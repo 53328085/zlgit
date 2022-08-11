@@ -93,7 +93,7 @@ export class Project {
 }
 // 设备监控
 export class Meter {
-    static Overview = ({projectId,meterType,bindStatus, lineStatus,alike='', pageNum = 1, pageSize = 10} = {}) => server.get(`/Meter/Overview?projectId=${projectId}&meterType=${meterType}&lineStatus=${lineStatus}&bindStatus=${bindStatus}&pageNum=${pageNum}&pageSize=${pageSize}&alike=${alike}`) // 查询设备监控
+    static Overview = ({projectId,meterType,bindStatus, lineStatus,alike='', pageNum = 1, pageSize = 12} = {}) => server.get(`/Meter/Overview?projectId=${projectId}&meterType=${meterType}&lineStatus=${lineStatus}&bindStatus=${bindStatus}&pageNum=${pageNum}&pageSize=${pageSize}&alike=${alike}`) // 查询设备监控
     
 }
 // 设备详情

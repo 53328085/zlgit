@@ -1,0 +1,17 @@
+
+html, body, #root{
+    height: 100%;
+}
+.flex {
+    display: flex;
+}
+.ant-layout-content.page--main {
+    padding: 16px;
+    display: flex;
+    .page--content {
+      flex:1;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+      row-gap: 16px;
+    }
+}

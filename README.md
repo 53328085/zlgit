@@ -1,3 +1,5 @@
+# 全局 css 变量用css自身变量功能
+# 配置LESS
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

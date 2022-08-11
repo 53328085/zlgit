@@ -13,14 +13,15 @@ const server = axios.create({
 })
 server.interceptors.request.use(
     config => {     
-       const token = window.sessionStorage.getItem('token');
-       config.headers['token'] = store.getState().user.token
+       //const token = window.sessionStorage.getItem('token');
+       const token = store.getState()?.user?.token
+       config.headers['token'] = token
         return config
     },
     error => {
-        let message = error.message || '请求出错'
+        let msg = error.message || '请求出错'
         return  message.error({
-            content: message,
+            content: msg,
         })
     }
 )
@@ -30,18 +31,18 @@ server.interceptors.response.use(
       return data
     },
     error => {       
-        let message = error?.response?.statusText
+        let msg = error?.response?.statusText
         let state = error?.response?.status
-        if (state >= 400 && state < 500 && state != 401 ) console.info(message)
+        if (state >= 400 && state < 500 && state != 401 ) console.info(msg)
         if (state == 401)  {
-          message({
+          message.warning({
           
             content: '登录状态发生改变,请重新登录',
           //  onClose: () => router.push('/'),
            
         })
         }
-        if (state >= 500)   message.error(message)
+        if (state >= 500)   message.error(msg)
         return Promise.reject(error)
     })
 export default server

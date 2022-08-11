@@ -19,7 +19,7 @@ export const loginByName = createAsyncThunk(
       return response
     }
 )
-const userSlice = createSlice({
+const user = createSlice({
     name: 'user',
     initialState,
     reducers: {
@@ -42,16 +42,14 @@ const userSlice = createSlice({
     }
 
 })
+
 export const selectFunctions = state => state.user.selectFunctions
-export const selectProjects = state => state.user.projects
+export const selectCurProject = state => (Array.isArray(state?.user.projects) && state.user.projects.length > 0) ? state.user.projects[0] : {}
+
 export const selectLoading = state => state.user.loading
 export const selectUser =  (state) => {    
     let {loginName,mobile, nickName,roleType,token,userId} = state.user
     return {loginName,mobile,nickName,roleType,token,userId}
  }
-/* export const selectUser = createSelector([state => state.user.userId], () => {    
-   let {loginName,mobile, nickName,roleType,token,userId} = getState.user
-   return {loginName,mobile,nickName,roleType,token,userId}
-}) */
-export const {test} = userSlice.actions
-export default userSlice.reducer
+
+export default user.reducer

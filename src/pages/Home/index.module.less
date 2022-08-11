@@ -1,0 +1,101 @@
+.content {
+  height: inherit;
+}
+.comheader{
+  color: #ffffff;
+  z-index: 2;
+ 
+  align-items: center;
+  padding-left: 24px;
+  padding-right: 16px;
+  height: 64px;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 190px 220px 1fr;
+  column-gap: 16px;
+  .custlog {
+    display: flex;
+  }
+  .title {
+    font-size: 20px;
+  }
+}
+.home--container {
+  flex: 1;
+  display: grid;
+  grid-template-rows: 178px 308px 303px;
+  grid-row-gap: 16px;
+  color: #333;
+  .home--header {
+    display: grid;
+    grid-template-columns: 360px 364px repeat(6, 142px);
+    grid-column-gap: 16px;
+    .company {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 196px 1fr;
+      grid-template-rows: 127px;
+      gap: 0 16px;
+      .name {
+        font-size: 16px;
+        padding-bottom: 18px;
+      }
+      .address {
+        font-size: 12px;
+      }
+    }
+    .info {
+      width: 264px;
+      display: flex;
+      justify-content: space-between;
+      color: #666;     
+      font-size: 12px;
+    }
+    .homeinfo {
+      display: flex;
+      width: 142px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 5px 12px 5px;
+      overflow: hidden;
+      p {
+        width: 132px;
+        text-align: center;
+       
+      }
+    }
+    .homeinfo--text {
+      color: var(--text-color6);
+    }
+    .homeinfo--num {
+      color: var(--text-color3);
+      font-size: 22px;
+    }
+    .homeicon {
+      width: 64px;
+      height: 64px;
+    }
+  }
+  .home-center {
+    display: grid;
+    grid-template-columns: 740px repeat(2, 458px);
+    grid-column-gap: 16px;
+    .income {
+      width: 740px;
+      height: 275px;
+    }
+    .payMode,.rank {
+      width: 458px;
+      height: 275;
+    }  
+  }
+  .home-footer {
+    display: grid;    
+    grid-column-gap: 16px;
+    .elect,.water, .coal {
+      min-width: 552px;
+       height: 270px;
+    }
+  }
+}

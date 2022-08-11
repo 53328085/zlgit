@@ -1,0 +1,29 @@
+.ant-menu-horizontal.headrmenu  {
+    background-color: transparent;
+    border-bottom: none;
+    flex: 1;
+    .ant-menu-item.custsubmenu{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100px;
+        padding: 8px 0; 
+        height: 64px;
+        color: #fff;
+        &::after {
+            right: 0px;
+            left: 0px;
+        }
+        &:nth-of-type(:first-of-type) {
+            border-right: 1px solid #fff;
+        }
+    .ant-menu-title-content {
+        margin-left: 0px;
+        line-height: 1;
+        text-align: center;
+        a {
+            color: #fff;
+        }
+    }
+  }
+}
