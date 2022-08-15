@@ -13,7 +13,10 @@ const loginrouter =  [{
   export const LoginRouter = () => useRoutes(loginrouter)
 
 const routes =  [
-    
+   {
+    path: "/",
+    element: <Login />
+    },
     {
       path: "/index",
       element: <Index />,
