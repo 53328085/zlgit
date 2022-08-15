@@ -23,26 +23,29 @@ const user = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        test: (state, action) => {
-            return state
+        clearToken(state) {
+          console.log(222222222222)
+          return Object.assign({}, state, {token: ''})
         }
     },
     extraReducers: {
-        [loginByName.pending]: (state, action) => {
-            state.loading = false
+        [loginByName.pending]: (state) => {
+             return {...state, loading: true}
          },
         [loginByName.fulfilled]: (state, {payload}) => {           
            let {success, errMsg, data} = payload
            if (success) {
-               return Object.assign({}, state, data, {loading: true} )
+               return Object.assign({}, state, data, {loading: false} )
            }else {
-               return Object.assign({}, state, {errMsg, loading: true})
+               return Object.assign({}, state, {errMsg, loading: false})
            }
-        }
+        },
+        [loginByName.rejected]: (state) => {           
+            return {...state, loading: false}
+         }
     }
 
 })
-
 export const selectFunctions = state => state.user.selectFunctions
 export const selectCurProject = state => (Array.isArray(state?.user.projects) && state.user.projects.length > 0) ? state.user.projects[0] : {}
 
@@ -51,5 +54,8 @@ export const selectUser =  (state) => {
     let {loginName,mobile, nickName,roleType,token,userId} = state.user
     return {loginName,mobile,nickName,roleType,token,userId}
  }
+export const {clearToken} = user.actions
+
+
 
 export default user.reducer

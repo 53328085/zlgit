@@ -15,7 +15,8 @@ const reducers = combineReducers({
 })
 const persistConfig = {
   key: 'redux_state',
-  storage
+  storage,
+  blacklist: ['user.loading']
 }
 const persistedReducer = persistReducer(persistConfig, reducers);
 export default configureStore({

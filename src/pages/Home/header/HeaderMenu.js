@@ -1,5 +1,5 @@
 import React, {useState, useMemo, useEffect} from "react";
-import {useNavigate, NavLink} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import { Menu } from "antd";
 import './style.less'
 import { 
@@ -8,20 +8,24 @@ import {
 
 export default function Hmenu() {
   const navigate = useNavigate()
+  const location = useLocation()
   const menus = [
     {
       label: '首页' ,
       key: "/index",
       icon: <SettingOutlined />,
       className: 'custsubmenu',
-      danger: true
+      danger: true,
+      title: '首页'
     },
     {
       label: '运行监控',
-      key: "/index/monitoring",
+      key: "/index/monitoring/outline",
       icon: <SettingOutlined />,
       className: 'custsubmenu',
-      danger: true
+      danger: true,
+      active: 'outline',
+      title: '运行概述'
     },
     {
       label: "电气安全",
@@ -73,10 +77,16 @@ export default function Hmenu() {
     }]
   const [current, SetCurrent] = useState('/index')  
   const onSelect = (e) => {
-      SetCurrent(e.key)
-      navigate(e.key)
+      let key = e.key
+      SetCurrent(key) 
+      const {active, title} = menus.find(item => item.key === key)    
+      let state = key === '/index' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title}
+      navigate(key, {state})
+     
   }
-
+  useEffect(() => {
+    SetCurrent(location.state?.headerKeys)
+   },[location])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className='headrmenu' />;
 
 

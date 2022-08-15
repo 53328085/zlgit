@@ -6,23 +6,26 @@ const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
+const loginrouter =  [{
+  path: "/",
+  element: <Login />
+  }]
+  export const LoginRouter = () => useRoutes(loginrouter)
 
 const routes =  [
-  {
-    path: "/",
-    element: <Login />
-    },
+    
     {
       path: "/index",
       element: <Index />,
       children: [
         {
           index: true,
-          element: <Defauthome/> //默认首页
+          element: <Defauthome/>, //默认首页
+          state: {index: true}
         },
         {
           path: 'monitoring', // 运行监控
-          element: <Monitoring/>,
+          element: <Monitoring><Navigate to='outline' replace={true}></Navigate> </Monitoring>, // 父组件的默认子路由
           children: monitoringRoutes
         }
       ]

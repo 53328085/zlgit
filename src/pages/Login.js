@@ -1,55 +1,52 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { loginByName, selectLoading, selectUser } from "../redux/user";
-import { systemConfig } from "../redux/systemconfig";
+import { useEffect,useState } from "react";
+import { useDispatch, useSelector, useStore } from "react-redux";
+import { loginByName, selectLoading} from "../redux/user";
+import { systemConfig } from "@redux/systemconfig";
+import {clearToken} from '@redux/user'
 import { useNavigate } from "react-router-dom";
-
 import {
-  Layout,
   Button,
   Checkbox,
   Form,
   Input,
+  message
 } from "antd";
 
-import { SmileOutlined } from '@ant-design/icons';
-import PageLayout from "../components/layout/PageLayout";
-import moment from "moment";
-var now = moment('1995-6-6')
-console.log(now)
-function UserLog() {
-  const [name, userSet] = useState("admin");
-  const [pwd, pwdSet] = useState("chint_123456");
-  const hostname =
-    process.env.NODE_ENV === "production"
-      ? new URL(window.location.href).hostname
-      : "10.5.7.60";
+
+import {LoginLayout} from "../components/layout";
+function UserLog() { // admin chint_123456 redux state 数据的变化监听
+  const store = useStore()
+ 
   const navigate = useNavigate();
-  let loading = useSelector(selectLoading);
-  let userinfo = useSelector(selectUser);
+  let initloaidng = useSelector(selectLoading)
+  let [loading, setLoading] = useState(initloaidng);  
   const dispatch = useDispatch();
+  store.subscribe(() => {   
+    setLoading(store.getState()?.user?.loading)
+  })
+  const hostname = process.env.NODE_ENV === "production" ? new URL(window.location.href).hostname  : "10.5.7.60";
   const submit = async (value) => {
-    console.log(value)
-    let { success } = await dispatch(loginByName({ name, pwd })).unwrap();
-    if (success) navigate("/index");
+    const {name, pwd} = value
+   let { success,errMsg } = await dispatch(loginByName({ name, pwd })).unwrap();
+   if (success) navigate("/index", {state: {index: true}});
+   if (!success) message.warning(errMsg || '系统繁忙,请稍后再试')
   };
   const onFinishFailed = (error) => {
     console.log(error)
   }
   useEffect(() => {
+    dispatch(clearToken()) // 返回登录页面时清楚token
+  }, [])
+  useEffect(() => {
+    document.title = 'NES600智慧能源服务平台'
+
+  }, [])
+  useEffect(() => {
+    
     dispatch(systemConfig(hostname));
   }, [hostname]);
+
   const [form] = Form.useForm()
-  const getform = () => {
-    console.log(112233)
-    form.setFieldsValue({
-      name: 'zhuzl',
-      pwd: 123
-    })
-  }
-  const resetform = () => {
-    form.resetFields()
-  }
   return (
     <div style={{width: '402px', margin: '100px auto'}}>  
    
@@ -61,14 +58,16 @@ function UserLog() {
         form={form}
         name='login'
         initialValues={{
-          remember: true
+          remember: true,
+          name: '',
+          pwd: ''
         }}
         onFinish={submit}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item
-           name="Name"
+           name="name"
            label="用户名"
            rules={[
             {
@@ -100,22 +99,12 @@ function UserLog() {
             <Checkbox>记住用户名</Checkbox>
           </Form.Item>
           <Form.Item>
-              <Button type="primary" htmlType="submit" block>立即登录</Button>
+              <Button type="primary" htmlType="submit" block loading={loading}>立即登录</Button>
           </Form.Item>
       </Form>
-     
-      {/*  <p><label>用户名</label><input value={name} onChange={e => userSet(e.target.value)}></input></p>
-       <p><label>用户名</label><input value={pwd} onChange={e => pwdSet(e.target.value)}></input></p>
-       <p><button onClick={submit}>提交</button></p>
-       <div>
-         <p> 用户姓名： {userinfo.loginName} </p>
-         <p> 用户电话： {userinfo.mobile} </p>
-       </div> */}
-    
     </div>
   );
 }
-export default function Login() {
-  const { Content } = Layout;
-  return <PageLayout ><Content><UserLog /></Content> </PageLayout>;
+export default function Login() {  
+  return <LoginLayout login={true}><UserLog /> </LoginLayout>;
 }

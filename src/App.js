@@ -1,20 +1,21 @@
 import React, {Suspense, lazy} from 'react'
-import {
-  BrowserRouter, 
-  useRoutes,
-  
-} from 'react-router-dom'
+import {BrowserRouter, useNavigate} from 'react-router-dom'
+import {useSelector} from 'react-redux'
+import {selectUser} from '@redux/user'
 import Loading from './pages/Loading';
-import EL from './router'
-function App() {
- 
+import EL, {LoginRouter} from './router'
 
+function App() {
+ const {token} = useSelector(selectUser)
+  const navigate = useNavigate()
   return (
+ 
     <BrowserRouter>
      <Suspense fallback={<Loading/>}>
-        <EL></EL>
+      <EL/>
      </Suspense>    
     </BrowserRouter>
+   
   )
 }
 

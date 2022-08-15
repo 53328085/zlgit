@@ -11,7 +11,8 @@ const Warning = lazy(() => import("../pages/monitoring/warning"))
 const Remote = lazy(() => import("../pages/monitoring/remote"))
 export default [
     {
-        index: true,
+       // index: true,
+        path: 'outline',
         element: <Summary/>
      },
      {
