@@ -8,7 +8,6 @@ export default function Sider() {
   const [key, Setkey] = useState('outline')
   const navigate = useNavigate()
   const location = useLocation()
-  console.log(location)
   useEffect(() => {
     Setkey(location.state?.selectedKeys) 
   },[location])

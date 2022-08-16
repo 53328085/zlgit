@@ -24,7 +24,6 @@ const user = createSlice({
     initialState,
     reducers: {
         clearToken(state) {
-          console.log(222222222222)
           return Object.assign({}, state, {token: ''})
         }
     },
@@ -46,6 +45,7 @@ const user = createSlice({
     }
 
 })
+const {actions, reducer} = user
 export const selectFunctions = state => state.user.selectFunctions
 export const selectCurProject = state => (Array.isArray(state?.user.projects) && state.user.projects.length > 0) ? state.user.projects[0] : {}
 
@@ -54,8 +54,8 @@ export const selectUser =  (state) => {
     let {loginName,mobile, nickName,roleType,token,userId} = state.user
     return {loginName,mobile,nickName,roleType,token,userId}
  }
-export const {clearToken} = user.actions
+export const {clearToken} = actions
 
 
 
-export default user.reducer
+export default reducer

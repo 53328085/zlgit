@@ -1,16 +1,18 @@
 import React, {useState, useEffect} from 'react'
-import {useSelector} from 'react-redux'
+import {useSelector, useStore} from 'react-redux'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import {Meter} from '@api/api.js'
 import { recordNo } from '../../../redux/systemconfig'
 import {selectCurProject} from '@redux/user.js'
+import {selectArea} from '@redux/params.js'
 export default function Index() {
   const [value, SetValue] = useState(1)
   const [dataSource, setDataSource] = useState([]) 
   const projectId = useSelector(selectCurProject)?.id
-  console.log(projectId)
-
+  const arearParams = useSelector(selectArea)
+  let [initparams, setInitparams] = useState({...arearParams})
+  const store = useStore()
   //const projectId = useSelector()
   const columns = [
     {
@@ -53,8 +55,7 @@ export default function Index() {
     pageSize: 12,
     alike: '',
   }
-  useEffect(() => { // 监听value数据变化 
-    console.log(value)
+  const getData = () => {
     Meter.Overview(params).then(res => {
       let {success, data} = res
       if (success && Array.isArray(data?.data)) {
@@ -63,8 +64,19 @@ export default function Index() {
         setDataSource([])
       }
     })
+  }
+
+  useEffect(() => { // 监听value数据变化    
+    getData()
     return () => {}
-  }, [value, projectId])
+  }, [value, projectId, initparams])
+/*   useEffect(() => { 
+    getData()
+  }, [projectId])
+  useEffect(() => { 
+    getData()
+  }, [initparams]) */
+  
   const tabs = [
     {label: '电表', value: 1},
     {label: '水表', value: 2},
