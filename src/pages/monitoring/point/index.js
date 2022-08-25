@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {useSelector, useStore, useDispatch} from 'react-redux'
-import {useAntdTable} from 'ahooks'
+import {useAntdTable, usePagination} from 'ahooks'
 import {Form} from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
@@ -57,16 +57,38 @@ export default function Index() {
       }
     })
   }
+  const getCardData = ({current, pageSize}) => {     
+    params = Object.assign({}, params, {pageNum: current, pageSize})
+    return  Meter.Overview(params).then(res => {
+      let {success, data, totalNum} = res
+      if (success && Array.isArray(data?.data)) {
+        return {
+          total: totalNum,
+          list: data.data
+        }
+      
+      }else {
+        return {
+          total: 0,
+          list: []
+        }
+      }
+    })
+  }
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
     refreshDeps: [projectId, value]
    })
-   console.log(tableProps) 
+   const {data, pagination} = usePagination(getCardData, {
+    refreshDeps: [projectId, value],
+    defaultPageSize: 12,
+   })
+  console.log(data)
   return (
     <Pagecount tabs={tabs} value={value} setvalue={SetValue} form={form} search={search}>   
    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id'/> : 
-        <UserCard   {...tableProps} /> 
+        <UserCard   {...{data, pagination}} /> 
      /*  <UserCard  dataSource={dataSource} totalNum={totalNum}  datacontext={DataContext} current={current}  setCurrent={setCurrent} />  */
   
     }
