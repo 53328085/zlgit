@@ -9,6 +9,7 @@ const Summary = lazy(() => import("../pages/monitoring/summary"))
 const Video = lazy(() => import("../pages/monitoring/video"))
 const Warning = lazy(() => import("../pages/monitoring/warning"))
 const Remote = lazy(() => import("../pages/monitoring/remote"))
+const Oplog = lazy(() => import("../pages/monitoring/oplog"))
 export default [
     {
        // index: true,
@@ -46,5 +47,9 @@ export default [
     {
         path: 'remote',
         element: <Remote/>
+    },
+    {
+        path: 'oplog',
+        element: <Oplog/>
     }
 ]

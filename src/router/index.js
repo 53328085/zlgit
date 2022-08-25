@@ -8,6 +8,9 @@ const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
+const Test = lazy(() => import("../pages/test"))
+const List = lazy(() => import("../pages/test/list"))
+const Fform = lazy(() => import("../pages/test/fform"))
 const loginrouter =  [{
   path: "/login",
   element: <Login />
@@ -21,12 +24,13 @@ const loginrouter =  [{
  }
 const routes =  [
    {
-    path: "/login",
+    path: "/",
     element: <Login />
     },
     {
-      path: "/",
-      element: <Redirect />,
+      path: "/index",
+    //  element: <Redirect />,
+        element: <Index />,
       children: [
         {
           index: true,
@@ -43,6 +47,18 @@ const routes =  [
     {
       path: '/config',
       element: <Antdconfig/>
+    },
+    {
+      path: '/test',
+      element: <Test/>
+    },
+    {
+      path: '/list',
+      element: <List/>
+    },
+    {
+      path: '/form',
+      element: <Fform/>
     }
    
 ];

@@ -1,6 +1,6 @@
 import { useEffect,useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { loginByName, selectLoading} from "../redux/user";
+import { loginByName, selectLoading} from "@redux/user";
 import { systemConfig } from "@redux/systemconfig";
 import {clearToken} from '@redux/user'
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ import {
 } from "antd";
 
 
-import {LoginLayout} from "../components/layout";
+import {LoginLayout} from "@com/layout";
 function UserLog() { // admin chint_123456 redux state 数据的变化监听
   const store = useStore()
  
@@ -28,7 +28,7 @@ function UserLog() { // admin chint_123456 redux state 数据的变化监听
   const submit = async (value) => {
     const {name, pwd} = value
    let { success,errMsg } = await dispatch(loginByName({ name, pwd })).unwrap();
-   if (success) navigate("/", {state: {index: true}});
+   if (success) navigate("/index", {state: {index: true}});
    if (!success) message.warning(errMsg || '系统繁忙,请稍后再试')
   };
   const onFinishFailed = (error) => {

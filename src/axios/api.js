@@ -171,6 +171,7 @@ export class PriceSolution {
 export class LogOperation {
     static GetLogOperation = (data) => server.get(`LogOperation/GetLogOperation?start=${data.start}&end=${data.end}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)
 }
+export const GetLogOperation = (data) => server.get(`LogOperation/GetLogOperation?start=${data.start}&end=${data.end}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)
 //保电方案
 export class PowerProtect {
     static AddPowerProtectSolution=(data)=>server.post(`/PowerProtect/AddPowerProtectSolution`,data)
@@ -293,6 +294,7 @@ export class Remote{
     static Log = (data) => server.post(`Remote/Log`,data)//查询操作日志
     static BatchValveStatus = (data) => server.post(`Remote/BatchValveStatus`,data)//批量查询阀门当前状态
 }
+export const OpLog = (data) => server.post(`Remote/Log`,data)
 //能源账户充值
 export class EnergyAccount {
     static EnergyCharge = (data) => server.post(`EnergyAccount/EnergyCharge?projectId=${data.projectId}&customerId=${data.customerId}&amount=${data.amount}&payMode=${data.payMode}&code=${data.code}`)//能源账户充值

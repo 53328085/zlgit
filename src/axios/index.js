@@ -43,7 +43,7 @@ server.interceptors.response.use(
           message.warning({
           
             content: '登录状态发生改变,请重新登录',
-            onClose: <Navigate to='/' replace={true} />
+            onClose: () => (<Navigate to='/' replace={true} />)
            
         })
         }

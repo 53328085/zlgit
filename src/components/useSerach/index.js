@@ -1,29 +1,33 @@
 import React, {useState} from "react";
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { Form, Select, Button, AutoComplete } from "antd";
 import style from "./style.module.less";
-import {onAreaParams, onModel} from '@redux/params'
-export default function useSerach() {
- 
-  let [init, setInit] = useState(false)
+import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
+export default function useSerach(props) {
   const dispatch = useDispatch()
+  const search = props.search 
+ 
+ const form = props.form || {};
+
+  const { type, changeType, submit, reset } = search;
+  let [init, setInit] = useState(false)  
   const { Item } = Form;
   const { Option } = Select;
   const changemodel = () => {
     setInit(init => !init)
-    dispatch(onModel(init))
+    dispatch(onDisplay(init))
   }
-  const onFieldsChange = (_, allFields) => {
-     let fields =   {} 
-     allFields.forEach(f => {
-        fields[f.name[0]] = f.value || ''
-     });
-     dispatch(onAreaParams({areaParams: fields}))
-  }
-  return (    
-    <Form layout="inline" className={style.serachform} onFieldsChange={onFieldsChange}>
+  return (  
+  
+    <Form layout="inline" className={style.serachform} form={form} initialValues={{
+      RegionId: null,
+      BuildingId: null,
+      FloorId: null,
+      Type: null,
+      State: null
+    }} >
       <Item label="园区选择" name='RegionId'>
-        <Select style={{ width: "320px" }}>
+        <Select style={{ width: "320px" }} onChange={submit} allowClear>
           <Option value={1}>正泰园区</Option>
         </Select>
       </Item>
@@ -48,8 +52,10 @@ export default function useSerach() {
         </Select>
       </Item>
       <Item style={{marginLeft: 'auto', marginRight: '0px'}}>
-        <Button onClick={() => changemodel()}>{init ? '列表模式' : '表格模式'}</Button>
+          <Button  onClick={() => changemodel()}>{init ? '列表模式' : '表格模式'}</Button>
       </Item>
     </Form>
+  
+    
   );
 }

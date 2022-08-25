@@ -12,7 +12,7 @@ export default function Hmenu() {
   const menus = [
     {
       label: '首页' ,
-      key: "/",
+      key: "/index",
       icon: <SettingOutlined />,
       className: 'custsubmenu',
       danger: true,
@@ -20,7 +20,7 @@ export default function Hmenu() {
     },
     {
       label: '运行监控',
-      key: "/monitoring/outline",
+      key: "/index/monitoring/outline",
       icon: <SettingOutlined />,
       className: 'custsubmenu',
       danger: true,
@@ -80,7 +80,7 @@ export default function Hmenu() {
       let key = e.key
       SetCurrent(key) 
       const {active, title} = menus.find(item => item.key === key)    
-      let state = key === '/' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title}
+      let state = key === '/index' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title}
       navigate(key, {state})
      
   }

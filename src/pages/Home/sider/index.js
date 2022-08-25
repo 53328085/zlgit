@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import {Menu} from 'antd'
-import {AppstoreOutlined} from '@ant-design/icons'
 import {useNavigate, useLocation} from 'react-router-dom'
 
 
@@ -55,11 +54,16 @@ export default function Sider() {
         key: "report",
        
     },
+    {
+      label: "操作日志",
+      key: "oplog",
+     
+  },
    ]
   const onSelect = (e) => {
      let label = items.find(item => item.key == e.key)?.label
      Setkey(e.key)
-     navigate('monitoring/' + e.key, {state: {title: label, selectedKeys: e.key}})
+     navigate('/index/monitoring/' + e.key, {state: {title: label, selectedKeys: e.key}})
   }
   return (
     <div> 
