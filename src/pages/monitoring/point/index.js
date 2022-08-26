@@ -9,6 +9,7 @@ import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import {selectDisplay} from '@redux/params.js'
 import columns,  { onDesc} from './columns'
+import {nanoid} from '@reduxjs/toolkit'
 export default function Index() {
   const [form] = Form.useForm()
   const [value, SetValue] = useState('electric')
@@ -38,9 +39,9 @@ export default function Index() {
     pageSize: 12,
     alike: '',
   }
-  let DataContext = React.createContext()
   const getTableData = ({current, pageSize}, formData) => {     
-    params = Object.assign({}, params, {pageNum: current, pageSize})
+    console.log(formData)
+    params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res
       if (success && Array.isArray(data?.data)) {
@@ -77,20 +78,19 @@ export default function Index() {
   }
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
-    refreshDeps: [projectId, value]
+    refreshDeps: [projectId, value],
+    defaultPageSize: 12,
    })
    const {data, pagination} = usePagination(getCardData, {
     refreshDeps: [projectId, value],
     defaultPageSize: 12,
    })
-  console.log(data)
+  console.log(tableProps)
   return (
     <Pagecount tabs={tabs} value={value} setvalue={SetValue} form={form} search={search}>   
    
-       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id'/> : 
+       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' /> : 
         <UserCard   {...{data, pagination}} /> 
-     /*  <UserCard  dataSource={dataSource} totalNum={totalNum}  datacontext={DataContext} current={current}  setCurrent={setCurrent} />  */
-  
     }
     </Pagecount>
   )

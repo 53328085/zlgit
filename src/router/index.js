@@ -29,8 +29,8 @@ const routes =  [
     },
     {
       path: "/index",
-    //  element: <Redirect />,
-        element: <Index />,
+      element: <Redirect />,
+       // element: <Index />,
       children: [
         {
           index: true,

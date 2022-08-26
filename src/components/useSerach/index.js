@@ -36,8 +36,8 @@ export default function useSerach(props) {
           <Option value={2}>1号楼</Option>
         </Select>
       </Item>
-      <Item label="楼层" style={{width: '174px'}} name='FloorId'>
-        <Select>
+      <Item label="楼层" style={{width: '174px'}} name='FloorId' >
+        <Select onChange={submit} allowClear>
         <Option value={3}>7楼</Option>
         </Select>
       </Item>
