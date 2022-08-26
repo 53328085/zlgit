@@ -1,7 +1,13 @@
 import React  from 'react'
 import {Radio, Tabs} from 'antd'
+import  './style.less'
+
 export default function maincontent(props) {
  const {tabs, value, setvalue} = props
+ const tabstyl = {
+     background: '#237ae4',
+     color: '#fff'
+ }
  const onChange = (key) => {
      setvalue(key)
  }
@@ -9,15 +15,15 @@ export default function maincontent(props) {
      if (!tabs) return null  
      const {TabPane} = Tabs
      return (
-        <Tabs  onChange={onChange} activeKey={value} type="card" >
-            {tabs.map(t => <TabPane tab={t.label} key={t.value}></TabPane>)}
+        <Tabs  onChange={onChange} activeKey={value} animated tabBarGutter={16} type="card" id='custTab'>
+            {tabs.map(t => <TabPane tab={t.label} key={t.value} className='custTabPane'></TabPane>)}
         </Tabs>
      )
  } 
   return (
-    <div>
+    <div className='page--content--box'>
         <TabsEl></TabsEl>
-        {props.children}
+        <div className='page--content--main'>{props.children}</div>
     </div>
   )
 }

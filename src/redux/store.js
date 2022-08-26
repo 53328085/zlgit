@@ -6,16 +6,18 @@ import storage from 'redux-persist/lib/storage' // redux 持久化
 import {composeWithDevTools} from 'redux-devtools-extension'
 import user from './user' 
 import system from './systemconfig' //根据IP或域名获取系统配置
-import theme from './them' // 配置 antd 
-
+import theme from './theme' // 配置 antd 
+import params from './params' // 查询参数， 表格、列表显示模式等
 const reducers = combineReducers({
   user,
   system,
-  theme
+  theme,
+  params
 })
 const persistConfig = {
   key: 'redux_state',
-  storage
+  storage,
+  blacklist: ['user.loading']
 }
 const persistedReducer = persistReducer(persistConfig, reducers);
 export default configureStore({

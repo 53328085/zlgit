@@ -1,16 +1,19 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Menu} from 'antd'
-import {AppstoreOutlined} from '@ant-design/icons'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 
 
 export default function Sider() {
-  const [key, Setkey] = useState('default')
+  const [key, Setkey] = useState('outline')
   const navigate = useNavigate()
+  const location = useLocation()
+  useEffect(() => {
+    Setkey(location.state?.selectedKeys) 
+  },[location])
   const items = [
     {
       label: '运行概述' ,
-      key: "default",
+      key: "outline",
     
     },
     {
@@ -51,10 +54,16 @@ export default function Sider() {
         key: "report",
        
     },
+    {
+      label: "操作日志",
+      key: "oplog",
+     
+  },
    ]
   const onSelect = (e) => {
-    Setkey(e.key)
-     navigate(e.key=='default' ? 'monitoring' : e.key)
+     let label = items.find(item => item.key == e.key)?.label
+     Setkey(e.key)
+     navigate('/index/monitoring/' + e.key, {state: {title: label, selectedKeys: e.key}})
   }
   return (
     <div> 

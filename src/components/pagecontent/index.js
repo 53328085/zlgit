@@ -1,13 +1,13 @@
 import React from 'react'
 
-import Userserach from '@com/useSerach'
+ import Userserach from '@com/useSerach'
 import Maincontent from './maincontent'
-export default function index(props) {
- 
+export default function Index(props) {
+  const {search, form, ...otherProps} = props 
   return (
     <div className='page--content'>
-       <Userserach/>
-       <Maincontent {...props}></Maincontent>
+       <Userserach search={search} form={form} />
+       <Maincontent {...otherProps}></Maincontent>
     </div>
   )
 }

@@ -1,9 +1,50 @@
 
-html, body, #root{
-    height: 100%;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    font-size: 14px;
 }
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+h1,h2,h3,h4,h5,h6,p{
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+#root {
+    height: inherit;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+body::-webkit-scrollbar{
+    display: none !important;
+}
+
+body *::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #ccc; 
+  }
+body *::-webkit-scrollbar-thumb {
+      background: #ccc;
+  }
+.ellipsis {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+}
+
 .flex {
     display: flex;
+}
+.felx_1 {
+    flex: 1
 }
 .ant-layout-content.page--main {
     padding: 16px;
@@ -13,5 +54,16 @@ html, body, #root{
       display: grid;
       grid-template-rows: 52px 1fr;
       row-gap: 16px;
+      .page--content--box {
+        display: flex;
+        flex-direction: column;
+       .page--content--main {
+          background-color: #fff;
+          padding: 16px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+       }
+     }
     }
 }

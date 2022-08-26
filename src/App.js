@@ -1,21 +1,19 @@
 import React, {Suspense, lazy} from 'react'
-import {
-  BrowserRouter, 
-  useRoutes,
-  
-} from 'react-router-dom'
-import Loading from './pages/Loading';
-import EL from './router'
-function App() {
- 
+import {BrowserRouter, Navigate} from 'react-router-dom'
 
-  return (
-    <BrowserRouter>
+import Loading from './pages/Loading';
+import EL, {LoginRouter} from './router'
+
+function App() {
+
+  return   (<BrowserRouter>
      <Suspense fallback={<Loading/>}>
-        <EL></EL>
+         <EL/>
+        
      </Suspense>    
-    </BrowserRouter>
-  )
-}
+    </BrowserRouter>) 
+   
+
+  }
 
 export default App

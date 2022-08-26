@@ -1,0 +1,97 @@
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.cardLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 30px;
+  flex:1;
+}
+.cardlist {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 160px;
+  gap: 16px;
+  .item {
+    height: 160px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    column-gap: 16px;
+    font-size: 14px;
+    background-color: #e4e4e4;
+    overflow: hidden;
+    .mainright {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 48px 1fr;
+      row-gap: 16px;
+      .upcontent {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr) ;
+        grid-auto-rows: 20px;
+        row-gap: 8px;
+        place-items: left center;
+        div > span:first-of-type {
+          color: #7d7d7d;
+          margin-right: 16px;
+        }
+        div > span:last-of-type {
+          color: var(--text-color3);
+        }
+        div > span.state {
+          width: 108px;
+          height: 24px;
+          border-radius: 2px;
+          color: #fff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        div > span.normal {
+          background: #009966;
+        }
+        div > span.offline {
+          border: 1px solid #333;
+          animation: offlineani 0.5s infinite;
+        }
+      }
+
+      .info {
+        display: grid;
+        grid-template-columns: 186px 186px;
+        grid-template-rows: 28px 28px;
+        gap: 16px;
+        font-size: 12px;
+        > div {
+          border: 1px solid var(--text-colorc);
+          border-radius: 2px;
+          display: grid;
+          grid-template-columns: 80px 1fr;
+          grid-template-rows: 28px;
+          overflow: hidden;
+          >div {
+            align-items: center;
+            
+            padding: 0 8px;
+            display: flex;
+            .ellipsis()
+          }
+          .left {    
+            background-color: #000066;
+            color: #fff;
+            justify-content: center;
+          }
+          .right {
+            background-color: #fff;
+            justify-content: end;
+            color:#003366
+          }
+        }
+      }
+    }
+  }
+}

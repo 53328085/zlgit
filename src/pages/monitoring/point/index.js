@@ -1,86 +1,97 @@
 import React, {useState, useEffect} from 'react'
-import {useSelector} from 'react-redux'
+import {useSelector, useStore, useDispatch} from 'react-redux'
+import {useAntdTable, usePagination} from 'ahooks'
+import {Form} from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
+import UserCard from '@com/useCard'
 import {Meter} from '@api/api.js'
-import { recordNo } from '../../../redux/systemconfig'
 import {selectCurProject} from '@redux/user.js'
+import {selectDisplay} from '@redux/params.js'
+import columns,  { onDesc} from './columns'
+import {nanoid} from '@reduxjs/toolkit'
 export default function Index() {
-  const [value, SetValue] = useState(1)
-  const [dataSource, setDataSource] = useState([]) 
-  const projectId = useSelector(selectCurProject)?.id
-  console.log(projectId)
+  const [form] = Form.useForm()
+  const [value, SetValue] = useState('electric')
+  const projectId = useSelector(selectCurProject)?.id 
+  let [display, setDisplay] = useState(useSelector(selectDisplay))
+  const store = useStore()
+  store.subscribe(() => {
+      setDisplay(store.getState().params.display)
+  })
+  const meterType = {
+    electric: 1,
+    water: 2,
+    gas: 3
+  }
 
-  //const projectId = useSelector()
-  const columns = [
-    {
-      dataIndex: "sn",
-      title: "设备编号",
-      key: 'sn'
-    },
-    {
-      dataIndex: "categoryName",
-      title: "设备型号",
-      key: 'categoryName'
-    },
-    {
-      dataIndex: "status", // status 1: 离线 2：在线
-      title: "设备状态",
-      key: 'status'
-    },
-    {
-      dataIndex: "address",
-      title: "安装地址",
-      key: 'address'
-    },
-    {
-      dataIndex: "customer",
-      title: "客户名",
-      key: 'customer'
-    },
-    {
-      dataIndex: "lastSampleTime",
-      title: "更新时间",
-      key: 'lastSampleTime'
-    },
+  const tabs = [
+    {label: '电表', value: 'electric'},
+    {label: '水表', value: 'water'},
+    {label: '燃气表', value: 'gas'}
   ]
-  const params = {
+  let params = {
     projectId: projectId,
-    meterType: value*1,
+    meterType: meterType[value],
     lineStatus: 0,
     bindStatus: 0,
     pageNum: 1,
     pageSize: 12,
     alike: '',
   }
-  useEffect(() => { // 监听value数据变化 
-    console.log(value)
-    Meter.Overview(params).then(res => {
-      let {success, data} = res
+  const getTableData = ({current, pageSize}, formData) => {     
+    console.log(formData)
+    params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
+    return  Meter.Overview(params).then(res => {
+      let {success, data, totalNum} = res
       if (success && Array.isArray(data?.data)) {
-        setDataSource(data.data)
+        return {
+          total: totalNum,
+          list: data.data
+        }
+      
       }else {
-        setDataSource([])
+        return {
+          total: 0,
+          list: []
+        }
       }
     })
-    return () => {}
-  }, [value, projectId])
-  const tabs = [
-    {label: '电表', value: 1},
-    {label: '水表', value: 2},
-    {label: '燃气表', value: 3}
-  ]
-  const onDesc = {
-      expandedRowRender: (record) => {
-         const desc = record.data.map(r => <span key={r.pointId}>{r.description}{r.display}</span>)
-         return (<div key={record.id}>{desc}</div>)
-        },
-      rowExpandable: (record) => Array.isArray(record.data) && record.data?.length > 0
-    }
-
+  }
+  const getCardData = ({current, pageSize}) => {     
+    params = Object.assign({}, params, {pageNum: current, pageSize})
+    return  Meter.Overview(params).then(res => {
+      let {success, data, totalNum} = res
+      if (success && Array.isArray(data?.data)) {
+        return {
+          total: totalNum,
+          list: data.data
+        }
+      
+      }else {
+        return {
+          total: 0,
+          list: []
+        }
+      }
+    })
+  }
+  const {tableProps, search} = useAntdTable(getTableData, {
+    form,
+    refreshDeps: [projectId, value],
+    defaultPageSize: 12,
+   })
+   const {data, pagination} = usePagination(getCardData, {
+    refreshDeps: [projectId, value],
+    defaultPageSize: 12,
+   })
+  console.log(tableProps)
   return (
-    <Pagecount tabs={tabs} value={value} setvalue={SetValue}>
-       <UserTable columns={columns} dataSource={dataSource} expandable={onDesc}/>
+    <Pagecount tabs={tabs} value={value} setvalue={SetValue} form={form} search={search}>   
+   
+       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' /> : 
+        <UserCard   {...{data, pagination}} /> 
+    }
     </Pagecount>
   )
 }
