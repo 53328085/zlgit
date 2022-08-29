@@ -64,7 +64,7 @@ function UserLog() { // admin chint_123456 redux state 数据的变化监听
         }}
         onFinish={submit}
         onFinishFailed={onFinishFailed}
-        autoComplete="off"
+       
       >
         <Form.Item
            name="name"
@@ -72,8 +72,7 @@ function UserLog() { // admin chint_123456 redux state 数据的变化监听
            rules={[
             {
               required: true,
-              message: '请输入用户姓名',
-              warningOnly: true
+              message: '请输入用户姓名',             
             },
           ]}
           >
@@ -85,8 +84,7 @@ function UserLog() { // admin chint_123456 redux state 数据的变化监听
            rules={[
             {
               required: true,
-              message: '请输入密码',
-              warningOnly: true
+              message: '请输入密码',             
             },
           ]}
           >
