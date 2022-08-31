@@ -19,7 +19,7 @@ const loginrouter =  [{
 
  function Redirect() { // 路由守卫
   const {token} = useSelector(selectUser);
-  return token ? (<Index/>) : (<Navigate to="/login" />)
+  return token ? (<Index/>) : (<Navigate to="/" />)
   
  }
 const routes =  [

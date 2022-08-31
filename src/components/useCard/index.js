@@ -6,7 +6,6 @@ import Custcard from './custCard'
 
 export default function Index(props) {
   let {data, pagination} = props || {}
-  console.log(props)
   return (
     <div className={style.cardLayout}>
       <div className={style.cardlist}>

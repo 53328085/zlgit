@@ -13,40 +13,68 @@ import {
   TimePicker,
   Row,
   Col,
-  Checkbox
+  Checkbox,
+  message
 } from "antd";
 
 import Cfrom from "./ccform";
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
-import { useSetState, useToggle, useBoolean, useVirtualList, useHistoryTravel, useNetwork, useCountDown, useSelections, useCounter, useTextSelection, useMount } from "ahooks";
+import { 
+      useCookieState,
+      useLocalStorageState,
+      useDebounce,
+      useMap,
+      useEventListener,
+      useClickAway,
+      useSetState, 
+      useToggle, 
+      useBoolean,
+      useVirtualList,
+      useHistoryTravel, 
+      useNetwork, 
+      useCountDown, 
+      useSelections,
+      useCounter, 
+      useTextSelection, 
+      useMount,
+      useFullscreen,
+      useHover,
+      useMutationObserver,
+      useKeyPress,
+      usePrevious,
+      useGetState,
+      useResetState,
+      useUpdateEffect,
+    } 
+     from "ahooks";
 
-interface State { // 接口
-  hello: string,
-  count: number,
-  [key: string]: any;
- }
+
 export default () => {
-/*  const [state, setState] = useSetState<State>({ // 泛型
-   hello: '',
-   count: 1
- }) */
- const [state, { toggle, setLeft, setRight }] = useToggle('hello', 'world');
+  const [count, setCount] = useState(0);
+  const [effectCount, setEffectCount] = useState(0);
+  const [updateEffectCount, setUpdateEffectCount] = useState(0);
+
+  useEffect(() => {
+    setEffectCount((c) => c + 1);
+  }, [count]);
+
+  useUpdateEffect(() => {
+    setUpdateEffectCount((c) => c + 1);
+    return () => {
+      // do something
+    };
+  }, [count]); // you can include deps array if necessary
+
   return (
     <div>
-    <p>Effects：{`${state}`}</p>
-    <p>
-      <button type="button" onClick={toggle}>
-        Toggle
-      </button>
-      <button type="button" onClick={setLeft} style={{ margin: '0 8px' }}>
-        Toggle False
-      </button>
-      <button type="button" onClick={setRight}>
-        Toggle True
-      </button>
-    </p>
-  </div>
-  
-  )
+      <p>effectCount: {effectCount}</p>
+      <p>updateEffectCount: {updateEffectCount}</p>
+      <p>
+        <button type="button" onClick={() => setCount((c) => c + 1)}>
+          reRender
+        </button>
+      </p>
+    </div>
+  );
 }

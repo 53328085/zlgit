@@ -8,7 +8,7 @@ export class Login {
     static SystemConfig = (url) => server.get(`/SystemConfig/GetSystemConfigInfo?url=${url}`)
     static LoginByName = (data = {}) => server.post(`/User/LoginByName?name=${data.name}&pwd=${data.pwd}`)      // 根据用户名登录
 
-    static GetVerification = (data = {}) => server.post(`/User/GetCode?mobile=${data.mobile}`)    // 获取验证吗
+    static GetVerification = (mobile) => server.post(`/User/GetCode?mobile=${mobile}`)    // 获取验证吗
     static LoginByPhone = (data = {}) => server.post(`/User/LoginByMobile?mobile=${data.mobile}&code=${data.code}`)   // 根据手机号登录
     static GetMenuByRoleType = (params = {}) => server.get('/Project/GetMenuByRoleType', { params }) // 根据登录人查询项目和侧边栏
     static SystemQueryLoginConfigInfo = (data = {}) => server.get('/System/QueryLoginConfigInfo', data) // 查询登录页配置

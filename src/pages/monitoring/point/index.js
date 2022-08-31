@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {useSelector, useStore, useDispatch} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
 import {Form} from 'antd'
 import Pagecount from '@com/pagecontent'
@@ -7,18 +7,17 @@ import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
 import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
-import {selectDisplay} from '@redux/params.js'
+import CustContext from '@com/content.js'
 import columns,  { onDesc} from './columns'
-import {nanoid} from '@reduxjs/toolkit'
 export default function Index() {
   const [form] = Form.useForm()
+
+  const [formparams, setFormparams] = useState(form.getFieldValue())
   const [value, SetValue] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
-  let [display, setDisplay] = useState(useSelector(selectDisplay))
-  const store = useStore()
-  store.subscribe(() => {
-      setDisplay(store.getState().params.display)
-  })
+  let [display, setDisplay] = useState(true)
+
+
   const meterType = {
     electric: 1,
     water: 2,
@@ -39,8 +38,10 @@ export default function Index() {
     pageSize: 12,
     alike: '',
   }
-  const getTableData = ({current, pageSize}, formData) => {     
-    console.log(formData)
+  const getTableData = ({current, pageSize}, formData) => {  
+    setFormparams((form) => ({...form, ...formData}))
+   
+    if (!display) return;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res
@@ -58,8 +59,8 @@ export default function Index() {
       }
     })
   }
-  const getCardData = ({current, pageSize}) => {     
-    params = Object.assign({}, params, {pageNum: current, pageSize})
+  const getCardData = ({current, pageSize}) => {  
+    params = Object.assign({}, params, {pageNum: current, pageSize}, formparams)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res
       if (success && Array.isArray(data?.data)) {
@@ -78,20 +79,32 @@ export default function Index() {
   }
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
-    refreshDeps: [projectId, value],
+    refreshDeps: [projectId, value, display],
     defaultPageSize: 12,
    })
+ 
    const {data, pagination} = usePagination(getCardData, {
-    refreshDeps: [projectId, value],
+    refreshDeps: [projectId, value, formparams],
     defaultPageSize: 12,
+
    })
-  console.log(tableProps)
+  const propsData ={
+    tabs,
+    value,
+    setvalue: SetValue,
+    form,
+    search,
+    display,
+    setDisplay,
+  }
   return (
-    <Pagecount tabs={tabs} value={value} setvalue={SetValue} form={form} search={search}>   
+    <CustContext.Provider value={propsData}>
+    <Pagecount>   
    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' /> : 
         <UserCard   {...{data, pagination}} /> 
     }
     </Pagecount>
+    </CustContext.Provider>
   )
 }

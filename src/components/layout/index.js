@@ -2,10 +2,11 @@ import React from 'react'
 import { Layout} from 'antd'
 import Copyright from './Copyright'
 import style from './index.module.less'
+import Logbg from './logBg.png'
 const { Header, Footer, Sider, Content } = Layout;
 export function LoginLayout(props) { // 登录页
   return( 
-  <Layout className={style.pagelayout}>  
+  <Layout className={style.pagelayout} style={{backgroundImage: `url(${Logbg})`, backgroundSize: 'cover'}}>  
     <Content>{props.children}</Content>  
     <Footer className={style.footer}>
         <Copyright />
