@@ -1,6 +1,6 @@
-import { useEffect,useState } from "react";
+import React, { useEffect,useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { UserOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, PhoneOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 import { loginByName, selectLoading} from "@redux/user";
 import { systemConfig } from "@redux/systemconfig";
 import {clearToken} from '@redux/user'
@@ -159,38 +159,49 @@ function UserLog() {
       </Itembox>
   </Form>
   )
-  const Phonelog = () => {
+
+function Phonelog(){
     const {GetVerification} = Logapi
     const [phoneform] = Form.useForm()
+    const [phone, setPhone] = useState('')
+    const onValuesChange = (value) => {
+      setPhone(value)
+    }
     const {loading, run } = useRequest(GetVerification, { // 获取验证码
       manual: true,
-      onSuccess: (result) => {
-        console.log(result)
-        phoneform.setFieldValue('code', result?.data?.code)
-        
-
-      },
+    
       onError: (error) => {
-
+        console.log(error)
       }
     })
     const getCode = () => {
-      
       phoneform.validateFields(['mobile']).then(res => {
         setTargetDate(Date.now() + 1000*60)
-        run(phoneform.getFieldValue('mobile'))
+        //run(phone)
         
       }).catch(e => {
         console.log(e)
       })
      
     }
+    const Countdown = () => {
+     
+      return (
+         <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
+               {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
+         </Button>
+         )
+}
+   useEffect(() => {
+    console.log('111111')
+   })
     return (
     <Form
     layout="horizontal"
     labelCol={{flex: '4em'}}
     wrapperCol={{flex:1}}
     labelWrap
+    onValuesChange={onValuesChange}
     form={phoneform}
     name='phonelogin'
     initialValues={{
@@ -235,9 +246,10 @@ function UserLog() {
        <Input  prefix={<LockOutlined style={{fontSize: '24px'}}  placeholder="请输入验证码" />} style={{width: '275px'}} /> 
        </Item>
        <Item noStyle>
-        <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
-          {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
-         </Button>
+       {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
+               {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
+         </Button> */}
+         <Countdown/>
          </Item>
       </Space>
       </Itembox>
@@ -253,13 +265,16 @@ function UserLog() {
   </Form>
   )
 }
+
+const Phone = React.memo(Phonelog)
+console.log(Phone)
   return (
     <Logbox>  
       <Logtype>
         <span onClick={toggle} style={stylefn(state)}>账户登录</span>
         <span onClick={toggle} style={stylefn(!state)}>手机登录</span>
       </Logtype> 
-      {state ? <Userlog />  : <Phonelog />}
+      {state ? <Userlog />  : <Phone/>}
     
     </Logbox>
   );
