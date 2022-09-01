@@ -25,7 +25,8 @@ export default function Hmenu() {
       className: 'custsubmenu',
       danger: true,
       active: 'outline',
-      title: '运行概述'
+      title: '运行概述',
+      path: 'monitoring'
     },
     {
       label: "电气安全",
@@ -47,9 +48,13 @@ export default function Hmenu() {
     },
     {
         label: "能源管理",
-        key: "energy",
+        key: "/index/energy/summary",
         icon: <SettingOutlined />,
-        className: 'custsubmenu'
+        className: 'custsubmenu',
+        danger: true,
+        active: 'summary',
+        title: '能源概述',
+        path: 'energy'
     },
     {
         label: "光伏发电",
@@ -79,8 +84,8 @@ export default function Hmenu() {
   const onSelect = (e) => {
       let key = e.key
       SetCurrent(key) 
-      const {active, title} = menus.find(item => item.key === key)    
-      let state = key === '/index' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title}
+      const {active, title, path} = menus.find(item => item.key === key)    
+      let state = key === '/index' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title, path}
       navigate(key, {state})
      
   }

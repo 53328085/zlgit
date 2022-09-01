@@ -29,6 +29,7 @@ export default function Index() {
     {label: '水表', value: 'water'},
     {label: '燃气表', value: 'gas'}
   ]
+  
   let params = {
     projectId: projectId,
     meterType: meterType[value],
