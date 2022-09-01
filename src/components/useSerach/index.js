@@ -1,22 +1,16 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import {useDispatch, useSelector} from 'react-redux'
 import { Form, Select, Button, AutoComplete } from "antd";
+import { useBoolean } from 'ahooks';
 import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
+import CustContext from "../content";
 export default function useSerach(props) {
-  const dispatch = useDispatch()
-  const search = props.search 
- 
- const form = props.form || {};
+  const {form, search, setDisplay, display} = useContext(CustContext)
 
   const { type, changeType, submit, reset } = search;
-  let [init, setInit] = useState(false)  
   const { Item } = Form;
   const { Option } = Select;
-  const changemodel = () => {
-    setInit(init => !init)
-    dispatch(onDisplay(init))
-  }
   return (  
   
     <Form layout="inline" className={style.serachform} form={form} initialValues={{
@@ -52,7 +46,7 @@ export default function useSerach(props) {
         </Select>
       </Item>
       <Item style={{marginLeft: 'auto', marginRight: '0px'}}>
-          <Button  onClick={() => changemodel()}>{init ? '列表模式' : '表格模式'}</Button>
+          <Button  onClick={() => setDisplay(s => !s)}>{display ? '列表模式' : '表格模式'}</Button>
       </Item>
     </Form>
   

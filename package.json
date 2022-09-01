@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ahooksjs/use-url-state": "^3.5.0",
     "@ant-design/icons": "^4.7.0",
+    "@ant-design/pro-components": "^1.1.21",
     "@babel/core": "^7.16.0",
     "@csstools/normalize.css": "^12.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
@@ -101,7 +103,9 @@
     ]
   },
   "devDependencies": {
-    "postcss-normalize": "^10.0.1"
+    "@typescript-eslint/parser": "^5.36.1",
+    "postcss-normalize": "^10.0.1",
+    "typescript": "^4.8.2"
   },
   "jest": {
     "roots": [
@@ -158,5 +162,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "resolutions": {
+    "styled-components": "^5"
   }
 }

@@ -10,7 +10,7 @@ const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 const Test = lazy(() => import("../pages/test"))
 const List = lazy(() => import("../pages/test/list"))
-const Fform = lazy(() => import("../pages/test/fform"))
+const Fform = lazy(() => import("../pages/test/fform.tsx"))
 const loginrouter =  [{
   path: "/login",
   element: <Login />
@@ -19,7 +19,7 @@ const loginrouter =  [{
 
  function Redirect() { // 路由守卫
   const {token} = useSelector(selectUser);
-  return token ? (<Index/>) : (<Navigate to="/login" />)
+  return token ? (<Index/>) : (<Navigate to="/" />)
   
  }
 const routes =  [

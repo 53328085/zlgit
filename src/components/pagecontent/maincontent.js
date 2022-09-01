@@ -1,9 +1,11 @@
-import React  from 'react'
-import {Radio, Tabs} from 'antd'
+import React, {useContext}  from 'react'
+import {Tabs} from 'antd'
+import CustContext from '../content'
 import  './style.less'
 
-export default function maincontent(props) {
- const {tabs, value, setvalue} = props
+export default function Maincontent(props) {
+ const {tabs, value, setvalue} = useContext(CustContext)
+ //const {tabs, value, setvalue} = props
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
