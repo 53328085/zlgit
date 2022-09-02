@@ -113,6 +113,7 @@ export default function Index() {
         optionFilterProp="children"
         onChange={onChange}
         onSearch={onSearch}
+        size="middle"
         filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
       >
         <Option value="jack">Jack</Option>
