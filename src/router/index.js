@@ -5,13 +5,14 @@ import {selectUser} from '@redux/user'
 import monitoringRoutes from "./monitoring";
 import energyRoutes from "./energy";
 const Login = lazy(() => import("../pages/Login"))
+const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Energy = lazy(() => import("../pages/energy/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
-const Fform = lazy(() => import("../pages/test/fform.tsx"))
+const Fform = lazy(() => import("../pages/test/fform.js"))
 const loginrouter =  [{
   path: "/login",
   element: <Login />
@@ -20,7 +21,7 @@ const loginrouter =  [{
 
  function Redirect() { // 路由守卫
   const {token} = useSelector(selectUser);
-  return token ? (<Index/>) : (<Navigate to="/" />)
+  return token ? (<Projectlist/>) : (<Navigate to="/" />)
   
  }
 const routes =  [
@@ -29,9 +30,13 @@ const routes =  [
     element: <Login />
     },
     {
+      path: "/projectList",
+      element: <Redirect />
+    },
+    {
       path: "/index",
-      element: <Redirect />,
-       // element: <Index />,
+      //element: <Redirect />,
+      element: <Index />,
       children: [
         {
           index: true,
