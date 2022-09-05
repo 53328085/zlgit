@@ -3,7 +3,7 @@ import {Space, Image} from 'antd'
 
 import {useSelector} from 'react-redux'
 import {selectCurProject} from '../../../redux/user'
-import logo from '../img/logo.png'
+import logo from '@imgs/logo.png'
 import style from '../index.module.less'
 //const HeaderMenu = () => import('./HeaderMenu')
 
