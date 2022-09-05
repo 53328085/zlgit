@@ -11,6 +11,7 @@ export default function Index(props) {
     document.title = location.state?.title   
     return () => document.title= 'NES600智慧能源服务平台'
   },[location])
+  console.log(location)
   const index = useMemo(() => location?.state?.index, [location]);
   let Defaultlayout = (
     <DefaultLayout       

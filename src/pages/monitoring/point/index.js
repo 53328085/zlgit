@@ -85,7 +85,7 @@ export default function Index() {
     refreshDeps: [projectId, value],
     defaultPageSize: 12,
    })
-  console.log(tableProps)
+  console.log(tableProps,form)
   return (
     <Pagecount tabs={tabs} value={value} setvalue={SetValue} form={form} search={search}>   
    

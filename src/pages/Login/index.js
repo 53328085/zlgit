@@ -59,8 +59,8 @@ function UserLog() { // admin chint_123456 redux state 数据的变化监听
         name='login'
         initialValues={{
           remember: true,
-          name: '',
-          pwd: ''
+          name: 'admin',
+          pwd: 'chint_123456'
         }}
         onFinish={submit}
         onFinishFailed={onFinishFailed}
