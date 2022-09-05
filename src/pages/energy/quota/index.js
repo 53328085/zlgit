@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
 import { SearchOutlined } from '@ant-design/icons';
-import { Select,Input, Button } from 'antd';
+import { Select,Input, Button, Progress, Pagination } from 'antd';
 
 export default function Index() {
   const {Option} = Select
@@ -13,6 +13,9 @@ export default function Index() {
     SurEnergy:'1.00',
     Percent: 75
   }]
+  for(let i = 0;i<11;i++){
+    cardList.push(cardList[0]);
+  }
 
   return (
     <div>
@@ -65,20 +68,40 @@ export default function Index() {
           <Button type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
         </div>
       </div>
-      <div style={{paddingTop: '12px'}}>
+      <div style={{paddingTop: '12px',display:'flex',flexWrap:'wrap'}}>
         { cardList.map((item, index) => {
         return <div className={style.card} key={index}>
           <div className={style.cardTop}>
             <span>{item.Address}</span>
-            <span>{item.Status == 'Normal' ?'能耗正常':'能耗异常'}</span>
+            <span className={style.energyState}>{item.Status == 'Normal' ?'能耗正常':'能耗异常'}</span>
           </div>
           <div className={style.cardMiddle}>
-            <img src='./img/bg.png' style={{width:'60px',height:'60px'}} />
-
+            <img src={require('./img/bg.png')} style={{width:'60px',height:'60px',marginLeft:'12px'}} />
+            <div className={style.energyType}>
+              <div className={style.energyItem}>
+                <span className={style.energytitle}>定额能耗</span>
+                <span className={style.energyData}>{item.QuotaEnergy}</span>
+              </div>
+              <div className={style.energyItem}>
+                <span className={style.energytitle}>已用能耗</span>
+                <span className={style.energyData}>{item.UsedEnergy}</span>
+              </div>
+              <div className={style.energyItem}>
+                <span className={style.energytitle}>剩余能耗</span>
+                <span className={style.energyData}>{item.SurEnergy}</span>
+              </div>
+            </div>
           </div>
+          <div className={style.cardBottom}>
+            <span>(吨标煤)</span>
+            <span className={style.percent}>能耗剩余</span>
+            <Progress style={{width:'280px'}} percent={item.Percent} trailColor='#ebeef5' strokeWidth={20} />
+          </div>
+          
         </div>
       }) }
       </div>
+      <Pagination style={{display:'flex',justifyContent:'flex-end', margin:'12px'}} size="small"  total={50} />
     </div>
   )
 }
