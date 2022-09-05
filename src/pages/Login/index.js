@@ -67,7 +67,7 @@ function UserLog() {
   const submit = async (value) => {
     const {name, pwd} = value
    let { success,errMsg } = await dispatch(loginByName({ name, pwd })).unwrap();
-   if (success) navigate("/index", {state: {index: true}});
+   if (success) navigate("/projectlist", {});
    if (!success) message.warning(errMsg || '系统繁忙,请稍后再试')
   };
   const onFinishFailed = (error) => {

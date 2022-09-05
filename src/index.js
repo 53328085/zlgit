@@ -7,7 +7,7 @@ import store from './redux/store'
 import {ConfigProvider} from 'antd'
 import 'antd/dist/antd.variable.min.css'
 import './assets/css/index.less'
-import App from './App'
+import App from './app'
 import antdconfig from './antdconfig';
 let persistor = persistStore(store)
 const root = createRoot(document.getElementById('root'));
