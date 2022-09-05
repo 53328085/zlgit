@@ -15,7 +15,7 @@ export default function Sider() {
   const location = useLocation()
   useEffect(() => {
     console.log(location)
-    let {selectedKeys, path} = location.state
+    let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
     setPath(path)
     setMenus(menuList[path])
     Setkey(location.state?.selectedKeys) 
