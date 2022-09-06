@@ -5,6 +5,7 @@ import {Form} from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import {columns} from './columns'
+import CustContext from '@com/content.js'
 export default function Index() {
   const tabs = [
     {label: '电表', value: 'electric'},
@@ -41,15 +42,24 @@ export default function Index() {
     }
     console.log('result',res)
   }
+ 
   const {tableProps,search} = useAntdTable(getTableData,{
     form
   })
   const {submit} =search
+  const propsData ={
+    tabs,
+    form,
+    search,
+
+  }
   console.log('search',search)
   return (
+    <CustContext.Provider value={propsData}>
     <Pagecount tabs={tabs} form={form} search={search}>
       
         <UserTable columns={columns}  {...tableProps}></UserTable>
     </Pagecount>
+    </CustContext.Provider>
   )
 }
