@@ -85,6 +85,7 @@ function UserLog() {
     dispatch(systemConfig(hostname));
   }, [hostname]);
 
+
   const [userform] = Form.useForm()
   
   const [state, { toggle  }] = useBoolean(true);
@@ -241,6 +242,7 @@ function Phonelog(){
         {
           validator: codeValidator
         }
+
        
       ]} noStyle> 
        <Input  prefix={<LockOutlined style={{fontSize: '24px'}}  placeholder="请输入验证码" />} style={{width: '275px'}} /> 
