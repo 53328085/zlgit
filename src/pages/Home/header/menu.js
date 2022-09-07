@@ -1,7 +1,8 @@
 import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation} from 'react-router-dom'
+import styled from "styled-components";
 import { Menu } from "antd";
-import './style.less'
+import style from './style.less'
 import { 
   SettingOutlined,
 } from "@ant-design/icons";
@@ -92,7 +93,7 @@ export default function Hmenu() {
   useEffect(() => {
     SetCurrent(location.state?.headerKeys)
    },[location])
- return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className='headrmenu' />;
+ return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 
 }
