@@ -22,32 +22,32 @@ export default function Index({
                 Plan: null,
             }} >
             <Item label="园区选择" name="RegionId">
-                <Select defaultValue="lucy" style={{ width: 320 }} allowClear>
-                    <Option value="lucy">正泰园区</Option>
-                    <Option value="lucy">滨江园区</Option>
+                <Select defaultValue="1" style={{ width: 320 }} allowClear>
+                    <Option value="1">正泰园区</Option>
+                    <Option value="2">滨江园区</Option>
                 </Select>
             </Item>
             <Item label="能源类型" name="EnergyType">
-                <Select defaultValue="lucy" style={{ width: 120 }} allowClear>
-                    <Option value="lucy">水</Option>
-                    <Option value="lucy">电</Option>
-                    <Option value="lucy">燃气</Option>
+                <Select defaultValue="1" style={{ width: 120 }} allowClear>
+                    <Option value="1">水</Option>
+                    <Option value="2">电</Option>
+                    <Option value="3">燃气</Option>
                 </Select>
             </Item>
             <Item label="时间" name="Time">
-                <Select defaultValue="lucy" style={{ width: 120 }} allowClear>
-                    <Option value="lucy">日</Option>
-                    <Option value="lucy">月</Option>
-                    <Option value="lucy">年</Option>
+                <Select defaultValue="1" style={{ width: 120 }} allowClear>
+                    <Option value="1">日</Option>
+                    <Option value="2">月</Option>
+                    <Option value="3">年</Option>
                 </Select>
             </Item>
             {
                isplan?  <Item  name="Plan">
-                 <Select defaultValue={1} style={{ width: 120 }} allowClear>
-                     <Option value={1}>全部班次</Option>
-                     <Option value={2}>早班</Option>
-                     <Option value={3}>中班</Option>
-                     <Option value={4}>晚班</Option>
+                 <Select defaultValue="1" style={{ width: 120 }} allowClear>
+                     <Option value="1">全部班次</Option>
+                     <Option value="2">早班</Option>
+                     <Option value="3">中班</Option>
+                     <Option value="4">晚班</Option>
                  </Select>
              </Item>:null
             }

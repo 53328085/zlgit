@@ -9,7 +9,7 @@ import {UserOutlined, PoweroffOutlined, ExclamationCircleFilled, PlusCircleOutli
 import {useAntdTable} from 'ahooks'
 import {Project} from '@api/api.js'
 import Chintlog from '@imgs/chintlog.png'
-import { servicesVersion } from 'typescript'
+//import { servicesVersion } from 'typescript'
 export default function Index() {
   const Mainbox = styled.div`  
     background-image: linear-gradient(#003399, #000000);
