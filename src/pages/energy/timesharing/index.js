@@ -1,7 +1,9 @@
 import React from 'react'
-
-export default function index() {
+import  SelectForm from '@com/useSelect'
+export default function Index() {
   return (
-    <div>分时能耗</div>
+    <div>
+      <SelectForm isplan={true}/>
+    </div>
   )
 }

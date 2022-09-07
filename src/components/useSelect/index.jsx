@@ -6,6 +6,8 @@ import PropTypes from 'prop-types'
 export default function Index({
     isexports = true,
     isset = true,
+    isplan = false,
+    ...otherprops
 }) {
     const { Item } = Form
     const { Option } = Select
@@ -16,7 +18,8 @@ export default function Index({
             initialValues={{
                 RegionId: null,
                 EnergyType: null,
-                Time: null
+                Time: null,
+                Plan: null,
             }} >
             <Item label="园区选择" name="RegionId">
                 <Select defaultValue="lucy" style={{ width: 320 }} allowClear>
@@ -38,6 +41,17 @@ export default function Index({
                     <Option value="lucy">年</Option>
                 </Select>
             </Item>
+            {
+               isplan?  <Item  name="Plan">
+                 <Select defaultValue={1} style={{ width: 120 }} allowClear>
+                     <Option value={1}>全部班次</Option>
+                     <Option value={2}>早班</Option>
+                     <Option value={3}>中班</Option>
+                     <Option value={4}>晚班</Option>
+                 </Select>
+             </Item>:null
+            }
+           
             <div className={selectStyle.btnStyle}>
                 {
                     isexports ? <Item style={!isset ? { marginRight: 0 } : {}}>
