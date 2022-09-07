@@ -1,24 +1,70 @@
 import React, {useState, useEffect, Fragment} from 'react'
 import style from './style.module.less';
-import { SearchOutlined } from '@ant-design/icons';
-import { Select,Input, Button, Radio } from 'antd';
+import { Select, } from 'antd';
+import RadioTree from '@com/radiotree'
+import { Sankey } from '@ant-design/plots';
 
 export default function Index() {
   const { Option } = Select;
-  const options = [
-    {
-      label: '按回路',
-      value: 1,
-    },
-    {
-      label: '按建筑',
-      value: 2,
-    },
-  ];
-  const [value, setValue] = useState(1);
-  const onChange = ({target:{value}})=>{
-    setValue(value)
-  }
+  const data = [{
+    source:'园区总进线',
+    target:'A区总进线',
+    value: 200,
+  },{
+    source:'A区总进线',
+    target:'A区1号楼',
+    value: 120,
+  },{
+    source:'A区总进线',
+    target:'A区2号楼',
+    value: 80,
+  },{
+    source:'A区1号楼',
+    target:'1号楼1层',
+    value: 40,
+  },{
+    source:'A区1号楼',
+    target:'1号楼2层',
+    value: 10,
+  },{
+    source:'A区1号楼',
+    target:'1号楼3层',
+    value: 10,
+  },{
+    source:'A区2号楼',
+    target:'2号楼1层',
+    value: 8,
+  },{
+    source:'A区2号楼',
+    target:'2号楼2层',
+    value: 27,
+  },{
+    source:'A区2号楼',
+    target:'2号楼3层',
+    value: 30,
+  },{
+    source:'2号楼2层',
+    target:'2号楼2层203',
+    value: 5,
+  },{
+    source:'2号楼2层',
+    target:'2号楼2层204',
+    value: 10,
+  },{
+    source:'2号楼2层',
+    target:'2号楼2层205',
+    value: 15,
+  },]
+  
+  const config = {
+    data: data,
+    sourceField: 'source',
+    targetField: 'target',
+    weightField: 'value',
+    nodeWidthRatio: 0.01,
+    nodePaddingRatio: 0.03,
+
+  };
 
   return (
     <div>
@@ -46,10 +92,11 @@ export default function Index() {
         </Select> 
       </div>
       <div className={style.content}>
-        <div className={style.contentLeft}>
-          <Radio.Group className={style.radioCss} options={options} onChange={onChange} value={value} />
+        <RadioTree></RadioTree>
+        <div className={style.contentRight}>
+          <div className={style.rightTitle}>能源流向</div>
+          <Sankey style={{width:'1300px',height:650,margin:'24px'}} {...config} />
         </div>
-        <div className={style.contentRight}></div>
       </div>
     </div>
   )
