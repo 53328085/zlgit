@@ -2,6 +2,7 @@ import React from 'react'
 import Bluecolumn from '@com/bluecolumn';
 import style from './style.module.less'
 import { Pie } from '@ant-design/plots';
+import warn from '@imgs/warn.png'
 export default function Timepercent() {
     const data = [
         {
@@ -57,9 +58,11 @@ export default function Timepercent() {
             </div>
             <div className={style.analysis}>
                 <Bluecolumn name="用电分析" />
-               <div style={{padding:'16px'}}>
-               今日时段内,峰电量占总电量26%,占比较大。
-               请合理利用峰谷用电。
+               <div style={{padding:'16px 0',display: 'flex'}}>
+               <img src={warn} style={{marginRight:16,flexShrink:0,width:32,height:32}}></img>
+               <div> 今日时段内,峰电量占总电量26%,占比较大。
+               请合理利用峰谷用电。</div>
+              
                </div>
             </div>
         </div>

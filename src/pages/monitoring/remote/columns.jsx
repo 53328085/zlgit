@@ -1,4 +1,4 @@
-export const columns = [
+  let columns = [
     {
         title: '设备编号',
         dataIndex:'sn'
@@ -31,17 +31,20 @@ export const columns = [
     },
     {
         title: '安装地址',
-        dataIndex:'address'
+        dataIndex:'address',
+    
     }, {
         title: '开关状态',
         dataIndex:'status',
         render: (val)=><span>{!val?'未知':val[1]==='Close'?'合闸':'开闸'}</span>
     }, {
         title: '保电方案',
-        dataIndex:'powerProtectSolution'
+        dataIndex:'powerProtectSolution',
+   
     }, {
         title: '告警方案',
-        dataIndex:'alarmSolution'
+        dataIndex:'alarmSolution',
+        
     }, {
         title: '账户余额',
         dataIndex:'balanceEnergy'
@@ -51,3 +54,8 @@ export const columns = [
         dataIndex:'accountType'
     }
 ]
+ columns.forEach((item)=>{
+ item.ellipsis=true
+})
+ console.log('columns',columns)
+export {columns}

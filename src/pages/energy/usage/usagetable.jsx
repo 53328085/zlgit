@@ -1,5 +1,5 @@
 import React from 'react'
-// import UserTable from '@com/useTable'
+import UserTable from '@com/useTable'
 import { Table } from 'antd';
 export default function usagetable() {
 let tablecolumns= [
@@ -45,8 +45,8 @@ let tablecolumns= [
   }
  
   return (
-    <Table columns={tablecolumns} scroll={{
-        x: 1500,
-      }}></Table>
+    <UserTable columns={tablecolumns} scroll={{
+        x: 1300,
+      }}></UserTable>
   )
 }

@@ -8,7 +8,7 @@ import Timepercent from './timepercent'
 export default function Index() {
   return (
     <div className={style.timesharing}>
-      <SelectForm isplan={true}/>
+      <SelectForm isplan={true} isset={false}/>
       <div className={style.sharecontent}>
         <RadioTree/>
         <div className={style.sharingtime}>
@@ -18,6 +18,7 @@ export default function Index() {
         </div>
         <Timepercent/>
       </div>
+      
     </div>
   )
 }
