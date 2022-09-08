@@ -9,7 +9,6 @@ import {UserOutlined, PoweroffOutlined, ExclamationCircleFilled, PlusCircleOutli
 import {useAntdTable} from 'ahooks'
 import {Project} from '@api/api.js'
 import Chintlog from '@imgs/chintlog.png'
-import { servicesVersion } from 'typescript'
 const CustBtn = styled(Button)`
 width: ${props => props.width || '144px'};
 height: 40px;
