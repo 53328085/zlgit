@@ -10,18 +10,17 @@ export default function Index(props) {
   useEffect(() => {
     document.title = location.state?.title   
     return () => document.title= 'NES600智慧能源服务平台'
-  },[location])
-  console.log(location)
-  const index = useMemo(() => location?.state?.index, [location]);
+  },[location])  
+  const index = useMemo(() => location?.state?.index, [location.state]);
   let Defaultlayout = (
     <DefaultLayout       
-      custheader= {<Header/>}
+      custheader= {<Header istitle={true}/>}
     >
     <Outlet/>
    </DefaultLayout>
   )
   let Projectlayout = (
-    <ProjectLayout {...props} custheader= {<Header/>}  custsider={<Sider />}>
+    <ProjectLayout {...props} custheader= {<Header istitle={false}/>}  custsider={<Sider />}>
         <Outlet/>
     </ProjectLayout>
   )

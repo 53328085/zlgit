@@ -1,9 +1,14 @@
 import React from 'react'
 import { Layout} from 'antd'
+import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import Logbg from './logBg.png'
 const { Header, Footer, Sider, Content } = Layout;
+
+const Csider = styled(Sider)`
+  background-image: linear-gradient(#0e42c8, #7662ff);
+`
 export function LoginLayout(props) { // 登录页
   return( 
   <Layout className={style.pagelayout} style={{backgroundImage: `url(${Logbg})`, backgroundSize: 'cover'}}>  
@@ -30,7 +35,7 @@ export function DefaultLayout(props) { // 默认首页
 export function ProjectLayout(props) { // 项目内容
   return (
     <Layout className={style.pagelayout}>
-     <Sider>{props.custsider}</Sider>
+     <Csider>{props.custsider}</Csider>
     <Layout>
       <Header className={style.header}>{props.custheader}</Header>
       <Content className={style.content}>{props.children}</Content>

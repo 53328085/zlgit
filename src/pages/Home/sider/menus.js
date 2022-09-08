@@ -1,3 +1,7 @@
+ import {ScanOutlined} from '@ant-design/icons'
+ const Micon = () => {
+    return <span className="custicon">&#9673;</span>
+ }
  export  const monitoring = [
     {
       label: '运行概述' ,
@@ -49,90 +53,55 @@
   },
    ]
 
-/*  {
-       // index: true,
-        path: 'summary',
-        element: <Summary/>
-     },
-     {
-         path: 'synthetical',
-         element: <Synthetical/>
-     },
-     {
-        path: 'ranking',
-        element: <Ranking/>
-    },
-    {
-        path: 'timesharing',
-        element: <Timesharing/>
-    },
-    {
-        path: 'usage',
-        element: <Usage/>
-    },
-    {
-        path: 'direction',
-        element: <Direction/>
-    },
-    {
-        path: 'analysis',
-        element: <Analysis/>
-    },
-    {
-        path: 'quota',
-        element: <Quota/>
-    },
-   
-    {
-        path: 'comm',
-        element: <Comm/>
-    } */
-
-
 
 
    export  const energy = [
     {
       label: '能源概述' ,
       key: "summary",
-    
+      icon: <Micon />
     },
     {
       label: '综合能耗',
       key: "synthetical",
+      icon: <Micon />
     },
     {
       label: "能耗排名",
       key: "ranking",
+      icon: <Micon />
     },
     {
         label: "分时能耗",
         key: "timesharing",
+        icon: <Micon />
        
     },
     {
         label: "能耗用量",
         key: "usage",
+        icon: <Micon />
       
     },
     {
         label: "能耗流向",
         key: "direction",
+        icon: <Micon />
        
     },
     {
         label: "损耗分析",
         key: "analysis",
-       
+        icon: <Micon />
     },
     {
         label: "能耗指标",
         key: "quota",
-       
+        icon: <Micon />
     },
     {
         label: "公共能耗",
         key: "comm",
-       
+        icon: <Micon />
     },
    ]

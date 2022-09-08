@@ -2,31 +2,40 @@
     background-color: transparent;
     border-bottom: none;
     flex: 1;
-    .ant-menu-item.ant-menu-item-selected {
+    .custsubmenu.ant-menu-item.ant-menu-item-selected {
         background-color: #1c62b6 ;
         border-bottom: 2px solid #0f6;
-        bottom: 1px;
+        color:#fff;
     }
     .ant-menu-item.custsubmenu{
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        align-items: center;
         width: 100px;
-        padding: 8px 0; 
+        padding: 4px 0; 
         height: 64px;
-        color: #fff;
+        color: #b2c1d1;
+        border-bottom: 2px solid transparent;
+     //   background-color: #1c62b6 ;      
      //   transition: all 0.3s;
+        .ant-image {
+            height: 36px;
+            line-height: 36px;
+        }
         &::after {
             right: 0px;
             left: 0px;
+            border-bottom: none;
         }
         &:nth-of-type(:first-of-type) {
             border-right: 1px solid #fff;
         }
         &:hover {
             background-color: #1c62b6 ;
+            color:#fff;
             border-bottom: 2px solid #0f6;
-            bottom: 1px;
+            bottom: 0px;
         }
     .ant-menu-title-content {
         margin-left: 0px;
