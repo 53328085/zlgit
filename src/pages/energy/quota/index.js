@@ -2,9 +2,13 @@ import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
 import { SearchOutlined } from '@ant-design/icons';
 import { Select,Input, Button, Progress, Pagination } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 export default function Index() {
   const {Option} = Select
+  const navigate = useNavigate();
+
+
   let cardList = [{
     Address:'正泰物联滨江园区-研发1号楼-1层-101',
     Status:'Normal',
@@ -15,6 +19,13 @@ export default function Index() {
   }]
   for(let i = 0;i<11;i++){
     cardList.push(cardList[0]);
+  }
+
+
+  const toRoomDetail = (item) =>{
+    // navigate('/roomDetail')
+    console.log(item);
+    window.open('/roomDetail','_blank')
   }
 
   return (
@@ -70,7 +81,7 @@ export default function Index() {
       </div>
       <div style={{paddingTop: '12px',display:'flex',flexWrap:'wrap'}}>
         { cardList.map((item, index) => {
-        return <div className={style.card} key={index}>
+        return <div className={style.card} key={index} onClick={() => toRoomDetail(item)}>
           <div className={style.cardTop}>
             <span>{item.Address}</span>
             <span className={style.energyState}>{item.Status == 'Normal' ?'能耗正常':'能耗异常'}</span>

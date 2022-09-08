@@ -11,6 +11,7 @@ const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Energy = lazy(() => import("../pages/energy/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
+const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const loginrouter =  [{
@@ -54,6 +55,10 @@ const routes =  [
           children: energyRoutes
         }
       ]
+    },
+    {
+      path: "/roomDetail",
+      element: <RoomDetail />
     },
     {
       path: '/config',
