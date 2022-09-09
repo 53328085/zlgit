@@ -2,7 +2,7 @@ import React from 'react'
 import  SelectForm from '@com/useSelect'
 import style from './ranking.module.less'
 import RankCharts from './rankecharts'
-export default function index() {
+export default function Index() {
   
   return (
     <div className={style.ranking}>

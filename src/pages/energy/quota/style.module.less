@@ -95,3 +95,109 @@
         }
     }
 }
+.goback{
+    width: 96px;
+    position: absolute;
+    right: 36px;
+    top: 88px;
+}
+.content{
+    margin-top: 12px;
+    display: flex;
+    .contentLeft{
+        width: 400px;
+        .item{
+            border: 1px solid rgb(215, 215, 215);
+            border-radius: 4px;
+            background-color: #fff;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            .itemTitle{
+                margin: 12px;
+                padding-left: 12px;
+                height: 32px;
+                border-left: 4px solid #237Ae4;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                color: #515151;
+            }
+            .state{
+                display: inline-block;
+                width: 96px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 14px;
+                color: #390;
+                text-align: center;
+                margin-left: auto;
+                margin-right: 0px;
+                background: url('./img/energyState.png');
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+            }
+            .detail{
+              font-size: 14px;
+              color: #135abd;
+              cursor: pointer;
+              margin-left: auto;
+              margin-right: 12px;  
+            }
+            .itemData{
+                margin-top: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 88px;
+                margin-right: 12px;
+                .bgImg{
+                    margin-left: 24px;
+                    width: 64px;
+                    height: 64px;
+                }
+                .dataList{
+                    height: 88px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    .dataItem{
+                        width: 180px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+                    .listTitle{
+                        font-size: 14px;
+                        color: #999;
+                    }
+                    .listValue{
+                        font-size: 16px;
+                        color: #515151;
+                    }
+                }
+            }
+            .progress{
+                margin-top: 24px;
+                margin-left: 28px;
+                .quota{
+                 font-size: 14px;
+                 color: #606266;
+                 margin-right: 24px;   
+                }
+            }
+        }
+    }
+    .contentRight{
+        width: 1264px;
+        height: 800px;
+        margin-left: 12px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 4px;
+        .area{
+            width: 1232px;
+            height: 768px;
+            margin: 12px;
+        }
+    }
+}
