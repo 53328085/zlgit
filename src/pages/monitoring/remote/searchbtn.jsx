@@ -2,9 +2,11 @@ import React from 'react'
 import { Input, Button, Select } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import style from './style.module.less'
+import { useNavigate } from 'react-router-dom'
 export default function Searchbtn(props) {
     const {Option} =Select
     const {brake,setbrake,switching,setswitching} =props
+    const navigate = useNavigate()
     const btnstyle = {
         width: '96px',
         fontSize: '14px',
@@ -15,6 +17,9 @@ export default function Searchbtn(props) {
     }
     const hezha=()=>{
         setswitching(!switching)
+    }
+    const log=()=>{
+        navigate('/index/monitoring/oplog')
     }
     return (
         <>
@@ -35,7 +40,7 @@ export default function Searchbtn(props) {
             <Button type="primary" danger style={{ ...btnstyle, marginRight: 16, backgroundColor: '#f56c6c' }} size="default" onClick={fenzha}>分闸</Button>
             <Button type="primary" danger style={{ ...btnstyle, backgroundColor: '#f56c6c' }} size="default" onClick={hezha}>合闸</Button>
             <div className={style.line}></div>
-            <Button type="primary" style={btnstyle} size="default">操作日志</Button>
+            <Button type="primary" style={btnstyle} size="default" onClick={log}>操作日志</Button>
         </Input.Group>
         </>
       

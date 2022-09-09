@@ -1,6 +1,6 @@
 import React from 'react'
 import style from './style.module.less'
-export default function index({name=''}) {
+export default function Index({name=''}) {
   return (
       <div className={style.title}>
         <div className={style.columns}></div>
