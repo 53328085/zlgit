@@ -4,7 +4,7 @@ import style from './style.module.less'
 import RadioTree from '@com/radiotree'
 import Bluecolumn from '@com/bluecolumn';
 import Usagetable from './usagetable'
-export default function index() {
+export default function Index() {
   return (
     <div className={style.usage}>
       <SelectForm isset={false}/>
