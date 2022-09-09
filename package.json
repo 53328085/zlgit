@@ -47,6 +47,7 @@
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.4.5",
     "moment": "^2.29.4",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "normalize.css": "^8.0.1",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",

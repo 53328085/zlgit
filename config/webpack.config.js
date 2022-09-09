@@ -27,7 +27,7 @@ const ForkTsCheckerWebpackPlugin =
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
-
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
@@ -187,7 +187,7 @@ module.exports = function (webpackEnv) {
     return loaders;
   };
 
-  return {
+  return {   
     target: ['browserslist'],
     // Webpack noise constrained to errors and warnings
     stats: 'errors-warnings',
@@ -332,13 +332,14 @@ module.exports = function (webpackEnv) {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
+       // new NodePolyfillPlugin(),
         new ModuleScopePlugin(paths.appSrc, [
           paths.appPackageJson,
           reactRefreshRuntimeEntry,
           reactRefreshWebpackPluginRuntimeEntry,
           babelRuntimeEntry,
           babelRuntimeEntryHelpers,
-          babelRuntimeRegenerator,
+          babelRuntimeRegenerator,         
         ]),
       ],
     },
@@ -572,6 +573,7 @@ module.exports = function (webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
+      new NodePolyfillPlugin(),
       new HtmlWebpackPlugin(
         Object.assign(
           {},
