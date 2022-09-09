@@ -1,20 +1,88 @@
 import React from 'react'
-import Pagecount from '@com/pagecontent'
-import CustContext from '@com/content.js'
-import {Form} from 'antd'
+import {Form,DatePicker,Select,Button} from 'antd'
+import {Warning} from '@api/api.js'
+import {useAntdTable, usePagination} from 'ahooks'
+import {SearchOutlined}  from '@ant-design/icons';
+import electricwarn from  '@imgs/electricwarn.png'
+import firstwarn from '@imgs/firstwarn.png'
+import secondwarn from '@imgs/secondwarn.png'
+import thirdwarn from '@imgs/thirdwarn.png'
+import Card from './card'
 export default function Index() {
   const tabs =[]
-  const form = Form.useForm()
-  
-  const {Provider} =CustContext
+  const [form] = Form.useForm()
+  const {Item} =Form
+  const {RangePicker } =DatePicker
+  const {Option} =Select
+  let param ={
+    projectId:1,
+    region:0,
+    building:0,
+    floor:0,
+    room:0,
+    alike:''
+   
+  }
+  const getTableData = async ({current, pageSize},formData)=>{
+    param ={...param,pageNum: current, pageSize,...formData}
+    const res = await Warning.FindAlikeAccount(param)
+    let {success, data, totalNum} = res
+      if (success && Array.isArray(data?.data)) {
+        return {
+          total: totalNum,
+          list: data.data
+        }
+      
+      }else {
+        return {
+          total: 0,
+          list: []
+        }
+      }
+  }
+  const  {tableProps,search}=useAntdTable(getTableData,{
+      form,
+      defaultPageSize: 12,
+  })
+ 
+
   const propsData = {
     tabs,
     form,
-    search:''
+    search
   }
   return (
-    <Provider value={propsData}>
-      <Pagecount/>
-    </Provider>
+    <div>
+      <Form 
+        form={form} 
+        layout="inline"
+        size='default'
+        style={{height:48,backgroundColor:'#fff',padding:'8px 12px',width:'100%'}}
+        >
+        <Item label="园区选择">
+        <Select
+          placeholder="Select a option and change input text above"
+          defaultValue="1"
+          style={{ width: 320 }}
+        >
+          <Option value="1">滨江园区</Option>
+          <Option value="2">温州园区</Option>
+        </Select>
+        </Item> 
+        <Item label="园区选择">
+          <RangePicker style={{width: 376}}/>
+        </Item>
+         <Item>
+           <Button type="primary" icon={<SearchOutlined />} style={{width: 96,height:32}}>查询</Button>
+         </Item>
+         <Item style={{marginRight: 0,marginLeft: 'auto',}}>
+         <Button style={{width: 96,height:32}} >导出</Button>
+         </Item>
+        </Form>
+        <div>
+          <Card title="告警总数" value="2300" imgurl={electricwarn}/>
+        </div>
+    </div>
+        
   )
 }
