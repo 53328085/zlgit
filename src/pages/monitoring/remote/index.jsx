@@ -9,6 +9,8 @@ import CustContext from '@com/content.js'
 import SearchBtn from './searchbtn'
 import Bluecolumn from '@com/bluecolumn'
 import redwarn from '@imgs/redwarn.png'
+import styles from './style.module.less'
+
 export default function Index() {
   const tabs = [
     {label: '单表控制', value: 'single'},
@@ -86,22 +88,24 @@ export default function Index() {
         width={640}
         visible={brake}
         centered={true}
+        closable={false}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn}></img>确认要对所选设备进行分闸操作？</p>
+        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn} className={styles.imgclass}></img>确认要对所选设备进行分闸操作？</p>
       </Modal>
       <Modal
         title={<Bluecolumn name="远程控制"/>}
         width={640}
         visible={switching}
         centered={true}
+        closable={false}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn}></img>确认要对所选设备进行合闸操作？</p>
+        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn} className={styles.imgclass}></img>确认要对所选设备进行合闸操作？</p>
       </Modal>
     </CustContext.Provider>
   )
