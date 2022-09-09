@@ -1,7 +1,20 @@
 import React from 'react'
-
-export default function index() {
+import Pagecount from '@com/pagecontent'
+import CustContext from '@com/content.js'
+import {Form} from 'antd'
+export default function Index() {
+  const tabs =[]
+  const form = Form.useForm()
+  
+  const {Provider} =CustContext
+  const propsData = {
+    tabs,
+    form,
+    search:''
+  }
   return (
-    <div>告警监控</div>
+    <Provider value={propsData}>
+      <Pagecount/>
+    </Provider>
   )
 }
