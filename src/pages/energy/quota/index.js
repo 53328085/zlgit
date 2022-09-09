@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
 import { SearchOutlined } from '@ant-design/icons';
 import { Select,Input, Button, Progress, Pagination } from 'antd';
+import UseHeader from '@com/useHeader'
 import { useNavigate } from 'react-router-dom';
 
 export default function Index() {
@@ -30,7 +31,7 @@ export default function Index() {
 
   return (
     <div>
-      <div className={style.header}>
+      {/* <div className={style.header}>
         <span style={{marginLeft: '12px'}}>园区选择</span>
         <Select
           placeholder="请选择园区"
@@ -78,7 +79,8 @@ export default function Index() {
           <Input size="middle" placeholder='请输入房间号' style={{width:'260px'}} />
           <Button type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
         </div>
-      </div>
+      </div> */}
+      <UseHeader></UseHeader>
       <div style={{paddingTop: '12px',display:'flex',flexWrap:'wrap'}}>
         { cardList.map((item, index) => {
         return <div className={style.card} key={index} onClick={() => toRoomDetail(item)}>
