@@ -13,7 +13,7 @@ export default function Index() {
   const [form] = Form.useForm()
 
   const [formparams, setFormparams] = useState(form.getFieldValue())
-  const [value, SetValue] = useState('electric')
+  const [key, setKey] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
   let [display, setDisplay] = useState(true)
 
@@ -25,14 +25,14 @@ export default function Index() {
   }
 
   const tabs = [
-    {label: '电表', value: 'electric'},
-    {label: '水表', value: 'water'},
-    {label: '燃气表', value: 'gas'}
+    {label: '电表', key: 'electric'},
+    {label: '水表', key: 'water'},
+    {label: '燃气表', key: 'gas'}
   ]
   
   let params = {
     projectId: projectId,
-    meterType: meterType[value],
+    meterType: meterType[key],
     lineStatus: 0,
     bindStatus: 0,
     pageNum: 1,
@@ -80,19 +80,19 @@ export default function Index() {
   }
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
-    refreshDeps: [projectId, value, display],
+    refreshDeps: [projectId, key, display],
     defaultPageSize: 12,
    })
  
    const {data, pagination} = usePagination(getCardData, {
-    refreshDeps: [projectId, value, formparams],
+    refreshDeps: [projectId, key, formparams],
     defaultPageSize: 12,
 
    })
   const propsData ={
     tabs,
-    value,
-    setvalue: SetValue,
+    key,
+    setKey,
     form,
     search,
     display,
