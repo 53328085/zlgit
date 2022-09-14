@@ -1,6 +1,6 @@
 
 import * as echarts from "echarts";
-import { rest } from "lodash";
+
 
 /**
  * @author zhenglin zhu
@@ -77,15 +77,17 @@ export const drawEcharts = (
       bottom: "40px",
     },
     xAxis: {
+    
       type: "category",
       boundaryGap: true,
       axisTick: {
         alignWithLabel: true,
-      },
+      }, 
+     
       ...xAxis,
     },
     legend: {
-      bottom: "0px",
+      top: "0px",
     },
    /*  dataZoom: [
       {
@@ -112,9 +114,7 @@ export const drawEcharts = (
 
     yAxis: [
       {
-        type: "value",
-        min: "dataMin",
-        max: "dataMax",
+        type: "value",     
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
