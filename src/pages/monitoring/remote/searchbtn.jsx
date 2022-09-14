@@ -29,6 +29,7 @@ export default function Searchbtn(props) {
                 <Option value="2">水表</Option>
                 <Option value="3">燃气表</Option>
             </Select>
+            <div className={style.line}></div>
             <Input   style={{ width: 260,height: 32,fontSize: 14}} placeholder="请输入设备编号/安装地址" />
             <Button type="primary" icon={<SearchOutlined />} style={btnstyle} size="default">查询</Button>
             <div className={style.line}></div>

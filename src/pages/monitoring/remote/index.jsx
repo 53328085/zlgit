@@ -13,16 +13,19 @@ import styles from './style.module.less'
 
 export default function Index() {
   const tabs = [
-    {label: '单表控制', value: 'single'},
-    {label: '批量控制', value: 'batch'},
+    {label: '单表控制', key: 'single'},
+    {label: '批量控制', key: 'batch'},
   ]
-  
-  const [value,setvalue] = useState('single')
+  const meterType={
+    'single':0,
+    'batch':1
+  }
+  const [key,setKey] = useState('single')
   const [brake,setbrake] = useState(false) //分闸弹窗显示
   const [switching,setswitching] = useState(false) //合闸弹窗显示
   const [form] =Form.useForm()
   let params = {
-    meterType: 0,
+    meterType: meterType[key],
     projectId: 1,
     regionId: 0,
     buildingId: 0,
@@ -34,7 +37,7 @@ export default function Index() {
     alike: ''
   }
   const getTableData =async ({current,pageSize},formData)=>{
-    const res =await Remote.AllMeter(params)
+    const res =await Remote.AllMeter({...params,formData})
     let {success,data,totalNum} =res
     console.log(res)
     if(success&&Array.isArray(data)){
@@ -52,7 +55,7 @@ export default function Index() {
  
   const {tableProps,search} = useAntdTable(getTableData,{
     form,
-    refreshDeps:[value]
+    refreshDeps:[key]
   })
   const  handleCancel=()=>{
     setbrake(false)
@@ -64,8 +67,8 @@ export default function Index() {
     tabs,
     form,
     search,
-    value,
-    setvalue
+    key,
+    setKey
   }
  const propsSearch ={
   brake,
@@ -79,7 +82,7 @@ export default function Index() {
     <Pagecount  form={form} search={search}>
       <SearchBtn {...propsSearch}/>
       <UserTable columns={columns}  {...tableProps} rowSelection={{
-          type: value==='single'?'radio':'checkbox',
+          type: key==='single'?'radio':'checkbox',
         }} rowKey={v=>v.id}></UserTable>
        
     </Pagecount>

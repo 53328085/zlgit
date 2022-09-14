@@ -35,6 +35,7 @@ const Tabsbox = styled(Tabs)`
 
 export default function Maincontent(props) {
  const {tabs, key, setKey} = useContext(CustContext)
+ console.log(tabs)
  //const {tabs, value, setvalue} = props
  const tabstyl = {
      background: '#237ae4',

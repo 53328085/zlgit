@@ -332,3 +332,4 @@ export class Mannul {
 export class UserReportApi {
     static GetUserReport = (data) => server.get(`CustomerReport/GetUserReport?projectId=${data.projectId}&date=${data.date}&yearMonth=${data.yearMonth}`)//查询客户报告
 }
+export const GetCamerasVideosByProjectId = (Id) =>server.get(`/Camera/GetCamerasByHouseId?houseId=${Id}`)

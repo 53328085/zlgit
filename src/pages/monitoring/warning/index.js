@@ -32,12 +32,12 @@ export default function Index() {
   }
   const getTableData = async ({ current, pageSize }, formData) => {
     param = { ...param, pageNum: current, pageSize, ...formData }
-    const res = await Warning.FindAlikeAccount(param)
+    const res = await Warning.FindAlikeDevice(param)
     let { success, data, totalNum } = res
-    if (success && Array.isArray(data?.data)) {
+    if (success && Array.isArray(data)) {
       return {
         total: totalNum,
-        list: data.data
+        list: data
       }
 
     } else {
@@ -52,7 +52,7 @@ export default function Index() {
     defaultPageSize: 12,
   })
 
-
+  console.log(tableProps)
   const propsData = {
     tabs,
     form,
@@ -76,7 +76,7 @@ export default function Index() {
             <Option value="2">温州园区</Option>
           </Select>
         </Item>
-        <Item label="园区选择">
+        <Item >
           <RangePicker style={{ width: 376 }} />
         </Item>
         <Item>
@@ -93,7 +93,7 @@ export default function Index() {
         <Card title="三级告警" value="300" imgurl={thirdwarn} />
       </Containerdiv>
       <Titlelayout title="日志查询">
-        <UserTable columns={Column} style={{marginTop: 16}}></UserTable>
+        <UserTable columns={Column} style={{marginTop: 16}} {...tableProps} rowkey="id"></UserTable>
       </Titlelayout>
     </div>
 

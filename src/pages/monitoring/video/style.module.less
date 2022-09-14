@@ -1,0 +1,42 @@
+.video{
+    width: 100%;
+    display: grid;
+    grid-template-rows: 44px 1fr;
+    grid-row-gap:16px ;
+    .select{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 6px 16px;
+        background-color: #fff;
+        border: 1px solid #d7d7d7;
+    }
+    .container{
+        background-color: #fff;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows:repeat(2,1fr);
+        grid-gap: 16px;
+        border: 1px solid #d7d7d7;
+    }
+}
+
+
+
+
+.line{
+    border-left: 1px dotted #d7d7d7;
+    height: 32px;
+    margin: 0 16px;
+}
+
+.videocard{
+    border: 1px solid #d7d7d7;
+    padding: 16px;
+    .videotitle{
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+}
