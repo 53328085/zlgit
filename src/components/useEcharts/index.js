@@ -14,6 +14,7 @@ const chartoption = {
 };
 const pieOption = ({ data = [], total = 0 } = {}) => ({
   // 饼图的设置
+  color:['#6395f9', '#62daab', '#657798', '#f6c022'],
   tooltip: {
     trigger: "item",
   },
@@ -40,7 +41,7 @@ const pieOption = ({ data = [], total = 0 } = {}) => ({
     {
       type: "pie",
       data,
-      radius: ["30%", "60%"],
+      radius: ["60%", "80%"],
       label: {
         show: true,
         position: "outside",
@@ -48,6 +49,8 @@ const pieOption = ({ data = [], total = 0 } = {}) => ({
       },
       labelLine: {
         show: true,
+        length:8,
+        length2:8
       },
     },
   ],

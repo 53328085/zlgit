@@ -90,3 +90,116 @@
         }
     }
 }
+.content{
+    margin-top: 16px;
+    display: flex;
+    .contentLeft{
+        margin-bottom: 16px;
+        width: 496px;
+        height: 688px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 4px;
+        .pieTitle{
+            margin: 16px;
+            padding-left: 16px;
+            height: 32px;
+            line-height: 32px;
+            border-left: 4px solid #237ae4;
+            font-size: 14px;
+            color: #303133;
+        }
+        .pieChart{
+            margin: 16px;
+            width: 464px;
+            height: 520px;
+            border-bottom: 1px dashed #d7d7d7;
+        }
+        .tips{
+            display: flex;
+            align-items: center;
+            margin-top: 24px;
+            margin-left: 16px;
+            .warn{
+                width: 32px;
+                height: 32px;
+            }
+            .tipDesc{
+                margin-left: 24px;
+                line-height: 20px;
+                font-size: 14px;
+                color: #303133;
+            }
+        }
+    }
+    .contentRight{
+        margin-left: 16px;
+        .chartItem{
+            width: 1168px;
+            height: 340px;
+            padding: 16px;
+            border: 1px solid #d7d7d7;
+            border-radius: 4px;
+            background-color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            .linechart{
+                width: 864px;
+                height: 302px;
+                position: relative;
+            }
+            .dataItem{
+                width: 240px;
+                margin-left: auto;
+                margin-right: 0;
+                height: 100%;
+                bottom: 1px solid #d7d7d7;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                color: #303133;
+                .title{
+                    margin-top: 12px;
+                    font-size: 14px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    .subTitle{
+                        font-size: 12px;
+                    }
+                }
+                .itemData{
+                    margin-top: 6px;
+                   width: 240px;
+                   height: 40px;
+                   padding: 0 12px;
+                   border-radius: 4px;
+                   border: 1px solid rgb(215, 215, 215);
+                   display: flex;
+                   justify-content: space-between;
+                   align-items: center;
+                   color: #515151;
+                   font-size: 18px;
+                   .unit{
+                    font-size: 14px;
+                   }
+                }
+                .itemDesc{
+                    margin-top: 6px;
+                   width: 240px;
+                   height: 40px;
+                   padding: 0 12px;
+                   border-radius: 4px;
+                   border: 1px solid rgb(215, 215, 215);
+                   display: flex;
+                   align-items: center;
+                   color: #515151;
+                   .desc{
+                    font-size: 14px;
+                    margin-left: 12px;
+                   }
+                }
+            }
+        }
+    }
+}
