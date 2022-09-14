@@ -1,5 +1,6 @@
 
 import * as echarts from "echarts";
+import { rest } from "lodash";
 
 /**
  * @author zhenglin zhu
@@ -62,9 +63,10 @@ export const drawEcharts = (
     dataset = [],
     pieData = { data: [], total: 0 },
     type = 1,
+    ...rest
   } = {}
 ) => {
-  console.log(dataset)
+  
   const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
   const comm = {
@@ -130,7 +132,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption(pieData)
       : "";
-  chart.setOption(setoption, true, chartoption);
+  chart.setOption({...setoption, ...rest}, true, chartoption);
  // chart.resize();
 };
 
