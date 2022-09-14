@@ -1,6 +1,6 @@
 
 import * as echarts from "echarts";
-import { rest } from "lodash";
+
 
 /**
  * @author zhenglin zhu
@@ -14,6 +14,7 @@ const chartoption = {
 };
 const pieOption = ({ data = [], total = 0 } = {}) => ({
   // 饼图的设置
+  color:['#6395f9', '#62daab', '#657798', '#f6c022'],
   tooltip: {
     trigger: "item",
   },
@@ -40,7 +41,7 @@ const pieOption = ({ data = [], total = 0 } = {}) => ({
     {
       type: "pie",
       data,
-      radius: ["30%", "60%"],
+      radius: ["60%", "80%"],
       label: {
         show: true,
         position: "outside",
@@ -48,6 +49,8 @@ const pieOption = ({ data = [], total = 0 } = {}) => ({
       },
       labelLine: {
         show: true,
+        length:8,
+        length2:8
       },
     },
   ],
@@ -77,15 +80,17 @@ export const drawEcharts = (
       bottom: "40px",
     },
     xAxis: {
+    
       type: "category",
       boundaryGap: true,
       axisTick: {
         alignWithLabel: true,
-      },
+      }, 
+     
       ...xAxis,
     },
     legend: {
-      bottom: "0px",
+      top: "0px",
     },
    /*  dataZoom: [
       {
@@ -112,9 +117,7 @@ export const drawEcharts = (
 
     yAxis: [
       {
-        type: "value",
-        min: "dataMin",
-        max: "dataMax",
+        type: "value",     
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
