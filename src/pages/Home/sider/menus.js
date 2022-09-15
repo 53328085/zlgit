@@ -6,50 +6,52 @@
     {
       label: '运行概述' ,
       key: "outline",
-    
+      icon: <Micon />
     },
     {
       label: '测点监测',
       key: "point",
+      icon: <Micon />
     },
     {
       label: "网关监测",
       key: "gateway",
+      icon: <Micon />
     },
     {
         label: "远程控制",
         key: "remote",
-       
+        icon: <Micon />
     },
     {
         label: "视频监控",
         key: "video",
-      
+        icon: <Micon />
     },
     {
         label: "告警监控",
         key: "warning",
-       
+        icon: <Micon />
     },
     {
         label: "配电系统图",
         key: "electrica",
-       
+        icon: <Micon />
     },
     {
         label: "损耗分析",
         key: "loss",
-       
+        icon: <Micon />
     },
     {
         label: "用户报告",
         key: "report",
-       
+        icon: <Micon />
     },
     {
       label: "操作日志",
       key: "oplog",
-     
+      icon: <Micon />
   },
    ]
 
