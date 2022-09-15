@@ -21,7 +21,14 @@ const Boxdiv = styled(Card)`
       flex:1;
       height: inherit;
     }
+
   }
+  .ant-card-type-inner .ant-card-head {
+    background-color: transparent;
+  }
+ .ant-card-body {
+  padding: 0;
+ }
 `
 export default function Titlelayout({title='', children, ...other}) {
   return (
