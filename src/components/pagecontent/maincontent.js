@@ -34,23 +34,22 @@ const Tabsbox = styled(Tabs)`
 `
 
 export default function Maincontent(props) {
- const {tabs, key, setKey} = useContext(CustContext)
- console.log(tabs)
+ const {tabs, value, setvalue} = useContext(CustContext)
  //const {tabs, value, setvalue} = props
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
  }
  const onChange = (key) => {
-     setKey(key)
+    setvalue(key)
  }
  const TabsEl = () => {
      if (!tabs) return null  
-     const {TabPane} = Tabs
+    console.log(value)
      return (
         <Tabsbox  
         onChange={onChange} 
-        defaultActiveKey={key} 
+        defaultActiveKey={value} 
         animated 
         tabBarGutter={16} 
         type="card"
