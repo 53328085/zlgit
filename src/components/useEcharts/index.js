@@ -69,7 +69,7 @@ export const drawEcharts = (
     ...rest
   } = {}
 ) => {
-  
+  if (!dom) return
   const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
   const comm = {
@@ -136,6 +136,6 @@ export const drawEcharts = (
       ? pieOption(pieData)
       : "";
   chart.setOption({...setoption, ...rest}, true, chartoption);
- // chart.resize();
+  chart.resize();
 };
 
