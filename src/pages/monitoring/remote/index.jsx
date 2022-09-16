@@ -1,10 +1,10 @@
 import React,{useState} from 'react'
 import { useAntdTable, usePagination } from 'ahooks'
 import { Remote } from '@api/api.js'
-import {Form,Modal } from 'antd'
+import {Button, Form,Modal } from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
-import {columns} from './columns'
+import {columns,realcolumns} from './columns'
 import CustContext from '@com/content.js'
 import SearchBtn from './searchbtn'
 import Bluecolumn from '@com/bluecolumn'
@@ -20,12 +20,13 @@ export default function Index() {
     'single':0,
     'batch':1
   }
-  const [key,setKey] = useState('single')
+  const [value,setvalue] = useState('single')
   const [brake,setbrake] = useState(false) //分闸弹窗显示
   const [switching,setswitching] = useState(false) //合闸弹窗显示
+  const [readout,setreadout] = useState(false) //实时抄读显示
   const [form] =Form.useForm()
   let params = {
-    meterType: meterType[key],
+    meterType: meterType[value],
     projectId: 1,
     regionId: 0,
     buildingId: 0,
@@ -55,26 +56,29 @@ export default function Index() {
  
   const {tableProps,search} = useAntdTable(getTableData,{
     form,
-    refreshDeps:[key]
+    refreshDeps:[value]
   })
   const  handleCancel=()=>{
     setbrake(false)
     setswitching(false)
   }
-
+  const realReadout = ()=>{
+      setreadout(true)
+  }
   const {submit} =search
   const propsData ={
     tabs,
     form,
     search,
-    key,
-    setKey
+    value,
+    setvalue
   }
  const propsSearch ={
   brake,
   setbrake,
   switching,
-  setswitching
+  setswitching,
+  realReadout
  }
   
   return (
@@ -82,7 +86,7 @@ export default function Index() {
     <Pagecount  form={form} search={search}>
       <SearchBtn {...propsSearch}/>
       <UserTable columns={columns}  {...tableProps} rowSelection={{
-          type: key==='single'?'radio':'checkbox',
+          type: value==='single'?'radio':'checkbox',
         }} rowKey={v=>v.id}></UserTable>
        
     </Pagecount>
@@ -92,6 +96,7 @@ export default function Index() {
         visible={brake}
         centered={true}
         closable={false}
+        className={styles.readout}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -104,11 +109,24 @@ export default function Index() {
         visible={switching}
         centered={true}
         closable={false}
+        className={styles.readout}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
         <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn} className={styles.imgclass}></img>确认要对所选设备进行合闸操作？</p>
+      </Modal>
+      <Modal
+      title={<Bluecolumn name="实时抄读"/>}
+      visible={readout}
+      centered={true}
+      onCancel={()=>{setreadout(false)}}
+      width={1218}
+      className={styles.readout}
+      footer={[<Button>关闭</Button>]}
+      >
+        <UserTable columns={realcolumns}  ></UserTable>
+       
       </Modal>
     </CustContext.Provider>
   )
