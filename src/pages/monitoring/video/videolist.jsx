@@ -4,8 +4,9 @@ import imgurl from '@imgs/index.js'
 import { Button, } from 'antd'
 import  EZUIKit from 'ezuikit-js'; 
 import video from '@imgs/video.gif'
-
+import {themeData} from './themeData'
 export default function Videolist({showModal,setplay}) {
+  
   let player
   useEffect(()=>{
     player= new EZUIKit.EZUIKitPlayer({
@@ -14,11 +15,11 @@ export default function Videolist({showModal,setplay}) {
       url: "ezopen://open.ys7.com/G88471891/1.hd.live",
       width: 506, 
       height: 270,
-      template:'standard',
-      header:['capturePicture'],
+      themeData:themeData,
       
     })
     setplay(player)
+    return ()=>{player.stop();console.log('视频清除了')}
   },[])
  
   return (

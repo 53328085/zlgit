@@ -57,5 +57,41 @@
  columns.forEach((item)=>{
  item.ellipsis=true
 })
- console.log('columns',columns)
-export {columns}
+let realcolumns = [
+    {
+        title: '抄读时间',
+        dataIndex:'sn'
+    },
+    {
+        title: '设备编号',
+        dataIndex:'accountType',
+    },
+    {
+        title: 'A相电压(V)',
+        dataIndex:'deviceType',
+      
+    },
+    {
+        title: 'C相电压(V)',
+        dataIndex:'categoryName'
+    },
+    {
+        title: 'A相电流(A)',
+        dataIndex:'customerNo'
+    },
+    {
+        title: 'B相电流(A)',
+        dataIndex:'customerName'
+    },
+  
+    {
+        title: 'C相电流(A)',
+        dataIndex:'customerMobile'
+    },
+    {
+        title: '总电度(kWh)',
+        dataIndex:'address',
+    
+    }
+]
+export {columns,realcolumns}

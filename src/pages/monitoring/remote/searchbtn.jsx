@@ -5,7 +5,7 @@ import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
 export default function Searchbtn(props) {
     const {Option} =Select
-    const {brake,setbrake,switching,setswitching} =props
+    const {brake,setbrake,switching,setswitching,realReadout} =props
     const navigate = useNavigate()
     const btnstyle = {
         width: '96px',
@@ -36,7 +36,7 @@ export default function Searchbtn(props) {
            
         </Input.Group>
         <Input.Group className={style.searchbtn}>
-        <Button type="primary" style={btnstyle} size="default">实时抄读</Button>
+        <Button type="primary" style={btnstyle} size="default" onClick={realReadout}>实时抄读</Button>
             <div className={style.line}></div>
             <Button type="primary" danger style={{ ...btnstyle, marginRight: 16, backgroundColor: '#f56c6c' }} size="default" onClick={fenzha}>分闸</Button>
             <Button type="primary" danger style={{ ...btnstyle, backgroundColor: '#f56c6c' }} size="default" onClick={hezha}>合闸</Button>

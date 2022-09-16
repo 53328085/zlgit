@@ -6,13 +6,16 @@ import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
-
+import moment from 'moment';
+import {themeData} from './themeData'
 export default function Index() {
   const { Panel } = Collapse;
   const {Item} =Form
   const [form] = Form.useForm();
   const [isModal, setisModal] = useState(false)
-  const [play,setplay] =useState('')
+  const [play,setplay] =useState('') //小屏监控实例
+  const [bigplay,setbigplay] =useState('')
+  const [disabledendDate,setdisabledendDate] = useState(()=>(current=> current && current>moment().endOf('day')))
   const controlStyle= {
     width: 256,
     height: 256,
@@ -26,6 +29,12 @@ export default function Index() {
   const buttonstyle = {
     width:'120px',
   }
+  const disabledDate  = current=> current && current>moment().endOf('day')
+  const changestartdate=(val)=>{
+    setdisabledendDate(()=>(current=> current &&(current<val.endOf('day')|| current>moment().endOf('day'))))
+  }
+  console.log('disabledendDate',disabledendDate)
+ //打开视频监控弹窗
   const showModal = () => {
     setisModal(true)
     play.stop()
@@ -37,17 +46,16 @@ export default function Index() {
         url: "ezopen://open.ys7.com/G88471891/1.hd.live",
         width: 1280, 
         height: 717,
-        footer: ["hd"],
+        themeData:themeData,
       })
-      setplay(player);
+    setbigplay(player)
     },0)
-   
-    
-    
   }
+  //关闭视频监控弹窗
   const handleCancel = () => {
     setisModal(false)
-    play.stop()
+    bigplay.stop()
+    play.play()
   }
   return (
     <div className={style.video}>
@@ -81,10 +89,23 @@ export default function Index() {
                 <Panel header={<BlueColumn name="视频回放" styled={{fontSize: 16}}/>} key="1">
                   <Form form={form} >
                     <Item style={{width:'100%'}}>
-                      <DatePicker showTime placeholder="开始时间" className={style.wd100}></DatePicker>
+                      <DatePicker 
+                      showTime={{
+                        defaultValue: moment('00:00:00', 'HH:mm:ss'),
+                      }}
+                        format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="开始时间"
+                        className={style.wd100}
+                        disabledDate ={disabledDate }
+                        onChange={changestartdate}
+                       />
                     </Item>
                     <Item>
-                      <DatePicker showTime placeholder="结束时间" className={style.wd100}></DatePicker>
+                      <DatePicker 
+                      showTime 
+                      placeholder="结束时间" 
+                      className={style.wd100} 
+                      disabledDate={disabledendDate}></DatePicker>
                     </Item>
                     <Item>
                       <Radio.Group defaultValue="a" buttonStyle="solid"  className={style.wd100}>
