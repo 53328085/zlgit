@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import {useRequest} from 'ahooks'
 import {UserReportApi} from '@api/api.js'
 import style from './style.module.less'
-import { Select,Radio, DatePicker } from 'antd'
+import { Select,Radio, DatePicker, Button } from 'antd'
+import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
 import logo from './images/logo.png'
@@ -27,6 +28,23 @@ export default function Index() {
     console.log(date,dateString)
   }
 
+  const [display, setdisplay] = useState(false);
+
+  const [coverData, setcoverData] = useState({
+    ProjectName:'',
+    Address:'',
+    Date:''
+  });
+
+  const createReport = () =>{
+    setdisplay(true);
+    setcoverData({
+      ProjectName:'正泰物联',
+      Address:'浙江省杭州市滨江区月明路560号',
+      Date:new Date().toLocaleDateString()
+    })
+  }
+
   return (
     <div className={style.content}>
       <div className={style.selectDiv}>
@@ -49,7 +67,7 @@ export default function Index() {
           <div className={style.itemTitle}>日期范围</div>
           <DatePicker style={{width:324}} onChange={changeDate} picker={radioValue}></DatePicker>
         </div>
-        <div className={style.button}>
+        <div className={style.button} onClick={createReport}>
           <img src={searchFile} className={style.searchFile}></img>
           <span>生成报告</span>
         </div>
@@ -62,14 +80,16 @@ export default function Index() {
           </div>
           <div className={style.mainTitle}>运行监控报告</div>
           <div className={style.mainDetail}>
-            <div className={style.detailItem}>项目名称: <span style={{marginLeft:18}}>正泰物联</span></div>
-            <div className={style.detailItem}>项目地址: <span style={{marginLeft:18}}>浙江省杭州市滨江区月明路560号</span></div>
-            <div className={style.detailItem}>报告日期: <span style={{marginLeft:18}}>2022-08-10</span></div>
+            <div className={style.detailItem}>项目名称: <span style={{marginLeft:18}}>{ coverData.ProjectName }</span></div>
+            <div className={style.detailItem}>项目地址: <span style={{marginLeft:18}}>{ coverData.Address }</span></div>
+            <div className={style.detailItem}>报告日期: <span style={{marginLeft:18}}>{ coverData.Date }</span></div>
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        <PageList></PageList>
+        {display ? <PageList></PageList> : null }
       </div>
+      <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
+      <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button>
     </div>
   )
 }
