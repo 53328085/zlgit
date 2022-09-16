@@ -10,6 +10,7 @@ const Direction = lazy(() => import("../pages/energy/direction"))
 const Analysis = lazy(() => import("../pages/energy/analysis"))
 const Quota = lazy(() => import("../pages/energy/quota"))
 const Comm = lazy(() => import("../pages/energy/comm"))
+const Cost = lazy(() => import("../pages/energy/cost"))
 export default [
     {
        // index: true,
@@ -20,6 +21,10 @@ export default [
          path: 'synthetical',
          element: <Synthetical/>
      },
+     {
+        path: 'cost',
+        element: <Cost/>
+    },
      {
         path: 'ranking',
         element: <Ranking/>

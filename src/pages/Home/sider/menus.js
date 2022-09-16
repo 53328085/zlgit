@@ -69,6 +69,11 @@
       icon: <Micon />
     },
     {
+      label: '能耗费用',
+      key: "cost",
+      icon: <Micon />
+    },
+    {
       label: "能耗排名",
       key: "ranking",
       icon: <Micon />
