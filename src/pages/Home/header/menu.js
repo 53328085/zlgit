@@ -94,12 +94,18 @@ export default function Hmenu() {
         icon: <Ciocn url={current == '/index' ? h08 : n08} />,
         className: 'custsubmenu'
     },
+
     {
-        label: "运维管理",
-        key: "OPS",
-        icon: <Ciocn url={current == '/index' ? h09 : n09} />,
-        className: 'custsubmenu'
-    },
+      label: "运维管理",
+      key: "/index/devops/summary",
+      icon: <Ciocn url={current == '/index' ? h09 : n09} />,
+      className: 'custsubmenu',
+      danger: true,
+      active: 'summary',
+      title: '运维管理',
+      path: 'devops'
+   },
+    
     {
         label: "后台管理",
         key: "adimin",

@@ -112,3 +112,31 @@
         icon: <Micon />
     },
    ]
+   export  const devops = [
+    {
+      label: '运维概述' ,
+      key: "summary",
+      icon: <Micon />
+    },
+    {
+      label: '告警信息',
+      key: "warning",
+      icon: <Micon />
+    },
+    {
+      label: '工单管理',
+      key: "order",
+      icon: <Micon />
+    },
+    {
+      label: "巡检管理",
+      key: "inspection",
+      icon: <Micon />
+    },
+    {
+        label: "运行报告",
+        key: "runing",
+        icon: <Micon />
+       
+    },
+   ]
