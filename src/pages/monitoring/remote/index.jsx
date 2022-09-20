@@ -123,7 +123,7 @@ export default function Index() {
       onCancel={()=>{setreadout(false)}}
       width={1218}
       className={styles.readout}
-      footer={[<Button>关闭</Button>]}
+      footer={[<Button onClick={()=>{setreadout(false)}}>关闭</Button>]}
       >
         <UserTable columns={realcolumns}  ></UserTable>
        
