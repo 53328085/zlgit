@@ -6,20 +6,26 @@ const Boxdiv = styled(Card)`
   border-radius: 4px;
   border: 1px solid #d7d7d7;
   display: grid;
-  grid-template-rows: ${(props) => props.title ? `32px 1fr` : '1fr'};
+  grid-template-rows: ${(props) => props.title ? `${props.hv || '32px'} 1fr` : '1fr'};
   flex:1;
   background-color: #fff;
   .ant-card-head {
-    padding-left: 12px;
+    padding-left: 16px;
     border-left: 4px solid #237ae4;
     display: flex;
     align-items: center;
     border-bottom: none;
-    min-height: 32px;
+    min-height: ${(props) =>  props.hv || '32px'};
+    height: ${(props) =>  props.hv || '32px'};
     padding-right: 0px;
     .ant-card-head-wrapper {
       flex:1;
       height: inherit;
+      .ant-card-head-title {
+         font-size: ${({fz}) => fz || '14px'};
+         color: ${({fc}) => fc || '#515151'};
+         padding: 0px;
+      }
     }
 
   }
