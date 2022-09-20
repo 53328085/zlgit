@@ -264,7 +264,7 @@ export default function Index() {
       <Listbox len={arr.length || 1}>
          {
          arr.map(item => (
-           <div className="item">
+           <div className="item" key={nanoid()}>
               <span>{item.key}</span>
               <span>
                 {item.arrow ? <Arrow num={item.value}></Arrow> : item.value}
@@ -439,7 +439,7 @@ export default function Index() {
                   />
                   <div className="down">
                     {
-                     Array.isArray(item.data) && item.data.map(items =>(<ListItem arr={items} />))
+                     Array.isArray(item.data) && item.data.map(items =>(<ListItem arr={items} key={nanoid()} />))
                     }
                   </div>
                 </UDbox>
@@ -541,7 +541,7 @@ export default function Index() {
           <div style={{display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', height: '100%'}}>
            {
             testDatas3.map((item) => (
-              <UDboxbord>
+              <UDboxbord key={nanoid()}>
               <div
                 style={{
                   display: "flex",

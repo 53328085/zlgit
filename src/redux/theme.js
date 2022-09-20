@@ -1,4 +1,4 @@
-import { createSlice,nanoid, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
+import { createSlice} from '@reduxjs/toolkit'
 import zhCN from 'antd/es/locale/zh_CN'
 const initialState = {
   theme: {

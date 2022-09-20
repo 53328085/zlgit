@@ -4,12 +4,14 @@ import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 import monitoringRoutes from "./monitoring";
 import energyRoutes from "./energy";
+import devopsRoutes from './devops'
 const Login = lazy(() => import("../pages/Login"))
 const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Energy = lazy(() => import("../pages/energy/index"))
+const Devops = lazy(() => import("../pages/devops/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
@@ -51,8 +53,13 @@ const routes =  [
         },
         {
           path: 'energy', // 能源管理
-          element: <Energy><Navigate to='outline' replace={true}></Navigate> </Energy>, // 父组件的默认子路由
+          element: <Energy><Navigate to='summary' replace={true}></Navigate> </Energy>, // 父组件的默认子路由
           children: energyRoutes
+        },
+        {
+          path: 'devops', // 运维管理管理
+          element: <Devops><Navigate to='summary' replace={true}></Navigate> </Devops>, // 父组件的默认子路由
+          children: devopsRoutes
         }
       ]
     },

@@ -20,8 +20,8 @@ const Divbox = styled.div`
 `
 export default function Icard({height, custTitle}) {
   return (
-     <Divbox height={height}>
-        <h4 className='title'>{custTitle}</h4>
+     <Divbox height={height}  >
+        <h4 className='title'>{custTitle}</h4> 
      </Divbox>
   )
 }

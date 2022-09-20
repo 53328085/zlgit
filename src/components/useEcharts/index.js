@@ -12,7 +12,7 @@ const chartoption = {
   lazyUpdate: true,
   replaceMerge: ["xAxis", "series"],
 };
-const pieOption = ({ data = [], total = 0 } = {}) => ({
+const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"] } = {}) => ({
   // 饼图的设置
   color:['#6395f9', '#62daab', '#657798', '#f6c022'],
   tooltip: {
@@ -41,7 +41,7 @@ const pieOption = ({ data = [], total = 0 } = {}) => ({
     {
       type: "pie",
       data,
-      radius: ["60%", "80%"],
+      radius,
       label: {
         show: true,
         position: "outside",
@@ -64,11 +64,12 @@ export const drawEcharts = (
     xAxis = [],
     series = [],
     dataset = [],
-    pieData = { data: [], total: 0 },
+    pieData = { data: [], total: 0, radius: ["60%", "80%"] },
     type = 1,
+    grid={},
     ...rest
   } = {}
-) => {
+) => {  
   if (!dom) return
   const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
@@ -78,26 +79,32 @@ export const drawEcharts = (
       right: "40px",
       top: "40px",
       bottom: "40px",
+      ...grid
     },
-    xAxis: {
-    
+    xAxis: {    
       type: "category",
       boundaryGap: true,
       axisTick: {
         alignWithLabel: true,
-      }, 
-     
+        lineStyle: {
+          color: '#ccc'
+        }
+      },   
+      axisLine: {
+        lineStyle: {
+          color:"#ccc"
+        }
+      },
+      axisLabel: {
+        color:"#545454",
+        interval:0, // 显示所有x轴的label
+      },
+      
       ...xAxis,
     },
     legend: {
       top: "0px",
-    },
-   /*  dataZoom: [
-      {
-        type: "slider",
-        height: "20px",
-      },
-    ], */
+    },  
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -108,7 +115,7 @@ export const drawEcharts = (
   const baseoption = {
     ...comm,
     yAxis: {
-      type: "value",
+      type: "value",   
     },
     series,
   };
@@ -120,7 +127,7 @@ export const drawEcharts = (
         type: "value",     
         axisLabel: {
           showMinLabel: true,
-          showMaxLabel: true,
+          showMaxLabel: true, 
         },
       },
     ],
