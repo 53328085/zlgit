@@ -10,8 +10,8 @@ const Boxdiv = styled(Card)`
   flex:1;
   background-color: #fff;
   .ant-card-head {
-    padding-left: 16px;
-    border-left: 4px solid #237ae4;
+    padding-left: ${({pl}) => pl || '16px'};
+    border-left: ${({bl}) => bl || '4px solid #237ae4'};
     display: flex;
     align-items: center;
     border-bottom: none;
