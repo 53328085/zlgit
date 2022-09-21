@@ -1,0 +1,43 @@
+
+.Order{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+   
+   .OrderContent{
+    flex: 1;
+    background-color: #fff;
+    margin-top: 16px;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    padding: 16px;
+    .SearchContent{
+        display: flex;
+        justify-content: space-between;
+        .CheckCircle{
+            width: 16px;
+            height: 16px;
+        }
+    }
+   }
+  
+   
+}
+.timeline{
+   
+    :global(.ant-timeline-item-content){
+       width: auto !important;
+       left: 147px !important;
+    }
+    :global(.ant-timeline-item-label){
+        text-align: center !important;
+        width: auto !important;
+    }
+    :global(.ant-timeline-item-head){
+        left: 146px !important;
+    }
+    :global(.ant-timeline-item-tail){
+        left: 146px !important;
+    }
+  }
