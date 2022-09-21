@@ -12,23 +12,20 @@ const chartoption = {
   lazyUpdate: true,
   replaceMerge: ["xAxis", "series"],
 };
-const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"] } = {}) => ({
-  // 饼图的设置
-  color:['#6395f9', '#62daab', '#657798', '#f6c022'],
+const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, grid={left: 0, right: 0, containLabel: true,}} = {}) => ({
+  // 饼图的设置 
   tooltip: {
     trigger: "item",
   },
   legend: {
-    bottom: "5%",
-    left: "center",
+    top:0,
+    icon: 'circle',
+    itemHeight: 8,
+    itemWidth: 8,
+    itemGap: 20,
+    ...legend
   },
-  legend: {
-    top: "bottom",
-  },
-  grid: {
-    left: "5%",
-    right: "5%",
-  },
+  grid,
   graphic: {
     type: "text",
     left: "center",
@@ -67,6 +64,7 @@ export const drawEcharts = (
     pieData = { data: [], total: 0, radius: ["60%", "80%"] },
     type = 1,
     grid={},
+    legend={},
     ...rest
   } = {}
 ) => {  
@@ -103,7 +101,14 @@ export const drawEcharts = (
       ...xAxis,
     },
     legend: {
-      top: "0px",
+      top: 0,
+
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20,
+     
+      ...legend
     },  
     tooltip: {
       trigger: "axis",
@@ -140,7 +145,7 @@ export const drawEcharts = (
       : type == 2
       ? baseoption
       : type == 3
-      ? pieOption(pieData)
+      ? pieOption({...pieData, grid, legend})
       : "";
   chart.setOption({...setoption, ...rest}, true, chartoption);
   chart.resize();

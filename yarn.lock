@@ -3711,7 +3711,7 @@ ansi-styles@^5.0.0:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz"
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
 
-"antd@^4.20.0 ":
+"antd@^4.20.0 ", antd@^4.23.0:
   version "4.23.0"
   resolved "https://registry.npmjs.org/antd/-/antd-4.23.0.tgz"
   integrity sha512-a0voELfS5lDy6NCcDNbDUMv2OZ+IfeX/kYxaRnRJj0/R4tPJWAqs0bqFVpdk5y8JsPl6B396bTVzKZo49e+uvA==
@@ -3756,56 +3756,6 @@ ansi-styles@^5.0.0:
     rc-tooltip "~5.2.0"
     rc-tree "~5.6.5"
     rc-tree-select "~5.4.0"
-    rc-trigger "^5.2.10"
-    rc-upload "~4.3.0"
-    rc-util "^5.22.5"
-    scroll-into-view-if-needed "^2.2.25"
-
-antd@^4.23.2:
-  version "4.23.2"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.23.2.tgz#6bbd2d4bfb066b501fa606cab0df3bf1e758298e"
-  integrity sha512-GGOaIUxPg8wl8lGcCJ2U/1Eg5mt0hNb554a0y4mTJa1ijPRCNM8XjUcio4lTMM7M9/fLm9ttKtyxHg4n+JX26A==
-  dependencies:
-    "@ant-design/colors" "^6.0.0"
-    "@ant-design/icons" "^4.7.0"
-    "@ant-design/react-slick" "~0.29.1"
-    "@babel/runtime" "^7.18.3"
-    "@ctrl/tinycolor" "^3.4.0"
-    classnames "^2.2.6"
-    copy-to-clipboard "^3.2.0"
-    lodash "^4.17.21"
-    memoize-one "^6.0.0"
-    moment "^2.29.2"
-    rc-cascader "~3.7.0"
-    rc-checkbox "~2.3.0"
-    rc-collapse "~3.3.0"
-    rc-dialog "~8.9.0"
-    rc-drawer "~5.1.0"
-    rc-dropdown "~4.0.0"
-    rc-field-form "~1.27.0"
-    rc-image "~5.7.0"
-    rc-input "~0.1.2"
-    rc-input-number "~7.3.5"
-    rc-mentions "~1.9.1"
-    rc-menu "~9.6.3"
-    rc-motion "^2.6.1"
-    rc-notification "~4.6.0"
-    rc-pagination "~3.1.17"
-    rc-picker "~2.6.10"
-    rc-progress "~3.3.2"
-    rc-rate "~2.9.0"
-    rc-resize-observer "^1.2.0"
-    rc-segmented "~2.1.0"
-    rc-select "~14.1.13"
-    rc-slider "~10.0.0"
-    rc-steps "~4.1.0"
-    rc-switch "~3.2.0"
-    rc-table "~7.26.0"
-    rc-tabs "~12.1.0-alpha.1"
-    rc-textarea "~0.3.0"
-    rc-tooltip "~5.2.0"
-    rc-tree "~5.7.0"
-    rc-tree-select "~5.5.0"
     rc-trigger "^5.2.10"
     rc-upload "~4.3.0"
     rc-util "^5.22.5"
@@ -8357,6 +8307,11 @@ mapbox-gl@^1.2.1:
     tinyqueue "^2.0.3"
     vt-pbf "^3.1.1"
 
+mapvgl@^1.0.0-beta.149:
+  version "1.0.0-beta.156"
+  resolved "https://registry.npmjs.org/mapvgl/-/mapvgl-1.0.0-beta.156.tgz"
+  integrity sha512-fWZjAn8N/A2RteqmLlyoq+xigrNMDZaOpaArNri1v91NUaXKseZc8fe/sxsMkWmwgBhjSTMyJn/Pn7QkKsPdSQ==
+
 material-colors@^1.2.1:
   version "1.2.6"
   resolved "https://registry.npmjs.org/material-colors/-/material-colors-1.2.6.tgz"
@@ -9940,18 +9895,6 @@ rc-align@^4.0.0:
     rc-util "^5.3.0"
     resize-observer-polyfill "^1.5.1"
 
-rc-cascader@~3.6.0:
-  version "3.6.1"
-  resolved "https://registry.npmjs.org/rc-cascader/-/rc-cascader-3.6.1.tgz"
-  integrity sha512-+GmN2Z0IybKT45t0Z94jkjmsOHGxAliobR2tzt05/Gw0AKBYLHX5bdvsVXR7abPnarYyYzZ/cWe8CoFgDjAFNw==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    array-tree-filter "^2.1.0"
-    classnames "^2.3.1"
-    rc-select "~14.1.0"
-    rc-tree "~5.6.3"
-    rc-util "^5.6.1"
-
 rc-cascader@~3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/rc-cascader/-/rc-cascader-3.7.0.tgz#98134df578ce1cca22be8fb4319b04df4f3dca36"
@@ -10174,7 +10117,7 @@ rc-segmented@~2.1.0:
     rc-motion "^2.4.4"
     rc-util "^5.17.0"
 
-rc-select@~14.1.0, rc-select@~14.1.1:
+rc-select@~14.1.0:
   version "14.1.9"
   resolved "https://registry.npmjs.org/rc-select/-/rc-select-14.1.9.tgz"
   integrity sha512-DK01+Q7oCWr5jVPiEp/BTQ8xCB4rI4LfXzZtSmBWJhOMuibyZD1Vlz/DlVKCUFmtBM4SzG4/SltGHoGlcbCqiw==
@@ -10272,17 +10215,6 @@ rc-tooltip@~5.2.0:
     classnames "^2.3.1"
     rc-trigger "^5.0.0"
 
-rc-tree-select@~5.4.0:
-  version "5.4.0"
-  resolved "https://registry.npmjs.org/rc-tree-select/-/rc-tree-select-5.4.0.tgz"
-  integrity sha512-reRbOqC7Ic/nQocJAJeCl4n6nJUY3NoqiwRXKvhjgZJU7NGr9vIccXEsY+Lghkw5UMpPoxGsIJB0jiAvM18XYA==
-  dependencies:
-    "@babel/runtime" "^7.10.1"
-    classnames "2.x"
-    rc-select "~14.1.0"
-    rc-tree "~5.6.1"
-    rc-util "^5.16.1"
-
 rc-tree-select@~5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/rc-tree-select/-/rc-tree-select-5.5.0.tgz#96d935ec994a0f6b0fecc4c18f22f472fe8530a3"
@@ -10293,17 +10225,6 @@ rc-tree-select@~5.5.0:
     rc-select "~14.1.0"
     rc-tree "~5.7.0"
     rc-util "^5.16.1"
-
-rc-tree@~5.6.1, rc-tree@~5.6.3, rc-tree@~5.6.5:
-  version "5.6.6"
-  resolved "https://registry.npmjs.org/rc-tree/-/rc-tree-5.6.6.tgz"
-  integrity sha512-HI/q4D4AHOp48OZcBUvJFWkI5OfnZivvGYI0xzI0dy0Mita2KcTGZv7/Yl6Aq3bL3od3x5AqAXq/7qxR3x4Kkg==
-  dependencies:
-    "@babel/runtime" "^7.10.1"
-    classnames "2.x"
-    rc-motion "^2.0.1"
-    rc-util "^5.16.1"
-    rc-virtual-list "^3.4.8"
 
 rc-tree@~5.7.0:
   version "5.7.0"
@@ -10377,9 +10298,17 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
+react-bmapgl@^0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/react-bmapgl/-/react-bmapgl-0.2.7.tgz#38b6b82be553a5e1b64acc11f176378e1e5da33c"
+  integrity sha512-e5jidSPBvuUGdNarubFDhnyJYwhCWtSWU1TAr+7/PxUfz8EwWO6cK0qx8GRxCdshAlMlVlaaSjc1GaHjQWsbNA==
+  dependencies:
+    mapvgl "^1.0.0-beta.149"
+    shallowequal "^1.1.0"
+
 react-color@2.17.1:
   version "2.17.1"
-  resolved "https://registry.npmjs.org/react-color/-/react-color-2.17.1.tgz"
+  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.17.1.tgz#f114811c83f5d80a1bd1b80466c2f7ddcc58da9d"
   integrity sha512-S+I6TkUKJaqfALLkAIfiCZ/MANQyy7dKkf7g9ZU5GTUy2rf8c2Rx62otyvADAviWR+6HRkzdf2vL1Qvz9goCLQ==
   dependencies:
     "@icons/material" "^0.2.4"
