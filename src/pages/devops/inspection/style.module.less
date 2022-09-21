@@ -1,0 +1,85 @@
+.header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+}
+.content{
+    margin-top: 18px;
+    :global{
+        .ant-tabs-tab{
+            margin-right: 10px!important;
+            width: 140px;
+            height: 36px;
+            border-top-left-radius: 4px!important;
+            border-top-right-radius: 4px!important;
+            justify-content: center;
+        }
+        .ant-tabs-tab-active{
+            background-color: #237ae4!important;
+            .ant-tabs-tab-btn{
+                color: #fff;
+            }
+        }
+        .ant-tabs-nav{
+            margin: 0!important;
+            &::before{
+                border-color: rgb(215, 215, 215);
+            }
+        }
+        .ant-tabs-content{
+            width: 1680px;
+            height: 750px;
+            border: 1px solid rgb(215, 215, 215);
+            border-top: none;
+            background-color: #fff;
+            padding: 16px;
+            position: relative;
+        }
+        .ant-pagination{
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+        }
+    }
+
+    .contentHeader{
+        display: flex;
+        align-items: center;
+    }
+    .contentTable{
+        margin-top: 20px;
+    }
+}
+:global{
+    .ant-modal-body{
+        padding: 0;
+        border-radius: 4px;
+    }
+}
+.modalTitle{
+    width: 140px;
+    height: 32px;
+    background: #237ae4;
+    color: #fff;
+    text-align: center;
+    line-height: 32px;
+    font-size: 14px;
+}
+.dialogForm{
+    margin-top: 20px;
+    margin-left: 36px;
+    :global{
+        .ant-form-item{
+            margin-bottom: 12px;
+        }
+        .ant-btn{
+            border-radius: 4px;
+            height: 36px;
+            width: 96px;
+        }
+    }
+}
