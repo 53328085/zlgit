@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import style from './style.module.less';
-import { DatePicker,Button, Table, Pagination, Switch, Space, Modal, Form, Select, Input  } from 'antd';
+import { DatePicker,Button, Table, Pagination, Switch, Space, Modal, Form, Select, Input, message } from 'antd';
 import { SearchOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import deleteImg from '../../../assets/image/delete.png'
 
 export default function Index(){
 
@@ -16,10 +17,6 @@ export default function Index(){
       day = day>9?day: '0' + day;
       var time = year + "-" + month + "-" + day;
       return time;
-    }
-
-    const edit = (value)=>{
-        console.log(value);
     }
 
     const columns = [{
@@ -53,7 +50,7 @@ export default function Index(){
         render:(text, record) => (
             <Space size="middle">
                 <span style={{color:'#237ae4',textDecoration:'underline', cursor:'pointer'}} onClick={()=>edit(record)}>编辑</span>
-                <span style={{color:'#f00',textDecoration:'underline', cursor:'pointer'}}>删除</span>
+                <span style={{color:'#f00',textDecoration:'underline', cursor:'pointer'}} onClick={()=>deleteData(record)}>删除</span>
             </Space>
         )
     }]
@@ -105,6 +102,7 @@ export default function Index(){
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
+        setDialogTitle('新增巡检计划');
         setIsModalOpen(true);
     };
     const [form] = Form.useForm();
@@ -176,11 +174,29 @@ export default function Index(){
     }
     const disabledDate = (current) => {
         return current > disabledStart;
-      };
-      const disabledStartDate = (current) => {
+    };
+    const disabledStartDate = (current) => {
         return current < disabledEnd;
-      };
+    };
 
+    const edit = (value)=>{
+        console.log(value);
+        setDialogTitle('编辑巡检计划');
+        setIsModalOpen(true);
+        form.setFieldsValue(value);   
+    }
+
+    const [deleteModal, setDeleteModal] = useState(false);
+    const deleteData = value => {
+        setDeleteModal(true);
+    }
+    const cancelDelete = () => {
+        setDeleteModal(false);
+    }
+    const confirmDelete = () => {
+        setDeleteModal(false);
+        message.success('删除成功！');
+    }
     
 
     return(
@@ -203,7 +219,7 @@ export default function Index(){
             </div>
             <Modal footer={null} closable={false} maskClosable={false} open={isModalOpen}>
                 <div className={style.modalTitle}>{dialogTitle}</div>
-                <Form className={style.dialogForm} onFinish={onFinish} requiredMark={false}>
+                <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
                     <Form.Item name='RegionId' label='区域名称' 
                     rules={[{required: true,message:'请选择区域'}]}>
                         <Select
@@ -218,7 +234,7 @@ export default function Index(){
                     <Form.Item name='PlanName' label='计划名称' rules={[{required: true,message:'请输入计划名称'}]}>
                         <Input size="middle" style={{width: '320px', marginLeft: '12px'}}></Input>
                     </Form.Item>
-                    <Form.Item name='PlanContent' label='计划内容' rules={[{required: true,message:'请输入计划内容'}]}>
+                    <Form.Item name='Task' label='计划内容' rules={[{required: true,message:'请输入计划内容'}]}>
                         <Input size="middle" style={{width: '320px', marginLeft: '12px'}}></Input>
                     </Form.Item>
                     <Form.Item name='Circle' label='巡检周期' 
@@ -281,6 +297,17 @@ export default function Index(){
                         </Button>
                     </Form.Item>
                 </Form>
+            </Modal>
+            <Modal className={style.deleteModal} footer={null} closable={false} maskClosable={false} open={deleteModal}>
+                <div className={style.deleteTitle}>删除巡检计划</div>
+                <div className={style.deleteContent}>
+                    <img src={deleteImg} className={style.deleteImg}></img>
+                    <span>确认是否删除选中项目？</span>
+                </div>
+                <div className={style.deleteFooter}>
+                    <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancelDelete}>取消</Button>
+                    <Button size="middle" type="primary" danger  onClick={confirmDelete}>确认</Button>
+                </div>
             </Modal>
         </>
     )
