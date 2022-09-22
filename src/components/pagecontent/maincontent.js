@@ -32,7 +32,15 @@ const Tabsbox = styled(Tabs)`
  
 }
 `
-
+const PageContentMain = styled.div`  
+    background-color: ${props => props.bgcolor || '#fff'};
+    padding: ${props => props.pd || '16px'};
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+ 
+`
 export default function Maincontent(props) {
  const {tabs, value, setvalue} = useContext(CustContext)
  //const {tabs, value, setvalue} = props
@@ -62,7 +70,10 @@ export default function Maincontent(props) {
   return (
     <div className='page--content--box'>
         <TabsEl></TabsEl>
-        <div className='page--content--main'>{props.children}</div>
+       {/*  <div className='page--content--main'>{props.children}</div> */}
+        <PageContentMain pd={props.pd} bgcolor={props.bgcolor}>
+          {props.children}
+        </PageContentMain>
     </div>
   )
 }
