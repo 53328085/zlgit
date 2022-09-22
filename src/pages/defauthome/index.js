@@ -221,6 +221,7 @@ tooltip: {
     trigger: 'item'
   },
   legend: {
+    top: 'auto',
     bottom: 0,
     icon: 'none',
     formatter: function (name) {
@@ -289,7 +290,10 @@ export default function DefaultHome(){
       containLabel: true,
     }, })
     drawEcharts(guref.current,  {...gauge, type: 2})
-    drawEcharts(wnref.current,  {pieData: {data: pieData, radius: '75%'}, type: 3})
+    drawEcharts(wnref.current,  {pieData: {data: pieData, radius: '75%', },legend: {
+      top: 'auto',
+      bottom: 0,
+    }, type: 3})
     drawEcharts(tmref.current,  {pieData: {data: pietmData, total: 102.4}, type: 3})
   }, [])
   
