@@ -2,7 +2,7 @@ import {nanoid} from '@reduxjs/toolkit'
 export default [
     {
       dataIndex: "sn",
-      title: "设备编号",
+      title: "设备编号",      
     },
     {
       dataIndex: "categoryName",

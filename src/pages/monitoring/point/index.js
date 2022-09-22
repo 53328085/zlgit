@@ -15,9 +15,7 @@ export default function Index() {
   const [formparams, setFormparams] = useState(form.getFieldValue())
   const [key, setKey] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
-  let [display, setDisplay] = useState(true)
-
-
+  let [display, setDisplay] = useState(true)  
   const meterType = {
     electric: 1,
     water: 2,
@@ -102,7 +100,7 @@ export default function Index() {
     <CustContext.Provider value={propsData}>
     <Pagecount>   
    
-       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' /> : 
+       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id'/> : 
         <UserCard   {...{data, pagination}} /> 
     }
     </Pagecount>

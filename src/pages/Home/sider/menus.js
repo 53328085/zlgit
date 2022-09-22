@@ -140,3 +140,58 @@
        
     },
    ]
+   export  const electric = [
+    {
+      label: '安全概述' ,
+      key: "safe",
+      icon: <Micon />
+    },
+    {
+      label: '告警信息',
+      key: "warning",
+      icon: <Micon />
+    },
+   ]
+
+   export  const distribution = [
+    {
+      label: '配电概述' ,
+      key: "summary",
+      icon: <Micon />
+    },
+    {
+      label: '配电系统图',
+      key: "map",
+      icon: <Micon />
+    },
+    {
+      label: '变压器监测',
+      key: "transformer",
+      icon: <Micon />
+    },
+    {
+      label: '回路监测',
+      key: "loop",
+      icon: <Micon />
+    },
+    {
+      label: '环境监测',
+      key: "surroundings",
+      icon: <Micon />
+    },
+    {
+      label: '视频监控',
+      key: "video",
+      icon: <Micon />
+    },
+    {
+      label: '告警信息',
+      key: "warning",
+      icon: <Micon />
+    },
+    {
+      label: '运行报告',
+      key: "report",
+      icon: <Micon />
+    },
+   ]
