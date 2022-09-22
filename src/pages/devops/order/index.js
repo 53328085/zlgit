@@ -5,7 +5,7 @@ import style from './style.module.less'
 export default function Index() {
   return (
     <div className={style.Order}>
-      <DevopSearch/>
+      <DevopSearch ischeck={true}/>
       <OrderContent style={style}/>
     </div>
   )
