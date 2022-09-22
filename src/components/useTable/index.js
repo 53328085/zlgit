@@ -2,8 +2,7 @@ import React from 'react'
 import {Table} from 'antd'
 import styled from 'styled-components'
 export default function index(props) { 
-  const {pagination, ...otherprops} =props
-  console.log(otherprops)
+  const {pagination, ...otherprops} =props  
   const paginationProp = Object.assign( {}, {
     hideOnSinglePage: true,
     showTotal: (total) => `共${total}条记录`

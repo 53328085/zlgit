@@ -2,7 +2,7 @@ import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation} from 'react-router-dom'
 import { Menu, Image } from "antd";
 import './style.less'
-//import imgurl from './icon/index.js'
+import imgurl from './icon/index.js'
 import h01 from './icon/01H.png'
 import n01 from './icon/01N.png'
 import h02 from './icon/02H.png'
@@ -23,10 +23,7 @@ import h09 from './icon/09H.png'
 import n09 from './icon/09N.png'
 import h10 from './icon/10H.png'
 import n10 from './icon/10N.png'
-import { 
-  SettingOutlined,
-} from "@ant-design/icons";
-//console.log(imgurl)
+
 const Ciocn = (props) => {
   const url = props.url || h01
   return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
@@ -39,7 +36,7 @@ export default function Hmenu() {
     {
       label: '项目概述' ,
       key: "/index",
-      icon: <Ciocn url={current == '/index' ? h01 : n01} />,
+      icon: <Ciocn url={current == '/index' ? imgurl['01H'] : imgurl['01N']} />,
       className: 'custsubmenu',
       danger: true,
       title: '首页'
@@ -56,15 +53,23 @@ export default function Hmenu() {
     },
     {
       label: "电气安全",
-      key: "safety",
+      key: "/index/electric/safe",
       icon: <Ciocn url={current == '/index' ? h03 : n03} />,
-      className: 'custsubmenu'
+      className: 'custsubmenu',
+      danger: true,
+      active: 'safe',
+      title: '电气安全',
+      path: 'electric'
     },
     {
         label: "配电管理",
-        key: "distribution",
+        key: "/index/distribution/summary",
         icon: <Ciocn url={current == '/index' ? h04 : n04} />,
-        className: 'custsubmenu'
+        className: 'custsubmenu',
+        danger: true,
+        active: 'summary',
+        title: '配电概述',
+        path: 'distribution'
     },
     {
         label: "预付费",

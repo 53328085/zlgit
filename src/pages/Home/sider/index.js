@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import styled from 'styled-components'
-import {monitoring, energy, devops} from './menus'
+import {monitoring, energy, devops, electric, distribution} from './menus'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
@@ -49,7 +49,9 @@ export default function Sider() {
   const menuList = {
     monitoring,
     energy,
-    devops
+    devops,
+    electric,
+    distribution
   }
   const [menus, setMenus] = useState(menuList['monitoring'])
   const [path, setPath] = useState('monitoring')
