@@ -12,7 +12,7 @@ export default function Index() {
           <RadioTree/>
           
           <div className={style.usagetable}>
-            <Bluecolumn name='损耗分析'/>
+            <Bluecolumn name='能耗用量'/>
             <div style={{height:'16px'}}></div>
             <Usagetable/>
           </div>

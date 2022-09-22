@@ -3,7 +3,6 @@ import style from './style.module.less'
 import imgurl from '@imgs/index.js'
 import { Button, } from 'antd'
 import  EZUIKit from 'ezuikit-js'; 
-import video from '@imgs/video.gif'
 import {themeData} from './themeData'
 export default function Videolist({showModal,setplay}) {
   
