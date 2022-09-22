@@ -5,11 +5,15 @@ import {selectUser} from '@redux/user'
 import monitoringRoutes from "./monitoring";
 import energyRoutes from "./energy";
 import devopsRoutes from './devops'
+import electricRoutes from "./electric";
+import distributionRoutes from "./distribution";
 const Login = lazy(() => import("../pages/Login"))
 const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
+const Electric = lazy(() => import("../pages/electric/index"))
+const Distribution = lazy(() => import("../pages/distribution/index"))
 const Energy = lazy(() => import("../pages/energy/index"))
 const Devops = lazy(() => import("../pages/devops/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
@@ -48,17 +52,27 @@ const routes =  [
         },
         {
           path: 'monitoring', // 运行监控
-          element: <Monitoring><Navigate to='outline' replace={true}></Navigate> </Monitoring>, // 父组件的默认子路由
+          element: <Monitoring><Navigate to='outline' replace={true}></Navigate> </Monitoring>, 
           children: monitoringRoutes
         },
         {
+          path: 'electric', // 电气安全
+          element: <Electric><Navigate to='safe' replace={true}></Navigate> </Electric>, 
+          children: electricRoutes
+        },
+        {
+          path: 'distribution', // 配电管理
+          element: <Distribution><Navigate to='summary' replace={true}></Navigate> </Distribution>, 
+          children: distributionRoutes
+        },
+        {
           path: 'energy', // 能源管理
-          element: <Energy><Navigate to='summary' replace={true}></Navigate> </Energy>, // 父组件的默认子路由
+          element: <Energy><Navigate to='summary' replace={true}></Navigate> </Energy>, 
           children: energyRoutes
         },
         {
           path: 'devops', // 运维管理管理
-          element: <Devops><Navigate to='summary' replace={true}></Navigate> </Devops>, // 父组件的默认子路由
+          element: <Devops><Navigate to='summary' replace={true}></Navigate> </Devops>, 
           children: devopsRoutes
         }
       ]
