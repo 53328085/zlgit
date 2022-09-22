@@ -9,7 +9,7 @@ import React from 'react'
         title: '工单编号',
         dataIndex: 'number',
         key: 'number',
-        render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
+        // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
         title: '状态',
