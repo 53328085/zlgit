@@ -12,43 +12,23 @@ import imgurl from './icon'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-columns: 458px 1206px; 
+  grid-template-rows: 176px 304px 267px; 
   column-gap: 16px;
   justify-content: flex-end;
-  .left {
+  .upper {
     display: grid;
-    grid-template-rows: 336px 448px;
-    row-gap: 16px;
-    .plist {
-      padding-top: 16px;
-      height: 100%;
-      display: grid;
-      grid-template-rows: repeat(3, 112px);
-      row-gap: 16px;
-      .item {
-        border: 1px solid #dedede;
-        padding: 8px;
-        display: grid;
-        grid-template-columns: 107px 1fr;
-        column-gap: 8px;
-        .itemR {
-           height: 87px;
-           display: flex;
-           flex-direction: column;
-           justify-content: space-between;
-           div.sub{
-             display: grid;
-             grid-template-columns: 1fr 1fr;
-             color: #666;
-             grid-template-rows: 19px;
-             align-items: center;
-             span {
-              line-height: 19px;
-             }
-           }
-        }
-      }
-    }
+    grid-template-columns: 420px repeat(7, 176px);
+    column-gap: 16px;
+  }
+  .middle {
+    display: grid;
+    grid-template-columns: 808px 375px 464px;
+    column-gap: 16px;
+  }
+  .lower {
+    display: grid;
+    grid-template-columns: repeat(3, 550px);
+    column-gap: 16px;
   }
   .rigth {
     display: grid;
@@ -274,137 +254,9 @@ export default function Index() {
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
         <Mainbox>
-         <div className='left'>
-             <Titlelayout title={'实时负荷率'}  >
-             
-                 <div ref={guref} style={{height: '270px'}}>
-                  
-                 </div>
-                  
-             </Titlelayout>
-           
-             <Titlelayout title={'变压器状态'}>
-                 <div className='plist'>
-                     <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>1#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>2#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>3#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                 </div>
-                 
-                  
-             </Titlelayout>
-         </div>
-
-         <div className='rigth'>
-           <div className='upper'>
-              <div>
-                <Image src={imgurl.z02} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>配电房容量(kvA)</span>
-                   <span>8000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z03} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>申报需量 (kW)</span>
-                   <span>7000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z04} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>电压等级 (kV)</span>
-                   <span>10/0.4</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z05} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>变压器 (台)</span>
-                   <span>3</span>
-                </div>
-              </div>
-           </div>
-           <div className='lower'>
-              <div className='control'>
-                <Radiogroup options={options} onChange={onChange} value={value} optionType="button" />
-                <Radiogroup options={options2} onChange={onChange2} value={value2} optionType="button" />
-              </div>
-              <div ref={bref}></div>
-           </div>
-         </div>
+            <div className='upper'></div>
+            <div className='middle'></div>
+            <div className='lower'></div>
          </Mainbox>
       </Pagecount>
     </CustContext.Provider>

@@ -5,225 +5,73 @@ import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Radio} from 'antd'
+import {Form, Image, Timeline, Typography} from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
 import imgurl from './icon'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-columns: 458px 1206px; 
-  column-gap: 16px;
+  grid-template-rows: 176px 304px 267px; 
+  row-gap: 16px;
   justify-content: flex-end;
-  .left {
+  .upper {
     display: grid;
-    grid-template-rows: 336px 448px;
-    row-gap: 16px;
-    .plist {
-      padding-top: 16px;
+    grid-template-columns: 420px repeat(7, 176px);
+    column-gap: 16px;
+    .item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
       height: 100%;
-      display: grid;
-      grid-template-rows: repeat(3, 112px);
-      row-gap: 16px;
-      .item {
-        border: 1px solid #dedede;
-        padding: 8px;
-        display: grid;
-        grid-template-columns: 107px 1fr;
-        column-gap: 8px;
-        .itemR {
-           height: 87px;
-           display: flex;
-           flex-direction: column;
-           justify-content: space-between;
-           div.sub{
-             display: grid;
-             grid-template-columns: 1fr 1fr;
-             color: #666;
-             grid-template-rows: 19px;
-             align-items: center;
-             span {
-              line-height: 19px;
-             }
-           }
-        }
+      color:#333;
+      strong {
+        font-size: 22px;
       }
     }
   }
-  .rigth {
+  .middle {
     display: grid;
-    grid-template-rows: 96px 690px;
-    row-gap: 16px;
-   
-    .upper {
-      display: grid;
-      grid-template-columns: repeat(4, 290px);
-      grid-template-rows: 96px;
-      column-gap: 16px;
-       >div {
-        background-color: #fff;
-        border: 1px solid #dedede;
-        border-radius: 4px;
-        padding: 16px;
-        display: grid;
-        grid-template-columns: 48px 1fr;
-        column-gap: 32px;
-        grid-template-rows: 1fr;
-        align-items: center;
-        .content {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          line-height: 1;
-          span:first-of-type{
-             color:#999;
-             font-size: 16px;
-          }
-          span:last-of-type{
-            color:#515151;
-            font-size: 26px;
-          }
-        }
-       }
-    }
-    .lower {
-      display: grid;
-      grid-template-rows: 32px 658px;
-      grid-template-columns: 1206px;
-      .control {
-        display: flex;
-        justify-content: space-between;
-        background-color: #fff;
-      }
-    }
+    grid-template-columns: 808px 375px 464px;
+    column-gap: 16px;
   }
-
- 
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      height: 100%;    
-      .cl {
-        display: flex;
-        align-items: center;
-        color:#515151;
-        font-size: 32px;
-        font-weight: bold;
-      }
-    }`
-
-   
-const Radiogroup = styled(Radio.Group)`
-
- .ant-radio-button-wrapper {
-  min-width: 100px;
-  text-align: center;
-  height: 32px;
-  line-height: 32px;
-  background-color: #237ae4;
-  border-color:#237ae4;
-  color: #fff; 
-  font-size: 14px;
-  span {
-    font-size: 14px;
+  .lower {
+    display: grid;
+    grid-template-columns: repeat(3, 550px);
+    column-gap: 16px;
   }
- }
- .ant-radio-button-wrapper-checked {
-   background-color: #003399;
-   border-color:#003399;
-   &:hover {
-    color:#fff;
-    border-color:#003399;
-   }
- }
-`
-const gauge = {
- 
-    radius: '85%',
-    legend: {
-      top: 'auto',
-      bottom: 0,
-      icon: 'none',
-      formatter: function (name) {
-        return  '本月最大负荷率:89.2% 发生时间： 2022-7-21 12:32:12'; 
-      },   
-    },
-    tooltip: {
-      trigger: 'item'
-    },
-    grid: {
-       left: 0,
-       right: 0,
-       top: 0,
-       bottom: 0,
-       containLabel: true,
-    },
-    series: [ 
-      {
-        title: {
-  
-        },
-        name: '实时负荷率',
-        type: 'gauge',
-        progress: {
-          show: true
-        },
-        detail: {
-          valueAnimation: true,
-          formatter: '{value}'
-        },
-        data: [
-          {
-            value: 65.2,
-            name: '负荷率%'
-          }
-        ],
-      }
-    ]
+   `
+
+const Timelinebox = styled(Timeline)`
+   max-height: 115px;
+   padding-top: 2px;
+  .ant-timeline-item {
+    padding-bottom: 8px;
   }
+  .title {
+    color:#1e1e1e;
+  }
+  .content {
+    font-size: 12px;
+    color:#6b6b6b;
+  }
+`   
+
+const {Text} = Typography
 
 
 export default function Index() {
   const [form] = Form.useForm()
   const bref = useRef(null)
-  const guref = useRef(null)
-  const options = [
-    {
-      label: '负荷趋势 (kW)',
-      value: '1',
-    },
-    {
-      label: '负荷率(%)',
-      value: '2',
-    },
-    {
-      label: '用电量趋势(kWh)',
-      value: '3',
-    },
-  ];
-  const options2 = [
-    {
-      label: '日',
-      value: 'day',
-    },
-    {
-      label: '月',
-      value: 'month',
-    },
-    {
-      label: '年',
-      value: 'year',
-    },
-  ];
-  const [value, setValue] = useState('1') 
-  const onChange = ({target: {value}}) => {
-    setValue(value)
-  }
-  const [value2, setTime] = useState('day') 
-  const onChange2 = ({target: {value}}) => {
-    console.log(value)
-    setTime(value)
-  }
+  const pref = useRef(null)
+  const stref = useRef(null)
+  const lref = useRef(null)
+  const l2ref = useRef(null)
+  const l3ref = useRef(null)
+
   const grid = {
     // 图表 grid
     left: "0px",
@@ -233,178 +81,296 @@ export default function Index() {
     containLabel: true,
   }
   const datasetMonth = {
-    dimensions: ["time", "派单数", "完成"],
+    dimensions: ["time", "2020", "2019"],
     source: [
-      { time: "1", "派单数": 5600, "完成": 9600 },
-      { time: "2", "派单数": 4600, "完成": 3644 },
-      { time: "3", "派单数": 3600, "完成": 4644 },
-      { time: "4", "派单数": 5611, "完成": 9655 },
-      { time: "5", "派单数": 5644, "完成": 3677 },
-      { time: "6", "派单数": 4677, "完成": 3633 },
-      { time: "7", "派单数": 3688, "完成": 4655 },
-      { time: "8", "派单数": 5088, "完成": 2644 },
-      { time: "9", "派单数": 6677, "完成": 2641 },
-      { time: "10", "派单数": 5866, "完成": 5641 },
-      { time: "11", "派单数": 4677, "完成": 7645 },
-      { time: "12", "派单数": 1877, "完成": 2645 },
+      { time: "1月", "2020": 5600, "2019": 9600 },
+      { time: "2月", "2020": 4600, "2019": 3644 },
+      { time: "3月", "2020": 3600, "2019": 4644 },
+      { time: "4月", "2020": 5611, "2019": 9655 },
+      { time: "5月", "2020": 5644, "2019": 3677 },
+      { time: "6月", "2020": 4677, "2019": 3633 },
+      { time: "7月", "2020": 3688, "2019": 4655 },
+      { time: "8月", "2020": 5088, "2019": 2644 },
+      { time: "9月", "2020": 6677, "2019": 2641 },
+      { time: "10月", "2020": 5866, "2019": 5641 },
+      { time: "11月", "2020": 4677, "2019": 7645 },
+      { time: "12月", "2020": 1877, "2019": 2645 },
     ],
   };
-  const datasetMonthl = {
-    dimensions: ["time", "本月", "上月"],
+  const pieData = [
+    { value: 30.4, name: "支付宝" },
+    { value: 25.7, name: "微信" },
+    { value: 25.6, name: "现金" },
+    { value: 15.6, name: "对公支付" },
+    { value: 5, name: "其他" },
+  ];
+  const datasetStack = {
+    dimensions: ["type", "用电量"],
     source: [
-      { time: "1", "本月": 5600, "上月": 9600 },
-      { time: "2", "本月": 4600, "上月": 3644 },
-      { time: "3", "本月": 3600, "上月": 4644 },
-      { time: "4", "本月": 5611, "上月": 9655 },
-      { time: "5", "本月": 5644, "上月": 3677 },
-      { time: "6", "本月": 4677, "上月": 3633 },
-      { time: "7", "本月": 3688, "上月": 4655 },
-      { time: "8", "本月": 5088, "上月": 2644 },
-      { time: "9", "本月": 6677, "上月": 2641 },
-      { time: "10", "本月": 5866, "上月": 5641 },
-      { time: "11", "本月": 4677, "上月": 7645 },
-      { time: "12", "本月": 1877, "上月": 2645 },
+      {type: "A区1-203", "用电量": 5600, },
+      {type: "A区1-204", "用电量": 4600 },
+      { type: "A区1-205", "用电量": 3600 },
+      { type: "A区1-206", "用电量": 5611 },
+      { type: "A区1-207", "用电量": 5644},
+      { type: "A区1-208", "用电量": 4677 },
+      { type: "A区1-209", "用电量": 3688 },
     ],
   };
+  const datasetMonthe = {
+    dimensions: ["time", "用电量" ],
+    source: [
+      { time: "1", "用电量": 5600 },
+      { time: "2", "用电量": 4600},
+      { time: "3", "用电量": 3600 },
+      { time: "4", "用电量": 5611 },
+      { time: "5", "用电量": 5644 },
+      { time: "6", "用电量": 4677 },
+      { time: "7", "用电量": 3688 },
+      { time: "8", "用电量": 5088 },
+      { time: "9", "用电量": 6677 },
+      { time: "10", "用电量": 5866 },
+      { time: "11", "用电量": 4677 },
+      { time: "12", "用电量": 1877 },
+    ],
+  };
+  const datasetMonthw = {
+    dimensions: ["time", "用水量" ],
+    source: [
+      { time: "1", "用水量": 7600 },
+      { time: "2", "用水量": 4600},
+      { time: "3", "用水量": 1600 },
+      { time: "4", "用水量": 2611 },
+      { time: "5", "用水量": 5644 },
+      { time: "6", "用水量": 4677 },
+      { time: "7", "用水量": 2688 },
+      { time: "8", "用水量": 3088 },
+      { time: "9", "用水量": 4677 },
+      { time: "10", "用水量": 5866 },
+      { time: "11", "用水量": 6677 },
+      { time: "12", "用水量": 7877 },
+    ],
+  };
+  const datasetMonthg = {
+    dimensions: ["time", "天燃气" ],
+    source: [
+      { time: "1", "天燃气": 5600 },
+      { time: "2", "天燃气": 4600},
+      { time: "3", "天燃气": 3600 },
+      { time: "4", "天燃气": 5611 },
+      { time: "5", "天燃气": 5644 },
+      { time: "6", "天燃气": 4677 },
+      { time: "7", "天燃气": 1688 },
+      { time: "8", "天燃气": 2088 },
+      { time: "9", "天燃气": 3677 },
+      { time: "10", "天燃气": 5866 },
+      { time: "11", "天燃气": 4677 },
+      { time: "12", "天燃气": 7877 },
+    ],
+  };
+  const fs = {
+    hv: '24px',
+    fc: '#333'
+  }
 
   useEffect(() => {
-    drawEcharts(guref.current,  {...gauge, type: 2})
+    drawEcharts(lref.current, {
+      color: ["#5e92f9"],
+      dataset: datasetMonthe,
+      series: [{ type: "line" }],
+      grid: {
+        top: '30px',
+        left: 0,
+        right: 0,
+        bottom: '0',
+        containLabel: true,
+      },
+      legend: {
+        top: 0,
+       // bottom: 0,
+        icon: 'rect',
+        itemHeight: 2,
+        itemWidth: 12,
+        itemGap: 20,
+      }
+    })
+    drawEcharts(l2ref.current, {
+      color: ["#099c9c"],
+      dataset: datasetMonthw,
+      series: [{ type: "line" }],
+      grid: {
+        top: '30px',
+        left: 0,
+        right: 0,
+        bottom: '0',
+        containLabel: true,
+      },
+      legend: {
+        top: 0,
+       // bottom: 0,
+        icon: 'rect',
+        itemHeight: 2,
+        itemWidth: 12,
+        itemGap: 20,
+      }
+    })
+    drawEcharts(l3ref.current, {
+      color: ["#ff6803"],
+      dataset: datasetMonthg,
+      series: [{ type: "line" }],
+      grid: {
+        top: '30px',
+        left: 0,
+        right: 0,
+        bottom: '0',
+        containLabel: true,
+      },
+      legend: {
+        top: 0,
+       // bottom: 0,
+        icon: 'rect',
+        itemHeight: 2,
+        itemWidth: 12,
+        itemGap: 20,
+      }
+    })
+    drawEcharts(bref.current, {
+      dataset: datasetMonth,
+      series: [{ type: "bar",barGap: 0 }, { type: "bar", barGap: 0 }],
+      grid,
+      legend: {
+      
+        icon: 'rect',
+        itemHeight: 8,
+        itemWidth: 8,
+        itemGap: 20
+      }
+    })  
+    drawEcharts(pref.current,  {pieData: {data: pieData, radius: '65%'}, type: 3, legend: {
+       top: 'auto',
+       bottom: 0,
+      
+    }}) 
+    drawEcharts(stref.current, {
+      xAxis: {
+          type: 'value',
+          
+        },
+        yAxis: {
+          type: 'category',
+          axisLabel: {
+              color:"#545454"
+          },
+        },    
+    dataset: datasetStack,
+    series: [{ type: "bar",  stack: 'total', barWidth:20, itemStyle: {
+      borderRadius: 10
+    } }],
+    grid: {
+      top: '10px',
+      bottom: "0px",
+      right: '0px',
+      left: '0px',
+      containLabel: true,
+    },
+    legend: {   
+      show: false
+    }
+  })   
   })
+ 
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
         <Mainbox>
-         <div className='left'>
-             <Titlelayout title={'实时负荷率'}  >
-             
-                 <div ref={guref} style={{height: '270px'}}>
+            <div className='upper'>
+                <Titlelayout title={'最新告警'} {...fs}>
+                  <Timelinebox>
+                    <Timeline.Item>
+                        <div>
+                          <p className='title'>13:48:55  客户欠费</p>
+                          <p className='content'>02303  张三 / 13588455699  欠费 100.32元</p>
+                        </div>
+                    </Timeline.Item>
+                    <Timeline.Item>
+                        <div>
+                          <p className='title'>13:20:23  客户欠费</p>
+                          <p className='content'>02304  李四 / 13588455699  欠费 100.32元</p>
+                        </div>
+                    </Timeline.Item>
+                    <Timeline.Item>
+                        <div>
+                          <p className='title'>02305</p>
+                          <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p>
+                        </div>
+                    </Timeline.Item>         
+                  </Timelinebox>
                   
-                 </div>
-                  
-             </Titlelayout>
-           
-             <Titlelayout title={'变压器状态'}>
-                 <div className='plist'>
-                     <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>1#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>2#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>3#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                 </div>
-                 
-                  
-             </Titlelayout>
-         </div>
-
-         <div className='rigth'>
-           <div className='upper'>
-              <div>
-                <Image src={imgurl.z02} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>配电房容量(kvA)</span>
-                   <span>8000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z03} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>申报需量 (kW)</span>
-                   <span>7000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z04} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>电压等级 (kV)</span>
-                   <span>10/0.4</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z05} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>变压器 (台)</span>
-                   <span>3</span>
-                </div>
-              </div>
-           </div>
-           <div className='lower'>
-              <div className='control'>
-                <Radiogroup options={options} onChange={onChange} value={value} optionType="button" />
-                <Radiogroup options={options2} onChange={onChange2} value={value2} optionType="button" />
-              </div>
-              <div ref={bref}></div>
-           </div>
-         </div>
+            </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home1} preview={false} width={64} height={64}></Image>
+                 <span>昨日能源金额 (元)</span>
+                 <Text strong ellipsis>125896.300</Text>
+               </div>
+           </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home2} preview={false} width={64} height={64}></Image>
+                 <span>昨日物业金额 (元)</span>
+                 <Text strong ellipsis>15896.01</Text>
+               </div>
+           </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home3} preview={false} width={64} height={64}></Image>
+                 <span>客户总数 (户)</span>
+                 <Text strong ellipsis>125</Text>
+               </div>
+           </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home4} preview={false} width={64} height={64}></Image>
+                 <span>欠费客户 (户)</span>
+                 <Text strong ellipsis>3</Text>
+               </div>
+           </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home5} preview={false} width={64} height={64}></Image>
+                 <span>账户余额总计</span>
+                 <Text strong ellipsis>122325</Text>
+               </div>
+           </Titlelayout>
+           <Titlelayout>
+               <div className='item'>
+                <Image src={imgurl.home6} preview={false} width={64} height={64}></Image>
+                 <span>账户欠费总计</span>
+                 <Text strong ellipsis>-205.6</Text>
+               </div>
+           </Titlelayout>
+            </div>
+            <div className='middle'>
+              <Titlelayout title={'项目收入趋势'} extra={'详情'} {...fs}>
+               <div ref={bref} style={{width: '100%', height: '100%'}}></div>
+               </Titlelayout>
+               <Titlelayout title={'支付方式'}   {...fs}>
+                 <div ref={pref} style={{width: '100%', height: '100%'}}></div>
+               </Titlelayout>
+               <Titlelayout title={'房间累计能耗排名(kwh)'}   {...fs} extra={'用电量'}>
+                 <div ref={stref} style={{width: '100%', height: '100%'}}></div>
+               </Titlelayout>
+            </div>
+            <div className='lower'>
+            <Titlelayout title={'用电量趋势'}   {...fs} extra={'详情'}>
+                <div ref={lref} style={{width: '100%', height: '100%'}}></div>
+                </Titlelayout>
+                <Titlelayout title={'用水量趋势'}   {...fs} extra={'详情'}>
+                    <div ref={l2ref}  style={{width: '100%', height: '100%'}}></div>
+                </Titlelayout>
+                <Titlelayout title={'用气趋势'}   {...fs} extra={'详情'}>
+                <div ref={l3ref}  style={{width: '100%', height: '100%'}}></div>
+                </Titlelayout>
+            </div>
          </Mainbox>
       </Pagecount>
     </CustContext.Provider>
