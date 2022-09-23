@@ -1,0 +1,51 @@
+.container{
+    width: 100%;
+    .header{
+       height: 48px;
+       line-height: 48px;
+       background-color: #fff;
+       border: 1px solid #cccccc;
+       padding: 0 16px;
+    }
+    .content{
+        margin-top: 16px;
+        .contentTable{
+            height: 740px;
+            border: 1px solid #cccccc;
+            margin-top: -1px;
+            background-color: #fff;
+            padding: 16px;
+        }
+    }
+}
+.dash{
+    width: 100%;
+    margin: 16px 0;
+  
+}
+.tableArea{
+    display: flex;
+    .message{
+        width: 380px;
+    }
+    .accountRecord{
+        margin-left:300px;
+        .moneyNum{
+            display: grid;
+            grid-template-rows:repeat(2,1fr);
+            grid-template-columns: repeat(3,1fr);
+            grid-gap: 16px;
+            margin: 16px 0;
+            .moneydiv{
+                width: 120px;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+                border: 1px solid #aeaeae;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+       
+    }
+}

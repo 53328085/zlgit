@@ -5,6 +5,7 @@ import UserTable from '@com/useTable'
 import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import { Warning } from '@api/api'
+import BlueColumn from '@com/bluecolumn'
 const { Search } = Input;
 export default function Warncontent({ style }) {
     const param = {
@@ -33,14 +34,7 @@ export default function Warncontent({ style }) {
     return (
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
-                <Search
-                    placeholder="请输入设备编号/安装地址"
-                    allowClear
-                    enterButton={<><SearchOutlined />&nbsp; 查询</>}
-                    size="default"
-                    style={{ width: 356 }}
-                />
-                <Button size='default' style={{ width: 96 }}>导出</Button>
+                <BlueColumn name="告警信息"/>
             </div>
             <div style={{ marginTop: 16 }}>
                 <UserTable columns={columns} {...tableProps} rowKey="sn" ></UserTable>
