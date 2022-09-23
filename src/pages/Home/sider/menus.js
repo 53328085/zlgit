@@ -2,7 +2,7 @@
  const Micon = () => {
     return <span className="custicon">&#9673;</span>
  }
- export  const monitoring = [
+ export  const monitoring = [ // 运行监控
     {
       label: '运行概述' ,
       key: "outline",
@@ -57,7 +57,7 @@
 
 
 
-   export  const energy = [
+   export  const energy = [ // 能源管理
     {
       label: '能源概述' ,
       key: "summary",
@@ -112,7 +112,7 @@
         icon: <Micon />
     },
    ]
-   export  const devops = [
+   export  const devops = [ // 运维管理
     {
       label: '运维概述' ,
       key: "summary",
@@ -140,7 +140,7 @@
        
     },
    ]
-   export  const electric = [
+   export  const electric = [ // 电气安全
     {
       label: '安全概述' ,
       key: "safe",
@@ -153,7 +153,7 @@
     },
    ]
 
-   export  const distribution = [
+   export  const distribution = [ // 配电管理
     {
       label: '配电概述' ,
       key: "summary",
@@ -195,3 +195,84 @@
       icon: <Micon />
     },
    ]
+
+   export  const prepayment = [ // 结算收费
+   {
+     label: '概述' ,
+     key: "summary",
+     icon: <Micon />
+   },
+   {
+     label: '客户管理',
+     key: "customer",
+     icon: <Micon />
+   },
+   {
+     label: '能源收费',
+     key: "charge",
+     icon: <Micon />
+   },
+   {
+     label: '物业收费',
+     key: "property",
+     icon: <Micon />
+   },
+   {
+     label: '账单报表',
+     key: "bill",
+     icon: <Micon />
+   },
+   {
+     label: '数据报表',
+     key: "data",
+     icon: <Micon />
+   },
+   {
+     label: '手动抄表',
+     key: "reading",
+     icon: <Micon />
+   },
+   {
+    label: '充值补助',
+    key: "recharge",
+    icon: <Micon />
+   },
+   {
+     label: '运行报告',
+     key: "run",
+     icon: <Micon />
+   },
+  ]
+  export  const photovoltaic = [ // 光伏发电
+  {
+    label: '概述' ,
+    key: "summary",
+    icon: <Micon />
+  },
+  {
+    label: '运行监控',
+    key: "monitor",
+    icon: <Micon />
+  },
+  {
+    label: '数据分析',
+    key: "analysis",
+    icon: <Micon />
+  },
+  {
+    label: '环境监测',
+    key: "surroundings",
+    icon: <Micon />
+  },
+  {
+    label: '告警监控',
+    key: "warn",
+    icon: <Micon />
+  },
+  {
+    label: '运行报告',
+    key: "run",
+    icon: <Micon />
+  },
+  
+ ]
