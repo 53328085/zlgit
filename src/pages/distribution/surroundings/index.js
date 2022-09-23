@@ -4,6 +4,7 @@ import { Select, Button, DatePicker } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import * as echarts from "echarts";
 import updateImg from './updateImg.png'
+import ItemCard from './itemCard'
 
 export default function Index() {
   const {Option} = Select;
@@ -97,6 +98,15 @@ export default function Index() {
             <Button size='middle' type='primary' icon={<SearchOutlined />}>查询</Button>
           </div>
           <div className={style.lineChart} id='lineChart'></div>
+        </div>
+        <div className={style.bottomContent}>
+          <ItemCard title={'环境温度'} desc={'正常'} value={'28.5℃'}></ItemCard>
+          <ItemCard title={'环境湿度'} desc={'正常'} value={'56.2%'}></ItemCard>
+          <ItemCard title={'水浸监测'} desc={'无水'} value={''}></ItemCard>
+          <ItemCard title={'烟感监测'} desc={'无烟'} value={''}></ItemCard>
+          <ItemCard title={'噪音监测'} desc={'正常'} value={'56/72 bB'}></ItemCard>
+          <ItemCard title={'明火监测'} desc={'无明火'} value={''}></ItemCard>
+          <ItemCard title={'门禁监控'} desc={'门关闭'} value={'2022-09-23 14:45:25'}></ItemCard>
         </div>
       </div>
     </div>
