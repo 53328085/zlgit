@@ -15,7 +15,7 @@
         display: flex;
         .transformList{
             width:264px;
-            height: 780px;
+            height: 950px;
             background-color: #fff;
             border: 1px solid #cccccc;
             border-radius: 4px;
@@ -35,9 +35,28 @@
                         justify-content: space-between;
                         background-color: #237ae4;
                         color: #fff;
-                        align-items: center;
                         .totaltype{
                             display: flex;
+                            height: inherit;
+                            align-items: center;
+                            .type{
+                                width:112px;
+                                text-align: center;
+                                height:100%;
+                                line-height:32px;
+                                border-left:1px solid #3399cc;
+                                border-right:1px solid #3399cc;
+                                margin-left:-1px;
+                                cursor: pointer;
+                            }
+                            .activetype{
+                                background-color: #003399;
+                                color: #fff;
+                            }
+                            .datetype{
+                                width: 86px;
+                               
+                            }
                         }
                     }
                    
@@ -48,6 +67,10 @@
             .transformerTable{
                 :global(.ant-empty-normal){
                     margin: 0;
+                }
+                :global(th.ant-table-cell){
+                    background-color: #237ae4;
+                    color: #fff;
                 }
             }
         }
