@@ -7,6 +7,8 @@ import energyRoutes from "./energy";
 import devopsRoutes from './devops'
 import electricRoutes from "./electric";
 import distributionRoutes from "./distribution";
+import prepaymentRoutes from "./prepayment";
+import photovoltaicRoutes from "./photovoltaic";
 const Login = lazy(() => import("../pages/Login"))
 const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
@@ -16,6 +18,8 @@ const Electric = lazy(() => import("../pages/electric/index"))
 const Distribution = lazy(() => import("../pages/distribution/index"))
 const Energy = lazy(() => import("../pages/energy/index"))
 const Devops = lazy(() => import("../pages/devops/index"))
+const Prepayment = lazy(() => import("../pages/prepayment/index"))
+const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
@@ -74,6 +78,16 @@ const routes =  [
           path: 'devops', // 运维管理管理
           element: <Devops><Navigate to='summary' replace={true}></Navigate> </Devops>, 
           children: devopsRoutes
+        },
+        {
+          path: 'prepayment', // 结算收费
+          element: <Prepayment><Navigate to='summary' replace={true}></Navigate> </Prepayment>, 
+          children: prepaymentRoutes
+        },
+        {
+          path: 'photovoltaic', // 光伏发电
+          element: <Photovoltaic><Navigate to='summary' replace={true}></Navigate> </Photovoltaic>, 
+          children: photovoltaicRoutes
         }
       ]
     },

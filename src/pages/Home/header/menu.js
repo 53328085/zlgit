@@ -72,10 +72,14 @@ export default function Hmenu() {
         path: 'distribution'
     },
     {
-        label: "预付费",
-        key: "replay",
+        label: "结算收费",
+        key: "/index/prepayment/summary",
         icon: <Ciocn url={current == '/index' ? h05 : n05} />,
-        className: 'custsubmenu'
+        className: 'custsubmenu',
+        danger: true,
+        active: 'summary',
+        title: '配电概述',
+        path: 'prepayment'
     },
     {
         label: "能源管理",
@@ -89,9 +93,13 @@ export default function Hmenu() {
     },
     {
         label: "光伏发电",
-        key: "photovoltaic",
+        key: "/index/photovoltaic/summary",
         icon: <Ciocn url={current == '/index' ? h07 : n07} />,
-        className: 'custsubmenu'
+        className: 'custsubmenu',
+        danger: true,
+        active: 'summary',
+        title: '概述',
+        path: 'photovoltaic'
     },
     {
         label: "碳排管理",
