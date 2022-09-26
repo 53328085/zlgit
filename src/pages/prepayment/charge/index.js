@@ -1,8 +1,9 @@
-import React from 'react'
+import React,{useState} from 'react'
 import style from './style.module.less'
 import {Select,Tabs } from 'antd'
 import styled from 'styled-components'
 import EnergyRecord from './energyRecord'
+import Refund from './refund'
 const {Option} =Select
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
@@ -34,13 +35,14 @@ const Tabsbox = styled(Tabs)`
 }
 `
 export default function Index() {
+  const [section,setSection] = useState('device')
   const tabs = [{label:"能源账户充值",key:'customer'},{label:'退费',key:'device'}]
   const TabsEl = () => {
     if (!tabs) return null  
     return (
        <Tabsbox  
-      //  onChange={onChange} 
-      //  defaultActiveKey={value} 
+       onChange={onChange} 
+       defaultActiveKey={section} 
        animated 
        tabBarGutter={16} 
        type="card"
@@ -50,6 +52,9 @@ export default function Index() {
        </Tabsbox>
     )
 } 
+const onChange=(v)=>{
+  setSection(v)
+}
   return (
     <div className={style.container}>
       <div className={style.header}>
@@ -61,7 +66,10 @@ export default function Index() {
       <div className={style.content}>
         <TabsEl></TabsEl>
         <div className={style.contentTable}>
-            <EnergyRecord/>
+          {
+            section==='customer'?<EnergyRecord/>:<Refund/>
+          }
+            
         </div>
       </div>
      

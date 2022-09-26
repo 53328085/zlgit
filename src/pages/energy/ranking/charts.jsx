@@ -3,24 +3,24 @@ import {Bar} from '@ant-design/plots';
 export default function Charts() {
     let data = [
         {
-          year: '1951 年',
+          year: '生产车间2',
           value: 38,
           title:'用电量'
         },
         {
-          year: '1952 年',
+          year: '研发3号楼',
           value: 52,
         },
         {
-          year: '1956 年',
+          year: '行政1号楼',
           value: 61,
         },
         {
-          year: '1957 年',
+          year: '保安室',
           value: 145,
         },
         {
-          year: '1958 年',
+          year: '无聊仓库',
           value: 48,
         },
       ];
