@@ -5,29 +5,29 @@ import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Radio} from 'antd'
+import {Form, Image, } from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
 import imgurl from './icon'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-rows: 176px 304px 267px; 
+  grid-template-rows: 184px 280px 304px; 
   column-gap: 16px;
   justify-content: flex-end;
   .upper {
     display: grid;
-    grid-template-columns: 420px repeat(7, 176px);
+    grid-template-columns: 332px repeat(7, 1fr);
     column-gap: 16px;
   }
   .middle {
     display: grid;
-    grid-template-columns: 808px 375px 464px;
+    grid-template-columns: 385px 200px 832px;
     column-gap: 16px;
   }
   .lower {
     display: grid;
-    grid-template-columns: repeat(3, 550px);
+    grid-template-columns: repeat(2, 832px);
     column-gap: 16px;
   }
   .rigth {
@@ -93,30 +93,7 @@ const Mainbox = styled.div`
     }`
 
    
-const Radiogroup = styled(Radio.Group)`
 
- .ant-radio-button-wrapper {
-  min-width: 100px;
-  text-align: center;
-  height: 32px;
-  line-height: 32px;
-  background-color: #237ae4;
-  border-color:#237ae4;
-  color: #fff; 
-  font-size: 14px;
-  span {
-    font-size: 14px;
-  }
- }
- .ant-radio-button-wrapper-checked {
-   background-color: #003399;
-   border-color:#003399;
-   &:hover {
-    color:#fff;
-    border-color:#003399;
-   }
- }
-`
 const gauge = {
  
     radius: '85%',
@@ -246,16 +223,39 @@ export default function Index() {
       { time: "12", "本月": 1877, "上月": 2645 },
     ],
   };
-
+  const weather = () => {
+    const script = document.createElement('script')
+    script.src = 'https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0'
+    script.type = 'text/javascript'
+    script.async=true
+    document.head.append(script)
+  }
   useEffect(() => {
     drawEcharts(guref.current,  {...gauge, type: 2})
-  })
+    weather()
+    const WIDGET = {
+      "CONFIG": {
+        "layout": "1",
+        "width": "400",
+        "height": "280",
+        "background": "3",
+        "dataColor": "FFFFFF",
+        "key": "1a59003a160c4614b88500e1acb22bef"
+      }
+    }
+
+  }, [])
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
         <Mainbox>
-            <div className='upper'></div>
-            <div className='middle'></div>
+            <div className='upper'>
+                <Image src={imgurl.pv} size={332} height={184}></Image>
+                
+            </div>
+            <div className='middle'>
+               <div id="he-plugin-standard" style={{width: '400px', height: '280px'}}></div>
+            </div>
             <div className='lower'></div>
          </Mainbox>
       </Pagecount>
