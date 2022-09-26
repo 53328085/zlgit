@@ -274,6 +274,10 @@ export default function Index() {
     },
     legend: {   
       show: false
+    },
+    label: {
+      show: true,     
+      formatter: '{@[1]}kwh'
     }
   })   
   })

@@ -1,17 +1,18 @@
 import React, {Suspense, lazy} from 'react'
-import {BrowserRouter, Navigate} from 'react-router-dom'
+// import {BrowserRouter, Navigate} from 'react-router-dom'
+import {HashRouter, Navigate} from 'react-router-dom'
 
 import Loading from './pages/Loading';
 import EL, {LoginRouter} from './router'
 
 function App() {
 
-  return   (<BrowserRouter>
+  return   (<HashRouter>
      <Suspense fallback={<Loading/>}>
          <EL/>
         
      </Suspense>    
-    </BrowserRouter>) 
+    </HashRouter>) 
    
 
   }

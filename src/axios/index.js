@@ -4,8 +4,7 @@ import store from '../redux/store'
 import {useNavigate} from 'react-router-dom'
 //const token = store.getState().user.token
 //console.log(token)
-const Login = () => {
-    console.log(1111)
+const Login = () => {  
     const navigate = useNavigate()
     return navigate('/')
 }

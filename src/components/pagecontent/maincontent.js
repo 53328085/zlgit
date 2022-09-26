@@ -3,7 +3,6 @@ import {Tabs} from 'antd'
 import CustContext from '../content'
 
 import styled from 'styled-components'
-import { set } from 'lodash'
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
@@ -52,8 +51,8 @@ export default function Maincontent(props) {
     setvalue(key)
  }
  const TabsEl = () => {
-     if (!tabs) return null  
-    console.log(value)
+    console.log(tabs)
+     if (!tabs) return null    
      return (
         <Tabsbox  
         onChange={onChange} 
