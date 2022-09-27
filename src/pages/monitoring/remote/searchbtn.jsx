@@ -19,7 +19,8 @@ export default function Searchbtn(props) {
         setswitching(!switching)
     }
     const log=()=>{
-        navigate('/index/monitoring/oplog')
+        navigate('/index/monitoring/oplog',{state:{title:'操作日志',selectedKeys:'oplog',path:'monitoring'}})
+        // navigate(`/index/${path}/` + e.key, {state: {title: label, selectedKeys: e.key, path}})
     }
     return (
         <>

@@ -12,12 +12,13 @@ export default function Index(props) {
     return () => document.title= 'NES600智慧能源服务平台'
   },[location])  
   const index = useMemo(() => location?.state?.index, [location.state]);
+  console.log(index)
   let Defaultlayout = (
     <DefaultLayout       
       custheader= {<Header istitle={true}/>}
     >
     <Outlet/>
-   </DefaultLayout>
+   </DefaultLayout> 
   )
   let Projectlayout = (
     <ProjectLayout {...props} custheader= {<Header istitle={false}/>}  custsider={<Sider />}>

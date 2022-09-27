@@ -11,8 +11,6 @@ const { Option } = Select;
 
 export default function Index() {
   const [activeIndex, setActiveIndex] = useState(0) //变压器切换
-  const [typeIndex,setTypeIndex] = useState(0) //参数类型
-  const [typeDate,setTypeDate] = useState(0) //日期类型
   const list = [
     {
       name: '1#变压器',
@@ -43,12 +41,7 @@ export default function Index() {
     activeIndex,
     choose
   }
-  const SelectHeaderProps={
-    typeIndex,
-    setTypeIndex,
-    typeDate,
-    setTypeDate
-  }
+
   return (
     <div className={style.transform}>
       <div className={style.transformheader}>
@@ -75,8 +68,8 @@ export default function Index() {
             <UseTable columns={columns} bordered className={style.transformerTable}></UseTable>
           </div>
           <div className={style.chartArea}>
-            <SelectHeader {...SelectHeaderProps} type={type}/>
-            <SelectHeader {...SelectHeaderProps} type={type}/>
+            <SelectHeader type={type}/>
+            <SelectHeader type={[{name:'变压器温度',value:0}]}/>
           </div>
         </div>
 
