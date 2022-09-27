@@ -103,9 +103,13 @@ export default function Hmenu() {
     },
     {
         label: "碳排管理",
-        key: "CO2",
+        key: "/index/carbon/monitor",
         icon: <Ciocn url={current == '/index' ? h08 : n08} />,
-        className: 'custsubmenu'
+        className: 'custsubmenu',
+        danger: true,
+        active: 'monitor',
+        title: '运行监控',
+        path: 'carbon'
     },
 
     {
@@ -119,12 +123,12 @@ export default function Hmenu() {
       path: 'devops'
    },
     
-    {
+   /*  {
         label: "后台管理",
         key: "adimin",
         icon: <Ciocn url={current == '/index' ? h10 : n10} />,
         className: 'custsubmenu'
-    }] 
+    } */] 
   const onSelect = (e) => {
       let key = e.key
       SetCurrent(key) 
