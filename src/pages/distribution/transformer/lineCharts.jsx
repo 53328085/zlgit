@@ -1,61 +1,75 @@
 import React from 'react'
 import { Line } from '@ant-design/plots';
 export default function LineCharts() {
-    const data=[{
+    const line1 = [
+      {
         "date": "2018/8/12",
-        "type": "register",
+        "type": "A相电流",
         "value": 3491
       },
       {
+        "date": "2018/8/13",
+        "type": "A相电流",
+        "value": 2852
+      },
+      {
+        "date": "2018/8/14",
+        "type": "A相电流",
+        "value": 4788
+      },
+      {
+        "date": "2018/8/15",
+        "type": "A相电流",
+        "value": 4319
+      },
+    ]
+    const line2 = [
+      {
         "date": "2018/8/12",
-        "type": "bill",
+        "type": "B相电流",
         "value": 456
       },
       {
         "date": "2018/8/13",
-        "type": "download",
-        "value": 6419
-      },
-      {
-        "date": "2018/8/13",
-        "type": "register",
-        "value": 2852
-      },
-      {
-        "date": "2018/8/13",
-        "type": "bill",
+        "type": "B相电流",
         "value": 689
       },
       {
         "date": "2018/8/14",
-        "type": "download",
-        "value": 1643
-      },
-      {
-        "date": "2018/8/14",
-        "type": "register",
-        "value": 4788
-      },
-      {
-        "date": "2018/8/14",
-        "type": "bill",
+        "type": "B相电流",
         "value": 280
       },
       {
         "date": "2018/8/15",
-        "type": "download",
-        "value": 445
-      },
-      {
-        "date": "2018/8/15",
-        "type": "register",
-        "value": 4319
-      },
-      {
-        "date": "2018/8/15",
-        "type": "bill",
+        "type": "B相电流",
         "value": 176
       }
+    ]
+    const data=[
+      ...line1,
+      ...line2,
+      {
+        "date": "2018/8/12",
+        "type": "C相电流",
+        "value": 6419
+      },
+      {
+        "date": "2018/8/13",
+        "type": "C相电流",
+        "value": 6419
+      },
+      {
+        "date": "2018/8/14",
+        "type": "C相电流",
+        "value": 1643
+      },
+      {
+        "date": "2018/8/15",
+        "type": "C相电流",
+        "value": 445
+      },
+      
+      
     ]
     const config = {
         data,
@@ -78,7 +92,7 @@ export default function LineCharts() {
           shape: 'circle',
         },
         color: ({ type }) => {
-          return type === 'register' ? '#F4664A' : type === 'download' ? '#30BF78' : '#FAAD14';
+          return type === 'A相电流' ? '#F4664A' : type === 'C相电流' ? '#30BF78' : '#FAAD14';
         },
         lineStyle: {
           lineWidth:1

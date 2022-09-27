@@ -1,9 +1,11 @@
-import React from 'react'
+import React,{useState} from 'react'
 import style from './style.module.less'
 import columnpng from '@imgs/columns.png'
 import LineCharts from './lineCharts'
-export default function selectHeader({type,typeIndex,setTypeIndex,typeDate,setTypeDate}) {
-    
+const func=()=>{}
+export default function SelectHeader({type}) {
+    const [typeDate,setTypeDate] = useState(0) //日期类型
+    const [typeIndex,setTypeIndex] = useState(0) //参数类型
     const datetype = [{name:'日',value:0},{name:'月',value:1},{name:'年',value:2}]
     return (
         <div className={style.totalCharts}>
