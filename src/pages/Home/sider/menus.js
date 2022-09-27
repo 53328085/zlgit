@@ -276,3 +276,12 @@
   },
   
  ]
+
+
+ export  const carbon = [ // 碳排管理
+ {
+   label: '运行监控',
+   key: "monitor",
+   icon: <Micon />
+ },
+]

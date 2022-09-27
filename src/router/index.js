@@ -9,6 +9,7 @@ import electricRoutes from "./electric";
 import distributionRoutes from "./distribution";
 import prepaymentRoutes from "./prepayment";
 import photovoltaicRoutes from "./photovoltaic";
+import carbonRoutes from "./carbon"
 const Login = lazy(() => import("../pages/Login"))
 const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
@@ -20,15 +21,15 @@ const Energy = lazy(() => import("../pages/energy/index"))
 const Devops = lazy(() => import("../pages/devops/index"))
 const Prepayment = lazy(() => import("../pages/prepayment/index"))
 const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
+const Carbon = lazy(() => import("../pages/carbon/index"))
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
-
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const loginrouter =  [{
   path: "/login",
   element: <Login />
   }]
-  export const LoginRouter = () => useRoutes(loginrouter)
+ export const LoginRouter = () => useRoutes(loginrouter)
 
  function Redirect() { // 路由守卫
   const {token} = useSelector(selectUser);
@@ -88,6 +89,11 @@ const routes =  [
           path: 'photovoltaic', // 光伏发电
           element: <Photovoltaic><Navigate to='summary' replace={true}></Navigate> </Photovoltaic>, 
           children: photovoltaicRoutes
+        },
+        {
+          path: 'carbon', // 光伏发电
+          element: <Carbon><Navigate to='monitor' replace={true}></Navigate></Carbon>, 
+          children: carbonRoutes
         }
       ]
     },
@@ -98,8 +104,7 @@ const routes =  [
     {
       path: '/config',
       element: <Antdconfig/>
-    },
-   
+    },   
     {
       path: '/form',
       element: <Fform/>

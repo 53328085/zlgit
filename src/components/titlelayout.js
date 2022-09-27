@@ -8,7 +8,7 @@ const Boxdiv = styled(Card)`
   display: grid;
   grid-template-rows: ${(props) => props.title ? `${props.hv || '32px'} 1fr` : '1fr'};
   flex:1;
-  background-color: #fff;
+  background-color: ${(props) =>  props.bgcolor || '#fff'};
   .ant-card-head {
     padding-left: ${({pl}) => pl || '16px'};
     border-left: ${({bl}) => bl || '4px solid #237ae4'};
@@ -38,7 +38,7 @@ const Boxdiv = styled(Card)`
 `
 export default function Titlelayout({title='', children, ...other}) {
   return (
-    <Boxdiv title={title} {...other}>       
+    <Boxdiv title={title} {...other}> 
         {children}
     </Boxdiv>
   )
