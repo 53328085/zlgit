@@ -43,6 +43,11 @@ const Mainbox = styled.div`
     display: grid;
     grid-template-columns: 400px 200px 200px 832px;
     column-gap: 16px;
+    #he-plugin-standard {
+      .wv-lt-refresh {
+        display: none;
+      }
+    }
     .item {
       flex: 1;
       display: grid;
@@ -149,8 +154,7 @@ export default function Index() {
   const plref = useRef(null);
   const lref = useRef(null)
   const stref = useRef(null)
-
-
+  const wref = useRef(null)
   const grid = {
     // 图表 grid
     left: "0px",
@@ -210,15 +214,27 @@ export default function Index() {
       { time: "dec", "累计发电量": 1877, "累计节能减排": 2645 },
     ],
   };
+
   const weather = () => {
+    window.WIDGET = {
+      CONFIG: {
+        layout: "1",
+        width: "400",
+        height: "280",
+        background: "3",
+        dataColor: "FFFFFF",
+        key: "1a59003a160c4614b88500e1acb22bef",
+      },
+    };
     const script = document.createElement("script");
-    script.src =
-      "https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0";
-    script.type = "text/javascript";
-    script.async = true;
+    script.src ="https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0";
+    script.type = "text/javascript";   
     document.head.append(script);
+    
+    
   };
   useEffect(() => {
+    weather();
     drawEcharts(plref.current, {
       toolbox: {
         feature: {
@@ -271,18 +287,12 @@ export default function Index() {
         top: 0,
       },
     });
-    weather();
-    const WIDGET = {
-      CONFIG: {
-        layout: "1",
-        width: "400",
-        height: "280",
-        background: "3",
-        dataColor: "FFFFFF",
-        key: "1a59003a160c4614b88500e1acb22bef",
-      },
-    };
+   
+    
   }, []);
+  useEffect(() => {
+
+  })
   const fs = {
     hv: "24px",
     fc: "#333",
@@ -334,10 +344,7 @@ export default function Index() {
              </Titlelayout>
           </div>
           <div className="middle">
-            <div
-              id="he-plugin-standard"
-              style={{ width: "400px", height: "280px" }}
-            ></div>
+            <div id="he-plugin-standard" ref={wref} ></div>
             <Titlelayout>
               <div className="item">
                 <div className="content">

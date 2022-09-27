@@ -1,10 +1,12 @@
-import React, {useState, useContext, useMemo} from "react";
+import React, {useState, useContext, useMemo, useEffect} from "react";
 
 import { Form, Select, Button, AutoComplete } from "antd";
 
 import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import CustContext from "../content";
+// https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
+
 export default function useSerach(props) {
   const {form, search, setDisplay, display, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
  
@@ -64,6 +66,9 @@ export default function useSerach(props) {
       </Item>)
       : null
       }
+      <Item>
+
+      </Item>
     </Form>
   
     
