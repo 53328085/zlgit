@@ -285,3 +285,36 @@
    icon: <Micon />
  },
 ]
+export  const module = [ // 公共模块
+{
+  label: '项目管理' ,
+  key: "project",
+  icon: <Micon />
+},
+{
+  label: '用户管理',
+  key: "user",
+  icon: <Micon />
+},
+{
+  label: '档案管理',
+  key: "file",
+  icon: <Micon />
+},
+{
+  label: '能耗分类',
+  key: "energy",
+  icon: <Micon />
+},
+{
+  label: '能源定价',
+  key: "pricing",
+  icon: <Micon />
+},
+{
+  label: '数字驾驶舱',
+  key: "cockpit",
+  icon: <Micon />
+},
+
+]

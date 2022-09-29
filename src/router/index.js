@@ -9,11 +9,13 @@ import electricRoutes from "./electric";
 import distributionRoutes from "./distribution";
 import prepaymentRoutes from "./prepayment";
 import photovoltaicRoutes from "./photovoltaic";
+import moduleRoutes from "./module";
 import carbonRoutes from "./carbon"
 const Login = lazy(() => import("../pages/Login"))
 const Projectlist = lazy(() => import("../pages/projectList"))
 const Index = lazy(() => import("../pages/Home/Index"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
+const Module = lazy(() => import("../pages/module/index"))
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 const Electric = lazy(() => import("../pages/electric/index"))
 const Distribution = lazy(() => import("../pages/distribution/index"))
@@ -91,9 +93,14 @@ const routes =  [
           children: photovoltaicRoutes
         },
         {
-          path: 'carbon', // 光伏发电
+          path: 'carbon', // 碳排管理
           element: <Carbon><Navigate to='monitor' replace={true}></Navigate></Carbon>, 
           children: carbonRoutes
+        },
+        {
+          path: 'module', // 公共模块
+          element: <Module><Navigate to='project' replace={true}></Navigate></Module>, 
+          children: moduleRoutes
         }
       ]
     },
