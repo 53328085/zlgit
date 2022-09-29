@@ -138,7 +138,8 @@ export default function Hmenu() {
      
   }
   useEffect(() => {
-    SetCurrent(location.state?.headerKeys)
+    
+      SetCurrent(location.state?.headerKeys)  
    },[location])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
