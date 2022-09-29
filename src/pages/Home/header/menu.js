@@ -34,6 +34,16 @@ export default function Hmenu() {
   const [current, SetCurrent] = useState('/index')  
   const menus = [
     {
+      label: '公共模块',
+      key: "/index/module/project",
+      icon: <Ciocn url={current == '/index' ? h02 : n02} />,
+      className: 'custsubmenu',
+      danger: true,
+      active: 'project',
+      title: '项目管理',
+      path: 'module'
+    },
+    {
       label: '项目概述' ,
       key: "/index",
       icon: <Ciocn url={current == '/index' ? imgurl['01H'] : imgurl['01N']} />,

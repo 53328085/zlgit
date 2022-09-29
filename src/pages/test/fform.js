@@ -1,46 +1,55 @@
-import { Button, Modal } from 'antd';
- import styled from 'styled-components';
-import React, { useState, useCallback } from 'react';
-const Wrapper =styled.div`
+import { Button, Modal } from "antd";
+import styled from "styled-components";
+import React, { useState, useCallback } from "react";
+const Wrapper = styled.div`
+height: 100vh;
+.wrapper {
+  border: 2px solid #f76707;
+    border-radius: 5px;
+    background-color: #fff4e6;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 100px;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  height: 500px;
+  width: 500px;
   gap: 10px;
-  &>div {
-    padding: 16px;
-    background-color:#dedede;
-    border: 1px solid #ff7312;
-  }
-  &> div:nth-child(2) {
-   grid-column: 3;
-   grid-row: 2 / 4;
- }
- &> div:nth-child(5) {
-   grid-column: 1 / 3;
-   grid-row: 1 / 3;
+  grid-template-areas:
+    "a a b"
+    "a a b"
+    "c d d";
+   >div {
+    border: 2px solid #ffa94d;
+    border-radius: 5px;
+    background-color: #ffd8a8;
+    padding: 1em;
+    color: #d9480f;
+   } 
+    .item1 {
+  grid-area: a;
+}
+.item2 {
+  grid-area: b;
+}
+.item3 {
+  grid-area: c;
+}
+.item4 {
+  grid-area: d;
+}
 }
 `
- 
-const set  = new Set()
+
+
 export default () => {
-  
   return (
-      <Wrapper>
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-          <div>4</div>
-          <div>5</div>
-          <div>6</div>
-          <div>7</div>
-          <div>8</div>
-          <div>9</div>
-          <div>10</div>
-          <div>11</div>
-          <div>12</div>
-      </Wrapper>   
-  )
-}
-
-
-
+    <Wrapper>
+      <div className="wrapper">
+      <div className="item1">Item 1</div>
+      <div className="item2">Item 2</div>
+      <div className="item3">Item 3</div>
+      <div className="item4">Item 4</div>
+      
+      </div>
+    </Wrapper>
+  );
+};
