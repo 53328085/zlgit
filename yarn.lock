@@ -4551,6 +4551,11 @@
   "resolved" "https://registry.npmjs.org/check-types/-/check-types-11.1.2.tgz"
   "version" "11.1.2"
 
+"china-division@^2.5.0":
+  "integrity" "sha512-Ix4mtmRdzwsbSJJuUFhJOOiM/7KklK7vvoRnZLFoR03dbFuMZi3XIn9RIMHspiu/Ev7r7kGQeYiwd5uD0uGbRg=="
+  "resolved" "https://registry.npmjs.org/china-division/-/china-division-2.5.0.tgz"
+  "version" "2.5.0"
+
 "chokidar@^3.4.2", "chokidar@^3.5.3", "chokidar@>=3.0.0 <4.0.0":
   "integrity" "sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw=="
   "resolved" "https://registry.npmjs.org/chokidar/-/chokidar-3.5.3.tgz"
