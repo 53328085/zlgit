@@ -38,7 +38,6 @@
     }
     .solutionBody{
        display: flex;
-       height: 128px;
        padding: 16px 0;
        .boxes{
         width: 150px;
@@ -136,4 +135,32 @@
     height: 66px;
     background-color: #ff6666;
     clip-path:polygon(0px 0px,100% 0,0px 100%,)
+}
+:global(.ant-modal-header){
+    border-bottom: none;
+}
+:global(.ant-modal-footer){
+    border-top: none;
+}
+.OkBtnStyle{
+    width:96px;
+    height:36px;
+    background-color:#ff5b5b;
+    border-color:#ff5b5b;
+    &:hover{
+        background-color:#ff5b5b;
+        border-color:#ff5b5b;
+        opacity: .8;
+    }
+}
+.CanCelStyle{
+    width:96px;
+    height:36px;
+    color:#ff5b5b;
+    border-color:#ff5b5b;
+    &:hover{
+        color:#ff5b5b;
+        border-color:#ff5b5b; 
+        opacity: .8;
+    }
 }

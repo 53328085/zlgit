@@ -4,7 +4,9 @@ import style from './style.module.less'
 import styled from 'styled-components'
 import DashLine from '@imgs/dashed.png'
 import Solution  from './solution'
-
+import WaterSolution from './watersolution'
+import FireSolution from './firesolution'
+import CoalSolution from './coalsolution'
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
@@ -17,10 +19,10 @@ const Tabsbox = styled(Tabs)`
         font-size: 14px;
         background-color: #fff;
         border:1px solid #ccc;      
-        // &:hover {
-        //     background-color: var(--ant-primary-color);
-        //     color: #fff;
-        // }
+        &:hover {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+        }
     }
     .ant-tabs-tab-active {
         background-color: var(--ant-primary-color);
@@ -37,11 +39,14 @@ const Tabsbox = styled(Tabs)`
 export default function Index() {
   const [key, setKey] = useState(1)
   const tabs = [{ label: "电", key: 1 }, { label: '水', key: 2 }, { label: "燃气", key: 3 }, { label: '煤炭', key: 4 }]
+  const onChange =(v)=>{
+    setKey(v)
+  }
   const TabsEl = () => {
     if (!tabs) return null
     return (
       <Tabsbox
-        //onChange={onChange} 
+        onChange={onChange} 
         defaultActiveKey={key}
         animated
         tabBarGutter={16}
@@ -57,21 +62,21 @@ export default function Index() {
       name:'电价方案1',
       date:'2022-05-16',
       basePrice:'基准价',
-      isStep:true, 
+      priceType:'step', 
       type:'阶梯费率' 
     },
     {
       name:'电价方案2',
       date:'2022-05-17',
       basePrice:'复费率',
-      isStep:false,  
+      priceType:'even',  
       type:'复费率'
     },
     {
       name:'电价方案3',
       date:'2022-05-18',
       basePrice:'基准价',
-      isStep:true,  
+      priceType:'odd',  
       type:'单费率'
     },
 ] 
@@ -89,10 +94,9 @@ export default function Index() {
         </div>
         <img src={DashLine} style={{margin:'0 auto',display:'block'}}></img>
         <div className={style.lists}> 
-        {solutionPropsList.map((item,index)=>{
+        {key===1? solutionPropsList.map((item,index)=>{
           return <Solution {...item} key={index}></Solution>
-        })}
-         
+        }):key===2?<WaterSolution/>:key===3?<FireSolution/>:<CoalSolution/>}
         </div>
         
        
