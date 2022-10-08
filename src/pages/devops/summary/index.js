@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import {Form, Image, Progress} from 'antd'
-import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
+//import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
 import { drawEcharts } from "@com/useEcharts";
 
-
+import  Mapcom from '@com/useMap'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
@@ -84,14 +84,10 @@ const Mainbox = styled.div`
 
   }
 `
-/**
- * @author zhenglin zhu
- * @description: // 120.228177,30.212296 正泰大厦经纬度
- * @date 2022-09-21 09:49
- */
 
 
-const Mapcom = () =>  {
+
+/* const Mapcom = () =>  {
   const option = {
    // mapType: 'earth',
     center: {lng: 120.228166, lat: 30.212296},
@@ -111,7 +107,7 @@ const Mapcom = () =>  {
     <ZoomControl/>
   </Map>
   )
-}
+} */
 
 export default function Index() {
   const [form] = Form.useForm()
