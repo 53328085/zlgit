@@ -17,7 +17,7 @@ import {
   ZoomControl,
 } from "react-bmapgl";
 export default function Index(props) {
-  const {initialValues={}, setAaddress=null} = props
+  const {initialValues={}, setAaddress=()=>{}} = props
   const {Lng, Lat} = initialValues 
   const center = { lng: Lng ||120.228177 , lat: Lat || 30.212296}
   const option = {
@@ -29,13 +29,6 @@ export default function Index(props) {
     enableDragging: true,
     // enableRotate: false
   };
-  
-  useEffect(() => {
-  /*  if(window.BMapGL)  {   
-    geoc = new window.BMapGL.Geocoder()
-   } */
-  }, [])
- 
   const getPosition = (e) => {
     try {
    
@@ -43,16 +36,15 @@ export default function Index(props) {
     if(window.BMapGL)  {   
         geoc = new window.BMapGL.Geocoder()
     }
-    const pt = e.latlng   
-    console.dir(geoc)
+    const pt = e.latlng      
     geoc.getLocation(pt, function (rs) {
         
         try {    
         let { addressComponents, address, point } = rs;   
         console.log(point?.lng)       
-        let { city, district, province, street, streetNumber } = addressComponents;    
-        
-         if(typeof setAaddress == 'function') setAaddress((params) => ( { ...params, Lng: point.lng, Lat: point.lat, Address: address}) )
+        let { city, district, province, street, streetNumber } = addressComponents; 
+        console.log(province)
+        if(typeof setAaddress == 'function') setAaddress({Lng: point.lng, Lat: point.lat, Address: address, province, city, district})
          } catch (error) {
           console.dir(error)
         }     
