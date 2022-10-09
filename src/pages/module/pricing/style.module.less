@@ -17,6 +17,9 @@
             .plan{
                 display: flex;
                 align-items: center;
+                :global(.ant-input-group-addon){
+                    padding: 0;
+                }
             }
         }
         .lists{
@@ -164,3 +167,20 @@
         opacity: .8;
     }
 }
+.addPlanForm{
+    .ant-form-item{
+        margin-bottom: 16px;
+    }
+    .elecPrice{
+        display: grid;
+        grid-template-rows: repeat(2,1fr);
+        .flexContainer{
+            display: flex;
+            justify-content: space-between;
+            
+        }
+        
+       
+    }
+}
+

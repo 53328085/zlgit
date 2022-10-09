@@ -305,7 +305,7 @@ const ChangePrice = ({ isChangeOpen, setIsChangeOpen }) => {
                         <Input style={{ width: 112 }} size="default"></Input>
                     </div>
                 </Item>
-                <Item style={{ display: 'flex' }}>
+                <Item >
                     <div style={{ display: 'flex', }}>
                         <div style={{ width: 288 }}>
                             <div>阶梯值(kWh)</div>
