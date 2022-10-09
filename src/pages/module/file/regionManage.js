@@ -117,7 +117,7 @@ const cancel = () =>{
           <Button onClick={addRegion} type='primary' size='middle' style={{width:96,marginLeft:'auto',marginRight:0}} icon={<PlusOutlined />}>新增</Button>
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
-        <Modal className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
+        <Modal width={440} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
                 <div className={style.modalTitle}>{dialogTitle}</div>
                 <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
                     <Form.Item name='ProjectName' label='所属项目' 

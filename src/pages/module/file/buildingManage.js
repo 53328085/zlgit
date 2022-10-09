@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import style from './style.module.less'
-import { Input, Button, Space, Modal, Form } from 'antd'
+import { Input, Button, Space, Modal, Form, Select } from 'antd'
 import Icon, { PlusOutlined } from '@ant-design/icons';
 import UserTable from '@com/useTable'
 import {Backstage} from '@api/api.js'
@@ -10,13 +10,26 @@ import {useAntdTable} from 'ahooks'
 
 export default function Index() {
   const { Search } = Input;
+  const { Option } = Select;
+  const defaultStyle = {
+    width:232
+  };
   const [search, setSearch] = useState('');
   const onSearch = (value) => setSearch(value);
   const projectId = useSelector(selectCurProject)?.id;
   const projectName = useSelector(selectCurProject)?.name;
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [dialogTitle, setDialogTitle] = useState('新增园区')
+  const [dialogTitle, setDialogTitle] = useState('新增建筑')
+  const [regionOption, setRegionOption] = useState([]);
+
+  useEffect(() =>{
+    Backstage.GetProjectRegionList(projectId).then(res => {
+      if(res.success && Array.isArray(res.data)){
+        setRegionOption(res.data);
+      }
+    })
+  },[])
 
   let params = {
     pageNum:1,
@@ -79,8 +92,11 @@ export default function Index() {
 
   const addRegion = () =>{
     setIsModalOpen(true);
-    setDialogTitle('新增园区');
-    form.setFieldValue('ProjectName',projectName);
+    setDialogTitle('新增建筑');
+  }
+
+  const onChangeRegion = (value) => {
+    console.log(value)
   }
 
   const onFinish = (value) => {
@@ -118,33 +134,43 @@ const cancel = () =>{
           <Button onClick={addRegion} type='primary' size='middle' style={{width:96,marginLeft:'auto',marginRight:0}} icon={<PlusOutlined />}>新增</Button>
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
-        <Modal className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
-                <div className={style.modalTitle}>{dialogTitle}</div>
-                <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
-                    <Form.Item name='ProjectName' label='所属项目' 
-                    rules={[{required: true,message:'请选择区域'}]}>
-                        <Input size='middle' className='input' disabled></Input>
-                    </Form.Item>
-                    <Form.Item name='regionName' label='园区名称' 
-                    rules={[{required: true,message:'请输入园区名称'}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item name='leader' label='园区负责人' 
-                    rules={[{required: true,message:'请输入园区负责人'}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item name='phone' label='联系方式' 
-                    rules={[{validator:validateMode}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
-                        <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
-                        <Button size="middle" type="primary" htmlType="submit" >
-                        保存
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
+        <Modal width={1072} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
+          <div className={style.modalTitle}>{dialogTitle}</div>
+          <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
+            <Form.Item name='regionId' label='所属园区' rules={[{required: true,message:'请选择园区'}]}>
+              <Select size='middle' style={defaultStyle}  placeholder='请选择园区' onChange={onChangeRegion}>
+                {regionOption.map((item,index)=>{
+                  return <Option key={index} value={item.id}>{item.name}</Option>
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item name='buildingNum' label='建筑号' rules={[{required: true,message:'请输入建筑号'}]}>
+              <Input size='middle' style={defaultStyle} placeholder='请输入建筑号'></Input>
+            </Form.Item>
+            <Form.Item name='buildingName' label='建筑名称' rules={[{required: true,message:'请输入建筑名称'}]}>
+              <Input size='middle' style={defaultStyle} placeholder='请输入建筑名称'></Input>
+            </Form.Item>
+            <Form.Item name='upFloor' label='地上层数' rules={[{required: true,message:'请输入地上层数'}]}>
+              <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地上层数'></Input>
+            </Form.Item>
+            <Form.Item name='downFloor' label='地下层数' rules={[{required: true,message:'请输入地下层数'}]}>
+              <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地下层数'></Input>
+            </Form.Item>
+            <Form.Item name='lng' label='坐标经度' rules={[{required: true,message:'请输入坐标经度'}]}>
+              <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标经度'></Input>
+            </Form.Item>
+            <Form.Item name='lat' label='坐标纬度' rules={[{required: true,message:'请输入坐标纬度'}]}>
+              <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标纬度'></Input>
+            </Form.Item>
+            <Form.Item name='remark' label='备注信息'>
+              <Input size='middle' style={defaultStyle} ></Input>
+            </Form.Item>
+            <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
+              <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
+              <Button size="middle" type="primary" htmlType="submit" >保存</Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     )
   }

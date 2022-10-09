@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import {useRequest, useAntdTable} from 'ahooks'
-import {Typography, Space, Form, Input, Modal, Select, Switch} from 'antd'
+import {Typography, Space, Form, Input, Modal, Select, Switch, message} from 'antd'
 import {LockOutlined} from '@ant-design/icons'
 import styled from 'styled-components'
 import {selectCurProject} from '@redux/user.js'
@@ -14,7 +14,7 @@ const Mainbox = styled.div`
 `
 export default function Account() {
  const {Text, Link} = Typography
- const {GetUsersPage, GetRoleType} = User
+ const {GetUsersPage, GetRoleType, ResetPassword, UpdateUser, DeleteUse} = User 
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
@@ -24,13 +24,18 @@ export default function Account() {
     LoginName: '',
     NickName: '',
     RoleType: 1,
-    Pwd: '',
-    RePwd: '',
+  //  Pwd: '',
+   // RePwd: '',
     Mobile: '',
     Enabled: true,
     Remark: ''
  })
- const {loading} = useRequest(GetRoleType, {
+ const [record, setRecord] = useState({})
+ const [isEdit, setIsEdit] = useState(false)
+ const [isrepd, setIsrepd] = useState(false)
+ const [pwdparms, setpwdparms] = useState({userId: '', pwd: ''})
+
+ const {loading} = useRequest(GetRoleType, { // 获取用户角色 list
     onSuccess: (result) => {
         let {data, success} = result
         if (success) {
@@ -41,16 +46,86 @@ export default function Account() {
  })
 
  // setRoletype(data?.data || [])
- const showModal = (record) => {
-    console.log(record)
-    setIsopen(true)
+ const delcancal = () => {}
+ const delok =() => {}
+ const deluser = () => {}
+ const repdcancal = () => {
+  setIsrepd(false)
+}
+ const repdupdate = () => {
+     repdcancal()
+     setIsEdit(f => !f)
  }
+ const {run} = useRequest(ResetPassword, {
+   manual: true,
+   onSuccess: (res) => {
+    console.log(res)
+    let {success, errMsg} = res 
+    success ? message.success('修改成功', 1).then(() => repdupdate()) : message.error(errMsg || '数据出错', 1).then(() => repdupdate())
+   },
+   onError: (e) => {
+     console.log(e)
+   }
+
+ })
+ const restpd = (record) => {
+   setRecord(o => ({...o, ...record}))
+   let {id} = record;
+   let pwd = Math.random().toString().slice(2, 8);
+   setpwdparms(o => ({...o, userId: id, pwd,}))
+   setIsrepd(true)
+
+ }
+ const repdok = () => {
+    run(pwdparms)
+ }
+
+ 
+ const updateuser = (record) => {
+    setRecord(o => ({...o, ...record}))
+    setIsopen(true)   
+    let {loginName, nickName, mobile, roleType, enabled, remark} = record
+    mform.setFieldsValue({
+      'LoginName':loginName,
+      'NickName': nickName,
+      'Mobile': mobile,
+      'Remark': remark,
+      'RoleType': roleType,
+      'Enabled': enabled === 1
+    })
+ }
+ /* Enabled: 1
+Id: 1
+LoginName: "admin"
+Mobile: "15844165233"
+NickName: "admin"
+ProjectId: 1
+Remark: "超级管理员123"
+RoleType: 1
+SpliteLedgerEnable: 0 */
+const cancal = () => {
+  form.resetFields()
+  setIsopen(false)
+}
+const update = () => {
+  cancal()
+  setIsEdit(f => !f)
+}
  const ok = () => {
-    setIsopen(false)
+   let params =   mform.getFieldsValue(true)
+   const {projectId, spliteLedgerEnable, id} = record
+   params.Enabled = params.Enabled ? 1 : 0
+   params.ProjectId = projectId
+   params.SpliteLedgerEnable = spliteLedgerEnable
+   params.Id = id  
+   UpdateUser(params).then(res => {
+      let {success, errMsg} = res 
+       success ? message.success('修改成功', 1).then(() => update()) : message.error(errMsg || '数据出错', 1).then(() => update())
+   }).catch(e => {
+      message.error(e.message)
+   })
  }
- const cancal = () => {
-    setIsopen(false)
- }
+
 
  const columns = [  
         {
@@ -82,10 +157,10 @@ export default function Account() {
         {
           dataIndex: "op",
           title: "操作",
-          render: (_,record) => <Space>
-            <Link underline onClick={() => showModal(record)}>编辑</Link>
-            <Link underline>重置密码</Link>
-            <Link underline type="danger">删除</Link>
+          render: (_,record) => <Space size={16}>
+            <Link underline onClick={() => updateuser(record)}>编辑</Link>
+            <Link underline onClick={() => restpd(record)}>重置密码</Link>
+            <Link underline type="danger" onClick={deluser(record)}>删除</Link>
           </Space>
         }
      
@@ -116,9 +191,9 @@ export default function Account() {
       }
     })
   }
-  const {tableProps, search} = useAntdTable(getTableData, {
+  const {tableProps, search} = useAntdTable(getTableData, {  
     form,
-    refreshDeps: [projectId, params.likeValue],
+    refreshDeps: [projectId, params.likeValue, isEdit],
     defaultPageSize: 15,
    })
  const {submit} = search
@@ -140,10 +215,10 @@ export default function Account() {
                 </Select>
              </Item>
              <Item label="用户名" name="LoginName">
-                <Input/>
+                <Input />
              </Item>
              <Item label="用户姓名" name="NickName">
-                <Input/>
+                <Input />
              </Item>
            {/*   <Item label="密码" name="Pwd">
                 <Input.Password  />
@@ -155,7 +230,7 @@ export default function Account() {
                 <Input  />
              </Item> 
              <Item label="是否启用" name="Enabled">
-               <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+               <Switch checkedChildren="是" unCheckedChildren="否" checked />
              </Item> 
              <Item label="备注信息" name="Remark">
                <Input.TextArea  autoSize={{
@@ -164,6 +239,13 @@ export default function Account() {
                     }} />
              </Item> 
          </Form>
+     </Modal>
+     <Modal width={554} title="重置密码" open={isrepd} onOk={() => repdok()} onCancel={repdcancal} >
+         <p>账号： <Link>{record.loginName}</Link>， 密码将被重置为<Link>{pwdparms.pwd}</Link></p>
+         
+     </Modal>
+     <Modal width={554} title="重置密码" open={isrepd} onOk={() => delok()} onCancel={delcancal} >
+         <p>是否确认删除 <Text type="danger">{record.loginName}</Text>账号?</p>
      </Modal>
      </Mainbox>
      
