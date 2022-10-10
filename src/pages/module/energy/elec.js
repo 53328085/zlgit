@@ -225,9 +225,9 @@ export default function Index(){
 
   const [targetKeys, setTargetKeys] = useState(originTargetKeys);
 
-  const onChange = (nextTargetKeys) => {
+  const onChange = (nextTargetKeys, direction, moveKeys) => {
     setTargetKeys(nextTargetKeys);
-    console.log(nextTargetKeys);
+    console.log(nextTargetKeys, direction, moveKeys);
   };
   
   const [configTransfer, setConfigTransfer] = useState(false);
@@ -293,7 +293,7 @@ export default function Index(){
             dataSource={mockData}
             targetKeys={targetKeys}
             showSelectAll={false}
-            selectAllLabels={null}
+            selectAllLabels={['照明用电','未选中的表']}
             onChange={onChange}
             rowKey={record => record.id}
             leftColumns={leftTableColumns}

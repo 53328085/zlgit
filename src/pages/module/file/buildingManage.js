@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, createRef } from 'react'
 import style from './style.module.less'
 import { Input, Button, Space, Modal, Form, Select } from 'antd'
 import Icon, { PlusOutlined } from '@ant-design/icons';
@@ -7,16 +7,11 @@ import {Backstage} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import {useSelector} from 'react-redux'
 import {useAntdTable} from 'ahooks'
-import {
-  Map,
-  CityListControl,
-  ScaleControl,
-  ZoomControl,
-} from "react-bmapgl";
 
 export default function Index() {
   const { Search } = Input;
   const { Option } = Select;
+  const [searchInput, setSearchInput] = useState('');
   const defaultStyle = {
     width:232
   };
@@ -27,26 +22,7 @@ export default function Index() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('新增建筑')
   const [regionOption, setRegionOption] = useState([]);
-
-  const center = { lng: 120.228177 , lat: 30.212296}
-  const option = {
-    // mapType: 'earth',
-    center ,
-    zoom: 12,
-    enableScrollWheelZoom: true, // 鼠标滚轮缩放
-    // tilt: 20,
-    enableDragging: true,
-    // enableRotate: false
-  };
-  const getPosition = (e) =>{
-    form.setFieldValue('lng',e.latlng.lng)
-    form.setFieldValue('lat',e.latlng.lat)
-  }
-
-  const getSearchList = (value) => {
-    let local = new window.BMapGL.Geocoder();
-    console.log(local);
-  }
+  const inputValue = createRef();
 
   useEffect(() =>{
     Backstage.GetProjectRegionList(projectId).then(res => {
@@ -115,9 +91,60 @@ export default function Index() {
     defaultPageSize:15,
   })
 
-  const addRegion = () =>{
+  const [bmap, setBmap] = useState(null);
+  const addBuildiing = () =>{
     setIsModalOpen(true);
     setDialogTitle('新增建筑');
+    setTimeout(()=>{
+      let map = new window.BMapGL.Map('mapFrame');
+      setBmap(map);
+      var scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
+      map.addControl(scaleCtrl);
+      var zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+      map.addControl(zoomCtrl);
+      var cityCtrl = new window.BMapGL.CityListControl();  // 添加城市列表控件
+      map.addControl(cityCtrl);
+      // 设置中心点坐标
+      const point = new window.BMapGL.Point(120.228177 , 30.212296)
+      // 初始化地图  15是放大级别
+      map.centerAndZoom(point, 12);
+      map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+      map.addEventListener('click', function (e) {
+        form.setFieldValue('lng', e.latlng.lng)
+        form.setFieldValue('lat',e.latlng.lat)
+    });
+      let ac = new window.BMapGL.Autocomplete({
+        'input':'suggestId',
+        'location':map
+      })
+      ac.addEventListener('onconfirm',function(e){
+        setSearchInput(e.item.value.business);
+      })
+    },500)
+  }
+
+  const changeInput = (e) => {
+    setSearchInput(e.target.value);
+  }
+
+  const getSearchList = () =>{
+    // map.clearOverlays();    //清除地图上所有覆盖物
+    // let map = new window.BMapGL.Map('mapFrame');
+    let map = bmap;
+    map.clearOverlays();    //清除地图上所有覆盖物
+		function myFun(){
+			var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+			map.centerAndZoom(pp, 15);
+			map.addOverlay(new window.BMapGL.Marker(pp));    //添加标注
+		}
+		var local = new window.BMapGL.LocalSearch(map, { //智能搜索
+		  onSearchComplete: myFun
+		});
+		local.search(searchInput);
+		// var local = new window.BMapGL.LocalSearch(map, {
+    //   renderOptions:{map: map}
+    // });
+    // local.search(searchInput);
   }
 
   const onChangeRegion = (value) => {
@@ -156,10 +183,10 @@ const cancel = () =>{
             onSearch={onSearch}
             style={{width:533,marginLeft:12}}
           />
-          <Button onClick={addRegion} type='primary' size='middle' style={{width:96,marginLeft:'auto',marginRight:0}} icon={<PlusOutlined />}>新增</Button>
+          <Button onClick={addBuildiing} type='primary' size='middle' style={{width:96,marginLeft:'auto',marginRight:0}} icon={<PlusOutlined />}>新增</Button>
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
-        <Modal width={1072} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
+        <Modal getContainer={false} width={1072} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
           <div className={style.modalTitle}>{dialogTitle}</div>
           <div className='modalContent'>
             <Form form={form} className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
@@ -182,11 +209,11 @@ const cancel = () =>{
               <Form.Item name='downFloor' label='地下层数' rules={[{required: true,message:'请输入地下层数'}]}>
                 <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地下层数'></Input>
               </Form.Item>
-              <Form.Item name='lng' label='坐标经度' rules={[{required: true,message:'请输入坐标经度'}]}>
-                <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标经度'></Input>
+              <Form.Item name='lng' label='坐标经度' rules={[{required: true,message:'请点击地图获取坐标经度'}]}>
+                <Input size='middle' disabled style={defaultStyle} placeholder='请点击地图获取坐标经度'></Input>
               </Form.Item>
-              <Form.Item name='lat' label='坐标纬度' rules={[{required: true,message:'请输入坐标纬度'}]}>
-                <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标纬度'></Input>
+              <Form.Item name='lat' label='坐标纬度' rules={[{required: true,message:'请点击地图获取坐标纬度'}]}>
+                <Input size='middle' disabled style={defaultStyle} placeholder='请点击地图获取坐标纬度'></Input>
               </Form.Item>
               <Form.Item name='remark' label='备注信息'>
                 <Input size='middle' style={defaultStyle} ></Input>
@@ -197,14 +224,10 @@ const cancel = () =>{
               </Form.Item>
             </Form>
             <div className='mapDiv'>
-              <Search placeholder="请输入地址信息" allowClear enterButton="查询" size="middle" onSearch={getSearchList} style={{width:640}} />
-              <div className='mapFrame'>
-                <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} >
-                  <CityListControl />
-                  <ScaleControl />
-                  <ZoomControl />
-                </Map>
-              </div>
+              <Input id='suggestId' value={searchInput} name='searchInput' onChange={e =>changeInput(e)} placeholder="请输入地址信息" allowClear size="middle" style={{width:544}}></Input>
+              <Button size='middle' type='primary' onClick={getSearchList}>查询</Button>
+              {/* <Search placeholder="请输入地址信息" allowClear enterButton="查询" size="middle" onSearch={getSearchList} style={{width:640}} /> */}
+              <div className='mapFrame' id='mapFrame'></div>
             </div>
           </div>
         </Modal>

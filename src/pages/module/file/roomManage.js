@@ -148,7 +148,7 @@ export default function Index() {
           <Button onClick={addRegion} type='primary' size='middle' style={{width:96,marginLeft:'auto',marginRight:0}} icon={<PlusOutlined />}>新增</Button>
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
-        <Modal className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
+        <Modal width={440} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
                 <div className={style.modalTitle}>{dialogTitle}</div>
                 <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
                     <Form.Item name='name' label='房间号' 
@@ -157,7 +157,7 @@ export default function Index() {
                     </Form.Item>
                     <Form.Item name='regionId' label='所属园区' 
                     rules={[{required: true,message:'请选择园区'}]}>
-                        <Select size='middle' className='select' placeholder='请选择园区' onChange={onChangeRegion}>
+                        <Select size='middle' className='input' placeholder='请选择园区' onChange={onChangeRegion}>
                           {regionOption.map((item,index)=>{
                             return <Option key={index} value={item.id}>{item.name}</Option>
                           })}
@@ -165,7 +165,7 @@ export default function Index() {
                     </Form.Item>
                     <Form.Item name='buildingId' label='所属建筑' 
                     rules={[{required: true,message:'请选择建筑'}]}>
-                        <Select size='middle' className='select' placeholder='请选择建筑' onChange={onChangeBuilding} disabled={isbuild}>
+                        <Select size='middle' className='input' placeholder='请选择建筑' onChange={onChangeBuilding} disabled={isbuild}>
                           {buildingOption.map((item,index)=>{
                             return <Option key={index} value={item.id}>{item.name}</Option>
                           })}
@@ -173,7 +173,7 @@ export default function Index() {
                     </Form.Item>
                     <Form.Item name='floorId' label='所属楼层' 
                     rules={[{required: true,message:'请选择楼层'}]}>
-                        <Select size='middle' className='select' placeholder='请选择楼层' disabled={isfloor}>
+                        <Select size='middle' className='input' placeholder='请选择楼层' disabled={isfloor}>
                           {floorOption.map((item,index)=>{
                             return <Option key={index} value={item.id}>{item.name}</Option>
                           })}
