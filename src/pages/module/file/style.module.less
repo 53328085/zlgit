@@ -12,6 +12,9 @@
     margin-bottom: 16px;
 }
 :global{
+    .tangram-suggestion-main{
+        z-index: 9999999;
+    }
     .dialogModal{
         // width: 440px!important;
         .ant-modal-body{
@@ -24,7 +27,7 @@
         .ant-form-item{
             margin-bottom: 12px;
         }
-        .ant-btn{
+        .submitButton{
             border-radius: 4px;
             height: 36px;
             width: 96px;
@@ -32,6 +35,25 @@
         label{
             width: 90px;
         } 
+    }
+    .modalContent{
+        position: relative;
+        .mapDiv{
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 640px;
+            height: 500px;
+        }
+        .ant-btn{
+            width: 96px;
+        }
+        .mapFrame{
+            margin-top: 16px;
+            width: 640px;
+            height: 454px;
+            border: 1px solid rgb(204, 204, 204);
+        }
     }
 }
 .modalTitle{
@@ -42,4 +64,47 @@
     font-size: 16px;
     color: #237ae4;
     margin-bottom: 32px;
+}
+
+.deleteModal{
+    :global{
+        .ant-modal-content{
+            width: 448px;
+        }
+    }
+}
+
+.deleteTitle{
+    width: 140px;
+    height: 32px;
+    border-left: 4px solid #f33;
+    color: #666;
+    padding-left: 12px;
+    line-height: 32px;
+    font-size: 16px;
+}
+.deleteContent{
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #666;
+    .deleteImg{
+        width: 53px;
+        height: 48px;
+        margin-right: 16px;
+    }
+}
+.deleteFooter{
+    padding-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+    :global{
+        .ant-btn{
+            border-radius: 4px;
+            height: 36px;
+            width: 96px;
+        }
+    }
 }

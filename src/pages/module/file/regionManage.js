@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import style from './style.module.less'
-import { Input, Button, Space, Modal, Form } from 'antd'
+import { Input, Button, Space, Modal, Form, message } from 'antd'
 import Icon, { PlusOutlined } from '@ant-design/icons';
 import UserTable from '@com/useTable'
 import {Backstage} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import {useSelector, useStore, useDispatch} from 'react-redux'
 import {useAntdTable} from 'ahooks'
+import warningImg from '@imgs/warning.png'
 
 export default function Index() {
   const { Search } = Input;
@@ -46,7 +47,7 @@ export default function Index() {
       key:'action',
       render: (_,record) => <Space>
         <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}}>编辑</span>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}}>删除</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}} onClick={()=>deleteItem(record)}>删除</span>
       </Space>
     }
   ]
@@ -101,6 +102,17 @@ const cancel = () =>{
     }
   };
 
+  const [deleteModal, setDeleteModal] = useState(false);
+  const cancelDelete = () => {
+    setDeleteModal(false);
+  }
+  const confirmDelete = () => {
+    setDeleteModal(false);
+    message.success('删除成功！');
+  }
+  const deleteItem = (record) => {
+    setDeleteModal(true);
+  }
 
     return (
       <div className={style.content}>
@@ -144,6 +156,17 @@ const cancel = () =>{
                     </Form.Item>
                 </Form>
             </Modal>
+        <Modal className={style.deleteModal} footer={null} closable={false} maskClosable={false} open={deleteModal}>
+          <div className={style.deleteTitle}>删除园区</div>
+          <div className={style.deleteContent}>
+            <img src={warningImg} className={style.deleteImg} alt='danger'></img>
+              <span>是否确认删除园区和相关信息？</span>
+          </div>
+          <div className={style.deleteFooter}>
+            <Button size="middle" danger  style={{marginLeft:'auto',marginRight:12}} onClick={cancelDelete}>取消</Button>
+            <Button size="middle" type="primary" danger  onClick={confirmDelete}>确认</Button>
+          </div>
+        </Modal>
       </div>
     )
   }
