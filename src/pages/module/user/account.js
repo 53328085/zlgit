@@ -2,11 +2,13 @@ import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import {useRequest, useAntdTable} from 'ahooks'
 import {Typography, Space, Form, Input, Modal, Select, Switch, message} from 'antd'
-import {LockOutlined} from '@ant-design/icons'
+import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
 import {selectCurProject} from '@redux/user.js'
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
+
+
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
@@ -245,7 +247,7 @@ const update = () => {
          
      </Modal>
      <Modal width={554} title="重置密码" open={isrepd} onOk={() => delok()} onCancel={delcancal} >
-         <p>是否确认删除 <Text type="danger">{record.loginName}</Text>账号?</p>
+         <p><WarningFilled />是否确认删除 <Text type="danger">{record.loginName}</Text>账号?</p>
      </Modal>
      </Mainbox>
      
