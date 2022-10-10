@@ -5,8 +5,14 @@ import Icon, { PlusOutlined } from '@ant-design/icons';
 import UserTable from '@com/useTable'
 import {Backstage} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
-import {useSelector, useStore, useDispatch} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {useAntdTable} from 'ahooks'
+import {
+  Map,
+  CityListControl,
+  ScaleControl,
+  ZoomControl,
+} from "react-bmapgl";
 
 export default function Index() {
   const { Search } = Input;
@@ -17,11 +23,30 @@ export default function Index() {
   const [search, setSearch] = useState('');
   const onSearch = (value) => setSearch(value);
   const projectId = useSelector(selectCurProject)?.id;
-  const projectName = useSelector(selectCurProject)?.name;
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('新增建筑')
   const [regionOption, setRegionOption] = useState([]);
+
+  const center = { lng: 120.228177 , lat: 30.212296}
+  const option = {
+    // mapType: 'earth',
+    center ,
+    zoom: 12,
+    enableScrollWheelZoom: true, // 鼠标滚轮缩放
+    // tilt: 20,
+    enableDragging: true,
+    // enableRotate: false
+  };
+  const getPosition = (e) =>{
+    form.setFieldValue('lng',e.latlng.lng)
+    form.setFieldValue('lat',e.latlng.lat)
+  }
+
+  const getSearchList = (value) => {
+    let local = new window.BMapGL.Geocoder();
+    console.log(local);
+  }
 
   useEffect(() =>{
     Backstage.GetProjectRegionList(projectId).then(res => {
@@ -136,40 +161,52 @@ const cancel = () =>{
         <UserTable columns={columns} {...tableProps} rowKey='id' />
         <Modal width={1072} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
           <div className={style.modalTitle}>{dialogTitle}</div>
-          <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
-            <Form.Item name='regionId' label='所属园区' rules={[{required: true,message:'请选择园区'}]}>
-              <Select size='middle' style={defaultStyle}  placeholder='请选择园区' onChange={onChangeRegion}>
-                {regionOption.map((item,index)=>{
-                  return <Option key={index} value={item.id}>{item.name}</Option>
-                })}
-              </Select>
-            </Form.Item>
-            <Form.Item name='buildingNum' label='建筑号' rules={[{required: true,message:'请输入建筑号'}]}>
-              <Input size='middle' style={defaultStyle} placeholder='请输入建筑号'></Input>
-            </Form.Item>
-            <Form.Item name='buildingName' label='建筑名称' rules={[{required: true,message:'请输入建筑名称'}]}>
-              <Input size='middle' style={defaultStyle} placeholder='请输入建筑名称'></Input>
-            </Form.Item>
-            <Form.Item name='upFloor' label='地上层数' rules={[{required: true,message:'请输入地上层数'}]}>
-              <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地上层数'></Input>
-            </Form.Item>
-            <Form.Item name='downFloor' label='地下层数' rules={[{required: true,message:'请输入地下层数'}]}>
-              <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地下层数'></Input>
-            </Form.Item>
-            <Form.Item name='lng' label='坐标经度' rules={[{required: true,message:'请输入坐标经度'}]}>
-              <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标经度'></Input>
-            </Form.Item>
-            <Form.Item name='lat' label='坐标纬度' rules={[{required: true,message:'请输入坐标纬度'}]}>
-              <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标纬度'></Input>
-            </Form.Item>
-            <Form.Item name='remark' label='备注信息'>
-              <Input size='middle' style={defaultStyle} ></Input>
-            </Form.Item>
-            <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
-              <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
-              <Button size="middle" type="primary" htmlType="submit" >保存</Button>
-            </Form.Item>
-          </Form>
+          <div className='modalContent'>
+            <Form form={form} className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
+              <Form.Item name='regionId' label='所属园区' rules={[{required: true,message:'请选择园区'}]}>
+                <Select size='middle' style={defaultStyle}  placeholder='请选择园区' onChange={onChangeRegion}>
+                  {regionOption.map((item,index)=>{
+                    return <Option key={index} value={item.id}>{item.name}</Option>
+                  })}
+                </Select>
+              </Form.Item>
+              <Form.Item name='buildingNum' label='建筑号' rules={[{required: true,message:'请输入建筑号'}]}>
+                <Input size='middle' style={defaultStyle} placeholder='请输入建筑号'></Input>
+              </Form.Item>
+              <Form.Item name='buildingName' label='建筑名称' rules={[{required: true,message:'请输入建筑名称'}]}>
+                <Input size='middle' style={defaultStyle} placeholder='请输入建筑名称'></Input>
+              </Form.Item>
+              <Form.Item name='upFloor' label='地上层数' rules={[{required: true,message:'请输入地上层数'}]}>
+                <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地上层数'></Input>
+              </Form.Item>
+              <Form.Item name='downFloor' label='地下层数' rules={[{required: true,message:'请输入地下层数'}]}>
+                <Input size='middle' type='number' style={defaultStyle} placeholder='请输入地下层数'></Input>
+              </Form.Item>
+              <Form.Item name='lng' label='坐标经度' rules={[{required: true,message:'请输入坐标经度'}]}>
+                <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标经度'></Input>
+              </Form.Item>
+              <Form.Item name='lat' label='坐标纬度' rules={[{required: true,message:'请输入坐标纬度'}]}>
+                <Input size='middle' disabled style={defaultStyle} placeholder='请输入坐标纬度'></Input>
+              </Form.Item>
+              <Form.Item name='remark' label='备注信息'>
+                <Input size='middle' style={defaultStyle} ></Input>
+              </Form.Item>
+              <Form.Item style={{display:'flex',justifyContent:'flex-end',marginTop:128}}>
+                <Button className='submitButton' size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
+                <Button className='submitButton' size="middle" type="primary" htmlType="submit" >保存</Button>
+              </Form.Item>
+            </Form>
+            <div className='mapDiv'>
+              <Search placeholder="请输入地址信息" allowClear enterButton="查询" size="middle" onSearch={getSearchList} style={{width:640}} />
+              <div className='mapFrame'>
+                <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} >
+                  <CityListControl />
+                  <ScaleControl />
+                  <ZoomControl />
+                </Map>
+              </div>
+            </div>
+          </div>
         </Modal>
       </div>
     )
