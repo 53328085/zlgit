@@ -4,7 +4,7 @@
  * @date 2022-09-21 09:49
  */
 import { ConsoleSqlOutlined } from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import {
   Map,
   Marker,
@@ -15,11 +15,13 @@ import {
   MapTypeControl,
   ScaleControl,
   ZoomControl,
+  AutoComplete
 } from "react-bmapgl";
 export default function Index(props) {
   const {initialValues={}, setAaddress=()=>{}} = props
   const {Lng, Lat} = initialValues 
   const center = { lng: Lng ||120.228177 , lat: Lat || 30.212296}
+  const mapref = useRef(null)
   const option = {
     // mapType: 'earth',
     center ,
@@ -36,7 +38,8 @@ export default function Index(props) {
     if(window.BMapGL)  {   
         geoc = new window.BMapGL.Geocoder()
     }
-    const pt = e.latlng      
+    const pt = e.latlng   
+   
     geoc.getLocation(pt, function (rs) {
         
         try {    
@@ -54,9 +57,10 @@ export default function Index(props) {
         console.log(error)
     }  
   }
-
+ 
   return (
     <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition}>
+     
       <Marker position={center} />
       <NavigationControl />
       <CityListControl />

@@ -1,53 +1,77 @@
-import { Button, Modal } from "antd";
+import { Button, Modal, Input, message } from "antd";
 import styled from "styled-components";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 const Wrapper = styled.div`
-height: 100vh;
-.wrapper {
-  border: 2px solid #f76707;
-    border-radius: 5px;
-    background-color: #fff4e6;
-  display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
-  height: 500px;
-  width: 500px;
-  gap: 10px;
-  grid-template-areas:
-    "a a b"
-    "a a b"
-    "c d d";
-   >div {
-    border: 2px solid #ffa94d;
-    border-radius: 5px;
-    background-color: #ffd8a8;
-    padding: 1em;
-    color: #d9480f;
-   } 
-    .item1 {
-  grid-area: a;
+
+margin: 20px;
+height:600px ;
+width: 600px;
+#wrapper {
+  height:80%;
+  width: 100%;
 }
-.item2 {
-  grid-area: b;
-}
-.item3 {
-  grid-area: c;
-}
-.item4 {
-  grid-area: d;
-}
-}
-`
+
+` 
 
 
 export default () => {
+
+  let  [ipt, setIpt] = useState('')
+  useEffect(() => {
+   const map = new window.BMapGL.Map("wrapper")
+   const geoc = new window.BMapGL.Geocoder()
+    var point = new window.BMapGL.Point(120.228177, 30.212296);
+    console.log(map)
+    map?.centerAndZoom(point, 15); 
+    map?.enableScrollWheelZoom(true)
+    const scaleCtrl = new window.BMapGL.ScaleControl()
+    const zoomCtrl = new window.BMapGL.ZoomControl()
+    const  nav3d= new window.BMapGL.NavigationControl3D()
+    const cityCtrl = new window.BMapGL.CityListControl
+    map.addControl(scaleCtrl)
+    map.addControl(zoomCtrl)
+    map.addControl(nav3d)
+    map.addControl(cityCtrl)
+  
+    map.addEventListener('click', (e) => {
+        const point = e.latlng
+        geoc.getLocation(point, function (rs) {
+        console.log(rs)
+          try {    
+          let { addressComponents, address, point } = rs;   
+          console.log(point?.lng)       
+          let { city, district, province, street, streetNumber } = addressComponents; 
+          console.log(province)
+         // if(typeof setAaddress == 'function') setAaddress({Lng: point.lng, Lat: point.lat, Address: address, province, city, district})
+           } catch (error) {
+            console.dir(error)
+          }     
+        });
+    })
+   
+    geoc.getPoint(ipt, function(point) {
+      console.log(point)
+      if(point) {
+        map.centerAndZoom(point, 16);
+        map.addOverlay(new window.BMapGL.Marker(point))
+      }else {
+        message.error('你输入的地址没有解析到结果')
+      }
+    }, '杭州市')
+   // map.setHeading(64.5)
+    //map.setMapType(window.BMAP_NORMAL_MAP)
+    //map.setTilt(73)
+  }, [ipt])
+ 
+  const onSearch = (e) => {
+    console.log(e)
+    setIpt(e)
+  }
   return (
     <Wrapper>
-      <div className="wrapper">
-      <div className="item1">Item 1</div>
-      <div className="item2">Item 2</div>
-      <div className="item3">Item 3</div>
-      <div className="item4">Item 4</div>
+      <Input.Search  onSearch={(e) => onSearch(e)}  />
+      <div id="wrapper">
+      
       
       </div>
     </Wrapper>
