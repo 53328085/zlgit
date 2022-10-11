@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import style from './style.module.less'
-import { Input, Button, Space, Modal, Form, Select } from 'antd'
+import { Input, Button, Space, Modal, Form, Select, message } from 'antd'
 import Icon, { PlusOutlined } from '@ant-design/icons';
 import UserTable from '@com/useTable'
 import {Backstage} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import {useSelector, useStore, useDispatch} from 'react-redux'
 import {useAntdTable} from 'ahooks'
+import warningImg from '@imgs/warning.png'
 
 export default function Index() {
   const { Search } = Input;
@@ -23,6 +24,7 @@ export default function Index() {
   const [isbuild, setIsbuild] = useState(true);
   const [floorOption, setFloorOption] = useState([]);
   const [isfloor, setIsfloor] = useState(true);
+  const [dialogType, setDialogType] = useState('')
 
   useEffect(() =>{
     Backstage.GetProjectRegionList(projectId).then(res => {
@@ -56,8 +58,8 @@ export default function Index() {
       title:'操作',
       key:'action',
       render: (_,record) => <Space>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}}>编辑</span>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}}>删除</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}} onClick={()=>editItem(record)}>编辑</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}} onClick={()=>deleteItem(record)}>删除</span>
       </Space>
     }
   ]
@@ -132,6 +134,32 @@ export default function Index() {
     })
   }
 
+  const editItem = (record) => {
+    setDialogType('edit');
+    setDialogTitle('编辑房间');
+    setIsModalOpen(true);
+    form.setFieldsValue(record);
+    onChangeRegion(record.regionId);
+    onChangeBuilding(record.buildingId);
+    setTimeout(()=>{
+      form.setFieldValue('buildingId',record.buildingId);
+      form.setFieldValue('floorId',record.floorId)
+    },500)
+    
+  }
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const cancelDelete = () => {
+    setDeleteModal(false);
+  }
+  const confirmDelete = () => {
+    setDeleteModal(false);
+    message.success('删除成功！');
+  }
+  const deleteItem = (record) => {
+    setDeleteModal(true);
+  }
+
 
     return (
       <div className={style.content}>
@@ -149,51 +177,62 @@ export default function Index() {
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
         <Modal width={440} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
-                <div className={style.modalTitle}>{dialogTitle}</div>
-                <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
-                    <Form.Item name='name' label='房间号' 
-                    rules={[{required: true,message:'请输入房间号'}]}>
-                        <Input size='middle' className='input' placeholder='请输入房间号'></Input>
-                    </Form.Item>
-                    <Form.Item name='regionId' label='所属园区' 
-                    rules={[{required: true,message:'请选择园区'}]}>
-                        <Select size='middle' className='input' placeholder='请选择园区' onChange={onChangeRegion}>
-                          {regionOption.map((item,index)=>{
-                            return <Option key={index} value={item.id}>{item.name}</Option>
-                          })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name='buildingId' label='所属建筑' 
-                    rules={[{required: true,message:'请选择建筑'}]}>
-                        <Select size='middle' className='input' placeholder='请选择建筑' onChange={onChangeBuilding} disabled={isbuild}>
-                          {buildingOption.map((item,index)=>{
-                            return <Option key={index} value={item.id}>{item.name}</Option>
-                          })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name='floorId' label='所属楼层' 
-                    rules={[{required: true,message:'请选择楼层'}]}>
-                        <Select size='middle' className='input' placeholder='请选择楼层' disabled={isfloor}>
-                          {floorOption.map((item,index)=>{
-                            return <Option key={index} value={item.id}>{item.name}</Option>
-                          })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name='area' label='房间面积' 
-                    rules={[{required: true,message:'请输入房间面积'}]}>
-                        <Input size='middle' className='input' type='number' placeholder='请输入房间面积'></Input>
-                    </Form.Item>
-                    <Form.Item name='remark' label='备注信息'>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
-                        <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
-                        <Button size="middle" type="primary" htmlType="submit" >
-                        保存
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
+          <div className={style.modalTitle}>{dialogTitle}</div>
+          <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
+            <Form.Item name='name' label='房间号' 
+            rules={[{required: true,message:'请输入房间号'}]}>
+              <Input size='middle' className='input' placeholder='请输入房间号'></Input>
+            </Form.Item>
+            <Form.Item name='regionId' label='所属园区' 
+            rules={[{required: true,message:'请选择园区'}]}>
+              <Select size='middle' className='input' placeholder='请选择园区' onChange={onChangeRegion}>
+                {regionOption.map((item,index)=>{
+                  return <Option key={index} value={item.id}>{item.name}</Option>
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item name='buildingId' label='所属建筑' 
+            rules={[{required: true,message:'请选择建筑'}]}>
+              <Select size='middle' className='input' placeholder='请选择建筑' onChange={onChangeBuilding} disabled={isbuild}>
+                {buildingOption.map((item,index)=>{
+                  return <Option key={index} value={item.id}>{item.name}</Option>
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item name='floorId' label='所属楼层' 
+            rules={[{required: true,message:'请选择楼层'}]}>
+              <Select size='middle' className='input' placeholder='请选择楼层' disabled={isfloor}>
+                {floorOption.map((item,index)=>{
+                  return <Option key={index} value={item.id}>{item.name}</Option>
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item name='area' label='房间面积' 
+            rules={[{required: true,message:'请输入房间面积'}]}>
+              <Input size='middle' className='input' type='number' placeholder='请输入房间面积'></Input>
+            </Form.Item>
+            <Form.Item name='remark' label='备注信息'>
+              <Input size='middle' className='input'></Input>
+            </Form.Item>
+            <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
+              <Button className='submitButton' size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
+              <Button className='submitButton' size="middle" type="primary" htmlType="submit" >
+                保存
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal className={style.deleteModal} footer={null} closable={false} maskClosable={false} open={deleteModal}>
+          <div className={style.deleteTitle}>删除房间</div>
+          <div className={style.deleteContent}>
+            <img src={warningImg} className={style.deleteImg} alt='danger'></img>
+              <span>是否确认删除房间和相关信息？</span>
+          </div>
+          <div className={style.deleteFooter}>
+            <Button size="middle" danger  style={{marginLeft:'auto',marginRight:12}} onClick={cancelDelete}>取消</Button>
+            <Button size="middle" type="primary" danger  onClick={confirmDelete}>确认</Button>
+          </div>
+        </Modal>
       </div>
     )
   }

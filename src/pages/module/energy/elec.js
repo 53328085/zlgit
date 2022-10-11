@@ -227,7 +227,6 @@ export default function Index(){
 
   const onChange = (nextTargetKeys, direction, moveKeys) => {
     setTargetKeys(nextTargetKeys);
-    console.log(nextTargetKeys, direction, moveKeys);
   };
   
   const [configTransfer, setConfigTransfer] = useState(false);
@@ -328,7 +327,7 @@ export default function Index(){
             下载模板
           </p>
         </Dragger>
-        <div style={{display:'flex',justifyContent:'flex-end',marginTop:24,marginRight:12}}>
+        <div style={{display:'flex',justifyContent:'flex-end',marginTop:24}}>
           <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancelUpload}>取消</Button>
           <Button size="middle" type="primary" onClick={confirmUpload} >确认</Button>
         </div>
