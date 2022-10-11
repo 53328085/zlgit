@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Tabs, Input, Button, Modal, Form, Select, DatePicker } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Tabs, Input, Button, Modal, Form, Select, DatePicker,Pagination,message  } from 'antd'
 import style from './style.module.less'
 import styled from 'styled-components'
 import DashLine from '@imgs/dashed.png'
@@ -8,7 +8,8 @@ import WaterSolution from './watersolution'
 import FireSolution from './firesolution'
 import CoalSolution from './coalsolution'
 import BlueColumn from '@com/bluecolumn'
-
+import { usePagination } from 'ahooks';
+import { PriceSolution } from '@api/api.js'
 
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
@@ -45,6 +46,7 @@ const { Option } = Select
 export default function Index() {
   const [addPlan, setAddPlan] = useState(false)
   const [key, setKey] = useState(1)
+  const [solutionPropsList,setSolutionPropsList] = useState([])
 
   const tabs = [{ label: "电", key: 1 }, { label: '水', key: 2 }, { label: "燃气", key: 3 }, { label: '煤炭', key: 4 }]
   const onChange = (v) => {
@@ -65,30 +67,18 @@ export default function Index() {
       </Tabsbox>
     )
   }
-  const solutionPropsList = [
-    {
-      name: '电价方案1',
-      date: '2022-05-16',
-      basePrice: '基准价',
-      priceType: 'step',
-      type: '阶梯费率'
-    },
-    {
-      name: '电价方案2',
-      date: '2022-05-17',
-      basePrice: '复费率',
-      priceType: 'even',
-      type: '复费率'
-    },
-    {
-      name: '电价方案3',
-      date: '2022-05-18',
-      basePrice: '基准价',
-      priceType: 'odd',
-      type: '单费率'
-    },
-  ]
-  
+  const getPriceSolution = async ()=>{
+      const res = await PriceSolution.GetEnablePriceSolution('',1)
+      if(res.success){
+        setSolutionPropsList(res.data.elerticPriceSolution)
+      }else{
+        message.error(res.errMsg)
+      }
+  }
+
+  useEffect(()=>{
+    getPriceSolution()
+  },[])
   return (
     <div className={style.pricing}>
       <TabsEl></TabsEl>
