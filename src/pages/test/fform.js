@@ -1,79 +1,102 @@
-import { Button, Modal, Input, message } from "antd";
-import styled from "styled-components";
-import React, { useState, useCallback, useEffect } from "react";
-const Wrapper = styled.div`
+import { Button, DatePicker, Form, TimePicker } from 'antd';
+import React from 'react';
+const { RangePicker } = DatePicker;
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 8,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
+const config = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: 'Please select time!',
+    },
+  ],
+};
+const rangeConfig = {
+  rules: [
+    {
+      type: 'array',
+      required: true,
+      message: 'Please select time!',
+    },
+  ],
+};
 
-margin: 20px;
-height:600px ;
-width: 600px;
-#wrapper {
-  height:80%;
-  width: 100%;
-}
+const App = () => {
+  const onFinish = (fieldsValue) => {
+    console.log(fieldsValue)
+    // Should format date value before submit.
+    const rangeValue = fieldsValue['range-picker'];
+    const rangeTimeValue = fieldsValue['range-time-picker'];
+    const values = {
+      ...fieldsValue,
+      'date-picker': fieldsValue['date-picker'].format('YYYY-MM-DD'),
+      'date-time-picker': fieldsValue['date-time-picker'].format('YYYY-MM-DD HH:mm:ss'),
+      'month-picker': fieldsValue['month-picker'].format('YYYY-MM'),
+      'range-picker': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')],
+      'range-time-picker': [
+        rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
+        rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
+      ],
+      'time-picker': fieldsValue['time-picker'].format('HH:mm:ss'),
+    };
+    console.log('Received values of form: ', values);
+  };
 
-` 
-
-
-export default () => {
-
-  let  [ipt, setIpt] = useState('')
-  useEffect(() => {
-   const map = new window.BMapGL.Map("wrapper")
-   const geoc = new window.BMapGL.Geocoder()
-    var point = new window.BMapGL.Point(120.228177, 30.212296);
-    console.log(map)
-    map?.centerAndZoom(point, 15); 
-    map?.enableScrollWheelZoom(true)
-    const scaleCtrl = new window.BMapGL.ScaleControl()
-    const zoomCtrl = new window.BMapGL.ZoomControl()
-    const  nav3d= new window.BMapGL.NavigationControl3D()
-    const cityCtrl = new window.BMapGL.CityListControl
-    map.addControl(scaleCtrl)
-    map.addControl(zoomCtrl)
-    map.addControl(nav3d)
-    map.addControl(cityCtrl)
-  
-    map.addEventListener('click', (e) => {
-        const point = e.latlng
-        geoc.getLocation(point, function (rs) {
-        console.log(rs)
-          try {    
-          let { addressComponents, address, point } = rs;   
-          console.log(point?.lng)       
-          let { city, district, province, street, streetNumber } = addressComponents; 
-          console.log(province)
-         // if(typeof setAaddress == 'function') setAaddress({Lng: point.lng, Lat: point.lat, Address: address, province, city, district})
-           } catch (error) {
-            console.dir(error)
-          }     
-        });
-    })
-   
-    geoc.getPoint(ipt, function(point) {
-      console.log(point)
-      if(point) {
-        map.centerAndZoom(point, 16);
-        map.addOverlay(new window.BMapGL.Marker(point))
-      }else {
-        message.error('你输入的地址没有解析到结果')
-      }
-    }, '杭州市')
-   // map.setHeading(64.5)
-    //map.setMapType(window.BMAP_NORMAL_MAP)
-    //map.setTilt(73)
-  }, [ipt])
- 
-  const onSearch = (e) => {
-    console.log(e)
-    setIpt(e)
-  }
   return (
-    <Wrapper>
-      <Input.Search  onSearch={(e) => onSearch(e)}  />
-      <div id="wrapper">
-      
-      
-      </div>
-    </Wrapper>
+    <Form name="time_related_controls" {...formItemLayout} onFinish={onFinish}>
+      <Form.Item name="date-picker" label="DatePicker" {...config}>
+        <DatePicker />
+      </Form.Item>
+      <Form.Item name="date-time-picker" label="DatePicker[showTime]" {...config}>
+        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+      </Form.Item>
+      <Form.Item name="month-picker" label="MonthPicker" {...config}>
+        <DatePicker picker="month" />
+      </Form.Item>
+      <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
+        <RangePicker />
+      </Form.Item>
+      <Form.Item name="range-time-picker" label="RangePicker[showTime]" {...rangeConfig}>
+        <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+      </Form.Item>
+      <Form.Item name="time-picker" label="TimePicker" {...config}>
+        <TimePicker />
+      </Form.Item>
+      <Form.Item
+        wrapperCol={{
+          xs: {
+            span: 24,
+            offset: 0,
+          },
+          sm: {
+            span: 16,
+            offset: 8,
+          },
+        }}
+      >
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
+
+export default App;
