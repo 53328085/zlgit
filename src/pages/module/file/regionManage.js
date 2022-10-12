@@ -18,6 +18,7 @@ export default function Index() {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('新增园区')
+  const [dialogType, setDialogType] = useState('')
 
   let params = {
     pageNum:1,
@@ -46,7 +47,7 @@ export default function Index() {
       title:'操作',
       key:'action',
       render: (_,record) => <Space>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}}>编辑</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}} onClick={()=>editItem(record)}>编辑</span>
         <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}} onClick={()=>deleteItem(record)}>删除</span>
       </Space>
     }
@@ -79,8 +80,9 @@ export default function Index() {
 
   const addRegion = () =>{
     setIsModalOpen(true);
+    setDialogType('add');
     setDialogTitle('新增园区');
-    form.setFieldValue('ProjectName',projectName);
+    form.setFieldValue('projectName',projectName);
   }
 
   const onFinish = (value) => {
@@ -101,6 +103,13 @@ const cancel = () =>{
         callback();
     }
   };
+
+  const editItem = (record) => {
+    setDialogType('edit');
+    setDialogTitle('编辑园区');
+    setIsModalOpen(true);
+    form.setFieldsValue(record);
+  }
 
   const [deleteModal, setDeleteModal] = useState(false);
   const cancelDelete = () => {
@@ -130,32 +139,30 @@ const cancel = () =>{
         </div>
         <UserTable columns={columns} {...tableProps} rowKey='id' />
         <Modal width={440} className='dialogModal' footer={null} closable={false} maskClosable={false} open={isModalOpen}>
-                <div className={style.modalTitle}>{dialogTitle}</div>
-                <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
-                    <Form.Item name='ProjectName' label='所属项目' 
-                    rules={[{required: true,message:'请选择区域'}]}>
-                        <Input size='middle' className='input' disabled></Input>
-                    </Form.Item>
-                    <Form.Item name='regionName' label='园区名称' 
-                    rules={[{required: true,message:'请输入园区名称'}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item name='leader' label='园区负责人' 
-                    rules={[{required: true,message:'请输入园区负责人'}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item name='phone' label='联系方式' 
-                    rules={[{validator:validateMode}]}>
-                        <Input size='middle' className='input'></Input>
-                    </Form.Item>
-                    <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
-                        <Button size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
-                        <Button size="middle" type="primary" htmlType="submit" >
-                        保存
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
+          <div className={style.modalTitle}>{dialogTitle}</div>
+          <Form form={form}   className={style.dialogForm} onFinish={onFinish} requiredMark={false} >
+            <Form.Item name='projectName' label='所属项目' 
+            rules={[{required: true,message:'请选择区域'}]}>
+              <Input size='middle' className='input' disabled></Input>
+            </Form.Item>
+            <Form.Item name='name' label='园区名称' 
+            rules={[{required: true,message:'请输入园区名称'}]}>
+              <Input size='middle' className='input'></Input>
+            </Form.Item>
+            <Form.Item name='leader' label='园区负责人' 
+            rules={[{required: true,message:'请输入园区负责人'}]}>
+              <Input size='middle' className='input'></Input>
+            </Form.Item>
+            <Form.Item name='phone' label='联系方式' 
+            rules={[{validator:validateMode}]}>
+              <Input size='middle' className='input'></Input>
+            </Form.Item>
+            <Form.Item style={{display:'flex',justifyContent:'flex-end'}}>
+              <Button className='submitButton' size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
+              <Button className='submitButton' size="middle" type="primary" htmlType="submit" > 保存</Button>
+            </Form.Item>
+          </Form>
+        </Modal>
         <Modal className={style.deleteModal} footer={null} closable={false} maskClosable={false} open={deleteModal}>
           <div className={style.deleteTitle}>删除园区</div>
           <div className={style.deleteContent}>

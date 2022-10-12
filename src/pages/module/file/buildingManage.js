@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, createRef } from 'react'
 import style from './style.module.less'
-import { Input, Button, Space, Modal, Form, Select } from 'antd'
+import { Input, Button, Space, Modal, Form, Select, message } from 'antd'
 import Icon, { PlusOutlined } from '@ant-design/icons';
 import UserTable from '@com/useTable'
 import {Backstage} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import {useSelector} from 'react-redux'
 import {useAntdTable} from 'ahooks'
+import warningImg from '@imgs/warning.png'
 
 export default function Index() {
   const { Search } = Input;
@@ -22,6 +23,7 @@ export default function Index() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('新增建筑')
   const [regionOption, setRegionOption] = useState([]);
+  const [dialogType, setDialogType] = useState('')
   const inputValue = createRef();
 
   useEffect(() =>{
@@ -60,8 +62,8 @@ export default function Index() {
       title:'操作',
       key:'action',
       render: (_,record) => <Space>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}}>编辑</span>
-        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}}>删除</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#237ae4'}} onClick={()=>editItem(record)}>编辑</span>
+        <span style={{textDecoration:'underline',cursor:'pointer',color:'#f00'}} onClick={()=>deleteItem(record)}>删除</span>
       </Space>
     }
   ]
@@ -170,6 +172,52 @@ const cancel = () =>{
     }
   };
 
+  const editItem = (record) => {
+    setDialogType('edit');
+    setDialogTitle('编辑建筑');
+    setIsModalOpen(true);
+    form.setFieldsValue(record);
+    setTimeout(()=>{
+      let map = new window.BMapGL.Map('mapFrame');
+      setBmap(map);
+      var scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
+      map.addControl(scaleCtrl);
+      var zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+      map.addControl(zoomCtrl);
+      var cityCtrl = new window.BMapGL.CityListControl();  // 添加城市列表控件
+      map.addControl(cityCtrl);
+      // 设置中心点坐标
+      const point = new window.BMapGL.Point(record.lng,record.lat)
+      // 初始化地图  15是放大级别
+      map.centerAndZoom(point, 15);
+      var marker = new window.BMapGL.Marker(point);        // 创建标注   
+      map.addOverlay(marker);                     // 将标注添加到地图中
+      map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+      map.addEventListener('click', function (e) {
+        form.setFieldValue('lng', e.latlng.lng)
+        form.setFieldValue('lat',e.latlng.lat)
+    });
+      let ac = new window.BMapGL.Autocomplete({
+        'input':'suggestId',
+        'location':map
+      })
+      ac.addEventListener('onconfirm',function(e){
+        setSearchInput(e.item.value.business);
+      })
+    },500)
+  }
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const cancelDelete = () => {
+    setDeleteModal(false);
+  }
+  const confirmDelete = () => {
+    setDeleteModal(false);
+    message.success('删除成功！');
+  }
+  const deleteItem = (record) => {
+    setDeleteModal(true);
+  }
 
     return (
       <div className={style.content}>
@@ -197,10 +245,10 @@ const cancel = () =>{
                   })}
                 </Select>
               </Form.Item>
-              <Form.Item name='buildingNum' label='建筑号' rules={[{required: true,message:'请输入建筑号'}]}>
+              <Form.Item name='buildingNo' label='建筑号' rules={[{required: true,message:'请输入建筑号'}]}>
                 <Input size='middle' style={defaultStyle} placeholder='请输入建筑号'></Input>
               </Form.Item>
-              <Form.Item name='buildingName' label='建筑名称' rules={[{required: true,message:'请输入建筑名称'}]}>
+              <Form.Item name='name' label='建筑名称' rules={[{required: true,message:'请输入建筑名称'}]}>
                 <Input size='middle' style={defaultStyle} placeholder='请输入建筑名称'></Input>
               </Form.Item>
               <Form.Item name='upFloor' label='地上层数' rules={[{required: true,message:'请输入地上层数'}]}>
@@ -218,7 +266,7 @@ const cancel = () =>{
               <Form.Item name='remark' label='备注信息'>
                 <Input size='middle' style={defaultStyle} ></Input>
               </Form.Item>
-              <Form.Item style={{display:'flex',justifyContent:'flex-end',marginTop:128}}>
+              <Form.Item style={{display:'flex',justifyContent:'flex-end',marginTop:184}}>
                 <Button className='submitButton' size="middle"  style={{marginLeft:'auto',marginRight:12}} onClick={cancel}>取消</Button>
                 <Button className='submitButton' size="middle" type="primary" htmlType="submit" >保存</Button>
               </Form.Item>
@@ -229,6 +277,17 @@ const cancel = () =>{
               {/* <Search placeholder="请输入地址信息" allowClear enterButton="查询" size="middle" onSearch={getSearchList} style={{width:640}} /> */}
               <div className='mapFrame' id='mapFrame'></div>
             </div>
+          </div>
+        </Modal>
+        <Modal className={style.deleteModal} footer={null} closable={false} maskClosable={false} open={deleteModal}>
+          <div className={style.deleteTitle}>删除园区</div>
+          <div className={style.deleteContent}>
+            <img src={warningImg} className={style.deleteImg} alt='danger'></img>
+              <span>是否确认删除选中建筑和相关信息？</span>
+          </div>
+          <div className={style.deleteFooter}>
+            <Button size="middle" danger  style={{marginLeft:'auto',marginRight:12}} onClick={cancelDelete}>取消</Button>
+            <Button size="middle" type="primary" danger  onClick={confirmDelete}>确认</Button>
           </div>
         </Modal>
       </div>
