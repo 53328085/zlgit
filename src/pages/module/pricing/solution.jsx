@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import style from './style.module.less'
-import { Modal, Input, Form, DatePicker, Select,message } from 'antd'
+import { Modal, Input, Form, DatePicker, Select, message } from 'antd'
 import BlueColumn from '@com/bluecolumn'
 import RedWarn from '@imgs/redwarn.png'
 import { PriceSolution } from '@api/api.js'
+import moment from 'moment';
 import { useEffect } from 'react'
 
 const { Item } = Form
@@ -13,16 +14,16 @@ export default function Solution(props) {
     const [isChangeOpen, setIsChangeOpen] = useState(false)
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-    const [priceRecord,setPriceRecord] = useState([])
-    const getPriceSolution = async ()=>{
-        const res = await PriceSolution.GetPriceSolution({projectId:1,solutionId:props.id})
-   
-        if(res.success){
-            if(Array.isArray(res.data)){
+    const [priceRecord, setPriceRecord] = useState([])
+    const getPriceSolution = async () => {
+        const res = await PriceSolution.GetPriceSolution({ projectId: 1, solutionId: props.id })
+
+        if (res.success) {
+            if (Array.isArray(res.data)) {
                 setPriceRecord(res.data)
             }
-        }else{
-            res.errMsg?message.error(res.errMsg):message.error('调价记录查询失败')
+        } else {
+            res.errMsg ? message.error(res.errMsg) : message.error('调价记录查询失败')
         }
     }
     const pdl24 = {
@@ -31,19 +32,7 @@ export default function Solution(props) {
     const pdl40 = {
         paddingLeft: 40
     }
-    const changePriceRecords = () => {
-        getPriceSolution()
-        setIsOpen(true)
-    }
-    const changePrice = () => {
-        setIsChangeOpen(true)
-    }
-    const editEvent = () => {
-        setIsEditOpen(true)
-    }
-    const deleteEvent = () => {
-        setIsDeleteOpen(true)
-    }
+
     //调价记录
     const ModalProps = {
         setIsOpen,
@@ -60,14 +49,28 @@ export default function Solution(props) {
     //编辑
     const ModalEditProps = {
         isEditOpen,
-        setIsEditOpen
+        setIsEditOpen,
+        ...props
     }
     //删除
     const DeleteProps = {
         isDeleteOpen,
         setIsDeleteOpen
     }
-    
+    const changePriceRecords = () => {
+        getPriceSolution()
+        setIsOpen(true)
+    }
+    const changePrice = () => {
+        console.log(props)
+        setIsChangeOpen(true)
+    }
+    const editEvent = () => {
+        setIsEditOpen(true)
+    }
+    const deleteEvent = () => {
+        setIsDeleteOpen(true)
+    }
     return (
         <div className={style.Solution}>
             <div className={style.solutionTitle}>
@@ -112,7 +115,7 @@ export default function Solution(props) {
                             <p className={style.mgtop}><span>第三档</span><span style={pdl40}>{props.tierPrice.tierValueMin3.toFixed(2)}</span></p>
                         </div>
                         <div className={style.column}>
-                            <p style={{ fontWeight: 'bold' }}>阶梯值(kWh)</p>
+                            <p style={{ fontWeight: 'bold' }}>阶梯价(元/度)</p>
                             <p className={style.mgtop}><span>第二档</span><span style={pdl40}>{props.tierPrice.tierPrice2.toFixed(2)}</span></p>
                             <p className={style.mgtop}><span>第三档</span><span style={pdl40}>{props.tierPrice.tierPrice3.toFixed(2)}</span></p>
                         </div>
@@ -129,17 +132,16 @@ export default function Solution(props) {
             </div>
 
             <PriceRecordModal {...ModalProps} />
-            {/* <ChangePrice {...ChangeProps} /> */}
-            <EditModals {...ChangeProps} />
+
+            <ChangePrice {...ChangeProps} />
             <EditModal {...ModalEditProps} />
             <DeleteModal {...DeleteProps} />
         </div>
     )
 }
 //调价记录
-const PriceRecordModal = ({ isOpen = false, setIsOpen,priceRecord, ...otherprops }) => {
+const PriceRecordModal = ({ isOpen = false, setIsOpen, priceRecord, ...otherprops }) => {
     const [editElectric, setEditElectric] = useState(false)
-  
     const pdf40 = {
         paddingLeft: 30
     }
@@ -147,7 +149,7 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen,priceRecord, ...otherprops
     function Card(props) {
         return (
             <div className={style.priceRecordCard}>
-                <div className={ `${style.polygon} ${props.enabled==='使用中'?style.greenpolygon:style.graypolygon}`   }><div style={{ rotate: '-45deg', color: '#fff' }}>{props.enabled}</div></div>
+                <div className={`${style.polygon} ${props.enabled === '使用中' ? style.greenpolygon : style.graypolygon}`}><div style={{ rotate: '-45deg', color: '#fff' }}>{props.enabled}</div></div>
                 <div className={style.makeBrith}>
                     <div style={{ fontWeight: 'bold' }}>生效日期</div>
                     <div style={{ fontWeight: 'bold', marginTop: 12 }}>{props.startDate.split(" ")[0]}</div>
@@ -164,7 +166,7 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen,priceRecord, ...otherprops
                         otherprops.priceType === 2 || otherprops.priceType === 4 ?
                             (
                                 <>
-                                    <div className={style.priceColumn} style={{ marginLeft: 65 ,borderLeft: '1px dashed #d7d7d7'}}>
+                                    <div className={style.priceColumn} style={{ marginLeft: 65, borderLeft: '1px dashed #d7d7d7' }}>
                                         <div className={style.columnTitle}>复费率</div>
                                         <div style={{ marginTop: 12, color: '#666' }}>
                                             <span >尖单价(元)</span>
@@ -193,7 +195,7 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen,priceRecord, ...otherprops
                     {
                         otherprops.priceType === 3 || otherprops.priceType === 4 ?
                             (<>
-                                <div className={style.priceColumn} style={{ marginLeft: 65 ,borderLeft: '1px dashed #d7d7d7'}}>
+                                <div className={style.priceColumn} style={{ marginLeft: 65, borderLeft: '1px dashed #d7d7d7' }}>
                                     <div className={style.columnTitle}>阶梯值(kWh)</div>
                                     <div style={{ marginTop: 12, color: '#666' }}>
                                         <span >第二档</span>
@@ -238,9 +240,8 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen,priceRecord, ...otherprops
                 title={<BlueColumn name="调价记录" />}
                 footer={null}
             >
-                {priceRecord.map((item,index)=><Card {...item} key={index}/>)}
-                
-                
+                {priceRecord.map((item, index) => <Card {...item} key={index} />)}
+
             </Modal>
             <EditElectricModal editElectric={editElectric} setEditElectric={setEditElectric} />
         </>
@@ -336,7 +337,7 @@ const EditElectricModal = ({ editElectric, setEditElectric }) => {
 
                     </Item>
                 </Form>
-                <p style={{ marginLeft: 64, backgroundColor: '#f2f2f2', borderRadius: 4, padding: 16, width: 472, marginBottom: 24 }}>
+                <div style={{ marginLeft: 64, backgroundColor: '#f2f2f2', borderRadius: 4, padding: 16, width: 472, marginBottom: 24 }}>
                     <strong style={{ fontSize: 16 }}>计算公式：</strong>
                     <p style={{ marginTop: 16 }}>总电量＝峰时段电量+平时段电量+谷时段电量</p>
                     <p style={{ marginTop: 16 }}>总电费＝分时电费＋第二档增量电费＋第三档增量电费</p>
@@ -346,87 +347,189 @@ const EditElectricModal = ({ editElectric, setEditElectric }) => {
                     <p style={{ marginTop: 16 }}>"电费先分时后阶梯”即先按照峰谷各时段用电量和分时电价标准计算全部电量的电费，再按照第二档、第三档递增电价标准，分别计算第二档、第三档电量的递增电费，三部分电费之和即为该居民用户的总电费。</p>
                     <p style={{ marginTop: 16 }}> 阶梯式电价是阶梯式递增电价或阶梯式累进电价的简称，也称为阶梯电价，是指把户均用电量设置为若干个阶梯分段或分档次定价计算费用。</p>
 
-                </p>
+                </div>
             </div>
 
         </Modal>
     )
 }
+
 //调价
-const ChangePrice = ({ isChangeOpen, setIsChangeOpen }) => {
+const ChangePrice = ({ isChangeOpen, setIsChangeOpen, priceType, ...otherprops }) => {
+    const [form] = Form.useForm()
+    const labcol1 = { span: 4, offset: 0 };
+    const labcol2 = { span: 5, offset: 0 }
+    console.log(priceType)
+    const inpStyle1 = {
+        width: 112,
+        marginLeft: 60,
+    }
+    const inpStyle2 = {
+        width: 112,
+        marginLeft: 39
+    }
+    const itemStyle = {
+        paddingBottom: 16,
+        borderBottom: '1px dashed #d7d7d7'
+    }
+
+    const initFormData = {
+        Electric: priceType,
+        BasePrice: otherprops.benchmarkPrice,
+        Tip: otherprops.ratePrice.ratePrice1,
+        Peak: otherprops.ratePrice.ratePrice2,
+        Plain: otherprops.ratePrice.ratePrice3,
+        Valley: otherprops.ratePrice.ratePrice4,
+        tierValueMin2: otherprops.tierPrice.tierValueMin2,
+        tierValueMin3: otherprops.tierPrice.tierValueMin3,
+        tierPrice2: otherprops.tierPrice.tierPrice2,
+        tierPrice3: otherprops.tierPrice.tierPrice3,
+        Birth: moment(otherprops.startDate)
+    }
+    console.log(initFormData)
+    const BasePrice = (
+        <Item label={<strong>基准价(元/度)</strong>} name="BasePrice" style={priceType !== 1 ? itemStyle : {}}>
+            <Input style={{ width: 112 }}></Input>
+        </Item>)
+
     return (
         <Modal
             centered
-            width={614}
+            destroyOnClose
+            width={priceType === 4 ? 1114 : 614}
+            forceRender={true}
             closable={false}
-            cancelText="返回"
-            cancelButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
-            okText="保存"
-            okButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
             open={isChangeOpen}
-            onCancel={() => { setIsChangeOpen(false) }}
-            title={<BlueColumn name="编辑定价" />}
+            title={<BlueColumn name="定价方案" />}
+            onCancel={() => { setIsChangeOpen(false); }}
+            cancelButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
+            onOk={() => { console.log(form.getFieldValue()) }}
+            okButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
         >
-            <Form style={{ borderBottom: '1px dashed #d7d7d7' }}>
-                <Item style={{ borderBottom: '1px dashed #d7d7d7', paddingBottom: 16 }}>
-                    <span>生效日期</span>
-                    <DatePicker picker='month' style={{ width: 112, marginLeft: 60 }} suffixIcon={null} size="default" />
-                    <Input style={{ width: 64, margin: '0 16px' }} size="default"></Input>
-                    <span>(结算日)</span>
-                </Item>
-                <Item style={{ borderBottom: '1px dashed #d7d7d7' }}>
-                    <div style={{ marginBottom: 16 }}>
-                        <span style={{ display: 'inline-block', width: 115 }}>电价类型</span>
-                        <Select style={{ width: 112 }} size="default">
-                            <Option>阶梯费率</Option>
-                        </Select>
-                    </div>
-                    <div style={{ marginBottom: 16 }}>
-                        <span style={{ display: 'inline-block', width: 115 }}>基准价 (元/度)</span>
-                        <Input style={{ width: 112 }} size="default"></Input>
-                    </div>
-                </Item>
-                <Item >
-                    <div style={{ display: 'flex', }}>
-                        <div style={{ width: 288 }}>
-                            <div>阶梯值(kWh)</div>
-                            <div>
-                                <span style={{ paddingRight: 16 }}>第二档</span>
-                                <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                            </div>
-                            <div>
-                                <span style={{ paddingRight: 16 }}>第三档</span>
-                                <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                            </div>
+            <div style={priceType === 4 ? { display: 'flex', borderBottom: '1px dashed #d7d7d7' } : {}}>
+                <Form
+                    labelCol={priceType !== 2 ? labcol2 : labcol1}
+                    labelAlign="left"
+                    size="middle"
+                    preserve={true}
+                    form={form}
+                    initialValues={initFormData}
+                    className={style.addPlanForm}
+                >
+                    <Item label={<strong>电价类型</strong>} style={{ paddingTop: 16, borderTop: '1px dashed #d7d7d7' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Item noStyle name="Electric">
+                                <Select style={{ width: 112 }} >
+                                    <Option value="1">单费率</Option>
+                                    <Option value="2">复费率</Option>
+                                    <Option value="3">阶梯费率</Option>
+                                    <Option value="4">混合费率</Option>
+                                </Select>
+                            </Item>
                         </div>
-                        <div style={{ width: 288 }}>
-                            <div>阶梯价(元/度)</div>
-                            <div>
-                                <span style={{ paddingRight: 16 }}>第二档</span>
-                                <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                            </div>
-                            <div>
-                                <span style={{ paddingRight: 16 }}>第三档</span>
-                                <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                            </div>
-                        </div>
-                    </div>
 
-                </Item>
-            </Form>
-            <p>
+                    </Item>
+                    {priceType !== 2 ? BasePrice : null}
+                    {
+                        (priceType == 2 || priceType == 4) ?
+                            <Item style={{ borderBottom: '1px dashed #d7d7d7' }}>
+                                <div style={{ alignItems: 'center', borderTop: priceType == 2 ? '1px dashed #d7d7d7' : '', paddingTop: priceType == 2 ? 16 : '' }}>
+                                    <strong style={{ marginRight: 105 }}>复费率(元/度)</strong>
+                                    <div className={style.flexContainer} style={{ marginTop: 16 }}>
+                                        <Item label="尖电价" labelCol={5} name="Tip"><Input style={inpStyle2} /></Item>
+                                        <Item label="峰电价" labelCol={5} name="Peak"><Input style={{ width: 112, marginLeft: 22 }} /></Item>
+                                    </div>
+                                    <div className={style.flexContainer}>
+                                        <Item label="平电价" labelCol={5} name="Plain"><Input style={inpStyle2} /></Item>
+                                        <Item label="谷电价" labelCol={5} name="Valley"><Input style={{ width: 112, marginLeft: 22 }} /></Item>
+                                    </div>
+                                </div>
+                            </Item> : null
+                    }
+                    {(priceType == 3 || priceType == 4) ? (
+                        <>
+                            <Item style={{ ...itemStyle, paddingBottom: 0 }}>
+                                <div style={{ display: 'flex', }}>
+                                    <div style={{ width: 288 }}>
+                                        <strong style={{ marginBottom: 16 }}>阶梯值(kWh)</strong>
+                                        <Item name="tierValueMin2" label="第二档" style={{ marginTop: 16 }}>
+                                            <Input style={inpStyle1} size="default"></Input>
+                                        </Item>
+                                        <Item name="tierValueMin3" label="第三档">
+                                            <Input style={inpStyle1} size="default"></Input>
+                                        </Item>
+                                    </div>
+                                    <div style={{ width: 288 }}>
+                                        <strong >阶梯价(元/度)</strong>
+                                        <Item name="tierPrice2" label="第二档" style={{ marginTop: 16 }}>
+                                            <Input style={{ width: 112 }} size="default"></Input>
+                                        </Item>
+                                        <Item name="tierPrice3" label="第三档">
 
-            </p>
+                                            <Input style={{ width: 112 }} size="default"></Input>
+                                        </Item>
+                                    </div>
+                                </div>
+                            </Item>
+                        </>
+                    ) : null
+                    }
+
+                    <Item label={<strong>生效日期</strong>} name="Birth" style={priceType !== 4 ? itemStyle : {}}>
+                        <DatePicker style={{ width: 112 }} suffixIcon={null}></DatePicker>
+                    </Item>
+                </Form>
+                {
+                    priceType === 4 ? (<div style={{ marginLeft: 64, backgroundColor: '#f2f2f2', borderRadius: 4, padding: 16, width: 472, marginBottom: 16 }}>
+                        <strong style={{ fontSize: 16 }}>计算公式：</strong>
+                        <p style={{ marginTop: 16 }}>总电量＝峰时段电量+平时段电量+谷时段电量</p>
+                        <p style={{ marginTop: 16 }}>总电费＝分时电费＋第二档增量电费＋第三档增量电费</p>
+                        <p style={{ marginTop: 16 }}>分时电费＝峰时段电量×峰时段电价+平时段电量×平时段电价+谷时段电量×谷时段电价</p>
+                        <p style={{ marginTop: 16 }}>第二档增量电费＝第二档用电量×第二档加价标准</p>
+                        <p style={{ marginTop: 16 }}>第三档增量电费＝第三档用电量×第三档加价标准</p>
+                        <p style={{ marginTop: 16 }}>"电费先分时后阶梯”即先按照峰谷各时段用电量和分时电价标准计算全部电量的电费，再按照第二档、第三档递增电价标准，分别计算第二档、第三档电量的递增电费，三部分电费之和即为该居民用户的总电费。</p>
+                        <p style={{ marginTop: 16 }}> 阶梯式电价是阶梯式递增电价或阶梯式累进电价的简称，也称为阶梯电价，是指把户均用电量设置为若干个阶梯分段或分档次定价计算费用。</p>
+
+                    </div>) : null
+                }
+            </div>
+
+
         </Modal>
     )
 }
+
 //编辑
-const EditModal = ({ isEditOpen = false, setIsEditOpen }) => {
+const EditModal = ({ isEditOpen = false, setIsEditOpen, ...otherprops }) => {
+    const [planName, setPlanName] = useState(otherprops.name)
+
+    const UpdatePriceSolutionName = async () => {
+        const res = await PriceSolution.UpdatePriceSolutionName({
+            projectId: 1,
+            solutionId: otherprops.id,
+            solutionName: planName
+        })
+        if (res.success) {
+            otherprops.getPriceSolution()
+            message.success('编辑方案名称成功!')
+        } else {
+            message.error('编辑方案名称失败!')
+        }
+    }
+    const InpChange = (e) => {
+        setPlanName(e.target.value)
+    }
+
+    const ConfirmEdit = () => {
+        UpdatePriceSolutionName();
+        setIsEditOpen(false)
+    }
     return (
         <Modal
             centered
             open={isEditOpen}
-            onCancel={() => { setIsEditOpen(false) }}
+            onCancel={() => { setPlanName(otherprops.name); setIsEditOpen(false) }}
+            onOk={ConfirmEdit}
             width={505}
             title={<BlueColumn name="编辑定价方案" />}
             closable={false}
@@ -435,7 +538,7 @@ const EditModal = ({ isEditOpen = false, setIsEditOpen }) => {
         >
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ flexShrink: 0, paddingRight: 16 }}>方案名称</span>
-                <Input size='default'></Input>
+                <Input size='default' onChange={InpChange} value={planName}></Input>
             </div>
         </Modal>
     )
@@ -460,197 +563,3 @@ const DeleteModal = ({ isDeleteOpen, setIsDeleteOpen }) => {
     )
 }
 
-//编辑弹框
-const EditModals = ({ isChangeOpen, setIsChangeOpen,priceType}) => {
-  const [form] = Form.useForm()
-  const labcol1 = {span:4,offset: 0};
-  const labcol2 = {span:5,offset:0}
-
-  const inpStyle1 = {
-    width: 112, 
-    marginTop: 16,
-    marginLeft: 60,
- }
- const inpStyle2 = {
-  width:112,
-  marginLeft:39
- }
- const itemStyle = {
-  paddingBottom:16,
-  borderBottom:'1px dashed #d7d7d7'
- }
- const BasePeice = (
-  <Item label={<strong>基准价(元/度)</strong>} name="BasePeice" style={priceType!==1?itemStyle:{}}>
-  <Input style={{ width: 112 }}></Input>
-  </Item>)
-
-  return (
-    <Modal
-      centered
-      destroyOnClose
-      width={priceType===4?1114:614}
-      forceRender={true}
-      closable={false}
-      open={isChangeOpen}
-      title={<BlueColumn name="定价方案" />}
-      onCancel={() => { setIsChangeOpen(false); }}
-      cancelButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
-      onOk={() => { console.log(form.getFieldValue()) }}
-      okButtonProps={{ style: { width: 96, height: 36, fontSize: 14 } }}
-    >
-      <div style={priceType===4?{display:'flex',borderBottom: '1px dashed #d7d7d7'}:{}}>
-      <Form
-        labelCol={priceType!==2?labcol2:labcol1}
-        labelAlign="left"
-        size="middle"
-        preserve={true}
-        form={form}
-        initialValues={{ Electric: '1' }}
-        className={style.addPlanForm}
-      >
-        {/* <Item label={<strong>方案名称</strong>} name="Plan" style={itemStyle}>
-          <Input ></Input>
-        </Item> */}
-        <Item label={<strong>电价类型</strong>} style={{paddingTop:16,borderTop:'1px dashed #d7d7d7'}}>
-         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-         <Item noStyle name="Electric">
-          <Select style={{ width: 112 }} >
-            <Option value="1">单费率</Option>
-            <Option value="2">复费率</Option>
-            <Option value="3">阶梯费率</Option>
-            <Option value="4">混合费率</Option>
-          </Select>
-          </Item>
-          {/* {priceType===2?( <div style={{marginRight:105}}>复费率(元/度)</div>):null} */}
-         </div>
-          
-        </Item>
-        {priceType!==2?BasePeice:null}
-        {
-           priceType == 2?
-            <Item style={{borderBottom:'1px dashed #d7d7d7'}}>
-              <div className={style.elecPrice} style={{alignItems:'center',borderTop:'1px dashed #d7d7d7'}}>
-                <strong style={{marginRight:105}}>复费率(元/度)</strong>
-                <div className={style.flexContainer}>
-                  <Item  label="尖电价" labelCol={5} name="tip "><Input style={inpStyle2}/></Item>
-                  <Item  label="峰电价"  labelCol={5} name="peak"><Input style={{width:112,marginLeft:22}}/></Item>
-                </div>
-                <div className={style.flexContainer}>
-                  <Item  label="平电价" labelCol={5} name="plain "><Input style={inpStyle2}/></Item>
-                  <Item  label="谷电价"  labelCol={5} name="valley"><Input style={{width:112,marginLeft:22}}/></Item>
-                </div>
-              </div>
-            </Item>
-              
-            : priceType == 3?(
-              <>
-              <Item style={itemStyle}>
-                <div style={{ display: 'flex', }}>
-              <div style={{ width: 288 }}>
-                  <strong>阶梯值(kWh)</strong>
-                  <div>
-                      <span style={{ paddingRight: 16 }}>第二档</span>
-                      <Input style={inpStyle1} size="default"></Input>
-                  </div>
-                  <div>
-                      <span style={{ paddingRight: 16 }}>第三档</span>
-                      <Input style={inpStyle1} size="default"></Input>
-                  </div>
-              </div>
-              <div style={{ width: 288 }}>
-                  <strong>阶梯价(元/度)</strong>
-                  <div>
-                      <span style={{ paddingRight: 16 }}>第二档</span>
-                      <Input style={{width:112,marginTop: 16,}} size="default"></Input>
-                  </div>
-                  <div>
-                      <span style={{ paddingRight: 16 }}>第三档</span>
-                      <Input style={{width:112,marginTop: 16,}} size="default"></Input>
-                  </div>
-              </div>
-          </div>
-              </Item>
-              </>  
-            ) :priceType == 4? (
-              <>
-              <Item style={{  borderBottom: '1px dashed #d7d7d7', paddingBottom: 16 }}>
-                        <div style={{ display: 'flex', }}>
-                            <div style={{ width: 288 }}>
-                                <div>复费率(元/度)</div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>尖电价</span>
-                                    <Input style={inpStyle1} size="default"></Input>
-                                </div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>平电价</span>
-                                    <Input style={inpStyle1} size="default"></Input>
-                                </div>
-                            </div>
-                            <div style={{ width: 288 }}>
-                                <div style={{height:22}}></div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>峰电价</span>
-                                    <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                                </div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>谷电价</span>
-                                    <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                                </div>
-                            </div>
-                        </div>
-
-                    </Item>
-                    <Item style={{ display: 'flex',...itemStyle }}>
-                        <div style={{ display: 'flex', }}>
-                            <div style={{ width: 288 }}>
-                                <div>阶梯值(kWh)</div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>第二档</span>
-                                    <Input style={inpStyle1} size="default"></Input>
-                                </div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>第三档</span>
-                                    <Input style={inpStyle1} size="default"></Input>
-                                </div>
-                            </div>
-                            <div style={{ width: 288 }}>
-                                <div>阶梯价(元/度)</div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>第二档</span>
-                                    <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                                </div>
-                                <div>
-                                    <span style={{ paddingRight: 16 }}>第三档</span>
-                                    <Input style={{ width: 112, marginTop: 16 }} size="default"></Input>
-                                </div>
-                            </div>
-                        </div>
-
-                    </Item>
-              </>
-            ):null
-        }
-
-        <Item label={<strong>生效日期</strong>} name="Birth" style={priceType!==4?itemStyle:{}}>
-          <DatePicker style={{ width: 112 }} suffixIcon={null}></DatePicker>
-        </Item>
-      </Form>
-      {
-        priceType===4?(<p style={{marginLeft:64,backgroundColor:'#f2f2f2',borderRadius:4,padding:16,width:472,marginBottom: 16}}>
-        <strong style={{fontSize:16}}>计算公式：</strong>
-        <p style={{marginTop:16}}>总电量＝峰时段电量+平时段电量+谷时段电量</p>
-        <p style={{marginTop:16}}>总电费＝分时电费＋第二档增量电费＋第三档增量电费</p>
-        <p style={{marginTop:16}}>分时电费＝峰时段电量×峰时段电价+平时段电量×平时段电价+谷时段电量×谷时段电价</p>
-        <p style={{marginTop:16}}>第二档增量电费＝第二档用电量×第二档加价标准</p>
-        <p style={{marginTop:16}}>第三档增量电费＝第三档用电量×第三档加价标准</p>
-        <p style={{marginTop:16}}>"电费先分时后阶梯”即先按照峰谷各时段用电量和分时电价标准计算全部电量的电费，再按照第二档、第三档递增电价标准，分别计算第二档、第三档电量的递增电费，三部分电费之和即为该居民用户的总电费。</p>
-        <p style={{marginTop:16}}> 阶梯式电价是阶梯式递增电价或阶梯式累进电价的简称，也称为阶梯电价，是指把户均用电量设置为若干个阶梯分段或分档次定价计算费用。</p>
-       
-    </p>):null
-      }
-      </div>
-    
-      
-    </Modal>
-  )
-}

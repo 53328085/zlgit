@@ -94,7 +94,7 @@ export default function Index() {
         <img src={DashLine} style={{ margin: '0 auto', display: 'block' }}></img>
         <div className={style.lists}>
           {key === 1 ? solutionPropsList.map((item, index) => {
-            return <Solution {...item} key={index}></Solution>
+            return <Solution {...item} key={index} getPriceSolution={getPriceSolution}></Solution>
           }) : key === 2 ? <WaterSolution /> : key === 3 ? <FireSolution /> : <CoalSolution />}
         </div>
       </div>
@@ -281,7 +281,7 @@ const AddModal = ({ addPlan, setAddPlan }) => {
         </Item>
       </Form>
       {
-        elecType==='4'?(<p style={{marginLeft:64,backgroundColor:'#f2f2f2',borderRadius:4,padding:16,width:472,marginBottom: 16}}>
+        elecType==='4'?(<div style={{marginLeft:64,backgroundColor:'#f2f2f2',borderRadius:4,padding:16,width:472,marginBottom: 16}}>
         <strong style={{fontSize:16}}>计算公式：</strong>
         <p style={{marginTop:16}}>总电量＝峰时段电量+平时段电量+谷时段电量</p>
         <p style={{marginTop:16}}>总电费＝分时电费＋第二档增量电费＋第三档增量电费</p>
@@ -291,7 +291,7 @@ const AddModal = ({ addPlan, setAddPlan }) => {
         <p style={{marginTop:16}}>"电费先分时后阶梯”即先按照峰谷各时段用电量和分时电价标准计算全部电量的电费，再按照第二档、第三档递增电价标准，分别计算第二档、第三档电量的递增电费，三部分电费之和即为该居民用户的总电费。</p>
         <p style={{marginTop:16}}> 阶梯式电价是阶梯式递增电价或阶梯式累进电价的简称，也称为阶梯电价，是指把户均用电量设置为若干个阶梯分段或分档次定价计算费用。</p>
        
-    </p>):null
+    </div>):null
       }
       </div>
     
