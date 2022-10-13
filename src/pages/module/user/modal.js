@@ -11,23 +11,26 @@ export default function Custmodal({
   roletype,
   enable = false,
   type = "normal",
+  mold = "form",
+  children = null
 } = {}) {
   const [form] = Form.useForm();
   const { Item } = Form;
-  const theme = {
-    normal: "2px solid #337af0",
-    warn: "2px solid #ff4d4f",
-  };
-  console.log(theme[type]);
+  const custCorle = {
+    normal: "#337af0",
+    warn: "#ff4d4f"
+  }
+  const theme = `2px solid ${custCorle[type]}`
+
   const CModal = styled(Modal)`
     .ant-modal-header {
       padding: 32px;
       border-bottom: none;
       .ant-modal-title {
-        font-size: 18px;
-        color: #666;
+        font-size: 16px;
+        color: ${custCorle[type]};
         padding-left: 16px;
-        border-left: ${theme[type]};
+        border-left: ${theme};
         height: 32px;
         line-height: 32px;
       }
@@ -47,32 +50,50 @@ export default function Custmodal({
         margin-left: 16px;
       }
       .ant-btn-primary {
-        border-color: ${theme[type]};
-        background-color: ${theme[type]};
+        border-color: ${custCorle[type]};
+        background-color: ${custCorle[type]};
       }
     }
     .ant-form-item:last-of-type {
       margin-bottom: 0px;
     }
   `;
-  return (
+  const msg = (
+    <CModal
+      width={592}
+      title={title}
+      open={open}
+      onOk={() => {
+        ok().then(() => {
+          cancal()
+        })
+      }}
+      onCancel={cancal}
+      closable={false}
+      centered     
+    >
+      {children}
+    </CModal>
+  )
+  const fromModal = (
     <CModal
       width={554}
       title={title}
       open={open}
-      onOk={ () => {
-       
-        form.validateFields().then(values => {
-          form.submit()
-          ok(values).then((f)=> {
-            if (f) {
-              form.resetFields()
-              cancal()
-            }
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values) => {
+            form.submit();
+            ok(values).then((f) => {
+              if (f) {
+                cancal();
+              }
+            });
           })
-        }).catch((info) => {
-          console.log(info)
-        })
+          .catch((info) => {
+            console.log(info);
+          });
       }}
       onCancel={cancal}
       closable={false}
@@ -88,8 +109,7 @@ export default function Custmodal({
         preserve={false}
       >
         {roletype && (
-          <Item label="用户角色" name="RoleType"        
-          >
+          <Item label="用户角色" name="RoleType">
             <Select>
               {roletype.map((r) => (
                 <Select.Option key={r.id} value={r.id}>
@@ -99,12 +119,16 @@ export default function Custmodal({
             </Select>
           </Item>
         )}
-        <Item label="用户名" name="LoginName" rules={[
+        <Item
+          label="用户名"
+          name="LoginName"
+          rules={[
             {
               required: true,
-              message: '用户名必填',
+              message: "用户名必填",
             },
-          ]}>
+          ]}
+        >
           <Input />
         </Item>
         <Item label="用户姓名" name="NickName" required>
@@ -135,4 +159,9 @@ export default function Custmodal({
       </Form>
     </CModal>
   );
+  const modal = {
+    form: fromModal,
+    msg,
+  };
+  return modal[mold];
 }
