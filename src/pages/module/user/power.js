@@ -12,12 +12,15 @@ import {
   Modal,
   Form,
   message,
-  Table
+  Table,
+  Tag
+
 } from "antd";
 import {WarningFilled} from '@ant-design/icons'
 import { useRequest } from "ahooks";
 import { Project } from "@api/api.js";
 import Custmodal from "./modal";
+import { fromJSON } from "postcss";
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -41,8 +44,8 @@ const msginfo = ['', '', '运营管理员', '项目管理员', '运维人员']
 export default function Account() {
   const Mainbox = styled.div`
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
-    grid-template-columns: 1090px 1fr;
+    grid-template-rows: repeat(3, auto);
+     max-width: 1090px;
     row-gap: 16px;
 
     div.admin {
@@ -63,79 +66,47 @@ export default function Account() {
         font-size: 14px;
         width: 336px;
       }
+      .park {
+        display: flex;
+        align-items: center;
+        .ant-typography {
+          margin-right: 16px;
+        }
+      }
     }
   `;
-  const [operate, setOperate] = useState([]);
-  const [opvalue, setOpvalue] = useState("");
+  const Ctag = styled(Tag)`
+     height: 32px;
+     padding: 0 23px;
+     line-height: 32px;
+     margin-right: 16px;
+   
+  `
+  const [operate, setOperate] = useState([]); // 运营管理员
+  const [admin, setAdmin] = useState([]) //运维管理员
   const [open, setOpen] = useState(false);
   const [msgopen, setMsgopen] = useState(false)
   const [menuopen, setMenuopen] = useState(false)
   const [menus, setMenus] = useState([])
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [opvalue, setOpvalue] = useState('')
   const [delmsg, setDelmsg] = useState('')
   const [delarg, setDelarg] = useState({
     type: '',
     projectId: 1, // 暂时写死
     userId: ''
   })
-  const [admin, setAdmin] = useState({
-    LoginName: "",
-    NickName: "",
-    Mobile: "",
-    id: ''
-  });
+
   const {runAsync: runMenu} = useRequest(GetMenus, { // 获取菜单
     manual: true,
      
   })
-  const up = (index, row, data) => {
-    // 上移
-    let prerow = data[index - 1];
-    data[index] = prerow;
-    data[index - 1] = row;
-  };
-  const down = (index, row, data) => {
-    // 下移
-    let nextrow = data[index + 1];
-    data[index] = nextrow;
-    data[index + 1] = row;
-  }
-  const rowmove = (record, index) => {
-      
-  }
-  
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log(newSelectedRowKeys)
-   
-   
-    setSelectedRowKeys((arr) => [...new Set([...arr, ...newSelectedRowKeys])]);
-    console.log(selectedRowKeys)
-  }
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
-  const columns = [
-    {
-    title: 'name',
-    dataIndex: 'name',
-     
-   },
-   {
-    title: '',
-    dataIndex: 'up',
-    render: (_, record, index) => (<Link onClick={() => rowmove(record, index, 'up')}>上移一行</Link>)
-   },
-   {
-    title: '',
-    dataIndex: 'down',
-    render: (_, record, index) => (<Link onClick={() => rowmove(record, index, 'down')}>下移一行</Link>)
-   }
-]
+ const [title, setTitle] = useState('新增项目管理员')
+ const [form] = Form.useForm()
   const menufn = () => { 
-    console.log(admin)
+   
     setMenuopen(true)
-     runMenu({projectId: 1, userId: admin.id}).then(res => {
+    const userId = form.getFieldValue('id')
+     runMenu({projectId: 1, userId}).then(res => {
         
          let {success, data: {menuList}} = res        
          success && setMenus(menuList) && setMenuopen(true)
@@ -155,29 +126,23 @@ export default function Account() {
     manual: true,   
     onSuccess: ({ success, data }) => {
       if (success && Array.isArray(data) && data.length > 0) {
-        let { loginName, nickName, mobile,id } = data[0];
-        setAdmin((o) => ({
-          ...o,
+        let { loginName, nickName, mobile,id } = data[0];       
+        form.setFieldsValue({
           LoginName: loginName,
           NickName: nickName,
           Mobile: mobile,
           id
-        }));
+        })
       }
     },
   });
-  const {run: runop} = useRequest(GetProjectOperator, { // 获取运营人员
+  
+  const {run: runop} = useRequest(GetProjectOperator, { // 获取运维人员
     manual: true,   
     onSuccess: ({ success, data }) => {
       if (success && Array.isArray(data) && data.length > 0) {
-        let { loginName, nickName, mobile,id } = data[0];
-        setAdmin((o) => ({
-          ...o,
-          LoginName: loginName,
-          NickName: nickName,
-          Mobile: mobile,
-          id
-        }));
+         setAdmin(data)
+        console.log(admin)
       }
     },
   });
@@ -215,6 +180,7 @@ export default function Account() {
       let { success, errMsg } = await addProjectUser(params);
       console.log(success);
       if (!success) message.error(errMsg, 1);
+       
       return success;
     } catch (error) {
       console.log(error);
@@ -289,17 +255,103 @@ export default function Account() {
     runmg()
     runop(1)
   }, []) // 需要projectId
-  const CustDrawer = ({menuopen, rowSelection, columns, menus}) => {
 
-   return (
-     <Drawer open={menuopen} title="项目权限选择" width={608} closable={false} extra={<Button type="primary">保存</Button>}>
-       <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>
-    </Drawer>
-   )
+  const saveMenu =() => {}
+  const closemenu = () => {
+    setMenuopen(false)
+  }
+  const CustDrawer = ({menuopen, onClose=()=> {}, menus=[]}={} ) => {
+    const [tbdata, setTbdata] = useState(menus)
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    
+    const rowmove = {
+      up: (record,index) => {
+        setTbdata(arr => {
+          let prerow = arr[index - 1];
+          arr[index] = prerow;
+          arr[index - 1] = record;
+          console.log(arr)
+          return [...arr]
+        })
+     
+      },
+      down: (record,index) => {
+        setTbdata(arr => {
+          let nextrow = arr[index + 1];
+          arr[index] = nextrow;
+          arr[index + 1] = record;
+          return [...arr]
+        })
+       
+      }
+    }
+    const rowlen = useMemo(() => menus.length, [menus])
+    console.log(rowlen)
+    const onSelectChange = (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+     // setSelectedRowKeys((arr) => [...new Set([...arr, ...newSelectedRowKeys])]);
+     // console.log(selectedRowKeys)
+    }
+    const rowSelection = {
+     // selectedRowKeys,
+      onChange: onSelectChange,
+    }
+    const columns = [
+      {
+      title: '预付费的菜单',
+      dataIndex: 'name',
+       
+     },
+     {
+      title: '',
+      dataIndex: 'up',
+      render: (_, record, index) => index !==0 && (<Link onClick={() => rowmove.up(record, index)}>上移一行</Link>)
+     },
+     {
+      title: '',
+      dataIndex: 'down',
+      render: (_, record, index) => index <  rowlen - 1 && (<Link onClick={() => rowmove.down(record, index)} type="danger">下移一行</Link>)
+     }
+  ]
+    return (
+      <Drawer open={menuopen} title="项目权限选择" width={608} onClose={onClose} closable={false}  extra={<Pributton type="primary" onClick={() => saveMenu()}>保存</Pributton>}>
+          <Table rowSelection={rowSelection} columns={columns} dataSource={tbdata} rowKey="no" pagination={false}></Table>
+      </Drawer>
+    )
+  }
+  const RenderItem = (data) => {
+  return data.map((field, index) => (
+    <div className="admin" style={{flex: 1}}>
+      <div className="item" >
+         <Item name={[index, "LoginName"]} noStyle>
+                <Input size="middle" defaultValue={field.loginName} />
+              </Item>
+              <Item name={[index, "NickName"]} noStyle>
+                <Input size="middle" defaultValue={field.nickName} />
+              </Item>
+              <Item name={[index, "Mobile"]} noStyle>
+                <Input size="middle" defaultValue={field.mobile} />
+              </Item>
+              <Item noStyle>
+                 <div style={{ display: "flex" }}>
+                       <Space size={16}>  <Pributton onClick={() => menufn(field.id)}>数据权限</Pributton><Pributton onClick={() => menufn(field.id)}>菜单权限</Pributton></Space>
+                       <Delbutton onClick={() => onDeleteMsg(0, field.id)}>删除</Delbutton>
+                    </div>
+              </Item>
+              <Item noStyle>
+              
+              </Item>
+      </div>
+      <div className="park">
+                <Text>园区选择</Text> <Ctag>温州园区</Ctag> <Ctag>滨江园区</Ctag>
+              </div>
+      </div>
+    ))
   }
   return (
     <Mainbox>
-      <div>
+     
+        <div>
         <div className="admin">
           <Title level={5} className="title">
             运营管理员（支持添加多位运营管理员）
@@ -335,6 +387,8 @@ export default function Account() {
             </div>
           ))}
         </div>
+        </div>
+        <div>
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
@@ -346,21 +400,11 @@ export default function Account() {
             <Text type="">用户名</Text> <Text>姓名</Text>{" "}
             <Text span={4}>手机号</Text>
           </div>
-          <Form.Provider
-            onFormFinish={(name, { values, forms }) => {
-              if (name == "modalform") {
-                const { useform } = forms;
-                useform.setFieldsValue({
-                  ...values,
-                });
-              }
-            }}
-          >
+         
             <Form
-              name="useform"
+              form={form}
               layout="inline"
               className="item"
-              initialValues={admin}
               readOnly
             >
               <Item name="LoginName" noStyle>
@@ -384,14 +428,12 @@ export default function Account() {
                 </Item>
               
             </Form>
-            <Custmodal
-              title="新增项目管理员"
-              open={open}
-              cancal={cancal}
-              ok={ok}
-            ></Custmodal>
-          </Form.Provider>
+          <div className="park">
+             <Text>园区选择</Text> <Ctag>温州园区</Ctag> <Ctag>滨江园区</Ctag>
+          </div>
         </div>
+        </div>
+        <div>
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
@@ -401,8 +443,26 @@ export default function Account() {
               添加运维人员
             </Pributton>
           </Space>
+          <div className="item">
+            <Text type="">用户名</Text> <Text>姓名</Text>{" "}
+            <Text span={4}>手机号</Text>
+          </div>
+        
+              <Form
+              layout="inline"
+              readOnly
+            >
+              {admin?.length > 0 && RenderItem(admin)}
+             </Form>
         </div>
       </div>
+      
+      <Custmodal
+              title={title}
+              open={open}
+              cancal={cancal}
+              ok={ok}
+            ></Custmodal>
       <Custmodal mold="msg" title='删除账号' open={msgopen} type="warn" cancal={onDeleteMsgClose} ok={onDeletehandle}>
          <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delmsg}</p>
 
@@ -411,7 +471,9 @@ export default function Account() {
        
          <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>
        </Drawer> */}
-       <CustDrawer menuopen={menuopen} rowSelection={rowSelection} columns={columns} menus={menus} />
+       <CustDrawer menuopen={menuopen} menus={menus} onClose={() => closemenu()}>
+            
+      </CustDrawer>
     </Mainbox>
   );
 }

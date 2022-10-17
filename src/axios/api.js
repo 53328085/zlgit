@@ -36,7 +36,7 @@ export class User {
 }
 // 项目管理
 export class Project {
-    static queryProject = ({pageNum, pageSize, projectName, valid} = {}) => server.get(`/Project/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&projectName=${projectName}&valid=${valid}`)
+    static queryProject = ({pageNum, pageSize, projectName='', valid=0} = {}) => server.get(`/Project/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&projectName=${projectName}&valid=${valid}`)
     static queryProjectByName = (data) => server.post('/Project/QueryByProjectName', data) // 查询
     static addProject = (data) => server.post('/Project/AddProject', data) // 新增
     static UpdateBaseProject = (data) => server.post('/Project/UpdateBaseProject', data) // 编辑

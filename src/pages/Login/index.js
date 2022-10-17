@@ -49,8 +49,110 @@ const Itembox = styled(Item)`
     height: 48px;
   }
 `
-
-
+const Logipt = styled(Input)`
+  background-color: transparent !important;
+  border: 1px solid #9c9ea4;
+  &:focus, &:hover {    
+    border-color: #1f83fe !important;
+    .ant-input {
+      color: #1f83fe;
+    }
+    .anticon.anticon-user {
+      color: #1f83fe !important;
+    }
+  }
+ 
+  .ant-input-affix-wrapper-status-error {
+    background-color: transparent !important;
+  }
+  .ant-input {
+    background-color: transparent;
+    color:#999;
+  
+  } 
+ .ant-input::placeholder {
+    color: #999;
+    }
+  input:-internal-autofill-previewed,
+  input:-internal-autofill-selected {
+    -webkit-text-fill-color: #999 !important;
+　　transition: background-color 5000s ease-in-out 0s !important;
+  }
+`
+const Logpsd = styled(Input.Password)`
+  background-color: transparent !important;
+  border: 1px solid #9c9ea4;
+  &:focus, &:hover {    
+    border-color: #1f83fe !important;
+    .ant-input {
+      color: #1f83fe;
+    }
+    .anticon.anticon-lock {
+      color: #1f83fe !important;
+    }
+  }
+ 
+  .ant-input-affix-wrapper-status-error {
+    background-color: transparent !important;
+  }
+  .ant-input {
+    background-color: transparent;
+    color:#999;
+  
+  } 
+ .ant-input::placeholder {
+    color: #999;
+    }
+`
+const Logck = styled(Checkbox)`
+  display: flex;
+  align-items: center;
+  &:hover {
+    .ant-checkbox:hover {
+      border-color: #9c9ea4;
+    }
+  
+ }
+ .ant-checkbox+span {
+  padding-left: 0;
+  padding-right: 0;
+  color: #999;
+  font-size: 16px;
+ }
+ .ant-checkbox-checked .ant-checkbox-inner:after {
+  transform: rotate(45deg) scale(2) translate(-25%,-50%);
+ }
+  .ant-checkbox {
+    width: 32px;
+    height: 32px;
+    margin-right: 16px;
+    top:0px;
+    .ant-checkbox-input, .ant-checkbox-inner {
+      width: inherit;
+      height: inherit;
+      background-color: transparent;
+    }
+    .ant-checkbox-inner {
+      border-color: #9c9ea4;
+      background-color: transparent;
+      &:hover {
+        border-color: #9c9ea4;
+      }
+    }
+  }
+  
+`
+const Logbtn = styled(Button)`
+  border-color: #0e2db3;
+  background-color: #0e2db3;
+  font-size: 18px;
+  color:#fff;
+  &:hover {
+    border-color: #0728ae;
+    background-color: #0728ae;
+    color:#fff;
+  }
+`
 function UserLog() { 
 
   const store = useStore()
@@ -58,7 +160,7 @@ function UserLog() {
   const navigate = useNavigate();
   let initloaidng = useSelector(selectLoading)
   let [loading, setLoading] = useState(initloaidng);  
-  let [auto, setAuto] = useState('off')
+  
   const dispatch = useDispatch();
   store.subscribe(() => {   
     setLoading(store.getState()?.user?.loading)
@@ -92,13 +194,22 @@ function UserLog() {
   const stylefn = (state) => {
     return state ? {fontSize: '28px', color: '#fff'} : {fontSize: '26px', color: '#515151'}
   }
-  const [targetDate, setTargetDate] = useState(0)
-  const [countdown] = useCountDown({
-    targetDate
-  })
+
+
+ const iconsty = {
+  fontSize: '26px', 
+  color: '#999',
+  marginRight: '16px'
+ }
+ const Userlog = () => {
+  let [auto, setAuto] = useState('off')
+  const ckChange = (e) => {
+    let v = (e.target.checked) ? 'on' : 'off'
+    console.log(v)
+    setAuto(v)
+  }
+  return (
  
- 
- const Userlog = () => (
     <Form
     layout="horizontal"
     labelCol={{flex: '4em'}}
@@ -106,14 +217,9 @@ function UserLog() {
     labelWrap
     form={userform}
     name='login'
-    initialValues={{
-      remember: true,
-      name: '',
-      pwd: ''
-    }}
     onFinish={submit}
     onFinishFailed={onFinishFailed}
-    autoComplete={auto}
+   
   >
     <Itembox
        name="name"
@@ -131,7 +237,7 @@ function UserLog() {
         }
       ]}
       >
-       <Input prefix={<UserOutlined style={{fontSize: '24px'}}  placeholder="请输入用户名" />} />
+       <Logipt prefix={<UserOutlined style={iconsty}   />} placeholder="请输入用户名" allowClear autoComplete={auto} />
       </Itembox>
       <Itembox
        name="pwd"
@@ -141,44 +247,54 @@ function UserLog() {
           required: true,
           message: '请输入密码',             
         },
-        {
+       /*  {
             validator: pwdValidator
-        },
+        }, */
      
       ]}
       >         
-       <Input.Password prefix={<LockOutlined style={{fontSize: '24px'}}  placeholder="请输入密码" />} />
+       <Logpsd prefix={<LockOutlined style={iconsty}   />} placeholder="请输入密码" />
       </Itembox>
       <Itembox
        name='remember'
        valuePropName="checked"
       >
-        <Checkbox style={{color: '#fff', fontSize: '16px'}}>记住用户名</Checkbox>
+        <Logck   onChange={ckChange}   >记住用户名</Logck>
       </Itembox>
       <Itembox>
-          <Button type="primary" htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Button>
+          <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
       </Itembox>
   </Form>
   )
-
+    }
 function Phonelog(){
     const {GetVerification} = Logapi
     const [phoneform] = Form.useForm()
-    const [phone, setPhone] = useState('')
-    const onValuesChange = (value) => {
-      setPhone(value)
-    }
+    const [at, setAuto] = useState('off')  
+    const [targetDate, setTargetDate] = useState(0)
+    const [countdown] = useCountDown({
+      targetDate
+    })
+    const ckchange = (v) => {
+      let f = v.target.checked ? 'on' :  'off'
+      console.log(f)
+      setAuto(f)
+    } 
     const {loading, run } = useRequest(GetVerification, { // 获取验证码
-      manual: true,
-    
+      manual: true,   
+      onSuccess: (res) => {
+        let {success, data} = res
+        if (success) phoneform.setFieldValue('code', data.code)
+      },
       onError: (error) => {
         console.log(error)
       }
     })
     const getCode = () => {
+      const phone = phoneform.getFieldValue('mobile')    
       phoneform.validateFields(['mobile']).then(res => {
         setTargetDate(Date.now() + 1000*60)
-        //run(phone)
+        run(phone)
         
       }).catch(e => {
         console.log(e)
@@ -188,9 +304,9 @@ function Phonelog(){
     const Countdown = () => {
      
       return (
-         <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
+         <Logbtn  style={{height: '48px', width: '112px', fontSize: '16px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
                {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
-         </Button>
+         </Logbtn>
          )
 }
    useEffect(() => {
@@ -201,18 +317,11 @@ function Phonelog(){
     layout="horizontal"
     labelCol={{flex: '4em'}}
     wrapperCol={{flex:1}}
-    labelWrap
-    onValuesChange={onValuesChange}
+    labelWrap 
     form={phoneform}
-    name='phonelogin'
-    initialValues={{
-      remember: true,
-      mobile: '',
-      code: ''
-    }}
+    name='phonelogin'  
     onFinish={submit}
-    onFinishFailed={onFinishFailed}
-    autoComplete={auto}
+    onFinishFailed={onFinishFailed}   
   >
     <Itembox
        name="mobile"
@@ -227,10 +336,10 @@ function Phonelog(){
         }
       ]}
       >
-       <Input prefix={<PhoneOutlined style={{fontSize: '24px'}}  placeholder="请输入手机号" />} />
+       <Logipt prefix={<PhoneOutlined style={iconsty}   />}  placeholder="请输入手机号" autoComplete={at} />
       </Itembox>
       <Itembox   >         
-      <Space> 
+      <Space size={16}> 
         <Item   
         name="code"
         hasFeedback
@@ -245,7 +354,7 @@ function Phonelog(){
 
        
       ]} noStyle> 
-       <Input  prefix={<LockOutlined style={{fontSize: '24px'}}  placeholder="请输入验证码" />} style={{width: '275px'}} /> 
+       <Logipt  prefix={<LockOutlined style={iconsty}  />}   placeholder="请输入验证码" style={{width: '275px'}} /> 
        </Item>
        <Item noStyle>
        {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
@@ -259,24 +368,24 @@ function Phonelog(){
        name='remember'
        valuePropName="checked"
       >
-        <Checkbox style={{color: '#fff', fontSize: '16px'}}>记住手机号</Checkbox>
+        <Logck   onChange={ckchange} >记住手机号</Logck>
       </Itembox>
       <Itembox>
-          <Button type="primary" htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Button>
+          <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
       </Itembox>
   </Form>
   )
 }
 
 const Phone = React.memo(Phonelog)
-console.log(Phone)
+
   return (
     <Logbox>  
       <Logtype>
         <span onClick={toggle} style={stylefn(state)}>账户登录</span>
         <span onClick={toggle} style={stylefn(!state)}>手机登录</span>
       </Logtype> 
-      {state ? <Userlog />  : <Phone/>}
+      {state ? <Userlog />  : <Phonelog/>}
     
     </Logbox>
   );

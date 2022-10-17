@@ -129,6 +129,18 @@ const Mainbox = styled.div`
         margin-left: auto;
       }
     }
+    .ant-table-wrapper {
+      height: 100%;
+      .ant-spin-nested-loading {
+        height: 100%;
+        .ant-spin-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+      }
+    }
     .ant-table {
       background-color: transparent;
 
@@ -136,6 +148,9 @@ const Mainbox = styled.div`
       font-size: 16px;
       .ant-table-tbody > tr.rowclass > td {
         border-color: #2b4475;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        height: 56px;
         &:first-of-type {
           border-left: 1px solid #2b4475;
         }
@@ -154,6 +169,8 @@ const Mainbox = styled.div`
         color: #fff;
         text-align: center;
         border-color: #2b4475;
+        height: 48px;
+        padding: 0px;
         &:first-of-type,
         &:last-of-type {
           border-left: 1px solid #2b4475;
@@ -203,7 +220,6 @@ export default function Index() {
   const [formParams, setFormParams] = useState({});
   const { Item } = Form;
   const { Option } = Select;
-  const { Search } = Input;
   const [isshow, setShow] = useState(false);
   const [options, setOptions] = useState([
     { label: "全部", value: 0 },
@@ -213,7 +229,6 @@ export default function Index() {
     { label: "未过期", value: 4 },
   ]);
   const onShow = () => {
-    console.log(1111);
     setShow(true);
   };
   const onCancel = () => {
@@ -229,7 +244,7 @@ export default function Index() {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: 50,
+      width: 80,
       render: (text, record, index) => `${index + 1}`,
     },
     {
@@ -291,17 +306,18 @@ export default function Index() {
   useEffect(() => {
     setFormParams(form.getFieldsValue());
   }, []);
-  let params = {
+/*   let params = {
     pageNum: 1,
     pageSize: 12,
-  };
+  }; */
 
   const getTableData = ({ current, pageSize }, formData) => {
-    setFormParams((formParams) => ({ ...formParams, ...formData }));
+    console.log(formData)
+    //setFormParams((formParams) => ({ ...formParams, ...formData }));
 
-    params = Object.assign(
+   const params = Object.assign(
       {},
-      params,
+     // params,
       { pageNum: current, pageSize },
       formData
     );
@@ -324,7 +340,11 @@ export default function Index() {
   };
   const { tableProps, search } = useAntdTable(getTableData, {
     form,
-    defaultPageSize: 12,
+    defaultParams: [
+      { current: 1, pageSize: 10 },
+      {projectName: '', valid: 0}
+    ],
+   
   });
   const { submit } = search;
 
@@ -369,10 +389,6 @@ export default function Index() {
             layout="inline"
             className="serach"
             form={form}
-            initialValues={{
-              projectName: "",
-              valid: 0,
-            }}
           >
             <Space size={32} style={{ flex: 1 }}>
               <Item>
@@ -394,15 +410,16 @@ export default function Index() {
                   />
                   <CutSerachBt
                     width="98px"
+                    onClick={() => submit()}
                     icon={
                       <SearchOutlined
                         style={{ fontSize: "18px" }}
-                        onClick={submit}
+                        
                         mgl="8px"
                       />
                     }
                   >
-                    {" "}
+                   
                     查询
                   </CutSerachBt>
                 </Input.Group>
@@ -422,7 +439,7 @@ export default function Index() {
                 >
                   {options.map((o) => (
                     <Option value={o.value} key={nanoid()}>
-                      {o.label}{" "}
+                      {o.label}
                     </Option>
                   ))}
                 </Select>
@@ -443,7 +460,7 @@ export default function Index() {
             bordered={true}
             pagination={{ position: ["bottomCenter"] }}
           >
-            {" "}
+           
           </Table>
         </div>
         <Modalbox
@@ -458,7 +475,7 @@ export default function Index() {
         <Space size={16}>
           <ExclamationCircleFilled
             style={{ fontSize: "40px", color: "#0033ff" }}
-          />{" "}
+          />
           是否退出系统？
         </Space>
       </Modalbox>

@@ -12,7 +12,7 @@ import columns,  { onDesc} from './columns'
 export default function Index() {
   const [form] = Form.useForm()
 
-  const [formparams, setFormparams] = useState(form.getFieldValue())
+  const [formparams, setFormparams] = useState(form.getFieldsValue())
   const [value, setvalue] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
   let [display, setDisplay] = useState(true)  
