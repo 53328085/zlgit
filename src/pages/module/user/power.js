@@ -1,15 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import styled from "styled-components";
 import {
   Typography,
   Select,
-  Row,
-  Col,
   Button,
   Input,
   Space,
   Drawer,
-  Modal,
   Form,
   message,
   Table,
@@ -19,8 +16,8 @@ import {
 import {WarningFilled} from '@ant-design/icons'
 import { useRequest } from "ahooks";
 import { Project } from "@api/api.js";
-import Custmodal from "./modal";
-import { fromJSON } from "postcss";
+import Custmodal from "@com/useModal";
+
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -83,19 +80,12 @@ export default function Account() {
    
   `
   const [operate, setOperate] = useState([]); // 运营管理员
-  const [admin, setAdmin] = useState([]) //运维管理员
-  const [open, setOpen] = useState(false);
-  const [msgopen, setMsgopen] = useState(false)
+  const [admin, setAdmin] = useState([]) //运维管理员 
   const [menuopen, setMenuopen] = useState(false)
   const [menus, setMenus] = useState([])
   const [opvalue, setOpvalue] = useState('')
-  const [delmsg, setDelmsg] = useState('')
-  const [delarg, setDelarg] = useState({
-    type: '',
-    projectId: 1, // 暂时写死
-    userId: ''
-  })
-
+ const modal = useRef()
+ const fmodal = useRef()
   const {runAsync: runMenu} = useRequest(GetMenus, { // 获取菜单
     manual: true,
      
@@ -169,10 +159,16 @@ export default function Account() {
   }, [operate]);
 
   const addProjectadmin = () => {
-    setOpen(true);
+    console.log(fmodal.current.onOpen)
+     try {
+      fmodal.current.onOpen();
+     } catch (error) {
+       console.log(error)
+     }
+    // 
   };
   const cancal = () => {
-    setOpen(false);
+   // fmodal.current.onCancal()
   };
   const ok = async (values) => {
     const params = { ...values, RoleType: 3, ProjectId: "1" };
@@ -224,8 +220,13 @@ export default function Account() {
       </Button>
     );
   };
-  const onDeletehandle = async ( ) => { 
-    let {type, userId} = delarg
+  const delarg = {
+    type: '',
+    userId: '',
+    projectId : 1, // 暂时写死
+  }
+  const onDeletehandle = async ( {type, userId}) => { 
+   // let {type, userId} = delarg
     let i = type == 2 ? 1 : type;
     const fn = ["DeleteOperationManager", "DeleteProjectUser"][i]; // 删除项目管理员或者运维人员, 删除运营人员
     try {
@@ -236,20 +237,23 @@ export default function Account() {
         runmg,
         runop
       ][type]; // 获取 项目管理人员 , 运维人员    运营管理人员，
-      message.error('删除成功', 1,  handler);
+      message.error('删除成功', 1,  () => {
+        handler()
+        modal.current.onCancel()
+      });
     } catch (error) {
       console.log(error);
     }
   };
   const msginfo = ['项目管理员', '运维人员', '运营管理员'] // //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
-  const onDeleteMsg = (type, id) => {     
-     setDelmsg(msginfo[type])
-     setDelarg(o => ({...o, type, userId: id}))
-     setMsgopen(true)
+  let delmsg = ''
+  const onDeleteMsg = (type, id) => { 
+     delmsg = msginfo[type]
+     delarg.type = type
+     delarg.userId = id
+     modal.current.onOpen()
   }
-  const onDeleteMsgClose = () => {
-     setMsgopen(false)
-  }
+
   useEffect(() => {
     runadmin(1)
     runmg()
@@ -286,9 +290,9 @@ export default function Account() {
       }
     }
     const rowlen = useMemo(() => menus.length, [menus])
-    console.log(rowlen)
+   
     const onSelectChange = (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+     //  console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
      // setSelectedRowKeys((arr) => [...new Set([...arr, ...newSelectedRowKeys])]);
      // console.log(selectedRowKeys)
     }
@@ -459,11 +463,11 @@ export default function Account() {
       
       <Custmodal
               title={title}
-              open={open}
-              cancal={cancal}
-              ok={ok}
+              ref={fmodal} 
+              onCancal={cancal}
+              onOk={ok}
             ></Custmodal>
-      <Custmodal mold="msg" title='删除账号' open={msgopen} type="warn" cancal={onDeleteMsgClose} ok={onDeletehandle}>
+      <Custmodal mold="msg" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={modal}>
          <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delmsg}</p>
 
       </Custmodal>

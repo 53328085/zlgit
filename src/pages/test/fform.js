@@ -333,12 +333,9 @@ export default function Index() {
       }
     });
   };
-  const { tableProps, search} = useAntdTable(getTableData, {
+  const {tableProps, search} = useAntdTable(getTableData, {
     form,
-    defaultParams: [
-      {current: 1, pageSize: 10},
-      {}
-    ]
+    defaultPageSize: 5
   });
   tableProps.pagination.position = ["bottomCenter"]
   const {submit} = search
@@ -398,26 +395,23 @@ export default function Index() {
                 </CustBtn>
               </Item>
               <Item name="projectName">
-                <Input.Group compact>
-                  <Input
-                    style={{ width: "412px" }}
-                    placeholder="请输入项目名称"
-                  />
-                  <CutSerachBt
-                    width="98px"
-                    onClick={() => submit()}
+                <Input.Search
+                   placeholder="请输入项目名称"
+                   style={{ width: "412px" }}
+                   allowClear
+                   onSearch={submit}
+                   enterButton={ <CutSerachBt
+                    width="98px"                  
                     icon={
                       <SearchOutlined
                         style={{ fontSize: "18px" }}
                         
                         mgl="8px"
-                      />
+                      />  
                     }
-                  >
-                   
-                    查询
-                  </CutSerachBt>
-                </Input.Group>
+                  >查询</CutSerachBt>}
+                >
+                </Input.Search>                
               </Item>
               <Item>
                 <Divider
