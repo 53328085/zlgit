@@ -47,7 +47,7 @@ export default function Index() {
   const [addPlan, setAddPlan] = useState(false)
   const [key, setKey] = useState(1)
   const [solutionPropsList,setSolutionPropsList] = useState([])
-
+  const [searchPlan,setSearchPlan] = useState('') 
   const tabs = [{ label: "电", key: 1 }, { label: '水', key: 2 }, { label: "燃气", key: 3 }, { label: '煤炭', key: 4 }]
   const onChange = (v) => {
     setKey(v)
@@ -67,15 +67,15 @@ export default function Index() {
       </Tabsbox>
     )
   }
-  const getPriceSolution = async ()=>{
-      const res = await PriceSolution.GetEnablePriceSolution('',1)
+  const getPriceSolution = async (name='')=>{
+      const res = await PriceSolution.GetEnablePriceSolution(name,1)
       if(res.success){
         setSolutionPropsList(res.data.elerticPriceSolution)
       }else{
         message.error(res.errMsg)
       }
   }
-
+  const changePlanInp = (e)=>{setSearchPlan(e.target.value)}
   useEffect(()=>{
     getPriceSolution()
   },[])
@@ -87,7 +87,12 @@ export default function Index() {
         <div className={style.searcHeader}>
           <div className={style.plan}>
             <span style={{ paddingRight: 16 }}>方案查询</span>
-            <Search enterButton={<div style={{ width: 66 }}>查询</div>} style={{ width: 538 }} />
+            <Search 
+            enterButton={<div style={{ width: 66 }}>查询</div>} 
+            style={{ width: 538 }} 
+            value={searchPlan} 
+            onChange={changePlanInp} 
+            onSearch={()=>{getPriceSolution(searchPlan)}}/>
           </div>
           <Button type='primary' size='default' onClick={() => { setAddPlan(true); }}>新增方案</Button>
         </div>

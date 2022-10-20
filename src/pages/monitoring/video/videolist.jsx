@@ -10,7 +10,7 @@ export default function Videolist({showModal,setplay}) {
   useEffect(()=>{
     player= new EZUIKit.EZUIKitPlayer({
       id: 'video',
-      accessToken: 'at.2hyc53ltbwytyh1i8r669k4zdbua2t43-7efxli8xb0-0g9ij9v-iewfmsfph',
+      accessToken: 'at.9cl77yip98abfs927jrhscoj8cagttcz-9nyz8ow4cj-1e2lldl-xfyg9vtih',
       url: "ezopen://open.ys7.com/G88471891/1.hd.live",
       width: 506, 
       height: 270,

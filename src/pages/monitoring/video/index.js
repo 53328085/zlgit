@@ -42,7 +42,7 @@ export default function Index() {
     setTimeout(()=>{
       player= new EZUIKit.EZUIKitPlayer({
         id: 'replay',
-        accessToken: 'at.2hyc53ltbwytyh1i8r669k4zdbua2t43-7efxli8xb0-0g9ij9v-iewfmsfph',
+        accessToken: 'at.9cl77yip98abfs927jrhscoj8cagttcz-9nyz8ow4cj-1e2lldl-xfyg9vtih',
         url: "ezopen://open.ys7.com/G88471891/1.hd.live",
         width: 1280, 
         height: 717,
@@ -57,6 +57,7 @@ export default function Index() {
     bigplay.stop()
     play.play()
   }
+  useEffect(()=>{})
   return (
     <div className={style.video}>
       <Header />
