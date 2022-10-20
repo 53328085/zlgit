@@ -36,7 +36,7 @@ export class User {
 }
 // 项目管理
 export class Project {
-    static queryProject = ({pageNum, pageSize, projectName, valid} = {}) => server.get(`/Project/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&projectName=${projectName}&valid=${valid}`)
+    static queryProject = ({pageNum, pageSize, projectName='', valid=0} = {}) => server.get(`/Project/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&projectName=${projectName}&valid=${valid}`)
     static queryProjectByName = (data) => server.post('/Project/QueryByProjectName', data) // 查询
     static addProject = (data) => server.post('/Project/AddProject', data) // 新增
     static UpdateBaseProject = (data) => server.post('/Project/UpdateBaseProject', data) // 编辑
@@ -55,7 +55,7 @@ export class Project {
     static getOperationUsers = (projectId) => server.get(`/User/GetOperationManagerUsersByProjectId?projectId=${projectId}`) // 获取已授权的运营管理员列表
     static ProjectAddOperationManager = (projectId, userId) => server.get(`/User/ProjectAddOperationManager?projectId=${projectId}&userId=${userId}`) // 授权运营管理员项目权限
     static SetFunction = (data) => server.post(`/User/SetFunction`, data) // 功能授权
-    static GetMenus = (projectId, userId) => server.get(`/User/GetMenus?projectId=${projectId}&userId=${userId}`) // 获取功能菜单列表
+    static GetMenus = ({projectId='', userId=''}={}) => server.get(`/User/GetMenus?projectId=${projectId}&userId=${userId}`) // 获取功能菜单列表
     // 修改项目-设备配置--接入设备
     static QueryDeviceCategoryListInfos = (projectId) => server.get(`/Project/QueryDeviceCategoryListInfos?projectId=${projectId}`) // 查询项目中接入的设备类型列表详情
     static QueryInsertDeviceCategoryList = (projectId) => server.get(`/Project/QueryInsertDeviceCategoryList?projectId=${projectId}`) // 新增项目 下拉列表设备型号

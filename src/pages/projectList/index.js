@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
@@ -18,17 +18,18 @@ import {
 } from "antd";
 import {
   UserOutlined,
-  PoweroffOutlined,
-  ExclamationCircleFilled,
+  PoweroffOutlined,  
   PlusCircleOutlined,
   SettingOutlined,
   SearchOutlined,
-  DesktopOutlined,
-  ContactsOutlined,
+  DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
 import { Project } from "@api/api.js";
+import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
+import Custmodal from "@com/useModal";
+import {Circle} from '@com/useIcon'
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -44,10 +45,12 @@ const CustBtn = styled(Button)`
   font-size: 14px;
   display: flex;
   align-items: center;
+  padding-top:0px;
+  padding-bottom: 0px;
   .anticon + span {
     margin-left: ${(props) => props.mgl || "16px"};
   }
-  &:hover {
+  &:hover, &:active, &:focus  {
     background-color: #0033ff;
     color: #fff;
   }
@@ -56,6 +59,13 @@ const CutSerachBt = styled(CustBtn)`
   .anticon + span {
     margin-left: 8px;
   }
+  font-size: 16px;
+  color:#fff !important;
+  border:none;
+/*   &:hover, &:focus {
+    background-color: #0033ff;
+    border-color: none;
+  } */
 `;
 const Mainbox = styled.div`
   background-image: linear-gradient(#003399, #000000);
@@ -123,10 +133,22 @@ const Mainbox = styled.div`
         }
       }
       .ant-input-search-button {
-        background-color: #002e88;
+       // background-color: #002e88;
       }
       .ant-space-item:last-of-type {
         margin-left: auto;
+      }
+    }
+    .ant-table-wrapper {
+      height: 100%;
+      .ant-spin-nested-loading {
+        height: 100%;
+        .ant-spin-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
       }
     }
     .ant-table {
@@ -136,6 +158,9 @@ const Mainbox = styled.div`
       font-size: 16px;
       .ant-table-tbody > tr.rowclass > td {
         border-color: #2b4475;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        height: 56px;
         &:first-of-type {
           border-left: 1px solid #2b4475;
         }
@@ -154,6 +179,8 @@ const Mainbox = styled.div`
         color: #fff;
         text-align: center;
         border-color: #2b4475;
+        height: 48px;
+        padding: 0px;
         &:first-of-type,
         &:last-of-type {
           border-left: 1px solid #2b4475;
@@ -195,16 +222,14 @@ const Modalbox = styled(Modal)`
     }
   }
 `;
+
 export default function Index() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-
-  const [count, setCount] = useState(0);
-  const [formParams, setFormParams] = useState({});
+  const [count, setCount] = useState(0); 
+  const modal = useRef()
   const { Item } = Form;
   const { Option } = Select;
-  const { Search } = Input;
-  const [isshow, setShow] = useState(false);
   const [options, setOptions] = useState([
     { label: "全部", value: 0 },
     { label: "已发布", value: 1 },
@@ -212,24 +237,25 @@ export default function Index() {
     { label: "已过期", value: 3 },
     { label: "未过期", value: 4 },
   ]);
-  const onShow = () => {
-    console.log(1111);
-    setShow(true);
+  const onShow = () => {    
+      modal.current.onOpen()
   };
-  const onCancel = () => {
-    setShow(false);
-  };
-  const onOk = () => {
-    setShow(false);
+  const onOk = () => {   
+    modal.current.onCancel()
     navigate("/", {});
   };
-
+  const projectcig = () => {
+    console.log(1111)
+    navigate("/index/module/project", {
+      state: { headerKeys: "module",  title: "项目管理" },
+    })
+  }
   const columns = [
     {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: 50,
+      width: 80,
       render: (text, record, index) => `${index + 1}`,
     },
     {
@@ -271,7 +297,7 @@ export default function Index() {
       align: "center",
       render: () => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }} />}>
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => projectcig()}>
             项目配置
           </CustBtn>
           <CustBtn
@@ -288,22 +314,16 @@ export default function Index() {
       ),
     },
   ];
-  useEffect(() => {
-    setFormParams(form.getFieldsValue());
-  }, []);
-  let params = {
-    pageNum: 1,
-    pageSize: 12,
-  };
 
   const getTableData = ({ current, pageSize }, formData) => {
-    setFormParams((formParams) => ({ ...formParams, ...formData }));
+    console.log(formData)
+    //setFormParams((formParams) => ({ ...formParams, ...formData }));
 
-    params = Object.assign(
+   const params = Object.assign(
       {},
-      params,
+     // params,
       { pageNum: current, pageSize },
-      formData
+     formData
     );
     return Project.queryProject(params).then((res) => {
       let { success, data, totalNum } = res;
@@ -324,8 +344,14 @@ export default function Index() {
   };
   const { tableProps, search } = useAntdTable(getTableData, {
     form,
-    defaultPageSize: 12,
+    defaultParams: [
+      { current: 1, pageSize: 10 },
+      {projectName: '', valid: 0}
+    ],
+   
   });
+
+tableProps.pagination.position = ["bottomCenter"] // 底部居中
   const { submit } = search;
 
   const { chineseTitle, englishTitle, systemLogoImage } = useSelector(
@@ -369,10 +395,6 @@ export default function Index() {
             layout="inline"
             className="serach"
             form={form}
-            initialValues={{
-              projectName: "",
-              valid: 0,
-            }}
           >
             <Space size={32} style={{ flex: 1 }}>
               <Item>
@@ -387,25 +409,23 @@ export default function Index() {
                 </CustBtn>
               </Item>
               <Item name="projectName">
-                <Input.Group compact>
-                  <Input
-                    style={{ width: "412px" }}
-                    placeholder="请输入项目名称"
-                  />
-                  <CutSerachBt
-                    width="98px"
+              <Iptserach
+                   placeholder="请输入项目名称"
+                   style={{ width: "500px" }}
+                   allowClear
+                   onSearch={submit}
+                   enterButton={ <CutSerachBt
+                    width="98px"                  
                     icon={
                       <SearchOutlined
-                        style={{ fontSize: "18px" }}
-                        onClick={submit}
+                        style={{ fontSize: "18px", color: '#fff' }}
+                        
                         mgl="8px"
-                      />
+                      />  
                     }
-                  >
-                    {" "}
-                    查询
-                  </CutSerachBt>
-                </Input.Group>
+                  >查询</CutSerachBt>}
+                >
+                </Iptserach>       
               </Item>
               <Item>
                 <Divider
@@ -415,17 +435,17 @@ export default function Index() {
                 />
               </Item>
               <Item name="valid">
-                <Select
+                <Cselect
                   placeholder="项目状态"
                   style={{ width: "200px" }}
                   onChange={submit}
                 >
                   {options.map((o) => (
                     <Option value={o.value} key={nanoid()}>
-                      {o.label}{" "}
+                      {o.label}
                     </Option>
                   ))}
-                </Select>
+                </Cselect>
               </Item>
 
               <Item>
@@ -441,27 +461,25 @@ export default function Index() {
             rowClassName="rowclass"
             rowKey="id"
             bordered={true}
-            pagination={{ position: ["bottomCenter"] }}
           >
-            {" "}
+           
           </Table>
         </div>
-        <Modalbox
+        <Custmodal
         title="提示信息"
-        open={isshow}
-        onOk={onOk}
-        onCancel={onCancel}
-        centered={true}
-        closable={false}
+         ref={modal}
+         onOk={onOk}
+        
         width={488}
+        mold="msg"
+        type="dark"
       >
-        <Space size={16}>
-          <ExclamationCircleFilled
-            style={{ fontSize: "40px", color: "#0033ff" }}
-          />{" "}
-          是否退出系统？
+        <Space size={16} style={{paddingLeft: '32px'}}>
+          <Circle
+          />
+         <span style={{color: '#fff', fontSize: '18px'}}> 是否退出系统？</span>
         </Space>
-      </Modalbox>
+      </Custmodal>
    
       </Mainbox>
      

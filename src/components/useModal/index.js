@@ -1,35 +1,52 @@
-import React from "react";
-import { Modal, Form, Select, Input, Switch } from "antd";
+import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
+import { Modal} from "antd";
 import styled from "styled-components";
+import Useform from "./useform";
 
-export default function Custmodal({
-  title,
-  initialValues = {},
-  open = () => {},
-  ok = () => {},
-  cancal = () => {},
-  roletype,
+ function Custmodal({
+ 
+  fromprops = {
+    initialValues: {},
+     roletype: ''},
   enable = false,
   type = "normal",
   mold = "form",
-  children = null
-} = {}) {
-  const [form] = Form.useForm();
-  const { Item } = Form;
+  children = null, 
+  ...props
+} = {}, ref) { 
+  const [open, setOpen] = useState(false)
+  const {onCancel: close, ...rest} = props
+  const form = useRef()
+  const onCancel = () => {   
+    setOpen(false)
+  }
+  const onOpen = () => {
+    setOpen(true)
+  }
+  useImperativeHandle(ref, ()=> ({
+    onCancel,
+    onOpen
+  }))
+
   const custCorle = {
     normal: "#337af0",
-    warn: "#ff4d4f"
+    warn: "#ff4d4f",
+   
   }
   const theme = `2px solid ${custCorle[type]}`
-
+  
   const CModal = styled(Modal)`
+     .ant-modal-content {
+       background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
+    }
     .ant-modal-header {
       padding: 32px;
       border-bottom: none;
+      background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
       .ant-modal-title {
         font-size: 16px;
-        color: ${custCorle[type]};
-        padding-left: 16px;
+        color: ${() => type=='dark' ? '#fff' : custCorle[type]};;
+        padding-left: ${() => type=='dark' ? '0px' : '16px'};
         border-left: ${theme};
         height: 32px;
         line-height: 32px;
@@ -49,6 +66,10 @@ export default function Custmodal({
       .ant-btn + .ant-btn {
         margin-left: 16px;
       }
+      .ant-btn-default {
+        background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
+        color: ${() => type=='dark' ? '#fff' : '#fff'};
+      }
       .ant-btn-primary {
         border-color: ${custCorle[type]};
         background-color: ${custCorle[type]};
@@ -58,36 +79,30 @@ export default function Custmodal({
       margin-bottom: 0px;
     }
   `;
-  const msg = (
+  return (
     <CModal
-      width={592}
-      title={title}
       open={open}
-      onOk={() => {
-        ok().then(() => {
-          cancal()
-        })
-      }}
-      onCancel={cancal}
+      onCancel={close || onCancel}
       closable={false}
-      centered     
+      centered    
+      {...rest} 
     >
-      {children}
+      {mold == 'msg' ? children : mold == 'form' ? <Useform {...fromprops} ref={form} /> : ''}
     </CModal>
   )
-  const fromModal = (
+/*   const fromModal = (
     <CModal
-      width={554}
-      title={title}
+     width={554}
+    title={title}
       open={open}
-      onOk={() => {
+     onOk={() => {
         form
           .validateFields()
           .then((values) => {
             form.submit();
             ok(values).then((f) => {
               if (f) {
-                cancal();
+                onCancel();
               }
             });
           })
@@ -95,7 +110,7 @@ export default function Custmodal({
             console.log(info);
           });
       }}
-      onCancel={cancal}
+      onCancel={onCancel} 
       closable={false}
       centered
     >
@@ -108,7 +123,7 @@ export default function Custmodal({
         labelAlign="left"
         preserve={false}
       >
-        {roletype && (
+      {roletype && (
           <Item label="用户角色" name="RoleType">
             <Select>
               {roletype.map((r) => (
@@ -118,7 +133,7 @@ export default function Custmodal({
               ))}
             </Select>
           </Item>
-        )}
+        )} 
         <Item
           label="用户名"
           name="LoginName"
@@ -158,10 +173,12 @@ export default function Custmodal({
         </Item>
       </Form>
     </CModal>
-  );
-  const modal = {
+  ); */
+  /* const modal = {
     form: fromModal,
     msg,
   };
-  return modal[mold];
+  return modal[mold]; */
 }
+
+export default forwardRef(Custmodal)
