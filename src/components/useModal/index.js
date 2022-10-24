@@ -23,9 +23,15 @@ import Useform from "./useform";
   const onOpen = () => {
     setOpen(true)
   }
+  const onResetform = () => form.current.resetfrom
+
+  const onGetvalue = () => form.current.getValue()
+  
   useImperativeHandle(ref, ()=> ({
     onCancel,
-    onOpen
+    onOpen,
+    onResetform,
+    onGetvalue
   }))
 
   const custCorle = {
@@ -68,7 +74,7 @@ import Useform from "./useform";
       }
       .ant-btn-default {
         background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
-        color: ${() => type=='dark' ? '#fff' : '#fff'};
+        color: ${() => type=='dark' ? '#fff' : '#666'};
       }
       .ant-btn-primary {
         border-color: ${custCorle[type]};
@@ -87,98 +93,10 @@ import Useform from "./useform";
       centered    
       {...rest} 
     >
-      {mold == 'msg' ? children : mold == 'form' ? <Useform {...fromprops} ref={form} /> : ''}
+      {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={form} /> : ''}
     </CModal>
   )
-/*   const fromModal = (
-    <CModal
-     width={554}
-    title={title}
-      open={open}
-     onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            form.submit();
-            ok(values).then((f) => {
-              if (f) {
-                onCancel();
-              }
-            });
-          })
-          .catch((info) => {
-            console.log(info);
-          });
-      }}
-      onCancel={onCancel} 
-      closable={false}
-      centered
-    >
-      <Form
-        form={form}
-        name="modalform"
-        initialValues={initialValues}
-        size="middle"
-        labelCol={{ flex: "7em" }}
-        labelAlign="left"
-        preserve={false}
-      >
-      {roletype && (
-          <Item label="用户角色" name="RoleType">
-            <Select>
-              {roletype.map((r) => (
-                <Select.Option key={r.id} value={r.id}>
-                  {r.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Item>
-        )} 
-        <Item
-          label="用户名"
-          name="LoginName"
-          rules={[
-            {
-              required: true,
-              message: "用户名必填",
-            },
-          ]}
-        >
-          <Input />
-        </Item>
-        <Item label="用户姓名" name="NickName" required>
-          <Input />
-        </Item>
-        <Item label="密码" name="Pwd" required>
-          <Input.Password />
-        </Item>
-        <Item label="确认密码" name="RePwd" required>
-          <Input.Password />
-        </Item>
-        <Item label="手机号码" name="Mobile" required>
-          <Input />
-        </Item>
-        {enable && (
-          <Item label="是否启用" name="Enabled">
-            <Switch checkedChildren="是" unCheckedChildren="否" checked />
-          </Item>
-        )}
-        <Item label="备注信息" name="Remark">
-          <Input.TextArea
-            autoSize={{
-              minRows: 2,
-              maxRows: 6,
-            }}
-          />
-        </Item>
-      </Form>
-    </CModal>
-  ); */
-  /* const modal = {
-    form: fromModal,
-    msg,
-  };
-  return modal[mold]; */
+
 }
 
 export default forwardRef(Custmodal)

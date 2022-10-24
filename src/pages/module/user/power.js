@@ -84,6 +84,7 @@ export default function Account() {
   const [menuopen, setMenuopen] = useState(false)
   const [menus, setMenus] = useState([])
   const [opvalue, setOpvalue] = useState('')
+  const [manager, setManager] = useState(false) // 是否显示项目管理员 
  const modal = useRef()
  const fmodal = useRef()
   const {runAsync: runMenu} = useRequest(GetMenus, { // 获取菜单
@@ -112,10 +113,12 @@ export default function Account() {
       success && setOperate(data);
     },
   });
-  const {run: runadmin} = useRequest(getProjectUser, { // 获取项目管理员
+  const {run: runadmin, runAsync: runAsyncadmin} = useRequest(getProjectUser, { // 获取项目管理员
     manual: true,   
     onSuccess: ({ success, data }) => {
+      console.log('项目管理员', data)
       if (success && Array.isArray(data) && data.length > 0) {
+        setManager(true)
         let { loginName, nickName, mobile,id } = data[0];       
         form.setFieldsValue({
           LoginName: loginName,
@@ -123,8 +126,13 @@ export default function Account() {
           Mobile: mobile,
           id
         })
+      } else {
+        setManager(false)
       }
     },
+    onError: () => {
+      setManager(false)
+    }
   });
   
   const {run: runop} = useRequest(GetProjectOperator, { // 获取运维人员
@@ -168,16 +176,21 @@ export default function Account() {
     // 
   };
   const cancal = () => {
-   // fmodal.current.onCancal()
+      fmodal.current.onResetform()
+      fmodal.current.onCancal()
   };
-  const ok = async (values) => {
-    const params = { ...values, RoleType: 3, ProjectId: "1" };
+  const ok = async () => {
+   
     try {
-      let { success, errMsg } = await addProjectUser(params);
-      console.log(success);
-      if (!success) message.error(errMsg, 1);
+      const values = await fmodal.current.onGetvalue()     
+      const params = { ...values, RoleType: 3, ProjectId: "1" };
+      let { success, errMsg } = await addProjectUser(params);    
+      if (!success) return message.error(errMsg, 1);
+      runAsyncadmin(1).finally(() => {
+        cancal()
+      })
        
-      return success;
+     
     } catch (error) {
       console.log(error);
       return;
@@ -225,15 +238,15 @@ export default function Account() {
     userId: '',
     projectId : 1, // 暂时写死
   }
-  const onDeletehandle = async ( {type, userId}) => { 
-   // let {type, userId} = delarg
-    let i = type == 2 ? 1 : type;
-    const fn = ["DeleteOperationManager", "DeleteProjectUser"][i]; // 删除项目管理员或者运维人员, 删除运营人员
+  const onDeletehandle = async () => { 
+    let {type, userId} = delarg
+    let i = type < 2 ? 0 : 1;
+    const fn = ["DeleteProjectUser", "DeleteOperationManager"][i]; // 删除项目管理员或者运维人员, 删除运营人员
     try {
       let { success, errMsg } = await Project[fn](1, userId); // 项目ID暂时写死！！！
       if (!success) return message.error(errMsg, 1);      
       let handler = [
-        runadmin,
+        runadmin(1),
         runmg,
         runop
       ][type]; // 获取 项目管理人员 , 运维人员    运营管理人员，
@@ -247,7 +260,7 @@ export default function Account() {
   };
   const msginfo = ['项目管理员', '运维人员', '运营管理员'] // //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
   let delmsg = ''
-  const onDeleteMsg = (type, id) => { 
+  const onDeleteMsg = (type, id) => {      
      delmsg = msginfo[type]
      delarg.type = type
      delarg.userId = id
@@ -405,7 +418,7 @@ export default function Account() {
             <Text span={4}>手机号</Text>
           </div>
          
-            <Form
+          {manager && (<><Form
               form={form}
               layout="inline"
               className="item"
@@ -432,9 +445,12 @@ export default function Account() {
                 </Item>
               
             </Form>
+           
           <div className="park">
              <Text>园区选择</Text> <Ctag>温州园区</Ctag> <Ctag>滨江园区</Ctag>
           </div>
+          </>)
+           }
         </div>
         </div>
         <div>
@@ -466,8 +482,9 @@ export default function Account() {
               ref={fmodal} 
               onCancal={cancal}
               onOk={ok}
+              mold="default"
             ></Custmodal>
-      <Custmodal mold="msg" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={modal}>
+      <Custmodal mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={modal}>
          <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delmsg}</p>
 
       </Custmodal>

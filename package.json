@@ -2,6 +2,7 @@
   "name": "testapp",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@ahooksjs/use-url-state": "^3.5.0",
     "@ant-design/charts": "^1.4.2",
@@ -92,12 +93,6 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -173,6 +168,6 @@
   },
   "resolutions": {
     "styled-components": "^5"
-  },
-  "homepage": "./"
+  }
+ 
 }

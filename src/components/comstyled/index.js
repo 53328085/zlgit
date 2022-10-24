@@ -1,41 +1,67 @@
 /**
  * @author zhenglin zhu
- * @description: // 公用的样式组件
+ * @description: // 公用的Input样式组件
  * @date 2022-10-18 09:45
  */
-import styled from "styled-components";
-import {Input, Select} from 'antd'
-const {Search, Password} = Input
+import styled, {css} from "styled-components";
+import {Input, Select, DatePicker} from 'antd'
+const {Search, Password, TextArea} = Input
 
-const Comipt = styled(Input)`  // 背景色透明
-  background-color: transparent !important;
-  border: 1px solid #9c9ea4;
-  &:focus, &:hover {    
-    border-color: #1f83fe !important;
-    .ant-input {
+const normal = css`
+    background-color: transparent !important; // 背景色透明
+    border: 1px solid #9c9ea4;
+    color:#fff;
+    input::placeholder {
+      color: #999;
+    }
+`
+const active = css` //  :focus, :hover  
+   input:focus:not(.ant-input-disabled), input:hover:not(.ant-input-disabled) {    
+      border-color: #1f83fe !important;
       color: #1f83fe;
-    }
-    .anticon.anticon-user {
-      color: #1f83fe !important;
-    }
   }
+`
+const formMixin = css`
+    background-color: transparent !important; // 背景色透明
+    border: 1px solid #9c9ea4;
+    color: #fff;
+    input::placeholder {
+      color: #999;
+    }
+    &&:focus:not(.ant-input-disabled), &&:hover:not(.ant-input-disabled) {    
+      border-color: #1f83fe !important;
+      color: #1f83fe;
+   
+    
+  }
+  
+`
+export const Comipt = styled(Input)`  
  
+    ${formMixin}
+    ${active}
+  .anticon.anticon-user {
+      color: #1f83fe !important;
+  }
   .ant-input-affix-wrapper-status-error {
     background-color: transparent !important;
   }
-  .ant-input {
-    background-color: transparent;
-    color:#999;
-  
-  } 
- .ant-input::placeholder {
-    color: #999;
-    }
   input:-internal-autofill-previewed,
   input:-internal-autofill-selected {
     -webkit-text-fill-color: #999 !important;
 　　transition: background-color 5000s ease-in-out 0s !important;
   }
+`
+export const CdatePicker = styled(DatePicker)`
+
+&& {
+  ${formMixin}
+  width: 200px;
+  .ant-picker-input >input{
+      color:#fff;
+      ${active}
+  }
+}
 `
 export const Iptserach = styled(Search)`
  .ant-input-affix-wrapper {
@@ -47,7 +73,7 @@ export const Iptserach = styled(Search)`
  }
  background-color: transparent !important;
  border: 1px solid #9c9ea4;
-  &:focus, &:hover {    
+  &:focus:not(.ant-input-disabled), &:hover:not(.ant-input-disabled) {    
     border-color: #1f83fe !important;
     .ant-input {
       color: #1f83fe;

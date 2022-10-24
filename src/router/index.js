@@ -114,7 +114,11 @@ const routes =  [
     },   
     {
       path: '/form',
-      element: <Fform/>
+      element: <Fform/>,
+      loader: async ({ params }) => {
+         console.log(params)
+      },
+
     }
    
 ];

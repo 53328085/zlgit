@@ -4,9 +4,20 @@ import {Form, Select, Input, Switch} from 'antd'
   const [form] = Form.useForm()
   const {Item} = Form
   const {roletype, enable, ...rest} = props
+  const getValue = () => {
+   return  new Promise((resolve, reject) => {
+    form.validateFields().then(res => {
+       resolve(res)
+    }).catch(e => {
+        reject(e)
+    })
+   })
+    
+  }
   useImperativeHandle(ref, () => ({
-    resetfrom: form.resetFields(),
-    getValue: form.getFieldsValue()
+    resetfrom: form.resetFields,
+    getValue,
+    validateFields: form.validateFields
   }))
   return (
     <Form

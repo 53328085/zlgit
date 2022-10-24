@@ -30,6 +30,7 @@ import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
+import Projectform from './projectform'
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -226,8 +227,11 @@ const Modalbox = styled(Modal)`
 export default function Index() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [proform] =  Form.useForm()
+  console.log(proform)
   const [count, setCount] = useState(0); 
   const modal = useRef()
+  const formmodal = useRef()
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
@@ -244,11 +248,14 @@ export default function Index() {
     modal.current.onCancel()
     navigate("/", {});
   };
-  const projectcig = () => {
-    console.log(1111)
+  const projectcig = () => {   
     navigate("/index/module/project", {
       state: { headerKeys: "module",  title: "项目管理" },
     })
+  }
+  /* 新增项目  start*/
+  const showproject = () => {
+    formmodal.current.onOpen()
   }
   const columns = [
     {
@@ -399,6 +406,7 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
             <Space size={32} style={{ flex: 1 }}>
               <Item>
                 <CustBtn
+                  onClick={showproject}
                   icon={
                     <PlusCircleOutlined
                       style={{ color: "#fff", fontSize: "24px" }}
@@ -471,7 +479,7 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
          onOk={onOk}
         
         width={488}
-        mold="msg"
+        mold="cust"
         type="dark"
       >
         <Space size={16} style={{paddingLeft: '32px'}}>
@@ -480,7 +488,16 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
          <span style={{color: '#fff', fontSize: '18px'}}> 是否退出系统？</span>
         </Space>
       </Custmodal>
-   
+      <Custmodal
+        title="新增项目"
+        ref={formmodal}
+        onOk={onOk}        
+        width={1366} 
+        mold="cust"     
+        type="dark"
+      >
+        <Projectform />
+      </Custmodal>
       </Mainbox>
      
   );
