@@ -1,10 +1,9 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect,useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { UserOutlined, LockOutlined, PhoneOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
-import { loginByName, selectLoading} from "@redux/user";
+import {useNavigate, useParams } from 'react-router-dom'
+import { UserOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
+import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
 import { systemConfig } from "@redux/systemconfig";
-import {clearToken} from '@redux/user'
-import { useNavigate } from "react-router-dom";
 import {useBoolean, useCountDown, useRequest } from 'ahooks'
 
 import {
@@ -158,12 +157,12 @@ function UserLog() {
   const store = useStore()
  
   const navigate = useNavigate();
-  let initloaidng = useSelector(selectLoading)
+  let initloaidng = useSelector(selectLoading)  
   let [loading, setLoading] = useState(initloaidng);  
-  
   const dispatch = useDispatch();
   store.subscribe(() => {   
     setLoading(store.getState()?.user?.loading)
+   
   })
   const hostname = process.env.NODE_ENV === "production" ? new URL(window.location.href).hostname  : "10.5.7.60";
   const submit = async (value) => {
@@ -191,6 +190,7 @@ function UserLog() {
   const [userform] = Form.useForm()
   
   const [state, { toggle  }] = useBoolean(true);
+  
   const stylefn = (state) => {
     return state ? {fontSize: '28px', color: '#fff'} : {fontSize: '26px', color: '#515151'}
   }
@@ -202,12 +202,16 @@ function UserLog() {
   marginRight: '16px'
  }
  const Userlog = () => {
-  let [auto, setAuto] = useState('off')
+  let initmemorize = useSelector(selectMemorize) 
+  let {loginName} = useSelector(selectUser)
+  const auto = useMemo(()=> initmemorize ? 'on' : 'off', [initmemorize])
+  const userName = useMemo(()=> initmemorize ? loginName : '', [initmemorize])
   const ckChange = (e) => {
-    let v = (e.target.checked) ? 'on' : 'off'
-    console.log(v)
-    setAuto(v)
+    dispatch(memorizeName(e.target.checked))
   }
+  store.subscribe(() => {
+    initmemorize = store.getState()?.memorize
+  })
   return (
  
     <Form
@@ -219,6 +223,9 @@ function UserLog() {
     name='login'
     onFinish={submit}
     onFinishFailed={onFinishFailed}
+    initialValues={{
+      name: userName
+    }}
    
   >
     <Itembox
@@ -256,10 +263,10 @@ function UserLog() {
        <Logpsd prefix={<LockOutlined style={iconsty}   />} placeholder="请输入密码" />
       </Itembox>
       <Itembox
-       name='remember'
+      
        valuePropName="checked"
       >
-        <Logck   onChange={ckChange}   >记住用户名</Logck>
+        <Logck   onChange={ckChange}  defaultChecked={initmemorize} >记住用户名</Logck>
       </Itembox>
       <Itembox>
           <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
@@ -270,16 +277,20 @@ function UserLog() {
 function Phonelog(){
     const {GetVerification} = Logapi
     const [phoneform] = Form.useForm()
-    const [at, setAuto] = useState('off')  
+    let initPhone = useSelector(selectMemoPhone)   
+    let {mobile} = useSelector(selectUser)  
+    const auto = useMemo(()=> initPhone ? 'on' : 'off', [initPhone])
+    const initMobile = useMemo(()=> initPhone ? mobile : '', [initPhone])
+    const ckchange = (e) => {
+      dispatch(memorizePhone(e.target.checked))
+    }
+    store.subscribe(() => {
+      initPhone = store.getState()?.memoPhone
+    }) 
     const [targetDate, setTargetDate] = useState(0)
     const [countdown] = useCountDown({
       targetDate
     })
-    const ckchange = (v) => {
-      let f = v.target.checked ? 'on' :  'off'
-      console.log(f)
-      setAuto(f)
-    } 
     const {loading, run } = useRequest(GetVerification, { // 获取验证码
       manual: true,   
       onSuccess: (res) => {
@@ -310,7 +321,7 @@ function Phonelog(){
          )
 }
    useEffect(() => {
-    console.log('111111')
+   
    })
     return (
     <Form
@@ -322,6 +333,12 @@ function Phonelog(){
     name='phonelogin'  
     onFinish={submit}
     onFinishFailed={onFinishFailed}   
+    initialValues= {
+      {
+        mobile: initMobile,
+        remember: initPhone
+      }
+    }
   >
     <Itembox
        name="mobile"
@@ -336,7 +353,7 @@ function Phonelog(){
         }
       ]}
       >
-       <Logipt prefix={<PhoneOutlined style={iconsty}   />}  placeholder="请输入手机号" autoComplete={at} />
+       <Logipt prefix={<PhoneOutlined style={iconsty}   />}  placeholder="请输入手机号" autoComplete={auto} />
       </Itembox>
       <Itembox   >         
       <Space size={16}> 
@@ -368,7 +385,7 @@ function Phonelog(){
        name='remember'
        valuePropName="checked"
       >
-        <Logck   onChange={ckchange} >记住手机号</Logck>
+        <Logck   onChange={ckchange}  >记住手机号</Logck>
       </Itembox>
       <Itembox>
           <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
@@ -378,14 +395,25 @@ function Phonelog(){
 }
 
 const Phone = React.memo(Phonelog)
+  const params = useParams()
+  const type = useMemo(() => {
+    let param =  Object.values(params)?.[0]
 
+      return !param || param == 'user'
+  })
   return (
     <Logbox>  
       <Logtype>
-        <span onClick={toggle} style={stylefn(state)}>账户登录</span>
-        <span onClick={toggle} style={stylefn(!state)}>手机登录</span>
+        <span onClick={() => {
+          navigate('user')
+          toggle()
+          }} style={stylefn(type)}>账户登录</span>
+        <span onClick={() => {
+           navigate('mobile')
+           toggle()
+        }} style={stylefn(!type)}>手机登录</span>
       </Logtype> 
-      {state ? <Userlog />  : <Phonelog/>}
+      {type ? <Userlog />  : <Phonelog/>}
     
     </Logbox>
   );

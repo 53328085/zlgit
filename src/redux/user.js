@@ -1,6 +1,8 @@
 import { createSlice,nanoid, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
+    memorize: false, // 是否记住用户名
+    memoPhone: false, // 是否记住手机号码
     loading: false,
     loginName: "",
     mobile: "",
@@ -10,7 +12,7 @@ const initialState = {
     userId: '',
     errMsg: '',
     functions: [],
-    projects: []
+    projects: [],   
 }
 export const loginByName = createAsyncThunk(
     'user/loginByName',
@@ -25,6 +27,12 @@ const user = createSlice({
     reducers: {
         clearToken(state) {
           return Object.assign({}, state, {token: ''})
+        },
+        memorizeName(state, actions) {          
+            return Object.assign({}, state, {memorize: actions.payload})
+        },
+        memorizePhone(state, actions) {           
+            return Object.assign({}, state, {memoPhone: actions.payload})
         }
     },
     extraReducers: {
@@ -54,7 +62,9 @@ export const selectUser =  (state) => {
     let {loginName,mobile, nickName,roleType,token,userId} = state.user
     return {loginName,mobile,nickName,roleType,token,userId}
  }
-export const {clearToken} = actions
+export const selectMemorize = state => state.user.memorize
+export const selectMemoPhone = state => state.user.memoPhone
+export const {clearToken, memorizeName, memorizePhone} = actions
 
 
 

@@ -40,8 +40,8 @@ const loginrouter =  [{
  }
 const routes =  [
    {
-    path: "/",
-    element: <Login />
+    path: "/*",
+    element: <Login />,   
     },
     {
       path: "/projectList",
