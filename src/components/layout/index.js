@@ -9,9 +9,20 @@ const { Header, Footer, Sider, Content } = Layout;
 const Csider = styled(Sider)`
   background-image: linear-gradient(#0e42c8, #7662ff);
 `
+const Logheaer = styled(Header)`
+&& {
+  height: 138px;
+  background-color: transparent; 
+  padding: 0px;
+}
+
+`
 export function LoginLayout(props) { // 登录页
   return( 
   <Layout className={style.pagelayout} style={{backgroundImage: `url(${Logbg})`, backgroundSize: 'cover'}}>  
+    <Logheaer>
+      {props.header}
+    </Logheaer>
     <Content>{props.children}</Content>  
     <Footer className={style.footer}>
         <Copyright />

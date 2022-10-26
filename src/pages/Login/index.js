@@ -2,6 +2,7 @@ import React, { useEffect,useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import {useNavigate, useParams } from 'react-router-dom'
 import { UserOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
+
 import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
 import { systemConfig } from "@redux/systemconfig";
 import {useBoolean, useCountDown, useRequest } from 'ahooks'
@@ -12,19 +13,84 @@ import {
   Form,
   Input,
   message,
-  Space
+  Space,
+  Image
 } from "antd";
 import styled from 'styled-components'
 import {LoginLayout} from "@com/layout";
 import {pwdValidator, phoneValidator, codeValidator} from '../rule'
 import {Login as Logapi} from '@api/api'
-
-
+import logo from './logo.png'
+import credentials from './credentials.png'
+const Logmain = styled.div`
+  && {
+    padding: 142px 45px 0 100px;
+    display: flex;
+    height: calc(100vh - 138px - 24px);
+    overflow-y: auto;
+  }
+`
+const List = styled.div`
+  width: 660px;
+  display: flex;
+  flex-direction: column;
+  .chtitle {
+    .text {
+      color: #fff;
+      font-style: italic;
+      font-size: 56px;
+      z-index: 2;
+      position: absolute;
+      width: 560px;
+      left: 40px;
+    }
+    position: relative;
+    height: 90px;
+    text-align: center;
+  }
+  .block {
+    display: block;
+    width: 640px;
+    height: 35px;
+    background-color: #012BD2;
+    position: absolute;
+    top:59px;
+    transform: skewX(-20deg);
+  }
+  .entitle {
+    font-size: 28px;
+    line-height: 2;
+    color: rgba(255,255,255,0.3);
+    padding-left: 40px;
+    padding-bottom: 100px;
+  }
+  .itemlist {
+    display: flex;
+    flex-direction: column;
+    padding-left: 40px;
+    .item{
+      font-size: 16px;
+      color: rgba(255,255,255,0.3);
+      
+    }
+    .icon {
+      
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-color: #1F83FE;
+      transform: rotate(45deg);
+    }
+    .item + .item {
+      margin-bottom: 24px;
+    }
+  }
+`
 const Logbox = styled.div`
   width: 402px;
- margin: 280px 50px 0 auto;
- color: #fff;
- background: transparent;
+  color: #fff;
+  background: transparent;
+  margin-left: auto;
 `
 const Logtype = styled.div`
   display: flex;
@@ -152,6 +218,38 @@ const Logbtn = styled(Button)`
     color:#fff;
   }
 `
+const Title = styled.div`
+  display: flex;
+  height: inherit;
+  flex: 1;
+  padding: 0 84px 0 96px; 
+  justify-content: space-between;
+  align-items: flex-end;
+`
+const Logtitle = () => {
+ return (  
+ <Title>
+    <Image src={logo} preview={false} width={120} />
+    <Image src={credentials} preview={false} />
+   </Title>
+ )
+}
+const Loglist = () => {
+
+  return (
+    <List>
+      <div className="chtitle">
+        <p className="text">正泰智慧能源服务平台</p>
+        <p className="block"></p>
+       </div>
+       <p className="entitle">Chint Smart Energy Service Platform</p>
+       <div className="itemlist">
+         <div className="item"><span className="icon"></span>运行监控</div>
+        
+       </div>
+    </List>
+  )
+}
 function UserLog() { 
 
   const store = useStore()
@@ -419,7 +517,12 @@ const Phone = React.memo(Phonelog)
   );
 }
 export default function Login() {  
-  return <LoginLayout login={true}>
+  return <LoginLayout login={true} header={<Logtitle />}>
+        <Logmain>
+          <Loglist>
+
+          </Loglist>
           <UserLog /> 
+          </Logmain>
     </LoginLayout>;
 }
