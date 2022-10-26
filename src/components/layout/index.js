@@ -43,52 +43,5 @@ export function ProjectLayout(props) { // 项目内容
     </Layout>
   )
 }
-/* export default function PageLayout(props) {
-  const { Header, Footer, Sider, Content } = Layout;
-  const CustHeader = () => {
-    let Custheader = props.custheader
-    if(Custheader) {
-      return <Header className={style.header}>{ props.custheader}</Header>
-    }
-    return null
-  }
-  const CustSider = (props) => {
-    if(props.sider) return   <Sider>{props.sider}</Sider>
-    return null
-  }
 
-  
-  if(props.isheader) {
-    return (
-      <Layout className={style.pagelayout}>
-      <CustSider></CustSider>
-      <Layout>
-        <Header className={style.header}>{props.custheader}</Header>
-        <Content className={style.content}>{props.children}</Content>
-      </Layout>
-    </Layout>
-   )
-    
-  }else if(props.login) { // 登录页
-    return (
-      <Layout className={style.pagelayout}>
-    
-       <Content>{props.children}</Content>  
-       <Footer className={style.footer}>
-          <Copyright />
-       </Footer>
-    </Layout>
-    )
-  }
-  const LoginLayout = (
-    <Layout className={style.pagelayout}>
-  
-        <Content>{props.children}</Content>  
-        <Footer className={style.footer}>
-            <Copyright />
-        </Footer>
-    </Layout>
-  )
-
-} */
 // 首页没有sider, header

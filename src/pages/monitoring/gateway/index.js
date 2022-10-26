@@ -105,7 +105,7 @@ export default function Index() {
 
   return (
     <CustContext.Provider value= {propsData}>
-      <Pagecount>
+      <Pagecount showserach={true}>
       <Select
         className={style.selectCss}
         showSearch

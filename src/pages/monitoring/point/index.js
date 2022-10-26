@@ -98,7 +98,7 @@ export default function Index() {
   }
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount>   
+    <Pagecount showserach={true}>   
    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id'/> : 
         <UserCard   {...{data, pagination}} /> 

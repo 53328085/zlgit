@@ -83,7 +83,7 @@ export default function Index() {
   
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount  form={form} search={search}>
+    <Pagecount  form={form} search={search} showserach={true}>
       <SearchBtn {...propsSearch}/>
       <UserTable columns={columns}  {...tableProps} rowSelection={{
           type: value==='single'?'radio':'checkbox',

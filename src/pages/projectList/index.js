@@ -76,7 +76,7 @@ const Mainbox = styled.div`
   grid-template-rows: 101px 1fr;
   row-gap: 32px;
   color: #fff;
-  min-height: 780px;
+ // min-height: 780px;
   min-width:1440px;
   overflow: auto;
   .title {
@@ -117,6 +117,7 @@ const Mainbox = styled.div`
     display: grid;
     grid-template-rows: 42px 1fr;
     row-gap: 32px;
+    height: calc(100vh - 165px);
     .serach {
       .ant-form-item {
         margin-right: 0px;

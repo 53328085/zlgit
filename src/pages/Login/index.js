@@ -400,7 +400,7 @@ const Phone = React.memo(Phonelog)
     let param =  Object.values(params)?.[0]
 
       return !param || param == 'user'
-  })
+  }, [params])
   return (
     <Logbox>  
       <Logtype>

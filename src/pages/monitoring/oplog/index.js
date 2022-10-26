@@ -79,7 +79,7 @@ export default function Index() {
 
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount>
+    <Pagecount showserach={true}>
       <Form form={form}  layout="inline"  initialValues={{
         date: [moment().subtract(1, 'M'), moment(),],
         like: ''
