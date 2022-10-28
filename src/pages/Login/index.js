@@ -62,27 +62,33 @@ const List = styled.div`
     line-height: 2;
     color: rgba(255,255,255,0.3);
     padding-left: 40px;
-    padding-bottom: 100px;
+    padding-bottom: 72px;
   }
   .itemlist {
     display: flex;
     flex-direction: column;
     padding-left: 40px;
     .item{
+     
+      display: flex;
+      align-items: center;
+    }
+    .text {
+      display: inline-block;
       font-size: 16px;
-      color: rgba(255,255,255,0.3);
-      
+      color: rgba(255,255,255,0.6);
     }
     .icon {
       
       display: inline-block;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       background-color: #1F83FE;
       transform: rotate(45deg);
+      margin-right: 16px;
     }
     .item + .item {
-      margin-bottom: 24px;
+      margin-top: 24px;
     }
   }
 `
@@ -235,7 +241,7 @@ const Logtitle = () => {
  )
 }
 const Loglist = () => {
-
+  let items = ['运行监控', '电气安全', '配电管理', '结算收费', '光伏发电', '碳排管理', '运维管理']
   return (
     <List>
       <div className="chtitle">
@@ -243,9 +249,8 @@ const Loglist = () => {
         <p className="block"></p>
        </div>
        <p className="entitle">Chint Smart Energy Service Platform</p>
-       <div className="itemlist">
-         <div className="item"><span className="icon"></span>运行监控</div>
-        
+       <div className="itemlist">        
+         {items.map((i, index) =>  (<div className="item" key={index}><span className="icon"></span><span className="text">{i}</span></div>))}
        </div>
     </List>
   )

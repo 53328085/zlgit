@@ -100,9 +100,9 @@
         label: "损耗分析",
         key: "analysis",
         icon: <Micon />
-    },
+    },  
     {
-        label: "能耗指标",
+        label: "定额能耗",
         key: "quota",
         icon: <Micon />
     },
@@ -111,6 +111,16 @@
         key: "comm",
         icon: <Micon />
     },
+    {
+      label: "路灯监控",
+      key: "streetLamp",
+      icon: <Micon />
+    },
+    {
+      label: "公共照明",
+      key: "lighting",
+      icon: <Micon />
+   },
    ]
    export  const devops = [ // 运维管理
     {

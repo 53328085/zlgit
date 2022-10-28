@@ -11,6 +11,8 @@ const Analysis = lazy(() => import("../pages/energy/analysis"))
 const Quota = lazy(() => import("../pages/energy/quota"))
 const Comm = lazy(() => import("../pages/energy/comm"))
 const Cost = lazy(() => import("../pages/energy/cost"))
+const Lighting = lazy(() => import("../pages/energy/lighting") )
+const Streetlamp = lazy(() => import("../pages/energy/streetLamp") )
 export default [
     {
        // index: true,
@@ -53,5 +55,13 @@ export default [
     {
         path: 'comm',
         element: <Comm/>
+    },
+    {
+        path: 'lighting',
+        element: <Lighting/>
+    },
+    {
+        path: 'streetlamp',
+        element: <Streetlamp/>
     }
 ]

@@ -10,7 +10,7 @@ import CustContext from "../content";
 export default function useSerach(props) {
   const {form, search, setDisplay, display, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
  
-  const { type, changeType, submit, reset } = search || {};
+  const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
   const { Item } = Form;
   const { Option } = Select;
   const initialValues = useMemo(() => {

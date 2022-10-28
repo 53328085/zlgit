@@ -74,7 +74,7 @@ export default function Maincontent(props) {
     setvalue(key)
  }
  const TabsEl = () => {   
-     if (!tabs) return null    
+     if (!beTabs) return null    
      return (
         <Tabsbox  
         onChange={onChange} 
