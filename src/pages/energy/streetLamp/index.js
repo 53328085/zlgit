@@ -118,7 +118,7 @@ export default function Index() {
              <Image src={lingth} preview={false} />
              <div style={{color: "#fff", textAlign: "center"}}>
                 <p style={{lineHeight: 1.2, fontSize: "28px"}}> {num}</p>
-                {add && <span>同比&nbsp;&nbsp;+{add}%</span> }
+                {add && <span>同比&nbsp;&nbsp;&nbsp;+{add}%</span> }
              </div>
           </Cardmain>
         </Custcard>
