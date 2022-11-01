@@ -251,7 +251,7 @@ export default function Index() {
   };
   const projectcig = () => {   
     navigate("/index/module/project", {
-      state: { headerKeys: "module",  title: "项目管理" },
+      state: { selectedKeys: "project",  title: "项目管理", path: 'module' },
     })
   }
   /* 新增项目  start*/

@@ -61,19 +61,19 @@ export default function Sider() {
   const [path, setPath] = useState('monitoring')
   const navigate = useNavigate()
   const location = useLocation()
-  useEffect(() => {
-    console.log(location)
+  useEffect(() => {   
+    
     let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
     setPath(path)
     setMenus(menuList[path])
     Setkey(location.state?.selectedKeys) 
   },[location])
 
-  const onSelect = (e) => {
-    console.log(e)
-     let label = menuList[path]?.find(item => item.key == e.key)?.label
-     Setkey(e.key)
-     navigate(`/index/${path}/` + e.key, {state: {title: label, selectedKeys: e.key, path}})
+  const onSelect = ({key}) => {  
+     let label = menuList[path]?.find(item => item.key == key)?.label
+     Setkey(key)
+     let url = `/index/${path}/` + key
+     navigate(url, {state: {title: label, selectedKeys: key, path}})
   }
  
   return (

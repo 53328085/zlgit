@@ -20,8 +20,7 @@ import styled from 'styled-components'
 import {LoginLayout} from "@com/layout";
 import {pwdValidator, phoneValidator, codeValidator} from '../rule'
 import {Login as Logapi} from '@api/api'
-import logo from './logo.png'
-import credentials from './credentials.png'
+import imgurl from "./icon";
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
@@ -30,6 +29,7 @@ const Logmain = styled.div`
     overflow-y: auto;
   }
 `
+
 const List = styled.div`
   width: 660px;
   display: flex;
@@ -120,19 +120,35 @@ const Itembox = styled(Item)`
     height: 48px;
   }
 `
+const Ipticon = styled.span`
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+ 
+  background-size: 32px 32px;
+  transition: all 0.3s; 
+`  
 const Logipt = styled(Input)`
+  font-size: 14px;
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
+  ${Ipticon} {
+    background-image: url(${(props) => props.url});
+  }
   &:focus, &:hover {    
     border-color: #1f83fe !important;
+    ${Ipticon} {
+      background-image: url(${(props) => props.aurl});
+    }
     .ant-input {
       color: #1f83fe;
     }
-    .anticon.anticon-user {
-      color: #1f83fe !important;
+  }
+  && {
+    .ant-input-prefix {
+      margin-right: 16px;
     }
   }
- 
   .ant-input-affix-wrapper-status-error {
     background-color: transparent !important;
   }
@@ -153,16 +169,30 @@ const Logipt = styled(Input)`
 const Logpsd = styled(Input.Password)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
+  font-size: 14px;
+  ${Ipticon} {
+    background-image: url(${(props) => props.url});
+  }
   &:focus, &:hover {    
     border-color: #1f83fe !important;
+    ${Ipticon} {
+    background-image: url(${(props) => props.aurl});
+  }
     .ant-input {
       color: #1f83fe;
     }
-    .anticon.anticon-lock {
+    .ant-input-password-icon.anticon {
       color: #1f83fe !important;
     }
   }
- 
+  && {
+    .ant-input-prefix {
+      margin-right: 16px;
+    }
+  }
+  .ant-input-password-icon.anticon {
+      color: #999
+    }
   .ant-input-affix-wrapper-status-error {
     background-color: transparent !important;
   }
@@ -213,6 +243,7 @@ const Logck = styled(Checkbox)`
   }
   
 `
+
 const Logbtn = styled(Button)`
   border-color: #0e2db3;
   background-color: #0e2db3;
@@ -224,6 +255,7 @@ const Logbtn = styled(Button)`
     color:#fff;
   }
 `
+
 const Title = styled.div`
   display: flex;
   height: inherit;
@@ -232,11 +264,12 @@ const Title = styled.div`
   justify-content: space-between;
   align-items: flex-end;
 `
+
 const Logtitle = () => {
  return (  
  <Title>
-    <Image src={logo} preview={false} width={120} />
-    <Image src={credentials} preview={false} />
+    <Image src={imgurl.logo} preview={false}  />
+    <Image src={imgurl.credentials} preview={false} />
    </Title>
  )
 }
@@ -347,7 +380,7 @@ function UserLog() {
         }
       ]}
       >
-       <Logipt prefix={<UserOutlined style={iconsty}   />} placeholder="请输入用户名" allowClear autoComplete={auto} />
+       <Logipt prefix={<Ipticon />} url={imgurl.user}  aurl={imgurl.usera} placeholder="请输入用户名" allowClear autoComplete={auto} />
       </Itembox>
       <Itembox
        name="pwd"
@@ -363,7 +396,7 @@ function UserLog() {
      
       ]}
       >         
-       <Logpsd prefix={<LockOutlined style={iconsty}   />} placeholder="请输入密码" />
+       <Logpsd prefix={<Ipticon />} url={imgurl.pwd}  aurl={imgurl.pwda} placeholder="请输入密码" />
       </Itembox>
       <Itembox
       
@@ -456,7 +489,7 @@ function Phonelog(){
         }
       ]}
       >
-       <Logipt prefix={<PhoneOutlined style={iconsty}   />}  placeholder="请输入手机号" autoComplete={auto} />
+       <Logipt prefix={<Ipticon/>} url={imgurl.phone} aurl={imgurl.phonea} placeholder="请输入手机号" autoComplete={auto} />
       </Itembox>
       <Itembox   >         
       <Space size={16}> 
@@ -474,7 +507,7 @@ function Phonelog(){
 
        
       ]} noStyle> 
-       <Logipt  prefix={<LockOutlined style={iconsty}  />}   placeholder="请输入验证码" style={{width: '275px'}} /> 
+       <Logipt  prefix={<Ipticon/>} url={imgurl.code} aurl={imgurl.codea}  placeholder="请输入验证码" style={{width: '275px'}} /> 
        </Item>
        <Item noStyle>
        {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        

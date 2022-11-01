@@ -11,21 +11,37 @@ import prepaymentRoutes from "./prepayment";
 import photovoltaicRoutes from "./photovoltaic";
 import moduleRoutes from "./module";
 import carbonRoutes from "./carbon"
-const Login = lazy(() => import("../pages/Login"))
-const Projectlist = lazy(() => import("../pages/projectList"))
-const Index = lazy(() => import("../pages/Home/Index"))
-const Defauthome = lazy(() => import("../pages/defauthome"))
-const Module = lazy(() => import("../pages/module/index"))
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
-const Electric = lazy(() => import("../pages/electric/index"))
-const Distribution = lazy(() => import("../pages/distribution/index"))
-const Energy = lazy(() => import("../pages/energy/index"))
-const Devops = lazy(() => import("../pages/devops/index"))
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
-const Carbon = lazy(() => import("../pages/carbon/index"))
-const Antdconfig = lazy(() => import("../pages/Antcutom"))
-const RoomDetail = lazy(() => import("../pages/roomDetail"))
+//const Login = lazy(() => import("../pages/Login"))
+import Login from "@pages/Login"
+//const Projectlist = lazy(() => import("../pages/projectList"))
+import Projectlist from "@pages/projectList"
+//const Index = lazy(() => import("../pages/Home/Index"))
+import Index from '@pages/Home'
+// const Defauthome = lazy(() => import("../pages/defauthome"))
+import Defauthome from "@pages/defauthome"
+//const Module = lazy(() => import("../pages/module/index"))
+import Module from '@pages/module/index'
+//const Monitoring = lazy(() => import("../pages/monitoring/index"))
+import Monitoring from "@pages/monitoring/index";
+//const Electric = lazy(() => import("../pages/electric/index"))
+import Electric from "@pages/electric/index";
+//const Distribution = lazy(() => import("../pages/distribution/index"))
+import Distribution from "@pages/distribution/index"
+
+//const Energy = lazy(() => import("../pages/energy/index"))
+import Energy from "@pages/energy/index"
+//const Devops = lazy(() => import("../pages/devops/index"))
+import Devops from "@pages/devops/index"
+//const Prepayment = lazy(() => import("../pages/prepayment/index"))
+import Prepayment from "@pages/prepayment/index"
+//const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
+import Photovoltaic from "@pages/photovoltaic/index"
+// const Carbon = lazy(() => import("../pages/carbon/index"))
+import Carbon from '@pages/carbon/index'
+//const Antdconfig = lazy(() => import("../pages/Antcutom"))
+import Antdconfig from "@pages/Antcutom"
+//const RoomDetail = lazy(() => import("../pages/roomDetail"))
+import RoomDetail from "@pages/roomDetail"
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const loginrouter =  [{
   path: "/login",
