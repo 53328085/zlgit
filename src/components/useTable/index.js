@@ -1,8 +1,35 @@
-import React from 'react'
+import React, {useRef, useImperativeHandle, forwardRef} from 'react'
 import {Table} from 'antd'
 import styled from 'styled-components'
-export default function index(props) { 
-  const {pagination, ...otherprops} =props  
+import {read, utils, writeFile} from 'xlsx'
+ function Index(props, ref) { 
+  const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
+  const tableref = useRef()
+  const domExprot = ()=> { // 通过table DOM 导出  
+    const params = { raw: true };
+    const workbook = utils.book_new(); // 新建工作簿   
+    let table = tableref.current  
+    const ws = utils.table_to_sheet(
+      // 新建工作表
+      table,
+      params
+    );
+    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    let file =  sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
+    writeFile(workbook, sheetName, { bookType: file }); // 下载
+  }
+  const dataExport = ({headers, data}) => {
+    const workbook = utils.book_new(); // 新建工作簿
+    var ws = utils.aoa_to_sheet([headers]); // 添加标题到工作表
+    utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
+    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
+    writeFile(workbook, this.sheetName, { bookType: file }); // 下载
+  }
+  useImperativeHandle(ref, () => ({
+    download: domExprot,
+    downloadByData: dataExport
+  }))
   const paginationProp = Object.assign( {}, {
     hideOnSinglePage: true,
     showTotal: (total) => `共${total}条记录`
@@ -28,7 +55,8 @@ export default function index(props) {
   return (
     <Divbox>
        {/*  <Tablecom {...props} bordered   onChange={changePage} size="small"  pagination={pagination} /> */}
-        <Tablecom { ...otherprops} bordered   size="small"  pagination={paginationProp}  />
+        <Tablecom { ...otherprops} bordered   size="small"  pagination={paginationProp} ref={tableref}  />
     </Divbox>
   )
 }
+export default forwardRef(Index)

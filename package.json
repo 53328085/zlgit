@@ -2,7 +2,6 @@
   "name": "testapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
   "dependencies": {
     "@ahooksjs/use-url-state": "^3.5.0",
     "@ant-design/charts": "^1.4.2",
@@ -86,7 +85,8 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -168,6 +168,6 @@
   },
   "resolutions": {
     "styled-components": "^5"
-  }
- 
+  },
+  "homepage": "./"
 }

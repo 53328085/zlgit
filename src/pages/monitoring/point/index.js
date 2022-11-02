@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Form} from 'antd'
+import {Button, Form} from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
@@ -16,6 +16,10 @@ export default function Index() {
   const [value, setvalue] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
   let [display, setDisplay] = useState(true)  
+  const tableref = useRef()
+  const onDowne = () => {
+    tableref.current.download()
+  }
   const meterType = {
     electric: 1,
     water: 2,
@@ -99,8 +103,8 @@ export default function Index() {
   return (
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={true}>   
-   
-       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id'/> : 
+       <Button onClick={() => onDowne()}>下载</Button>
+       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' ref={tableref}/> : 
         <UserCard   {...{data, pagination}} /> 
     }
     </Pagecount>

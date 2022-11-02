@@ -251,7 +251,7 @@ export default function Index() {
   };
   const projectcig = () => {   
     navigate("/index/module/project", {
-      state: { selectedKeys: "project",  title: "项目管理", path: 'module' },
+      state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
     })
   }
   /* 新增项目  start*/
@@ -312,7 +312,7 @@ export default function Index() {
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
               navigate("/index", {
-                state: { headerKeys: "/index", index: true, title: "首页" },
+                state: { path: "index", index: true, title: "项目概述" },
               })
             }
           >

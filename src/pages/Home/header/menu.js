@@ -10,7 +10,7 @@ const Ciocn = (props) => {
 export default function Hmenu() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [current, SetCurrent] = useState('/index')  
+  const [current, SetCurrent] = useState('index')  
   const menus = [
     {
       label: '公共模块',
