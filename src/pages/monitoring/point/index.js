@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, Suspense} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Button, Form} from 'antd'
+import {Button, Form, message} from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
@@ -11,14 +11,34 @@ import CustContext from '@com/content.js'
 import columns,  { onDesc} from './columns'
 export default function Index() {
   const [form] = Form.useForm()
-
   const [formparams, setFormparams] = useState(form.getFieldsValue())
   const [value, setvalue] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
+  
   let [display, setDisplay] = useState(true)  
+  const [total, setTotal] = useState(0)
   const tableref = useRef()
-  const onDowne = () => {
-    tableref.current.download()
+  let params = {
+    projectId: projectId,
+    meterType: meterType[value],
+    lineStatus: 0,
+    bindStatus: 0,
+    pageNum: 1,
+    pageSize: 12,
+    alike: '',
+  }
+  const onDownload = () => {
+    params.pageSize = total
+    Meter.Overview(params).then(res => {
+      let {success, data } = res
+      if (!success) return message.warning('下载数据出错')
+      if(success) {
+        tableref.current.download()
+      }
+    }).catch((e) => {
+      message.warning('下载数据出错')
+    })
+    
   }
   const meterType = {
     electric: 1,
@@ -32,15 +52,7 @@ export default function Index() {
     {label: '燃气表', key: 'gas'}
   ]
   
-  let params = {
-    projectId: projectId,
-    meterType: meterType[value],
-    lineStatus: 0,
-    bindStatus: 0,
-    pageNum: 1,
-    pageSize: 12,
-    alike: '',
-  }
+
   const getTableData = ({current, pageSize}, formData) => {  
     setFormparams((form) => ({...form, ...formData}))
    
@@ -48,6 +60,7 @@ export default function Index() {
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res
+       setTotal(totalNum)
       if (success && Array.isArray(data?.data)) {
         return {
           total: totalNum,
@@ -98,12 +111,14 @@ export default function Index() {
     form,
     search,
     display,
+    apply: true,
+    data: true,
     setDisplay,
+    onDownload
   }
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true}>   
-       <Button onClick={() => onDowne()}>下载</Button>
+    <Pagecount showserach={true}>        
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' ref={tableref}/> : 
         <UserCard   {...{data, pagination}} /> 
     }

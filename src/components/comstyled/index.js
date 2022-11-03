@@ -104,7 +104,11 @@ export const Iptserach = styled(Search)`
   }
 `
 export const Cselect = styled(Select)`
- color: #999;
+  && {
+    color: #999;   
+    width: ${props => props.w || 'auto'} ;
+  }
+
  &:hover,&:focus {
     color: #1f83fe;
  }
@@ -114,11 +118,13 @@ export const Cselect = styled(Select)`
     color: #1f83fe;
  }
  }
+
  &:not(.ant-select-customize-input) .ant-select-selector {
     background-color: transparent;
     border: 1px solid #9c9ea4;
     &:focus, &:hover {    
     border-color: #1f83fe !important;
+    
   }
  }
 `

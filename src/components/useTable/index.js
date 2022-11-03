@@ -24,7 +24,7 @@ import {read, utils, writeFile} from 'xlsx'
     utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
     let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
-    writeFile(workbook, this.sheetName, { bookType: file }); // 下载
+    writeFile(workbook, sheetName, { bookType: file }); // 下载
   }
   useImperativeHandle(ref, () => ({
     download: domExprot,

@@ -31,12 +31,32 @@ import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
+import { color } from "echarts";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
   overflow-y: auto;
   display: flex;
 `;
+const CustTable = styled(Table)`
+  && {
+    .ant-pagination-item-active {
+      background-color: #0033ff;
+      border-color:  #0033ff;
+     
+      a{ 
+       
+        color: #fff;
+      }
+    }
+    .ant-pagination-next .ant-pagination-item-link, .ant-pagination-prev .ant-pagination-item-link {
+      background-color: transparent;
+      color: #fff;
+      border-color: #5e5e5e;
+    }
+  }
+  
+` 
 const CustBtn = styled(Button)`
   max-width: ${(props) => props.width || "144px"};
   height: 40px;
@@ -360,6 +380,7 @@ export default function Index() {
   });
 
 tableProps.pagination.position = ["bottomCenter"] // 底部居中
+tableProps.pagination.size="default" // 页码大小默认
   const { submit } = search;
 
   const { chineseTitle, englishTitle, systemLogoImage } = useSelector(
@@ -446,8 +467,10 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
               <Item name="valid">
                 <Cselect
                   placeholder="项目状态"
-                  style={{ width: "200px" }}
+                  w="200px"
+                  h="40px"
                   onChange={submit}
+                  size="large"
                 >
                   {options.map((o) => (
                     <Option value={o.value} key={nanoid()}>
@@ -464,7 +487,7 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
               </Item>
             </Space>
           </Form>
-          <Table
+          <CustTable
             columns={columns}
             {...tableProps}
             rowClassName="rowclass"
@@ -472,7 +495,7 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
             bordered={true}
           >
            
-          </Table>
+          </CustTable>
         </div>
         <Custmodal
         title="提示信息"

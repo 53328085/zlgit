@@ -1,14 +1,32 @@
 import React, {useState, useContext, useMemo, useEffect} from "react";
 
-import { Form, Select, Button, AutoComplete } from "antd";
-
+import { Form, Select, Button, AutoComplete, Space, Divider} from "antd";
+import styled from "styled-components";
 import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import CustContext from "../content";
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
-
+const Cdivider = styled(Divider)`
+&& {
+  margin: 0px;
+  height: 32px;
+}
+ 
+`
+const Cform = styled(Form)`
+    background: #fff;
+    padding: 7px 16px;
+    border-top: 1px solid #dedede;
+    border-bottom: 1px solid #dedede;
+    height: max-content;
+   &&{
+    .ant-form-item {
+        margin: 0px;
+    }
+   } 
+`
 export default function useSerach(props) {
-  const {form, search, setDisplay, display, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
+  const {form, search, setDisplay, display, data, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
  
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
   const { Item } = Form;
@@ -22,19 +40,42 @@ export default function useSerach(props) {
   }, [names])  
   return (  
   
-    <Form layout="inline" className={style.serachform} form={form} initialValues={{initialValues}} >
+    <Cform layout="inline" className={style.serachform} form={form} initialValues={{initialValues}} >
+      <Space size={16}>
       <Item label="园区选择" name='RegionId'>
         <Select style={{ width: "320px" }} onChange={submit} allowClear>
           <Option value={1}>正泰园区</Option>
         </Select>
       </Item>
-      <Item label="建筑物" name='BuildingId'>
+      {
+        names.includes('BuildingId')  && <Cdivider dashed type="vertical" />
+      }
+      {
+        <Item label="" name='BuildingId'>
         <Select style={{ width: "235px" }}>
+          <Option value={0}>全部建筑物</Option>
           <Option value={2}>1号楼</Option>
         </Select>
-      </Item>
-      { names.includes('FloorId') ? (<Item label="楼层" style={{width: '174px'}} name='FloorId' >
+        </Item>
+       
+      }
+     
+      { names.includes('FloorId') ? (
+      <Item label="" style={{width: '174px'}} name='FloorId' >
         <Select onChange={submit} allowClear>
+        <Option value={0}>全部楼层</Option>
+        <Option value={3}>7楼</Option>
+        </Select>
+      </Item>)
+      : null
+      }
+       {
+        names.includes('apply')  && <Cdivider dashed type="vertical" />
+      }
+      { names.includes('apply') ? (
+        <Item label="" style={{width: '174px'}} name='apply' >
+        <Select onChange={submit} allowClear>
+        <Option value={0}>全部应用</Option>
         <Option value={3}>7楼</Option>
         </Select>
       </Item>)
@@ -59,17 +100,29 @@ export default function useSerach(props) {
 
       : null
       }
+      </Space>
+      <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}> 
       {
+       
+       data!==undefined ? 
+       (<Item>
+           <Button  onClick={() => onDownload()}>数据导出</Button>
+       </Item>)
+       : null
+      
+       }
+      {
+       
       display!==undefined ? 
-      (<Item style={{marginLeft: 'auto', marginRight: '0px'}}>
+      (<Item>
           <Button  onClick={() => setDisplay(s => !s)}>{display ? '列表模式' : '表格模式'}</Button>
       </Item>)
       : null
+     
       }
-      <Item>
-
-      </Item>
-    </Form>
+      
+      </Space>
+    </Cform>
   
     
   );

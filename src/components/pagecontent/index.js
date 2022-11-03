@@ -5,7 +5,7 @@ import Maincontent from './maincontent'
 const Pagecontent = styled.div`
     flex:1;
     display: grid;
-    grid-template-rows: ${p => p.showserach ? '52px 1fr' : '1fr'};
+    grid-template-rows: ${p => p.showserach ? '48px 1fr' : '1fr'};
     row-gap: 16px;
 `
 export default function Index(props) {

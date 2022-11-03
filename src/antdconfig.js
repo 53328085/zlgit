@@ -10,7 +10,7 @@ const deftheme = {
     infoColor: '#1890ff',
   }
 export default {
-    componentSize: 'large',
+    componentSize: 'middle',
     nonce: 'YourNonceCode',
     theme: deftheme,
     locale: zhCN
