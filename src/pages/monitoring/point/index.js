@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, Suspense} from 'react'
+import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
 import {Button, Form, message} from 'antd'
@@ -9,6 +9,7 @@ import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import CustContext from '@com/content.js'
 import columns,  { onDesc} from './columns'
+import { CodeSandboxCircleFilled } from '@ant-design/icons'
 export default function Index() {
   const [form] = Form.useForm()
   const [formparams, setFormparams] = useState(form.getFieldsValue())
@@ -18,6 +19,11 @@ export default function Index() {
   let [display, setDisplay] = useState(true)  
   const [total, setTotal] = useState(0)
   const tableref = useRef()
+  const meterType = {
+    electric: 1,
+    water: 2,
+    gas: 3
+  }
   let params = {
     projectId: projectId,
     meterType: meterType[value],
@@ -27,24 +33,41 @@ export default function Index() {
     pageSize: 12,
     alike: '',
   }
+  const header = useMemo(() => columns.map(i => i.dataIndex), [columns])
+  const firstRow = useMemo(() => {
+    let obj = {}
+    columns.forEach(col => {
+      obj[col.dataIndex] = col.title
+    });
+    return obj
+  }, [columns])  
   const onDownload = () => {
     params.pageSize = total
     Meter.Overview(params).then(res => {
       let {success, data } = res
+      let tbData = data?.data      
       if (!success) return message.warning('下载数据出错')
-      if(success) {
-        tableref.current.download()
+      if(success && Array.isArray(tbData)) {
+        let jsondata = tbData.map(d => {
+          let obj = {}
+          for(let key of header) {
+             if (key == 'status') {
+               obj[key] = ['', '离线', '在线'][d[key]] || ''              
+             } else {
+              obj[key] = d[key]
+             } 
+          }
+          return obj
+        } )       
+        tableref.current.downloadByData({header, data:[firstRow, ...jsondata], sheetName: '测试' })
       }
     }).catch((e) => {
+      console.log(e)
       message.warning('下载数据出错')
     })
     
   }
-  const meterType = {
-    electric: 1,
-    water: 2,
-    gas: 3
-  }
+
 
   const tabs = [
     {label: '电表', key: 'electric'},

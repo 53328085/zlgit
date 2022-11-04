@@ -5,7 +5,7 @@ export default [
       title: "设备编号",      
     },
     {
-      dataIndex: "categoryName",
+      dataIndex: "category",
       title: "设备型号",
     },
     {

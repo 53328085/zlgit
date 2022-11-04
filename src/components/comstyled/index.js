@@ -67,6 +67,7 @@ export const Iptserach = styled(Search)`
  .ant-input-affix-wrapper {
     background-color: transparent !important;
     border: none;
+    height: 40px;
  }
  .ant-input-group-addon {
     background-color: transparent;

@@ -20,19 +20,21 @@
 import React, {useEffect, useRef} from 'react'
 import {read, utils, writeFile, write} from 'xlsx'
 import {Button} from 'antd'
-import { DownloadOutlined } from '@ant-design/icons'
-
+import { CodeSandboxCircleFilled, DownloadOutlined } from '@ant-design/icons'
 export default function fform() {
   const ref = useRef()
+  const img = useRef()
   useEffect(() => {
  // const book = utils.table_to_book(document.getElementById("tb"))
   //writeFile(book, 'out.xlsx')
   //console.log(book)
   })
+
+
   const download = () => {
     console.log(11)
     let workbook = utils.book_new(); //创建工作薄
-    let sheet = utils.table_to_sheet(document.getElementById('tb')) // dom创建工作表
+    let sheet = utils.table_to_sheet(document.getElementById('tb'), {raw: true, cellDates: true}) // dom创建工作表
      sheet['B4']= {t: 'n', f: "SUM(B2:B3)", z: "0.00"}
      /* sheet['B4'].l= {
       Target: "http://www.163.com",
@@ -69,19 +71,49 @@ export default function fform() {
     utils.book_append_sheet(workbook, sheet2, "meiya")
     let first_sheet_name = workbook.SheetNames[0] // 获取工作薄 第一张工作表的名称
     let firts_sheet_body = workbook.Sheets[first_sheet_name] // 获取工作表的内容
+    // 二维数组的操作
     const sheetData = [
       ['A', 'B', 'C', 'D'],
-      [1, 2, 3]
+      [1, 2, 3, '好咯', "2009-09-02"],
+      [1, true, 'zzl',null]
     ]
-    const ws = utils.aoa_to_sheet(sheetData) // 数据生成工作表
-    utils.book_append_sheet(workbook, ws, '数据生成的工作表')
+    const ws = utils.aoa_to_sheet(sheetData, { cellDates:true}) // 数据生成工作表
+    utils.sheet_add_aoa(ws, [['a', 'b', 'c', 'd'], ['aa', 'bb', null, 'dd']], {origin: {c: 0, r: 3} } ) // 追加数据
+    utils.book_append_sheet(workbook, ws, '二维数组生成的工作表') // 把数据表添加到工作薄
+    // 对象数组的操作
+    const ObjectArray = [
+      {
+        address: "浙江省杭州市",
+        createTime: "2022-10-18 17:54:15",
+        creator: "admin"
+      },
+      {
+        address: "浙江省杭州市",
+        createTime: "2022-10-18 17:54:15",
+        creator: true
+      }
+    ]
+    const ows = utils.json_to_sheet(ObjectArray, {header:['address', 'createTime', 'creator'], skipHeader: false}) // 生成工作表
+    utils.sheet_add_json(ows, [{address: "温州市", createTime: '1999-10-18 17:54:15'}], {skipHeader: true, origin: 'A4'})
+    ows['!cols']= [
+      {
+        wpx: 120
+      },
+      {
+        wpx: 120
+      },
+      {
+        wpx: 120
+      }
+    ]
+    utils.book_append_sheet(workbook, ows, '对象数组生成的工作表')
     let contenter = document.getElementById("containner")
     //contenter.innerHTML = JSON.stringify(utils.sheet_to_formulae(sheet2), null, 2)
     let cell = {c: 1, r:1}
    
     firts_sheet_body["!margins"]={left:2.7, right:0.7, top:0.75,bottom:0.75,header:0.3,footer:0.3}
-   
-    contenter.innerHTML = JSON.stringify(firts_sheet_body['!margins'], null, 2)
+    console.log(utils.sheet_to_json(ows, {header: 'A'}))
+    contenter.innerHTML = utils.sheet_to_json(ows, {header: ["address", "createTime", "creator"]})
      if (!workbook.Props) workbook.Props = {}
      workbook.Props.Title = "家庭成长计划"
      workbook.Workbook = {}
@@ -93,13 +125,24 @@ export default function fform() {
       RTL: false
      }]
      console.dir(workbook)
-     writeFile(workbook, 'dd.csv', {bookType: 'csv'})
+    // writeFile(workbook, 'dd.xlsx', {bookType: 'xlsx'})
   }
-  let br = new Date()
+  const upload = (e) => {
+     let files = e.target.files
+     let f = files[0]
+     let reader = new FileReader()
+     reader.readAsBinaryString(f)
+     reader.onload = (e) => {
+       let ex = e.target.result
+       var workbook = read(ex, {type: 'binary'})
+       console.dir(workbook)
+     }
+  }
   return (
     <div>
-      <Button onClick={() => download()}>download</Button>
-    
+      <Button onClick={() => download()}>download</Button>  
+      <input type="file" onChange={upload} /> 
+      <img ref={img} /> 
       <table id="tb">
         <thead>
          <tr>
