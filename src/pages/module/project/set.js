@@ -17,14 +17,18 @@ import cities from "china-division/dist/cities.json";
 import areas from "china-division/dist/areas.json";
 import styled from "styled-components";
 import Mapcom from "@com/useMap";
+import Cupload from "@com/useUpload.js"
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 600px 600px;
   grid-template-rows: repeat(12, 36px);
   gap: 16px 128px;
   grid-auto-flow: column;
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
   .ant-form-item-label {
-    flex-basis: 140px;
+    flex-basis: 8em;
     padding-right: 10px;
   }
   .optional {
@@ -36,15 +40,41 @@ import Mapcom from "@com/useMap";
   }
   .upload {
     grid-column: 2;
-    grid-row: 1 / 3;
-  }
+    grid-row: 1 / 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    .ant-form-item-row {
+       height: 140px;
+      }
+    .ant-form-item-control-input-content {
+        display: grid;
+        grid-template-rows: 116px 1fr;
+        row-gap: 8px;
+        width: 200px;
+        height: 140px;
+        .img {
+          border: 1px dotted #dedede;
+          display: flex;
+        }
+      }
+    
+    }
+ 
   .address {
     grid-column: 2;
-    grid-row: 3/5;
+    grid-row: 4 / 6;
+  }
+  .lat {}
+  .upload, .address, .lat {
+    .ant-form-item-label {
+    flex-basis: 5em;
+   
+  }
   }
   .map {
     grid-column: 2;
-    grid-row: 6 / -1;
+    grid-row: 7 / -1;
   }
   .ant-btn-default,
   .ant-btn-primary {
@@ -213,11 +243,20 @@ const uploadprop = {
       <Item label="项目备注" name="Remark" className='remark'>
         <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
       </Item>
-      <Item label="项目图片" className='upload'>
-        <Upload  {...uploadprop} beforeUpload={onUpdate} listType="picture" maxCount={1}>
-           <Button>上传图片</Button>
-        </Upload>
-      </Item>
+      <div className='upload'>
+         <Item label="项目logo" className="left">
+           <div className="img">
+            <Cupload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} /> 
+           </div>
+           <span>（图片大小为: 212*32 png 格式 )</span>
+         </Item>
+         <Item label="项目图片">
+           <div className="img">
+            <Cupload wpx={248} hpx={168} swpx={200} shpx={116} /> 
+           </div>
+           <span>（图片大小为: 248*168像素   png 格式)</span>
+         </Item>
+      </div>
       <Item label="项目地址" className='address'>
         <Item noStyle>
           <Cascader
@@ -236,7 +275,7 @@ const uploadprop = {
           <Input placeholder="请输入项目的详细地址" /> 
         </Item>
       </Item>
-      <Item label="经纬度" required>
+      <Item label="经纬度" className="lat" required>
         <Row gutter={16}>
           <Col span={12}>
             <Item name="Lng">
