@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Navigate, useRoutes } from "react-router-dom";
+import { Navigate, useRoutes, useNavigate } from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 import monitoringRoutes from "./monitoring";
@@ -51,8 +51,7 @@ const loginrouter =  [{
 
  function Redirect() { // 路由守卫
   const {token} = useSelector(selectUser);
-  return token ? (<Projectlist/>) : (<Navigate to="/" />)
-  
+  return token ? (<Projectlist/>) : (<Navigate to="/" />)  
  }
 const routes =  [
    {

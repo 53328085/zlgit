@@ -58,8 +58,21 @@ export default function Index() {
              } 
           }
           return obj
-        } )       
-        tableref.current.downloadByData({header, data:[firstRow, ...jsondata], sheetName: '测试' })
+        } )  
+        let colinfo = [ // wch 字符, wpx 像素          
+          {
+            wch: 20
+          },
+          {
+            wch: 16,
+          },
+          {wch: 10},
+          {wch: 10},
+          {wch: 10},
+          {wch: 60}
+        ] 
+    
+        tableref.current.downloadByData({header, data:[firstRow, ...jsondata], sheetName: '测试', option: {colinfo} })
       }
     }).catch((e) => {
       console.log(e)

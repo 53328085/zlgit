@@ -1,39 +1,19 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
 import { Modal} from "antd";
 import styled from "styled-components";
+import Draggable  from "react-draggable";
 import Useform from "./useform";
 
- function Custmodal({
- 
+ function Custmodal({ 
   fromprops = {
     initialValues: {},
      roletype: ''},
   enable = false,
   type = "normal",
   mold = "form",
-  children = null, 
+  children = null,  
   ...props
 } = {}, ref) { 
-  const [open, setOpen] = useState(false)
-  const {onCancel: close, ...rest} = props
-  const form = useRef()
-  const onCancel = () => {   
-    setOpen(false)
-  }
-  const onOpen = () => {
-    setOpen(true)
-  }
-  const onResetform = () => form.current.resetfrom
-
-  const onGetvalue = () => form.current.getValue()
-  
-  useImperativeHandle(ref, ()=> ({
-    onCancel,
-    onOpen,
-    onResetform,
-    onGetvalue
-  }))
-
   const custCorle = {
     normal: "#337af0",
     warn: "#ff4d4f",
@@ -85,13 +65,56 @@ import Useform from "./useform";
       margin-bottom: 0px;
     }
   `;
+  const [open, setOpen] = useState(false)
+  const [disabled, setDisabled] = useState(false)
+  const [bounds, setBounds] = useState({
+    left: 0,
+    top: 0,
+    bottom: 0,
+    right: 0
+  })
+  const draggleRef = useRef(null)
+  const onStart = (_event, uiData) => {
+    const { clientWidth, clientHeight } = window.document.documentElement;
+    const targetRect = draggleRef.current?.getBoundingClientRect();
+    if (!targetRect) {
+      return;
+    }
+    setBounds({
+      left: -targetRect.left + uiData.x,
+      right: clientWidth - (targetRect.right - uiData.x),
+      top: -targetRect.top + uiData.y,
+      bottom: clientHeight - (targetRect.bottom - uiData.y),
+    });
+  };
+  const {onCancel: close, ...rest} = props
+  const form = useRef()
+  const onCancel = () => {   
+    console.log(22222)
+    setOpen(false)
+  }
+  const onOpen = () => {
+    setOpen(true)
+  }
+  const onResetform = () => form.current.resetfrom
+
+  const onGetvalue = () => form.current.getValue()
+  
+  useImperativeHandle(ref, ()=> ({
+    onCancel,
+    onOpen,
+    onResetform,
+    onGetvalue
+  }))
+
+ 
   return (
-    <CModal
+    <CModal      
       open={open}
       onCancel={close || onCancel}
       closable={false}
       centered    
-      {...rest} 
+      {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={form} /> : ''}
     </CModal>
