@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Space, Divider } from "antd";
+import React, {useState, useRef} from "react";
+import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import n31 from "./icon/31N.png";
-import h31 from "./icon/31H.png";
-import n32 from "./icon/32N.png";
-import h32 from "./icon/32H.png";
-import n33 from "./icon/33N.png";
-import h33 from "./icon/33H.png";
+import { useSelector, useDispatch } from "react-redux";
+import {useNavigate} from "react-router-dom"
+import { clearToken} from "@redux/user";
+import CModal from "@com/useModal"
+import imgurl from "./icon";
+import {pwdValidator, phoneValidator} from '@pages/rule.js'
+import {Login} from '@api/api' 
 const Cdiv = styled.div`
   display: flex;
   height: 64px;
@@ -43,21 +43,21 @@ const Idiv = styled.div`
   }
 `;
 const Idiv1 = styled(Idiv)`
-  background-image: url(${n31});
+  background-image: url(${imgurl['31N']});
   &:hover {
-    background-image: url(${h31});
+    background-image: url(${imgurl['31H']});
   }
 `;
 const Idiv2 = styled(Idiv)`
-  background-image: url(${n32});
+  background-image: url(${imgurl['32N']});
   &:hover {
-    background-image: url(${h32});
+    background-image: url(${imgurl['32H']});
   }
 `;
 const Idiv3 = styled(Idiv)`
-  background-image: url(${n33});
+  background-image: url(${imgurl['33N']});
   &:hover {
-    background-image: url(${h33});
+    background-image: url(${imgurl['33H']});
   }
 `;
 const Triangle = styled.div`
@@ -67,10 +67,86 @@ const Triangle = styled.div`
  	border-style: solid;
  	border-color: transparent #135abd transparent transparent;
 `;
+const Citem = styled(Menu.Item)`
+  && {
+    line-height: 40px;
+    height: 40px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: all 0.1s;
+    padding: 0 16px 0 58px;
+    background-image: url(${imgurl.login});
+    background-repeat: no-repeat;
+    background-size: 20px auto;
+    background-position: 16px center;
+  }
+ &&:hover {
+  background-color: #237ae4 !important;
+  background-image: url(${imgurl.login_a});
+  color: #ffffff;
+ } 
+`
+const Uitem = styled(Citem)`
+  && {
+    background-image: url(${imgurl.exit});
+  }
+  &&:hover {
+    background-image: url(${imgurl.exit_a});
+  }
+ 
+`
+const Cipt = styled(Input)`
+  && {
+    height: 36px;
+    line-height: 36px;
+    border-radius: 18px;
+  }
+`
+const Ciptpd = styled(Input.Password)`
+  && {
+    height: 36px;
+    line-height: 36px;
+    border-radius: 18px;
+  }
+`
 export default function Log() {
   // const [user, setUser] = useState('')
+  
+  const user = useRef()
+  const navgite = useNavigate()
+  const dispatch = useDispatch()
   const loginName = useSelector((state) => state.user)?.loginName;
-
+  const Item = Form.Item
+  const [form] = Form.useForm()
+  const onExit = async () => {
+     await dispatch(clearToken()) 
+     return navgite('/')
+  }
+  const account = () => {
+    user.current.onOpen()
+  }
+  const menu = (
+    <Menu style={{padding: '0px', width: "144px"}}>
+      <Citem key="mg" onClick={account}>账户管理</Citem>
+      <Uitem key="exit" onClick={onExit}>退出系统</Uitem>
+    </Menu>
+  )
+  const onOk = () => {
+    form.validateFields().then(() => {
+      let {mobile, pwd, Pwd} = form.getFieldsValue(true)
+      Login.UpdateCurrentAccount({mobile, pwd, Pwd}).then(res => {
+         let {success} = res
+         if(success) {
+          return message.success("保存成功", 1, user.current.onCancel())
+         }
+         return message.warning('保存失败', 1)
+      })
+      
+    }).catch(e => {
+      message.warning(e.message || '保存失败', 1)
+    })
+  }
   return (
     <Cdiv>
       <Triangle />
@@ -81,10 +157,96 @@ export default function Log() {
         <Idiv2>
           <span>平台配置</span>
         </Idiv2>
+        <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
-          <span>{loginName}</span>
+          
+            <span>{loginName}</span>
+          
         </Idiv3>
+        </Dropdown>
+       
       </Ldiv>
+      <CModal  title="账户信息" mold="cust"  ref={user} width="440px" onOk={onOk}>
+      <Form
+        form={form}
+        name="modalform"
+        colon={false}
+        initialValues={{
+          loginname: loginName
+        }}
+        size="middle"
+        labelCol={{ flex: "7em" }}
+        labelAlign="left"
+        preserve={false}
+        requiredMark={false}
+      >
+    <Item
+      label="账户名"
+      name="loginname"
+    >
+      <Cipt disabled />
+    </Item>
+    <Item label="手机号" name="mobile"  rules={[
+        {
+          required: true,
+          message: '请输入手机号码',             
+        },
+       {
+            validator: phoneValidator
+        }, 
+     
+      ]}>
+      <Cipt placeholder="请输入手机号码" />
+    </Item>
+    <Item label="输入旧密码" name="pwd"  rules={
+      [
+        {
+          required: true,
+          message: '请输入旧密码',             
+        },
+        {
+            min: 6,
+            max: 20,
+            message: "密码6位到18位之间"
+         }, 
+      ]
+    }>
+    <Ciptpd placeholder="请输入旧密码" />
+    </Item>
+    <Item label="输入新密码" name="Pwd" rules={
+      [
+        {
+          required: true,
+          message: '请输入新密码',             
+        },
+        {
+            validator: pwdValidator
+         }, 
+      ]}>
+      <Ciptpd placeholder="请输入新密码"  />
+    </Item>
+    <Item label="确认新密码" name="RePwd" rules={
+      [
+        {
+          required: true,
+          message: '请确认新密码',             
+        },
+        ({ getFieldValue }) => ({
+          validator(_, value) {
+            if (!value || getFieldValue('Pwd') === value) {
+              return Promise.resolve();
+            }
+            return Promise.reject(new Error('两次输入的新密码不匹配'));
+          },
+        }),
+      ]}>
+    <Ciptpd placeholder="请确认新密码"  />
+    </Item>
+  
+  
+  </Form>
+
+      </CModal>
     </Cdiv>
   );
 }

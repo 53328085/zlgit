@@ -1,12 +1,9 @@
-import React, { useEffect,useState, useMemo, useCallback } from "react";
+import React, { useEffect,useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import {useNavigate, useParams } from 'react-router-dom'
-import { UserOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
-
 import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
 import { systemConfig } from "@redux/systemconfig";
 import {useBoolean, useCountDown, useRequest } from 'ahooks'
-
 import {
   Button,
   Checkbox,

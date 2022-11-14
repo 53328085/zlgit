@@ -145,7 +145,6 @@ export default function Index() {
       form.setFieldValue('buildingId',record.buildingId);
       form.setFieldValue('floorId',record.floorId)
     },500)
-    
   }
 
   const [deleteModal, setDeleteModal] = useState(false);

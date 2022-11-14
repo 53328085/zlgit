@@ -90,6 +90,7 @@ import Useform from "./useform";
   const {onCancel: close, ...rest} = props
   const form = useRef()
   const onCancel = () => {   
+    console.log(22222)
     setOpen(false)
   }
   const onOpen = () => {
@@ -106,9 +107,9 @@ import Useform from "./useform";
     onGetvalue
   }))
 
-  console.log(CModal)
+ 
   return (
-    <Modal      
+    <CModal      
       open={open}
       onCancel={close || onCancel}
       closable={false}
@@ -116,7 +117,7 @@ import Useform from "./useform";
       {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={form} /> : ''}
-    </Modal>
+    </CModal>
   )
 
 }
