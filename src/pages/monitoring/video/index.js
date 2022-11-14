@@ -139,8 +139,8 @@ export default function Index() {
         setLocalModal(true);
         setCameraTitle(record.CameraName)
         // setwsType('h264')
-        setWsUrl('ws://localhost:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
-        chooseType('ws://localhost:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
+        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
+        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
       }
     }
   }
@@ -270,7 +270,7 @@ export default function Index() {
       div.setAttribute('class','glplayer');
       div.setAttribute('id','glplayer');
       playerContainer.appendChild(div);
-      let backURL = 'ws://localhost:8888/video?ip=10.5.107.8&type=track&user=admin&pwd=chint_2022&&channel=1&startTime='+ start +'&endTime=' + end;
+      let backURL = 'ws://10.5.7.60:8888/video?ip=10.5.107.8&type=track&user=admin&pwd=chint_2022&&channel=1&startTime='+ start +'&endTime=' + end;
       setWsUrl(backURL);
       chooseType(backURL);
     },1000)

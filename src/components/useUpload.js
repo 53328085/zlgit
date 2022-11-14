@@ -2,7 +2,12 @@ import React, {useState, useRef} from 'react'
 import {PlusOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
 import {Image, message} from 'antd'
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto"} = {}) {
+/**
+ * @author zhenglin zhu
+ * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数
+ * @date 2022-11-11 09:38
+ */
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}} = {}) {
 const Preview = styled.div`
     flex: 1;
     display: flex;
@@ -91,9 +96,9 @@ const Ifile = styled.input.attrs(props => ({
    
   }
   let src = null // 图片地址
+  let fileData = null // 图片数据
   const clearfile = () => {
-    file.current.select()
-    document.getSelection.clear()
+    file.current.value = '' // 浏览器的安全机制不允许直接用js修改file的value为空字符串以外的值.否则报错
   }
   const onreader = (file) => {
     let reader = new FileReader()
@@ -107,22 +112,22 @@ const Ifile = styled.input.attrs(props => ({
    };
  
   const upload = (e) => {  // 1.判断图片大小 2. 判断图片格式 3. 判断图片尺寸
-    let file = e.target.files[0];
-    console.log(file)
-    let { name, size } = file;
+    fileData = e.target.files[0];
+    console.log(fileData)
+    let { name, size } = fileData;
     let limit = Math.ceil(size / 1024);
     let ext = name.split(".")[1];
-    let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < 200;
+    let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < maximum;
     if (ext && !["png", "jpg", "jpeg"].includes(ext.toLowerCase())) {   
         clearfile()   
       return message.warning("只能选择png/jpg/jpeg格式图片", 1);
     }
-    if (ext && limit > 200) {
+    if (ext && limit > maximum) {
         clearfile() 
-       return  message.warning("请选择200k以内的图片！", 1);
+       return  message.warning(`请选择${maximum}k以内的图片！`, 1);
     }  
-    if (file && enable) { 
-        src = URL.createObjectURL(file)
+    if (fileData && enable) { 
+        src = URL.createObjectURL(fileData)
         let img = document.createElement('img')  
         let ws = false, hs = false   
      // img.src = `data:image/png;base64,${src}`
@@ -136,13 +141,20 @@ const Ifile = styled.input.attrs(props => ({
             hs = img.height <= hpx
         }
       }
-      if (ws) return message.warning(`图片宽度大于${wpx}像素`);
-      if (hs) return message.warning(`图片高度大于${hpx}像素`);
+      if (ws || hs) {
+        let text = ws ? '宽' : hs ? '高' : ''
+        let size = ws || hs
+        clearfile() 
+        return message.warning(`图片${text}度大于${size}像素`);
+      }
+      getfile(fileData)
+      clearfile() 
       setUrl(src)
     }
   }
   const delImg = () => {
-    setUrl(null)
+    setUrl(null) 
+    getfile(null)  
     window.URL && URL.revokeObjectURL(src)
   }
   return (
