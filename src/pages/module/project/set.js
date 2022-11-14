@@ -5,12 +5,12 @@ import {
   DatePicker,
   Space,
   Button,
-  Switch,
-  Upload,
+  Switch, 
   Cascader,
   message,
   Row,
   Col,
+  Checkbox
 } from "antd";
 import provinces from "china-division/dist/provinces.json";
 import cities from "china-division/dist/cities.json";
@@ -85,9 +85,68 @@ import Cupload from "@com/useUpload.js"
     font-size: 14px;
   }
 `; 
+const Info = styled.span`
+  font-size: 12px;
+  color: rgba(0,0,0,0.85);
+`
+const Ccheckbox = styled(Checkbox.Group)`
+
+ && {
+  display: grid;
+  grid-template-columns: repeat(4, 96px);
+  grid-auto-rows: auto;
+  gap: 16px;
+  .ant-checkbox-group-item {
+    margin: 0px;
+    color: #999;
+    font-size: 14px;
+    width: 96px;
+    height: 32px;
+    line-height: 32px;
+    background-color: transparent;
+    border: 1px solid #999;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+  }
+  .ant-checkbox-disabled+span {
+    color: #fff;
+  }
+  .ant-checkbox-wrapper-checked.ant-checkbox-group-item {
+    color:#fff;
+    background-color: #237ae4;
+    border-color: #237ae4;
+  }
+   .ant-checkbox {
+    opacity: 0;
+   }
+   .ant-checkbox+span {
+    padding: 0 16px 0 0;
+   }
+ }
+`
 export default function Set() {
   const [form] = Form.useForm();
-
+  const defaultProject = [
+    { label: '项目概述', value: '1' },
+    { label: '运行监控', value: '2' },
+  ]
+  const optionalProject = [
+    { label: '电气安全', value: '1' },
+    { label: '配电管理', value: '2' },
+    { label: '结算收费', value: '3' },
+    { label: '能源管理', value: '4' },
+    { label: '光伏发电', value: '5' },
+    { label: '碳排管理', value: '6' },
+    { label: '数据报表', value: '7' },
+    { label: '运维管理', value: '8' },
+  ]
+  const energyType = [
+    { label: '电', value: '1' },
+    { label: '水', value: '2' },
+    { label: '燃气', value: '3' },
+    { label: '煤炭', value: '4' },
+  ]
   const { Item } = Form;
   const { TextArea } = Input;
   const params = {
@@ -98,10 +157,12 @@ export default function Set() {
     LineAnalysisEnabled: 0,
     Lng: "",
     Lat: "",
-
+    
     BigScreenUrl: "",
     Remark: "", //备注
   };
+  let logo = null // 项目logo
+  let picture = null // 项目图片
   const [initialValues] = useState(params);
   const [defaultAdress, setDefaultAddress]=useState([])
   const [addressVal, setAddressVal] = useState(['', '', ''])
@@ -160,24 +221,8 @@ const onUpdate = (file) => {
    console.log(file)
    return false
 }
-const uploadprop = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  headers: {
-    authorization: 'authorization-text',
-  },
-
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
+const checkChange = (values) => {
+  console.log(values)
 }
   return (
     <Formbox
@@ -196,26 +241,13 @@ const uploadprop = {
         <DatePicker />
       </Item>
       <Item label="默认模块">
-        <Space size={16}>
-          <Button type="primary"> 项目概述 </Button>
-          <Button type="primary"> 运行监控 </Button>
-        </Space>
+          <Ccheckbox options={defaultProject} defaultValue={['1', '2']} onChange={checkChange} disabled />
       </Item>
-      <Item label="可选模块" className='optional'>
-        <Space size={16} wrap>
-          <Button type="primary"> 电气安全 </Button>
-          <Button type="primary"> 配电管理 </Button> <Button> 结算收费 </Button>
-          <Button> 能源管理 </Button> <Button> 光伏发电 </Button>
-          <Button> 碳排管理 </Button> <Button> 数据报表 </Button>
-          <Button> 运维管理 </Button>
-        </Space>
+      <Item label="可选模块" className='optional'> 
+         <Ccheckbox options={optionalProject} defaultValue={[]} onChange={checkChange} />
       </Item>
       <Item label="能源种类">
-        <Space size={16} wrap>
-          <Button type="primary"> 水 </Button>
-          <Button type="primary"> 电 </Button> <Button> 燃气 </Button>
-          <Button> 煤炭 </Button>
-        </Space>
+         <Ccheckbox options={energyType} defaultValue={[]} onChange={checkChange} />
       </Item>
       <Item label="数据大屏启用">
         <Switch
@@ -244,17 +276,17 @@ const uploadprop = {
         <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
       </Item>
       <div className='upload'>
-         <Item label="项目logo" className="left">
+         <Item label="项目logo" className="left" required>
            <div className="img">
-            <Cupload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} /> 
+            <Cupload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={(file) => logo=file} /> 
            </div>
-           <span>（图片大小为: 212*32 png 格式 )</span>
+           <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
-         <Item label="项目图片">
+         <Item label="项目图片" required>
            <div className="img">
-            <Cupload wpx={248} hpx={168} swpx={200} shpx={116} /> 
+            <Cupload wpx={248} hpx={168} swpx={200} shpx={116} getfile={(file) => picture=file} /> 
            </div>
-           <span>（图片大小为: 248*168像素   png 格式)</span>
+           <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
       <Item label="项目地址" className='address'>

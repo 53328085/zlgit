@@ -19,7 +19,7 @@ import Useform from "./useform";
     warn: "#ff4d4f",
    
   }
-  const theme = `2px solid ${custCorle[type]}`
+  const theme = `4px solid ${custCorle[type]}`
   
   const CModal = styled(Modal)`
      .ant-modal-content {

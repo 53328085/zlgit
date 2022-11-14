@@ -9,6 +9,8 @@ import CustContext from '@com/content.js'
 import styled from 'styled-components'
 import Item from './item'
 import Set from './set'
+import Region from './region'
+import Datagroup from './dataGroup'
 const Maibox = styled.div`
   display: grid;
   grid-auto-rows: 145px;
@@ -22,13 +24,14 @@ export default function Index() {
     projectName: '',
     valid: 0
   })
-  const [value, setvalue] = useState('1')
+  const [value, setvalue] = useState('release')
   const {queryProject} = Project
 
   const tabs = [
-    {label: '项目发布', key: '1'},
-    {label: '项目设置', key: '2'},
-   
+    {label: '项目发布', key: 'release'},
+    {label: '项目设置', key: 'set'},
+    {label: '区域设置', key: 'region'},
+    {label: '数据组管理', key: 'datagroup'},
   ]
   const getData = () => {
     return  queryProject(params).then(res => {
@@ -54,14 +57,24 @@ export default function Index() {
     value,
     setvalue
   }
+ const Release = () =>   <Maibox>{data?.list.map(item => <Item item={item} key={item.id} />)} </Maibox>
+ const ProjectCom = {
+  release: Release ,
+  set: Set,
+  region: Region,
+  datagroup: Datagroup
+ }
+ let Com = ProjectCom[value]
   return (
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={false} pd="32px">   
         
-             {
+           {/*   {
               value == '1' ? <Maibox>{data?.list.map(item => <Item item={item} key={item.id} />)} </Maibox> : <Set />
-             }
-       
+             } */}
+            {
+              <Com/>
+            }
       
     </Pagecount>
     </CustContext.Provider>
