@@ -1,4 +1,5 @@
-import React, {useContext, useMemo}  from 'react'
+import React, {useContext, useEffect, useMemo, useState}  from 'react'
+import {useSearchParams} from 'react-router-dom'
 import {Tabs} from 'antd'
 import CustContext from '../content'
 
@@ -63,22 +64,33 @@ PageContentMain.defaultProps = {
     bgcolor: "#fff"
 }
 export default function Maincontent(props) {
+ const [searchParams, setSearchParams] = useSearchParams()
  const {tabs, value, setvalue} = useContext(CustContext)
  const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
  //const {tabs, value, setvalue} = props
+ const [defaultTab, setDefaultTab] = useState(value)
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
  }
  const onChange = (key) => {
     setvalue(key)
+    setDefaultTab(key)
+    setSearchParams({item: key})
  }
+useEffect(() => {
+    let param = searchParams.get('item')
+    if(param) {
+        setvalue(param)
+        setDefaultTab(param)
+    }
+})
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (
         <Tabsbox  
         onChange={onChange} 
-        defaultActiveKey={value} 
+        defaultActiveKey={defaultTab} 
         animated 
         tabBarGutter={16} 
         type="card"
