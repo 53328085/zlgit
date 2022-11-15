@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useMemo, useState}  from 'react'
-import {useSearchParams} from 'react-router-dom'
+import {useSearchParams, useLocation, useNavigate} from 'react-router-dom'
 import {Tabs} from 'antd'
 import CustContext from '../content'
 
@@ -65,26 +65,36 @@ PageContentMain.defaultProps = {
 }
 export default function Maincontent(props) {
  const [searchParams, setSearchParams] = useSearchParams()
+ 
+ const location = useLocation()
+ const navigate = useNavigate()
  const {tabs, value, setvalue} = useContext(CustContext)
  const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
  //const {tabs, value, setvalue} = props
  const [defaultTab, setDefaultTab] = useState(value)
+ const [pathName, setPathName] = useState()
+ const [urlstate, setUrlstate] = useState()
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
  }
- const onChange = (key) => {
+ const onChange = (key) => {  
     setvalue(key)
     setDefaultTab(key)
     setSearchParams({item: key})
+    navigate(`${pathName}?item=${key}`, {state: urlstate})
  }
-useEffect(() => {
+
+useEffect(() => {   
+    let {pathname, state} = location
+    setPathName(pathname)
+    setUrlstate((s) => ({...s, ...state}))
     let param = searchParams.get('item')
     if(param) {
         setvalue(param)
         setDefaultTab(param)
     }
-})
+}, [location.pathname])
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (
