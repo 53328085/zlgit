@@ -67,7 +67,7 @@ export default function Sider() {
     setPath(path)
     setMenus(menuList[path])
     Setkey(location.state?.selectedKeys) 
-  },[location])
+  },[location.pathname])
 
   const onSelect = ({key}) => {  
      let label = menuList[path]?.find(item => item.key == key)?.label

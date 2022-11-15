@@ -1,5 +1,5 @@
 import React, {useState, useMemo, useEffect} from "react";
-import {useNavigate, useLocation} from 'react-router-dom'
+import {useNavigate, useLocation, useSearchParams} from 'react-router-dom'
 import { Menu, Image } from "antd";
 import './style.less'
 import imgurl from './icon/index.js'
@@ -10,6 +10,7 @@ const Ciocn = (props) => {
 export default function Hmenu() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const [current, SetCurrent] = useState('index')  
   const menus = [
     {
@@ -109,6 +110,7 @@ export default function Hmenu() {
         icon: <Ciocn url={current == '/index' ? h10 : n10} />,
         className: 'custsubmenu'
     } */] 
+  
   const onSelect = ({key}) => {
       const {active, title} = menus.find(item => item.key === key)  
       SetCurrent(key)  
@@ -120,9 +122,10 @@ export default function Hmenu() {
      
   }
   useEffect(() => {     
+      console.log(location)
       SetCurrent(location.state?.path)  
      
-   },[location])
+   },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 
