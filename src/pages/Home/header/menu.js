@@ -121,10 +121,8 @@ export default function Hmenu() {
       navigate(url, {state})
      
   }
-  useEffect(() => {     
-      console.log(location)
-      SetCurrent(location.state?.path)  
-     
+  useEffect(() => {    
+      SetCurrent(location.state?.path)       
    },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 

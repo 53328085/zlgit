@@ -62,14 +62,14 @@ export default function Sider() {
   const navigate = useNavigate()
   const location = useLocation()
   useEffect(() => {   
-    
+    console.log(location)
     let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
     setPath(path)
     setMenus(menuList[path])
     Setkey(location.state?.selectedKeys) 
   },[location.pathname])
 
-  const onSelect = ({key}) => {  
+  const onSelect = ({key}) => {      
      let label = menuList[path]?.find(item => item.key == key)?.label
      Setkey(key)
      let url = `/index/${path}/` + key
