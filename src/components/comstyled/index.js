@@ -23,7 +23,7 @@ const active = css` //  :focus, :hover
 `
 const formMixin = css`
     background-color: transparent !important; // 背景色透明
-    border: 1px solid #9c9ea4;
+    border: 1px solid #9c9ea4; 
     color: #fff;
     input::placeholder {
       color: #999;
@@ -35,6 +35,14 @@ const formMixin = css`
     
   }
   
+`
+export const Comtext = styled(TextArea)`
+ && {
+    ${formMixin}
+    ${active}
+    height: ${({h}) => h || 'auto'};
+ }
+   
 `
 export const Comipt = styled(Input)`  
  
