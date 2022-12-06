@@ -149,6 +149,8 @@ export default function Index() {
     display,
     apply: true,
     data: true,
+    print: true,
+    printContent: tableref,
     setDisplay,
     onDownload
   }

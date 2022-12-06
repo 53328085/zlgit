@@ -4,6 +4,7 @@ import { Form, Select, Button, AutoComplete, Space, Divider} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
+import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
 const Cdivider = styled(Divider)`
@@ -26,9 +27,13 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, search, setDisplay, display, data, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
- 
+  const {form, search, setDisplay, display, data, print, printOption={}, printContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
+  console.log(printContent)
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
+  const handlePrint = useReactToPrint({
+    content: () => printContent?.current,
+    ...printOption, // 打印选项
+  })
   const { Item } = Form;
   const { Option } = Select;
   const initialValues = useMemo(() => {
@@ -107,6 +112,15 @@ export default function useSerach(props) {
        data!==undefined ? 
        (<Item>
            <Button  onClick={() => onDownload()}>数据导出</Button>
+       </Item>)
+       : null
+      
+       }
+       {
+       
+       print!==undefined ? 
+       (<Item>
+           <Button  onClick={() => handlePrint()}>打印</Button>
        </Item>)
        : null
       
