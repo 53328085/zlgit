@@ -11,19 +11,12 @@ import App from './App'
 import antdconfig from './antdconfig';
 import {detectZoom} from './hooks/detectZoom'
 let persistor = persistStore(store)
-console.log(detectZoom)
 const {ratio, screen}= detectZoom()
-
 const root = createRoot(document.getElementById('root'));
-
-//console.log('m', ratio)
-//console.log('s', screen)
-console.log(window.outerHeight)
-console.log(window.outerWidth)
-console.log(window.innerHeight)
-document.body.style.height = window.outerHeight*(Number(ratio) / 100) + 'px'
-document.body.style.width = window.outerWidth*(Number(ratio) / 100) + 'px'
-//document.body.style.transform=`scale(${100 / Number(ratio)})` 
+window.addEventListener('resize', () => {
+  document.body.style.height = window.innerHeight*(Number(ratio) / 100) + 'px'
+  document.body.style.width = window.outerWidth*(Number(ratio) / 100) + 'px'
+})
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>

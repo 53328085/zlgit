@@ -26,22 +26,9 @@ const pageStyle = `
   }
 `;
 export default function Fform() {
-  const printref = useRef()
-  const handlePrint = useReactToPrint({
-    content: () => printref.current,
-    pageStyle,
-    documentTitle: '打印测试',
-    bodyClass: 'printContent'
-  })
-  return (
 
-      <div style={{flex: 1}}>
-         <div>
-          <Button onClick={handlePrint}>打印</Button>
-         </div>
-         <div ref={printref}>
-              <h2 style={{lineHeight: 2}}>打印的内容</h2>
-         </div>
-      </div>
-  )  
+  const arr = [1, 2, 3, 4, 5, 6];
+  const { 0: first, length, [length - 1]: last } = arr;
+  console.log(first) // 1
+  console.log(last) // 6
 }

@@ -1,6 +1,6 @@
 import React, {useState, useContext, useMemo, useEffect} from "react";
 
-import { Form, Select, Button, AutoComplete, Space, Divider} from "antd";
+import { Form, Select, Button, Dropdown, Space, Divider} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
@@ -28,12 +28,28 @@ const Cform = styled(Form)`
 `
 export default function useSerach(props) {
   const {form, search, setDisplay, display, data, print, printOption={}, printContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
-  console.log(printContent)
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
+  const btns = [
+    {
+      key: 1,
+      label: '打印当前页'
+    },
+    {
+      key: 2,
+      label: '打印全部数据'
+    }
+  ]
+   
   const handlePrint = useReactToPrint({
-    content: () => printContent?.current,
+    content: () => printContent,
     ...printOption, // 打印选项
   })
+  const onHandlePrint = (e) => {
+    const {key} = e
+    if (key == 1)  {
+      handlePrint();
+    }
+  }
   const { Item } = Form;
   const { Option } = Select;
   const initialValues = useMemo(() => {
@@ -120,7 +136,7 @@ export default function useSerach(props) {
        
        print!==undefined ? 
        (<Item>
-           <Button  onClick={() => handlePrint()}>打印</Button>
+          <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button>
        </Item>)
        : null
       
