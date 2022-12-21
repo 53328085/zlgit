@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message} from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import Header from './header'
-import VideoList from './videolist'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import cameraBG from '@imgs/carmeraBG.png'
@@ -14,6 +13,8 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
+
+import {leftControl, bottomControl, rightControl, topControl, stopControl} from '@api/api.js'
 
 export default function Index() {
   const { Panel } = Collapse;
@@ -120,12 +121,29 @@ export default function Index() {
   const dataSource = [
     {
       Id:1,
-      CameraName:'Camera1',
+      CameraName:'6楼测试摄像头',
       Position:'正泰大厦1号楼B2低压配电房',
       AccessMode:1
     },{
       Id:2,
       CameraName:'Camera2',
+      Position:'正泰大厦1号楼B2低压配电房',
+      AccessMode:2
+    },
+    {
+      Id:3,
+      CameraName:'测试录像机',
+      Position:'正泰大厦1号楼B2低压配电房',
+      AccessMode:1
+    },{
+      Id:4,
+      CameraName:'Camera4',
+      Position:'正泰大厦1号楼B2低压配电房',
+      AccessMode:2
+    },
+    {
+      Id:5,
+      CameraName:'Camera5',
       Position:'正泰大厦1号楼B2低压配电房',
       AccessMode:2
     }
@@ -139,8 +157,8 @@ export default function Index() {
         setLocalModal(true);
         setCameraTitle(record.CameraName)
         // setwsType('h264')
-        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
-        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=1');
+        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
       }
     }
   }
@@ -224,20 +242,45 @@ export default function Index() {
   const changeControl = (value) => {
     if(value == 'left'){
       setChangeType('leftControl');
+      leftControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+        if(res.success){
+          return;
+        }else{}
+      })
     }
     if(value == 'right'){
       setChangeType('rightControl');
+      rightControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+        if(res.success){
+          return;
+        }else{}
+      })
     }
     if(value == 'top'){
       setChangeType('topControl');
+      topControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+        if(res.success){
+          return;
+        }else{}
+      })
     }
     if(value == 'bottom'){
       setChangeType('bottomControl');
+      bottomControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+        if(res.success){
+          return;
+        }else{}
+      })
     }
   }
 
   const cancelControl = () => {
     setChangeType('');
+    stopControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+      if(res.success){
+        return;
+      }else{}
+    })
   }
 
   const [activeCollapse, setActiveCollapse] = useState(['1'])
@@ -262,14 +305,16 @@ export default function Index() {
     let end = changeUTC(endTime);
     console.log(start, end);
     setTimeout(()=>{
-      let playerContainer = document.getElementById("player-container"); 
-      let glplayer = document.getElementById('glplayer');
-      console.log(glplayer);
-      playerContainer.removeChild(glplayer);
-      let div = document.createElement('div');
-      div.setAttribute('class','glplayer');
-      div.setAttribute('id','glplayer');
-      playerContainer.appendChild(div);
+      if(wsType == 'h265'){
+        let playerContainer = document.getElementById("player-container"); 
+        let glplayer = document.getElementById('glplayer');
+        console.log(playerContainer);
+        playerContainer.removeChild(glplayer);
+        let div = document.createElement('div');
+        div.setAttribute('class','glplayer');
+        div.setAttribute('id','glplayer');
+        playerContainer.appendChild(div);
+      }
       let backURL = 'ws://10.5.7.60:8888/video?ip=10.5.107.8&type=track&user=admin&pwd=chint_2022&&channel=1&startTime='+ start +'&endTime=' + end;
       setWsUrl(backURL);
       chooseType(backURL);

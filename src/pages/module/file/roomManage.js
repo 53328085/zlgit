@@ -163,7 +163,7 @@ export default function Index() {
     return (
       <div className={style.content}>
         <div className={style.contentHeader}>
-          <span >建筑查询</span>
+          <span >房间查询</span>
           <Search
             placeholder="请输入房间名称"
             allowClear
