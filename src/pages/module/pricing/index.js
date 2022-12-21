@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Tabs, Input, Button, Modal, Form, Select, DatePicker, Pagination, message } from 'antd'
+import {  Input, Button, Modal, Form, Select, DatePicker, Pagination, message } from 'antd'
 import style from './style.module.less'
-import styled from 'styled-components'
 import DashLine from '@imgs/dashed.png'
 import ElecSolution from './solution'
 import WaterSolution from './watersolution'
@@ -13,41 +12,12 @@ import CustContext from '@com/content.js'
 import { usePagination } from 'ahooks';
 import { PriceSolution } from '@api/api.js'
 
-// const Tabsbox = styled(Tabs)`
-//   .ant-tabs-nav {
-//     margin-bottom: 0px;
-//    .ant-tabs-nav-list {
-//     .ant-tabs-tab {
-//         border-radius: 4px 4px 0 0;
-//         height: 36px;
-//         width: 144px;
-//         justify-content: center;
-//         font-size: 14px;
-//         background-color: #fff;
-//         border:1px solid #ccc;      
-//         &:hover {
-//             background-color: var(--ant-primary-color);
-//             color: #fff;
-//         }
-//     }
-//     .ant-tabs-tab-active {
-//         background-color: var(--ant-primary-color);
 
-//         .ant-tabs-tab-btn {
-//             color:#fff;
-//             transition: color 100ms;
-//         }
-//     }
-//    }  
-
-// }
-// `
 const { Search } = Input
 const { Item } = Form
 const { Option } = Select
 export default function Index() {
   const [addPlan, setAddPlan] = useState(false)
-  // const [key, setKey] = useState(1)
   const [solutionPropsList, setSolutionPropsList] = useState([])
   const [searchPlan, setSearchPlan] = useState('')
   const [value, setvalue] = useState('electricity')
@@ -57,24 +27,6 @@ export default function Index() {
     { label: "燃气", key: 'gas' },
     { label: '煤炭', key: 'coal' }]
 
-  // const onChange = (v) => {
-  //   setKey(v)
-  // }
-  // const TabsEl = () => {
-  //   if (!tabs) return null
-  //   return (
-  //     <Tabsbox
-  //       onChange={onChange}
-  //       defaultActiveKey={key}
-  //       animated
-  //       tabBarGutter={16}
-  //       type="card"
-  //       items={tabs}
-  //     >
-
-  //     </Tabsbox>
-  //   )
-  // }
   const getPriceSolution = async (name = '') => {
     const res = await PriceSolution.GetEnablePriceSolution(name, 1)
     if (res.success) {
@@ -130,32 +82,6 @@ export default function Index() {
         </div>
       </Pagecount>
     </CustContext.Provider>
-
-    // <div className={style.pricing}>
-    //   <TabsEl></TabsEl>
-
-    //   <div className={style.content}>
-    //     <div className={style.searcHeader}>
-    //       <div className={style.plan}>
-    //         <span style={{ paddingRight: 16 }}>方案查询</span>
-    //         <Search 
-    //         enterButton={<div style={{ width: 66 }}>查询</div>} 
-    //         style={{ width: 538 }} 
-    //         value={searchPlan} 
-    //         onChange={changePlanInp} 
-    //         onSearch={()=>{getPriceSolution(searchPlan)}}/>
-    //       </div>
-    //       <Button type='primary' size='default' onClick={() => { setAddPlan(true); }}>新增方案</Button>
-    //     </div>
-    //     <img src={DashLine} style={{ margin: '0 auto', display: 'block' }}></img>
-    //     <div className={style.lists}>
-    //       {key === 1 ? solutionPropsList.map((item, index) => {
-    //         return <Solution {...item} key={index} getPriceSolution={getPriceSolution}></Solution>
-    //       }) : key === 2 ? <WaterSolution /> : key === 3 ? <FireSolution /> : <CoalSolution />}
-    //     </div>
-    //   </div>
-    //   <AddModal addPlan={addPlan} setAddPlan={setAddPlan} />
-    // </div>
   )
 }
 
