@@ -325,7 +325,7 @@ module.exports = function (webpackEnv) {
         '@api': path.resolve(__dirname, '../src/axios'), // 接口
         '@redux': path.resolve(__dirname, '../src/redux'), // rduex
         '@imgs': path.resolve(__dirname, '../src/assets/image'), // 图片
-        '@pages': path.resolve(__dirname, '../src/pages') // 图片
+        '@pages': path.resolve(__dirname, '../src/pages') // 页面
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).

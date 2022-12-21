@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
+ 
   const tableref = useRef()
   const domExprot = ()=> { // 通过table DOM 导出  
     const params = { raw: true };
@@ -34,13 +35,16 @@ import {utils, writeFile} from 'xlsx'
     
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
+
   useImperativeHandle(ref, () => ({
     download: domExprot,
-    downloadByData: dataExport
+    downloadByData: dataExport,
+    printContent: tableref.current
   }))
+ 
   const paginationProp = Object.assign( {}, {
     hideOnSinglePage: true,
-    showTotal: (total) => `共${total}条记录`
+    showTotal: (total) => `共${total}条记录`,
   }, pagination)
 
   const Divbox = styled.div`
@@ -62,7 +66,6 @@ import {utils, writeFile} from 'xlsx'
   `
   return (
     <Divbox>
-       {/*  <Tablecom {...props} bordered   onChange={changePage} size="small"  pagination={pagination} /> */}
         <Tablecom { ...otherprops} bordered   size="small"  pagination={paginationProp} ref={tableref}  />
     </Divbox>
   )
