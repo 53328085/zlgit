@@ -93,7 +93,7 @@ export default function Index() {
     <Modal
         title={<Bluecolumn name="远程控制"/>}
         width={640}
-        visible={brake}
+        open={brake}
         centered={true}
         closable={false}
         className={styles.readout}
@@ -106,7 +106,7 @@ export default function Index() {
       <Modal
         title={<Bluecolumn name="远程控制"/>}
         width={640}
-        visible={switching}
+        open={switching}
         centered={true}
         closable={false}
         className={styles.readout}
@@ -118,7 +118,7 @@ export default function Index() {
       </Modal>
       <Modal
       title={<Bluecolumn name="实时抄读"/>}
-      visible={readout}
+      open={readout}
       centered={true}
       onCancel={()=>{setreadout(false)}}
       width={1218}
