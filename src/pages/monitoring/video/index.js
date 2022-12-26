@@ -201,43 +201,6 @@ export default function Index() {
     });
   }
 
-  const getwebConnect = (url) => {
-    var jmuxer;
-    jmuxer = new JMuxer({
-      node: 'player',
-      mode: 'video',
-      flushingTime: 1000,
-      clearBuffer: false,
-      fps: 25,
-      debug: true,
-    });
-    // setwebsocket(new WebSocket(url));
-    let ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
-
-    setwebsocket(ws);
-
-    ws.addEventListener('open',function(event){});
-    ws.addEventListener('message',function(event) {
-      let data = new Uint8Array(event.data);   
-      if(data.length == 1){
-      }else{
-        jmuxer.feed({
-          video: new Uint8Array(event.data),
-        });
-      }
-    });
-  }
-
-  const closeWS = () => {
-    setLocalModal(false);
-    if(wsType =='h264'){
-      wsocket.close();
-    }else{
-      closeWeb();
-    }
-  }
-
   const [changeType, setChangeType] = useState('')
   const changeControl = (value) => {
     if(value == 'left'){
@@ -282,6 +245,45 @@ export default function Index() {
       }else{}
     })
   }
+
+  const getwebConnect = (url) => {
+    var jmuxer;
+    jmuxer = new JMuxer({
+      node: 'player',
+      mode: 'video',
+      flushingTime: 1000,
+      clearBuffer: false,
+      fps: 25,
+      debug: true,
+    });
+    // setwebsocket(new WebSocket(url));
+    let ws = new WebSocket(url);
+    ws.binaryType = 'arraybuffer';
+
+    setwebsocket(ws);
+
+    ws.addEventListener('open',function(event){});
+    ws.addEventListener('message',function(event) {
+      let data = new Uint8Array(event.data);   
+      if(data.length == 1){
+      }else{
+        jmuxer.feed({
+          video: new Uint8Array(event.data),
+        });
+      }
+    });
+  }
+
+  const closeWS = () => {
+    setLocalModal(false);
+    if(wsType =='h264'){
+      wsocket.close();
+    }else{
+      closeWeb();
+    }
+  }
+
+  
 
   const [activeCollapse, setActiveCollapse] = useState(['1'])
   const changeActive = () => {
