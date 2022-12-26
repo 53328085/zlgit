@@ -225,9 +225,6 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen, priceRecord, ...otherprop
                                 </div>
                             </>) : null
                     }
-
-
-
                 </div>
                 <div className={style.modalBtns}>
                     <div className={style.modalEdit} onClick={() => { setEditElectric(true) }}>编辑</div>
@@ -250,10 +247,6 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen, priceRecord, ...otherprop
                {
                 otherprops.isLoading?<Loading/>:(priceRecord.map((item, index) => <Card {...item} key={index} />))
                }
-                    
-              
-               
-
             </Modal>
           {editElectric &&  <EditElectricModal editElectric={editElectric} setEditElectric={setEditElectric} {...otherprops} />} 
         </>
@@ -612,3 +605,5 @@ const DeleteModal = ({ isDeleteOpen, setIsDeleteOpen }) => {
     )
 }
 
+
+export {PriceRecordModal,EditElectricModal,ChangePrice,EditModal,DeleteModal }

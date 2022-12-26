@@ -1,18 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from './style.module.less'
+import { Modal, Input, Form, DatePicker, Select, message } from 'antd'
+import BlueColumn from '@com/bluecolumn'
 
 export default function Watersolution(props) {
+    const [isOpen,setisOpen] = useState(false)
     const changePriceRecords = () => {
-        
+        setisOpen(true)
     }
     const changePrice = () => {
-        
+        setisOpen(true)
     }
     const editEvent = () => {
-        
+        setisOpen(true)
     }
     const deleteEvent = () => {
-        
+        setisOpen(true)
     }
 
   return (
@@ -61,6 +64,19 @@ export default function Watersolution(props) {
             <div className={style.btns} onClick={deleteEvent} style={{ borderColor: '#ff0000', color: '#ff0000' }}>删除</div>
         </div>
     </div>
+    <Modal
+                centered
+                open={isOpen}
+                onCancel={() => { setisOpen(false) }}
+                width={1440}
+                title={<BlueColumn name="调价记录" />}
+                footer={null}
+                
+            >
+             
+            </Modal>
+            
+            
 </div>
   )
 }
