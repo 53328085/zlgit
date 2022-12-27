@@ -149,20 +149,6 @@ export default function Index() {
     }
   ]
 
-  const showCameraDialog = (record) => {
-    if(record.AccessMode == 1){
-      showModal()
-    }else{
-      if(record.AccessMode == 2){
-        setLocalModal(true);
-        setCameraTitle(record.CameraName)
-        // setwsType('h264')
-        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-      }
-    }
-  }
-
   const chooseType = (url) => {
     console.log(url);
     let config = {
@@ -200,6 +186,22 @@ export default function Index() {
       }
     });
   }
+
+  const showCameraDialog = (record) => {
+    if(record.AccessMode == 1){
+      showModal()
+    }else{
+      if(record.AccessMode == 2){
+        setLocalModal(true);
+        setCameraTitle(record.CameraName)
+        // setwsType('h264')
+        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+      }
+    }
+  }
+
+  
 
   const [changeType, setChangeType] = useState('')
   const changeControl = (value) => {
