@@ -1,4 +1,4 @@
-import React, {useState, useContext, useMemo, useEffect} from "react";
+import React, {useState, useContext, useMemo, useEffect, useRef} from "react";
 
 import { Form, Select, Button, Dropdown, Space, Divider} from "antd";
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
+import {PrintButton, SerachButton} from '../useButton'
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
 const Cdivider = styled(Divider)`
 && {
@@ -27,8 +28,10 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, search, setDisplay, display, data, print, printOption={}, printContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
+  const {form, search, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
+  //const {printArea, setPrintArea} = useState()
+  const allData = useRef();
   const btns = [
     {
       key: 1,
@@ -39,16 +42,22 @@ export default function useSerach(props) {
       label: '打印全部数据'
     }
   ]
-   
+  let PrintArea = null
   const handlePrint = useReactToPrint({
-    content: () => printContent,
+    content: () =>  PrintArea ?? (() => <div></div>),
+    onAfterPrint: () => PrintArea = null,
     ...printOption, // 打印选项
   })
-  const onHandlePrint = (e) => {
+  const onHandlePrint = async (e) => {
     const {key} = e
-    if (key == 1)  {
-      handlePrint();
-    }
+     if (key == 1) PrintArea = printContent() ;
+     if (key== 2 ) {
+      let Comp = await PrintAllContent();
+      console.dir(Comp);
+     //  document.body.appendChild(Comp)
+      PrintArea = Comp();
+     }
+     handlePrint();
   }
   const { Item } = Form;
   const { Option } = Select;
@@ -123,11 +132,12 @@ export default function useSerach(props) {
       }
       </Space>
       <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}> 
+       <SerachButton />
       {
        
        data!==undefined ? 
        (<Item>
-           <Button  onClick={() => onDownload()}>数据导出</Button>
+           <Button  onClick={() => onDownload()} type="primary">数据导出</Button>
        </Item>)
        : null
       
@@ -136,7 +146,8 @@ export default function useSerach(props) {
        
        print!==undefined ? 
        (<Item>
-          <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button>
+           <PrintButton></PrintButton>
+        {/*   <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button> */}
        </Item>)
        : null
       
