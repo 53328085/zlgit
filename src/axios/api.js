@@ -333,3 +333,10 @@ export class UserReportApi {
     static GetUserReport = (data) => server.get(`CustomerReport/GetUserReport?projectId=${data.projectId}&date=${data.date}&yearMonth=${data.yearMonth}`)//查询客户报告
 }
 export const GetCamerasVideosByProjectId = (Id) =>server.get(`/Camera/GetCamerasByHouseId?houseId=${Id}`)
+
+
+export const leftControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzLeft?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+export const bottomControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzDown?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+export const rightControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzRight?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+export const topControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzUp?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+export const stopControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzStop?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)

@@ -10,7 +10,7 @@ export default function TransCard({message,activeCard,choose,index,activeIndex})
       <img src={transform} alt="" style={{width:107,height:87}}/>
       <div className={style.title}>
         <div style={{marginBottom:16}}>
-            <p>{message.name}</p>
+            <p className={style.txtline}>{message.name}</p>
             <p>S11-M-315</p>
         </div>
         <div>
