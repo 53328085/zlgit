@@ -4,11 +4,14 @@ import { Provider } from 'react-redux'
 import {PersistGate} from 'redux-persist/integration/react'
 import {persistStore} from 'redux-persist'
 import store from './redux/store'
-import {ConfigProvider} from 'antd'
-import 'antd/dist/antd.variable.min.css'
+import ConfigProvider from './antdconfig';
+import 'antd/dist/antd.css'
+
+// import {ConfigProvider} from 'antd'
+
 import './assets/css/index.less'
 import App from './App'
-import antdconfig from './antdconfig';
+
 import {detectZoom} from './hooks/detectZoom'
 let persistor = persistStore(store)
 const {ratio, screen}= detectZoom()
@@ -20,7 +23,7 @@ window.addEventListener('resize', () => {
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <ConfigProvider {...antdconfig}>
+    <ConfigProvider>
       <App />
     </ConfigProvider>
     </PersistGate>

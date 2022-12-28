@@ -1,10 +1,10 @@
-import React, {useRef, useImperativeHandle, forwardRef} from 'react'
+import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState} from 'react'
 import {Table} from 'antd'
 import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
- 
+  console.dir(otherprops)
   const tableref = useRef()
   const domExprot = ()=> { // 通过table DOM 导出  
     const params = { raw: true };
@@ -35,11 +35,10 @@ import {utils, writeFile} from 'xlsx'
     
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
-
   useImperativeHandle(ref, () => ({
     download: domExprot,
     downloadByData: dataExport,
-    printContent: tableref.current
+    printContent: tableref.current,
   }))
  
   const paginationProp = Object.assign( {}, {
