@@ -6,7 +6,23 @@ import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
-import {PrintButton, SerachButton} from '../useButton'
+import {PrintButton,
+   SaveButton, 
+  SerachButton,
+  RefreshButton, 
+  NewButton, 
+  ChangeButton, 
+  UnbindingButton,
+  ImportButton,
+  ExportButton,
+  AllExportButton,
+  AccountButton,
+  ConfigButton,
+  OpenButton,
+  CloseButton,
+  DelButton,
+  WegButton
+} from '../useButton'
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
 const Cdivider = styled(Divider)`
 && {
@@ -132,7 +148,34 @@ export default function useSerach(props) {
       }
       </Space>
       <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}> 
+      {/*  RefreshButton, 
+  NewButton, 
+  ChangeButton, 
+  UnbindingButton,
+  ImportButton,
+  ExportButton,
+  AllExportButton */}
+      <SaveButton/>
        <SerachButton />
+       <ChangeButton />
+       <UnbindingButton/>
+       <ImportButton />
+       <ExportButton/>
+       <AllExportButton/>
+       <AccountButton/>
+       <RefreshButton/>
+       <NewButton/>
+       <ConfigButton/>
+       <OpenButton/>
+       <CloseButton/>
+       <CloseButton disabled />
+       <DelButton/>
+       <DelButton disabled />
+       <WegButton weg="water">水</WegButton>
+       <WegButton weg="electric">电</WegButton>
+       <WegButton weg="gas">气</WegButton>
+       <WegButton weg="other">其他</WegButton>
+       <WegButton weg="trend">趋势</WegButton>
       {
        
        data!==undefined ? 

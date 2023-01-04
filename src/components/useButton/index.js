@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button } from "antd";
-import {CaretDownFilled} from '@ant-design/icons'
+import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const Custbtn = styled(Button)`
   && {
@@ -27,20 +27,88 @@ const Custbtn = styled(Button)`
     border-color: #1c62b7;
     color: #fff;
   }
+  &&[disabled] {
+    background-color: #C8C9CC;
+    border-color: #C8C9CC;
+  }
   img {
+    height: 16px;
     margin-right: 8px;
   }
 `;
+const Deltbtn = styled(Button)`
+  && {
+    width: 96px;
+    height: 32px;
+    background: #F5212D;
+    border-color: #F5212D;
+    border-radius: 2px;
+    color: #fff;
+    padding: 8px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+  &&:hover {
+    background-color: #F74D57;
+    border-color: #F74D57;
+    color: #fff;
+  }
+  &&:active,
+  &&:focus {
+    background-color: #C41A24;
+    border-color: #C41A24;
+    color: #fff;
+  }
+  &&[disabled] {
+    background-color: #C8C9CC;
+    border-color: #C8C9CC;
+  }
+  img {
+    height: 16px;
+    margin-right: 8px;
+  }
+`;
+const Wegbtn = styled(Button)`
+  && {
+    width: 96px;
+    height: 32px;   
+    background-image: url(${props => icon[props.weg]});
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: 8px;
+    border-color: #AEAEAE;
+    border-radius: 2px;
+    color: #AEAEAE;
+    padding: 8px 8px 8px 32px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    
+  }
 
-export function PrintButton() {
-  return (
-    <Custbtn>
-      <img src={icon.print} />
-      打印
-      <CaretDownFilled/>
-    </Custbtn>
-  );
-}
+  &&:hover:not([type='trend']) {   
+    
+    background-image: url(${props => icon[`${props.weg}h`]});
+    border-color: #237AE4;
+    color: #237AE4;
+  }
+  &&:active,
+  &&:focus {
+    background-color: #237AE4;
+    background-image: url(${props => icon[`${props.weg}s`]});
+    border-color: #237AE4;
+    color: #fff;
+  }
+  &&[disabled] {
+    background-color: #C8C9CC;
+    border-color: #C8C9CC;
+  }
+  img {
+    height: 16px;
+    margin-right: 8px;
+  }
+`;
 export function SaveButton() {
   return (
     <Custbtn>
@@ -73,7 +141,14 @@ export function NewButton() {
     </Custbtn>
   );
 }
-
+export function ChangeButton() {
+  return (
+    <Custbtn>
+      <img src={icon.change} />
+      更换
+    </Custbtn>
+  );
+}
 export function UnbindingButton() {
   return (
     <Custbtn>
@@ -104,5 +179,62 @@ export function AllExportButton() {
       <img src={icon.export} />
       批量导入
     </Custbtn>
+  );
+}
+export function PrintButton() {
+  return (
+    <Custbtn>
+      <img src={icon.print} />
+      打印
+      <CaretDownFilled/>
+    </Custbtn>
+  );
+}
+export function AccountButton() {
+  return (
+    <Custbtn>
+      <img src={icon.account} />
+      开户
+    </Custbtn>
+  );
+}
+export function ConfigButton() {
+  return (
+    <Custbtn>
+      <img src={icon.config} />
+      配置
+    </Custbtn>
+  );
+}
+export function OpenButton() {
+  return (
+    <Custbtn>
+      <img src={icon.open} />
+        全部开启
+    </Custbtn>
+  );
+}
+export function CloseButton(props) {
+  return (
+    <Custbtn {...props}>
+      <img src={icon.close} />
+        全部关闭
+    </Custbtn>
+  );
+}
+export function DelButton(props) {
+  return (
+    <Deltbtn {...props}>
+      <CloseOutlined style={{fontSize: '16px'}} />
+        删除
+    </Deltbtn>
+  );
+}
+
+export function WegButton(props) {
+  return (
+    <Wegbtn {...props}> 
+       {props.children}
+    </Wegbtn>
   );
 }
