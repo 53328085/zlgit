@@ -6,6 +6,38 @@ import dashLine from '@imgs/line.png'
 export default function Index(){
     const { Search } = Input;
 
+    const [treeData, setTreeData] = useState([{
+      title:'正泰物联滨江园区总进线',
+      key:'正泰物联滨江园区总进线',
+      children:[{
+        title:'研发1号楼进线总表',
+        key:'研发1号楼进线总表',
+        children:[{
+          title:'1层回路',
+          key:'1',
+        },{
+          title:'2层回路',
+          key:'2',
+        },{
+          title:'3层回路',
+          key:'3',
+        },]
+      },{
+        title:'研发2号楼进线总表',
+        key:'研发2号楼进线总表',
+        children:[{
+          title:'1层回路',
+          key:'1层回路',
+        },{
+          title:'2层回路',
+          key:'2层回路',
+        },{
+          title:'3层回路',
+          key:'3层回路',
+        },]
+      }]
+    }])
+
     const options = [
         {
           label: '按回路',
@@ -16,37 +48,7 @@ export default function Index(){
           value: 2,
         },
       ];
-      const [treeData, setTreeData] = useState([{
-        title:'正泰物联滨江园区总进线',
-        key:'正泰物联滨江园区总进线',
-        children:[{
-          title:'研发1号楼进线总表',
-          key:'研发1号楼进线总表',
-          children:[{
-            title:'1层回路',
-            key:'1',
-          },{
-            title:'2层回路',
-            key:'2',
-          },{
-            title:'3层回路',
-            key:'3',
-          },]
-        },{
-          title:'研发2号楼进线总表',
-          key:'研发2号楼进线总表',
-          children:[{
-            title:'1层回路',
-            key:'1层回路',
-          },{
-            title:'2层回路',
-            key:'2层回路',
-          },{
-            title:'3层回路',
-            key:'3层回路',
-          },]
-        }]
-      }])
+      
     
     
       
