@@ -64,8 +64,8 @@ export default function useSerach(props) {
     onAfterPrint: () => PrintArea = null,
     ...printOption, // 打印选项
   })
-  const onHandlePrint = async (e) => {
-    const {key} = e
+  const onHandlePrint = async (key) => {
+    //const {key} = e
      if (key == 1) PrintArea = printContent() ;
      if (key== 2 ) {
       let Comp = await PrintAllContent();
@@ -175,7 +175,8 @@ export default function useSerach(props) {
        <WegButton weg="electric">电</WegButton>
        <WegButton weg="gas">气</WegButton>
        <WegButton weg="other">其他</WegButton>
-       <WegButton weg="trend">趋势</WegButton>
+       <WegButton weg="trend" other="true" >趋势</WegButton>
+       <WegButton weg="report" other="true" >报表</WegButton>
       {
        
        data!==undefined ? 
@@ -189,7 +190,7 @@ export default function useSerach(props) {
        
        print!==undefined ? 
        (<Item>
-           <PrintButton></PrintButton>
+           <PrintButton print={onHandlePrint}></PrintButton>
         {/*   <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button> */}
        </Item>)
        : null

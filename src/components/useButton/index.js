@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const Custbtn = styled(Button)`
@@ -87,12 +87,12 @@ const Wegbtn = styled(Button)`
     
   }
 
-  &&:hover:not([type='trend']) {   
-    
+  &&:hover:not([other]) {       
     background-image: url(${props => icon[`${props.weg}h`]});
     border-color: #237AE4;
     color: #237AE4;
   }
+
   &&:active,
   &&:focus {
     background-color: #237AE4;
@@ -109,6 +109,47 @@ const Wegbtn = styled(Button)`
     margin-right: 8px;
   }
 `;
+const Cmenu = styled(Menu)`
+  padding: 0;
+  border-radius: 0;
+`
+const CmenuItem = styled(Menu.Item)`
+ // padding: 8px;
+  background-color: #f2f2f2;
+  color:#666;
+  height: 32px;
+  padding-left: 32px;
+  background-image: url(${props => icon[props.type]});
+  background-size: 16px;
+  background-position: 8px;
+  background-repeat: no-repeat;
+  &&>span {
+     display: flex;
+     align-items: center;
+     height: 32px; 
+     
+  }
+&&:hover{
+  background-color: #237AE4;
+  color:#fff;
+  background-image: url(${props => icon[`${props.type}h`]});
+}
+`
+const singleprint = () => {
+  console.log('打印单页')
+}
+const Menus = (print) => {
+  console.log(print)
+  return (
+  <Cmenu>
+    <CmenuItem key="prints" type="prints" onClick={() => print(1)}  > 
+        单页打印
+    </CmenuItem>
+    <CmenuItem key="printa" type="printa" onClick={() =>  print(2)} > 
+        全部打印 
+    </CmenuItem>
+  </Cmenu>
+)}
 export function SaveButton() {
   return (
     <Custbtn>
@@ -181,13 +222,15 @@ export function AllExportButton() {
     </Custbtn>
   );
 }
-export function PrintButton() {
+export function PrintButton(props) {
   return (
-    <Custbtn>
-      <img src={icon.print} />
-      打印
-      <CaretDownFilled/>
-    </Custbtn>
+    <Dropdown overlay={Menus(props.print)}>
+      <Custbtn>
+        <img src={icon.print} />
+        打印
+        <CaretDownFilled/>
+      </Custbtn>
+    </Dropdown> 
   );
 }
 export function AccountButton() {
