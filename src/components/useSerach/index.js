@@ -21,7 +21,8 @@ import {PrintButton,
   OpenButton,
   CloseButton,
   DelButton,
-  WegButton
+  WegButton,
+  CustButton,
 } from '../useButton'
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
 const Cdivider = styled(Divider)`
@@ -62,6 +63,7 @@ export default function useSerach(props) {
   const handlePrint = useReactToPrint({
     content: () =>  PrintArea ?? (() => <div></div>),
     onAfterPrint: () => PrintArea = null,
+ //   copyStyles: false, // 打印隐藏的表格
     ...printOption, // 打印选项
   })
   const onHandlePrint = async (key) => {
@@ -69,9 +71,10 @@ export default function useSerach(props) {
      if (key == 1) PrintArea = printContent() ;
      if (key== 2 ) {
       let Comp = await PrintAllContent();
-      console.dir(Comp);
+     
      //  document.body.appendChild(Comp)
       PrintArea = Comp();
+      console.dir(PrintArea);
      }
      handlePrint();
   }
@@ -155,20 +158,22 @@ export default function useSerach(props) {
   ImportButton,
   ExportButton,
   AllExportButton */}
-      <SaveButton/>
-       <SerachButton />
+     {/*  <SaveButton/> */}
+    {/*   <CustButton type="save">保存</CustButton>
+      <CustButton type="serach">查询</CustButton> */}
+      {/*  <SerachButton />
        <ChangeButton />
        <UnbindingButton/>
        <ImportButton />
-       <ExportButton/>
+       
        <AllExportButton/>
        <AccountButton/>
        <RefreshButton/>
        <NewButton/>
        <ConfigButton/>
        <OpenButton/>
-       <CloseButton/>
-       <CloseButton disabled />
+       <CloseButton/> */}
+    {/*    <CloseButton disabled />
        <DelButton/>
        <DelButton disabled />
        <WegButton weg="water">水</WegButton>
@@ -176,12 +181,13 @@ export default function useSerach(props) {
        <WegButton weg="gas">气</WegButton>
        <WegButton weg="other">其他</WegButton>
        <WegButton weg="trend" other="true" >趋势</WegButton>
-       <WegButton weg="report" other="true" >报表</WegButton>
+       <WegButton weg="report" other="true" >报表</WegButton> */}
       {
        
        data!==undefined ? 
        (<Item>
-           <Button  onClick={() => onDownload()} type="primary">数据导出</Button>
+            <ExportButton  onClick={() => onDownload()} />
+          {/*  <Button  onClick={() => onDownload()} type="primary">数据导出</Button> */}
        </Item>)
        : null
       

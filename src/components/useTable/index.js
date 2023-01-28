@@ -3,8 +3,7 @@ import {Table} from 'antd'
 import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
-  console.dir(otherprops)
+  const {pagination, sheetName="sheet.xlsx", ...otherprops} =props    
   const tableref = useRef()
   const domExprot = ()=> { // 通过table DOM 导出  
     const params = { raw: true };
@@ -28,7 +27,7 @@ import {utils, writeFile} from 'xlsx'
      let {rowinfo, colinfo} = option
      rowinfo ?  ws["!rows"] = rowinfo : ''
      colinfo ?  ws["!cols"] = colinfo : ''
-     console.log(ws)
+    
     utils.book_append_sheet(workbook, ws, sheetName); // 把工作表添加到工作簿
     let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
     let fileName = sheetName.split(".")[0]

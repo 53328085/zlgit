@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Upload } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const Custbtn = styled(Button)`
@@ -135,11 +135,8 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
-const singleprint = () => {
-  console.log('打印单页')
-}
+
 const Menus = (print) => {
-  console.log(print)
   return (
   <Cmenu>
     <CmenuItem key="prints" type="prints" onClick={() => print(1)}  > 
@@ -150,6 +147,16 @@ const Menus = (print) => {
     </CmenuItem>
   </Cmenu>
 )}
+export function CustButton(props) { // 通用方式
+  let {type, other} = props
+  return (
+    <Custbtn {...other}>
+    <img src={icon[type]} />
+      {props.children}
+    </Custbtn>
+  )
+}
+
 export function SaveButton() {
   return (
     <Custbtn>
@@ -206,10 +213,10 @@ export function ImportButton() {
     </Custbtn>
   );
 }
-export function ExportButton() {
+export function ExportButton(props) {
   return (
-    <Custbtn>
-      <img src={icon.export} />
+    <Custbtn {...props}>
+      <img src={icon.export}  />
       导出
     </Custbtn>
   );

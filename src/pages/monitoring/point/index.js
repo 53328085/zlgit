@@ -133,13 +133,13 @@ export default function Index() {
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
     defaultParams: [
-     { current: 1, pageSize: 12},
-     params,
+     { current: 1, pageSize: 12}, // 分页参数
+     params, // 表单参数
     ],
     refreshDeps: [projectId, value, display], // projectId: 项目ID， value: 电表、水表、燃气表，  display: 表格或卡片模式
    //defaultPageSize: 12,
-   })
-  
+   }) 
+   //console.log(search);
    const {data, pagination} = usePagination(getCardData, {
     refreshDeps: [projectId, value, formparams],
     defaultPageSize: 12,
@@ -147,11 +147,17 @@ export default function Index() {
    })
 const printContent = () => tableref.current?.printContent;
 const PrintAllContent = async () => {
+ /*   try {
+    await runAsync({current:1, pageSize: total})
+    return tableref.current?.printContent;
+   } catch (error) {
+     console.log(error);
+   } */
    const {list} = await getTableData({current: 1, pageSize: total}, formparams)
    console.log(list)
   
    setListdata(() => [...list])
-  // console.dir(data)
+  
    return () => tableall.current
 }
 const propsData = { 
@@ -177,7 +183,11 @@ const propsData = {
         <UserCard   {...{data, pagination}} /> 
        
     }
- {/*     <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={{defaultPageSize: total}} rowKey='id' ref={tableall}  style={{left: "0", position: "absolute"}}  /> */}
+    <div   style={{display: 'none'}}>    
+       <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={false} rowKey='id'  ref={tableall}  />
+   </div>
+ 
+ 
     </Pagecount>
     </CustContext.Provider>
   )

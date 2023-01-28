@@ -27,10 +27,7 @@ export default function Custcard(props) {
  
   return (
   
-      <Card
-        bodyStyle={{ padding: 0 }}
-        hoverable
-      >
+     
         <div className={style.item}>
           <div >
             <Image
@@ -63,6 +60,6 @@ export default function Custcard(props) {
             </div>            
           </div>
         </div>
-      </Card>
+     
   );
 }
