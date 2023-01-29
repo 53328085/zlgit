@@ -59,6 +59,7 @@ const PageContentMain = styled.div`
     }};
     overflow-y: auto;
 `
+
 PageContentMain.defaultProps = {
     pd: "16px",
     bgcolor: "#fff"
@@ -113,6 +114,7 @@ useEffect(() => {
   return (
     <Pagecontentbox beTabs={beTabs}>
         <TabsEl></TabsEl>
+      
        {/*  <div className='page--content--main'>{props.children}</div> */}
         <PageContentMain pd={props.pd} bgcolor={props.bgcolor} beTabs={beTabs} showserach={props.showserach}>
           {props.children}

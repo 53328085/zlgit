@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Table, Form, message} from 'antd'
+import {Table, Form, message, Space, Radio, Select, Divider } from 'antd'
+
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
+import {Cradiogroup} from '@com/comstyled'
 import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import CustContext from '@com/content.js'
@@ -16,6 +18,7 @@ export default function Index() {
   const projectId = useSelector(selectCurProject)?.id 
   let [display, setDisplay] = useState(true)  
   const [total, setTotal] = useState(0)
+  const [stateV, setStateV] = useState();
   const [listdata, setListdata] = useState([])
   const tableref = useRef()
   const tableall = useRef()
@@ -82,9 +85,10 @@ export default function Index() {
 
 
   const tabs = [
-    {label: '电表', key: 'electric'},
-    {label: '水表', key: 'water'},
-    {label: '燃气表', key: 'gas'}
+    {label: '电表', value: 'electric'},
+    {label: '水表', value: 'water'},
+    {label: '燃气表', value: 'gas'},
+    {label: '传感器', value: 'sensor'},
   ]
   
 
@@ -161,7 +165,7 @@ const PrintAllContent = async () => {
    return () => tableall.current
 }
 const propsData = { 
-  tabs,
+  //tabs, 
   value,
   setvalue,
   form,
@@ -175,10 +179,34 @@ const propsData = {
   setDisplay,
   onDownload,
 }
- 
+ const checkChange = ({target: {value}}) => {
+   setvalue(value)
+ }
+const changeState = ({target: {value}}) => {
+  setStateV()
+};
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true}>        
+    <Pagecount showserach={true}>     
+        <div className='button--tabs'>
+         <Cradiogroup options={tabs} onChange={checkChange} value={value} optionType="button" />
+         <Space>
+          <Divider type="vertical" style={{height: '32px'}} />
+          <Select 
+           allowClear
+           placeholder="水表型号"           
+           style={{width: '160px'}}
+           defaultValue="lucy"
+           options={[{ value: 'lucy', label: 'Lucy' }]}
+           ></Select>
+          <Divider type="vertical" style={{height: '32px'}} />
+         <Radio.Group onChange={changeState} value={stateV}>
+            <Radio value={1}>正常</Radio>
+            <Radio value={2}>告警</Radio>
+            <Radio value={3}>失联</Radio>
+         </Radio.Group>
+         </Space>
+        </div>    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps}  rowKey='id' ref={tableref}/> : 
         <UserCard   {...{data, pagination}} /> 
        
