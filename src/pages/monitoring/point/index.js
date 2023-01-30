@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Table, Form, message, Space, Radio, Select, Divider } from 'antd'
+import {Table, Form, message, Space, Checkbox, Select, Divider, Button } from 'antd'
 
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
@@ -182,8 +182,9 @@ const propsData = {
  const checkChange = ({target: {value}}) => {
    setvalue(value)
  }
-const changeState = ({target: {value}}) => {
-  setStateV()
+const changeState = (value) => {
+  console.log(value);
+  setStateV(value)
 };
   return (
     <CustContext.Provider value={propsData}>
@@ -200,11 +201,13 @@ const changeState = ({target: {value}}) => {
            options={[{ value: 'lucy', label: 'Lucy' }]}
            ></Select>
           <Divider type="vertical" style={{height: '32px'}} />
-         <Radio.Group onChange={changeState} value={stateV}>
-            <Radio value={1}>正常</Radio>
-            <Radio value={2}>告警</Radio>
-            <Radio value={3}>失联</Radio>
-         </Radio.Group>
+         <Checkbox.Group onChange={changeState} value={stateV}>
+            <Space>
+             <Button><Checkbox  value={1}>正常</Checkbox></Button>
+            <Button><Checkbox  value={2}>告警</Checkbox></Button> 
+            <Button> <Checkbox  value={3}>失联</Checkbox></Button>
+            </Space>
+         </Checkbox.Group>
          </Space>
         </div>    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps}  rowKey='id' ref={tableref}/> : 

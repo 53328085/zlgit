@@ -2,7 +2,7 @@ import React, { useEffect,useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import {useNavigate, useParams } from 'react-router-dom'
 import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
-import { systemConfig } from "@redux/systemconfig";
+import { systemConfig} from "@redux/systemconfig";
 import {useBoolean, useCountDown, useRequest } from 'ahooks'
 import {
   Button,
