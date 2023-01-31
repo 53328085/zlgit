@@ -15,7 +15,9 @@ const initialState = {
     systemLogoKey: "",
     themeColor: "#509ff1",
     updateTime: "0001-01-01 00:00:00",
-    url: ""
+    url: "",
+    configState: false, // 项目是否处于配置状态
+
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -28,6 +30,10 @@ const system = createSlice({
     name: 'system',
     initialState,
     reducers: {
+        configProject(state, actions) { // 项目是否处于配置状态
+            console.log(actions);
+            return Object.assign({}, state, {configState: actions.payload})
+        },
     },
     extraReducers: {      
         [systemConfig.fulfilled]: (state, {payload}) => {           
@@ -41,6 +47,7 @@ const system = createSlice({
     }
 
 })
+const {actions} = system
 export const recordNo = state => state.system.recordNo
-
+export const {configProject} = actions
 export default system.reducer

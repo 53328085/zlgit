@@ -12,7 +12,7 @@ const login = () => {
 }
 const server = axios.create({
     baseURL: process.env.NODE_ENV === "production" ? '/V1' :  '/api/V1',
-    timeout: 5000,
+    timeout: 50000,
     headers: {      
         'Content-Type': "application/json"
     }

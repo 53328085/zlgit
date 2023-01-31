@@ -112,6 +112,7 @@ export default function Index() {
   }
   const getCardData = ({current, pageSize}) => {  
    // console.log(11111);
+   if (display) return;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formparams)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res

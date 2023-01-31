@@ -149,20 +149,6 @@ export default function Index() {
     }
   ]
 
-  const showCameraDialog = (record) => {
-    if(record.AccessMode == 1){
-      showModal()
-    }else{
-      if(record.AccessMode == 2){
-        setLocalModal(true);
-        setCameraTitle(record.CameraName)
-        // setwsType('h264')
-        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-      }
-    }
-  }
-
   const chooseType = (url) => {
     console.log(url);
     let config = {
@@ -201,42 +187,21 @@ export default function Index() {
     });
   }
 
-  const getwebConnect = (url) => {
-    var jmuxer;
-    jmuxer = new JMuxer({
-      node: 'player',
-      mode: 'video',
-      flushingTime: 1000,
-      clearBuffer: false,
-      fps: 25,
-      debug: true,
-    });
-    // setwebsocket(new WebSocket(url));
-    let ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
-
-    setwebsocket(ws);
-
-    ws.addEventListener('open',function(event){});
-    ws.addEventListener('message',function(event) {
-      let data = new Uint8Array(event.data);   
-      if(data.length == 1){
-      }else{
-        jmuxer.feed({
-          video: new Uint8Array(event.data),
-        });
-      }
-    });
-  }
-
-  const closeWS = () => {
-    setLocalModal(false);
-    if(wsType =='h264'){
-      wsocket.close();
+  const showCameraDialog = (record) => {
+    if(record.AccessMode == 1){
+      showModal()
     }else{
-      closeWeb();
+      if(record.AccessMode == 2){
+        setLocalModal(true);
+        setCameraTitle(record.CameraName)
+        // setwsType('h264')
+        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+      }
     }
   }
+
+  
 
   const [changeType, setChangeType] = useState('')
   const changeControl = (value) => {
@@ -282,6 +247,45 @@ export default function Index() {
       }else{}
     })
   }
+
+  const getwebConnect = (url) => {
+    var jmuxer;
+    jmuxer = new JMuxer({
+      node: 'player',
+      mode: 'video',
+      flushingTime: 1000,
+      clearBuffer: false,
+      fps: 25,
+      debug: true,
+    });
+    // setwebsocket(new WebSocket(url));
+    let ws = new WebSocket(url);
+    ws.binaryType = 'arraybuffer';
+
+    setwebsocket(ws);
+
+    ws.addEventListener('open',function(event){});
+    ws.addEventListener('message',function(event) {
+      let data = new Uint8Array(event.data);   
+      if(data.length == 1){
+      }else{
+        jmuxer.feed({
+          video: new Uint8Array(event.data),
+        });
+      }
+    });
+  }
+
+  const closeWS = () => {
+    setLocalModal(false);
+    if(wsType =='h264'){
+      wsocket.close();
+    }else{
+      closeWeb();
+    }
+  }
+
+  
 
   const [activeCollapse, setActiveCollapse] = useState(['1'])
   const changeActive = () => {

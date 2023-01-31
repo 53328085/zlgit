@@ -60,6 +60,12 @@ const Idiv3 = styled(Idiv)`
     background-image: url(${imgurl['33H']});
   }
 `;
+const Idiv4 = styled(Idiv)`
+  background-image: url(${imgurl['34N']});
+  &:hover {
+    background-image: url(${imgurl['34H']});
+  }
+`;
 const Triangle = styled.div`
     width: 0; 
  	height: 0;
@@ -154,6 +160,9 @@ export default function Log() {
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
+        <Idiv4>
+          <span>项目设置</span>
+        </Idiv4>
         <Idiv2>
           <span>平台配置</span>
         </Idiv2>

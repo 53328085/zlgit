@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Button, Form, message} from 'antd'
+import {Table, Form, message, Space, Checkbox, Select, Divider, Button } from 'antd'
+
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
+import {Cradiogroup} from '@com/comstyled'
 import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import CustContext from '@com/content.js'
@@ -14,10 +16,12 @@ export default function Index() {
   const [formparams, setFormparams] = useState(form.getFieldsValue())
   const [value, setvalue] = useState('electric')
   const projectId = useSelector(selectCurProject)?.id 
-  const [pageSize, setPageSize] = useState(12)
   let [display, setDisplay] = useState(true)  
   const [total, setTotal] = useState(0)
+  const [stateV, setStateV] = useState();
+  const [listdata, setListdata] = useState([])
   const tableref = useRef()
+  const tableall = useRef()
   const meterType = {
     electric: 1,
     water: 2,
@@ -28,6 +32,7 @@ export default function Index() {
     meterType: meterType[value],
     lineStatus: 0,
     bindStatus: 0,
+   
     alike: '',
   }
   const header = useMemo(() => columns.map(i => i.dataIndex), [columns])
@@ -80,14 +85,14 @@ export default function Index() {
 
 
   const tabs = [
-    {label: '电表', key: 'electric'},
-    {label: '水表', key: 'water'},
-    {label: '燃气表', key: 'gas'}
+    {label: '电表', value: 'electric'},
+    {label: '水表', value: 'water'},
+    {label: '燃气表', value: 'gas'},
+    {label: '传感器', value: 'sensor'},
   ]
   
 
-  const getTableData = ({current, pageSize}, formData) => {  
-    if(!display) return; // 卡片模式下不发请求
+  const getTableData = ({current, pageSize}, formData) => {     
     setFormparams((form) => ({...form, ...formData}))
    
     if (!display) return;
@@ -109,9 +114,9 @@ export default function Index() {
       }
     })
   }
-  const getCardData = ({current, pageSize}) => { 
-    console.log(pageSize); 
-    if (display) return; // 表格模式下不发生请求
+  const getCardData = ({current, pageSize}) => {  
+   // console.log(11111);
+   if (display) return;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formparams)
     return  Meter.Overview(params).then(res => {
       let {success, data, totalNum} = res
@@ -129,45 +134,91 @@ export default function Index() {
       }
     })
   }
- 
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
     defaultParams: [
-     { current: 1, pageSize},
-     params,
+     { current: 1, pageSize: 12}, // 分页参数
+     params, // 表单参数
     ],
-    refreshDeps: [projectId, value, display, pageSize], // projectId: 项目ID， value: 电表、水表、燃气表，  display: 表格或卡片模式
+    refreshDeps: [projectId, value, display], // projectId: 项目ID， value: 电表、水表、燃气表，  display: 表格或卡片模式
    //defaultPageSize: 12,
-   cacheKey: 'useAntdTableCache',
-   })
-   console.log(tableProps);
+   }) 
+   //console.log(search);
    const {data, pagination} = usePagination(getCardData, {
     refreshDeps: [projectId, value, formparams],
     defaultPageSize: 12,
 
    })
-  const propsData ={
-    tabs,
-    value,
-    setvalue,
-    form,
-    search,
-    display,
-    apply: true,
-    data: true,
-    print: true,
-    printContent: tableref.current?.printContent, 
-    setPageSize,
-    setDisplay,
-    onDownload,
-    total,
-  }
+const printContent = () => tableref.current?.printContent;
+const PrintAllContent = async () => {
+ /*   try {
+    await runAsync({current:1, pageSize: total})
+    return tableref.current?.printContent;
+   } catch (error) {
+     console.log(error);
+   } */
+   const {list} = await getTableData({current: 1, pageSize: total}, formparams)
+   console.log(list)
+  
+   setListdata(() => [...list])
+  
+   return () => tableall.current
+}
+const propsData = { 
+  //tabs, 
+  value,
+  setvalue,
+  form,
+  search,
+  display,
+  apply: true,
+  data: true,
+  print: true,
+  printContent,
+  PrintAllContent,
+  setDisplay,
+  onDownload,
+}
+ const checkChange = ({target: {value}}) => {
+   setvalue(value)
+ }
+const changeState = (value) => {
+  console.log(value);
+  setStateV(value)
+};
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true} >    
-       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps} rowKey='id' ref={tableref}/> : 
+    <Pagecount showserach={true}>     
+        <div className='button--tabs'>
+         <Cradiogroup options={tabs} onChange={checkChange} value={value} optionType="button" />
+         <Space>
+          <Divider type="vertical" style={{height: '32px'}} />
+          <Select 
+           allowClear
+           placeholder="水表型号"           
+           style={{width: '160px'}}
+           defaultValue="lucy"
+           options={[{ value: 'lucy', label: 'Lucy' }]}
+           ></Select>
+          <Divider type="vertical" style={{height: '32px'}} />
+         <Checkbox.Group onChange={changeState} value={stateV}>
+            <Space>
+             <Button><Checkbox  value={1}>正常</Checkbox></Button>
+            <Button><Checkbox  value={2}>告警</Checkbox></Button> 
+            <Button> <Checkbox  value={3}>失联</Checkbox></Button>
+            </Space>
+         </Checkbox.Group>
+         </Space>
+        </div>    
+       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps}  rowKey='id' ref={tableref}/> : 
         <UserCard   {...{data, pagination}} /> 
+       
     }
+    <div   style={{display: 'none'}}>    
+       <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={false} rowKey='id'  ref={tableall}  />
+   </div>
+ 
+ 
     </Pagecount>
     </CustContext.Provider>
   )

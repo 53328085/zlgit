@@ -1,10 +1,10 @@
 /**
  * @author zhenglin zhu
- * @description: // 公用的Input样式组件
+ * @description: // 公用的styled样式组件
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker} from 'antd'
+import {Input, Select, DatePicker, Radio} from 'antd'
 const {Search, Password, TextArea} = Input
 
 const normal = css`
@@ -135,5 +135,48 @@ export const Cselect = styled(Select)`
     border-color: #1f83fe !important;
     
   }
+ }
+`
+export const Cradiogroup = styled(Radio.Group)`
+
+ && {
+  display: grid;
+  grid-template-columns: repeat(4, 96px);
+  grid-auto-rows: auto;
+  gap: 16px;
+  .ant-radio-button-wrapper {
+    margin: 0px;
+    color: #333;
+    font-size: 14px;
+    width: 96px;
+    height: 32px;
+    line-height: 32px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    border-radius: 2px;
+   &:not(:first-child)::before {
+     display: none;
+   }
+   &:hover{
+      border: 1px solid rgba(35,122,228,1);
+      color: rgba(35,122,228,1);
+      .ant-radio-button {
+        border-color: rgba(35,122,228,1);
+    }
+    }
+  }
+  .ant-checkbox-disabled+span {
+    color: #fff;
+  }
+  .ant-radio-button-wrapper-checked.ant-radio-button-wrapper {
+    color:#fff;
+    background-color: #237ae4;
+    border-color: #237ae4;
+  }
+ 
+ 
  }
 `

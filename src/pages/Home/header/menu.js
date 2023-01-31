@@ -1,19 +1,30 @@
 import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation, useSearchParams} from 'react-router-dom'
+import { useStore } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
+
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['01H']
   return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
 }
 export default function Hmenu() {
+  const store = useStore();
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const [current, SetCurrent] = useState('index')  
-  const menus = [
-    {
+  const isconfig = store.getState()?.system.configState
+  let [config , SetConfig] = useState(isconfig)
+  store.subscribe(() => {
+    
+    SetConfig(store.getState()?.system.configState)
+
+  })
+  console.log(config);
+  const menus =  [
+  config ?  {
       label: '公共模块',
       key: "module",
       icon: <Ciocn url={current == 'module' ? imgurl['00H'] : imgurl['00N']} />,
@@ -21,7 +32,7 @@ export default function Hmenu() {
       danger: true,
       active: 'project',
       title: '项目管理',      
-    },
+    } : null,
     {
       label: '项目概述' ,
       key: "index",
@@ -85,6 +96,15 @@ export default function Hmenu() {
         title: '概述',
     },
     {
+      label: "储能管理",
+      key: "storage",
+      icon: <Ciocn url={current == 'storage' ? imgurl['11H'] : imgurl['11N']} />,
+      className: 'custsubmenu',
+      danger: true,
+      active: 'summary',
+      title: '概述',
+    },
+    {
         label: "碳排管理",
         key: "carbon",
         icon: <Ciocn url={current == 'carbon' ? imgurl['08H'] : imgurl['08N']} />,
@@ -114,8 +134,7 @@ export default function Hmenu() {
   const onSelect = ({key}) => {
       const {active, title} = menus.find(item => item.key === key)  
       SetCurrent(key)  
-      // let state = key === '/index' ? {headerKeys: key, index: true,title} : {headerKeys: key, selectedKeys: active, title, path}
-       
+     
       let url = key === 'index' ? '/index' : `/index/${key}/${active}`
       let state = key === 'index' ? {path: key, index: true,title} : {selectedKeys: active, title, path:key}
       navigate(url, {state})
