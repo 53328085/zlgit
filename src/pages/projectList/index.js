@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -31,7 +31,7 @@ import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
-import { color } from "echarts";
+import { configProject } from "@redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -247,6 +247,7 @@ const Modalbox = styled(Modal)`
 
 export default function Index() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [proform] =  Form.useForm()
   console.log(proform)
@@ -270,8 +271,15 @@ export default function Index() {
     navigate("/", {});
   };
   const projectcig = () => {   
-    navigate("/index/module/project", {
+    dispatch(configProject(true))
+    navigate("/config/module/project", {
       state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
+    })
+  }
+  const projectinfo = () => {   
+    dispatch(configProject(false))
+    navigate("/index", {
+      state: { path: "index", index: true, title: "项目概述" },
     })
   }
   /* 新增项目  start*/
@@ -331,9 +339,7 @@ export default function Index() {
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
-              navigate("/index", {
-                state: { path: "index", index: true, title: "项目概述" },
-              })
+              projectinfo()
             }
           >
             进入项目

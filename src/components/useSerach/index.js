@@ -6,7 +6,24 @@ import style from "./style.module.less";
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
-import {PrintButton, SerachButton} from '../useButton'
+import {PrintButton,
+   SaveButton, 
+  SerachButton,
+  RefreshButton, 
+  NewButton, 
+  ChangeButton, 
+  UnbindingButton,
+  ImportButton,
+  ExportButton,
+  AllExportButton,
+  AccountButton,
+  ConfigButton,
+  OpenButton,
+  CloseButton,
+  DelButton,
+  WegButton,
+  CustButton,
+} from '../useButton'
 // https://geoapi.qweather.com/v2/city/lookup?location=beij&key=你的KEY
 const Cdivider = styled(Divider)`
 && {
@@ -46,16 +63,18 @@ export default function useSerach(props) {
   const handlePrint = useReactToPrint({
     content: () =>  PrintArea ?? (() => <div></div>),
     onAfterPrint: () => PrintArea = null,
+ //   copyStyles: false, // 打印隐藏的表格
     ...printOption, // 打印选项
   })
-  const onHandlePrint = async (e) => {
-    const {key} = e
+  const onHandlePrint = async (key) => {
+    //const {key} = e
      if (key == 1) PrintArea = printContent() ;
      if (key== 2 ) {
       let Comp = await PrintAllContent();
-      console.dir(Comp);
+     
      //  document.body.appendChild(Comp)
       PrintArea = Comp();
+      console.dir(PrintArea);
      }
      handlePrint();
   }
@@ -132,12 +151,43 @@ export default function useSerach(props) {
       }
       </Space>
       <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}> 
-       <SerachButton />
+      {/*  RefreshButton, 
+  NewButton, 
+  ChangeButton, 
+  UnbindingButton,
+  ImportButton,
+  ExportButton,
+  AllExportButton */}
+     {/*  <SaveButton/> */}
+    {/*   <CustButton type="save">保存</CustButton>
+      <CustButton type="serach">查询</CustButton> */}
+      {/*  <SerachButton />
+       <ChangeButton />
+       <UnbindingButton/>
+       <ImportButton />
+       
+       <AllExportButton/>
+       <AccountButton/>
+       <RefreshButton/>
+       <NewButton/>
+       <ConfigButton/>
+       <OpenButton/>
+       <CloseButton/> */}
+    {/*    <CloseButton disabled />
+       <DelButton/>
+       <DelButton disabled />
+       <WegButton weg="water">水</WegButton>
+       <WegButton weg="electric">电</WegButton>
+       <WegButton weg="gas">气</WegButton>
+       <WegButton weg="other">其他</WegButton>
+       <WegButton weg="trend" other="true" >趋势</WegButton>
+       <WegButton weg="report" other="true" >报表</WegButton> */}
       {
        
        data!==undefined ? 
        (<Item>
-           <Button  onClick={() => onDownload()} type="primary">数据导出</Button>
+            <ExportButton  onClick={() => onDownload()} />
+          {/*  <Button  onClick={() => onDownload()} type="primary">数据导出</Button> */}
        </Item>)
        : null
       
@@ -146,7 +196,7 @@ export default function useSerach(props) {
        
        print!==undefined ? 
        (<Item>
-           <PrintButton></PrintButton>
+           <PrintButton print={onHandlePrint}></PrintButton>
         {/*   <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button> */}
        </Item>)
        : null

@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import {useAntdTable, usePagination} from 'ahooks'
-import {Table, Form, message} from 'antd'
+import {Table, Form, message, Space, Checkbox, Select, Divider, Button } from 'antd'
+
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import UserCard from '@com/useCard'
+import {Cradiogroup} from '@com/comstyled'
 import {Meter} from '@api/api.js'
 import {selectCurProject} from '@redux/user.js'
 import CustContext from '@com/content.js'
@@ -16,6 +18,7 @@ export default function Index() {
   const projectId = useSelector(selectCurProject)?.id 
   let [display, setDisplay] = useState(true)  
   const [total, setTotal] = useState(0)
+  const [stateV, setStateV] = useState();
   const [listdata, setListdata] = useState([])
   const tableref = useRef()
   const tableall = useRef()
@@ -82,9 +85,10 @@ export default function Index() {
 
 
   const tabs = [
-    {label: '电表', key: 'electric'},
-    {label: '水表', key: 'water'},
-    {label: '燃气表', key: 'gas'}
+    {label: '电表', value: 'electric'},
+    {label: '水表', value: 'water'},
+    {label: '燃气表', value: 'gas'},
+    {label: '传感器', value: 'sensor'},
   ]
   
 
@@ -133,13 +137,13 @@ export default function Index() {
   const {tableProps, search} = useAntdTable(getTableData, {
     form,
     defaultParams: [
-     { current: 1, pageSize: 12},
-     params,
+     { current: 1, pageSize: 12}, // 分页参数
+     params, // 表单参数
     ],
     refreshDeps: [projectId, value, display], // projectId: 项目ID， value: 电表、水表、燃气表，  display: 表格或卡片模式
    //defaultPageSize: 12,
-   })
-  
+   }) 
+   //console.log(search);
    const {data, pagination} = usePagination(getCardData, {
     refreshDeps: [projectId, value, formparams],
     defaultPageSize: 12,
@@ -147,15 +151,21 @@ export default function Index() {
    })
 const printContent = () => tableref.current?.printContent;
 const PrintAllContent = async () => {
+ /*   try {
+    await runAsync({current:1, pageSize: total})
+    return tableref.current?.printContent;
+   } catch (error) {
+     console.log(error);
+   } */
    const {list} = await getTableData({current: 1, pageSize: total}, formparams)
    console.log(list)
   
    setListdata(() => [...list])
-  // console.dir(data)
+  
    return () => tableall.current
 }
 const propsData = { 
-  tabs,
+  //tabs, 
   value,
   setvalue,
   form,
@@ -169,15 +179,46 @@ const propsData = {
   setDisplay,
   onDownload,
 }
- 
+ const checkChange = ({target: {value}}) => {
+   setvalue(value)
+ }
+const changeState = (value) => {
+  console.log(value);
+  setStateV(value)
+};
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true}>        
+    <Pagecount showserach={true}>     
+        <div className='button--tabs'>
+         <Cradiogroup options={tabs} onChange={checkChange} value={value} optionType="button" />
+         <Space>
+          <Divider type="vertical" style={{height: '32px'}} />
+          <Select 
+           allowClear
+           placeholder="水表型号"           
+           style={{width: '160px'}}
+           defaultValue="lucy"
+           options={[{ value: 'lucy', label: 'Lucy' }]}
+           ></Select>
+          <Divider type="vertical" style={{height: '32px'}} />
+         <Checkbox.Group onChange={changeState} value={stateV}>
+            <Space>
+             <Button><Checkbox  value={1}>正常</Checkbox></Button>
+            <Button><Checkbox  value={2}>告警</Checkbox></Button> 
+            <Button> <Checkbox  value={3}>失联</Checkbox></Button>
+            </Space>
+         </Checkbox.Group>
+         </Space>
+        </div>    
        {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps}  rowKey='id' ref={tableref}/> : 
         <UserCard   {...{data, pagination}} /> 
        
     }
- {/*     <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={{defaultPageSize: total}} rowKey='id' ref={tableall}  style={{left: "0", position: "absolute"}}  /> */}
+    <div   style={{display: 'none'}}>    
+       <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={false} rowKey='id'  ref={tableall}  />
+   </div>
+ 
+ 
     </Pagecount>
     </CustContext.Provider>
   )

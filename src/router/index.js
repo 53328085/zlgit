@@ -9,7 +9,7 @@ import electricRoutes from "./electric";
 import distributionRoutes from "./distribution";
 import prepaymentRoutes from "./prepayment";
 import photovoltaicRoutes from "./photovoltaic";
-import moduleRoutes from "./module";
+import moduleRoutes from "./configure/module";
 import carbonRoutes from "./carbon"
 //const Login = lazy(() => import("../pages/Login"))
 import Login from "@pages/Login"
@@ -43,6 +43,7 @@ import Antdconfig from "@pages/Antcutom"
 //const RoomDetail = lazy(() => import("../pages/roomDetail"))
 import RoomDetail from "@pages/roomDetail"
 const Fform = lazy(() => import("../pages/test/fform.js"))
+import configure from "./configure";
 const loginrouter =  [{
   path: "/login",
   element: <Login />
@@ -62,6 +63,11 @@ const routes =  [
       path: "/projectList",
       element: <Redirect />
     },
+
+  
+
+    // 进入项目
+
     {
       path: "/index",
       //element: <Redirect />,
@@ -112,11 +118,7 @@ const routes =  [
           element: <Carbon><Navigate to='monitor' replace={true}></Navigate></Carbon>, 
           children: carbonRoutes
         },
-        {
-          path: 'module', // 公共模块
-          element: <Module><Navigate to='project' replace={true}></Navigate></Module>, 
-          children: moduleRoutes
-        }
+       
       ]
     },
     {
@@ -124,7 +126,7 @@ const routes =  [
       element: <RoomDetail />
     },
     {
-      path: '/config',
+      path: '/antdconfig',
       element: <Antdconfig/>
     },   
     {
@@ -134,7 +136,9 @@ const routes =  [
          console.log(params)
       },
 
-    }
+    },
+      //  项目配置
+      ...configure,
    
 ];
 const EL = () => useRoutes(routes)

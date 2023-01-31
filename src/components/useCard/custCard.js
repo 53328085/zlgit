@@ -26,15 +26,15 @@ export default function Custcard(props) {
 )
  
   return (
-  
-      <Card
-        bodyStyle={{ padding: 0 }}
-        hoverable
-      >
+       
         <div className={style.item}>
-          <div >
-            <Image
-              preview={false}
+          <div className={style.textbox}
+             style={{backgroundColor: device.status == 1 ? '#52c41a' : device.status == 2 ? '#666' : '#ff4d4f'}}
+          >
+         <span> {device.status == 1 ? '优秀' : device.status == 2 ? '离线' : '告警'}</span>
+          </div>
+          <div className={style.imgbox} >
+            <img 
               src={
                 device.categoryImageBase64
                   ? "data:image/png;base64," + device.categoryImageBase64
@@ -63,6 +63,6 @@ export default function Custcard(props) {
             </div>            
           </div>
         </div>
-      </Card>
+     
   );
 }

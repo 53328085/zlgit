@@ -307,6 +307,11 @@ export  const module = [ // 公共模块
   icon: <Micon />
 },
 {
+  label: '区域管理',
+  key: "region",
+  icon: <Micon />
+},
+/* {
   label: '档案管理',
   key: "file",
   icon: <Micon />
@@ -320,7 +325,7 @@ export  const module = [ // 公共模块
   label: '能源定价',
   key: "pricing",
   icon: <Micon />
-},
+}, */
 {
   label: '数字驾驶舱',
   key: "cockpit",
