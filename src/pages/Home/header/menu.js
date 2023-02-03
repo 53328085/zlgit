@@ -3,7 +3,7 @@ import {useNavigate, useLocation, useSearchParams} from 'react-router-dom'
 import { useStore } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
-
+import {getrunMenus, designerMenus, siderRunMenus, siderDesignerMenus} from '@redux/systemconfig'
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['01H']
@@ -16,14 +16,35 @@ export default function Hmenu() {
   const [searchParams] = useSearchParams()
   const [current, SetCurrent] = useState('index')  
   const isconfig = store.getState()?.system.configState
+ 
   let [config , SetConfig] = useState(isconfig)
   store.subscribe(() => {
-    
     SetConfig(store.getState()?.system.configState)
 
   })
-  console.log(config);
-  const menus =  [
+ const runMenus = store.getState()?.system.runMenus;
+ const siderRunMenus = store.getState()?.system.siderRunMenus
+ const designerMenus = store.getState()?.system.designerMenus;
+ const siderDesignerMenus = store.getState()?.system.siderDesignerMenus;
+ console.dir(siderRunMenus)
+ const run = runMenus.map(item => ({
+   label: item.label,
+   key: item.key,
+   icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+   className: 'custsubmenu',
+   danger: true,
+   active: siderRunMenus[item.key]?.length > 0 ?  siderRunMenus[item.key][0]?.['route'] : null
+ }))
+ const designer = designerMenus.map(item => ({
+  label: item.label,
+  key: item.key,
+  icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+  className: 'custsubmenu',
+  danger: true,
+  active: siderDesignerMenus[item.key]?.length > 0 ?  siderDesignerMenus[item.key][0]?.['route'] : null
+}))
+ const menus =  config ? designer : run;
+/*  const menus =  [
   config ?  {
       label: '公共模块',
       key: "module",
@@ -35,7 +56,7 @@ export default function Hmenu() {
     } : null,
     {
       label: '项目概述' ,
-      key: "index",
+      key:  config ? "config" : "index",
       icon: <Ciocn url={current == 'index' ? imgurl['01H'] : imgurl['01N']} />,
       className: 'custsubmenu',
       danger: true,
@@ -47,7 +68,7 @@ export default function Hmenu() {
       icon: <Ciocn url={current == 'monitoring' ? imgurl['02H'] : imgurl['02N']} />,
       className: 'custsubmenu',
       danger: true,
-      active: 'outline',
+      active: config ? 'deviceType' : 'outline',
       title: '运行概述',      
     },
     {
@@ -124,19 +145,24 @@ export default function Hmenu() {
       title: '运维管理',
    },
     
-   /*  {
-        label: "后台管理",
-        key: "adimin",
-        icon: <Ciocn url={current == '/index' ? h10 : n10} />,
-        className: 'custsubmenu'
-    } */] 
+   ]   */
   
   const onSelect = ({key}) => {
-      const {active, title} = menus.find(item => item.key === key)  
-      SetCurrent(key)  
+      console.log(key)
+      let item = menus.find(item => item?.key === key);
+      if (!item) return;
+      const {active, title} = item || {};  
      
-      let url = key === 'index' ? '/index' : `/index/${key}/${active}`
-      let state = key === 'index' ? {path: key, index: true,title} : {selectedKeys: active, title, path:key}
+      SetCurrent(key)  
+      let url, state;
+      if(config) {
+         url = key === 'config' ? '/config/summary' : `/config/${key}/${active}`
+         state = key === 'config' ? {path: key, index: true,title} : {selectedKeys: active, title, path:key}
+      } else {
+        url = key === 'index' ? '/index' : `/index/${key}/${active}`
+        state = key === 'index' ? {path: key, index: true,title} : {selectedKeys: active, title, path:key}
+      }
+      
       navigate(url, {state})
      
   }

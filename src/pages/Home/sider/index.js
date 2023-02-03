@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
+import { useStore } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import styled from 'styled-components'
 import {monitoring, energy, devops, electric, distribution, prepayment, photovoltaic, carbon, module} from './menus'
+import {monitoringConf} from './configuremenus'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
@@ -45,6 +47,15 @@ const Cmenu = styled(Menu)`
    }
 `
 export default function Sider() {
+  const store = useStore();
+  const isconfig = store.getState()?.system.configState
+  const designerMenus = store.getState()?.system.designerMenus;
+  const siderDesignerMenus = store.getState()?.system.siderDesignerMenus;
+  let [config , SetConfig] = useState(isconfig)
+  store.subscribe(() => {    
+    SetConfig(store.getState()?.system.configState)
+
+  })
   const [key, Setkey] = useState('outline')
   const menuList = {
     monitoring,
@@ -62,8 +73,9 @@ export default function Sider() {
   const navigate = useNavigate()
   const location = useLocation()
   useEffect(() => {   
-    console.log(location)
+  
     let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
+    console.dir(state);
     setPath(path)
     setMenus(menuList[path])
     Setkey(location.state?.selectedKeys) 
@@ -72,10 +84,16 @@ export default function Sider() {
   const onSelect = ({key}) => {      
      let label = menuList[path]?.find(item => item.key == key)?.label
      Setkey(key)
-     let url = `/index/${path}/` + key
+     let url;
+     if (config) {
+      url = `/config/${path}/` + key
+     }else {
+      url = `/index/${path}/` + key
+     }
+      
      navigate(url, {state: {title: label, selectedKeys: key, path}})
   }
- 
+
   return (
     <Sdiv> 
        <Title/>

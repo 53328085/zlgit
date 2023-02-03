@@ -16,8 +16,14 @@ const initialState = {
     themeColor: "#509ff1",
     updateTime: "0001-01-01 00:00:00",
     url: "",
-    configState: false, // 项目是否处于配置状态
-
+    configState: false, // 项目是否处于配置状态   
+ 
+        runMenus: null, // 项目top菜单栏 左边
+        designerMenus: null, // 设置top菜单栏
+        siderRunMenus: null, // 项目 sider
+        siderDesignerMenus: null, // 设置 sider
+        setMenus: null, // 项目top菜单栏 右边
+   
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -34,6 +40,21 @@ const system = createSlice({
             console.log(actions);
             return Object.assign({}, state, {configState: actions.payload})
         },
+        getRunMenus(state, actions) {
+            return Object.assign({}, state, {runMenus: actions.payload })
+        },
+        getDesignerMenus(state, actions) {
+           return Object.assign({}, state, {designerMenus: actions.payload })
+        },
+        getSiderRunMenus(state, actions) {
+            return Object.assign({}, state, {siderRunMenus: actions.payload })
+        },
+        getSiderDesignerMenus(state, actions) {
+            return Object.assign({}, state, {siderDesignerMenus: actions.payload })
+         },
+        getSetMenus(state, actions) {
+            return Object.assign({}, state, {setMenus: actions.payload })
+        }
     },
     extraReducers: {      
         [systemConfig.fulfilled]: (state, {payload}) => {           
@@ -47,7 +68,10 @@ const system = createSlice({
     }
 
 })
+ 
+
 const {actions} = system
 export const recordNo = state => state.system.recordNo
-export const {configProject} = actions
+export const getrunMenus  = state => state.system.runMenus 
+export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus} = actions
 export default system.reducer

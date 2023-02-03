@@ -6,7 +6,7 @@ export class Test {
 // 登录
 export class Login {
     static SystemConfig = (url) => server.get(`/SystemConfig/GetSystemConfigInfo?url=${url}`)
-    static LoginByName = (data = {}) => server.post(`/User/LoginByName?name=${data.name}&pwd=${data.pwd}`)      // 根据用户名登录
+    static LoginByName = (data = {}) => server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`)      // 根据用户名登录
 
     static GetVerification = (mobile) => server.post(`/User/GetCode?mobile=${mobile}`)    // 获取验证吗
     static LoginByPhone = (data = {}) => server.post(`/User/LoginByMobile?mobile=${data.mobile}&code=${data.code}`)   // 根据手机号登录
@@ -16,6 +16,14 @@ export class Login {
     static LoginOut = () => server.post('User/Logout')
     static GetUseMenus = (projectId, userId) => server.get(`/User/GetUseMenus?projectId=${projectId}&userId=${userId}`)
 }
+
+// 项目列表
+export class ProjectList {
+    static queryProject = ({pageNum, pageSize, name='', state=0} = {}) => server.get(`/General/PlatConfig/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&name=${name}&state=${state}`)
+    static createProject = (data) => server.post('General/PlatConfig/CreateProject', data) // 新增项目
+    static QueryMenus = (projectId) => server.get(`General/User/QueryMenus?projectId=${projectId}`)  // 查询菜单栏
+}
+
 // 主页
 export class Home {
     static BaseInfoSummary = (projectId) => server.get(`/Home/BaseInfoSummary?projectId=${projectId}`)      // 告警信息和客户信息汇总

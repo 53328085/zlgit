@@ -20,24 +20,24 @@ const Index = lazy(() => import("../pages/Home"))
 
 const Defauthome = lazy(() => import("../pages/defauthome"))
 
-const Module = lazy(() => import("../pages/module/index"))
+const Module = lazy(() => import("../pages/module/index/index"))
 
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
+const Monitoring = lazy(() => import("../pages/monitoring/index/index"))
 
-const Electric = lazy(() => import("../pages/electric/index"))
+const Electric = lazy(() => import("../pages/electric/index/index"))
 
-const Distribution = lazy(() => import("../pages/distribution/index"))
+const Distribution = lazy(() => import("../pages/distribution/index/index"))
 
 
-const Energy = lazy(() => import("../pages/energy/index"))
+const Energy = lazy(() => import("../pages/energy/index/index"))
 
-const Devops = lazy(() => import("../pages/devops/index"))
+const Devops = lazy(() => import("../pages/devops/index/index"))
 
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
+const Prepayment = lazy(() => import("../pages/prepayment/index/index"))
 
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
+const Photovoltaic = lazy(() => import("../pages/photovoltaic/index/index"))
 
-const Carbon = lazy(() => import("../pages/carbon/index"))
+const Carbon = lazy(() => import("../pages/carbon/index/index"))
 
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
@@ -69,47 +69,7 @@ const loginrouter =  [{
    
 } 
 
- const RunRoute = [];
- const routes =  [
-  {
-   path: "/*",
-   element: <Login />,   
-   },
-   {
-     path: "/projectList",
-     element: <Redirect />
-   },
-
- 
-
-   // 进入项目
-
-   {
-     path: "/index",
-     //element: <Redirect />,
-     element: <Index />,
-     children: [...RunRoute]
-   },
-   {
-     path: "/roomDetail",
-     element: <RoomDetail />
-   },
-   {
-     path: '/antdconfig',
-     element: <Antdconfig/>
-   },   
-   {
-     path: '/form',
-     element: <Fform/>,
-     loader: async ({ params }) => {
-        console.log(params)
-     },
-
-   },
-     //  项目配置
-     ...configure,
-  
-];
+ const childrenRoute = [];
  store.subscribe(() => {
   try {
     console.log(store)
@@ -119,14 +79,12 @@ const loginrouter =  [{
     runmen.forEach(r => {
       let {no, key} = r;
       let Com = components[no];
-      console.log(Com)
       if (Com) {
-        no == '0104' ? RunRoute.push({
-          path: key,
+        no == '0104' ? childrenRoute.push({
           index: true,
           element: <Defauthome/>, //默认首页
           state: {index: true}
-        }) : RunRoute.push( {
+        }) : childrenRoute.push( {
           path: key, // 运行监控
           element: <Com><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Com>, 
           children: monitoringRoutes
@@ -204,8 +162,93 @@ const loginrouter =  [{
  })
 
 
+const routes =  [
+   {
+    path: "/*",
+    element: <Login />,   
+    },
+    {
+      path: "/projectList",
+      element: <Redirect />
+    },
 
-console.dir(routes)
+  
+
+    // 进入项目
+
+    {
+      path: "/index",
+      //element: <Redirect />,
+      element: <Index />,
+      children: [
+        {
+          index: true,
+          element: <Defauthome/>, //默认首页
+          state: {index: true}
+        },
+        {
+          path: 'monitoring', // 运行监控
+          element: <Monitoring><Navigate to='outline' replace={true}></Navigate> </Monitoring>, 
+          children: monitoringRoutes
+        },
+        {
+          path: 'electric', // 电气安全
+          element: <Electric><Navigate to='safe' replace={true}></Navigate> </Electric>, 
+          children: electricRoutes
+        },
+        {
+          path: 'distribution', // 配电管理
+          element: <Distribution><Navigate to='summary' replace={true}></Navigate> </Distribution>, 
+          children: distributionRoutes
+        },
+        {
+          path: 'energy', // 能源管理
+          element: <Energy><Navigate to='summary' replace={true}></Navigate> </Energy>, 
+          children: energyRoutes
+        },
+        {
+          path: 'devops', // 运维管理管理
+          element: <Devops><Navigate to='summary' replace={true}></Navigate> </Devops>, 
+          children: devopsRoutes
+        },
+        {
+          path: 'prepayment', // 结算收费
+          element: <Prepayment><Navigate to='summary' replace={true}></Navigate> </Prepayment>, 
+          children: prepaymentRoutes
+        },
+        {
+          path: 'photovoltaic', // 光伏发电
+          element: <Photovoltaic><Navigate to='summary' replace={true}></Navigate> </Photovoltaic>, 
+          children: photovoltaicRoutes
+        },
+        {
+          path: 'carbon', // 碳排管理
+          element: <Carbon><Navigate to='monitor' replace={true}></Navigate></Carbon>, 
+          children: carbonRoutes
+        },
+       
+      ]
+    },
+    {
+      path: "/roomDetail",
+      element: <RoomDetail />
+    },
+    {
+      path: '/antdconfig',
+      element: <Antdconfig/>
+    },   
+    {
+      path: '/form',
+      element: <Fform/>,
+      loader: async ({ params }) => {
+         console.log(params)
+      },
+
+    },
+      //  项目配置
+      ...configure,
+   
+];
 const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫

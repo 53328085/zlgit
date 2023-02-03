@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState,  useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +10,11 @@ import {
   Modal,
   Button,
   Form,
-  Input,
   Select,
   Divider,
   Table,
   Layout,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -25,13 +25,13 @@ import {
   DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
-import { Project } from "@api/api.js";
+import { ProjectList } from "@api/api.js";
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
-import { configProject } from "@redux/systemconfig";
+import { configProject, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -254,6 +254,7 @@ export default function Index() {
   const [count, setCount] = useState(0); 
   const modal = useRef()
   const formmodal = useRef()
+  const projectform = useRef()
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
@@ -267,14 +268,290 @@ export default function Index() {
       modal.current.onOpen()
   };
   const onOk = () => {   
-    modal.current.onCancel()
-    navigate("/", {});
+     navigate("/", {});
+    // projectform.current.onFinish();
+   // projectform.current.onFinish();
+   // modal.current.onCancel()
+    //navigate("/", {});
   };
-  const projectcig = () => {   
-    dispatch(configProject(true))
-    navigate("/config/module/project", {
-      state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
+  const onSubmit = () => {
+    let params =  projectform.current.onSubmint();
+    console.log(params);
+    ProjectList.createProject(params).then(res => {
+      console.log(res)
+    }).catch(e => {
+      console.log(e);
     })
+  }
+  const data = [
+    
+{no: '01', label: '运行功能', key: '', parentNo: '00', select: 1},
+
+{no: '0101', label: '数据大屏', key: '', parentNo: '01', select: 1},
+
+{no: '0102', label: '项目设置', key: 'projectSet', parentNo: '01', select: 1},
+ 
+{no: '0103', label: '平台设置', key: 'systemSet', parentNo: '01', select: 1},
+ 
+{no: '0104', label: '项目概述', key: 'runtimeProject', parentNo: '01', select: 1},
+ 
+{no: '0105', label: '运行监控', key: 'runtimeMonitor', parentNo: '01', select: 1},
+
+{no: '010501', label: '运行监控', key: 'monitor', parentNo: '0105', select: 1},
+
+ 
+{no: '010502', label: '测点监测', key: 'point', parentNo: '0105', select: 1},
+ 
+{no: '010503', label: '网关监测', key: 'gateway', parentNo: '0105', select: 1},
+
+{no: '010504', label: '远程控制', key: 'remote', parentNo: '0105', select: 1},
+ 
+{no: '010505', label: '告警监控', key: 'alarm', parentNo: '0105', select: 1},
+
+{no: '010506', label: '视频监控', key: 'camera', parentNo: '0105', select: 1},
+
+{no: '010507', label: '运行报告', key: 'report', parentNo: '0105', select: 1},
+ 
+{no: '010508', label: '系统日志', key: 'log', parentNo: '0105', select: 1},
+ 
+{no: '0106', label: '电气安全', key: 'runtimeSafe', parentNo: '01', select: 1},
+ 
+{no: '010601', label: '概述', key: 'summary', parentNo: '0106', select: 1},
+
+{no: '010602', label: '告警消息', key: 'alarm', parentNo: '0106', select: 1},
+ 
+{no: '0107', label: '配电管理', key: 'runtimeDistribution', parentNo: '01', select: 1},
+
+{no: '010701', label: '概述', key: 'summary', parentNo: '0107', select: 1},
+ 
+{no: '010702', label: '配电系统图', key: 'diagram', parentNo: '0107', select: 1},
+
+{no: '010703', label: '变压器监测', key: 'transformer', parentNo: '0107', select: 1},
+{no: '010704', label: '回路监测', key: 'line', parentNo: '0107', select: 1},
+
+{no: '010705', label: '环境监测', key: 'environment', parentNo: '0107', select: 1},
+ 
+{no: '010706', label: '视频监控', key: 'camera', parentNo: '0107', select: 1},
+ 
+{no: '010707', label: '告警信息', key: 'alarm', parentNo: '0107', select: 1},
+
+{no: '010708', label: '运行报告', key: 'report', parentNo: '0107', select: 1},
+ 
+{no: '0108', label: '结算收费', key: 'runtimePrepay', parentNo: '01', select: 1},
+
+{no: '010801', label: '概述', key: 'summary', parentNo: '0108', select: 1},
+
+{no: '010802', label: '客户管理', key: 'user', parentNo: '0108', select: 1},
+
+{no: '010803', label: '能源收费', key: 'energy', parentNo: '0108', select: 1},
+
+{no: '010804', label: '物业收费', key: 'property', parentNo: '0108', select: 1},
+ 
+{no: '010805', label: '账单报表', key: 'account', parentNo: '0108', select: 1},
+
+{no: '010806', label: '数据报表', key: 'data', parentNo: '0108', select: 1},
+ 
+{no: '010807', label: '手动抄表', key: 'manual', parentNo: '0108', select: 1},
+ 
+{no: '010808', label: '充值补助', key: 'charge', parentNo: '0108', select: 1},
+ 
+{no: '010809', label: '运行报告', key: 'report', parentNo: '0108', select: 1},
+
+{no: '0109', label: '能源管理', key: 'runtimeEnergy', parentNo: '01', select: 1},
+ 
+{no: '010901', label: '概述', key: 'summary', parentNo: '0109', select: 1},
+
+{no: '010902', label: '综合能耗', key: 'complex', parentNo: '0109', select: 1},
+
+{no: '010903', label: '分类能耗', key: 'assorting', parentNo: '0109', select: 1},
+ 
+{no: '010904', label: '综合费用', key: 'complexCost', parentNo: '0109', select: 1},
+
+{no: '010905', label: '分类费用', key: 'assortingCost', parentNo: '0109', select: 1},
+
+{no: '010906', label: '能耗排名', key: 'range', parentNo: '0109', select: 1},
+ 
+{no: '010907', label: '分时能耗', key: 'time', parentNo: '0109', select: 1},
+
+{no: '010908', label: '数据报表', key: 'report', parentNo: '0109', select: 1},
+
+{no: '010909', label: '能源流向', key: 'direction', parentNo: '0109', select: 1},
+
+{no: '010910', label: '损耗分析', key: 'analysis', parentNo: '0109', select: 1},
+ 
+{no: '010911', label: '定额能耗', key: 'norm', parentNo: '0109', select: 1},
+ 
+{no: '010912', label: '公共能耗', key: 'public', parentNo: '0109', select: 1},
+
+{no: '010913', label: '路灯监控', key: 'light', parentNo: '0109', select: 1},
+
+{no: '010914', label: '公共照明', key: 'grading', parentNo: '0109', select: 1},
+
+{no: '0110', label: '光伏发电', key: 'runtimeSolar', parentNo: '01', select: 1},
+
+{no: '011001', label: '概述', key: 'summary', parentNo: '0110', select: 1},
+ 
+{no: '011002', label: '运行监控', key: 'monitor', parentNo: '0110', select: 1},
+
+{no: '011003', label: '数据分析', key: 'analysis', parentNo: '0110', select: 1},
+
+{no: '011004', label: '环境监测', key: 'environment', parentNo: '0110', select: 1},
+ 
+{no: '011005', label: '告警监测', key: 'alarm', parentNo: '0110', select: 1},
+ 
+{no: '011006', label: '运行报告', key: 'report', parentNo: '0110', select: 1},
+ 
+{no: '0111', label: '碳排管理', key: 'runtimeCarbon', parentNo: '01', select: 1},
+
+{no: '011101', label: '概述', key: 'summary', parentNo: '0111', select: 1},
+
+{no: '011102', label: '排放详情', key: 'details', parentNo: '0111', select: 1},
+ 
+{no: '011103', label: '碳排流向', key: 'direction', parentNo: '0111', select: 1},
+
+{no: '011104', label: '碳排报告', key: 'report', parentNo: '0111', select: 1},
+ 
+{no: '0112', label: '数据报表', key: 'runtimeReport', parentNo: '01', select: 1},
+ 
+{no: '011201', label: '运行监控', key: 'monitor', parentNo: '0112', select: 1},
+
+{no: '0113', label: '运维管理', key: 'runtimeMaintenance', parentNo: '01', select: 1},
+
+{no: '011301', label: '概述', key: 'summary', parentNo: '0113', select: 1},
+
+{no: '011302', label: '告警信息', key: 'alarm', parentNo: '0113', select: 1},
+
+{no: '011303', label: '工单管理', key: 'order', parentNo: '0113', select: 1},
+
+{no: '011304', label: '巡检管理', key: 'inspection', parentNo: '0113', select: 1},
+
+{no: '011305', label: '运行报告', key: 'report', parentNo: '0113', select: 1},
+ 
+{no: '02', label: '设置功能', key: '', parentNo: '00', select: 1},
+
+{no: '0201', label: '公共模块', key: 'designerCommon', parentNo: '02', select: 1},
+
+{no: '020101', label: '项目设置', key: 'project', parentNo: '0201', select: 1},
+
+{no: '020102', label: '用户管理', key: 'user', parentNo: '0201', select: 1},
+
+{no: '020103', label: '区域管理', key: 'area', parentNo: '0201', select: 1},
+
+{no: '020104', label: '数字驾驶舱', key: 'driver', parentNo: '0201', select: 1},
+ 
+{no: '0202', label: '项目概述', key: 'designerProject', parentNo: '02', select: 1},
+ 
+{no: '0203', label: '运行监控', key: 'designerMonitor', parentNo: '02', select: 1},
+
+{no: '020301', label: '类型管理', key: 'category', parentNo: '0203', select: 1},
+ 
+{no: '020302', label: '设备管理', key: 'device', parentNo: '0203', select: 1},
+
+{no: '020303', label: '线路管理', key: 'line', parentNo: '0203', select: 1},
+ 
+{no: '020304', label: '告警管理', key: 'alarm', parentNo: '0203', select: 1},
+ 
+{no: '0204', label: '电气安全', key: 'designerSafe', parentNo: '02', select: 1},
+
+{no: '020401', label: '配额管理', key: 'quota', parentNo: '0204', select: 1},
+
+{no: '0205', label: '配电管理', key: 'designerDistribution', parentNo: '02', select: 1},
+
+{no: '020501', label: '配电房管理', key: 'room', parentNo: '0205', select: 1},
+
+{no: '0206', label: '收费结算', key: 'designerPrepay', parentNo: '02', select: 1},
+
+{no: '020601', label: '配额管理', key: 'quota', parentNo: '0206', select: 1},
+ 
+{no: '020602', label: '后台管理', key: 'back', parentNo: '0206', select: 1},
+
+{no: '0207', label: '能源管理', key: 'designerEnergy', parentNo: '02', select: 1},
+
+{no: '020701', label: '能耗分类', key: 'assorting', parentNo: '0207', select: 1},
+
+{no: '020702', label: '能耗定价', key: 'price', parentNo: '0207', select: 1},
+
+{no: '020703', label: '能耗定额', key: 'norm', parentNo: '0207', select: 1},
+
+{no: '0208', label: '光伏发电', key: 'designerSolar', parentNo: '02', select: 1},
+
+{no: '020801', label: '配额管理', key: 'quota', parentNo: '0208', select: 1},
+
+{no: '020802', label: '后台设置', key: 'back', parentNo: '0208', select: 1},
+
+{no: '0209', label: '碳排管理', key: 'designerCarbon', parentNo: '02', select: 1},
+
+{no: '020901', label: '配额管理', key: 'quota', parentNo: '0209', select: 1},
+
+{no: '020902', label: '后台设置', key: 'back', parentNo: '0209', select: 1},
+
+{no: '0210', label: '数据报表', key: 'designerReport', parentNo: '02', select: 1},
+
+{no: '021001', label: '配额管理', key: 'quota', parentNo: '0210', select: 1},
+ 
+{no: '021002', label: '后台设置', key: 'back', parentNo: '0210', select: 1},
+ 
+{no: '0211', label: '运维管理', key: 'designerMaintenance', parentNo: '02', select: 1},
+
+{no: '021101', label: '配额管理', key: 'quota', parentNo: '0211', select: 1},
+ 
+{no: '021102', label: '后台设置', key: '/back', parentNo: '0211', select: 1},
+  ]
+  const projectcig = async ({id}) => {   
+    // console.log(text);
+    console.log(data.length)
+     try {
+     // let {data, success, errMsg} = await ProjectList.QueryMenus(1)
+      if (Array.isArray(data)) {       
+         const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+         const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行
+         const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+         let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+        
+         const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+         console.log(runMenus);
+
+         const siderRunMenus = {}; 
+         runMenus.forEach(item => {
+          let {no, key, parentNo} = item 
+          if (!exclude.includes(item.no)) {
+             siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no)
+          }   
+         })
+         console.log()
+         const siderDesignerMenus = {};
+         designerMenus.forEach(item => {
+          let {no, key, parentNo} = item 
+          if (!exclude.includes(item.no)) {
+            siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+          }   
+         }) 
+         const menus = {
+          runMenus,
+          designerMenus,
+          siderRunMenus,
+          siderDesignerMenus,
+         }
+         dispatch(getRunMenus(runMenus));
+         dispatch(getDesignerMenus(designerMenus));
+         dispatch(getSiderRunMenus(siderRunMenus));
+         dispatch(getSiderDesignerMenus(siderDesignerMenus));
+         dispatch(getSetMenus(setMenus));
+      } else {
+        return message.warning(errMsg || '数据出错,请重试', 1)
+      }
+     } catch (error) {
+       console.log(error);
+     }
+    
+      
+    dispatch(configProject(true))
+    navigate("/index", {
+      state: { path: "index", index: true, title: "项目概述" },
+    })
+   /*  navigate("/config/module/project", {
+      state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
+    })  */
   }
   const projectinfo = () => {   
     dispatch(configProject(false))
@@ -331,9 +608,9 @@ export default function Index() {
       key: "custop",
       dataIndex: "custop",
       align: "center",
-      render: () => (
+      render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => projectcig()}>
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => projectcig(record)}>
             项目配置
           </CustBtn>
           <CustBtn
@@ -359,7 +636,7 @@ export default function Index() {
       { pageNum: current, pageSize },
      formData
     );
-    return Project.queryProject(params).then((res) => {
+    return ProjectList.queryProject(params).then((res) => {
       let { success, data, totalNum } = res;
       if (success && Array.isArray(data)) {
         setCount(totalNum);
@@ -374,13 +651,15 @@ export default function Index() {
           list: [],
         };
       }
+    }).catch(e => {
+      console.log(e)
     });
   };
   const { tableProps, search } = useAntdTable(getTableData, {
     form,
     defaultParams: [
       { current: 1, pageSize: 10 },
-      {projectName: '', valid: 0}
+      {name: '', state: 0}
     ],
    
   });
@@ -444,7 +723,7 @@ tableProps.pagination.size="default" // 页码大小默认
                   新增项目
                 </CustBtn>
               </Item>
-              <Item name="projectName">
+              <Item name="name">
               <Iptserach
                    placeholder="请输入项目名称"
                    style={{ width: "500px" }}
@@ -470,7 +749,7 @@ tableProps.pagination.size="default" // 页码大小默认
                   type="vertical"
                 />
               </Item>
-              <Item name="valid">
+              <Item name="state">
                 <Cselect
                   placeholder="项目状态"
                   w="200px"
@@ -485,11 +764,14 @@ tableProps.pagination.size="default" // 页码大小默认
                   ))}
                 </Cselect>
               </Item>
-
+             
               <Item>
+                <Space>
                 <span style={{ color: "#ccc", fontSize: "16px" }}>
                   当前账户共有{count}个项目
                 </span>
+                 <Button onClick={projectcig}>menus</Button>
+                </Space>
               </Item>
             </Space>
           </Form>
@@ -521,12 +803,12 @@ tableProps.pagination.size="default" // 页码大小默认
       <Custmodal
         title="新增项目"
         ref={formmodal}
-        onOk={onOk}        
+        onOk={onSubmit}        
         width={1366} 
         mold="cust"     
         type="dark"
       >
-        <Projectform />
+        <Projectform ref={projectform} />
       </Custmodal>
       </Mainbox>
      
