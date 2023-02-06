@@ -3,12 +3,12 @@ import { Navigate, useRoutes, useNavigate } from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 import store from '@redux/store'
-import monitoringRoutes from "./monitoring";
-import energyRoutes from "./energy";
+import monitoringRoutes from "./monitoring"; // 运行监控
+import energyRoutes from "./energy"; // 能源管理
 import devopsRoutes from './devops'
-import electricRoutes from "./electric";
-import distributionRoutes from "./distribution";
-import prepaymentRoutes from "./prepayment";
+import electricRoutes from "./electric"; // 电气安全
+import distributionRoutes from "./distribution"; // 配电管理
+import prepaymentRoutes from "./prepayment"; // 结算收费
 import photovoltaicRoutes from "./photovoltaic";
 import moduleRoutes from "./configure/module";
 import carbonRoutes from "./carbon"
@@ -52,7 +52,7 @@ const loginrouter =  [{
  export const LoginRouter = () => useRoutes(loginrouter)
  const token = 'YPOitQUwHhheEIJH0cJzdX2M6YITk9cYbr2lzrI0StM='
  function Redirect() { // 路由守卫
-  //const {token} = useSelector(selectUser);
+  //const {token} = useSelector(selectUser); // 后台问题， 暂时注释
   return token ? (<Projectlist/>) : (<Navigate to="/" />)  
  }
 
@@ -66,11 +66,21 @@ const loginrouter =  [{
   '0110': Photovoltaic,
   '0111': Carbon,
   '0112': Devops,
-   
 } 
-
+const childrenRoute = {
+  
+  '0105': monitoringRoutes,
+  '0106': electricRoutes,
+  '0107': distributionRoutes,
+  '0108': prepaymentRoutes,
+  '0109': energyRoutes,
+  '0110': Photovoltaic,
+  '0111': Carbon,
+  '0112': Devops,
+}
+//console.log(runMenus)
  const RunRoute = [];
- const routes =  [
+ let routes =  [
   {
    path: "/*",
    element: <Login />,   
@@ -88,7 +98,8 @@ const loginrouter =  [{
      path: "/index",
      //element: <Redirect />,
      element: <Index />,
-     children: [...RunRoute]
+     children: [],
+
    },
    {
      path: "/roomDetail",
@@ -110,16 +121,18 @@ const loginrouter =  [{
      ...configure,
   
 ];
- store.subscribe(() => {
-  try {
-    console.log(store)
-    const sidernmen = store.getState().system.siderRunMenus
-    const runmen= store.getState().system.runMenus
-    console.dir(runmen)
-    runmen.forEach(r => {
+ 
+store.subscribe(() => {
+
+   const menus  = store.getState().system.menus;
+   console.log(menus);
+   const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
+  
+  console.log(runMenus)
+  console.log(siderRunMenus)
+  runMenus?.forEach(r => {
       let {no, key} = r;
       let Com = components[no];
-      console.log(Com)
       if (Com) {
         no == '0104' ? RunRoute.push({
           path: key,
@@ -127,85 +140,23 @@ const loginrouter =  [{
           element: <Defauthome/>, //默认首页
           state: {index: true}
         }) : RunRoute.push( {
-          path: key, // 运行监控
-          element: <Com><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Com>, 
-          children: monitoringRoutes
+          path: key, 
+          element: <Com><Navigate to={siderRunMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
+          children: childrenRoute[no]
         })
       }
-      /* switch (no) {
-        case '0104':
-          childrenRoute.push({
-            index: true,
-            element: <Defauthome/>, //默认首页
-            state: {index: true}
-          })
-          break;
-        case "0105":
-          childrenRoute.push( {
-            path: key, // 运行监控
-            element: <Monitoring><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Monitoring>, 
-            children: monitoringRoutes
-          })
-          break;
-        case "0106":
-            childrenRoute.push(  {
-              path: key, // 电气安全
-              element: <Electric><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Electric>, 
-              children: electricRoutes
-            })
-        break;
-        case "0107":
-          childrenRoute.push({
-            path: key, // 配电管理
-            element: <Distribution><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Distribution>, 
-            children: distributionRoutes
-          })
-        break;
-        case "0108":
-          childrenRoute.push({
-            path: key, // 结算收费
-            element: <Prepayment><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Prepayment>, 
-            children: prepaymentRoutes
-          })
-        break;
-        case "0109":
-          childrenRoute.push( {
-            path: key, // 能源管理
-            element: <Energy><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Energy>, 
-            children: energyRoutes
-          })
-        break;
-        case "0110":
-          childrenRoute.push({
-            path: key, // 光伏发电
-            element: <Photovoltaic><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Photovoltaic>, 
-            children: photovoltaicRoutes
-          })
-        break;
-        case "0111":
-          childrenRoute.push( {
-            path: key, // 碳排管理
-            element: <Carbon><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate></Carbon>, 
-            children: carbonRoutes
-          })
-        break;
-        case "0112":
-          childrenRoute.push({
-            path: key, // 运维管理管理
-            element: <Devops><Navigate to={sidernmen[key][0]?.key} replace={true}></Navigate> </Devops>, 
-            children: devopsRoutes
-          },)
-        break;
-      } */
+     
     })
-   } catch (error) {
-    
-   }
+ 
+  try {
+    routes[2].children = RunRoute;  
+  } catch (error) {
+    console.log(error);
+  }
+ 
+
  })
 
-
-
-console.dir(routes)
 const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫

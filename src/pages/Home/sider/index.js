@@ -46,43 +46,36 @@ const Cmenu = styled(Menu)`
      padding-left: 32px;
    }
 `
+/*   siderRunMenus: null, // 项目 sider
+        siderDesignerMenus: null, // 设置 sider */
 export default function Sider() {
   const store = useStore();
   const isconfig = store.getState()?.system.configState
-  const designerMenus = store.getState()?.system.designerMenus;
-  const siderDesignerMenus = store.getState()?.system.siderDesignerMenus;
+  const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
   let [config , SetConfig] = useState(isconfig)
   store.subscribe(() => {    
     SetConfig(store.getState()?.system.configState)
 
   })
-  const [key, Setkey] = useState('outline')
-  const menuList = {
-    monitoring,
-    energy,
-    devops,
-    electric,
-    distribution,
-    prepayment,
-    photovoltaic,
-    carbon,
-    module
-  }
-  const [menus, setMenus] = useState(menuList['monitoring'])
-  const [path, setPath] = useState('monitoring')
+  const [key, Setkey] = useState('')
+
+  const [menus, setMenus] = useState()
+  const [path, setPath] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
-  useEffect(() => {   
-  
-    let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
+  useEffect(() => {  
+    let state = location.state 
     console.dir(state);
-    setPath(path)
-    setMenus(menuList[path])
-    Setkey(location.state?.selectedKeys) 
+    let {selectedKeys, key} = state;
+    setPath(key)
+    setMenus(siderRunMenus[key])
+    Setkey(selectedKeys) 
   },[location.pathname])
 
-  const onSelect = ({key}) => {      
-     let label = menuList[path]?.find(item => item.key == key)?.label
+  const onSelect = (item) => {      
+     console.log(item)
+     let {key} = item;
+     let label = menus[key]?.find(item => item.key == key)?.label
      Setkey(key)
      let url;
      if (config) {
@@ -91,7 +84,7 @@ export default function Sider() {
       url = `/index/${path}/` + key
      }
       
-     navigate(url, {state: {title: label, selectedKeys: key, path}})
+     navigate(url, {state: {title: label, selectedKeys: key, key: path}})
   }
 
   return (

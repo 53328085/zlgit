@@ -31,7 +31,7 @@ import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
-import { configProject, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
+import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -502,7 +502,9 @@ export default function Index() {
     console.log(data.length)
      try {
      // let {data, success, errMsg} = await ProjectList.QueryMenus(1)
-      if (Array.isArray(data)) {       
+      if (Array.isArray(data)) {    
+         try {
+        
          const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
          const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行
          const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
@@ -531,12 +533,18 @@ export default function Index() {
           designerMenus,
           siderRunMenus,
           siderDesignerMenus,
+          setMenus,
          }
-         dispatch(getRunMenus(runMenus));
+         dispatch(getMenus(menus));
+           
+        } catch (error) {
+          console.log(error);
+        }   
+       /*   dispatch(getRunMenus(runMenus));
          dispatch(getDesignerMenus(designerMenus));
          dispatch(getSiderRunMenus(siderRunMenus));
          dispatch(getSiderDesignerMenus(siderDesignerMenus));
-         dispatch(getSetMenus(setMenus));
+         dispatch(getSetMenus(setMenus)); */
       } else {
         return message.warning(errMsg || '数据出错,请重试', 1)
       }
@@ -545,8 +553,8 @@ export default function Index() {
      }
     
       
-    dispatch(configProject(true))
-    navigate("/index", {
+    dispatch(configProject(false))
+    navigate("/index/runtimeProject", {
       state: { path: "index", index: true, title: "项目概述" },
     })
    /*  navigate("/config/module/project", {
