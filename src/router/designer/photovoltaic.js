@@ -1,4 +1,4 @@
-/*  光伏发电 */
+/*  光伏发电 配置 */
 import {lazy} from 'react'
 const Summary = lazy(() => import("../pages/photovoltaic/summary"))
 const Analysis = lazy(() => import("../pages/photovoltaic/analysis"))

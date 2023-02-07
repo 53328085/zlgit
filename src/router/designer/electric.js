@@ -1,14 +1,16 @@
-/*  碳排管理 */
+/*  电气安全 配置 */
 import {lazy} from 'react'
 import store from '@redux/store'
-const Monitor = lazy(() => import("@pages/carbon/monitor"))
-
+const Quota = lazy(() => import("@pages/electric/configure/quota"))
+ 
 const menus = [];
 const components = {
-    '011201': Monitor, 
+    '020401': Quota,
+    
+    
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeCarbon']
+    const runmen= store.getState().system.menus.siderRunMenus?.['designerSafe'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
@@ -17,5 +19,4 @@ store.subscribe(() => {
        })
     }
 })
-
 export default  menus

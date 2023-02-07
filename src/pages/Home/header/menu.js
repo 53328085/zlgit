@@ -41,6 +41,7 @@ export default function Hmenu() {
  // const siderDesignerMenus = store.getState()?.system.menus?.siderDesignerMenus;
 useEffect(() => {
   const run = runmenus?.map(item => ({
+    no: item.no,
     label: item.label,
     key: item.key,
     icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
@@ -49,6 +50,7 @@ useEffect(() => {
     active: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : null
   }))
   const designer = designermenus?.map(item => ({
+   no: item.no,
    label: item.label,
    key: item.key,
    icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
@@ -62,16 +64,17 @@ useEffect(() => {
 
   
   const onSelect = ({key}) => {
-      console.log(key)
+      
+      
       let item = menus.find(item => item?.key === key);
       if (!item) return;
-      const {active, label} = item || {};  
+      const {active, label, no} = item || {};  
      
       SetCurrent(key)  
       let url, state;
       if(config) {
-         url = key === 'config' ? '/config/summary' : `/config/${key}/${active}`
-         state = key === 'config' ? {path: key, index: true,label} : {selectedKeys: active, label, path:key}
+         url = no === '0202' ? `/config/${key}` : `/config/${key}/${active}`
+         state = key === 'designerProject' ? {path: key, index: true,label} : {selectedKeys: active, label, path:key}
       } else {
         url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${active}`;
         state =  {selectedKeys: active, label, key}
@@ -81,7 +84,7 @@ useEffect(() => {
      
   }
   useEffect(() => {    
-      SetCurrent(location.state?.path)       
+      SetCurrent(location.state?.key)       
    },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 

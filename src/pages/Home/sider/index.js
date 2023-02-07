@@ -50,25 +50,27 @@ const Cmenu = styled(Menu)`
         siderDesignerMenus: null, // 设置 sider */
 export default function Sider() {
   const store = useStore();
+  const navigate = useNavigate()
+  const location = useLocation()
   const isconfig = store.getState()?.system.configState
   const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
   let [config , SetConfig] = useState(isconfig)
+  const [key, Setkey] = useState('')
+  const [menus, setMenus] = useState()
+
+  const [path, setPath] = useState('')
   store.subscribe(() => {    
     SetConfig(store.getState()?.system.configState)
-
+     
   })
-  const [key, Setkey] = useState('')
 
-  const [menus, setMenus] = useState()
-  const [path, setPath] = useState('')
-  const navigate = useNavigate()
-  const location = useLocation()
+
   useEffect(() => {  
-    let state = location.state 
-    console.dir(state);
+    let state = location.state || {}
+    console.log(state)
     let {selectedKeys, key} = state;
     setPath(key)
-    setMenus(siderRunMenus[key])
+    config ? setMenus(siderDesignerMenus[key]) : setMenus(siderRunMenus[key])
     Setkey(selectedKeys) 
   },[location.pathname])
 

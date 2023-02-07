@@ -1,14 +1,15 @@
-/*  碳排管理 */
+/*  结算收费 */
 import {lazy} from 'react'
 import store from '@redux/store'
-const Monitor = lazy(() => import("@pages/carbon/monitor"))
+const Quota = lazy(() => import("@pages/prepayment/configure/quota"))
+ 
 
 const menus = [];
 const components = {
-    '011201': Monitor, 
+    '020601': Quota,
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeCarbon']
+    const runmen= store.getState().system.menus.siderRunMenus?.['designerPrepay'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
@@ -17,5 +18,5 @@ store.subscribe(() => {
        })
     }
 })
-
 export default  menus
+

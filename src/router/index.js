@@ -5,21 +5,22 @@ import {selectUser} from '@redux/user'
 import store from '@redux/store'
 import monitoringRoutes from "./monitoring"; // 运行监控
 import energyRoutes from "./energy"; // 能源管理
-import devopsRoutes from './devops'
+import devopsRoutes from './devops'; // 运维管理
 import electricRoutes from "./electric"; // 电气安全
 import distributionRoutes from "./distribution"; // 配电管理
 import prepaymentRoutes from "./prepayment"; // 结算收费
-import photovoltaicRoutes from "./photovoltaic";
-import moduleRoutes from "./configure/module";
-import carbonRoutes from "./carbon"
+import photovoltaicRoutes from "./photovoltaic"; // 光伏
+import moduleRoutes from "./designer/common";
+import carbonRoutes from "./carbon" // 碳排管理
+import storageRoutes from './storage' // 储能管理
 const Login = lazy(() => import("@pages/Login"))
 
-const Projectlist = lazy(() => import("../pages/projectList"))
+const Projectlist = lazy(() => import("@pages/projectList"))
 
-const Index = lazy(() => import("../pages/Home"))
+const Index = lazy(() => import("@pages/Home"))
 
 const Defauthome = lazy(() => import("../pages/defauthome"))
-
+const Project = lazy(() => import("@pages/defauthome/configure"))
 const Module = lazy(() => import("../pages/module/index"))
 
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
@@ -34,25 +35,25 @@ const Energy = lazy(() => import("../pages/energy/index"))
 const Devops = lazy(() => import("../pages/devops/index"))
 
 const Prepayment = lazy(() => import("../pages/prepayment/index"))
-
+const Carbon = lazy(() => import("../pages/carbon/index"))
 const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
 
-const Carbon = lazy(() => import("../pages/carbon/index"))
+const Storage = lazy(() => import("../pages/storage/index"))
 
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Fform = lazy(() => import("../pages/test/fform.js"))
-import configure from "./configure";
+import {designerComponents, designerChildrenRoute} from "./designer";
+
 const loginrouter =  [{
   path: "/login",
   element: <Login />
   }]
  export const LoginRouter = () => useRoutes(loginrouter)
- const token = 'YPOitQUwHhheEIJH0cJzdX2M6YITk9cYbr2lzrI0StM='
  function Redirect() { // 路由守卫
-  //const {token} = useSelector(selectUser); // 后台问题， 暂时注释
+  const {token} = useSelector(selectUser); 
   return token ? (<Projectlist/>) : (<Navigate to="/" />)  
  }
 
@@ -64,22 +65,24 @@ const loginrouter =  [{
   '0108': Prepayment,
   '0109': Energy,
   '0110': Photovoltaic,
-  '0111': Carbon,
-  '0112': Devops,
+  '0111': Storage,
+  '0112': Carbon,
+  '0113': Devops,
 } 
 const childrenRoute = {
-  
   '0105': monitoringRoutes,
   '0106': electricRoutes,
   '0107': distributionRoutes,
   '0108': prepaymentRoutes,
   '0109': energyRoutes,
-  '0110': Photovoltaic,
-  '0111': Carbon,
-  '0112': Devops,
+  '0110': photovoltaicRoutes,
+  '0111': storageRoutes,
+  '0112': carbonRoutes,
+  '0113': devopsRoutes,
 }
 //console.log(runMenus)
- const RunRoute = [];
+ let RunRoute = [];
+ let DesignerRoute = [];
  let routes =  [
   {
    path: "/*",
@@ -95,12 +98,19 @@ const childrenRoute = {
    // 进入项目
 
    {
-     path: "/index",
-     //element: <Redirect />,
+     path: "/index", 
      element: <Index />,
      children: [],
-
+     key: 'run'
    },
+   // 配置项目
+   {
+     path: "/config",
+     element: <Index />,
+     children: [],
+     key: 'ddesignere'
+   },
+
    {
      path: "/roomDetail",
      element: <RoomDetail />
@@ -117,20 +127,19 @@ const childrenRoute = {
      },
 
    },
-     //  项目配置
-     ...configure,
+   
   
 ];
  
 store.subscribe(() => {
-
+  try {
+   RunRoute = [];
+   DesignerRoute = [];
    const menus  = store.getState().system.menus;
    console.log(menus);
    const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
-  
-  console.log(runMenus)
-  console.log(siderRunMenus)
-  runMenus?.forEach(r => {
+   console.log(siderDesignerMenus);
+   runMenus?.forEach(r => {
       let {no, key} = r;
       let Com = components[no];
       if (Com) {
@@ -147,16 +156,31 @@ store.subscribe(() => {
       }
      
     })
+    designerMenus?.forEach(r => {
+      let {no, key} = r;
+      let Com = designerComponents[no];
+      if (Com) {
+       no == '0202' ?  DesignerRoute.push( {
+        path: key, 
+        element: Project, 
+      }) : DesignerRoute.push( {
+          path: key, 
+          element: <Com><Navigate to={siderDesignerMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
+          children: designerChildrenRoute[no]
+        })
+      }
+     
+    }) 
  
-  try {
     routes[2].children = RunRoute;  
+    routes[3].children = DesignerRoute; 
   } catch (error) {
     console.log(error);
   }
  
 
  })
-
+console.log(routes);
 const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫
