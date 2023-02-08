@@ -169,14 +169,15 @@ export default function Log() {
   }
   const back = () => {
      dispatch(configProject(false));
-     navgite("/index", {
-      state: { primary: "runtimeProject", index: true, title: "项目概述" },
+     navgite("/index/runtimeProject", {
+      // state: { type: 'index',  primary: key,  index: true, title: label }
+      state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
     })
   }
   const onConfigure = () => {
     dispatch(configProject(true));
     navgite("/config/designerCommon/project", {
-      state: { nested: "project",  title: "项目管理", primary: 'designerCommon' },
+      state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
     })
   }
   return (
@@ -201,7 +202,7 @@ export default function Log() {
         </Idiv2>
         </>
         }
-        <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
+        <Dropdown menu={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
           
             <span>{loginName}</span>

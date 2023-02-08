@@ -66,14 +66,19 @@ export default function Sider() {
 
 
   useEffect(() => {  
-    let state = location.state || {}
-    console.log(state)
-    let {nested, primary } = state;
-    setPath(primary)
-    let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
-    let sidermenus = sidermenu.map(({no, label, key}) => ({no, label,key}));
-    setMenus(sidermenus)
-    Setkey(nested) 
+    try {
+      let state = location.state || {}
+      console.log(state)
+      let {nested, primary } = state;
+      setPath(primary)
+      let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key})) || [];
+      setMenus(sidermenus)
+      Setkey(nested) 
+    } catch (error) {
+      console.log(error);
+    }
+   
   },[location.pathname, config])
 
   const onSelect = ({key}) => {   

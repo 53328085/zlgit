@@ -312,10 +312,9 @@ export default function Index() {
             siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
           }   
          }) 
-         const menus = type == 1 ? {
+         const menus =  {
           designerMenus, 
           siderDesignerMenus,
-         } :  {
           runMenus,
           siderRunMenus, 
           setMenus,
