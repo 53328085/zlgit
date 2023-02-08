@@ -18,11 +18,11 @@ const initialState = {
     url: "",
     configState: false, // 项目是否处于配置状态   
     menus: {
-        runMenus: null, // 项目top菜单栏 左边
-        designerMenus: null, // 设置top菜单栏
-        siderRunMenus: null, // 项目 sider
-        siderDesignerMenus: null, // 设置 sider
-        setMenus: null, // 项目top菜单栏 右边
+        runMenus: [], // 项目top菜单栏 左边
+        designerMenus: [], // 设置top菜单栏
+        siderRunMenus: [], // 项目 sider
+        siderDesignerMenus: [], // 设置 sider
+        setMenus: [], // 项目top菜单栏 右边
     },
         runMenus: null, // 项目top菜单栏 左边
         designerMenus: null, // 设置top菜单栏

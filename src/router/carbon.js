@@ -8,7 +8,7 @@ const components = {
     '011201': Monitor, 
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeCarbon']
+    const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeCarbon']
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
