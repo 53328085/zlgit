@@ -146,7 +146,7 @@ store.subscribe(() => {
         no == '0104' ? RunRoute.push({
           path: key,
           index: true,
-          element: <Defauthome/>, //默认首页
+          element: <Defauthome/>, // 项目概述
           state: {index: true}
         }) : RunRoute.push( {
           path: key, 
@@ -162,7 +162,7 @@ store.subscribe(() => {
       if (Com) {
        no == '0202' ?  DesignerRoute.push( {
         path: key, 
-        element: Project, 
+        element: <Project />, // 项目概述
       }) : DesignerRoute.push( {
           path: key, 
           element: <Com><Navigate to={siderDesignerMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 

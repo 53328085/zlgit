@@ -1,5 +1,5 @@
 import React, {useState, useMemo, useEffect} from "react";
-import {useNavigate, useLocation, useSearchParams} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import { useStore } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
@@ -13,7 +13,6 @@ export default function Hmenu() {
   const store = useStore();
   const navigate = useNavigate()
   const location = useLocation()
-  const [searchParams] = useSearchParams()
   const [current, SetCurrent] = useState('index')  
   const isconfig = store.getState()?.system.configState
   const Menus   = store.getState()?.system.menus;
@@ -33,12 +32,6 @@ export default function Hmenu() {
      setDesignerMenus(designerMenus)
      setSiderDesignerMenus(siderDesignerMenus)
   })
-
-
- // const runMenus = store.getState()?.system.menus?.runMenus;
- //const siderRunMenus = store.getState()?.system.menus?.siderRunMenus
- //const designerMenus = store.getState()?.system.menus?.designerMenus;
- // const siderDesignerMenus = store.getState()?.system.menus?.siderDesignerMenus;
 useEffect(() => {
   const run = runmenus?.map(item => ({
     no: item.no,
@@ -47,44 +40,47 @@ useEffect(() => {
     icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
     className: 'custsubmenu',
     danger: true,
-    active: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : null
+    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : null
   }))
   const designer = designermenus?.map(item => ({
    no: item.no,
    label: item.label,
    key: item.key,
-   icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+   icon: <Ciocn url={current == 'config' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
    className: 'custsubmenu',
    danger: true,
-   active: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : null
+   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : null
   }))
   setMenus(config ? designer : run)
+  console.log()
 }, [config, runmenus, siderrunmenus])
 
 
   
-  const onSelect = ({key}) => {
-      
-      
-      let item = menus.find(item => item?.key === key);
+  const onSelect = ({   key, keyPath, domEvent }) => {
+      console.log(key);
+      console.log(keyPath)
+
+    
+     let item = menus.find(item => item?.key === key);
       if (!item) return;
-      const {active, label, no} = item || {};  
+      const {nested, label, no} = item || {};  
      
       SetCurrent(key)  
       let url, state;
       if(config) {
-         url = no === '0202' ? `/config/${key}` : `/config/${key}/${active}`
-         state = key === 'designerProject' ? {path: key, index: true,label} : {selectedKeys: active, label, path:key}
+         url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
+         state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
       } else {
-        url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${active}`;
-        state =  {selectedKeys: active, label, key}
+        url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
+        state =  {nested, title: label, primary: key}
       }
       
-      navigate(url, {state})
+      navigate(url, {state}) 
      
   }
   useEffect(() => {    
-      SetCurrent(location.state?.key)       
+      SetCurrent(location.state?.primary)       
    },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 

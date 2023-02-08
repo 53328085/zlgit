@@ -340,14 +340,16 @@ export default function Index() {
        console.log(error);
      }
   }
-  const projectRun = ({key, label}) => {
+  // 数据需要动态获取
+  const projectRun = ({key, label}) => { 
     navigate(`/index/${key}`, {
-      state: { path: "index", index: true, title: label,  key }
+      state: { type: 'index',  primary: key,  index: true, title: label }
     })
   };
+
   const projectDesigner = ({key, label}) => {
-    navigate(`/config/${key}`, {
-      state: { path: "config", index: true, title: label, key }
+    navigate(`/config/${key}/project`, {
+      state: { type: 'config', primary: key,  title: label, nested: 'project'  } 
     })
   }
   /* 新增项目  start*/

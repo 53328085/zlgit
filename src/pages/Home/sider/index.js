@@ -68,15 +68,15 @@ export default function Sider() {
   useEffect(() => {  
     let state = location.state || {}
     console.log(state)
-    let {selectedKeys, key} = state;
-    setPath(key)
-    config ? setMenus(siderDesignerMenus[key]) : setMenus(siderRunMenus[key])
-    Setkey(selectedKeys) 
-  },[location.pathname])
+    let {nested, primary } = state;
+    setPath(primary)
+    let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
+    let sidermenus = sidermenu.map(({no, label, key}) => ({no, label,key}));
+    setMenus(sidermenus)
+    Setkey(nested) 
+  },[location.pathname, config])
 
-  const onSelect = (item) => {      
-     console.log(item)
-     let {key} = item;
+  const onSelect = ({key}) => {   
      let label = menus[key]?.find(item => item.key == key)?.label
      Setkey(key)
      let url;
@@ -86,7 +86,7 @@ export default function Sider() {
       url = `/index/${path}/` + key
      }
       
-     navigate(url, {state: {title: label, selectedKeys: key, key: path}})
+     navigate(url, {state: {title: label, nested: key, primary: path}})
   }
 
   return (

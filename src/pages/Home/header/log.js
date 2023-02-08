@@ -170,13 +170,13 @@ export default function Log() {
   const back = () => {
      dispatch(configProject(false));
      navgite("/index", {
-      state: { path: "index", index: true, title: "项目概述" },
+      state: { primary: "runtimeProject", index: true, title: "项目概述" },
     })
   }
   const onConfigure = () => {
     dispatch(configProject(true));
-    navgite("/config/module/project", {
-      state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
+    navgite("/config/designerCommon/project", {
+      state: { nested: "project",  title: "项目管理", primary: 'designerCommon' },
     })
   }
   return (
