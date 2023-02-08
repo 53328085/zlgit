@@ -16,7 +16,7 @@ const components = {
 }
 store.subscribe(() => {
     try {
-        const runmen= store.getState().system.menus.siderDesignerMenus?.['designerMonitor']
+        const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerMonitor']
         if (Array.isArray(runmen) && runmen.length > 0) {        
            runmen.forEach(r => {
             let {no, key} = r;

@@ -12,7 +12,7 @@ const components = {
     '020803': Chart,
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderDesignerMenus?.['designerSolar']
+    const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerSolar']
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
