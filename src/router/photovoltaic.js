@@ -7,31 +7,20 @@ const Surroundings = lazy(() => import("../pages/photovoltaic/surroundings"))
 const Warn= lazy(() => import("../pages/photovoltaic/warn"))
 
 const Run = lazy(() => import("../pages/photovoltaic/run"))
-export default [
-    {
-       // index: true,
-        path: 'summary',
-        element: <Summary/>
-     },
-     {
-         path: 'analysis',
-         element: <Analysis/>
-     },
-     {
-        path: 'monitor',
-        element: <Monitor/>
-    },
-     {
-        path: 'surroundings',
-        element: <Surroundings/>
-    },
-    {
-        path: 'warn',
-        element: <Warn/>
-    },   
-    {
-        path: 'run',
-        element: <Run/>
+import store from '@redux/store'
+const menus = [];
+const components = {
+    '011001': Summary, 
+}
+store.subscribe(() => {
+    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeSolar']
+    if (Array.isArray(runmen) && runmen.length > 0) {        
+       runmen.forEach(r => {
+        let {no, key} = r;
+        let Com = components[no];
+        if (Com) menus.push({path: key, element: <Com />}) 
+       })
     }
-   
-]
+})
+export default  menus
+

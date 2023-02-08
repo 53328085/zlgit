@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef} from "react";
+import moment from 'moment';
 import {
   Form,
   Input,
@@ -44,7 +45,7 @@ const Formbox = styled(Form)`
   .remark {
     grid-row: 7 / 10;
   }
-  .upload {
+  /* .upload {
     grid-row: 4 / 7;
     .ant-form-item-control-input-content {
       display: grid;
@@ -52,7 +53,28 @@ const Formbox = styled(Form)`
       column-gap: 32px;
     }
    
-  }
+  } */
+  .upload {
+    grid-row: 4 / 7;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    .ant-form-item-row {
+       height: 140px;
+      }
+    .ant-form-item-control-input-content {
+        display: grid;
+        grid-template-rows: 116px 1fr;
+        row-gap: 8px;
+        width: 200px;
+        height: 140px;
+        .img {
+          border: 1px dotted #dedede;
+          display: flex;
+        }
+      }
+    
+    }
   .address {
     grid-column: 2;
     grid-row: 1/ 3;
@@ -72,23 +94,39 @@ const Formbox = styled(Form)`
     font-size: 14px;
   }
 `;
-export default function Set() {
+const Info = styled.span`
+  font-size: 12px;
+  color: rgba(0,0,0,0.85);
+`
+ function Set(props, ref) {
   const [form] = Form.useForm();
   const { Item } = Form;
   const { TextArea } = Input;
+  /* "validStageTime": "2023-02-01T00:14:31.889Z",
+  "name": "string",
+  "address": "string",
+  "lng": 0,
+  "lat": 0,
+  "imgLogo": "string",
+  "imgProject": "string",
+  "remark": "string" */
+  
   const params = {
-    ProjectType: "预付费项目",
-    ProjectValidStageTime: "", //项目有效期
-    Name: "",
-    Address: "",
-    LineAnalysisEnabled: 0,
-    Lng: "",
-    Lat: "",
-    Remark: "", //备注
+    name: "",
+    alidStageTime: "", //项目有效期
+   // imgLogo: "",
+   // imgProject: '',
+    address: "",
+   // LineAnalysisEnabled: 0,
+    lng: "",
+    lat: "",
+    remark: "", //备注
   };
   const [initialValues] = useState(params);
   const [defaultAdress, setDefaultAddress] = useState([]);
   const [addressVal, setAddressVal] = useState(["", "", ""]);
+  const [imgLogo, setImgLogo] = useState('')
+  const [imgProject, setImgProject] = useState('')
   areas.forEach((area) => {
     const matchCity = cities.filter((city) => city.code === area.cityCode)[0];
     if (matchCity) {
@@ -118,17 +156,17 @@ export default function Set() {
     children: p.children,
   }));
   const setAaddress = ({
-    Lng = "",
-    Lat = "",
-    Address = "",
+    lng = "",
+    lat = "",
+    address = "",
     province = "",
     city = "",
     district = "",
   } = {}) => {
     form.setFieldsValue({
-      Lng,
-      Lat,
-      Address,
+      lng,
+      lat,
+      address,
     });
 
     const p = options.find((i) => i.label == province);
@@ -151,10 +189,24 @@ export default function Set() {
     return false;
   };
  
+  const onSubmint = () => {
+   let fileds = form.getFieldValue()
+   let {alidStageTime} = fileds;
+  
+   if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
+   if (!imgProject)  return message.warning('项目图片必须上传', 1);
+   const params = Object.assign({}, fileds, {imgLogo, imgProject, alidStageTime: alidStageTime.format('YYYY-MM-DD')})
+  // console.log(params);
+   return params;
+  }  
+
+  useImperativeHandle(ref, () => ({
+    onSubmint
+  }));
   return (
     <Formbox
       form={form}
-      initialValues={initialValues}
+      initialValues={params}
       labelAlign="left"
       size="middle"
       requiredMark="optional"
@@ -163,19 +215,35 @@ export default function Set() {
       <Item label="项目ID">
         <Comipt placeholder="系统自增项目ID" disabled />
       </Item>
-      <Item label="项目名称" required>
+      <Item label="项目名称" required name="name">
         <Comipt placeholder="请输入项目名称" />
       </Item>
-      <Item label="项目有效期" required name="ProjectValidStageTime">
-        <CdatePicker placeholder="请选择项目有效期" />
+      <Item label="项目有效期" required name="alidStageTime">
+        <CdatePicker placeholder="请选择项目有效期" defaultValue={moment('2023-01-01', 'YYYY-MM-DD')} />
       </Item>
-      <Item label="项目图片" className="upload">
+      {/*  imgLogo: "",
+    imgProject: '', */}
+      <div className='upload'>
+         <Item label="项目logo" className="left" required>
+           <div className="img">
+            <Upload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={setImgLogo} /> 
+           </div>
+           <Info>（图片大小为: 212*32 png 格式)</Info>
+         </Item>
+         <Item label="项目图片" required>
+           <div className="img">
+            <Upload wpx={248} hpx={168} swpx={200} shpx={116} getfile={setImgProject} /> 
+           </div>
+           <Info>（图片大小为: 248*168像素 png 格式)</Info>
+         </Item>
+      </div>
+     {/*  <Item label="项目图片" className="upload">
         <Image src={imgurl['projectimg']} height={116}></Image>
         <div style={{border: "1px dotted #9c9ea4", display: 'flex'}}>
-        <Upload shpx={116} wpx={248} hpx={168}  />
+           <Upload shpx={116} wpx={248} hpx={168}  />
         </div>
-      </Item>
-      <Item label="项目备注" name="Remark" className="remark">
+      </Item> */}
+      <Item label="项目备注" name="remark" className="remark">
         <Comtext  placeholder="请输入备注0-99字" maxLength={99} h="140px" />
       </Item>
       <Item label="项目地址" className="address">
@@ -192,19 +260,19 @@ export default function Set() {
             }}
           />
         </Item>
-        <Item name="Address">
+        <Item name="address">
           <Comipt placeholder="请输入项目的详细地址" />
         </Item>
       </Item>
       <Item label="经纬度" required>
         <Row gutter={16}>
           <Col span={12}>
-            <Item name="Lng">
+            <Item name="lng">
               <Comipt placeholder="经度" />
             </Item>
           </Col>
           <Col span={12}>
-            <Item name="Lat">
+            <Item name="lat">
               <Comipt placeholder="纬度" />
             </Item>
           </Col>
@@ -216,3 +284,4 @@ export default function Set() {
     </Formbox>
   );
 }
+export default forwardRef(Set)

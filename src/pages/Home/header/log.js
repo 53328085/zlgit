@@ -1,9 +1,10 @@
 import React, {useState, useRef} from "react";
 import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate} from "react-router-dom"
 import { clearToken} from "@redux/user";
+import { configProject} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -66,6 +67,12 @@ const Idiv4 = styled(Idiv)`
     background-image: url(${imgurl['34H']});
   }
 `;
+const Idiv5 = styled(Idiv)`
+  background-image: url(${imgurl['35N']});
+  &:hover {
+    background-image: url(${imgurl['35H']});
+  }
+`;
 const Triangle = styled.div`
     width: 0; 
  	height: 0;
@@ -118,11 +125,18 @@ const Ciptpd = styled(Input.Password)`
 `
 export default function Log() {
   // const [user, setUser] = useState('')
-  
+  const store = useStore();
   const user = useRef()
   const navgite = useNavigate()
   const dispatch = useDispatch()
   const loginName = useSelector((state) => state.user)?.loginName;
+  const isconfig = store.getState()?.system.configState
+  let [config , SetConfig] = useState(isconfig)
+  store.subscribe(() => {
+    
+    SetConfig(store.getState()?.system.configState)
+
+  })
   const Item = Form.Item
   const [form] = Form.useForm()
   const onExit = async () => {
@@ -153,20 +167,42 @@ export default function Log() {
       message.warning(e.message || '保存失败', 1)
     })
   }
+  const back = () => {
+     dispatch(configProject(false));
+     navgite("/index/runtimeProject", {
+      // state: { type: 'index',  primary: key,  index: true, title: label }
+      state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
+    })
+  }
+  const onConfigure = () => {
+    dispatch(configProject(true));
+    navgite("/config/designerCommon/project", {
+      state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
+    })
+  }
   return (
     <Cdiv>
       <Triangle />
       <Ldiv>
+        {
+          config ? 
+          (<Idiv5 onClick={back}>
+            <span> 返回</span>
+          </Idiv5>)
+          :
+        <>
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
-        <Idiv4>
+        <Idiv4 onClick={onConfigure}>
           <span>项目设置</span>
         </Idiv4>
         <Idiv2>
           <span>平台配置</span>
         </Idiv2>
-        <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
+        </>
+        }
+        <Dropdown menu={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
           
             <span>{loginName}</span>

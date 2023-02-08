@@ -1,5 +1,6 @@
-/*  运行监控 */
+/*  运行监控 run*/
 import {lazy} from 'react'
+import store from '@redux/store'
 const Electrical = lazy(() => import("../pages/monitoring/electrical"))
 const Gateway = lazy(() => import("../pages/monitoring/gateway"))
 const Loss= lazy(() => import("../pages/monitoring/loss"))
@@ -10,46 +11,25 @@ const Video = lazy(() => import("../pages/monitoring/video"))
 const Warning = lazy(() => import("../pages/monitoring/warning"))
 const Remote = lazy(() => import("../pages/monitoring/remote"))
 const Oplog = lazy(() => import("../pages/monitoring/oplog"))
-export default [
-    {
-       // index: true,
-        path: 'outline',
-        element: <Summary/>
-     },
-     {
-         path: 'electrica',
-         element: <Electrical/>
-     },
-     {
-        path: 'gateway',
-        element: <Gateway/>
-    },
-    {
-        path: 'loss',
-        element: <Loss/>
-    },
-    {
-        path: 'point',
-        element: <Point/>
-    },
-    {
-        path: 'report',
-        element: <Report/>
-    },
-    {
-        path: 'video',
-        element: <Video/>
-    },
-    {
-        path: 'warning',
-        element: <Warning/>
-    },
-    {
-        path: 'remote',
-        element: <Remote/>
-    },
-    {
-        path: 'oplog',
-        element: <Oplog/>
+const menus = [];
+const components = {
+    '010501': Summary,
+    '010502': Point,
+    '010503': Gateway,
+    '010504': Remote,
+    '010505': Warning,
+    '010506': Video,
+    '010507': Report,
+    '010508': Oplog
+}
+store.subscribe(() => {
+    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeMonitor'] 
+    if (Array.isArray(runmen) && runmen.length > 0) {        
+       runmen.forEach(r => {
+        let {no, key} = r;
+        let Com = components[no];
+        if (Com) menus.push({path: key, element: <Com />}) 
+       })
     }
-]
+})
+export default  menus

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import {ExclamationCircleFilled} from '@ant-design/icons'
 import Titlelayout from '@com/titlelayout';
 import {drawEcharts} from '@com/useEcharts'
-import company from './company.png'
+import company from '../company.png'
 const Divbox = styled.div`
  // flex: 1;
   height: max-content;

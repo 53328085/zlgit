@@ -1,9 +1,9 @@
 import React, {useState, useMemo, useEffect} from "react";
-import {useNavigate, useLocation, useSearchParams} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import { useStore } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
-
+//import {getrunMenus, designerMenus, siderRunMenus, siderDesignerMenus} from '@redux/systemconfig'
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['01H']
@@ -13,135 +13,74 @@ export default function Hmenu() {
   const store = useStore();
   const navigate = useNavigate()
   const location = useLocation()
-  const [searchParams] = useSearchParams()
   const [current, SetCurrent] = useState('index')  
   const isconfig = store.getState()?.system.configState
+  const Menus   = store.getState()?.system.menus;
+
+  const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = Menus;
   let [config , SetConfig] = useState(isconfig)
+  let [runmenus, setRunMenus] = useState(runMenus)
+  let [siderrunmenus, setSiderRunMenus] = useState(siderRunMenus)
+  let [designermenus, setDesignerMenus] = useState(designerMenus)
+  let [siderdesignermenus, setSiderDesignerMenus] = useState(siderDesignerMenus)
+  let [menus, setMenus] = useState([]);
   store.subscribe(() => {
-    
     SetConfig(store.getState()?.system.configState)
-
+    const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus}   = store.getState()?.system.menus;   
+     setRunMenus(runMenus)
+     setSiderRunMenus(siderRunMenus)
+     setDesignerMenus(designerMenus)
+     setSiderDesignerMenus(siderDesignerMenus)
   })
-  console.log(config);
-  const menus =  [
-  config ?  {
-      label: '公共模块',
-      key: "module",
-      icon: <Ciocn url={current == 'module' ? imgurl['00H'] : imgurl['00N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      active: 'project',
-      title: '项目管理',      
-    } : null,
-    {
-      label: '项目概述' ,
-      key: "index",
-      icon: <Ciocn url={current == 'index' ? imgurl['01H'] : imgurl['01N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      title: '项目概述',     
-    },
-    {
-      label: '运行监控',
-      key: "monitoring",
-      icon: <Ciocn url={current == 'monitoring' ? imgurl['02H'] : imgurl['02N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      active: 'outline',
-      title: '运行概述',      
-    },
-    {
-      label: "电气安全",
-      key: "electric",
-      icon: <Ciocn url={current == 'electric' ? imgurl['03H'] : imgurl['03N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      active: 'safe',
-      title: '电气安全',      
-    },
-    {
-        label: "配电管理",
-        key: "distribution",
-        icon: <Ciocn url={current == 'distribution' ? imgurl['04H'] : imgurl['04N']} />,
-        className: 'custsubmenu',
-        danger: true,
-        active: 'summary',
-        title: '配电概述',
-    },
-    {
-        label: "结算收费",
-        key: "prepayment",
-        icon: <Ciocn url={current == 'prepayment' ? imgurl['05H'] : imgurl['05N']} />,
-        className: 'custsubmenu',
-        danger: true,
-        active: 'summary',
-        title: '配电概述',        
-    },
-    {
-        label: "能源管理",
-        key: "energy",
-        icon: <Ciocn url={current == 'energy' ? imgurl['06H'] : imgurl['06N']} />,
-        className: 'custsubmenu',
-        danger: true,
-        active: 'summary',
-        title: '能源概述',
-    },
-    {
-        label: "光伏发电",
-        key: "photovoltaic",
-        icon: <Ciocn url={current == 'photovoltaic' ? imgurl['07H'] : imgurl['07N']} />,
-        className: 'custsubmenu',
-        danger: true,
-        active: 'summary',
-        title: '概述',
-    },
-    {
-      label: "储能管理",
-      key: "storage",
-      icon: <Ciocn url={current == 'storage' ? imgurl['11H'] : imgurl['11N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      active: 'summary',
-      title: '概述',
-    },
-    {
-        label: "碳排管理",
-        key: "carbon",
-        icon: <Ciocn url={current == 'carbon' ? imgurl['08H'] : imgurl['08N']} />,
-        className: 'custsubmenu',
-        danger: true,
-        active: 'monitor',
-        title: '运行监控',
-    },
+useEffect(() => {
+  const run = runmenus?.map(item => ({
+    no: item.no,
+    label: item.label,
+    key: item.key,
+    icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+    className: 'custsubmenu',
+    danger: true,
+    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : null
+  }))
+  const designer = designermenus?.map(item => ({
+   no: item.no,
+   label: item.label,
+   key: item.key,
+   icon: <Ciocn url={current == 'config' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+   className: 'custsubmenu',
+   danger: true,
+   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : null
+  }))
+  setMenus(config ? designer : run)
+  console.log()
+}, [config, runmenus, siderrunmenus])
 
-    {
-      label: "运维管理",
-      key: "devops",
-      icon: <Ciocn url={current == 'devops' ? imgurl['09H'] : imgurl['09N']} />,
-      className: 'custsubmenu',
-      danger: true,
-      active: 'summary',
-      title: '运维管理',
-   },
-    
-   /*  {
-        label: "后台管理",
-        key: "adimin",
-        icon: <Ciocn url={current == '/index' ? h10 : n10} />,
-        className: 'custsubmenu'
-    } */] 
+
   
-  const onSelect = ({key}) => {
-      const {active, title} = menus.find(item => item.key === key)  
-      SetCurrent(key)  
+  const onSelect = ({   key, keyPath, domEvent }) => {
+      console.log(key);
+      console.log(keyPath)
+
+    
+     let item = menus.find(item => item?.key === key);
+      if (!item) return;
+      const {nested, label, no} = item || {};  
      
-      let url = key === 'index' ? '/index' : `/index/${key}/${active}`
-      let state = key === 'index' ? {path: key, index: true,title} : {selectedKeys: active, title, path:key}
-      navigate(url, {state})
+      SetCurrent(key)  
+      let url, state;
+      if(config) {
+         url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
+         state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
+      } else {
+        url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
+        state =  {nested, title: label, primary: key}
+      }
+      
+      navigate(url, {state}) 
      
   }
   useEffect(() => {    
-      SetCurrent(location.state?.path)       
+      SetCurrent(location.state?.primary)       
    },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 

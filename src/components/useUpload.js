@@ -7,7 +7,7 @@ import {Image, message} from 'antd'
  * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB
  * @date 2022-11-11 09:38
  */
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}} = {}) {
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile} = {}) {
 const Preview = styled.div`
     flex: 1;
     display: flex;
@@ -105,6 +105,9 @@ const Ifile = styled.input.attrs(props => ({
     reader.readAsDataURL(file)
     reader.onload = () => {
         src = reader.result
+        clearfile() 
+        setUrl(src)
+        getfile(src);
     }
     reader.onerror = () => {
         return message.warning(reader.error || '图片加载出错' )
@@ -112,8 +115,7 @@ const Ifile = styled.input.attrs(props => ({
    };
  
   const upload = (e) => {  // 1.判断图片大小 2. 判断图片格式 3. 判断图片尺寸
-    fileData = e.target.files[0];
-    console.log(fileData)
+    fileData = e.target.files[0];    
     let { name, size } = fileData;
     let limit = Math.ceil(size / 1024);
     let ext = name.split(".")[1];
@@ -147,9 +149,14 @@ const Ifile = styled.input.attrs(props => ({
         clearfile() 
         return message.warning(`图片${text}度大于${size}像素`);
       }
-      getfile(fileData)
-      clearfile() 
-      setUrl(src)
+      //
+
+      onreader(fileData);
+      //let reader = new FileReader();
+     // console.log(reader.readAsDataURL(fileData))
+     // getfile(reader.readAsDataURL(fileData));
+      //clearfile() 
+     // setUrl(src)
     }
   }
   const delImg = () => {
@@ -161,10 +168,10 @@ const Ifile = styled.input.attrs(props => ({
      <Preview>
       {
         url ? 
-        <Imgbox>
+        (<Imgbox>
             <Image src={url} preview={true} width={swpx} height={shpx}   /> 
             <Luspan onClick={delImg} className="iconfont iconicon_shanchu"></Luspan>
-        </Imgbox>
+        </Imgbox>)
         : 
         <>
         <Ciocn>   
