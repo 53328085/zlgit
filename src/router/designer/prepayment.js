@@ -9,7 +9,7 @@ const components = {
     '020601': Quota,
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderDesignerMenus?.['designerPrepay'] 
+    const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerPrepay'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;

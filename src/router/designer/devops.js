@@ -12,7 +12,7 @@ const components = {
     '021102': Inspection, 
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderDesignerMenus?.['maintenance']
+    const runmen= store.getState().system.menus?.siderDesignerMenus?.['maintenance']
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
