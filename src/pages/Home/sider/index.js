@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
+import { useStore } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import styled from 'styled-components'
 import {monitoring, energy, devops, electric, distribution, prepayment, photovoltaic, carbon, module} from './menus'
+import {monitoringConf} from './configuremenus'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
@@ -44,38 +46,49 @@ const Cmenu = styled(Menu)`
      padding-left: 32px;
    }
 `
+/*   siderRunMenus: null, // 项目 sider
+        siderDesignerMenus: null, // 设置 sider */
 export default function Sider() {
-  const [key, Setkey] = useState('outline')
-  const menuList = {
-    monitoring,
-    energy,
-    devops,
-    electric,
-    distribution,
-    prepayment,
-    photovoltaic,
-    carbon,
-    module
-  }
-  const [menus, setMenus] = useState(menuList['monitoring'])
-  const [path, setPath] = useState('monitoring')
+  const store = useStore();
   const navigate = useNavigate()
   const location = useLocation()
-  useEffect(() => {   
-    console.log(location)
-    let {selectedKeys, path} = location.state || {selectedKeys: 'outline', path: '/index'}
-    setPath(path)
-    setMenus(menuList[path])
-    Setkey(location.state?.selectedKeys) 
+  const isconfig = store.getState()?.system.configState
+  const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
+  let [config , SetConfig] = useState(isconfig)
+  const [key, Setkey] = useState('')
+  const [menus, setMenus] = useState()
+
+  const [path, setPath] = useState('')
+  store.subscribe(() => {    
+    SetConfig(store.getState()?.system.configState)
+     
+  })
+
+
+  useEffect(() => {  
+    let state = location.state || {}
+    console.log(state)
+    let {selectedKeys, key} = state;
+    setPath(key)
+    config ? setMenus(siderDesignerMenus[key]) : setMenus(siderRunMenus[key])
+    Setkey(selectedKeys) 
   },[location.pathname])
 
-  const onSelect = ({key}) => {      
-     let label = menuList[path]?.find(item => item.key == key)?.label
+  const onSelect = (item) => {      
+     console.log(item)
+     let {key} = item;
+     let label = menus[key]?.find(item => item.key == key)?.label
      Setkey(key)
-     let url = `/index/${path}/` + key
-     navigate(url, {state: {title: label, selectedKeys: key, path}})
+     let url;
+     if (config) {
+      url = `/config/${path}/` + key
+     }else {
+      url = `/index/${path}/` + key
+     }
+      
+     navigate(url, {state: {title: label, selectedKeys: key, key: path}})
   }
- 
+
   return (
     <Sdiv> 
        <Title/>

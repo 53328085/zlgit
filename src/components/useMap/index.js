@@ -41,7 +41,7 @@ export default function Index(props) {
     const pt = e.latlng   
    
     geoc.getLocation(pt, function (rs) {
-        
+        console.log(rs);
         try {    
         let { addressComponents, address, point } = rs;   
         console.log(point?.lng)       

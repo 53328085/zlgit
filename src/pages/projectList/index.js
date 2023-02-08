@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState,  useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +10,11 @@ import {
   Modal,
   Button,
   Form,
-  Input,
   Select,
   Divider,
   Table,
   Layout,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -25,13 +25,14 @@ import {
   DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
-import { Project } from "@api/api.js";
+import { ProjectList } from "@api/api.js";
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
-import { configProject } from "@redux/systemconfig";
+import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
+import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -254,6 +255,7 @@ export default function Index() {
   const [count, setCount] = useState(0); 
   const modal = useRef()
   const formmodal = useRef()
+  const projectform = useRef()
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
@@ -267,19 +269,85 @@ export default function Index() {
       modal.current.onOpen()
   };
   const onOk = () => {   
-    modal.current.onCancel()
-    navigate("/", {});
+     navigate("/", {});
+    // projectform.current.onFinish();
+   // projectform.current.onFinish();
+   // modal.current.onCancel()
+    //navigate("/", {});
   };
-  const projectcig = () => {   
-    dispatch(configProject(true))
-    navigate("/config/module/project", {
-      state: { selectedKeys: "module",  title: "项目管理", path: 'module' },
+  const onSubmit = () => {
+    let params =  projectform.current.onSubmint();
+    console.log(params);
+    ProjectList.createProject(params).then(res => {
+      console.log(res)
+    }).catch(e => {
+      console.log(e);
     })
   }
-  const projectinfo = () => {   
-    dispatch(configProject(false))
-    navigate("/index", {
-      state: { path: "index", index: true, title: "项目概述" },
+
+  const startProject = async ({id, type}) => {
+    console.log(id);
+     try {
+      let {data, success, errMsg} = await ProjectList.QueryMenus(id)
+      if (success && Array.isArray(data)) {    
+         try {
+         const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+         const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行
+         const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+         let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+        
+         const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+
+         const siderRunMenus = {}; 
+         runMenus.forEach(item => {
+          let {no, key, parentNo} = item 
+          if (!exclude.includes(item.no)) {
+             siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no)
+          }   
+         }) 
+         const siderDesignerMenus = {};
+         designerMenus.forEach(item => {
+          let {no, key, parentNo} = item 
+          if (!exclude.includes(item.no)) {
+            siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+          }   
+         }) 
+         const menus = type == 1 ? {
+          designerMenus, 
+          siderDesignerMenus,
+         } :  {
+          runMenus,
+          siderRunMenus, 
+          setMenus,
+         }
+         dispatch(getMenus(menus));
+         dispatch(configProject(type === 1))
+         if (type == 2) {
+           let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
+           projectRun(runitem)
+         }else if(type == 1) {
+           let desitem = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
+           projectDesigner(desitem)
+         }
+           
+        } catch (error) {
+          console.log(error);
+        }   
+      } else {
+        return message.warning(errMsg || '数据出错,请重试', 1)
+      }
+     } catch (error) {
+       console.log(error);
+     }
+  }
+  const projectRun = ({key, label}) => {
+    navigate(`/index/${key}`, {
+      state: { path: "index", index: true, title: label,  key }
+    })
+  };
+  const projectDesigner = ({key, label}) => {
+    navigate(`/config/${key}`, {
+      state: { path: "config", index: true, title: label, key }
     })
   }
   /* 新增项目  start*/
@@ -331,15 +399,15 @@ export default function Index() {
       key: "custop",
       dataIndex: "custop",
       align: "center",
-      render: () => (
+      render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => projectcig()}>
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1})}>
             项目配置
           </CustBtn>
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
-              projectinfo()
+              startProject({id: record.id, type: 2})
             }
           >
             进入项目
@@ -359,7 +427,7 @@ export default function Index() {
       { pageNum: current, pageSize },
      formData
     );
-    return Project.queryProject(params).then((res) => {
+    return ProjectList.queryProject(params).then((res) => {
       let { success, data, totalNum } = res;
       if (success && Array.isArray(data)) {
         setCount(totalNum);
@@ -374,13 +442,15 @@ export default function Index() {
           list: [],
         };
       }
+    }).catch(e => {
+      console.log(e)
     });
   };
   const { tableProps, search } = useAntdTable(getTableData, {
     form,
     defaultParams: [
       { current: 1, pageSize: 10 },
-      {projectName: '', valid: 0}
+      {name: '', state: 0}
     ],
    
   });
@@ -444,7 +514,7 @@ tableProps.pagination.size="default" // 页码大小默认
                   新增项目
                 </CustBtn>
               </Item>
-              <Item name="projectName">
+              <Item name="name">
               <Iptserach
                    placeholder="请输入项目名称"
                    style={{ width: "500px" }}
@@ -470,7 +540,7 @@ tableProps.pagination.size="default" // 页码大小默认
                   type="vertical"
                 />
               </Item>
-              <Item name="valid">
+              <Item name="state">
                 <Cselect
                   placeholder="项目状态"
                   w="200px"
@@ -485,11 +555,13 @@ tableProps.pagination.size="default" // 页码大小默认
                   ))}
                 </Cselect>
               </Item>
-
+             
               <Item>
+                <Space>
                 <span style={{ color: "#ccc", fontSize: "16px" }}>
                   当前账户共有{count}个项目
-                </span>
+                </span> 
+                </Space>
               </Item>
             </Space>
           </Form>
@@ -521,12 +593,12 @@ tableProps.pagination.size="default" // 页码大小默认
       <Custmodal
         title="新增项目"
         ref={formmodal}
-        onOk={onOk}        
+        onOk={onSubmit}        
         width={1366} 
         mold="cust"     
         type="dark"
       >
-        <Projectform />
+        <Projectform ref={projectform} />
       </Custmodal>
       </Mainbox>
      
