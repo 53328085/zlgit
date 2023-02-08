@@ -1,4 +1,4 @@
-/*  运行监控 */
+/*  运行监控 配置 */
 import {lazy} from 'react'
 import store from '@redux/store'
 const DeviceType = lazy(() => import("@pages/monitoring/configure/deviceType"))

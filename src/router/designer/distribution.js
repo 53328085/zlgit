@@ -8,7 +8,7 @@ const components = {
     '020501': Room, 
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderRunMenus?.['designerDistribution'] 
+    const runmen= store.getState().system.menus.siderDesignerMenus?.['designerDistribution'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
