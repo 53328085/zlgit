@@ -13,7 +13,7 @@ const components = {
     '011001': Summary, 
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus.siderRunMenus?.['runtimeSolar']
+    const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeSolar']
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
