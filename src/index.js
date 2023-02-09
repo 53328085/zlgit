@@ -3,15 +3,15 @@ import {createRoot} from 'react-dom/client';
 import { Provider } from 'react-redux'
 import {PersistGate} from 'redux-persist/integration/react'
 import {persistStore} from 'redux-persist'
-import store from './redux/store'
-import ConfigProvider from './antdconfig';
+import store from './redux/store' 
 import 'antd/dist/antd.css'
-
-// import {ConfigProvider} from 'antd'
-
+import zhCN from 'antd/es/locale/zh_CN'
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
+import ConfigProvider  from './antdconfig';
 import './assets/css/index.less'
 import App from './App'
-
 import {detectZoom} from './hooks/detectZoom'
 let persistor = persistStore(store)
 const {ratio, screen}= detectZoom()
@@ -23,7 +23,7 @@ window.addEventListener('resize', () => {
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <ConfigProvider>
+    <ConfigProvider locale={zhCN}>
       <App />
     </ConfigProvider>
     </PersistGate>
