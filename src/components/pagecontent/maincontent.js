@@ -80,6 +80,7 @@ export default function Maincontent(props) {
      color: '#fff'
  }
  const onChange = (key) => {  
+    console.log(key)
     setvalue(key)
     setDefaultTab(key)
     setSearchParams({item: key})

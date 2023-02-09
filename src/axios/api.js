@@ -348,3 +348,11 @@ export const bottomControl = (params, url, ip, channel, user, pwd) => server.pos
 export const rightControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzRight?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const topControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzUp?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const stopControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzStop?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+
+//运行监控
+export const Monitoring =  {
+    DeviceTypeManager:{
+        GatewayType:(data)=>server.post('/Monitor/Gateway/QueryByPage',data)
+    }
+  
+}
