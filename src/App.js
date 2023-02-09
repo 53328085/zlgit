@@ -7,10 +7,10 @@ import EL from './router'
 
 function App() {
   return   (<BrowserRouter>
-     <Suspense fallback={<Loading/>}>
+    <Suspense fallback={<Loading/>}>  
          <EL/>
         
-     </Suspense>    
+    </Suspense>  
     </BrowserRouter>) 
    
 

@@ -120,7 +120,7 @@ const childrenRoute = {
      element: <Antdconfig/>
    },   
    {
-     path: '/form',
+     path: '/zltest',
      element: <Fform/>,
      loader: async ({ params }) => {
         console.log(params)

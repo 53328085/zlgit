@@ -74,7 +74,7 @@ useEffect(() => {
          state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
       } else {
         url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
-        state =  {nested, title: label, primary: key}
+        state = key == 'runtimeProject'  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
       }
       
       navigate(url, {state}) 
