@@ -18,6 +18,7 @@ const initialState = {
     url: "",
     configState: false, // 项目是否处于配置状态   
     menus: {
+        projectId: 0, // 项目ID
         runMenus: [], // 项目top菜单栏 左边
         designerMenus: [], // 设置top菜单栏
         siderRunMenus: [], // 项目 sider
@@ -42,12 +43,10 @@ const system = createSlice({
     name: 'system',
     initialState,
     reducers: {
-        configProject(state, actions) { // 项目是否处于配置状态
-           
+        configProject(state, actions) { // 项目是否处于配置状态           
             return Object.assign({}, state, {configState: actions.payload})
         },
         getMenus(state, actions) {
-            console.log(actions)
             return Object.assign({}, state, {menus: actions.payload})
         },
         getRunMenus(state, actions) {

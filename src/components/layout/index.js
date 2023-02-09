@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import Logbg from './logBg.png'
+//const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
 
 const Csider = styled(Sider)`
@@ -23,7 +24,9 @@ export function LoginLayout(props) { // 登录页
     <Logheaer>
       {props.header}
     </Logheaer>
-    <Content>{props.children}</Content>  
+    <Content>
+      {props.children}
+    </Content>  
     <Footer className={style.footer}>
         <Copyright />
     </Footer>
@@ -49,7 +52,9 @@ export function ProjectLayout(props) { // 项目内容
      <Csider>{props.custsider}</Csider>
     <Layout>
       <Header className={style.header}>{props.custheader}</Header>
+     
       <Content className={style.content}>{props.children}</Content>
+     
     </Layout>
     </Layout>
   )
