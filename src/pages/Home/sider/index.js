@@ -6,6 +6,11 @@ import styled from 'styled-components'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
+
+ 
+const Micon = () => {
+   return <span className="custicon">&#9673;</span>
+}
 const Imgbox = styled.div`
    padding: 20px 0 16px 0;
    border-bottom: 1px dotted #ffff;
@@ -70,7 +75,7 @@ export default function Sider() {
       let {nested, primary } = state;
       setPath(primary)
       let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key})) || [];
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
