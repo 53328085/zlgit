@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {lazy} from 'react'
 import { Layout} from 'antd'
 import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
-import Logbg from './logBg.png'
+//import Logbg from './logBg.png'
+const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
 
 const Csider = styled(Sider)`
