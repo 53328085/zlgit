@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
-
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
 
 import Pagecount from '@com/pagecontent'
 
@@ -9,9 +10,10 @@ import Release from './release'
 import Set from './set'
 import Region from './region'
 import Datagroup from './dataGroup'
-
+import CModal from '@com/useModal'
 export default function Index() {
   const [value, setvalue] = useState('set')
+  const projectId = useSelector(selectProjectId);
   const tabs = [
     {label: '项目基础设置', key: 'set'},
     {label: '区域设置', key: 'region'},
@@ -34,7 +36,7 @@ export default function Index() {
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={false} pd="32px">   
         
-     { <Com/>}
+     { <Com CModal={CModal} projectId={projectId} />}
       
     </Pagecount>
     </CustContext.Provider>

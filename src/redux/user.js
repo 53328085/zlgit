@@ -4,9 +4,8 @@ const initialState = {
     memorize: false, // 是否记住用户名
     memoPhone: false, // 是否记住手机号码
     loading: false,
-    loginName: "",
-    mobile: "",
-    nickName: "",
+    name: "",
+    mobile: "",  
     roleType: '',
     token: "",
     userId: '',
@@ -59,8 +58,9 @@ export const selectCurProject = state => (Array.isArray(state?.user.projects) &&
 
 export const selectLoading = state => state.user.loading
 export const selectUser =  (state) => {    
-    let {loginName,mobile, nickName,roleType,token,userId} = state.user
-    return {loginName,mobile,nickName,roleType,token,userId}
+    let {name,mobile, roleType,token,userId} = state.user
+    console.log('name',name)
+    return {name,mobile,roleType,token,userId}
  }
 export const selectMemorize = state => state.user.memorize
 export const selectMemoPhone = state => state.user.memoPhone
