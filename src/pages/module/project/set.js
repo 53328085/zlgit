@@ -21,7 +21,7 @@ import Cupload from "@com/useUpload.js"
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 600px 600px;
-  grid-template-rows: repeat(12, 36px);
+  grid-template-rows: repeat(14, 32px);
   gap: 16px 128px;
   grid-auto-flow: column;
   .ant-form-item {
@@ -36,7 +36,10 @@ import Cupload from "@com/useUpload.js"
     grid-row-end: 7;
   }
   .remark {
-    grid-row: 11 / 13;
+    grid-row: 13 / 15;
+    textarea.ant-input {
+      height: 80px;
+    }
   }
   .upload {
     grid-column: 2;
@@ -65,7 +68,10 @@ import Cupload from "@com/useUpload.js"
     grid-column: 2;
     grid-row: 4 / 6;
   }
-  .lat {}
+  .lat {
+    grid-column: 2;
+    grid-row: 6;
+  }
   .upload, .address, .lat {
     .ant-form-item-label {
     flex-basis: 5em;
@@ -74,7 +80,14 @@ import Cupload from "@com/useUpload.js"
   }
   .map {
     grid-column: 2;
-    grid-row: 7 / -1;
+    grid-row: 7 / -3;
+  }
+  .save {
+    grid-column: 2;
+    grid-row: -2;
+    display: flex;
+    justify-content: flex-end;
+    
   }
   .ant-btn-default,
   .ant-btn-primary {
@@ -272,8 +285,30 @@ const checkChange = (values) => {
           }}
         />
       </Item>
+      <Item label="App 功能启用">
+        <Switch
+          checkedChildren="是"
+          unCheckedChildren="否"
+          defaultChecked
+          style={{
+            width: "64px",
+          }}
+        />
+      </Item>
+      <Item label="班次管理启用">
+        <Switch
+          checkedChildren="是"
+          unCheckedChildren="否"
+          defaultChecked
+          style={{
+            width: "64px",
+          }}
+        />
+      </Item>
       <Item label="项目备注" name="Remark" className='remark'>
+         <Item noStyle>
         <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
+        </Item>
       </Item>
       <div className='upload'>
          <Item label="项目logo" className="left" required>
@@ -323,6 +358,9 @@ const checkChange = (values) => {
       </Item>
       <div className='map'>
         <Mapcom setAaddress={setAaddress} initialValues={initialValues} />
+      </div>
+      <div className="save">
+         <Button type="primary">保存</Button>
       </div>
     </Formbox>
   );

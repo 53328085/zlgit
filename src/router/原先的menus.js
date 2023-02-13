@@ -1,7 +1,3 @@
- import {ScanOutlined} from '@ant-design/icons'
- const Micon = () => {
-    return <span className="custicon">&#9673;</span>
- }
  export  const monitoring = [ // 运行监控
     {
       label: '运行概述' ,
@@ -54,9 +50,9 @@
       icon: <Micon />
   },
    ]
-
-
-
+ 
+ 
+ 
    export  const energy = [ // 能源管理
     {
       label: '能源概述' ,
@@ -162,7 +158,7 @@
       icon: <Micon />
     },
    ]
-
+ 
    export  const distribution = [ // 配电管理
     {
       label: '配电概述' ,
@@ -205,7 +201,7 @@
       icon: <Micon />
     },
    ]
-
+ 
    export  const prepayment = [ // 结算收费
    {
      label: '概述' ,
@@ -286,8 +282,8 @@
   },
   
  ]
-
-
+ 
+ 
  export  const carbon = [ // 碳排管理
  {
    label: '运行监控',
@@ -331,5 +327,5 @@ export  const module = [ // 公共模块
   key: "cockpit",
   icon: <Micon />
 },
-
+ 
 ]

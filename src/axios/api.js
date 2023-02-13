@@ -3,6 +3,7 @@ import server  from './index'
 export class Test {
     static User = (params) => server.post(`/users`, params)
 }
+// zl api start
 // 登录
 export class Login {
     static SystemConfig = (url) => server.get(`/SystemConfig/GetSystemConfigInfo?url=${url}`)
@@ -23,7 +24,13 @@ export class ProjectList {
     static createProject = (data) => server.post('General/PlatConfig/CreateProject', data) // 新增项目
     static QueryMenus = (projectId) => server.get(`General/User/QueryMenus?projectId=${projectId}`)  // 查询菜单栏
 }
+// 公共模块---项目设置
+export class ProjectSetting {
+    static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
+    static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
+}
 
+// zl api end
 // 主页
 export class Home {
     static BaseInfoSummary = (projectId) => server.get(`/Home/BaseInfoSummary?projectId=${projectId}`)      // 告警信息和客户信息汇总

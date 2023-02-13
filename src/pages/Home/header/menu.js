@@ -6,7 +6,7 @@ import './style.less'
 //import {getrunMenus, designerMenus, siderRunMenus, siderDesignerMenus} from '@redux/systemconfig'
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
-  const url = props.url || imgurl['01H']
+  const url = props.url || imgurl['0104H']
   return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
 }
 export default function Hmenu() {
@@ -24,44 +24,45 @@ export default function Hmenu() {
   let [designermenus, setDesignerMenus] = useState(designerMenus)
   let [siderdesignermenus, setSiderDesignerMenus] = useState(siderDesignerMenus)
   let [menus, setMenus] = useState([]);
-  store.subscribe(() => {
+  const unsubscribe =  store.subscribe(() => {
     SetConfig(store.getState()?.system.configState)
-    const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus}   = store.getState()?.system.menus;   
+    const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = store.getState()?.system.menus;   
      setRunMenus(runMenus)
      setSiderRunMenus(siderRunMenus)
      setDesignerMenus(designerMenus)
      setSiderDesignerMenus(siderDesignerMenus)
+
+
+     
   })
 useEffect(() => {
   const run = runmenus?.map(item => ({
     no: item.no,
     label: item.label,
     key: item.key,
-    icon: <Ciocn url={current == 'index' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+    icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
     className: 'custsubmenu',
     danger: true,
-    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : null
+    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
   }))
   const designer = designermenus?.map(item => ({
    no: item.no,
    label: item.label,
    key: item.key,
-   icon: <Ciocn url={current == 'config' ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+   icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
    className: 'custsubmenu',
    danger: true,
-   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : null
+   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
   }))
-  setMenus(config ? designer : run)
-  console.log()
-}, [config, runmenus, siderrunmenus])
+  setMenus(config ? designer : run);
+  return () => {
+    unsubscribe();
+  }
+}, [config, runmenus, siderrunmenus, current])
 
 
   
-  const onSelect = ({   key, keyPath, domEvent }) => {
-      console.log(key);
-      console.log(keyPath)
-
-    
+  const onSelect = ({key}) => {
      let item = menus.find(item => item?.key === key);
       if (!item) return;
       const {nested, label, no} = item || {};  
@@ -73,7 +74,7 @@ useEffect(() => {
          state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
       } else {
         url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
-        state =  {nested, title: label, primary: key}
+        state = key == 'runtimeProject'  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
       }
       
       navigate(url, {state}) 

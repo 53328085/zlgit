@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
@@ -132,7 +132,7 @@ export default function Log() {
   const loginName = useSelector((state) => state.user)?.loginName;
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
-  store.subscribe(() => {
+  const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
 
@@ -180,6 +180,11 @@ export default function Log() {
       state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
     })
   }
+  useEffect(() => {
+    return () => {
+      unsubscribe()
+    }
+  })
   return (
     <Cdiv>
       <Triangle />
@@ -202,7 +207,7 @@ export default function Log() {
         </Idiv2>
         </>
         }
-        <Dropdown menu={menu}  placement="bottom" trigger={['click']}>
+        <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
           
             <span>{loginName}</span>

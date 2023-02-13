@@ -3,11 +3,14 @@ import { useStore } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import styled from 'styled-components'
-import {monitoring, energy, devops, electric, distribution, prepayment, photovoltaic, carbon, module} from './menus'
-import {monitoringConf} from './configuremenus'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
+
+ 
+const Micon = () => {
+   return <span className="custicon">&#9673;</span>
+}
 const Imgbox = styled.div`
    padding: 20px 0 16px 0;
    border-bottom: 1px dotted #ffff;
@@ -59,26 +62,28 @@ export default function Sider() {
   const [menus, setMenus] = useState()
 
   const [path, setPath] = useState('')
-  store.subscribe(() => {    
+  const unsubscribe = store.subscribe(() => {    
     SetConfig(store.getState()?.system.configState)
-     
   })
 
 
   useEffect(() => {  
     try {
+      SetConfig(store.getState()?.system.configState)
       let state = location.state || {}
       console.log(state)
       let {nested, primary } = state;
       setPath(primary)
       let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key})) || [];
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
       console.log(error);
     }
-   
+   return () => {
+    unsubscribe();
+   }
   },[location.pathname, config])
 
   const onSelect = ({key}) => {   

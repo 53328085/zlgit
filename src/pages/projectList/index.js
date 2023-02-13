@@ -318,9 +318,11 @@ export default function Index() {
           runMenus,
           siderRunMenus, 
           setMenus,
+          projectId: id,
          }
          dispatch(getMenus(menus));
          dispatch(configProject(type === 1))
+
          if (type == 2) {
            let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
            projectRun(runitem)
