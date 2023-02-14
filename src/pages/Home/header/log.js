@@ -129,7 +129,7 @@ export default function Log() {
   const user = useRef()
   const navgite = useNavigate()
   const dispatch = useDispatch()
-  const loginName = useSelector((state) => state.user)?.loginName;
+  const name = useSelector((state) => state.user)?.name;
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
@@ -210,7 +210,7 @@ export default function Log() {
         <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
           
-            <span>{loginName}</span>
+            <span>{name}</span>
           
         </Idiv3>
         </Dropdown>
@@ -222,7 +222,7 @@ export default function Log() {
         name="modalform"
         colon={false}
         initialValues={{
-          loginname: loginName
+          name: name
         }}
         size="middle"
         labelCol={{ flex: "7em" }}
@@ -232,7 +232,7 @@ export default function Log() {
       >
     <Item
       label="账户名"
-      name="loginname"
+      name="name"
     >
       <Cipt disabled />
     </Item>

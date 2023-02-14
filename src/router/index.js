@@ -108,7 +108,8 @@ const childrenRoute = {
      path: "/config",
      element: <Index />,
      children: [],
-     key: 'ddesignere'
+     key: 'ddesignere',
+     
    },
 
    {

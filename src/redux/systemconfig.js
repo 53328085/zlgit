@@ -25,12 +25,6 @@ const initialState = {
         siderDesignerMenus: [], // 设置 sider
         setMenus: [], // 项目top菜单栏 右边
     },
-        runMenus: null, // 项目top菜单栏 左边
-        designerMenus: null, // 设置top菜单栏
-        siderRunMenus: null, // 项目 sider
-        siderDesignerMenus: null, // 设置 sider
-        setMenus: null, // 项目top菜单栏 右边
-   
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -78,13 +72,7 @@ const system = createSlice({
 
 })
  
-/*      
-       runMenus: null, // 项目top菜单栏 左边
-        designerMenus: null, // 设置top菜单栏
-        siderRunMenus: null, // 项目 sider
-        siderDesignerMenus: null, // 设置 sider
-        setMenus: null, // 项目top菜单栏 右边
-         */
+
 const {actions} = system
 export const recordNo = state => state.system.recordNo
 
@@ -93,5 +81,6 @@ export const designerMenus  = state => state.system.menus?.designerMenus
 export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMenus
 export const siderRunMenus  = state => state.system.menus?.siderRunMenus
 export const setMenus  = state => state.system.menus?.setMenus
+export const selectProjectId = state => state.system.menus?.projectId
 export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus} = actions
 export default system.reducer

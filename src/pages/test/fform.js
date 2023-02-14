@@ -1,56 +1,100 @@
-
-import React, {useState, useMemo, useCallback, useEffect, useRef, forwardRef} from 'react'
-import styled from 'styled-components'
-import ReactToPrint, {PrintContextConsumer, useReactToPrint} from 'react-to-print'
-import {Button} from 'antd'
-const Counter = React.memo(({count}) => {
-  console.log('Counter重新执行！' )
-  return <span>{count()}</span>
-})
-const FacncyBtn = forwardRef((props, ref) => {
-  return <><Button ref={ref}>{props.children}</Button></>
- })
- const list = ["apple", "peer", "banana", "lemon"];
-export default function Fform() {
-
-  const [autoconte, setAutoConte] = useState(0)
-  useEffect(() => {
-    const timer = setInterval(() => {
-    setAutoConte(s => s + 1)
-   }, 1500)
-   return () => {
-     clearInterval(timer)
-   }
-  }, [])
-  const [name, setName] = useState("apple");
-  const [price, setPrice] = useState(0);
- const getProductName = useMemo(() => {
-  console.log('修改名字的时候才触发')
-  return () => name
-}, [name])
-  
-  const [num] = useState(222) 
-  const [height, setHeight] = useState(0);
-  const [time, setTime] = useState(new Date())
-  const measuredRef = useCallback(node => { // 接受html dom 元素作为参数  回调ref
-    console.log(node);
-    if(node !=null) {
-      setHeight(node.getBoundingClientRect().height)
+import { Button, Form, Input, Select } from 'antd';
+import React, { useState } from 'react';
+const { Option } = Select;
+const PriceInput = ({ value = {}, onChange }) => {
+  const [number, setNumber] = useState(0);
+  const [currency, setCurrency] = useState('rmb');
+  const triggerChange = (changedValue) => {
+    onChange?.({
+      number,
+      currency,
+      ...value,
+      ...changedValue,
+    });
+  };
+  const onNumberChange = (e) => {
+    const newNumber = parseInt(e.target.value || '0', 10);
+    if (Number.isNaN(number)) {
+      return;
     }
-  }, [])
-  useEffect(() => { // 处理状态更新导致的副作用 componentDidMount / componentDidUpdate / componentWillUnmount
-    getProductName()
-  }, [name])
-  useMemo(() => {}, [] ) // 保持对象引用不变
- /*  const count =  useMemo(() => () => num
-  , [num]) */
- const count = useCallback(() => num, [num])
+    if (!('number' in value)) {
+      setNumber(newNumber);
+    }
+    triggerChange({
+      number: newNumber,
+    });
+  };
+  const onCurrencyChange = (newCurrency) => {
+    if (!('currency' in value)) {
+      setCurrency(newCurrency);
+    }
+    triggerChange({
+      currency: newCurrency,
+    });
+  };
   return (
-      <div>
-         <p>自动执行：{autoconte}</p>
-         <div>
-           <Counter count={count} />
-         </div>
-      </div>   
-  )
-}
+    <span>
+      <Input
+        type="text"
+        value={value.number || number}
+        onChange={onNumberChange}
+        style={{
+          width: 100,
+        }}
+      />
+      <Select
+        value={value.currency || currency}
+        style={{
+          width: 80,
+          margin: '0 8px',
+        }}
+        onChange={onCurrencyChange}
+      >
+        <Option value="rmb">RMB</Option>
+        <Option value="dollar">Dollar</Option>
+      </Select>
+    </span>
+  );
+};
+const App = () => {
+  const onFinish = (values) => {
+    console.log('Received values from form: ', values);
+  };
+  const checkPrice = (_, value) => {
+    if (value.number > 0) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Price must be greater than zero!'));
+  };
+  return (
+    <Form
+      name="customized_form_controls"
+      layout="inline"
+      onFinish={onFinish}
+      initialValues={{
+        price: {
+          number: 0,
+          currency: 'rmb',
+        },
+      }}
+    >
+      <Form.Item
+        name="price"
+        label="Price"
+        rules={[
+          {
+            validator: checkPrice,
+          },
+        ]}
+      >
+        <PriceInput />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+export default App;
