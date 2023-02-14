@@ -4,11 +4,9 @@ import {
   Form,
   Input,
   DatePicker,
-  Space,
   Button,
   Switch, 
   Cascader,
-  message,
   Row,
   Col,
   Checkbox
@@ -17,13 +15,14 @@ import provinces from "china-division/dist/provinces.json";
 import cities from "china-division/dist/cities.json";
 import areas from "china-division/dist/areas.json";
 import styled from "styled-components";
+import moment from 'moment';
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
 import Cupload from "@com/useUpload.js"
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 600px 600px;
-  grid-template-rows: repeat(15, 32px);
+  grid-template-rows: repeat(16, 32px);
   gap: 16px 128px;
   grid-auto-flow: column;
   .ant-form-item {
@@ -49,7 +48,7 @@ import Cupload from "@com/useUpload.js"
   }
   .upload {
     grid-column: 2;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 16px;
@@ -72,11 +71,11 @@ import Cupload from "@com/useUpload.js"
  
   .address {
     grid-column: 2;
-    grid-row: 4 / 6;
+    grid-row: 5 / 7;
   }
   .lat {
     grid-column: 2;
-    grid-row: 6;
+    grid-row: 7;
   }
   .upload, .address, .lat {
     .ant-form-item-label {
@@ -86,7 +85,7 @@ import Cupload from "@com/useUpload.js"
   }
   .map {
     grid-column: 2;
-    grid-row: 7 / -4;
+    grid-row: 8 / -4;
   }
   .save {
     grid-column: 2;
@@ -235,6 +234,7 @@ ShiftEnabled: 0, // 班次管理
 
 
   const params = {   
+    id: '',
     validStageTime: "", //项目有效期
     name: "",
     address: "",
@@ -248,7 +248,7 @@ ShiftEnabled: 0, // 班次管理
     imgProject: '',
     shiftEnabled: false
   };  
-  const [initialValues] = useState(params);
+  const [initialValues ] = useState(params);
   const [defaultAdress, setDefaultAddress]=useState([])
   const [addressVal, setAddressVal] = useState(['', '', ''])
   areas.forEach((area) => {
@@ -312,8 +312,14 @@ const checkChange = (values) => {
 const queryProjectInfo = async () => {
    let {data, success, errMsg} = await QueryProjectInfo(projectId)
    for(let key of Object.keys(params)) {
-     params[key] = data[key]
+     if (key == 'validStageTime' && data[key]) {
+        params[key] = moment(data[key]);
+     } else {
+        params[key] = data[key];
+     }
    }
+   form.setFieldsValue(params)
+  // setInitialValues(p => Object.assign({}, p, params))
    for(let m of module) {
       if (data[m] > 0) {
         moduleValue.add(m)
@@ -325,6 +331,27 @@ const queryProjectInfo = async () => {
      }
    }
 }
+const config = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: '请选择项目有效期',
+    },
+  ],
+};
+const checkLog = (_, value) => {
+   console.log('value'+value);
+   if (!!value) {
+     return Promise.resolve();
+   }
+   return Promise.reject(new Error('项目Logo必须上传'));
+  
+}
+const onFinish = (values) => {
+  console.log(values);
+  console.log(params)
+}
 useEffect(() => {
   queryProjectInfo();
 }, [projectId])
@@ -334,14 +361,15 @@ useEffect(() => {
       initialValues={initialValues}
       labelAlign="left"
       size="middle"
+      onFinish={onFinish}
     >
-      <Item label="项目ID">
+      <Item label="项目ID" name="id">
         <Input placeholder="系统自增项目ID" disabled />
       </Item>
       <Item label="项目名称" required name="name">
         <Input placeholder="请输入项目名称" />
       </Item>
-      <Item label="项目有效期" required name="validStageTime">
+      <Item label="项目有效期" required name="validStageTime" {...config}>
         <DatePicker />
       </Item>
       <Item label="默认模块">
@@ -384,7 +412,7 @@ useEffect(() => {
           }}
         />
       </Item>
-      <Item label="班次管理启用" valuePropName="checked" name="ShiftEnabled">
+      <Item label="班次管理启用" valuePropName="checked" name="shiftEnabled">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
@@ -393,21 +421,29 @@ useEffect(() => {
           }}
         />
       </Item>
-      <Item label="项目备注" name="Remark" className='remark'>
-         <Item noStyle>
+      <Item label="项目备注"  className='remark'>
+         <Item noStyle name="remark">
         <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
         </Item>
-      </Item>
+      </Item> 
       <div className='upload'>
          <Item label="项目logo" className="left" required>
            <div className="img">
-            <Cupload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={(file) => params.imgProject =file} /> 
+            <Item noStyle name="imgLogo">
+              <Cupload wpx={212} hpx={32} swpx={220} shpx={114} style={{padding: '16px'}}   /> 
+            </Item>
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
          <Item label="项目图片" required>
            <div className="img">
-            <Cupload wpx={248} hpx={168} swpx={200} shpx={116} getfile={(file) => params.imgLogo=file} /> 
+            <Item noStyle name="imgProject" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
+            <Cupload wpx={248} hpx={168} swpx={220} shpx={114}  /> 
+            </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
@@ -426,29 +462,29 @@ useEffect(() => {
             }}
           />
         </Item>
-        <Item name="Address">
+        <Item name="address">
           <Input placeholder="请输入项目的详细地址" /> 
         </Item>
       </Item>
       <Item label="经纬度" className="lat" required>
         <Row gutter={16}>
           <Col span={12}>
-            <Item name="Lng">
+            <Item name="lng">
               <Input placeholder="经度" /> 
             </Item>
           </Col>
           <Col span={12}>
-            <Item name="Lat">
+            <Item name="lat">
               <Input placeholder="纬度" /> 
             </Item>
           </Col>
         </Row>
       </Item>
       <div className='map'>
-        <Mapcom setAaddress={setAaddress} initialValues={initialValues} />
+        <Mapcom setAaddress={setAaddress} initialValues={params} />
       </div>
       <div className="save">
-         <Button type="primary">保存</Button>
+         <Button type="primary" htmlType="submit">保存</Button>
       </div>
     </Formbox>
   );
