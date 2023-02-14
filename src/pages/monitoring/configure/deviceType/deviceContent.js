@@ -9,7 +9,7 @@ export default function DeviceContent(props,ref) {
   const {
     value,
     name='新增网关类型',
-    AddModal=()=>{},
+    AddModal=<></>,
     canceltext='返回',
     oktext='保存',
     onOk,
@@ -21,10 +21,7 @@ export default function DeviceContent(props,ref) {
   
   const {DeviceTypeManager:{QueryNotUsed}}=Monitoring
   
-  const openAdd =async ()=>{
-    await other.openAdd()
-    ModalRef.current.onOpen()
-  }
+  const openAdd =  other.open
 
   const modalProps = {
     cancelText:canceltext,
@@ -46,7 +43,7 @@ export default function DeviceContent(props,ref) {
         {other.children}
         <Modal ref={ModalRef} mold='cust' {...modalProps}>
             <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
-            <AddModal></AddModal>
+            {AddModal}
         </Modal>
     </div>
   )
