@@ -352,7 +352,10 @@ export const stopControl = (params, url, ip, channel, user, pwd) => server.post(
 //运行监控
 export const Monitoring =  {
     DeviceTypeManager:{
-        GatewayType:(data)=>server.post('/Monitor/Gateway/QueryByPage',data)
+        GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
+        AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
+        AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
+        QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
     }
   
 }

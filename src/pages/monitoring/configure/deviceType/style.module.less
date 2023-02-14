@@ -1,0 +1,39 @@
+.optionBtn{
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    color: #515151;
+    margin-bottom: 16px;
+    .btns{
+        display: flex;
+        cursor: pointer;
+        .btn{
+            width: 96px;
+            height: 32px;
+            background-color: #237ae4;
+            text-align: center;
+            line-height: 32px;
+            color: #fff;
+            font-size: 14px;
+            border-radius: 2px;
+            &:nth-of-type(1){
+                margin-right: 16px;
+            }
+            &:hover{
+                opacity: .7;
+            }
+        }
+       
+    }
+}
+
+.uploader{
+    :global(.ant-upload.ant-upload-select-picture-card){
+        width: 120px !important;
+        height: 90px !important;
+        &:hover{
+            border-color: #d9d9d9;
+        }
+    }
+    
+}

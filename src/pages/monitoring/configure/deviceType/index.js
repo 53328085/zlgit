@@ -1,93 +1,60 @@
-import React,{useState} from 'react'
-import {useSelector} from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
-import DeviceContent from './deviceContent'
 import { Monitoring } from '@api/api.js'
-import {selectCurProject} from '@redux/user.js'
-
+import style from './style.module.less'
+import GateWay from './gateway'
+import Electric from './electric'
+import Water from './water'
+import Fire from './fire'
+import Sensor from './sensor'
+import Transform from './transform'
+import Video from './video'
 export default function Index() {
-  const [value,setvalue] = useState('0')
-  const projectId = useSelector(selectCurProject)
-  console.log(projectId)
-  const tabs =[
-    {
-      key:'0',
-      label:'网关类型',
-    },
-    {
-      key:'1',
-      label:'电表类型',
-    },
-    {
-      key:'2',
-      label:'水表类型',
-    },
-    {
-      key:'3',
-      label:'燃气表类型',
-    },
-    {
-      key:'4',
-      label:'传感器类型',
-    },
-    {
-      key:'5',
-      label:'变压器类型',
-    },
-    {
-      key:'6',
-      label:'视频监控类型',
-    },
-  ] 
-  const gatewaycolumns = [
-    {
-      title:'网关型号',
-      dataIndex:''
-    },
-    {
-      title:'网关缩略图',
-      dataIndex:''
-    },
-    {
-      title:'已用网关数量',
-      dataIndex:''
-    },
-    {
-      title:'操作',
-      dataIndex:''
-    },
+  const [value, setvalue] = useState('0')
+  const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
+
+  const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
+  
+  let Coms = [
+    <GateWay/>,
+    <Electric/>,
+    <Water/>,
+    <Fire/>,
+    <Sensor/>,
+    <Transform/>,
+    <Video/>
   ]
 
-  let params = {
-    projectId:1,
-    pageNum:1,
-    pageSize:10,
-    alike:''
+  let dataProps = {
+    value,
+    setvalue,
+    tabs
+  };
+ 
+  const getAllDeviceStyle = async () => {
+    const result = await AllDeviceStyle()
+    const { data, errMsg, success } = result;
+    if (success && Array.isArray(data)) {
+     let arr= data.map(item => ({
+        key: `${item.deviceStyle}`,
+        label: `${item.name}类型`
+      }))
+      arr.unshift({ key: '0', label: '网关类型' })
+      setTabs(arr)
+      dataProps = {...dataProps,  tabs } 
+    }
   }
+  useEffect(() => {
+    getAllDeviceStyle()
+  }, [])
 
-  const getTableData = async ()=>{
-    const {DeviceTypeManager:{ GatewayType}} = Monitoring;
-    console.log(GatewayType)
-    const result = await GatewayType(params)
-    console.log(result)
-  }
-  getTableData()
-  const propsData = {
-      tabs,
-      value,
-      setvalue
-  }
   return (
-    <CustContext.Provider value={propsData}>
-      <Pagecount>
-        {
-          <DeviceContent columns = {value==='0'? gatewaycolumns:[]}></DeviceContent>
-        }
-       
-        
-      </Pagecount>
+    <CustContext.Provider value={dataProps}>
+          <Pagecount>
+             {Coms[Number(value)]}
+          </Pagecount>
     </CustContext.Provider>
-    
+
   )
 }
