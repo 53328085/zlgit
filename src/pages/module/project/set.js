@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo,memo } from "react";
 
 import {
   Form,
@@ -9,16 +9,15 @@ import {
   Cascader,
   Row,
   Col,
-  Checkbox
+  Checkbox,
+  message
 } from "antd";
-import provinces from "china-division/dist/provinces.json";
-import cities from "china-division/dist/cities.json";
-import areas from "china-division/dist/areas.json";
 import styled from "styled-components";
 import moment from 'moment';
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
 import Cupload from "@com/useUpload.js"
+import Adrress from "@com/useAddress.js"
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 600px 600px;
@@ -144,7 +143,7 @@ const Ccheckbox = styled(Checkbox.Group)`
  }
 `
 export default function ProjectSet({projectId}) {
-  const {QueryProjectInfo} = ProjectSetting
+  const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
   const defaultProject = [
     { label: '项目概述', value: '1' },
@@ -160,7 +159,7 @@ export default function ProjectSet({projectId}) {
     'carbonEnabled',  
     'maintenanceEnabled',
   ]
- const moduleValue = new Set()
+ let moduleValue = []
   const  energy = [ // 能源种类
    'safeEnabled',
    'distributionEnabled',
@@ -171,7 +170,7 @@ export default function ProjectSet({projectId}) {
   'carbonEnabled',  
   'maintenanceEnabled',
   ]
-const energyValue = new Set()
+let energyValue = []
 const selectModule = useMemo(() => [...moduleValue], [moduleValue])
 const selectEnergy = useMemo(() => [...energyValue], [energyValue])
   const optionalProject = [
@@ -238,8 +237,7 @@ ShiftEnabled: 0, // 班次管理
     validStageTime: "", //项目有效期
     name: "",
     address: "",
-    lng: "",
-    lat: "",
+    lngLat: '', // 经纬度
     appEnabled: false,
     dataCockpitEnabled: false,
     bigScreenUrl: "",
@@ -248,88 +246,44 @@ ShiftEnabled: 0, // 班次管理
     imgProject: '',
     shiftEnabled: false
   };  
-  const [initialValues ] = useState(params);
-  const [defaultAdress, setDefaultAddress]=useState([])
-  const [addressVal, setAddressVal] = useState(['', '', ''])
-  areas.forEach((area) => {
-    const matchCity = cities.filter((city) => city.code === area.cityCode)[0];
-    if (matchCity) {
-      matchCity.children = matchCity.children || [];
-      matchCity.children.push({
-        label: area.name,
-        value: area.code,
-      });
-    }
-  });
-  cities.forEach((city) => {
-    const matchProvince = provinces.filter(
-      (province) => province.code === city.provinceCode
-    )[0];
-    if (matchProvince) {
-      matchProvince.children = matchProvince.children || [];
-      matchProvince.children.push({
-        label: city.name,
-        value: city.code,
-        children: city.children,
-      });
-    }
-  });
-  const options = provinces.map((p) => ({
-    label: p.name,
-    value: p.code,
-    children: p.children,
-  })); 
-  const setAaddress = ({lng='', lat='', address='', province='', city='', district=''}={}) => {
-    
-   form.setFieldsValue({
-    lng,
-    lat,
-    address
-   })
+
+const GetAddress = useMemo(() => Adrress, [])
+const checkChange = (values, type) => {
+    if(type == 1) moduleValue = values 
+    if(type == 2) energyValue =values
+   }
    
-   const p = options.find(i => i.label == province);
-  
-   let c, a;
-   if (Array.isArray(p?.children)) {
-      c = p.children.find(i => i.label == city);
-      if (Array.isArray(c?.children)) {
-         a = c.children.find(i => i.label == district)?.value
-      }
-   }
-   setAddressVal([p.value, c.value, a]) 
-   console.log(defaultAdress)
-}
-const changeaddress = (value) => {
-   setAddressVal(value)
-}
-const onUpdate = (file) => {
-   console.log(file)
-   return false
-}
-const checkChange = (values) => {
-  console.log(values)
-}
+ 
 const queryProjectInfo = async () => {
-   let {data, success, errMsg} = await QueryProjectInfo(projectId)
-   for(let key of Object.keys(params)) {
-     if (key == 'validStageTime' && data[key]) {
-        params[key] = moment(data[key]);
-     } else {
-        params[key] = data[key];
-     }
-   }
-   form.setFieldsValue(params)
-  // setInitialValues(p => Object.assign({}, p, params))
-   for(let m of module) {
-      if (data[m] > 0) {
-        moduleValue.add(m)
+   try {
+    let {data, success, errMsg} = await QueryProjectInfo(projectId)
+    if(!success) return ;
+    moduleValue = []
+    energyValue = []
+    for(let key of Object.keys(params)) {
+      if (key == 'validStageTime' && data[key]) {
+         params[key] = moment(data[key]);
+      } else {
+         params[key] = data[key];
       }
+    }
+    form.setFieldsValue(params)
+   // setInitialValues(p => Object.assign({}, p, params))
+    for(let m of module) {
+       if (!isNaN(data[m]) && data[m] > 0) {
+         moduleValue.push(m)
+       }
+    }
+    for(let e of energy) {
+      if(!isNaN(data[e]) && data[e] > 0) {
+       energyValue.push(e)
+      }
+    }
+    
+   } catch (error) {
+    
    }
-   for(let e of energy) {
-     if(data[e] > 0) {
-      moduleValue.add(e)
-     }
-   }
+  
 }
 const config = {
   rules: [
@@ -340,25 +294,31 @@ const config = {
     },
   ],
 };
-const checkLog = (_, value) => {
-   console.log('value'+value);
+const checkLog = (_, value) => {   
    if (!!value) {
      return Promise.resolve();
    }
-   return Promise.reject(new Error('项目Logo必须上传'));
+   return Promise.reject(new Error('项目Log必须上传'));
   
 }
+const checkProject = (_, value) => { 
+  if (!!value) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('项目图片必须上传'));
+ 
+}
 const onFinish = (values) => {
-  console.log(values);
-  console.log(params)
+   console.log(moduleValue);
+   console.log(energyValue);
 }
 useEffect(() => {
   queryProjectInfo();
 }, [projectId])
+
   return (
     <Formbox
-      form={form}      
-      initialValues={initialValues}
+      form={form}   
       labelAlign="left"
       size="middle"
       onFinish={onFinish}
@@ -373,13 +333,13 @@ useEffect(() => {
         <DatePicker />
       </Item>
       <Item label="默认模块">
-          <Ccheckbox options={defaultProject} defaultValue={['1', '2']} onChange={checkChange} disabled />
+          <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled />
       </Item>
       <Item label="可选模块" className='optional' valuePropName="checked" initialValue={selectModule}> 
-         <Ccheckbox options={optionalProject} defaultValue={[]} onChange={checkChange} />
+         <Ccheckbox options={optionalProject} defaultValue={[]} onChange={(value) => checkChange(value, 1)} />
       </Item>
       <Item label="能源种类" className="type" valuePropName="checked" initialValue={selectEnergy}>
-         <Ccheckbox options={energyType} defaultValue={[]} onChange={checkChange} />
+         <Ccheckbox options={energyType} defaultValue={[]} onChange={(value) => checkChange(value, 2)} />
       </Item>
       <Item label="数据大屏启用">
         <Switch
@@ -429,7 +389,11 @@ useEffect(() => {
       <div className='upload'>
          <Item label="项目logo" className="left" required>
            <div className="img">
-            <Item noStyle name="imgLogo">
+            <Item noStyle name="imgLogo" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
               <Cupload wpx={212} hpx={32} swpx={220} shpx={114} style={{padding: '16px'}}   /> 
             </Item>
            </div>
@@ -439,7 +403,7 @@ useEffect(() => {
            <div className="img">
             <Item noStyle name="imgProject" rules={[
               {
-                validator: checkLog,
+                validator: checkProject,
               },
             ]}>
             <Cupload wpx={248} hpx={168} swpx={220} shpx={114}  /> 
@@ -448,28 +412,33 @@ useEffect(() => {
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
-      <Item label="项目地址" className='address'>
-        <Item noStyle>
-          <Cascader
-            options={options}
-            defaultValue={defaultAdress}
-            value={addressVal}
-            onChange={changeaddress}
-            showSearch
-            placeholder="请选择或输入省/市/区"
-            style={{
-              marginBottom: "16px",
-            }}
-          />
+      <Item label="项目地址" className='address' required>
+        <Item noStyle name={['address', 'province']}
+           rules={[
+            {
+              required: true,
+              message: '请选择省市区',
+            },
+          ]}
+        >
+           <GetAddress  />
         </Item>
-        <Item name="address">
+        <Item name={['address', 'street']}  rules={[
+              {
+                required: true,
+                message: '请输入详细地址',
+              },
+            ]}>
           <Input placeholder="请输入项目的详细地址" /> 
         </Item>
       </Item>
-      <Item label="经纬度" className="lat" required>
-        <Row gutter={16}>
+      <Item label="经纬度" className="lat" name="lngLat" required>
+       
+              <Input placeholder="经纬度" /> 
+          
+        {/* <Row gutter={16}>
           <Col span={12}>
-            <Item name="lng">
+            <Item name="lng" required>
               <Input placeholder="经度" /> 
             </Item>
           </Col>
@@ -478,10 +447,10 @@ useEffect(() => {
               <Input placeholder="纬度" /> 
             </Item>
           </Col>
-        </Row>
+        </Row> */}
       </Item>
       <div className='map'>
-        <Mapcom setAaddress={setAaddress} initialValues={params} />
+        <Mapcom setAaddress={() => {}} initialValues={params} />
       </div>
       <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>
