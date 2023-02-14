@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import {PlusOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
 import {Image, message} from 'antd'
@@ -7,7 +7,7 @@ import {Image, message} from 'antd'
  * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB
  * @date 2022-11-11 09:38
  */
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile} = {}) {
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange}) {
 const Preview = styled.div`
     flex: 1;
     display: flex;
@@ -75,9 +75,9 @@ const Ifile = styled.input.attrs(props => ({
     cursor: pointer;
   }
 `
- 
+
  // img.src = `data:image/png;base64,${src}`
-  const [url, setUrl] = useState(null)
+  const [url, setUrl] = useState(value)
   const file = useRef()
   const imgsize = (src) => {
     const msg = () => {
@@ -107,7 +107,8 @@ const Ifile = styled.input.attrs(props => ({
         src = reader.result
         clearfile() 
         setUrl(src)
-        getfile(src);
+        getfile(src); 
+        onChange?.(src)
     }
     reader.onerror = () => {
         return message.warning(reader.error || '图片加载出错' )
@@ -162,8 +163,10 @@ const Ifile = styled.input.attrs(props => ({
   const delImg = () => {
     setUrl(null) 
     getfile(null)  
+    onChange?.('')
     window.URL && URL.revokeObjectURL(src)
   }
+ 
   return (
      <Preview>
       {
