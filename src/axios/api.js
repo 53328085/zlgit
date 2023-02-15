@@ -358,3 +358,16 @@ export const bottomControl = (params, url, ip, channel, user, pwd) => server.pos
 export const rightControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzRight?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const topControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzUp?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const stopControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzStop?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+
+//运行监控
+export const Monitoring =  {
+    DeviceTypeManager:{
+        GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
+        AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
+        AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
+        QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
+        UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
+        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
+    }
+  
+}

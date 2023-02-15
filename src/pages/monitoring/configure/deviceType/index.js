@@ -1,7 +1,59 @@
-import React from 'react'
-
+import React, { useEffect, useState } from 'react'
+import CustContext from '@com/content.js'
+import Pagecount from '@com/pagecontent'
+import { Monitoring } from '@api/api.js'
+import style from './style.module.less'
+import GateWay from './gateway'
+import Electric from './electric'
+import Water from './water'
+import Fire from './fire'
+import Sensor from './sensor'
+import Transform from './transform'
+import Video from './video'
 export default function Index() {
+  const [value, setvalue] = useState('0')
+  const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
+  const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
+  
+  let Coms = [
+    <GateWay/>,
+    <Electric/>,
+    <Water/>,
+    <Fire/>,
+    <Sensor/>,
+    <Transform/>,
+    <Video/>
+  ]
+
+  let dataProps = {
+    value,
+    setvalue,
+    tabs
+  };
+ 
+  const getAllDeviceStyle = async () => {
+    const result = await AllDeviceStyle()
+    const { data, errMsg, success } = result;
+    if (success && Array.isArray(data)) {
+     let arr= data.map(item => ({
+        key: `${item.deviceStyle}`,
+        label: `${item.name}类型`
+      }))
+      arr.unshift({ key: '0', label: '网关类型' })
+      setTabs(arr)
+      dataProps = {...dataProps,  tabs } 
+    }
+  }
+  useEffect(() => {
+    getAllDeviceStyle()
+  }, [])
+
   return (
-    <div>设备类型管理</div>
+    <CustContext.Provider value={dataProps}>
+          <Pagecount>
+             {Coms[Number(value)]}
+          </Pagecount>
+    </CustContext.Provider>
+
   )
 }
