@@ -1,20 +1,27 @@
+import { render } from "less";
+
 export default [
     [
         {
             title: '网关型号',
-            dataIndex: 'gateway-model'
+            dataIndex: 'category',
+            key:'category'
           },
           {
             title: '网关缩略图',
-            dataIndex: 'gateway-img'
+            dataIndex: 'imageBase64',
+            key:'imageBase64',
+            render:(t,r,i)=>(<img src={'data:image/jpeg;base64,'+t} width="64px" alt=""></img>)
           },
           {
             title: '已用网关数量',
-            dataIndex: 'gateway-num'
+            dataIndex: 'cnt',
+            key:'cnt'
           },
           {
             title: '操作',
-            dataIndex: 'options'
+            dataIndex: 'options',
+            key:'options',
           },
     ],
     [

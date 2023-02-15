@@ -10,8 +10,8 @@ export default function DeviceContent(props,ref) {
     value,
     name='新增网关类型',
     AddModal=<></>,
-    canceltext='返回',
-    oktext='保存',
+    cancelText='返回',
+    okText='保存',
     onOk,
     onCancel,
     width=520,
@@ -24,8 +24,8 @@ export default function DeviceContent(props,ref) {
   const openAdd =  other.open
 
   const modalProps = {
-    cancelText:canceltext,
-    okText:oktext,
+    cancelText,
+    okText,
     width,
     onOk,
    

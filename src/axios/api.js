@@ -365,6 +365,8 @@ export const Monitoring =  {
         AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
         AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
         QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
+        UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
+        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
     }
   
 }
