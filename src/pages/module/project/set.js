@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo,memo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 
 import {
   Form,
@@ -106,6 +106,41 @@ const Info = styled.span`
   font-size: 12px;
   color: rgba(0,0,0,0.85);
 `
+const Dcheckbox = styled.div`
+ && {
+  display: grid;
+  grid-template-columns: repeat(4, 96px);
+  grid-auto-rows: auto;
+  gap: 16px;
+  .ant-checkbox-wrapper {
+    margin: 0px;
+    color: #999;
+    font-size: 14px;
+    width: 96px;
+    height: 32px;
+    line-height: 32px;
+    background-color: transparent;
+    border: 1px solid #999;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+  }
+  .ant-checkbox-disabled+span {
+    color: #fff;
+  }
+  .ant-checkbox-wrapper.ant-checkbox-wrapper-checked {
+    color:#fff;
+    background-color: #237ae4;
+    border-color: #237ae4;
+  }
+   .ant-checkbox {
+    opacity: 0;
+   }
+   .ant-checkbox+span {
+    padding: 0 16px 0 0;
+   }
+ }
+`
 const Ccheckbox = styled(Checkbox.Group)`
 
  && {
@@ -145,11 +180,10 @@ const Ccheckbox = styled(Checkbox.Group)`
 export default function ProjectSet({projectId}) {
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
-  const defaultProject = [
-    { label: '项目概述', value: '1' },
-    { label: '运行监控', value: '2' },
-  ]
-  const module = [ // 可选模块
+  const map = useRef();
+  const [isbigurl, setIsbig] = useState(false)
+  const [addressDtl, setAddressDtl] = useState(null)
+  const module = new Set([ // 布尔值转换成0, 1
      'safeEnabled',
     'distributionEnabled',
     'prepayEnabled',
@@ -158,21 +192,20 @@ export default function ProjectSet({projectId}) {
     'storageEnabled',
     'carbonEnabled',  
     'maintenanceEnabled',
-  ]
- let moduleValue = []
-  const  energy = [ // 能源种类
-   'safeEnabled',
-   'distributionEnabled',
-   'prepayEnabled',
-   'energyEnabled',
-  'solarEnabled',
-  'storageEnabled',
-  'carbonEnabled',  
-  'maintenanceEnabled',
-  ]
-let energyValue = []
-const selectModule = useMemo(() => [...moduleValue], [moduleValue])
-const selectEnergy = useMemo(() => [...energyValue], [energyValue])
+    'energyEnabled',
+    'appEnabled',
+    'dataCockpitEnabled',
+   'shiftEnabled',
+   'electricEnabled',
+   'waterColdEnabled',
+   'waterHotEnabled',
+   'steamEnabled',
+   'gasEnabled',
+   'coalEnabled',
+   'oilEnabled',
+  ])
+ 
+ 
   const optionalProject = [
     { label: '电气安全', value: 'safeEnabled' },
     { label: '配电管理', value: 'distributionEnabled' },
@@ -230,36 +263,35 @@ waterHotEnabled: 0, // 热水
 ShiftEnabled: 0, // 班次管理
  */
 
-
+ const [lngLat, setLngLat] = useState()
 
   const params = {   
     id: '',
     validStageTime: "", //项目有效期
     name: "",
     address: "",
-    lngLat: '', // 经纬度
-    appEnabled: false,
-    dataCockpitEnabled: false,
+    lngLat: '', // 经纬度 
     bigScreenUrl: "",
     remark: "", //备注
     imgLogo: '',
     imgProject: '',
-    shiftEnabled: false
   };  
 
 const GetAddress = useMemo(() => Adrress, [])
-const checkChange = (values, type) => {
-    if(type == 1) moduleValue = values 
-    if(type == 2) energyValue =values
-   }
+
    
- 
+const onSwitch = (f) => {
+  /* if(!f) {
+    form.setFieldValue('bigScreenUrl', '')
+  } */
+  setIsbig(f)
+}
+let initial = {} // 获取的接口项目信息
 const queryProjectInfo = async () => {
    try {
     let {data, success, errMsg} = await QueryProjectInfo(projectId)
-    if(!success) return ;
-    moduleValue = []
-    energyValue = []
+    if(!success) return ;  
+     initial = data;
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
          params[key] = moment(data[key]);
@@ -267,22 +299,29 @@ const queryProjectInfo = async () => {
          params[key] = data[key];
       }
     }
-    form.setFieldsValue(params)
-   // setInitialValues(p => Object.assign({}, p, params))
-    for(let m of module) {
-       if (!isNaN(data[m]) && data[m] > 0) {
-         moduleValue.push(m)
-       }
+
+    setLngLat(data['lngLat'])
+    const bool = {}
+    for(let b of module) {
+      bool[b] = Boolean(data[b])
     }
-    for(let e of energy) {
-      if(!isNaN(data[e]) && data[e] > 0) {
-       energyValue.push(e)
-      }
-    }
-    
+    form.setFieldsValue({...params, ...bool})
    } catch (error) {
     
    }
+  
+}
+const changeAddress = (v) => {
+  try {
+    let address = v?.split(',').join('').trim();
+
+     address?.replace("市辖区", "")
+    console.log(address)
+    map.current?.serachMap.search(address)
+    form.setFieldValue('address',address);
+  } catch (error) {
+    console.log(error);
+  }
   
 }
 const config = {
@@ -308,12 +347,41 @@ const checkProject = (_, value) => {
   return Promise.reject(new Error('项目图片必须上传'));
  
 }
-const onFinish = (values) => {
-   console.log(moduleValue);
-   console.log(energyValue);
+const setAaddress = (value) => {
+  try {
+   console.log(value)
+  let {lng, lat, address, province, city, district, street, streetNumber} = value
+  
+   lng && lat && form.setFieldValue('lngLat', `${lng?.toFixed(3)},${lat?.toFixed(3)}`)
+  
+  address && form.setFieldValue('address', address);
+  province && setAddressDtl([province, city, district])
+} catch (error) {
+    console.log(error)
+}
+}
+const onFinish = async (values) => {
+  try {
+    for(let b of module) {
+      values[b] = Number(values[b])
+    }
+    values['validStageTime'] = values['validStageTime'].format('YYYY-MM-DD HH:mm:ss')
+   let params = {...initial, ...values};
+   let {success, errMsg} = await SaveProjectInfo(params)
+   success && message.success({
+    content: '保存成功',
+    onClose: queryProjectInfo,
+   }) 
+   !success && message.error(errMsg || '数据错误')
+  } catch (error) {
+    
+  }
+    
 }
 useEffect(() => {
   queryProjectInfo();
+  console.dir(map.current.serachMap.search
+    )
 }, [projectId])
 
   return (
@@ -321,6 +389,7 @@ useEffect(() => {
       form={form}   
       labelAlign="left"
       size="middle"
+      scrollToFirstError={true}
       onFinish={onFinish}
     >
       <Item label="项目ID" name="id">
@@ -330,31 +399,40 @@ useEffect(() => {
         <Input placeholder="请输入项目名称" />
       </Item>
       <Item label="项目有效期" required name="validStageTime" {...config}>
-        <DatePicker />
+        <DatePicker  showTime format="YYYY-MM-DD HH:mm:ss" />
       </Item>
       <Item label="默认模块">
-          <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled />
+          <Dcheckbox>
+            <Checkbox checked disabled>项目概述</Checkbox>
+            <Checkbox checked disabled>运行监控</Checkbox>
+          </Dcheckbox>
+         {/*  <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled /> */}
       </Item>
-      <Item label="可选模块" className='optional' valuePropName="checked" initialValue={selectModule}> 
-         <Ccheckbox options={optionalProject} defaultValue={[]} onChange={(value) => checkChange(value, 1)} />
+      <Item label="可选模块" className='optional'> 
+           <Dcheckbox>
+             {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
+          </Dcheckbox>
+     
       </Item>
-      <Item label="能源种类" className="type" valuePropName="checked" initialValue={selectEnergy}>
-         <Ccheckbox options={energyType} defaultValue={[]} onChange={(value) => checkChange(value, 2)} />
+      <Item label="能源种类" className="type" >
+          <Dcheckbox>
+             {energyType.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
+          </Dcheckbox>
       </Item>
       <Item label="数据大屏启用">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
-          defaultChecked={!!params.bigScreenUrl}
+          onChange={onSwitch}
           style={{
             width: "64px",
           }}
         />
       </Item>
-      <Item label="数据大屏url" name="bigScreenUrl">
-        <Input placeholder="请输入数据大屏地址" />
+      <Item label="数据大屏url" name="bigScreenUrl"  >
+        <Input placeholder="请输入数据大屏地址" disabled={!isbigurl}/>
       </Item>
-      <Item label="数据驾驶舱启用" valuePropName="checked" name="dataCockpitEnabled">
+      <Item label="数据驾驶舱启用" valuePropName="checked" name="dataCockpitEnabled" >
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
@@ -399,7 +477,7 @@ useEffect(() => {
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
-         <Item label="项目图片" required>
+         <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
            <div className="img">
             <Item noStyle name="imgProject" rules={[
               {
@@ -413,17 +491,10 @@ useEffect(() => {
          </Item>
       </div>
       <Item label="项目地址" className='address' required>
-        <Item noStyle name={['address', 'province']}
-           rules={[
-            {
-              required: true,
-              message: '请选择省市区',
-            },
-          ]}
-        >
-           <GetAddress  />
+        <Item noStyle>
+           <GetAddress placeholder="请选择省市区" onChange={changeAddress} value={addressDtl} />
         </Item>
-        <Item name={['address', 'street']}  rules={[
+        <Item name='address'  rules={[
               {
                 required: true,
                 message: '请输入详细地址',
@@ -449,8 +520,10 @@ useEffect(() => {
           </Col>
         </Row> */}
       </Item>
-      <div className='map'>
-        <Mapcom setAaddress={() => {}} initialValues={params} />
+      <div className='map'  >
+          
+          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
+         
       </div>
       <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>

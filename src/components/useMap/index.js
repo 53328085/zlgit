@@ -3,8 +3,8 @@
  * @description: // 120.228177,30.212296 正泰大厦经纬度
  * @date 2022-09-21 09:49
  */
-import { ConsoleSqlOutlined } from "@ant-design/icons";
-import React, {useEffect, useRef} from "react";
+ 
+import React, {useEffect, useRef, forwardRef, useImperativeHandle} from "react";
 import {
   Map,
   Marker,
@@ -17,11 +17,14 @@ import {
   ZoomControl,
   AutoComplete
 } from "react-bmapgl";
-export default function Index(props) {
-  const {initialValues={}, setAaddress=()=>{}} = props
-  const {Lng, Lat} = initialValues 
-  const center = { lng: Lng ||120.228177 , lat: Lat || 30.212296}
+
+ function Index(props, ref) {
+  const {initialValues={}, setAaddress=()=>{}, lngLat, value, onChange} = props
+  const {Lng, Lat} = initialValues
+  const [lng, lat] = lngLat?.split(',') || []
+  const center = { lng: (Lng ?? lng) ?? 120.228177 , lat: Lat ?? lat  ?? 30.212296} 
   const mapref = useRef(null)
+
   const option = {
     // mapType: 'earth',
     center ,
@@ -38,16 +41,13 @@ export default function Index(props) {
     if(window.BMapGL)  {   
         geoc = new window.BMapGL.Geocoder()
     }
-    const pt = e.latlng   
-   
-    geoc.getLocation(pt, function (rs) {
-        console.log(rs);
+    const pt = e.latlng    
+    geoc.getLocation(pt, function (rs) { 
         try {    
-        let { addressComponents, address, point } = rs;   
-        console.log(point?.lng)       
-        let { city, district, province, street, streetNumber } = addressComponents; 
-        console.log(province)
-        if(typeof setAaddress == 'function') setAaddress({Lng: point.lng, Lat: point.lat, Address: address, province, city, district})
+        let { addressComponents, address, point:{lng, lat} } = rs;    
+        let { city, district, province, street, streetNumber } = addressComponents;    
+        console.log(rs)      
+        setAaddress({lng, lat, address, province, city, district, street, streetNumber})
          } catch (error) {
           console.dir(error)
         }     
@@ -57,9 +57,28 @@ export default function Index(props) {
         console.log(error)
     }  
   }
- 
+   
+  const serachcomplete = (res) => {
+   // console.log(serachMap.getStatus())
+    if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {
+      let len = res.getCurrentNumPois();
+      if (len > 0) {
+        console.dir(res.getPoi(0));
+        let { lng, lat } = res.getPoi(0)?.point;
+        setAaddress({lng, lat})
+      }
+    }
+  }
+  
+  const serachMap = new BMapGL.LocalSearch(mapref?.current?.map, { 
+        renderOptions: { map: mapref?.current?.map },
+        onSearchComplete: serachcomplete 
+    }); 
+  useImperativeHandle(ref, () => ({
+    serachMap
+  }))
   return (
-    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition}>
+    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref}>
      
       <Marker position={center} />
       <NavigationControl />
@@ -70,3 +89,4 @@ export default function Index(props) {
     </Map>
   );
 }
+export default forwardRef(Index)
