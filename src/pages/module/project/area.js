@@ -1,9 +1,9 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react'
-import {Form, Space, Input, Button, Select} from 'antd'
+import {Form, Space, Input, Button, Select, message} from 'antd'
 import styled from 'styled-components'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
- 
+import UserTable from '@com/useTable'
 const Item = Form.Item
 const Boxitem = styled.div`
   display: grid;
@@ -28,33 +28,60 @@ const Boxitem = styled.div`
 `
 export default function Region({projectId, CModal}) {
  const mref = useRef()
+ const dref = useRef()
+ const fref = useRef()
  const [form] = Form.useForm()
  const [modalform] = Form.useForm()
- const {QueryAreaLevels} = AreaSetting
- const [disabled, setDisabled] = useState(true)
- const {initialValues, setInitialValues} = useState({
-    oneLever: '园区',
-    twoLever: '建筑物',
-    threeLever: '房间'
- })
- const [lever, setLever] = useState('')
+ const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields} = AreaSetting 
 const [title, setTitle] = useState()
 const [datas, setDatas] = useState(null)
- const edit = (type) => {
-    setTitle('修改区域名称')
-    let l = ['', '一'][type]
-    setLever(l)
-    console.log(mref)
+const [handler,setHandler ] = useState(0);
+const [level, setLevel] = useState()
+const [levelid, setLevelid] = useState()
+ const edit = ({name, type, level}) => {
+      setLevel(level);
+      setHandler(2);
+     setTitle('修改区域')
+     modalform.setFieldsValue({
+       name,
+       type,
+     })
+     mref.current.onOpen()
+    // UpdateAreaLevel()
+ }
+
+ const add = () => {
+     setHandler(1);
+     setTitle('新增区域')
+     modalform.resetFields()
      mref.current.onOpen()
  }
- const add = () => {
-    setTitle('新增区域')
-     mref.current.onOpen()
+
+ const del = async () => {
+   try {
+      let {success, errMsg} = await DeleteAreaLevel({projectId, level: levelid})
+      levelid =''; 
+      success && message.success({
+         content: '删除成功',
+         duration: 0.3,
+         onClose: () => queryarealevels().then(() =>  dref.current.onCancel()),
+      })
+      !success && message.warning(errMsg || '数据出错')
+     
+   } catch (error) {
+      
+   }
+   
+ }
+ const ondel = (level) => { 
+   setLevelid(level);
+   dref.current.onOpen()
  }
   const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        success && setDatas(data)
+        success && setDatas(data) ;
+       
      } catch (error) {
         console.log(error);
      }
@@ -62,8 +89,68 @@ const [datas, setDatas] = useState(null)
   const onFinish = () => {
 
   }
-  const onOk = ()=> {
+  const editArea = async () => {
+   try {
+      const params = {...modalform.getFieldsValue(), level: level, projectId };
+      let {success,errMsg} =  await UpdateAreaLevel(params)
+      levelid = '';
+      success && message.success({
+         content: '修改成功',
+         duration: 0.3,
+         onClose: () =>  queryarealevels().then(() => mref.current.onCancel() ),
+      })
+      !success && message.warning(errMsg || '数据出错')
+      
+   } catch (error) {
+      console.log(error)
+   }
    
+
+}
+  const addArea = async () => {
+   try {
+      const params = {...modalform.getFieldsValue(), level: datas.length + 1, projectId };
+      let {success,errMsg} =  await InsertAreaLevel(params)
+      success && message.success({
+         content: '保存成功',
+         duration: 0.3,
+         onClose: () =>  queryarealevels().then(() => mref.current.onCancel() ),
+      })
+      !success && message.warning(errMsg || '数据出错')
+      
+   } catch (error) {
+      console.log(error)
+   }
+   
+
+}
+  const onOk = () => {
+       console.log(handler);
+       handler == 1 && addArea();
+       handler == 2 && editArea();
+   
+  }
+  const columns = [
+   {
+      dataIndex: "name",
+      title: "字段名称",  
+          
+    },
+    {
+      dataIndex: "use",
+      title: "字段用途",
+    },
+    {
+      dataIndex: '',
+      title: '操作',
+      render: (_, data) =>{
+        return  <Button>删除</Button>
+      },
+    }
+  ]
+  const editfiled = async (level) => {
+     await QueryAreaLevelFields({projectId, level})
+     fref.current.onOpen();
   }
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId])
   useEffect(() => {
@@ -77,7 +164,6 @@ const [datas, setDatas] = useState(null)
          onFinish={onFinish}
         >
          {
-          
            datas?.map((d, index)=> (
             <Boxitem style={{paddingTop: 0}}>
                <span>{numberFormat(d.level)}级区域</span>
@@ -85,16 +171,13 @@ const [datas, setDatas] = useState(null)
                    <Item name={d.id.toString() + d.level} label="" initialValue={d.name}>
                    <Input  />
                    </Item>
-                   <Button type='primary' ghost onClick={() => edit(1)}>修改区域</Button>
-                   <Button type="primary" danger ghost disabled={index != datas?.length - 1}>删除</Button>
-                   <Button type='primary' ghost onClick={() => edit(1)}>编辑字段</Button>
+                   <Button type='primary' ghost onClick={() => edit(d)}>修改区域</Button>
+                   <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d.level)}>删除</Button>
+                   <Button type='primary' ghost onClick={() => editfiled(d.level)}>编辑字段</Button>
               </div>
             </Boxitem>
            ))
-
-
          }
-
          <Boxitem style={{borderBottom: 'none'}}>
              <div className='delbox'>
              <Button type="primary" onClick={add}>+新增下级区域</Button>
@@ -103,19 +186,27 @@ const [datas, setDatas] = useState(null)
           </Boxitem>
          
         </Form>
+        {/* 新增，修改区域 */}
         <CModal title={title} ref={mref}  mold="cust" width={512} okText="保存" onOk={onOk}>
-             <Form name="modalform" ref={modalform}>
+             <Form name="modalform" form={modalform}>
                  <Item name="name" label="区域名称">
                      <Input/>
                  </Item>
-                 <Item name="use" label="区域用途">
+                 <Item name="type" label="区域用途">
                       <Select>
-                         <Select.Option value="0">无</Select.Option>
-                         <Select.Option value="1">楼层</Select.Option>
-                         <Select.Option value="2">房间</Select.Option>
+                         <Select.Option value={0}  >无</Select.Option>
+                         <Select.Option value={1}  >楼层</Select.Option>
+                         <Select.Option value={2} >房间</Select.Option>
                       </Select>
                  </Item>
              </Form>
+        </CModal>
+        <CModal title='删除区域' ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
+              <p>是否确认删除区域</p>
+        </CModal>
+        <CModal title='编辑字段' ref={fref}  mold="cust" width={874}   cancelText="关闭" >
+             <UserTable columns={columns}    />
+              <Button type='primary'>新增</Button>
         </CModal>
     </div>
   )
