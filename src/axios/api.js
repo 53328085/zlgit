@@ -32,6 +32,14 @@ export class ProjectSetting {
     static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
     static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
 }
+// 公共模块---区域设置
+export class AreaSetting {
+    static QueryAreaLevels = (projectId) => server.get(`/General/ProjectSetting/QueryAreaLevels?projectId=${projectId}`) //  查询区域
+    static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
+    static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
+    static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
+    static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
+}
 
 // zl api end
 // 主页
