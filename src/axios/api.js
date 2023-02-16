@@ -355,3 +355,10 @@ export const bottomControl = (params, url, ip, channel, user, pwd) => server.pos
 export const rightControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzRight?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const topControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzUp?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const stopControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzStop?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
+
+
+//首页
+export class UISummary {
+    static InsertUISummary = (projectId, data) => server.post(`UISummary/UISummary/Insert?projectId=${projectId}`, data) // 保存UI
+    static QueryUISummary = (projectId) => server.get(`UISummary/UISummary/Query?projectId=${projectId}`)  // 查询UI
+}

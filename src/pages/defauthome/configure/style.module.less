@@ -1,0 +1,212 @@
+.mainContent{
+    position: relative;
+    width: 100%;
+    
+}
+
+.selectMenu{
+    z-index: 1111;
+    position: absolute;
+    top: 24px;
+    right: 0;
+    width: 48px;
+    height: 848px;
+    background-color: rgba(51, 51, 51, 1);
+    .selectTab{
+        background-color: #003366;
+        border-bottom: 1px solid rgba(188,188, 188, 1);
+        width: 100%;
+        height: 112px;
+        cursor: pointer;
+        
+        .configIcon{
+            width: 28px;
+            height: 28px;
+            margin-top: 24px;
+            margin-left: 10px;
+        }
+        .configName{
+            margin-top: 12px;
+            margin-left: 10px;
+            width: 28px;
+            color: #fff;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+        }
+        .specialConfigName{
+            margin-top: 12px;
+            color: #fff;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+        }
+    }
+}
+
+:global {
+    .ant-drawer-content-wrapper{
+        top: 88px!important;
+        width: 320px!important;
+        
+    }
+    .ant-drawer-header{
+        display: none;
+    }
+    .ant-drawer-body{
+        background-color: #000!important;
+        padding: 16px!important;
+    }
+}
+.searchInput{
+    padding-bottom: 16px;
+    border-bottom: 1px dashed #ccc;
+    display: flex;
+    align-items: center;
+    width: 241px;
+}
+.searchButton{
+    display: inline-block;
+    width: 64px;
+    height: 32px;
+    border: 1px solid rgb(119, 119, 119);
+    background-color: rgb(242, 242, 242);
+    text-align: center;
+    line-height: 32px;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+}
+.addModule{
+    width: 240px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    .dragItem{
+        width: 112px;
+        height: 112px;
+        margin-bottom: 16px;
+        border-radius: 4px;
+        border: 1px solid rgb(119, 119, 119);
+        background-color: rgba(51, 51, 51, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        .itemName{
+            font-size: 14px;
+            color: #f2f2f2;
+            margin-top: 12px;
+        }
+        &:hover{
+            background-color: rgba(15, 26, 46, 1);
+            border-color: rgb(19, 90, 189);
+        }
+    }
+}
+
+.reset{
+    position: absolute;
+    left: 785px;
+    top: 804px;
+    width: 160px;
+    height: 48px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    line-height: 48px;
+    background-color: rgba(255, 102, 51, 1);
+    border-radius: 64px;
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+    &:hover{
+        background-color: rgba(255, 51, 0, 1);
+    }
+}
+
+.confirm{
+    position: absolute;
+    left: 975px;
+    top: 804px;
+    width: 160px;
+    height: 48px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    line-height: 48px;
+    background-color: rgba(35, 122, 228, 1);
+    border-radius: 64px;
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+    &:hover{
+        background-color: rgba(19,90,189,1);
+    }
+}
+.resetModal{
+    :global{
+        .ant-modal-footer{
+            border: none;
+            padding-right: 32px;
+            padding-bottom: 32px;
+        }
+        .ant-modal-body{
+            padding: 32px;
+        }
+    }
+    .resetHeader{
+        height: 32px;
+        border-left: 4px solid #ff4d4f;
+        font-size: 16px;
+        color: #ff4d4f;
+        line-height: 32px;
+        padding-left: 12px;
+    }
+    .resetBody{
+        margin-top: 43px;
+        margin-left: 20px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #333;
+        .warnIcon{
+            width: 42px;
+            height: 42px;
+            margin-right: 12px;
+        }
+    }
+}
+.confirmModal{
+    :global{
+        .ant-modal-footer{
+            border: none;
+            padding-right: 32px;
+            padding-bottom: 32px;
+        }
+        .ant-modal-body{
+            padding: 32px;
+        }
+    }
+    .confirmHeader{
+        height: 32px;
+        border-left: 4px solid #237ae4;
+        font-size: 16px;
+        color: #237ae4;
+        line-height: 32px;
+        padding-left: 12px;
+    }
+    .confirmBody{
+        margin-top: 43px;
+        margin-left: 20px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #333;
+        .warnIcon{
+            width: 42px;
+            height: 42px;
+            margin-right: 12px;
+        }
+    }
+}
