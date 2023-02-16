@@ -18,6 +18,7 @@ import {LoginLayout} from "@com/layout";
 import {pwdValidator, phoneValidator, codeValidator} from '../rule'
 import {Login as Logapi} from '@api/api'
 import imgurl from "./icon";
+import bgImg from './logBg.png'
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
@@ -336,9 +337,9 @@ function UserLog() {
  }
  const Userlog = () => {
   let initmemorize = useSelector(selectMemorize) 
-  let {loginName} = useSelector(selectUser)
+  let {name} = useSelector(selectUser)
   const auto = useMemo(()=> initmemorize ? 'on' : 'off', [initmemorize])
-  const userName = useMemo(()=> initmemorize ? loginName : '', [initmemorize])
+  const userName = useMemo(()=> initmemorize ? name : '', [initmemorize])
   const ckChange = (e) => {
     dispatch(memorizeName(e.target.checked))
   }
@@ -552,7 +553,7 @@ const Phone = React.memo(Phonelog)
   );
 }
 export default function Login() {  
-  return <LoginLayout login={true} header={<Logtitle />}>
+  return <LoginLayout login={true} header={<Logtitle /> } bgImg={bgImg}>
         <Logmain>
           <Loglist>
 

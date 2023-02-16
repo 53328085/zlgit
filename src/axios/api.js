@@ -9,7 +9,7 @@ export class Login {
     static SystemConfig = (url) => server.get(`/SystemConfig/GetSystemConfigInfo?url=${url}`)
     static LoginByName = (data = {}) => server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`)      // 根据用户名登录
 
-    static GetVerification = (mobile) => server.post(`/User/GetCode?mobile=${mobile}`)    // 获取验证吗
+    static GetVerification = (mobile) => server.post(`/General/User/GetCode?mobile=${mobile}`)    // 获取验证吗
     static LoginByPhone = (data = {}) => server.post(`/User/LoginByMobile?mobile=${data.mobile}&code=${data.code}`)   // 根据手机号登录
     static GetMenuByRoleType = (params = {}) => server.get('/Project/GetMenuByRoleType', { params }) // 根据登录人查询项目和侧边栏
     static SystemQueryLoginConfigInfo = (data = {}) => server.get('/System/QueryLoginConfigInfo', data) // 查询登录页配置
@@ -26,8 +26,11 @@ export class ProjectList {
 }
 // 公共模块---项目设置
 export class ProjectSetting {
+    static QueryProjectInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectInfo?projectId=${projectId}`) //  查询项目信息
+    static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
     static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
     static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
+    static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
 }
 
 // zl api end
@@ -361,4 +364,14 @@ export const stopControl = (params, url, ip, channel, user, pwd) => server.post(
 export class UISummary {
     static InsertUISummary = (projectId, data) => server.post(`UISummary/UISummary/Insert?projectId=${projectId}`, data) // 保存UI
     static QueryUISummary = (projectId) => server.get(`UISummary/UISummary/Query?projectId=${projectId}`)  // 查询UI
+}
+export const Monitoring =  {
+    DeviceTypeManager:{
+        GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
+        AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
+        AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
+        QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
+        UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
+        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
+    }
 }

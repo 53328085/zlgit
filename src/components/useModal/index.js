@@ -6,8 +6,8 @@ import Useform from "./useform";
 
  function Custmodal({ 
   fromprops = {
-    initialValues: {},
-     roletype: ''},
+  initialValues: {},
+  roletype: ''},
   enable = false,
   type = "normal",
   mold = "form",

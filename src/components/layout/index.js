@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Layout} from 'antd'
 import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
-import Logbg from './logBg.png'
+//import Logbg from './logBg.png'
 //const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -18,9 +18,11 @@ const Logheaer = styled(Header)`
 }
 
 `
+
 export function LoginLayout(props) { // 登录页
+ //const bgImg = useMemo(() => Logbg, []);
   return( 
-  <Layout className={style.pagelayout} style={{backgroundImage: `url(${Logbg})`, backgroundSize: 'cover'}}>  
+  <Layout className={style.pagelayout} style={{backgroundImage: `url(${props.bgImg})`, backgroundSize: 'cover'}}>  
     <Logheaer>
       {props.header}
     </Logheaer>

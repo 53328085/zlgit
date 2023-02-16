@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useRef} from 'react'
 import { Form, DatePicker, Select, Button } from 'antd'
 import { Warning } from '@api/api.js'
 import { useAntdTable, usePagination } from 'ahooks'
@@ -16,6 +16,7 @@ const Containerdiv = styled.div`
   display:flex
 `
 export default function Index() {
+  const inpDom = useRef(null)
   const tabs = []
   const [form] = Form.useForm()
   const { Item } = Form
@@ -51,7 +52,13 @@ export default function Index() {
     form,
     defaultPageSize: 12,
   })
-
+  const changeFile =()=>{
+    let formData = new FormData();
+    let file = inpDom.current.files[0]
+    console.log(file)
+    formData.append('file',file);
+    console.log(formData.values())
+  }
   console.log(tableProps)
   const propsData = {
     tabs,
@@ -84,6 +91,9 @@ export default function Index() {
         </Item>
         <Item style={{ marginRight: 0, marginLeft: 'auto', }}>
           <Button style={{ width: 96, height: 32 }} >导出</Button>
+        </Item>
+        <Item>
+          <input type='file' onChange={changeFile} ref={inpDom}></input>
         </Item>
       </Form>
       <Containerdiv >

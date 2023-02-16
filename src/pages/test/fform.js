@@ -1,56 +1,125 @@
-
-import React, {useState, useMemo, useCallback, useEffect, useRef, forwardRef} from 'react'
-import styled from 'styled-components'
-import ReactToPrint, {PrintContextConsumer, useReactToPrint} from 'react-to-print'
-import {Button} from 'antd'
-const Counter = React.memo(({count}) => {
-  console.log('Counter重新执行！' )
-  return <span>{count()}</span>
-})
-const FacncyBtn = forwardRef((props, ref) => {
-  return <><Button ref={ref}>{props.children}</Button></>
- })
- const list = ["apple", "peer", "banana", "lemon"];
-export default function Fform() {
-
-  const [autoconte, setAutoConte] = useState(0)
-  useEffect(() => {
-    const timer = setInterval(() => {
-    setAutoConte(s => s + 1)
-   }, 1500)
-   return () => {
-     clearInterval(timer)
-   }
-  }, [])
-  const [name, setName] = useState("apple");
-  const [price, setPrice] = useState(0);
- const getProductName = useMemo(() => {
-  console.log('修改名字的时候才触发')
-  return () => name
-}, [name])
-  
-  const [num] = useState(222) 
-  const [height, setHeight] = useState(0);
-  const [time, setTime] = useState(new Date())
-  const measuredRef = useCallback(node => { // 接受html dom 元素作为参数  回调ref
-    console.log(node);
-    if(node !=null) {
-      setHeight(node.getBoundingClientRect().height)
-    }
-  }, [])
-  useEffect(() => { // 处理状态更新导致的副作用 componentDidMount / componentDidUpdate / componentWillUnmount
-    getProductName()
-  }, [name])
-  useMemo(() => {}, [] ) // 保持对象引用不变
- /*  const count =  useMemo(() => () => num
-  , [num]) */
- const count = useCallback(() => num, [num])
+import { Button, Form, Input, Select, Space, Tooltip, Typography } from 'antd';
+import React from 'react';
+const { Option } = Select;
+const App = () => {
+ 
+  const onFinish = (values) => {
+   
+    console.log('Received values of form: ', values);
+  };
   return (
-      <div>
-         <p>自动执行：{autoconte}</p>
-         <div>
-           <Counter count={count} />
-         </div>
-      </div>   
-  )
-}
+    <Form
+      name="complex-form"
+      onFinish={onFinish}
+      labelCol={{
+        span: 8,
+      }}
+      wrapperCol={{
+        span: 16,
+      }}
+    >
+      <Form.Item label="Username">
+        <Space>
+          <Form.Item
+            name="username"
+            noStyle
+            rules={[
+              {
+                required: true,
+                message: 'Username is required',
+              },
+            ]}
+          >
+            <Input
+              style={{
+                width: 160,
+              }}
+              placeholder="Please input"
+            />
+          </Form.Item>
+          <Tooltip title="Useful information">
+            <Typography.Link href="#API">Need Help?</Typography.Link>
+          </Tooltip>
+        </Space>
+      </Form.Item>
+      <Form.Item label="Address">
+        <Input.Group compact>
+          <Form.Item
+            name={['address', 'province']}
+            noStyle
+            rules={[
+              {
+                required: true,
+                message: 'Province is required',
+              },
+            ]}
+          >
+            <Select placeholder="Select province">
+              <Option value="Zhejiang">Zhejiang</Option>
+              <Option value="Jiangsu">Jiangsu</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name={['address', 'street']}
+            noStyle
+            rules={[
+              {
+                required: true,
+                message: 'Street is required',
+              },
+            ]}
+          >
+            <Input
+              style={{
+                width: '50%',
+              }}
+              placeholder="Input street"
+            />
+          </Form.Item>
+        </Input.Group>
+      </Form.Item>
+      <Form.Item
+        label="BirthDate"
+        style={{
+          marginBottom: 0,
+        }}
+      >
+        <Form.Item
+          name="year"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          style={{
+            display: 'inline-block',
+            width: 'calc(50% - 8px)',
+          }}
+        >
+          <Input placeholder="Input birth year" />
+        </Form.Item>
+        <Form.Item
+          name="month"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          style={{
+            display: 'inline-block',
+            width: 'calc(50% - 8px)',
+            margin: '0 8px',
+          }}
+        >
+          <Input placeholder="Input birth month" />
+        </Form.Item>
+      </Form.Item>
+      <Form.Item label=" " colon={false}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+export default App;

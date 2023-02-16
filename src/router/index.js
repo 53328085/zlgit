@@ -108,7 +108,8 @@ const childrenRoute = {
      path: "/config",
      element: <Index />,
      children: [],
-     key: 'ddesignere'
+     key: 'ddesignere',
+     
    },
 
    {
@@ -123,7 +124,7 @@ const childrenRoute = {
      path: '/zltest',
      element: <Fform/>,
      loader: async ({ params }) => {
-        console.log(params)
+       // console.log(params)
      },
 
    },
@@ -136,9 +137,9 @@ store.subscribe(() => {
    RunRoute = [];
    DesignerRoute = [];
    const menus  = store.getState().system.menus;
-   console.log(menus);
+   
    const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
-   console.log(siderDesignerMenus);
+   
    runMenus?.forEach(r => {
       let {no, key} = r;
       let Com = components[no];
@@ -180,7 +181,7 @@ store.subscribe(() => {
  
 
  })
-console.log(routes);
+ 
 const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫

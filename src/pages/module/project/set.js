@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+
 import {
   Form,
   Input,
   DatePicker,
-  Space,
   Button,
   Switch, 
   Cascader,
-  message,
   Row,
   Col,
-  Checkbox
+  Checkbox,
+  message
 } from "antd";
-import provinces from "china-division/dist/provinces.json";
-import cities from "china-division/dist/cities.json";
-import areas from "china-division/dist/areas.json";
 import styled from "styled-components";
+import moment from 'moment';
+import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
 import Cupload from "@com/useUpload.js"
+import Adrress from "@com/useAddress.js"
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 600px 600px;
-  grid-template-rows: repeat(14, 32px);
+  grid-template-rows: repeat(16, 32px);
   gap: 16px 128px;
   grid-auto-flow: column;
   .ant-form-item {
@@ -35,15 +35,19 @@ import Cupload from "@com/useUpload.js"
     grid-row-start: 5;
     grid-row-end: 7;
   }
+  .type {
+    grid-row: 7 / 9;
+  }
   .remark {
-    grid-row: 13 / 15;
+    grid-column: 2;
+    grid-row: -2 / -4;
     textarea.ant-input {
       height: 80px;
     }
   }
   .upload {
     grid-column: 2;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 16px;
@@ -66,11 +70,11 @@ import Cupload from "@com/useUpload.js"
  
   .address {
     grid-column: 2;
-    grid-row: 4 / 6;
+    grid-row: 5 / 7;
   }
   .lat {
     grid-column: 2;
-    grid-row: 6;
+    grid-row: 7;
   }
   .upload, .address, .lat {
     .ant-form-item-label {
@@ -80,7 +84,7 @@ import Cupload from "@com/useUpload.js"
   }
   .map {
     grid-column: 2;
-    grid-row: 7 / -3;
+    grid-row: 8 / -4;
   }
   .save {
     grid-column: 2;
@@ -101,6 +105,41 @@ import Cupload from "@com/useUpload.js"
 const Info = styled.span`
   font-size: 12px;
   color: rgba(0,0,0,0.85);
+`
+const Dcheckbox = styled.div`
+ && {
+  display: grid;
+  grid-template-columns: repeat(4, 96px);
+  grid-auto-rows: auto;
+  gap: 16px;
+  .ant-checkbox-wrapper {
+    margin: 0px;
+    color: #999;
+    font-size: 14px;
+    width: 96px;
+    height: 32px;
+    line-height: 32px;
+    background-color: transparent;
+    border: 1px solid #999;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+  }
+  .ant-checkbox-disabled+span {
+    color: #fff;
+  }
+  .ant-checkbox-wrapper.ant-checkbox-wrapper-checked {
+    color:#fff;
+    background-color: #237ae4;
+    border-color: #237ae4;
+  }
+   .ant-checkbox {
+    opacity: 0;
+   }
+   .ant-checkbox+span {
+    padding: 0 16px 0 0;
+   }
+ }
 `
 const Ccheckbox = styled(Checkbox.Group)`
 
@@ -138,229 +177,356 @@ const Ccheckbox = styled(Checkbox.Group)`
    }
  }
 `
-export default function Set() {
+export default function ProjectSet({projectId}) {
+  const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
-  const defaultProject = [
-    { label: '项目概述', value: '1' },
-    { label: '运行监控', value: '2' },
-  ]
+  const map = useRef();
+  const [isbigurl, setIsbig] = useState(false)
+  const [addressDtl, setAddressDtl] = useState(null)
+  const module = new Set([ // 布尔值转换成0, 1
+     'safeEnabled',
+    'distributionEnabled',
+    'prepayEnabled',
+     'energyEnabled',
+    'solarEnabled',
+    'storageEnabled',
+    'carbonEnabled',  
+    'maintenanceEnabled',
+    'energyEnabled',
+    'appEnabled',
+    'dataCockpitEnabled',
+   'shiftEnabled',
+   'electricEnabled',
+   'waterColdEnabled',
+   'waterHotEnabled',
+   'steamEnabled',
+   'gasEnabled',
+   'coalEnabled',
+   'oilEnabled',
+  ])
+ 
+ 
   const optionalProject = [
-    { label: '电气安全', value: '1' },
-    { label: '配电管理', value: '2' },
-    { label: '结算收费', value: '3' },
-    { label: '能源管理', value: '4' },
-    { label: '光伏发电', value: '5' },
-    { label: '碳排管理', value: '6' },
-    { label: '数据报表', value: '7' },
-    { label: '运维管理', value: '8' },
+    { label: '电气安全', value: 'safeEnabled' },
+    { label: '配电管理', value: 'distributionEnabled' },
+    { label: '结算收费', value: 'prepayEnabled' },
+    { label: '能源管理', value: 'energyEnabled' },
+    { label: '光伏发电', value: 'solarEnabled' },
+    { label: '存储管理', value: 'storageEnabled' },
+    { label: '碳排管理', value: 'carbonEnabled' },  
+    { label: '运维管理', value: 'maintenanceEnabled' },
   ]
   const energyType = [
-    { label: '电', value: '1' },
-    { label: '水', value: '2' },
-    { label: '燃气', value: '3' },
-    { label: '煤炭', value: '4' },
+    { label: '电', value: 'electricEnabled' },
+    { label: '冷水', value: 'waterColdEnabled' },
+    { label: '热水', value: 'waterHotEnabled' },
+    { label: '蒸汽', value: 'steamEnabled' },
+    { label: '燃气', value: 'gasEnabled' },
+    { label: '煤炭', value: 'coalEnabled' },
+    { label: '燃油', value: 'oilEnabled' },
   ]
   const { Item } = Form;
   const { TextArea } = Input;
-  const params = {
-    ProjectType: "预付费项目",
-    ProjectValidStageTime: "", //项目有效期
-    Name: "",
-    Address: "",
-    LineAnalysisEnabled: 0,
-    Lng: "",
-    Lat: "",
-    
-    BigScreenUrl: "",
-    Remark: "", //备注
-  };
-  let logo = null // 项目logo
-  let picture = null // 项目图片
-  const [initialValues] = useState(params);
-  const [defaultAdress, setDefaultAddress]=useState([])
-  const [addressVal, setAddressVal] = useState(['', '', ''])
-  areas.forEach((area) => {
-    const matchCity = cities.filter((city) => city.code === area.cityCode)[0];
-    if (matchCity) {
-      matchCity.children = matchCity.children || [];
-      matchCity.children.push({
-        label: area.name,
-        value: area.code,
-      });
-    }
-  });
-  cities.forEach((city) => {
-    const matchProvince = provinces.filter(
-      (province) => province.code === city.provinceCode
-    )[0];
-    if (matchProvince) {
-      matchProvince.children = matchProvince.children || [];
-      matchProvince.children.push({
-        label: city.name,
-        value: city.code,
-        children: city.children,
-      });
-    }
-  });
-  const options = provinces.map((p) => ({
-    label: p.name,
-    value: p.code,
-    children: p.children,
-  })); 
-  const setAaddress = ({Lng='', Lat='', Address='', province='', city='', district=''}={}) => {
-    
-   form.setFieldsValue({
-    Lng,
-    Lat,
-    Address
-   })
+
+/* 
+address: "滨江",
+appEnabled: 0, //app是否启用
+bigScreenUrl: ""， // 数据大屏
+carbonEnabled: 0, 碳排管理
+coalEnabled: 0, // 煤炭
+createTime: "2023-02-06 19:24:34"
+dataCockpitEnabled: 0, //数字驾驶创
+distributionEnabled: 0, // 配电监控
+electricEnabled: 0, // 电
+energyEnabled: 0, //能源管理
+gasEnabled:0, 燃气
+id: 2，
+imgLogo: ""， // 项目LOGO
+imgProject: "", // 项目图片
+lat: 0
+lng: 0
+maintenanceEnabled: 0, // 运维管理
+name: "测试项目2"
+oilEnabled: 0, // 燃油
+prepayEnabled: 0, //结算收费
+remark: "测试2"
+safeEnabled: 0, // 电气安全
+solarEnabled: 0, // 光伏发电
+state: 0
+steamEnabled: 0, // 蒸汽
+storageEnabled: 0, // 储能管理
+updateTime: "2023-02-06 19:24:34"
+validStageTime: "2023-02-02 00:00:00"  // 有限期
+waterColdEnabled: 0, // 冷水
+waterHotEnabled: 0, // 热水
+
+ShiftEnabled: 0, // 班次管理
+ */
+
+ const [lngLat, setLngLat] = useState()
+
+  const params = {   
+    id: '',
+    validStageTime: "", //项目有效期
+    name: "",
+    address: "",
+    lngLat: '', // 经纬度 
+    bigScreenUrl: "",
+    remark: "", //备注
+    imgLogo: '',
+    imgProject: '',
+  };  
+
+const GetAddress = useMemo(() => Adrress, [])
+
    
-   const p = options.find(i => i.label == province);
-  
-   let c, a;
-   if (Array.isArray(p?.children)) {
-      c = p.children.find(i => i.label == city);
-      if (Array.isArray(c?.children)) {
-         a = c.children.find(i => i.label == district)?.value
+const onSwitch = (f) => {
+  /* if(!f) {
+    form.setFieldValue('bigScreenUrl', '')
+  } */
+  setIsbig(f)
+}
+let initial = {} // 获取的接口项目信息
+const queryProjectInfo = async () => {
+   try {
+    let {data, success, errMsg} = await QueryProjectInfo(projectId)
+    if(!success) return ;  
+     initial = data;
+    for(let key of Object.keys(params)) {
+      if (key == 'validStageTime' && data[key]) {
+         params[key] = moment(data[key]);
+      } else {
+         params[key] = data[key];
       }
+    }
+
+    setLngLat(data['lngLat'])
+    const bool = {}
+    for(let b of module) {
+      bool[b] = Boolean(data[b])
+    }
+    form.setFieldsValue({...params, ...bool})
+   } catch (error) {
+    
    }
-   setAddressVal([p.value, c.value, a]) 
-   console.log(defaultAdress)
+  
 }
-const changeaddress = (value) => {
-   setAddressVal(value)
+const changeAddress = (v) => {
+  try {
+    let address = v?.split(',').join('').trim();
+
+     address?.replace("市辖区", "")
+    console.log(address)
+    map.current?.serachMap.search(address)
+    form.setFieldValue('address',address);
+  } catch (error) {
+    console.log(error);
+  }
+  
 }
-const onUpdate = (file) => {
-   console.log(file)
-   return false
+const config = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: '请选择项目有效期',
+    },
+  ],
+};
+const checkLog = (_, value) => {   
+   if (!!value) {
+     return Promise.resolve();
+   }
+   return Promise.reject(new Error('项目Log必须上传'));
+  
 }
-const checkChange = (values) => {
-  console.log(values)
+const checkProject = (_, value) => { 
+  if (!!value) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('项目图片必须上传'));
+ 
 }
+const setAaddress = (value) => {
+  try {
+   console.log(value)
+  let {lng, lat, address, province, city, district, street, streetNumber} = value
+  
+   lng && lat && form.setFieldValue('lngLat', `${lng?.toFixed(3)},${lat?.toFixed(3)}`)
+  
+  address && form.setFieldValue('address', address);
+  province && setAddressDtl([province, city, district])
+} catch (error) {
+    console.log(error)
+}
+}
+const onFinish = async (values) => {
+  try {
+    for(let b of module) {
+      values[b] = Number(values[b])
+    }
+    values['validStageTime'] = values['validStageTime'].format('YYYY-MM-DD HH:mm:ss')
+   let params = {...initial, ...values};
+   let {success, errMsg} = await SaveProjectInfo(params)
+   success && message.success({
+    content: '保存成功',
+    onClose: queryProjectInfo,
+   }) 
+   !success && message.error(errMsg || '数据错误')
+  } catch (error) {
+    
+  }
+    
+}
+useEffect(() => {
+  queryProjectInfo();
+  console.dir(map.current.serachMap.search
+    )
+}, [projectId])
+
   return (
     <Formbox
-      form={form}      
-      initialValues={initialValues}
+      form={form}   
       labelAlign="left"
       size="middle"
+      scrollToFirstError={true}
+      onFinish={onFinish}
     >
-      <Item label="项目ID">
+      <Item label="项目ID" name="id">
         <Input placeholder="系统自增项目ID" disabled />
       </Item>
-      <Item label="项目名称" required>
+      <Item label="项目名称" required name="name">
         <Input placeholder="请输入项目名称" />
       </Item>
-      <Item label="项目有效期" required name="ProjectValidStageTime">
-        <DatePicker />
+      <Item label="项目有效期" required name="validStageTime" {...config}>
+        <DatePicker  showTime format="YYYY-MM-DD HH:mm:ss" />
       </Item>
       <Item label="默认模块">
-          <Ccheckbox options={defaultProject} defaultValue={['1', '2']} onChange={checkChange} disabled />
+          <Dcheckbox>
+            <Checkbox checked disabled>项目概述</Checkbox>
+            <Checkbox checked disabled>运行监控</Checkbox>
+          </Dcheckbox>
+         {/*  <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled /> */}
       </Item>
       <Item label="可选模块" className='optional'> 
-         <Ccheckbox options={optionalProject} defaultValue={[]} onChange={checkChange} />
+           <Dcheckbox>
+             {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
+          </Dcheckbox>
+     
       </Item>
-      <Item label="能源种类">
-         <Ccheckbox options={energyType} defaultValue={[]} onChange={checkChange} />
+      <Item label="能源种类" className="type" >
+          <Dcheckbox>
+             {energyType.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
+          </Dcheckbox>
       </Item>
       <Item label="数据大屏启用">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
-          defaultChecked
+          onChange={onSwitch}
           style={{
             width: "64px",
           }}
         />
       </Item>
-      <Item label="数据大屏url">
-        <Input placeholder="请输入数据大屏地址" />
+      <Item label="数据大屏url" name="bigScreenUrl"  >
+        <Input placeholder="请输入数据大屏地址" disabled={!isbigurl}/>
       </Item>
-      <Item label="数据驾驶舱启用">
+      <Item label="数据驾驶舱启用" valuePropName="checked" name="dataCockpitEnabled" >
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
-          defaultChecked
           style={{
             width: "64px",
           }}
         />
       </Item>
-      <Item label="App 功能启用">
+      <Item label="App 功能启用" valuePropName="checked" name="appEnabled">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
-          defaultChecked
           style={{
             width: "64px",
           }}
         />
       </Item>
-      <Item label="班次管理启用">
+      <Item label="班次管理启用" valuePropName="checked" name="shiftEnabled">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
-          defaultChecked
           style={{
             width: "64px",
           }}
         />
       </Item>
-      <Item label="项目备注" name="Remark" className='remark'>
-         <Item noStyle>
+      <Item label="项目备注"  className='remark'>
+         <Item noStyle name="remark">
         <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
         </Item>
-      </Item>
+      </Item> 
       <div className='upload'>
          <Item label="项目logo" className="left" required>
            <div className="img">
-            <Cupload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={(file) => logo=file} /> 
+            <Item noStyle name="imgLogo" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
+              <Cupload wpx={212} hpx={32} swpx={220} shpx={114} style={{padding: '16px'}}   /> 
+            </Item>
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
-         <Item label="项目图片" required>
+         <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
            <div className="img">
-            <Cupload wpx={248} hpx={168} swpx={200} shpx={116} getfile={(file) => picture=file} /> 
+            <Item noStyle name="imgProject" rules={[
+              {
+                validator: checkProject,
+              },
+            ]}>
+            <Cupload wpx={248} hpx={168} swpx={220} shpx={114}  /> 
+            </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
-      <Item label="项目地址" className='address'>
+      <Item label="项目地址" className='address' required>
         <Item noStyle>
-          <Cascader
-            options={options}
-            defaultValue={defaultAdress}
-            value={addressVal}
-            onChange={changeaddress}
-            showSearch
-            placeholder="请选择或输入省/市/区"
-            style={{
-              marginBottom: "16px",
-            }}
-          />
+           <GetAddress placeholder="请选择省市区" onChange={changeAddress} value={addressDtl} />
         </Item>
-        <Item name="Address">
+        <Item name='address'  rules={[
+              {
+                required: true,
+                message: '请输入详细地址',
+              },
+            ]}>
           <Input placeholder="请输入项目的详细地址" /> 
         </Item>
       </Item>
-      <Item label="经纬度" className="lat" required>
-        <Row gutter={16}>
+      <Item label="经纬度" className="lat" name="lngLat" required>
+       
+              <Input placeholder="经纬度" /> 
+          
+        {/* <Row gutter={16}>
           <Col span={12}>
-            <Item name="Lng">
+            <Item name="lng" required>
               <Input placeholder="经度" /> 
             </Item>
           </Col>
           <Col span={12}>
-            <Item name="Lat">
+            <Item name="lat">
               <Input placeholder="纬度" /> 
             </Item>
           </Col>
-        </Row>
+        </Row> */}
       </Item>
-      <div className='map'>
-        <Mapcom setAaddress={setAaddress} initialValues={initialValues} />
+      <div className='map'  >
+          
+          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
+         
       </div>
       <div className="save">
-         <Button type="primary">保存</Button>
+         <Button type="primary" htmlType="submit">保存</Button>
       </div>
     </Formbox>
   );
