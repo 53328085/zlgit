@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import { Monitoring } from '@api/api.js'
@@ -14,16 +14,9 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
   const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
+
+ 
   
-  let Coms = [
-    <GateWay/>,
-    <Electric/>,
-    <Water/>,
-    <Fire/>,
-    <Sensor/>,
-    <Transform/>,
-    <Video/>
-  ]
 
   let dataProps = {
     value,
@@ -44,6 +37,15 @@ export default function Index() {
       dataProps = {...dataProps,  tabs } 
     }
   }
+  let Coms = [
+    <GateWay />,
+    <Electric />,
+    <Water/>,
+    <Fire />,
+    <Sensor />,
+    <Transform />,
+    <Video/>
+  ]
   useEffect(() => {
     getAllDeviceStyle()
   }, [])
@@ -51,7 +53,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={dataProps}>
           <Pagecount>
-             {Coms[Number(value)]}
+             { Coms[Number(value)] }
           </Pagecount>
     </CustContext.Provider>
 
