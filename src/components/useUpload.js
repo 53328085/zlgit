@@ -77,7 +77,7 @@ const Ifile = styled.input.attrs(props => ({
 `
 
  // img.src = `data:image/png;base64,${src}`
-  const [url, setUrl] = useState(value)
+  const [url, setUrl] = useState()
   const file = useRef()
   const imgsize = (src) => {
     const msg = () => {
@@ -166,7 +166,9 @@ const Ifile = styled.input.attrs(props => ({
     onChange?.('')
     window.URL && URL.revokeObjectURL(src)
   }
- 
+  useEffect(() => { 
+    setUrl(value); 
+  }, [value])
   return (
      <Preview>
       {

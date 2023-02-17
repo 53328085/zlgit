@@ -32,6 +32,15 @@ export class ProjectSetting {
     static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
     static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
 }
+// 公共模块---区域设置
+export class AreaSetting {
+    static QueryAreaLevels = (projectId) => server.get(`/General/ProjectSetting/QueryAreaLevels?projectId=${projectId}`) //  查询区域
+    static InsertAreaLevel = ({projectId, level,name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  插入区域
+    static DeleteAreaLevel = ({projectId,level}) => server.delete(`/General/ProjectSetting/DeleteAreaLevel?projectId=${projectId}&level=${level}`) //  删除区域
+    static UpdateAreaLevel = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/UpdateAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  修改区域
+    static QueryAreaLevelFields = ({projectId,level}) => server.get(`/General/ProjectSetting/QueryAreaLevelFields?projectId=${projectId}&level=${level}`) //  查询字段
+
+}
 
 // zl api end
 // 主页

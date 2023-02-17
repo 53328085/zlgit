@@ -89,8 +89,7 @@ import Useform from "./useform";
   };
   const {onCancel: close, ...rest} = props
   const form = useRef()
-  const onCancel = () => {   
-    console.log(22222)
+  const onCancel = () => {    
     setOpen(false)
   }
   const onOpen = () => {

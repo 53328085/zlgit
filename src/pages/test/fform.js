@@ -1,124 +1,39 @@
-import { Button, Form, Input, Select, Space, Tooltip, Typography } from 'antd';
-import React from 'react';
-const { Option } = Select;
-const App = () => {
-  const onFinish = (values) => {
-   
-    console.log('Received values of form: ', values);
-  };
-  return (
-    <Form
-      name="complex-form"
-      onFinish={onFinish}
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
-    >
-      <Form.Item label="Username">
-        <Space>
-          <Form.Item
-            name="username"
-            noStyle
-            rules={[
-              {
-                required: true,
-                message: 'Username is required',
-              },
-            ]}
-          >
-            <Input
-              style={{
-                width: 160,
-              }}
-              placeholder="Please input"
-            />
-          </Form.Item>
-          <Tooltip title="Useful information">
-            <Typography.Link href="#API">Need Help?</Typography.Link>
-          </Tooltip>
-        </Space>
-      </Form.Item>
-      <Form.Item label="Address">
-        <Input.Group compact>
-          <Form.Item
-            name={['address', 'province']}
-            noStyle
-            rules={[
-              {
-                required: true,
-                message: 'Province is required',
-              },
-            ]}
-          >
-            <Select placeholder="Select province">
-              <Option value="Zhejiang">Zhejiang</Option>
-              <Option value="Jiangsu">Jiangsu</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name={['address', 'street']}
-            noStyle
-            rules={[
-              {
-                required: true,
-                message: 'Street is required',
-              },
-            ]}
-          >
-            <Input
-              style={{
-                width: '50%',
-              }}
-              placeholder="Input street"
-            />
-          </Form.Item>
-        </Input.Group>
-      </Form.Item>
-      <Form.Item
-        label="BirthDate"
-        style={{
-          marginBottom: 0,
-        }}
-      >
-        <Form.Item
-          name="year"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: 'inline-block',
-            width: 'calc(50% - 8px)',
-          }}
-        >
-          <Input placeholder="Input birth year" />
-        </Form.Item>
-        <Form.Item
-          name="month"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: 'inline-block',
-            width: 'calc(50% - 8px)',
-            margin: '0 8px',
-          }}
-        >
-          <Input placeholder="Input birth month" />
-        </Form.Item>
-      </Form.Item>
-      <Form.Item label=" " colon={false}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
-export default App;
+import React from "react";
+import { Form, Input, Row, Col, Button } from "antd";
+
+//initalValue.files 有一元素 可直接显示一行样式 可以实验性看下样式
+//可以看到 { add , remove } 暴漏的这两个方法显而易见可用来添加删除项
+//可各种组合 华山论剑
+
+export default () => (
+  <Form initialValues={{ files : [{ file : '' , name : '' }] }}>  
+    <Form.Item label="文件">
+      <Form.List name="files">
+        {
+            (fields , {add, remove}) => fields.map(
+              field => (
+                <>
+                  <Row key={ field.key }>
+                    <Col span={ 11 }>
+                      <Form.Item name={[ field.name , 'file']}>
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={ 11 }>
+                      <Form.Item  name={[ field.name , 'name']}>
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={ 2 } onClick={ () => remove( field.name ) }>x</Col>
+                  </Row>
+                  <Row>
+                    <Button onClick={ () =>  add( field.name ) }>添加一行</Button>
+                  </Row>
+                </>
+              )
+            )
+        }
+      </Form.List>
+    </Form.Item>
+  </Form>
+);

@@ -391,11 +391,11 @@ export default function Index() {
     },
     {
       title: "有效期",
-      key: "projectValidStageTime",
-      dataIndex: "projectValidStageTime",
+      key: "validStageTime",
+      dataIndex: "validStageTime",
       align: "center",
       width: 200,
-      render: (text) => moment(text).format("YYYY-MM-DD"),
+     // render: (text) => moment(text).format("YYYY-MM-DD"),
     },
     {
       title: "操作",
