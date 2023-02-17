@@ -154,42 +154,11 @@ let ImageUpload = ({ value = {}})=>{
 
 
 
-let TableSwitch=forwardRef(
-  ({_,v,pointSource,setPointSource,setIsSwitched,isSiwtched})=>{
-    
-    // useImperativeHandle(ref,()=>({
-    //   isSiwtched
-    // }))
-    return(
-      <Switch 
-        checkedChildren="标记" 
-        unCheckedChildren="不标记" 
-        defaultChecked={_} 
-        disabled={isSiwtched?!v['watchPoint']:false} 
-        onChange={(o)=>{
-          let arr = [...pointSource]
-          arr.forEach((it,i)=>{
-            if(it.index===v.index){
-              it.watchPoint=o
-            }
-          })
-          setPointSource(arr)
-          const num = arr.filter((it,index)=>it.watchPoint).length
-          if(num>=4){
-            setIsSwitched(true)
-          }else{
-            setIsSwitched(false)
-          }
-        }}
-        /> 
-    )
-  }
-)
+
 let TableForm=forwardRef(({defaultTableData},ref)=>{
   const [pointSource,setPointSource] = useState([...defaultTableData])
-  const [isSiwtched,setIsSwitched] = useState(false)
-  // const SwitchRef = useRef(null)
-  console.log('重新渲染')
+  const [isSiwtched,setIsSwitched] = useState([])
+  let arrs=[];
   const columns=[
     {
       title:'序号',
@@ -238,7 +207,38 @@ let TableForm=forwardRef(({defaultTableData},ref)=>{
       title:'标记运行监测点',
       key:'watchPoint',
       dataIndex:'watchPoint',
-      render:(t,v,index)=><TableSwitch v={v} _={t} pointSource={pointSource} setPointSource={setPointSource} isSiwtched={isSiwtched} setIsSwitched={setIsSwitched}></TableSwitch>
+      // shouldCellUpdate:(r,o)=>{
+      //   console.log(r,o)
+      // },
+      render:(t,v,index)=>{
+        return(
+          <Switch 
+            checkedChildren="标记" 
+            unCheckedChildren="不标记" 
+            defaultChecked={t} 
+            disabled={isSiwtched.length>3} 
+            onChange={(o)=>{
+              // let arr = [...pointSource]
+              // arr.forEach((it,i)=>{
+              //   if(it.index===v.index){
+              //     it.watchPoint=o
+              //   }
+              // })
+              // setPointSource(arr)
+              if(isSiwtched.length<4){
+                o&& setIsSwitched((d)=>{return [...d,v.index]})
+              }
+              console.log(isSiwtched,v)
+              // const num = arr.filter((it,index)=>it.watchPoint).length
+              // if(arrs.length>3){
+              //   setIsSwitched(true)
+              // }else{
+              //   setIsSwitched(false)
+              // }
+            }}
+            /> 
+        )
+      }
        
     },
     {
@@ -260,6 +260,8 @@ let TableForm=forwardRef(({defaultTableData},ref)=>{
     <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index} ></Table>
   )
 })
+
+
 //新增电表类型
 let AddModal =forwardRef(
   ({ addForm, dataSource,getDeviceQueryCategoryFull,defaultTableData },ref) => { 
@@ -366,7 +368,6 @@ let AddModal =forwardRef(
       <Form
         layout="vertical"
         form={addForm}
-      
       >
         <Row align='bottom'>
           <Col span={16}>
@@ -421,7 +422,5 @@ let AddModal =forwardRef(
         <TableForm ref={tableRef} defaultTableData={defaultTableData}  ></TableForm>
       </Form>
     )
-  
-  
   }
 ) 
