@@ -24,7 +24,7 @@ export class ProjectList {
     static createProject = (data) => server.post('General/PlatConfig/CreateProject', data) // 新增项目
     static QueryMenus = (projectId) => server.get(`General/User/QueryMenus?projectId=${projectId}`)  // 查询菜单栏
 }
-// 公共模块---项目设置
+// 公共模块---项目设置---项目基础设置
 export class ProjectSetting {
     static QueryProjectInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectInfo?projectId=${projectId}`) //  查询项目信息
     static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
@@ -32,16 +32,23 @@ export class ProjectSetting {
     static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
     static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
 }
-// 公共模块---区域设置
+// 公共模块---项目设置---区域设置
 export class AreaSetting {
     static QueryAreaLevels = (projectId) => server.get(`/General/ProjectSetting/QueryAreaLevels?projectId=${projectId}`) //  查询区域
     static InsertAreaLevel = ({projectId, level,name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  插入区域
     static DeleteAreaLevel = ({projectId,level}) => server.delete(`/General/ProjectSetting/DeleteAreaLevel?projectId=${projectId}&level=${level}`) //  删除区域
     static UpdateAreaLevel = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/UpdateAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  修改区域
     static QueryAreaLevelFields = ({projectId,level}) => server.get(`/General/ProjectSetting/QueryAreaLevelFields?projectId=${projectId}&level=${level}`) //  查询字段
-
+    static InsertAreaLevelField = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevelField?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  新增字段
+    static DeleteAreaLevelField = ({projectId, fieldId}) => server.delete(`/General/ProjectSetting/DeleteAreaLevelField?projectId=${projectId}&fieldId=${fieldId}`) // 删除字段
 }
-
+// 公共模块---项目设置---数据组设置
+export class DataGroups {
+    static QueryDataGroups = () => server.get(`/General/ProjectSetting/QueryDataGroups`) //  查询数据组名称
+    static InsertDataGroup = ({name}) => server.post(`/General/ProjectSetting/InsertDataGroup?name=${name}`) //  新增数据组名称
+    static DeleteDataGroup = ({id}) => server.delete(`/V1/General/ProjectSetting/DeleteDataGroup?id=${id}`) //  删除数据组名称
+}
+// 
 // zl api end
 // 主页
 export class Home {

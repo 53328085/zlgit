@@ -12,8 +12,7 @@ export default function Index(props) {
     document.title = `NES600智慧能源服务平台 ${location.state?.title}`
     return () => document.title= 'NES600智慧能源服务平台'
   },[location])  
-  const index = useMemo(() => location?.state?.index, [location.state]);
-  console.log(index)
+  const index = useMemo(() => location?.state?.index, [location.state]); 
   let Defaultlayout = (
     <DefaultLayout       
       custheader= {<Header istitle={true}/>}
