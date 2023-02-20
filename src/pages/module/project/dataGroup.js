@@ -99,7 +99,7 @@ const onOkDel = async () => {
     {
       dataIndex: "op",
       title: "操作",
-      render: (_,record) => (<Space size={32}><Link underline  onClick={() => edit({id})}>编辑</Link><Link underline type="danger" onClick={() => del(id)}>删除</Link></Space>),
+      render: (_,{id}) => (<Space size={32}><Link underline  onClick={() => edit({id})}>编辑</Link><Link underline type="danger" onClick={() => del(id)}>删除</Link></Space>),
       align: 'center'
     },
     
