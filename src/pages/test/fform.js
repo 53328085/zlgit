@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-const From = () => {
-    const [value, setValue] = useState('zl')
-    console.log(1111)
+const From = ({count}) => {
+    const [value, setValue] = useState(count);
+    const [text, setText] = useState('')
+    if (count > value) {
+       setText('数据增加')
+    }e
    return (
-    <label>{value}  <input value={value} onChange={
-      (e) => setValue(e.target.value)
-    }></input></label>
+    <h1>{value}{text}  </h1>
    )
 }
 export default function Fform() {
@@ -25,7 +26,7 @@ export default function Fform() {
       <button onClick={() => setName(Math.random().toString())}>{name}</button>
       {list}
       <button onClick={() => setKeyId(keyId + 1)}>reset</button>
-      <From key={keyId}></From>
+      
       </div>
   )
 }

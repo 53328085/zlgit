@@ -10,7 +10,7 @@ const Mainbox = styled.div`
   flex: 1;
 `
 export default function Datagroupc({projectId, CModal}) {
- const {QueryDataGroups, InsertDataGroup, DeleteDataGroup} = DataGroups
+ const {QueryDataGroups, InsertDataGroup, DeleteDataGroup, UpdateDataGroup} = DataGroups
  let {Text, Link} = Typography
  const eref = useRef()
  const dref = useRef();
@@ -18,66 +18,68 @@ export default function Datagroupc({projectId, CModal}) {
  const [title, setTitle] = useState()
  const [tableData, setTableData] = useState([])
  const [groupId, setGroupId] = useState(null)
+ const [type, setType] = useState(0)
  const getData = async () => {
 
-      QueryDataGroups().then(({success, data}) => {
-        console.log(data)
+      QueryDataGroups().then(({success, data}) => {       
         success && setTableData(() => [...data])
+        return true;
       }).catch()
    
  }
  const add = () => {
    setTitle('新增数据组') 
+   setType(0)
    eref.current.onOpen();
  }
- const edit = (record) => {
-   setValue(record.name)
-   eref.current.onOpen()
+ const edit = ({id, name}) => {
+   setTitle('编辑数据组')
+   setGroupId(id);
+   setType(1)
+   eref.current.onOpen();
+   console.log(name);
+   form.setFieldValue('name', name)
  }
- const del = (id) => {
+ const del = (id) => { 
   setGroupId(id)
   dref.current.onOpen()
  }
- const onOk = async() => {
+ 
+ const onOk = async() => { // type: 0 新增， 1 编辑；
+   
    try {
      let data = await form.validateFields()
-     let {success} = await InsertDataGroup(data)
+     let {success} = type == 0 ? await InsertDataGroup(data) : await UpdateDataGroup({name: data.name, id: groupId})
      success && message.success({
-      content: '新增字段成功',
+      content:  ['新增字段成功', '编辑字段成功'][type],
       onClose:  () =>  { 
-          getData() 
-          eref.current.onCancel() 
+          getData().then((_) => eref.current.onCancel() ) 
+          
         },       
       duration: 0.3,
      })
    } catch (error) {
      console.log(error)
-   }  
-const onOkDel = async () => {
-   if(!groupId) return;
-    let {success, errMsg} = await DeleteDataGroup(gropuId);
-    success && message.success({
-      content: '删除字段成功',
-      onClose:  () =>  { 
-          getData() 
-          eref.current.onCancel() 
-        },       
-      duration: 0.3,
-     })
-}
- /*  form.validateFields().then(res => {
-     InsertDataGroup(res)
-  }).catch(e => {
-    console.log(e)
-  }) */
-    /* form.validateFields().then(res => {
-      console.log(res)
-    }).catch(err) {
-      console.log(err)
-    } */
- //  console.log(form.getFieldsValue());
-   //form.submit()
+   }   
  }
+ const onOkDel = async () => {
+  try {
+   if(!groupId) return;
+   console.log(groupId);
+   let {success, errMsg} = await DeleteDataGroup({id:groupId});
+   success && message.success({
+     content: '删除字段成功',
+     onClose:  () =>  { 
+         getData().then(_ => dref.current.onCancel());
+         
+       },       
+     duration: 0.3,
+    })
+  } catch (error) {
+     console.log(error)
+  }
+  
+}
  const columns = [
     { 
     
@@ -99,7 +101,7 @@ const onOkDel = async () => {
     {
       dataIndex: "op",
       title: "操作",
-      render: (_,{id}) => (<Space size={32}><Link underline  onClick={() => edit({id})}>编辑</Link><Link underline type="danger" onClick={() => del(id)}>删除</Link></Space>),
+      render: (_,{id,name}) => (<Space size={32}><Link underline  onClick={() => edit({id,name})}>编辑</Link><Link underline type="danger" onClick={() => del(id)}>删除</Link></Space>),
       align: 'center'
     },
     
@@ -131,7 +133,7 @@ const onOkDel = async () => {
                 
              </Form>
         </CModal>
-        <CModal title='删除提示' ref={dref}  mold="cust" width={512} type="warn" >
+        <CModal title='删除提示' ref={dref}  mold="cust" width={512} type="warn" onOk={onOkDel} >
              <div style={{display:"flex", alignItems: "center"}}>
                  <span> 是否确认删除数据组名称？ </span>
                
