@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
-
+import {custMsg} from '@com/usehandler'
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
@@ -14,15 +14,14 @@ const Mainbox = styled.div`
 `
 export default function Account({projectId, CModal}) {
  const {Text, Link} = Typography
- const {GetUsersPage, GetRoleType, ResetPassword, UpdateUser, DeleteUse, QueryOperationManager, AddOperationManager} = User 
+ const {QueryOperationManager, AddOperationManager, DeleteOperationManager, ResetPassword} = User 
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
- const [isopen, setIsopen]=useState(false)
- const [roletype, setRoletype] = useState([])
+
  const [title, setTitle] = useState('新增账号')
  const [userinof, setUserinfo] = useState({
-    loginName: '',
+    name: '',
     nickName: '',
     pwd:'',
     rpwd: '',
@@ -31,16 +30,19 @@ export default function Account({projectId, CModal}) {
     remark: ''
  })
  const mref = useRef(null)
+ const dref = useRef(null)
+ const rref = useRef(null)
+ const pwd = useRef(null)
 const showModl = (type=0) => { 
    let text = ['新增账号', '编辑账号'][type]
    setTitle(text)
    mref.current.onOpen()
 }
 
- const [record, setRecord] = useState({})
+ const [Record, setRecord] = useState({})
  const [isEdit, setIsEdit] = useState(false)
  
- const [pwdparms, setpwdparms] = useState({userId: '', pwd: ''})
+  
 
  
 
@@ -61,10 +63,46 @@ const showModl = (type=0) => {
       'enabled': enabled,
     })
  }
- 
- 
- 
+ const del = async (record) => {
+  setRecord({...Record, ...record})
+  dref.current.onOpen()
+ }    
+ const delOk = async () => {
+  let {id} = Record
+  try {
+    let {success, errMsg} =  await DeleteOperationManager(id)
 
+   custMsg({success, content: '删除成功',  onClose: () => {
+      refresh()
+      dref.current.onCancel()
+    }})
+    custMsg({success: !success, content: errMsg, type: 'warning'} )
+   
+  } catch (error) {
+    
+  }
+ }
+ const reset = (record) => {
+  setRecord({...Record, ...record});
+  console.log(Math.random())
+  pwd.current = Math.random().toString().slice(2,8)
+  rref.current.onOpen();
+ }
+ const restOk = async () => {
+   try {
+    const {id, pwd} = Record
+    const {success} =  await ResetPassword({id, pwd, oldPwd: pwd.current})
+    custMsg({success, content: '密码重置成功',  onClose: () => {
+      refresh()
+      rref.current.onCancel()
+    }})
+    custMsg({success: !success, content: errMsg, type: 'warning'} )
+    
+   } catch (error) {
+     console.log(error)
+   }
+ 
+ }
  const columns = [  
         {
           dataIndex: "name",
@@ -98,8 +136,8 @@ const showModl = (type=0) => {
           title: "操作",
           render: (_,record) => <Space size={16}>
             <Link underline onClick={ null}>编辑</Link>
-            <Link underline onClick={null }>重置密码</Link>
-            <Link underline type="danger" onClick={null}>删除</Link>
+            <Link underline onClick={reset.bind(null, record)}>重置密码</Link>
+            <Link underline type="danger" onClick={del.bind(null, record)}>删除</Link>
           </Space>
         }
      
@@ -144,15 +182,14 @@ const showModl = (type=0) => {
     let data = await mform.validateFields();
     console.log(data)
     let {success, errMsg} = await AddOperationManager({...data, enabled: data.enabled ? 1 : 0})
-    success && message.success({
-      content: '新增成功', 
-      onClose: () => {
-        mref.current.onCancel();
-        refresh()
-      },
-      duration: 0.3,
-    })
-    !success && message.warning(errMsg || '数据出错, 请检查输入数据')
+    success && custMsg({success, content: '新增成功',  onClose: () => {
+      mref.current.onCancel();
+      refresh()
+    }})
+    !success && custMsg({success: !success, content: errMsg, type: 'warning'} )
+
+  
+   
   } catch (error) {
     console.log(error)
   } 
@@ -248,12 +285,12 @@ const showModl = (type=0) => {
              </Item> 
          </Form>
      </CModal>
-     <CModal width={554} title="重置密码"     >
-         <p>账号： <Link>{record.loginName}</Link>， 密码将被重置为<Link>{pwdparms.pwd}</Link></p>
+     <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
+         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{pwd.current}</Link></p>
          
      </CModal>
-     <CModal width={554} title="重置密码"   >
-         <p><WarningFilled />是否确认删除 <Text type="danger">{record.loginName}</Text>账号?</p>
+     <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>
+         <p><WarningFilled />是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
      </CModal>
      </Mainbox>
      

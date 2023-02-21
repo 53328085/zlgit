@@ -1,32 +1,50 @@
-import React, {useState} from 'react'
-const From = ({count}) => {
-    const [value, setValue] = useState(count);
-    const [text, setText] = useState('')
-    if (count > value) {
-       setText('数据增加')
-    }e
-   return (
-    <h1>{value}{text}  </h1>
-   )
-}
-export default function Fform() {
-  const initfn = () => {
-    console.log(111)
-    const lis = []
-    for(let i=0;i<3; i++) {
-      lis.push(<li key={i}>{i}Item</li>)
-    }
-    return <ul>{ lis.map(l => l)}</ul>
+ 
+import { useState } from 'react';
+
+const initialItems = [
+  { title: 'pretzels', id: 0 },
+  { title: 'crispy seaweed', id: 1 },
+  { title: 'granola bar', id: 2 },
+];
+
+export default function Menu() {
+  const [items, setItems] = useState(initialItems);
+  const [id, setId] = useState(0);
+  const selectedItem = items.find(item=> item.id == id)
+  function handleItemChange(id, e) {
+    setItems(items.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          title: e.target.value,
+        };
+      } else {
+        return item;
+      }
+    }));
   }
-  const [list, setList] =useState(initfn)
-  const [name, setName] =useState('zl')
-  const [keyId, setKeyId] = useState(0)
+
   return (
-    <div>
-      <button onClick={() => setName(Math.random().toString())}>{name}</button>
-      {list}
-      <button onClick={() => setKeyId(keyId + 1)}>reset</button>
-      
-      </div>
-  )
+    <>
+      <h2>What's your travel snack?</h2> 
+      <ul>
+        {items.map((item, index) => (
+          <li key={item.id}>
+            <input
+              value={item.title}
+              onChange={e => {
+                handleItemChange(item.id, e)
+                setId(item.id)
+              }}
+            />
+            {' '}
+            <button onClick={() => {
+              setId(item.id);
+            }}>Choose</button>
+          </li>
+        ))}
+      </ul>
+      <p>You picked {selectedItem?.title}.</p>
+    </>
+  );
 }
