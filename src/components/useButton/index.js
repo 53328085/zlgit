@@ -148,10 +148,10 @@ const Menus = (print) => {
   </Cmenu>
 )}
 export function CustButton(props) { // 通用方式
-  let {type, other} = props
+  let {type, ...other} = props
   return (
     <Custbtn {...other}>
-    <img src={icon[type]} />
+     {type ? <img src={icon[type]} /> : null}
       {props.children}
     </Custbtn>
   )

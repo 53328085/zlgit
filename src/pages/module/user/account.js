@@ -1,173 +1,110 @@
-import React, {useState} from 'react'
-import {useSelector} from 'react-redux'
+import React, {useState, useRef, useEffect} from 'react'
 import {useRequest, useAntdTable} from 'ahooks'
-import {Typography, Space, Form, Input, Modal, Select, Switch, message} from 'antd'
+import {Typography, Space, Form, Input, Select, Switch, message} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
-import {selectCurProject} from '@redux/user.js'
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
-
+import {CustButton} from '@com/useButton'
 
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
   row-gap: 16px;
 `
-export default function Account() {
+export default function Account({projectId, CModal}) {
  const {Text, Link} = Typography
- const {GetUsersPage, GetRoleType, ResetPassword, UpdateUser, DeleteUse} = User 
+ const {GetUsersPage, GetRoleType, ResetPassword, UpdateUser, DeleteUse, QueryOperationManager, AddOperationManager} = User 
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
  const [isopen, setIsopen]=useState(false)
  const [roletype, setRoletype] = useState([])
+ const [title, setTitle] = useState('新增账号')
  const [userinof, setUserinfo] = useState({
-    LoginName: '',
-    NickName: '',
-    RoleType: 1,
-  //  Pwd: '',
-   // RePwd: '',
-    Mobile: '',
-    Enabled: true,
-    Remark: ''
+    loginName: '',
+    nickName: '',
+    pwd:'',
+    rpwd: '',
+    mobile: '',
+    enabled: true,
+    remark: ''
  })
+ const mref = useRef(null)
+const showModl = (type=0) => { 
+   let text = ['新增账号', '编辑账号'][type]
+   setTitle(text)
+   mref.current.onOpen()
+}
+
  const [record, setRecord] = useState({})
  const [isEdit, setIsEdit] = useState(false)
- const [isrepd, setIsrepd] = useState(false)
+ 
  const [pwdparms, setpwdparms] = useState({userId: '', pwd: ''})
 
- const {loading} = useRequest(GetRoleType, { // 获取用户角色 list
-    onSuccess: (result) => {
-        let {data, success} = result
-        if (success) {
-            setRoletype(data)
-        }
-    },
+ 
 
- })
-
- // setRoletype(data?.data || [])
- const delcancal = () => {}
- const delok =() => {}
- const deluser = () => {}
- const repdcancal = () => {
-  setIsrepd(false)
-}
- const repdupdate = () => {
-     repdcancal()
-     setIsEdit(f => !f)
- }
- const {run} = useRequest(ResetPassword, {
-   manual: true,
-   onSuccess: (res) => {
-    console.log(res)
-    let {success, errMsg} = res 
-    success ? message.success('修改成功', 1).then(() => repdupdate()) : message.error(errMsg || '数据出错', 1).then(() => repdupdate())
-   },
-   onError: (e) => {
-     console.log(e)
-   }
-
- })
- const restpd = (record) => {
-   setRecord(o => ({...o, ...record}))
-   let {id} = record;
-   let pwd = Math.random().toString().slice(2, 8);
-   setpwdparms(o => ({...o, userId: id, pwd,}))
-   setIsrepd(true)
-
- }
- const repdok = () => {
-    run(pwdparms)
- }
+ 
+ 
+ 
 
  
  const updateuser = (record) => {
     setRecord(o => ({...o, ...record}))
     setIsopen(true)   
-    let {loginName, nickName, mobile, roleType, enabled, remark} = record
+    let {loginName, nickName, mobile,  enabled, remark} = record
     mform.setFieldsValue({
-      'LoginName':loginName,
-      'NickName': nickName,
-      'Mobile': mobile,
-      'Remark': remark,
-      'RoleType': roleType,
-      'Enabled': enabled === 1
+      'loginName':loginName,
+      'nickName': nickName,
+      'mobile': mobile,
+      'remark': remark,
+      'enabled': enabled,
     })
  }
- /* Enabled: 1
-Id: 1
-LoginName: "admin"
-Mobile: "15844165233"
-NickName: "admin"
-ProjectId: 1
-Remark: "超级管理员123"
-RoleType: 1
-SpliteLedgerEnable: 0 */
-const cancal = () => {
-  form.resetFields()
-  setIsopen(false)
-}
-const update = () => {
-  cancal()
-  setIsEdit(f => !f)
-}
- const ok = () => {
-   let params =   mform.getFieldsValue(true)
-   const {projectId, spliteLedgerEnable, id} = record
-   params.Enabled = params.Enabled ? 1 : 0
-   params.ProjectId = projectId
-   params.SpliteLedgerEnable = spliteLedgerEnable
-   params.Id = id  
-   UpdateUser(params).then(res => {
-      let {success, errMsg} = res 
-       success ? message.success('修改成功', 1).then(() => update()) : message.error(errMsg || '数据出错', 1).then(() => update())
-   }).catch(e => {
-      message.error(e.message)
-   })
- }
-
+ 
+ 
+ 
 
  const columns = [  
         {
-          dataIndex: "loginName",
-          title: "用户名",      
+          dataIndex: "name",
+          title: "用户名", 
+          key: 'name',     
         },
         {
           dataIndex: "nickName",
           title: "用户姓名",
+          key: "nickName",
         },
-        {
-          dataIndex: "roleTypeStr", // status 1: 离线 2：在线
-          title: "用户角色",
-         
-        },
+        
         {
           dataIndex: "mobile",
           title: "手机号码",
+          key: 'mobile'
         },
         {
           dataIndex: "enabled",
           title: "状态",
+          key: 'enabled',
           render: (text) => <span>{text===1 ? '启用' : '停用' }</span>
         },
         {
           dataIndex: "remark",
+          key: 'remark',
           title: "备注",
         },
         {
           dataIndex: "op",
           title: "操作",
           render: (_,record) => <Space size={16}>
-            <Link underline onClick={() => updateuser(record)}>编辑</Link>
-            <Link underline onClick={() => restpd(record)}>重置密码</Link>
-            <Link underline type="danger" onClick={deluser(record)}>删除</Link>
+            <Link underline onClick={ null}>编辑</Link>
+            <Link underline onClick={null }>重置密码</Link>
+            <Link underline type="danger" onClick={null}>删除</Link>
           </Space>
         }
      
  ]
- const projectId = useSelector(selectCurProject)?.id 
+
  let params = {
    projectId,
    pageNum: 1,
@@ -176,12 +113,11 @@ const update = () => {
  }
  const getTableData = ({current, pageSize}, formData) => {  
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
-    return  GetUsersPage(params).then(res => {
-      let {success, data, totalNum} = res
-      console.log(totalNum)
+    return  QueryOperationManager(params).then(res => {
+      let {success, data: {data, total}} = res 
       if (success && Array.isArray(data)) {
         return {
-          total: totalNum,
+          total,
           list: data
         }
       
@@ -193,62 +129,132 @@ const update = () => {
       }
     })
   }
-  const {tableProps, search} = useAntdTable(getTableData, {  
+  const {tableProps, search, refresh} = useAntdTable(getTableData, {  
     form,
     refreshDeps: [projectId, params.likeValue, isEdit],
     defaultPageSize: 15,
+    onError: (e) => {
+      console.log(e)
+    },
+   
    })
- const {submit} = search
-
+ const {submit} = search;
+ const onOk = async () => {
+  try {
+    let data = await mform.validateFields();
+    console.log(data)
+    let {success, errMsg} = await AddOperationManager({...data, enabled: data.enabled ? 1 : 0})
+    success && message.success({
+      content: '新增成功', 
+      onClose: () => {
+        mref.current.onCancel();
+        refresh()
+      },
+      duration: 0.3,
+    })
+    !success && message.warning(errMsg || '数据出错, 请检查输入数据')
+  } catch (error) {
+    console.log(error)
+  } 
+}
+ 
   return (
      <Mainbox>
-        <Form form={form} initialValues={{likeValue: params.likeValue}}>
+        <Form form={form} initialValues={{likeValue: params.likeValue}} layout="inline">
             <Form.Item name="likeValue" label="账号查询">
                 <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
-
+            <Form.Item>
+                <CustButton style={{justifyContent: 'center'}} onClick={showModl.bind(null, 0)}>+新增</CustButton>
+            </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
-     <Modal width={554} title="新增账号" open={isopen} onOk={ok} onCancel={cancal} >
-         <Form form={mform} initialValues={userinof} size="middle"  labelCol={{flex: '7em'}} labelAlign="left" preserve={false}>
-             <Item label="用户角色" name="RoleType">
-                <Select>
-                 { roletype.map(r => (<Select.Option key={r.id} value={r.id}>{r.name}</Select.Option>)) }
+     <CModal width={554} title={title} ref={mref} mold='cust' onOk={onOk}>
+         <Form 
+         form={mform}   
+         size="middle"  
+         labelCol={{flex: '7em'}}
+          labelAlign="left" 
+          preserve={false}
+          validateMessages = {{
+              required: "'${name}' 是必选字段"
+           }}  
+           >
+             <Item label="用户角色">
+                <Select disabled defaultValue="1"  options={[
+                  {
+                    value: '1',
+                    label: '运营管理员',
+                  },
+                ]}>
+                            
                 </Select>
              </Item>
-             <Item label="用户名" name="LoginName">
+             <Item label="用户名" name="nickName" rules={[
+                  {
+                    required: true,
+                    message: '请输入用户名！',
+                  }]}>
                 <Input />
              </Item>
-             <Item label="用户姓名" name="NickName">
+             <Item label="用户姓名" name="name" rules={[
+                  {
+                    required: true,
+                    message: '请输入用户姓名！',
+                  }]}
+                  >
                 <Input />
              </Item>
-           {/*   <Item label="密码" name="Pwd">
+             <Item label="密码" name="pwd" rules={[
+                  {
+                    required: true,
+                    message: '请输入密码！',
+                  }]}>
                 <Input.Password  />
              </Item>   
-             <Item label="确认密码" name="RePwd">
+             <Item label="确认密码" dependencies={['pwd']} name='rpwd'
+                rules={[
+                  {
+                    required: true,
+                    message: '请确认你的密码！',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('pwd') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('密码不一致'));
+                    },
+                  }),
+                ]}
+             >
                 <Input.Password  />
-             </Item>   */}
-             <Item label="手机号码" name="Mobile">
+             </Item>  
+             <Item label="手机号码" name="mobile" rules={[
+                  {
+                    required: true,
+                    message: '请输入手机号码！',
+                  }]}>
                 <Input  />
              </Item> 
-             <Item label="是否启用" name="Enabled">
-               <Switch checkedChildren="是" unCheckedChildren="否" checked />
+             <Item label="是否启用" name="enabled" valuePropName="checked">
+               <Switch checkedChildren="是" unCheckedChildren="否"  />
              </Item> 
-             <Item label="备注信息" name="Remark">
+             <Item label="备注信息" name="remark">
                <Input.TextArea  autoSize={{
                     minRows: 2,
                     maxRows: 6,
                     }} />
              </Item> 
          </Form>
-     </Modal>
-     <Modal width={554} title="重置密码" open={isrepd} onOk={() => repdok()} onCancel={repdcancal} >
+     </CModal>
+     <CModal width={554} title="重置密码"     >
          <p>账号： <Link>{record.loginName}</Link>， 密码将被重置为<Link>{pwdparms.pwd}</Link></p>
          
-     </Modal>
-     <Modal width={554} title="重置密码" open={isrepd} onOk={() => delok()} onCancel={delcancal} >
+     </CModal>
+     <CModal width={554} title="重置密码"   >
          <p><WarningFilled />是否确认删除 <Text type="danger">{record.loginName}</Text>账号?</p>
-     </Modal>
+     </CModal>
      </Mainbox>
      
   )
