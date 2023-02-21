@@ -46,26 +46,5 @@ export default [
             dataIndex: 'options'
         }
     ],
-    [
-        {
-            title:'监控设备型号',
-            dataIndex: 'monitor-type'
-        },
-        {
-            title:'监控设备厂家',
-            dataIndex: 'monitor-factory'
-        },
-        {
-            title:'监控设备型号',
-            dataIndex: 'monitor-model'
-        },
-        {
-            title:'视频监控缩略图',
-            dataIndex: 'monitor-img'
-        },
-        {
-            title:'已用传感器数量',
-            dataIndex: 'usemonitor-num'
-        },{}
-    ]
+   
 ]

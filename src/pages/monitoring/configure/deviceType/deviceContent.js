@@ -28,7 +28,7 @@ export default function DeviceContent(props,ref) {
     okText,
     width,
     onOk,
-   
+    onCancel
   }
   return (
     <div >

@@ -1,0 +1,231 @@
+import React, { useEffect, useState } from "react";
+import style from './style.module.less'
+import { Table, Input, message } from "antd";
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+
+export default function index (props) {
+    const [messageApi, contextHolder] = message.useMessage();
+    const { Search } = Input
+    const columns = props.columns
+    const [mainData, setMainData] = useState([])
+    const [subData, setSubData] = useState([])
+    const [unknownData, setUnknownData] = useState([])
+    useEffect(()=>{
+        let mainArr = [...props.mainTable]
+        let subArr = [...props.subTable]
+        let unknownArr = [...props.unknownTable]
+        setMainData(mainArr)
+        setSubData(subArr)
+        setUnknownData(unknownArr)
+    },[props])
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const onSelectChange = (newSelectedRowKeys) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+
+    const unknownToMain = () => {
+        if(mainData.length == 1) {
+            messageApi.open({
+                type: 'warning',
+                content:'当前线路已有总表！',
+            })
+            return;
+        }else if( selectedRowKeys.length == 0 ){
+            messageApi.open({
+                type: 'warning',
+                content:'请至少选择一个设备！',
+            })
+            return;
+        }else if(selectedRowKeys.length > 1 ) {
+            messageApi.open({
+                type: 'warning',
+                content:'线路总表只能有一个设备！',
+            })
+            return;
+        }else{
+            let arr = [...unknownData];
+            let arr2 = [];
+            for(let i =0;i< arr.length;i++){
+                for(let j = 0;j<selectedRowKeys.length;j++){
+                    if(arr[i].id == selectedRowKeys[j]){
+                        arr2.push(arr[i])
+                        arr.splice(i,1)
+                    }
+                }
+            }
+            setMainData(mainData.concat(arr2));
+            setUnknownData(arr);
+            setSelectedRowKeys([])
+        }
+        
+    }
+
+    //总表->未知
+    const [selectedMainKeys, setSelectedMainKeys] = useState([]);
+    const onSelectMain = (newSelectedRowKeys) => {
+        setSelectedMainKeys(newSelectedRowKeys);
+    };
+    const mainSelection = {
+        selectedMainKeys,
+        onChange: onSelectMain,
+    };
+    const MainToUnknown = () => {
+        if( selectedMainKeys.length == 0 ){
+            messageApi.open({
+                type: 'warning',
+                content:'请先选择设备！',
+            })
+            return;
+        }else{
+            setUnknownData(unknownData.concat(mainData))
+            setMainData([]);
+            setSelectedMainKeys([]);
+        }
+    }
+
+    const unknownToSub = () => {
+        if( selectedRowKeys.length == 0 ){
+            messageApi.open({
+                type: 'warning',
+                content:'请至少选择一个设备！',
+            })
+            return;
+        }else{
+            let arr = [...unknownData];
+            let arr2 = [];
+            for(let i =0;i< arr.length;i++){
+                for(let j = 0;j<selectedRowKeys.length;j++){
+                    if(arr[i].id == selectedRowKeys[j]){
+                        arr2.push(arr[i])
+                        arr.splice(i,1)
+                    }
+                }
+            }
+            setSubData(subData.concat(arr2));
+            setUnknownData(arr);
+            setSelectedRowKeys([])
+        }
+    }
+
+    const [selectedSubKeys, setSelectedSubKeys] = useState([]);
+    const onSelectSub = (newSelectedRowKeys) => {
+        setSelectedSubKeys(newSelectedRowKeys);
+    };
+    const subSelection = {
+        selectedSubKeys,
+        onChange: onSelectSub,
+    };
+    const subToUnknown = () => {
+        if( selectedSubKeys.length == 0 ){
+            messageApi.open({
+                type: 'warning',
+                content:'请先选择设备！',
+            })
+            return;
+        }else{
+            let arr = [...subData];
+            let arr2 = [];
+            for(let i =0;i< arr.length;i++){
+                for(let j = 0;j<selectedSubKeys.length;j++){
+                    if(arr[i].id == selectedSubKeys[j]){
+                        arr2.push(arr[i])
+                        arr.splice(i,1)
+                    }
+                }
+            }
+            setUnknownData(unknownData.concat(arr2));
+            setSubData(arr)
+            // setSelectedSubKeys([])
+        }
+    }
+
+    const handleClose = () => {
+        props.closeValue('close');
+    }
+
+    const onSearchUnknown = (value) => {
+        let arr = [];
+        unknownData.map(item => {
+            if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                arr.push(item)
+            }
+        })
+        setUnknownData([...arr]);
+    }
+
+    return (
+        <div className={style.transferContent}>
+            {contextHolder}
+            { props.mainTable.length > 0 ? 
+            <div className={style.leftTable}>
+                <div className={style.mainTable}>
+                    <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
+                    <div className={style.mainContent}>
+                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection}></Table>
+                    </div>
+                </div>
+                <div className={style.subTable}>
+                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                    <div className={style.searchInput}>
+                        <span style={{marginRight: 16}}>设备搜索</span>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton></Search>
+                    </div>
+                    <div className={style.mainContent}>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:270}} rowSelection={subSelection}></Table>
+                    </div>
+                </div>
+            </div> : 
+            <div className={style.leftTable}>
+                <div className={style.otherSubTable}>
+                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                    <div className={style.searchInput}>
+                        <span style={{marginRight: 16}}>设备搜索</span>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton></Search>
+                    </div>
+                    <div className={style.mainContent}>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
+                    </div>
+                </div>
+            </div>
+            }
+            <div className={style.actions}>
+                { props.mainTable.length > 0 ? 
+                <div className={style.firstButton}>
+                    <span className={style.leftButton} onClick={()=>unknownToMain()}>
+                        <LeftOutlined />
+                    </span>
+                    <span className={style.rightButton} onClick={()=>MainToUnknown()}>
+                        <RightOutlined />
+                    </span>
+                </div> : null }
+                <div className={style.secondButton}>
+                    <span className={style.leftButton} onClick={() => unknownToSub() }>
+                        <LeftOutlined />
+                    </span>
+                    <span className={style.rightButton} onClick={() => subToUnknown() }>
+                        <RightOutlined />
+                    </span>
+                </div>
+                <div className={style.finalButton}>
+                    <div className={style.saveButton}>保存</div>
+                    <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
+                </div>
+            </div>
+            <div className={style.rightTable}>
+                <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
+                <div className={style.searchInput}>
+                    <span style={{marginRight: 16}}>设备搜索</span>
+                    <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
+                </div>
+                <div className={style.mainContent}>
+                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
+                </div>
+            </div>
+        </div>
+    )
+}

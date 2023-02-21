@@ -41,6 +41,7 @@ export class AreaSetting {
     static QueryAreaLevelFields = ({projectId,level}) => server.get(`/General/ProjectSetting/QueryAreaLevelFields?projectId=${projectId}&level=${level}`) //  查询字段
     static InsertAreaLevelField = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevelField?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  新增字段
     static DeleteAreaLevelField = ({projectId, fieldId}) => server.delete(`/General/ProjectSetting/DeleteAreaLevelField?projectId=${projectId}&fieldId=${fieldId}`) // 删除字段
+    static QueryAllArea = (projectId, level) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`)//查询全部区域
 }
 // 公共模块---项目设置---数据组设置
 export class DataGroups {
@@ -377,7 +378,12 @@ export const rightControl = (params, url, ip, channel, user, pwd) => server.post
 export const topControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzUp?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 export const stopControl = (params, url, ip, channel, user, pwd) => server.post('http://'+ url +'/V1/Ptz/PtzStop?ip='+ ip +'&channel=' + channel + '&user='+ user +'&pwd=' + pwd, params)
 
-//运行监控
+
+//首页
+export class UISummary {
+    static InsertUISummary = (projectId, data) => server.post(`UISummary/UISummary/Insert?projectId=${projectId}`, data) // 保存UI
+    static QueryUISummary = (projectId) => server.get(`UISummary/UISummary/Query?projectId=${projectId}`)  // 查询UI
+}
 export const Monitoring =  {
     DeviceTypeManager:{
         GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
@@ -386,8 +392,20 @@ export const Monitoring =  {
         QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
         UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
         DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
-        DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用电表
-        DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`) //获取对应电表的详细信息
+        DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用设备类型
+        DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`), //获取对应设备类型的详细信息
+        AddDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/AddCategory`,data),//新增设备类型
+        DeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryByPage?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
+        UpdateDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/UpdateCategory`,data),//更新设备
+        DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除设备
     }
-  
+}
+
+//energyDesigner能耗管理
+export class energyDesigner {
+    static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)
+    //单个插入
+    static insertEnergyClassify = (parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
+    static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
+    static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
 }
