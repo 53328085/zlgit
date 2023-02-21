@@ -3,8 +3,9 @@ import ClassfyTree from './classfyTree'
 import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
-import { Input, Form, message, Spin, Upload } from "antd";
+import { Input, Form, message, Spin, Upload, Modal } from "antd";
 import warning from '@imgs/warning.png'
+import style from './style.module.less'
 
 export default function Index (props) {
     const { Dragger } = Upload
@@ -65,7 +66,9 @@ export default function Index (props) {
             dref.current.onOpen()
         }
         if(values.tag == 'importData'){
-            iref.current.onOpen()
+            // iref.current.onOpen()
+            setFileList([])
+            setAddModal(true)
         }
         changeItem = values.data;
         tag = values.tag;
@@ -166,6 +169,10 @@ export default function Index (props) {
         deleteRun()
     }
     //批量导入
+    const [addModal, setAddModal] = useState(false)
+      const handleCancel = () => {
+        setAddModal(false)
+      }
     const [fileList, setFileList] = useState([]);
     const propData = {
         onRemove: (file) => {
@@ -183,7 +190,7 @@ export default function Index (props) {
         fileList,
     };
     const onUpload = () => {
-        iref.current.onCancel()
+        setAddModal(false)
     }
     
     return (
@@ -214,17 +221,20 @@ export default function Index (props) {
                     <span> 是否确认删除选中的能耗分类名称？ </span>
                 </div>
             </Custmodl>
-            <Custmodl title='批量导入' ref={iref}  mold="cust" width={600} onOk={()=>onUpload()}>
-                <div style={{display:"flex", alignItems: "center", position:'relative'}}>
-                    <Dragger {...propData}>
-                        <div style={{width: 536, height: 200, display:'flex',flexDirection:'column', fontSize: 16}}>
-                            <p style={{marginTop: 24, marginBottom: 24}}>将文件拖到此处，或<span style={{ color:'#237ae4',textDecoration:'underline', cursor:'pointer'}}>点击上传</span></p>
-                            
-                        </div>
-                    </Dragger>
-                    <a style={{ position:'absolute',bottom: 32,left: 233,fontSize: 16, width: 70, textAlign:'center', color:'#237ae4',textDecoration:'underline', cursor:'pointer', zIndex: 1000}} href='/energyTemplate.xlsx' download>下载模板</a>
+            <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
+                <div className={style.addHeader}>批量导入</div>
+                <div className={style.addBody}>
+                    <div style={{display:"flex", alignItems: "center", position:'relative'}}>
+                        <Dragger {...propData}>
+                            <div style={{width: 536, height: 200, display:'flex',flexDirection:'column', fontSize: 16}}>
+                                <p style={{marginTop: 24, marginBottom: 24}}>将文件拖到此处，或<span style={{ color:'#237ae4',textDecoration:'underline', cursor:'pointer'}}>点击上传</span></p>
+                                
+                            </div>
+                        </Dragger>
+                        <a style={{ position:'absolute',bottom: 32,left: 233,fontSize: 16, width: 70, textAlign:'center', color:'#237ae4',textDecoration:'underline', cursor:'pointer', zIndex: 1000}} href='/energyTemplate.xlsx' download>下载模板</a>
+                    </div>
                 </div>
-            </Custmodl>
+            </Modal>
         </Spin>
         
     )
