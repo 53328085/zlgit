@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } f
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import { useSelector } from 'react-redux'
 import DeviceContent from './deviceContent'
-import AllColumns from './columns'
 import Table from '@com/useTable'
 import { Monitoring } from '@api/api.js'
 import Camera from '@imgs/camera1.png'

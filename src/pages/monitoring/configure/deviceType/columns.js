@@ -27,19 +27,19 @@ export default [
     [
         {
             title:'设备型号',
-            dataIndex: 'device-type'
+            dataIndex: 'category'
         },
         {
             title:'设备厂家',
-            dataIndex: 'device-factory'
+            dataIndex: 'manufacturer'
         },
         {
             title:'设备缩略图',
-            dataIndex: 'device-img'
+            dataIndex: 'imageBase64'
         },
         {
             title:'当前设备数量',
-            dataIndex: 'device-num'
+            dataIndex: 'cnt'
         },
         {
             title:'操作',

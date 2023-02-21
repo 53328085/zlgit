@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import DeviceContent from './deviceContent'
-import gateWayImg from '@imgs/gateway.png';
 import style from './style.module.less'
-import AllColumns from './columns'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import Table from '@com/useTable'
-import electricImg from '@imgs/diaobiao.png'
+import Modal from '@com/useModal'
 import UploadImg from './upload.jsx'
 
 const { DeviceTypeManager: { AllDeviceStyle, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory} } = Monitoring;
@@ -20,8 +18,46 @@ export default function Electric() {
   const foRef = useRef(null)
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
+  const optionStyle={
+    color: '#1890ff',
+    cursor: 'pointer',
+  }
+  const columns =  [
+    {
+        title:'设备型号',
+        dataIndex: 'category'
+    },
+    {
+        title:'设备厂家',
+        dataIndex: 'manufacturer'
+    },
+    {
+        title:'设备缩略图',
+        dataIndex: 'imageBase64',
+        render:(text)=>{
+          return( <img src={text} width={64} height={53}></img>)
+         
+        }
+    },
+    {
+        title:'当前设备数量',
+        dataIndex: 'cnt'
+    },
+    {
+        title:'操作',
+        dataIndex: 'options',
+        render:(text,record)=>{
+          console.log(text,record)
+          return(
+            <div>
+              <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
+              <span style={{...optionStyle,paddingLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{DelModalRef.current.onOpen(),categoryId=record.category}}>删除</span>
+            </div>
+          )
+        }
+    }
+]
 
-  
   //获取设备列表
   const getTableData = async () => {
     let params = {
@@ -155,8 +191,11 @@ export default function Electric() {
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={AllColumns[1]} dataSource={tableDataSource}></Table>
+        <Table columns={columns} dataSource={tableDataSource}></Table>
       </DeviceContent>
+      <Modal>
+        
+      </Modal>
     </div>
   )
 }
@@ -394,3 +433,86 @@ let AddModal = forwardRef(
     )
   }
 ) 
+let EditModal = ()=>{
+  ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
+    const tableRef = useRef(null)
+    const [isControl,setIsControl] = useState()
+    const [IsCount,setIsCount] = useState()
+    const handleChange = async (option) => {
+      await getDeviceQueryCategoryFull(option)
+      setIsControl(addForm.getFieldsValue().Control)
+      setIsCount(addForm.getFieldsValue().IsCount)
+      tableRef.current.setTableParams({ current: 1, pageSize: 10 })
+      //tableRef.current.setSwitched([])
+    }
+
+    useEffect(() => {
+      setIsControl(addForm.getFieldsValue().Control)
+      setIsCount(addForm.getFieldsValue().IsCount)
+    },[])
+    useImperativeHandle(ref, () => ({
+      pointSource: tableRef.current.pointSource,
+      setPointSource: tableRef.current.setPointSource,
+      setSwitched:tableRef.current.setSwitched
+      // handleChange: tableRef.current.handleChange,
+
+    }))
+    return (
+      <Form
+        layout="vertical"
+        form={addForm}
+       
+      >
+        <Row align='bottom'>
+          <Col span={16}>
+            <Row style={{ marginBottom: 16 }}>
+              <Form.Item label="设备型号" name="DeviceType">
+                <Select
+                  style={{ width: 200 }}
+                  options={dataSource}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </Row>
+            <Row >
+              {/* <Col>
+                <Form.Item label="心跳周期(秒)" name="Cycle">
+                  <Count></Count>
+                </Form.Item>
+              </Col> */}
+              <Col className={style.ColGap}>
+                <Form.Item label="远程控制" name="Control" valuePropName="checked">
+                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!isControl} checked={addForm.getFieldsValue().Control} />
+                </Form.Item>
+              </Col>
+              <Col className={style.ColGap}>
+                <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
+                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!IsCount} />
+                </Form.Item>
+              </Col>
+              <Col className={style.ColGap}>
+                <Form.Item label="是否抄读" name="IsRead" valuePropName='checked'>
+                  <Switch checkedChildren="是" unCheckedChildren="否" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={8} align="bottom">
+            <Row align="bottom">
+              <Form.Item label="设备图片" name='DefaulImg' style={{ margin: 0 }}>
+                <ImageUpload></ImageUpload>
+              </Form.Item>
+              <Form.Item name='ImageUpload' >
+                <UploadImg></UploadImg>
+              </Form.Item>
+            </Row>
+          </Col>
+        </Row>
+        <Divider dashed />
+        <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
+        {/* <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index}></Table> */}
+        <TableForm ref={tableRef} defaultTableData={defaultTableData}  ></TableForm>
+      </Form>
+    )
+  }
+}
