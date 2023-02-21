@@ -1,3 +1,10 @@
+/**
+ * @author zhenglin zhu
+ * @description: //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
+ * @date 2022-10-13 10:08
+ */
+
+
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import styled from "styled-components";
 import {
@@ -16,8 +23,8 @@ import {
 import {WarningFilled} from '@ant-design/icons'
 import { useRequest } from "ahooks";
 import { Project } from "@api/api.js";
-import Custmodal from "@com/useModal";
-
+import { User } from "@api/api.js";
+import {CustButton} from "@com/useButton"
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -32,13 +39,8 @@ const {
   DeleteProjectUser, // 删除项目管理员或者运维人员
   GetMenus, // 功能授权
 } = Project;
-/**
- * @author zhenglin zhu
- * @description: //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
- * @date 2022-10-13 10:08
- */
-const msginfo = ['', '', '运营管理员', '项目管理员', '运维人员']
-export default function Account() {
+const {QueryOperationManager, QueryOperationManagers, InsertOperationManager} = User
+export default function Account({projectId, CModal}) {
   const Mainbox = styled.div`
     display: grid;
     grid-template-rows: repeat(3, auto);
@@ -79,13 +81,15 @@ export default function Account() {
      margin-right: 16px;
    
   `
-  const [operate, setOperate] = useState([]); // 运营管理员
+  const [operate, setOperate] = useState([]); // 运营管理员（选择框）
+  const [oplist, setOplist] = useState([]); // 运营管理员（已选择）
   const [admin, setAdmin] = useState([]) //运维管理员 
+  const [delinfo, setDelinfo] = useState({}) // 删除的信息
   const [menuopen, setMenuopen] = useState(false)
   const [menus, setMenus] = useState([])
-  const [opvalue, setOpvalue] = useState('')
+  const [opvalue, setOpvalue] = useState(null) // 暂存选择的运营管理员
   const [manager, setManager] = useState(false) // 是否显示项目管理员 
- const modal = useRef()
+ const mref = useRef()
  const fmodal = useRef()
   const {runAsync: runMenu} = useRequest(GetMenus, { // 获取菜单
     manual: true,
@@ -93,6 +97,7 @@ export default function Account() {
   })
  const [title, setTitle] = useState('新增项目管理员')
  const [form] = Form.useForm()
+ 
   const menufn = () => { 
    
     setMenuopen(true)
@@ -106,13 +111,28 @@ export default function Account() {
       console.log(e)
      })
   }
-  const {run: runmg} = useRequest(getOperationManagerUsers, { // 获取运营管理员
-    manual: true,
+  const {run: runops} = useRequest(QueryOperationManager, { // 获取运营管理员(选择框)
+    defaultParams: {
+      alike: '',
+      pageNum: 1,
+      pageSize: 150,
+    },
     onSuccess: (res) => {
-      const { success, data } = res;
-      success && setOperate(data);
+      const { success, data: {data} } = res;
+      success && setOperate([...data]);
     },
   });
+  const {run: runmg} = useRequest(QueryOperationManagers, { // 获取运营管理员(已选择)   
+    defaultParams: {projectId}, 
+    onSuccess: (res) => {
+      const { success, data } = res;
+      success && setOplist([...data]);
+    },
+  });
+
+
+
+
   const {run: runadmin, runAsync: runAsyncadmin} = useRequest(getProjectUser, { // 获取项目管理员
     manual: true,   
     onSuccess: ({ success, data }) => {
@@ -144,12 +164,10 @@ export default function Account() {
       }
     },
   });
-  const addOperation = () => {
-    setOperate((arr) => {
-      let item = arr.find((i) => i.id == opvalue);
-      if (item) item.disabled = true;
-      return [...arr];
-    });
+  const addOperation = async () => {
+     let {success } = await InsertOperationManager({projectId, userId: opvalue})
+      runmg(projectId)
+      success && setOperate(arr => arr.map(item => ({...item, disabled: item.id == opvalue}))) 
   };
   const delop = (id) => {
     setOperate((arr) => {
@@ -158,13 +176,10 @@ export default function Account() {
       return [...arr];
     });
   };
-  const handChange = (value, options) => {
-    console.log(options);
-    setOpvalue(value);
+  const handChange = (value) => { 
+    setOpvalue(value) 
   }; 
-  const oplist = useMemo(() => {
-    return operate.filter((item) => item.disabled);
-  }, [operate]);
+
 
   const addProjectadmin = () => {
     console.log(fmodal.current.onOpen)
@@ -252,25 +267,36 @@ export default function Account() {
       ][type]; // 获取 项目管理人员 , 运维人员    运营管理人员，
       message.error('删除成功', 1,  () => {
         handler()
-        modal.current.onCancel()
+        mref.current.onCancel()
       });
     } catch (error) {
       console.log(error);
     }
   };
-  const msginfo = ['项目管理员', '运维人员', '运营管理员'] // //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
-  let delmsg = ''
-  const onDeleteMsg = (type, id) => {      
-     delmsg = msginfo[type]
-     delarg.type = type
-     delarg.userId = id
-     modal.current.onOpen()
+  //const msginfo = ['项目管理员', '运维人员', '运营管理员'] // //1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
+ 
+  const onDeleteMsg = (type, userId) => {      
+    mref.current.onOpen()
+   /*   try {
+      delarg.type = type
+      delarg.userId = userId
+      setDelinfo({
+       ...delinfo,
+       msg: ['项目管理员', '运维人员', '运营管理员'][type],
+       type,
+       userId,
+      })
+     
+     } catch (error) {
+      console.log(error)
+     }  */
+    
   }
 
   useEffect(() => {
-    runadmin(1)
-    runmg()
-    runop(1)
+   // runadmin(1)
+   // runmg(projectId)
+   // runop(1)
   }, []) // 需要projectId
 
   const saveMenu =() => {}
@@ -380,7 +406,7 @@ export default function Account() {
               value={opvalue}
               onChange={handChange}
               fieldNames={{
-                label: "loginName",
+                label: "name",
                 value: "id",
                 disabled: "disabled",
               }}
@@ -389,15 +415,15 @@ export default function Account() {
             ></Select>
 
             {/*   <Button size="middle" style={addstyl} onClick={addOperation} type="primary" ghost >+&nbsp;添加</Button> */}
-            <Pributton onClick={addOperation}>+&nbsp;添加</Pributton>
+            <CustButton type="default" onClick={addOperation} style={{padding: '0px', width: '112px'}}>添加运营管理员</CustButton>
           </div>
           <div className="item">
             <Text type="">用户名</Text> <Text>姓名</Text>{" "}
             <Text span={4}>手机号</Text>
           </div>
-          {oplist.map((item) => (
+          {oplist?.map((item) => (
             <div className="item" key={item.id}>
-              <Input size="middle" value={item.loginName} readOnly />
+              <Input size="middle" value={item.name} readOnly />
               <Input size="middle" readOnly value={item.nickName} />
               <Input size="middle" readOnly value={item.mobile} />
               <Delbutton onClick={() => onDeleteMsg(2, item.id)}></Delbutton>
@@ -477,17 +503,16 @@ export default function Account() {
         </div>
       </div>
       
-      <Custmodal
+      <CModal
               title={title}
               ref={fmodal} 
               onCancal={cancal}
               onOk={ok}
               mold="default"
-            ></Custmodal>
-      <Custmodal mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={modal}>
-         <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delmsg}</p>
-
-      </Custmodal>
+            ></CModal>
+      <CModal mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={mref}>
+         <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delinfo['msg']}?</p>
+      </CModal>
      {/*   <Drawer open={menuopen} title="项目权限选择" width={608} closable={false} extra={<Button type="primary">保存</Button>}>
        
          <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>

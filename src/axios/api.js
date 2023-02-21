@@ -52,12 +52,16 @@ export class DataGroups {
 }
 // 公共模块---用户管理
 export class User {
-    static QueryOperationManager = () => server.get(`/General/User/QueryOperationManager`) //  查询账号
+    // --账号管理
+    static QueryOperationManager = ({alike, pageNum, pageSize}) => server.get(`/General/User/QueryOperationManager?alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`) //  查询账号
     static AddOperationManager = (params) => server.post( `/General/User/AddOperationManager`, params) //  新增
     static DeleteOperationManager = (id) => server.post( `/General/User/Delete?id=${id}`) //  删除
-    static ResetPassword = ({id, pwd, oldPwd}) => server.post( `/General/User/ResetPassword?id=${id}&pwd=${pwd}2&oldPwd=${oldPwd}`) //  重置密码
-    
-    
+    static ResetPassword = ({id, pwd}) => server.post( `/General/User/ResetPassword?id=${id}&pwd=${pwd}`) //  重置密码
+    static Update = (params) => server.post( `/General/User/Update`, params) // 编辑
+    // -- 权限管理
+    static QueryOperationManagers = ({projectId}) => server.get( `/General/User/QueryOperationManagers?projectId=${projectId}`) // 查询 运营管理员 已选择
+    static InsertOperationManager = ({projectId, userId}) => server.post( `/General/User/InsertOperationManager?projectId=${projectId}&userId=${userId}`) // 添加 运营管理员
+    static DeleteOperationManager = ({projectId, userId}) => server.post( `/General/User/DeleteOperationManager?projectId=${projectId}&userId=${userId}`) // 删除 运营管理员
 }
 // 
 // zl api end
