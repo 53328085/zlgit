@@ -1,11 +1,19 @@
 /*  配电管理 配置 */
 import {lazy} from 'react'
 import store from '@redux/store'
-const Room = lazy(() => import("@pages/distribution/summary"))
+const Room = lazy(() => import("@pages/distribution/configure/index/room"))
+const Topology = lazy(() => import("@pages/distribution/configure/index/topology"))
+const LineManage = lazy(() => import("@pages/distribution/configure/index/lineManage"))
+const MonitorManage = lazy(() => import("@pages/distribution/configure/index/monitorManage"))
+const SensorManage = lazy(() => import("@pages/distribution/configure/index/sensorManage"))
  
 const menus = [];
 const components = {
-    '020501': Room, 
+    '020501': Room,
+    '020502': Topology,
+    '020503': LineManage,
+    '020504': MonitorManage,
+    '020505': SensorManage,
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerDistribution'] 

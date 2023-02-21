@@ -375,3 +375,12 @@ export const Monitoring =  {
         DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
     }
 }
+
+//energyDesigner能耗管理
+export class energyDesigner {
+    static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)
+    //单个插入
+    static insertEnergyClassify = (parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
+    static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
+    static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
+}
