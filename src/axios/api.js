@@ -54,12 +54,10 @@ export class DataGroups {
 export class User {
     static QueryOperationManager = () => server.get(`/General/User/QueryOperationManager`) //  查询账号
     static AddOperationManager = (params) => server.post( `/General/User/AddOperationManager`, params) //  新增
-    static GetUsersPage=(data={})=>server.get(`User/GetUsers`,{params:data})//获取用户列表
-    static GetRoleType=()=>server.get(`/User/GetRoleType`)//获取用户角色
-    static AddUser=(data)=>server.post(`/User/AddUser`,data) //添加用户
-    static UpdateUser=(data)=>server.post(`/User/UpdateUser`,data)//编辑用户
-    static ResetPassword=(data)=>server.post(`/User/ResetPassword?userId=${data.userId}&pwd=${data.pwd}`)//重置用户密码
-    static DeleteUse=(id)=>server.post(`/User/DeleteUser?id=${id}`)//删除用户
+    static DeleteOperationManager = (id) => server.post( `/General/User/Delete?id=${id}`) //  删除
+    static ResetPassword = ({id, pwd, oldPwd}) => server.post( `/General/User/ResetPassword?id=${id}&pwd=${pwd}2&oldPwd=${oldPwd}`) //  重置密码
+    
+    
 }
 // 
 // zl api end
