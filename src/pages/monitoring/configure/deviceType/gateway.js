@@ -19,7 +19,7 @@ export default function gateway() {
   const ModalRef = useRef(null)
   const EditModalRef = useRef(null)
   const DelModalRef = useRef(null)
-  const UploadRef = useRef(null)
+
   const projectId = useSelector(state => state.system.menus.projectId)
   const ForwardAddModal = forwardRef(AddModal)
   let categoryId=''
@@ -157,7 +157,7 @@ export default function gateway() {
   let deviceProps = {
     value: 0,
     open,
-    AddModal: <ForwardAddModal  ref={UploadRef}  {...addAodalProps}/>,
+    AddModal: <ForwardAddModal   {...addAodalProps}/>,
     ModalRef,
     cancelText: '返回',
     okText: '保存',

@@ -1,11 +1,19 @@
 import React, { useRef, useState } from 'react'
-import { Select, Button, Table, Space, Form, Input, Modal } from 'antd';
+import { Select, Button, Table, Space, Form, Input, Modal,message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
 import firstwarn from '@imgs/warning.png' 
+import { AreaSetting } from '@api/api.js'
+import { useRequest } from "ahooks";
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import { result } from 'lodash';
 
 export default function Index() {
+  const { QueryAllArea } = AreaSetting
+  const [messageApi, contextHolder] = message.useMessage();
+  const projectId = useSelector(selectProjectId);
   const columns = [
     {
       align:'center',
@@ -92,6 +100,24 @@ export default function Index() {
     }
   ]
 
+  const getAreaData = () =>{
+    return QueryAllArea (projectId, 1).then(res=> {
+      let {success, data} = res
+      if(success && typeof(data) == 'Array'){
+        console.log(data)
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+
+  const { data:AreaData } = useRequest(getAreaData,{
+    onSuccess:(result,params) => {}
+  }) 
+
   const { TextArea } = Input;
   const [addModal, setAddModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('')
@@ -131,6 +157,7 @@ export default function Index() {
 
   return (
     <div>
+      {contextHolder}
       <div className={style.header}>
         <span className={style.headerTitle}>园区选择</span>
         <Select

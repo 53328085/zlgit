@@ -358,7 +358,8 @@ function UserLog() {
     onFinish={submit}
     onFinishFailed={onFinishFailed}
     initialValues={{
-      name: userName
+      name: userName,
+      pwd: 'chint_123456'
     }}
    
   >

@@ -24,15 +24,44 @@ export class ProjectList {
     static createProject = (data) => server.post('General/PlatConfig/CreateProject', data) // 新增项目
     static QueryMenus = (projectId) => server.get(`General/User/QueryMenus?projectId=${projectId}`)  // 查询菜单栏
 }
-// 公共模块---项目设置
+// 公共模块---项目设置--- 项目基础设置,  项目发布
 export class ProjectSetting {
     static QueryProjectInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectInfo?projectId=${projectId}`) //  查询项目信息
     static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
     static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
-    static publishProject = ({projectId, state}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}`) //  项目发布/取消发布
+    static publishProject = ({projectId, state, code, moble}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
     static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
 }
-
+// 公共模块---项目设置---区域设置
+export class AreaSetting {
+    static QueryAreaLevels = (projectId) => server.get(`/General/ProjectSetting/QueryAreaLevels?projectId=${projectId}`) //  查询区域
+    static InsertAreaLevel = ({projectId, level,name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  插入区域
+    static DeleteAreaLevel = ({projectId,level}) => server.delete(`/General/ProjectSetting/DeleteAreaLevel?projectId=${projectId}&level=${level}`) //  删除区域
+    static UpdateAreaLevel = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/UpdateAreaLevel?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  修改区域
+    static QueryAreaLevelFields = ({projectId,level}) => server.get(`/General/ProjectSetting/QueryAreaLevelFields?projectId=${projectId}&level=${level}`) //  查询字段
+    static InsertAreaLevelField = ({projectId,level, name, type}) => server.post(`/General/ProjectSetting/InsertAreaLevelField?projectId=${projectId}&level=${level}&name=${name}&type=${type}`) //  新增字段
+    static DeleteAreaLevelField = ({projectId, fieldId}) => server.delete(`/General/ProjectSetting/DeleteAreaLevelField?projectId=${projectId}&fieldId=${fieldId}`) // 删除字段
+    static QueryAllArea = (projectId, level) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`)//查询全部区域
+}
+// 公共模块---项目设置---数据组设置
+export class DataGroups {
+    static QueryDataGroups = () => server.get(`/General/ProjectSetting/QueryDataGroups`) //  查询数据组名称
+    static InsertDataGroup = ({name}) => server.post(`/General/ProjectSetting/InsertDataGroup?name=${name}`) //  新增数据组名称
+    static DeleteDataGroup = ({id}) => server.post(`/General/ProjectSetting/DeleteDataGroup?id=${id}`) //  删除数据组 
+    static UpdateDataGroup = ({id,name}) => server.post( `/General/ProjectSetting/UpdateDataGroup?id=${id}&name=${name}`) //  编辑数据组 
+}
+// 公共模块---用户管理
+export class User {
+    static QueryOperationManager = () => server.get(`/General/User/QueryOperationManager`) //  查询账号
+    static AddOperationManager = (params) => server.post( `/General/User/AddOperationManager`, params) //  新增
+    static GetUsersPage=(data={})=>server.get(`User/GetUsers`,{params:data})//获取用户列表
+    static GetRoleType=()=>server.get(`/User/GetRoleType`)//获取用户角色
+    static AddUser=(data)=>server.post(`/User/AddUser`,data) //添加用户
+    static UpdateUser=(data)=>server.post(`/User/UpdateUser`,data)//编辑用户
+    static ResetPassword=(data)=>server.post(`/User/ResetPassword?userId=${data.userId}&pwd=${data.pwd}`)//重置用户密码
+    static DeleteUse=(id)=>server.post(`/User/DeleteUser?id=${id}`)//删除用户
+}
+// 
 // zl api end
 // 主页
 export class Home {
@@ -43,15 +72,7 @@ export class Home {
   
 
 }
-//账号管理
-export class User {
-    static GetUsersPage=(data={})=>server.get(`User/GetUsers`,{params:data})//获取用户列表
-    static GetRoleType=()=>server.get(`/User/GetRoleType`)//获取用户角色
-    static AddUser=(data)=>server.post(`/User/AddUser`,data) //添加用户
-    static UpdateUser=(data)=>server.post(`/User/UpdateUser`,data)//编辑用户
-    static ResetPassword=(data)=>server.post(`/User/ResetPassword?userId=${data.userId}&pwd=${data.pwd}`)//重置用户密码
-    static DeleteUse=(id)=>server.post(`/User/DeleteUser?id=${id}`)//删除用户
-}
+ 
 // 项目管理
 export class Project {
     static queryProject = ({pageNum, pageSize, projectName='', valid=0} = {}) => server.get(`/Project/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&projectName=${projectName}&valid=${valid}`)
@@ -373,6 +394,8 @@ export const Monitoring =  {
         QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
         UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
         DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
+        DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用电表
+        DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`) //获取对应电表的详细信息
     }
 }
 

@@ -64,7 +64,7 @@ import {utils, writeFile} from 'xlsx'
   `
   return (
     <Divbox>
-        <Tablecom { ...otherprops} bordered   size="small"  pagination={paginationProp} ref={tableref}  />
+        <Tablecom  bordered { ...otherprops} size="small"  pagination={paginationProp} ref={tableref}  />
     </Divbox>
   )
 }

@@ -8,7 +8,7 @@ import CustContext from '@com/content.js'
 import styled from 'styled-components'
 import Release from './release'
 import Set from './set'
-import Region from './region'
+import Region from './area'
 import Datagroup from './dataGroup'
 import CModal from '@com/useModal'
 export default function Index() {
@@ -16,7 +16,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const tabs = [
     {label: '项目基础设置', key: 'set'},
-    {label: '区域设置', key: 'region'},
+    {label: '区域设置', key: 'area'},
     {label: '数据组管理', key: 'datagroup'},
     {label: '项目发布', key: 'release'},
   ]
@@ -28,7 +28,7 @@ export default function Index() {
  const ProjectCom = {
   release: Release ,
   set: Set,
-  region: Region,
+  area: Region,
   datagroup: Datagroup
  }
  let Com = ProjectCom[value]

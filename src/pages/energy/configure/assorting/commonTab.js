@@ -3,10 +3,11 @@ import ClassfyTree from './classfyTree'
 import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
-import { Input, Form, message, Spin } from "antd";
+import { Input, Form, message, Spin, Upload } from "antd";
 import warning from '@imgs/warning.png'
 
 export default function Index (props) {
+    const { Dragger } = Upload
     const [loading, setLoading] = useState(true);
     const aref = useRef()
     const eref = useRef()
@@ -165,6 +166,22 @@ export default function Index (props) {
         deleteRun()
     }
     //批量导入
+    const [fileList, setFileList] = useState([]);
+    const propData = {
+        onRemove: (file) => {
+          const index = fileList.indexOf(file);
+          const newFileList = fileList.slice();
+          newFileList.splice(index, 1);
+          setFileList(newFileList);
+        },
+        maxCount: 1,
+        accept:'.xls,.xlsx',
+        beforeUpload: (file) => {
+          setFileList([...fileList, file]);
+          return false;
+        },
+        fileList,
+    };
     const onUpload = () => {
         iref.current.onCancel()
     }
@@ -198,8 +215,14 @@ export default function Index (props) {
                 </div>
             </Custmodl>
             <Custmodl title='批量导入' ref={iref}  mold="cust" width={600} onOk={()=>onUpload()}>
-                <div style={{display:"flex", alignItems: "center"}}>
-                    
+                <div style={{display:"flex", alignItems: "center", position:'relative'}}>
+                    <Dragger {...propData}>
+                        <div style={{width: 536, height: 200, display:'flex',flexDirection:'column', fontSize: 16}}>
+                            <p style={{marginTop: 24, marginBottom: 24}}>将文件拖到此处，或<span style={{ color:'#237ae4',textDecoration:'underline', cursor:'pointer'}}>点击上传</span></p>
+                            
+                        </div>
+                    </Dragger>
+                    <a style={{ position:'absolute',bottom: 32,left: 233,fontSize: 16, width: 70, textAlign:'center', color:'#237ae4',textDecoration:'underline', cursor:'pointer', zIndex: 1000}} href='/energyTemplate.xlsx' download>下载模板</a>
                 </div>
             </Custmodl>
         </Spin>
