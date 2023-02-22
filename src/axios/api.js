@@ -55,13 +55,24 @@ export class User {
     // --账号管理
     static QueryOperationManager = ({alike, pageNum, pageSize}) => server.get(`/General/User/QueryOperationManager?alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`) //  查询账号
     static AddOperationManager = (params) => server.post( `/General/User/AddOperationManager`, params) //  新增
-    static DeleteOperationManager = (id) => server.post( `/General/User/Delete?id=${id}`) //  删除
+    static DeleteAccount = (id) => server.post( `/General/User/Delete?id=${id}`) //  删除
     static ResetPassword = ({id, pwd}) => server.post( `/General/User/ResetPassword?id=${id}&pwd=${pwd}`) //  重置密码
     static Update = (params) => server.post( `/General/User/Update`, params) // 编辑
     // -- 权限管理
     static QueryOperationManagers = ({projectId}) => server.get( `/General/User/QueryOperationManagers?projectId=${projectId}`) // 查询 运营管理员 已选择
     static InsertOperationManager = ({projectId, userId}) => server.post( `/General/User/InsertOperationManager?projectId=${projectId}&userId=${userId}`) // 添加 运营管理员
     static DeleteOperationManager = ({projectId, userId}) => server.post( `/General/User/DeleteOperationManager?projectId=${projectId}&userId=${userId}`) // 删除 运营管理员
+    static QueryProjectManager = (projectId) => server.get( `/General/User/QueryProjectManager?projectId=${projectId}`) // 查询项目管理员
+    static AddProjectManager = (params) => server.post( `/General/User/AddProjectManager`,params) // 新增项目管理员
+    static DeleteProjectManager = ({userId}) => server.post( `/General/User/DeleteProjectManager?userId=${userId}`) // 删除项目管理员
+   
+    static QueryProjectMaintenance = ({projectId}) => server.get( `/General/User/QueryProjectMaintenance?projectId=${projectId}`) // 查询运维人员
+   
+    static InsertProjectMaintenance = (params) => server.post(`/General/User/InsertProjectMaintenance`, params) // 添加运维人员
+   
+    static DeleteProjectMaintenance = ({userId}) => server.post(`/General/User/DeleteProjectMaintenance?userId=${userId}`) // 删除运维人员
+   
+    static SetMenus = ({projectId, userId}, params) => server.post(`/General/User/SetMenus?projectId=${projectId}&userId=${userId}`, params) // 查询菜单栏
 }
 // 
 // zl api end

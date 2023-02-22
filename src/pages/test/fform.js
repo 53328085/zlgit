@@ -1,50 +1,35 @@
- 
+import { Checkbox, Divider } from 'antd';
 import { useState } from 'react';
-
-const initialItems = [
-  { title: 'pretzels', id: 0 },
-  { title: 'crispy seaweed', id: 1 },
-  { title: 'granola bar', id: 2 },
-];
-
-export default function Menu() {
-  const [items, setItems] = useState(initialItems);
-  const [id, setId] = useState(0);
-  const selectedItem = items.find(item=> item.id == id)
-  function handleItemChange(id, e) {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        return {
-          ...item,
-          title: e.target.value,
-        };
-      } else {
-        return item;
-      }
-    }));
-  }
-
+const CheckboxGroup = Checkbox.Group;
+const plainOptions = ['Apple', 'Pear', 'Orange'];
+const defaultCheckedList = ['Apple', 'Orange'];
+const App = () => {
+  const [checkedList, setCheckedList] = useState(defaultCheckedList);
+  const [indeterminate, setIndeterminate] = useState(true);
+  const [checkAll, setCheckAll] = useState(false);
+  const onChange = (list) => {
+    console.log(list)
+    setCheckedList(list);
+    setIndeterminate(!!list.length && list.length < plainOptions.length);
+    setCheckAll(list.length === plainOptions.length);
+  };
+  const onCheckAllChange = (e) => {
+    setCheckedList(e.target.checked ? plainOptions : []);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+  };
   return (
     <>
-      <h2>What's your travel snack?</h2> 
-      <ul>
-        {items.map((item, index) => (
-          <li key={item.id}>
-            <input
-              value={item.title}
-              onChange={e => {
-                handleItemChange(item.id, e)
-                setId(item.id)
-              }}
-            />
-            {' '}
-            <button onClick={() => {
-              setId(item.id);
-            }}>Choose</button>
-          </li>
-        ))}
-      </ul>
-      <p>You picked {selectedItem?.title}.</p>
+      <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+        Check all
+      </Checkbox>
+      <Divider />
+      <CheckboxGroup  value={checkedList} onChange={onChange} defaultValue={defaultCheckedList}>
+        <Checkbox value="Apple">Apple</Checkbox>
+        <Checkbox value="Pear">Pear</Checkbox>
+        <Checkbox value="Orange">Orange</Checkbox>
+      </CheckboxGroup>
     </>
   );
-}
+};
+export default App;

@@ -14,7 +14,7 @@ const Mainbox = styled.div`
 `
 export default function Account({projectId, CModal}) {
  const {Text, Link} = Typography
- const {QueryOperationManager, AddOperationManager, DeleteOperationManager, ResetPassword, Update} = User 
+ const {QueryOperationManager, AddOperationManager, DeleteAccount, ResetPassword, Update} = User 
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
@@ -46,7 +46,7 @@ const showModl = () => {
  const delOk = async () => {
   let {id} = Record
   try {
-    let {success, errMsg} =  await DeleteOperationManager(id)
+    let {success, errMsg} =  await DeleteAccount(id)
 
    custMsg({success, content: '删除成功',  onClose: () => {
       refresh()
