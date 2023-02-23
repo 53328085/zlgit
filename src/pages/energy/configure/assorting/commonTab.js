@@ -3,21 +3,36 @@ import ClassfyTree from './classfyTree'
 import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
-import { Input, Form, message, Spin, Upload, Modal } from "antd";
+import { Input, Form, message, Spin, Upload, Modal, Table } from "antd";
 import warning from '@imgs/warning.png'
 import style from './style.module.less'
+import UseTransfer from '@com/useTransfer'
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import upload from '@imgs/upload.png'
 
 export default function Index (props) {
     const { Dragger } = Upload
+    const projectId = useSelector(selectProjectId);
     const [loading, setLoading] = useState(true);
     const aref = useRef()
     const eref = useRef()
     const dref = useRef()
     const iref = useRef()
+    const errRef = useRef()
     const [messageApi, contextHolder] = message.useMessage();
     const [value, setValue] = useState()
     const [changeTag, setChangeTag] = useState('')
-    const { queryElectricClassifys, insertEnergyClassify, updateEnergyClassify, deleteEnergyClassify } = energyDesigner
+    const { 
+        queryElectricClassifys, 
+        insertEnergyClassify, 
+        updateEnergyClassify, 
+        deleteEnergyClassify, 
+        queryEnergyConfigedDevices, 
+        queryEnergyNoConfigedDevices, 
+        saveEnergyDevices,
+        insertEnergyClassifys 
+    } = energyDesigner
     const type = props.type
     const [form] = Form.useForm()
     const [editform] = Form.useForm()
@@ -52,15 +67,29 @@ export default function Index (props) {
     let changeItem = {};
     let tag = '';
     let inputName = '';
+    const [energyId, setEnergyId] = useState();
 
     const getFromChild = values => {
+        setEnergyId(values.data.energyId);
+        changeItem = values.data;
+        tag = values.tag;
         if(values.tag == 'addSon' || values.tag == 'addParent'){
             aref.current.onOpen()
         }
         if(values.tag == 'edit'){
-            console.log(values.data)
             editform.setFieldValue('name',values.data.energyName);
             eref.current.onOpen()
+        }
+        if(values.tag == 'settings'){
+            setTransferTitle({
+                mainTitle:'',
+                subTitle:values.data.energyName,
+                unknownTitle:'未选中的设备',
+            })
+            console.log(values.data)
+            setRun()
+            setAllRun()
+            setTransTag('open');
         }
         if(values.tag == 'delete'){
             dref.current.onOpen()
@@ -70,12 +99,11 @@ export default function Index (props) {
             setFileList([])
             setAddModal(true)
         }
-        changeItem = values.data;
-        tag = values.tag;
+        
     }
     //新增
     const insertData = () => {
-        return insertEnergyClassify(changeItem.energyId? changeItem.energyId:0, type, inputName).then(res => {
+        return insertEnergyClassify(energyId? energyId:0, type, inputName).then(res => {
             let { success, data }  = res
             if(success){
                 messageApi.open({
@@ -101,7 +129,7 @@ export default function Index (props) {
     })
     //编辑
     const updateData = () => {
-        return updateEnergyClassify(type, changeItem.energyId, inputName).then(res =>{
+        return updateEnergyClassify(type, energyId, inputName).then(res =>{
             let {success} = res
             if(success){
                 messageApi.open({
@@ -125,7 +153,7 @@ export default function Index (props) {
     })
     //删除
     const deleteData = () => {
-        return deleteEnergyClassify(changeItem.energyId).then (res => {
+        return deleteEnergyClassify(energyId).then (res => {
             let { success } = res
             if(success){
                 messageApi.open({
@@ -181,18 +209,158 @@ export default function Index (props) {
           newFileList.splice(index, 1);
           setFileList(newFileList);
         },
-        maxCount: 1,
         accept:'.xls,.xlsx',
         beforeUpload: (file) => {
-          setFileList([...fileList, file]);
+            console.log(file)
+          setFileList([file]);
           return false;
         },
         fileList,
     };
     const onUpload = () => {
-        setAddModal(false)
+        let formData = new FormData()
+        formData.append('projectId', projectId)
+        formData.append('type',type)
+        formData.append('file',fileList[0])
+        insertEnergyClassifys(formData).then(res => {
+            if(res.success){
+                let {success, data} = res.data
+                if(success){
+                    messageApi.open({
+                        type:'success',
+                        content:'批量导入成功!'
+                    })
+                    
+                }else{
+                    messageApi.open({
+                        type:'error',
+                        content: res.data.errMsg
+                    })
+                }
+                setErrorData(data);
+                setAddModal(false)
+                errRef.current.onOpen()
+            }else{
+                messageApi.open({
+                    type:"error",
+                    content:res.errMsg
+                })
+                setAddModal(false)
+            }
+        })
     }
+    const [errorData,setErrorData] = useState();
+    const errColumns = [{
+        title:'错误行数',
+        width: 100,
+        dataIndex:'row',
+        key:'row',
+        align:'center',
+    },{
+        title:'错误原因',
+        dataIndex:'cause',
+        key:'cause',
+        align:'center',
+    }]
+    const onCloseError = () => {
+        errRef.current.onCancel();
+    }
+
+    //transfer
+  const [transferTitle,setTransferTitle] = useState({})
+  const mainTable = []
+  const [subTable, setSubTable] = useState([])
+
+  const [unknownTable, setUnknownTable] = useState([])
+  //已选设备
+  const getConfigedDevice = () => {
+    return queryEnergyConfigedDevices(projectId, type, energyId).then(res => {
+        if(res.success && res.data){
+            setSubTable(res.data)
+        }else{
+            messageApi.open({
+                type:'error',
+                content: res.errMsg
+            })
+        }
+    })
+  }
+  //未选设备
+  const { run:setRun } = useRequest(getConfigedDevice,{
+    manual: true,
+    onSuccess:(result, params) => {}
+  })
+  const getNoConfigedDevice = () => {
+    return queryEnergyNoConfigedDevices(projectId, type).then(res => {
+        if(res.success && res.data){
+            setUnknownTable(res.data)
+        }else{
+            messageApi.open({
+                type:'error',
+                content: res.errMsg
+            })
+        }
+    })
+  }
+
+  const { run:setAllRun } = useRequest(getNoConfigedDevice,{
+    manual: true,
+    onSuccess:(result, params) => {}
+  })
+  const columns = [
+    {   
+        align:'center',
+        title: '设备编号',
+        dataIndex:'deviceNumber',
+        key:'deviceNumber'
+    },{
+        align:'center',
+        title: '设备名称',
+        dataIndex:'deviceName',
+        key:'deviceName'
+    },{
+        align:'center',
+        title: '安装地址',
+        dataIndex:'address',
+        key:'address'
+    }
+    ]
     
+    const [transTag, setTransTag] = useState('')
+
+    const getCloseValue = params => {
+        setTransTag(params)
+    }
+    let arr;
+    const getSaveValue = params => {
+    arr = [];
+    if(params.subData.length > 0){
+        params.subData.map(item => {
+            arr.push(item.id)
+        })
+    }
+    runSave()
+    }
+    const SaveDevices = ()=>{
+        return saveEnergyDevices(projectId, type, energyId, arr).then(res => {
+            if(res.success){
+                messageApi.open({
+                    type:'success',
+                    content:'能耗设备配置成功!'
+                })
+                setTransTag('close');
+            }else{
+                messageApi.open({
+                    type:'success',
+                    content:res.errMsg || '能耗设备配置保存失败，请重试！'
+                })
+                setTransTag('close');
+            }
+        })
+    }
+    const { run: runSave } = useRequest(SaveDevices, {
+        manual: true
+    })
     return (
         <Spin tip='Loading...' spinning={loading}>
             {contextHolder}
@@ -225,16 +393,25 @@ export default function Index (props) {
                 <div className={style.addHeader}>批量导入</div>
                 <div className={style.addBody}>
                     <div style={{display:"flex", alignItems: "center", position:'relative'}}>
-                        <Dragger {...propData}>
-                            <div style={{width: 536, height: 200, display:'flex',flexDirection:'column', fontSize: 16}}>
+                        <Dragger {...propData} maxCount={1}>
+                            <div style={{width: 536, height: 200, display:'flex',flexDirection:'column', alignItems:'center', fontSize: 16}}>
+                                <img style={{width:84, height:60, marginTop: 44}} src={upload}></img>
                                 <p style={{marginTop: 24, marginBottom: 24}}>将文件拖到此处，或<span style={{ color:'#237ae4',textDecoration:'underline', cursor:'pointer'}}>点击上传</span></p>
                                 
                             </div>
                         </Dragger>
-                        <a style={{ position:'absolute',bottom: 32,left: 233,fontSize: 16, width: 70, textAlign:'center', color:'#237ae4',textDecoration:'underline', cursor:'pointer', zIndex: 1000}} href='/energyTemplate.xlsx' download>下载模板</a>
+                        <a style={{ position:'absolute',top: 180,left: 233,fontSize: 16, width: 70, textAlign:'center', color:'#237ae4',textDecoration:'underline', cursor:'pointer', zIndex: 1000}} href='/energyTemplate.xlsx' download>下载模板</a>
                     </div>
                 </div>
             </Modal>
+            <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
+                <UseTransfer transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
+            </div>
+            <Custmodl title='错误原因' ref={errRef}  mold="cust" width={600} onOk={()=>onCloseError()}>
+                <div style={{display:"flex", alignItems: "center"}}>
+                    <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{y:300}}></Table>
+                </div>
+            </Custmodl>
         </Spin>
         
     )

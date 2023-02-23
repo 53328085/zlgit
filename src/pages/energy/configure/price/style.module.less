@@ -1,0 +1,74 @@
+.header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    .headerTitle{
+        margin: 0 16px;
+        font-size: 14px;
+        color: #515151;
+    }
+}
+.mainContent{
+    width: 1680px;
+    height: 800px;
+    margin-top: 16px;
+    background-color: #fff;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    padding: 16px;
+}
+.card{
+    width: 1648px;
+    height: 112px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    .cardTitle{
+        height: 32px;
+        line-height: 32px;
+        padding-left: 16px;
+        font-size: 14px;
+        color: #333;
+        background-color: #ecf5ff;
+    }
+    .cardContent{
+        display: flex;
+        height: 80px;
+        padding: 16px;
+        font-size: 14px;
+        color: #333;
+        .contentLeft{
+            min-width: 120px;
+            // margin-right: 32px;
+        }
+        .contentMiddle{
+            border-left: 1px dashed #bbb;
+            border-right: 1px dashed #bbb;
+            padding-left: 16px;
+            width: 1287px;
+            span{
+                display: inline-block;
+                width: 170px;
+                margin-bottom: 8px;
+            }
+        }
+        .actions{
+            width: 216px;
+            display: flex;
+            align-items: center;
+            padding-left: 16px;
+            justify-content: flex-end;
+        }
+    }
+}
+
+.formStyle{
+    :global{
+        .ant-form-item{
+            // width: 238px;
+        }
+    }
+}

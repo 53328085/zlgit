@@ -1,7 +1,510 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import { Select,Button, Space, message, Form, Input } from 'antd';
+import style from './style.module.less'
+import { energyPrice } from '@api/api.js'
+import { useRequest } from 'ahooks';
+import Custmodl from '@com/useModal'
+import warning from '@imgs/warning.png'
 
 export default function Index() {
+  const aref = useRef()
+  const eref = useRef()
+  const dref = useRef()
+  const [form] = Form.useForm()
+  const [editform] = Form.useForm()
+  const Item = Form.Item
+  const projectId = useSelector(selectProjectId);
+  const [messageApi, contextHolder] = message.useMessage();
+  const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
+  const [elecPrice, setElecPrice] = useState()
+  const [waterPrice, setWaterPrice] = useState()
+  const [gasPrice, setGasPrice] = useState()
+  const [coalPrice, setCoalPrice] = useState()
+  const [fuelPrice, setFuelPrice] = useState()
+  const [changeTag, setChangeTag]= useState()
+  const [solutionId, setSolutionId] = useState()
+
+  const Actions = (props) => {
+    return <div className={style.actions}>
+      {props.valueJson ? <Space>
+      <Button type='primary' style={{width: 96}} onClick={()=> editPrice(props.valueJson, props.title)}>编辑</Button>
+      <Button type='primary' style={{width: 96}} danger onClick={()=> deletePrice(props.valueJson.id, props.title)}>删除</Button>
+      </Space> : <Button type='primary' style={{width: 96, marginLeft:'auto'}} onClick={()=> addPrice(props.title)}>新建</Button>}
+    </div>
+  }
+
+  
+  const getSolutions = () => {
+    return queryPriceSolutions(projectId, 1).then(res => {
+      if(res.success){
+        let { data } = res
+        if(data.length == 0){
+          return;
+        }else{
+          data.map(item => {
+            if(item.priceType == 1){
+              setElecPrice(item)
+            }
+            if(item.priceType == 2){
+              setWaterPrice(item)
+            }
+            if(item.priceType == 5){
+              setGasPrice(item)
+            }
+            if(item.priceType == 6){
+              setCoalPrice(item)
+            }
+            if(item.priceType == 7){
+              setFuelPrice(item)
+            }
+          })
+        }
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+
+  const {run: queryRun } = useRequest(getSolutions,{
+    manual: true,
+    onSuccess:(result, params) => {}
+  })
+
+  const addPrice = (title) => {
+    setChangeTag(title);
+    aref.current.onOpen()
+  }
+  const editPrice = (values, title) => {
+    setChangeTag(title);
+    editform.setFieldsValue(values)
+    aref.current.onOpen()
+  }
+  const deletePrice = (values, title) => {
+    setChangeTag(title);
+    setSolutionId(values)
+    dref.current.onOpen()
+  }
+  const onOk = async () => {
+    try {
+      const values = await form.validateFields();
+      let params = {}
+      params.AreaId = 1
+      if(changeTag == 'electric'){
+        params.PriceType = 1
+        params.Price1 = values.price1
+        params.Price2 = values.price2
+        params.Price3 = values.price3
+        params.Price4 = values.price4
+      }
+      if(changeTag == 'water'){
+        params.PriceType = 2
+        params.Price = parseFloat(values.price)
+      }
+      if(changeTag == 'gas'){
+        params.PriceType = 5
+        params.Price = values.price
+      }
+      if(changeTag == 'coal'){
+        params.PriceType = 6
+        params.Price = values.price
+      }
+      if(changeTag == 'fuel'){
+        params.PriceType = 7
+        params.Price = values.price
+      }
+      insertPriceSolution(projectId, params).then(res=>{
+        if(res.success){
+          messageApi.open({
+            type:'success',
+            content: '定价方案新增成功!'
+          })
+        }else{
+          messageApi.open({
+            type:'error',
+            content: res.errMsg
+          })
+        }
+        queryRun()
+        form.resetFields()
+        aref.current.onCancel();
+      })
+      
+    }catch(errorInfo){}
+    
+  }
+
+  const onSaveEdit = async () => {
+    try {
+      const values = await editform.validateFields();
+      let params = {}
+      params.AreaId = 1
+      if(changeTag == 'electric'){
+        params.PriceType = 1
+        params.Price1 = values.price1
+        params.Price2 = values.price2
+        params.Price3 = values.price3
+        params.Price4 = values.price4
+      }
+      if(changeTag == 'water'){
+        params.PriceType = 2
+        params.Price = parseFloat(values.price)
+      }
+      if(changeTag == 'gas'){
+        params.PriceType = 5
+        params.Price = values.price
+      }
+      if(changeTag == 'coal'){
+        params.PriceType = 6
+        params.Price = values.price
+      }
+      if(changeTag == 'fuel'){
+        params.PriceType = 7
+        params.Price = values.price
+      }
+      updatePriceSolution(projectId, params).then(res=>{
+        if(res.success){
+          messageApi.open({
+            type:'success',
+            content: '定价方案编辑成功!'
+          })
+        }else{
+          messageApi.open({
+            type:'error',
+            content: res.errMsg
+          })
+        }
+        queryRun()
+        editform.resetFields()
+        eref.current.onCancel();
+      })
+      
+    }catch(errorInfo){}
+    
+  }
+
+  const onDelete = () => {
+    deletePriceSolution(projectId, solutionId).then(res=>{
+      if(res.success){
+        messageApi.open({
+          type:'success',
+          content: '定价方案删除成功!'
+        })
+      }else{
+        messageApi.open({
+          type:'error',
+          content: res.errMsg
+        })
+      }
+      queryRun()
+      dref.current.onCancel();
+    })
+  }
+
+  useEffect(()=>{
+    queryRun()
+  },[])
+
+
   return (
-    <div>能耗定价</div>
+    <div>
+      {contextHolder}
+      <div className={style.header}>
+        <span className={style.headerTitle}>园区选择</span>
+        <Select
+          placeholder="请选择园区"
+          size="middle"
+          defaultValue="1"
+          style={{width: '200px'}}
+        >
+          <Option value="1">正泰物联全部园区</Option>
+          <Option value="2">正泰物联滨江园区</Option>
+          <Option value="3">正泰物联温州园区</Option>
+        </Select>
+      </div>
+      <div className={style.mainContent}>
+        <div className={style.card}>
+          <div className={style.cardTitle}>正泰物联杭州园区电价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>电价&nbsp;(元/度)</div>
+            {elecPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>尖电价&nbsp;(元/度)</span>
+                <span>峰电价&nbsp;(元/度)</span>
+                <span>平电价&nbsp;(元/度)</span>
+                <span>谷电价&nbsp;(元/度)</span>
+              </div>
+              <div>
+                <span>{elecPrice.price1}</span>
+                <span>{elecPrice.price2}</span>
+                <span>{elecPrice.price3}</span>
+                <span>{elecPrice.price4}</span>
+              </div>
+            </div> :<div className={style.contentMiddle}></div>}
+            <Actions valueJson={elecPrice} title={'electric'}></Actions>
+          </div>
+        </div>
+        <div className={style.card}>
+          <div className={style.cardTitle}>正泰物联杭州园区水价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>水价&nbsp;(元/m³)</div>
+            {waterPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>水价&nbsp;</span>
+              </div>
+              <div>
+                <span>{waterPrice.price}</span>
+              </div>
+            </div> : <div className={style.contentMiddle}></div>}
+            <Actions valueJson={waterPrice} title={'water'}></Actions>
+          </div>
+        </div>
+        <div className={style.card}>
+          <div className={style.cardTitle}>正泰物联杭州园区燃气价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>燃气价&nbsp;(元/m³)</div>
+            {gasPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>燃气价&nbsp;</span>
+              </div>
+              <div>
+                <span>{ gasPrice.price }</span>
+              </div>
+            </div> : <div className={style.contentMiddle}></div>}
+            <Actions valueJson={gasPrice} title={'gas'}></Actions>
+          </div>
+        </div>
+        <div className={style.card}>
+          <div className={style.cardTitle}>正泰物联杭州园区煤炭价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>煤炭价&nbsp;(元/吨)</div>
+            {coalPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>煤炭价&nbsp;</span>
+              </div>
+              <div>
+                <span>{ coalPrice.price }</span>
+              </div>
+            </div> : <div className={style.contentMiddle}></div>}
+            <Actions valueJson={coalPrice} title={'coal'}></Actions>
+          </div>
+        </div>
+        <div className={style.card}>
+          <div className={style.cardTitle}>正泰物联杭州园区燃油价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>燃油价&nbsp;(元/吨)</div>
+            {fuelPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>燃油价&nbsp;</span>
+              </div>
+              <div>
+                <span>{ fuelPrice.price }</span>
+              </div>
+            </div> : <div className={style.contentMiddle}></div>}
+            <Actions valueJson={fuelPrice} title={'fuel'}></Actions>
+          </div>
+        </div>
+      </div>
+      <Custmodl title='新增价格' ref={aref}  mold="cust" width={592} onOk={onOk}>
+        { changeTag == 'electric' ?<div className={style.formStyle} >
+          <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <div style={{display:"flex", alignItems: "center", justifyContent:'space-around'}}>
+            <div className={style.itemStyle}>
+              <Item label='尖电价' rules={[{required:true, message:'尖电价不能为空！'}]}>
+                <Space>
+                  <Item name='price1' rules={[{required:true, message:'尖电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+              <Item label='平电价' rules={[{required:true, message:'平电价不能为空！'}]}>
+                <Space>
+                  <Item name='price3' rules={[{required:true, message:'平电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+            </div>
+            <div className={style.itemStyle}>
+              <Item label='峰电价' rules={[{required:true, message:'峰电价不能为空！'}]}>
+                <Space>
+                  <Item name='price2' rules={[{required:true, message:'峰电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+              <Item label='谷电价' rules={[{required:true, message:'谷电价不能为空！'}]}>
+                <Space>
+                  <Item name='price4' rules={[{required:true, message:'谷电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+            </div>
+            </div>
+          </Form>
+        </div> : null }
+        { changeTag == 'water' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='水价' rules={[{required:true, message:'水价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'水价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'gas' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='燃气价' rules={[{required:true, message:'燃气价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'燃气价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'coal' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='煤炭价' rules={[{required:true, message:'煤炭价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'煤炭价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/吨)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'fuel' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='燃油价' rules={[{required:true, message:'燃油价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'燃油价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/吨)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+      </Custmodl>
+      <Custmodl title='编辑价格' ref={eref}  mold="cust" width={592} onOk={onSaveEdit}>
+        { changeTag == 'electric' ?<div className={style.formStyle} >
+          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <div style={{display:"flex", alignItems: "center", justifyContent:'space-around'}}>
+            <div className={style.itemStyle}>
+              <Item label='尖电价' rules={[{required:true, message:'尖电价不能为空！'}]}>
+                <Space>
+                  <Item name='price1' rules={[{required:true, message:'尖电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+              <Item label='平电价' rules={[{required:true, message:'平电价不能为空！'}]}>
+                <Space>
+                  <Item name='price3' rules={[{required:true, message:'平电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+            </div>
+            <div className={style.itemStyle}>
+              <Item label='峰电价' rules={[{required:true, message:'峰电价不能为空！'}]}>
+                <Space>
+                  <Item name='price2' rules={[{required:true, message:'峰电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+              <Item label='谷电价' rules={[{required:true, message:'谷电价不能为空！'}]}>
+                <Space>
+                  <Item name='price4' rules={[{required:true, message:'谷电价不能为空！'}]}>
+                    <Input style={{width:'112px'}}></Input>
+                  </Item>
+                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                </Space>
+              </Item>
+            </div>
+            </div>
+          </Form>
+        </div> : null }
+        { changeTag == 'water' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='水价' rules={[{required:true, message:'水价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'水价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'gas' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='燃气价' rules={[{required:true, message:'燃气价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'燃气价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'coal' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='煤炭价' rules={[{required:true, message:'煤炭价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'煤炭价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/吨)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
+        { changeTag == 'fuel' ? <div style={{display:"flex", alignItems: "center"}}>
+          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='燃油价' rules={[{required:true, message:'燃油价不能为空！'}]}>
+              <Space>
+                <Item name='price' rules={[{required:true, message:'燃油价不能为空！'}]}>
+                  <Input style={{width:'112px'}}></Input>
+                </Item>
+                <span style={{fontSize: 14, color:'#999'}}>(元/吨)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+      </Custmodl>
+      <Custmodl title='删除价格' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDelete()}>
+        <div style={{display:"flex", alignItems: "center"}}>
+          <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
+          <span> 是否删除{ changeTag == 'electric'? '电价' : changeTag == 'water'? '水价' : changeTag == 'gas'? '燃气价' : changeTag == 'coal'? '煤炭价' : changeTag == 'fuel'? '燃油价' : '' }? </span>
+        </div>
+      </Custmodl>
+    </div>
   )
 }

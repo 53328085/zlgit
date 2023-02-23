@@ -152,7 +152,9 @@ export default function Index() {
     console.log(params);
     setTransTag(params)
   }
-
+  const getSaveValue = params => {
+    console.log(params)
+  }
   const mainTable = [{
     id:1,
     deviceNumber:'563265532381',
@@ -237,7 +239,7 @@ export default function Index() {
         dataIndex:'address',
         key:'address'
     }
-]
+  ]
   const transferTitle = {
     mainTitle:'线路总表',
     subTitle:'线路分表',
@@ -293,7 +295,7 @@ export default function Index() {
             </div>
         </div>
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-          <UseTransfer transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
+          <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
         <Modal className={style.addModal} open={addModal} onOk={addOk} onCancel={handleCancel} width={592} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} >
         <div className={style.addHeader}>{ modalTitle }</div>

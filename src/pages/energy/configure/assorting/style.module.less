@@ -15,7 +15,7 @@
     margin-top: 16px;
 }
 .classifyTree{
-    width: 600px;
+    width: 700px;
     height:618px;
     padding: 32px 16px;
     overflow-y: auto;
@@ -31,6 +31,10 @@
         .ant-modal-body{
             padding: 32px;
         }
+        .ant-btn{
+            width: 96px;
+            margin-left: 32px;
+        }
     }
     .addHeader{
         height: 32px;
@@ -43,5 +47,40 @@
     .addBody{
         margin-top: 16px;
         // margin-left: 32px;
+    }
+}
+
+.transferPage{
+    position: absolute;
+    top: 64px;
+    left: 1680px;
+    
+}
+.startAnimation{
+    animation: change 0.5s;
+    // left: 0!important;
+    animation-fill-mode: both;
+    
+}
+@keyframes change{
+    from {
+        left: 1680px;
+    }
+    to {
+        left: 0px;
+    }
+}
+.endAnimation{
+    animation: changeTo 0.5s;
+    // left: 0!important;
+    animation-fill-mode: both;
+    
+}
+@keyframes changeTo{
+    from {
+        left: 0px;
+    }
+    to {
+        left: 1680px;
     }
 }

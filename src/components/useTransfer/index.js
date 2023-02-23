@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from './style.module.less'
 import { Table, Input, message } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { cloneDeep } from "lodash";
 
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
@@ -11,9 +12,9 @@ export default function index (props) {
     const [subData, setSubData] = useState([])
     const [unknownData, setUnknownData] = useState([])
     useEffect(()=>{
-        let mainArr = [...props.mainTable]
-        let subArr = [...props.subTable]
-        let unknownArr = [...props.unknownTable]
+        let mainArr = cloneDeep(props.mainTable)
+        let subArr = cloneDeep(props.subTable)
+        let unknownArr = cloneDeep(props.unknownTable)
         setMainData(mainArr)
         setSubData(subArr)
         setUnknownData(unknownArr)
@@ -147,6 +148,13 @@ export default function index (props) {
     const handleClose = () => {
         props.closeValue('close');
     }
+    const handleSave = () => {
+        props.saveValue({
+            mainData,
+            subData,
+            unknownData,
+        })
+    }
 
     const onSearchUnknown = (value) => {
         let arr = [];
@@ -212,7 +220,7 @@ export default function index (props) {
                     </span>
                 </div>
                 <div className={style.finalButton}>
-                    <div className={style.saveButton}>保存</div>
+                    <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div>
                     <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
                 </div>
             </div>
