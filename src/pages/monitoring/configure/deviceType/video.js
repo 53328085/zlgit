@@ -38,6 +38,9 @@ export default function video() {
     const resp = await DeviceCategory(params)
     if(resp.success&&Array.isArray(resp.data)){
       setDataSource([...resp.data])
+    }else
+    {
+      setDataSource([])
     }
     console.log(resp)
 }
@@ -76,16 +79,35 @@ export default function video() {
   const editOption=(record)=>{
       console.log(record)
       console.log(EditForm.getFieldValue())
+      categoryId=record.category
       EditForm.setFieldsValue({
         category:record.category,
         manufacturer:record.manufacturer,
         imageBase64:record.imageBase64,
+        ImageUpload:''
       })
       EditModalRef.current.onOpen()
     }
   //保存编辑
   const onOkEdit =async ()=>{
-    //UpdateCategory()
+    const formvalue = EditForm.getFieldValue()
+    console.log(formvalue)
+    let params={
+      projectId,
+      category:formvalue.category,
+      imageBase64:formvalue['ImageUpload']?`${formvalue['ImageUpload']}`:`data:image/jpeg;base64,${formvalue['imageBase64']}`
+    }
+    // console.log(EditForm.getFieldValue())
+    const resp = await UpdateDeviceCategory(params)
+    console.log(resp)
+    if(resp.success){
+      EditModalRef.current.onCancel()
+      message.success('编辑成功')
+      getDeviceQueryCategory()
+      getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
+    }
   }
     const columns= [
     {
@@ -101,7 +123,7 @@ export default function video() {
         dataIndex: 'imageBase64',
         render:(text)=>{
           return (<div >
-            <img src={`data:image/jpeg;base64,${text}`} style={{width:64,height:53}}></img>
+            <img src={text.includes(`data:image/jpeg;base64,`)?`${text}`:`data:image/jpeg;base64,${text}`} style={{width:64,height:53}}></img>
           </div>)
         }
     },
@@ -191,7 +213,8 @@ export default function video() {
     EditForm
   }
   let editModalProps = {
-    ref:EditModalRef
+    ref:EditModalRef,
+    onOk:onOkEdit
   }
   let delModal={
     cancelText: '取消',
@@ -218,7 +241,7 @@ export default function video() {
 
 let ImageUpload = ({ value = '', onChange }) => {
   return (
-    <img src={value?`data:image/jpeg;base64,${value}`:Camera } style={{ width: 120, height: 96, marginRight: 16 }}></img>
+    <img src={value.includes('data:image/jpeg;base64,')?`${value}`:`data:image/jpeg;base64,${value}` } style={{ width: 120, height: 96, marginRight: 16 }}></img>
   )
 }
 //新增监控modal组件

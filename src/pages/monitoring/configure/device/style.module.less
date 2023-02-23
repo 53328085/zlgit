@@ -1,0 +1,59 @@
+.divmgr16{
+    text-align: center;
+    color: #fff;
+    height:32px;
+    line-height: 32px;
+    border-radius: 2px;
+    width:96px;
+    background-color: #237ae4;
+    margin-right:16px;
+    cursor: pointer;
+   
+    &:hover{
+        opacity: .7;
+    }
+}
+
+.countNum{
+    display: flex;
+    line-height: 30px;
+    margin-right: 48px;
+    .opts{
+        width: 30px;
+        height: 30px;
+        border: 1px solid #dcdfe6;
+        background-color: rgba(245, 247, 250, 1);
+        cursor: pointer;
+        text-align: center;
+        &:hover{
+            opacity: .7;
+          
+        }
+    }
+   .numbers{
+    width: 67px;
+    height: 30px;
+    text-align: center;
+    border-top: 1px solid #dcdfe6;
+    border-bottom: 1px solid #dcdfe6;
+    &:hover{
+        border-color: #dcdfe6 !important;
+    }
+    &:focus{
+        border-color: #dcdfe6 !important;
+    }
+   }
+   
+}
+.DelModal{
+    
+    :global(.ant-btn:hover){
+        border-color: #d9d9d9 !important;
+       
+    }
+    :global( .ant-modal-footer .ant-btn-primary){
+        background-color: #ff4d4f;
+        border-color: #ff4d4f;
+        &:hover{border-color:#ff4d4f !important;}
+    }
+}

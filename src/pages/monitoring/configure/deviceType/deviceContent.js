@@ -16,6 +16,7 @@ export default function DeviceContent(props,ref) {
     onCancel,
     width=520,
     ModalRef,
+    exportExecel=()=>{},
     ...other
   } = props
   
@@ -37,7 +38,7 @@ export default function DeviceContent(props,ref) {
           <div className={style.btns}>
             <div className={style.btn} onClick={openAdd}>+新增</div>
             {value===6?<div className={style.btn} style={{marginRight:16}}>批量导入</div>:null}
-            <div className={style.btn}>导出</div>
+            <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>
         </div>
         {other.children}

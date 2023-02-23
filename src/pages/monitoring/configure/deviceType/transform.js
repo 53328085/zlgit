@@ -1,53 +1,191 @@
-import React, { useEffect, useState, useRef,forwardRef,useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import DeviceContent from './deviceContent'
-import gateWayImg from '@imgs/gateway.png';
-import style from './style.module.less'
-import AllColumns from './columns'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message ,Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import Table from '@com/useTable'
-import electricImg from '@imgs/diaobiao.png'
-import UploadImg from './upload.jsx'
+import Modal from '@com/useModal'
+import BlueColumn from '@com/bluecolumn'
+import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 
-const { DeviceTypeManager: { AllDeviceStyle, DeviceQueryNotUsed, DeviceQueryCategoryFull } } = Monitoring;
+const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
 export default function Electric() {
-  const [dataSource, setDataSource] = useState([])
-  const [defaultTableData,setDefaultTableData] = useState(null)
-  const { DeviceTypeManager: { } } = Monitoring;
+  const [dataSource, setDataSource] = useState([])//modal框表格数据
+  const [tableDataSource,setTableDataSource]=useState([])//主页表格数据
+  const [defaultTableData, setDefaultTableData] = useState(null)//新增时表格默认数据
+  const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
+  const [isOpenModal,setIsOpenModal] = useState(true)
+  const [isAdd,setIsAdd]=useState(false)
   const ModalRef = useRef(null)
+  const EditModalRef = useRef(null)
   const foRef = useRef(null)
+  const editFromRef = useRef(null)
+  const DelModalRef =useRef()
+  const tableLoadRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
-  let tableData=[];
-  let params = {
-    projectId,
-    pageNum: 1,
-    pageSize: 10,
-    alike: ''
+  const [editForm] = Form.useForm()
+  const optionStyle={
+    color: '#1890ff',
+    cursor: 'pointer',
+  }
+  let categoryId;
+ 
+  //获取设备列表
+  const getTableData = async () => {
+    let params = {
+      projectId,
+      pageNum: 1,
+      pageSize: 10,
+      deviceStyle:5
+    }
+    const result = await DeviceCategory(params)
+    const { data, errMsg, success } = result;
+    if (success && Array.isArray(data)) {
+      setTableDataSource(data)
+    } else{
+      setTableDataSource([])
+    }
   }
 
-  const getTableData = async () => {
-    // const result = await GatewayType(params)
-    // const { data, errMsg, success } = result;
-    // if (success && Array.isArray(data)) {
-    // }
+   //确认删除
+   const delOK=async ()=>{
+    console.log(111)
+    const resp=await DeleteDeviceCategory({
+      projectId,
+      category:categoryId
+    })
+    if(resp.success){
+      DelModalRef.current.onCancel()
+      message.success("删除成功")
+      getTableData()
+      getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
+    }
   }
+  //打开删除窗口
+  const openDel=(record)=>{
+    DelModalRef.current.onOpen();
+    categoryId=record.category;
+
+  } 
+  
+//获取打开编辑窗口数据
+const editOption=(record)=>{
+  EditModalRef.current.onOpen()
+  const editModalData = tableDataSource.filter(it=>it.category===record.category)
+  console.log(editModalData,editForm)
+  editForm.setFieldsValue({
+    DeviceType:editModalData[0]?.category,
+    Control: editModalData[0]?.control,
+    IsCount: editModalData[0]?.calculate,
+    IsRead: editModalData[0]?.realTimeReading,
+    DefaulImg:editModalData[0]?.imageBase64,
+    ImageUpload: '',
+  })
+  const arr = editModalData[0]?.points.map((item, index) => ({
+    index: index + 1,
+    dataMark: item.name,
+    dataName: item.description,
+    dataUnit: item.unit,
+    isSave: item.isSave,
+    watchPoint: item.isRuningPoint,
+    dataOrder: item.secquence
+  }))
+  setEditDefaultTableData(arr)
+  // const watchPointArr = arr.filter(it=>it.watchPoint)
+  // console.log(watchPointArr)
+  // editFromRef.current.setSwitched(watchPointArr)
+}
+  const columns =  [
+    {
+        title:'设备型号',
+        dataIndex: 'category'
+    },
+    {
+        title:'设备厂家',
+        dataIndex: 'manufacturer'
+    },
+    {
+        title:'设备缩略图',
+        dataIndex: 'imageBase64',
+        render:(text)=>{
+          return( <img src={text} width={64} height={53}></img>)
+         
+        }
+    },
+    {
+        title:'当前设备数量',
+        dataIndex: 'cnt'
+    },
+    {
+        title:'操作',
+        dataIndex: 'options',
+        render:(text,record)=>{
+          console.log(text,record)
+          return(
+            <div>
+              <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
+              <span style={{...optionStyle,paddingLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{openDel(record)}}>删除</span>
+            </div>
+          )
+        }
+    }
+]
+
+//保存编辑
+  const onOkEditModal=async ()=>{
+  console.log(editFromRef.current.pointSource,editForm.getFieldsValue())
+  const tableforvalues= editFromRef.current.pointSource
+  const formvalues = editForm.getFieldsValue()
+  const tableData =  tableforvalues.map(it=>({
+    name:it.dataMark,
+    isSave:it.isSave,
+    isRuningPoint:it.watchPoint,
+    secquence:it.dataOrder
+  }))
+  let params ={
+    projectId,
+    category:formvalues.DeviceType,
+    control:formvalues.Control,
+    calculate:formvalues.IsCount,
+    realTimeReading:formvalues.IsRead,
+    imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
+    points:tableData
+  }
+  const resp = await UpdateDeviceCategory(params)
+  if(resp.success){
+    EditModalRef.current.onCancel()
+    message.success("编辑成功")
+    getTableData()
+  }else{
+    message.error(resp.errMsg)
+  }
+}
+
+  
   //新增时获取未使用的电表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
-      deviceStyle: 1
+      deviceStyle: 5
     }
     const r = await DeviceQueryNotUsed(params)
     if (r.success && Array.isArray(r.data)) {
-      const arr = r.data.map((item, index) => ({ label: item, value: item }))
-      setDataSource(arr)
-      getDeviceQueryCategoryFull(r.data[0])
+      if(r.data.length > 0){
+        setIsOpenModal(true)
+        const arr = r.data.map((item, index) => ({ label: item, value: item }))
+        setDataSource(arr)
+        getDeviceQueryCategoryFull(r.data[0])
+      }else{
+        setIsOpenModal(false)
+      }
+      
     }
   }
 
-  //获取默认电表的详细信息
+  //获取默认水表的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -56,19 +194,23 @@ export default function Electric() {
     const r = await DeviceQueryCategoryFull(params)
     if (r.success) {
       const data = r.data
-      const arr = data.points.map((item,index)=>({
-        index:index+1,
-        dataMark:item.alias,
-        dataName:item.name,
-        dataUnit:item.unit,
-        isSave:item.isSave,
-        watchPoint:item.isRuningPoint,
-        dataOrder:item.secquence
+      const arr = data.points?.map((item, index) => ({
+        index: index + 1,
+        dataMark: item.name,
+        dataName: item.description,
+        dataUnit: item.unit,
+        isSave: item.isSave,
+        watchPoint: item.isRuningPoint,
+        dataOrder: item.secquence
       }))
-      console.log(foRef,arr)
-      if(foRef.current){
+      
+      // console.log(foRef, arr)
+      if (foRef.current) {
+        const watchPointArr = arr.filter(it=>it.watchPoint)
+        console.log(watchPointArr)
+        foRef.current.setSwitched(watchPointArr)
         foRef.current.setPointSource(arr)
-      }else{
+      } else {
         setDefaultTableData(arr)
       }
       addForm.setFieldsValue({
@@ -77,23 +219,66 @@ export default function Electric() {
         Control: data.control,
         IsCount: data.calculate,
         IsRead: data.realTimeReading,
-        DefaulImg:`data:image/jpeg;base64,${data.imageBase64}` ,
-        ImageUpload:'',
+        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
+        ImageUpload: '',
         // Point:arr,
       })
+      setIsAdd(true)
     }
-  
+
   }
+  //打开新增modal
   const open = () => {
-    ModalRef.current.onOpen()
+    if(!isAdd)return
+    if(isOpenModal){
+      ModalRef.current.onOpen()
+    }else{
+      message.warning('无可用新增设备!')
+    }
+    
+    
   }
-  const onOk = () => {
-    console.log(addForm.getFieldsValue(),foRef.current.pointSource)
+  //关闭新增modal
+  const onCancel=()=>{
+    getDeviceQueryNotUsed()
+    ModalRef.current.onCancel()
   }
-  useEffect( () => {
+  //保存新增设备
+  const onOk = async () => {
+    const formValue = addForm.getFieldsValue()
+    const tableData =  foRef.current.pointSource.map(it=>({
+      name:it.dataMark,
+      isSave:it.isSave,
+      isRuningPoint:it.watchPoint,
+      secquence:it.dataOrder
+    }))
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
+    let params ={
+      projectId,
+      category:formValue.DeviceType,
+      control:formValue.Control,
+      calculate:formValue.IsCount,
+      realTimeReading:formValue.IsRead,
+      imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
+      points:tableData
+    }
+    const resp = await AddDeviceCategory(params)
+    console.log(resp)
+    if(resp.success){
+      ModalRef.current.onCancel()
+      message.success("新增成功")
+      getTableData()
+      getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
+    }
+  }
+ 
+
+  
+  useEffect(() => {
     getTableData()
     getDeviceQueryNotUsed()
-    getDeviceQueryCategoryFull()
   }, [])
   let addModalProp = {
     addForm,
@@ -110,319 +295,37 @@ export default function Electric() {
     onOk,
     width: 1032,
     open,
-    ModalRef
+    ModalRef,
+    onCancel
   };
+  let editFormProps={
+    editForm,
+    ref:editFromRef,
+    editDefaultTableData
+  }
+  let editModalProps={
+   ref:EditModalRef,
+   width: 1032,
+   onOk:onOkEditModal
+  }
+  let delModalProps={
+    DelModalRef,
+    cancelText: '取消',
+    okText: '确认',
+    content:'是否确认删除电表类型?',
+    name:'删除电表类型',
+    onOk:delOK
+  }
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={AllColumns[1]}></Table>
+        <Table columns={columns} dataSource={tableDataSource} bordered={false} ref={tableLoadRef}></Table>
       </DeviceContent>
+      <Modal  mold='cust' {...editModalProps}>
+      <BlueColumn name='编辑视频监控类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <EditModal {...editFormProps}></EditModal>
+      </Modal>
+      <DeleteModal {...delModalProps}></DeleteModal>
     </div>
   )
 }
-
-
-let Count = ({ value,index,pointSource }) => {
-  const [num,setNum] =useState(value|| 0)
-  const reduce = () => {
-    if (num < 0) return
-    setNum(num - 1)
-
-    pointSource[index]['dataOrder']=num-1
-  }
-  
-  const add = () => {
-    setNum(num + 1)
-    pointSource[index]['dataOrder']=num+1
-  }
-  return (
-    <div className={style.countNum}>
-      <div onClick={reduce} className={style.opts}>-</div>
-      <div className={style.numbers}>{num}</div>
-      <div onClick={add} className={style.opts}>+</div>
-    </div>
-  )
-}
-
-let ImageUpload = ({ value = {}})=>{
-  return(
-       <img src={value } style={{ width: 120, height: 96,marginRight: 16 }}></img>
-  )
-}
-
-
-
-
-
-
-
-let TableForm=forwardRef(({defaultTableData},ref)=>{
-  const [pointSource,setPointSource] = useState([...defaultTableData])
-  const [isSiwtched,setIsSwitched] = useState([])
-
-  let arrs=[];
-  const columns=[
-    {
-      title:'序号',
-      key:'index',
-      dataIndex:'index'
-    },
-    {
-      title:'数据标识',
-      key:'dataMark',
-      dataIndex:'dataMark'
-    },
-    {
-      title:'数据名称',
-      key:'dataName',
-      dataIndex:'dataName'
-    },
-    {
-      title:'数据单位',
-      key:'dataUnit',
-      dataIndex:'dataUnit'
-    },
-    {
-      title:'是否存储',
-      key:'isSave',
-      dataIndex:'isSave',
-      // shouldCellUpdate:()=>true,
-      render:(_,v,index)=>{
-        return (
-          <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_} 
-          onChange={(o)=>{
-            pointSource.forEach((it,index)=>{
-              if(it.index===v.index){
-                it.isSave=o
-              }
-            })
-            
-          }}/> 
-          
-        )
-      }
-    
-    },
-    {
-      title:'标记运行监测点',
-      key:'watchPoint',
-      dataIndex:'watchPoint',
-      shouldCellUpdate:(r,o)=>true,
-      render:(t,v,index)=>{
-        return(
-          <Switch 
-            checkedChildren="标记" 
-            unCheckedChildren="不标记" 
-            defaultChecked={t} 
-            disabled={isSiwtched.length>3} 
-            onChange={(o)=>{
-              let arr = [...pointSource]
-              arr.forEach((it,i)=>{
-                if(it.index===v.index){
-                  it.watchPoint=o
-                }
-              })
-              setPointSource(arr)
-              // if(isSiwtched.length<4){
-              //   o&& setIsSwitched((d)=>{return [...d,v.index]})
-              // }
-              // console.log(isSiwtched,v)
-              // const num = arr.filter((it,index)=>it.watchPoint).length
-              // if(arrs.length>3){
-              //   setIsSwitched(true)
-              // }else{
-              //   setIsSwitched(false)
-              // }
-            }}
-            /> 
-        )
-      }
-       
-    },
-    {
-      title:'数据显示顺序',
-      key:'dataOrder',
-      dataIndex:'dataOrder',
-      render:(_,v,i)=>{
-        return <Count value={_} index={i} pointSource={pointSource} ></Count>
-      }
-    },
-  ] 
-
-  useImperativeHandle(ref,()=>({
-    // setIsSwitched,
-    pointSource,
-    setPointSource
-  }))
-  return(
-    <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index} ></Table>
-  )
-})
-
-
-//新增电表类型
-let AddModal =forwardRef(
-  ({ addForm, dataSource,getDeviceQueryCategoryFull,defaultTableData ,initialValues},ref) => { 
-    const tableRef = useRef(null)
-    // const [pointSource,setPointSource] = useState([...defaultTableData])
-    // const [isSiwtched,setIsSwitched] = useState(false)
-    // const [num,setNum]=useState(0)
-    // const columns=[
-    //   {
-    //     title:'序号',
-    //     key:'index',
-    //     dataIndex:'index'
-    //   },
-    //   {
-    //     title:'数据标识',
-    //     key:'dataMark',
-    //     dataIndex:'dataMark'
-    //   },
-    //   {
-    //     title:'数据名称',
-    //     key:'dataName',
-    //     dataIndex:'dataName'
-    //   },
-    //   {
-    //     title:'数据单位',
-    //     key:'dataUnit',
-    //     dataIndex:'dataUnit'
-    //   },
-    //   {
-    //     title:'是否存储',
-    //     key:'isSave',
-    //     dataIndex:'isSave',
-    //     render:(_,v,index)=>{
-    //       return (
-    //         <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_} 
-    //         onChange={(o)=>{
-    //           // console.log(v); 
-    //           pointSource[index]=v;
-    //           const arr = [...pointSource];
-    //           arr.splice(index,1,v)
-    //           // setPointSource(arr)
-    //           setPointSource([...arr])
-    //         }}/> 
-    //       )
-    //     }
-      
-    //   },
-    //   {
-    //     title:'标记运行监测点',
-    //     key:'watchPoint',
-    //     dataIndex:'watchPoint',
-    //     render:(_,v,index)=>
-    //     <Switch 
-    //     checkedChildren="标记" 
-    //     unCheckedChildren="不标记" 
-    //     defaultChecked={_} 
-    //     // disabled={isSiwtched?!pointSource[index].watchPoint:false} 
-        
-    //     onChange={(o)=>{
-    //       // pointSource[index].watchPoint=o;
-    //       // const arr = [...pointSource];
-    //       // arr[index].watchPoint=o;
-    //       // arr.splice(index,1,arr)
-    //       // console.log(arr)
-    //       // setPointSource(arr)
-    //       // const flagArr = arr.filter((it,i)=>it.watchPoint)
-    //       // if(flagArr.length>=4){
-    //       //  setIsSwitched(true)
-    //       // }else{
-    //       //  setIsSwitched(false)
-    //       //  }
-    //       // arr[index]=[...arr[index],...v]
-         
-    //       // setPointSource((o,n)=>{
-    //       //   console.log(o,n)
-    //       // })
-         
-    //     }} />  
-    //   },
-    //   {
-    //     title:'数据显示顺序',
-    //     key:'dataOrder',
-    //     dataIndex:'dataOrder',
-    //     render:(_,v,i)=>{
-    //       return <Count value={_} index={i} pointSource={pointSource}></Count>
-    //     }
-    //   },
-    // ] 
-    console.log(addForm.getFieldsValue())
-    const handleChange=async (option)=>{
-     await  getDeviceQueryCategoryFull(option)
-     setControl(addForm.getFieldsValue().Control)
-
-    }
-    
-    useEffect(()=>{
-      // setPointSource(tableData)
-    })
-    useImperativeHandle(ref, ()=> ({
-      pointSource:tableRef.current.pointSource,
-      setPointSource:tableRef.current.setPointSource,
-      handleChange:tableRef.current.handleChange,
-     
-    }))
-    return (
-      <Form
-        layout="vertical"
-        form={addForm}
-        initialValues={
-          initialValues
-        }
-      >
-        <Row align='bottom'>
-          <Col span={16}>
-            <Row style={{ marginBottom: 16 }}>
-              <Form.Item label="设备型号" name="DeviceType">
-                <Select
-                  style={{ width: 200 }}
-                  options={dataSource}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </Row>
-            <Row >
-              {/* <Col>
-                <Form.Item label="心跳周期(秒)" name="Cycle">
-                  <Count></Count>
-                </Form.Item>
-              </Col> */}
-              <Col className={style.ColGap}>
-                <Form.Item label="远程控制" name="Control" valuePropName="checked">
-                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!addForm.getFieldsValue().Control} checked={addForm.getFieldsValue().Control}/>
-                  
-                </Form.Item>
-              </Col>
-              <Col className={style.ColGap}>
-                <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
-                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!addForm.getFieldsValue().IsCount}/>
-                </Form.Item>
-              </Col>
-              <Col className={style.ColGap}>
-                <Form.Item label="是否抄读" name="IsRead" valuePropName='checked'>
-                  <Switch checkedChildren="是" unCheckedChildren="否" />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={8} align="bottom">
-            <Row align="bottom">
-              <Form.Item label="设备图片" name='DefaulImg' style={{margin:0} }>
-               <ImageUpload></ImageUpload>
-              </Form.Item>
-              <Form.Item name='ImageUpload' >
-              <UploadImg></UploadImg>
-              </Form.Item>
-            </Row>
-          </Col>
-        </Row>
-        <Divider dashed/>
-        <Row style={{fontWeight:'bold',marginBottom:16}}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
-        {/* <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index}></Table> */}
-        <TableForm ref={tableRef} defaultTableData={defaultTableData}  ></TableForm>
-      </Form>
-    )
-  }
-) 

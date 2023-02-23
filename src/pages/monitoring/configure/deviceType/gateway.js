@@ -19,7 +19,7 @@ export default function gateway() {
   const ModalRef = useRef(null)
   const EditModalRef = useRef(null)
   const DelModalRef = useRef(null)
-
+  const tableLoadRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const ForwardAddModal = forwardRef(AddModal)
   let categoryId=''
@@ -43,6 +43,7 @@ export default function gateway() {
   const open = async () => {
     const result = await QueryNotUsed(projectId)
     const { success, data } = result;
+    form.setFieldValue('Upload','')
     if (success && Array.isArray(data)) {
       if (data.length > 0) {
         ModalRef.current.onOpen()
@@ -145,6 +146,10 @@ export default function gateway() {
       </div>
     )
   }
+  //导出
+  const exportExecel=()=>{
+    tableLoadRef.current.download()
+  }
   useEffect(() => {
     getTableData()
   }, [])
@@ -164,7 +169,7 @@ export default function gateway() {
     onOk,
     name: '新增网关类型',
     width:520,
-   
+    exportExecel
   };
   let editModal={
     cancelText: '返回',
@@ -184,7 +189,7 @@ export default function gateway() {
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={AllColumns[0]} bordered={false} dataSource={dataSource}></Table>
+        <Table columns={AllColumns[0]} bordered={false} dataSource={dataSource} ref={tableLoadRef}></Table>
       </DeviceContent>
       <Modal mold='cust' ref={EditModalRef} {...editModal}>
       <BlueColumn name='编辑网关类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
@@ -195,11 +200,16 @@ export default function gateway() {
   )
 }
 
+
+
 let ImageUpload = ({ value = {}})=>{
   return(
        <img src={value } style={{ width: 118, height: 90 }}></img>
   )
 }
+
+
+
 //新增网关窗口
 let AddModal = (props, ref) => {
   const {
@@ -242,7 +252,7 @@ let AddModal = (props, ref) => {
   }
 
   useImperativeHandle(ref, () => ({
-  
+    setImageUrl,
     imageUrl
   }))
 
