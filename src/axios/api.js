@@ -77,9 +77,15 @@ export class User {
 
 // 公共模块---区域管理
    export class Area {
+   
+    static AllLevel = (projectId) => server.get(`/General/Area/AllLevel?projectId=${projectId}`)
+
     static QueryByPage = ({projectId, level, topAreaId, name, pageNum, pageSize}) => server.get(`/General/Area/QueryByPage?projectId=${projectId}&level=${level}&topAreaId=${topAreaId}&name=${name}&pageNum=${pageNum}&pageSize=${pageSize}`) // 查询菜单栏
   
     static Insert = (params) => server.post(`/General/Area/Insert`, params)
+
+    static DeleteArea = ({projectId,areaId}) => server.delete(`/General/Area/DeleteArea?projectId=${projectId}&areaId=${areaId}`)
+    static UpdateArea = (params) => server.post(`/General/Area/UpdateArea`, params)
 }
 // 
 // zl api end
@@ -406,6 +412,7 @@ export class UISummary {
     static InsertUISummary = (projectId, data) => server.post(`UISummary/UISummary/Insert?projectId=${projectId}`, data) // 保存UI
     static QueryUISummary = (projectId) => server.get(`UISummary/UISummary/Query?projectId=${projectId}`)  // 查询UI
 }
+//运行监控
 export const Monitoring =  {
     DeviceTypeManager:{
         GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
@@ -417,9 +424,12 @@ export const Monitoring =  {
         DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用设备类型
         DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`), //获取对应设备类型的详细信息
         AddDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/AddCategory`,data),//新增设备类型
-        DeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryByPage?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
+        DeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryByPageFull?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
         UpdateDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/UpdateCategory`,data),//更新设备
         DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除设备
+    },
+    DeviceManager:{
+        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${1}`)
     }
 }
 

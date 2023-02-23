@@ -18,16 +18,6 @@ export default function Account({projectId, CModal}) {
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
-
- const [userinof, setUserinfo] = useState({
-    name: '',
-    nickName: '',
-    pwd:'',
-    rpwd: '',
-    mobile: '',
-    enabled: true,
-    remark: ''
- })
  const mref = useRef(null)
  const dref = useRef(null)
  const rref = useRef(null)
