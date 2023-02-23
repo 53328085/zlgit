@@ -14,12 +14,11 @@ const Mainbox = styled.div`
 `
 export default function Account({projectId, CModal}) {
  const {Text, Link} = Typography
- const {QueryOperationManager, AddOperationManager, DeleteOperationManager, ResetPassword} = User 
+ const {QueryOperationManager, AddOperationManager, DeleteAccount, ResetPassword, Update} = User 
  const [form] = Form.useForm()
  const [mform] = Form.useForm()
  const {Item} = Form
 
- const [title, setTitle] = useState('新增账号')
  const [userinof, setUserinfo] = useState({
     name: '',
     nickName: '',
@@ -32,37 +31,14 @@ export default function Account({projectId, CModal}) {
  const mref = useRef(null)
  const dref = useRef(null)
  const rref = useRef(null)
- const pwd = useRef(null)
-const showModl = (type=0) => { 
-   let text = ['新增账号', '编辑账号'][type]
-   setTitle(text)
+ const newpwd = useRef(null)
+ const [Record, setRecord] = useState({})
+ const [isAdd, setIsAdd] = useState(true)
+ const title = isAdd ? '新增账号' : '编辑账号';
+const showModl = () => { 
+   setIsAdd(true)
    mref.current.onOpen()
 }
-
- const [Record, setRecord] = useState({})
- const [isEdit, setIsEdit] = useState(false)
- 
-  
-
- 
-
- 
- 
- 
-
- 
- const updateuser = (record) => {
-    setRecord(o => ({...o, ...record}))
-    setIsopen(true)   
-    let {loginName, nickName, mobile,  enabled, remark} = record
-    mform.setFieldsValue({
-      'loginName':loginName,
-      'nickName': nickName,
-      'mobile': mobile,
-      'remark': remark,
-      'enabled': enabled,
-    })
- }
  const del = async (record) => {
   setRecord({...Record, ...record})
   dref.current.onOpen()
@@ -70,7 +46,7 @@ const showModl = (type=0) => {
  const delOk = async () => {
   let {id} = Record
   try {
-    let {success, errMsg} =  await DeleteOperationManager(id)
+    let {success, errMsg} =  await DeleteAccount(id)
 
    custMsg({success, content: '删除成功',  onClose: () => {
       refresh()
@@ -84,14 +60,13 @@ const showModl = (type=0) => {
  }
  const reset = (record) => {
   setRecord({...Record, ...record});
-  console.log(Math.random())
-  pwd.current = Math.random().toString().slice(2,8)
+  newpwd.current = Math.random().toString().slice(2,8)
   rref.current.onOpen();
  }
  const restOk = async () => {
    try {
     const {id, pwd} = Record
-    const {success} =  await ResetPassword({id, pwd, oldPwd: pwd.current})
+    const {success, errMsg} =  await ResetPassword({id, pwd: newpwd.current})
     custMsg({success, content: '密码重置成功',  onClose: () => {
       refresh()
       rref.current.onCancel()
@@ -102,6 +77,17 @@ const showModl = (type=0) => {
      console.log(error)
    }
  
+ }
+ const edit = (record) => {
+    setRecord({...Record, ...record});
+    setIsAdd(false)
+    mform.setFieldsValue({
+      ...record,
+      rpwd: record.pwd,
+      enabled: Number(record.enabled)
+    })
+    mref.current.onOpen()
+
  }
  const columns = [  
         {
@@ -135,7 +121,7 @@ const showModl = (type=0) => {
           dataIndex: "op",
           title: "操作",
           render: (_,record) => <Space size={16}>
-            <Link underline onClick={ null}>编辑</Link>
+            <Link underline onClick={edit.bind(null, record)}>编辑</Link>
             <Link underline onClick={reset.bind(null, record)}>重置密码</Link>
             <Link underline type="danger" onClick={del.bind(null, record)}>删除</Link>
           </Space>
@@ -143,11 +129,10 @@ const showModl = (type=0) => {
      
  ]
 
- let params = {
-   projectId,
+ let params = { 
    pageNum: 1,
    pageSize: 15,
-   likeValue: ''
+   alike: ''
  }
  const getTableData = ({current, pageSize}, formData) => {  
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
@@ -169,7 +154,7 @@ const showModl = (type=0) => {
   }
   const {tableProps, search, refresh} = useAntdTable(getTableData, {  
     form,
-    refreshDeps: [projectId, params.likeValue, isEdit],
+    refreshDeps: [projectId, params.alike],
     defaultPageSize: 15,
     onError: (e) => {
       console.log(e)
@@ -180,9 +165,13 @@ const showModl = (type=0) => {
  const onOk = async () => {
   try {
     let data = await mform.validateFields();
-    console.log(data)
-    let {success, errMsg} = await AddOperationManager({...data, enabled: data.enabled ? 1 : 0})
-    success && custMsg({success, content: '新增成功',  onClose: () => {
+    delete data.rpwd
+    let handler = isAdd ? AddOperationManager : Update;
+    let content = isAdd ? '新增成功' : '编辑成功';
+    let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id};
+    console.log(params);
+    let {success, errMsg} = await handler(params)
+    success && custMsg({success, content,  onClose: () => {
       mref.current.onCancel();
       refresh()
     }})
@@ -197,12 +186,12 @@ const showModl = (type=0) => {
  
   return (
      <Mainbox>
-        <Form form={form} initialValues={{likeValue: params.likeValue}} layout="inline">
-            <Form.Item name="likeValue" label="账号查询">
+        <Form form={form} layout="inline" initialValues={{alike: ''}}>
+            <Form.Item name="alike" label="账号查询">
                 <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
             <Form.Item>
-                <CustButton style={{justifyContent: 'center'}} onClick={showModl.bind(null, 0)}>+新增</CustButton>
+                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+新增</CustButton>
             </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
@@ -242,6 +231,9 @@ const showModl = (type=0) => {
                   >
                 <Input />
              </Item>
+             {
+              isAdd &&
+             (<>
              <Item label="密码" name="pwd" rules={[
                   {
                     required: true,
@@ -267,6 +259,8 @@ const showModl = (type=0) => {
              >
                 <Input.Password  />
              </Item>  
+            </>)
+            }
              <Item label="手机号码" name="mobile" rules={[
                   {
                     required: true,
@@ -286,7 +280,7 @@ const showModl = (type=0) => {
          </Form>
      </CModal>
      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
-         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{pwd.current}</Link></p>
+         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
      </CModal>
      <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>

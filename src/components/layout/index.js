@@ -8,7 +8,7 @@ import style from './index.module.less'
 const { Header, Footer, Sider, Content } = Layout;
 
 const Csider = styled(Sider)`
-  background-image: linear-gradient(#0e42c8, #7662ff);
+  background-image: linear-gradient(180deg, rgba(0, 51, 153, 1) 0%, rgba(0, 51, 153, 1) 0%, rgba(0, 51, 51, 1) 100%, rgba(0, 51, 51, 1) 100%);
 `
 const Logheaer = styled(Header)`
 && {

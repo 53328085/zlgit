@@ -43,7 +43,7 @@ import {Form, Select, Input, Switch} from 'antd'
     )}
     <Item
       label="用户名"
-      name="LoginName"
+      name="name"
       rules={[
         {
           required: true,
@@ -53,24 +53,24 @@ import {Form, Select, Input, Switch} from 'antd'
     >
       <Input />
     </Item>
-    <Item label="用户姓名" name="NickName" required>
+    <Item label="用户姓名" name="nickName" required>
       <Input />
     </Item>
-    <Item label="密码" name="Pwd" required>
+    <Item label="密码" name="pwd" required>
       <Input.Password />
     </Item>
-    <Item label="确认密码" name="RePwd" required>
+    <Item label="确认密码" name="repwd" required>
       <Input.Password />
     </Item>
-    <Item label="手机号码" name="Mobile" required>
+    <Item label="手机号码" name="mobile" required>
       <Input />
     </Item>
     {enable && (
-      <Item label="是否启用" name="Enabled">
-        <Switch checkedChildren="是" unCheckedChildren="否" checked />
+      <Item label="是否启用" name="enabled">
+        <Switch checkedChildren="是" unCheckedChildren="否"   />
       </Item>
     )}
-    <Item label="备注信息" name="Remark">
+    <Item label="备注信息" name="remark">
       <Input.TextArea
         autoSize={{
           minRows: 2,
