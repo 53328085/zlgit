@@ -15,6 +15,7 @@ const Custbtn = styled(Button)`
     text-align: left;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   &&:hover {
     background-color: #4f95ea;
@@ -148,10 +149,10 @@ const Menus = (print) => {
   </Cmenu>
 )}
 export function CustButton(props) { // 通用方式
-  let {type, ...other} = props
+  let {src, ...other} = props
   return (
     <Custbtn {...other}>
-     {type ? <img src={icon[type]} /> : null}
+     {src ? <img src={icon[src]} /> : null}
       {props.children}
     </Custbtn>
   )
