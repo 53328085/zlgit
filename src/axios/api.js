@@ -77,9 +77,15 @@ export class User {
 
 // 公共模块---区域管理
    export class Area {
+   
+    static AllLevel = (projectId) => server.get(`/General/Area/AllLevel?projectId=${projectId}`)
+
     static QueryByPage = ({projectId, level, topAreaId, name, pageNum, pageSize}) => server.get(`/General/Area/QueryByPage?projectId=${projectId}&level=${level}&topAreaId=${topAreaId}&name=${name}&pageNum=${pageNum}&pageSize=${pageSize}`) // 查询菜单栏
   
     static Insert = (params) => server.post(`/General/Area/Insert`, params)
+
+    static DeleteArea = ({projectId,areaId}) => server.delete(`/General/Area/DeleteArea?projectId=${projectId}&areaId=${areaId}`)
+    static UpdateArea = (params) => server.post(`/General/Area/UpdateArea`, params)
 }
 // 
 // zl api end
