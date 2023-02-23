@@ -76,6 +76,8 @@ export default function Sider() {
       setPath(primary)
       let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
       let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];
+      console.log('sidermenu')
+      console.log(sidermenu)
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
@@ -86,8 +88,8 @@ export default function Sider() {
    }
   },[location.pathname, config])
 
-  const onSelect = ({key}) => {   
-     let label = menus[key]?.find(item => item.key == key)?.label
+  const onSelect = ({key}) => {       
+     let label = menus?.find(item => item.key == key)?.label
      Setkey(key)
      let url;
      if (config) {
@@ -95,7 +97,7 @@ export default function Sider() {
      }else {
       url = `/index/${path}/` + key
      }
-      
+     
      navigate(url, {state: {title: label, nested: key, primary: path}})
   }
 

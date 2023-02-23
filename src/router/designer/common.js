@@ -4,7 +4,6 @@ import store from '@redux/store'
 const Project = lazy(() => import("@pages/module/project"))
 const User = lazy(() => import("@pages/module/user"))
 const Region = lazy(() => import("@pages/module/region"))
-const File= lazy(() => import("@pages/module/file"))
 const Energy = lazy(() => import("@pages/module/energy"))
 const Pricing= lazy(() => import("@pages/module/pricing"))
 const Cockpit= lazy(() => import("@pages/module/cockpit"))

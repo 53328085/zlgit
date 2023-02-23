@@ -17,6 +17,7 @@ const components = {
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerEnergy'] 
+    console.log(runmen)
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;

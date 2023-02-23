@@ -91,8 +91,11 @@ const CustDrawer = styled(Drawer)`
      },
      {
         title: '',
-        dataIndex: 'key',
-        render: (text) => <Checkbox value={text}>选中</Checkbox>,
+        dataIndex: 'no',
+        render: (text) => {
+         console.log(text)
+         return <Checkbox value={text}>选中</Checkbox>
+       },
         align: 'center'
      },
      {
@@ -144,13 +147,13 @@ const CustDrawer = styled(Drawer)`
     return (
       <CustDrawer open={open} title="项目权限选择" width={608} onClose={onClose} closable={false}  extra={<Button type="primary" onClick={() => saveMenu()}>保存</Button>}>
            {
-             Array.isArray(bkgnd) && <TableList title="后台控制模块" data={bkgnd} /> 
+             Array.isArray(bkgnd) && <TableList title="后台控制模块" data={bkgnd} key={nanoid()} /> 
            }
            {
-             Array.isArray(bigScrren) && <TableList title="数据大屏模块" data={bigScrren} /> 
+             Array.isArray(bigScrren) && <TableList title="数据大屏模块" data={bigScrren} key={nanoid()} /> 
            }
             {
-             Array.isArray(projectsummary) && <TableList title="Web端功能模块" data={projectsummary} /> 
+             Array.isArray(projectsummary) && <TableList title="Web端功能模块" data={projectsummary} key={nanoid()} /> 
            }
            {
             Array.isArray(menus) && menus.map(m => {

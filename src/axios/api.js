@@ -74,6 +74,13 @@ export class User {
    
     static SetMenus = ({projectId, userId}, params) => server.post(`/General/User/SetMenus?projectId=${projectId}&userId=${userId}`, params) // 查询菜单栏
 }
+
+// 公共模块---区域管理
+   export class Area {
+    static QueryByPage = ({projectId, level, topAreaId, name, pageNum, pageSize}) => server.get(`/General/Area/QueryByPage?projectId=${projectId}&level=${level}&topAreaId=${topAreaId}&name=${name}&pageNum=${pageNum}&pageSize=${pageSize}`) // 查询菜单栏
+  
+    static Insert = (params) => server.post(`/General/Area/Insert`, params)
+}
 // 
 // zl api end
 // 主页
