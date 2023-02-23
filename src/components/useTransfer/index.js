@@ -10,14 +10,19 @@ export default function index (props) {
     const columns = props.columns
     const [mainData, setMainData] = useState([])
     const [subData, setSubData] = useState([])
+    const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
+    const [unknownCopy, setUnknownCopy] = useState([])
     useEffect(()=>{
         let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
         let unknownArr = cloneDeep(props.unknownTable)
+        
         setMainData(mainArr)
         setSubData(subArr)
+        setSubCopy(subArr)
         setUnknownData(unknownArr)
+        setUnknownCopy(unknownArr)
     },[props])
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -99,16 +104,26 @@ export default function index (props) {
         }else{
             let arr = [...unknownData];
             let arr2 = [];
+            let copyArr = [...unknownCopy];
             for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedRowKeys.length;j++){
                     if(arr[i].id == selectedRowKeys[j]){
+                        for(let x = 0;x< copyArr.length;x++){
+                            console.log(copyArr[x])
+                            if(arr[i].id == copyArr[x].id){
+                                copyArr.splice(x, 1)
+                            }
+                        }
                         arr2.push(arr[i])
                         arr.splice(i,1)
+                        
                     }
                 }
             }
             setSubData(subData.concat(arr2));
+            setSubCopy(subCopy.concat(arr2));
             setUnknownData(arr);
+            setUnknownCopy(copyArr);
             setSelectedRowKeys([])
         }
     }
@@ -131,16 +146,25 @@ export default function index (props) {
         }else{
             let arr = [...subData];
             let arr2 = [];
+            let copyArr = [...subCopy]
             for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedSubKeys.length;j++){
                     if(arr[i].id == selectedSubKeys[j]){
+                        for(let x = 0;x< copyArr.length;x++){
+                            console.log(copyArr[x])
+                            if(arr[i].id == copyArr[x].id){
+                                copyArr.splice(x, 1)
+                            }
+                        }
                         arr2.push(arr[i])
                         arr.splice(i,1)
                     }
                 }
             }
             setUnknownData(unknownData.concat(arr2));
+            setUnknownCopy(unknownCopy.concat(arr2));
             setSubData(arr)
+            setSubCopy(copyArr)
             // setSelectedSubKeys([])
         }
     }
@@ -156,14 +180,32 @@ export default function index (props) {
         })
     }
 
+    const onSearchSub = (value) => {
+        let arr = [];
+        if(value == '') {
+            setSubData([...subCopy]);
+        }else{
+            subCopy.map(item => {
+                if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                }
+            })
+            setSubData([...arr]);
+        }
+    }
+
     const onSearchUnknown = (value) => {
         let arr = [];
-        unknownData.map(item => {
-            if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                arr.push(item)
-            }
-        })
-        setUnknownData([...arr]);
+        if(value == '') {
+            setUnknownData([...unknownCopy]);
+        }else{
+            unknownCopy.map(item => {
+                if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                }
+            })
+            setUnknownData([...arr]);
+        }
     }
 
     return (
@@ -181,7 +223,7 @@ export default function index (props) {
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
                         <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton></Search>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:270}} rowSelection={subSelection}></Table>
@@ -193,7 +235,7 @@ export default function index (props) {
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
                         <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton></Search>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
