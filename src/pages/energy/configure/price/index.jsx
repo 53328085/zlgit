@@ -7,16 +7,19 @@ import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
+import { AreaSetting } from '@api/api.js'
 
 export default function Index() {
   const aref = useRef()
   const eref = useRef()
   const dref = useRef()
+  const formRef = useRef()
   const [form] = Form.useForm()
   const [editform] = Form.useForm()
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
   const [messageApi, contextHolder] = message.useMessage();
+  const { QueryAllArea } = AreaSetting
   const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
   const [elecPrice, setElecPrice] = useState()
   const [waterPrice, setWaterPrice] = useState()
@@ -24,6 +27,7 @@ export default function Index() {
   const [coalPrice, setCoalPrice] = useState()
   const [fuelPrice, setFuelPrice] = useState()
   const [changeTag, setChangeTag]= useState()
+  const [editId, setEditId]= useState()
   const [solutionId, setSolutionId] = useState()
 
   const Actions = (props) => {
@@ -35,10 +39,42 @@ export default function Index() {
     </div>
   }
 
-  
+  //园区
+  const [areaList, setAreaList] = useState([])
+  const [defaultArea, setDefaultArea] = useState()
+  const [areaId,setAreaId] = useState(0)
+  const getAreaData = () =>{
+    return QueryAllArea (projectId, 1).then(res=> {
+      let {success, data} = res
+      if(success && data){
+        setAreaList(data)
+        setDefaultArea(data[0].id)
+        setAreaId(data[0].id)
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+
+  const { data:AreaData } = useRequest(getAreaData,{
+    onSuccess:(result,params) => {}
+  })
+  const changeArea = (value) => {
+    setAreaId(value)
+    console.log(areaId, value)
+  }
+
   const getSolutions = () => {
-    return queryPriceSolutions(projectId, 1).then(res => {
+    return queryPriceSolutions(projectId, areaId).then(res => {
       if(res.success){
+        setElecPrice()
+        setWaterPrice()
+        setGasPrice()
+        setCoalPrice()
+        setFuelPrice()
         let { data } = res
         if(data.length == 0){
           return;
@@ -80,9 +116,11 @@ export default function Index() {
     aref.current.onOpen()
   }
   const editPrice = (values, title) => {
+    eref.current.onOpen()
     setChangeTag(title);
+    setEditId(values.id)
     editform.setFieldsValue(values)
-    aref.current.onOpen()
+    
   }
   const deletePrice = (values, title) => {
     setChangeTag(title);
@@ -93,13 +131,13 @@ export default function Index() {
     try {
       const values = await form.validateFields();
       let params = {}
-      params.AreaId = 1
+      params.AreaId = areaId
       if(changeTag == 'electric'){
         params.PriceType = 1
-        params.Price1 = values.price1
-        params.Price2 = values.price2
-        params.Price3 = values.price3
-        params.Price4 = values.price4
+        params.Price1 = parseFloat(values.price1)
+        params.Price2 = parseFloat(values.price2)
+        params.Price3 = parseFloat(values.price3)
+        params.Price4 = parseFloat(values.price4)
       }
       if(changeTag == 'water'){
         params.PriceType = 2
@@ -107,15 +145,15 @@ export default function Index() {
       }
       if(changeTag == 'gas'){
         params.PriceType = 5
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       if(changeTag == 'coal'){
         params.PriceType = 6
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       if(changeTag == 'fuel'){
         params.PriceType = 7
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       insertPriceSolution(projectId, params).then(res=>{
         if(res.success){
@@ -142,13 +180,14 @@ export default function Index() {
     try {
       const values = await editform.validateFields();
       let params = {}
-      params.AreaId = 1
+      params.AreaId = areaId
+      params.id = editId
       if(changeTag == 'electric'){
         params.PriceType = 1
-        params.Price1 = values.price1
-        params.Price2 = values.price2
-        params.Price3 = values.price3
-        params.Price4 = values.price4
+        params.Price1 = parseFloat(values.price1)
+        params.Price2 = parseFloat(values.price2)
+        params.Price3 = parseFloat(values.price3)
+        params.Price4 = parseFloat(values.price4)
       }
       if(changeTag == 'water'){
         params.PriceType = 2
@@ -156,15 +195,15 @@ export default function Index() {
       }
       if(changeTag == 'gas'){
         params.PriceType = 5
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       if(changeTag == 'coal'){
         params.PriceType = 6
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       if(changeTag == 'fuel'){
         params.PriceType = 7
-        params.Price = values.price
+        params.Price = parseFloat(values.price)
       }
       updatePriceSolution(projectId, params).then(res=>{
         if(res.success){
@@ -207,7 +246,7 @@ export default function Index() {
 
   useEffect(()=>{
     queryRun()
-  },[])
+  },[areaId])
 
 
   return (
@@ -218,12 +257,14 @@ export default function Index() {
         <Select
           placeholder="请选择园区"
           size="middle"
-          defaultValue="1"
+          key={defaultArea}
+          defaultValue={defaultArea}
           style={{width: '200px'}}
+          onChange={changeArea}
         >
-          <Option value="1">正泰物联全部园区</Option>
-          <Option value="2">正泰物联滨江园区</Option>
-          <Option value="3">正泰物联温州园区</Option>
+          {areaList.map(item => {
+            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          })}
         </Select>
       </div>
       <div className={style.mainContent}>
@@ -406,7 +447,7 @@ export default function Index() {
       </Custmodl>
       <Custmodl title='编辑价格' ref={eref}  mold="cust" width={592} onOk={onSaveEdit}>
         { changeTag == 'electric' ?<div className={style.formStyle} >
-          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+          <Form name='editform' ref={formRef} labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <div style={{display:"flex", alignItems: "center", justifyContent:'space-around'}}>
             <div className={style.itemStyle}>
               <Item label='尖电价' rules={[{required:true, message:'尖电价不能为空！'}]}>
@@ -448,7 +489,7 @@ export default function Index() {
           </Form>
         </div> : null }
         { changeTag == 'water' ? <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+          <Form name='editform' ref={formRef} labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <Item label='水价' rules={[{required:true, message:'水价不能为空！'}]}>
               <Space>
                 <Item name='price' rules={[{required:true, message:'水价不能为空！'}]}>
@@ -461,7 +502,7 @@ export default function Index() {
         </div> : null}
 
         { changeTag == 'gas' ? <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+          <Form name='editform' ref={formRef} labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <Item label='燃气价' rules={[{required:true, message:'燃气价不能为空！'}]}>
               <Space>
                 <Item name='price' rules={[{required:true, message:'燃气价不能为空！'}]}>
@@ -474,7 +515,7 @@ export default function Index() {
         </div> : null}
 
         { changeTag == 'coal' ? <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+          <Form name='editform' ref={formRef} labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <Item label='煤炭价' rules={[{required:true, message:'煤炭价不能为空！'}]}>
               <Space>
                 <Item name='price' rules={[{required:true, message:'煤炭价不能为空！'}]}>
@@ -487,7 +528,7 @@ export default function Index() {
         </div> : null}
 
         { changeTag == 'fuel' ? <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='editform' labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+          <Form name='editform' ref={formRef} labelCol={{span:6}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <Item label='燃油价' rules={[{required:true, message:'燃油价不能为空！'}]}>
               <Space>
                 <Item name='price' rules={[{required:true, message:'燃油价不能为空！'}]}>

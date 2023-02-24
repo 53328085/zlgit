@@ -459,3 +459,18 @@ export class energyQuota {
     static queryRoomQuotas = (projectId, data) => server.post(`Energy/EnergyQuotaDesigner/QueryRoomQuotas?projectId=${projectId}`, data)
     static updateRoomQuotas = (projectId, data) => server.post(`Energy/EnergyQuotaDesigner/UpdateRoomQuotas?projectId=${projectId}`, data)
 }
+
+//班次管理
+export class eneryShift {
+    static queryShifts = (projectId) => server.get(`Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)
+    static insertShift = (projectId, count, data) => server.post(`Energy/EnergyShiftDesigner/InsertShift?projectId=${projectId}&count=${count}`, data)
+    static updateShift = (projectId, data) => server.post(`Energy/EnergyShiftDesigner/UpdateShift?projectId=${projectId}`, data)
+    static deleteShift = (projectId) => server.delete(`Energy/EnergyShiftDesigner/DeleteShift?projectId=${projectId}`)
+}
+
+export class distributionRoom {
+    static queryPageRoom = (projectId, areaId, pageNum, pageSize) => server.get(`Distribution/DistributionRoom/QueryPageRoom?projectId=${projectId}&areaId=${areaId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+    static addRoom = (data) => server.post(`Distribution/DistributionRoom/AddRoom`, data)
+    static updateRoom = (data) => server.post(`Distribution/DistributionRoom/UpdateRoom`, data)
+    static deleteRoom = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteRoom?projectId=${projectId}&id=${id}`)
+}
