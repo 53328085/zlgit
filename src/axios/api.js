@@ -72,6 +72,8 @@ export class User {
    
     static DeleteProjectMaintenance = ({userId}) => server.post(`/General/User/DeleteProjectMaintenance?userId=${userId}`) // 删除运维人员
    
+    static QueryUserMenus = ({projectId, userId}, params) => server.get(`/General/User/QueryUserMenus?projectId=${projectId}&userId=${userId}`) // 查询用户菜单栏
+
     static SetMenus = ({projectId, userId}, params) => server.post(`/General/User/SetMenus?projectId=${projectId}&userId=${userId}`, params) // 查询菜单栏
 }
 

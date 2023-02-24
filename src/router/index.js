@@ -21,7 +21,7 @@ const Index = lazy(() => import("@pages/Home"))
 
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
-const Module = lazy(() => import("../pages/module/index"))
+//const Module = lazy(() => import("../pages/module/index"))
 
 const Monitoring = lazy(() => import("../pages/monitoring/index"))
 

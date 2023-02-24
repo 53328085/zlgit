@@ -32,7 +32,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import Projectform from './projectform'
 import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
-import { runMenus } from "../../redux/systemconfig";
+//import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
   height: inherit;
@@ -285,24 +285,32 @@ export default function Index() {
     })
   }
 
-  const startProject = async ({id, type}) => {
-    console.log(id);
+  const startProject = async ({id, type}) => {  
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
       if (success && Array.isArray(data)) {    
          try {
          const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
-         const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行
+         const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+         const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
          const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
          let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
         
          const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
 
-         const siderRunMenus = {}; 
+         const siderRunMenus = {}; // 运行功能 选择的子菜单
+         const allsinderRunMenus = {} ; //运行功能 所有的子菜单
          runMenus.forEach(item => {
           let {no, key, parentNo} = item 
+          if (!exclude.includes(item.no)) { 
+             siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
+             
+          }   
+         }) 
+         allRunMenus.forEach(item => {
+          let {no, key, parentNo} = item 
           if (!exclude.includes(item.no)) {
-             siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no)
+             allsinderRunMenus[key] = sidermenu?.filter(m => m.parentNo == no) 
           }   
          }) 
          const siderDesignerMenus = {};
@@ -312,12 +320,16 @@ export default function Index() {
             siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
           }   
          }) 
+         console.log(allRunMenus)
+         console.log(allsinderRunMenus)
          const menus =  {
           designerMenus, 
           siderDesignerMenus,
           runMenus,
           siderRunMenus, 
           setMenus,
+          allRunMenus,
+          allsinderRunMenus,
           projectId: id,
          }
          dispatch(getMenus(menus));

@@ -47,7 +47,7 @@ server.interceptors.response.use(
         if (state == 401)  {
           return  message.warning({          
             content: '登录状态发生改变,请重新登录',
-            onClose: () => login()
+            onClose: () => window.location.href="/"
            
         })
         }

@@ -1,35 +1,50 @@
-import { Checkbox, Divider } from 'antd';
-import { useState } from 'react';
-const CheckboxGroup = Checkbox.Group;
-const plainOptions = ['Apple', 'Pear', 'Orange'];
-const defaultCheckedList = ['Apple', 'Orange'];
+import { Transfer } from 'antd';
+import { useEffect, useState } from 'react';
 const App = () => {
-  const [checkedList, setCheckedList] = useState(defaultCheckedList);
-  const [indeterminate, setIndeterminate] = useState(true);
-  const [checkAll, setCheckAll] = useState(false);
-  const onChange = (list) => {
-    console.log(list)
-    setCheckedList(list);
-    setIndeterminate(!!list.length && list.length < plainOptions.length);
-    setCheckAll(list.length === plainOptions.length);
+  const [mockData, setMockData] = useState([]);
+  const [targetKeys, setTargetKeys] = useState([]);
+  const getMock = () => {
+    const tempTargetKeys = [];
+    const tempMockData = [];
+    for (let i = 0; i < 20; i++) {
+      const data = {
+        key: i.toString(),
+        title: `content${i + 1}`,
+        description: `description of content${i + 1}`,
+        chosen: i % 2 === 0,
+      };
+      if (data.chosen) {
+        tempTargetKeys.push(data.key);
+      }
+      tempMockData.push(data);
+    }
+    setMockData(tempMockData);
+    setTargetKeys(tempTargetKeys);
   };
-  const onCheckAllChange = (e) => {
-    setCheckedList(e.target.checked ? plainOptions : []);
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
+  useEffect(() => {
+    getMock();
+  }, []);
+  const filterOption = (inputValue, option) => { 
+    console.log(inputValue)
+    console.log(option);
+    return option.description.indexOf(inputValue) > -1;
+  }
+  const handleChange = (newTargetKeys) => {
+    setTargetKeys(newTargetKeys);
+  };
+  const handleSearch = (dir, value) => {
+    console.log('search:', dir, value);
   };
   return (
-    <>
-      <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
-        Check all
-      </Checkbox>
-      <Divider />
-      <CheckboxGroup  value={checkedList} onChange={onChange} defaultValue={defaultCheckedList}>
-        <Checkbox value="Apple">Apple</Checkbox>
-        <Checkbox value="Pear">Pear</Checkbox>
-        <Checkbox value="Orange">Orange</Checkbox>
-      </CheckboxGroup>
-    </>
+    <Transfer
+      dataSource={mockData}
+      showSearch
+      filterOption={filterOption}
+      targetKeys={targetKeys}
+      onChange={handleChange}
+      onSearch={handleSearch}
+      render={(item) => item.title}
+    />
   );
 };
 export default App;
