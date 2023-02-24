@@ -42,7 +42,7 @@ let treeData = [
         ],
     },
 ];
-export default function Common() {
+export default function Common({addMainLine}) {
     const [tdata, setTdata] = useState([...treeData])
     const titlelinecss={
         background: '#ecf5ff',
@@ -77,7 +77,7 @@ export default function Common() {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Select style={{ width: 264 }}></Select>
-                <div className={commonstyle.divBtn}>新增主线</div>
+                <div className={commonstyle.divBtn} onClick={addMainLine}>新增主线</div>
             </div>
             <Divider style={{ borderColor: '#d7d7d7', margin: '16px 0' }} dashed></Divider>
             <div style={{display:'flex',margin: '16px 0 24px 0'}}>
