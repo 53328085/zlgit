@@ -1,3 +1,4 @@
+import { data } from 'browserslist'
 import server  from './index'
 // 测试 新技术 
 export class Test {
@@ -414,6 +415,7 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring =  {
+    //设备类型管理
     DeviceTypeManager:{
         GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
         AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
@@ -428,8 +430,16 @@ export const Monitoring =  {
         UpdateDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/UpdateCategory`,data),//更新设备
         DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除设备
     },
+    //设备管理
     DeviceManager:{
-        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${1}`)
+        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域
+        QueryByPageElectric:(data)=>server.post(`/Monitor/Device/QueryByPageElectric`,data),//获取电表
+        QueryByPageGateWay:(data)=>server.post(`/Monitor/Gateway/QueryByPage`,data),//获取网关
+        QueryListGateWay:(projectId)=>server.get(`/Monitor/Gateway/QueryList?projectId=${projectId}`),//网关列表
+        QueryUsedGateway:(projectId)=>server.get(`/Monitor/GatewayCategory/QueryUsed?projectId=${projectId}`),//获取使用的网关
+        QueryUsedDeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取设备类型
+        GatewayAdd:(data)=>server.post(`/Monitor/Gateway/Add`,data),//新增网关
+        GatewayUpdate:(data)=>server.post(`/Monitor/Gateway/Update`,data)//更新网关
     }
 }
 

@@ -1,4 +1,5 @@
-import React, { useRef,useState } from 'react'
+import React, { useEffect, useRef,useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Form, Row, Col,Select,Input,Divider } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
@@ -6,8 +7,17 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import {MultImport} from './modalCom'
+import { Monitoring } from '@api/api.js'
 
+const { DeviceManager: { QueryByPageElectric,QueryListGateWay } } = Monitoring
 export default function gateway() {
+  const [page,setPage]=useState({
+    current:1,
+    pageSize:10
+  })
+  const [dataSource,setDataSource]=useState([])
+  const projectId = useSelector(state=>state.system.menus.projectId)
+  const compRef =useRef()
   const modalFormRef = useRef()
   const modalImportRef =useRef()
   const columns = [
@@ -56,10 +66,37 @@ export default function gateway() {
   const multExport=()=>{
     modalImportRef?.current?.onOpen()
   }
+  //获取电表列表
+  const getQueryByPageElectric = async ()=>{
+    let params={
+      projectId,
+      pageNum:page.current,
+      pageSize:page.pageSize,
+      areaId: compRef?.current?.selvalue,
+      alike:compRef?.current?.inpvalue,
+    }
+    const resp = await QueryByPageElectric(params)
+    console.log(resp)
+    if(resp.success&&Array.isArray(resp.data)){
+      setDataSource([...setDataSource])
+    }else{
+      setDataSource([])
+    }
+  }
+  const a=async()=>{
+  const r=  await QueryListGateWay(projectId)
+  console.log(r)
+  }
+  useEffect(()=>{
+    getQueryByPageElectric()
+    a()
+  },[])
+  //传入props对象
   const ComProps = {
     addopen,
     isenergy:true,
-    multExport
+    multExport,
+    ref:compRef
   }
   const ModalFormProps = {
     modalFormRef,
@@ -74,7 +111,7 @@ export default function gateway() {
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}></Table>
+        <Table columns={columns} pagination={page} dataSource={dataSource}></Table>
       </Comp>
       <AddModalForm {...ModalFormProps}></AddModalForm>
       <MultImport {...ImportProps}></MultImport>

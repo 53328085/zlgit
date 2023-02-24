@@ -1,24 +1,29 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
-export default function Comp(props) {
+export default forwardRef(function Comp(props, ref) {
     const {
         placeholder = '输入网关编号/安装地址',
         inplabel = '设备查询',
         addopen = () => { },
         isenergy = false,
-        multExport
+        multExport,
+        selectopts=[]
     } = props
-    const { DeviceManager: { AeraQueryAll } } = Monitoring
-    const projectId = useSelector(state => state.system.menus.projectId)
-    const getAeraQueryAll = async () => {
-        const resp = await AeraQueryAll(projectId)
-        console.log(resp)
+    const [selvalue, setSelvalue] = useState(0)
+    const [inpvalue, setInpvalue] = useState('')
+    const changeSelect = (value) => {
+        setSelvalue(value)
     }
+   
+    useImperativeHandle(ref, () => ({
+        selvalue,
+        inpvalue,
+      
+    }))
     useEffect(() => {
-        getAeraQueryAll()
     }, [])
     return (
         <div>
@@ -26,29 +31,17 @@ export default function Comp(props) {
                 <Row align='middle'>
                     <Col>
                         <Select
-                            defaultValue="lucy"
+                            defaultValue="全部园区"
                             style={{
                                 width: 264,
                             }}
-                            options={[
-                                {
-                                    value: 'jack',
-                                    label: 'Jack',
-                                },
-                                {
-                                    value: 'lucy',
-                                    label: 'Lucy',
-                                },
-                                {
-                                    value: 'Yiminghe',
-                                    label: 'yiminghe',
-                                },
-                                {
-                                    value: 'disabled',
-                                    label: 'Disabled',
-                                    disabled: true,
-                                },
-                            ]}
+                            fieldNames={{
+                                label: 'name',
+                                value: 'id'
+                            }}
+                            value={selvalue}
+                            onChange={changeSelect}
+                            options={selectopts}
                         />
                     </Col>
                     <Col style={{ margin: '0 20px' }}>
@@ -58,7 +51,7 @@ export default function Comp(props) {
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
-                        <Input style={{ width: 321 }} placeholder={placeholder} />
+                        <Input style={{ width: 321 }} placeholder={placeholder} onChange={(v) => { setInpvalue(v) }} />
                     </Col>
                     <Col>
                         <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }}>查询</Button>
@@ -82,4 +75,4 @@ export default function Comp(props) {
             {props.children}
         </div>
     )
-}
+})
