@@ -23,6 +23,7 @@ import { User } from "@api/api.js";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
 import Custdrawer from './drawer'
+import Drawerdata from './drawerdata'
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -121,15 +122,17 @@ export default function Account({projectId, CModal}) {
  const mref = useRef()
  const fmodal = useRef()
  const dref = useRef()
- 
+ const dpref  = useRef();
  const [person, setPerson] = useState(0) // 新增项目管理员 新增运维人员
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
 
 
-  const menufn = (id) => {
+  const menufn = (id, type) => {
     setUserId(id);
-    dref.current.onOpen()
+   type == 1 && dref.current.onOpen();
+
+   type == 2 && dpref.current.onOpen();
   }
  
   const queryOperationManager = async () => {
@@ -274,8 +277,8 @@ export default function Account({projectId, CModal}) {
               <Item noStyle>
                  <div style={{ display: "flex", justifyContent: "space-between" }}>
                        <Space size={16}>  
-                        <Pbutton onClick={() => menufn(field.id)}>数据权限</Pbutton>
-                        <Pbutton onClick={() => menufn(field.id)}>菜单权限</Pbutton>
+                        <Pbutton onClick={() => menufn(field.id, 2)}>数据权限</Pbutton>
+                        <Pbutton onClick={() => menufn(field.id, 1)}>菜单权限</Pbutton>
                        
                        </Space>
                        <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
@@ -364,7 +367,7 @@ export default function Account({projectId, CModal}) {
                 <Item  noStyle shouldUpdate>
                   { ({getFieldValue }) => {
                    return <div style={{ display: "flex",justifyContent: 'justify-content' }}>
-                          <Pbutton onClick={() => menufn(getFieldValue('id'))}>菜单权限</Pbutton>
+                          <Pbutton onClick={() => menufn(getFieldValue('id'), 1)}>菜单权限</Pbutton>
                           <Dbutton  onClick={() => onDeleteMsg(1, getFieldValue('id'))} >删除</Dbutton>
                     </div>
                   }
@@ -423,6 +426,7 @@ export default function Account({projectId, CModal}) {
        <Custdrawer projectId={projectId} userId={userId} ref={dref} >
             
       </Custdrawer>
+      <Drawerdata projectId={projectId} userId={userId} ref={dpref}></Drawerdata>
     </Mainbox>
   );
 }

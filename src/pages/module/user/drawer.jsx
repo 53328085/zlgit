@@ -74,6 +74,7 @@ const CustDrawer = styled(Drawer)`
     }
   //  const QuserMenus = useMemo(() => queryUserMenus, [])
     const saveMenu = async () => {
+        console.log(MenuNos)
         try {
                            // 只要有一个子，父需要传
             let Nos = []
@@ -84,8 +85,9 @@ const CustDrawer = styled(Drawer)`
             }
             let paramsNos = [...new Set(Nos)]
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
-            success &&  custMsg({content: '保存成功', oncClose: () => {
+            success &&  custMsg({content: '保存成功', onClose: () => {
                 setOpen(false)
+                queryUserMenus()
             }})
             !success && custMsg({success, content: errMsg || '数据出错'})
         } catch (error) {
@@ -95,16 +97,34 @@ const CustDrawer = styled(Drawer)`
       //  
     }
    
+   
+   
+    
+  useEffect(() => {
+    queryUserMenus();
+}, [projectId, userId])
+
+   const TableList = ({title, data, mod}) => {     
+
+    const choose = (data=[]) =>  data?.filter(d => d.select == 1).map(d => d.id)
+    const [tableData, setTbdata] = useState(data)
+    const [checkedList, setCheckedList] = useState(choose(data));
+    const [allSelect] = useState(() => data.map(d => d.no))
+    const [indeterminate, setIndeterminate] = useState(false);
+    const [checkAll, setCheckAll] = useState(() => data.length === checkedList.length);
+    const [exclude] = useState(['0101', '0102', '0103', '0104'])
+    const rowlen = useMemo(() => data.length, [data])
+   
     const rowmove = {
       up: (record,index) => {
         setTbdata(arr => {
           let prerow = arr[index - 1];
           arr[index] = prerow;
           arr[index - 1] = record;
-          console.log(arr)
+         
           return [...arr]
         })
-     
+        setCheckedList(choose(tableData))
       },
       down: (record,index) => {
         setTbdata(arr => {
@@ -113,11 +133,11 @@ const CustDrawer = styled(Drawer)`
           arr[index + 1] = record;
           return [...arr]
         })
-       
+       setCheckedList(choose(tableData))
       }
     }
-    const rowlen = useMemo(() => menus.length, [menus])
    
+
     const columns = [
       {
       title: '',
@@ -136,29 +156,19 @@ const CustDrawer = styled(Drawer)`
      {
       title: '',
       dataIndex: 'up',
-      render: (_, record, index) => index !==0 && (<Link onClick={() => rowmove.up(record, index)}>上移一行</Link>),
+      render: (_, record, index) => index !==0 && !exclude.includes(mod) && (<Link onClick={() => rowmove.up(record, index)}>上移一行</Link>),
       align: 'center',
      },
      {
       title: '',
       dataIndex: 'down',
-      render: (_, record, index) => index <  rowlen - 1 && (<Link onClick={() => rowmove.down(record, index)} type="danger">下移一行</Link>),
+      render: (_, record, index) => index <  rowlen - 1 && !exclude.includes(mod) &&  (<Link onClick={() => rowmove.down(record, index)} type="danger">下移一行</Link>),
       align: 'center'
      },
      
   ]
-  useEffect(() => {
-    queryUserMenus();
-}, [projectId, userId])
-   const TableList = ({title, data, mod}) => {
-     
-   // const defaultCheckedList = useState()
-    const [checkedList, setCheckedList] = useState(() => data.map(d => {
-        if(d.select == 1) return d.no;
-    }));
-    const [allSelect] = useState(() => data.map(d => d.no))
-    const [indeterminate, setIndeterminate] = useState(false);
-    const [checkAll, setCheckAll] = useState(() => data.length === checkedList.length);
+
+
     const onCheckAllChange = (e) => {
         setCheckedList(e.target.checked ? allSelect : []);
         setIndeterminate(false);
@@ -166,6 +176,7 @@ const CustDrawer = styled(Drawer)`
     }
   
     const onChange = (list) => {
+       console.log(list)
        setCheckedList(list)
        setIndeterminate(!!list.length && list.length < data.length)
        setCheckAll(list.length === data.length)
@@ -183,7 +194,7 @@ const CustDrawer = styled(Drawer)`
              </Text>
           </div>
           <CheckboxGroup onChange={onChange} value={checkedList} >
-                 <CustTable columns={columns} dataSource={data} rowKey="no" pagination={false} showHeader={false} bordered={false} ></CustTable>
+                 <CustTable columns={columns} dataSource={tableData} rowKey="no" pagination={false} showHeader={false} bordered={false} ></CustTable>
           </CheckboxGroup>
         </>
     )

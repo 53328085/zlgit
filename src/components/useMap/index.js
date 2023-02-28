@@ -19,21 +19,25 @@ import {
 } from "react-bmapgl";
 
  function Index(props, ref) {
-  const {initialValues={}, setAaddress=()=>{}, lngLat, value, onChange} = props
-  const {Lng, Lat} = initialValues
-  const [lng, lat] = lngLat?.split(',') || []
-  const center = { lng: (Lng ?? lng) ?? 120.228177 , lat: Lat ?? lat  ?? 30.212296} 
-  const mapref = useRef(null)
-
-  const option = {
-    // mapType: 'earth',
-    center ,
-    zoom: 12,
-    enableScrollWheelZoom: true, // 鼠标滚轮缩放
-    // tilt: 20,
-    enableDragging: true,
-    // enableRotate: false
-  };
+  
+    const {initialValues={}, setAaddress=()=>{}, lngLat, value, onChange} = props
+    const {Lng, Lat} = initialValues
+    const [lng, lat] = lngLat?.split(',') || []
+    const center = { lng: (Lng ?? lng) ?? 120.2281 , lat: Lat ?? lat  ?? 30.2122} 
+    const mapref = useRef(null)
+  
+    const option = {
+      // mapType: 'earth',
+      center ,
+      zoom: 12,
+      enableScrollWheelZoom: true, // 鼠标滚轮缩放
+      // tilt: 20,
+      enableDragging: true,
+      // enableRotate: false
+    };
+    
+  
+ 
   const getPosition = (e) => {
     try {
    
