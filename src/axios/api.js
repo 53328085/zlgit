@@ -76,6 +76,12 @@ export class User {
     static QueryUserMenus = ({projectId, userId}, params) => server.get(`/General/User/QueryUserMenus?projectId=${projectId}&userId=${userId}`) // 查询用户菜单栏
 
     static SetMenus = ({projectId, userId}, params) => server.post(`/General/User/SetMenus?projectId=${projectId}&userId=${userId}`, params) // 查询菜单栏
+
+    static GetDataRights = ({projectId, userId}, params) => server.post( `/General/User/GetDataRights?projectId=${projectId}&userId=${userId}`, params) // 查询数据权限
+    ///V1/General/User/SetDataRightsArea
+    static SetDataRightsarea = ({projectId, userId}, params) => server.post( `/General/User/SetDataRightsArea?projectId=${projectId}&userId=${userId}`, params) // 设置园区权限
+    static SetDataRightsenergy = ({projectId, userId}, params) => server.post( `/General/User/SetDataRightsEnergy?projectId=${projectId}&userId=${userId}`, params) // 设置能耗权限
+    static SetDataRightsdevice = ({projectId, userId}, params) => server.post( `/General/User/SetDataRightsDevice?projectId=${projectId}&userId=${userId}`, params) // 设置设备权限
 }
 
 // 公共模块---区域管理
@@ -89,6 +95,8 @@ export class User {
 
     static DeleteArea = ({projectId,areaId}) => server.delete(`/General/Area/DeleteArea?projectId=${projectId}&areaId=${areaId}`)
     static UpdateArea = (params) => server.post(`/General/Area/UpdateArea`, params)
+    static QueryAll = ({projectId, level}) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`)
+     
 }
 // 
 // zl api end

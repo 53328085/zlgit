@@ -292,14 +292,14 @@ export default function Index() {
          try {
          const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
          const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
-         const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
+       //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
          const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
          let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
         
          const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
 
          const siderRunMenus = {}; // 运行功能 选择的子菜单
-         const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+        // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
          runMenus.forEach(item => {
           let {no, key, parentNo} = item 
           if (!exclude.includes(item.no)) { 
@@ -307,12 +307,12 @@ export default function Index() {
              
           }   
          }) 
-         allRunMenus.forEach(item => {
+      /*    allRunMenus.forEach(item => {
           let {no, key, parentNo} = item 
           if (!exclude.includes(item.no)) {
              allsinderRunMenus[key] = sidermenu?.filter(m => m.parentNo == no) 
           }   
-         }) 
+         })  */
          const siderDesignerMenus = {};
          designerMenus.forEach(item => {
           let {no, key, parentNo} = item 
@@ -320,16 +320,14 @@ export default function Index() {
             siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
           }   
          }) 
-         console.log(allRunMenus)
-         console.log(allsinderRunMenus)
          const menus =  {
           designerMenus, 
           siderDesignerMenus,
           runMenus,
           siderRunMenus, 
           setMenus,
-          allRunMenus,
-          allsinderRunMenus,
+         // allRunMenus,
+        //  allsinderRunMenus,
           projectId: id,
          }
          dispatch(getMenus(menus));
