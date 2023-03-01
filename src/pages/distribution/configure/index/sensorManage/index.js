@@ -1,49 +1,160 @@
-import React, { useRef, useState } from 'react'
-import { Select, Button, Table, Space, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
+import React, { useRef, useState, useEffect } from 'react'
+import { Select, Button, Table, Space, Modal, message } from 'antd';
 import style from './style.module.less'
+import UseTransfer from '@com/useTransfer'
+import { useRequest } from 'ahooks';
+import {useSelector} from 'react-redux'
+import {utils, writeFile} from 'xlsx'
+import {selectProjectId} from '@redux/systemconfig.js'
+import { AreaSetting, distributionRoom, DistributionMeter } from '@api/api.js'
+import { cloneDeep } from 'lodash';
+
 import dashed from '@imgs/dashed.png'
 import firstwarn from '@imgs/warning.png' 
-import UseTransfer from '@com/useTransfer'
 
 export default function Index() {
+  const tableRef = useRef()
+  const { QueryAllArea } = AreaSetting
+  const { queryPageRoom } = distributionRoom
+  const { queryPageSensor, queryUnusedSensor, configureSensor } = DistributionMeter
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageContent = (type, content)=>{
+    messageApi.open({
+      type,
+      content
+    })
+  }
+  const projectId = useSelector(selectProjectId);
+  //园区选择
+  const [areaList, setAreaList] = useState([])
+  const [defaultArea, setDefaultArea] = useState()
+  const [areaId,setAreaId] = useState(0)
+  const getAreaData = () =>{
+    return QueryAllArea (projectId, 1).then(res=> {
+      let {success, data} = res
+      if(success && data){
+        setAreaList(data)
+        setDefaultArea(data[0].id)
+        setAreaId(data[0].id)
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+  const { data:AreaData } = useRequest(getAreaData,{
+    onSuccess:(result,params) => {}
+  })
+  const handleChange = (values) => {
+    setPageNum(1)
+    setAreaId(values)
+  }
+  //配电房下拉框
+  const [roomList, setRoomList] = useState([])
+  const [defaultRoom, setDefaultRoom] = useState()
+  const [roomId, setRoomId] = useState()
+  const getRoomData = () => {
+    return queryPageRoom( projectId, areaId, 0, 0).then(res => {
+      if(res.success){
+        setRoomList(res.data)
+        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
+        setRoomId(res.data.length > 0  ? res.data[0].id : null)
+        if(res.data.length == 0){
+          messageApi.open({
+            type: 'warning',
+            content:"当前园区没有配电房"
+          })
+        }
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+  const { run : queryRoom } = useRequest(getRoomData,{
+    manual: true,
+  })
+  useEffect(()=>{
+    if(areaId == 0){
+      return
+    }else{
+      queryRoom()
+    }
+  },[areaId])
+  const ChangeRoom = values => {
+    setPageNum(1)
+    setDefaultRoom(values)
+    setRoomId(values)
+  }
+
+  //设备查询
+  const [pageNum, setPageNum] = useState(1)
+  const [total, setTotal] = useState(0)
+  const pageSize = 10
+  const getTableData = () => {
+    return queryPageSensor(projectId, roomId, pageNum, pageSize).then(res => {
+      if(res.success){
+        if(res.data){
+          setData(res.data)
+          setSubTable(res.data)
+        }else{
+          setData([])
+          setSubTable([])
+        }
+        setTotal(res.total)
+      }
+    })
+  }
+  const {run: queryTable } = useRequest(getTableData,{
+    manual:true
+  })
+  useEffect(()=> {
+    if(roomId){
+      queryTable()
+    }
+  },[roomId, pageNum])
+
   const columns = [
     {
       align:'center',
-      title: '园区名称',
-      dataIndex: 'regionName',
-      key: 'regionName',
-    },
-    { 
+      title: '传感器编号',
+      dataIndex: 'sn',
+      key: 'sn',
+    },{
+      align:'center',
+      title: '传感器名称',
+      dataIndex: 'name',
+      key: 'name',
+    },{
+      align:'center',
+      title: '传感器型号',
+      dataIndex: 'category',
+      key: 'category',
+    },{
       align:'center',
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
+      width: 480
+    },{
+      align:'center',
+      title: '所属网关',
+      dataIndex: 'gatewayName',
+      key: 'gatewayName',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.gatewayName == ''? '/' : record.gatewayName}</span>
+        </Space>
+      ),
     },
     {
-      title: '传感器型号',
-      dataIndex: 'sensorType',
-      key: 'sensorType',
-      align:'center',
-    },{
-        title: '传感器编号',
-        dataIndex: 'sensorNumber',
-        key: 'sensorNumber',
-        align:'center',
-      },{
-        title: '传感器名称',
-        dataIndex: 'sensorName',
-        key: 'sensorName',
-        align:'center',
-      },{
-        title: '所属网关',
-        dataIndex: 'gateway',
-        key: 'gateway',
-        align:'center',
-      },{
       title: '备注',
-      dataIndex: 'tag',
-      key: 'tag',
+      dataIndex: 'remark',
+      key: 'remark',
       align:'center',
     },
     {
@@ -58,73 +169,108 @@ export default function Index() {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      regionName:'正泰物联杭州园区',
-      address:'1号楼B2配电房',
-      sensorType:'ZTWLSENEOR-S',
-      sensorNumber:'220500991',
-      sensorName:'烟感传感器',
-      gateway:'/',
-      tag:''
-    },{
-      id: 2,
-      regionName:'正泰物联杭州园区',
-      address:'1号楼B2配电房',
-      sensorType:'ZTWLSENEOR-W',
-      sensorNumber:'220500992',
-      sensorName:'水浸传感器',
-      gateway:'/',
-      tag:''
-    },{
-        id: 3,
-        regionName:'正泰物联杭州园区',
-        address:'1号楼B2配电房',
-        sensorType:'ZTWLSENEOR-TH',
-        sensorNumber:'220500993',
-        sensorName:'温湿度传感器',
-        gateway:'/',
-        tag:''
-      }
-  ]
-
+  const [data, setData] = useState([])
   const [deleteModal, setDeleteModal] = useState(false)
+  const [deleteId, setDeleteId] = useState()
   const deleteOk = () => {
-    setDeleteModal(false)
+    let deleteArr = cloneDeep(subTable)
+    deleteArr.map((item, index) => {
+      if(item.id = deleteId){
+        deleteArr.splice(index, 1)
+      }
+    })
+    let group = []
+    if(deleteArr.length > 0){
+      deleteArr.map(item => {
+        group.push(item.id)
+      })
+    }
+    let data = {
+      projectId,
+      roomId,
+      group
+    }
+    configureSensor(data).then(res=> {
+      if(res.success){
+        messageContent('success','设备删除成功!')
+        queryTable()
+        setDeleteModal(false)
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+    
   }
   const handleDelete = () => {
     setDeleteModal(false)
   }
   const deleteRecord = (record) => {
+    setDeleteId(record.id)
     setDeleteModal(true)
   }
 
   //穿梭框
-  const mainTable = []
-  const [subTable, setSubTable] = useState([])
-  const unknownTable = []
   const [transTag, setTransTag] = useState('')
   const settingClick =() => {
-    setTransTag('open');
-    setSubTable([...data])
+    if(roomId){
+      queryUnusedSensor(projectId, roomId).then(res => {
+        let { success, data } = res
+        if(success){
+          if(data){
+            setUnknownTable(data)
+          }else{
+            setUnknownTable([])
+          }
+          setTransTag('open');
+        }else{
+          messageContent('error', res.errMsg)
+        }
+      })
+    }else{
+      messageContent('warning', '请先选择配电房')
+    }
+  }
+  const  getSaveValue = params => {
+    let group = []
+    if(params.subData.length > 0){
+      params.subData.map(item => {
+        group.push(item.id)
+      })
+    }
+    let data = {
+      projectId,
+      roomId,
+      group
+    }
+    configureSensor(data).then(res=> {
+      if(res.success){
+        messageContent('success','传感器设备配置成功!')
+        queryTable()
+        setTransTag('close')
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
   }
 
   const getCloseValue = params => {
     setTransTag(params)
   }
 
+  const mainTable = []
+  const [subTable, setSubTable]= useState([])
+  const [unknownTable, setUnknownTable] = useState([])
   const transferColumns = [
     {   
         align:'center',
         title: '设备编号',
-        dataIndex:'sensorNumber',
-        key:'sensorNumber'
+        dataIndex:'sn',
+        key:'sn'
     },{
         align:'center',
         title: '设备名称',
-        dataIndex:'sensorName',
-        key:'sensorName'
+        dataIndex:'name',
+        key:'name'
     },{
         align:'center',
         title: '安装地址',
@@ -138,44 +284,73 @@ export default function Index() {
     subTitle:'配电房传感器',
     unknownTitle:'未选中的传感器设备'
   }  
+  //分页
+  const paginationProps = {
+    current: pageNum, //当前页码
+    pageSize, // 每页数据条数
+    total, // 总条数
+    onChange: page => handlePageChange(page), //改变页码的函数
+    hideOnSinglePage: false,
+    showSizeChanger: false,
+  }
+  const handlePageChange = (page) => {
+    setPageNum(page)
+  }
+
+  const exportData = () => {
+    const params = { raw: true };
+    const workbook = utils.book_new(); // 新建工作簿   
+    let table = tableRef.current  
+    const ws = utils.table_to_sheet(
+      // 新建工作表
+      table,
+      params
+    );
+    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    let file =  "xlsx";
+    writeFile(workbook, '配电房传感器.xlsx', { bookType: file }); // 下载
+  }
+
   return (
     <div>
+      {contextHolder}
       <div className={style.header}>
         <span className={style.headerTitle}>园区选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
-          defaultValue="1"
+          key={defaultArea}
+          defaultValue={defaultArea}
           style={{width: '200px'}}
+          onChange={handleChange}
         >
-          <Option value="1">正泰物联全部园区</Option>
-          <Option value="2">正泰物联滨江园区</Option>
-          <Option value="3">正泰物联温州园区</Option>
+          {areaList.map(item => {
+            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          })}
         </Select>
         <div className={style.division}></div>
         <Select
           placeholder="请选择配电房"
           size="middle"
-          defaultValue="1"
-          style={{width: '240px'}}
+          // key={defaultRoom}
+          // defaultValue={defaultRoom}
+          value={defaultRoom}
+          style={{width: '200px'}}
+          onChange={ChangeRoom}
         >
-          <Option value="1">正泰大厦1号楼低压配电房</Option>
-          <Option value="2">正泰大厦2号楼低压配电房</Option>
-          <Option value="3">正泰大厦3号楼低压配电房</Option>
-          <Option value="4">正泰大厦4号楼低压配电房</Option>
+          {roomList.map((item) => {
+            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          })}
         </Select>
       </div>
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
             <span>配电房传感器</span>
             <div>
-            <Button type="primary" onClick={()=> settingClick()}>
+            <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
                 选择设备
             </Button>
-            <Button type="primary" style={{marginLeft:'16px',marginRight:16}}>
-                批量导入
-            </Button>
-            <Button type="primary" >
+            <Button type="primary" style={{marginLeft:'16px', width: 96}} onClick={()=>exportData()}>
                 导出
             </Button>
             </div>
@@ -184,14 +359,14 @@ export default function Index() {
           <img className={style.lineImg} src={dashed}></img>
         </div>
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-        <UseTransfer transferTitle={transferTitle} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
+        <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
-      <Table style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id'></Table>
+      <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
       <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
         <div className={style.deleteHeader}>删除提示</div>
         <div className={style.deleteBody}>
           <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认在该配电房中删除视频监控设备？</span>
+          <span>是否确认在该配电房中删除该传感器？</span>
         </div>
       </Modal>
       </div>

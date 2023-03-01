@@ -95,6 +95,7 @@ export default function Index() {
   })
 
   const handleChange = (values) => {
+    setPageNum(1)
     setAreaId(values)
   }
 
@@ -217,7 +218,11 @@ export default function Index() {
   }
 
   useEffect(()=>{
-    queryRoom()
+    if(areaId == 0){
+      return
+    }else{
+      queryRoom()
+    }
   },[areaId, pageNum])
 
   //分页

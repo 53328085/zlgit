@@ -86,9 +86,10 @@ export default function Index (props) {
                 subTitle:values.data.energyName,
                 unknownTitle:'未选中的设备',
             })
-            console.log(values.data)
-            setRun()
-            setAllRun()
+            setTimeout(()=>{
+                setRun()
+                setAllRun()
+            }, 200)
             setTransTag('open');
         }
         if(values.tag == 'delete'){

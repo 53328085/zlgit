@@ -179,6 +179,7 @@ export default function index (props) {
             unknownData,
         })
     }
+    let tag = columns[0].key;
 
     const onSearchSub = (value) => {
         let arr = [];
@@ -186,7 +187,7 @@ export default function index (props) {
             setSubData([...subCopy]);
         }else{
             subCopy.map(item => {
-                if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
                     arr.push(item)
                 }
             })
@@ -200,7 +201,7 @@ export default function index (props) {
             setUnknownData([...unknownCopy]);
         }else{
             unknownCopy.map(item => {
-                if(item.deviceNumber.indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
                     arr.push(item)
                 }
             })
@@ -211,12 +212,12 @@ export default function index (props) {
     return (
         <div className={style.transferContent}>
             {contextHolder}
-            { props.mainTable.length > 0 ? 
+            { props.transferTitle.mainTitle != '' ? 
             <div className={style.leftTable}>
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection}></Table>
+                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} scroll={{y:50}}></Table>
                     </div>
                 </div>
                 <div className={style.subTable}>
@@ -244,7 +245,7 @@ export default function index (props) {
             </div>
             }
             <div className={style.actions}>
-                { props.mainTable.length > 0 ? 
+                { props.transferTitle.mainTitle != ''? 
                 <div className={style.firstButton}>
                     <span className={style.leftButton} onClick={()=>unknownToMain()}>
                         <LeftOutlined />
