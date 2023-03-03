@@ -100,7 +100,7 @@ const [tableData, setTableData] = useState([])
       success && message.success({
          content: '修改成功',
          duration: 0.3,
-         onClose: () =>  queryarealevels().then(() => mref.current.onCancel() ),
+         onClose: () =>  queryarealevels().then(() => mref.current.onCancel() ).catch((e) => {}),
       })
       !success && message.warning(errMsg || '数据出错')
       
@@ -153,24 +153,35 @@ const [tableData, setTableData] = useState([])
       align: "center",
     }
   ]
+  const queyFiled = async (level) => {
+    try {
+      let {success, data} =  await QueryAreaLevelFields({projectId, level})
+      success && setTableData([...data]) ;
+    } catch (error) {
+      return error
+    }
+   
+  }
   const delFiled = async ({id}) => {
-     
+     console.log(id)
       try {
         let {success, errMsg}  =  await DeleteAreaLevelField({projectId, fieldId: id}) 
         if (!success) return message.warning(errMsg || '数据出错');
-        success && QueryAreaLevelFields({projectId, level:levelid});
+       // success && QueryAreaLevelFields({projectId, level:levelid});
+        success &&  queyFiled(levelid)
       } catch (error) {
          
       }
-      await DeleteAreaLevelField 
+     // await DeleteAreaLevelField 
   }
   const editfiled = async (level) => {
    
    try {
       setLevelid(level)
       console.log(levelid);
-     let {success, data} =  await QueryAreaLevelFields({projectId, level})
-     success && setTableData([...data]) ;
+    // let {success, data} =  await QueryAreaLevelFields({projectId, level})
+    // success && setTableData([...data]) ;
+    queyFiled(level)
      fref.current.onOpen();
     
    } catch (error) {
@@ -190,7 +201,9 @@ const [tableData, setTableData] = useState([])
       const params = {...ffrom.getFieldsValue(), projectId, level: levelid}
       let {success, errMsg} = await InsertAreaLevelField(params)
       if(!success) return message.warning(errMsg || '数据出错')
-      QueryAreaLevelFields({projectId, level})
+      success && nfref.current.onCancel()
+     // QueryAreaLevelFields({projectId, level})
+      queyFiled(level)
     } catch (error) {
       
     }

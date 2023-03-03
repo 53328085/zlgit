@@ -13,12 +13,9 @@ import {
   Button,
   Input,
   Space,
-  Drawer,
   Form,
   message,
-  Table,
   Tag
-
 } from "antd";
 import {WarningFilled} from '@ant-design/icons'
 import { Project } from "@api/api.js";
@@ -26,17 +23,12 @@ import { User } from "@api/api.js";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
 import Custdrawer from './drawer'
+import Drawerdata from './drawerdata'
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
-import {custMsg} from '@com/usehandler'
- 
-const { 
-  
-  GetProjectOperator, // 获取运维管理员列表 
-  
-  GetMenus, // 功能授权
-} = Project;
+
+
 const {
   QueryOperationManager,
   QueryOperationManagers,
@@ -58,7 +50,7 @@ row-gap: 16px;
 div.admin {
   padding: 16px 0;
   display: grid;
-  grid-auto-rows: 32px;
+  grid-auto-rows: minmax(32px, auto);
   row-gap: 16px;
   border-bottom: 1px dotted #dedede;
   .item {
@@ -79,15 +71,42 @@ div.admin {
     .ant-typography {
       margin-right: 16px;
     }
-  }
+  }  
 }
 `;
+const Dbutton = styled(Button).attrs({
+  danger: true
+})`
+   && {
+     padding: 0px;
+     width: 96px;
+     margin-left: auto;
+   }
+`
 const Ctag = styled(Tag)`
  height: 32px;
  padding: 0 23px;
- line-height: 32px;
- margin-right: 16px;
+ line-height: 32px; 
+`
+/* Button type="primary" ghost */
+const Pbutton = styled(Button).attrs({
+  type: 'primary',
+  ghost: true,
+})`
+  && {
+    width: 96px;
+  }
+`
+/* CustButton type="default" onClick={addOperation} style={{padding: '0px', width: '112px'} */
 
+const Abutton = styled(CustButton).attrs({
+  type: 'default'
+})`
+&& {
+  padding: 0px;
+  width: 112px;
+}
+ 
 `
 export default function Account({projectId, CModal}) {
 
@@ -97,21 +116,23 @@ export default function Account({projectId, CModal}) {
   const [delinfo, setDelinfo] = useState('') // 删除的信息
   const [deltype, setDeltype] = useState('') // 删除的类型
   const [userId, setUserId] = useState('') //  ID
-  const [areas, setAreas] = useState([]) // 项目管理员 园区权限
-  const [menuopen, setMenuopen] = useState(false) 
+  const [areas, setAreas] = useState([]) // 项目管理员 园区权限 
   const [opvalue, setOpvalue] = useState(null) // 暂存选择的运营管理员
   const [manager, setManager] = useState(false) // 是否显示项目管理员 
  const mref = useRef()
  const fmodal = useRef()
  const dref = useRef()
- 
+ const dpref  = useRef();
  const [person, setPerson] = useState(0) // 新增项目管理员 新增运维人员
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
 
-  const menufn = (id) => {
+
+  const menufn = (id, type) => {
     setUserId(id);
-    dref.current.onOpen()
+   type == 1 && dref.current.onOpen();
+
+   type == 2 && dpref.current.onOpen();
   }
  
   const queryOperationManager = async () => {
@@ -200,43 +221,6 @@ export default function Account({projectId, CModal}) {
       fmodal.current.onCancal()
   };
  
-  const Pributton = ({
-    children = "",
-    width = "112px",
-    onClick = () => {},
-    ...other
-  } = {}) => {
-    return (
-      <Button
-        size="middle"
-        style={{ width: width, padding: "0px" }}
-        onClick={onClick}
-        type="primary"
-        ghost
-        {...other}
-      >
-        {children}
-      </Button>
-    );
-  };
-  const Delbutton = ({
-    children = "",
-    width = "96px",
-    onClick = () => {},
-    ...other
-  } = {}) => {
-    return (
-      <Button
-        size="middle"
-        danger
-        style={{ width: width, padding: "0px", marginLeft: "auto" }}
-        onClick={onClick}
-        {...other}
-      >
-        删除
-      </Button>
-    );
-  };
   const onDeletehandle = async () => {  
      
     const fn = ["DeleteOperationManager", "DeleteProjectManager", 'DeleteProjectMaintenance'][deltype]; //  删除  运营管理员, 项目管理员， 运维人员
@@ -279,7 +263,7 @@ export default function Account({projectId, CModal}) {
   }, [projectId])  
   const RenderItem = (data) => {
   return data.map((field, index) => (
-    <div className="admin" style={{flex: 1}}>
+    <div className="admin" style={{flex: 1, borderBottom: 'none'}}>
       <div className="item" >
          <Item name={[index, "name"]} noStyle>
                 <Input size="middle" defaultValue={field.name} />
@@ -291,25 +275,30 @@ export default function Account({projectId, CModal}) {
                 <Input size="middle" defaultValue={field.mobile} />
               </Item>
               <Item noStyle>
-                 <div style={{ display: "flex" }}>
-                       <Space size={16}>  <Pributton onClick={() => menufn(field.id)}>数据权限</Pributton><Pributton onClick={() => menufn(field.id)}>菜单权限</Pributton></Space>
-                       <Delbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Delbutton>
+                 <div style={{ display: "flex", justifyContent: "space-between" }}>
+                       <Space size={16}>  
+                        <Pbutton onClick={() => menufn(field.id, 2)}>数据权限</Pbutton>
+                        <Pbutton onClick={() => menufn(field.id, 1)}>菜单权限</Pbutton>
+                       
+                       </Space>
+                       <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
+                      {/*  <Button danger  onClick={() => onDeleteMsg(2, field.id)} style={{padding: '0px', width: '96px'}}>删除</Button> */}
                     </div>
               </Item>
               <Item noStyle>
               
               </Item>
       </div>
-      <div className="park">
-                <Text>园区选择</Text>  {field.areaAuthority?.map(item => (<Ctag key="item">{item}</Ctag>))}
-              </div>
+      <Space size={8} wrap>
+                <Text>园区选择</Text>  {field.areaAuthority?.map(item => (<Ctag key="item">{item.name}</Ctag>))} 
+       </Space>
       </div>
     ))
   }
   return (
     <Mainbox>
      
-        <div>
+      
         <div className="admin">
           <Title level={5} className="title">
             运营管理员（支持添加多位运营管理员）
@@ -330,33 +319,33 @@ export default function Account({projectId, CModal}) {
             ></Select>
 
             {/*   <Button size="middle" style={addstyl} onClick={addOperation} type="primary" ghost >+&nbsp;添加</Button> */}
-            <CustButton type="default" onClick={addOperation} style={{padding: '0px', width: '112px'}}>添加运营管理员</CustButton>
+            <Abutton  onClick={addOperation}>添加运营管理员</Abutton>
           </div>
           <div className="item">
             <Text type="">用户名</Text> <Text>姓名</Text>{" "}
-            <Text span={4}>手机号</Text>
+            <Text>手机号</Text>
           </div>
           {oplist?.map((item) => (
             <div className="item" key={item.id}>
               <Input size="middle" value={item.name} readOnly />
               <Input size="middle" readOnly value={item.nickName} />
               <Input size="middle" readOnly value={item.mobile} />
-              <Button   danger onClick={() => onDeleteMsg(0, item.id)} style={{padding: '0px', width: '96px'}}>删除</Button>
+              <Dbutton   onClick={() => onDeleteMsg(0, item.id)}>删除</Dbutton>
             </div>
           ))}
         </div>
-        </div>
-        <div>
+        
+       
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
               项目管理员（仅支持添加一位项目管理员）
             </Title>
-            <Button type="primary" ghost  onClick={addProjectadmin.bind(null, 0)} disabled={manager}>添加项目管理员</Button>
+            <Abutton  onClick={addProjectadmin.bind(null, 0)} disabled={manager}>添加项目管理员</Abutton>
           </Space>
           <div className="item">
             <Text type="">用户名</Text> <Text>姓名</Text>{" "}
-            <Text span={4}>手机号</Text>
+            <Text >手机号</Text>
           </div>
          
           {manager && (<><Form
@@ -377,9 +366,9 @@ export default function Account({projectId, CModal}) {
                
                 <Item  noStyle shouldUpdate>
                   { ({getFieldValue }) => {
-                   return <div style={{ display: "flex" }}>
-                       <Pributton onClick={() => menufn(getFieldValue('id'))}>菜单权限</Pributton>
-                       <Delbutton onClick={() => onDeleteMsg(1, getFieldValue('id'))}>删除</Delbutton>
+                   return <div style={{ display: "flex",justifyContent: 'justify-content' }}>
+                          <Pbutton onClick={() => menufn(getFieldValue('id'), 1)}>菜单权限</Pbutton>
+                          <Dbutton  onClick={() => onDeleteMsg(1, getFieldValue('id'))} >删除</Dbutton>
                     </div>
                   }
                   }
@@ -387,25 +376,25 @@ export default function Account({projectId, CModal}) {
               
             </Form>
            
-          <div className="park">
-             <Text>园区选择</Text> {areas.map(item => (<Ctag key="item">{item}</Ctag>))}
-          </div>
+          <Space size={8} wrap>
+             <Text>园区选择</Text> {areas.map(item => (<Ctag key="item">{item.name}</Ctag>))}
+          </Space>
           </>)
            }
         </div>
-        </div>
-        <div>
+       
+       
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
               运维人员（支持添加多位运维人员）
             </Title>
-            <Button type="primary" ghost  onClick={addProjectadmin.bind(null, 1)} >添加运维人员</Button>
+            <Abutton  onClick={addProjectadmin.bind(null, 1)} >添加运维人员</Abutton>
             
           </Space>
           <div className="item">
             <Text type="">用户名</Text> <Text>姓名</Text>{" "}
-            <Text span={4}>手机号</Text>
+            <Text>手机号</Text>
           </div>
         
               <Form
@@ -415,7 +404,7 @@ export default function Account({projectId, CModal}) {
               {admin?.length > 0 && RenderItem(admin)}
              </Form>
         </div>
-      </div>
+     
       
       <Custmodl
               title={title}
@@ -437,6 +426,7 @@ export default function Account({projectId, CModal}) {
        <Custdrawer projectId={projectId} userId={userId} ref={dref} >
             
       </Custdrawer>
+      <Drawerdata projectId={projectId} userId={userId} ref={dpref}></Drawerdata>
     </Mainbox>
   );
 }

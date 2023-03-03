@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react'
-import style from './style.module.less'
-import Region from './regionManage'
-import Building from './buildingManage'
-import Room from './roomManage'
+import React, {useState, useEffect, useRef} from 'react'
+ 
+import Region from './region'
+ 
 import CModal from '@com/useModal'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
@@ -14,12 +13,20 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const [value, setvalue] = useState()
   const [tabs, setTabs] = useState([])
+  const [levels, setLevels] = useState([])
+ 
+  const levelData = levels.find(l => l.level == value) || {}
+ 
+
+
+
   const allLevel = async () => {
      try {
       let {success, data} =  await Area.AllLevel(projectId)
       if(success && Array.isArray(data)) {
          setTabs([...data.map((d) => ({label: d.name, key: d.level}))])
          setvalue(data[0]?.level)
+         setLevels(data) 
       }
 
      } catch (error) {
@@ -27,29 +34,21 @@ export default function Index() {
      }
     
   }
-/*   const tabs = [
-    { label: '园区', key: 'region' },
-    { label: '建筑', key: 'building'},
-    { label: '房间', key: 'room' },
-  ] */
+
   const propsData ={
     tabs,
     value,
-    setvalue
+    setvalue,
+    
   }
-/*   const  RegionCom = {
-    region: Region,
-    building: Building,
-    room: Room,
-   }
-  let Com = RegionCom[value] */
+ 
   useEffect(() => {
     allLevel()
   }, [])
   return (
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={false}>   
-       <Region projectId={projectId} CModal={CModal} level={value} />
+    {  levels.length > 0 &&  <Region projectId={projectId} CModal={CModal} {...levelData} allLevel={levels}   /> }
     </Pagecount>
     </CustContext.Provider>
   )

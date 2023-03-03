@@ -95,6 +95,7 @@ export default function Index() {
   })
 
   const handleChange = (values) => {
+    setPageNum(1)
     setAreaId(values)
   }
 
@@ -197,7 +198,12 @@ export default function Index() {
           type:'success',
           content:'配电房删除成功！',
         })
-        queryRoom()
+        if(dataSource.length == 1 && pageNum > 1){
+          setPageNum(pageNum - 1)
+        }else{
+          queryRoom()
+        }
+        // queryRoom()
       }else{
         messageApi.open({
           type:'error',
@@ -217,7 +223,11 @@ export default function Index() {
   }
 
   useEffect(()=>{
-    queryRoom()
+    if(areaId == 0){
+      return
+    }else{
+      queryRoom()
+    }
   },[areaId, pageNum])
 
   //分页

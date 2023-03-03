@@ -3,7 +3,7 @@ import CommonTab from './commonTab'
 
 export default function Electric () {
     const dataprops = {
-        type: 5,
+        type: 3,
         title:'能耗分类(燃气)'
     }
     return (

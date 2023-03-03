@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
-import { Table, Input, message } from "antd";
+import { Table, Input, message, Select } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 
@@ -8,21 +8,18 @@ export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
-    const [mainData, setMainData] = useState([])
     const [subData, setSubData] = useState([])
     const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
     const [unknownCopy, setUnknownCopy] = useState([])
     useEffect(()=>{
-        let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
         let unknownArr = cloneDeep(props.unknownTable)
-        
-        setMainData(mainArr)
         setSubData(subArr)
         setSubCopy(subArr)
         setUnknownData(unknownArr)
         setUnknownCopy(unknownArr)
+        setType(0)
     },[props])
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -33,66 +30,6 @@ export default function index (props) {
         selectedRowKeys,
         onChange: onSelectChange,
     };
-
-    const unknownToMain = () => {
-        if(mainData.length == 1) {
-            messageApi.open({
-                type: 'warning',
-                content:'当前线路已有总表！',
-            })
-            return;
-        }else if( selectedRowKeys.length == 0 ){
-            messageApi.open({
-                type: 'warning',
-                content:'请至少选择一个设备！',
-            })
-            return;
-        }else if(selectedRowKeys.length > 1 ) {
-            messageApi.open({
-                type: 'warning',
-                content:'线路总表只能有一个设备！',
-            })
-            return;
-        }else{
-            let arr = [...unknownData];
-            let arr2 = [];
-            for(let i =0;i< arr.length;i++){
-                for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
-                        arr2.push(arr[i])
-                        arr.splice(i,1)
-                    }
-                }
-            }
-            setMainData(mainData.concat(arr2));
-            setUnknownData(arr);
-            setSelectedRowKeys([])
-        }
-        
-    }
-
-    //总表->未知
-    const [selectedMainKeys, setSelectedMainKeys] = useState([]);
-    const onSelectMain = (newSelectedRowKeys) => {
-        setSelectedMainKeys(newSelectedRowKeys);
-    };
-    const mainSelection = {
-        selectedMainKeys,
-        onChange: onSelectMain,
-    };
-    const MainToUnknown = () => {
-        if( selectedMainKeys.length == 0 ){
-            messageApi.open({
-                type: 'warning',
-                content:'请先选择设备！',
-            })
-            return;
-        }else{
-            setUnknownData(unknownData.concat(mainData))
-            setMainData([]);
-            setSelectedMainKeys([]);
-        }
-    }
 
     const unknownToSub = () => {
         if( selectedRowKeys.length == 0 ){
@@ -109,7 +46,6 @@ export default function index (props) {
                 for(let j = 0;j<selectedRowKeys.length;j++){
                     if(arr[i].id == selectedRowKeys[j]){
                         for(let x = 0;x< copyArr.length;x++){
-                            console.log(copyArr[x])
                             if(arr[i].id == copyArr[x].id){
                                 copyArr.splice(x, 1)
                             }
@@ -174,7 +110,6 @@ export default function index (props) {
     }
     const handleSave = () => {
         props.saveValue({
-            mainData,
             subData,
             unknownData,
         })
@@ -194,15 +129,59 @@ export default function index (props) {
             setSubData([...arr]);
         }
     }
-
+    const [searchUnknown, setSearchUnknown] = useState('')
     const onSearchUnknown = (value) => {
         let arr = [];
+        setSearchUnknown(value)
         if(value == '') {
-            setUnknownData([...unknownCopy]);
+            // setUnknownData([...unknownCopy]);
+            if(type == 0){
+                setUnknownData([...unknownCopy]);
+            }else{
+                unknownCopy.map(item => {
+                    if(item.meterType == type){
+                        arr.push(item)
+                    }
+                })
+                setUnknownData([...arr]);
+            }
         }else{
             unknownCopy.map(item => {
                 if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
+                    if(type == 0){
+                        arr.push(item)
+                    }else if(type != 0 && item.meterType == type){
+                        arr.push(item)
+                    }
+                }
+            })
+            setUnknownData([...arr]);
+        }
+    }
+
+    const [type, setType] = useState(0)
+    const changeType = (value) => {
+        setType(value)
+        let arr = [];
+        if(value == 0) {
+            if(searchUnknown == ''){
+                setUnknownData([...unknownCopy]);
+            }else{
+                unknownCopy.map(item => {
+                    if(item[tag].indexOf(searchUnknown) != -1 || item.address.indexOf(searchUnknown) != -1){
+                        arr.push(item)
+                    }
+                })
+                setUnknownData([...arr]);
+            }
+        }else{
+            unknownCopy.map(item => {
+                if(item.meterType == value){
+                    if(searchUnknown == ''){
+                        arr.push(item)
+                    }else if(searchUnknown != '' && (item[tag].indexOf(searchUnknown) != -1 || item.address.indexOf(searchUnknown) != -1)){
+                        arr.push(item)
+                    }
                 }
             })
             setUnknownData([...arr]);
@@ -212,25 +191,6 @@ export default function index (props) {
     return (
         <div className={style.transferContent}>
             {contextHolder}
-            { props.transferTitle.mainTitle != '' ? 
-            <div className={style.leftTable}>
-                <div className={style.mainTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} scroll={{y:50}}></Table>
-                    </div>
-                </div>
-                <div className={style.subTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                    <div className={style.searchInput}>
-                        <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
-                    </div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:270}} rowSelection={subSelection}></Table>
-                    </div>
-                </div>
-            </div> : 
             <div className={style.leftTable}>
                 <div className={style.otherSubTable}>
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
@@ -238,22 +198,13 @@ export default function index (props) {
                         <span style={{marginRight: 16}}>设备搜索</span>
                         <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
                     </div>
-                    <div className={style.mainContent}>
+                    <div>
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>
-            }
             <div className={style.actions}>
-                { props.transferTitle.mainTitle != ''? 
-                <div className={style.firstButton}>
-                    <span className={style.leftButton} onClick={()=>unknownToMain()}>
-                        <LeftOutlined />
-                    </span>
-                    <span className={style.rightButton} onClick={()=>MainToUnknown()}>
-                        <RightOutlined />
-                    </span>
-                </div> : null }
+
                 <div className={style.secondButton}>
                     <span className={style.leftButton} onClick={() => unknownToSub() }>
                         <LeftOutlined />
@@ -270,10 +221,23 @@ export default function index (props) {
             <div className={style.rightTable}>
                 <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
                 <div className={style.searchInput}>
+                    <span>设备类型</span>
+                    <Select
+                        size="middle"
+                        defaultValue={0}
+                        style={{ marginLeft: 16, width: '112px'}}
+                        onChange={changeType}
+                    >   
+                        <Select.Option  value={0}>全部类型</Select.Option>
+                        <Select.Option  value={1}>电表</Select.Option>
+                        <Select.Option  value={2}>水表</Select.Option>
+                        <Select.Option  value={3}>燃气表</Select.Option>
+                    </Select>
+                    <div style={{ width:0, height: 32, margin: '0 32px', borderLeft:'1px dashed #ddd' }}></div>
                     <span style={{marginRight: 16}}>设备搜索</span>
                     <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
                 </div>
-                <div className={style.mainContent}>
+                <div>
                     <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
                 </div>
             </div>
