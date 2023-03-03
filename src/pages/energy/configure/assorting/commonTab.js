@@ -28,7 +28,7 @@ export default function Index (props) {
         insertEnergyClassify, 
         updateEnergyClassify, 
         deleteEnergyClassify, 
-        queryEnergyConfigedDevices, 
+        queryEnergyConfigedDevicesInfo, 
         queryEnergyNoConfigedDevices, 
         saveEnergyDevices,
         insertEnergyClassifys 
@@ -88,7 +88,7 @@ export default function Index (props) {
             })
             setTimeout(()=>{
                 setRun()
-                setAllRun()
+                // setAllRun()
             }, 200)
             setTransTag('open');
         }
@@ -275,9 +275,10 @@ export default function Index (props) {
   const [unknownTable, setUnknownTable] = useState([])
   //已选设备
   const getConfigedDevice = () => {
-    return queryEnergyConfigedDevices(projectId, type, energyId).then(res => {
+    return queryEnergyConfigedDevicesInfo(projectId, type, energyId).then(res => {
         if(res.success && res.data){
-            setSubTable(res.data)
+            setSubTable(res.data.relations)
+            setUnknownTable(res.data.noRelations)
         }else{
             messageApi.open({
                 type:'error',
@@ -286,34 +287,17 @@ export default function Index (props) {
         }
     })
   }
-  //未选设备
   const { run:setRun } = useRequest(getConfigedDevice,{
     manual: true,
     onSuccess:(result, params) => {}
   })
-  const getNoConfigedDevice = () => {
-    return queryEnergyNoConfigedDevices(projectId, type).then(res => {
-        if(res.success && res.data){
-            setUnknownTable(res.data)
-        }else{
-            messageApi.open({
-                type:'error',
-                content: res.errMsg
-            })
-        }
-    })
-  }
-
-  const { run:setAllRun } = useRequest(getNoConfigedDevice,{
-    manual: true,
-    onSuccess:(result, params) => {}
-  })
+  //未选设备
   const columns = [
     {   
         align:'center',
         title: '设备编号',
-        dataIndex:'deviceNumber',
-        key:'deviceNumber'
+        dataIndex:'sn',
+        key:'sn'
     },{
         align:'center',
         title: '设备名称',
@@ -332,18 +316,15 @@ export default function Index (props) {
     const getCloseValue = params => {
         setTransTag(params)
     }
-    let arr;
+    
     const getSaveValue = params => {
-    arr = [];
-    if(params.subData.length > 0){
-        params.subData.map(item => {
-            arr.push(item.id)
-        })
-    }
-    runSave()
-    }
-    const SaveDevices = ()=>{
-        return saveEnergyDevices(projectId, type, energyId, arr).then(res => {
+        let arr = [];
+        if(params.subData.length > 0){
+            params.subData.map(item => {
+                arr.push(item.sn)
+            })
+        }
+        saveEnergyDevices(projectId, type, energyId, arr).then(res => {
             if(res.success){
                 messageApi.open({
                     type:'success',
@@ -359,9 +340,6 @@ export default function Index (props) {
             }
         })
     }
-    const { run: runSave } = useRequest(SaveDevices, {
-        manual: true
-    })
     return (
         <Spin tip='Loading...' spinning={loading}>
             {contextHolder}

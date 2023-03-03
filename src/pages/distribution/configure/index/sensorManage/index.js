@@ -193,7 +193,11 @@ export default function Index() {
     configureSensor(data).then(res=> {
       if(res.success){
         messageContent('success','设备删除成功!')
-        queryTable()
+        if(subTable.length == 1 && pageNum > 1){
+          setPageNum(pageNum  - 1)
+        }else{
+          queryTable()
+        }
         setDeleteModal(false)
       }else{
         messageContent('error', res.errMsg)

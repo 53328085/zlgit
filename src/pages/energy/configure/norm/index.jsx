@@ -92,10 +92,17 @@ export default function Index() {
           })
         }
       })
-      if(arr.length == 0){return;}
-      setParams(arr)
+      if(arr.length == 0){
+        return;
+      }else{
+        setParams(arr)
+      }
+      
     }  
   }
+  useEffect(()=> {
+    runTable()
+  },[params])
   const checkLeaf = (value, list) => {
     for(let i = 0 ;i< list.length; i++){
       if(value == list[i].areaId && list[i].nodes){

@@ -461,7 +461,7 @@ export class energyDesigner {
     static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`,data)
     static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
     static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
-    static queryEnergyConfigedDevices = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
+    static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
     static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
     static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)
 }
@@ -478,6 +478,16 @@ export class energyQuota {
     static querySpaceTrees = (projectId, areaId, areaName) => server.get(`Energy/EnergyQuotaDesigner/QuerySpaceTrees?projectId=${projectId}&areaId=${areaId}&areaName=${areaName}`)
     static queryRoomQuotas = (projectId, pageNum, pageSize, data) => server.post(`Energy/EnergyQuotaDesigner/QueryRoomQuotas?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`, data)
     static updateRoomQuotas = (projectId, data) => server.post(`Energy/EnergyQuotaDesigner/UpdateRoomQuotas?projectId=${projectId}`, data)
+}
+
+//能源结构
+export class energyStructure {
+    static queryEnergyStructure = (projectId, areaId, name) => server.get(`Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}`)
+    static addEnergyStructure = (projectId, data) => server.post(`Energy/EnergyStructureDesigner/AddEnergyStructure?projectId=${projectId}`, data)
+    static updateEnergyStructure = (projectId, id, name) => server.get(`Energy/EnergyStructureDesigner/UpdateEnergyStructure?projectId=${projectId}&id=${id}&name=${name}`)
+    static deleteEnergyStructure = (projectId, id) => server.delete(`Energy/EnergyStructureDesigner/DeleteEnergyStructure?projectId=${projectId}&id=${id}`)
+    static configEnergyStructure = (projectId, data) => server.post(`Energy/EnergyStructureDesigner/ConfigEnergyStructure?projectId=${projectId}`, data)
+    static queryEnergyStructureConfig = (projectId, energyStructureId, areaId) => server.get(`Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}`)
 }
 
 //班次管理

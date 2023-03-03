@@ -198,7 +198,12 @@ export default function Index() {
           type:'success',
           content:'配电房删除成功！',
         })
-        queryRoom()
+        if(dataSource.length == 1 && pageNum > 1){
+          setPageNum(pageNum - 1)
+        }else{
+          queryRoom()
+        }
+        // queryRoom()
       }else{
         messageApi.open({
           type:'error',

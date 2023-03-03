@@ -204,7 +204,11 @@ export default function Index() {
     configureCamera(data).then(res=> {
       if(res.success){
         messageContent('success','设备删除成功!')
-        queryPageCamera()
+        if(subTable.length == 1 && pageNum > 1){
+          setPageNum(pageNum  - 1)
+        }else{
+          queryTable()
+        }
         setDeleteModal(false)
       }else{
         messageContent('error', res.errMsg)
