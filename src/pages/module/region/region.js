@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo, useContext} from 'react'
+import React, { useState, useRef, useEffect, useMemo, useContext, useCallback} from 'react'
 import style from './style.module.less'
-import { Input, Button, Space, Modal, Form, message, Typography, Select } from 'antd'
+import { Input, Button, Space, Modal, Form, message, Typography, Select, InputNumber  } from 'antd'
 import styled from 'styled-components' 
 import UserTable from '@com/useTable'
 import {Area} from '@api/api.js'
@@ -10,6 +10,8 @@ import warningImg from '@imgs/warning.png'
 import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
 import Mapcom from "@com/useMap";
+import { Column } from '@antv/g2plot'
+import { repeat } from 'lodash'
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
@@ -17,11 +19,11 @@ const Mainbox = styled.div`
 `
 const Formbox = styled(Form)`
   display: grid;
-  grid-template-columns: 1fr 584px;
-  grid-template-rows: repeat(8, 32px);
+  grid-template-columns: ${p => p.islngLat ? '1fr 584px;' : '1fr' };
+  grid-template-rows:  ${p => isNaN(p.rowes) ? 'repeat(8, 32px)' : p.islngLat ? `repeat(${p.rowes + 5}, 32px)` : `repeat(${p.rowes}, 32px)` } ;
   column-gap: 32px;
   row-gap: 16px;
-  grid-auto-flow: column;
+  grid-auto-flow: ${p => p.islngLat ? 'column' : 'row' };
   .address {
     grid-column: 2;
   }
@@ -33,31 +35,38 @@ const Formbox = styled(Form)`
   `
 const {Link, Text} = Typography
 const {Item} = Form
-export default function Index({projectId,level, CModal, name, allLevel }) {
- 
+export default function Index({projectId,level, CModal, name, allLevel}) {
+  
   const [levelone] = useState(allLevel[0])  
   const limitlevle = allLevel.slice(0, level - 1);
   console.log(limitlevle)
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
-  const [nlform] = Form.useForm();
-  const nref = useRef()
-  const dref = useRef()
-  const nlref = useRef()
-  const mapref = useRef()
-  const tlref = useRef()
+  const nref = useRef() // 新增，编辑
+  const dref = useRef() // 删除
+  const mapref = useRef() 
   const [Record, setRecord] = useState({})
   const [isAdd, setIsAdd] = useState(true)
-  const [levels, setLevel] = useState([])
+  //const [leveloption, setLevelOption] = useState({})
+ 
   const [columns, setColumns] = useState([])
-  const [topAreaId, setTopAreaId] = useState(0)
-  const [fields, setField] =useState([])
+  //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
+  const  [fields, setFields] = useState({
+    field: [],
+    type: []
+  })
+  
+  const islngLat = fields.field.includes('经纬度')
+  const address = useRef('');
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
-  let params = { 
+  const leveloption = useRef({})
+  const topAreaId = level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0;
+  console.log(leveloption)
+  let params = { //查询
     pageNum: 1,
     pageSize: 15,
     level,
-    topAreaId, // 暂时写死
+    topAreaId,  
     name: '',
     projectId,
   }
@@ -70,6 +79,32 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
     id: 0,
     fields:[],
   }
+ 
+  const getLevelOption = async (parentId=0, level=1) => {  // 查询层级
+    
+     if  (Array.isArray(leveloption.current.level1) && level == 1) return // 第一级只需查一遍
+     try {
+      let {success, data} = await  Area.QueryAll({
+        projectId,
+        level,
+        parentId,
+      })
+       if (success && Array.isArray(data)) {
+        leveloption.current[`level${level}`] = data;  
+       }else {
+        leveloption.current[`level${level}`] = []
+       }                
+       console.log(leveloption)  
+     } catch (error) {
+       console.log(error)
+     } 
+}
+ 
+
+
+
+
+
   const del = (record) => {
     setRecord({...Record, ...record});
     dref.current.onOpen();
@@ -89,15 +124,24 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
 
 
 
-  const getTableData = ({current, pageSize}, formData={}) => {    
+  const getTableData = ({current, pageSize}, formData={}) => {     // 列表查询
     if(isNaN(level)) return;
+    
+    
+      
+   
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
-    console.log(formData)
+    
     return Area.QueryByPage(params).then(res => {
       let {success, data} = res;
-      let {body=[], header=[], idGroup=[], type=[]} = data || {};
+      let {body=[], header=[], idGroup=[], type=[], parentIdGroup=[]} = data || {};
       let cols = []
-      setField([...header.slice(level + 1)])
+      
+      setFields({
+        ...fields,
+        field: [...header.slice(level+1)],
+        type:  [...type.slice(level+1)],
+      })
       for (let k of header) {
         let col = {
           title: k,
@@ -120,7 +164,9 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
      
       let formart = body.map(((r, i) => {
          let row = {
-          areaId: idGroup[i]
+          areaId: idGroup[i],
+          parentId: parentIdGroup[i],
+          type: type[i],
          }
           header.forEach((e,i) => {
               row[e] = r[i]
@@ -156,128 +202,99 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
    })
  
  const {submit} = search;
- 
-  const quayall = async (level) => { // 园区 
-     if (level == 1 || isNaN(level)) return;
-     try {
-      let {success, data} = await Area.QueryAll({projectId, level}) 
-      if (success && Array.isArray(data)) {
-        success && setLevel([...data]);
-        let id = data[0]?.id || '' 
-        console.log(levels)
-        form.setFieldValue('topAreaId', id)
-       
-        setTopAreaId(id)
-        console.log(topAreaId)
-      }
-      
-
-     } catch (e) {
-       console.log(e)
-     }
-  }
-
-
-
- 
   
-  const add = () => {
+  const add = () => { 
+     address.current = ''
      setIsAdd(true)
-    level == 1 &&  nref.current.onOpen();
-    level == 2 && nlref.current.onOpen();
-    level > 2 && tlref.current.onOpen();
+     nref.current.onOpen()
    }
-  const onOk = async() => { 
-      try {
-      let values =  await nform.validateFields()
-      
-      let methods = isAdd ? 'Insert' : 'UpdateArea' 
-      let params = isAdd ? {...defaultParams, ...values} : {...defaultParams, ...values, id: Record.areaId }
+ 
+  const  onOk = async () => { // 新增、编辑
 
+    try {
+      
+      let values =  await nform.validateFields()       
+      let {remark, name, parentId=Record.parentId,} =values   // 编辑时 parentId=Record.parentId
+       
+      let other = []
+      for(let key of fields.field) {
+        let obj = {
+           name: key,
+           value: values[key],
+        }
+        other.push(obj)
+      }
+    
+      let methods = isAdd ? 'Insert' : 'UpdateArea' 
+      let params = {...defaultParams, remark, name, parentId, 
+        id: isAdd ? 0 :  Record.areaId,
+        fields:other,} 
+      console.log(params);
       let {success, errMsg} = await Area[methods](params)
       success && message.success({
         content:  isAdd ? '新增成功' : '编辑成功',
         onClose: () => {
           nref.current.onCancel();
           refresh();
-        }
-      })
-      !success && custMsg({success, content: errMsg || '数据出错'})
-      } catch (error) {
-        console.log(error);
-      }
-
-   
-   }
-   const lonOk = async () => {
-    try {
-      let values =  await nlform.validateFields() 
-      let {remark, name, parentId, ...valueparam} =values
-       
-      const fields = [];
-      for(let [key, value] of Object.entries(valueparam)) {
-        let obj = {
-           name: key,
-           value,
-        }
-        fields.push(obj)
-      }
-    
-      let methods = isAdd ? 'Insert' : 'UpdateArea' 
-      let params = {...defaultParams, remark, name, parentId, 
-        id: isAdd ? 0 :  Record.areaId,
-        fields,} 
-      console.log(params);
-      let {success, errMsg} = await Area[methods](params)
-      success && message.success({
-        content:  isAdd ? '新增成功' : '编辑成功',
-        onClose: () => {
-          nlref.current.onCancel();
-          refresh();
          
         }
       })
-      !success && custMsg({success, content: errMsg || '数据出错'})
+       !success && custMsg({success, content: errMsg || '数据出错'})
       } catch (error) {
         console.log(error);
       }
 
    }
-   const oneLeveEdit = (record) => {
-    setRecord({...Record, ...record})
-    nform.setFieldsValue({
-      name: record['名称'],
-      remark: record['备注']
-    })
-    nref.current.onOpen()
-   }
-   const towLeveEdit = (record) => {
-    console.log(record)
-    setRecord({...Record, ...record})
-    nlform.setFieldsValue({
-      parentId: topAreaId,
-      name: record['名称'],
-      remark: record['备注'],
-      lngLat: record['经纬度']
-    })
-    nlref.current.onOpen()
-   }
+   
+ 
+
    const edit = (record) => { 
-    try {
-      setIsAdd(false)
-      level == 1 && oneLeveEdit(record)
-      level == 2 && towLeveEdit(record)
-    } catch (error) {
-      console.log(error)
-    }
+     setIsAdd(false)
+     setRecord({...Record, ...record});
+     let {名称,备注,areaId, ...keys} = record
+    
+      nform.setFieldsValue({
+        name: record['名称'],
+        remark: record['备注'],
+        ...keys,
+      })
+    
+     nref.current.onOpen();
     
    }
+   const setAaddress = (adr) => {
+      console.log(adr)
+      nform.setFieldsValue(
+        {
+          '经纬度': `${adr.lng},${adr.lat}`,
+          address: adr.address
+        }
+      )
+   }
+   const inputType =(f, type) => {
+     switch(type) {
+      case 0 :
+        return  <Item label={f} name= {f} ><Input/></Item>
+      case 1 :
+        return   <Item label={f} name={f} tooltip="为保证精度点击地图获取" ><Input/></Item>
+       case 2 :
+         return  <Item label={f} name={f} tooltip="面积类数据保留两位小数"><InputNumber step="0.01" precision={2}   style={{width: '100%'}} addonAfter="㎡" /></Item>
+                 
+       case 3 :
+          return  <Item label={f} name={f} tooltip="楼层数据为整数"><InputNumber precision={0} style={{width: '100%'}} />  </Item>
+       default:
+         return <Item label={f} name= {f} ><Input/></Item> ;
+     }
+  }
+  useEffect(() => {
+    getLevelOption()
+  }, [])
    useEffect(() => {
-     refresh()
-   }, [topAreaId])
-   useEffect(() => {
-    quayall()
+     form.setFieldsValue({
+      topAreaId
+     })
    }, [level])
+  
   return (
       <Mainbox>
         <Form form={form} layout="inline" initialValues={{name: ''}}>
@@ -290,8 +307,8 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
              { 
            level > 1 &&
              <>
-             <Item label="园区名称" name="topAreaId" >
-                  <Select options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}} style={{width: '200px'}}
+             <Item label={`${levelone.name}名称`} name="topAreaId" >
+                  <Select options={leveloption.current[`level1`]} fieldNames={{label: 'name', value: 'id', options: 'options'}} style={{width: '200px'}}
                    onChange={submit}
                   ></Select>
              </Item>
@@ -310,104 +327,44 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
           <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />  
     
-       
-        <CModal width={554} title={title} ref={nref} onOk={onOk}  mold='cust'>
-          
-        <Form 
+       {/* 新增 / 编辑*/}
+        <CModal width={fields.field.includes('经纬度') ? 1024 : 554} title={title} ref={nref} onOk={onOk}  mold='cust'>
+
+
+        <Formbox 
+          islngLat={fields.field.includes('经纬度')}
+          rowes={limitlevle.length + 2 + fields.field.length}
           form={nform}   
           size="middle"  
           labelCol={{flex: '7em'}}
-            labelAlign="left" 
-            preserve={false}
-            
-            >
-              
-                <Item label={`${levelone?.name}名称`}  name='name'   rules={[
-                  {
-                    required: true, 
-                  }]}>
-                    <Input />
-                </Item>
-                <Item label='备注'  name='remark'>
-                    <Input />
-                </Item>
-        </Form>
-         </CModal>
-         <CModal width={1024} title={title} ref={nlref} onOk={lonOk}  mold='cust'>
-          <Formbox  
-          form={nlform}   
-          size="middle"  
-          labelCol={{flex: '7em'}}
-            labelAlign="left" 
-            preserve={false}
-            validateMessages = {{
-                required: "'${name}' 是必选字段"
-            }}  
-            >
-
-            
-
-
-              <Item label={`${levelone?.name}名称`}  name="parentId" rules={[
-                    {
-                      required: true, 
-                    }]}>
-                  <Select options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd}></Select>
-              </Item>
-            
-              <Item label={`${name}名称`}  name="name" rules={[
-                    {
-                      required: true, 
-                    }]}>
-                  <Input />
-              </Item>
-
-              {
-                fields.map(f => (
-
-                  <Item label={f} name={f} rules={[
-                    {
-                      required: true, 
-                    }]}>
-                  <Input />
-                 </Item>
-
-                ))
-              } 
-              <Item label="备注" name="remark" rules={[
-                    {
-                      required: true, 
-                    }]}>
-                  <Input/>
-              </Item> 
-              <Item label=""   className='address' >
-                 <Input.Search placeholder='请输入地址' allowClear enterButton="查询"   onSearch={() => {}}/>
-              </Item> 
-              <div className='map'>
-                  <Mapcom setAaddress={() => {}} lngLat='' ref={mapref} />  
-              </div>
-          </Formbox>
-         </CModal>
-          {/* 层级大于2 */}
-         <CModal width={592} title={title} ref={tlref} onOk={lonOk}  mold='cust'>
-          <Form 
-          form={nlform}   
-          size="middle"  
-          labelCol={{flex: '7em'}}
-            labelAlign="left" 
-            preserve={false}
-            validateMessages = {{
-                required: "'${label}' 是必选字段"
+          labelAlign="left" 
+          preserve={false}
+          validateMessages = {{
+          required: "'${label}' 是必选字段"
             }}  
             >
             {
-                limitlevle.map((lv, index, array) => (
-                   
-                  <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }  >
-                    { index==0 &&  <Select options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd}></Select> }
-                    {index > 0 && <Select options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd} dependencies={[array[index - 1].name]}></Select>}
-                  </Item>
-                ))
+             isAdd ?  limitlevle?.map((lv, index, array) => {
+                   if (index ==0) { return (
+                      <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }  >
+                       <Select options={leveloption.current[`level1`] || []} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd} onChange={(e) => getLevelOption(e, lv.level + 1)}></Select> 
+                      </Item>
+                     )
+                   } else  {
+                     return(
+                       <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }   > 
+                         <Select options={leveloption.current[`level${lv.level}`] || []} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd} onChange={(e) => getLevelOption(e, lv.level + 1)}></Select>
+                       </Item>
+                     )
+                   }
+                 
+                }) : limitlevle?.map((lv, index, array) => {                 
+                   return (
+                     <Item label={`${lv?.name}名称`}  name={lv?.name }  >
+                      <Input disabled={!isAdd}  />
+                     </Item>
+                    ) 
+               })
 
 
 
@@ -423,13 +380,7 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
               </Item>
 
               {
-                fields.map(f => (
-
-                  <Item label={f} name={f}  >
-                  <Input />
-                 </Item>
-
-                ))
+                fields.field?.map((f,index) =>   inputType(f,fields.type[index]))
               } 
               <Item label="备注" name="remark" rules={[
                     {
@@ -437,10 +388,22 @@ export default function Index({projectId,level, CModal, name, allLevel }) {
                     }]}>
                   <Input/>
               </Item> 
-           
+              {
+                islngLat &&
+                <>
+                <Item label=""   className='address' name="address" >
+                  <Input.Search placeholder='请输入地址' allowClear enterButton="查询" value={address.current}  onSearch={() => {}}/>
+                </Item> 
+                <div className='map'>
+                    <Mapcom setAaddress={setAaddress}  ref={mapref} />  
+                </div>
+              </>
+              }
                
-          </Form>
+          </Formbox>
+   
          </CModal>
+         {/* 删除 */}
          <CModal width={554} title={`删除${name}`} ref={dref} onOk={delOk} type="warn" mold='cust'>
               <p><WarningFilled />是否确认删除 <Text type="danger">{Record['名称']}</Text>和相关信息?</p>
          </CModal>

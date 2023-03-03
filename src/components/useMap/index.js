@@ -4,7 +4,7 @@
  * @date 2022-09-21 09:49
  */
  
-import React, {useEffect, useRef, forwardRef, useImperativeHandle} from "react";
+import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle} from "react";
 import {
   Map,
   Marker,
@@ -20,16 +20,22 @@ import {
 
  function Index(props, ref) {
   
-    const {initialValues={}, setAaddress=()=>{}, lngLat, value, onChange} = props
-    const {Lng, Lat} = initialValues
-    const [lng, lat] = lngLat?.split(',') || []
-    const center = { lng: (Lng ?? lng) ?? 120.2281 , lat: Lat ?? lat  ?? 30.2122} 
+    const { setAaddress=()=>{}, lngLat, value, onChange} = props
+    const defaultpoint = lngLat || value 
+
+    const [lng, lat] = defaultpoint?.split(',') || []
+     
+   
+    const [position, setPosition] = useState({
+       point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
+       icon: 'loc_blue'
+     }
+    )
+  
     const mapref = useRef(null)
   
     const option = {
-      // mapType: 'earth',
-      center ,
-      zoom: 12,
+      zoom: 16,
       enableScrollWheelZoom: true, // 鼠标滚轮缩放
       // tilt: 20,
       enableDragging: true,
@@ -78,15 +84,25 @@ import {
         renderOptions: { map: mapref?.current?.map },
         onSearchComplete: serachcomplete 
     }); 
+  useEffect(() => {
+   setPosition(
+     {
+       ...position,
+       point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
+     }
+  
+    )
+  }, [value])
   useImperativeHandle(ref, () => ({
     serachMap
   }))
+
   return (
-    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref}>
+    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref} center={position.point}>
      
-      <Marker position={center} />
+      <Marker position={position.point} enableDragging icon={position.icon} />
       <NavigationControl />
-      <CityListControl />
+      <CityListControl anchor={BMAP_ANCHOR_TOP_LEFT} />
       <MapTypeControl />
       <ScaleControl />
       <ZoomControl />

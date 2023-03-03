@@ -95,7 +95,7 @@ export class User {
 
     static DeleteArea = ({projectId,areaId}) => server.delete(`/General/Area/DeleteArea?projectId=${projectId}&areaId=${areaId}`)
     static UpdateArea = (params) => server.post(`/General/Area/UpdateArea`, params)
-    static QueryAll = ({projectId, level}) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`)
+    static QueryAll = ({projectId, level, parentId}) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}&parentId=${parentId}`)
      
 }
 // 

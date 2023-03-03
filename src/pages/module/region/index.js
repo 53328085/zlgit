@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
  
 import Region from './region'
  
@@ -14,14 +14,19 @@ export default function Index() {
   const [value, setvalue] = useState()
   const [tabs, setTabs] = useState([])
   const [levels, setLevels] = useState([])
+ 
   const levelData = levels.find(l => l.level == value) || {}
+ 
+
+
+
   const allLevel = async () => {
      try {
       let {success, data} =  await Area.AllLevel(projectId)
       if(success && Array.isArray(data)) {
          setTabs([...data.map((d) => ({label: d.name, key: d.level}))])
          setvalue(data[0]?.level)
-         setLevels(data)
+         setLevels(data) 
       }
 
      } catch (error) {
@@ -36,14 +41,14 @@ export default function Index() {
     setvalue,
     
   }
-
+ 
   useEffect(() => {
     allLevel()
   }, [])
   return (
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={false}>   
-    { levels.length > 0 &&  <Region projectId={projectId} CModal={CModal} {...levelData} allLevel={levels} /> }
+    {  levels.length > 0 &&  <Region projectId={projectId} CModal={CModal} {...levelData} allLevel={levels}   /> }
     </Pagecount>
     </CustContext.Provider>
   )
