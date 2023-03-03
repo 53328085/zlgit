@@ -5,6 +5,7 @@ import dashLine from '@imgs/line.png'
 import { cloneDeep } from 'lodash';
 
 export default function Index(props){
+  const { getValues } = props;
     const { Search } = Input;
     const [treeData, setTreeData] = useState([])
     const arr = cloneDeep(props.treeData)
@@ -23,10 +24,13 @@ export default function Index(props){
         }
     }
     changeTitle(arr)
-    let arrayList = arr
-    useEffect(()=>{
-        setTreeData(arrayList)
-    },[])
+    setTimeout(()=>{
+      setTreeData(arr)
+    }, 100)
+    // let arrayList = cloneDeep(arr)
+    // useEffect(()=>{
+        
+    // },[])
 
 
     let dataList = [];
@@ -117,7 +121,7 @@ export default function Index(props){
         });
 
         const onCheck = (checkedKeys, info) => {
-            console.log('onCheck', checkedKeys, info);
+            getValues(checkedKeys)
         };
     
        

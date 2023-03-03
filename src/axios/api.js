@@ -465,7 +465,7 @@ export class energyDesigner {
     static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`,data)
     static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
     static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
-    static queryEnergyConfigedDevices = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
+    static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
     static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
     static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)
 }
@@ -479,9 +479,19 @@ export class energyPrice {
 
 //能耗定额
 export class energyQuota {
-    static querySpaceTrees = (projectId, areaId) => server.get(`Energy/EnergyQuotaDesigner/QuerySpaceTrees?projectId=${projectId}&areaId=${areaId}`)
-    static queryRoomQuotas = (projectId, data) => server.post(`Energy/EnergyQuotaDesigner/QueryRoomQuotas?projectId=${projectId}`, data)
+    static querySpaceTrees = (projectId, areaId, areaName) => server.get(`Energy/EnergyQuotaDesigner/QuerySpaceTrees?projectId=${projectId}&areaId=${areaId}&areaName=${areaName}`)
+    static queryRoomQuotas = (projectId, pageNum, pageSize, data) => server.post(`Energy/EnergyQuotaDesigner/QueryRoomQuotas?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`, data)
     static updateRoomQuotas = (projectId, data) => server.post(`Energy/EnergyQuotaDesigner/UpdateRoomQuotas?projectId=${projectId}`, data)
+}
+
+//能源结构
+export class energyStructure {
+    static queryEnergyStructure = (projectId, areaId, name) => server.get(`Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}`)
+    static addEnergyStructure = (projectId, data) => server.post(`Energy/EnergyStructureDesigner/AddEnergyStructure?projectId=${projectId}`, data)
+    static updateEnergyStructure = (projectId, id, name) => server.get(`Energy/EnergyStructureDesigner/UpdateEnergyStructure?projectId=${projectId}&id=${id}&name=${name}`)
+    static deleteEnergyStructure = (projectId, id) => server.delete(`Energy/EnergyStructureDesigner/DeleteEnergyStructure?projectId=${projectId}&id=${id}`)
+    static configEnergyStructure = (projectId, data) => server.post(`Energy/EnergyStructureDesigner/ConfigEnergyStructure?projectId=${projectId}`, data)
+    static queryEnergyStructureConfig = (projectId, energyStructureId, areaId) => server.get(`Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}`)
 }
 
 //班次管理
@@ -497,4 +507,24 @@ export class distributionRoom {
     static addRoom = (data) => server.post(`Distribution/DistributionRoom/AddRoom`, data)
     static updateRoom = (data) => server.post(`Distribution/DistributionRoom/UpdateRoom`, data)
     static deleteRoom = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteRoom?projectId=${projectId}&id=${id}`)
+    static queryLine = (projectId, roomId) => server.get(`Distribution/DistributionRoom/QueryLine?projectId=${projectId}&roomId=${roomId}`)
+    static addLine = (data) => server.post(`Distribution/DistributionRoom/AddLine`, data)
+    static updateLine = (projectId, id, name) => server.get(`Distribution/DistributionRoom/UpdateLine?projectId=${projectId}&id=${id}&name=${name}`)
+    static deleteLine = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteLine?projectId=${projectId}&id=${id}`)
+    static queryUnusedLineMeter = (projectId, type, areaId) => server.get(`Distribution/DistributionRoom/QueryUnusedLineMeter?projectId=${projectId}&type=${type}&areaId=${areaId}`)
+    static configLineMeter = (data) => server.post(`Distribution/DistributionRoom/ConfigureLineMeter`, data)
+}
+
+//配电房设备
+export class DistributionMeter {
+    //监控设备
+    static queryPageCamera = (projectId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionMeter/QueryPageCamera?projectId=${projectId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+    static queryUsedCamera = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUsedCamera?projectId=${projectId}&roomId=${roomId}`)
+    static queryUnusedCamera = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUnusedCamera?projectId=${projectId}&roomId=${roomId}`)
+    static configureCamera = (data) => server.post(`Distribution/DistributionMeter/ConfigureCamera`, data)
+    //传感器设备
+    static queryPageSensor = (projectId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionMeter/QueryPageSensor?projectId=${projectId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+    static queryUsedSensor = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUsedSensor?projectId=${projectId}&roomId=${roomId}`)
+    static queryUnusedSensor = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUnusedSensor?projectId=${projectId}&roomId=${roomId}`)
+    static configureSensor = (data) => server.post(`Distribution/DistributionMeter/ConfigureSensor`, data)
 }

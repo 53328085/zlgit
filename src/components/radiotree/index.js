@@ -245,7 +245,10 @@ export default function Index(){
         }
         dataList = [];
         generateList(treeData)
-      }  
+      }
+      const onCheck = (checkedKeys, info) => {
+        console.log('onCheck', checkedKeys, info);
+      };
       return(
         <div className={style.contentLeft}>
           <Radio.Group className={style.radioCss} options={options} onChange={onChange} value={value} />
@@ -266,6 +269,7 @@ export default function Index(){
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             treeData={loop(treeData)}
+            onCheck={onCheck}
           />
         </div>
       )
