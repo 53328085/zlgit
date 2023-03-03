@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext,useRef } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
-export default function parkstreet() {
+import {Addmodal} from './modalcomp'
+export default function parkstreet({areaList}) {
+  const addModalRef = useRef()
   const columns=[{
     title:'园区名称',
     dataIndex:''
@@ -30,11 +32,24 @@ export default function parkstreet() {
     title:'操作',
     dataIndex:''
   }]
+  const addopen=()=>{
+    addModalRef.current.onOpen()
+  }
+  const comProps={
+    addopen,
+    areaList
+  }
+  const addModalProps = {
+    addModalRef,
+    width: 832,
+    areaList
+  }
   return (
     <div>
-     <Comp>
+     <Comp {...comProps}>
       <Table columns={columns}></Table>
      </Comp>
+     <Addmodal {...addModalProps}></Addmodal>
     </div>
   )
 }

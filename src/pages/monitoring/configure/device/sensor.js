@@ -1,146 +1,623 @@
-import React, { useRef,useState } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import { useSelector } from 'react-redux'
+import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
+import { MultImport } from './modalCom'
+import { Monitoring } from '@api/api.js'
+import { DeleteModal } from './modalCom'
+import { MyContext } from './formcomp'
 import style from './style.module.less'
-import { Form, Row, Col,Select,Input,Divider } from 'antd'
-export default function gateway() {
+
+const {
+  DeviceManager: {
+    QueryByPageSensor,
+    AeraQueryAll,
+    QueryListGateWay,
+    QueryUsedDeviceCategory,
+    QueryPlanList,
+    AddSensor,
+    UpdateSensor,
+    DeleteSensor
+  }
+} = Monitoring
+
+export default function gateway({ deviceStyle }) {
+  const [selectopts, setSelectopts] = useState([])
+  const [gatewaylist, setGatewaylist] = useState()
+  const [devicelist, setDevicelist] = useState()
+  const [addopts, setAddOpts] = useState()
+  const [alarmopts, setAlarmopts] = useState()
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState({
+    current: 1,
+    pageSize: 10,
+    hideOnSinglePage: false
+  })
+  const pageRef= useRef(page)
+  pageRef.current=page
+  const [dataSource, setDataSource] = useState([])
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const compRef = useRef()
   const modalFormRef = useRef()
+  const modalImportRef = useRef()
+  const DelModalRef = useRef()
+  const EditModalFormRef = useRef()
+  const [addform] = Form.useForm()
+  const [editform] = Form.useForm()
+  let delid;
+  const optcss = {
+    color: '#237ae4',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  }
   const columns = [
     {
       title: '园区名称',
-      dataIndex: ''
+      dataIndex: 'areaName'
     },
     {
       title: '安装地址',
-      dataIndex: ''
+      dataIndex: 'address'
     },
     {
       title: '传感器型号',
-      dataIndex: ''
+      dataIndex: 'category'
     },
     {
       title: '传感器编号',
-      dataIndex: ''
+      dataIndex: 'sn'
     },
+
     {
       title: '传感器名称',
-      dataIndex: ''
+      dataIndex: 'name'
     },
     {
       title: '所属网关',
-      dataIndex: ''
-    },
-    {
-      title: '用能类型',
-      dataIndex: ''
+      dataIndex: 'gatewayName',
+      render: (text, record, index) => {
+        if (Array.isArray(gatewaylist)) {
+          const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
+          console.log(gatewayfilter)
+          return (
+            <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].category}</span>
+          )
+        }
+
+      }
     },
     {
       title: '备注',
-      dataIndex: ''
+      dataIndex: 'remark'
     },
     {
       title: '操作',
-      dataIndex: ''
+      dataIndex: 'options',
+      width: 136,
+      render: (text, record) => {
+        return (
+          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
+            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
+          </p>
+        )
+      }
     },
   ]
-  //打开新增网关窗口
-  const addopen = () => {
-    modalFormRef.current.onOpen()
+  for (let val of columns) {
+    val.align = 'center'
   }
+  //打开编辑窗口
+  const onEdit = (record) => {
+    console.log(record)
+    EditModalFormRef?.current?.onOpen()
+    editform.setFieldsValue({ ...record })
+  }
+
+  //确认编辑
+  const editOk = async () => {
+    addform.validateFields().then(async () => {
+      const {
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor
+      }
+      const resp = await UpdateSensor(params)
+      if (resp.success) {
+        message.success("更新成功")
+        EditModalFormRef?.current?.onCancel()
+        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      } else {
+        message.error(resp.errMsg)
+      }
+    })
+
+  }
+  //打开删除窗口
+  const onDelete = (record) => {
+    DelModalRef?.current?.onOpen()
+    delid = record.id
+  }
+  //确认删除
+  const delOk = async () => {
+    const { success, errMsg } = await DeleteSensor({
+      projectId,
+      id: delid
+    })
+    if (success) {
+      message.success('删除成功')
+      if(page.pageSize*page.current>=page.total){
+        setPage({
+          ...page,
+          current:page.current-1
+        })
+      }
+      DelModalRef?.current?.onCancel()
+      setTimeout(()=>{
+        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      },0)
+     
+    } else {
+      message.error(errMsg)
+    }
+  
+  }
+
+
+  //打开新增窗口
+  const addopen = () => {
+    addform.setFieldsValue({
+      areaId: '',
+      alarmPlanId: '',
+      address: '',
+      remark: '',
+      gatewayId: '',
+      category: '',
+      sn: '',
+      name: '',
+      customerType: 0,
+      commPort: 0,
+      commProtocol: 0,
+      commAddress: 0,
+      factor: 0
+    })
+    modalFormRef?.current?.onOpen()
+
+  }
+  //确认新增
+  const addOk = async () => {
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        alarmPlanId: formvalue.alarmPlanId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        customerType: 0,
+        commPort: 0,
+        commProtocol: 0,
+        commAddress: 0,
+        factor: 1
+      }
+      const res = await AddSensor(params)
+      if (res.success) {
+        message.success('新增成功!')
+        modalFormRef?.current?.onCancel()
+        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+
+
+
+  }
+  //打开批量导入窗口
+  const multExport = () => {
+    modalImportRef?.current?.onOpen()
+  }
+  //获取园区
+  const getAeraQueryAll = async () => {
+    try {
+      const resp = await AeraQueryAll(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        setSelectopts(() => [...data])
+        setAddOpts(() => [...resp.data])
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  //获取已使用的电表列表
+  const getQueryUsedDeviceCategory = async () => {
+    try {
+      const resp = await QueryUsedDeviceCategory({
+        projectId,
+        deviceStyle
+      })
+      if (resp.success && Array.isArray(resp.data)) {
+        let arr = resp.data.map(it => ({ label: it, value: it }))
+        setDevicelist(() => ([...arr]))
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+  }
+  //获取网关
+  const getQueryListGateWay = async () => {
+    try {
+      const resp = await QueryListGateWay(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const arr = resp.data.map(it => ({ ...it }))
+        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+
+  }
+  //获取告警计划
+  const getQueryPlanList = async () => {
+    const res = await QueryPlanList(projectId)
+    console.log(res)
+
+    if (res.success && Array.isArray(res.data)) {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }, ...res.data])
+    } else {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }])
+    }
+  }
+  //获取传感器列表
+  const getQueryByPageSensor = async (curpage=0,pageSize=0,id, like, customerType) => {
+    setLoading(true)
+    let params = {
+      projectId,
+      // pageNum: page.current,
+      // pageSize: page.pageSize,
+      pageNum: curpage?curpage:pageRef.current.current,
+      pageSize: pageSize?pageSize:pageRef.current.pageSize,
+      areaId: id ? id : 0,
+      alike: like ? like : '',
+      customerType: customerType ? customerType : 0
+    }
+    const resp = await QueryByPageSensor(params)
+    setLoading(false)
+    setPage({
+      ...page,
+      current:resp.pageNum,
+      pageSize: resp.pageSize,
+      total: resp.total
+    })
+    if (resp.success && Array.isArray(resp.data)) {
+      setDataSource([...resp.data.reverse()])
+      
+      console.log(page)
+    } else {
+      setDataSource([])
+    }
+  }
+
+
+
+  useEffect(() => {
+    getQueryByPageSensor()
+    getAeraQueryAll()
+    getQueryUsedDeviceCategory()
+    getQueryPlanList()
+    getQueryListGateWay()
+    
+
+  }, [])
+  //传入props对象
   const ComProps = {
     addopen,
-    isenergy:false
+    isenergy: false,
+    multExport,
+    ref: compRef,
+    selectopts,
+    setPage,
+    page,
+    getList: getQueryByPageSensor
   }
   const ModalFormProps = {
     modalFormRef,
-    width: 746
+    width: 746,
+    name: '新增传感器',
+    addopts,
+    gatewaylist,
+    devicelist,
+    onOk: addOk
   }
+  const ImportProps = {
+    modalImportRef,
+    width: 560,
+    name: '/deviceExcel/electric.xlsx'
+  }
+  const EditModalFormProps = {
+    EditModalFormRef,
+    width: 746,
+    name: '编辑传感器',
+    onOk: editOk
+  }
+
+
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}></Table>
+        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading} onChange={(page, pageSize) => {
+          setPage(() => ({
+            ...page
+          }))
+          getQueryByPageSensor(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+        }}></Table>
       </Comp>
-      <AddModalForm {...ModalFormProps}></AddModalForm>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+        <AddModalForm {...ModalFormProps} >
+        </AddModalForm>
+      </MyContext.Provider>
+      <MultImport {...ImportProps}></MultImport>
+      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除传感器？" onOk={delOk}></DeleteModal>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+        <EditModalForm {...EditModalFormProps}></EditModalForm>
+      </MyContext.Provider>
+
     </div>
   )
 }
 
-//新增网关
-let AddModalForm = ({ modalFormRef, ...other }) => {
+
+//新增form表单组件
+export const FormComp = (props) => {
+  const { TextArea } = Input
+  const { addopts, gatewaylist, devicelist, alarmopts, form } = useContext(MyContext)
+  const [area, setArea] = useState([])
+  const rules = [{
+    required: true
+  }]
+  const changeGateway = (v, option) => {
+    console.log(v, option)
+    if (v) {
+      const arr = addopts?.filter(it => (it.id === option.areaId))
+      setArea([...arr])
+      form.setFieldsValue({ areaId: arr[0].id, commPort: '', commProtocol: 0 })
+    } else {
+      setArea([])
+    }
+  }
+  return (
+    <Form
+      labelAlign="left"
+      form={form}
+      colon={false}
+      labelCol={{
+        span: 7
+      }}
+    >
+      <Row className={style.customItem}>
+        <Col flex={1}>
+          <Form.Item label="所属园区" name="areaId" rules={rules}>
+            {
+              area.length > 0 ? <Select
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={area}
+                disabled
+              ></Select> : <Select
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={addopts}
+              ></Select>
+            }
+          </Form.Item>
+          <Form.Item label="安装地址" name="address" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
+            <Select
+              options={alarmopts}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="备注" name="remark" >
+            <TextArea />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+        </Col>
+        <Col flex={1}>
+          <Form.Item label="所属网关" name="gatewayId" rules={rules}>
+            <Select
+              fieldNames={{
+                label: 'category',
+                value: 'id',
+              }}
+              onChange={changeGateway}
+              options={gatewaylist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="传感器型号" name="category" rules={rules}>
+            <Select
+              options={devicelist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="传感器编号" name="sn" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="传感器名称" name="name" rules={rules}>
+            <Input />
+          </Form.Item>
+        </Col>
+      </Row>
+    </Form>
+  )
+}
+//新增设备
+export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
     <Modal mold='cust' ref={modalFormRef} {...other}>
-      <BlueColumn name="新增传感器" styled={{ padding: '24px 0px' }}></BlueColumn>
-      <Form 
-       labelAlign="left"
-       colon={false}
-       labelCol={{
-         span:6
-       }}
-      >
-        <Row>
-          <Col flex={1}>
-            <Form.Item label="所属园区">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="安装地址">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="告警方案">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="备注">
-              <Input/>
-            </Form.Item>
-          </Col>
-          <Col>
-          <Divider type='vertical' style={{height:'100%',margin:'0 32px',borderColor:'#bcbcbc'}} dashed/>
-          </Col>
-          <Col flex={1}>
-            <Form.Item label="所属网关">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="传感器型号">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="传感器编号">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="传感器名称">
-              <Input/>
-            </Form.Item>
-           
-          </Col>
-        </Row>
-
-      </Form>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <FormComp >
+      </FormComp>
     </Modal>
   )
 
 }
-let Count = ({ value, onChange }) => {
-  console.log(value)
-  const [number,setNumber] =useState(0)
-  const reduce = () => {
-    number>0&&number>0&&setNumber(number-1)
-    onChange(number-1)
-  }
 
-  const add = () => {
-    setNumber(number+1)
-    onChange(number+1)
-  }
-  const inpBlur=(e)=>{
-   
- 
-  }
+
+
+
+//编辑设备
+export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <div className={style.countNum}>
-      <div onClick={reduce} className={style.opts} style={{borderRight:'none'}}>-</div>
-      <Input  className={style.numbers} defaultValue={number}  onBlur={inpBlur} value={number} onChange={(e)=>{setNumber(e.target.value);onChange(e.target.value)}}/>
-      <div onClick={add} className={style.opts} style={{borderLeft:'none'}}>+</div>
-      <span style={{paddingLeft:16}}>(秒)</span>
-    </div>
+    <Modal mold='cust' ref={EditModalFormRef} {...other}>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <EditFormComp >
+      </EditFormComp>
+    </Modal>
+  )
+
+}
+
+//编辑form表单组件
+export const EditFormComp = (props) => {
+  const { TextArea } = Input
+  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+  const [area, setArea] = useState([])
+  const [coms, setComs] = useState(0)
+  const [isdisable, setIsdisable] = useState(false)
+  const rules = [{
+    required: true
+  }]
+  const changeGateway = (v, option) => {
+    console.log(v, option)
+    setIsdisable(false)
+    if (v) {
+      const arr = addopts?.filter(it => (it.id === option.areaId))
+      setArea([...arr])
+      setComs(option.com)
+      form.setFieldsValue({ areaId: arr[0].id, commPort: '', commAddress: 0, commProtocol: '' })
+    } else {
+      setArea([])
+      form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 })
+    }
+  }
+  useEffect(() => {
+    if (form?.getFieldsValue().gatewayId !== 0) {
+      setIsdisable(true)
+    }
+    const comsnum = gatewaylist.filter(it => it.id === form?.getFieldsValue().gatewayId)
+    comsnum[0] && setComs(comsnum[0].com)
+    console.log(form?.getFieldsValue())
+  }, [])
+  return (
+    <Form
+      labelAlign="left"
+      form={form}
+      colon={false}
+      labelCol={{
+        span: 7
+      }}
+    >
+      <Row className={style.customItem}>
+        <Col flex={1}>
+          <Form.Item label="所属园区" name="areaId" rules={rules}>
+            {
+              (area.length || isdisable) > 0 ? <Select
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={area}
+                disabled
+              ></Select> : <Select
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={addopts}
+              ></Select>
+            }
+          </Form.Item>
+          <Form.Item label="安装地址" name="address" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
+            <Select
+              options={alarmopts}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="备注" name="remark" >
+            <TextArea />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+        </Col>
+        <Col flex={1}>
+          <Form.Item label="所属网关" name="gatewayId" rules={rules}>
+            <Select
+              fieldNames={{
+                label: 'category',
+                value: 'id',
+              }}
+              onChange={changeGateway}
+              options={gatewaylist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="传感器型号" name="category" rules={rules}>
+            <Select
+              options={devicelist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="传感器编号" name="sn" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="传感器名称" name="name" rules={rules}>
+            <Input />
+          </Form.Item>
+        </Col>
+      </Row>
+    </Form>
   )
 }

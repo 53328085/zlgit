@@ -9,16 +9,22 @@ import restart from './imgs/restart.png'
 import { Form, Row, Col, Select, Input, Divider, Upload, message } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-const { DeviceManager: { AeraQueryAll, QueryUsedGateway,GatewayAdd,QueryByPageGateWay,GatewayUpdate } } = Monitoring
+const { DeviceManager: { AeraQueryAll, QueryUsedGateway,GatewayAdd,QueryByPageGateWay,GatewayUpdate,GatewayDelete,StartReboot } } = Monitoring
 export default function gateway() {
   const [selectopts, setSelectopts] = useState()
   const [addopts, setAddOpts] = useState()
   const [usecategory, setUsecategory] = useState()
   const [dataSource,setDataSource] = useState()
+  const [delId,setDelId] = useState()
+  const [gatewaySn,setGatewaySn] = useState('')
+  const [loading, setLoading] = useState(false);
   const [page,setPage]=useState({
     current:1,
-    pageSize:10
+    pageSize:10,
+    hideOnSinglePage: false
   })
+  const pageRef= useRef(page)
+  pageRef.current=page
   const compRef = useRef()
   const modalFormRef = useRef() //新增Ref
   const modalEditRef = useRef() //编辑Ref
@@ -34,6 +40,7 @@ export default function gateway() {
     textDecoration: 'underline',
     cursor: 'pointer',
   }
+  let startsn;
   const columns = [
     {
       title: '园区名称',
@@ -70,10 +77,10 @@ export default function gateway() {
       render: (text,record,index) => {
         return (
           <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={onRestart}>重启</span>
-            <span style={optcss} onClick={onKeyParam}>参数下发</span>
+            <span style={optcss} onClick={()=>{onRestart(record)}}>重启</span>
+            <span style={optcss} onClick={()=>{onKeyParam(record)}}>参数下发</span>
             <span style={optcss} onClick={()=>{onEdit(record)}}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={onDelete}>删除</span>
+            <span style={{ ...optcss, color: '#FF0000' }} onClick={()=>{onDelete(record)}}>删除</span>
           </p>
         )
       }
@@ -81,12 +88,15 @@ export default function gateway() {
   ]
   columns.forEach(it => it.align = 'center')
   //打开参数下发弹窗
-  const onKeyParam = () => {
+  const onKeyParam = (record) => {
+    setGatewaySn(record.sn)
     keyParamRef?.current?.onOpen()
   }
   //打开重启网关弹窗
-  const onRestart = () => {
+  const onRestart = (record) => {
+    console.log(record)
     modalReStartRef?.current?.onOpen()
+    startsn=record.sn
   }
   //打开编辑网关窗口
   const onEdit=(record)=>{
@@ -116,7 +126,8 @@ export default function gateway() {
     modalImportRef?.current?.onOpen()
   }
   //打开删除窗口
-  const onDelete = () => {
+  const onDelete = (record) => {
+    setDelId(record.id)
     modalDelRef?.current?.onOpen()
   }
  
@@ -134,25 +145,37 @@ export default function gateway() {
     }
   }
   //获取网关列表
-  const getQueryByPageGateWay =async()=>{
+  const getQueryByPageGateWay =async(curpage=0,pageSize=0,id=0,like='')=>{
+    setLoading(true)
     let params={
       projectId,
-      pageNum:page.current,
-      pageSize:page.pageSize,
-      areaId: compRef?.current?.selvalue,
-      alike:compRef?.current?.inpvalue,
+      // pageNum:page.current,
+      // pageSize:page.pageSize,
+      pageNum: curpage?curpage:pageRef.current.current,
+      pageSize: pageSize?pageSize:pageRef.current.pageSize,
+      areaId: id?id:0,
+      alike:like?like:'',
     }
+    
     const resp = await QueryByPageGateWay(params)
+    setLoading(false)
+    setPage({
+      ...page,
+      current:resp.pageNum,
+      pageSize: resp.pageSize,
+      total: resp.total
+    })
     if(resp.success&&Array.isArray(resp.data)){
-      setDataSource(()=>resp.data)
-      console.log(resp)
+      setDataSource(()=>resp.data.reverse())
+    }else{
+      console.log('setdata[]')
+      setDataSource([])
     }
   }
   //获取已使用网关型号
   const getQueryUsedGateway = async () => {
     try {
       const { data, success, errMsg } = await QueryUsedGateway(projectId)
-      console.log(data, Array.isArray(data))
       if (success) {
         const mapdata = data.map((it) => {
           return {
@@ -162,7 +185,6 @@ export default function gateway() {
         })
         setUsecategory([...mapdata])
       }
-      console.log(data)
     } catch (e) {
       console.log(e)
     }
@@ -189,34 +211,69 @@ export default function gateway() {
    if(success){
     message.success('新增成功')
     modalFormRef.current.onCancel()
-    getQueryByPageGateWay()
+    getQueryByPageGateWay(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,)
    }else{
     message.error(errMsg)
    }
   }
   //确认编辑
   const editOk=async()=>{
-    const {area,category,address,sn,pwd,name,heartInterval,remark} = editform.getFieldValue()
+    const {areaId,category,address,sn,pwd,name,heartInterval,remark,id} = editform.getFieldValue()
     let params ={
-      id:0,
+      id:id,
       projectId,
-      areaId: area,
+      areaId,
       address,
       category,
       sn,
       pwd,
       name,
-      heartInterval,
+      heartInterval:Number(heartInterval),
       remark
     }
+    console.log(params)
     const {data,success,errMsg} = await GatewayUpdate(params)
     if(success){
       message.success('更新成功')
-      modalEditRef.current.onCancel()
+      modalEditRef.current.onCancel(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,)
       getQueryByPageGateWay()
     }else{
       message.error(errMsg)
      }
+  }
+  //确认删除
+  const delOk=async()=>{
+    let params ={
+      projectId,
+      id:delId
+    }
+    const resp = await GatewayDelete(params)
+    if(resp.success){
+      modalDelRef?.current?.onCancel()
+      message.success('删除成功!')
+      if(page.pageSize*page.current>=page.total){
+        setPage({
+          ...page,
+          current:page.current-1
+        })
+      }
+      setTimeout(()=>{
+        getQueryByPageGateWay(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,)
+      },0)
+      
+      
+    }else{
+      message.error(resp.errMsg)
+    }
+  }
+  //确认重启
+  const startOk=async()=>{
+  //  const res = await StartReboot(startsn) 
+  //  if(res.success){
+  //   message.success('重启成功')
+  //  }else{
+  //   message.error(res.errMsg)
+  //  }
   }
   const cancelOk=()=>{
     modalFormRef.current.onCancel()
@@ -225,7 +282,10 @@ export default function gateway() {
     addopen,
     multExport,
     ref: compRef,
-    selectopts
+    selectopts,
+    page,
+    setPage,
+    getList: getQueryByPageGateWay,
   }
   let ModalFormProps = {
     modalFormRef,
@@ -248,20 +308,26 @@ export default function gateway() {
     onOk:editOk
   }
   useEffect(() => {
-    getAeraQueryAll()
     getQueryByPageGateWay()
+    getAeraQueryAll()
     getQueryUsedGateway()
   }, [])
+  
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} dataSource={dataSource} pagination={page}></Table>
+        <Table columns={columns} dataSource={dataSource} pagination={page} loading={loading} onChange={(page, pageSize) => {
+          setPage(() => ({
+            ...page
+          }))
+          getQueryByPageGateWay(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue)
+        }}></Table>
       </Comp>
       <AddModalForm {...ModalFormProps}></AddModalForm>
       <MultImport {...ImportProps}></MultImport>
-      <ReStart modalReStartRef={modalReStartRef}></ReStart>
-      <KeyParam keyParamRef={keyParamRef}></KeyParam>
-      <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？"></DeleteModal>
+      <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
+      <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn}></KeyParam>
+      <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
       <EditModalForm {...EditProps}></EditModalForm>
     </div>
   )
@@ -335,7 +401,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, ...other }) =
 //计数器组件
 let Count = ({ value, onChange }) => {
   console.log(value)
-  const [number, setNumber] = useState(0)
+  const [number, setNumber] = useState(value?value:0)
   const reduce = () => {
     number > 0 && number > 0 && setNumber(number - 1)
     onChange(number - 1)
@@ -359,10 +425,10 @@ let Count = ({ value, onChange }) => {
   )
 }
 //重启网关组件
-let ReStart = ({ modalReStartRef }) => {
+let ReStart = ({ modalReStartRef,startOk }) => {
   return (
-    <Modal mold='cust' ref={modalReStartRef}>
-      <BlueColumn name="重启提示" styled={{ padding: '24px 0px' }}></BlueColumn>
+    <Modal mold='cust' ref={modalReStartRef} onOk={startOk}>
+      <BlueColumn name="重启提示" styled={{ padding: '24px 0px' ,color:'#237ae4'}}></BlueColumn>
       <div style={{ margin: '16px 32px 0' }}>
         <img src={restart}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>确认要重启网关？</span>
@@ -372,14 +438,14 @@ let ReStart = ({ modalReStartRef }) => {
   )
 }
 //参数下发组件
-const KeyParam = ({ keyParamRef }) => {
+const KeyParam = ({ keyParamRef ,gatewaySn}) => {
   return (
     <Modal mold='cust' ref={keyParamRef}>
-      <BlueColumn name="网关参数下发" styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name="网关参数下发" styled={{ padding: '24px 0px',color:'#237ae4' }}></BlueColumn>
       <div style={{ margin: '16px 32px 0', display: 'flex', alignItems: 'center' }}>
         <div><img src={restart}></img></div>
         <div style={{ paddingLeft: 32, fontSize: 16 }}>
-          <p>网关编号:</p>
+          <p>网关编号:{gatewaySn}</p>
           <p>是否对本网关参数下发?</p>
         </div>
       </div>

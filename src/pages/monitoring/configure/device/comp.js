@@ -10,21 +10,56 @@ export default forwardRef(function Comp(props, ref) {
         addopen = () => { },
         isenergy = false,
         multExport,
-        selectopts=[]
+        selectopts = [],
+        getList = "",
+        setPage,
+        page
     } = props
     const [selvalue, setSelvalue] = useState(0)
     const [inpvalue, setInpvalue] = useState('')
-    const changeSelect = (value) => {
+    const [energyVal,setEnergyVal] = useState(0)
+    const selOptions = [{
+        label: '全部用能类型',
+        value: 0
+    }, {
+        label: '客户用能',
+        value: 1
+    }, {
+        label: '公共用能',
+        value: 2
+    }]
+    const changeSelect = (value) => {  
+        setPage(()=>({
+            ...page,
+            current: 1,
+        }))
         setSelvalue(value)
+        console.log(page)
+        getList && getList(1,page.pageSize,value, inpvalue,energyVal)
+        // getList && getList(value, inpvalue,energyVal)
     }
-   
+    const getDeviceSearch = () => {
+        setPage(()=>({
+            ...page,
+            current: 1,
+        }))
+        getList && getList(1,page.pageSize,selvalue, inpvalue,energyVal)
+    }
+    const changeEnergy=(v)=>{
+        console.log(v)
+        setEnergyVal(v)
+        setPage(()=>({
+            ...page,
+            current: 1,
+        }))
+        getList && getList(1,page.pageSize,selvalue, inpvalue,v)
+    }
     useImperativeHandle(ref, () => ({
         selvalue,
         inpvalue,
-      
+        energyVal
     }))
-    useEffect(() => {
-    }, [])
+
     return (
         <div>
             <Row justify='space-between'  >
@@ -51,16 +86,16 @@ export default forwardRef(function Comp(props, ref) {
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
-                        <Input style={{ width: 321 }} placeholder={placeholder} onChange={(v) => { setInpvalue(v) }} />
+                        <Input style={{ width: 321 }} placeholder={placeholder} onChange={(e) => { setInpvalue(e.target.value) }} />
                     </Col>
                     <Col>
-                        <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }}>查询</Button>
+                        <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={getDeviceSearch}>查询</Button>
                     </Col>
                     {
                         isenergy && (<>
                             <Divider type="vertical" dashed style={{ margin: '0 16px', borderColor: ' #d7d7d7', height: 30 }} />
                             <Col>
-                                <Select style={{ width: 128 }}></Select>
+                                <Select style={{ width: 128 }} options={selOptions} defaultValue={0} onChange={changeEnergy}></Select>
                             </Col>
                         </>)
                     }

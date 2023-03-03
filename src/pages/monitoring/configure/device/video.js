@@ -1,157 +1,698 @@
-import React, { useRef,useState } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import { useSelector } from 'react-redux'
+import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
+import { MultImport } from './modalCom'
+import { Monitoring } from '@api/api.js'
+import { DeleteModal } from './modalCom'
+import { MyContext } from './formcomp'
 import style from './style.module.less'
-import {MultImport} from './modalCom'
-import { Form, Row, Col,Select,Input,Divider } from 'antd'
-export default function gateway() {
+
+
+const {
+  DeviceManager: {
+    QueryByPageCamera,
+    AeraQueryAll,
+    QueryListGateWay,
+    QueryUsedDeviceCategory,
+    QueryPlanList,
+    AddCamera,
+    UpdateCamera,
+    DeleteCamera
+  }
+} = Monitoring
+
+export default function gateway({ deviceStyle }) {
+  const [selectopts, setSelectopts] = useState([])
+  const [gatewaylist, setGatewaylist] = useState()
+  const [devicelist, setDevicelist] = useState()
+  const [addopts, setAddOpts] = useState()
+  const [alarmopts, setAlarmopts] = useState()
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState({
+    current: 1,
+    pageSize: 10,
+    hideOnSinglePage:false
+  })
+  const pageRef= useRef(page)
+  pageRef.current=page
+  const [dataSource, setDataSource] = useState([])
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const compRef = useRef()
   const modalFormRef = useRef()
-  const modalImportRef=useRef() //导入ref
+  const modalImportRef = useRef()
+  const DelModalRef = useRef()
+  const EditModalFormRef = useRef()
+  const [addform] = Form.useForm()
+  const [editform] = Form.useForm()
+  let delid;
+  const optcss = {
+    color: '#237ae4',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  }
   const columns = [
     {
       title: '园区名称',
-      dataIndex: ''
+      dataIndex: 'areaName'
     },
     {
       title: '安装地址',
-      dataIndex: ''
+      dataIndex: 'address'
     },
     {
       title: '监控类型',
-      dataIndex: ''
+      dataIndex: 'accessMode',
+      render: (text) => {
+        return (
+          <span>{text === 1 ? '云监控' : '本地监控'}</span>
+        )
+      }
     },
     {
       title: '监控设备SN',
-      dataIndex: ''
+      dataIndex: 'sn'
+    },
+    {
+      title: '监控型号',
+      dataIndex: 'category',
     },
     {
       title: '监控名称',
-      dataIndex: ''
+      dataIndex: 'name'
     },
     {
       title: '监控设备IP',
-      dataIndex: ''
+      dataIndex: 'serverAddress'
     },
     {
       title: '通道号',
-      dataIndex: ''
-    },
-    {
-      title: '监控设备厂商',
-      dataIndex: ''
+      dataIndex: 'channel'
     },
     {
       title: '备注',
-      dataIndex: ''
+      dataIndex: 'remark'
     },
     {
       title: '操作',
-      dataIndex: ''
+      dataIndex: 'options',
+      render: (text, record) => {
+        return (
+          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
+            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
+          </p>
+        )
+      }
     },
   ]
-  //打开新增网关窗口
+  for (let val of columns) {
+    val.align = 'center'
+  }
+  //打开编辑窗口
+  const onEdit = (record) => {
+    console.log(record)
+    EditModalFormRef?.current?.onOpen()
+    editform.setFieldsValue({ ...record, port: record.port ? record.port : '' })
+  }
+
+  //确认编辑
+  const editOk = async () => {
+    editform.validateFields().then(async () => {
+      let { id, areaId, address, remark, gatewayId, category, sn,
+        name,
+        accessMode,
+        channel,
+        serverAddress,
+        port,
+        ip,
+        account,
+        pwd,
+      } = editform.getFieldValue()
+      if (accessMode === 1) {
+        serverAddress = ''
+        port = 0
+        ip = ''
+        account = ''
+        pwd = ''
+      }
+      let params = {
+        id,
+        projectId,
+        areaId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        manufacturer: 0,
+        accessMode,
+        channel,
+        serverAddress,
+        port,
+        ip,
+        account,
+        pwd,
+      }
+      const resp = await UpdateCamera(params)
+      if (resp.success) {
+        message.success("更新成功")
+        EditModalFormRef?.current?.onCancel()
+        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      } else {
+        message.error(resp.errMsg)
+      }
+    })
+
+  }
+  //打开删除窗口
+  const onDelete = (record) => {
+    DelModalRef?.current?.onOpen()
+    delid = record.id
+  }
+  //确认删除
+  const delOk = async () => {
+    
+    const { success, errMsg } = await DeleteCamera({
+      projectId,
+      id: delid
+    })
+    if (success) {
+      message.success('删除成功')
+      if(page.pageSize*page.current>=page.total){
+        setPage({
+          ...page,
+          current:page.current-1
+        })
+      }
+      DelModalRef?.current?.onCancel()
+      setTimeout(()=>{
+        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      },0)
+      
+ 
+    } else {
+      message.error(errMsg)
+    }
+  }
+
+
+  //打开新增窗口
   const addopen = () => {
+    addform.setFieldsValue({
+      areaId: '',
+      address: '',
+      remark: '',
+      gatewayId: '',
+      category: '',
+      sn: '',
+      name: '',
+      manufacturer: 0,
+      serverAddress: '',
+      port: '',
+      ip: '',
+      account: '',
+      pwd: '',
+      address: '',
+      channel: '',
+      accessMode: "",
+    })
     modalFormRef?.current?.onOpen()
+
+  }
+  //确认新增
+  const addOk = async () => {
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        manufacturer: 0,
+        accessMode: formvalue.accessMode,
+        serverAddress: formvalue.serverAddress ? formvalue.serverAddress : "",
+        port: formvalue.port ? formvalue.port : 0,
+        ip: formvalue.ip ? formvalue.ip : "",
+        account: formvalue.account ? formvalue.account : "",
+        pwd: formvalue.pwd ? formvalue.pwd : "",
+        address: formvalue.address ? formvalue.address : "",
+        channel: formvalue.channel
+      }
+      const res = await AddCamera(params)
+      if (res.success) {
+        message.success('新增成功!')
+        modalFormRef?.current?.onCancel()
+        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+
+
+
   }
   //打开批量导入窗口
-  const multExport=()=>{
+  const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
+  //获取园区
+  const getAeraQueryAll = async () => {
+    try {
+      const resp = await AeraQueryAll(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        setSelectopts(() => [...data])
+        setAddOpts(() => [...resp.data])
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  //获取已使用的电表列表
+  const getQueryUsedDeviceCategory = async () => {
+    try {
+      const resp = await QueryUsedDeviceCategory({
+        projectId,
+        deviceStyle
+      })
+      if (resp.success && Array.isArray(resp.data)) {
+        let arr = resp.data.map(it => ({ label: it, value: it }))
+        setDevicelist(() => ([...arr]))
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+  }
+  //获取网关
+  const getQueryListGateWay = async () => {
+    try {
+      const resp = await QueryListGateWay(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const arr = resp.data.map(it => ({ ...it }))
+        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+
+  }
+  //获取告警计划
+  const getQueryPlanList = async () => {
+    const res = await QueryPlanList(projectId)
+    console.log(res)
+
+    if (res.success && Array.isArray(res.data)) {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }, ...res.data])
+    } else {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }])
+    }
+  }
+  //获取视频监控列表
+  const getQueryByPageCamera = async (curpage=0,pageSize=0,id, like, customerType) => {
+    setLoading(true)
+    let params = {
+      projectId,
+      pageNum: curpage?curpage:pageRef.current.current,
+      pageSize:pageSize?pageSize:pageRef.current.pageSize,
+      areaId: id ? id: 0,
+      alike: like ? like : '',
+      customerType: customerType ? customerType : 0
+    }
+    const resp = await QueryByPageCamera(params)
+    setPage(() => ({
+      ...page,
+      current:resp.pageNum,
+      pageSize: resp.pageSize,
+      total: resp.total
+    }))
+    setLoading(false)
+    if (resp.success && Array.isArray(resp.data)) {
+      setDataSource([...resp.data])
+      
+    } else {
+      setDataSource([])
+    }
+  }
+  const changePage=(page, pageSize) => {
+      setPage(()=>({
+        ...page
+      }))
+      getQueryByPageCamera(page.current,page.pageSize,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+  
+
+
+  useEffect(() => {
+    getAeraQueryAll()
+    getQueryUsedDeviceCategory()
+    getQueryPlanList()
+    getQueryListGateWay()
+    getQueryByPageCamera()
+  }, [])
+
+  //传入props对象
   const ComProps = {
     addopen,
-    multExport
+    isenergy: false,
+    multExport,
+    ref: compRef,
+    selectopts,
+    setPage,
+    page,
+    getList: getQueryByPageCamera
   }
   const ModalFormProps = {
     modalFormRef,
-    width: 746
+    width: 746,
+    name: '新增视频监控',
+    addopts,
+    gatewaylist,
+    devicelist,
+    onOk: addOk
   }
-  const ImportProps={
+  const ImportProps = {
     modalImportRef,
-    width: 560
+    width: 560,
+    name: '/deviceExcel/electric.xlsx'
   }
+  const EditModalFormProps = {
+    EditModalFormRef,
+    width: 746,
+    name: '编辑视频监控',
+    onOk: editOk
+  }
+
+
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}></Table>
+        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage }></Table>
       </Comp>
-      <AddModalForm {...ModalFormProps}></AddModalForm>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+        <AddModalForm {...ModalFormProps} >
+        </AddModalForm>
+      </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
+      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除传感器？" onOk={delOk}></DeleteModal>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+        <EditModalForm {...EditModalFormProps}></EditModalForm>
+      </MyContext.Provider>
+
     </div>
   )
 }
 
-//新增网关
-let AddModalForm = ({ modalFormRef, ...other }) => {
+
+//新增form表单组件
+export const FormComp = (props) => {
+  const { TextArea } = Input
+  const { addopts, gatewaylist, devicelist, alarmopts, form } = useContext(MyContext)
+  const [camera, setCamera] = useState(2)
+  const rules = [{
+    required: true
+  }]
+  const channelList = Array(1, 2, 3, 4, 5, 6, 7, 8).map((item, index) => ({ label: index + 1, value: index + 1 }))
+  const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
+
+  const changeCameraType = (v, option) => {
+    setCamera(v)
+  }
+  return (
+    <Form
+      labelAlign="left"
+      form={form}
+      colon={false}
+      labelCol={{
+        span: 8
+      }}
+      validateTrigger="onFinish"
+    >
+      <Row className={style.customItem}>
+        <Col flex={1} style={{ minHeight: 536 }}>
+          <Form.Item label="所属园区" name="areaId" rules={rules} >
+            <Select
+              fieldNames={{
+                label: 'name',
+                value: 'id',
+              }}
+              options={addopts}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="安装地址" name="address" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="备注" name="remark" >
+            <TextArea />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+        </Col>
+        <Col flex={1}>
+          <Form.Item label="设备型号" name="category" rules={rules}>
+            <Select
+              options={devicelist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="监控类型" name="accessMode" rules={rules}>
+            <Select
+              onChange={changeCameraType}
+              options={[
+                {
+                  label: '云监控',
+                  value: 1
+                },
+                {
+                  label: '本地监控',
+                  value: 2
+                }
+              ]}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="设备编号" name="sn" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="设备名称" name="name" rules={rules}>
+            <Input />
+          </Form.Item>
+          {
+            camera === 2 ? <>
+              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+                validator: (_, value) => {
+                  if (!value) {
+                    return Promise.resolve()
+                  } else {
+                    if (Number(value) && value >= 1 && value < 65535) {
+                      return Promise.resolve()
+                    } else {
+                      return Promise.reject(new Error('请输入正确的端口号(1~65535)'))
+                    }
+                  }
+                }
+              }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+                <Input />
+              </Form.Item>
+            </> : null
+          }
+
+          <Form.Item label="通道号" name="channel" rules={rules}>
+            <Select options={channelList}></Select>
+          </Form.Item>
+          {
+            camera === 2 ? <>
+              <Form.Item label="用户名" name="account" rules={rules}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="密码" name="pwd" rules={rules}>
+                <Input />
+              </Form.Item>
+            </> : null
+          }
+
+        </Col>
+      </Row>
+    </Form>
+  )
+}
+//新增设备
+export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
     <Modal mold='cust' ref={modalFormRef} {...other}>
-      <BlueColumn name="新增电表" styled={{ padding: '24px 0px' }}></BlueColumn>
-      <Form >
-        <Row>
-          <Col flex={1}>
-            <Form.Item label="所属园区">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="安装地址">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="告警方案">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="备注">
-              <Input/>
-            </Form.Item>
-          </Col>
-          <Col>
-          <Divider type='vertical' style={{height:'100%',margin:'0 32px',borderColor:'#bcbcbc'}} dashed/>
-          </Col>
-          <Col flex={1}>
-            <Form.Item label="所属网关">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="设备型号">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="设备编号">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="设备名称">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="用能类型">
-              <Select></Select>
-            </Form.Item>
-          </Col>
-        </Row>
-
-      </Form>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <FormComp >
+      </FormComp>
     </Modal>
   )
 
 }
-let Count = ({ value, onChange }) => {
-  console.log(value)
-  const [number,setNumber] =useState(0)
-  const reduce = () => {
-    number>0&&number>0&&setNumber(number-1)
-    onChange(number-1)
-  }
 
-  const add = () => {
-    setNumber(number+1)
-    onChange(number+1)
-  }
-  const inpBlur=(e)=>{
-   
- 
-  }
+
+
+
+//编辑设备
+export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <div className={style.countNum}>
-      <div onClick={reduce} className={style.opts} style={{borderRight:'none'}}>-</div>
-      <Input  className={style.numbers} defaultValue={number}  onBlur={inpBlur} value={number} onChange={(e)=>{setNumber(e.target.value);onChange(e.target.value)}}/>
-      <div onClick={add} className={style.opts} style={{borderLeft:'none'}}>+</div>
-      <span style={{paddingLeft:16}}>(秒)</span>
-    </div>
+    <Modal mold='cust' ref={EditModalFormRef} {...other}>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <EditFormComp >
+      </EditFormComp>
+    </Modal>
+  )
+
+}
+
+//编辑form表单组件
+export const EditFormComp = (props) => {
+  const { TextArea } = Input
+  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+  const [camera, setCamera] = useState(2)
+  const rules = [{
+    required: true
+  }]
+  const channelList = Array(1, 2, 3, 4, 5, 6, 7, 8).map((item, index) => ({ label: index + 1, value: index + 1 }))
+  const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
+  const changeCameraType = (v, option) => {
+    setCamera(v)
+  }
+  useEffect(() => {
+    setCamera(form.getFieldValue("accessMode"))
+  }, [])
+  return (
+    <Form
+      labelAlign="left"
+      form={form}
+      colon={false}
+      labelCol={{
+        span: form.getFieldValue("accessMode") === 2 ? 8 : 7
+      }}
+      validateTrigger="onFinish"
+    >
+      <Row className={style.customItem} style={{ minHeight: 536 }}>
+        <Col flex={1}>
+          <Form.Item label="所属园区" name="areaId" rules={rules}>
+
+            <Select
+              fieldNames={{
+                label: 'name',
+                value: 'id',
+              }}
+              options={addopts}
+            ></Select>
+
+          </Form.Item>
+          <Form.Item label="安装地址" name="address" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="备注" name="remark" rules={rules}>
+            <TextArea />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+        </Col>
+        <Col flex={1}>
+          <Form.Item label="设备型号" name="category" rules={rules}>
+            <Select
+              options={devicelist}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="监控类型" name="accessMode" rules={rules}>
+            <Select
+              onChange={changeCameraType}
+              options={[
+                {
+                  label: '云监控',
+                  value: 1
+                },
+                {
+                  label: '本地监控',
+                  value: 2
+                }
+              ]}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="设备编号" name="sn" rules={rules}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="设备名称" name="name" rules={rules}>
+            <Input />
+          </Form.Item>
+          {
+            camera === 2 ? <>
+              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+                validator: (_, value) => {
+                  if (!value) {
+                    return Promise.resolve()
+                  } else {
+                    if (Number(value) && value >= 1 && value < 65535) {
+                      return Promise.resolve()
+                    } else {
+                      return Promise.reject(new Error('请输入正确的端口号(1~65535)'))
+                    }
+                  }
+                }
+              }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+                <Input />
+              </Form.Item>
+            </> : null
+          }
+
+          <Form.Item label="通道号" name="channel" rules={rules}>
+            <Select options={channelList}></Select>
+          </Form.Item>
+          {
+            camera === 2 ? <>
+              <Form.Item label="用户名" name="account" rules={rules}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="密码" name="pwd" rules={rules}>
+                <Input />
+              </Form.Item>
+            </> : null
+          }
+        </Col>
+      </Row>
+    </Form>
   )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

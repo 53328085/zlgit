@@ -1,201 +1,481 @@
-import React, { useEffect, useRef,useState } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col,Select,Input,Divider } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import style from './style.module.less'
-import {MultImport} from './modalCom'
+import { MultImport } from './modalCom'
 import { Monitoring } from '@api/api.js'
+import { DeleteModal } from './modalCom'
+import {AddModalForm, MyContext, EditModalForm} from './elecomp'
 
-const { DeviceManager: { QueryByPageElectric,QueryListGateWay } } = Monitoring
-export default function gateway() {
-  const [page,setPage]=useState({
-    current:1,
-    pageSize:10
+const {
+  DeviceManager: {
+    QueryByPageElectric,
+    AeraQueryAll,
+    QueryListGateWay,
+    QueryUsedDeviceCategory,
+    QueryPlanList,
+    AddElectric,
+    UpdateElectric,
+    UpdateFactor,
+    DeleteElectric
+  }
+} = Monitoring
+
+export default function gateway({ deviceStyle }) {
+  const [selectopts, setSelectopts] = useState([])
+  const [gatewaylist, setGatewaylist] = useState()
+  const [devicelist, setDevicelist] = useState()
+  const [addopts, setAddOpts] = useState()
+  const [alarmopts, setAlarmopts] = useState()
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState({
+    current: 1,
+    pageSize: 10,
+    hideOnSinglePage: false
   })
-  const [dataSource,setDataSource]=useState([])
-  const projectId = useSelector(state=>state.system.menus.projectId)
-  const compRef =useRef()
+  const pageRef= useRef(page)
+  pageRef.current=page
+  const [dataSource, setDataSource] = useState([])
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const compRef = useRef()
   const modalFormRef = useRef()
-  const modalImportRef =useRef()
+  const modalImportRef = useRef()
+  const DelModalRef = useRef()
+  const EditModalFormRef = useRef()
+  const FactorRef=useRef()
+  const [addform] = Form.useForm()
+  const [editform] = Form.useForm()
+  const [factorform] = Form.useForm()
+  let delid;
+  const optcss = {
+    color: '#237ae4',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  }
   const columns = [
     {
       title: '园区名称',
-      dataIndex: ''
+      dataIndex: 'areaName'
     },
     {
       title: '安装地址',
-      dataIndex: ''
+      dataIndex: 'address'
     },
     {
       title: '电表编号',
-      dataIndex: ''
+      dataIndex: 'sn'
     },
     {
       title: '电表型号',
-      dataIndex: ''
+      dataIndex: 'category'
     },
     {
       title: '电表名称',
-      dataIndex: ''
+      dataIndex: 'name'
     },
     {
       title: '所属网关',
-      dataIndex: ''
+      dataIndex: 'gatewayName',
+      render: (text, record, index) => {
+        if (Array.isArray(gatewaylist)) {
+          const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
+          console.log(gatewayfilter)
+          return (
+            <span>{gatewayfilter[0]['id']===0?'/':gatewayfilter[0].category}</span>
+          )
+        }
+
+      }
     },
     {
       title: '用能类型',
-      dataIndex: ''
+      dataIndex: 'customerType',
+      render: (text) => {
+        return (
+          <>
+            {text === 1 ? <span>客户用能</span> : <span>公共用能</span>}
+          </>
+        )
+      }
     },
     {
       title: '备注',
-      dataIndex: ''
+      dataIndex: 'remark'
     },
     {
       title: '操作',
-      dataIndex: ''
+      dataIndex: 'options',
+      width: 136,
+      render: (text, record) => {
+        return (
+          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
+            <span style={optcss} onClick={() => { onFactor(record) }}>倍率</span>
+            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
+          </p>
+        )
+      }
     },
   ]
-  //打开新增网关窗口
+  for (let val of columns) {
+    val.align = 'center'
+  }
+  //打开编辑窗口
+  const onEdit = (record) => {
+    EditModalFormRef?.current?.onOpen()
+    editform.setFieldsValue({ ...record, commProtocol: record.commProtocol ? record.commProtocol : '' })
+  }
+ 
+  //确认编辑
+  const editOk = async () => {
+    const { 
+      id,
+      areaId,
+      alarmPlanId,
+      address,
+      remark,
+      gatewayId,
+      category,
+      sn,
+      name,
+      customerType,
+      commPort,
+      commProtocol,
+      commAddress,
+      factor } = editform.getFieldValue()
+    let params = {
+      id,
+      projectId,
+      areaId,
+      alarmPlanId,
+      address,
+      remark,
+      gatewayId,
+      category,
+      sn,
+      name,
+      customerType,
+      commPort,
+      commProtocol:commProtocol?commProtocol:0,
+      commAddress,
+      factor
+    }
+    const resp = await UpdateElectric(params)
+    if(resp.success){
+      message.success("更新成功")
+      EditModalFormRef?.current?.onCancel()
+      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }else{
+      message.error(resp.errMsg)
+    }
+    console.log(resp)
+  }
+   //打开删除窗口
+   const onDelete = (record) => {
+    DelModalRef?.current?.onOpen()
+    delid=record.id
+  }
+  //确认编辑
+  const delOk=async()=>{
+    console.log(delid)
+    const {success,errMsg} = await DeleteElectric({
+      projectId,
+      id:delid
+    })
+    if(success){
+      message.success('删除成功')
+      if(page.pageSize*page.current>=page.total){
+        setPage({
+          ...page,
+          current:page.current-1
+        })
+      }
+      DelModalRef?.current?.onCancel()
+      setTimeout(()=>{
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      },0)
+    
+    }else{
+      message.error(errMsg)
+    }
+    console.log(res)
+  }
+  //打开倍率窗口
+  const onFactor=(record)=>{
+    FactorRef?.current?.onOpen()
+    factorform.setFieldsValue({...record})
+  }
+  //确认倍率修改
+  const factorOk=async()=>{
+   
+    const formvalue = factorform.getFieldValue()
+    const res =  await  UpdateFactor({
+      projectId,
+      id: formvalue.id,
+      factor:formvalue.factor
+    })
+    if(res.success){
+      message.success('修改成功')
+      FactorRef?.current?.onCancel()
+      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //打开新增窗口
   const addopen = () => {
+    addform.setFieldsValue({
+      areaId: '',
+      alarmPlanId: '',
+      address: '',
+      remark: '',
+      gatewayId: '',
+      category: '',
+      sn: '',
+      name: '',
+      customerType: '',
+      commPort: '',
+      commProtocol: '',
+      commAddress: '',
+      factor: 1
+    })
     modalFormRef?.current?.onOpen()
+
+  }
+  //确认新增
+  const addOk = async () => {
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        alarmPlanId: formvalue.alarmPlanId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        customerType: formvalue.customerType,
+        commPort: formvalue.commPort ? formvalue.commPort : 0,
+        commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
+        commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
+        factor: formvalue.factor
+      }
+      const res = await AddElectric(params)
+      if (res.success) {
+        message.success('新增成功!')
+        modalFormRef?.current?.onCancel()
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+
+
+
   }
   //打开批量导入窗口
-  const multExport=()=>{
+  const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
+  //获取园区
+  const getAeraQueryAll = async () => {
+    try {
+      const resp = await AeraQueryAll(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        setSelectopts(() => [...data])
+        setAddOpts(() => [...resp.data])
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  //获取已使用的电表列表
+  const getQueryUsedDeviceCategory = async () => {
+    try {
+      const resp = await QueryUsedDeviceCategory({
+        projectId,
+        deviceStyle
+      })
+      if (resp.success && Array.isArray(resp.data)) {
+        let arr = resp.data.map(it => ({ label: it, value: it }))
+        setDevicelist(() => ([...arr]))
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+  }
+  //获取网关
+  const getQueryListGateWay = async () => {
+    try {
+      const resp = await QueryListGateWay(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        const arr = resp.data.map(it => ({ ...it }))
+        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+
+  }
+  //获取告警计划
+  const getQueryPlanList = async () => {
+    const res = await QueryPlanList(projectId)
+    console.log(res)
+
+    if (res.success && Array.isArray(res.data)) {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }, ...res.data])
+    } else {
+      setAlarmopts([{ label: '不启用告警方案', value: 0 }])
+    }
+  }
   //获取电表列表
-  const getQueryByPageElectric = async ()=>{
-    let params={
+  const getQueryByPageElectric = async (curpage=0,pageSize=0,id, like,customerType) => {
+    setLoading(true)
+    let params = {
       projectId,
-      pageNum:page.current,
-      pageSize:page.pageSize,
-      areaId: compRef?.current?.selvalue,
-      alike:compRef?.current?.inpvalue,
+      // pageNum: page.current,
+      // pageSize: page.pageSize,
+      pageNum: curpage?curpage:pageRef.current.current,
+      pageSize: pageSize?pageSize:pageRef.current.pageSize,
+      areaId: id ? id : 0,
+      alike: like ? like : '',
+      customerType:customerType?customerType:0
     }
     const resp = await QueryByPageElectric(params)
-    console.log(resp)
-    if(resp.success&&Array.isArray(resp.data)){
-      setDataSource([...setDataSource])
-    }else{
+    setLoading(false)
+    setPage({
+      ...page,
+      current:resp.pageNum,
+      pageSize: resp.pageSize,
+      total: resp.total
+    })
+    if (resp.success && Array.isArray(resp.data)) {
+      setDataSource([...resp.data.reverse()])
+  
+    } else {
       setDataSource([])
     }
+    
   }
-  const a=async()=>{
-  const r=  await QueryListGateWay(projectId)
-  console.log(r)
-  }
-  useEffect(()=>{
+
+
+
+  useEffect(() => {
     getQueryByPageElectric()
-    a()
-  },[])
+    getAeraQueryAll()
+    getQueryUsedDeviceCategory()
+    getQueryPlanList()
+    getQueryListGateWay()
+   
+
+  }, [])
   //传入props对象
   const ComProps = {
     addopen,
-    isenergy:true,
+    isenergy: true,
     multExport,
-    ref:compRef
+    ref: compRef,
+    selectopts,
+    setPage,
+    page,
+    getList:getQueryByPageElectric
   }
   const ModalFormProps = {
     modalFormRef,
     width: 746,
-   
+    name: '新增电表',
+    addopts,
+    gatewaylist,
+    devicelist,
+    onOk: addOk
   }
-  const ImportProps={
+  const ImportProps = {
     modalImportRef,
     width: 560,
-    name:'/deviceExcel/electric.xlsx'
+    name: '/deviceExcel/electric.xlsx'
   }
+  const EditModalFormProps = {
+    EditModalFormRef,
+    width: 746,
+    name: '编辑电表',
+    onOk: editOk
+  }
+  const FactorModalProps={
+    FactorRef,
+    name:'设置倍率',
+    factorform,
+    onOk: factorOk,
+    width:512
+  }
+  
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} pagination={page} dataSource={dataSource}></Table>
+        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading} onChange={(page, pageSize) => {
+          setPage(() => ({
+            ...page
+          }))
+          getQueryByPageElectric(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+        }}></Table>
       </Comp>
-      <AddModalForm {...ModalFormProps}></AddModalForm>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+        <AddModalForm {...ModalFormProps} >
+        </AddModalForm>
+      </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
+      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除电表？" onOk={delOk}></DeleteModal>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+        <EditModalForm {...EditModalFormProps}></EditModalForm>
+      </MyContext.Provider>
+      <SetFactor {...FactorModalProps}></SetFactor>
     </div>
   )
 }
 
-//新增网关
-let AddModalForm = ({ modalFormRef, ...other }) => {
-  const {TextArea} = Input
-  return (
-    <Modal mold='cust' ref={modalFormRef} {...other}>
-      <BlueColumn name="新增电表" styled={{ padding: '24px 0px' }}></BlueColumn>
-      <Form 
-        labelAlign="left"
-        colon={false}
-        labelCol={{
-          span:5
-        }}
-      >
-        <Row>
-          <Col flex={1}>
-            <Form.Item label="所属园区">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="安装地址">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="告警方案">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="备注">
-              <TextArea/>
-            </Form.Item>
-          </Col>
-          <Col>
-          <Divider type='vertical' style={{height:'100%',margin:'0 32px',borderColor:'#bcbcbc'}} dashed/>
-          </Col>
-          <Col flex={1}>
-            <Form.Item label="所属网关">
-              <Select></Select>
-            </Form.Item>
-            <Form.Item label="设备型号">
-            <Select></Select>
-            </Form.Item>
-            <Form.Item label="设备编号">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="设备名称">
-              <Input/>
-            </Form.Item>
-            <Form.Item label="用能类型">
-              <Select></Select>
-            </Form.Item>
-          </Col>
-        </Row>
 
+let SetFactor=({FactorRef,name,factorform,...other})=>{
+  return(
+    <Modal mold='cust' ref={FactorRef} {...other}>
+      <BlueColumn name={name}  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <Form 
+      form={factorform}
+      labelAlign="left"
+      colon={false}
+      labelCol={{
+        span: 4
+      }}
+      >
+          <Form.Item label="设备类别" >
+            <Input value="电表" style={{width:240}} disabled/>
+          </Form.Item>
+          <Form.Item label="设备型号" name="category" >
+            <Input style={{width:240}} disabled/>
+          </Form.Item>
+          <Form.Item label="设备编号" name="sn" >
+            <Input style={{width:240}} disabled/>
+          </Form.Item>
+          <Form.Item label="设备名称" name="name" >
+            <Input style={{width:240}} disabled/>
+          </Form.Item>
+          <Form.Item label="倍率" name="factor">
+           <Input style={{width:240}}/>
+          </Form.Item>
+          <Form.Item label="  ">
+            <Row style={{color:'#ff0000',fontSize:12}}>
+            倍率=PT*CT！  
+            </Row>
+            <Row style={{color:'#ff0000',fontSize:12}}>
+            修改倍率会影响结算金额，请保持平台设置和现场环境一致！
+            </Row>
+          </Form.Item>
       </Form>
     </Modal>
-  )
-
-}
-let Count = ({ value, onChange }) => {
-  console.log(value)
-  const [number,setNumber] =useState(0)
-  const reduce = () => {
-    number>0&&number>0&&setNumber(number-1)
-    onChange(number-1)
-  }
-
-  const add = () => {
-    setNumber(number+1)
-    onChange(number+1)
-  }
-  const inpBlur=(e)=>{
-   
- 
-  }
-  return (
-    <div className={style.countNum}>
-      <div onClick={reduce} className={style.opts} style={{borderRight:'none'}}>-</div>
-      <Input  className={style.numbers} defaultValue={number}  onBlur={inpBlur} value={number} onChange={(e)=>{setNumber(e.target.value);onChange(e.target.value)}}/>
-      <div onClick={add} className={style.opts} style={{borderLeft:'none'}}>+</div>
-      <span style={{paddingLeft:16}}>(秒)</span>
-    </div>
   )
 }

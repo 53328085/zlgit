@@ -1,24 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
+import CustContext from '@com/content'
 export default function Comp(props) {
+    const context = useContext(CustContext)
     const {
         placeholder = '输入网关编号/安装地址',
         inplabel = '设备查询',
         addopen = () => { },
         isenergy = false,
+        areaList=[],
         multExport
     } = props
-    const { DeviceManager: { AeraQueryAll } } = Monitoring
-    const projectId = useSelector(state => state.system.menus.projectId)
-    const getAeraQueryAll = async () => {
-        const resp = await AeraQueryAll(projectId)
-        console.log(resp)
-    }
+   
+    
+   
     useEffect(() => {
-        getAeraQueryAll()
+       
     }, [])
     return (
         <div>
@@ -26,29 +26,15 @@ export default function Comp(props) {
                 <Row align='middle'>
                     <Col>
                         <Select
-                            defaultValue="lucy"
+                           defaultValue={0}
+                           fieldNames={{
+                            label:'name',
+                            value:'id'
+                           }}
                             style={{
                                 width: 264,
                             }}
-                            options={[
-                                {
-                                    value: 'jack',
-                                    label: 'Jack',
-                                },
-                                {
-                                    value: 'lucy',
-                                    label: 'Lucy',
-                                },
-                                {
-                                    value: 'Yiminghe',
-                                    label: 'yiminghe',
-                                },
-                                {
-                                    value: 'disabled',
-                                    label: 'Disabled',
-                                    disabled: true,
-                                },
-                            ]}
+                            options={areaList}
                         />
                     </Col>
                     <Col style={{ margin: '0 20px' }}>

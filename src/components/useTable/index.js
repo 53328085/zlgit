@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
-  console.log(pagination)  
   const tableref = useRef()
   const domExprot = ()=> { // 通过table DOM 导出  
     const params = { raw: true };
