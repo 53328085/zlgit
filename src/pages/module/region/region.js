@@ -1,20 +1,18 @@
-import React, { useState, useRef, useEffect, useMemo, useContext, useCallback} from 'react'
-import style from './style.module.less'
-import { Input, Button, Space, Modal, Form, message, Typography, Select, InputNumber  } from 'antd'
+import React, { useState, useRef, useEffect, } from 'react' 
+import { Input, Button, Space, Modal, Form, message, Typography, Select, InputNumber, Drawer  } from 'antd'
 import styled from 'styled-components' 
 import UserTable from '@com/useTable'
 import {Area} from '@api/api.js'
-import {WarningFilled} from '@ant-design/icons'
+import {WarningFilled, LeftOutlined, RightOutlined} from '@ant-design/icons'
 import {useAntdTable} from 'ahooks'
 import warningImg from '@imgs/warning.png'
 import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
 import Mapcom from "@com/useMap";
-import { Column } from '@antv/g2plot'
-import { repeat } from 'lodash'
+
 const Mainbox = styled.div`
   display: grid;
-  grid-template-rows: 65px 1fr;
+  grid-template-rows: 48px 1fr;
   row-gap: 16px;
 `
 const Formbox = styled(Form)`
@@ -33,20 +31,73 @@ const Formbox = styled(Form)`
   }
 
   `
-const {Link, Text} = Typography
+const Drawerbox = styled(Drawer)`
+   && {
+    .ant-drawer-content-wrapper {
+      width: 100% !important;
+    }
+    .ant-drawer-wrapper-body {
+      background-color: #003366;
+      .ant-drawer-body {
+        display: grid;
+        grid-template-columns: 692px 1fr 714px;
+        column-gap: 32px;
+        .selected {
+          display: grid;
+          grid-template-rows: 1fr 1fr;
+          row-gap: 32px;
+          .ant-table {
+            height: 100%;
+          }
+        }
+        .unselected {
+          display:  flex;
+          >div {
+            flex: 1;
+          }
+          .ant-table {
+            height: 100%;
+          }
+        }
+        .optab {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 32px 0;
+          >div {
+            .ant-typography {
+              color: #fff;
+            }
+           .ant-btn-icon-only {
+             width: 64px;
+             height: 46px;
+           }
+          }
+        }
+      }
+    }
+   }
+
+`
+const {Link, Text, Paragraph} = Typography
 const {Item} = Form
 export default function Index({projectId,level, CModal, name, allLevel}) {
   
   const [levelone] = useState(allLevel[0])  
   const limitlevle = allLevel.slice(0, level - 1);
-  console.log(limitlevle)
+   
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
   const nref = useRef() // 新增，编辑
   const dref = useRef() // 删除
+  const content = useRef()
   const mapref = useRef() 
   const [Record, setRecord] = useState({})
   const [isAdd, setIsAdd] = useState(true)
+  const [open, setOpen] = useState(false)
+  const [deviceSummary, setDeviceSummary] = useState([]);
+  const [deviceSub, setDeviceSub] = useState([])
+  const [Unselected, setUnSelected] = useState([]);
   //const [leveloption, setLevelOption] = useState({})
  
   const [columns, setColumns] = useState([])
@@ -55,13 +106,18 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
     field: [],
     type: []
   })
-  
+  const devices = useRef({
+    unselected: [],
+    deviceSummary: [],
+    deviceSub: [],
+    selected: []
+  })
   const islngLat = fields.field.includes('经纬度')
   const address = useRef('');
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
   const leveloption = useRef({})
   const topAreaId = level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0;
-  console.log(leveloption)
+  
   let params = { //查询
     pageNum: 1,
     pageSize: 15,
@@ -79,9 +135,9 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
     id: 0,
     fields:[],
   }
- 
+  
   const getLevelOption = async (parentId=0, level=1) => {  // 查询层级
-    
+     console.log(level);
      if  (Array.isArray(leveloption.current.level1) && level == 1) return // 第一级只需查一遍
      try {
       let {success, data} = await  Area.QueryAll({
@@ -99,11 +155,128 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
        console.log(error)
      } 
 }
+  //  配置 start
+ const deviceColumns = [
+    {
+      title: '设备编号',
+      dataIndex: 'sn',
+      key: 'sn',
+    },
+    {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'address',
+    },
+  
+ ]
+ const drawClose = () => {
+  setOpen(false)
+ }
+ const drawopen = () => {
+   setOpen(true)
+ }
+ const deviceData = async (record) => {
+  try {
+  let {type, areaId} = record   
+  let {success, data} = await Area.QueryUnusedMeter({projectId, type, areaId}) // 未选中 
+   if (success && Array.isArray(data)) {
+    setUnSelected([...data])
+   }else {
+    setUnSelected([])
+   }
+
+   let {data: {deviceSummary , deviceSub}, success:suc} = await Area.QueryUsedMeter({projectId, type, areaId}) // 已选中
+    if (suc && Array.isArray(deviceSummary)) {
+       setDeviceSummary([...deviceSummary]) 
+    }else {
+      setDeviceSummary([]) 
+    }
+    if (suc && Array.isArray(deviceSub)) {
+      setDeviceSub([...deviceSub]) 
+    }else {
+      setDeviceSub([]) 
+    }
+  } catch (error) {
+    console.log(error)
+  }
+ }
+ const config = async (record) => { 
+   try {
+     setRecord({...record})
+     deviceData(record).then(() => {
+      drawopen()
+     })
+   } catch (error) {
+     console.log(error)
+   }
  
+ }
+ const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows, info) => {
+    devices.current.selected = selectedRows;
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    console.log(info)
+  }, 
+};
+ const onMove = (type) => {
+  let selected = devices.current.selected
+  const choose = (arr) => arr.filter(a => {
+    return  !selected.find(s => s.id == a.id)
+ })
 
+   switch(type) {
+     case 1:
+      setDeviceSummary((arr) => [...arr, ...selected])
+      setUnSelected(choose)
+      break;
+    case 2:
+      setUnSelected((arr) => [...arr, ...selected])
+      setDeviceSummary(choose)
+      break;
+    case 3:
+      setDeviceSub((arr) => [...arr, ...selected])
+      setUnSelected(choose)
+      break;  
+    case 4:
+      setUnSelected((arr) => [...arr, ...selected])
+      setDeviceSub(choose)
+      break; 
+    default:
+      break;
+   }
+  devices.current.selected = []
+ }
 
+ const configureMeter = async () => {
 
+  /* projectId": 0,
+  "areaId": 0,
+  "deviceSummary": [
+    "string"
+  ],
+  "deviceSub": [
+    "string"
+  ] */
+  // let summary = deviceSummary.map(i => i.id);
 
+    let params = {
+      projectId,
+      areaId: Record.areaId,
+      deviceSummary: deviceSummary.map(i => i.sn),
+      deviceSub: deviceSub.map(i => i.sn),
+    }
+   let {success, errMsg} = await  Area.ConfigureMeter(params)
+   success && custMsg({content: '保存成功', onClose: () => {
+      deviceData(Record)
+   }})
+   !success && custMsg({success, content: errMsg || '数据出错'})
+ }
+//  配置 end
 
   const del = (record) => {
     setRecord({...Record, ...record});
@@ -155,7 +328,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
         key:'action',
         align: 'center',
         render: (_,record) => <Space size={32}>
-          <Link underline onClick={()=>editItem(record)}>配置</Link>         
+          <Link underline onClick={()=> config(record)}>配置</Link>         
           <Link underline onClick={()=>edit(record)}>编辑</Link>
           <Link underline  type="danger" onClick={()=>del(record)}>删除</Link>
         </Space>
@@ -286,6 +459,12 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
          return <Item label={f} name= {f} ><Input/></Item> ;
      }
   }
+
+
+
+
+
+
   useEffect(() => {
     getLevelOption()
   }, [])
@@ -324,9 +503,47 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
             </Space>
            
         </Form>
+         <div id="content" style={{position: "relative"}}>
           <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />  
-    
+
+           {/* 抽屉 */}
+           {/*  devices.current.deviceSummary = [];
+        devices.current.deviceSub = [] */}
+          <Drawerbox  placement="right" onClose={drawClose} open={open} getContainer={false}    style={{position: 'absolute'}}  closable={false}   >
+                 <div className='selected'>
+                    <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={deviceSummary} rowKey='id'  scroll={{
+                      x: 'max-content',
+                      y: 268
+                    }}   />  
+                    <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={deviceSub} rowKey='id'   /> 
+
+                 </div>
+                 <div className='optab'>
+                          <div>
+                           <Paragraph>选中园区总表</Paragraph>
+                            <Space>
+                            <Button type='primary' icon={<LeftOutlined style={{fontSize: '18px'}} />}  onClick={() => onMove(1)}></Button>
+                            <Button type='primary' icon={<RightOutlined style={{fontSize: '18px'}} />} onClick={() => onMove(2)}></Button>
+                            </Space>
+                          </div>
+                          <div>
+                           <Paragraph>选择园区分表</Paragraph>
+                            <Space>
+                            <Button type='primary' icon={<LeftOutlined style={{fontSize: '18px'}}  onClick={() => onMove(3)}/>} ></Button>
+                            <Button type='primary' icon={<RightOutlined style={{fontSize: '18px'}} onClick={() => onMove(4)} />}></Button>
+                            </Space>
+                          </div>
+                          <div>
+                          <Button type='primary' block style={{marginBottom: '16px'}} onClick={configureMeter}>保存</Button>
+                          <Button   block onClick={drawClose}>关闭</Button>
+                          </div>
+                 </div>
+                 <div className='unselected'>
+                 <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={Unselected} rowKey='id'   /> 
+                 </div>
+          </Drawerbox>
+        </div>
        {/* 新增 / 编辑*/}
         <CModal width={fields.field.includes('经纬度') ? 1024 : 554} title={title} ref={nref} onOk={onOk}  mold='cust'>
 
@@ -407,6 +624,8 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
          <CModal width={554} title={`删除${name}`} ref={dref} onOk={delOk} type="warn" mold='cust'>
               <p><WarningFilled />是否确认删除 <Text type="danger">{Record['名称']}</Text>和相关信息?</p>
          </CModal>
+        
+        
       </Mainbox>
     )
   }
