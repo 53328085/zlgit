@@ -96,7 +96,11 @@ export class User {
     static DeleteArea = ({projectId,areaId}) => server.delete(`/General/Area/DeleteArea?projectId=${projectId}&areaId=${areaId}`)
     static UpdateArea = (params) => server.post(`/General/Area/UpdateArea`, params)
     static QueryAll = ({projectId, level, parentId}) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}&parentId=${parentId}`)
-     
+    static QueryUsedMeter = ({projectId, type, areaId, alike=''} ={}) => server.get(`/General/Area/QueryUsedMeter?projectId=${projectId}&type=${type}&areaId=${areaId}&alike=${alike}`) 
+
+    static QueryUnusedMeter = ({projectId, type, areaId, alike=''} ={}) => server.get(`/General/Area/QueryUnusedMeter?projectId=${projectId}&type=${type}&areaId=${areaId}&alike=${alike}`) 
+    static ConfigureMeter = (params={}) => server.post(`/General/Area/ConfigureMeter`, params) 
+    ///V1/General/Area/QueryUnusedMeter
 }
 // 
 // zl api end

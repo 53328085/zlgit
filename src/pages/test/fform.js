@@ -1,25 +1,52 @@
-import React, {useEffect, useCallback, useMemo} from 'react'
+import { Button, Drawer } from 'antd';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+const Divbox = styled.div`
+  position: relative;
+  height: 200px;
+  padding: 48px;
+  overflow: hidden;
+  text-align: center;
+  background: #fafafa;
+  border: 1px solid #ebedf0;
+  border-radius: 2px;
+  
 
-export default function Father1 (){
-  let [name,setName] = React.useState('');
-  const countContainer = React.useRef(0);
-  const getData=(count)=>{
-      //依据异步获取数据
-      setTimeout(()=>{
-          setName("异步获取回来的数据"+count)
-          countContainer.current = count++;
-      },200)
-  }
+`
+const App = () => {
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
   return (
-      <div>
-          <button onClick={()=>getData(++countContainer.current)}>点击获取数据</button>
-          {name}
+    <Divbox>
+      Render in this
+      <div
+        style={{
+          marginTop: 16,
+        }}
+      >
+        <Button type="primary" onClick={showDrawer}>
+          Open
+        </Button>
       </div>
-  )
-}
- 
-/* 
- 1.父组件state, props更新，子组件也更新
- 2.父组件的函数 useMemo或者 useCallback 缓存
- 3.React.memo 比较 通过第二个参数函数来决定是否刷新，没有第二个函数 浅比较
- */
+      <Drawer
+        title="Basic Drawer"
+        placement="right"
+        closable={false}
+        onClose={onClose}
+        open={open}
+      //  getContainer={false}
+        style={{
+          position: 'absolute',
+        }}
+      >
+        <p>Some contents...</p>
+      </Drawer>
+    </Divbox>
+  );
+};
+export default App;
