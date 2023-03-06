@@ -116,13 +116,13 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
   const address = useRef('');
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
   const leveloption = useRef({})
-  //const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
-  
+ // const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
+  console.log(leveloption)
   let params = { //查询
     pageNum: 1,
     pageSize: 15,
     level,
-    topAreaId: 0,  
+    topAreaId:0,  
     name: '',
     projectId,
   }
@@ -146,7 +146,15 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
         parentId,
       })
        if (success && Array.isArray(data)) {
+
+        /*  
+{id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
+        if (level == 1) {
+           data.push({id: 0, level: 1, name: '全部'})
+        }
         leveloption.current[`level${level}`] = data;  
+
+
        }else {
         leveloption.current[`level${level}`] = []
        }                
@@ -290,8 +298,8 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
     if(isNaN(level)) return;
     
     
-     // console.log('formData', formData);
-    if (level == 1) formData.topAreaId = 0;
+    console.log('formData', formData);
+    formData.topAreaId = 0;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     
     return Area.QueryByPage(params).then(res => {
@@ -481,8 +489,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
                    onChange={submit}
                   ></Select>
              </Item>
-            <Form.Item name="name" label={`${name}查询`}>
-                     
+            <Form.Item name="name" label={`${name}查询`}>                     
                      <Input.Search placeholder={`请输入${name}名称`} allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
                   </Form.Item>
              </>     

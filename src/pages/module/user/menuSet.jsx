@@ -1,0 +1,261 @@
+import React, {useState, useEffect, useLayoutEffect, useRef, forwardRef, useImperativeHandle, useMemo} from 'react'
+import {Drawer, Button, Table, Typography, Checkbox, Tabs, Space, Spin} from 'antd' 
+import styled from 'styled-components' 
+import { User } from "@api/api.js";
+import {custMsg} from '@com/usehandler'
+import CModal from '@com/useModal'
+const { Text, Link, Paragraph  } = Typography
+const CheckboxGroup = Checkbox.Group;
+const Checkdiv = styled.div`
+  display: flex;
+  align-items: stretch;
+  padding: 12px 0;
+  border-bottom: 1px dotted #d7d7d7;
+  && {
+    .ant-checkbox-wrapper {
+      height: 32px;
+      border: 1px solid #e4e4e4;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      min-width: 128px;
+      .ant-checkbox {
+        margin-right: 8px;
+        top: 0;
+        & + span {
+          color: #515151 ;
+        }
+      }
+      
+    }
+    .checktitle {
+      background-color: #f2f2f2;
+      margin-right: 32px;
+      min-width: 168px;
+    }
+  }
+`
+const Tabsbox = styled(Tabs)`
+    .ant-tabs-content-holder {
+      padding: 32px;
+      border: 1px solid #d7d7d7;
+    }
+  .ant-tabs-nav {
+    margin-bottom: 0px;
+  
+   .ant-tabs-nav-list {
+    .ant-tabs-tab {
+        border-radius: 4px 4px 0 0;
+        height: 41px;
+        width: 145px;
+        justify-content: center;
+        font-size: 14px;
+        background-color: #fff;  
+        transition: none;
+        &:hover {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .ant-tabs-tab-btn{
+            transition: none;
+        }
+        .ant-tabs-tab-btn:active {
+            color:#fff
+        }
+    }
+    .ant-tabs-tab.ant-tabs-tab-active {
+        background-color: var(--ant-primary-color);
+       
+        .ant-tabs-tab-btn {
+            color:#fff;
+            transition: none;
+        }
+    }
+   }  
+ 
+}
+`
+ function Index({projectId, userId}, ref) { 
+    const [value, setvalue] = useState('run')
+   
+
+    const mref= useRef() 
+    const  MenuNos =  useRef({})
+    const onClose = () => {
+        mref.current.onCancal() 
+    }
+    const onOpen = () => {
+        mref.current.onOpen()
+    }
+    useImperativeHandle(ref, () => ({
+        onClose,
+        onOpen,
+    })) 
+    const saveMenu = async () => { 
+        try {
+                           // 只要有一个子，父需要传
+            let Nos = []
+            for(let [key, value] of Object.entries(MenuNos.current)) {
+               if(Array.isArray(value) && value.length > 0) {
+                  Nos = [...Nos, ...value]
+               }
+            }
+            let paramsNos = [...new Set(Nos)]
+            let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
+            success &&  custMsg({content: '保存成功'})
+            !success && custMsg({success, content: errMsg || '数据出错'})
+        } catch (error) {
+            console.log(error)
+        }
+    
+      //  
+    }
+   
+   
+  
+ 
+
+   const CheckboxList = ({data, title, mod}) => { 
+    console.log(data)     
+    const [checkedList, setCheckedList] = useState(() => data?.filter(d => d.select == 1)?.map(d => d.no));
+    const [allSelect] = useState(() => data.map(d => d.no) || []) 
+    const [indeterminate, setIndeterminate] = useState(false);
+    const [checkAll, setCheckAll] = useState(() => data.length === checkedList.length); 
+
+    const onCheckAllChange = (e) => {
+        setCheckedList(e.target.checked ? allSelect : []);
+        setIndeterminate(false);
+        setCheckAll(e.target.checked);
+    }
+  
+    const onChange = (list) => {
+       console.log(list)
+       setCheckedList(list)
+       setIndeterminate(!!list.length && list.length < data.length)
+       setCheckAll(list.length === data.length)
+    }
+    useEffect(() => {
+       MenuNos.current[mod] = checkedList;
+    }, [checkedList])
+    return (
+      
+          <Checkdiv>
+            
+             <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll} className="checktitle">
+                       {title}模块
+             </Checkbox>
+             
+            <CheckboxGroup  value={checkedList} onChange={onChange} >
+                 <Space size={16} wrap>
+                      {
+                        data?.map((d) => <Checkbox value={d.no}>{d.label}</Checkbox>)
+                      }
+                 </Space>
+                  
+                   
+            </CheckboxGroup>
+          </Checkdiv>
+         
+        
+    )
+   }
+   const Menulist = ({type}) => {    
+    const [AllRunMenus, setAllRunMenus] = useState([])    
+    const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
+    const [AllDesignMenus, setAllDesignMenus] = useState([])
+    const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
+    let exclude = ['01','02','0101','0102', '0103'];
+     const queryUserMenus =  () => { 
+      let f = !!projectId && !!userId
+      if (!f)  return;
+       User.QueryUserMenus({projectId, userId}).then(res => {
+           let {success, data} = res
+           if (success && Array.isArray(data)) {
+           let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
+           setAllRunMenus([...runmenu]);
+           let designmenu = data.filter(m => m.parentNo == '02');   
+           setAllDesignMenus([...designmenu])     
+           let sider = {}, design = {};
+            runmenu.forEach(item => {
+              let {no, key } = item 
+               if(no == '0104') {
+                sider[key] = [item]
+              } else {
+                sider[key] = data?.filter(m => m.parentNo == no) 
+              }  
+           })
+           setAllSinderRunMenus({...sider})
+           designmenu.forEach(item => {
+            let {no, key } = item  
+             design[key] = data?.filter(m => m.parentNo == no) 
+              
+          })         
+          setallSinderDesignMenus({...design})
+        }
+       }).catch(e => {
+          console.log(e)
+       });
+       }
+       useEffect(() => {
+        queryUserMenus()
+       }, [])
+    
+       return (
+        <>
+         {
+        type == 'run' ?  
+          (<div>
+          <Checkdiv style={{paddingTop: '0px'}}>
+            <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
+          </Checkdiv>
+           { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList data={allSinderRunMenus[m.key]} title={m.label} mod={m.key} />)}
+
+           </div>)
+           :
+          (<div>
+           <Checkdiv style={{paddingTop: '0px'}}>
+              <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
+           </Checkdiv>
+          
+          { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList data={allSinderDesignMenus[m.key]} title={m.label} mod={m.key} />)}
+
+          </div>)
+         }
+         </>
+       )
+      
+   }
+ 
+   const tabs = [
+    {label: '展示模块', key: 'run'},
+    {label: '设置模块', key: 'design'},
+]
+
+   const items =  [
+    {
+    key: 'run',
+    label: '展示模块',
+    children:   <Menulist type='run' />
+    },
+    {
+      key: 'design',
+      label: '设置模块',
+      children:  <Menulist type='design' />
+      }
+  ]
+    const tabChange =(t) => { 
+      setvalue(t);
+    }
+  
+    return (
+
+        <CModal mold="cust"  title="菜单权限设置" footer={false} ref={mref} width={1600} closable={true} closeIcon={<Button type="primary" onClick={saveMenu}  style={{top: '18px', right: '32px'}}>保存</Button>}>
+           <Tabsbox  items={items} onChange={tabChange} activeKey={value} />
+        </CModal>
+
+
+   
+    )
+}
+export default forwardRef(Index)
