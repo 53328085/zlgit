@@ -9,7 +9,15 @@ import restart from './imgs/restart.png'
 import { Form, Row, Col, Select, Input, Divider, Upload, message } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-const { DeviceManager: { AeraQueryAll, QueryUsedGateway,GatewayAdd,QueryByPageGateWay,GatewayUpdate,GatewayDelete,StartReboot } } = Monitoring
+const { DeviceManager: 
+  { AeraQueryAll, 
+    QueryUsedGateway,
+    GatewayAdd,
+    QueryByPageGateWay,
+    GatewayUpdate,
+    GatewayDelete,
+    GatewayImport,
+    StartReboot } } = Monitoring
 export default function gateway() {
   const [selectopts, setSelectopts] = useState()
   const [addopts, setAddOpts] = useState()
@@ -32,6 +40,7 @@ export default function gateway() {
   const modalReStartRef = useRef() //重启Ref
   const keyParamRef = useRef() //参数下发Ref
   const modalDelRef = useRef() //删除Ref
+  const tableLoadRef = useRef()
   const [editform] =Form.useForm()
   const [addForm] = Form.useForm()
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -41,6 +50,7 @@ export default function gateway() {
     cursor: 'pointer',
   }
   let startsn;
+  let flies
   const columns = [
     {
       title: '园区名称',
@@ -149,8 +159,6 @@ export default function gateway() {
     setLoading(true)
     let params={
       projectId,
-      // pageNum:page.current,
-      // pageSize:page.pageSize,
       pageNum: curpage?curpage:pageRef.current.current,
       pageSize: pageSize?pageSize:pageRef.current.pageSize,
       areaId: id?id:0,
@@ -166,7 +174,7 @@ export default function gateway() {
       total: resp.total
     })
     if(resp.success&&Array.isArray(resp.data)){
-      setDataSource(()=>resp.data.reverse())
+      setDataSource(()=>resp.data)
     }else{
       console.log('setdata[]')
       setDataSource([])
@@ -251,7 +259,7 @@ export default function gateway() {
     if(resp.success){
       modalDelRef?.current?.onCancel()
       message.success('删除成功!')
-      if(page.pageSize*page.current>=page.total){
+      if(page.total%(page.pageSize*(page.current-1 ))===1){
         setPage({
           ...page,
           current:page.current-1
@@ -278,6 +286,24 @@ export default function gateway() {
   const cancelOk=()=>{
     modalFormRef.current.onCancel()
   }
+  //导出
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
+  //批量上传
+  const onImportOk=async ()=>{
+    const formData =new FormData()
+    formData.append("file",flies[0])
+    formData.append("projectId",projectId)
+    const res = await GatewayImport(formData)
+    if(res.data.success) {
+      message.success("上传成功")
+      modalImportRef.current.onCancel()
+      getQueryByPageGateWay(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,)
+     }else{
+      message.error(res.data.errMsg)
+     }
+  }
   const ComProps = {
     addopen,
     multExport,
@@ -285,6 +311,7 @@ export default function gateway() {
     selectopts,
     page,
     setPage,
+    exportExecel,
     getList: getQueryByPageGateWay,
   }
   let ModalFormProps = {
@@ -297,9 +324,20 @@ export default function gateway() {
     onOk: addOk,
     onCancel:cancelOk
   }
+  const uploadprops = {
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      flies=[...fileList]
+      return false
+    }
+  };
   const ImportProps = {
     modalImportRef,
-    width: 560
+    width: 560,
+    link:'/deviceExcel/gateway.xlsx',
+    name:'网关设备批量导入',
+    uploadprops,
+    onOk:onImportOk
   }
   const EditProps={
     modalEditRef,
@@ -316,7 +354,13 @@ export default function gateway() {
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} dataSource={dataSource} pagination={page} loading={loading} onChange={(page, pageSize) => {
+        <Table 
+        columns={columns} 
+        dataSource={dataSource} 
+        pagination={page} 
+        loading={loading} 
+        ref={tableLoadRef}
+        onChange={(page, pageSize) => {
           setPage(() => ({
             ...page
           }))

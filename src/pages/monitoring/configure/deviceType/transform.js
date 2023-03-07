@@ -6,165 +6,182 @@ import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import {DeleteModal,AddModal,EditModal} from './modalCom.js'
+import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 
-const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
+const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
   const [dataSource, setDataSource] = useState([])//modal框表格数据
-  const [tableDataSource,setTableDataSource]=useState([])//主页表格数据
+  const [tableDataSource, setTableDataSource] = useState([])//主页表格数据
   const [defaultTableData, setDefaultTableData] = useState(null)//新增时表格默认数据
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
-  const [isOpenModal,setIsOpenModal] = useState(true)
-  const [isAdd,setIsAdd]=useState(false)
+  const [isOpenModal, setIsOpenModal] = useState(true)
+  const [isAdd, setIsAdd] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState({
+    current: 1,
+    pageSize: 2,
+    hideOnSinglePage: false
+  });
   const ModalRef = useRef(null)
   const EditModalRef = useRef(null)
   const foRef = useRef(null)
   const editFromRef = useRef(null)
-  const DelModalRef =useRef()
-  const tableLoadRef =useRef()
+  const DelModalRef = useRef()
+  const tableLoadRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
-  const optionStyle={
+  const optionStyle = {
     color: '#1890ff',
     cursor: 'pointer',
   }
   let categoryId;
- 
+
   //获取设备列表
   const getTableData = async () => {
+    setLoading(true)
     let params = {
       projectId,
-      pageNum: 1,
-      pageSize: 10,
-      deviceStyle:5
+      pageNum: tableParams.current,
+      pageSize: tableParams.pageSize,
+      deviceStyle: 5
     }
     const result = await DeviceCategory(params)
-    const { data, errMsg, success } = result;
+    const { data, errMsg, success, pageNum, pageSize, total } = result;
+    setLoading(false)
     if (success && Array.isArray(data)) {
       setTableDataSource(data)
-    } else{
+      setTableParams({
+        ...tableParams,
+        current: pageNum,
+        pageSize: pageSize,
+        total: total
+      })
+    } else {
       setTableDataSource([])
     }
   }
 
-   //确认删除
-   const delOK=async ()=>{
-    console.log(111)
-    const resp=await DeleteDeviceCategory({
+  //确认删除
+  const delOK = async () => {
+    const resp = await DeleteDeviceCategory({
       projectId,
-      category:categoryId
+      category: categoryId
     })
-    if(resp.success){
+    if (resp.success) {
       DelModalRef.current.onCancel()
       message.success("删除成功")
-      getTableData()
+      if (tableParams.total % (tableParams.pageSize * (tableParams.current - 1)) === 1) {
+        setTableParams({
+          ...tableParams,
+          current: tableParams.current - 1
+        })
+      } else {
+        getTableData()
+      }
       getDeviceQueryNotUsed()
-    }else{
+    } else {
       message.error(resp.errMsg)
     }
   }
   //打开删除窗口
-  const openDel=(record)=>{
+  const openDel = (record) => {
     DelModalRef.current.onOpen();
-    categoryId=record.category;
+    categoryId = record.category;
 
-  } 
-  
-//获取打开编辑窗口数据
-const editOption=(record)=>{
-  EditModalRef.current.onOpen()
-  const editModalData = tableDataSource.filter(it=>it.category===record.category)
-  console.log(editModalData,editForm)
-  editForm.setFieldsValue({
-    DeviceType:editModalData[0]?.category,
-    Control: editModalData[0]?.control,
-    IsCount: editModalData[0]?.calculate,
-    IsRead: editModalData[0]?.realTimeReading,
-    DefaulImg:editModalData[0]?.imageBase64,
-    ImageUpload: '',
-  })
-  const arr = editModalData[0]?.points.map((item, index) => ({
-    index: index + 1,
-    dataMark: item.name,
-    dataName: item.description,
-    dataUnit: item.unit,
-    isSave: item.isSave,
-    watchPoint: item.isRuningPoint,
-    dataOrder: item.secquence
-  }))
-  setEditDefaultTableData(arr)
-  // const watchPointArr = arr.filter(it=>it.watchPoint)
-  // console.log(watchPointArr)
-  // editFromRef.current.setSwitched(watchPointArr)
-}
-  const columns =  [
+  }
+
+  //获取打开编辑窗口数据
+  const editOption = (record) => {
+    EditModalRef.current.onOpen()
+    const editModalData = tableDataSource.filter(it => it.category === record.category)
+    console.log(editModalData, editForm)
+    editForm.setFieldsValue({
+      DeviceType: editModalData[0]?.category,
+      Control: editModalData[0]?.control,
+      IsCount: editModalData[0]?.calculate,
+      IsRead: editModalData[0]?.realTimeReading,
+      DefaulImg: editModalData[0]?.imageBase64,
+      ImageUpload: '',
+    })
+    const arr = editModalData[0]?.points.map((item, index) => ({
+      index: index + 1,
+      dataMark: item.name,
+      dataName: item.description,
+      dataUnit: item.unit,
+      isSave: item.isSave,
+      watchPoint: item.isRuningPoint,
+      dataOrder: item.secquence
+    }))
+    setEditDefaultTableData(arr)
+  }
+  const columns = [
     {
-        title:'设备型号',
-        dataIndex: 'category'
+      title: '设备型号',
+      dataIndex: 'category'
     },
     {
-        title:'设备厂家',
-        dataIndex: 'manufacturer'
+      title: '设备厂家',
+      dataIndex: 'manufacturer'
     },
     {
-        title:'设备缩略图',
-        dataIndex: 'imageBase64',
-        render:(text)=>{
-          return( <img src={text} width={64} height={53}></img>)
-         
-        }
+      title: '设备缩略图',
+      dataIndex: 'imageBase64',
+      render: (text) => {
+        return (<img src={text} width={64} height={53}></img>)
+
+      }
     },
     {
-        title:'当前设备数量',
-        dataIndex: 'cnt'
+      title: '当前设备数量',
+      dataIndex: 'cnt'
     },
     {
-        title:'操作',
-        dataIndex: 'options',
-        render:(text,record)=>{
-          console.log(text,record)
-          return(
-            <div>
-              <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
-              <span style={{...optionStyle,paddingLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{openDel(record)}}>删除</span>
-            </div>
-          )
-        }
+      title: '操作',
+      dataIndex: 'options',
+      render: (text, record) => {
+        console.log(text, record)
+        return (
+          <div>
+            <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
+            <span style={{ ...optionStyle, paddingLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</span>
+          </div>
+        )
+      }
     }
-]
+  ]
 
-//保存编辑
-  const onOkEditModal=async ()=>{
-  console.log(editFromRef.current.pointSource,editForm.getFieldsValue())
-  const tableforvalues= editFromRef.current.pointSource
-  const formvalues = editForm.getFieldsValue()
-  const tableData =  tableforvalues.map(it=>({
-    name:it.dataMark,
-    isSave:it.isSave,
-    isRuningPoint:it.watchPoint,
-    secquence:it.dataOrder
-  }))
-  let params ={
-    projectId,
-    category:formvalues.DeviceType,
-    control:formvalues.Control,
-    calculate:formvalues.IsCount,
-    realTimeReading:formvalues.IsRead,
-    imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
-    points:tableData
+  //保存编辑
+  const onOkEditModal = async () => {
+    console.log(editFromRef.current.pointSource, editForm.getFieldsValue())
+    const tableforvalues = editFromRef.current.pointSource
+    const formvalues = editForm.getFieldsValue()
+    const tableData = tableforvalues.map(it => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder
+    }))
+    let params = {
+      projectId,
+      category: formvalues.DeviceType,
+      control: formvalues.Control,
+      calculate: formvalues.IsCount,
+      realTimeReading: formvalues.IsRead,
+      imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
+      points: tableData
+    }
+    const resp = await UpdateDeviceCategory(params)
+    if (resp.success) {
+      EditModalRef.current.onCancel()
+      message.success("编辑成功")
+      getTableData()
+    } else {
+      message.error(resp.errMsg)
+    }
   }
-  const resp = await UpdateDeviceCategory(params)
-  if(resp.success){
-    EditModalRef.current.onCancel()
-    message.success("编辑成功")
-    getTableData()
-  }else{
-    message.error(resp.errMsg)
-  }
-}
 
-  
+
   //新增时获取未使用的电表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
@@ -173,15 +190,16 @@ const editOption=(record)=>{
     }
     const r = await DeviceQueryNotUsed(params)
     if (r.success && Array.isArray(r.data)) {
-      if(r.data.length > 0){
+      if (r.data.length > 0) {
         setIsOpenModal(true)
         const arr = r.data.map((item, index) => ({ label: item, value: item }))
         setDataSource(arr)
         getDeviceQueryCategoryFull(r.data[0])
-      }else{
+      } else {
         setIsOpenModal(false)
+        setIsAdd(true)
       }
-      
+
     }
   }
 
@@ -203,10 +221,10 @@ const editOption=(record)=>{
         watchPoint: item.isRuningPoint,
         dataOrder: item.secquence
       }))
-      
+
       // console.log(foRef, arr)
       if (foRef.current) {
-        const watchPointArr = arr.filter(it=>it.watchPoint)
+        const watchPointArr = arr.filter(it => it.watchPoint)
         console.log(watchPointArr)
         foRef.current.setSwitched(watchPointArr)
         foRef.current.setPointSource(arr)
@@ -229,53 +247,62 @@ const editOption=(record)=>{
   }
   //打开新增modal
   const open = () => {
-    if(!isAdd)return
-    if(isOpenModal){
+    if (!isAdd) return
+    if (isOpenModal) {
       ModalRef.current.onOpen()
-    }else{
+    } else {
       message.warning('无可用新增设备!')
     }
-    
-    
+
+
   }
   //关闭新增modal
-  const onCancel=()=>{
+  const onCancel = () => {
     getDeviceQueryNotUsed()
     ModalRef.current.onCancel()
   }
   //保存新增设备
   const onOk = async () => {
     const formValue = addForm.getFieldsValue()
-    const tableData =  foRef.current.pointSource.map(it=>({
-      name:it.dataMark,
-      isSave:it.isSave,
-      isRuningPoint:it.watchPoint,
-      secquence:it.dataOrder
+    const tableData = foRef.current.pointSource.map(it => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder
     }))
     console.log(addForm.getFieldsValue(), foRef.current.pointSource)
-    let params ={
+    let params = {
       projectId,
-      category:formValue.DeviceType,
-      control:formValue.Control,
-      calculate:formValue.IsCount,
-      realTimeReading:formValue.IsRead,
-      imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
-      points:tableData
+      category: formValue.DeviceType,
+      control: formValue.Control,
+      calculate: formValue.IsCount,
+      realTimeReading: formValue.IsRead,
+      imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
+      points: tableData
     }
     const resp = await AddDeviceCategory(params)
     console.log(resp)
-    if(resp.success){
+    if (resp.success) {
       ModalRef.current.onCancel()
       message.success("新增成功")
       getTableData()
       getDeviceQueryNotUsed()
-    }else{
+    } else {
       message.error(resp.errMsg)
     }
   }
- 
+  //导出表格
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
+  //分页
+  const onChangePage = (page, pageSize) => {
+    setTableParams({
+      ...page
+    })
+  }
 
-  
+
   useEffect(() => {
     getTableData()
     getDeviceQueryNotUsed()
@@ -296,34 +323,43 @@ const editOption=(record)=>{
     width: 1032,
     open,
     ModalRef,
+    exportExecel,
     onCancel
   };
-  let editFormProps={
+  let editFormProps = {
     editForm,
-    ref:editFromRef,
+    ref: editFromRef,
     editDefaultTableData
   }
-  let editModalProps={
-   ref:EditModalRef,
-   width: 1032,
-   onOk:onOkEditModal
+  let editModalProps = {
+    ref: EditModalRef,
+    width: 1032,
+    onOk: onOkEditModal
   }
-  let delModalProps={
+  let delModalProps = {
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除电表类型?',
-    name:'删除电表类型',
-    onOk:delOK
+    content: '是否确认删除电表类型?',
+    name: '删除电表类型',
+    onOk: delOK
   }
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={columns} dataSource={tableDataSource} bordered={false} ref={tableLoadRef}></Table>
+        <Table
+          columns={columns}
+          dataSource={tableDataSource}
+          bordered={false}
+          ref={tableLoadRef}
+          loading={loading}
+          pagination={tableParams}
+          onChange={onChangePage}
+        ></Table>
       </DeviceContent>
-      <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑视频监控类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
-      <EditModal {...editFormProps}></EditModal>
+      <Modal mold='cust' {...editModalProps}>
+        <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+        <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModalProps}></DeleteModal>
     </div>

@@ -13,6 +13,7 @@ export default forwardRef(function Comp(props, ref) {
         selectopts = [],
         getList = "",
         setPage,
+        exportExecel,
         page
     } = props
     const [selvalue, setSelvalue] = useState(0)
@@ -103,7 +104,7 @@ export default forwardRef(function Comp(props, ref) {
                 <Row>
                     <div className={style.divmgr16} onClick={addopen}>+新增</div>
                     <div className={style.divmgr16} onClick={multExport}>批量导入</div>
-                    <div className={style.divmgr16}>导出</div>
+                    <div className={style.divmgr16} onClick={exportExecel}>导出</div>
                 </Row>
             </Row>
             <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />

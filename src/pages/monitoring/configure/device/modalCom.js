@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext, forwardRef, useImperativeHandle } from 'react'
 import WarningPng from '@imgs/warning.png'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import { Form, Row, Col, Select, Input, Divider, Upload } from 'antd'
 import upCloud from './imgs/upcloud.png'
 import style from './style.module.less'
+import Table from '@com/useTable'
 const { Dragger } = Upload;
 // export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 //删除modal组件
@@ -20,14 +21,14 @@ export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) =>
   )
 }
 //批量上传导入
-export let MultImport = ({ modalImportRef, name = '/deviceExcel/gateway.xlsx', ...other }) => {
+export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',name='' ,uploadprops,...other }) => {
   return (
     <Modal mold='cust' ref={modalImportRef} {...other}>
-      <BlueColumn name="网关设备批量导入" styled={{ padding: '24px 0px' }}></BlueColumn>
-      <Dragger>
+      <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <Dragger {...uploadprops}>
         <img src={upCloud}></img>
         <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>
-        <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={name}>下载模板</a>
+        <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={link}>下载模板</a>
       </Dragger>
     </Modal>
   )
@@ -58,7 +59,29 @@ export let Count = ({ value, onChange }) => {
     </div>
   )
 }
-
+//批量上传报错
+export let ErrorMessage=forwardRef(
+  (props,ref)=>{
+    const {ErrModalRef,...other}=props
+    const [list,setList]=useState([])
+   useImperativeHandle(ref,()=>({
+    setList
+   }))
+    const columns=[{
+      title:'错误行',
+      dataIndex:'row'
+    },{
+      title:'错误原因',
+      dataIndex:'cause'
+    }]
+    return (
+      <Modal mold='cust' ref={ErrModalRef} {...other}>
+         <Table columns={columns} dataSource={list} style={{marginTop: 32}}></Table>
+      </Modal>
+     
+    )
+  }
+)
 
 
 

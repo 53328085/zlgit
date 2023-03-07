@@ -16,6 +16,12 @@ export default function Electric() {
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
   const [isOpenModal,setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState({
+    current: 1,
+    pageSize: 2,
+    hideOnSinglePage: false
+  });
   const ModalRef = useRef(null)
   const EditModalRef = useRef(null)
   const foRef = useRef(null)
@@ -33,16 +39,25 @@ export default function Electric() {
  
   //获取设备列表
   const getTableData = async () => {
+    setLoading(true)
     let params = {
       projectId,
-      pageNum: 1,
-      pageSize: 10,
+      pageNum: tableParams.current,
+      pageSize: tableParams.pageSize,
       deviceStyle:3
     }
     const result = await DeviceCategory(params)
-    const { data, errMsg, success } = result;
+    const { data, errMsg, success,pageNum,pageSize,total } = result;
+    setLoading(false)
     if (success && Array.isArray(data)) {
+      console.log('getTable',data)
       setTableDataSource(data)
+      setTableParams({
+        ...tableParams,
+        current: pageNum,
+        pageSize: pageSize,
+        total: total
+      })
     } else{
       setTableDataSource([])
     }
@@ -58,7 +73,14 @@ export default function Electric() {
     if(resp.success){
       DelModalRef.current.onCancel()
       message.success("删除成功")
-      getTableData()
+      if(tableParams.total%(tableParams.pageSize*(tableParams.current-1 ))===1){
+        setTableParams({
+          ...tableParams,
+          current:tableParams.current-1
+        })
+      }else{
+        getTableData()
+      } 
       getDeviceQueryNotUsed()
     }else{
       message.error(resp.errMsg)
@@ -123,7 +145,6 @@ const editOption=(record)=>{
         title:'操作',
         dataIndex: 'options',
         render:(text,record)=>{
-          console.log(text,record)
           return(
             <div>
               <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
@@ -165,7 +186,7 @@ const editOption=(record)=>{
 }
 
   
-  //新增时获取未使用的电表名
+  //新增时获取未使用的燃气表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
@@ -181,12 +202,13 @@ const editOption=(record)=>{
         setIsOpenModal(true)
       }else{
         setIsOpenModal(false)
+        setIsAdd(true)
       }
       
     }
   }
 
-  //获取默认水表的详细信息
+  //获取默认燃气表的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -278,10 +300,16 @@ const editOption=(record)=>{
   const exportExecel=()=>{
     tableLoadRef.current.download()
   }
+  //分页
+  const onChangePage = (page, pageSize) => {
+    setTableParams({
+      ...page
+    })
+  }
   useEffect(() => {
     getTableData()
     getDeviceQueryNotUsed()
-  }, [])
+  }, [tableParams.current])
   let addModalProp = {
     addForm,
     dataSource,
@@ -290,7 +318,7 @@ const editOption=(record)=>{
   }
   let deviceProps = {
     value: 0,
-    name: '新增电表类型',
+    name: '新增燃气表类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
@@ -315,17 +343,25 @@ const editOption=(record)=>{
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除电表类型?',
-    name:'删除电表类型',
+    content:'是否确认删除燃气表类型?',
+    name:'删除燃气表类型',
     onOk:delOK
   }
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={columns} dataSource={tableDataSource} bordered={false} ref={tableLoadRef}></Table>
+        <Table 
+        columns={columns} 
+        dataSource={tableDataSource} 
+        bordered={false} 
+        ref={tableLoadRef}
+        loading={ loading}
+        pagination={tableParams}
+        onChange={onChangePage}
+        ></Table>
       </DeviceContent>
       <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑视频监控类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModalProps}></DeleteModal>

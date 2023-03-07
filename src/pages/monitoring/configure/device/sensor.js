@@ -5,7 +5,7 @@ import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { MultImport } from './modalCom'
+import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
@@ -20,7 +20,8 @@ const {
     QueryPlanList,
     AddSensor,
     UpdateSensor,
-    DeleteSensor
+    DeleteSensor,
+    ImportSensor
   }
 } = Monitoring
 
@@ -36,8 +37,8 @@ export default function gateway({ deviceStyle }) {
     pageSize: 10,
     hideOnSinglePage: false
   })
-  const pageRef= useRef(page)
-  pageRef.current=page
+  const pageRef = useRef(page)
+  pageRef.current = page
   const [dataSource, setDataSource] = useState([])
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
@@ -45,9 +46,13 @@ export default function gateway({ deviceStyle }) {
   const modalImportRef = useRef()
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
+  const ErrModalRef=useRef()
+  const errlistRef =useRef()
+  const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   let delid;
+  let flies;
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -81,7 +86,6 @@ export default function gateway({ deviceStyle }) {
       render: (text, record, index) => {
         if (Array.isArray(gatewaylist)) {
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
-          console.log(gatewayfilter)
           return (
             <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].category}</span>
           )
@@ -156,7 +160,7 @@ export default function gateway({ deviceStyle }) {
       if (resp.success) {
         message.success("更新成功")
         EditModalFormRef?.current?.onCancel()
-        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(resp.errMsg)
       }
@@ -176,21 +180,21 @@ export default function gateway({ deviceStyle }) {
     })
     if (success) {
       message.success('删除成功')
-      if(page.pageSize*page.current>=page.total){
+      if (page.total % (page.pageSize * (page.current - 1)) === 1) {
         setPage({
           ...page,
-          current:page.current-1
+          current: page.current - 1
         })
       }
       DelModalRef?.current?.onCancel()
-      setTimeout(()=>{
-        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-      },0)
-     
+      setTimeout(() => {
+        getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+      }, 0)
+
     } else {
       message.error(errMsg)
     }
-  
+
   }
 
 
@@ -239,7 +243,7 @@ export default function gateway({ deviceStyle }) {
       if (res.success) {
         message.success('新增成功!')
         modalFormRef?.current?.onCancel()
-        getQueryByPageSensor(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
@@ -305,14 +309,14 @@ export default function gateway({ deviceStyle }) {
     }
   }
   //获取传感器列表
-  const getQueryByPageSensor = async (curpage=0,pageSize=0,id, like, customerType) => {
+  const getQueryByPageSensor = async (curpage = 0, pageSize = 0, id, like, customerType) => {
     setLoading(true)
     let params = {
       projectId,
       // pageNum: page.current,
       // pageSize: page.pageSize,
-      pageNum: curpage?curpage:pageRef.current.current,
-      pageSize: pageSize?pageSize:pageRef.current.pageSize,
+      pageNum: curpage ? curpage : pageRef.current.current,
+      pageSize: pageSize ? pageSize : pageRef.current.pageSize,
       areaId: id ? id : 0,
       alike: like ? like : '',
       customerType: customerType ? customerType : 0
@@ -321,20 +325,41 @@ export default function gateway({ deviceStyle }) {
     setLoading(false)
     setPage({
       ...page,
-      current:resp.pageNum,
+      current: resp.pageNum,
       pageSize: resp.pageSize,
       total: resp.total
     })
     if (resp.success && Array.isArray(resp.data)) {
       setDataSource([...resp.data.reverse()])
-      
+
       console.log(page)
     } else {
       setDataSource([])
     }
   }
-
-
+  //批量上传
+  const onImportOk = async () => {
+    const formData = new FormData()
+    formData.append("file", flies[0])
+    formData.append("projectId", projectId)
+    const res = await ImportSensor(formData)
+    if(res.success) {
+      if (res.data.success) {
+        message.success("上传成功")
+        modalImportRef.current.onCancel()
+        getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+      }else{
+        errlistRef.current.setList([...res.data.data])
+        ErrModalRef.current.onOpen()
+      } 
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //导出
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
 
   useEffect(() => {
     getQueryByPageSensor()
@@ -342,7 +367,7 @@ export default function gateway({ deviceStyle }) {
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
-    
+
 
   }, [])
   //传入props对象
@@ -354,6 +379,7 @@ export default function gateway({ deviceStyle }) {
     selectopts,
     setPage,
     page,
+    exportExecel,
     getList: getQueryByPageSensor
   }
   const ModalFormProps = {
@@ -365,10 +391,21 @@ export default function gateway({ deviceStyle }) {
     devicelist,
     onOk: addOk
   }
+  const uploadprops = {
+    maxCount: 1,
+    beforeUpload(file, fileList) {
+      console.log(file, fileList)
+      flies = [...fileList]
+      return false
+    }
+  };
   const ImportProps = {
     modalImportRef,
     width: 560,
-    name: '/deviceExcel/electric.xlsx'
+    link: '/deviceExcel/sensor.xlsx',
+    name: '传感器导入',
+    uploadprops,
+    onOk: onImportOk
   }
   const EditModalFormProps = {
     EditModalFormRef,
@@ -376,12 +413,16 @@ export default function gateway({ deviceStyle }) {
     name: '编辑传感器',
     onOk: editOk
   }
-
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
+  }
 
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading} onChange={(page, pageSize) => {
+        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading} ref={tableLoadRef} onChange={(page, pageSize) => {
           setPage(() => ({
             ...page
           }))
@@ -397,7 +438,7 @@ export default function gateway({ deviceStyle }) {
       <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
-
+      <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )
 }
