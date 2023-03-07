@@ -24,6 +24,7 @@ import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
 import Custdrawer from './drawer'
 import Drawerdata from './drawerdata'
+import Menuset from './menuSet.jsx'
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -423,9 +424,17 @@ export default function Account({projectId, CModal}) {
        
          <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>
        </Drawer> */}
-       <Custdrawer projectId={projectId} userId={userId} ref={dref} >
+
+       
+     
+
+
+
+
+
+       <Menuset projectId={projectId} userId={userId} ref={dref} >
             
-      </Custdrawer>
+      </Menuset>
       <Drawerdata projectId={projectId} userId={userId} ref={dpref}></Drawerdata>
     </Mainbox>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, } from 'react' 
+import React, { useState, useRef, useEffect, useMemo } from 'react' 
 import { Input, Button, Space, Modal, Form, message, Typography, Select, InputNumber, Drawer  } from 'antd'
 import styled from 'styled-components' 
 import UserTable from '@com/useTable'
@@ -82,7 +82,7 @@ const Drawerbox = styled(Drawer)`
 const {Link, Text, Paragraph} = Typography
 const {Item} = Form
 export default function Index({projectId,level, CModal, name, allLevel}) {
-  
+  console.log('level'+level);
   const [levelone] = useState(allLevel[0])  
   const limitlevle = allLevel.slice(0, level - 1);
    
@@ -90,7 +90,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
   const [nform] = Form.useForm();
   const nref = useRef() // 新增，编辑
   const dref = useRef() // 删除
-  const content = useRef()
+
   const mapref = useRef() 
   const [Record, setRecord] = useState({})
   const [isAdd, setIsAdd] = useState(true)
@@ -116,13 +116,13 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
   const address = useRef('');
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
   const leveloption = useRef({})
-  const topAreaId = level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0;
-  
+ // const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
+  console.log(leveloption)
   let params = { //查询
     pageNum: 1,
     pageSize: 15,
     level,
-    topAreaId,  
+    topAreaId:0,  
     name: '',
     projectId,
   }
@@ -146,7 +146,15 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
         parentId,
       })
        if (success && Array.isArray(data)) {
+
+        /*  
+{id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
+        if (level == 1) {
+           data.push({id: 0, level: 1, name: '全部'})
+        }
         leveloption.current[`level${level}`] = data;  
+
+
        }else {
         leveloption.current[`level${level}`] = []
        }                
@@ -253,17 +261,6 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
  }
 
  const configureMeter = async () => {
-
-  /* projectId": 0,
-  "areaId": 0,
-  "deviceSummary": [
-    "string"
-  ],
-  "deviceSub": [
-    "string"
-  ] */
-  // let summary = deviceSummary.map(i => i.id);
-
     let params = {
       projectId,
       areaId: Record.areaId,
@@ -297,12 +294,12 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
 
 
 
-  const getTableData = ({current, pageSize}, formData={}) => {     // 列表查询
+  const getTableData = ({current, pageSize}, formData ) => {     // 列表查询
     if(isNaN(level)) return;
     
     
-      
-   
+    console.log('formData', formData);
+    formData.topAreaId = 0;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     
     return Area.QueryByPage(params).then(res => {
@@ -366,7 +363,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
 
   const {tableProps, search, refresh} = useAntdTable(getTableData, {  
     form,
-    refreshDeps: [level, topAreaId],
+    refreshDeps: [level],
     defaultPageSize: 15,
     onError: (e) => {
       console.log(e)
@@ -470,8 +467,9 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
   }, [])
    useEffect(() => {
      form.setFieldsValue({
-      topAreaId
+      topAreaId: 0
      })
+   
    }, [level])
   
   return (
@@ -491,8 +489,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
                    onChange={submit}
                   ></Select>
              </Item>
-            <Form.Item name="name" label={`${name}查询`}>
-                     
+            <Form.Item name="name" label={`${name}查询`}>                     
                      <Input.Search placeholder={`请输入${name}名称`} allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
                   </Form.Item>
              </>     
