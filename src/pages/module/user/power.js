@@ -6,6 +6,7 @@
 
 
 import React, { useEffect, useMemo, useState, useRef } from "react";
+import {flushSync} from 'react-dom'
 import styled from "styled-components";
 import {
   Typography,
@@ -22,8 +23,9 @@ import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
-import Custdrawer from './drawer'
-import Drawerdata from './drawerdata'
+//import Custdrawer from './drawer'
+//import Drawerdata from './drawerdata'
+import Dataset from './dataSet.jsx'
 import Menuset from './menuSet.jsx'
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
@@ -127,10 +129,13 @@ export default function Account({projectId, CModal}) {
  const [person, setPerson] = useState(0) // 新增项目管理员 新增运维人员
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
-
+ 
 
   const menufn = (id, type) => {
-    setUserId(id);
+    flushSync(() => {
+      setUserId(id);
+    }) 
+   
    type == 1 && dref.current.onOpen();
 
    type == 2 && dpref.current.onOpen();
@@ -435,7 +440,7 @@ export default function Account({projectId, CModal}) {
        <Menuset projectId={projectId} userId={userId} ref={dref} >
             
       </Menuset>
-      <Drawerdata projectId={projectId} userId={userId} ref={dpref}></Drawerdata>
+      <Dataset projectId={projectId} userId={userId} ref={dpref}></Dataset>
     </Mainbox>
   );
 }
