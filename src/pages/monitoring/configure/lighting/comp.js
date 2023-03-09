@@ -59,7 +59,7 @@ import CustContext from '@com/content'
                 <Row align='middle'>
                     <Col>
                         <Select
-                           defaultValue={0}
+                           defaultValue={{name:'全部园区',value:0}}
                            value={selvalue}
                            fieldNames={{
                             label:'name',
