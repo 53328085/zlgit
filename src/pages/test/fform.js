@@ -1,52 +1,32 @@
-import { Button, Drawer } from 'antd';
-import React, { useState } from 'react';
-import styled from 'styled-components';
-const Divbox = styled.div`
-  position: relative;
-  height: 200px;
-  padding: 48px;
-  overflow: hidden;
-  text-align: center;
-  background: #fafafa;
-  border: 1px solid #ebedf0;
-  border-radius: 2px;
-  
-
-`
-const App = () => {
-  const [open, setOpen] = useState(false);
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
+import React, {useState, useMemo} from 'react'
+import {flushSync} from 'react-dom'
+import DemoEffect from './DemoEffect'
+export default function Fform() {
+  console.log('更新')
+  // useState 比较状态。状态一样不更新
+  let [x, setX] = useState(10),
+    [y, setY] = useState(30),
+    [z, setz] = useState(0);
+  const handlerx = () => { 
+    
+        setX((prev) => prev + 1 ) 
+  } 
+  const handlery = () => { 
+    
+    setY((prev) => prev + 1 ) 
+}
+  const child1 = useMemo(() => <DemoEffect x={x} type='x' />, [x])
+  const child2 = useMemo(() => <DemoEffect x={y} type='y' />, [y])
   return (
-    <Divbox>
-      Render in this
-      <div
-        style={{
-          marginTop: 16,
-        }}
-      >
-        <Button type="primary" onClick={showDrawer}>
-          Open
-        </Button>
-      </div>
-      <Drawer
-        title="Basic Drawer"
-        placement="right"
-        closable={false}
-        onClose={onClose}
-        open={open}
-      //  getContainer={false}
-        style={{
-          position: 'absolute',
-        }}
-      >
-        <p>Some contents...</p>
-      </Drawer>
-    </Divbox>
-  );
-};
-export default App;
+    <div> 
+       <p>
+         <button onClick={handlerx}>x更新</button>
+       </p>
+       <p>
+         <button onClick={handlery}>y更新</button>
+       </p>
+       {child1}
+       {child2}
+    </div>
+  )
+}

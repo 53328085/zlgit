@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useLayoutEffect, useRef, forwardRef, useImperativeHandle, useMemo} from 'react'
-import {Drawer, Button, Table, Typography, Checkbox, Tabs, Space, Spin} from 'antd' 
+import {flushSync} from 'react-dom'
+import {Drawer, Button, Table, Typography, Checkbox, Tabs, Space, Spin, Radio} from 'antd' 
 import styled from 'styled-components' 
 import { User } from "@api/api.js";
 import {custMsg} from '@com/usehandler'
 import CModal from '@com/useModal'
+ 
 const { Text, Link, Paragraph  } = Typography
 const CheckboxGroup = Checkbox.Group;
 const Checkdiv = styled.div`
@@ -77,11 +79,12 @@ const Tabsbox = styled(Tabs)`
 }
 `
  function Index({projectId, userId}, ref) { 
-    const [value, setvalue] = useState('run')
+    
    
 
     const mref= useRef() 
-    const  MenuNos =  useRef({})
+    const   MenuNos  =  useRef({}) // 运行
+    const  Dmenunos = useRef({}) // 设计
     const onClose = () => {
         mref.current.onCancal() 
     }
@@ -93,15 +96,19 @@ const Tabsbox = styled(Tabs)`
         onOpen,
     })) 
     const saveMenu = async () => { 
-        try {
-                           // 只要有一个子，父需要传
-            let Nos = []
-            for(let [key, value] of Object.entries(MenuNos.current)) {
+        const getno = (data) => {
+          let Nos = []
+            for(let [key, value] of Object.entries(data)) {
                if(Array.isArray(value) && value.length > 0) {
                   Nos = [...Nos, ...value]
                }
             }
-            let paramsNos = [...new Set(Nos)]
+          return [...new Set(Nos)]
+        }
+        try {        
+            let runnos = getno(MenuNos.current);
+            let desnos = getno(Dmenunos.current)
+            let paramsNos = [...runnos, ...desnos]
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
             success &&  custMsg({content: '保存成功'})
             !success && custMsg({success, content: errMsg || '数据出错'})
@@ -112,15 +119,135 @@ const Tabsbox = styled(Tabs)`
       //  
     }
    
-   
+    const Menulist = () => {    
+      const [value, setvalue] = useState('run')
+      const [AllRunMenus, setAllRunMenus] = useState([])    
+      const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
+      const [AllDesignMenus, setAllDesignMenus] = useState([])
+      const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
+     let exclude = [ '0101','0102', '0103', '0104'];
+       const queryUserMenus =  () => { 
+        let f = !!projectId && !!userId
+        if (!f)  return;
+         User.QueryUserMenus({projectId, userId}).then(res => {
+             let {success, data} = res
+             if (success && Array.isArray(data)) {
+             //let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
+             let runmenu = data.filter(m => m.parentNo == '01')
+             setAllRunMenus([...runmenu]);
+             let designmenu = data.filter(m => m.parentNo == '02');   
+             setAllDesignMenus([...designmenu])     
+             let sider = {}, design = {};
+              runmenu.forEach(item => {
+                let {no, key } = item 
+                let arr = data?.filter(m => m.parentNo == no);
+                 if(exclude.includes(no)) {
+                  sider[key] = [item]
+                } else if(arr.length > 0) {
+                  sider[key] = arr;
+                } 
+             })
+             setAllSinderRunMenus({...sider})
+             designmenu.forEach(item => {
+              let {no, key } = item  
+               design[key] = data?.filter(m => m.parentNo == no) 
+                
+            })         
+            setallSinderDesignMenus({...design})
+          }
+         }).catch(e => {
+            console.log(e)
+         });
+         }
+         useEffect(() => {
+          queryUserMenus()
+         }, [userId])
+      
+         const Runcom = () => {
+          console.log(allSinderRunMenus); 
+          
+          const [runall, setRunall] = useState(() => {
+            let allvalues = []
+            for(let values of Object.values(allSinderRunMenus)) {
+                allvalues= [...allvalues, ...values];
+            }
+           console.log(allvalues)
+           return !allvalues.find(i => i.select == 0)
+          })
+          const onRunall = (e) => {
+            let checked = e.target.checked
+            setRunall(checked)
+            setAllSinderRunMenus(pre => {
+                let menus = {}
+                for(let [key, sider] of Object.entries(pre)) {
+                    let ms = []
+                    sider.forEach(s => {
+                      s.select = Number(checked);
+                      ms.push(s);
+                    })
+                    menus[key] = ms
+                }
+                return menus  
+  
+            })
+          }
+          return (
+            <>
+              <Checkdiv style={{paddingTop: '0px'}}>
+              <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall}>选择全部</Checkbox></Checkdiv>
+              </Checkdiv>
+             { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
+              
+            </>
+          )
+         }
+         const Descom = () =>{
+  
+          return (
+            <>
+          <Checkdiv style={{paddingTop: '0px'}}>
+          <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
+            </Checkdiv>
+      
+           { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
+           </>
+          )
+         }
+  
+         const cachrun = useMemo(() => <Runcom />, [AllRunMenus, allSinderRunMenus])
+         const cachdes = useMemo(() => <Descom />, [AllDesignMenus, AllDesignMenus])
+         const items =  [
+          {
+          key: 'run',
+          label: '展示模块',
+          children:  cachrun // <Menulist type='run' />
+          },
+          {
+            key: 'design',
+            label: '设置模块',
+            children: cachdes // <Menulist type='design' />
+            }
+        ]
+          const tabChange =(t) => { 
+            setvalue(t);
+          }
+         return (
+          <Tabsbox  items={items} onChange={tabChange} activeKey={value} />
+         )
+        
+     }
   
  
 
-   const CheckboxList = ({data, title, mod}) => { 
-    console.log(data)     
+   const CheckboxList = ({data, title, mod, type }) => { 
+    if (!Array.isArray(data))  return  
+    
     const [checkedList, setCheckedList] = useState(() => data?.filter(d => d.select == 1)?.map(d => d.no));
     const [allSelect] = useState(() => data.map(d => d.no) || []) 
-    const [indeterminate, setIndeterminate] = useState(false);
+    const [indeterminate, setIndeterminate] = useState(() => {
+      let list = data.filter(d => d.select == 1)
+       return  list.length>0 && list.length < data.length
+    }); // 全选 或 全不选 false
     const [checkAll, setCheckAll] = useState(() => data.length === checkedList.length); 
 
     const onCheckAllChange = (e) => {
@@ -129,15 +256,22 @@ const Tabsbox = styled(Tabs)`
         setCheckAll(e.target.checked);
     }
   
-    const onChange = (list) => {
-       console.log(list)
+    const onChange = (list) => { 
        setCheckedList(list)
        setIndeterminate(!!list.length && list.length < data.length)
        setCheckAll(list.length === data.length)
     }
     useEffect(() => {
-       MenuNos.current[mod] = checkedList;
-    }, [checkedList])
+       if(type == 'run') {
+        
+        MenuNos.current[mod] = checkedList;
+      
+       
+       }else if(type == 'design') {
+        Dmenunos.current[mod] = checkedList;
+       }
+       
+    }, [checkedList, type])
     return (
       
           <Checkdiv>
@@ -149,7 +283,7 @@ const Tabsbox = styled(Tabs)`
             <CheckboxGroup  value={checkedList} onChange={onChange} >
                  <Space size={16} wrap>
                       {
-                        data?.map((d) => <Checkbox value={d.no}>{d.label}</Checkbox>)
+                        data?.map((d) => <Checkbox value={d.no} key={d.no}>{d.label}</Checkbox>)
                       }
                  </Space>
                   
@@ -160,98 +294,15 @@ const Tabsbox = styled(Tabs)`
         
     )
    }
-   const Menulist = ({type}) => {    
-    const [AllRunMenus, setAllRunMenus] = useState([])    
-    const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
-    const [AllDesignMenus, setAllDesignMenus] = useState([])
-    const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
-    let exclude = ['01','02','0101','0102', '0103'];
-     const queryUserMenus =  () => { 
-      let f = !!projectId && !!userId
-      if (!f)  return;
-       User.QueryUserMenus({projectId, userId}).then(res => {
-           let {success, data} = res
-           if (success && Array.isArray(data)) {
-           let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
-           setAllRunMenus([...runmenu]);
-           let designmenu = data.filter(m => m.parentNo == '02');   
-           setAllDesignMenus([...designmenu])     
-           let sider = {}, design = {};
-            runmenu.forEach(item => {
-              let {no, key } = item 
-               if(no == '0104') {
-                sider[key] = [item]
-              } else {
-                sider[key] = data?.filter(m => m.parentNo == no) 
-              }  
-           })
-           setAllSinderRunMenus({...sider})
-           designmenu.forEach(item => {
-            let {no, key } = item  
-             design[key] = data?.filter(m => m.parentNo == no) 
-              
-          })         
-          setallSinderDesignMenus({...design})
-        }
-       }).catch(e => {
-          console.log(e)
-       });
-       }
-       useEffect(() => {
-        queryUserMenus()
-       }, [])
-    
-       return (
-        <>
-         {
-        type == 'run' ?  
-          (<div>
-          <Checkdiv style={{paddingTop: '0px'}}>
-            <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
-          </Checkdiv>
-           { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList data={allSinderRunMenus[m.key]} title={m.label} mod={m.key} />)}
-
-           </div>)
-           :
-          (<div>
-           <Checkdiv style={{paddingTop: '0px'}}>
-              <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
-           </Checkdiv>
-          
-          { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList data={allSinderDesignMenus[m.key]} title={m.label} mod={m.key} />)}
-
-          </div>)
-         }
-         </>
-       )
-      
-   }
  
-   const tabs = [
-    {label: '展示模块', key: 'run'},
-    {label: '设置模块', key: 'design'},
-]
+   
+ 
 
-   const items =  [
-    {
-    key: 'run',
-    label: '展示模块',
-    children:   <Menulist type='run' />
-    },
-    {
-      key: 'design',
-      label: '设置模块',
-      children:  <Menulist type='design' />
-      }
-  ]
-    const tabChange =(t) => { 
-      setvalue(t);
-    }
   
     return (
 
-        <CModal mold="cust"  title="菜单权限设置" footer={false} ref={mref} width={1600} closable={true} closeIcon={<Button type="primary" onClick={saveMenu}  style={{top: '18px', right: '32px'}}>保存</Button>}>
-           <Tabsbox  items={items} onChange={tabChange} activeKey={value} />
+        <CModal mold="cust"    title="菜单权限设置" footer={false} ref={mref} width={1600} closable={true} closeIcon={<Button type="primary" onClick={saveMenu}  style={{top: '18px', right: '32px'}}>保存</Button>}>
+          <Menulist />
         </CModal>
 
 
