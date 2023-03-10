@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Index() {
   return (
-    <div>分类费用</div>
+    <div>空调控制</div>
   )
 }

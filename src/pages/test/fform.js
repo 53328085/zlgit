@@ -1,32 +1,79 @@
-import React, {useState, useMemo} from 'react'
-import {flushSync} from 'react-dom'
-import DemoEffect from './DemoEffect'
-export default function Fform() {
-  console.log('更新')
-  // useState 比较状态。状态一样不更新
-  let [x, setX] = useState(10),
-    [y, setY] = useState(30),
-    [z, setz] = useState(0);
-  const handlerx = () => { 
-    
-        setX((prev) => prev + 1 ) 
-  } 
-  const handlery = () => { 
-    
-    setY((prev) => prev + 1 ) 
-}
-  const child1 = useMemo(() => <DemoEffect x={x} type='x' />, [x])
-  const child2 = useMemo(() => <DemoEffect x={y} type='y' />, [y])
-  return (
-    <div> 
-       <p>
-         <button onClick={handlerx}>x更新</button>
-       </p>
-       <p>
-         <button onClick={handlery}>y更新</button>
-       </p>
-       {child1}
-       {child2}
-    </div>
-  )
-}
+import { Table } from 'antd';
+import React from 'react';
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    filters: [
+      {
+        text: 'Joe',
+        value: 'Joe',
+      },
+      {
+        text: 'Category 1',
+        value: 'Category 1',
+      },
+      {
+        text: 'Category 2',
+        value: 'Category 2',
+      },
+    ],
+    filterMode: 'tree',
+    filterSearch: true,
+    onFilter: (value, record) => record.name.startsWith(value),
+    width: '30%',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    sorter: (a, b) => a.age - b.age,
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    filters: [
+      {
+        text: 'London',
+        value: 'London',
+      },
+      {
+        text: 'New York',
+        value: 'New York',
+      },
+    ],
+   // onFilter: (value, record) => record.address.startsWith(value),
+   // filterSearch: true,
+    width: '40%',
+  },
+];
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+  },
+];
+const onChange = (pagination, filters, sorter, extra) => {
+  console.log('params', pagination, filters, sorter, extra);
+};
+const App = () => <Table columns={columns} dataSource={data} onChange={onChange} />;
+export default App;
