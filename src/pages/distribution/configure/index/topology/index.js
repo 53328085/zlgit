@@ -64,6 +64,8 @@ export default function Index() {
 
   const edit = (record) => {
     console.log(record)
+    sessionStorage.setItem('chartData', JSON.stringify(record))
+    window.open(`/topology`, '_blank')
   }
 
   const [deleteModal, setDeleteModal] = useState(false)
