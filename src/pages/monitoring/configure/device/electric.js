@@ -135,48 +135,49 @@ export default function gateway({ deviceStyle }) {
   }
  
   //确认编辑
-  const editOk = async () => {
-    const { 
-      id,
-      areaId,
-      alarmPlanId,
-      address,
-      remark,
-      gatewayId,
-      category,
-      sn,
-      name,
-      customerType,
-      commPort,
-      commProtocol,
-      commAddress,
-      factor } = editform.getFieldValue()
-    let params = {
-      id,
-      projectId,
-      areaId,
-      alarmPlanId,
-      address,
-      remark,
-      gatewayId,
-      category,
-      sn,
-      name,
-      customerType,
-      commPort,
-      commProtocol:commProtocol?commProtocol:0,
-      commAddress,
-      factor
-    }
-    const resp = await UpdateElectric(params)
-    if(resp.success){
-      message.success("更新成功")
-      EditModalFormRef?.current?.onCancel()
-      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }else{
-      message.error(resp.errMsg)
-    }
-    console.log(resp)
+  const editOk = () => {
+    editform.validateFields().then(async()=>{
+      const { 
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol:commProtocol?commProtocol:0,
+        commAddress,
+        factor
+      }
+      const resp = await UpdateElectric(params)
+      if(resp.success){
+        message.success("更新成功")
+        EditModalFormRef?.current?.onCancel()
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      }else{
+        message.error(resp.errMsg)
+      }
+    })
   }
    //打开删除窗口
    const onDelete = (record) => {

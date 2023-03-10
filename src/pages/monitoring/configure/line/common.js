@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer,Table } from 'antd'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
@@ -22,10 +22,11 @@ const { LineManager: {
 
 
 
-export default function Common({type}) {
+export default function Common({ type }) {
     const [tdata, setTdata] = useState([])
     const [areaOpts, setAreaOpts] = useState([])
     const [open, setOpen] = useState(false)
+    const [treelist,setTreeList] = useState([])
     const [addmianform] = Form.useForm()
     const [selform] = Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
@@ -35,7 +36,6 @@ export default function Common({type}) {
         background: '#ecf5ff',
         height: 32,
         lineHeight: '32px',
-
     }
     //查询区域
     const getAeraQueryAll = async () => {
@@ -108,15 +108,14 @@ export default function Common({type}) {
     const openDrawer = (tree) => {
         console.log('tree', tree)
         setOpen(true)
-        setforwardRef.current.setSelectedRowKeys([])
+        setTreeList(tree)
+        //setforwardRef.current.setSelectedRowKeys([])
         setforwardRef.current.setLineId(tree.id)
-        tree.deviceSub ? setforwardRef.current.setSubMeter([...tree.deviceSub]) : setforwardRef.current.setSubMeter([])
-        tree.deviceSummary ? setforwardRef.current.setSummaryMeter([...tree.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
-        gettablelineData()
+        gettablelineData(tree)
     }
 
     //获取线路数据
-    const gettablelineData = async () => {
+    const gettablelineData = async (tree='') => {
         let params = {
             projectId,
             type,
@@ -126,7 +125,17 @@ export default function Common({type}) {
         const res = await QueryUnusedMeter(params)
         if (res.success && Array.isArray(res.data)) {
             setforwardRef.current.setDataSource([...res.data])
-
+            setforwardRef.current.setCopydataSource([...res.data])
+            setforwardRef.current.setSelectedRowKeys([])
+            setforwardRef.current.setSubMeterRowKeys([])
+            setforwardRef.current.setSummaryRowKeys([])
+            if(tree){
+                tree.deviceSub ? setforwardRef.current.setSubMeter([...tree.deviceSub]) : setforwardRef.current.setSubMeter([])
+                tree.deviceSummary ? setforwardRef.current.setSummaryMeter([...tree.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
+            }else{
+                treelist.deviceSub ? setforwardRef.current.setSubMeter([...treelist.deviceSub]) : setforwardRef.current.setSubMeter([])
+                treelist.deviceSummary ? setforwardRef.current.setSummaryMeter([...treelist.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
+            }      
         } else {
             setforwardRef.current.setDataSource([])
         }
@@ -135,8 +144,9 @@ export default function Common({type}) {
     const closeDrawer = () => {
         setOpen(false)
     }
-    //区域选择
+    //改变区域
     const changeSelection = (v, option) => {
+        setforwardRef.current.setSearchValue("")
         getLineManagerQuery(v)
         closeDrawer()
     }
@@ -157,7 +167,9 @@ export default function Common({type}) {
         open,
         closeDrawer,
         ref: setforwardRef,
-        getLineManagerQuery
+        getLineManagerQuery,
+        gettablelineData,
+        treelist
     }
     return (
         <>
@@ -193,7 +205,7 @@ export default function Common({type}) {
 
 //树节点
 let Treeline = forwardRef(
-    ({ tree, alldata, openDrawer, getLineManagerQuery, selform,type }, ref) => {
+    ({ tree, alldata, openDrawer, getLineManagerQuery, selform, type }, ref) => {
         const [addform] = Form.useForm()
         const [editform] = Form.useForm()
         const addmodalRef = useRef()
@@ -307,7 +319,8 @@ let Treeline = forwardRef(
             onOk: delOk
         }
         useImperativeHandle(ref, () => ({
-            opneSet
+            opneSet,
+            tree
         }))
         return (
             (<>
@@ -402,9 +415,10 @@ let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
 }
 
 //配置线路
-let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
+let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, ref) => {
     const { Search } = Input;
     const [dataSource, setDataSource] = useState([])//未选data
+    const [copydataSource,setCopydataSource] = useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState(null);//未选线路check
     const [selectedRows, setSelectedRows] = useState([]);//未选线路选中data
     const [subMeter, setSubMeter] = useState([]); //分表data
@@ -414,11 +428,13 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
     const [summaryRowKeys, setSummaryRowKeys] = useState();//总表选中check
     const [summarySelectedRows, setSummarySelectedRows] = useState()//总表选中data
     const [lineId, setLineId] = useState(null);
+    const [searchValue, setSearchValue] = useState(""); //搜索值
     const projectId = useSelector(state => state.system.menus.projectId)
     const columns = [
         { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
         { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
-        { title: '安装地址', dataIndex: 'address', align: "center", }
+        { title: '安装地址', dataIndex: 'address', align: "center", },
+    
     ]
     const btncss = {
         width: 68,
@@ -442,6 +458,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
     //关闭抽屉
     const close = () => {
         closeDrawer()
+        setSearchValue("")
     }
     //未选择线路check
     const onSelectChange = (newSelectedRowKeys, selectedRows, info) => {
@@ -461,38 +478,47 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
     //未选择to分表
     const subToLeft = () => {
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
+        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
         console.log(arr)
         setSubMeter([...selectedRows, ...subMeter])
         setSubMeterRowKeys([])
-        setDataSource(arr)
+        setDataSource([...arr])
+        setCopydataSource([...unarr])
+        
+        
     }
     //分表to未选择
     const subToRight = () => {
         const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
         console.log(arr, subMeter, subSelectedRows)
         setDataSource([...subSelectedRows, ...dataSource])
+        setCopydataSource([...subSelectedRows, ...copydataSource])
         setSubMeter([...arr])
         setSelectedRowKeys([])
     }
     //未选择to总表
     const summaryToLeft = () => {
-        if (selectedRows.length !== 1) {
+        if (selectedRows.length !== 1 || summaryMeter.length===1) {
             message.warning('总表最多为一条')
             return
         }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
+        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
         setSummaryMeter([...selectedRows])
-        setDataSource(arr)
+        setDataSource([...arr])
+        setCopydataSource([...unarr])
     }
     //总表to未选择
     const summaryToRight = () => {
         console.log(summarySelectedRows)
         setDataSource([...summarySelectedRows, ...dataSource])
+        setCopydataSource([...summarySelectedRows, ...copydataSource])
         setSummaryMeter([])
         setSelectedRowKeys([])
     }
     //保存线路编辑
     const saveConfig = async () => {
+        setSearchValue("")
         const summatysn = summaryMeter.map(it => it.sn)
         const subsn = subMeter.map(it => it.sn)
         let params = {
@@ -501,7 +527,6 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
             deviceSummary: summatysn,
             deviceSub: subsn
         }
-        console.log(params)
         const resp = await ConfigureMeter(params)
         if (resp.success) {
             message.success('线路配置成功')
@@ -511,12 +536,30 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
             message.error(resp.errMsg)
         }
     }
+    //搜索
+    const onSearch = async (value, event) => {
+        console.log(treelist)
+        
+        if(!value){
+            setDataSource([...copydataSource])
+            return
+        }
+        const filterarr = copydataSource.filter(it => {
+            return (it.sn.includes(value)  || it.address.includes(value) )
+        })
+        setDataSource([...filterarr])
+        console.log(filterarr)
+    }
     useImperativeHandle(ref, () => ({
         setDataSource,
         setSelectedRowKeys,
         setSubMeter,
         setSummaryMeter,
-        setLineId
+        setLineId,
+        setCopydataSource,
+        setSubMeterRowKeys,
+        setSummaryRowKeys,
+        setSearchValue
     }))
     return (
         <div style={{ position: 'absolute', width: 1686, height: 755, top: 73, left: open ? -17 : 2000, background: "#003366", transition: 'all .5s 0s', padding: 32, display: 'flex' }}>
@@ -541,7 +584,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
                         columns={columns}
-                        scroll={{ y: 360  }} 
+                        scroll={{ y: 360 }}
                         size={'small'}
                         dataSource={subMeter}
                         rowKey={record => record.id}
@@ -570,16 +613,16 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery }, ref) => {
                 </div>
             </div>
             <div style={{ position: 'relative', width: 714 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: '99%',width:'100%',overflow:'hidden', }}>
+                <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
                     <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <div style={{marginBottom:16}} className={commonstyle.searchinp}>
-                        <span>设备搜索</span>                       
-                        <Search style={{width:372,borderRadius:16,marginLeft:16}} placeholder="请设备编号/安装地址"></Search>
+                    <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
+                        <span>设备搜索</span>
+                        <Search style={{ width: 372, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e)=>{setSearchValue(e.target.value)}}></Search>
                     </div>
                     <Table
                         bordered
                         pagination={false}
-                        rowSelection={{selectedRowKeys,onChange: onSelectChange }}
+                        rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
                         dataSource={dataSource}
                         scroll={{ y: 500 }}

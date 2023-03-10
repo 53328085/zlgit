@@ -11,7 +11,7 @@ export default [
             title: '网关缩略图',
             dataIndex: 'imageBase64',
             key:'imageBase64',
-            render:(t,r,i)=>(<img src={'data:image/jpeg;base64,'+t} width="64px" alt=""></img>)
+            render:(t,r,i)=>(<img src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></img>)
           },
           {
             title: '已用网关数量',

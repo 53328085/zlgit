@@ -19,7 +19,7 @@ export default function Electric() {
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
     current: 1,
-    pageSize: 2,
+    pageSize: 10,
     hideOnSinglePage: false
   });
   const ModalRef = useRef(null)

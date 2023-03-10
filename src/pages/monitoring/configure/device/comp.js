@@ -16,7 +16,7 @@ export default forwardRef(function Comp(props, ref) {
         exportExecel,
         page
     } = props
-    const [selvalue, setSelvalue] = useState(0)
+    const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal,setEnergyVal] = useState(0)
     const selOptions = [{
