@@ -44,6 +44,8 @@ const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
+const Topology = lazy(() => import("../pages/topology"))
+
 const Fform = lazy(() => import("../pages/test/fform.js"))
 import {designerComponents, designerChildrenRoute} from "./designer";
 
@@ -116,6 +118,10 @@ const childrenRoute = {
      path: "/roomDetail",
      element: <RoomDetail />
    },
+   {
+    path: "/topology",
+    element: <Topology />
+  },
    {
      path: '/antdconfig',
      element: <Antdconfig/>
