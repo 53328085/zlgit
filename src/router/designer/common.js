@@ -13,7 +13,7 @@ const components = {
     '020101': Project,
     '020102': User,
     '020103': Region,
-    '020105': Cockpit,
+    '020104': Cockpit,
 }
 store.subscribe(() => {
     try {
