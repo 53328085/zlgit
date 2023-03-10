@@ -502,6 +502,16 @@ export const Monitoring =  {
         StreetLightUpdate:(data)=>server.post(`/Monitor/StreetLight/Update`,data),//更新园区照明
         StreetLightDelete:(data)=>server.delete(`/Monitor/StreetLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除园区照明
         StreetLightImport:(data)=>server.post(`/Monitor/StreetLight/Import`,data),//批量导入
+    },
+    //线路管理
+    LineManager:{
+        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
+        LineManagerQuery:(data)=>server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
+        LineManagerAdd:(data)=>server.post(`/Monitor/LineManager/Add`,data),//新增线路       
+        LineManagerUpdate:(data)=>server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
+        LineManagerDelete:(data)=>server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
+        QueryUnusedMeter:(data)=>server.get(`/Monitor/LineManager/QueryUnusedMeter?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}&alike=${data.alike}`),//未使用线路
+        ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
     }
 }
 

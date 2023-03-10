@@ -10,7 +10,7 @@ const {PubliclightManager:{StreetLightAdd,StreetLightQueryByPage,StreetLightUpda
 export default function parkstreet({areaList}) {
   const [tableParams,setTableParams]=useState({
     current:1,
-    pageSize:2,
+    pageSize:10,
     hideOnSinglePage:false,
     total:0
   })

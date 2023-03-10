@@ -67,7 +67,10 @@ import {
         console.log(error)
     }  
   }
-   
+  const moveend = ({type, target}) => {
+     console.log(type)
+     console.log(target)
+  }  
   const serachcomplete = (res) => {
    // console.log(serachMap.getStatus())
     if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {
@@ -91,14 +94,14 @@ import {
        point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
      }
   
-    )
+    ) 
   }, [value])
   useImperativeHandle(ref, () => ({
     serachMap
   }))
 
   return (
-    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref} center={position.point}>
+    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref} center={position.point} >
      
       <Marker position={position.point} enableDragging icon={position.icon} />
       <NavigationControl />

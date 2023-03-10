@@ -8,8 +8,8 @@ export default function electric() {
     addMainLine
   }
   return (
-    <div>
-        <Common {...commonProps}/>
+    <div style={{ overflow: 'hidden' ,width:'100%',height:873}}>
+        <Common type={1}/>
     </div>
   )
 }

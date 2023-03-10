@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
+import style from './style.module.less'
 import { Form, Row, Col, Select, Input, Divider, Upload } from 'antd'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
@@ -97,8 +98,9 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 6
             }}
+            
         >
-            <Row>
+            <Row className={style.customItem}>
                 <Col flex={1}>
                     <Form.Item label="所属园区" name="areaId" rules={rules}>
                         {
@@ -182,10 +184,6 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
     )
 
 }
-
-
-
-
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
@@ -302,7 +300,7 @@ export const EditFormComp = (props) => {
                 span: 6
             }}
         >
-            <Row>
+            <Row className={style.customItem}>
                 <Col flex={1}>
                     <Form.Item label="所属园区" name="areaId" rules={rules}>
                         {

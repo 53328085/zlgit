@@ -14,21 +14,22 @@ import {
 } from "antd";
 import styled from "styled-components";
 import moment from 'moment';
+
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
-import Cupload from "@com/useUpload.js"
-import Adrress from "@com/useAddress.js"
+import Cupload from "@com/useUpload.js" 
  const Formbox = styled(Form)`
   display: grid;
-  grid-template-columns: 600px 600px;
+  grid-template-columns: 578px 720px;
   grid-template-rows: repeat(16, 32px);
   gap: 16px 128px;
   grid-auto-flow: column;
+  justify-content: space-between;
   .ant-form-item {
     margin-bottom: 0px;
   }
   .ant-form-item-label {
-    flex-basis: 8em;
+    flex-basis: 146px;
     padding-right: 10px;
   }
   .optional {
@@ -40,17 +41,15 @@ import Adrress from "@com/useAddress.js"
   }
   .remark {
     grid-column: 2;
-    grid-row: -2 / -4;
-    textarea.ant-input {
-      height: 80px;
-    }
+    grid-row: -2 / -3; 
+
   }
   .upload {
     grid-column: 2;
     grid-row: 1 / 5;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 16px;
+    grid-template-columns: 296px 296px;
+   justify-content: space-between;
     .ant-form-item-row {
        height: 140px;
       }
@@ -70,21 +69,21 @@ import Adrress from "@com/useAddress.js"
  
   .address {
     grid-column: 2;
-    grid-row: 5 / 7;
+   // grid-row: 5 / 7;
   }
   .lat {
     grid-column: 2;
-    grid-row: 7;
+   // grid-row: 7;
   }
-  .upload, .address, .lat {
+  .upload, .address, .lat, .remark {
     .ant-form-item-label {
-    flex-basis: 5em;
+    flex-basis: 96px;
    
   }
   }
   .map {
     grid-column: 2;
-    grid-row: 8 / -4;
+    grid-row: 7 / 15;
   }
   .save {
     grid-column: 2;
@@ -277,7 +276,7 @@ ShiftEnabled: 0, // 班次管理
     imgProject: '',
   };  
 
-const GetAddress = useMemo(() => Adrress, [])
+ 
 
    
 const onSwitch = (f) => {
@@ -311,6 +310,8 @@ const queryProjectInfo = async () => {
    }
   
 }
+
+const onInput = (e) =>   map.current?.serachMap.search(e.target.value)
 const changeAddress = (v) => {
   try {
     let address = v?.split(',').join('').trim();
@@ -352,7 +353,7 @@ const setAaddress = (value) => {
    console.log(value)
   let {lng, lat, address, province, city, district, street, streetNumber} = value
   
-   lng && lat && form.setFieldValue('lngLat', `${lng?.toFixed(3)},${lat?.toFixed(3)}`)
+   lng && lat && form.setFieldValue('lngLat', `${lng},${lat}`)
   
   address && form.setFieldValue('address', address);
   province && setAddressDtl([province, city, district])
@@ -392,6 +393,7 @@ useEffect(() => {
       scrollToFirstError={true}
       onFinish={onFinish}
     >
+     
       <Item label="项目ID" name="id">
         <Input placeholder="系统自增项目ID" disabled />
       </Item>
@@ -459,11 +461,7 @@ useEffect(() => {
           }}
         />
       </Item>
-      <Item label="项目备注"  className='remark'>
-         <Item noStyle name="remark">
-        <TextArea rows={2} placeholder="请输入备注0-99字" maxLength={99} />
-        </Item>
-      </Item> 
+       
       <div className='upload'>
          <Item label="项目logo" className="left" required>
            <div className="img">
@@ -472,7 +470,7 @@ useEffect(() => {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={212} hpx={32} swpx={220} shpx={114} style={{padding: '16px'}}   /> 
+              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}}   /> 
             </Item>
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
@@ -490,18 +488,15 @@ useEffect(() => {
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
-      <Item label="项目地址" className='address' required>
-        <Item noStyle>
-           <GetAddress placeholder="请选择省市区" onChange={changeAddress} value={addressDtl} />
-        </Item>
-        <Item name='address'  rules={[
+      <Item label="项目地址" name="address"  className='address' rules={[
               {
                 required: true,
                 message: '请输入详细地址',
               },
-            ]}>
-          <Input placeholder="请输入项目的详细地址" /> 
-        </Item>
+            ]}
+            tooltip="请在地图上刷选或点击获取"
+            > 
+          <Input placeholder="请在地图上刷选或点击获取"  onChange={onInput} />         
       </Item>
       <Item label="经纬度" className="lat" name="lngLat" required>
        
@@ -525,6 +520,9 @@ useEffect(() => {
           <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
          
       </div>
+      <Item label="项目备注"  className='remark' name="remark">
+        <TextArea placeholder="项目详细地址" maxLength={99} style={{height: '32px'}} />
+      </Item> 
       <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>
       </div>

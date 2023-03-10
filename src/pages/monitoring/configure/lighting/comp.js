@@ -26,7 +26,6 @@ import CustContext from '@com/content'
     } = props
    
    const changeSelect=(v)=>{
-    console.log(inpRef)
     setSelValue(v)
     setTableParams({
         ...tableParams,
@@ -51,7 +50,7 @@ import CustContext from '@com/content'
     inpRef
    }))
     useEffect(() => {
-       
+        
     }, [])
     return (
         <div>
@@ -59,7 +58,7 @@ import CustContext from '@com/content'
                 <Row align='middle'>
                     <Col>
                         <Select
-                           defaultValue={0}
+                           defaultValue='全部园区'
                            value={selvalue}
                            fieldNames={{
                             label:'name',
