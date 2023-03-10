@@ -514,7 +514,10 @@ export const Monitoring =  {
         ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
     }
 }
-
+export class energyRanking{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+}
 //energyDesigner能耗管理
 export class energyDesigner {
     static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)

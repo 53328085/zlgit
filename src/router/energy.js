@@ -25,8 +25,7 @@ const components = {
     '010903': Assorting, // 分类能耗
     '010904': Ranking , // 能耗排名 
     '010905': Timesharing,  // 分时能耗
-   // '010905': AssortingCost, // 分类费用
-   
+    
     '010906': Report,  // 数据报表
     '010907': Direction,  // 能源流向
     '010908': Analysis, // 损耗分析

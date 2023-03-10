@@ -79,9 +79,6 @@ const Tabsbox = styled(Tabs)`
 }
 `
  function Index({projectId, userId}, ref) { 
-    
-   
-
     const mref= useRef() 
     const   MenuNos  =  useRef({}) // 运行
     const  Dmenunos = useRef({}) // 设计
@@ -150,7 +147,13 @@ const Tabsbox = styled(Tabs)`
              setAllSinderRunMenus({...sider})
              designmenu.forEach(item => {
               let {no, key } = item  
-               design[key] = data?.filter(m => m.parentNo == no) 
+              let arr = data?.filter(m => m.parentNo == no);
+              if(no == '0202') {
+                design[key] = [item]
+              }else if(arr.length > 0) {
+                design[key] = arr
+              }
+              
                 
             })         
             setallSinderDesignMenus({...design})
@@ -164,19 +167,23 @@ const Tabsbox = styled(Tabs)`
          }, [userId])
       
          const Runcom = () => {
-          console.log(allSinderRunMenus); 
-          
-          const [runall, setRunall] = useState(() => {
+         
+          const runValue = useMemo(() => {
+
             let allvalues = []
             for(let values of Object.values(allSinderRunMenus)) {
                 allvalues= [...allvalues, ...values];
             }
-           console.log(allvalues)
-           return !allvalues.find(i => i.select == 0)
-          })
+            return allvalues
+          }, [allSinderRunMenus])
+          const [indeterminate, setIndeterminate] = useState(false); //
+          const [isall, setIsall] = useState({})
+
+          const [runall, setRunall] = useState(() => !runValue.find(i => i.select == 0))
           const onRunall = (e) => {
             let checked = e.target.checked
             setRunall(checked)
+            setIndeterminate(false)
             setAllSinderRunMenus(pre => {
                 let menus = {}
                 for(let [key, sider] of Object.entries(pre)) {
@@ -191,31 +198,87 @@ const Tabsbox = styled(Tabs)`
   
             })
           }
+          useEffect(() => { 
+            let bools = Object.values(isall)
+            if (bools?.length) {
+              console.log(bools)
+              let trues = bools.filter(f => !f) 
+              console.log(trues)
+              setIndeterminate(!!trues.length && bools.length > trues.length) 
+              if(trues.length ==bools.length) setRunall(false)
+
+            } 
+           
+          }, [isall])
+        
           return (
             <>
               <Checkdiv style={{paddingTop: '0px'}}>
-              <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall}>选择全部</Checkbox></Checkdiv>
+              <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall} indeterminate={indeterminate}>选择全部</Checkbox></Checkdiv>
               </Checkdiv>
-             { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
+             { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
               
             </>
           )
          }
          const Descom = () =>{
+          const runValue = useMemo(() => {
+
+            let allvalues = []
+            for(let values of Object.values(allSinderDesignMenus)) {
+                allvalues= [...allvalues, ...values];
+            }
+            return allvalues
+          }, [allSinderDesignMenus])
+          const [indeterminate, setIndeterminate] = useState(false); //
+          const [isall, setIsall] = useState({})
+
+          const [runall, setRunall] = useState(() => !runValue.find(i => i.select == 0))
+          const onRunall = (e) => {
+            let checked = e.target.checked
+            setRunall(checked)
+            setIndeterminate(false)
+            setallSinderDesignMenus(pre => {
+                let menus = {}
+                for(let [key, sider] of Object.entries(pre)) {
+                    let ms = []
+                    sider.forEach(s => {
+                      s.select = Number(checked);
+                      ms.push(s);
+                    })
+                    menus[key] = ms
+                }
+                return menus  
   
+            })
+          }
+          useEffect(() => { 
+            let bools = Object.values(isall)
+            if (bools?.length) {
+              console.log(bools)
+              let trues = bools.filter(f => !f) 
+              console.log(trues)
+              setIndeterminate(!!trues.length && bools.length > trues.length) 
+              if(trues.length ==bools.length) setRunall(false)
+              
+            } 
+           
+          }, [isall])
+
+
           return (
             <>
           <Checkdiv style={{paddingTop: '0px'}}>
-          <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox>选择全部</Checkbox></Checkdiv>
+          <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall} indeterminate={indeterminate}>选择全部</Checkbox></Checkdiv>
             </Checkdiv>
       
-           { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
+           { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
            </>
           )
          }
   
          const cachrun = useMemo(() => <Runcom />, [AllRunMenus, allSinderRunMenus])
-         const cachdes = useMemo(() => <Descom />, [AllDesignMenus, AllDesignMenus])
+         const cachdes = useMemo(() => <Descom />, [AllDesignMenus, allSinderDesignMenus])
          const items =  [
           {
           key: 'run',
@@ -239,7 +302,7 @@ const Tabsbox = styled(Tabs)`
   
  
 
-   const CheckboxList = ({data, title, mod, type }) => { 
+   const CheckboxList = ({data, title, mod, type,  setIsall }) => { 
     if (!Array.isArray(data))  return  
     
     const [checkedList, setCheckedList] = useState(() => data?.filter(d => d.select == 1)?.map(d => d.no));
@@ -263,12 +326,18 @@ const Tabsbox = styled(Tabs)`
     }
     useEffect(() => {
        if(type == 'run') {
-        
         MenuNos.current[mod] = checkedList;
-      
+        setIsall((pre) => ({
+           ...pre,
+           [mod]: data.length === checkedList.length
+        }))
        
        }else if(type == 'design') {
         Dmenunos.current[mod] = checkedList;
+        setIsall((pre) => ({
+          ...pre,
+          [mod]: data.length === checkedList.length
+       }))
        }
        
     }, [checkedList, type])

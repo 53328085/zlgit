@@ -105,14 +105,13 @@ const Inptserach = styled(Input.Search)`
   && {
     width: 256px;
     .ant-input-search .ant-input-group .ant-input-affix-wrapper:not(:last-child) {
-      border-radius: 16px 0 0 16px;
+      border-radius: 16px 0 0 16px !important;
     }
   }
 `
 const {Link, Text, Paragraph} = Typography
 const {Item} = Form
-export default function Index({projectId,level, CModal, name, allLevel}) {
-  console.log('level'+level);
+export default function Index({projectId,level, CModal, name, allLevel}) { 
   const [levelone] = useState(allLevel[0])  
   const limitlevle = allLevel.slice(0, level - 1);
    
@@ -616,7 +615,6 @@ const changeUnselected =( ) => {
                     <Space size={16}>
                       <Item  label='设备类型' name="type" >
                       <Select style={{width: '112px'}}
-                        defaultValue='1'
                         onChange={changeUnselected}
                         options={
                           [
@@ -639,7 +637,7 @@ const changeUnselected =( ) => {
                       </Select>
                       </Item>
                       <Item name="alike" label="设备搜索">
-                         <Inptserach allowClear onChange={changeUnselected} placeholder='请输入设备编号/安装地址' onSearch={changeUnselected} />
+                         <Inptserach allowClear  placeholder='请输入设备编号/安装地址' onSearch={changeUnselected} />
                        </Item>
                     </Space>
                     </Form>
