@@ -1,0 +1,337 @@
+.header {
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+}
+
+.line {
+    width: 0;
+    height: 33px;
+    margin: 0 24px;
+    border-left: 1px dashed #d7d7d7;
+}
+
+.search {
+    margin-left: auto;
+    margin-right: 24px;
+}
+
+.card {
+    width: 550px;
+    height: 176px;
+    border: none;
+    border-radius: 4px;
+    margin-right: 15px;
+    margin-top: 12px;
+    background-color: #fff;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.35);
+
+    &:nth-child(3n) {
+        margin-right: 0;
+    }
+
+    &:hover {
+        cursor: pointer;
+        border: 1px solid #517bce;
+    }
+
+    .cardTop {
+        padding-top: 12px;
+        margin-left: 12px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        color: #666;
+
+        .energyState {
+            display: inline-block;
+            width: 96px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 14px;
+            color: #390;
+            text-align: center;
+            margin-left: auto;
+            margin-right: 12px;
+            background: url('./img/energyState.png');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+    }
+
+    .cardMiddle {
+        margin-left: 12px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+
+        .energyType {
+            margin: 0 24px;
+            width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .energyItem {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .energytitle {
+                    font-size: 16px;
+                    color: #666;
+                }
+
+                .energyData {
+                    font-size: 28px;
+                    color: #515151;
+                    margin-top: 6px;
+                }
+            }
+        }
+    }
+
+    .cardBottom {
+        margin-top: 16px;
+        margin-left: 24px;
+        font-size: 14px;
+        color: #999;
+        display: flex;
+        align-items: center;
+
+        .percent {
+            color: #606266;
+            margin: 0 45px;
+        }
+    }
+}
+
+.goback {
+    width: 96px;
+    position: absolute;
+    right: 36px;
+    top: 88px;
+}
+
+.content {
+    margin-top: 12px;
+    display: flex;
+
+    .contentLeft {
+        width: 400px;
+
+        .item {
+            border: 1px solid rgb(215, 215, 215);
+            border-radius: 4px;
+            background-color: #fff;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+
+            .itemTitle {
+                margin: 12px;
+                padding-left: 12px;
+                height: 32px;
+                border-left: 4px solid #237Ae4;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                color: #515151;
+            }
+
+            .state {
+                display: inline-block;
+                width: 96px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 14px;
+                color: #390;
+                text-align: center;
+                margin-left: auto;
+                margin-right: 0px;
+                background: url('./img/energyState.png');
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+            }
+
+            .detail {
+                font-size: 14px;
+                color: #135abd;
+                cursor: pointer;
+                margin-left: auto;
+                margin-right: 12px;
+            }
+
+            .itemData {
+                margin-top: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 88px;
+                margin-right: 12px;
+
+                .bgImg {
+                    margin-left: 24px;
+                    width: 64px;
+                    height: 64px;
+                }
+
+                .dataList {
+                    height: 88px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+
+                    .dataItem {
+                        width: 180px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
+                    .listTitle {
+                        font-size: 14px;
+                        color: #999;
+                    }
+
+                    .listValue {
+                        font-size: 16px;
+                        color: #515151;
+                    }
+                }
+            }
+
+            .progress {
+                margin-top: 24px;
+                margin-left: 28px;
+
+                .quota {
+                    font-size: 14px;
+                    color: #606266;
+                    margin-right: 24px;
+                }
+            }
+        }
+    }
+
+    .contentRight {
+        width: 1264px;
+        height: 800px;
+        margin-left: 12px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 4px;
+
+        .area {
+            width: 1232px;
+            height: 768px;
+            margin: 12px;
+        }
+    }
+}
+
+.content {
+    margin-top: 12px;
+    width: 100%;
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .contentTop {
+        width: 100%;
+        height: 328px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .contentTopLeft {
+            width: 1264px;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        .contentTopRight {
+            width: 400px;
+            height: 100%;
+            background-color: #fff;
+
+            .airEnergy {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding-top: 32px;
+
+                .airEnergyData {
+                    display: grid;
+                    grid-template-rows: 50px;
+                    grid-template-columns: repeat(2, 120px);
+
+                    p {
+                        line-height: 50px;
+                        text-align: left;
+                    }
+                }
+            }
+        }
+    }
+
+    .contentBottom {
+        width: 100%;
+        height: 456px;
+        background-color: #fff;
+        padding: 16px;
+
+        .contentBottomBottom {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .airBox {
+            width: 160px;
+            height: 360px;
+            background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
+            margin-right: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 16px;
+
+            .airBoxName {
+                color: #fff;
+                text-align: center;
+                margin-top: 16px;
+            }
+
+            .airBoxValue {
+                color: #66FF00;
+                text-align: right;
+                margin: 8px 0;
+                span {
+                    font-size: 12px;
+                    color: rgba(102, 255, 0, 0.8);
+                    margin-left: 5px;
+                }
+            }
+
+            .airState {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                span {
+                    margin-left: 8px;
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
