@@ -5,29 +5,62 @@ import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Timeline, Typography} from 'antd'
+import {Form, Image, Timeline, Typography,Select} from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
 import imgurl from './icon'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-rows: 176px 304px 267px; 
+  grid-template-rows:48px 176px 304px 267px; 
   row-gap: 16px;
   justify-content: flex-end;
+  .header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+}
+.line{
+    width: 0;
+    height: 33px;
+    margin: 0 24px;
+    border-left: 1px dashed #d7d7d7;
+}
   .upper {
     display: grid;
-    grid-template-columns: 420px repeat(7, 176px);
+    grid-template-columns:  repeat(7, 144px) 560px;
     column-gap: 16px;
     .item {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
+      border: 1px solid #d7d7d7;
       width: 100%;
       height: 100%;
       color:#333;
+      background-color:#fff;
+      .imgBox{
+        width:144px;
+        height:88px;
+        background-color:#237AE4;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      .descBox{
+        display:flex;
+        align-items:center;
+        flex-direction:column;
+        span{
+          line-height:44px;
+        }
+      }
       strong {
         font-size: 22px;
       }
@@ -47,7 +80,8 @@ const Mainbox = styled.div`
 
 const Timelinebox = styled(Timeline)`
    max-height: 115px;
-   padding-top: 2px;
+   overflow-y:scroll;
+   padding-top: 16px;
   .ant-timeline-item {
     padding-bottom: 8px;
   }
@@ -71,7 +105,7 @@ export default function Index() {
   const lref = useRef(null)
   const l2ref = useRef(null)
   const l3ref = useRef(null)
-
+  const { Option } = Select
   const grid = {
     // 图表 grid
     left: "0px",
@@ -281,80 +315,120 @@ export default function Index() {
     }
   })   
   })
- 
+  const handleChange=(e)=>{
+    console.log(e)//value值
+  }
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
         <Mainbox>
+        <div className='header'>
+        <span style={{marginLeft: '12px'}}>园区选择</span>
+        <Select
+          placeholder="请选择园区"
+          size="middle"
+          defaultValue="1"
+          style={{width: '320px', marginLeft: '12px'}}
+          onChange={handleChange}
+        >
+          <Option value="1">正泰物联全部园区</Option>
+          <Option value="2">正泰物联滨江园区</Option>
+          <Option value="3">正泰物联温州园区</Option>
+        </Select>
+        {/* <div className='line'></div>
+        <span>能源类型</span>
+        <Select
+          placeholder="全部类型"
+          size="middle"
+          style={{width: '126px', marginLeft: '12px'}}
+        >
+          <Option value="0">电</Option>
+          <Option value="1">水</Option>
+          <Option value="2">燃气</Option>
+        </Select>  */}
+      </div>
             <div className='upper'>
-                <Titlelayout title={'最新告警'} {...fs}>
+           {/* <Titlelayout> */}
+               <div className='item'>
+                <div className='imgBox'><Image src={imgurl.home5} preview={false} width={64} height={64} ></Image></div>
+                <div className='descBox'> <span>账户余额总计</span>
+                 <Text strong ellipsis>125896.30</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home1} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'><span>能源费累计收入</span>
+                 <Text strong ellipsis>15896.01</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home2} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'><span>物业费累计收入</span>
+                 <Text strong ellipsis>125.00</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home6} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'><span>能源欠费总计</span>
+                 <Text strong ellipsis>3.00</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home6} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'> <span>物业费欠费总计</span>
+                 <Text strong ellipsis>122325.00</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home3} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'> <span>客户总数</span>
+                 <Text strong ellipsis>205</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           {/* <Titlelayout> */}
+               <div className='item'>
+               <div className='imgBox'><Image src={imgurl.home4} preview={false} width={64} height={64}></Image></div>
+               <div className='descBox'> <span>欠费客户</span>
+                 <Text strong ellipsis>20</Text></div>
+               </div>
+           {/* </Titlelayout> */}
+           <Titlelayout title={'最新告警'} extra={<a href="#">详情</a>} {...fs}>
                   <Timelinebox>
-                    <Timeline.Item>
+                    <Timeline.Item color='red'>
                         <div>
-                          <p className='title'>13:48:55  客户欠费</p>
-                          <p className='content'>02303  张三 / 13588455699  欠费 100.32元</p>
+                          <p className='title'>13:48:55    客户欠费    <span className='content'>   02303  张三 / 13588455699  欠费 100.32元</span></p>
+                          {/* <p className='content'>02303  张三 / 13588455699  欠费 100.32元</p> */}
                         </div>
                     </Timeline.Item>
-                    <Timeline.Item>
+                    <Timeline.Item color='red'>
                         <div>
-                          <p className='title'>13:20:23  客户欠费</p>
-                          <p className='content'>02304  李四 / 13588455699  欠费 100.32元</p>
+                          <p className='title'>13:20:23  客户欠费<span className='content'>   02303  张三 / 13588455699  欠费 100.32元</span></p>
+                          {/* <p className='content'>02304  李四 / 13588455699  欠费 100.32元</p> */}
                         </div>
                     </Timeline.Item>
-                    <Timeline.Item>
+                    <Timeline.Item color='red'>
                         <div>
-                          <p className='title'>02305</p>
-                          <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p>
+                          <p className='title'>13:20:23  客户欠费<span className='content'>   02303  张三 / 13588455699  欠费 100.32元</span></p>
+                          {/* <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p> */}
                         </div>
-                    </Timeline.Item>         
+                    </Timeline.Item>    
+                    <Timeline.Item color='red'> 
+                        <div>
+                          <p className='title'>13:20:23  客户欠费<span className='content'>   02303  张三 / 13588455699  欠费 100.32元</span></p>
+                          {/* <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p> */}
+                        </div>
+                    </Timeline.Item>      
                   </Timelinebox>
                   
             </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home1} preview={false} width={64} height={64}></Image>
-                 <span>昨日能源金额 (元)</span>
-                 <Text strong ellipsis>125896.300</Text>
-               </div>
-           </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home2} preview={false} width={64} height={64}></Image>
-                 <span>昨日物业金额 (元)</span>
-                 <Text strong ellipsis>15896.01</Text>
-               </div>
-           </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home3} preview={false} width={64} height={64}></Image>
-                 <span>客户总数 (户)</span>
-                 <Text strong ellipsis>125</Text>
-               </div>
-           </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home4} preview={false} width={64} height={64}></Image>
-                 <span>欠费客户 (户)</span>
-                 <Text strong ellipsis>3</Text>
-               </div>
-           </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home5} preview={false} width={64} height={64}></Image>
-                 <span>账户余额总计</span>
-                 <Text strong ellipsis>122325</Text>
-               </div>
-           </Titlelayout>
-           <Titlelayout>
-               <div className='item'>
-                <Image src={imgurl.home6} preview={false} width={64} height={64}></Image>
-                 <span>账户欠费总计</span>
-                 <Text strong ellipsis>-205.6</Text>
-               </div>
-           </Titlelayout>
             </div>
             <div className='middle'>
-              <Titlelayout title={'项目收入趋势'} extra={'详情'} {...fs}>
+              <Titlelayout title={'项目收入趋势'} extra={<a href="#">详情</a>} {...fs}>
                <div ref={bref} style={{width: '100%', height: '100%'}}></div>
                </Titlelayout>
                <Titlelayout title={'支付方式'}   {...fs}>
@@ -365,13 +439,13 @@ export default function Index() {
                </Titlelayout>
             </div>
             <div className='lower'>
-            <Titlelayout title={'用电量趋势'}   {...fs} extra={'详情'}>
+            <Titlelayout title={'用电量趋势'}   {...fs} extra={<a href="#">详情</a>}>
                 <div ref={lref} style={{width: '100%', height: '100%'}}></div>
                 </Titlelayout>
-                <Titlelayout title={'用水量趋势'}   {...fs} extra={'详情'}>
+                <Titlelayout title={'用水量趋势'}   {...fs} extra={<a href="#">详情</a>}>
                     <div ref={l2ref}  style={{width: '100%', height: '100%'}}></div>
                 </Titlelayout>
-                <Titlelayout title={'用气趋势'}   {...fs} extra={'详情'}>
+                <Titlelayout title={'用气趋势'}   {...fs} extra={<a href="#">详情</a>}>
                 <div ref={l3ref}  style={{width: '100%', height: '100%'}}></div>
                 </Titlelayout>
             </div>
