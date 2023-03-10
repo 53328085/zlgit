@@ -8,7 +8,6 @@ import bg from './img/bg.png'
 import up from './img/up.png'
 import down from './img/down.png'
 import air from './img/air.png'
-import area from './img/area-1.png'
 import { drawEcharts } from "@com/useEcharts";
 export default function Index(props) {
     const toMainPage = () => {
