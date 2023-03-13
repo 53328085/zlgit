@@ -13,7 +13,12 @@ export default function Index() {
   const [datetype, setDatetype] = useState()
   const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
   const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
+  
   const [treeData, setTreeData] = useState(null)
+  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
+
+
   const [form] =Form.useForm()
   const { Search } = Input;
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -40,6 +45,10 @@ export default function Index() {
     borderRadius: 4,
     cursor: 'pointer'
   }
+  const onExpand = (newExpandedKeys) => {
+    setExpandedKeys(newExpandedKeys);
+    setAutoExpandParent(false);
+  };
   const changeDateType = (v) => {
     setDatetype(v)
   }
@@ -99,6 +108,9 @@ export default function Index() {
   //搜索数
   const onSearch=(v)=>{
     console.log(v)
+    treeData.map(it=>{
+      // if(it.name.indexOf(v))
+    })
   }
   useEffect(()=>{
     getAreaAll()
@@ -161,7 +173,14 @@ export default function Index() {
       <div className={style.sharecontent}>
         {/* <RadioTree/> */}
         <div className={style.radiotree}>
-          <Search placeholder='请输入关键字查询' style={{marginBottom:24}} onSearch={onSearch}/>
+          <Search 
+          placeholder='请输入关键字查询' 
+          style={{marginBottom:24}} 
+          onSearch={onSearch}
+          onExpand={onExpand}
+          expandedKeys={expandedKeys}
+          autoExpandParent={autoExpandParent}
+          />
           <Tree treeData={treeData} checkable fieldNames={{title:'name',key:'areaId',children:'nodes'}}/>
         </div>
         <div className={style.sharingtime}>

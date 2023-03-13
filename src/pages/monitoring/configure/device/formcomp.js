@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { Form, Row, Col, Select, Input, Divider, Upload } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload,Button } from 'antd'
 import style from './style.module.less'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
@@ -102,7 +102,7 @@ export const FormComp = (props) => {
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             fieldNames={{
-                                label: 'category',
+                                label: 'sn',
                                 value: 'id',
                             }}
                             onChange={changeGateway}
@@ -139,7 +139,11 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={modalFormRef} {...other}>
+        <Modal mold='cust' ref={modalFormRef} {...other} footer={[
+            <Button onClick={other.onCancel}>取消</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+        ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <FormComp >
             </FormComp>
@@ -154,7 +158,11 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} {...other}>
+        <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
+            <Button onClick={other.onCancel}>取消</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+        ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <EditFormComp >
             </EditFormComp>
@@ -274,7 +282,7 @@ export const EditFormComp = (props) => {
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             fieldNames={{
-                                label: 'category',
+                                label: 'sn',
                                 value: 'id',
                             }}
                             onChange={changeGateway}

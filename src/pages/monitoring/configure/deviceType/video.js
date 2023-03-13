@@ -241,6 +241,7 @@ export default function video() {
     open,
     ModalRef,
     exportExecel,
+    title:'配置视频监控类型',
     AddModal: <AddModal {...addModalProps}></AddModal>
   };
   let editFormProps = {
@@ -360,7 +361,7 @@ let EditModal = (props) => {
 let DeleteModal = ({ DelModalRef, ...other }) => {
   return (
     <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      <BlueColumn name='删除视频监控类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
       <div>
         <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
         <span>是否确认删除监控设备类型?</span>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext, createContext } from 'r
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { Form, Row, Col, Select, Input, Divider, Upload } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload,Button } from 'antd'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
@@ -15,7 +15,7 @@ let Com = ({ form, coms }) => {
     }]
     for (let i = 1; i <= coms; i++) {
         options.push({
-            label: `COM ${i}`,
+            label: `COM${i}`,
             value: i
         })
     }
@@ -139,7 +139,7 @@ export const FormComp = (props) => {
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             fieldNames={{
-                                label: 'category',
+                                label: 'sn',
                                 value: 'id',
                             }}
                             onChange={changeGateway}
@@ -155,7 +155,7 @@ export const FormComp = (props) => {
                         <Input />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
-                        <Input />
+                       <Input />
                     </Form.Item>
                     <Form.Item label="用能类型" name="customerType" rules={rules}>
                         <Select
@@ -173,10 +173,16 @@ export const FormComp = (props) => {
         </Form>
     )
 }
+
+
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={modalFormRef} {...other}>
+        <Modal mold='cust' ref={modalFormRef} {...other} footer={ [
+            <Button onClick={other.onAddCancel}>取消</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+        ] }>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <FormComp >
             </FormComp>
@@ -187,7 +193,11 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} {...other}>
+        <Modal mold='cust' ref={EditModalFormRef} {...other} footer={ [
+            <Button onClick={other.onEditCancel}>取消</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+        ] }>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <EditFormComp >
             </EditFormComp>
@@ -339,7 +349,7 @@ export const EditFormComp = (props) => {
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             fieldNames={{
-                                label: 'category',
+                                label: 'sn',
                                 value: 'id',
                             }}
                             onChange={changeGateway}

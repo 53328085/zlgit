@@ -40,6 +40,7 @@ export default function gateway({ deviceStyle }) {
   const pageRef= useRef(page)
   pageRef.current=page
   const [dataSource, setDataSource] = useState([])
+
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
   const modalFormRef = useRef()
@@ -55,6 +56,8 @@ export default function gateway({ deviceStyle }) {
   const [factorform] = Form.useForm()
   let delid;
   let flies;
+  let tag=false;
+  let edittag=false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -86,6 +89,7 @@ export default function gateway({ deviceStyle }) {
       dataIndex: 'gatewayName',
       render: (text, record, index) => {
         if (Array.isArray(gatewaylist)) {
+    
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
           console.log(gatewayfilter)
           return (
@@ -179,6 +183,57 @@ export default function gateway({ deviceStyle }) {
       }
     })
   }
+  //编辑应用
+  const editSure=()=>{
+    editform.validateFields().then(async()=>{
+      const { 
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol:commProtocol?commProtocol:0,
+        commAddress,
+        factor
+      }
+      const resp = await UpdateElectric(params)
+
+      if(resp.success){
+        message.success("应用成功")
+        edittag=true 
+      }else{
+        message.error(resp.errMsg)
+      }
+    })
+  }
+  const onEditCancel=()=>{
+    if(edittag){
+      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    EditModalFormRef?.current?.onCancel()
+  }
    //打开删除窗口
    const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
@@ -250,6 +305,7 @@ export default function gateway({ deviceStyle }) {
     modalFormRef?.current?.onOpen()
 
   }
+
   //确认新增
   const addOk = async () => {
     addform.validateFields().then(async () => {
@@ -280,9 +336,44 @@ export default function gateway({ deviceStyle }) {
         message.error(res.errMsg)
       }
     })
-
-
-
+  }
+  //新增确认应用
+  const onSure=()=>{
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        alarmPlanId: formvalue.alarmPlanId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        customerType: formvalue.customerType,
+        commPort: formvalue.commPort ? formvalue.commPort : 0,
+        commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
+        commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
+        factor: formvalue.factor
+      }
+      const res = await AddElectric(params)
+     
+      if (res.success) {
+        message.success('应用成功!')
+        tag=true
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  //新增弹窗取消
+  const onAddCancel = ()=>{
+    if(tag){
+      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    modalFormRef?.current?.onCancel()
   }
   //打开批量导入窗口
   const multExport = () => {
@@ -321,8 +412,9 @@ export default function gateway({ deviceStyle }) {
     try {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
+        console.log('resp',resp)
         const arr = resp.data.map(it => ({ ...it }))
-        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+        setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
         setDevicelist([])
       }
@@ -392,7 +484,7 @@ export default function gateway({ deviceStyle }) {
       message.error(res.errMsg)
     }
   }
-
+ 
 
   useEffect(() => {
     getQueryByPageElectric()
@@ -422,7 +514,9 @@ export default function gateway({ deviceStyle }) {
     addopts,
     gatewaylist,
     devicelist,
-    onOk: addOk
+    onOk: addOk,
+    onSure:onSure,
+    onAddCancel:onAddCancel
   }
   const uploadprops = {
     maxCount: 1,
@@ -444,7 +538,9 @@ export default function gateway({ deviceStyle }) {
     EditModalFormRef,
     width: 746,
     name: '编辑电表',
-    onOk: editOk
+    onOk: editOk,
+    onSure:editSure,
+    onEditCancel:onEditCancel
   }
   const FactorModalProps={
     FactorRef,

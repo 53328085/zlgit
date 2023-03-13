@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message,Button } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -54,6 +54,8 @@ export default function gateway({ deviceStyle }) {
   const [editform] = Form.useForm()
   let delid;
   let flies
+  let tag=false;
+  let edittag=false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -125,7 +127,7 @@ export default function gateway({ deviceStyle }) {
 
   //确认编辑
   const editOk = async () => {
-    addform.validateFields().then(async () => {
+    editform.validateFields().then(async () => {
       const {
         id,
         areaId,
@@ -167,6 +169,56 @@ export default function gateway({ deviceStyle }) {
       }
     })
     
+  }
+  const editSure= ()=>{
+    editform.validateFields().then(async () => {
+      const {
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        capacity,
+        ratedI,
+        ratedU,
+        ratedFrequency
+      } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        capacity,
+        ratedI,
+        ratedU,
+        ratedFrequency
+      }
+      const resp = await UpdateTransformer(params)
+      if (resp.success) {
+        message.success("更新成功")
+        edittag=true
+       
+        
+      } else {
+        message.error(resp.errMsg)
+      }
+    })
+  }
+  const editCancel=()=>{
+    if(true){
+      getQueryByPageTransformer(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    EditModalFormRef?.current?.onCancel()
   }
   //打开删除窗口
   const onDelete = (record) => {
@@ -252,6 +304,44 @@ export default function gateway({ deviceStyle }) {
 
 
   }
+  const addSure=()=>{
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        alarmPlanId: formvalue.alarmPlanId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        capacity:formvalue.capacity,
+        ratedU:formvalue.ratedU,
+        ratedI:formvalue.ratedI,
+        ratedFrequency:formvalue.ratedFrequency
+      }
+      const res = await AddTransformer(params)
+      if (res.success) {
+        message.success('新增成功!')
+        tag=true
+       
+        // getQueryByPageTransformer()
+        
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+
+  }
+  const addCancel=()=>{
+    if(tag){
+      getQueryByPageTransformer(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    modalFormRef?.current?.onCancel()
+  }
   //打开批量导入窗口
   const multExport = () => {
     modalImportRef?.current?.onOpen()
@@ -290,7 +380,7 @@ export default function gateway({ deviceStyle }) {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
         const arr = resp.data.map(it => ({ ...it }))
-        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+        setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
         setDevicelist([])
       }
@@ -388,7 +478,9 @@ export default function gateway({ deviceStyle }) {
     addopts,
     gatewaylist,
     devicelist,
-    onOk: addOk
+    onOk: addOk,
+    onSure:addSure,
+    onCancel: addCancel,
   }
   const uploadprops = {
     maxCount:1,
@@ -404,13 +496,15 @@ export default function gateway({ deviceStyle }) {
     link:'/deviceExcel/transformer.xlsx',
     name:'变压器导入',
     uploadprops,
-    onOk:onImportOk
+    onOk:onImportOk,
   }
   const EditModalFormProps = {
     EditModalFormRef,
     width: 746,
     name: '编辑变压器',
-    onOk: editOk
+    onOk: editOk,
+    onSure:editSure,
+    onCancel: editCancel
   }
   const ErrModalProps = {
     ErrModalRef,
@@ -536,7 +630,7 @@ export const FormComp = (props) => {
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
               fieldNames={{
-                label: 'category',
+                label: 'sn',
                 value: 'id',
               }}
               onChange={changeGateway}
@@ -564,7 +658,11 @@ export const FormComp = (props) => {
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
     <Modal mold='cust' ref={modalFormRef} {...other}>
-      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }} footer={[
+      <Button onClick={other.onCancel}>取消</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+  ]}></BlueColumn>
       <FormComp >
       </FormComp>
     </Modal>
@@ -578,7 +676,11 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={EditModalFormRef} {...other}>
+    <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
+      <Button onClick={other.onCancel}>取消</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+  ]}>
       <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditFormComp >
       </EditFormComp>
@@ -688,7 +790,7 @@ export const EditFormComp = (props) => {
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
               fieldNames={{
-                label: 'category',
+                label: 'sn',
                 value: 'id',
               }}
               onChange={changeGateway}

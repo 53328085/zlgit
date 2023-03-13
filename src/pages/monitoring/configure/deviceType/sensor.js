@@ -325,7 +325,8 @@ const editOption=(record)=>{
     open,
     ModalRef,
     onCancel,
-    exportExecel
+    exportExecel,
+    title:'配置传感器类型'
   };
   let editFormProps={
     editForm,
@@ -341,8 +342,8 @@ const editOption=(record)=>{
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除电表类型?',
-    name:'删除电表类型',
+    content:'是否确认删除传感器类型?',
+    name:'删除传感器类型',
     onOk:delOK
   }
   return (
@@ -359,7 +360,7 @@ const editOption=(record)=>{
         ></Table>
       </DeviceContent>
       <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑视频监控类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name='编辑传感器类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModalProps}></DeleteModal>
