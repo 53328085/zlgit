@@ -27,6 +27,7 @@ const initialState = {
       //  allRunMenus: [],
       //  allsinderRunMenus: {},
     },
+   onelevel: []
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -59,6 +60,10 @@ const system = createSlice({
          },
         getSetMenus(state, actions) {
             return Object.assign({}, state, {setMenus: actions.payload })
+        },
+        getOnelevel(state, actions) {
+            console.log(actions)
+            return Object.assign({}, state, {onelevel: actions.payload })
         }
     },
     extraReducers: {      
@@ -86,5 +91,7 @@ export const setMenus  = state => state.system.menus?.setMenus
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
-export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus} = actions
+export const selectOneLevel = state => state.system.onelevel
+export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id
+export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel} = actions
 export default system.reducer

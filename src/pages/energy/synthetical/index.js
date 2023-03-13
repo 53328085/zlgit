@@ -140,9 +140,12 @@ export default function Index() {
   const tabs = [
     { label: "综合能耗", key: "1" },
     { label: "电", key: "2" },
-    { label: "水", key: "3" },
-    { label: "燃气", key: "4" },
-    { label: "煤炭", key: "5" },
+    { label: "冷水", key: "3" },
+    { label: "热水", key: "4" },
+    { label: "燃气", key: "5" },
+    { label: "煤炭", key: "6" },
+    { label: "燃油", key: "7" },
+    { label: "其他", key: "8" },
   ];
   const datasetDay = {
     dimensions: ["time", "今日能耗(吨标煤)", "昨日能耗(吨标煤)"],
