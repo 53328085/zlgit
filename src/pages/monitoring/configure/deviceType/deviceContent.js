@@ -37,7 +37,7 @@ export default function DeviceContent(props,ref) {
           <div>请配置该项目接入的网关类型</div>
           <div className={style.btns}>
             <div className={style.btn} onClick={openAdd}>+新增</div>
-            {value===6?<div className={style.btn} style={{marginRight:16}}>批量导入</div>:null}
+            {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>
         </div>

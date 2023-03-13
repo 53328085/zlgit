@@ -94,7 +94,7 @@ export default function Electric() {
   const editOption = (record) => {
     EditModalRef.current.onOpen()
     const editModalData = tableDataSource.filter(it => it.category === record.category)
-    console.log(editModalData, editForm)
+    console.log(editModalData, tableDataSource)
     editForm.setFieldsValue({
       DeviceType: editModalData[0]?.category,
       Control: editModalData[0]?.control,

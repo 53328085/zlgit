@@ -514,9 +514,25 @@ export const Monitoring =  {
         ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
     }
 }
+//能耗排名
 export class energyRanking{
     static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
     static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+    static Query=(data)=>server.post(`/Energy/EnergyRankingRuntime/Query`,data)//能耗排名
+}
+//分时能耗
+export class energyShare{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+    static QuerySpaceTrees=(data)=>server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`,{params:data})//查询树
+    static QueryElectric=(data)=>server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`,data)//分时能耗
+}
+//数据报表
+export class energyReport{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryReading=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryReading`,areaId,{params:data})//能耗抄表
+    static QueryConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryConsume`,areaId,{params:data})//能耗用量
+    static QueryTimeConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryTimeConsume`,areaId,{params:data})//分时能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
