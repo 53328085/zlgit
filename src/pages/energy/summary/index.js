@@ -144,8 +144,7 @@ export default function Index() {
   }, []) */
   return (
     <CustContext.Provider value={{form, handler: {run}}}>
-      <Pagecount showserach={false}>
-
+      <Pagecount showserach={true}>
       <Titlelayout title='能源概述'>
         <Mainbox>
          <div className='up'>
