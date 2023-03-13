@@ -53,6 +53,7 @@ export default function useSerach(props) {
 
   const levelone = useSelector(selectOneLevel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+ 
   const allData = useRef();
   const onChange = (e) => {
      console.log(e)
@@ -106,7 +107,7 @@ export default function useSerach(props) {
         </Select>
       </Item>
         {
-          props.children
+          props.custview
         }
      {/*  <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}>  */}
       {/*  RefreshButton, 
