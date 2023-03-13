@@ -65,6 +65,7 @@ export default function Index() {
                 <Select style={{width:200 }} options={areas} fieldNames={{label:'name',value:'id'}} onChange={ changeArea}></Select>
               </Form.Item>
             </Form>
+            
           </div>
     
           <Pagecount showSearch={false}>
