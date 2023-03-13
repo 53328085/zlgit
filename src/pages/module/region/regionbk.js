@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react' 
+import React, { useState, useRef, useEffect, useMemo } from 'react' 
 import { Input, Button, Space, Modal, Form, message, Typography, Select, InputNumber, Drawer  } from 'antd'
-import {nanoid}  from '@reduxjs/toolkit'
 import styled from 'styled-components' 
 import UserTable from '@com/useTable'
 import {Area} from '@api/api.js'
@@ -530,7 +529,6 @@ const changeUnselected =( ) => {
 
 
   useEffect(() => {
-    console.log('zhu')
     getLevelOption()
   }, [])
    useEffect(() => {
@@ -568,9 +566,9 @@ const changeUnselected =( ) => {
             </Space>
            
         </Form>
-        <UserTable columns={columns} {...tableProps} rowKey='areaId'  />
-       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
-          <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
+      
+          <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
+          <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />  
 
            {/* 抽屉 */}
            {/*  devices.current.deviceSummary = [];
@@ -649,7 +647,8 @@ const changeUnselected =( ) => {
        
        {/* 新增 / 编辑*/}
         <CModal width={fields.field.includes('经纬度') ? 1024 : 554} title={title} ref={nref} onOk={onOk}  mold='cust'>
-        
+
+
         <Formbox 
           islngLat={fields.field.includes('经纬度')}
           rowes={limitlevle.length + 2 + fields.field.length}
@@ -665,19 +664,19 @@ const changeUnselected =( ) => {
             {
              isAdd ?  limitlevle?.map((lv, index, array) => {
                    if (index ==0) { return (
-                      <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }>
+                      <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }  >
                        <Select options={leveloption.current[`level1`] || []} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd} onChange={(e) => getLevelOption(e, lv.level + 1)}></Select> 
                       </Item>
                      )
                    } else  {
                      return(
-                       <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }> 
+                       <Item label={`${lv?.name}名称`}  name={index == array.length -1 ? 'parentId' : lv?.name }   > 
                          <Select options={leveloption.current[`level${lv.level}`] || []} fieldNames={{label: 'name', value: 'id', options: 'options'}} disabled={!isAdd} onChange={(e) => getLevelOption(e, lv.level + 1)}></Select>
                        </Item>
                      )
                    }
                  
-                }) : limitlevle?.map((lv, index, array) => {
+                }) : limitlevle?.map((lv, index, array) => {                 
                    return (
                      <Item label={`${lv?.name}名称`}  name={lv?.name }  >
                       <Input disabled={!isAdd}  />
