@@ -47,6 +47,7 @@ const RoomDetail = lazy(() => import("../pages/roomDetail"))
 const Topology = lazy(() => import("../pages/topology"))
 
 const Fform = lazy(() => import("../pages/test/fform.js"))
+const Notfound = lazy(() => import("./notfound"))
 import {designerComponents, designerChildrenRoute} from "./designer";
 
 const loginrouter =  [{
@@ -87,7 +88,7 @@ const childrenRoute = {
  let DesignerRoute = [];
  let routes =  [
   {
-   path: "/*",
+   path: "/",
    element: <Login />,   
    },
    {
@@ -134,14 +135,23 @@ const childrenRoute = {
      },
 
    },
-   
+   {
+    path: '*',
+    element: <Notfound />
+   }
   
 ];
  
 store.subscribe(() => {
   try {
-   RunRoute = [];
-   DesignerRoute = [];
+   RunRoute = [{
+    path: '',
+    element: <Notfound />
+   }];
+   DesignerRoute = [{
+    path: '',
+    element: <Notfound />
+   }];
    const menus  = store.getState().system.menus;
    
    const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
