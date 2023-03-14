@@ -69,7 +69,7 @@ export default function Index(props){
       const { searchValue, expandedKeys, autoExpandParent } = state;
     //搜索结果重新渲染Treenode，存在一个问题，如果搜索功能和编辑树功能同时需要的话，树组件中
     //tree={loop(treeData)}会造成编辑树功能无法重新渲染树，node中input渲染不出来
-      const loop = data =>{
+      const loop = data =>
         data.map(item => {
           const index = item[props.fieldNames.title].indexOf(searchValue);
           const beforeStr = item[props.fieldNames.title].substr(0, index);
@@ -87,13 +87,12 @@ export default function Index(props){
           if (item[props.fieldNames.children]) {
             return {  [props.fieldNames.title]: title, [props.fieldNames.key]: item[props.fieldNames.key], [props.fieldNames.children]: loop(item[props.fieldNames.children]) };
           }
-     
+    
           return {
             [props.fieldNames.title]:title,
             [props.fieldNames.key]: item[props.fieldNames.key],
           };
         });
-      }
         
 
       const onCheck = (checkedKeys, info) => {

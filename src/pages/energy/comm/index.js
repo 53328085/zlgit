@@ -55,29 +55,40 @@ export default function Index() {
   const fieldNames = {
     title:'name',
     key: 'id',
-    children: 'nodes'
+    children: 'childs'
   }
   const getCategoryTree = () => {
     return queryEnergyCategoryTree(projectId, headerData.energyType).then(res => {
       let {success, data} = res
-      if(res.success){}
+      if(success){
+        if(data){
+          setTreeData(data)
+        }else{
+          setTreeData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
     })
   }
   const {run: runTree} = useRequest(getCategoryTree,{
     manual: true
   })
+  const getSelcetedTree = val => {
+    console.log(val)
+  }
   useEffect(()=>{
     if(headerData.energyType){
       runTree()
     }
   },[headerData.energyType])
-
+  
   return (
     <div>
       {contextHolder}
       <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.content}>
-        <Searchtree title='公共能耗分类' fieldNames={fieldNames} treeData ={treeData}></Searchtree>
+        <Searchtree title='公共能耗分类' fieldNames={fieldNames} treeData ={treeData} getValues={getSelcetedTree}></Searchtree>
         <div className={style.contentMiddle}>
           <span className={style.title}>公共能耗</span>
           <Barchart></Barchart>
