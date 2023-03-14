@@ -22,7 +22,7 @@ export default forwardRef(function Comp(props, ref) {
         page
     } = props
     const projectId = useSelector(state=>state.system.menus.projectId)
-    const [selvalue, setSelvalue] = useState()
+    const [selvalue, setSelvalue] = useState(0)
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal,setEnergyVal] = useState()
     const selOptions = [{
@@ -82,7 +82,7 @@ export default forwardRef(function Comp(props, ref) {
                 <Row align='middle'>
                     <Col>
                         <Select
-                            defaultValue={{label:levelname.current,value:0}}
+                            // defaultValue={{label:levelname.current,value:0}}
                             style={{
                                 width: 264,
                             }}
