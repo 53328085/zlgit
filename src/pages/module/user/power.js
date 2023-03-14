@@ -142,23 +142,35 @@ export default function Account({projectId, CModal}) {
   }
  
   const queryOperationManager = async () => {
-    let {success, data} = await QueryOperationManager({                 // 获取运营管理员(选择框)    
+    let {success, data: {data}} = await QueryOperationManager({                 // 获取运营管理员(选择框)    
       alike: '',
       pageNum: 1,
       pageSize: 150,
     }) 
-    success && Array.isArray(data) && setOperate([...data]);
+     console.log('data')
+     console.log(data)
+     success && Array.isArray(data) && setOperate([...data]);
   }
 
   const queryOperationManagers = async () => {                          // 获取运营管理员(已选择)  
     let {success, data} = await QueryOperationManagers({projectId})
+    setOperate(arr => {
+      arr.forEach(a => {
+         a.disabled = data.find(i => i.id == a.id)
+      })
+      return arr
+    })
     success  && Array.isArray(data) && setOplist([...data]) 
   }
 
   const addOperation = async () => {                                    // 新增运营管理员
+    if(!opvalue) return message.warning('请选择运营管理员')
     let {success } = await InsertOperationManager({projectId, userId: opvalue})
      queryOperationManagers()
-     success && setOperate(arr => arr.map(item => ({...item, disabled: item.id == opvalue}))) 
+     if (success)  {
+     // setOperate(arr => arr.map(item => ({...item, disabled: item.id == opvalue}))) 
+      setOpvalue(null)
+     }
  };
 
  const queryProjectManager = async () => {                              // 获取项目管理员
@@ -178,16 +190,22 @@ export default function Account({projectId, CModal}) {
     
  }
  
- const addManager = async () => {                                     // 新增项目管理员 ,运维人员  
+ const addManager = async () => {     
+  
+  // 新增项目管理员 ,运维人员  
   try {
+    console.log(fmodal.current)
     const values = await fmodal.current.onGetvalue()     
     const params = { ...values, enabled: values.enabled? 1 : 0 ,  projectId };
     let hander = ['AddProjectManager', 'InsertProjectMaintenance'][person];
     let update = [queryProjectManager, queryProjectMaintenance][person];
     let { success, errMsg } = await User[hander](params);    
-    if (!success) return message.error(errMsg, 1);
-    await update()
-    fmodal.current.onCancal()
+    if (!success) return message.error(errMsg || '数据出错');
+    if(success) {
+      fmodal.current.onCancel()
+      await update()
+    }
+   
    
   } catch (error) {
     console.log(error);
@@ -202,13 +220,7 @@ export default function Account({projectId, CModal}) {
 
 
 
-  const delop = (id) => {
-    setOperate((arr) => {
-      let item = arr.find((i) => i.id == id);
-      if (item) item.disabled = false;
-      return [...arr];
-    });
-  };
+
   const handChange = (value) => { 
     setOpvalue(value) 
   }; 
@@ -222,11 +234,7 @@ export default function Account({projectId, CModal}) {
        console.log(error)
      } 
   };
-  const cancal = () => {
-      fmodal.current.onResetform()
-      fmodal.current.onCancal()
-  };
- 
+
   const onDeletehandle = async () => {  
      
     const fn = ["DeleteOperationManager", "DeleteProjectManager", 'DeleteProjectMaintenance'][deltype]; //  删除  运营管理员, 项目管理员， 运维人员
@@ -416,7 +424,7 @@ export default function Account({projectId, CModal}) {
               title={title}
               ref={fmodal} 
               fromprops={{enable: true}}
-              onCancal={cancal}
+            //  onCancal={cancal}
               onOk={addManager}
               mold="default"
             >

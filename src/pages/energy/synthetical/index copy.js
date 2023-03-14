@@ -32,19 +32,29 @@ const RadioBt = styled(Rbutton)`
 `;
 const Laybox = styled.div`
   display: grid;
- // grid-template-columns: 1264px 400px;
-  grid-template-rows: 512px 1fr;
-  row-gap: 16px;
+  grid-template-columns: 1264px 400px;
+  column-gap: 16px;
   flex: 1;
   .left {
     display: grid;
-    grid-template-columns: 1256px 1fr;
-    column-gap: 16px; 
+    grid-template-rows: ${props => props.value === '1' ? '48px 512px 272px' : "48px 1fr"};
+    row-gap: 16px;
+    .leftdown {
+      display: grid;
+      grid-template-columns: 432px repeat(4, 192px);
+      column-gap: 16px;
+    }
   }
   .right {
     display: grid;
-     grid-template-columns: repeat(11, 196px);
-    row-gap: 16px; 
+    grid-template-rows: ${props =>props.value === '1' ? '576px 272px' : '224px 624px'};
+    row-gap: 16px;
+    .rightdown {
+      display: grid;
+      grid-template-columns: 192px 192px;
+      column-gap: 16px;
+    }
+    
   }
 `;
 const Custspan = styled.span`
@@ -95,42 +105,6 @@ const Divbox = styled.div`
     }
   }
 `;
-const Tabsbox = styled(Tabs)`
-  .ant-tabs-nav {
-    margin-bottom: 0px;
-   .ant-tabs-nav-list {
-    .ant-tabs-tab {
-        border-radius: 4px 4px 0 0;
-        height: 41px;
-        width: 145px;
-        justify-content: center;
-        font-size: 14px;
-        background-color: #fff;  
-        transition: none;
-        &:hover {
-            background-color: var(--ant-primary-color);
-            color: #fff;
-            transition: all 0.3s;
-        }
-        .ant-tabs-tab-btn{
-            transition: none;
-        }
-        .ant-tabs-tab-btn:active {
-            color:#fff
-        }
-    }
-    .ant-tabs-tab.ant-tabs-tab-active {
-        background-color: var(--ant-primary-color);
-       
-        .ant-tabs-tab-btn {
-            color:#fff;
-            transition: none;
-        }
-    }
-   }  
- 
-}
-`
 const UDbox = styled.div`
   display: grid;
   grid-template-rows: 64px 1fr;
@@ -470,14 +444,20 @@ export default function Index() {
         setvalue,
       }}
     >
-
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px'}}>
-      <UserSearch></UserSearch>
       <Laybox value={value}>
         <div className="left">
-          
-          <Tabsbox>
-            
+          <UserSearch></UserSearch>
+          <Pagecontent>
+            <Groupbox
+              defaultValue="day"
+              buttonStyle="solid"
+              size="middle"
+              onChange={changeTime}
+            >
+              <RadioBt value="day">本日</RadioBt>
+              <RadioBt value="month">本月</RadioBt>
+              <RadioBt value="year">本年</RadioBt>
+            </Groupbox>
             {value === '1' ? (<div ref={ref} style={{ flex: 1, position: "relative" }}>
 
             </div>) : (
@@ -486,8 +466,82 @@ export default function Index() {
               </div>
             )
              }
-          </Tabsbox>
-          <Titlelayout title={<Title title="能耗总量" />}>
+          </Pagecontent>
+          {value === '1' && (<div className="leftdown">
+            <Titlelayout
+              title={<Title title="年度能耗指标" subtitle="吨标煤" jc={true} />}
+              extra={<Ebutton>能耗正常</Ebutton>}
+            >
+              <Divbox>
+                <Image
+                  src={imgurl.z02}
+                  preview={false}
+                  width={64}
+                  height={64}
+                />
+                <div className="list">
+                  <div className="item">
+                    <span>本年度定额能</span>
+                    <span>2000.00</span>
+                  </div>
+                  <div className="item">
+                    <span>本年累计使用</span>
+                    <span>1500.00</span>
+                  </div>
+                  <div className="item">
+                    <span>本年剩余额度</span>
+                    <span>500.00</span>
+                  </div>
+                </div>
+              </Divbox>
+              <Progress type="line" strokeWidth={24} percent={30} />
+            </Titlelayout>
+            {testDatas.map((item) => (
+              <Titlelayout
+                title={<Title title={item.title} subtitle={item.sub} />}
+                key={nanoid()}
+              >
+                <UDbox>
+                  <Image
+                    src={imgurl[item.icon]}
+                    preview={false}
+                    width={64}
+                    height={64}
+                  />
+                  <div className="list">
+                    <div className="item">
+                      <span>本月</span>
+                      <span>{item.cmonth}</span>
+                    </div>
+                    <div className="item">
+                      <span>上月</span>
+                      <span>{item.smonth}</span>
+                    </div>
+                    <div className="item">
+                      <span>环比</span>
+                      <span>
+                        +{item.hb}%{" "}
+                        {<ArrowUpOutlined style={{ color: "#f00" }} />}
+                      </span>
+                    </div>
+                    <div className="item">
+                      <span>同比</span>
+                      <span>
+                        +{item.tb}%{" "}
+                        {<ArrowUpOutlined style={{ color: "#0f0" }} />}
+                      </span>
+                    </div>
+                  </div>
+                </UDbox>
+              </Titlelayout>
+            ))}
+          </div>)}
+        </div>
+        <div className="right">
+        { value=== '1' ? 
+
+        (  <>
+           <Titlelayout title={<Title title="能耗总量" />}>
             <Divbox>
               <div
                 style={{
@@ -544,15 +598,143 @@ export default function Index() {
               ></div>
             </Titlelayout>
           </Titlelayout>
-          
-          
-        </div>
-        <div className="right">
-      
+          <div className="rightdown">
+            {testDatas2.map((item) => (
+              <Titlelayout
+                title={<Title title={item.title} subtitle={item.sub} />}
+                key={nanoid()}
+              >
+                <UDbox>
+                  <Image
+                    src={imgurl[item.icon]}
+                    preview={false}
+                    width={64}
+                    height={64}
+                  />
+                  <div className="list">
+                    <div className="item">
+                      <span>本月</span>
+                      <span>{item.cmonth}</span>
+                    </div>
+                    <div className="item">
+                      <span>上月</span>
+                      <span>{item.smonth}</span>
+                    </div>
+                    <div className="item">
+                      <span>环比</span>
+                      <span>
+                        +{item.hb}%{" "}
+                        <Arrow num={item.hb}/>
+                      </span>
+                    </div>
+                    <div className="item">
+                      <span>同比</span>
+                      <span>
+                        +{item.tb}%{" "}
+                        <Arrow num={item.tb}/>
+                      </span>
+                    </div>
+                  </div>
+                </UDbox>
+              </Titlelayout>
+            ))}
+          </div>
+          </>
+          )
+         : (
+          <>
+        
+         <Titlelayout
+              title={<Title title="年度用电指标"  jc={true} />}
+              extra={<Ebutton>能耗正常</Ebutton>}
+            >
+              <Divbox>
+                <Image
+                  src={imgurl.z02}
+                  preview={false}
+                  width={64}
+                  height={64}
+                />
+                <div className="list">
+                  <div className="item">
+                    <span>本年度定额能</span>
+                    <span>2000.00</span>
+                  </div>
+                  <div className="item">
+                    <span>本年累计使用</span>
+                    <span>1500.00</span>
+                  </div>
+                  <div className="item">
+                    <span>本年剩余额度</span>
+                    <span>500.00</span>
+                  </div>
+                </div>
+              </Divbox>
+              <Progress type="line" strokeWidth={24} percent={30} />
+            </Titlelayout>
+         
+        <Titlelayout title={<Title title="用电量统计" />}>
+          <div style={{display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', height: '100%'}}>
+           {
+            testDatas3.map((item) => (
+              <UDboxbord>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                 <span style={{ color: "#999" }}>
+                 ({item.title})
+                </span>
+                <Image
+                  src={imgurl[item.icon]}
+                  preview={false}
+                  width={64}
+                  height={64}
+                />
+                <span style={{ color: "#999", marginTop: "10px" }}>
+                 ({item.sub})
+                </span>
+              </div>
+
+              <div className="list">
+                <div className="item">
+                  <span>今日能耗：</span>
+                  <span>{item.cmonth}</span>
+                </div>
+                <div className="item">
+                  <span>昨日能耗：</span>
+                  <span>{item.smonth}</span>
+                </div>
+                <div className="item">
+                  <span>同比</span>
+                  <span>
+                    {item.hb}
+                    <Arrow num={item.hb}/>
+                  </span>
+                </div>
+                <div className="item">
+                  <span>环比</span>
+                  <span>
+                    {item.tb}
+                    <Arrow num={item.tb}/>
+                  </span>
+                </div>
+              </div>
+            </UDboxbord>
+            ))
+           }
+           </div>
+        </Titlelayout>
+         </>
+         )
+         }
         </div>
      
       </Laybox>
-      </div>
     </CustContext.Provider>
   );
 }

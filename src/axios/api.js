@@ -31,7 +31,7 @@ export class ProjectSetting {
     static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
     static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
     static publishProject = ({projectId, state, code, moble}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
-    static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
+    static DeleteProject = (projectId, name) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&name=${name}`) //  删除项目
 }
 // 公共模块---项目设置---区域设置
 export class AreaSetting {
@@ -109,7 +109,7 @@ export class User {
 
 // 能源管理--园区能耗
   export class EnergyComprehensive {
-    static EnergyOverViewRuntime = (projectId, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}`, params)
+    static EnergyOverViewRuntime = ({projectId, type, date}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}&type=${type}&date=${date}`, params)
   }
 
 // 

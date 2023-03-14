@@ -32,19 +32,29 @@ const RadioBt = styled(Rbutton)`
 `;
 const Laybox = styled.div`
   display: grid;
- // grid-template-columns: 1264px 400px;
-  grid-template-rows: 512px 1fr;
+  grid-template-rows: 48px 512px 1fr;
   row-gap: 16px;
   flex: 1;
-  .left {
+  .up {
     display: grid;
-    grid-template-columns: 1256px 1fr;
-    column-gap: 16px; 
+    grid-template-columns:  1256px 1fr;
+    column-gap: 16px;
+    .echart {
+
+    }
+    .upright {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      row-gap: 16px;
+    }
+   overflow: hidden;
   }
-  .right {
+  .down {
     display: grid;
-     grid-template-columns: repeat(11, 196px);
-    row-gap: 16px; 
+    grid-template-columns: repeat(9, 196px);
+    column-gap: 16px;
+   
+    
   }
 `;
 const Custspan = styled.span`
@@ -95,42 +105,6 @@ const Divbox = styled.div`
     }
   }
 `;
-const Tabsbox = styled(Tabs)`
-  .ant-tabs-nav {
-    margin-bottom: 0px;
-   .ant-tabs-nav-list {
-    .ant-tabs-tab {
-        border-radius: 4px 4px 0 0;
-        height: 41px;
-        width: 145px;
-        justify-content: center;
-        font-size: 14px;
-        background-color: #fff;  
-        transition: none;
-        &:hover {
-            background-color: var(--ant-primary-color);
-            color: #fff;
-            transition: all 0.3s;
-        }
-        .ant-tabs-tab-btn{
-            transition: none;
-        }
-        .ant-tabs-tab-btn:active {
-            color:#fff
-        }
-    }
-    .ant-tabs-tab.ant-tabs-tab-active {
-        background-color: var(--ant-primary-color);
-       
-        .ant-tabs-tab-btn {
-            color:#fff;
-            transition: none;
-        }
-    }
-   }  
- 
-}
-`
 const UDbox = styled.div`
   display: grid;
   grid-template-rows: 64px 1fr;
@@ -471,88 +445,18 @@ export default function Index() {
       }}
     >
 
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px'}}>
-      <UserSearch></UserSearch>
-      <Laybox value={value}>
-        <div className="left">
-          
-          <Tabsbox>
-            
-            {value === '1' ? (<div ref={ref} style={{ flex: 1, position: "relative" }}>
-
-            </div>) : (
-              <div ref={elref} style={{ flex: 1, position: "relative" }}>
-
-              </div>
-            )
-             }
-          </Tabsbox>
-          <Titlelayout title={<Title title="能耗总量" />}>
-            <Divbox>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  src={imgurl.z08}
-                  preview={false}
-                  width={80}
-                  height={80}
-                />
-                <span style={{ color: "#999", marginTop: "10px" }}>
-                  (吨标煤)
-                </span>
-              </div>
-
-              <div className="list">
-                <div className="item">
-                  <span>今日能耗：</span>
-                  <span>1.23</span>
-                </div>
-                <div className="item">
-                  <span>昨日能耗：</span>
-                  <span>1.54</span>
-                </div>
-                <div className="item">
-                  <span>同比</span>
-                  <span>
-                    -1.54%
-                    <ArrowDownOutlined style={{ color: "#f00" }} />
-                  </span>
-                </div>
-                <div className="item">
-                  <span>环比</span>
-                  <span>
-                    +1.54%
-                    <ArrowUpOutlined style={{ color: "#f00" }} />
-                  </span>
-                </div>
-              </div>
-            </Divbox>
-            <Titlelayout
-              type="inner"
-              title={<Title title="能耗占比" />}
-              style={{ padding: "0px", border: "none" }}
-            >
-              <div
-                style={{ width: "368px", height: "284px" }}
-                ref={pieref}
-              ></div>
-            </Titlelayout>
-          </Titlelayout>
-          
-          
+       <Laybox value={value}>
+       <UserSearch></UserSearch>
+        <div className="up">
+         <Pagecontent style={{height: '512px'}}>
+           <div ref={ref} className="echart"></div>
+         </Pagecontent>
+           <div className="upright"></div>
         </div>
-        <div className="right">
-      
+        <div className="down">
+       
         </div>
-     
-      </Laybox>
-      </div>
+      </Laybox> 
     </CustContext.Provider>
   );
 }
