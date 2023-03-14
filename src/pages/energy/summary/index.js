@@ -119,31 +119,28 @@ export default function Index() {
   const [energyValue, setEnergyValue] = useState({})
   const projectId = useSelector(selectProjectId);
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-  const getData = async (param) => {  
-      let  params =  Array.isArray(param) ? param : [param]
-      let {success, data} = await EnergyOverView.EnergyOverViewRuntime(projectId, params)
-      if (success) {
-        return data
-      } else {
-        return []
-      }
+  const getData = async () => {  
+       const {area} = form.getFieldsValue()
+       try {
+        let  params =  [area]
+        let {success, data} = await EnergyOverView.EnergyOverViewRuntime(projectId, params)
+        if (success) {
+          setEnergyValue({...energyValue, ...data})
+        } else {
+          setEnergyValue([])
+        }
+       } catch (error) {
+         console.log(error)
+       }
+     
      
   }
-  const {run} = useRequest(getData, {
-     onSuccess: (result) =>{
-      setEnergyValue({...energyValue, ...result})
-     },
-     defaultParams: [projectId, [oneLevelDefaultId]],
-     onError: (err) => {
-      console.log(err)
-     }
-
-  })
-/*   useEffect(() => {
+ 
+useEffect(() => {
     getData()
-  }, []) */
+  }, [])
   return (
-    <CustContext.Provider value={{form, handler: {run}}}>
+    <CustContext.Provider value={{form, handler: getData}}>
       <Pagecount showserach={true}>
       <Titlelayout title='能源概述'>
         <Mainbox>
