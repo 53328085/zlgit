@@ -102,6 +102,16 @@ export class User {
     static ConfigureMeter = (params={}) => server.post(`/General/Area/ConfigureMeter`, params) 
     ///V1/General/Area/QueryUnusedMeter
 }
+// 能源管理--能源概述
+  export class EnergyOverView {
+    static EnergyOverViewRuntime = (projectId, params) => server.post(`/Energy/EnergyOverViewRuntime/QueryElectricOverview?projectId=${projectId}`, params)
+  }
+
+// 能源管理--园区能耗
+  export class EnergyComprehensive {
+    static EnergyOverViewRuntime = (projectId, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}`, params)
+  }
+
 // 
 // zl api end
 // 主页

@@ -77,11 +77,11 @@ const Formbox = styled(Form)`
     }
   .address {
     grid-column: 2;
-    grid-row: 1/ 3;
+   // grid-row: 1/ 3;
   }
   .map {
     grid-column: 2;
-    grid-row: 4 / -1;
+    grid-row: 3 / -1;
     width: 487px;
     justify-self: end;
   }
@@ -118,8 +118,9 @@ const Info = styled.span`
    // imgProject: '',
     address: "",
    // LineAnalysisEnabled: 0,
-    lng: "",
-    lat: "",
+    //lng: "",
+   // lat: "",
+    lngLat: '',
     remark: "", //备注
   };
   const [initialValues] = useState(params);
@@ -191,11 +192,11 @@ const Info = styled.span`
  
   const onSubmint = () => {
    let fileds = form.getFieldValue()
-   let {alidStageTime} = fileds;
-  
+   let {alidStageTime, lng, lat, ...other} = fileds;
+   other['lngLat'] = lng + ','+lat;
    if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
    if (!imgProject)  return message.warning('项目图片必须上传', 1);
-   const params = Object.assign({}, fileds, {imgLogo, imgProject, alidStageTime: alidStageTime.format('YYYY-MM-DD')})
+   const params = Object.assign({}, other, {imgLogo, imgProject, alidStageTime: alidStageTime.format('YYYY-MM-DD')})
   // console.log(params);
    return params;
   }  
@@ -246,8 +247,8 @@ const Info = styled.span`
       <Item label="项目备注" name="remark" className="remark">
         <Comtext  placeholder="请输入备注0-99字" maxLength={99} h="140px" />
       </Item>
-      <Item label="项目地址" className="address">
-        <Item noStyle>
+      <Item label="项目地址" className="address" name="address">
+       {/*  <Item noStyle>
           <Cascader
             options={options}
             defaultValue={defaultAdress}
@@ -259,10 +260,8 @@ const Info = styled.span`
               marginBottom: "16px",
             }}
           />
-        </Item>
-        <Item name="address">
-          <Comipt placeholder="请输入项目的详细地址" />
-        </Item>
+        </Item> */} 
+          <Comipt placeholder="请输入项目的详细地址" /> 
       </Item>
       <Item label="经纬度" required>
         <Row gutter={16}>

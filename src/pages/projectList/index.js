@@ -30,8 +30,10 @@ import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
+import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus } from "@redux/systemconfig";
+import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus, getOnelevel } from "@redux/systemconfig";
+import {Area} from '@api/api.js'
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
@@ -279,7 +281,11 @@ export default function Index() {
     let params =  projectform.current.onSubmint();
     console.log(params);
     ProjectList.createProject(params).then(res => {
-      console.log(res)
+       let {success, errMsg} = res
+       success && custMsg({content: '新增成功', onClose: () => {
+        formmodal.current.onCancel()
+       }})
+       !success && custMsg({content: errMsg || '数据出错', type: 'warning'})
     }).catch(e => {
       console.log(e);
     })
@@ -288,6 +294,7 @@ export default function Index() {
   const startProject = async ({id, type}) => {  
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
+
       if (success && Array.isArray(data)) {    
          try {
          const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
@@ -340,7 +347,14 @@ export default function Index() {
            let desitem = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
            projectDesigner(desitem)
          }
-           
+          try {
+            let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: id,level: 1,parentId: 0})  
+            lsuccess && dispatch(getOnelevel(levelData));
+            !lsuccess && dispatch(getOnelevel([]));
+          } catch (error) {
+             console.log(error)
+          }
+         
         } catch (error) {
           console.log(error);
         }   
@@ -441,11 +455,11 @@ export default function Index() {
      formData
     );
     return ProjectList.queryProject(params).then((res) => {
-      let { success, data, totalNum } = res;
+      let { success, data, total} = res;
       if (success && Array.isArray(data)) {
-        setCount(totalNum);
+        setCount(total);
         return {
-          total: totalNum,
+          total,
           list: data,
         };
       } else {

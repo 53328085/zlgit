@@ -99,9 +99,14 @@ import {
   useImperativeHandle(ref, () => ({
     serachMap
   }))
-
+ const mapstyle = {
+   height: '100%',
+   width: '100%',
+   minHeight: '360px',
+   minWidth: '410px'
+ }
   return (
-    <Map style={{ height: "100%", width: "100%" }} {...option} onClick={getPosition} ref={mapref} center={position.point} >
+    <Map style={mapstyle} {...option} onClick={getPosition} ref={mapref} center={position.point} >
      
       <Marker position={position.point} enableDragging icon={position.icon} />
       <NavigationControl />
