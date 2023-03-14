@@ -16,6 +16,12 @@ export default function Electric() {
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
   const [isOpenModal, setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState({
+    current: 1,
+    pageSize: 10,
+    hideOnSinglePage: false
+  });
   const ModalRef = useRef(null)
   const EditModalRef = useRef(null)
   const foRef = useRef(null)
@@ -32,16 +38,24 @@ export default function Electric() {
   let categoryId;
   //获取设备列表
   const getTableData = async () => {
+    setLoading(true)
     let params = {
       projectId,
-      pageNum: 1,
-      pageSize: 10,
+      pageNum: tableParams.current,
+      pageSize: tableParams.pageSize,
       deviceStyle: 1
     }
     const result = await DeviceCategory(params)
-    const { data, errMsg, success } = result;
+    const { data, errMsg, success,pageNum ,pageSize,total} = result;
+    setLoading(false)
     if (success && Array.isArray(data)) {
       setTableDataSource(data)
+      setTableParams({
+        ...tableParams,
+        current: pageNum,
+        pageSize: pageSize,
+        total: total
+      })
     } else {
       setTableDataSource([])
     }
@@ -49,7 +63,6 @@ export default function Electric() {
 
   //确认删除
   const delOK = async () => {
-    console.log(111)
     const resp = await DeleteDeviceCategory({
       projectId,
       category: categoryId
@@ -57,8 +70,15 @@ export default function Electric() {
     if (resp.success) {
       DelModalRef.current.onCancel()
       message.success("删除成功")
-      getTableData()
-      getDeviceQueryNotUsed()
+      if(tableParams.total%(tableParams.pageSize*(tableParams.current-1 ))===1){
+        setTableParams({
+          ...tableParams,
+          current:tableParams.current-1
+        })
+      }else{
+        getTableData()
+      }  
+      getDeviceQueryNotUsed()  
     } else {
       message.error(resp.errMsg)
     }
@@ -122,7 +142,6 @@ export default function Electric() {
       title: '操作',
       dataIndex: 'options',
       render: (text, record) => {
-        console.log(text, record)
         return (
           <div>
             <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
@@ -180,12 +199,13 @@ export default function Electric() {
         getDeviceQueryCategoryFull(r.data[0])
       } else {
         setIsOpenModal(false)
+        setIsAdd(true)
       }
 
     }
   }
 
-  //获取默认水表的详细信息
+  //获取默认电表的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -194,6 +214,7 @@ export default function Electric() {
     const r = await DeviceQueryCategoryFull(params)
     if (r.success) {
       const data = r.data
+      console.log(213,data)
       const arr = data.points?.map((item, index) => ({
         index: index + 1,
         dataMark: item.name,
@@ -203,8 +224,6 @@ export default function Electric() {
         watchPoint: item.isRuningPoint,
         dataOrder: item.secquence
       }))
-
-      // console.log(foRef, arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it => it.watchPoint)
         console.log(watchPointArr)
@@ -275,11 +294,18 @@ export default function Electric() {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  //分页
+  const onChangePage = (page, pageSize) => {
+    setTableParams({
+      ...page
+    })
+  }
+
   useEffect(() => {
     getTableData()
     getDeviceQueryNotUsed()
-    getDeviceQueryCategoryFull()
-  }, [])
+    //getDeviceQueryCategoryFull()
+  }, [tableParams.current])
   let addModalProp = {
     addForm,
     dataSource,
@@ -320,7 +346,15 @@ export default function Electric() {
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={columns} dataSource={tableDataSource} bordered={false} ref={tableLoadRef}></Table>
+        <Table 
+        columns={columns} 
+        dataSource={tableDataSource} 
+        bordered={false} 
+        ref={tableLoadRef}
+        loading={loading}
+        pagination={tableParams}
+        onChange={onChangePage}
+        ></Table>
       </DeviceContent>
       <Modal mold='cust' {...editModalProps}>
         <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>

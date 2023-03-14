@@ -124,7 +124,7 @@ export default function Index() {
   }
 
   const AddItem = (props) => {
-    return <div className={style.dragItem} draggable={true} unselectable="on" onDragStart={e => setclassOfName(props.itemName)}>
+    return <div className={style.dragItem} draggable={true} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
       <img className={style.itemImg} src={props.imgUrl}></img>
       <span className={style.itemName}>{props.itemName}</span>
     </div>

@@ -1,52 +1,79 @@
-import { Button, Drawer } from 'antd';
-import React, { useState } from 'react';
-import styled from 'styled-components';
-const Divbox = styled.div`
-  position: relative;
-  height: 200px;
-  padding: 48px;
-  overflow: hidden;
-  text-align: center;
-  background: #fafafa;
-  border: 1px solid #ebedf0;
-  border-radius: 2px;
-  
-
-`
-const App = () => {
-  const [open, setOpen] = useState(false);
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
-  return (
-    <Divbox>
-      Render in this
-      <div
-        style={{
-          marginTop: 16,
-        }}
-      >
-        <Button type="primary" onClick={showDrawer}>
-          Open
-        </Button>
-      </div>
-      <Drawer
-        title="Basic Drawer"
-        placement="right"
-        closable={false}
-        onClose={onClose}
-        open={open}
-      //  getContainer={false}
-        style={{
-          position: 'absolute',
-        }}
-      >
-        <p>Some contents...</p>
-      </Drawer>
-    </Divbox>
-  );
+import { Table } from 'antd';
+import React from 'react';
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    filters: [
+      {
+        text: 'Joe',
+        value: 'Joe',
+      },
+      {
+        text: 'Category 1',
+        value: 'Category 1',
+      },
+      {
+        text: 'Category 2',
+        value: 'Category 2',
+      },
+    ],
+    filterMode: 'tree',
+    filterSearch: true,
+    onFilter: (value, record) => record.name.startsWith(value),
+    width: '30%',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    sorter: (a, b) => a.age - b.age,
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    filters: [
+      {
+        text: 'London',
+        value: 'London',
+      },
+      {
+        text: 'New York',
+        value: 'New York',
+      },
+    ],
+   // onFilter: (value, record) => record.address.startsWith(value),
+   // filterSearch: true,
+    width: '40%',
+  },
+];
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+  },
+];
+const onChange = (pagination, filters, sorter, extra) => {
+  console.log('params', pagination, filters, sorter, extra);
 };
+const App = () => <Table columns={columns} dataSource={data} onChange={onChange} />;
 export default App;

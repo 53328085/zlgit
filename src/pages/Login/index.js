@@ -346,6 +346,11 @@ function UserLog() {
   store.subscribe(() => {
     initmemorize = store.getState()?.memorize
   })
+  useEffect(() => {
+    return () => {
+      setLoading(false)
+    }
+  })
   return (
  
     <Form

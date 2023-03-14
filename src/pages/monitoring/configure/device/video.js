@@ -5,7 +5,7 @@ import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { MultImport } from './modalCom'
+import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
@@ -21,7 +21,8 @@ const {
     QueryPlanList,
     AddCamera,
     UpdateCamera,
-    DeleteCamera
+    DeleteCamera,
+    ImportCamera
   }
 } = Monitoring
 
@@ -46,9 +47,13 @@ export default function gateway({ deviceStyle }) {
   const modalImportRef = useRef()
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
+  const ErrModalRef = useRef()
+  const errlistRef =useRef()
+  const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   let delid;
+  let flies;
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -176,14 +181,14 @@ export default function gateway({ deviceStyle }) {
   }
   //确认删除
   const delOk = async () => {
-    
+
     const { success, errMsg } = await DeleteCamera({
       projectId,
       id: delid
     })
     if (success) {
       message.success('删除成功')
-      if(page.pageSize*page.current>=page.total){
+      if(page.total%(page.pageSize*(page.current-1 ))===1){
         setPage({
           ...page,
           current:page.current-1
@@ -343,13 +348,36 @@ export default function gateway({ deviceStyle }) {
       setDataSource([])
     }
   }
+  //分页跳转
   const changePage=(page, pageSize) => {
       setPage(()=>({
         ...page
       }))
       getQueryByPageCamera(page.current,page.pageSize,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
     }
-  
+  //导出
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
+  //批量上传
+  const onImportOk = async () => {
+    const formData = new FormData()
+    formData.append("file", flies[0])
+    formData.append("projectId", projectId)
+    const res = await ImportCamera(formData)
+    if(res.success) {
+      if (res.data.success) {
+        message.success("上传成功")
+        modalImportRef.current.onCancel()
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+      }else{
+        errlistRef.current.setList([...res.data.data])
+        ErrModalRef.current.onOpen()
+      } 
+    }else{
+      message.error(res.errMsg)
+    }
+  }
 
 
   useEffect(() => {
@@ -369,6 +397,7 @@ export default function gateway({ deviceStyle }) {
     selectopts,
     setPage,
     page,
+    exportExecel,
     getList: getQueryByPageCamera
   }
   const ModalFormProps = {
@@ -380,10 +409,21 @@ export default function gateway({ deviceStyle }) {
     devicelist,
     onOk: addOk
   }
+  const uploadprops = {
+    maxCount: 1,
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      flies=[...fileList]
+      return false
+    }
+  };
   const ImportProps = {
     modalImportRef,
     width: 560,
-    name: '/deviceExcel/electric.xlsx'
+    link:'/deviceExcel/camera.xlsx',
+    name:'视频监控设备导入',
+    uploadprops,
+    onOk:onImportOk
   }
   const EditModalFormProps = {
     EditModalFormRef,
@@ -391,12 +431,16 @@ export default function gateway({ deviceStyle }) {
     name: '编辑视频监控',
     onOk: editOk
   }
-
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
+  }
 
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage }></Table>
+        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage } ref={tableLoadRef}></Table>
       </Comp>
       <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
         <AddModalForm {...ModalFormProps} >
@@ -407,7 +451,7 @@ export default function gateway({ deviceStyle }) {
       <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
-
+      <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )
 }

@@ -11,9 +11,11 @@ import {custMsg} from '@com/usehandler'
 import Mapcom from "@com/useMap";
 
 const Mainbox = styled.div`
+  position: relative;
   display: grid;
   grid-template-rows: 48px 1fr;
   row-gap: 16px;
+  flex: 1;
 `
 const Formbox = styled(Form)`
   display: grid;
@@ -42,23 +44,43 @@ const Drawerbox = styled(Drawer)`
         display: grid;
         grid-template-columns: 692px 1fr 714px;
         column-gap: 32px;
+        .title {
+            padding-left: 16px;
+            border-left: 4px #237ae4 solid;
+            color: #333;
+            display: flex;
+            align-items: center;
+          }
         .selected {
           display: grid;
           grid-template-rows: 1fr 1fr;
           row-gap: 32px;
+          
           .ant-table {
             height: 100%;
+          }
+          .total {
+            display: grid;
+            grid-template-rows: 32px 1fr;
+            row-gap: 16px;
+            padding: 16px;
+            background-color: #fff;
+          }
+          .sub {
+            display: grid;
+            grid-template-rows: 32px 32px 1fr;
+            padding: 16px;
+            row-gap: 16px;
+            background-color: #fff;
           }
         }
         .unselected {
-          display:  flex;
-          >div {
-            flex: 1;
+            display: grid;
+            grid-template-rows: 32px 32px 1fr;
+            padding: 16px;
+            row-gap: 16px;
+            background-color: #fff;
           }
-          .ant-table {
-            height: 100%;
-          }
-        }
         .optab {
           display: flex;
           flex-direction: column;
@@ -79,19 +101,28 @@ const Drawerbox = styled(Drawer)`
    }
 
 `
+const Inptserach = styled(Input.Search)`
+  && {
+    width: 256px;
+    .ant-input-search .ant-input-group .ant-input-affix-wrapper:not(:last-child) {
+      border-radius: 16px 0 0 16px !important;
+    }
+  }
+`
 const {Link, Text, Paragraph} = Typography
 const {Item} = Form
-export default function Index({projectId,level, CModal, name, allLevel}) {
-  console.log('level'+level);
+export default function Index({projectId,level, CModal, name, allLevel}) { 
   const [levelone] = useState(allLevel[0])  
   const limitlevle = allLevel.slice(0, level - 1);
    
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
+  const [sfrom] = Form.useForm();
   const nref = useRef() // 新增，编辑
   const dref = useRef() // 删除
 
   const mapref = useRef() 
+  const boxref = useRef()
   const [Record, setRecord] = useState({})
   const [isAdd, setIsAdd] = useState(true)
   const [open, setOpen] = useState(false)
@@ -116,13 +147,13 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
   const address = useRef('');
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
   const leveloption = useRef({})
-  //const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
-  
+ // const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
+ const curareaId = useRef(null)
   let params = { //查询
     pageNum: 1,
     pageSize: 15,
     level,
-    topAreaId: 0,  
+    topAreaId:0,  
     name: '',
     projectId,
   }
@@ -146,7 +177,15 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
         parentId,
       })
        if (success && Array.isArray(data)) {
+
+        /*  
+{id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
+        if (level == 1) {
+           data.push({id: 0, level: 1, name: '全部'})
+        }
         leveloption.current[`level${level}`] = data;  
+
+
        }else {
         leveloption.current[`level${level}`] = []
        }                
@@ -180,19 +219,40 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
  const drawopen = () => {
    setOpen(true)
  }
+
+ const getUNselect = async ({type=1, areaId, alike=''}={}) => {
+    curareaId.current= areaId;
+    console.log(curareaId)
+    try {
+      let {success, data} = await Area.QueryUnusedMeter({projectId, type, areaId, alike}) // 未选中 
+      if (success && Array.isArray(data)) {
+        setUnSelected([...data])
+        devices.current.unselected = data
+      }else {
+        setUnSelected([])
+      }
+    } catch (error) {
+      
+    }
+ }
  const deviceData = async (record) => {
   try {
-  let {type, areaId} = record   
-  let {success, data} = await Area.QueryUnusedMeter({projectId, type, areaId}) // 未选中 
+ /*  let {type, areaId} = record   
+  let {success, data} = await Area.QueryUnusedMeter({projectId, type:1, areaId}) // 未选中 
    if (success && Array.isArray(data)) {
     setUnSelected([...data])
+    devices.current.unselected = data
    }else {
     setUnSelected([])
-   }
+   } */
+    let { areaId} = record
+    await getUNselect({areaId});
 
-   let {data: {deviceSummary , deviceSub}, success:suc} = await Area.QueryUsedMeter({projectId, type, areaId}) // 已选中
+   let {data: {deviceSummary , deviceSub}, success:suc} = await Area.QueryUsedMeter({projectId, type:0, areaId}) // 已选中
+  
     if (suc && Array.isArray(deviceSummary)) {
        setDeviceSummary([...deviceSummary]) 
+       devices.current.deviceSub = deviceSub
     }else {
       setDeviceSummary([]) 
     }
@@ -219,8 +279,6 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
  const rowSelection = {
   onChange: (selectedRowKeys, selectedRows, info) => {
     devices.current.selected = selectedRows;
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    console.log(info)
   }, 
 };
  const onMove = (type) => {
@@ -265,6 +323,22 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
    }})
    !success && custMsg({success, content: errMsg || '数据出错'})
  }
+ const handlersearch = (e) => {
+  let str = e.trim();
+   str && setDeviceSub(arr => arr.filter(a => a.sn?.includes(str) || a.address?.includes(str)  ))
+   !str && setDeviceSub([...devices.current.deviceSub])
+}
+const changeUnselected =( ) => {
+  let params = sfrom.getFieldsValue();
+  console.log(params)
+  try {
+    getUNselect({areaId: curareaId.current, ...params})
+  } catch (error) {
+    console.log(e)
+  }
+ 
+}
+
 //  配置 end
 
   const del = (record) => {
@@ -290,8 +364,8 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
     if(isNaN(level)) return;
     
     
-     // console.log('formData', formData);
-    if (level == 1) formData.topAreaId = 0;
+    console.log('formData', formData);
+    formData.topAreaId = 0;
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     
     return Area.QueryByPage(params).then(res => {
@@ -465,7 +539,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
    }, [level])
   
   return (
-      <Mainbox>
+      <Mainbox ref={boxref}>
         <Form form={form} layout="inline" initialValues={{name: ''}}>
           <Space size={16}>
            { 
@@ -481,8 +555,7 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
                    onChange={submit}
                   ></Select>
              </Item>
-            <Form.Item name="name" label={`${name}查询`}>
-                     
+            <Form.Item name="name" label={`${name}查询`}>                     
                      <Input.Search placeholder={`请输入${name}名称`} allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
                   </Form.Item>
              </>     
@@ -493,21 +566,24 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
             </Space>
            
         </Form>
-         <div id="content" style={{position: "relative"}}>
+      
           <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />  
 
            {/* 抽屉 */}
            {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
-          <Drawerbox  placement="right" onClose={drawClose} open={open} getContainer={false}    style={{position: 'absolute'}}  closable={false}   >
+          <Drawerbox  placement="right" onClose={drawClose} open={open} getContainer={() => boxref.current}    style={{position: 'absolute'}}  closable={false}   >
                  <div className='selected'>
-                    <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={deviceSummary} rowKey='id'  scroll={{
-                      x: 'max-content',
-                      y: 268
-                    }}   />  
+                    <div className='total'>
+                      <p className='title'>园区总表</p>
+                    <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={deviceSummary} rowKey='id' />  
+                    </div>
+                    <div className='sub'>
+                    <p className='title'>园区分表</p>
+                    <Space size={16}><Text style={{color: '#333'}}>设备搜索</Text><Inptserach allowClear onPressEnter={handlersearch} placeholder='请输入设备编号/安装地址' onSearch={handlersearch} /></Space>
                     <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={deviceSub} rowKey='id'   /> 
-
+                    </div>
                  </div>
                  <div className='optab'>
                           <div>
@@ -530,10 +606,45 @@ export default function Index({projectId,level, CModal, name, allLevel}) {
                           </div>
                  </div>
                  <div className='unselected'>
-                 <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={Unselected} rowKey='id'   /> 
+                    <p className='title'>未选中的设备</p>
+                    <Form form={sfrom}
+                      initialValues={{
+                          type: '1'
+                      }}
+                    > 
+                    <Space size={16}>
+                      <Item  label='设备类型' name="type" >
+                      <Select style={{width: '112px'}}
+                        onChange={changeUnselected}
+                        options={
+                          [
+                            {
+                              value: '1',
+                              label: '电表',
+                            },
+                            {
+                              value: '2',
+                              label: '水表',
+                            },
+                            {
+                              value: '3',
+                              label: '燃气表',
+                            },
+                          ]
+                        }
+                      >
+
+                      </Select>
+                      </Item>
+                      <Item name="alike" label="设备搜索">
+                         <Inptserach allowClear  placeholder='请输入设备编号/安装地址' onSearch={changeUnselected} />
+                       </Item>
+                    </Space>
+                    </Form>
+                    <UserTable columns={deviceColumns} rowSelection={rowSelection} dataSource={Unselected} rowKey='id'   /> 
                  </div>
           </Drawerbox>
-        </div>
+       
        {/* 新增 / 编辑*/}
         <CModal width={fields.field.includes('经纬度') ? 1024 : 554} title={title} ref={nref} onOk={onOk}  mold='cust'>
 

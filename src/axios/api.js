@@ -481,13 +481,43 @@ export const Monitoring =  {
         UpdateCamera:(data)=>server.post(`/Monitor/Device/UpdateCamera`,data),//更新视频监控
         DeleteCamera:(data)=>server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
         StartReboot:(sn)=>server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
+        GatewayImport:(data)=>server.post(`/Monitor/Gateway/Import`,data),//导入网关
+        ImportElectric:(data)=>server.post(`/Monitor/Device/ImportElectric`,data),//导入电表
+        ImportWater:(data)=>server.post(`/Monitor/Device/ImportWater`,data),//导入水表
+        ImportGas:(data)=>server.post(`/Monitor/Device/ImportGas`,data),//导入燃气表
+        ImportSensor:(data)=>server.post(`/Monitor/Device/ImportSensor`,data),//导入传感器
+        ImportTransformer:(data)=>server.post(`/Monitor/Device/ImportTransformer`,data),//导入变压器
+        ImportCamera:(data)=>server.post(`/Monitor/Device/ImportCamera`,data),//导入视频监控
     },
     //公共照明管理
     PubliclightManager:{
         AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
+        PublicLightAdd:(data)=>server.post(`/Monitor/PublicLight/Add`,data),//新增公共照明
+        PublicLightQueryByPage:(data)=>server.post(`/Monitor/PublicLight/QueryByPage`,data),//公共照明
+        PublicLightUpdate:(data)=>server.post(`/Monitor/PublicLight/Update`,data),//更新公共照明
+        PublicLightDelete:(data)=>server.delete(`/Monitor/PublicLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除公共照明
+        PublicLightImport:(data)=>server.post(`/Monitor/PublicLight/Import`,data),//批量导入
+        StreetLightAdd:(data)=>server.post(`/Monitor/StreetLight/Add`,data),//新增园区照明
+        StreetLightQueryByPage:(data)=>server.post(`/Monitor/StreetLight/QueryByPage`,data),//园区照明
+        StreetLightUpdate:(data)=>server.post(`/Monitor/StreetLight/Update`,data),//更新园区照明
+        StreetLightDelete:(data)=>server.delete(`/Monitor/StreetLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除园区照明
+        StreetLightImport:(data)=>server.post(`/Monitor/StreetLight/Import`,data),//批量导入
+    },
+    //线路管理
+    LineManager:{
+        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
+        LineManagerQuery:(data)=>server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
+        LineManagerAdd:(data)=>server.post(`/Monitor/LineManager/Add`,data),//新增线路       
+        LineManagerUpdate:(data)=>server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
+        LineManagerDelete:(data)=>server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
+        QueryUnusedMeter:(data)=>server.get(`/Monitor/LineManager/QueryUnusedMeter?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}&alike=${data.alike}`),//未使用线路
+        ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
     }
 }
-
+export class energyRanking{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+}
 //energyDesigner能耗管理
 export class energyDesigner {
     static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)

@@ -11,63 +11,77 @@ import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import WarningPng from '@imgs/warning.png'
 
-const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory,UpdateDeviceCategory,DeleteDeviceCategory } } = Monitoring;
+const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory, UpdateDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function video() {
   const [selectOption, setSelectOption] = useState(null)
-  const [dataSource,setDataSource] = useState(null)
+  const [dataSource, setDataSource] = useState(null)
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState({
+    current: 1,
+    pageSize: 10,
+    hideOnSinglePage: false
+  });
   const [AddModalForm] = Form.useForm()
-  const [EditForm] =Form.useForm()
+  const [EditForm] = Form.useForm()
   const ModalRef = useRef(null)//新增设备Ref
-  const EditModalRef=useRef(null)//编辑设备Ref
-  const DelModalRef=useRef(null)//删除设备Ref
+  const EditModalRef = useRef(null)//编辑设备Ref
+  const DelModalRef = useRef(null)//删除设备Ref
+  const tableLoadRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   let categoryId;
-  const optionStyle={
+  const optionStyle = {
     color: '#1890ff',
     cursor: 'pointer',
   }
 
-   //获取视频监控设备列表
-   const getDeviceQueryCategory=async ()=>{
-    let params={
+  //获取视频监控设备列表
+  const getDeviceQueryCategory = async () => {
+    setLoading(true)
+    let params = {
       projectId,
-      deviceStyle:6,
-      pageNum:1,
-      pageSize:10
+      deviceStyle: 6,
+      pageNum: tableParams.current,
+      pageSize: tableParams.pageSize
     }
     const resp = await DeviceCategory(params)
-    if(resp.success&&Array.isArray(resp.data)){
+    setLoading(false)
+    if (resp.success && Array.isArray(resp.data)) {
       setDataSource([...resp.data])
-    }else
-    {
+      setTableParams({
+        ...tableParams,
+        current: resp.pageNum,
+        pageSize: resp.pageSize,
+        total: resp.total
+      })
+    } else {
       setDataSource([])
     }
     console.log(resp)
-}
+  }
   //打开新增
   const open = () => {
-    if(selectOption.length<=0){
+    if (selectOption.length <= 0) {
       message.warning('无可用新增监控设备!')
-    }else{
+    } else {
       ModalRef.current.onOpen()
     }
-   
+
   }
   //保存新增
   const onOk = async () => {
-    const formvalues=AddModalForm.getFieldValue()
+    const formvalues = AddModalForm.getFieldValue()
     const upimg = AddModalForm.getFieldsValue()
-    let parmas ={
+    let parmas = {
       projectId,
       category: formvalues.category,
-      imageBase64: upimg.ImageUpload?upimg.ImageUpload:formvalues.imageBase64,
-      control:formvalues.control,
-      calculate:formvalues.calculate,
-      realTimeReading:formvalues.realTimeReading
+      imageBase64: upimg.ImageUpload ? upimg.ImageUpload : formvalues.imageBase64,
+      control: formvalues.control,
+      calculate: formvalues.calculate,
+      realTimeReading: formvalues.realTimeReading
     }
-    console.log('ok',AddModalForm.getFieldValue(),parmas)
+    console.log('ok', AddModalForm.getFieldValue(), parmas)
     const resp = await AddDeviceCategory(parmas)
-    if(resp.success){
+    if (resp.success) {
       ModalRef.current.onCancel()
       message.success('新增监控设备成功')
       getDeviceQueryCategory()
@@ -76,89 +90,88 @@ export default function video() {
     console.log(resp)
   }
   //打开编辑
-  const editOption=(record)=>{
-      console.log(record)
-      console.log(EditForm.getFieldValue())
-      categoryId=record.category
-      EditForm.setFieldsValue({
-        category:record.category,
-        manufacturer:record.manufacturer,
-        imageBase64:record.imageBase64,
-        ImageUpload:''
-      })
-      EditModalRef.current.onOpen()
-    }
+  const editOption = (record) => {
+    console.log(record)
+    console.log(EditForm.getFieldValue())
+    categoryId = record.category
+    EditForm.setFieldsValue({
+      category: record.category,
+      manufacturer: record.manufacturer,
+      imageBase64: record.imageBase64,
+      ImageUpload: ''
+    })
+    EditModalRef.current.onOpen()
+  }
   //保存编辑
-  const onOkEdit =async ()=>{
+  const onOkEdit = async () => {
     const formvalue = EditForm.getFieldValue()
     console.log(formvalue)
-    let params={
+    let params = {
       projectId,
-      category:formvalue.category,
-      imageBase64:formvalue['ImageUpload']?`${formvalue['ImageUpload']}`:`data:image/jpeg;base64,${formvalue['imageBase64']}`
+      category: formvalue.category,
+      imageBase64: formvalue['ImageUpload'] ? `${formvalue['ImageUpload']}` : `data:image/jpeg;base64,${formvalue['imageBase64']}`
     }
     // console.log(EditForm.getFieldValue())
     const resp = await UpdateDeviceCategory(params)
     console.log(resp)
-    if(resp.success){
+    if (resp.success) {
       EditModalRef.current.onCancel()
       message.success('编辑成功')
       getDeviceQueryCategory()
       getDeviceQueryNotUsed()
-    }else{
+    } else {
       message.error(resp.errMsg)
     }
   }
-    const columns= [
+  const columns = [
     {
-        title:'监控设备厂家',
-        dataIndex: 'manufacturer'
+      title: '监控设备厂家',
+      dataIndex: 'manufacturer'
     },
     {
-        title:'监控设备型号',
-        dataIndex: 'category'
+      title: '监控设备型号',
+      dataIndex: 'category'
     },
     {
-        title:'视频监控缩略图',
-        dataIndex: 'imageBase64',
-        render:(text)=>{
-          return (<div >
-            <img src={text.includes(`data:image/jpeg;base64,`)?`${text}`:`data:image/jpeg;base64,${text}`} style={{width:64,height:53}}></img>
-          </div>)
-        }
+      title: '视频监控缩略图',
+      dataIndex: 'imageBase64',
+      render: (text) => {
+        return (<div >
+          <img src={text.includes(`data:image/jpeg;base64,`) ? `${text}` : `data:image/jpeg;base64,${text}`} style={{ width: 64, height: 53 }}></img>
+        </div>)
+      }
     },
     {
-        title:'已用传感器数量',
-        dataIndex: 'cnt'
+      title: '已用传感器数量',
+      dataIndex: 'cnt'
     },
     {
-      title:'操作',
+      title: '操作',
       dataIndex: 'options',
-      render:(text,record)=>{
-        console.log(text,record)
-        return(
+      render: (text, record) => {
+        return (
           <div>
-            <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
-            <span style={{...optionStyle,paddingLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{DelModalRef.current.onOpen(),categoryId=record.category}}>删除</span>
+            <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
+            <span style={{ ...optionStyle, paddingLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { DelModalRef.current.onOpen(), categoryId = record.category }}>删除</span>
           </div>
         )
       }
-  },
-]
- //保存删除
- const onOkDel=async ()=>{
-   let params={
-    projectId,
-    category:categoryId
-   }
-   const resp = await DeleteDeviceCategory(params)
-   if(resp.success){
-    DelModalRef.current.onCancel()
-    message.success('删除成功!')
-    getDeviceQueryCategory()
-    getDeviceQueryNotUsed()
-   }
- }
+    },
+  ]
+  //保存删除
+  const onOkDel = async () => {
+    let params = {
+      projectId,
+      category: categoryId
+    }
+    const resp = await DeleteDeviceCategory(params)
+    if (resp.success) {
+      DelModalRef.current.onCancel()
+      message.success('删除成功!')
+      getDeviceQueryCategory()
+      getDeviceQueryNotUsed()
+    }
+  }
   //获取未使用的监控设备
   const getDeviceQueryNotUsed = async () => {
     const result = await DeviceQueryNotUsed({
@@ -169,10 +182,10 @@ export default function video() {
     if (success) {
       const arr = data.map(it => ({ label: it, value: it }))
       setSelectOption(arr)
-      if(arr.length>0){
+      if (arr.length > 0) {
         getDeviceQueryCategoryFull(arr[0].value)
       }
-     
+
     }
   }
   //获取设备详细信息
@@ -188,6 +201,16 @@ export default function video() {
       })
     }
   }
+  //导出表格
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
+  //分页
+  const onChangePage = (page, pageSize) => {
+    setTableParams({
+      ...page
+    })
+  }
   useEffect(() => {
     getDeviceQueryNotUsed()
     getDeviceQueryCategory()
@@ -200,37 +223,45 @@ export default function video() {
   let deviceProps = {
     value: 6,
     name: '新增视频监控类型',
-    // AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
     onOk,
     width: 512,
     open,
     ModalRef,
+    exportExecel,
     AddModal: <AddModal {...addModalProps}></AddModal>
   };
-  let editFormProps={
+  let editFormProps = {
     EditForm
   }
   let editModalProps = {
-    ref:EditModalRef,
-    onOk:onOkEdit
+    ref: EditModalRef,
+    onOk: onOkEdit
   }
-  let delModal={
+  let delModal = {
     cancelText: '取消',
     okText: '确认',
-    value:2,
-    onOk:onOkDel,
+    value: 2,
+    onOk: onOkDel,
     DelModalRef
   }
   return (
     <div>
       <DeviceContent {...deviceProps} >
-        <Table columns={columns} dataSource={dataSource}></Table>
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          bordered={false}
+          loading={loading}
+          ref={tableLoadRef}
+          pagination={tableParams}
+          onChange={onChangePage}
+        ></Table>
       </DeviceContent>
       <Modal mold='cust' {...editModalProps} >
-      <BlueColumn name='编辑视频监控类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
-      <EditModal {...editFormProps}></EditModal>
+        <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+        <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModal}></DeleteModal>
     </div>
@@ -241,7 +272,7 @@ export default function video() {
 
 let ImageUpload = ({ value = '', onChange }) => {
   return (
-    <img src={value.includes('data:image/jpeg;base64,')?`${value}`:`data:image/jpeg;base64,${value}` } style={{ width: 120, height: 96, marginRight: 16 }}></img>
+    <img src={value.includes('data:image/jpeg;base64,') ? `${value}` : `data:image/jpeg;base64,${value}`} style={{ width: 120, height: 96, marginRight: 16 }}></img>
   )
 }
 //新增监控modal组件
@@ -256,72 +287,72 @@ let AddModal = (props) => {
       layout="vertical"
       form={AddModalForm}
     >
-        <Row >
-     
+      <Row >
+
         <Form.Item label="监控设备型号" name="category">
-            <Select
-              onChange={handleChange}
-              options={selectOption}
-              style={{width:240}}
-            ></Select>
+          <Select
+            onChange={handleChange}
+            options={selectOption}
+            style={{ width: 240 }}
+          ></Select>
+        </Form.Item>
+        <Form.Item label="监控设备厂家" name="manufacturer">
+          <Input style={{ width: 240 }} />
+        </Form.Item>
+
+        <Row align="bottom">
+          <Form.Item label="监控设备缩略图" name="imageBase64" style={{ margin: 0 }}>
+            <ImageUpload></ImageUpload>
           </Form.Item>
-          <Form.Item label="监控设备厂家" name="manufacturer">
-            <Input   style={{width:240}}/>
+          <Form.Item name='ImageUpload' >
+            <UploadImg></UploadImg>
           </Form.Item>
-       
-            <Row align="bottom">
-              <Form.Item label="监控设备缩略图" name="imageBase64" style={{margin:0} }>
-               <ImageUpload></ImageUpload>
-              </Form.Item>
-              <Form.Item name='ImageUpload' >
-                <UploadImg></UploadImg>
-              </Form.Item>
-              
-            </Row>
+
         </Row>
+      </Row>
     </Form>
   )
 }
 
-let EditModal =(props)=>{
-  
-  const {EditForm}=props
-  
-  return(
+let EditModal = (props) => {
+
+  const { EditForm } = props
+
+  return (
     <Form
       layout="vertical"
       form={EditForm}
     >
-        <Row >
+      <Row >
         <Form.Item label="监控设备型号" name="category">
-          <Input   style={{width:240}} disabled/>
+          <Input style={{ width: 240 }} disabled />
+        </Form.Item>
+        <Form.Item label="监控设备厂家" name="manufacturer">
+          <Input style={{ width: 240 }} disabled />
+        </Form.Item>
+        <Row align="bottom">
+          <Form.Item label="监控设备缩略图" name="imageBase64" style={{ margin: 0 }}>
+            <ImageUpload></ImageUpload>
           </Form.Item>
-          <Form.Item label="监控设备厂家" name="manufacturer">
-            <Input   style={{width:240}} disabled/>
+          <Form.Item name='ImageUpload' >
+            <UploadImg></UploadImg>
           </Form.Item>
-            <Row align="bottom">
-              <Form.Item label="监控设备缩略图" name="imageBase64" style={{margin:0} }>
-               <ImageUpload></ImageUpload>
-              </Form.Item>
-              <Form.Item name='ImageUpload' >
-                <UploadImg></UploadImg>
-              </Form.Item>
-              
-            </Row>
+
         </Row>
+      </Row>
     </Form>
   )
-  
+
 }
 
-let DeleteModal=({DelModalRef,...other})=>{
-  return(
+let DeleteModal = ({ DelModalRef, ...other }) => {
+  return (
     <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-        <BlueColumn name='删除网关类型'  styled={{ padding: '24px 0px',color:'#ff4d4f' }} bg={{backgroundColor: '#ff4d4f'}}></BlueColumn>
-        <div>
-          <img src={WarningPng} style={{margin:'0 32px',width:48,height:48}}></img>
-          <span>是否确认删除监控设备类型?</span>
-        </div>
+      <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      <div>
+        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
+        <span>是否确认删除监控设备类型?</span>
+      </div>
     </Modal>
   )
 }

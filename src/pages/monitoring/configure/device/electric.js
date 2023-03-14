@@ -5,7 +5,7 @@ import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { MultImport } from './modalCom'
+import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import {AddModalForm, MyContext, EditModalForm} from './elecomp'
@@ -20,7 +20,8 @@ const {
     AddElectric,
     UpdateElectric,
     UpdateFactor,
-    DeleteElectric
+    DeleteElectric,
+    ImportElectric
   }
 } = Monitoring
 
@@ -46,10 +47,14 @@ export default function gateway({ deviceStyle }) {
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
   const FactorRef=useRef()
+  const ErrModalRef=useRef()
+  const errlistRef =useRef()
+  const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const [factorform] = Form.useForm()
   let delid;
+  let flies;
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -130,64 +135,64 @@ export default function gateway({ deviceStyle }) {
   }
  
   //确认编辑
-  const editOk = async () => {
-    const { 
-      id,
-      areaId,
-      alarmPlanId,
-      address,
-      remark,
-      gatewayId,
-      category,
-      sn,
-      name,
-      customerType,
-      commPort,
-      commProtocol,
-      commAddress,
-      factor } = editform.getFieldValue()
-    let params = {
-      id,
-      projectId,
-      areaId,
-      alarmPlanId,
-      address,
-      remark,
-      gatewayId,
-      category,
-      sn,
-      name,
-      customerType,
-      commPort,
-      commProtocol:commProtocol?commProtocol:0,
-      commAddress,
-      factor
-    }
-    const resp = await UpdateElectric(params)
-    if(resp.success){
-      message.success("更新成功")
-      EditModalFormRef?.current?.onCancel()
-      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }else{
-      message.error(resp.errMsg)
-    }
-    console.log(resp)
+  const editOk = () => {
+    editform.validateFields().then(async()=>{
+      const { 
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol:commProtocol?commProtocol:0,
+        commAddress,
+        factor
+      }
+      const resp = await UpdateElectric(params)
+      if(resp.success){
+        message.success("更新成功")
+        EditModalFormRef?.current?.onCancel()
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+      }else{
+        message.error(resp.errMsg)
+      }
+    })
   }
    //打开删除窗口
    const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
     delid=record.id
   }
-  //确认编辑
+  //确认删除
   const delOk=async()=>{
-    console.log(delid)
     const {success,errMsg} = await DeleteElectric({
       projectId,
       id:delid
     })
     if(success){
       message.success('删除成功')
-      if(page.pageSize*page.current>=page.total){
+      if(page.total%(page.pageSize*(page.current-1 ))===1){
         setPage({
           ...page,
           current:page.current-1
@@ -364,7 +369,29 @@ export default function gateway({ deviceStyle }) {
     }
     
   }
-
+  //导出
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }
+  //批量上传
+  const onImportOk=async ()=>{
+    const formData =new FormData()
+    formData.append("file",flies[0])
+    formData.append("projectId",projectId)
+    const res = await ImportElectric(formData)
+     if(res.success) {
+      if (res.data.success) {
+        message.success("上传成功")
+        modalImportRef.current.onCancel()
+        getQueryByPageElectric(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+      }else{
+        errlistRef.current.setList([...res.data.data])
+        ErrModalRef.current.onOpen()
+      } 
+    }else{
+      message.error(res.errMsg)
+    }
+  }
 
 
   useEffect(() => {
@@ -385,6 +412,7 @@ export default function gateway({ deviceStyle }) {
     selectopts,
     setPage,
     page,
+    exportExecel,
     getList:getQueryByPageElectric
   }
   const ModalFormProps = {
@@ -396,10 +424,21 @@ export default function gateway({ deviceStyle }) {
     devicelist,
     onOk: addOk
   }
+  const uploadprops = {
+    maxCount: 1,
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      flies=[...fileList]
+      return false
+    }
+  };
   const ImportProps = {
     modalImportRef,
     width: 560,
-    name: '/deviceExcel/electric.xlsx'
+    link:'/deviceExcel/electric.xlsx',
+    name:'电表导入',
+    uploadprops,
+    onOk:onImportOk
   }
   const EditModalFormProps = {
     EditModalFormRef,
@@ -414,11 +453,16 @@ export default function gateway({ deviceStyle }) {
     onOk: factorOk,
     width:512
   }
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
+  }
   
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading} onChange={(page, pageSize) => {
+        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading}  ref={tableLoadRef} onChange={(page, pageSize) => {
           setPage(() => ({
             ...page
           }))
@@ -435,6 +479,7 @@ export default function gateway({ deviceStyle }) {
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <SetFactor {...FactorModalProps}></SetFactor>
+      <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )
 }
