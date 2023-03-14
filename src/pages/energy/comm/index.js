@@ -38,13 +38,13 @@ export default function Index() {
     // writeFile(workbook, '公共能耗.xlsx', { bookType: file }); // 下载
   }
   const headerProps = {
-    isEnergy:true,
-    isDate: true,
-    isShift: true,
-    isExport: true,
-    isSearch: true,
-    isTab:false,
-    export: exportData
+    isEnergy:true,//能耗类型
+    isDate: true,//日期
+    isShift: true,//班次
+    isTab:false,//能耗、费用radioButton
+    isSearch: true,//查询按钮
+    isExport: true,//导出按钮
+    export: exportData //导出调用方法
   }
   const [headerData, setHeaderData] = useState({})
   const getFromChild = data => {
