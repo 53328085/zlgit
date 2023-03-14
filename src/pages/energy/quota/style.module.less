@@ -102,10 +102,14 @@
     top: 88px;
 }
 .content{
-    margin-top: 12px;
+    margin-top: 16px;
+    width: 1680px;
+    height: 800px;
+    background-color: #fff;
+    padding: 16px;
     display: flex;
     .contentLeft{
-        width: 400px;
+        width: 288px;
         .item{
             border: 1px solid rgb(215, 215, 215);
             border-radius: 4px;
@@ -113,8 +117,8 @@
             padding-bottom: 12px;
             margin-bottom: 12px;
             .itemTitle{
-                margin: 12px;
-                padding-left: 12px;
+                margin: 16px;
+                padding-left: 16px;
                 height: 32px;
                 border-left: 4px solid #237Ae4;
                 display: flex;
@@ -122,63 +126,24 @@
                 font-size: 14px;
                 color: #515151;
             }
-            .state{
-                display: inline-block;
-                width: 96px;
-                height: 32px;
-                line-height: 32px;
-                font-size: 14px;
-                color: #390;
-                text-align: center;
-                margin-left: auto;
-                margin-right: 0px;
-                background: url('./img/energyState.png');
-                background-repeat: no-repeat;
-                background-size: 100% 100%;
-            }
-            .detail{
-              font-size: 14px;
-              color: #135abd;
-              cursor: pointer;
-              margin-left: auto;
-              margin-right: 12px;  
-            }
             .itemData{
-                margin-top: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                height: 88px;
-                margin-right: 12px;
-                .bgImg{
-                    margin-left: 24px;
-                    width: 64px;
-                    height: 64px;
+                margin-left: 16px;
+                .listTitle{
+                    display: block;
+                    margin-top: 16px;
+                    font-size: 14px;
+                    color: #999;
                 }
-                .dataList{
-                    height: 88px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                    .dataItem{
-                        width: 180px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                    }
-                    .listTitle{
-                        font-size: 14px;
-                        color: #999;
-                    }
-                    .listValue{
-                        font-size: 16px;
-                        color: #515151;
-                    }
+                .listValue{
+                    display: block;
+                    margin-top: 16px;
+                    font-size: 16px;
+                    color: #333;
                 }
             }
             .progress{
                 margin-top: 24px;
-                margin-left: 28px;
+                margin-left: 16px;
                 .quota{
                  font-size: 14px;
                  color: #606266;
@@ -188,16 +153,74 @@
         }
     }
     .contentRight{
-        width: 1264px;
-        height: 800px;
-        margin-left: 12px;
-        background-color: #fff;
-        border: 1px solid rgb(215, 215, 215);
-        border-radius: 4px;
+        width: 1344px;
+        height: 768px;
+        margin-left: 16px;
+        position: relative;
         .area{
-            width: 1232px;
+            width: 1344px;
             height: 768px;
-            margin: 12px;
+        }
+        .mask{
+            background-color: #fff!important;
+        }
+        .mask, .imgData{
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            width: 465px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            // justify-content: space-around;
+            color: #000;
+            font-size: 16px;
+            span{
+                display: inline-block;
+                white-space:nowrap;
+            }
         }
     }
 }
+.mainContent{
+    margin-top: 16px;
+    width: 1680px;
+    height: 780px;
+    background-color: #fff;
+    padding: 16px;
+    .contentTitle{
+        border-left: 4px solid #237Ae4;
+        padding-left: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #515151;
+    }
+    .roomSearch{
+        width: 900px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        :global{
+            .ant-btn{
+                width: 80px;
+                background-color: #f5f7fa;
+                border-color:#d7d7d7 ;
+                color: #515151;
+            }
+        }
+    }
+    .tableList{
+        margin-top: 16px;
+        :global{
+            th{
+                background-color: #ecf5ff;;
+            }
+        }
+    }
+}
+
+

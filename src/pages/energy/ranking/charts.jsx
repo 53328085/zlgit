@@ -25,7 +25,6 @@ export default function Charts() {
         },
       ];
       let mapData = data.map(item=>({...item,title:'用电量(kwh)'}))
-      console.log(mapData)
       const config = {
         data:mapData,
         xField: 'value',

@@ -1,12 +1,18 @@
 import React, {useState, useEffect, Fragment} from 'react'
 import { useRequest } from 'ahooks';
 import style from './style.module.less';
-import { Select, DatePicker, message } from 'antd';
+import { Select, DatePicker, message, Empty  } from 'antd';
 import { Sankey } from '@ant-design/plots';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
-import { AreaSetting } from '@api/api.js'
+import { AreaSetting, EnergyFlowRuntime } from '@api/api.js'
+
+//dayjs bug
+import weekday from "dayjs/plugin/weekday"
+import localeData from "dayjs/plugin/localeData"
+dayjs.extend(weekday)
+dayjs.extend(localeData)
 
 export default function Index() {
   const { Option } = Select;
@@ -19,6 +25,7 @@ export default function Index() {
   }
   const projectId = useSelector(selectProjectId);
   const { QueryAllArea } = AreaSetting
+  const { queryComprehensive, queryElectric, queryWater, queryGas } = EnergyFlowRuntime
   //园区
   const [areaList, setAreaList] = useState([])
   const [defaultArea, setDefaultArea] = useState()
@@ -48,27 +55,121 @@ export default function Index() {
   }
   //日期选择
   const [type, setType] = useState('year')
-  const changeDateType = val => {
-    setType(val)
-  }
   let time = new Date()
   let year = time.getFullYear()
   let month = time.getMonth() + 1 
   month = month > 9 ? month : '0' + month
-  let day = time.getDate() + 1
+  let day = time.getDate()
   day = day > 9 ? day : '0' + day
-  console.log(year+'-'+month+'-'+day)
-  const PickerWithType = ({ type, onChange }) => {
-    if (type === 'date') return <DatePicker defaultValue={dayjs(year+'-'+month+'-'+day, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
-    if (type === 'month') return <DatePicker defaultValue={dayjs(year+'-'+month, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
-    return <DatePicker picker={type} defaultValue={dayjs(year.toString(), 'YYYY')} format={'YYYY'} onChange={onChange} />;
-  };
-  const changeDate = (date, dateString) => {
-    console.log(date, dateString)
+  const [date, setDate] = useState(year.toString()+'-01-01')
+  const changeDateType = val => {
+    setType(val)
+    if(val == 'year') setDate(year.toString()+'-01-01')
+    if(val == 'month') setDate(year+'-'+month+'-01')
+    if(val == 'date') setDate(year+'-'+month+'-'+day+'')
   }
+  const changeDate = (date, dateString) => {
+    if(type == 'year') setDate(dateString+'-01-01')
+    if(type == 'month') setDate(dateString+'-01')
+    if(type == 'date') setDate(dateString+'')
+  }
+  const PickerWithType = ({ type, onChange }) => {
+    if (type === 'date') return <DatePicker  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
+    if (type === 'month') return <DatePicker  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
+    if (type === 'year') return <DatePicker  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
+  };
+
+  //获取数据
+  //综合能耗
+  const getComprehensive = () => {
+    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
+    queryComprehensive(projectId, dateType, date, [areaId]).then(res => {
+      if(res.success){
+        if(res.data){
+          setData(res.data.link)
+        }else{
+          setData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+  }
+  const { run:runCompre } = useRequest(getComprehensive, {
+    manual: true
+  })
+  //电
+  const getElectric = () => {
+    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
+    queryElectric(projectId, dateType, date, [areaId]).then(res => {
+      if(res.success){
+        if(res.data){
+          setData(res.data.link)
+        }else{
+          setData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+  }
+  const { run:runElectric } = useRequest(getElectric, {
+    manual: true
+  })
+  //水
+  const getWater = () => {
+    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
+    queryWater(projectId, dateType, date, [areaId]).then(res => {
+      if(res.success){
+        if(res.data){
+          setData(res.data.link)
+        }else{
+          setData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+  }
+  const { run:runWater } = useRequest(getWater, {
+    manual: true
+  })
+  //燃气
+  const getGas = () => {
+    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
+    queryGas(projectId, dateType, date, [areaId]).then(res => {
+      if(res.success){
+        if(res.data){
+          setData(res.data.link)
+        }else{
+          setData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+  }
+  const { run:runGas } = useRequest(getGas, {
+    manual: true
+  })
+  useEffect(()=>{
+    if(areaId == 0) return;
+    if(energyType == 0){
+      runCompre()
+    }
+    if(energyType == 1){
+      runElectric()
+    }
+    if(energyType == 2){
+      runWater()
+    }
+    if(energyType == 3){
+      runGas()
+    }
+  },[areaId, energyType, date])
 
   //图表数据
-  const data = []
+  const [data, setData]= useState([])
   const config = {
     data: data,
     sourceField: 'source',
@@ -122,13 +223,17 @@ export default function Index() {
             <Option value="month">月</Option>
             <Option value="year">年</Option>
           </Select>
-          <PickerWithType style={{width: '160px', marginRight: '16px'}} type={type} onChange={changeDate}></PickerWithType> 
+          <PickerWithType 
+            style={{width: '160px', marginRight: '16px'}} 
+            type={type} 
+            onChange={changeDate}
+          ></PickerWithType> 
         </div>
       </div>
       <div className={style.content}>
         <div className={style.contentRight}>
           <div className={style.rightTitle}>能源流向</div>
-          <Sankey style={{width:'1400px',height:650,marginLeft:'120px'}} {...config} />
+          {data.length == 0 ? <Empty style={{marginTop: 150}}></Empty> : <Sankey style={{width:'1400px',height:650,marginLeft:'120px'}} {...config} /> }
         </div>
       </div>
     </div>

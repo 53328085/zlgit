@@ -8,11 +8,15 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
+
 import { Monitoring } from '@api/api.js'
-const { DeviceTypeManager: { AllDeviceStyle} } = Monitoring
+import { message } from 'antd'
+const { DeviceTypeManager: { AllDeviceStyle,}, } = Monitoring
 
 export default function Index() {
   const [value, setvalue] = useState('0')
+
+
   const [Coms,setComs]=useState([
     <GateWay/>,
     // <Electric />,
@@ -34,7 +38,8 @@ export default function Index() {
   let dataProps={
     value,
     setvalue,
-    tabs
+    tabs,
+
   }
 
  
@@ -68,7 +73,6 @@ export default function Index() {
     getAllDeviceStyle()
     console.log(Coms)
   },[])
-
  
   return (
     <CustContext.Provider value={dataProps}>

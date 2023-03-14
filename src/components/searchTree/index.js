@@ -1,60 +1,35 @@
 import React, {useState, useEffect, Fragment} from 'react'
 import style from './style.module.less';
-import {Input, Tree } from 'antd';
+import {Input, Tree, Empty } from 'antd';
 import dashLine from '@imgs/line.png'
 import { cloneDeep } from 'lodash';
 
 export default function Index(props){
   const { getValues } = props;
     const { Search } = Input;
-    const [treeData, setTreeData] = useState([])
-    const arr = cloneDeep(props.treeData)
-    const changeTitle = data => {
-        for(let i =0; i < data.length;i++){
-           let node = data[i]
-           node.title = cloneDeep(node[props.fieldNames.title])
-           node.key = cloneDeep(node[props.fieldNames.key])
-           node.children = node[props.fieldNames.children] ? cloneDeep(node[props.fieldNames.children]) : []
-           Reflect.deleteProperty(node, props.fieldNames.title) 
-           Reflect.deleteProperty(node, props.fieldNames.key)
-           Reflect.deleteProperty(node, props.fieldNames.children)
-           if(node.children.length > 0) {
-            changeTitle(node.children)
-           }
-        }
-    }
-    changeTitle(arr)
-    setTimeout(()=>{
-      setTreeData(arr)
-    }, 100)
-    // let arrayList = cloneDeep(arr)
-    // useEffect(()=>{
-        
-    // },[])
-
-
     let dataList = [];
     const generateList = data => {
+
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
-          const { key, title } = node;
-          dataList.push({ key, title: title });
-          if (node.children) {
-            generateList(node.children);
+          dataList.push({ [props.fieldNames.key]: node[props.fieldNames.key], [props.fieldNames.title]: node[props.fieldNames.title]});
+          if (node[props.fieldNames.children]) {
+            generateList(node[props.fieldNames.children]);
           }
         }
+        
     };
-    generateList(treeData);
-     
+    generateList(props.treeData);
+
       const getParentKey = (key, tree) => {
         let parentKey;
         for (let i = 0; i < tree.length; i++) {
           const node = tree[i];
-          if (node.children) {
-            if (node.children.some(item => item.key === key)) {
-              parentKey = node.key;
-            } else if (getParentKey(key, node.children)) {
-              parentKey = getParentKey(key, node.children);
+          if (node[props.fieldNames.children]) {
+            if (node[props.fieldNames.children].some(item => item[props.fieldNames.key] === key)) {
+              parentKey = node[props.fieldNames.key];
+            } else if (getParentKey(key, node[props.fieldNames.children])) {
+              parentKey = getParentKey(key, node[props.fieldNames.children]);
             }
           }
         }
@@ -77,10 +52,9 @@ export default function Index(props){
      
       const onSearch = e => {
         const { value } = e.target;
-        const expandedKeys = dataList
-          .map(item => {
-            if (item.title.indexOf(value) > -1) {
-              return getParentKey(item.key, treeData);
+        const expandedKeys = dataList.map(item => {
+            if (item[props.fieldNames.title].indexOf(value) > -1) {
+              return getParentKey(item[props.fieldNames.key], props.treeData);
             }
             return null;
           })
@@ -97,9 +71,9 @@ export default function Index(props){
     //tree={loop(treeData)}会造成编辑树功能无法重新渲染树，node中input渲染不出来
       const loop = data =>
         data.map(item => {
-          const index = item.title.indexOf(searchValue);
-          const beforeStr = item.title.substr(0, index);
-          const afterStr = item.title.substr(index + searchValue.length);
+          const index = item[props.fieldNames.title].indexOf(searchValue);
+          const beforeStr = item[props.fieldNames.title].substr(0, index);
+          const afterStr = item[props.fieldNames.title].substr(index + searchValue.length);
           const title =
             index > -1 ? (
               <span>
@@ -108,25 +82,29 @@ export default function Index(props){
                 {afterStr}
               </span>
             ) : (
-              <span>{item.title}</span>
+              <span>{item[props.fieldNames.title]}</span>
             );
-          if (item.children) {
-            return { title, key: item.key, children: loop(item.children) };
+          if (item[props.fieldNames.children]) {
+            return {  [props.fieldNames.title]: title, [props.fieldNames.key]: item[props.fieldNames.key], [props.fieldNames.children]: loop(item[props.fieldNames.children]) };
           }
-     
+    
           return {
-            title,
-            key: item.key,
+            [props.fieldNames.title]:title,
+            [props.fieldNames.key]: item[props.fieldNames.key],
           };
         });
+        
 
-        const onCheck = (checkedKeys, info) => {
-            getValues(checkedKeys)
-        };
+      const onCheck = (checkedKeys, info) => {
+        console.log(info)
+        // getValues(checkedKeys)
+        getValues(info.checkedNodesPositions)
+      };
     
        
       return(
         <div className={style.contentLeft}>
+          {props.title ? <div className={style.title}>{props.title}</div> : null}
           <Search
             placeholder="请输入关键字查询"
             size="middle"
@@ -136,16 +114,19 @@ export default function Index(props){
             }}
           />
           <img src={dashLine} className={style.radioLine}></img>
-          <Tree
-            style={{height:'636px',overflow:'auto',fontSize: 16}}
-            checkable
-            defaultExpandAll={true}
-            onExpand={onExpand}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            treeData={loop(treeData)}
-            onCheck={onCheck}
-          />
+          {props.treeData.length > 0 ? 
+            <Tree
+              style={{height:'636px',overflow:'auto',fontSize: 16}}
+              checkable
+              defaultExpandAll={true}
+              onExpand={onExpand}
+              expandedKeys={expandedKeys}
+              autoExpandParent={autoExpandParent}
+              treeData = {loop(props.treeData)}
+              onCheck={onCheck}
+              fieldNames={props.fieldNames}
+            /> : <Empty style={{marginTop: 120}}></Empty>
+          }
         </div>
       )
 }
