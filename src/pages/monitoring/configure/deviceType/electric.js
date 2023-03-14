@@ -94,7 +94,7 @@ export default function Electric() {
   const editOption = (record) => {
     EditModalRef.current.onOpen()
     const editModalData = tableDataSource.filter(it => it.category === record.category)
-    console.log(editModalData, editForm)
+    console.log(editModalData, tableDataSource)
     editForm.setFieldsValue({
       DeviceType: editModalData[0]?.category,
       Control: editModalData[0]?.control,
@@ -324,6 +324,7 @@ export default function Electric() {
     ModalRef,
     onCancel,
     exportExecel,
+    title:'配置电表类型'
   };
   let editFormProps = {
     editForm,
@@ -357,7 +358,7 @@ export default function Electric() {
         ></Table>
       </DeviceContent>
       <Modal mold='cust' {...editModalProps}>
-        <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+        <BlueColumn name='编辑电表类型' styled={{ padding: '24px 0px' }}></BlueColumn>
         <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModalProps}></DeleteModal>

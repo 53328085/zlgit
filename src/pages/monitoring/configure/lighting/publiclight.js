@@ -6,7 +6,7 @@ import {Addmodal,EditModal,DeleteModal,MultImport} from './modalcomp'
 import { Form, message } from 'antd'
 import {Monitoring} from '@api/api'
 const {PubliclightManager:{PublicLightAdd,PublicLightQueryByPage,PublicLightUpdate,PublicLightDelete,PublicLightImport}}=Monitoring
-export default function parkstreet({areaList}) {
+export default function parkstreet({areaList,levelname}) {
   const [tableParams,setTableParams]=useState({
     current:1,
     pageSize:10,
@@ -139,6 +139,10 @@ export default function parkstreet({areaList}) {
   }
   //打开新增窗口
   const addopen=()=>{
+    if(!levelname.current){
+      message.warning('请添加区域')
+      return
+    }
     addform.resetFields()
     addModalRef.current.onOpen()
   }
@@ -214,11 +218,16 @@ export default function parkstreet({areaList}) {
  
    const res = await PublicLightQueryByPage(params)
    setLoading(false)
-   if(res.success&&Array.isArray(res.data)){
-     setDataSource([...res.data])
+   if(res.success){
+    if(Array.isArray(res.data)){
+      setDataSource([...res.data])
+    }else{
+      setDataSource([])
+    }
      setTableParams({...tableParams, current:res.pageNum,pageSize:res.pageSize,total:res.total})
    }else{
-     setDataSource([])
+    
+     message.error(res.errMsg)
    }
   } 
 
@@ -246,7 +255,8 @@ export default function parkstreet({areaList}) {
     onOk:onAddOk,
     addform,
     name:'公共照明名称',
-    title:"新增公共照明"
+    title:"新增公共照明",
+    levelname
   }
   const editModalProps={
     editModalRef,
@@ -254,6 +264,7 @@ export default function parkstreet({areaList}) {
     areaList,
     width: 832,
     onOk:onEditOk,
+    levelname
   }
   const delModalProps={
     DelModalRef,

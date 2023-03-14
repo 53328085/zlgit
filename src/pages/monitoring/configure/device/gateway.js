@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState,useContext } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -6,9 +6,10 @@ import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import { MultImport, DeleteModal } from './modalCom'
 import restart from './imgs/restart.png'
-import { Form, Row, Col, Select, Input, Divider, Upload, message } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, message,Button } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
+import cutContext from  '@com/content'
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -17,6 +18,7 @@ const { DeviceManager:
     GatewayUpdate,
     GatewayDelete,
     GatewayImport,
+    OneLevel,
     StartReboot } } = Monitoring
 export default function gateway() {
   const [selectopts, setSelectopts] = useState()
@@ -43,14 +45,18 @@ export default function gateway() {
   const tableLoadRef = useRef()
   const [editform] = Form.useForm()
   const [addForm] = Form.useForm()
+  const content =useContext(cutContext)
   const projectId = useSelector(state => state.system.menus.projectId)
+  const levelname =useRef()
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
     cursor: 'pointer',
   }
   let startsn;
-  let flies
+  let flies;
+  let tag=false;
+  let edittag=false
   const columns = [
     {
       title: '园区名称',
@@ -119,6 +125,10 @@ export default function gateway() {
   }
   //打开新增网关窗口
   const addopen = () => {
+    if(!levelname.current){
+      message.warning('请先添加区域名称')
+      return
+    }
     modalFormRef?.current?.onOpen()
     addForm.setFieldsValue({
       area: '',
@@ -140,15 +150,26 @@ export default function gateway() {
     setDelId(record.id)
     modalDelRef?.current?.onOpen()
   }
-
+  //获取第一级区域名
+  const getOneLevel=async()=>{
+    const res =  await OneLevel(projectId)
+    if(res.success){
+      levelname.current =res.data.name
+      getAeraQueryAll(res.data.name)
+    }else{
+     message.error(res.errMsg)
+    }
+   }
   //获取园区
-  const getAeraQueryAll = async () => {
+  const getAeraQueryAll = async (name) => {
     try {
+      console.log(content)
       const resp = await AeraQueryAll(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
-        setSelectopts(() => [...data])
-        setAddOpts(() => [...resp.data])
+        const data = [{ name, id: 0 }, ...resp.data]
+        console.log(data)
+        setSelectopts([...data])
+        setAddOpts([...resp.data])
       }
     } catch (e) {
       console.log(e)
@@ -211,7 +232,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval,
+        heartInterval:heartInterval? Number(heartInterval):30,
         remark
       }
       const { data, success, errMsg } = await GatewayAdd(params)
@@ -224,6 +245,37 @@ export default function gateway() {
       }
     })
 
+  }
+  //确认新增应用
+  const addSure=()=>{
+    addForm.validateFields().then(async () => {
+      const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: area,
+        address,
+        category,
+        sn,
+        pwd,
+        name,
+        heartInterval:heartInterval? Number(heartInterval):30,
+        remark
+      }
+      const { data, success, errMsg } = await GatewayAdd(params)
+      if (success) {
+        message.success('应用成功')
+        tag=true; 
+      } else {
+        message.error(errMsg)
+      }
+    })
+  }
+  const cancelOk = () => {
+    if(tag){
+      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+    }
+    modalFormRef.current.onCancel()
   }
   //确认编辑
   const editOk = async () => {
@@ -245,12 +297,45 @@ export default function gateway() {
       const { data, success, errMsg } = await GatewayUpdate(params)
       if (success) {
         message.success('更新成功')
-        modalEditRef.current.onCancel(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
-        getQueryByPageGateWay()
+        modalEditRef.current.onCancel()
+        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
       } else {
         message.error(errMsg)
       }
     })
+  }
+  //确认编辑应用
+  const editSure=()=>{
+    editform.validateFields().then(async () => {
+      const { areaId, category, address, sn, pwd, name, heartInterval, remark, id } = editform.getFieldValue()
+      let params = {
+        id: id,
+        projectId,
+        areaId,
+        address,
+        category,
+        sn,
+        pwd,
+        name,
+        heartInterval: Number(heartInterval),
+        remark
+      }
+      console.log(params)
+      const { data, success, errMsg } = await GatewayUpdate(params)
+      if (success) {
+        message.success('更新成功')
+        edittag=true
+      } else {
+        message.error(errMsg)
+      }
+    })
+  }
+  const editCancel=()=>{
+    if(edittag){
+      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+    }
+    modalEditRef.current.onCancel()
+       
   }
   //确认删除
   const delOk = async () => {
@@ -286,9 +371,7 @@ export default function gateway() {
     //   message.error(res.errMsg)
     //  }
   }
-  const cancelOk = () => {
-    modalFormRef.current.onCancel()
-  }
+ 
   //导出
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -315,6 +398,8 @@ export default function gateway() {
     page,
     setPage,
     exportExecel,
+    levelname,
+    placeholder:'输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
   }
   let ModalFormProps = {
@@ -325,7 +410,9 @@ export default function gateway() {
     addForm,
     usecategory,
     onOk: addOk,
-    onCancel: cancelOk
+    onCancel: cancelOk,
+    onSure: addSure,
+    levelname
   }
   const uploadprops = {
     beforeUpload(file, fileList) {
@@ -346,11 +433,15 @@ export default function gateway() {
     modalEditRef,
     editform,
     width: 772,
-    onOk: editOk
+    onOk: editOk,
+    onSure:editSure,
+    onCancel: editCancel,
+    levelname
   }
   useEffect(() => {
+    getOneLevel()
     getQueryByPageGateWay()
-    getAeraQueryAll()
+   
     getQueryUsedGateway()
   }, [])
 
@@ -381,17 +472,27 @@ export default function gateway() {
 }
 
 //新增网关组件
-let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, ...other }) => {
+let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...other }) => {
+  console.log(475,levelname)
   const rules ={ required: true,}
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other}>
+    <Modal mold='cust' ref={modalFormRef} {...other} footer={[
+      <Button onClick={other.onCancel}>取消</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+  ]}>
       <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={addForm}
+        labelCol={{
+          span: 6
+        }}
+        labelAlign='left'
+        
       >
         <Row className={style.customItem}>
           <Col flex={1}>
-            <Form.Item label="所属园区" name="area" rules={[rules]}>
+            <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 fieldNames={{
                   label: 'name',
@@ -442,7 +543,8 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, ...other }) =
 //计数器组件
 let Count = ({ value, onChange }) => {
   console.log(value)
-  const [number, setNumber] = useState(value ? value : 0)
+  const [number, setNumber] = useState(value ? value : 30)
+  
   const reduce = () => {
     number > 0 && number > 0 && setNumber(number - 1)
     onChange(number - 1)
@@ -494,18 +596,25 @@ const KeyParam = ({ keyParamRef, gatewaySn }) => {
   )
 }
 //编辑网关
-const EditModalForm = ({ modalEditRef, editform, ...other }) => {
+const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
   const rules ={ required: true,}
   return (
-    <Modal mold='cust' ref={modalEditRef} {...other}>
+    <Modal mold='cust' ref={modalEditRef} {...other} footer={[
+      <Button onClick={other.onCancel}>取消</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
+      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+  ]}>
       <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={editform}
-
+        labelCol={{
+          span: 6
+        }}
+        labelAlign='left'
       >
         <Row className={style.customItem}>
           <Col flex={1}>
-            <Form.Item label="所属园区" name="area" rules={[rules]}>
+            <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 fieldNames={{
                   label: 'name',

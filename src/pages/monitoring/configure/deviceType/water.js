@@ -323,7 +323,8 @@ export default function Electric() {
     open,
     ModalRef,
     onCancel,
-    exportExecel
+    exportExecel,
+    title:'配置水表类型'
   };
   let editFormProps = {
     editForm,

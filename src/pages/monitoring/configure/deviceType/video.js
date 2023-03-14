@@ -10,7 +10,7 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import WarningPng from '@imgs/warning.png'
-
+import { MultImport } from  './modalCom'
 const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory, UpdateDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function video() {
   const [selectOption, setSelectOption] = useState(null)
@@ -27,8 +27,10 @@ export default function video() {
   const EditModalRef = useRef(null)//编辑设备Ref
   const DelModalRef = useRef(null)//删除设备Ref
   const tableLoadRef =useRef()
+  const modalImportRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   let categoryId;
+  let flies;
   const optionStyle = {
     color: '#1890ff',
     cursor: 'pointer',
@@ -67,6 +69,7 @@ export default function video() {
     }
 
   }
+ 
   //保存新增
   const onOk = async () => {
     const formvalues = AddModalForm.getFieldValue()
@@ -211,6 +214,14 @@ export default function video() {
       ...page
     })
   }
+  const uploadprops = {
+    maxCount: 1,
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      flies=[...fileList]
+      return false
+    }
+  };
   useEffect(() => {
     getDeviceQueryNotUsed()
     getDeviceQueryCategory()
@@ -230,6 +241,7 @@ export default function video() {
     open,
     ModalRef,
     exportExecel,
+    title:'配置视频监控类型',
     AddModal: <AddModal {...addModalProps}></AddModal>
   };
   let editFormProps = {
@@ -264,6 +276,7 @@ export default function video() {
         <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModal}></DeleteModal>
+      <MultImport modalImportRef = {modalImportRef} link = '/deviceExcel/camera.xlsx' name='批量导入' uploadprops={uploadprops}></MultImport>
     </div>
   )
 }
@@ -348,7 +361,7 @@ let EditModal = (props) => {
 let DeleteModal = ({ DelModalRef, ...other }) => {
   return (
     <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      <BlueColumn name='删除视频监控类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
       <div>
         <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
         <span>是否确认删除监控设备类型?</span>

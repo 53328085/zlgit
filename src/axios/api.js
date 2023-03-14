@@ -31,7 +31,7 @@ export class ProjectSetting {
     static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
     static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
     static publishProject = ({projectId, state, code, moble}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
-    static DeleteProject = (projectId) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}`) //  删除项目
+    static DeleteProject = (projectId, name) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&name=${name}`) //  删除项目
 }
 // 公共模块---项目设置---区域设置
 export class AreaSetting {
@@ -109,7 +109,7 @@ export class User {
 
 // 能源管理--园区能耗
   export class EnergyComprehensive {
-    static EnergyOverViewRuntime = (projectId, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}`, params)
+    static EnergyOverViewRuntime = ({projectId, type, date}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}&type=${type}&date=${date}`, params)
   }
 
 // 
@@ -457,6 +457,7 @@ export const Monitoring =  {
     //设备管理
     DeviceManager:{
         AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域
+        OneLevel:(projectId)=>server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`),//获取1级区域名
         QueryByPageElectric:(data)=>server.post(`/Monitor/Device/QueryByPageElectric`,data),//获取电表
         QueryByPageGateWay:(data)=>server.post(`/Monitor/Gateway/QueryByPage`,data),//获取网关
         QueryListGateWay:(projectId)=>server.get(`/Monitor/Gateway/QueryList?projectId=${projectId}`),//网关列表
@@ -524,9 +525,25 @@ export const Monitoring =  {
         ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
     }
 }
+//能耗排名
 export class energyRanking{
     static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
     static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+    static Query=(data)=>server.post(`/Energy/EnergyRankingRuntime/Query`,data)//能耗排名
+}
+//分时能耗
+export class energyShare{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+    static QuerySpaceTrees=(data)=>server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`,{params:data})//查询树
+    static QueryElectric=(data)=>server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`,data)//分时能耗
+}
+//数据报表
+export class energyReport{
+    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+    static QueryReading=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryReading`,areaId,{params:data})//能耗抄表
+    static QueryConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryConsume`,areaId,{params:data})//能耗用量
+    static QueryTimeConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryTimeConsume`,areaId,{params:data})//分时能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {

@@ -11,6 +11,7 @@ const Video = lazy(() => import("../pages/monitoring/video"))
 const Warning = lazy(() => import("../pages/monitoring/warning"))
 const Remote = lazy(() => import("../pages/monitoring/remote"))
 const Oplog = lazy(() => import("../pages/monitoring/oplog"))
+
 const menus = [];
 const components = {
     '010501': Summary,
@@ -19,8 +20,9 @@ const components = {
     '010504': Remote,
     '010505': Warning,
     '010506': Video,
-    '010507': Report,
-    '010508': Oplog
+    '010507': Electrical,
+    '010508': Oplog,
+    '010509': Report,
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor'] 

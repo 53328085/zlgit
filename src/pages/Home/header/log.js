@@ -180,6 +180,9 @@ export default function Log() {
       state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
     })
   }
+  const projectcfg =() => {
+    navgite("/projectList")
+  }
   useEffect(() => {
     return () => {
       unsubscribe()
@@ -202,7 +205,7 @@ export default function Log() {
         <Idiv4 onClick={onConfigure}>
           <span>项目设置</span>
         </Idiv4>
-        <Idiv2>
+        <Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
         </Idiv2>
         </>

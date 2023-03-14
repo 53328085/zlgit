@@ -327,7 +327,8 @@ const editOption=(record)=>{
     open,
     ModalRef,
     onCancel,
-    exportExecel
+    exportExecel,
+    title:'配置燃气表类型'
   };
   let editFormProps={
     editForm,

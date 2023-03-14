@@ -40,6 +40,7 @@ const Cform = styled(Form)`
     border-top: 1px solid #dedede;
     border-bottom: 1px solid #dedede;
     height: max-content;
+    display: flex;
    &&{
     .ant-form-item {
         margin: 0px;
@@ -47,7 +48,7 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, handler, search, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
+  const {form, handler, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
   //const {printArea, setPrintArea} = useState()
 
@@ -56,8 +57,9 @@ export default function useSerach(props) {
  
   const allData = useRef();
   const onChange = (e) => {
-     console.log(e)
-     handler?.run && handler.run([e])
+     if (typeof handler == 'function') {
+        handler()
+     }
   }
   const btns = [
     {
@@ -107,7 +109,7 @@ export default function useSerach(props) {
         </Select>
       </Item>
         {
-          props.custview
+           custview
         }
      {/*  <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}>  */}
       {/*  RefreshButton, 
