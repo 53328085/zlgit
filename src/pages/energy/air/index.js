@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './style.module.less';
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined, CheckCircleFilled, WarningFilled, RightOutlined, LeftOutlined } from '@ant-design/icons';
-import { Spin, Input, Button, Modal, Image, Divider ,message} from 'antd';
+import { Spin, Input, Button, Modal, Image, Divider, message } from 'antd';
 import UseHeader from '@com/useHeader'
+import { useSelector } from 'react-redux'
 import Titlelayout from '@com/titlelayout'
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { drawEcharts } from "@com/useEcharts";
+import { selectProjectId } from '@redux/systemconfig.js'
 import { data } from 'browserslist';
+// import { energyDesigner } from '@api/api.js'
 export default function Index(props) {
   const toMainPage = () => {
     let display = false;
     props.sendToIndex(display);
   }
+  const projectId = useSelector(selectProjectId)
   const elref = useRef(null)
   const datasetMonth = {
     dimensions: ["time", "2020", "2019"],
@@ -58,7 +62,8 @@ export default function Index(props) {
         itemGap: 20
       }
     })
-  });
+    //queryData()
+  }, []);
   const fs = {
     hv: '24px',
     fc: '#333'
@@ -126,9 +131,9 @@ export default function Index(props) {
     setCtitle(e)
     setIsModalOpen(true);
   }
-  const onOk = () => {
-    setIsModalOpen(false);
-  }
+  // const onOk = () => {
+  //   setIsModalOpen(false);
+  // }
   const handleOk = () => {
     setLoading(true)
     setIsModalOpen(false);
@@ -182,7 +187,7 @@ export default function Index(props) {
       setnumfirst(++numfirst)
       setnumlast(++numlast)
       setairList(arr.list.slice(numfirst, numlast))
-    }else{
+    } else {
       messageApi.open({
         type: 'warning',
         content: '当前已为最后一个……',
@@ -194,17 +199,43 @@ export default function Index(props) {
       setnumfirst(--numfirst)
       setnumlast(--numlast)
       setairList(arr.list.slice(numfirst, numlast))
-    }else{
+    } else {
       messageApi.open({
         type: 'warning',
         content: '当前已为第一个……',
       });
     }
   }
+  //   const { 
+  //     queryElectricClassifys, 
+  //     insertEnergyClassify, 
+  //     updateEnergyClassify, 
+  //     deleteEnergyClassify, 
+  //     queryEnergyConfigedDevicesInfo, 
+  //     queryEnergyNoConfigedDevices, 
+  //     saveEnergyDevices,
+  //     insertEnergyClassifys 
+  // } = energyDesigner
+  //   const getData = () => {
+  //     return queryElectricClassifys(type).then( res => {
+  //         let { success, data } = res
+  //         if(success && data){
+  //         }else{
+  //             messageApi.open({
+  //                 type:'error',
+  //                 content:res.errMsg
+  //             })
+  //         }
+  //     })
+  // }
+  // const { run:queryData } = useRequest(getData, {
+  //   refreshDeps:[changeTag],
+  //   manual: true,
+  // })
   return (
     <div>
       {contextHolder}
-      <Spin size="large" spinning={loading} tip="控制命令下发中，请稍候……">
+      <Spin size="large" spinning={loading} tip="控制命令下发中，请稍候……" delay={500}>
         <UseHeader isbuilding={false} iscircle={false} isSearch={false} ischangetab={true}></UseHeader>
         <div className={style.content}>
           <div className={style.contentTop}>
@@ -216,7 +247,7 @@ export default function Index(props) {
               <Titlelayout title={'本日空调能耗 (kWh)'}{...fs} style={{ width: '100%', height: '100%' }}>
                 <div className={style.airEnergy} style={{ width: '100%', height: '100%', padding: 16 }}>
                   <div style={{ width: '100%', height: '100%', paddingTop: 16 }}>
-                    <Image src={imgurl.bg} preview={false} width={64} height={64}></Image>
+                    <Image src={imgurl.logo} preview={false} width={64} height={64}></Image>
                   </div>
                   <div className={style.airEnergyData}>
                     <p>本日 :{airdata.today}</p>
@@ -239,7 +270,7 @@ export default function Index(props) {
               <span>空调控制</span><Input size="middle" placeholder='请输入空调名称' style={{ width: '260px', marginLeft: 16 }} />
               <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
             </div>
-            <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} />
+            <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
             <div className={style.contentBottomBottom}>
               <div className={style.boxList}>
                 {airList.map((item, index) => {
@@ -251,7 +282,8 @@ export default function Index(props) {
                       {item.state == '运行中' ? <div style={{ width: 14, height: 14, backgroundColor: '#66FF00', borderRadius: '50%' }}></div> : <div style={{ width: 14, height: 14, backgroundColor: '#000', borderRadius: '50%' }}></div>}
                       {item.state == '运行中' ? <span style={{ fontSize: 12, color: ' rgba(102, 255, 0, 0.8)', marginLeft: 5 }}>{item.state}</span> : <span style={{ fontSize: 12, color: '#003366', marginLeft: 5 }}>{item.state}</span>}
                     </div>
-                    <Divider dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} />
+                    <div style={{ marginTop: 16, marginBottom: 16, width: 137, borderTop: "1px dashed #fff" }} ></div>
+                    {/* <Divider dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} /> */}
                     <Button className={style.airBtn} style={{ width: 136, height: 32, borderRadius: 800, color: "#237AE4" }} onClick={() => { onclickBtn(item) }}>远程控制</Button>
 
                   </div>
@@ -280,17 +312,21 @@ export default function Index(props) {
           <div className={style.airModalBox}>
             <div className={style.airModalBoxBtn}>
               <p className={style.airModalName}>开关</p>
-              <div className={style.airModalImage}><Image src={imgurl.bg} preview={false} width={68} height={68}></Image></div>
+              {state == 'open' ? <div className={style.airModalImage}>
+                <Image src={imgurl.open} preview={false} width={68} height={68}></Image></div> : <div className={style.airModalImage}>
+                <Image src={imgurl.open} preview={false} width={68} height={68}></Image></div>}
               <div className={style.airModalState}>{state == 'open' ? '运行中……' : '关闭'}</div>
             </div>
             <div className={style.airModalBoxBtn}>
               <p className={style.airModalName}>温度</p>
-              <div className={style.airModalImage}><Image src={imgurl.bg} preview={false} width={68} height={68}></Image></div>
+              <div className={style.airModalImage}><Image src={imgurl.temp} preview={false} width={68} height={68}></Image></div>
               <div className={style.airModalState}>{temp}<span>℃</span></div>
             </div>
             <div className={style.airModalBoxBtn}>
               <p className={style.airModalName}>模式</p>
-              <div className={style.airModalImage}><Image src={imgurl.cold} preview={false} width={68} height={68}></Image></div>
+              {modelChange == 'cold' ? <div className={style.airModalImage}>
+                <Image src={imgurl.cold} preview={false} width={68} height={68}></Image></div> : <div className={style.airModalImage}>
+                <Image src={imgurl.warm} preview={false} width={68} height={68}></Image></div>}
               <div className={style.airModalState}>{modelChange == 'cold' ? '制冷' : '制热'}</div>
             </div>
             <Button className={isOnClick ? style.onClickState : ''} onClick={() => { onclickOpen('open') }}>开启</Button>
