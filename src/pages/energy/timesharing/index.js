@@ -75,6 +75,9 @@ export default function Index() {
   datetypeRef.current = datetype
   const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
   const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
+
+  const pieRef = useRef()
+  const columnRef =useRef()
   const [selectkeys, setSelectkeys] = useState([])
   const selectRef=useRef()
   selectRef.current=selectkeys
@@ -165,7 +168,6 @@ export default function Index() {
     }else if(datetypeRef.current ===3){
       date = moment(date).format('YYYY-01-01')
     }
-    console.log(date)
     return date
   }
   //分时能耗
@@ -182,7 +184,8 @@ export default function Index() {
     }
    const res = await energyShare.QueryElectric(params)
    if(res.success){
-
+    pieRef.current.setPieData([...res.data.proportion])
+    columnRef.current.setList([...res.data.detail])
    }else{
     message.error(res.errMsg)
    }
@@ -332,9 +335,12 @@ export default function Index() {
         <div className={style.sharingtime}>
         <Bluecolumn name="分时能耗"/>
         <div style={{height:'16px'}}> </div>
-        <Timenergy/>
+        <Timenergy ref={columnRef}/>
         </div>
-        <Timepercent/>
+        <div>
+        <Timepercent ref={pieRef}/>
+        </div>
+        
       </div>
       
     </div>

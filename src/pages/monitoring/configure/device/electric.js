@@ -362,7 +362,7 @@ export default function gateway({ deviceStyle }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor
+        factor:Number(formvalue.factor) 
       }
       const res = await AddElectric(params)
      

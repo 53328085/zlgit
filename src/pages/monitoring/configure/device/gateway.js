@@ -153,7 +153,7 @@ export default function gateway() {
   //获取第一级区域名
   const getOneLevel=async()=>{
     const res =  await OneLevel(projectId)
-    if(res.success &&res.data){
+    if(res.success){
       levelname.current =res.data.name
       getAeraQueryAll(res.data.name)
     }else{
@@ -398,6 +398,7 @@ export default function gateway() {
     page,
     setPage,
     exportExecel,
+    levelname,
     placeholder:'输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
   }
@@ -438,9 +439,9 @@ export default function gateway() {
     levelname
   }
   useEffect(() => {
-
-    getQueryByPageGateWay()
     getOneLevel()
+    getQueryByPageGateWay()
+   
     getQueryUsedGateway()
   }, [])
 
@@ -472,6 +473,7 @@ export default function gateway() {
 
 //新增网关组件
 let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...other }) => {
+  console.log(475,levelname)
   const rules ={ required: true,}
   return (
     <Modal mold='cust' ref={modalFormRef} {...other} footer={[
@@ -482,10 +484,15 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...
       <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={addForm}
+        labelCol={{
+          span: 6
+        }}
+        labelAlign='left'
+        
       >
         <Row className={style.customItem}>
           <Col flex={1}>
-            <Form.Item label={levelname.name} name="area" rules={[rules]}>
+            <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 fieldNames={{
                   label: 'name',
@@ -600,7 +607,10 @@ const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
       <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={editform}
-
+        labelCol={{
+          span: 6
+        }}
+        labelAlign='left'
       >
         <Row className={style.customItem}>
           <Col flex={1}>

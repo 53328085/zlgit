@@ -11,7 +11,7 @@ import Video from './video'
 
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
-const { DeviceTypeManager: { AllDeviceStyle,}, } = Monitoring
+const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monitoring
 
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -41,7 +41,31 @@ export default function Index() {
     tabs,
 
   }
-
+  // //获取第一级区域名
+  // const getOneLevel=async()=>{
+  //   const res =  await OneLevel(projectId)
+  //   if(res.success &&res.data){
+  //     levelname.current =res.data.name
+  //     getAeraQueryAll(res.data.name)
+  //   }else{
+  //    message.error(res.errMsg)
+  //   }
+  //  }
+  // //获取园区
+  // const getAeraQueryAll = async (name) => {
+  //   try {
+  //     console.log(content)
+  //     const resp = await AeraQueryAll(projectId)
+  //     if (resp.success && Array.isArray(resp.data)) {
+  //       const data = [{ name, id: 0 }, ...resp.data]
+  //       console.log(data)
+  //       setSelectopts([...data])
+  //       setAddOpts([...resp.data])
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
  
   const getAllDeviceStyle=async ()=>{
     const resp = await AllDeviceStyle()

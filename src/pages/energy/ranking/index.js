@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux'
 import RankCharts from './rankecharts'
 import { Form, Select, DatePicker, message } from 'antd'
 import { energyRanking } from '@api/api'
+
 import moment from 'moment';
-import { current } from '@reduxjs/toolkit'
+
 
 export default function Index() {
   const [datetype, setDatetype] = useState(1)

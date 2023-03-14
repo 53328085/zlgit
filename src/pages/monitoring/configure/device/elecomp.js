@@ -35,7 +35,18 @@ let Com = ({ form, coms }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            <Form.Item label="倍率" name="factor" rules={[...rules,{pattern:'/[1-9]\d*/',message:'倍率为正整数'}]}>
+            <Form.Item label="倍率" name="factor" rules={[...rules,
+                {
+                    validator:(_,value)=>{
+                        if(!value){
+                            return Promise.resolve()
+                        }else if(parseInt(value)<0){
+                            return Promise.reject(new Error("请输入正整数"))   
+                        }else{
+                            return Promise.resolve()
+                        }
+                    }   
+                },]}>
                 <Input />
                 {/* 默认1 */}
             </Form.Item>
@@ -151,7 +162,21 @@ export const FormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={[...rules]}>
+                    <Form.Item label="设备编号" name="sn" rules={[...rules,{
+                        validator:(_,value)=>{
+                            if(!value){
+                                return Promise.resolve()
+                            }else{
+                                let val = value.trim()
+                                 
+                                if(val.split(" ").join("").length !==12){
+                                    return Promise.reject(new Error("设备编号长度12位"))
+                                }else{
+                                    return Promise.resolve()
+                                }
+                            }
+                        }   
+                    }]}>
                         <Input />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>

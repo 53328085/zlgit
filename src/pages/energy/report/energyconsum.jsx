@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import Comp from './comp'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
@@ -29,7 +29,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
       })
     }
   }
-  const columns = [{
+  const columns =useMemo(()=>([{
     title: '名称',
     dataIndex: 'name',
     width: 200,
@@ -57,7 +57,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
     fixed: 'left',
   },
   ...times
-  ]
+  ]),[]) 
   //获取表格数据
   const getTableData = async (areaId = 0) => {
     try {

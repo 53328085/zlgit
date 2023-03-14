@@ -157,6 +157,7 @@ export default function gateway() {
     const { data, errMsg, success, total, pageNum, pageSize } = result;
     if (success && Array.isArray(data)) {
       setTableParams({
+        ...tableParams,
         current: pageNum,
         pageSize: pageSize,
         total: total

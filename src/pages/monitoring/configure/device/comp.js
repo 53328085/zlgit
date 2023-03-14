@@ -18,17 +18,13 @@ export default forwardRef(function Comp(props, ref) {
         getList = "",
         setPage,
         exportExecel,
+        levelname,
         page
     } = props
     const projectId = useSelector(state=>state.system.menus.projectId)
-    const [selvalue, setSelvalue] = useState(0)
+    const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
-    const [energyVal,setEnergyVal] = useState(0)
-
-
-   
-
-
+    const [energyVal,setEnergyVal] = useState()
     const selOptions = [{
         label: '全部用能类型',
         value: 0
@@ -39,15 +35,7 @@ export default forwardRef(function Comp(props, ref) {
         label: '公共用能',
         value: 2
     }]
-    // const getOneLevel=async()=>{
-    //     const res =  await OneLevel(projectId)
-    //     if(res.success &&res.data){
-    //       setLevel(res.data.name)
-    //       levelRef.current=res.data.name
-    //     }else{
-    //      message.error(res.errMsg)
-    //     }
-    //    }
+
        
     const changeSelect = (value) => {  
         setPage(()=>({
@@ -82,13 +70,19 @@ export default forwardRef(function Comp(props, ref) {
         energyVal,
   
     }))
-    
+    useEffect(()=>{
+        console.log(levelname)
+        // if(levelname.current){
+        //     setSelvalue(levelname.current)
+        // }
+    },[])
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
                         <Select
+                            defaultValue={{label:levelname.current,value:0}}
                             style={{
                                 width: 264,
                             }}

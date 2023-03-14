@@ -33,11 +33,20 @@
     display: grid;
     grid-template-rows: 440px 1fr;
     grid-row-gap: 16px;
+    height: 100%;
     .percent{
         padding:16px;
         border: 1px solid #d7d7d7;
         background-color: #fff;
         border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        .emptypng{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
     .analysis{
         padding:16px;
