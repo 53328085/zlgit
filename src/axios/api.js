@@ -530,12 +530,12 @@ export class energyRanking{
 }
 //energyDesigner能耗管理
 export class energyDesigner {
-    static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)
+    static queryElectricClassifys = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?projectId=${projectId}&type=${type}`)
     //单个插入
-    static insertEnergyClassify = (parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
+    static insertEnergyClassify = (projectId, parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?projectId=${projectId}&parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
     static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`,data)
-    static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
-    static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
+    static updateEnergyClassify = (projectId, type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?projectId=${projectId}&type=${type}&classifyId=${classifyId}&name=${name}`)
+    static deleteEnergyClassify =  (projectId, classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?projectId=${projectId}&classifyId=${classifyId}`)
     static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
     static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
     static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)

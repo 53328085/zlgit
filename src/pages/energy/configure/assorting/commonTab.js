@@ -38,7 +38,7 @@ export default function Index (props) {
     const [editform] = Form.useForm()
     const Item = Form.Item
     const getData = () => {
-        return queryElectricClassifys(type).then( res => {
+        return queryElectricClassifys(projectId, type).then( res => {
             let { success, data } = res
             if(success && data){
                 setLoading(false);
@@ -105,7 +105,7 @@ export default function Index (props) {
     }
     //新增
     const insertData = () => {
-        return insertEnergyClassify(energyId? energyId:0, type, inputName).then(res => {
+        return insertEnergyClassify(projectId, energyId? energyId:0, type, inputName).then(res => {
             let { success, data }  = res
             if(success){
                 messageApi.open({
@@ -131,7 +131,7 @@ export default function Index (props) {
     })
     //编辑
     const updateData = () => {
-        return updateEnergyClassify(type, energyId, inputName).then(res =>{
+        return updateEnergyClassify(projectId, type, energyId, inputName).then(res =>{
             let {success} = res
             if(success){
                 messageApi.open({
@@ -155,7 +155,7 @@ export default function Index (props) {
     })
     //删除
     const deleteData = () => {
-        return deleteEnergyClassify(energyId).then (res => {
+        return deleteEnergyClassify(projectId, energyId).then (res => {
             let { success } = res
             if(success){
                 messageApi.open({
