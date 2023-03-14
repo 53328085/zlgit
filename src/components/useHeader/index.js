@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useRequest } from 'ahooks';
 import style from './style.module.less';
-import { Select,DatePicker,Button, message } from 'antd';
+import { Select,DatePicker,Button, message, Radio } from 'antd';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
@@ -108,6 +108,12 @@ export default function Index(props) {
     props.export()
   }
 
+  //数据类型
+  const [tab, setTab] = useState('energy')
+  const changeTab = val => {
+    setTab(val)
+  }
+
   useEffect(()=> {
     if(areaId == 0) {
       return;
@@ -117,11 +123,12 @@ export default function Index(props) {
         shift, 
         energyType, 
         type, 
-        date
+        date,
+        tab
       }
       props.getValues(params)
     }
-  },[areaId, shift, energyType, type, date])
+  },[areaId, shift, energyType, type, date, tab])
 
   return (
     <div>
@@ -154,6 +161,14 @@ export default function Index(props) {
             <Option value={3}>燃气</Option>
           </Select> 
         </> : null}
+        {
+          props.isTab ? <>
+            <Radio.Group onChange={changeTab} defaultValue="energy" buttonStyle="solid">
+              <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', borderRadius: 16, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} value="energy">能耗</Radio.Button>
+              <Radio.Button style={{ width: '96px', textAlign: 'center', borderRadius: 16, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} value="cost">费用</Radio.Button>
+            </Radio.Group>
+          </> : null
+        }
         {props.isDate ? <>
           <div className={style.line}></div>
           <Select

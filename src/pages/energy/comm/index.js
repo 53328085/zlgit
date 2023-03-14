@@ -43,6 +43,7 @@ export default function Index() {
     isShift: true,
     isExport: true,
     isSearch: true,
+    isTab:false,
     export: exportData
   }
   const [headerData, setHeaderData] = useState({})
