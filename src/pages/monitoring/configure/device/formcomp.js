@@ -3,7 +3,7 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import { Form, Row, Col, Select, Input, Divider, Upload,Button } from 'antd'
 import style from './style.module.less'
-export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
+export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [],levelname:{current:''} })
 
 //新增com
 let Com = ({ form, coms }) => {
@@ -13,7 +13,7 @@ let Com = ({ form, coms }) => {
     }]
     for (let i = 1; i <= coms; i++) {
         options.push({
-            label: `COM ${i}`,
+            label: `COM${i}`,
             value: i
         })
     }
@@ -37,7 +37,7 @@ let Com = ({ form, coms }) => {
 //新增form表单组件
 export const FormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const rules = [{
@@ -65,7 +65,7 @@ export const FormComp = (props) => {
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label="所属园区" name="areaId" rules={rules}>
+                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
                                 fieldNames={{
@@ -206,7 +206,7 @@ let EditCom = ({ form, coms }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
@@ -245,7 +245,7 @@ export const EditFormComp = (props) => {
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label="所属园区" name="areaId" rules={rules}>
+                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
                                 fieldNames={{

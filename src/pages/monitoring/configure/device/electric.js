@@ -9,6 +9,7 @@ import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import {AddModalForm, MyContext, EditModalForm} from './elecomp'
+import cutContext from  '@com/content'
 
 const {
   DeviceManager: {
@@ -21,7 +22,8 @@ const {
     UpdateElectric,
     UpdateFactor,
     DeleteElectric,
-    ImportElectric
+    ImportElectric,
+    OneLevel
   }
 } = Monitoring
 
@@ -54,6 +56,8 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const [factorform] = Form.useForm()
+  const content =useContext(cutContext)
+  const levelname =useRef()
   let delid;
   let flies;
   let tag=false;
@@ -89,11 +93,9 @@ export default function gateway({ deviceStyle }) {
       dataIndex: 'gatewayName',
       render: (text, record, index) => {
         if (Array.isArray(gatewaylist)) {
-    
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
-          console.log(gatewayfilter)
           return (
-            <span>{gatewayfilter[0]['id']===0?'/':gatewayfilter[0].category}</span>
+            <span>{gatewayfilter[0]['id']===0?'/':gatewayfilter[0].sn}</span>
           )
         }
 
@@ -287,6 +289,10 @@ export default function gateway({ deviceStyle }) {
   }
   //打开新增窗口
   const addopen = () => {
+    if(!levelname.current){
+      message.warning('请先添加区域名称')
+      return
+    }
     addform.setFieldsValue({
       areaId: '',
       alarmPlanId: '',
@@ -379,12 +385,22 @@ export default function gateway({ deviceStyle }) {
   const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
+  //获取第一级区域名
+  const getOneLevel=async()=>{
+    const res =  await OneLevel(projectId)
+    if(res.success &&res.data){
+      levelname.current=res.data.name
+      getAeraQueryAll(res.data.name)
+    }else{
+     message.error(res.errMsg)
+    }
+   }
   //获取园区
-  const getAeraQueryAll = async () => {
+  const getAeraQueryAll = async (name) => {
     try {
       const resp = await AeraQueryAll(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        const data = [{ name, id: 0 }, ...resp.data]
         setSelectopts(() => [...data])
         setAddOpts(() => [...resp.data])
       }
@@ -487,8 +503,9 @@ export default function gateway({ deviceStyle }) {
  
 
   useEffect(() => {
+    getOneLevel()
     getQueryByPageElectric()
-    getAeraQueryAll()
+    //getAeraQueryAll()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
@@ -565,13 +582,13 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageElectric(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除电表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <SetFactor {...FactorModalProps}></SetFactor>

@@ -22,26 +22,31 @@ import CustContext from '@com/content'
         setTableParams,
         modalImport,
         exportTable,
+        tableParamsRef,
         getList=()=>{}
     } = props
    
    const changeSelect=(v)=>{
     setSelValue(v)
+    selRef.current=v
     setTableParams({
         ...tableParams,
         current:1
     })
-    getList({pageSize:tableParams.pageSize,pageNum:1,areaId:v,alike:inpRef.current})
+    getList({pageSize:tableParams.pageSize,pageNum:1,areaId:v,alike:inpRef.current?inpRef.current:""})
    }
    const changeInp=(e)=>{
     setInpValue(e.target.value)
+
    }
    const searchBtn=()=>{
     setTableParams({
         ...tableParams,
         current:1
     })
-    getList({pageSize:tableParams.pageSize,pageNum:1,alike:inpvalue,areaId:selRef.current})
+    console.log(selRef)
+    getList({pageSize:tableParams.pageSize,pageNum:1,alike:inpvalue,areaId:selRef.current?selRef.current:0})
+   
    }
    useImperativeHandle(ref,()=>({
     selvalue,
@@ -50,7 +55,7 @@ import CustContext from '@com/content'
     inpRef
    }))
     useEffect(() => {
-        
+        console.log(areaList)
     }, [])
     return (
         <div>
@@ -58,7 +63,7 @@ import CustContext from '@com/content'
                 <Row align='middle'>
                     <Col>
                         <Select
-                           defaultValue='全部园区'
+                           defaultValue={0}
                            value={selvalue}
                            fieldNames={{
                             label:'name',

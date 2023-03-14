@@ -35,7 +35,7 @@ let Com = ({ form, coms }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            <Form.Item label="倍率" name="factor" rules={rules}>
+            <Form.Item label="倍率" name="factor" rules={[...rules,{pattern:'/[1-9]\d*/',message:'倍率为正整数'}]}>
                 <Input />
                 {/* 默认1 */}
             </Form.Item>
@@ -73,7 +73,7 @@ let Com = ({ form, coms }) => {
 //新增form表单组件
 export const FormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const rules = [{
@@ -102,7 +102,7 @@ export const FormComp = (props) => {
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label="所属园区" name="areaId" rules={rules}>
+                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
                                 fieldNames={{
@@ -128,7 +128,7 @@ export const FormComp = (props) => {
                             options={alarmopts}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="备注" name="remark" rules={rules}>
+                    <Form.Item label="备注" name="remark" >
                         <TextArea />
                     </Form.Item>
                 </Col>
@@ -151,7 +151,7 @@ export const FormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                    <Form.Item label="设备编号" name="sn" rules={[...rules]}>
                         <Input />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
@@ -273,7 +273,7 @@ let EditCom = ({ form, coms }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
@@ -312,7 +312,7 @@ export const EditFormComp = (props) => {
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label="所属园区" name="areaId" rules={rules}>
+                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
                                 fieldNames={{

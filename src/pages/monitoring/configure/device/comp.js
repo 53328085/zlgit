@@ -1,11 +1,15 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle ,useContext, useRef} from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
+
+
+const { DeviceManager:{ OneLevel } } = Monitoring
+
 export default forwardRef(function Comp(props, ref) {
     const {
-        placeholder = '输入网关编号/安装地址',
+        placeholder = '输入设备编号/安装地址',
         inplabel = '设备查询',
         addopen = () => { },
         isenergy = false,
@@ -16,9 +20,15 @@ export default forwardRef(function Comp(props, ref) {
         exportExecel,
         page
     } = props
-    const [selvalue, setSelvalue] = useState()
+    const projectId = useSelector(state=>state.system.menus.projectId)
+    const [selvalue, setSelvalue] = useState(0)
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal,setEnergyVal] = useState(0)
+
+
+   
+
+
     const selOptions = [{
         label: '全部用能类型',
         value: 0
@@ -29,6 +39,16 @@ export default forwardRef(function Comp(props, ref) {
         label: '公共用能',
         value: 2
     }]
+    // const getOneLevel=async()=>{
+    //     const res =  await OneLevel(projectId)
+    //     if(res.success &&res.data){
+    //       setLevel(res.data.name)
+    //       levelRef.current=res.data.name
+    //     }else{
+    //      message.error(res.errMsg)
+    //     }
+    //    }
+       
     const changeSelect = (value) => {  
         setPage(()=>({
             ...page,
@@ -55,19 +75,20 @@ export default forwardRef(function Comp(props, ref) {
         }))
         getList && getList(1,page.pageSize,selvalue, inpvalue,v)
     }
+    
     useImperativeHandle(ref, () => ({
         selvalue,
         inpvalue,
-        energyVal
+        energyVal,
+  
     }))
-
+    
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
                         <Select
-                            defaultValue="全部园区"
                             style={{
                                 width: 264,
                             }}

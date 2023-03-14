@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState,useContext } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -9,6 +9,7 @@ import restart from './imgs/restart.png'
 import { Form, Row, Col, Select, Input, Divider, Upload, message,Button } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
+import cutContext from  '@com/content'
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -17,6 +18,7 @@ const { DeviceManager:
     GatewayUpdate,
     GatewayDelete,
     GatewayImport,
+    OneLevel,
     StartReboot } } = Monitoring
 export default function gateway() {
   const [selectopts, setSelectopts] = useState()
@@ -43,7 +45,9 @@ export default function gateway() {
   const tableLoadRef = useRef()
   const [editform] = Form.useForm()
   const [addForm] = Form.useForm()
+  const content =useContext(cutContext)
   const projectId = useSelector(state => state.system.menus.projectId)
+  const levelname =useRef()
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -121,6 +125,10 @@ export default function gateway() {
   }
   //打开新增网关窗口
   const addopen = () => {
+    if(!levelname.current){
+      message.warning('请先添加区域名称')
+      return
+    }
     modalFormRef?.current?.onOpen()
     addForm.setFieldsValue({
       area: '',
@@ -142,15 +150,26 @@ export default function gateway() {
     setDelId(record.id)
     modalDelRef?.current?.onOpen()
   }
-
+  //获取第一级区域名
+  const getOneLevel=async()=>{
+    const res =  await OneLevel(projectId)
+    if(res.success &&res.data){
+      levelname.current =res.data.name
+      getAeraQueryAll(res.data.name)
+    }else{
+     message.error(res.errMsg)
+    }
+   }
   //获取园区
-  const getAeraQueryAll = async () => {
+  const getAeraQueryAll = async (name) => {
     try {
+      console.log(content)
       const resp = await AeraQueryAll(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
-        setSelectopts(() => [...data])
-        setAddOpts(() => [...resp.data])
+        const data = [{ name, id: 0 }, ...resp.data]
+        console.log(data)
+        setSelectopts([...data])
+        setAddOpts([...resp.data])
       }
     } catch (e) {
       console.log(e)
@@ -379,6 +398,7 @@ export default function gateway() {
     page,
     setPage,
     exportExecel,
+    placeholder:'输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
   }
   let ModalFormProps = {
@@ -391,6 +411,7 @@ export default function gateway() {
     onOk: addOk,
     onCancel: cancelOk,
     onSure: addSure,
+    levelname
   }
   const uploadprops = {
     beforeUpload(file, fileList) {
@@ -413,11 +434,13 @@ export default function gateway() {
     width: 772,
     onOk: editOk,
     onSure:editSure,
-    onCancel: editCancel
+    onCancel: editCancel,
+    levelname
   }
   useEffect(() => {
+
     getQueryByPageGateWay()
-    getAeraQueryAll()
+    getOneLevel()
     getQueryUsedGateway()
   }, [])
 
@@ -448,7 +471,7 @@ export default function gateway() {
 }
 
 //新增网关组件
-let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, ...other }) => {
+let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...other }) => {
   const rules ={ required: true,}
   return (
     <Modal mold='cust' ref={modalFormRef} {...other} footer={[
@@ -462,7 +485,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, ...other }) =
       >
         <Row className={style.customItem}>
           <Col flex={1}>
-            <Form.Item label="所属园区" name="area" rules={[rules]}>
+            <Form.Item label={levelname.name} name="area" rules={[rules]}>
               <Select
                 fieldNames={{
                   label: 'name',
@@ -566,7 +589,7 @@ const KeyParam = ({ keyParamRef, gatewaySn }) => {
   )
 }
 //编辑网关
-const EditModalForm = ({ modalEditRef, editform, ...other }) => {
+const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
   const rules ={ required: true,}
   return (
     <Modal mold='cust' ref={modalEditRef} {...other} footer={[
@@ -581,7 +604,7 @@ const EditModalForm = ({ modalEditRef, editform, ...other }) => {
       >
         <Row className={style.customItem}>
           <Col flex={1}>
-            <Form.Item label="所属园区" name="area" rules={[rules]}>
+            <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 fieldNames={{
                   label: 'name',

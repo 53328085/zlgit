@@ -9,7 +9,7 @@ import upCloud from './imgs/upcloud.png'
 const {TextArea}=Input  
 const {Dragger}=Upload
 //新增Modal
-export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",title,...other}) => {
+export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",title,levelname,...other}) => {
    const areas = areaList?.filter(it=>it.id!==0)
    let list=[]
    for (let i=0; i<Array(6).length; i++){
@@ -30,7 +30,7 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
             >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label="所属区域" name="areaId" >
+                    <Form.Item label={levelname.current} name="areaId" >
                         <Select 
                         fieldNames={{
                             label: "name",
@@ -74,7 +74,7 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
 }
 //编辑Modal
 export const EditModal=(props)=>{
-    const {editModalRef,editform,areaList,...other} =props;
+    const {editModalRef,editform,areaList,levelname,...other} =props;
     const areas = areaList?.filter(it=>it.id!==0)
     let list=[]
     for (let i=0; i<Array(6).length; i++){
@@ -95,7 +95,7 @@ export const EditModal=(props)=>{
         >
         <Row className={style.customItem}>
             <Col flex={1}>
-                <Form.Item label="所属区域" name="areaId" >
+                <Form.Item label={levelname.current} name="areaId" >
                     <Select 
                     fieldNames={{
                         label: "name",

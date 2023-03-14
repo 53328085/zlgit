@@ -18,7 +18,8 @@ const {
     AddGas,
     UpdateGas,
     DeleteGas,
-    ImportGas
+    ImportGas,
+    OneLevel
   }
 } = Monitoring
 
@@ -48,6 +49,7 @@ export default function gateway({ deviceStyle }) {
   const [editform] = Form.useForm()
   const errlistRef =useRef()
   const tableLoadRef = useRef()
+  const levelname =useRef()
   let delid;
   let flies;
   let tag=false;
@@ -85,7 +87,7 @@ export default function gateway({ deviceStyle }) {
         if (Array.isArray(gatewaylist)) {
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
           return (
-            <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].category}</span>
+            <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].sn}</span>
           )
         }
 
@@ -259,6 +261,10 @@ export default function gateway({ deviceStyle }) {
 
   //打开新增窗口
   const addopen = () => {
+    if(!levelname.current){
+      message.warning('请添加区域')
+      return 
+    }
     addform.setFieldsValue({
       areaId: '',
       alarmPlanId: '',
@@ -353,12 +359,22 @@ export default function gateway({ deviceStyle }) {
   const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
+  //获取第一级区域名
+  const getOneLevel=async()=>{
+    const res =  await OneLevel(projectId)
+    if(res.success &&res.data){
+      levelname.current=res.data.name
+      getAeraQueryAll(res.data.name)
+    }else{
+     message.error(res.errMsg)
+    }
+   }
   //获取园区
-  const getAeraQueryAll = async () => {
+  const getAeraQueryAll = async (name) => {
     try {
       const resp = await AeraQueryAll(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        const data = [{ name, id: 0 }, ...resp.data]
         setSelectopts(() => [...data])
         setAddOpts(() => [...resp.data])
       }
@@ -462,7 +478,8 @@ export default function gateway({ deviceStyle }) {
 
   useEffect(() => {
     getQueryByPageGas()
-    getAeraQueryAll()
+    getOneLevel()
+    //getAeraQueryAll()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
@@ -531,13 +548,13 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageGas(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除燃气表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <ErrorMessage {...ErrModalProps}></ErrorMessage>

@@ -19,7 +19,7 @@ export default function gateway() {
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 8,
     hideOnSinglePage: false
   });
   const ModalRef = useRef(null)

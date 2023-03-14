@@ -6,9 +6,12 @@ import RankCharts from './rankecharts'
 import { Form, Select, DatePicker, message } from 'antd'
 import { energyRanking } from '@api/api'
 import moment from 'moment';
+import { current } from '@reduxjs/toolkit'
 
 export default function Index() {
   const [datetype, setDatetype] = useState(1)
+  const datetypeRef =useRef()
+  datetypeRef.current = datetype
   const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
   const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
   const buildRef= useRef(null)//建筑
@@ -59,12 +62,13 @@ export default function Index() {
   //获取日期格式
   const getdateformat = ()=>{
     let date= form.getFieldsValue().datevalue
-    if(datetype===1){
+    console.log(datetypeRef)
+    if(datetypeRef.current===1){
       date = moment(date).format('YYYY-MM-DD')
-    }else if(datetype ===2){
-      date = moment(date).format('YYYY-MM')
-    }else if(datetype ===3){
-      date = moment(date).format('YYYY')
+    }else if(datetypeRef.current ===2){
+      date = moment(date).format('YYYY-MM-01')
+    }else if(datetypeRef.current ===3){
+      date = moment(date).format('YYYY-01-01')
     }
     return date
   }
@@ -85,6 +89,7 @@ export default function Index() {
   //获取能耗排名
   const getQuery=async (areaId,type,energytype,shiftId)=>{
     const date =getdateformat()
+    console.log(date)
     const formvalues =form.getFieldsValue()
     let params={
         projectId,
@@ -118,6 +123,7 @@ export default function Index() {
   //改变年月日
   const changeDateType = (v) => {
     setDatetype(v)
+    datetypeRef.current =v
     console.log(form.getFieldsValue())
     getQuery()
   }
@@ -173,7 +179,7 @@ export default function Index() {
               <Select style={{ width: 80 }} options={typeoptions} onChange={changeDateType}></Select>
             </Form.Item>
             <Form.Item style={{ marginLeft: 16 }} name="datevalue">
-              <DatePicker picker={datetype==1?'day':datetype==2?'month':'year'} onChange={changeDate}></DatePicker>
+              <DatePicker picker={datetype==1?'date':datetype==2?'month':'year'} onChange={changeDate}></DatePicker>
             </Form.Item>
             <Form.Item style={{ marginLeft: 16 }} name="plan">
               <Select
