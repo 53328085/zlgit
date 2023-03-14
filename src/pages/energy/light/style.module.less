@@ -32,6 +32,13 @@
                 align-items: flex-start;
                 padding-top: 32px;
 
+                .airEnergyImage {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 16px;
+                }
+
                 .airEnergyData {
                     display: grid;
                     grid-template-rows: 50px;
@@ -51,6 +58,12 @@
         height: 456px;
         background-color: #fff;
         padding: 16px;
+
+        .contentBottomTop {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
 
         .contentBottomBottom {
             display: flex;
@@ -92,10 +105,21 @@
             flex-direction: column;
             padding: 16px;
 
+            .dividerLine {
+                color: #fff;
+
+                :global(.ant-divider-dashed) {
+                    border-width: 0px 0px 1px;
+                    background-color: #fff;
+                }
+
+            }
+
             .airBoxName {
                 color: #fff;
                 text-align: center;
-                margin-top: 16px;
+                margin-top: 8px;
+                margin-bottom: 32px;
             }
 
             .airBoxValue {
@@ -108,6 +132,7 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+                margin-top: 10px;
 
                 span {
                     margin-left: 8px;
@@ -115,11 +140,21 @@
                 }
             }
 
-            .airBtn:hover {
-                background-color: #515151;
+            .airBtn {
+                background-color: rgba(0, 51, 102, 1);
+                border: none;
 
                 span {
                     color: #fff;
+                }
+            }
+
+            .airBtnOff {
+                background-color: rgba(0, 51, 102, 0.5);
+                border: none;
+
+                span {
+                    color: rgba(255, 255, 255, 0.5);
                 }
             }
         }
