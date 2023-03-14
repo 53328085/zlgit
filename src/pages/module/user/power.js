@@ -153,40 +153,56 @@ export default function Account({projectId, CModal}) {
   }
 
   const queryOperationManagers = async () => {                          // 获取运营管理员(已选择)  
-    let {success, data} = await QueryOperationManagers({projectId})
-    setOperate(arr => {
-      arr.forEach(a => {
-         a.disabled = data.find(i => i.id == a.id)
+    try {
+      let {success, data} = await QueryOperationManagers({projectId})
+      setOperate(arr => {
+        arr.forEach(a => {
+           a.disabled = data?.find(i => i.id == a.id)
+        })
+        return arr
       })
-      return arr
-    })
-    success  && Array.isArray(data) && setOplist([...data]) 
+      success  && Array.isArray(data) && setOplist([...data]) 
+    } catch (error) {
+      console.log(error)
+    }
+   
   }
 
   const addOperation = async () => {                                    // 新增运营管理员
-    if(!opvalue) return message.warning('请选择运营管理员')
-    let {success } = await InsertOperationManager({projectId, userId: opvalue})
-     queryOperationManagers()
-     if (success)  {
-     // setOperate(arr => arr.map(item => ({...item, disabled: item.id == opvalue}))) 
-      setOpvalue(null)
-     }
+
+    try {
+      if(!opvalue) return message.warning('请选择运营管理员')
+      let {success } = await InsertOperationManager({projectId, userId: opvalue})
+       queryOperationManagers()
+       if (success)  {
+       // setOperate(arr => arr.map(item => ({...item, disabled: item.id == opvalue}))) 
+        setOpvalue(null)
+       }
+    } catch (error) {
+      console.log(error)
+    }
+   
  };
 
  const queryProjectManager = async () => {                              // 获取项目管理员
-    let {success, data} = await QueryProjectManager(projectId)
+    try {
+      let {success, data} = await QueryProjectManager(projectId)
     
-    if (success) {
-      setManager(!!data)
-      let { name, nickName, mobile,id, areaAuthority=[] } = data || {};    
-      setAreas([...areaAuthority])
-      form.setFieldsValue({
-       name,
-       nickName,
-       mobile,
-        id
-      })
+      if (success) {
+        setManager(!!data)
+        let { name, nickName, mobile,id, areaAuthority=[] } = data || {};    
+        setAreas([...areaAuthority])
+        form.setFieldsValue({
+         name,
+         nickName,
+         mobile,
+          id
+        })
+      }
+    } catch (error) {
+      console.log(error)
     }
+   
     
  }
  
@@ -213,9 +229,13 @@ export default function Account({projectId, CModal}) {
   }
 };
  const queryProjectMaintenance = async () => {       // 获取运维人员
-      let {success, data} = await  QueryProjectMaintenance({projectId})
+      try {
+        let {success, data} = await  QueryProjectMaintenance({projectId})
+        success && Array.isArray(data) && setAdmin(data)
+      } catch (error) {
+        console.log(error)
+      }
       
-      success && Array.isArray(data) && setAdmin(data)
  }
 
 
