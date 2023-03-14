@@ -91,6 +91,7 @@ export default function Index (props) {
                 // setAllRun()
             }, 200)
             setTransTag('open');
+            props.getValues('open')
         }
         if(values.tag == 'delete'){
             dref.current.onOpen()
@@ -315,6 +316,7 @@ export default function Index (props) {
 
     const getCloseValue = params => {
         setTransTag(params)
+        props.getValues(params)
     }
     
     const getSaveValue = params => {
@@ -331,12 +333,14 @@ export default function Index (props) {
                     content:'能耗设备配置成功!'
                 })
                 setTransTag('close');
+                props.getValues('close')
             }else{
                 messageApi.open({
                     type:'success',
                     content:res.errMsg || '能耗设备配置保存失败，请重试！'
                 })
                 setTransTag('close');
+                props.getValues('close')
             }
         })
     }

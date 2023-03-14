@@ -586,3 +586,27 @@ export class DistributionMeter {
     static queryUnusedSensor = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUnusedSensor?projectId=${projectId}&roomId=${roomId}`)
     static configureSensor = (data) => server.post(`Distribution/DistributionMeter/ConfigureSensor`, data)
 }
+
+//能源流向
+export class EnergyFlowRuntime {
+    static queryComprehensive = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryComprehensive?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryElectric = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryWater = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryGas = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`, data)
+}
+
+//损耗分析
+export class EnergyLossRuntime {
+    static queryByLine = (pageNum, pageSize, data) => server.post(`Energy/EnergyLossRunTime/QueryByLine?pageNum=${pageNum}&pageSize=${pageSize}`, data)
+    static queryByBuilding = (pageNum, pageSize, data) => server.post(`Energy/EnergyLossRunTime/QueryByBuilding?pageNum=${pageNum}&pageSize=${pageSize}`, data)
+}
+
+//定额能耗
+export class EnergyQuotaRuntime {
+    static queryQuotaOverview = (projectId, areaId) => server.post(`Energy/EnergyQuotaRuntime/QueryQuotaOverview?projectId=${projectId}&areaId=${areaId}`)
+    static queryRoomQuota= (projectId, areaId, roomName) => server.post(`Energy/EnergyQuotaRuntime/QueryRoomQuota?projectId=${projectId}&areaId=${areaId}&roomName=${roomName}`)
+}
+//公共能耗
+export class EnergyPublicRuntime {
+    static queryEnergyCategoryTree= (projectId, categoryType) => server.post(`Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}`)
+}

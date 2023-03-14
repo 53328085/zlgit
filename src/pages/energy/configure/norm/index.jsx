@@ -84,11 +84,23 @@ export default function Index() {
       setParams([{level: 1, id: areaId}])
     }else{
       let arr = []
-      values.map(value => {
-        if(checkLeaf(value, treeData)){
+      values.map(item => {
+        if(item.pos.length == 3){
           arr.push({
-            id: value,
-            level: 3
+            level: 1,
+            id: item.node.areaId
+          })
+        }
+        if(item.pos.length == 5){
+          arr.push({
+            level: 2,
+            id: item.node.areaId
+          })
+        }
+        if(item.pos.length == 7){
+          arr.push({
+            level: 3,
+            id: item.node.areaId
           })
         }
       })
@@ -99,20 +111,6 @@ export default function Index() {
       }
       
     }  
-  }
-  useEffect(()=> {
-    runTable()
-  },[params])
-  const checkLeaf = (value, list) => {
-    for(let i = 0 ;i< list.length; i++){
-      if(value == list[i].areaId && list[i].nodes){
-        return false
-      }else if(value != list[i].areaId && list[i].nodes){
-        checkLeaf(value, list[i].nodes)
-      }else if(value != list[i].areaId && !list[i].nodes){
-        return true
-      }
-    }
   }
 
   const columns = [
