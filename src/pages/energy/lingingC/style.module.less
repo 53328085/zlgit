@@ -32,6 +32,13 @@
                 align-items: flex-start;
                 padding-top: 32px;
 
+                .airEnergyImage {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 16px;
+                }
+
                 .airEnergyData {
                     display: grid;
                     grid-template-rows: 50px;
@@ -52,21 +59,29 @@
         background-color: #fff;
         padding: 16px;
 
+        .contentBottomTop {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
         .contentBottomBottom {
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
             position: relative;
+
             .boxList {
-                overflow-x: scroll;
+                overflow-x: hidden;
                 width: 1570px;
                 display: flex;
                 flex-direction: row;
                 justify-content: flex-start;
                 align-items: center;
             }
-            .pageBtn{
+
+            .pageBtn {
                 width: 55px;
                 height: 100%;
                 position: absolute;
@@ -89,14 +104,17 @@
             align-items: center;
             flex-direction: column;
             padding: 16px;
-            .dividerLine{
+
+            .dividerLine {
                 color: #fff;
-                :global(.ant-divider-dashed){
+
+                :global(.ant-divider-dashed) {
                     border-width: 0px 0px 1px;
                     background-color: #fff;
                 }
 
             }
+
             .airBoxName {
                 color: #fff;
                 text-align: center;
@@ -114,6 +132,7 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+                margin-top: 10px;
 
                 span {
                     margin-left: 8px;
@@ -124,14 +143,17 @@
             .airBtn {
                 background-color: rgba(0, 51, 102, 1);
                 border: none;
+
                 span {
                     color: #fff;
                 }
             }
-            .airBtnOff{
+
+            .airBtnOff {
                 background-color: rgba(0, 51, 102, 0.5);
                 border: none;
-                span{
+
+                span {
                     color: rgba(255, 255, 255, 0.5);
                 }
             }
@@ -214,13 +236,15 @@
         width: 180px;
         height: 42px;
     }
-    .onClickState{
+
+    .onClickState {
         background-color: #237AE4;
         color: #fff;
     }
 }
-.custmodal{
-   :global(.ant-btn-default){
-    display: none;
-   }
+
+.custmodal {
+    :global(.ant-btn-default) {
+        display: none;
+    }
 }

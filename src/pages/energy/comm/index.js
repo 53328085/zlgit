@@ -1,113 +1,94 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
+import { useRequest } from 'ahooks';
 import style from './style.module.less';
-import { Select,DatePicker,Table,Button } from 'antd';
-import Searchtree from './searchTree';
+import { message } from 'antd';
+import UseHeader from '@com/useHeader'
+import Searchtree from '@com/searchTree';
 import Barchart from './barChart';
 import Ringchart from './ringChart';
 import Percent from './percent'
-
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import {utils, writeFile} from 'xlsx'
+import { EnergyPublicRuntime } from '@api/api.js'
 export default function Index() {
-  const { Option } = Select;
-  const { RangePicker } = DatePicker;
-  const RegionList = [{
-    Id:0,
-    Name:'正泰物联全部园区'
-  },{
-    Id:1,
-    Name:'正泰物联滨江园区'
-  },{
-    Id:2,
-    Name:'正泰物联温州园区'
-  }];
-  const BuildingList = [{
-    Id:0,
-    Name:'全部建筑物'
-  },{
-    Id:1,
-    Name:'研发1号楼'
-  },{
-    Id:2,
-    Name:'研发2号楼'
-  }];
-  const FloorList = [{
-    Id:0,
-    Name:'全部楼层'
-  },{
-    Id:1,
-    Name:'1层'
-  },{
-    Id:2,
-    Name:'2层'
-  }];
-
-  const [showDate, setShowDate] = useState(false);
-
-  const onSelect = (value) => {
-    value == 3 ? setShowDate(true): setShowDate(false)
+  const tableRef = useRef()
+  const { queryEnergyCategoryTree } = EnergyPublicRuntime
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageContent = (type, content) => {
+    messageApi.open({
+      type,
+      content,
+    })
   }
-  const onChange = (date, dateString)=>console.log(date, dateString);
-
+  const projectId = useSelector(selectProjectId);
+  //导出数据
+  const exportData = () => {
+    console.log('export')
+    // const params = { raw: true };
+    // const workbook = utils.book_new(); // 新建工作簿   
+    // let table = tableRef.current  
+    // const ws = utils.table_to_sheet(
+    //   // 新建工作表
+    //   table,
+    //   params
+    // );
+    // utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    // let file =  "xlsx";
+    // writeFile(workbook, '公共能耗.xlsx', { bookType: file }); // 下载
+  }
+  const headerProps = {
+    isEnergy:true,//能耗类型
+    isDate: true,//日期
+    isShift: true,//班次
+    isTab:false,//能耗、费用radioButton
+    isSearch: true,//查询按钮
+    isExport: true,//导出按钮
+    export: exportData //导出调用方法
+  }
+  const [headerData, setHeaderData] = useState({})
+  const getFromChild = data => {
+    setHeaderData(data)
+  }
+  //树
+  const [treeData, setTreeData] = useState([])
+  const fieldNames = {
+    title:'name',
+    key: 'id',
+    children: 'childs'
+  }
+  const getCategoryTree = () => {
+    return queryEnergyCategoryTree(projectId, headerData.energyType).then(res => {
+      let {success, data} = res
+      if(success){
+        if(data){
+          setTreeData(data)
+        }else{
+          setTreeData([])
+        }
+      }else{
+        messageContent('error', res.errMsg)
+      }
+    })
+  }
+  const {run: runTree} = useRequest(getCategoryTree,{
+    manual: true
+  })
+  const getSelcetedTree = val => {
+    console.log(val)
+  }
+  useEffect(()=>{
+    if(headerData.energyType){
+      runTree()
+    }
+  },[headerData.energyType])
+  
   return (
     <div>
-      <div className={style.header}>
-        <span style={{marginLeft: '12px'}}>园区选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          style={{width: '320px', marginLeft: '12px'}}
-        >
-          { RegionList.map((item,index)=>{
-            return <Option key={index} value={item.Id}>{item.Name}</Option>
-          }) }
-        </Select>
-        <div className={style.line}></div>
-        <Select
-          placeholder="请选择建筑物"
-          size="middle"
-          style={{width: '224px', marginLeft: '12px'}}
-        >
-          { BuildingList.map((item,index)=>{
-            return <Option key={index} value={item.Id}>{item.Name}</Option>
-          }) }
-        </Select>
-        <Select
-          placeholder="请选择楼层"
-          size="middle"
-          style={{width: '128px', marginLeft: '12px'}}
-        >
-          { FloorList.map((item,index)=>{
-            return <Option key={index} value={item.Id}>{item.Name}</Option>
-          }) }
-        </Select>
-        <div className={style.line}></div>
-        <span>能源类型</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{width: '126px', marginLeft: '12px'}}
-        >
-          <Option value="0">电</Option>
-          <Option value="1">水</Option>
-          <Option value="2">燃气</Option>
-        </Select> 
-        <div className={style.line}></div>
-        <span>时间</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{width: '126px', marginLeft: '12px'}}
-          onSelect={onSelect}
-        >
-          <Option value="0">今日</Option>
-          <Option value="1">本月</Option>
-          <Option value="2">本年</Option>
-          <Option value="3">自定义</Option>
-        </Select> 
-        { showDate ? <RangePicker style={{marginLeft:12}} onChange={onChange} size='middle' placeholder={['开始日期','结束日期']}></RangePicker> : null }
-        {showDate ? <Button style={{marginLeft:12}} type='primary' size='middle'>查询</Button> : null}
-      </div>
+      {contextHolder}
+      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.content}>
-        <Searchtree></Searchtree>
+        <Searchtree title='公共能耗分类' fieldNames={fieldNames} treeData ={treeData} getValues={getSelcetedTree}></Searchtree>
         <div className={style.contentMiddle}>
           <span className={style.title}>公共能耗</span>
           <Barchart></Barchart>

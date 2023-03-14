@@ -266,6 +266,7 @@ export default function Index () {
   return (
     <div>
       {contextHolder}
+      {transTag == 'open' ? <div className={style.mask}></div> : null}
       <div className={style.header}>
         <span className={style.headerTitle}>园区选择</span>
         <Select

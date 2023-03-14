@@ -152,7 +152,7 @@
     position: absolute;
     top: 64px;
     left: 1680px;
-    
+    z-index: 1001;
 }
 .startAnimation{
     animation: change 0.5s;
@@ -181,4 +181,14 @@
     to {
         left: 1680px;
     }
+}
+.mask{
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #000;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
 }

@@ -174,8 +174,8 @@ export default function Index(props) {
             <div className={style.contentTopRight}>
               <Titlelayout title={'本日路灯能耗 (kWh)'}{...fs} style={{ width: '100%', height: '100%' }}>
                 <div className={style.airEnergy} style={{ width: '100%', height: '100%', padding: 16 }}>
-                  <div style={{ width: '100%', height: '100%', paddingTop: 16 }}>
-                    <Image src={imgurl.bg} preview={false} width={64} height={64}></Image>
+                <div className={style.airEnergyImage} style={{ borderRadius:'50%',width:68,height:68 ,border:'2px solid #237AE4'}}>
+                    <div style={{borderRadius:'50%',width:60,height:60,backgroundColor:'#237AE4'}}><Image src={imgurl.light} preview={false} width={60} height={60}></Image></div>
                   </div>
                   <div className={style.airEnergyData}>
                     <p>本日 :{airdata.today}</p>
@@ -197,22 +197,25 @@ export default function Index(props) {
             <div className={style.contentBottomTop}>
               <span>公共照明控制</span><Input size="middle" placeholder='请输入公共照明名称' style={{ width: '260px', marginLeft: 16 }} />
               <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
-              <Divider dashed style={{ marginLeft: 32, marginRight: 32, height: 32 }} type="vertical" />
+              {/* <Divider dashed style={{ marginLeft: 32, marginRight: 32, height: 32 }} type="vertical" /> */}
+              <div style={{ marginLeft: 32, marginRight: 32,height:32,borderLeft:"1px dashed #515151" }} ></div>
               <Button style={{ width: 96, height: 32 }} type='primary' size="middle" >全部开启</Button>
               <Button style={{ width: 96, height: 32, marginLeft: 16 }} type='primary' size="middle" >全部关闭</Button>
             </div>
-            <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} />
+            <div style={{ marginTop: 16, marginBottom: 16,width:1649,borderTop:"1px dashed #515151" }} ></div>
+            {/* <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} /> */}
             <div className={style.contentBottomBottom}>
             <div className={style.boxList}>
               {airList.map((item, index) => {
                 return <div className={style.airBox} key={index}>
                   <p className={style.airBoxName}>{item.name}</p>
-                  {item.state == '开启' ? <Image src={imgurl.air} preview={false} width={160} height={130}></Image> : <Image src={imgurl.air} preview={false} width={160} height={130} style={{ opacity: 0.3 }}></Image>}
+                  {item.state == '开启' ? <Image src={imgurl.light} preview={false} width={110} height={110}></Image> : <Image src={imgurl.light} preview={false} width={110} height={110} style={{ opacity: 0.3 }}></Image>}
                   <div className={style.airState}>
                     {item.state == '开启' ? <div style={{ width: 14, height: 14, backgroundColor: '#66FF00', borderRadius: '50%' }}></div> : <div style={{ width: 14, height: 14, backgroundColor: '#000', borderRadius: '50%' }}></div>}
                     {item.state == '开启' ? <span style={{ fontSize: 12, color: '#fff', marginLeft: 5 }}>{item.state}</span> : <span style={{ fontSize: 12, color: '#003366', marginLeft: 5 }}>{item.state}</span>}
                   </div>
-                  <Divider className={style.dividerLine} dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} />
+                  <div style={{ marginTop: 16, marginBottom: 16,width:137,borderTop:"1px dashed #fff" }} ></div>
+                  {/* <Divider className={style.dividerLine} dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} /> */}
                   <Button className={item.state == '开启' ? style.airBtnOff : style.airBtn} style={{ width: 136, height: 32, borderRadius: 800, }} onClick={() => { onclickBtn(item, 1) }}>远程开启</Button>
                   <Button className={item.state == '开启' ? style.airBtn : style.airBtnOff} style={{ width: 136, height: 32, borderRadius: 800, marginTop: 16 }} onClick={() => { onclickBtn(item, 2) }}>远程关闭</Button>
                 </div>

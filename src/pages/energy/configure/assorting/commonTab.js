@@ -38,7 +38,7 @@ export default function Index (props) {
     const [editform] = Form.useForm()
     const Item = Form.Item
     const getData = () => {
-        return queryElectricClassifys(type).then( res => {
+        return queryElectricClassifys(projectId, type).then( res => {
             let { success, data } = res
             if(success && data){
                 setLoading(false);
@@ -91,6 +91,7 @@ export default function Index (props) {
                 // setAllRun()
             }, 200)
             setTransTag('open');
+            props.getValues('open')
         }
         if(values.tag == 'delete'){
             dref.current.onOpen()
@@ -104,7 +105,7 @@ export default function Index (props) {
     }
     //新增
     const insertData = () => {
-        return insertEnergyClassify(energyId? energyId:0, type, inputName).then(res => {
+        return insertEnergyClassify(projectId, energyId? energyId:0, type, inputName).then(res => {
             let { success, data }  = res
             if(success){
                 messageApi.open({
@@ -130,7 +131,7 @@ export default function Index (props) {
     })
     //编辑
     const updateData = () => {
-        return updateEnergyClassify(type, energyId, inputName).then(res =>{
+        return updateEnergyClassify(projectId, type, energyId, inputName).then(res =>{
             let {success} = res
             if(success){
                 messageApi.open({
@@ -154,7 +155,7 @@ export default function Index (props) {
     })
     //删除
     const deleteData = () => {
-        return deleteEnergyClassify(energyId).then (res => {
+        return deleteEnergyClassify(projectId, energyId).then (res => {
             let { success } = res
             if(success){
                 messageApi.open({
@@ -315,6 +316,7 @@ export default function Index (props) {
 
     const getCloseValue = params => {
         setTransTag(params)
+        props.getValues(params)
     }
     
     const getSaveValue = params => {
@@ -331,12 +333,14 @@ export default function Index (props) {
                     content:'能耗设备配置成功!'
                 })
                 setTransTag('close');
+                props.getValues('close')
             }else{
                 messageApi.open({
                     type:'success',
                     content:res.errMsg || '能耗设备配置保存失败，请重试！'
                 })
                 setTransTag('close');
+                props.getValues('close')
             }
         })
     }

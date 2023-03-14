@@ -7,6 +7,7 @@ import Titlelayout from '@com/titlelayout'
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { drawEcharts } from "@com/useEcharts";
+import { flowExternStorage } from '@topology/flow-diagram';
 export default function Index(props) {
   const toMainPage = () => {
     let display = false;
@@ -71,28 +72,28 @@ export default function Index(props) {
         name: '园区回路2路灯',
         state: '关闭'
       },{
-        name: '园区回路1路灯',
+        name: '园区回路3路灯',
         state: '开启'
       }, {
-        name: '园区回路2路灯',
+        name: '园区回路4路灯',
         state: '关闭'
       },{
-        name: '园区回路1路灯',
+        name: '园区回路5路灯',
         state: '开启'
       }, {
-        name: '园区回路2路灯',
+        name: '园区回路6路灯',
         state: '关闭'
       },{
-        name: '园区回路1路灯',
+        name: '园区回路7路灯',
         state: '开启'
       }, {
-        name: '园区回路2路灯',
+        name: '园区回路8路灯',
         state: '关闭'
       },{
-        name: '园区回路1路灯',
+        name: '园区回路9路灯',
         state: '开启'
       }, {
-        name: '园区回路2路灯',
+        name: '园区回路10路灯',
         state: '关闭'
       },
     ]
@@ -106,18 +107,20 @@ export default function Index(props) {
   let [state, setstate] = useState('开启');
   let [operateState, setoperateState] = useState(true);
   const [Ctitle, setCtitle] = useState({});
-  const onclickBtn = (e, num) => {
-    console.log(e, num)
+  const onclickBtn = (e, num,index) => {
+    console.log(e, num,index)
     if (e.state == '开启' && num == 2 || e.state == '关闭' && num == 1) {
       setCtitle(e)
+      setLightIndex(index)
       aref.current.onOpen()
       if (num == 1) {//开启
-        setstate('开启')
+       setstate('开启')
       } else {
-        setstate('关闭')
+       setstate('关闭')
       }
     }
   }
+  let [lightIndex, setLightIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const aref = useRef()
   const sref = useRef()
@@ -128,10 +131,19 @@ export default function Index(props) {
         setLoading(false)
         sref.current.onOpen()
       }, 3000)
+      if(state=='开启'){
+        arr.list[lightIndex].state='开启'
+      }else if(state=='关闭'){
+        arr.list[lightIndex].state='关闭'
+      }
+      setairList([...arr.list])
+      console.log(airList)
+
   }
   const onOkEdit=()=>{
     sref.current.onCancel()
   }
+
   let [numfirst, setnumfirst] = useState(0);
   let [numlast, setnumlast] = useState(9);
   let [airList, setairList] = useState(arr.list);
@@ -174,9 +186,9 @@ export default function Index(props) {
             <div className={style.contentTopRight}>
               <Titlelayout title={'本日路灯能耗 (kWh)'}{...fs} style={{ width: '100%', height: '100%' }}>
                 <div className={style.airEnergy} style={{ width: '100%', height: '100%', padding: 16 }}>
-                  <div style={{ width: '100%', height: '100%', paddingTop: 16 }}>
-                    <Image src={imgurl.bg} preview={false} width={64} height={64}></Image>
-                  </div>
+                  {/* <div className={style.airEnergyImage} style={{ borderRadius:'50%',width:72,height:72 ,border:'2px solid #237AE4'}}> */}
+                    <div style={{borderRadius:'50%',width:64,height:64,backgroundColor:'#237AE4',marginTop:16}}><Image src={imgurl.logo} preview={false} width={64} height={64}></Image></div>
+                  {/* </div> */}
                   <div className={style.airEnergyData}>
                     <p>本日 :{airdata.today}</p>
                     <div>同比 :{parseFloat(airdata.todayper) > 0 ? '+' + airdata.todayper : airdata.todayper}
@@ -197,24 +209,27 @@ export default function Index(props) {
             <div className={style.contentBottomTop}>
               <span>路灯控制</span><Input size="middle" placeholder='请输入回路名称' style={{ width: '260px', marginLeft: 16 }} />
               <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
-              <Divider dashed style={{ marginLeft: 32, marginRight: 32, height: 32 }} type="vertical" />
+              {/* <Divider dashed style={{ marginLeft: 32, marginRight: 32, height: 32 }} type="vertical" /> */}
+              <div style={{ marginLeft: 32, marginRight: 32,height:32,borderLeft:"1px dashed #515151" }} ></div>
               <Button style={{ width: 96, height: 32 }} type='primary' size="middle" >全部开启</Button>
               <Button style={{ width: 96, height: 32, marginLeft: 16 }} type='primary' size="middle" >全部关闭</Button>
             </div>
-            <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} />
+            {/* <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} /> */}
+            <div style={{ marginTop: 16, marginBottom: 16,width:1649,borderTop:"1px dashed #515151" }} ></div>
             <div className={style.contentBottomBottom}>
             <div className={style.boxList}>
               {airList.map((item, index) => {
                 return <div className={style.airBox} key={index}>
                   <p className={style.airBoxName}>{item.name}</p>
-                  {item.state == '开启' ? <Image src={imgurl.air} preview={false} width={160} height={130}></Image> : <Image src={imgurl.air} preview={false} width={160} height={130} style={{ opacity: 0.3 }}></Image>}
+                  {item.state == '开启' ? <Image src={imgurl.light} preview={false} width={110} height={110}></Image> : <Image src={imgurl.light} preview={false} width={110} height={110} style={{ opacity: 0.3 }}></Image>}
                   <div className={style.airState}>
                     {item.state == '开启' ? <div style={{ width: 14, height: 14, backgroundColor: '#66FF00', borderRadius: '50%' }}></div> : <div style={{ width: 14, height: 14, backgroundColor: '#000', borderRadius: '50%' }}></div>}
                     {item.state == '开启' ? <span style={{ fontSize: 12, color: '#fff', marginLeft: 5 }}>{item.state}</span> : <span style={{ fontSize: 12, color: '#003366', marginLeft: 5 }}>{item.state}</span>}
                   </div>
-                  <Divider className={style.dividerLine} dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} />
-                  <Button className={item.state == '开启' ? style.airBtnOff : style.airBtn} style={{ width: 136, height: 32, borderRadius: 800, }} onClick={() => { onclickBtn(item, 1) }}>远程开启</Button>
-                  <Button className={item.state == '开启' ? style.airBtn : style.airBtnOff} style={{ width: 136, height: 32, borderRadius: 800, marginTop: 16 }} onClick={() => { onclickBtn(item, 2) }}>远程关闭</Button>
+                  {/* <Divider className={style.dividerLine} dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} /> */}
+                  <div style={{ marginTop: 16, marginBottom: 16,width:137,borderTop:"1px dashed #fff" }} ></div>
+                  <Button className={item.state == '开启' ? style.airBtnOff : style.airBtn} style={{ width: 136, height: 32, borderRadius: 800, }} onClick={() => { onclickBtn(item, 1,index) }}>远程开启</Button>
+                  <Button className={item.state == '开启' ? style.airBtn : style.airBtnOff} style={{ width: 136, height: 32, borderRadius: 800, marginTop: 16 }} onClick={() => { onclickBtn(item, 2,index) }}>远程关闭</Button>
                 </div>
               }
               )}

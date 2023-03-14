@@ -547,12 +547,12 @@ export class energyReport{
 }
 //energyDesigner能耗管理
 export class energyDesigner {
-    static queryElectricClassifys = (type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?type=${type}`)
+    static queryElectricClassifys = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?projectId=${projectId}&type=${type}`)
     //单个插入
-    static insertEnergyClassify = (parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
+    static insertEnergyClassify = (projectId, parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?projectId=${projectId}&parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
     static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`,data)
-    static updateEnergyClassify = (type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?type=${type}&classifyId=${classifyId}&name=${name}`)
-    static deleteEnergyClassify =  (classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?classifyId=${classifyId}`)
+    static updateEnergyClassify = (projectId, type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?projectId=${projectId}&type=${type}&classifyId=${classifyId}&name=${name}`)
+    static deleteEnergyClassify =  (projectId, classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?projectId=${projectId}&classifyId=${classifyId}`)
     static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
     static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
     static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)
@@ -615,4 +615,28 @@ export class DistributionMeter {
     static queryUsedSensor = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUsedSensor?projectId=${projectId}&roomId=${roomId}`)
     static queryUnusedSensor = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUnusedSensor?projectId=${projectId}&roomId=${roomId}`)
     static configureSensor = (data) => server.post(`Distribution/DistributionMeter/ConfigureSensor`, data)
+}
+
+//能源流向
+export class EnergyFlowRuntime {
+    static queryComprehensive = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryComprehensive?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryElectric = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryWater = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&date=${date}`, data)
+    static queryGas = (projectId, type, date, data) => server.post(`Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`, data)
+}
+
+//损耗分析
+export class EnergyLossRuntime {
+    static queryByLine = (pageNum, pageSize, data) => server.post(`Energy/EnergyLossRunTime/QueryByLine?pageNum=${pageNum}&pageSize=${pageSize}`, data)
+    static queryByBuilding = (pageNum, pageSize, data) => server.post(`Energy/EnergyLossRunTime/QueryByBuilding?pageNum=${pageNum}&pageSize=${pageSize}`, data)
+}
+
+//定额能耗
+export class EnergyQuotaRuntime {
+    static queryQuotaOverview = (projectId, areaId) => server.post(`Energy/EnergyQuotaRuntime/QueryQuotaOverview?projectId=${projectId}&areaId=${areaId}`)
+    static queryRoomQuota= (projectId, areaId, roomName) => server.post(`Energy/EnergyQuotaRuntime/QueryRoomQuota?projectId=${projectId}&areaId=${areaId}&roomName=${roomName}`)
+}
+//公共能耗
+export class EnergyPublicRuntime {
+    static queryEnergyCategoryTree= (projectId, categoryType) => server.post(`Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}`)
 }

@@ -2,57 +2,79 @@ import React, {useState, useEffect, Fragment} from 'react'
 import style from './style.module.less';
 import {Input, Button, Radio, Tree } from 'antd';
 import dashLine from '@imgs/line.png'
+import { cloneDeep } from 'lodash';
 
-export default function Index(){
+export default function Index(props){
     const { Search } = Input;
-
-    const [treeData, setTreeData] = useState([{
-      title:'正泰物联滨江园区总进线',
-      key:'正泰物联滨江园区总进线',
-      children:[{
-        title:'研发1号楼进线总表',
-        key:'研发1号楼进线总表',
-        children:[{
-          title:'1层回路',
-          key:'1',
-        },{
-          title:'2层回路',
-          key:'2',
-        },{
-          title:'3层回路',
-          key:'3',
-        },]
-      },{
-        title:'研发2号楼进线总表',
-        key:'研发2号楼进线总表',
-        children:[{
-          title:'1层回路',
-          key:'1层回路',
-        },{
-          title:'2层回路',
-          key:'2层回路',
-        },{
-          title:'3层回路',
-          key:'3层回路',
-        },]
-      }]
-    }])
+    const { getTreeType, getValues } = props;
+    const [treeData, setTreeData] = useState([])
+    const [value, setValue] = useState('line');
+    const arr = cloneDeep(props.treeData)
+    const [fieldNames, setFieldNames] = useState({
+      title:'name',
+      key: 'id',
+      children: 'nodes'
+    })
+    const changeTitle = data => {
+      for(let i =0; i < data.length;i++){
+         let node = data[i]
+         node.title = cloneDeep(node[fieldNames.title])
+         node.key = cloneDeep(node[fieldNames.key])
+         node.children = node[fieldNames.children] ? cloneDeep(node[fieldNames.children]) : []
+         Reflect.deleteProperty(node, fieldNames.title) 
+         Reflect.deleteProperty(node, fieldNames.key)
+         Reflect.deleteProperty(node, fieldNames.children)
+         if(node.children.length > 0) {
+          changeTitle(node.children)
+         }
+      }
+    }
+    const changeBuildTitle = data => {
+      for(let i =0; i < data.length;i++){
+         let node = data[i]
+         node.title = cloneDeep(node.name)
+         node.key = cloneDeep(node.areaId)
+         node.children = node.nodes ? cloneDeep(node.nodes) : []
+         Reflect.deleteProperty(node, 'name') 
+         Reflect.deleteProperty(node, 'areaId')
+         Reflect.deleteProperty(node, 'nodes')
+         if(node.children.length > 0) {
+          changeTitle(node.children)
+         }
+      }
+    }
+    
+    
+    useEffect(()=>{
+      changeTitle(arr)
+      setTimeout(()=>{
+        setTreeData(arr)
+      }, 100)
+    },[])
+    useEffect(()=> {
+      if(value == 'line'){
+        changeTitle(arr)
+        console.log(123) 
+        }else{
+        changeBuildTitle(arr)
+        console.log(456) 
+      }
+      setTimeout(()=>{
+        setTreeData(arr)
+      }, 100)
+    }, [value])
 
     const options = [
         {
           label: '按回路',
-          value: 1,
+          value: 'line',
         },
         {
           label: '按建筑',
-          value: 2,
+          value: 'building',
         },
       ];
-      
-    
-    
-      
-    
+
       let dataList = [];
       const generateList = data => {
         for (let i = 0; i < data.length; i++) {
@@ -141,113 +163,17 @@ export default function Index(){
         });
     
       
-        const [value, setValue] = useState(1);
+        
       const onChange = ({target:{value}})=>{
         setValue(value)
-        if(value == 1){
-          setTreeData([{
-            title:'正泰物联滨江园区总进线',
-            key:'正泰物联滨江园区总进线',
-            children:[{
-              title:'研发1号楼进线总表',
-              key:'研发1号楼进线总表',
-              children:[{
-                title:'1层回路',
-                key:'1',
-              },{
-                title:'2层回路',
-                key:'2',
-              },{
-                title:'3层回路',
-                key:'3',
-              },]
-            },{
-              title:'研发2号楼进线总表',
-              key:'研发2号楼进线总表',
-              children:[{
-                title:'1层回路',
-                key:'1层回路',
-              },{
-                title:'2层回路',
-                key:'2层回路',
-              },{
-                title:'3层回路',
-                key:'3层回路',
-              },]
-            }]
-          }])
-        }else if(value == 2){
-          setTreeData([{
-            title:'正泰物联滨江园区',
-            key:'正泰物联滨江园区',
-            children:[{
-              title:'研发1号楼',
-              key:'研发1号楼',
-              children:[{
-                title:'1层',
-                key:'1-1',
-                children:[{
-                  title:'101',
-                  key:'1-1-1'
-                },{
-                  title:'102',
-                  key:'1-1-2'
-                },{
-                  title:'103',
-                  key:'1-1-3'
-                }]
-              },{
-                title:'2层',
-                key:'1-2',
-                children:[{
-                  title:'201',
-                  key:'1-2-1'
-                },{
-                  title:'202',
-                  key:'1-2-2'
-                },{
-                  title:'203',
-                  key:'1-2-3'
-                }]
-              },]
-            },{
-              title:'研发2号楼',
-              key:'研发2号楼',
-              children:[{
-                title:'1层',
-                key:'2-1',
-                children:[{
-                  title:'101',
-                  key:'2-1-1'
-                },{
-                  title:'102',
-                  key:'2-1-2'
-                },{
-                  title:'103',
-                  key:'2-1-3'
-                }]
-              },{
-                title:'2层',
-                key:'2-2',
-                children:[{
-                  title:'201',
-                  key:'2-2-1'
-                },{
-                  title:'202',
-                  key:'2-2-2'
-                },{
-                  title:'203',
-                  key:'2-2-3'
-                }]
-              },]
-            }]
-          }])
-        }
-        dataList = [];
-        generateList(treeData)
+        setSelectKeys([])
+        getTreeType(value)
       }
+      const [selectKeys, setSelectKeys] = useState([])
       const onCheck = (checkedKeys, info) => {
         console.log('onCheck', checkedKeys, info);
+        setSelectKeys(checkedKeys)
+        getValues(checkedKeys)
       };
       return(
         <div className={style.contentLeft}>
@@ -267,6 +193,7 @@ export default function Index(){
             checkable
             onExpand={onExpand}
             expandedKeys={expandedKeys}
+            checkedKeys={selectKeys}
             autoExpandParent={autoExpandParent}
             treeData={loop(treeData)}
             onCheck={onCheck}
