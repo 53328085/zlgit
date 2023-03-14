@@ -1,10 +1,10 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, forwardRef, useImperativeHandle} from 'react'
 import style from './style.module.less';
 import {Input, Tree } from 'antd';
 import dashLine from '@imgs/line.png'
 import { cloneDeep } from 'lodash';
 
-export default function Index(props){
+function Index(props ,ref){
   const { getValues } = props;
     const { Search } = Input;
     let dataList = [];
@@ -93,13 +93,19 @@ export default function Index(props){
             [props.fieldNames.key]: item[props.fieldNames.key],
           };
         });
-
+        const [checkedKeys, setCheckedKeys] = useState([])
         const onCheck = (checkedKeys, info) => {
-          console.log(checkedKeys)
-          console.log(info)
+          setCheckedKeys(checkedKeys)
           getValues(checkedKeys)
         };
-    
+        const reSet = () => {
+          setCheckedKeys([])
+          getValues([])
+        }
+
+        useImperativeHandle(ref, ()=> ({
+          reSet
+        }))
        
       return(
         <div className={style.left}>
@@ -122,7 +128,10 @@ export default function Index(props){
             treeData = {loop(props.treeData)}
             onCheck={onCheck}
             fieldNames={props.fieldNames}
+            checkedKeys={checkedKeys}
           />
         </div>
       )
 }
+
+export default forwardRef(Index)

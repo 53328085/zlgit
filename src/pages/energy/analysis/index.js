@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, Fragment} from 'react'
+import React, {useState, useRef, useEffect, useCallback} from 'react'
 import { useRequest } from 'ahooks';
 import style from './style.module.less';
 import { Select,DatePicker,Table,Button, message, Radio } from 'antd';
@@ -18,6 +18,7 @@ dayjs.extend(localeData)
 
 export default function Index() {
   const tableRef = useRef()
+  const lineRef = useRef()
   const { Option } = Select;
   const [tableData, setTableData] = useState([])
   const [messageApi, contextHolder] = message.useMessage();
@@ -59,6 +60,9 @@ export default function Index() {
   const [energyType, setEnergyType] = useState(1)
   const changeEnergyType = val => {
     setEnergyType(val)
+    if(value =='line'){
+      lineRef.current.reSet()
+    }
   }
   //日期选择
   const [type, setType] = useState('year')
@@ -80,11 +84,11 @@ export default function Index() {
     if(type == 'month') setDate(dateString+'-01')
     if(type == 'date') setDate(dateString)
   }
-  const PickerWithType = ({ type, onChange }) => {
-    if (type === 'date') return <DatePicker  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
-    if (type === 'month') return <DatePicker  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
-    if (type === 'year') return <DatePicker  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
-  };
+  const PickerWithType = useCallback(({ type, onChange }) => {
+    if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
+    if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
+    if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
+  },[date])
   //班次
   const [shift, setShift] = useState(0)
   const changeShift = val => {
@@ -377,7 +381,7 @@ export default function Index() {
         <div className={style.contentLeft}>
           <Radio.Group className={style.radioCss} options={options} onChange={onChange} value={value} />
           <img src={dashLine} className={style.radioLine}></img>
-          {value == 'line' ? <SearchTree treeData={lineTreeData} fieldNames={fieldLineNames} getValues={getLineFromChild}></SearchTree> : null}
+          {value == 'line' ? <SearchTree ref={lineRef} treeData={lineTreeData} fieldNames={fieldLineNames} getValues={getLineFromChild}></SearchTree> : null}
           {value == 'building' ? <SearchTree treeData={buildTreeData} fieldNames={fieldBuildNames} getValues={getBuildFromChild}></SearchTree> : null}
         </div>
         <div className={style.contentRight}>
