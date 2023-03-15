@@ -4,36 +4,47 @@ import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs} 
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
-import Pagecontent from "@com/pagecontent/maincontent";
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import moment from 'moment';
 import imgurl from "./icon";
-import { queries } from "@testing-library/dom";
+
 const { Group, Button: Rbutton } = Radio;
 
 
 const Laybox = styled.div`
   display: grid;
- // grid-template-columns: 1264px 400px;
-  grid-template-rows: 512px 1fr;
-  row-gap: 16px;
   flex: 1;
-  .left {
+  &.zonghe {
+   grid-template-rows: 40px 472px 272px;
+  row-gap: 16px;
+  .up {
     display: grid;
-    grid-template-columns: 1256px 1fr;
+    grid-template-columns: 1256px 408px;
     column-gap: 16px; 
   }
-  .right {
-    display: grid;
-     grid-template-columns: repeat(11, 196px);
-    row-gap: 16px; 
+  .down { 
+      display: grid;
+      grid-template-columns: repeat(8, 196px);
+      column-gap: 16px;
+      overflow: hidden;
   }
+  }
+  &.classify {
+    .up {
+      flex:1;
+      display: grid;
+      grid-template-columns: 1264px 400px;
+      column-gap: 16px;
+
+    }
+  
+  }
+ 
 `;
 const Custspan = styled.span`
   font-size: 14px;
@@ -84,6 +95,7 @@ const Divbox = styled.div`
   }
 `;
 const Tabsbox = styled(Tabs)`
+ && {
   .ant-tabs-nav {
     margin-bottom: 0px;
    .ant-tabs-nav-list {
@@ -116,7 +128,10 @@ const Tabsbox = styled(Tabs)`
         }
     }
    }  
- 
+   .ant-tabs-content-holder {
+    display: none;
+   }
+  }
 }
 `
 const UDbox = styled.div`
@@ -149,13 +164,13 @@ const UDboxbord = styled(Divbox)`
   border-top: 1px dotted #d7d7d7;
 `
 const Echartbox = styled.div`
-   height: 100%;
-   width: 100%;
+   height: 477px;
+   width: 1256px;
    background-color: #fff;
    padding: 16px;
+   border: 1px solid #d7d7d7;
 `
 export default function Index() {
-  const ref = useRef()
   const elref = useRef(null)
   const pieref = useRef();
   const projectId = useSelector(selectProjectId);
@@ -165,23 +180,197 @@ export default function Index() {
   const [value, setvalue] = useState("1");
   const [qverview, setOverview] = useState({})
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
+  const [tabvalue, setTabvalue] = useState('1')
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const detail = queries['detail'];
-  const Chartbox = (data) => {
-
+  const {detail, total, proportion, coalStandard, ...energyitem} = qverview;
+  console.log(coalStandard)
+  let type = ['', '日', '月', '年'][timetype]
+  const Chartbox = ({data}) => {
+    const ref = useRef()
+    const charw = () => {
+     try {
+      let {x, y, y1} = data
+      let dimensions = ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`]
+      let source = x.map((v, index) => ({time: v, [`本${type}能耗(吨标煤)`]: y[index], [`昨${type}能耗(吨标煤)`]: y1[index]}))
+      drawEcharts(ref.current, {
+        dataset: {dimensions, source},
+        series: [{ type: "bar" }, { type: "bar" }],
+      })
+     } catch (error) {
+       console.log(error)
+     }
+   
+  }
     useEffect(() => {
-
-    })
+      charw()
+    }, [timetype, tabvalue])
     return (
       <Echartbox ref={ref}>
  
       </Echartbox>
     )
+}
+
+const EngItem = ({icon, data, sub, ...otherprop}) => {
+  return (
+   <Titlelayout
+   {...otherprop}
+   title={<Title title={data.name} subtitle={sub} />}
+   key={nanoid()}
+ >
+   <UDbox>
+     <Image
+       src={imgurl.z02}
+       preview={false}
+       width={64}
+       height={64}
+     />
+     <div className="list">
+       <div className="item">
+         <span>`本{type}`</span>
+         <span>{data.periodValue}</span>
+       </div>
+       <div className="item">
+         <span>`上{type}`</span>
+         <span>{data.lastMonthPeriodValue}</span>
+       </div>
+       <div className="item">
+         <span>环比</span>
+         <span>
+           +{data.mom}{" "}
+           <Arrow num={data.mom}/>
+         </span>
+       </div>
+       <div className="item">
+         <span>同比</span>
+         <span>
+           +{data.yoy}{" "}
+           <Arrow num={data.yoy}/>
+         </span>
+       </div>
+     </div>
+   </UDbox>
+ </Titlelayout>
+  )
+  }
+const Energyitem = () => {
+   const getsub = (type) => {
+     switch(type) {
+       case 'electric':
+       return '(kWh)'
+       case 'waterCold':
+       case 'waterHot':
+       case 'steam':
+       case 'gas':
+       return '(㎡)'
+       case 'oil':
+        return '(吨)'
+       default:
+        return '(/)'
+     }
+
+
+   }
+   let items = []
+   for(let [key, value] of Object.entries(energyitem)) {
+      let obj = {
+         icon: key,
+         data: value,
+         sub: getsub(key)
+      }
+      items.push(obj)
+   }
   
+
+   return (
+    <>
+      {
+        items.map(item => <EngItem  {...item} key={item.type}/>)
+      }
+    </>
+  
+
+   )
+}
+
+const CoalStandard =({data={}}) => {
+  useEffect(() => {
+    drawEcharts(pieref.current, {
+      pieData: { data: proportion, total: 100 },
+      type: 3,
+      legend: {
+        bottom: 0,
+        top: 'auto',
+        itemGap: 5
+      },
+      grid: {
+        bottom: 20
+      }
+    });
+  }, [])
+  return (
+    <Titlelayout title={<Title title={data?.name} />}>
+    <Divbox>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          src={imgurl.z08}
+          preview={false}
+          width={80}
+          height={80}
+        />
+        <span style={{ color: "#999", marginTop: "10px" }}>
+          (吨标煤)
+        </span>
+      </div>
+
+      <div className="list">
+        <div className="item">
+          <span>本{type}能耗：</span>
+          <span>{data.periodValue}</span>
+        </div>
+        <div className="item">
+          <span>昨{type}能耗：</span>
+          <span>{data.lastMonthPeriodValue}</span>
+        </div>
+        <div className="item">
+          <span>同比</span>
+          <span>
+          {data.yoy}
+            <ArrowDownOutlined style={{ color: "#f00" }} />
+          </span>
+        </div>
+        <div className="item">
+          <span>环比</span>
+          <span>
+            {data.mom}
+            <ArrowUpOutlined style={{ color: "#f00" }} />
+          </span>
+        </div>
+      </div>
+    </Divbox>
+    <Titlelayout
+      type="inner"
+      title={<Title title="能耗占比" />}
+      style={{ padding: "0px", border: "none" }}
+    >
+      <div
+        style={{ width: "368px", height: "284px" }}
+        ref={pieref}
+      ></div>
+    </Titlelayout>
+  </Titlelayout>
+  )
 }
   const tabs = [
-    { label: "综合能耗", key: "1", children: <Chartbox   /> },
-    { label: "电", key: "2" },
+    { label: "综合能耗", key: "1", },
+    { label: "电", key: "2",  },
     { label: "冷水", key: "3" },
     { label: "热水", key: "4" },
     { label: "燃气", key: "5" },
@@ -210,8 +399,9 @@ export default function Index() {
     const param = [area]
     try {
      let {success, data} =  await EnergyComprehensive.EnergyOverViewRuntime(querys, param)
+     console.log(data)
      if(success) {
-      setOverview({...qverview, data})
+      setOverview({...qverview, ...data})
      }else {
        return {}
      }
@@ -220,94 +410,15 @@ export default function Index() {
     }
   }
   const ontabChange = (e) => {
-
+    console.log(e)
+    setTabvalue(e)
   }
   useEffect(() => {
+   
     getData()
-  }, [])
+  }, [tabvalue])
 
 
-  const datasetDay = {
-    dimensions: ["time", "今日能耗(吨标煤)", "昨日能耗(吨标煤)"],
-    source: [
-      { time: "00:00", "今日能耗(吨标煤)": 56, "昨日能耗(吨标煤)": 96 },
-      { time: "00:01", "今日能耗(吨标煤)": 46, "昨日能耗(吨标煤)": 36 },
-      { time: "00:02", "今日能耗(吨标煤)": 36, "昨日能耗(吨标煤)": 46 },
-      { time: "00:03", "今日能耗(吨标煤)": 56, "昨日能耗(吨标煤)": 96 },
-      { time: "00:04", "今日能耗(吨标煤)": 56, "昨日能耗(吨标煤)": 36 },
-      { time: "00:05", "今日能耗(吨标煤)": 46, "昨日能耗(吨标煤)": 36 },
-      { time: "00:06", "今日能耗(吨标煤)": 36, "昨日能耗(吨标煤)": 46 },
-      { time: "00:07", "今日能耗(吨标煤)": 50, "昨日能耗(吨标煤)": 26 },
-      { time: "00:08", "今日能耗(吨标煤)": 66, "昨日能耗(吨标煤)": 26 },
-      { time: "00:09", "今日能耗(吨标煤)": 58, "昨日能耗(吨标煤)": 56 },
-      { time: "00:10", "今日能耗(吨标煤)": 46, "昨日能耗(吨标煤)": 76 },
-      { time: "00:11", "今日能耗(吨标煤)": 18, "昨日能耗(吨标煤)": 26 },
-      { time: "00:12", "今日能耗(吨标煤)": 13, "昨日能耗(吨标煤)": 16 },
-    ],
-  };
-  const datasetMonth = {
-    dimensions: ["time", "本月费用(万元)", "上月费用(万元)"],
-    source: [
-      { time: "9-1", "本月费用(万元)": 5600, "上月费用(万元)": 9600 },
-      { time: "9-2", "本月费用(万元)": 4600, "上月费用(万元)": 3644 },
-      { time: "9-3", "本月费用(万元)": 3600, "上月费用(万元)": 4644 },
-      { time: "9-4", "本月费用(万元)": 5611, "上月费用(万元)": 9655 },
-      { time: "9-5", "本月费用(万元)": 5644, "上月费用(万元)": 3677 },
-      { time: "9-6", "本月费用(万元)": 4677, "上月费用(万元)": 3633 },
-      { time: "9-7", "本月费用(万元)": 3688, "上月费用(万元)": 4655 },
-      { time: "9-8", "本月费用(万元)": 5088, "上月费用(万元)": 2644 },
-      { time: "9-9", "本月费用(万元)": 6677, "上月费用(万元)": 2641 },
-      { time: "9-10", "本月费用(万元)": 5866, "上月费用(万元)": 5641 },
-      { time: "9-11", "本月费用(万元)": 4677, "上月费用(万元)": 7645 },
-      { time: "9-12", "本月费用(万元)": 1877, "上月费用(万元)": 2645 },
-    ],
-  };
-  const datasetYear = {
-    dimensions: ["time", "本年费用(万元)", "上年费用(万元)"],
-    source: [
-      { time: "1月", "本年费用(万元)": 56000, "上年费用(万元)": 96000 },
-      { time: "2月", "本年费用(万元)": 46000, "上年费用(万元)": 36000 },
-      { time: "3月", "本年费用(万元)": 36000, "上年费用(万元)": 46000 },
-      { time: "4月", "本年费用(万元)": 56000, "上年费用(万元)": 96000 },
-      { time: "5月", "本年费用(万元)": 56000, "上年费用(万元)": 36000 },
-      { time: "6月", "本年费用(万元)": 46000, "上年费用(万元)": 36000 },
-      { time: "7月", "本年费用(万元)": 36000, "上年费用(万元)": 46000 },
-      { time: "8月", "本年费用(万元)": 50000, "上年费用(万元)": 26000 },
-      { time: "9月", "本年费用(万元)": 66000, "上年费用(万元)": 26000 },
-      { time: "10月", "本年费用(万元)": 58000, "上年费用(万元)": 56000 },
-      { time: "11月", "本年费用(万元)": 46000, "上年费用(万元)": 76000 },
-      { time: "12月", "本年费用(万元)": 18000, "上年费用(万元)": 26000 },
-    ],
-  };
-
-  const [dataset, setDataset] = useState(datasetDay);
-  const pieData = [
-    { value: 30, name: "电" },
-    { value: 25, name: "水" },
-    { value: 25, name: "燃气" },
-    { value: 20, name: "煤炭" },
-  ];
-
-  useEffect(() => {
-     
-   value == '1' ? drawEcharts(ref.current, {
-      dataset,
-      series: [{ type: "bar" }, { type: "bar" }],
-    }) : drawEcharts(elref.current, {
-      dataset,
-      series: [{ type: "bar" }, { type: "bar" }],
-    });
- 
-   if(value == '1') drawEcharts(pieref.current, {
-      pieData: { data: pieData, total: 100 },
-      type: 3,
-    });
-  }, [dataset, pieData, value]);
-  const changeTime = ({ target: { value } }) => {
-    if (value === "day") setDataset((data) => ({ ...data, ...datasetDay }));
-    if (value == "month") setDataset((data) => ({ ...data, ...datasetMonth }));
-    if (value == "year") setDataset((data) => ({ ...data, ...datasetYear }));
-  };
   const Title = ({ title, subtitle, jc }) => {
     return (
       <Custspan className="t" jc={jc}>
@@ -378,78 +489,25 @@ export default function Index() {
       }}
     >
 
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px'}}>
+      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
       <UserSearch></UserSearch>
-      <Laybox value={value}>
-        <div className="left">
+      <Laybox value={value} className={ tabvalue == '1' ? 'zonghe' : 'classify'}>
+        <div className="up">
           
-          <Tabsbox items={tabs} onChange={ontabChange}>
-            
-             
+          <Tabsbox defaultActiveKey="1" items={tabs} onChange={ontabChange}>
           </Tabsbox>
-          <Titlelayout title={<Title title="能耗总量" />}>
-            <Divbox>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  src={imgurl.z08}
-                  preview={false}
-                  width={80}
-                  height={80}
-                />
-                <span style={{ color: "#999", marginTop: "10px" }}>
-                  (吨标煤)
-                </span>
-              </div>
-
-              <div className="list">
-                <div className="item">
-                  <span>今日能耗：</span>
-                  <span>1.23</span>
-                </div>
-                <div className="item">
-                  <span>昨日能耗：</span>
-                  <span>1.54</span>
-                </div>
-                <div className="item">
-                  <span>同比</span>
-                  <span>
-                    -1.54%
-                    <ArrowDownOutlined style={{ color: "#f00" }} />
-                  </span>
-                </div>
-                <div className="item">
-                  <span>环比</span>
-                  <span>
-                    +1.54%
-                    <ArrowUpOutlined style={{ color: "#f00" }} />
-                  </span>
-                </div>
-              </div>
-            </Divbox>
-            <Titlelayout
-              type="inner"
-              title={<Title title="能耗占比" />}
-              style={{ padding: "0px", border: "none" }}
-            >
-              <div
-                style={{ width: "368px", height: "284px" }}
-                ref={pieref}
-              ></div>
-            </Titlelayout>
-          </Titlelayout>
+          <Chartbox  data={detail} />
+           <div>
           
+            <CoalStandard data={coalStandard} />
+           </div>
+     
           
         </div>
-        <div className="right">
-      
+       {tabvalue == '1' && <div className="down">
+             <Energyitem />
         </div>
+       }
      
       </Laybox>
       </div>
