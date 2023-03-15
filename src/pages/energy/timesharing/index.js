@@ -1,75 +1,17 @@
 import React,{useEffect, useState,useRef} from 'react'
-import  SelectForm from '@com/useSelect'
 import {useSelector } from 'react-redux'
 import style from './style.module.less'
-import RadioTree from '@com/radiotree'
 import Timenergy from './timenergy'
 import Bluecolumn from '@com/bluecolumn';
 import Timepercent from './timepercent'
 import { energyShare } from '@api/api'
-import { Form, Select, DatePicker, message,Input,Tree  } from 'antd'
+import { Form, Select, DatePicker, message,Input,Tree ,Button } from 'antd'
 import moment from 'moment';
 
-
-// const treeData = [
-//   {
-//     title: 'parent 1',
-//     key: '0-0',
-//     children: [
-//       {
-//         title: 'parent 1-0',
-//         key: '0-0-0',
-//         disabled: true,
-//         children: [
-//           {
-//             title: 'leaf',
-//             key: '0-0-0-0',
-//             disableCheckbox: true,
-//           },
-//           {
-//             title: 'leaf',
-//             key: '0-0-0-1',
-//           },
-//         ],
-//       },
-//       {
-//         title: 'parent 1-1',
-//         key: '0-0-1',
-//         children: [
-//           {
-//             title: (
-//               <span
-//                 style={{
-//                   color: '#1890ff',
-//                 }}
-//               >
-//                 sss
-//               </span>
-//             ),
-//             key: '0-0-1-0',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
-
-const getParentKey = (key, tree) => {
-  let parentKey;
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-    if (node.nodes) {
-      if (node.nodes.some((item) => item.areaId === key)) {
-        parentKey = node.key;
-      } else if (getParentKey(key, node.nodes)) {
-        parentKey = getParentKey(key, node.nodes);
-      }
-    }
-  }
-  return parentKey;
-};
-
 export default function Index() {
+
+  const [treeData,setTreeData] =useState([])
+  const [treeDatas,setTreeDatas]=useState([])
   const [datetype, setDatetype] = useState(1)
   const datetypeRef= useRef()
   datetypeRef.current = datetype
@@ -151,7 +93,8 @@ export default function Index() {
     }
     const res = await energyShare.QuerySpaceTrees(params)
     if(res.success){
-      setTreeData([...res.data])
+       setTreeData([...res.data])
+       setTreeDatas([...res.data])
     }else{
       message.error(res.errMsg)
     }
@@ -185,15 +128,18 @@ export default function Index() {
    const res = await energyShare.QueryElectric(params)
    if(res.success){
     pieRef.current.setPieData([...res.data.proportion])
-    columnRef.current.setList([...res.data.detail])
+    columnRef.current.setList({...res.data.detail})
    }else{
     message.error(res.errMsg)
    }
   }
   //树被选中
   const onCheck=(checkedKeys,e)=>{
-    setSelectkeys([...checkedKeys])
-    selectRef.current = [...checkedKeys]
+    if(Array.isArray(checkedKeys)){
+      setSelectkeys([...checkedKeys])
+      selectRef.current = [...checkedKeys]
+    }
+   
     getQueryElectric()
   }
   //园区改变
@@ -216,44 +162,48 @@ export default function Index() {
     getQueryElectric()
   }
 
-
-
-  const [treeData, setTreeData] = useState(null)
- 
-  // const [expandedKeys, setExpandedKeys] = useState([]);
-  // const [searchValue, setSearchValue] = useState('');
-  // const [autoExpandParent, setAutoExpandParent] = useState(true);
-  // const onExpand = (newExpandedKeys)=>{
-  //   setExpandedKeys(newExpandedKeys)
-  //   setAutoExpandParent(false)
-  // }
-  // const filtervalues = (data,v)=>{
-  //  const arr= data.filter(it=>{
-  //   console.log(it)
-  //     if(it.title.includes(v)){
-  //        return true
-  //     }else{
-  //      if(filtervalues(it.children,v).length>0){
-  //       return true
-  //      } 
-  //     }
-  //   })
-  //   return arr
-  // }
+   const filterSearchTree = (nodes, predicate, wrapMatchFn = () => false) => {
+    // 如果已经没有节点了，结束递归
+    if (!(nodes && nodes.length)) {
+      return []
+    }
+    const newChildren = []
+    for (let i = 0; i < nodes.length; i++) {
+      const node ={...nodes[i]} 
+      // 想要截止匹配的那一层（如果有匹配的则不用递归了，直接取下面所有的子节点）
+      if (wrapMatchFn(node) && predicate(node)) {
+        newChildren.push(node)
+        continue
+      }
+      console.log(node)
+      const subs = filterSearchTree(node.nodes, predicate, wrapMatchFn)
+      console.log(subs)
+      // 以下两个条件任何一个成立，当前节点都应该加入到新子节点集中
+      // 1. 子孙节点中存在符合条件的，即 subs 数组中有值
+      // 2. 自己本身符合条件
+      if ((subs && subs.length) || predicate(node)) {
+        node.nodes = subs || []
+        newChildren.push(node)
+      }
+      console.log('subs')
+    }
+    return newChildren.length ? newChildren : []
+  }
   //搜索数
   const onSearch=(v)=>{
-    // console.log(v)
-    // const list =  filtervalues(treeData,v)
-    console.log(list)
-    // const newExpandedKeys = treeData.map(it=>{
-    //   if(it.name.indexOf(v)>-1){
-    //     return getParentKey(v.areaId,treeData)
-    //   }
-    //   return null
-    // }).filter((item, i, self) => item && self.indexOf(item) === i)
-    // setExpandedKeys(newExpandedKeys);
-    // setAutoExpandParent(true);
-
+    if(!v){
+      setTreeData(()=>{return treeDatas})
+      return 
+    }
+    console.log(treeDatas)
+    const filterData = filterSearchTree(treeDatas,(node) => {
+      if (node.name.indexOf(v) !== -1) {
+          return true;
+      }
+      return false;
+  })
+  console.log(filterData)
+  setTreeData(()=>{return filterData})
   }
   useEffect(()=>{
     getAreaAll()
@@ -263,7 +213,6 @@ export default function Index() {
   
   return (
     <div className={style.timesharing}>
-      {/* <SelectForm isplan={true} isset={false}/> */}
       <Form
         className={style.mgbt0}
         form={form}
@@ -315,7 +264,6 @@ export default function Index() {
         </div>
       </Form>
       <div className={style.sharecontent}>
-        {/* <RadioTree/> */}
         <div className={style.radiotree}>
           <Search 
           placeholder='请输入关键字查询' 
@@ -335,6 +283,7 @@ export default function Index() {
         <div className={style.sharingtime}>
         <Bluecolumn name="分时能耗"/>
         <div style={{height:'16px'}}> </div>
+        
         <Timenergy ref={columnRef}/>
         </div>
         <div>
@@ -346,3 +295,6 @@ export default function Index() {
     </div>
   )
 }
+
+
+

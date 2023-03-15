@@ -4,6 +4,7 @@ import moment from 'moment'
 import { useSelector } from 'react-redux'
 import { energyReport } from '@api/api'
 import { message } from 'antd'
+
 export default function Energyconsum({ areavalue, arealistRef }) {
   const contentRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -13,7 +14,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
       times.push({
         title: `0${i}:00`,
         dataIndex: `0${i}:00`,
-        width: 100
+
       })
     } else if (i == 23) {
       times.push({
@@ -25,7 +26,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
       times.push({
         title: `${i}:00`,
         dataIndex: 'i',
-        width: 100
+    
       })
     }
   }
@@ -58,6 +59,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
   },
   ...times
   ]),[]) 
+
   //获取表格数据
   const getTableData = async (areaId = 0) => {
     try {
@@ -81,7 +83,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
       const res = await energyReport.QueryConsume(parmas, arrs)
       if (res.success) {
         if(Array.isArray(res.data)&&res.data.length>0){
-          contentRef.current.setDataSource([...res.data])
+          contentRef.current.setDataSource([...res.data,{name:'11',sn:123,type:'elec'}])
         }else{
           contentRef.current.setDataSource([])
         } 
@@ -97,7 +99,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
   }, [areavalue])
   const compProps = {
     columns,
-    scroll: { x: 3022 },
+    scroll: { x: 3022},
     ref: contentRef,
     getTableData,
     areavalue
@@ -108,3 +110,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
     </div>
   )
 }
+
+
+
+

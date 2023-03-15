@@ -71,8 +71,19 @@ let Com = ({ form, coms }) => {
                         ></Select>
                     </Form.Item>
                     {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true}]}>
-                            <Input />
+                        isaddress ? <Form.Item label="通讯地址" name="commAddress" 
+                        rules={[{ required: true},{validator:(_,value)=>{
+                            if(!value){
+                                return Promise.resolve()
+                            }else{
+                                if(Number(value)<=255&&Number(value)>=1){
+                                     return Promise.resolve()
+                                }else{
+                                    return Promise.reject(new Error("通讯地址范围1-255"))
+                                }
+                            }
+                        }}]}>
+                            <Input placeholder='通讯地址范围1-255' />
                             {/* 默认1-255 */}
                         </Form.Item> : null
                     }
