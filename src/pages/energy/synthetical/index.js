@@ -14,22 +14,10 @@ import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import moment from 'moment';
 import imgurl from "./icon";
+import { queries } from "@testing-library/dom";
 const { Group, Button: Rbutton } = Radio;
-const Groupbox = styled(Group)`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
-`;
-const RadioBt = styled(Rbutton)`
-  width: 64px;
-  &:first-of-type {
-    border-radius: 16px 0 0 16px;
-  }
-  &:last-of-type {
-    border-radius: 0 16px 16px 0;
-  }
-`;
+
+
 const Laybox = styled.div`
   display: grid;
  // grid-template-columns: 1264px 400px;
@@ -102,7 +90,7 @@ const Tabsbox = styled(Tabs)`
     .ant-tabs-tab {
         border-radius: 4px 4px 0 0;
         height: 41px;
-        width: 145px;
+        width: 114px;
         justify-content: center;
         font-size: 14px;
         background-color: #fff;  
@@ -160,6 +148,12 @@ const UDbox = styled.div`
 const UDboxbord = styled(Divbox)`  
   border-top: 1px dotted #d7d7d7;
 `
+const Echartbox = styled.div`
+   height: 100%;
+   width: 100%;
+   background-color: #fff;
+   padding: 16px;
+`
 export default function Index() {
   const ref = useRef()
   const elref = useRef(null)
@@ -171,9 +165,22 @@ export default function Index() {
   const [value, setvalue] = useState("1");
   const [qverview, setOverview] = useState({})
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-  const picker= ['', 'date', 'month', 'year'][timetype]
+  const picker= ['', 'date', 'month', 'year'][timetype];
+  const detail = queries['detail'];
+  const Chartbox = (data) => {
+
+    useEffect(() => {
+
+    })
+    return (
+      <Echartbox ref={ref}>
+ 
+      </Echartbox>
+    )
+  
+}
   const tabs = [
-    { label: "综合能耗", key: "1" },
+    { label: "综合能耗", key: "1", children: <Chartbox   /> },
     { label: "电", key: "2" },
     { label: "冷水", key: "3" },
     { label: "热水", key: "4" },
@@ -212,9 +219,14 @@ export default function Index() {
       console.log(e)
     }
   }
+  const ontabChange = (e) => {
+
+  }
   useEffect(() => {
     getData()
   }, [])
+
+
   const datasetDay = {
     dimensions: ["time", "今日能耗(吨标煤)", "昨日能耗(吨标煤)"],
     source: [
@@ -304,112 +316,7 @@ export default function Index() {
       </Custspan>
     );
   };
-  const testDatas = [
-    {
-      title: "能耗总量",
-      sub: "(吨标煤)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z08",
-    },
-    {
-      title: "碳排放量",
-      sub: "(吨CO2)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z07",
-    },
-    {
-      title: "用电量",
-      sub: "(kWh)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z06",
-    },
-    {
-      title: "用水量",
-      sub: "(m3)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z05",
-    },
-    /* {
-        title: '用燃气量',
-        sub: '(m3)',
-        cmonth: 200.21,
-        smonth: 180.52,
-        hb: 8.21,
-        tb: 10.21,
-        icon: 'z04'
-      },
-      {
-        title: '耗煤量',
-        sub: '(吨)',
-        cmonth: 200.21,
-        smonth: 180.52,
-        hb: 8.21,
-        tb: 10.21,
-        icon: 'z01'
-      } */
-  ];
-  const testDatas2 = [
-    {
-      title: "用燃气量",
-      sub: "(m3)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z04",
-    },
-    {
-      title: "耗煤量",
-      sub: "(吨)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-  ];
-
-  const testDatas3 = [
-    {
-      title: "日用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z04",
-    },
-    {
-      title: "月用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: -8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-    {
-      title: "年用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: -8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-  ];
+ 
   const Arrow = ({num}) => {
     if (Number.isNaN(num)) return
     return num > 0  ? ( <ArrowUpOutlined style={{ color: "#f00" }} />) :  (<ArrowDownOutlined style={{ color: "#06f" }} />)
@@ -464,7 +371,7 @@ export default function Index() {
       value={{
         form,
         custview: <CustView />,
-        tabs,
+       // tabs,
         handler: getData,
         value,
         setvalue,
@@ -476,16 +383,9 @@ export default function Index() {
       <Laybox value={value}>
         <div className="left">
           
-          <Tabsbox>
+          <Tabsbox items={tabs} onChange={ontabChange}>
             
-            {value === '1' ? (<div ref={ref} style={{ flex: 1, position: "relative" }}>
-
-            </div>) : (
-              <div ref={elref} style={{ flex: 1, position: "relative" }}>
-
-              </div>
-            )
-             }
+             
           </Tabsbox>
           <Titlelayout title={<Title title="能耗总量" />}>
             <Divbox>
