@@ -79,7 +79,9 @@ export default function Index() {
   }
   //查询表格
   const [params, setParams] = useState([])
+  const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
+    setTreeValues(values)
     if(values.length == 0){
       setParams([{level: 1, id: areaId}])
     }else{
@@ -168,12 +170,13 @@ export default function Index() {
 
   const [pageNum, setPageNum] = useState(1)
   const [total, setTotal] = useState(0)
-  const pageSize = 10
+  const pageSize = 20
   const getTableData = () => {
     return queryRoomQuotas(projectId, pageNum, pageSize, params).then(res => {
       if(res.success){
         setDataSource(res.data)
         setTotal(res.total)
+        setSelectedKeys([])
       }else{
         messageApi.open({
           type:'error',
@@ -194,8 +197,10 @@ export default function Index() {
   },[params, pageNum])
 
   const [selectedKeys, setSelectedKeys] = useState([]);
-  const onSelect = (newSelectedRowKeys) => {
-    setSelectedKeys(newSelectedRowKeys);
+  const [copyKeys, setCopyKeys] = useState([]);
+  const onSelect = (record, selected, selectedRows, nativeEvent) => {
+    setCopyKeys(record)
+    setSelectedKeys(selected);
   };
   const rowSelection = {
     selectedKeys,
@@ -204,10 +209,11 @@ export default function Index() {
 
   const setAll = (record) => {
     if(record){
-      setSelectedKeys([record.id])
+      form.resetFields()
+      setSelectedKeys([record])
       form.setFieldsValue({
         TotalValue: record.quotaComprehensive,
-        totalWarningValue: record.totalWarningValue,
+        TotalWarningValue: record.totalWarningValue,
         ElectricValue: record.quotaElectric,
         ElectricWarningValue: record.electricWarningValue,
         WaterColdValue: record.quotaWater,
@@ -217,25 +223,14 @@ export default function Index() {
         CoalValue: record.quotaCoal,
         CoalWarningValue: record.coalWarningValue,
       })
-    }else if(!record && selectedKeys.length == 0){
+    }else if(!record && treeValues.length == 0 && copyKeys.length == 0){
       messageApi.open({
         type:'warning',
-        content:'请至少选择一项配置项！'
+        content:'请至少选择一项配置项'
       })
       return;
     }else{
-      form.setFieldsValue({
-        TotalValue: 2000,
-        TotalWarningValue: 1000,
-        ElectricValue: 200,
-        ElectricWarningValue: 20,
-        WaterColdValue: 200,
-        WaterColdWarningValue: 20,
-        GasValue: 200,
-        GasWarningValue: 20,
-        CoalValue: 200,
-        CoalWarningValue: 20,
-      })
+      form.resetFields()
     }
     setRef.current.onOpen()
   }
@@ -243,19 +238,33 @@ export default function Index() {
     try{
       const values = await form.validateFields();
       let param = [];
-      selectedKeys.map(item => {
-        param.push({
-          areaId,
-          areaLevel: 3,
-          ...values
+      if(selectedKeys.length > 0){
+        selectedKeys.map(item => {
+          param.push({
+            id: item.id,
+            areaId: item.areaId,
+            areaLevel: 3,
+            ...values
+          })
         })
-      })
+      }else if(params.length > 0 && copyKeys.length == 0){
+        params.map(item => {
+          if(item.level == 3){
+            param.push({
+              areaId: item.id,
+              areaLevel: item.level,
+              ...values
+            })
+          }
+        })
+      }
       updateRoomQuotas(projectId, param).then(res => {
         if(res.success){
           messageApi.open({
             type:'success',
-            content:'方案修改成功!'
+            content:'能耗定额配置成功!'
           })
+          runTable()
         }else{
           messageApi.open({
             type:'error',
@@ -264,15 +273,18 @@ export default function Index() {
         }
       })
       setRef.current.onCancel()
+      form.resetFields()
     }catch(errorInfo){}
     
   }
 
   const handelValidate = (rule, value, callback) => {
     if(!Number.isNaN(Number(value))){
-      callback()
+      // callback()
+      return Promise.resolve();
     }else{
-      callback('值只能为数字！')
+      // callback('值只能为数字！')
+      return Promise.reject('值只能为数字')
     }
   }
 
@@ -315,13 +327,13 @@ export default function Index() {
       <div className={style.mainContent}>
         <SearchTree treeData={treeData} fieldNames={fieldNames} getValues={getFromChild}></SearchTree>
         <div className={style.rightContent}>
-          <Table columns={columns} dataSource={dataSource} bordered rowKey='id' rowSelection={rowSelection} pagination={paginationProps}></Table>
+          <Table size='small' columns={columns} dataSource={dataSource} bordered rowKey='id' rowSelection={rowSelection} pagination={paginationProps}></Table>
         </div>
       </div>
       <Custmodl title='设置能耗定额' ref={setRef}  mold="cust" width={640} onOk={onOk}>
         <Form name='editform'  form={form}  requiredMark={false} autoComplete='off' style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap'}}>
           <Item label='综合能耗(吨标煤)' labelCol={{span:14}} labelAlign={'left'} name='TotalValue' style={{width: 240}}>
-            <Input style={{width:'128px', textAlign:'right'}} disabled></Input>
+            <Input style={{width:'128px', textAlign:'right'}}></Input>
           </Item>
           <Item label='预警值' name='TotalWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'},{validator:handelValidate }]}>
             <Input style={{width:'128px', textAlign:'right'}} ></Input>

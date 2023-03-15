@@ -4,8 +4,8 @@ import style from './style.module.less';
 import { Select,DatePicker,Button, message, Radio } from 'antd';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import { AreaSetting, eneryShift } from '@api/api.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { eneryShift } from '@api/api.js'
 //dayjs bug
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
@@ -22,27 +22,11 @@ export default function Index(props) {
     })
   }
   const projectId = useSelector(selectProjectId);
-  const { QueryAllArea } = AreaSetting
+  const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
   //园区
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
   const changeArea = (value) => {
     setAreaId(value)
   }
