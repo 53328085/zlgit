@@ -1,145 +1,197 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less'
 import { Select } from 'antd'
 import Icard from './card'
-import safeOperation from './images/safeOperation.png'
-import carbonEmission from './images/carbonEmission.png'
-import useCurr from './images/useCurr.png'
-import useWater from './images/useWater.png'
-import useGas from './images/useGas.png'
-import warn from '@imgs/warn.png'
-import {drawEcharts} from '@com/useEcharts'
+import { drawEcharts } from '@com/useEcharts'
 import ChartData from './chartData'
-
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
+import UseHeader from '@com/useHeader'
+import imgurl from './images/index.js'
+import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
-
-  let pieData = {
-    data:[
-      { value: 35, name: '尖占比' },
-      { value: 15, name: '峰占比' },
-      { value: 20, name: '平占比' },
-      { value: 30, name: '谷占比' },
-    ],
-    total:100,
+  const projectId = useSelector(selectProjectId)
+  const elref = useRef(null)
+  const wlref = useRef(null)
+  const glref = useRef(null)
+  let [areaId, setAreaId] = useState(1)
+  let [statistics, setStatistics] = useState({})
+  let [status, setStatus] = useState({})
+  let [eleConsumes,seteleConsumes]=useState([])
+  let [waterConsumes,setwaterConsumes]=useState([])
+  let [gasConsumes,setgasConsumes]=useState([])
+  const { Runtime: { RuntimeStatistics, RuntimeStatus, RuntimeQueryMonthUsage } } = Monitoring
+  const getData = () => {//设备统计
+    return RuntimeStatistics({ projectId, areaId }).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        setStatistics(data)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
   }
-
+  const getStatusData = () => {//在线情况
+    return RuntimeStatus({ projectId, areaId }).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        setStatus(data)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
+  }
+  const getMonthUsage = (type) => {//月用量
+    return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        seteleConsumes(data.eleConsumes)
+        setwaterConsumes(data.waterConsumes)
+        setgasConsumes(data.gasConsumes)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
+  }
+  const datasetMonth = {
+    dimensions: ["name", "value"],
+    source:eleConsumes?eleConsumes:[] ,
+  };
+  const datasetMonthW = {
+    dimensions: ["name", "value"],
+    source:waterConsumes?waterConsumes:[] ,
+  };
+  const datasetMonthG = {
+    dimensions: ["name", "value"],
+    source:gasConsumes?gasConsumes:[] ,
+  };
+  const grid = {
+    // 图表 grid
+    left: "0px",
+    right: "0",
+    top: "30px",
+    bottom: "0px",
+    containLabel: true,
+  }
   useEffect(() => {
-    let pieChart = document.getElementById('pieChart')
-    drawEcharts(pieChart, {pieData, type:3})
+    getData()
+    getStatusData()
+    getMonthUsage(1)
+    charts()
+    console.log('useEffect')
+    console.log(eleConsumes)
+  }, [areaId])
+const charts=()=>{
+  drawEcharts(elref.current, {
+    dataset: datasetMonth,
+    series: [{ type: "line" ,name:'用电量(kWh)'}],
+    grid,
+    legend: {
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20
+    },
+    dataZoom:{
+      start: 0,
+      end: 50,
+    }
   })
-
-  let loadItem = [{
-    name:'本月平均负载',
-    value:1324.32,
-    unit:'kWh'
-},{
-    name:'本月平均负载率',
-    value:23.37,
-    unit:'%'
-},{
-    name:'最大负荷',
-    subTitle:'发生时间:',
-    Time:'2022-7-8 12:45',
-    value:1324.32,
-    unit:'kW'
-},{
-    name:'运行情况',
-    subTitle:'变压器最佳负载率为:65%~75%',
-    theme:'hidden',
-    description:"变压器轻载运行 经济性一般",
-}]
-
-  let loadOpts = {
-    title:'负荷趋势',
-    Time: ['7/1', '7/2', '7/3', '7/4', '7/5', '7/6','7/7', '7/8', '7/9', '7/10', '7/11', '7/12', '7/13', '7/14'],
-    lineData: [2697.4, 3055.2, 2344.2, 3784.8, 2356.5, 2473.2, 2417.3, 657.4, 788.2, 3156.2, 3184.8, 2356.5, 2873.2, 2787.3]
+  drawEcharts(wlref.current, {
+    dataset: datasetMonthW,
+    series: [{ type: "line" ,name:'用水量(m³)'}],
+    grid,
+    legend: {
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20
+    },
+    dataZoom:{
+      start: 0,
+      end: 50,
+    }
+  })
+  drawEcharts(glref.current, {
+    dataset: datasetMonthG,
+    series: [{ type: "line" ,name:'用气量(m³)'}],
+    grid,
+    legend: {
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20
+    },
+    dataZoom:{
+      start: 0,
+      end: 50,
+    }
+  })
+}
+  const headerProps = {
+    isEnergy: false,//能耗类型
+    isDate: false,//日期
+    isShift: false,//班次
+    isTab: false,//能耗、费用radioButton
+    isSearch: false,//查询按钮
+    isExport: false,//导出按钮
+    //export: exportData //导出调用方法
   }
-
-  let demandOpts = {
-    title:'需量趋势',
-    Time: ['7/1', '7/2', '7/3', '7/4', '7/5', '7/6','7/7', '7/8', '7/9', '7/10', '7/11', '7/12', '7/13', '7/14'],
-    lineData: [267.4, 305.2, 234.2, 374.8, 256.5, 273.2, 217.3, 57.4, 788.2, 316.2, 314.8, 236.5, 273.2, 278.3]
+  const getFromChild = data => {
+    console.log(data.areaId)//园区id
+    setAreaId(data.areaId)
+    getData()
+    getStatusData()
+    getMonthUsage(1)
+    setTimeout(()=>{
+      charts()
+    },1000)
   }
-
-  let demandItem = [{
-    name:'申报需量',
-    value:4240.25,
-    unit:'kW'
-},{
-    name:'本月最大需量',
-    subTitle:'发生时间:',
-    Time:'2022-7-8 12:45',
-    value:31523.32,
-    unit:'kWh'
-},{
-    name:'需量分析',
-    subTitle:'',
-    theme:'warning',
-    description:"申报值偏高 请合理申报需量",
-}]
-
   return (
     <div>
-      <div className={style.header}>
-        <span style={{marginLeft: '12px'}}>园区选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          style={{width: '320px', marginLeft: '12px'}}
-        >
-          <Option value="1">正泰物联全部园区</Option>
-          <Option value="2">正泰物联滨江园区</Option>
-          <Option value="3">正泰物联温州园区</Option>
-        </Select>
-        <div className={style.line}></div>
-        <span>能源类型</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{width: '126px', marginLeft: '12px'}}
-        >
-          <Option value="0">电</Option>
-          <Option value="1">水</Option>
-          <Option value="2">燃气</Option>
-        </Select> 
-      </div>
+      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.cardList}>
-        <Icard img={ safeOperation } title={'安全运行(天)'} value={1825} />
-        <Icard img={ useCurr } title={'本月用电量(kWh)'} value={'62,363.44'} />
-        <Icard img={ useWater } title={'本月用水量(m³)'} value={'7500.00'} />
-        <Icard img={ useGas } title={'本月用气量(m³)'} value={'8000.00'} />
-        <Icard img={ carbonEmission } title={'年度碳排放(吨)'} value={'215.32'} />
-        <div className={style.orderData}>
-          <div className={style.orderItem}>
-            <div className={style.itemTitle}>未处理工单</div>
-            <div className={style.waitOrder}>8</div>
-          </div>
-          <div className={style.orderItem}>
-            <div className={style.itemTitle}>进行中工单</div>
-            <div className={style.duringOrder}>3</div>
-          </div>
-          <div className={style.orderItem}>
-            <div className={style.itemTitle}>未完成巡检</div>
-            <div className={style.waitInspection}>3</div>
-          </div>
-        </div>
+        <Icard img={imgurl.category} title={'设备总数'} value={statistics.deviceCount} />
+        <Icard img={imgurl.category} title={'传感器数量'} value={statistics.sensorCount} />
+        <Icard img={imgurl.category} title={'变压器数量'} value={statistics.transformerCount} />
+        <Icard img={imgurl.category} title={'监控数量'} value={statistics.monitorCount}
+          isShow={true} on={'云监控'} off={'本地监控'} per={''} onValue={statistics.onlineMonitorCount}
+          offValue={statistics.localMonitorCount} />
+        <Icard img={imgurl.category} title={'网关'} value={status.gatewayCount}
+          isShow={true} on={'网关在线'} off={'网关离线'} per={'在线率'} onValue={status.gatewayOnlineCount}
+          offValue={status.gatewayOfflineCount} perValue={status.gatewayOnlineRate} isRed={true} isGreen={true} isredE={false} />
+        <Icard img={imgurl.category} title={'电表'} value={status.electricMeterCount}
+          isShow={true} on={'电表在线'} off={'电表离线'} per={'电表告警'} onValue={status.electricMeterOnlineCount}
+          offValue={status.electricMeterOfflineCount} perValue={status.electricMeterAlarmCount} isRed={true} isGreen={true} isredE={true} />
+        <Icard img={imgurl.category} title={'水表'} value={status.waterMeterCount}
+          isShow={true} on={'水表在线'} off={'水表离线'} per={'在线率'} onValue={status.waterMeterOnlineCount}
+          offValue={status.waterMeterOfflineCount} perValue={status.waterMeterOnlineRate} isRed={true} isGreen={true} isredE={false} />
+        <Icard img={imgurl.category} title={'燃气表'} value={status.gasCount}
+          isShow={true} on={'燃气表在线'} off={'燃气表离线'} per={'在线率'} onValue={status.gasOnlineCount}
+          offValue={status.gasOfflineCount} perValue={status.gasOnlineRate} isRed={true} isGreen={true} isredE={false} />
       </div>
       <div className={style.content}>
         <div className={style.contentLeft}>
-          <h4 className={style.pieTitle}>分时电量分析</h4>
-          <div className={style.pieChart} id='pieChart'></div>
-          <div className={style.tips}>
-            <img className={style.warn} src={warn} alt='提示'></img>
-            <div className={style.tipDesc}>
-              <div>当前时段内，峰电量占总电量37%，占比较大</div>
-              <div>请合理利用峰谷电</div>
-            </div>
-          </div>
+          <h4 className={style.pieTitle}>月度用电量（kWh）</h4>
+          <div ref={elref} style={{ width: 548, height: 446, padding: 16 }}></div>
         </div>
-        <div className={style.contentRight}>
-          <ChartData opts={loadOpts} itemValue={loadItem}></ChartData>
-          <ChartData opts={demandOpts} itemValue={demandItem}></ChartData>
+        <div className={style.contentLeft}>
+          <h4 className={style.pieTitle}>月度用水量（m³）</h4>
+          <div ref={wlref} style={{ width: 548, height: 446, padding: 16 }}></div>
+        </div>
+        <div className={style.contentLeft}>
+          <h4 className={style.pieTitle}>月度用气量（m³）</h4>
+          <div ref={glref} style={{ width: 548, height: 446, padding: 16 }}></div>
         </div>
       </div>
     </div>

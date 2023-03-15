@@ -136,10 +136,15 @@ const Inptserach = styled(Input.Search)`
 `;
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
-export default function Index({ projectId, level, CModal, name, allLevel }) {
+export default function Index({ projectId, level, CModal, name,  allLevel }) {
+  console.log('fields~~~~~~~~~~~~~~~~~')
+ 
+  console.log(allLevel)
   const [levelone] = useState(allLevel[0]);
-  const limitlevle = allLevel.slice(0, level - 1);
 
+  const limitlevle = allLevel.slice(0, level - 1);
+  const fields = allLevel?.find(item => item.level == level)?.fields || [];
+  
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
   const [sfrom] = Form.useForm();
@@ -159,18 +164,21 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const [columns, setColumns] = useState([]);
   //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
   const [topAreaId, setTopAreaId] = useState(0)
-  const [fields, setFields] = useState({
+/*   const [fields, setFields] = useState({
     field: [],
     type: [],
-  });
+  }); */
+
+
+ 
   const devices = useRef({
     unselected: [],
     deviceSummary: [],
     deviceSub: [],
     selected: [],
   });
-  
-  const islngLat = fields.type.includes(1);
+  console.log(fields)
+  const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
   const leveloption = useRef({});
@@ -213,7 +221,6 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 {id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
       
         leveloption.current[`level${level}`] = data;
-        getOptions(level).set([...data])
       } else {
         leveloption.current[`level${level}`] = [];
       }
@@ -222,13 +229,14 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       console.log(error);
     }
   };
-  // 新增 级联选择
+  //   级联选择 start
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState([])
+    console.log(level)
     const getOptions = async () => {
      let {success, data} = await Area.QueryAll({projectId,level: 1, parentId: 0 })
      if (success && Array.isArray(data)) {
-      let cardata = data.map(i => ({...i, children: [], isLeaf: false}))
+      let cardata = data.map(i => ({...i, children: [], isLeaf: level - 1 == 1}))
       setLevelOption([...cardata])
      }
     }
@@ -238,7 +246,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       children: 'children'
     }
     const loadData = async (selectedOptions) => {
-      console.log(111111)
+      
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
         targetOption.loading = true;
@@ -252,7 +260,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       let {data, success} =  await Area.QueryAll(params) 
        targetOption.loading = false
        if (success && Array.isArray(data)) {
-        let cardata = data.map(i => ({...i,  children: [], isLeaf: false}))
+        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - 1 == 1}))
         targetOption.children = cardata;
         setLevelOption([...leveloptions])
         /* setLevelOption(arr => {
@@ -285,14 +293,19 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     getOptions()
    }, [])
     return (
-      <Item label="父节点" name="parentId">
+      <Item label="父节点" name="parentId" rules={[
+        {
+          required: true,
+          message: '请选择父节点'
+        }
+      ]}>
          <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne}   />
       </Item>
     )
 
 
   }
-
+ //   级联选择 end
 
   //  配置 start
   const deviceColumns = [
@@ -471,11 +484,9 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   };
 
   const getTableData = ({ current, pageSize }, formData) => {
+    console.log(formData)
     // 列表查询
     if (isNaN(level)) return;
-
-    console.log("formData", formData);
-    formData.topAreaId = 0;
     params = Object.assign(
       {},
       params,
@@ -494,12 +505,6 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           parentIdGroup = [],
         } = data || {};
         let cols = [];
-
-        setFields({
-          ...fields,
-          field: [...header.slice(level + 1)],
-          type: [...type.slice(level + 1)],
-        });
         for (let k of header) {
           let col = {
             title: k,
@@ -535,7 +540,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           let row = {
             areaId: idGroup[i],
             parentId: parentIdGroup[i],
-            type: type[i],
+            type: type,
           };
           header.forEach((e, i) => {
             row[e] = r[i];
@@ -582,27 +587,37 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
     try {
       let values = await nform.validateFields();
-      let { remark, name, parentId = Record.parentId } = values; // 编辑时 parentId=Record.parentId
-
+      let { remark, name, parentId = Record.parentId, lngLat={} } = values; // 编辑时 parentId=Record.parentId
+      console.log(values)
+      console.log(lngLat)
+      console.log(fields)
+      let parent_id = isAdd ? parentId.pop() : parentId;
       let other = [];
-      for (let key of fields.field) {
-        let obj = {
-          name: key,
-          value: values[key],
+      for (let key of fields) {
+        let obj = {}
+        if (key.type == 1) {
+          obj = {
+            name: key.name,
+            value: lngLat[key.name]
+          }
+        }else {
+          obj = {
+            name: key.name,
+            value: values[key.name],
+         }
+         
         };
         other.push(obj);
-      }
-
+      } 
       let methods = isAdd ? "Insert" : "UpdateArea";
       let params = {
         ...defaultParams,
         remark,
         name,
-        parentId,
+        parentId: parent_id,
         id: isAdd ? 0 : Record.areaId,
         fields: other,
-      };
-      console.log(params);
+      };    
       let { success, errMsg } = await Area[methods](params);
       success &&
         message.success({
@@ -619,22 +634,43 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   };
 
   const edit = (record) => {
+    console.log(record)
+    let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
+    
     setIsAdd(false);
     setRecord({ ...Record, ...record });
     let { 名称, 备注, areaId, ...keys } = record;
-
+     
     nform.setFieldsValue({
       name: record["名称"],
       remark: record["备注"],
       ...keys,
     });
+    for(let key of fields) {
+      if(key.type == 1) {
+         nform.setFieldValue(['lngLat', `${key.name}`], record[key.name]);
+       }else {
+         nform.setFieldValue(key.name, record[key.name]);
+       }
 
+     }
     nref.current.onOpen();
   };
   const setAaddress = (adr) => {
-    console.log(adr);
+   let {lngLat} = nform.getFieldsValue();
+   //console.log(lngLat)
+   //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
+   
+   for(let key in lngLat) {   
+    console.log(lngLat[key]) 
+     if(!lngLat[key]){
+        nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
+        break
+     }
+
+   }
     nform.setFieldsValue({
-      经纬度: `${adr.lng},${adr.lat}`,
+     // 'lngLat.经纬度': `${adr.lng},${adr.lat}`,
       address: adr.address,
     });
   };
@@ -648,8 +684,10 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
         );
       case 1:
         return (
-          <Item label={f} name={f} tooltip="为保证精度点击地图获取">
-            <Input />
+          <Item label={f} name={['lngLat', f]} tooltip="为保证精度点击地图获取,清空后再重新获取" rules={[{
+            required: true,
+          }]} >
+            <Input allowClear />
           </Item>
         );
       case 2:
@@ -888,15 +926,15 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
       {/* 新增 / 编辑*/}
       <CModal
-        width={fields.type.includes(1) ? 1024 : 554}
+        width={islngLat ? 1024 : 554}
         title={title}
         ref={nref}
         onOk={onOk}
         mold="cust"
       >
         <Formbox
-          islngLat={fields.type.includes(1)}
-          rowes={limitlevle.length + 2 + fields.field.length}
+          islngLat={islngLat}
+          rowes={limitlevle.length + 2 + fields.length}
           form={nform}
           size="middle"
           labelCol={{ flex: "7em" }}
@@ -907,53 +945,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           }}
         >
           {isAdd
-            ? <CascaderSct />
-            /* limitlevle?.map((lv, index, array) => {
-             
-              let options = []
-               // console.log(options)
-                if (index == 0) {
-                  return (
-                    <Item
-                      label={`${lv?.name}名称`}
-                      name={index == array.length - 1 ? "parentId" : lv?.name}
-                    >
-                      <Select
-                        options={leveloption.current[`level1`] || []}
-                        fieldNames={{
-                          label: "name",
-                          value: "id",
-                          options: "options",
-                        }}
-                        disabled={!isAdd}
-                        onChange={(e) => getLevelOption(e, lv.level + 1)}
-                      ></Select>
-                    </Item>
-                  );
-                } else {
-                  return (
-                    <Item
-                      label={`${lv?.name}名称`}
-                      name={index == array.length - 1 ? "parentId" : lv?.name}
-                    >
-                      <Select
-                        options={options}
-                        fieldNames={{
-                          label: "name",
-                          value: "id",
-                          options: "options",
-                        }}
-                        disabled={!isAdd}
-                        onChange={(e) => getLevelOption(e, lv.level + 1)}
-                      >
-
-
-
-                      </Select>
-                    </Item>
-                  );
-                }
-              }) */
+            ? <CascaderSct />           
             : limitlevle?.map((lv, index, array) => {
                 return (
                   <Item label={`${lv?.name}名称`} name={lv?.name}>
@@ -974,7 +966,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             <Input />
           </Item>
 
-          {fields.field?.map((f, index) => inputType(f, fields.type[index]))}
+          {fields?.map((f, index) => inputType(f.name, f.type))}
           <Item
             label="备注"
             name="remark"
