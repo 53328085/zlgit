@@ -1,153 +1,235 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useRequest } from "ahooks";
 import style from "./style.module.less";
-import { Select, DatePicker, Table, Button } from "antd";
-import Searchtree from "./searchTree";
+import { message } from "antd";
+import UseHeader from "@com/useHeader";
+import Searchtree from "@com/searchTree";
 import Barchart from "./barChart";
 import Ringchart from "./ringChart";
 import Percent from "./percent";
+import { useSelector } from "react-redux";
+import { selectProjectId } from "@redux/systemconfig.js";
+import { utils, writeFile } from "xlsx";
+import { EnergyPublicRuntime } from "@api/api.js";
+import { validRange } from "semver";
+export default function Index(props) {
+  const tableRef = useRef();
+  const {
+    queryEnergyCategoryTree,
+    queryElectricYear,
+    queryElectricDay,
+    queryElectricMonth,
+    queryWaterDay,
+    queryWaterMonth,
+    queryWaterYear,
+    queryGasDay,
+    queryGasMonth,
+    queryGasYear,
+  } = EnergyPublicRuntime;
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageContent = (type, content) => {
+    messageApi.open({
+      type,
+      content,
+    });
+  };
+  const projectId = useSelector(selectProjectId);
+  //导出数据
+  const exportData = () => {
+    console.log("export");
+    // const params = { raw: true };
+    // const workbook = utils.book_new(); // 新建工作簿
+    // let table = tableRef.current
+    // const ws = utils.table_to_sheet(
+    //   // 新建工作表
+    //   table,
+    //   params
+    // );
+    // utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    // let file =  "xlsx";
+    // writeFile(workbook, '公共能耗.xlsx', { bookType: file }); // 下载
+  };
+  const headerProps = {
+    isEnergy: true, //能耗类型
+    isDate: true, //日期
+    isShift: true, //班次
+    isTab: false, //能耗、费用radioButton
+    isSearch: true, //查询按钮
+    isExport: true, //导出按钮
+    export: exportData, //导出调用方法
+  };
+  const [headerData, setHeaderData] = useState({});
+  const getFromChild = (data) => {
+    setHeaderData(data);
+  };
+  const [treeIdList, setTreeIdList] = useState([]);
+    const [energySub, setEnergySub] = useState([]);
+  //自定义调用方法
+  const pageInfo = () => {
+    if (headerData.energyType === 1 && headerData.type === "year") {
+      // 当选择能源类型是:电，时间类型是:年 时
+      return queryElectricYear(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {
+        let {success, data} = res;
+      if(success && data){
+        console.log(data.energySub);
+        setEnergySub(data.energySub)
+      }else{
+        messageContent('error', res.errMsg)
+      }
+      });
+    } else if (headerData.energyType === 1 && headerData.type === "date") {
+      // 当选择能源类型是:电，时间类型是:日 时
+      return queryElectricDay(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {
+        let {success, data} = res;
+        if(success && data){
+          setAreaList(data.energySub)
+          setDefaultArea(data[0].id)
+          setAreaId(data[0].id)
+        }else{
+          messageContent('error', res.errMsg)
+        }
+      });
+    } else if (headerData.energyType === 1 && headerData.type === "month") {
+      // 当选择能源类型是:电，时间类型是:月 时
+      return queryElectricMonth(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 2 && headerData.type === "date") {
+      // 当选择能源类型是:水，时间类型是:日 时
+      return queryWaterDay(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 2 && headerData.type === "month") {
+      // 当选择能源类型是:水，时间类型是:月 时
+      return queryWaterMonth(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 2 && headerData.type === "year") {
+      // 当选择能源类型是:水，时间类型是:年 时
+      return queryWaterYear(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 3 && headerData.type === "date") {
+      // 当选择能源类型是:燃气，时间类型是:日 时
+      return queryGasDay(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 3 && headerData.type === "date") {
+      // 当选择能源类型是:燃气，时间类型是:月 时
+      return queryGasMonth(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    } else if (headerData.energyType === 3 && headerData.type === "date") {
+      // 当选择能源类型是:燃气，时间类型是:年 时
+      return queryGasYear(
+        projectId,
+        headerData.areaId,
+        headerData.date,
+        headerData.shift,
+        treeIdList
+      ).then((res) => {});
+    }
+  };
+  const { run: runPageInfo } = useRequest(pageInfo, {
+    manual: true,
+  });
+  useEffect(() => {
+    runPageInfo();
+  }, [headerData, treeIdList]);
+  //树
+  const [treeData, setTreeData] = useState([]);
+  const fieldNames = {
+    title: "name",
+    key: "id",
+    children: "childs",
+  };
+  const getCategoryTree = () => {
+    return queryEnergyCategoryTree(projectId, headerData.energyType).then(
+      (res) => {
+        let { success, data } = res;
+        if (success) {
+          if (data) {
+            setTreeData(data);
+          } else {
+            setTreeData([]);
+          }
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      }
+    );
+  };
+  const { run: runTree } = useRequest(getCategoryTree, {
+    manual: true,
+  });
 
-export default function Index() {
-  const { Option } = Select;
-  const { RangePicker } = DatePicker;
-  const RegionList = [
-    {
-      Id: 0,
-      Name: "正泰物联全部园区",
-    },
-    {
-      Id: 1,
-      Name: "正泰物联滨江园区",
-    },
-    {
-      Id: 2,
-      Name: "正泰物联温州园区",
-    },
-  ];
-  const BuildingList = [
-    {
-      Id: 0,
-      Name: "全部建筑物",
-    },
-    {
-      Id: 1,
-      Name: "研发1号楼",
-    },
-    {
-      Id: 2,
-      Name: "研发2号楼",
-    },
-  ];
-  const FloorList = [
-    {
-      Id: 0,
-      Name: "全部楼层",
-    },
-    {
-      Id: 1,
-      Name: "1层",
-    },
-    {
-      Id: 2,
-      Name: "2层",
-    },
-  ];
-
-  const [showDate, setShowDate] = useState(false);
+  const getSelcetedTree = (val) => {
+    //公共能耗分类选中id获取
+    const arr = val.map((item) => {
+      return item.node.id;
+    });
+    setTreeIdList(() => [...arr]);
+  };
+  console.log(treeIdList);
   const [showElectricity, setShowElectricity] = useState(true);
+  useEffect(() => {
+    if (headerData.energyType) {
+      runTree(headerData.energyType);
+    }
+    if (headerData.energyType == 1) {
+      setShowElectricity(true);
+    } else {
+      setShowElectricity(false);
+    }
+  }, [headerData.energyType]);
 
-  const onSelect = (value) => {
-    value == 3 ? setShowDate(true) : setShowDate(false);
-  };
-  const onChange = (date, dateString) => console.log(date, dateString);
-  const onSelecType = (value) => {
-    value == 0 ? setShowElectricity(true) : setShowElectricity(false);
-  };
   return (
     <div>
-      <div className={style.header}>
-        <span style={{ marginLeft: "12px" }}>园区选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          style={{ width: "320px", marginLeft: "12px" }}
-        >
-          {RegionList.map((item, index) => {
-            return (
-              <Option key={index} value={item.Id}>
-                {item.Name}
-              </Option>
-            );
-          })}
-        </Select>
-        <div className={style.line}></div>
-        <Select
-          placeholder="请选择建筑物"
-          size="middle"
-          style={{ width: "224px", marginLeft: "12px" }}
-        >
-          {BuildingList.map((item, index) => {
-            return (
-              <Option key={index} value={item.Id}>
-                {item.Name}
-              </Option>
-            );
-          })}
-        </Select>
-        <Select
-          placeholder="请选择楼层"
-          size="middle"
-          style={{ width: "128px", marginLeft: "12px" }}
-        >
-          {FloorList.map((item, index) => {
-            return (
-              <Option key={index} value={item.Id}>
-                {item.Name}
-              </Option>
-            );
-          })}
-        </Select>
-        <div className={style.line}></div>
-        <span>能源类型</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{ width: "126px", marginLeft: "12px" }}
-          onSelect={onSelecType}
-        >
-          <Option value="0">电</Option>
-          <Option value="1">水</Option>
-          <Option value="2">燃气</Option>
-        </Select>
-        <div className={style.line}></div>
-        <span>时间</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{ width: "126px", marginLeft: "12px" }}
-          onSelect={onSelect}
-        >
-          <Option value="0">今日</Option>
-          <Option value="1">本月</Option>
-          <Option value="2">本年</Option>
-          <Option value="3">自定义</Option>
-        </Select>
-        {showDate ? (
-          <RangePicker
-            style={{ marginLeft: 12 }}
-            onChange={onChange}
-            size="middle"
-            placeholder={["开始日期", "结束日期"]}
-          ></RangePicker>
-        ) : null}
-        {showDate ? (
-          <Button style={{ marginLeft: 12 }} type="primary" size="middle">
-            查询
-          </Button>
-        ) : null}
-      </div>
+      {contextHolder}
+      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.content}>
-        <Searchtree></Searchtree>
-        {/* 切换能源类型不是 电 时，隐藏右边内容，改变中间内容宽度 */}
+        <Searchtree
+          title="公共能耗分类"
+          fieldNames={fieldNames}
+          treeData={treeData}
+          getValues={getSelcetedTree}
+        ></Searchtree>
         {showElectricity ? (
           <div className={style.contentMiddle}>
             <span className={style.title}>公共能耗</span>
@@ -165,7 +247,7 @@ export default function Index() {
               <span className={style.title}>公共能耗占比</span>
               <Ringchart></Ringchart>
             </div>
-            <Percent></Percent>
+            <Percent energySubGive={energySub}></Percent>
           </div>
         ) : null}
       </div>

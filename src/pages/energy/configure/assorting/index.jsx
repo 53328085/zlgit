@@ -6,6 +6,7 @@ import CustContext from '@com/content.js'
 import Electric from './electric'
 import Water from './water'
 import Gas from './gas'
+import style from './style.module.less'
 
 export default function Index() {
   const [value, setvalue] = useState('electric')
@@ -25,11 +26,16 @@ export default function Index() {
     water: Water,
     gas: Gas,
    }
+   const [tag, setTag] = useState('')
+   const getFromChild = val => {
+    setTag(val)
+   }
    let Com = ProjectCom[value]
   return (
     <CustContext.Provider value={propsData}>
+      {tag == 'open' ? <div className={style.mask}></div> : null}
       <Pagecount showserach={false} pd="32px">   
-      { <Com projectId={projectId} />}
+      { <Com projectId={projectId} getValues={getFromChild}/>}
       </Pagecount>
     </CustContext.Provider>
   )

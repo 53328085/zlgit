@@ -3,6 +3,8 @@ import React, {useState, useContext, useMemo, useEffect, useRef} from "react";
 import { Form, Select, Button, Dropdown, Space, Divider} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
+import {useSelector} from 'react-redux'
+import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
@@ -45,10 +47,18 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, search, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
+  const {form, handler, search, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
   const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
   //const {printArea, setPrintArea} = useState()
+
+  const levelone = useSelector(selectOneLevel)
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+ 
   const allData = useRef();
+  const onChange = (e) => {
+     console.log(e)
+     handler?.run && handler.run([e])
+  }
   const btns = [
     {
       key: 1,
@@ -89,68 +99,17 @@ export default function useSerach(props) {
   }, [names])  
   return (  
   
-    <Cform layout="inline" className={style.serachform} form={form} initialValues={{initialValues}} >
-      <Space size={16}>
-      <Item label="园区选择" name='RegionId'>
-        <Select style={{ width: "320px" }} onChange={submit} allowClear>
-          <Option value={1}>正泰园区</Option>
+    <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
+      
+      <Item label="园区选择" name='area'>
+        <Select style={{ width: "200px" }} onChange={onChange} allowClear options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+         
         </Select>
       </Item>
-      {
-        names.includes('BuildingId')  && <Cdivider dashed type="vertical" />
-      }
-      {
-        <Item label="" name='BuildingId'>
-        <Select style={{ width: "235px" }}>
-          <Option value={0}>全部建筑物</Option>
-          <Option value={2}>1号楼</Option>
-        </Select>
-        </Item>
-       
-      }
-     
-      { names.includes('FloorId') ? (
-      <Item label="" style={{width: '174px'}} name='FloorId' >
-        <Select onChange={submit} allowClear>
-        <Option value={0}>全部楼层</Option>
-        <Option value={3}>7楼</Option>
-        </Select>
-      </Item>)
-      : null
-      }
-       {
-        names.includes('apply')  && <Cdivider dashed type="vertical" />
-      }
-      { names.includes('apply') ? (
-        <Item label="" style={{width: '174px'}} name='apply' >
-        <Select onChange={submit} allowClear>
-        <Option value={0}>全部应用</Option>
-        <Option value={3}>7楼</Option>
-        </Select>
-      </Item>)
-      : null
-      }
-      {
-         names.includes('Type') ?
-        (<Item label="类型" name='Type'>
-        <Select style={{width: '174px'}}>
-          <Option value={4}>电</Option>
-        </Select>
-        </Item>)
-        : null
-      }
-      {
-       names.includes('State') ? 
-       (<Item label="状态" name='State'>
-        <Select style={{width: '174px'}}>
-          <Option value={5}>正常</Option>
-        </Select>
-      </Item>)
-
-      : null
-      }
-      </Space>
-      <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}> 
+        {
+          props.custview
+        }
+     {/*  <Space size={16} style={{marginLeft: 'auto', marginRight: '0px'}}>  */}
       {/*  RefreshButton, 
   NewButton, 
   ChangeButton, 
@@ -182,12 +141,12 @@ export default function useSerach(props) {
        <WegButton weg="other">其他</WegButton>
        <WegButton weg="trend" other="true" >趋势</WegButton>
        <WegButton weg="report" other="true" >报表</WegButton> */}
-      {
+      {/* {
        
        data!==undefined ? 
        (<Item>
             <ExportButton  onClick={() => onDownload()} />
-          {/*  <Button  onClick={() => onDownload()} type="primary">数据导出</Button> */}
+         
        </Item>)
        : null
       
@@ -197,7 +156,7 @@ export default function useSerach(props) {
        print!==undefined ? 
        (<Item>
            <PrintButton print={onHandlePrint}></PrintButton>
-        {/*   <Dropdown.Button  menu={{items: btns, onClick: onHandlePrint}}>打印</Dropdown.Button> */}
+       
        </Item>)
        : null
       
@@ -212,7 +171,7 @@ export default function useSerach(props) {
      
       }
       
-      </Space>
+      </Space> */}
     </Cform>
   
     

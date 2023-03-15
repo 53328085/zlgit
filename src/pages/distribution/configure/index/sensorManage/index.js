@@ -317,6 +317,7 @@ export default function Index() {
 
   return (
     <div>
+      {transTag =='open' ? <div className={style.mask}></div> : null }
       {contextHolder}
       <div className={style.header}>
         <span className={style.headerTitle}>园区选择</span>

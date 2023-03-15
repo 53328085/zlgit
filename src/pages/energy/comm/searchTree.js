@@ -3,7 +3,7 @@ import style from './style.module.less';
 import {Input, Button, Radio, Tree } from 'antd';
 import dashLine from '@imgs/line.png'
 
-export default function Index(){
+export default function Index(props){
     const { Search } = Input;
 
       const [treeData, setTreeData] = useState([
@@ -140,18 +140,19 @@ export default function Index(){
        
       return(
         <div className={style.contentLeft}>
+          {props.title ? <div className={style.title}>{props.title}</div> : null}
           <Search
             placeholder="请输入关键字查询"
             size="middle"
             onChange={onSearch}
             style={{
               width: 264,
-              margin:'12px'
+              margin:'16px'
             }}
           />
           <img src={dashLine} className={style.radioLine}></img>
           <Tree
-            style={{height:'636px',overflow:'auto',marginLeft:'12px'}}
+            style={{height:'636px',overflow:'auto',marginLeft:'16px'}}
             checkable
             onExpand={onExpand}
             expandedKeys={expandedKeys}

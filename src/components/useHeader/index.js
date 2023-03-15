@@ -1,128 +1,296 @@
-import React, { useState, useEffect } from 'react'
-import style from './style.module.less';
-import { SearchOutlined } from '@ant-design/icons';
-import { Select, Input, Button, Form, Radio, DatePicker ,Space} from 'antd';
-import dayjs from 'dayjs';
-export default function Index({
-    isexport = false,
-    isset = false,
-    ischangetab = false,
-    isbuilding = false,
-    isfloor = false,
-    iscircle = false,
-    isSearch = false,
-    isenergy = false,
-    istime = false,
-}) {
-    const { Option } = Select
-    const [form] = Form.useForm()
-    const onChange = ({ target: { value } }) => {
-        console.log('radio checked', value);
-        setValue(value);
-    };
-    const disabledDate = (current) => {
-        return current && current < dayjs().endOf('day');
+import React, { useState, useEffect, useRef } from "react";
+import { useRequest } from "ahooks";
+import style from "./style.module.less";
+import { Select, DatePicker, Button, message, Radio } from "antd";
+import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { selectProjectId } from "@redux/systemconfig.js";
+import { AreaSetting, eneryShift } from "@api/api.js";
+//dayjs bug
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+
+export default function Index(props) {
+  const { Option } = Select;
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageContent = (type, content) => {
+    messageApi.open({
+      type,
+      content,
+    });
+  };
+  const projectId = useSelector(selectProjectId);
+  const { QueryAllArea } = AreaSetting;
+  const { queryShifts } = eneryShift;
+  //园区
+  const [areaList, setAreaList] = useState([]);
+  const [defaultArea, setDefaultArea] = useState();
+  const [areaId, setAreaId] = useState(0);
+  const getAreaData = () => {
+    return QueryAllArea(projectId, 1).then((res) => {
+      let { success, data } = res;
+      if (success && data) {
+        setAreaList(data);
+        setDefaultArea(data[0].id);
+        setAreaId(data[0].id);
+      } else {
+        messageContent("error", res.errMsg);
+      }
+    });
+  };
+  const { data: AreaData } = useRequest(getAreaData, {
+    onSuccess: (result, params) => {},
+  });
+  const changeArea = (value) => {
+    setAreaId(value);
+  };
+  //能源类型
+  const [energyType, setEnergyType] = useState(1);
+  const changeEnergyType = (val) => {
+    setEnergyType(val);
+  };
+  //日期选择
+  const [type, setType] = useState("year");
+  let time = new Date();
+  let year = time.getFullYear();
+  let month = time.getMonth() + 1;
+  month = month > 9 ? month : "0" + month;
+  let day = time.getDate();
+  day = day > 9 ? day : "0" + day;
+  const [date, setDate] = useState(year.toString() + "-01-01");
+  const changeDateType = (val) => {
+    setType(val);
+    if (val == "year") setDate(year.toString() + "-01-01");
+    if (val == "month") setDate(year + "-" + month + "-01");
+    if (val == "date") setDate(year + "-" + month + "-" + day);
+  };
+  const changeDate = (date, dateString) => {
+    if (type == "year") setDate(dateString + "-01-01");
+    if (type == "month") setDate(dateString + "-01");
+    if (type == "date") setDate(dateString);
+  };
+  const PickerWithType = ({ type, onChange }) => {
+    if (type === "date")
+      return (
+        <DatePicker
+          picker={type}
+          value={dayjs(date, "YYYY-MM-DD")}
+          format={"YYYY-MM-DD"}
+          onChange={onChange}
+        />
+      );
+    if (type === "month")
+      return (
+        <DatePicker
+          picker={type}
+          value={dayjs(date, "YYYY-MM")}
+          format={"YYYY-MM"}
+          onChange={onChange}
+        />
+      );
+    if (type === "year")
+      return (
+        <DatePicker
+          picker={type}
+          value={dayjs(date, "YYYY")}
+          format={"YYYY"}
+          onChange={onChange}
+        />
+      );
+  };
+  //班次
+  const [shift, setShift] = useState(0);
+  const changeShift = (val) => {
+    setShift(val);
+  };
+  const [shiftList, setShiftList] = useState([]);
+  const getShifts = () => {
+    return queryShifts(projectId).then((res) => {
+      let { success, data } = res;
+      if (success) {
+        setShiftList(data);
+      } else {
+        messageContent("error", res.errMsg);
+      }
+    });
+  };
+  const { data: shiftsData, run: runShift } = useRequest(getShifts, {
+    manual: true,
+    onSuccess: (result, params) => {},
+  });
+  useEffect(() => {
+    if (props.isShift) {
+      runShift();
+    } else {
+      return;
+    }
+  }, []);
+  //导出
+  const handleExport = () => {
+    props.export();
+  };
+
+  //数据类型
+  const [tab, setTab] = useState("energy");
+  const changeTab = (val) => {
+    setTab(val);
+  };
+
+  useEffect(() => {
+    if (areaId == 0) {
+      return;
+    } else {
+      let params = {
+        areaId,
+        shift,
+        energyType,
+        type,
+        date,
+        tab,
       };
-    return (
-        <div className={style.header}>
-            <Form layout='inline'
-                style={{ display: 'flex', alignItems: 'center' }}
-                initialValues={{
-                    RegionId: null,
-                }}>
-                <Form.Item label='园区选择' name='RegionId' style={{ marginLeft: 12 }}>
-                    <Select
-                        placeholder="请选择园区"
-                        size="middle"
-                        style={{ width: '320px' }}
-                        defaultValue="1"
-                    >
-                        <Option value="1">正泰物联全部园区</Option>
-                        <Option value="2">正泰物联滨江园区</Option>
-                        <Option value="3">正泰物联温州园区</Option>
-                    </Select>
-                </Form.Item>
-                {ischangetab ? <>
-                    <Form.Item label='' name='energyId'>
-                        <Radio.Group onChange={onChange} defaultValue="1" buttonStyle="solid">
-                            <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', borderRadius: 16, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} value="1">能耗</Radio.Button>
-                            <Radio.Button style={{ width: '96px', textAlign: 'center', borderRadius: 16, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} value="2">费用</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                    <div className={style.date}>
-                        <Form.Item label='' name='dateId'>
-                            <Select
-                                placeholder=""
-                                size="middle"
-                                style={{ width: '80px' }}
-                                defaultValue="1"
-                            >
-                                <Option value="1">日</Option>
-                                <Option value="2">月</Option>
-                                <Option value="3">年</Option>
-                            </Select>
-                            
-                        </Form.Item>
-                        <Form.Item label='' name='date'>
-                        <DatePicker
-                                format="YYYY-MM-DD"
-                                disabledDate={disabledDate}
-                            />
-                            </Form.Item>
-                    </div>
-                </> : null}
-                {isbuilding ? <>
-                    <div className={style.line}></div>
-                    <Form.Item label='' name='BuildingId'>
-                        <Select
-                            placeholder="请选择建筑物"
-                            size="middle"
-                            style={{ width: '224px' }}
-                        >
-                            <Option value="0">全部建筑物</Option>
-                            <Option value="1">研发1号楼</Option>
-                            <Option value="2">研发2号楼</Option>
-                            <Option value="3">行政楼</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label='' name='FloorId'>
-                        <Select
-                            placeholder="请选择楼层"
-                            size="middle"
-                            style={{ width: '128px' }}
-                        >
-                            <Option value="0">全部楼层</Option>
-                            <Option value="1">1F</Option>
-                            <Option value="2">2F</Option>
-                            <Option value="3">3F</Option>
-                        </Select>
-                    </Form.Item>
-                </> : null}
-
-                {iscircle ? <>
-                    <div className={style.line}></div>
-                    <Form.Item label='周期' name='FloorId'>
-                        <Select
-                            placeholder="请选择周期"
-                            size="middle"
-                            style={{ width: '96px' }}
-                        >
-                            <Option value="0">月度</Option>
-                            <Option value="1">季度</Option>
-                            <Option value="2">年度</Option>
-                        </Select>
-                    </Form.Item>
-                </> : null}
-
-                {isSearch ? <>
-                    <div className={style.line}></div>
-                    <Form.Item label='' name='Input'>
-                        <Input size="middle" placeholder='请输入房间号' style={{ width: '260px' }} />
-                    </Form.Item>
-                    <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
-                </> : null}
-            </Form>
-
-        </div>
-    )
+      props.getValues(params);
+    }
+  }, [areaId, shift, energyType, type, date, tab]);
+  return (
+    <div>
+      {contextHolder}
+      <div className={style.header}>
+        <span style={{ marginLeft: "16px", marginRight: 16 }}>园区选择</span>
+        <Select
+          placeholder="请选择园区"
+          size="middle"
+          key={defaultArea}
+          defaultValue={defaultArea}
+          style={{ width: "200px" }}
+          onChange={changeArea}
+        >
+          {areaList.map((item) => {
+            return (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            );
+          })}
+        </Select>
+        {props.isEnergy ? (
+          <>
+            <div className={style.line}></div>
+            <span>能源类型</span>
+            <Select
+              size="middle"
+              style={{ width: "126px", marginLeft: "16px" }}
+              defaultValue={1}
+              onChange={changeEnergyType}
+            >
+              <Option value={1}>电</Option>
+              <Option value={2}>水</Option>
+              <Option value={3}>燃气</Option>
+            </Select>
+          </>
+        ) : null}
+        {props.isTab ? (
+          <>
+            <Radio.Group
+              onChange={changeTab}
+              defaultValue="energy"
+              buttonStyle="solid"
+            >
+              <Radio.Button
+                style={{
+                  width: "96px",
+                  marginLeft: 16,
+                  textAlign: "center",
+                  borderRadius: 16,
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                }}
+                value="energy"
+              >
+                能耗
+              </Radio.Button>
+              <Radio.Button
+                style={{
+                  width: "96px",
+                  textAlign: "center",
+                  borderRadius: 16,
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                }}
+                value="cost"
+              >
+                费用
+              </Radio.Button>
+            </Radio.Group>
+          </>
+        ) : null}
+        {props.isDate ? (
+          <>
+            <div className={style.line}></div>
+            <Select
+              size="middle"
+              style={{ width: "80px", marginRight: "16px" }}
+              defaultValue={"year"}
+              onChange={changeDateType}
+            >
+              <Option value="date">日</Option>
+              <Option value="month">月</Option>
+              <Option value="year">年</Option>
+            </Select>
+            <PickerWithType
+              style={{ width: "160px", marginRight: "16px" }}
+              type={type}
+              onChange={changeDate}
+            ></PickerWithType>
+          </>
+        ) : null}
+        {props.isShift ? (
+          <>
+            <Select
+              size="middle"
+              style={{ width: "112px", marginLeft: 16, marginRight: "16px" }}
+              defaultValue={0}
+              onChange={changeShift}
+            >
+              <Option value={0}>全部班次</Option>
+              {shiftList.map((item) => {
+                return (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                );
+              })}
+            </Select>
+          </>
+        ) : null}
+        {props.isExport ? (
+          <>
+            <Button
+              style={{
+                marginRight: 16,
+                marginLeft: "auto",
+                borderRadius: 4,
+                width: 96,
+              }}
+              size="middle"
+              onClick={() => handleExport()}
+            >
+              导出
+            </Button>
+          </>
+        ) : null}
+        {props.isSearch ? (
+          <>
+            <Button
+              style={{ marginRight: 16, borderRadius: 4, width: 96 }}
+              size="middle"
+            >
+              查询
+            </Button>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
 }

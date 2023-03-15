@@ -14,9 +14,10 @@ const Analysis = lazy(() => import("../pages/energy/analysis"))
 const Quota = lazy(() => import("../pages/energy/quota"))
 const Comm = lazy(() => import("../pages/energy/comm"))
 const Cost = lazy(() => import("../pages/energy/cost"))
-const Lighting = lazy(() => import("../pages/energy/lighting") )
+const LightingC = lazy(() => import("../pages/energy/lingingC") )
 const Streetlamp = lazy(() => import("../pages/energy/streetLamp") )
 const Air = lazy(() => import("../pages/energy/air"))
+const Streetlight = lazy(() => import("../pages/energy/light"))
 const Runreport = lazy(() => import("../pages/energy/runreport"))
 const menus = [];
 const components = {
@@ -33,8 +34,8 @@ const components = {
     '010910': Comm, // 公共能耗
 
     '010911': Air, // 空调控制
-    '010912': Streetlamp, // 路灯控制
-    '010913': Lighting, //照明控制
+    '010912': Streetlight, // 路灯控制
+    '010913': LightingC, //照明控制
     '010914': Runreport, // 运行报告
 }
 store.subscribe(() => {

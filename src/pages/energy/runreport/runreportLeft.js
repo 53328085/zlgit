@@ -8,24 +8,39 @@ import style from "./style.module.less";
 import { useState, useEffect, Fragment } from "react";
 import { Select, Radio, Button, DatePicker, Space } from "antd";
 import dashLine from "@imgs/line.png";
+import { useRequest } from "ahooks";
+import { AreaSetting } from "@api/api.js";
+import { useSelector } from "react-redux";
+import { selectProjectId } from "@redux/systemconfig.js";
 export default function Index(props) {
+  const { QueryAllArea } = AreaSetting;
   const [showMonth, setShowMonth] = useState(true);
-  const RegionList = [
-    {
-      Id: 0,
-      Name: "全部",
-    },
-    {
-      Id: 1,
-      Name: "正泰物联滨江园区",
-    },
-    {
-      Id: 2,
-      Name: "正泰物联温州园区",
-    },
-  ];
+  
+  //园区下拉获取
+  const projectId = useSelector(selectProjectId);
+  const [areaList, setAreaList] = useState([]);
+  const [defaultArea, setDefaultArea] = useState();
+  const [areaId,setAreaId] = useState(0)
+  const getAreaData = () => {
+    return QueryAllArea(projectId, 1).then((res) => {
+      let { success, data } = res;
+      if (success && data) {
+        setAreaList(data);
+        setDefaultArea(data[0].id);
+        setAreaId(data[0].id);
+      } else {
+        messageContent("error", res.errMsg);
+      }
+    });
+  };
+  const { data: AreaData } = useRequest(getAreaData, {
+    onSuccess: (result, params) => {},
+  });
+
+  const changeArea = (value) => {
+    setAreaId(value);
+  };
   const onChangeReportType = ({ target: { value } }) => {
-    // setValue(value);
     console.log(value.props);
     value == 1 ? setShowMonth(true) : setShowMonth(false);
     value == 1
@@ -45,12 +60,15 @@ export default function Index(props) {
         <Select
           placeholder="请选择园区"
           size="middle"
+          key={defaultArea}
+          defaultValue={defaultArea}
+          onChange={changeArea}
           style={{ width: "320px", marginTop: "32px" }}
         >
-          {RegionList.map((item, index) => {
+          {areaList.map((item) => {
             return (
-              <Select.Option key={index} value={item.Id}>
-                {item.Name}
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
               </Select.Option>
             );
           })}

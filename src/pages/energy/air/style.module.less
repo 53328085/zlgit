@@ -57,6 +57,28 @@
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
+            position: relative;
+
+            .boxList {
+                overflow-x: hidden;
+                width: 1570px;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .pageBtn {
+                width: 55px;
+                height: 100%;
+                position: absolute;
+                right: 0;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                flex-direction: column;
+            }
         }
 
         .airBox {
@@ -92,12 +114,102 @@
                     color: #fff;
                 }
             }
-            .airBtn:hover{
+
+            .airBtn:hover {
                 background-color: #515151;
-                span{
+
+                span {
                     color: #fff;
                 }
             }
         }
+    }
+}
+
+.airModal {
+    :global(.ant-modal-content) {
+
+
+        :global(.ant-modal-header) {
+            border: none;
+            padding-bottom: 0 !important;
+        }
+
+        :global(.ant-modal-footer) {
+            border: none;
+            text-align: center;
+            padding: 16px;
+        }
+
+        :global(.ant-modal-close-x) {
+            font-size: 32px;
+        }
+    }
+}
+
+.airModalBox {
+    width: 100%;
+    height: 373px;
+    border: 1px solid rgb(215, 215, 215);
+    background-color: #fff;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 270px);
+
+    .airModalBoxBtn {
+        position: relative;
+        width: 180px;
+        height: 178px;
+        border: 1px solid rgb(215, 215, 215);
+
+        .airModalName {
+            padding-left: 12px;
+            line-height: 30px;
+        }
+
+        .airModalImage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 104px;
+        }
+
+        .airModalState {
+            width: 180px;
+            height: 44px;
+            border-top: 1px solid rgba(204, 204, 204, 1);
+            background-color: rgba(242, 242, 242, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #237AE4;
+            font-size: 16px;
+            position: absolute;
+            bottom: 0;
+
+            span {
+                font-size: 14px;
+                text-align: left;
+                color: #515151;
+                line-height: 44px;
+            }
+        }
+    }
+
+    Button {
+        width: 180px;
+        height: 42px;
+    }
+
+    .onClickState {
+        background-color: #237AE4;
+        color: #fff;
+    }
+}
+
+.custmodal {
+    :global(.ant-btn-default) {
+        display: none;
     }
 }
