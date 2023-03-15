@@ -43,6 +43,7 @@ export default function Index() {
   const [areaList, setAreaList] = useState([])
   const [defaultArea, setDefaultArea] = useState()
   const [areaId,setAreaId] = useState(0)
+  const[areaName, setAreaName] = useState('')
   const getAreaData = () =>{
     return QueryAllArea (projectId, 1).then(res=> {
       let {success, data} = res
@@ -50,6 +51,7 @@ export default function Index() {
         setAreaList(data)
         setDefaultArea(data[0].id)
         setAreaId(data[0].id)
+        setAreaName(data[0].name)
       }else{
         messageApi.open({
           type:'error',
@@ -64,7 +66,11 @@ export default function Index() {
   })
   const changeArea = (value) => {
     setAreaId(value)
-    console.log(areaId, value)
+    areaList.map(item => {
+      if(item.id == value){
+        setAreaName(item.name)
+      }
+    })
   }
 
   const getSolutions = () => {
@@ -269,7 +275,7 @@ export default function Index() {
       </div>
       <div className={style.mainContent}>
         <div className={style.card}>
-          <div className={style.cardTitle}>正泰物联杭州园区电价</div>
+          <div className={style.cardTitle}>{areaName}电价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>电价&nbsp;(元/度)</div>
             {elecPrice ? <div className={style.contentMiddle}>
@@ -290,7 +296,7 @@ export default function Index() {
           </div>
         </div>
         <div className={style.card}>
-          <div className={style.cardTitle}>正泰物联杭州园区水价</div>
+          <div className={style.cardTitle}>{areaName}水价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>水价&nbsp;(元/m³)</div>
             {waterPrice ? <div className={style.contentMiddle}>
@@ -305,7 +311,7 @@ export default function Index() {
           </div>
         </div>
         <div className={style.card}>
-          <div className={style.cardTitle}>正泰物联杭州园区燃气价</div>
+          <div className={style.cardTitle}>{areaName}燃气价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>燃气价&nbsp;(元/m³)</div>
             {gasPrice ? <div className={style.contentMiddle}>
@@ -335,7 +341,7 @@ export default function Index() {
           </div>
         </div>
         <div className={style.card}>
-          <div className={style.cardTitle}>正泰物联杭州园区燃油价</div>
+          <div className={style.cardTitle}>{areaName}燃油价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>燃油价&nbsp;(元/吨)</div>
             {fuelPrice ? <div className={style.contentMiddle}>
@@ -360,7 +366,7 @@ export default function Index() {
                   <Item name='price1' rules={[{required:true, message:'尖电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
               <Item label='平电价' rules={[{required:true, message:'平电价不能为空！'}]}>
@@ -368,7 +374,7 @@ export default function Index() {
                   <Item name='price3' rules={[{required:true, message:'平电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
             </div>
@@ -378,7 +384,7 @@ export default function Index() {
                   <Item name='price2' rules={[{required:true, message:'峰电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
               <Item label='谷电价' rules={[{required:true, message:'谷电价不能为空！'}]}>
@@ -386,7 +392,7 @@ export default function Index() {
                   <Item name='price4' rules={[{required:true, message:'谷电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
             </div>
@@ -455,7 +461,7 @@ export default function Index() {
                   <Item name='price1' rules={[{required:true, message:'尖电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
               <Item label='平电价' rules={[{required:true, message:'平电价不能为空！'}]}>
@@ -463,7 +469,7 @@ export default function Index() {
                   <Item name='price3' rules={[{required:true, message:'平电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
             </div>
@@ -473,7 +479,7 @@ export default function Index() {
                   <Item name='price2' rules={[{required:true, message:'峰电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
               <Item label='谷电价' rules={[{required:true, message:'谷电价不能为空！'}]}>
@@ -481,7 +487,7 @@ export default function Index() {
                   <Item name='price4' rules={[{required:true, message:'谷电价不能为空！'}]}>
                     <Input style={{width:'112px'}}></Input>
                   </Item>
-                  <span style={{fontSize: 14, color:'#999'}}>(度/元)</span>
+                  <span style={{fontSize: 14, color:'#999'}}>(元/度)</span>
                 </Space>
               </Item>
             </div>

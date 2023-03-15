@@ -33,18 +33,18 @@ export default function MainPage(props){
   const columns = [
     {
       title:'园区',
-      dataIndex:'area',
-      key:'area',
+      dataIndex:'areaName',
+      key:'areaName',
       align:'center',
     },{
       title:'建筑物',
-      dataIndex:'building',
-      key:'building',
+      dataIndex:'buildingName',
+      key:'buildingName',
       align:'center'
     },{
       title:'房间',
-      dataIndex:'room',
-      key:'room',
+      dataIndex:'roomName',
+      key:'roomName',
       align:'center'
     },{
       title:'综合能耗用能剩余',
@@ -53,38 +53,57 @@ export default function MainPage(props){
       width:'258px',
       render: (_, record) => (
         <Space size="middle">
-          <CustomProgress progress={parseFloat(record.areaYearQuotaLeavedPercent)}></CustomProgress>
+          <CustomProgress progress={parseFloat(record.comprehensiveQuotaLeaved) / parseFloat(record.comprehensiveQuota) }></CustomProgress>
         </Space>)
     },{
       title:(<div>年度综合能耗<br/>剩余/定额(吨标煤)</div>),
-      dataIndex:'quotaComprehensive',
       key:'quotaComprehensive',
       width:'157px',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.comprehensiveQuotaLeaved + '/' + record.comprehensiveQuota}</span>
+        </Space>)
     },{
       title:(<div>年度电(kWh)<br/>剩余/定额 </div>),
       dataIndex:'quotaElectric',
       key:'quotaElectric',
       width:'157px',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.electricQuotaLeaved + '/' + record.electricQuota}</span>
+        </Space>)
     },{
       title:(<div>水(m³)<br/>剩余/定额 </div>),
       dataIndex:'quotaWater',
       key:'quotaWater',
       width:'157px',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.waterQuotaLeaved + '/' + record.waterQuota}</span>
+        </Space>)
     },{
       title:(<div>燃气(m³)<br/>剩余/定额 </div>),
       dataIndex:'quotaGas',
       key:'quotaGas',
       width:'157px',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.gasQuotaLeaved + '/' + record.gasQuota}</span>
+        </Space>)
     },{
       title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
       dataIndex:'quotaCoal',
       key:'quotaCoal',
       width:'157px',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.coalQuotaLeaved + '/' + record.coalQuota}</span>
+        </Space>)
     }
   ]
   const [pageNum, setPageNum] = useState(1)

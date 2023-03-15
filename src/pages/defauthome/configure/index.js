@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react'
 import style from './style.module.less';
 import configIcon from './configIcon.png'
-import { Drawer, Input, message, Modal } from 'antd';
+import { Drawer, Input, message, Modal, Empty } from 'antd';
 import _, { result } from 'lodash'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
@@ -22,6 +22,7 @@ import ElectricAnalysis from '../../../components/defaultHome/electricAnalysis'
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
+import { MenuUnfoldOutlined } from '@ant-design/icons';
 import './style.css';
 import './index.css';
 
@@ -51,6 +52,14 @@ import firstwarn from '../../../assets/image/warning.png'
 import finished from '@imgs/finished.png'
 import { useRequest } from 'ahooks';
 export default function Index() {
+  const { Search } = Input
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageContent = (type, content) => {
+    messageApi.open({
+      type,
+      content,
+    })
+  }
   const [resetModal, setResetModal] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false);
   const projectId = useSelector(selectProjectId)
@@ -63,53 +72,69 @@ export default function Index() {
       {props.tabName.length< 5 ? <div className={style.configName}>{props.tabName}</div> : <div className={style.specialConfigName}>{props.tabName}</div> }
     </div>
   }
+  const [dragList, setDragList] = useState([])
+  const [dragListCopy, setDragListCopy] = useState([])
+  const basicItems = [
+    {img:company, itemName:'公司信息', draggable:true },
+    {img:device, itemName:'设备信息', draggable:false },
+    {img:safe, itemName:'安全运行天数', draggable:false },
+    {img:weather, itemName:'天气信息', draggable:false },
+  ]
+  const monitorItems = [
+    {img:electric, itemName:'用电量', draggable:true },
+    {img:water, itemName:'用水量', draggable:true },
+    {img:gas, itemName:'用燃气量', draggable:true },
+    {img:coal, itemName:'用煤量', draggable:false },
+    {img:load, itemName:'实时负荷率', draggable:true },
+    {img:monitor, itemName:'实时监控', draggable:false },
+    {img:carbon, itemName:'碳排放量', draggable:true },
+  ]
+  const orderItems = [
+    {img:warning, itemName:'今日告警', draggable:true },
+    {img:warningMessage, itemName:'告警信息', draggable:true },
+    {img:todayOrder, itemName:'今日工单', draggable:true },
+    {img:spread, itemName:'告警分布', draggable:false },
+  ]
+  const disItems = [
+    {img:distribution, itemName:'配电房监测', draggable:false },
+    {img:transformer, itemName:'变压器监控', draggable:false },
+    {img:humiture, itemName:'温湿度监控', draggable:false },
+  ]
+  const energyItems = [
+    {img:energyCost, itemName:'能耗费用', draggable:false },
+    {img:energyTrend, itemName:'能耗趋势', draggable:true },
+    {img:costTrend, itemName:'能耗费用趋势', draggable:false },
+    {img:energyRank, itemName:'能耗排名', draggable:false },
+  ]
   const changeTab = (value) =>{
-    // if(value == activeName) {
-    //   return;
-    // }
+     if(value == activeName) {
+      return;
+    }
     setactiveName(value);
+    setbasicOpen(true);
     if(value == '基础信息'){
-      setbasicOpen(!basicOpen);
-      setmonitorOpen(false)
-      setOrderOpen(false)
-      setDisOpen(false)
-      setEnergyOpen(false)
+    setDragList(basicItems)
+    setDragListCopy(basicItems)
     }
     if(value == '运行监控'){
-      setbasicOpen(false);
-      setmonitorOpen(!monitorOpen);
-      setOrderOpen(false)
-      setDisOpen(false)
-      setEnergyOpen(false)
+      setDragList(monitorItems)
+      setDragListCopy(monitorItems)
     }
     if(value == '运维工单'){
-      setbasicOpen(false);
-      setmonitorOpen(false);
-      setOrderOpen(!orderOpen)
-      setDisOpen(false)
-      setEnergyOpen(false)
+      setDragList(orderItems)
+      setDragListCopy(orderItems)
     }
     if(value == '配电房信息'){
-      setbasicOpen(false);
-      setmonitorOpen(false);
-      setOrderOpen(false)
-      setDisOpen(!disOpen)
-      setEnergyOpen(false)
+      setDragList(disItems)
+      setDragListCopy(disItems)
     }
     if(value == '能耗统计'){
-      setbasicOpen(false);
-      setmonitorOpen(false);
-      setOrderOpen(false)
-      setDisOpen(false)
-      setEnergyOpen(!energyOpen)
+      setDragList(energyItems)
+      setDragListCopy(energyItems)
     }
   }
 
   const [basicOpen, setbasicOpen] = useState(false);
-  const [monitorOpen, setmonitorOpen] = useState(false);
-  const [orderOpen, setOrderOpen] = useState(false);
-  const [disOpen, setDisOpen] = useState(false);
-  const [energyOpen, setEnergyOpen] = useState(false);
 
   const [layoutItem, setlayoutItem] = useState([])
   const [newCounter, setNewCounter] = useState(0)
@@ -117,17 +142,16 @@ export default function Index() {
   const [layoutValue, setlayoutValue] = useState([])
   const onClose = () => {
     setbasicOpen(false);
-    setmonitorOpen(false);
-    setOrderOpen(false);
-    setDisOpen(false)
-    setEnergyOpen(false)
+    setactiveName('');
   }
 
   const AddItem = (props) => {
-    return <div className={style.dragItem} draggable={true} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
-      <img className={style.itemImg} src={props.imgUrl}></img>
-      <span className={style.itemName}>{props.itemName}</span>
-    </div>
+    return (
+      <div className={style.dragItem} draggable={props.dragTag} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
+        <img className={style.itemImg} src={props.imgUrl}></img>
+        <span className={style.itemName}>{props.itemName}</span>
+      </div>
+    )
   }
 
   //RGL布局
@@ -159,7 +183,6 @@ export default function Index() {
 
   const {queryData} = useRequest(getLayoutData, {
     onSuccess:(result, params) => {
-      console.log(result)
       sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
       setlayoutItem(result.list)
     }
@@ -230,7 +253,10 @@ export default function Index() {
         h:2,
         'description': classOfName
       })
-    }else{
+      setlayoutItem (newlayout)
+      setNewCounter(newCounter + 1);
+    }else if(classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '今日工单' || classOfName == '告警信息' ||
+    classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' ){
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x:xValue,
@@ -239,10 +265,14 @@ export default function Index() {
         h:1,
         'description': classOfName
       })
+      setlayoutItem (newlayout)
+      setNewCounter(newCounter + 1);
+    }else{
+      messageContent('warning', '当前模块尚未配置，请等待后续版本更新!')
+      return;
     }
     
-    setlayoutItem (newlayout)
-    setNewCounter(newCounter + 1);
+    
   }
 
   const onDrop = (layouts, layoutValue, _event) =>{
@@ -277,9 +307,23 @@ export default function Index() {
     setResetModal(false)
     setConfirmModal(false)
   }
+  const onSearch = val => {
+    if(val == ''){
+      setDragList(dragListCopy)
+    }else{
+      let arr = []
+      dragListCopy.map(item => {
+        if(item.itemName.indexOf(val) != -1){
+          arr.push(item)
+        }
+      })
+      setDragList(arr)
+    }
+  }
 
   return (
     <div className={style.mainContent} style={{backgroundColor:'#eee'}}>
+      {contextHolder}
       <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop = {onDrop} >
         {_.map( layoutItem, el =>createElement(el) )} 
       </ReactGridLayout>
@@ -309,69 +353,25 @@ export default function Index() {
         </div>
       </Modal>
 
-      <Drawer placement='right' onClose={onClose} open={basicOpen} mask={false}>
+      <Drawer placement='right' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true}>
         <div className={style.searchInput}>
-          <Input placeholder="模块名称" style={{width: 177, backgroundColor:'#000', color:'#fff'}}  size='middle'/>
-          <span className={style.searchButton} onClick={() => sessionStorage.setItem('layoutItem',JSON.stringify(layoutItem))}>查询</span>
+          <Search 
+          placeholder="模块名称" 
+          allowClear 
+          enterButton="查询" 
+          style={{width: 240, backgroundColor:'#000', color:'#fff'}} 
+          size="middle" 
+          onSearch={onSearch} 
+          />
         </div>
         <div className={style.addModule}>
-          <AddItem imgUrl={company} itemName={'公司信息'}></AddItem>
-          <AddItem imgUrl={device} itemName={'设备信息'}></AddItem>
-          <AddItem imgUrl={safe} itemName={'安全运行天数'}></AddItem>
-          <AddItem imgUrl={weather} itemName={'天气信息'}></AddItem>
+        {dragList.map((item, index)=>{
+            return <AddItem imgUrl={item.img} itemName={item.itemName} dragTag={item.draggable} key={index}></AddItem>
+        })}
+        {dragList.length == 0 ? <Empty style={{marginTop: 200, marginLeft: 32, color: "#fff"}}></Empty> : null}
         </div>
-      </Drawer>
-      <Drawer placement='right' onClose={onClose} open={monitorOpen} mask={false}>
-        <div className={style.searchInput}>
-          <Input placeholder="模块名称" style={{width: 177, backgroundColor:'#000', color:'#fff'}}  size='middle'/>
-          <span className={style.searchButton}>查询</span>
-        </div>
-        <div className={style.addModule}>
-          <AddItem imgUrl={electric} itemName={'用电量'}></AddItem>
-          <AddItem imgUrl={water} itemName={'用水量'}></AddItem>
-          <AddItem imgUrl={gas} itemName={'用燃气量'}></AddItem>
-          <AddItem imgUrl={coal} itemName={'用煤量'}></AddItem>
-          <AddItem imgUrl={load} itemName={'实时负荷率'}></AddItem>
-          <AddItem imgUrl={monitor} itemName={'实时监控'}></AddItem>
-          <AddItem imgUrl={carbon} itemName={'碳排放量'}></AddItem>
-        </div>
-      </Drawer>
-
-      <Drawer placement='right' onClose={onClose} open={orderOpen} mask={false}>
-        <div className={style.searchInput}>
-          <Input placeholder="模块名称" style={{width: 177, backgroundColor:'#000', color:'#fff'}}  size='middle'/>
-          <span className={style.searchButton}>查询</span>
-        </div>
-        <div className={style.addModule}>
-          <AddItem imgUrl={warning} itemName={'今日告警'}></AddItem>
-          <AddItem imgUrl={warningMessage} itemName={'告警信息'}></AddItem>
-          <AddItem imgUrl={todayOrder} itemName={'今日工单'}></AddItem>
-          <AddItem imgUrl={spread} itemName={'告警分布'}></AddItem>
-        </div>
-      </Drawer>
-
-      <Drawer placement='right' onClose={onClose} open={disOpen} mask={false}>
-        <div className={style.searchInput}>
-          <Input placeholder="模块名称" style={{width: 177, backgroundColor:'#000', color:'#fff'}}  size='middle'/>
-          <span className={style.searchButton}>查询</span>
-        </div>
-        <div className={style.addModule}>
-          <AddItem imgUrl={distribution} itemName={'配电房监测'}></AddItem>
-          <AddItem imgUrl={transformer} itemName={'变压器监控'}></AddItem>
-          <AddItem imgUrl={humiture} itemName={'温湿度监控'}></AddItem>
-        </div>
-      </Drawer>
-
-      <Drawer placement='right' onClose={onClose} open={energyOpen} mask={false}>
-        <div className={style.searchInput}>
-          <Input placeholder="模块名称" style={{width: 177, backgroundColor:'#000', color:'#fff'}}  size='middle'/>
-          <span className={style.searchButton}>查询</span>
-        </div>
-        <div className={style.addModule}>
-          <AddItem imgUrl={energyCost} itemName={'能耗费用'}></AddItem>
-          <AddItem imgUrl={energyTrend} itemName={'能耗趋势'}></AddItem>
-          <AddItem imgUrl={costTrend} itemName={'能耗费用趋势'}></AddItem>
-          <AddItem imgUrl={energyRank} itemName={'能耗排名'}></AddItem>
+        <div className={style.closeDrawer}>
+          <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </Drawer>
     </div>
