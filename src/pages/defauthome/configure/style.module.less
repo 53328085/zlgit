@@ -48,7 +48,7 @@
     .ant-drawer-content-wrapper{
         top: 88px!important;
         width: 320px!important;
-        
+        // position: relative;
     }
     .ant-drawer-header{
         display: none;
@@ -58,12 +58,37 @@
         padding: 16px!important;
     }
 }
+.closeDrawer{
+    position: absolute;
+    left: 12px;
+    bottom: 0px;
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    &:hover{
+        color: #237ae4;
+    }
+}
 .searchInput{
     padding-bottom: 16px;
     border-bottom: 1px dashed #ccc;
     display: flex;
     align-items: center;
     width: 241px;
+    :global{
+        .ant-input{
+            color: #fff;
+            background-color: #000;
+        }
+        .ant-input-affix-wrapper{
+            background-color: #000;
+        }
+        .ant-btn{
+            border-color: rgb(119, 119, 119);
+            background-color: rgb(242, 242, 242);
+            color: #000;
+        }
+    }
 }
 .searchButton{
     display: inline-block;

@@ -213,7 +213,7 @@ export default function Index() {
       energyType,
       type: type == 'year'? 3 : type =='month' ? 2: 1,
       date,
-      selectLineIds: lineParams
+      selectIds: lineParams
     }
     return queryByLine(pageNum, pageSize, params).then(res => {
       let {success, data} = res 
@@ -254,7 +254,7 @@ export default function Index() {
       energyType,
       type: type == 'year'? 3 : type =='month' ? 2 : 1,
       date,
-      selectLineIds: selectBuildIds
+      selectIds: selectBuildIds
     }
     return queryByBuilding(pageNum, pageSize, params).then(res => {
       let {success, data} = res 
