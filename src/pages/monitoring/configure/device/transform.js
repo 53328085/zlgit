@@ -129,6 +129,7 @@ export default function gateway({ deviceStyle }) {
 
   //确认编辑
   const editOk = async () => {
+    console.log(111)
     editform.validateFields().then(async () => {
       const {
         id,
@@ -737,6 +738,8 @@ export const EditFormComp = (props) => {
     }else{
       if(Number(value)<=0){
      return   Promise.reject(new Error("请输入正确的额定容量"))
+      }else{
+        return Promise.resolve()
       }
     }
     }

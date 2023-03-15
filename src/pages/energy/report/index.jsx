@@ -56,7 +56,6 @@ export default function Index() {
     <>
 
       <CustContext.Provider value={dataProps} >
-       
           <div style={{backgroundColor:"#fff",display:'flex',alignItems:'center',padding:'8px 16px',marginBottom:16,border:'1px solid #d7d7d7',borderRadius:4 }}>
             <Form 
             form={form}
@@ -65,19 +64,17 @@ export default function Index() {
                 <Select style={{width:200 }} options={areas} fieldNames={{label:'name',value:'id'}} onChange={ changeArea}></Select>
               </Form.Item>
             </Form>
-            
+
           </div>
-    
+
           <Pagecount showSearch={false}>
             {Coms[Number(value)]}
           </Pagecount>
-          {/* <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        </div> */}
-
       </CustContext.Provider>
 
     </>
 
   )
 }
+
 
