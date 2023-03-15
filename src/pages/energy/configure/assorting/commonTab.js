@@ -232,16 +232,16 @@ export default function Index (props) {
                         type:'success',
                         content:'批量导入成功!'
                     })
-                    
+                    setAddModal(false)
                 }else{
                     messageApi.open({
                         type:'error',
                         content: res.data.errMsg
                     })
+                    setErrorData(data);
+                    setAddModal(false)
+                    errRef.current.onOpen()
                 }
-                setErrorData(data);
-                setAddModal(false)
-                errRef.current.onOpen()
             }else{
                 messageApi.open({
                     type:"error",

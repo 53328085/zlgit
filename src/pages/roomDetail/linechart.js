@@ -1,45 +1,49 @@
 import React, {useState, useEffect, Fragment} from 'react'
 import style from './style.module.less';
-import { Line } from '@ant-design/plots';
+import * as echarts from "echarts";
 
 export default function Index(props){
-    
-    const { lineData } = props;
-    
-      const config = {
-        data:lineData.valueList,
-        xField: 'type',
-        yField: 'sales',
-        label: {
-    
-          // 可手动配置 label 数据标签位置
-          position: 'top',
-          // 'top', 'bottom', 'middle',
-          // 配置样式
-          style: {
-            fill: '#FFFFFF',
-            opacity: 0.6,
-          },
-        },
-        xAxis: {
-          label: {
-            autoHide: true,
-            autoRotate: false,
-          },
-        },
-        meta: {
-          type: {
-            alias: '时间',
-          },
-          sales: {
-            alias: lineData.Unit,
-          },
-        },
-      };
-
-    return <div className={style.chartTab}>
+  const { lineData } = props;
+  let lineId = 'lineChart' + Math.random();
+  useEffect(()=>{
+    let lineChart = echarts.init(document.getElementById(lineId));
+    lineChart.setOption({
+      color:['#237ae4'],
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        top: '0',
+        left: 'center'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: lineData.dateList
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          name: lineData.Unit,
+          data: lineData.valueList,
+          type: 'line'
+        }
+      ]
+    })
+  },[])
+  return <div className={style.chartTab}>
     <div className={style.itemTitle}><span>{ lineData.Name }</span></div>
-    <Line style={{width:424,height:334,margin:12}} {...config} />
-</div>
+    <div style={{width:424,height:334,margin:12}}  id={lineId}></div>
+  </div>
     
 }

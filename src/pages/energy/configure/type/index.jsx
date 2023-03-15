@@ -230,12 +230,25 @@ export default function Index () {
     queryEnergyStructureConfig(projectId, id, areaId).then(res => {
       let {success, data} = res
       if(success){
-        setSubTable(data.relations)
-        setUnknownTable(data.noRelations)
+        if(!data){
+          setSubTable([])
+          setUnknownTable([])
+        }else{
+          if(data.relations){
+            setSubTable(data.relations)
+          }else{
+            setSubTable([])
+          }
+          if(data.noRelations){
+            setUnknownTable(data.noRelations)
+          }else{
+            setUnknownTable([])
+          }
+        }
         setDeleteDom(true)
         setTransTag('open')
       }else{
-        messageContent('error',rs.errMsg)
+        messageContent('error',res.errMsg)
       }
     })
   }

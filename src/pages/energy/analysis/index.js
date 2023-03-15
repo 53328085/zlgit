@@ -6,8 +6,8 @@ import SearchTree from './searchTree'
 import columns,  { onDesc} from './columns';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import { AreaSetting , eneryShift, Monitoring, energyQuota, EnergyLossRuntime} from '@api/api.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { eneryShift, Monitoring, energyQuota, EnergyLossRuntime} from '@api/api.js'
 import {utils, writeFile} from 'xlsx'
 import dashLine from '@imgs/line.png'
 //dayjs bug
@@ -29,30 +29,14 @@ export default function Index() {
     })
   }
   const projectId = useSelector(selectProjectId);
-  const { QueryAllArea } = AreaSetting
+  const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
   const { LineManager: { LineManagerQuery } } = Monitoring
   const { querySpaceTrees } = energyQuota
   const { queryByLine, queryByBuilding } = EnergyLossRuntime
   //园区
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
   const changeArea = (value) => {
     setAreaId(value)
   }

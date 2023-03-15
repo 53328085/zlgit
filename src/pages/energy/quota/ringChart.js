@@ -1,22 +1,12 @@
 import React, {useState, useEffect, Fragment} from 'react'
 import { Pie, measureTextWidth } from '@ant-design/plots';
-
-
+import * as echarts from "echarts";
+import { cloneDeep } from 'lodash';
 export default function Index(props){
-    // const ringData = [
-    //     {
-    //         type:'1号楼',
-    //         value: 35,
-    //     },
-    //     {
-    //         type:'2号楼',
-    //         value: 15,
-    //     },
-    //     {
-    //         type:'3号楼',
-    //         value: 20,
-    //     },
-    // ]
+    const ringData = cloneDeep(props.chartData)
+    ringData.map(item => {
+      item.value = parseFloat(item.value)
+    })
     const  renderStatistic = (containerWidth, text, style) => {
       const { width: textWidth, height: textHeight } = measureTextWidth(text, style);
       const R = containerWidth / 2; // r^2 = (w / 2)^2 + (h - offsetY)^2
@@ -33,8 +23,8 @@ export default function Index(props){
     
     const config = {
         appendPadding: 10,
-        // data:ringData,
-        data: props.chartData,
+        data:ringData,
+        // data: props.chartData,
         angleField: 'value',
         colorField: 'name',
         radius: 0.8,
@@ -47,7 +37,7 @@ export default function Index(props){
         label: {
           type: 'outer',
           offset: '-50%',
-          content: '{value}',
+          content:'{value}',
           style: {
             textAlign: 'center',
             fontSize: 14,

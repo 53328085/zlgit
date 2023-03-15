@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
-import {Button, Progress, message } from 'antd';
+import {Button, Progress, message, Empty } from 'antd';
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import RingChart from './ringChart'
@@ -88,7 +88,7 @@ export default function Index(props){
                             <span>园区能耗分布</span>
                         </div>
                         <div style={{width:256,height:256,marginLeft:12}}>
-                            <RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>
+                            {itemData.buildingConsumeDistribution.length > 0 ?<RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>:<Empty></Empty>}
                         </div>
                     </div>
                     <Button type='primary' style={{width: 288, height: 40}} onClick={toMainPage}>查看房间能耗详情</Button>

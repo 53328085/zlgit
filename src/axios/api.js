@@ -523,6 +523,12 @@ export const Monitoring =  {
         LineManagerDelete:(data)=>server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
         QueryUnusedMeter:(data)=>server.get(`/Monitor/LineManager/QueryUnusedMeter?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}&alike=${data.alike}`),//未使用线路
         ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
+    },
+    //运行监控
+    Runtime:{
+        RuntimeStatistics:(data)=>server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
+        RuntimeStatus:(data)=>server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
+        RuntimeQueryMonthUsage:(data)=>server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
     }
 }
 //能耗排名
@@ -556,6 +562,10 @@ export class energyDesigner {
     static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
     static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
     static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)
+    static querOverview = (projectId, type, areaId, date) => server.post(`Energy/EnergyStreetLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询路灯能耗概览
+    static queryStreetLights = (projectId, content, areaId) => server.post(`Energy/EnergyStreetLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询路灯列表
+    static lineOn = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯
+    static lineOff = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯
 }
 //能源定价
 export class energyPrice {

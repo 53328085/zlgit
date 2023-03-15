@@ -1,135 +1,44 @@
 import React, {useState, useEffect, Fragment} from 'react'
-import style from './style.module.less';
-import { Column } from '@ant-design/plots';
+import * as echarts from "echarts";
 
 export default function Index(){
-    const barData = [
+  useEffect(()=>{
+    let barChart = echarts.init(document.getElementById('barChart'));
+    barChart.setOption({
+      color:['#237ae4'],
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        top: '0',
+        left: 'center'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+        '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
         {
-          type: '01:00',
-          sales: 125.36,
-        },
-        {
-          type: '02:00',
-          sales: 251.25,
-        },
-        {
-          type: '03:00',
-          sales: 321.25,
-        },
-        {
-          type: '04:00',
-          sales: 587.36,
-        },
-        {
-          type: '05:00',
-          sales: 258.14,
-        },
-        {
-          type: '06:00',
-          sales: 298.36,
-        },
-        {
-          type: '07:00',
-          sales: 301.32,
-        },
-        {
-          type: '08:00',
-          sales: 428.69,
-        },{
-          type: '09:00',
-          sales: 298.54,
-        },
-        {
-          type: '10:00',
-          sales: 125.96,
-        },
-        {
-          type: '11:00',
-          sales: 189.15,
-        },
-        {
-          type: '12:00',
-          sales: 315.45,
-        },
-        {
-          type: '13:00',
-          sales: 425.42,
-        },
-        {
-          type: '14:00',
-          sales: 500.23,
-        },
-        {
-          type: '15:00',
-          sales: 418.36,
-        },
-        {
-          type: '16:00',
-          sales: 428.69,
-        },{
-          type: '17:00',
-          sales: 298.54,
-        },
-        {
-          type: '18:00',
-          sales: 125.96,
-        },
-        {
-          type: '19:00',
-          sales: 189.15,
-        },
-        {
-          type: '20:00',
-          sales: 315.45,
-        },
-        {
-          type: '21:00',
-          sales: 0,
-        },
-        {
-          type: '22:00',
-          sales: 0,
-        },
-        {
-          type: '23:00',
-          sales: 0,
-        },
-        {
-          type: '24:00',
-          sales: 0,
-        },
+          name:'综合能耗(吨标煤)',
+          data: [125.36, 251.25, 321.25, 587.36, 258.14, 298.36, 301.32, 428.69, 298.54, 125.96, 189.15, 315.45, 
+            425.42, 500.23, 418.36, 428.69, 298.54, 125.96, 189.15, 315.45, 0, 0, 0, 0],
+          type: 'bar'
+        }
       ]
-    
-      const config = {
-        data:barData,
-        xField: 'type',
-        yField: 'sales',
-        label: {
-    
-          // 可手动配置 label 数据标签位置
-          position: 'top',
-          // 'top', 'bottom', 'middle',
-          // 配置样式
-          style: {
-            fill: '#FFFFFF',
-            opacity: 0.6,
-          },
-        },
-        xAxis: {
-          label: {
-            autoHide: true,
-            autoRotate: false,
-          },
-        },
-        meta: {
-          type: {
-            alias: '时间',
-          },
-          sales: {
-            alias: '综合能耗(吨标煤)',
-          },
-        },
-      };
-
-    return <Column style={{width:1368,height:334,margin:12}} {...config} />
+    })
+  },[])
+  return <div style={{width:1368,height:334}} id='barChart'></div>
 }
