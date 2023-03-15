@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState,useMemo } from 'react'
 import SelectForm from '@com/useSelect'
 import style from './ranking.module.less'
 import { useSelector } from 'react-redux'
@@ -20,6 +20,8 @@ export default function Index() {
   const roomRef = useRef(null)//房间
   const [form] = Form.useForm()
   const projectId = useSelector(state => state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
+  const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
   const typeoptions = [{
     label: '日',
     value: 1
@@ -167,7 +169,8 @@ export default function Index() {
                   label: "name",
                   value: "id"
                 }}
-                options={arealist}
+                defaultValue={0}
+                options={areaOptions}
                 onChange={changeArea}
               ></Select>
             </Form.Item>

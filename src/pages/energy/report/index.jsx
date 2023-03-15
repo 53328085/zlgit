@@ -23,21 +23,23 @@ export default function Index() {
 
   const [form]=Form.useForm()
   const projectId = useSelector(state=>state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
+  const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
   let Coms = [
     <Energymeter areavalue={areavalue} arealistRef={arealistRef}/>,
     <Energyconsum areavalue={areavalue} arealistRef={arealistRef}/>,
     <Energytimeshare areavalue={areavalue} arealistRef={arealistRef}/>
   ]
-  //获取区域
-  const getAeraQueryAll=async ()=>{
-    const res =await energyReport.AeraQueryAll(projectId)
-    if(res.success){
-      setAreas([{name:'全部园区',id:0},...res.data])
-      form.setFieldValue('area',0) 
-    }else{
-      message.error(res.errMsg)
-    }
-  }
+  // //获取区域
+  // const getAeraQueryAll=async ()=>{
+  //   const res =await energyReport.AeraQueryAll(projectId)
+  //   if(res.success){
+  //     setAreas([{name:'全部园区',id:0},...res.data])
+  //     form.setFieldValue('area',0) 
+  //   }else{
+  //     message.error(res.errMsg)
+  //   }
+  // }
   //改变区域
   const changeArea =(v)=>{
     console.log(v)
@@ -50,8 +52,8 @@ export default function Index() {
     form
   }
   useEffect(()=>{
-    getAeraQueryAll()
-  },[])
+    // getAeraQueryAll()
+  },[projectId])
   return (
     <>
 
@@ -61,7 +63,7 @@ export default function Index() {
             form={form}
             >
               <Form.Item label="园区选择" name="area" style={{marginBottom:0}}>
-                <Select style={{width:200 }} options={areas} fieldNames={{label:'name',value:'id'}} onChange={ changeArea}></Select>
+                <Select style={{width:200 }} options={areaOptions} fieldNames={{label:'name',value:'id'}} onChange={ changeArea} defaultValue={0}></Select>
               </Form.Item>
             </Form>
 

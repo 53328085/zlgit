@@ -6,7 +6,7 @@ import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
  function Comp(props,ref) {
     const context = useContext(CustContext)
-    const [selvalue,setSelValue]=useState()
+    const [selvalue,setSelValue]=useState("")
     const [inpvalue,setInpValue]=useState()
     const selRef = useRef(selvalue)
     selRef.current =selvalue
@@ -23,6 +23,7 @@ import CustContext from '@com/content'
         modalImport,
         exportTable,
         tableParamsRef,
+        levelname,
         getList=()=>{}
     } = props
    
@@ -55,15 +56,16 @@ import CustContext from '@com/content'
     inpRef
    }))
     useEffect(() => {
-        console.log(areaList)
-    }, [])
+        if(areaList&&areaList.length>0){
+            setSelValue(0)
+        }
+    }, [areaList])
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
-                        <Select
-                           defaultValue={0}
+                        <Select   
                            value={selvalue}
                            fieldNames={{
                             label:'name',
