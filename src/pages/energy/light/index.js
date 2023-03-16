@@ -38,10 +38,10 @@ export default function Index(props) {
   let [lightDateYesterday, setlightDateYesterday] = useState('去年');
   let energyInfo = {
     total: {
-      periodValue: '0.00',
-      lastMonthPeriodValue: '0.00',
-      mom: '100%',
-      yoy: '100%'
+      periodValue: '',
+      lastMonthPeriodValue: '',
+      mom: '',
+      yoy: ''
     },
     detail: {
       x: [],
@@ -280,14 +280,14 @@ export default function Index(props) {
                   {/* </div> */}
                   <div className={style.airEnergyData}>
                     <p>{lightDate} :{energyInfo.total ? energyInfo.total.periodValue : '0.00'}</p>
-                    <div>同比 :{parseFloat(energyInfo.total.mom) > 0 ? '+' + energyInfo.total.mom : energyInfo.total.mom}
-                      {parseFloat(energyInfo.total.mom) > 0 ? <Image src={imgurl.up} preview={false} width={9} height={14} style={{ margin: 16 }}></Image> : <Image src={imgurl.down} preview={false} width={9} height={14} style={{ margin: 16 }}></Image>}
+                    <div style={{display:'flex',alignItems:'center'}}>同比 :{parseFloat(energyInfo.total.mom) > 0 ? '+' + energyInfo.total.mom : energyInfo.total.mom}
+                      {parseFloat(energyInfo.total.mom) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={2} ></Image> :energyInfo.total.mom?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
 
 
                     </div>
                     <p>{lightDateYesterday}  :{energyInfo.total ? energyInfo.total.lastMonthPeriodValue : '0.00'}</p>
-                    <div>环比 :{parseFloat(energyInfo.total.yoy) > 0 ? '+' + energyInfo.total.yoy : energyInfo.total.yoy}
-                      {parseFloat(energyInfo.total.yoy) > 0 ? <Image src={imgurl.up} preview={false} width={9} height={14} style={{ margin: 16 }}></Image> : <Image src={imgurl.down} preview={false} width={9} height={14} style={{ margin: 16 }}></Image>}
+                    <div style={{display:'flex',alignItems:'center'}}>环比 :{parseFloat(energyInfo.total.yoy) > 0 ? '+' + energyInfo.total.yoy : energyInfo.total.yoy}
+                      {parseFloat(energyInfo.total.yoy) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={22}></Image> : energyInfo.total.yoy?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
                     </div>
                   </div>
                 </div>

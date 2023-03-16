@@ -232,11 +232,22 @@ export default function Index(props) {
   //   refreshDeps:[changeTag],
   //   manual: true,
   // })
+  const headerProps = {
+    isEnergy: false,//能耗类型
+    isDate: true,//日期
+    isShift: false,//班次
+    isTab: true,//能耗、费用radioButton
+    isSearch: false,//查询按钮
+    isExport: false,//导出按钮
+    //export: exportData //导出调用方法
+  }
+  const getFromChild = data => {
+  }
   return (
     <div>
       {contextHolder}
       <Spin size="large" spinning={loading} tip="控制命令下发中，请稍候……" delay={500}>
-        <UseHeader isbuilding={false} iscircle={false} isSearch={false} ischangetab={true}></UseHeader>
+        <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
         <div className={style.content}>
           <div className={style.contentTop}>
             <div className={style.contentTopLeft}>
