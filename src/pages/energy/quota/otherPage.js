@@ -87,7 +87,7 @@ export default function Index(props){
                         <div className={style.itemTitle}>
                             <span>园区能耗分布</span>
                         </div>
-                        <div style={{width:256,height:256,marginLeft:12}}>
+                        <div style={{width:288,height:256}}>
                             {itemData.buildingConsumeDistribution.length > 0 ?<RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>:<Empty></Empty>}
                         </div>
                     </div>

@@ -5,6 +5,7 @@ import {PersistGate} from 'redux-persist/integration/react'
 import {persistStore} from 'redux-persist'
 import store from './redux/store' 
 import 'antd/dist/antd.css'
+// import 'antd/dist/antd.min.css'
 import zhCN from 'antd/es/locale/zh_CN'
 import moment from 'moment';
 import 'moment/locale/zh-cn';

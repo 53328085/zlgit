@@ -8,7 +8,8 @@ import special from '@imgs/special.png'
 import up from '@imgs/up.png'
 import down from '@imgs/down.png'
 
-export default function Index(){
+export default function Index(props){
+    console.log(props);
     return (
         <div className={style.rightBottom}>
             <span className={style.title}>公共能耗同比</span>
@@ -31,8 +32,8 @@ export default function Index(){
                 <img className={style.lightingImg} src={lighting}></img>
             </div>
             <div className={style.itemData}>
-                <span>照明插座用电 (kWh)</span>
-                <span className={style.dataStyle} >332.32</span>
+            <span>{props.energySubGive[0].name}</span>
+                <span className={style.dataStyle} >{props.energySubGive[0].periodValue}</span>
             </div>
             <img className={style.upOrDown} src={up}></img>
             <span className={style.percentUp}>+3.25</span>
@@ -44,8 +45,8 @@ export default function Index(){
                 <img className={style.airConditionImg} src={airCondition}></img>
             </div>
             <div className={style.itemData}>
-                <span>空调用电(kWh)</span>
-                <span className={style.dataStyle} >16,332.95</span>
+                <span>{props.energySubGive[1].name}</span>
+                <span className={style.dataStyle} >{props.energySubGive[1].periodValue}</span>
             </div>
             <img className={style.upOrDown} src={up}></img>
             <span className={style.percentUp}>+18.75</span>
@@ -57,8 +58,8 @@ export default function Index(){
                 <img className={style.powerImg} src={power}></img>
             </div>
             <div className={style.itemData}>
-                <span>动力用电(kWh)</span>
-                <span className={style.dataStyle} >5232.39</span>
+                <span>{props.energySubGive[2].name}</span>
+                <span className={style.dataStyle} >{props.energySubGive[2].periodValue}</span>
             </div>
             <img className={style.upOrDown} src={down}></img>
             <span className={style.percentUp}>-8.13</span>
@@ -70,8 +71,8 @@ export default function Index(){
                 <img className={style.specialImg} src={special}></img>
             </div>
             <div className={style.itemData}>
-                <span>特殊区域用电(kWh)</span>
-                <span className={style.dataStyle} >154.78</span>
+                <span>{props.energySubGive[3].name}</span>
+                <span className={style.dataStyle} >{props.energySubGive[3].periodValue}</span>
             </div>
             <img className={style.upOrDown} src={down}></img>
             <span className={style.percentUp}>-1.59</span>

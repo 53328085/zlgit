@@ -221,7 +221,7 @@ export default function Index() {
     setDeleteId(record.id)
     setDeleteModal(true)
   }
-
+  // 只有当 areaId, pageNum 改变后才会重新创建订阅
   useEffect(()=>{
     if(areaId == 0){
       return
