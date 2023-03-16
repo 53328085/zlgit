@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import style from "./style.module.less";
 import Runreportleft from "./runreportLeft";
 import Runreportright from "./runreportRight";
+import { utils, writeFile } from "xlsx";
 export default function Index() {
   const [reportInfo, setReportInfo] = useState(false);
   const [electricityDate, setElectricityDate] = useState(true);
@@ -12,12 +13,16 @@ export default function Index() {
   const useElectricityDate = (val) => {
     setElectricityDate(val);
   };
+  const reportExport=()=>{
+    console.log("点击完了")
+  }
   return (
     <div className={style.box}>
       <div className={style.boxLeft}>
         <Runreportleft
           reportInfoGive={getReport}
           electricityDateGive={useElectricityDate}
+          reportExportGive={reportExport}
         ></Runreportleft>
       </div>
       <div className={style.boxRight}>

@@ -53,6 +53,7 @@ export default function Index(props) {
   const onChangeYear = (date, dateString) => {
     console.log(date, dateString);
   };
+ 
   return (
     <div className={style.contentLeft}>
       <div className={style.parkSelect}>
@@ -125,7 +126,7 @@ export default function Index(props) {
         </Button>
         <Button
           type="primary"
-          onClick={() => enterLoading(1)}
+          onClick={() =>  props.reportExportGive()}
           className={style.btn}
         >
           <ExportOutlined />

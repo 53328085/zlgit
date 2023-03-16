@@ -1,4 +1,4 @@
-import React,{useEffect, useState,useRef} from 'react'
+import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
 import style from './style.module.less'
 import Timenergy from './timenergy'
@@ -26,6 +26,9 @@ export default function Index() {
   const [form] =Form.useForm()
   const { Search } = Input;
   const projectId = useSelector(state => state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
+  const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+  console.log(oneLevel)
   const typeoptions = [{
     label: '日',
     value: 1
@@ -51,25 +54,25 @@ export default function Index() {
   }
  
   //获取区域
-  const getAreaAll = async () => {
-    try {
-      const resp = await energyShare.AeraQueryAll(projectId)
-      if (resp.success) {
-        if (Array.isArray(resp.data)) {
-          setArealist([{ name: '全部园区', id: 0 }, ...resp.data])
-          form.setFieldValue('area' ,0) 
-          getQuerySpaceTrees(0,"全部园区")
+  // const getAreaAll = async () => {
+  //   try {
+  //     const resp = await energyShare.AeraQueryAll(projectId)
+  //     if (resp.success) {
+  //       if (Array.isArray(resp.data)) {
+  //         setArealist([{ name: '全部园区', id: 0 }, ...resp.data])
+  //         form.setFieldValue('area' ,0) 
+  //         getQuerySpaceTrees(0,"全部园区")
          
-        } else {
-          setArealist([])
-        }
-      } else {
-        message.error(resp.errMsg)
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  //       } else {
+  //         setArealist([])
+  //       }
+  //     } else {
+  //       message.error(resp.errMsg)
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
   //获取班次
   const getQueryShifts = async () => {
     const res = await energyShare.QueryShifts(projectId)
@@ -161,7 +164,7 @@ export default function Index() {
   const changePlan=()=>{
     getQueryElectric()
   }
-
+  //树筛选
    const filterSearchTree = (nodes, predicate, wrapMatchFn = () => false) => {
     // 如果已经没有节点了，结束递归
     if (!(nodes && nodes.length)) {
@@ -206,7 +209,8 @@ export default function Index() {
   setTreeData(()=>{return filterData})
   }
   useEffect(()=>{
-    getAreaAll()
+    // getAreaAll()
+    getQuerySpaceTrees(0,oneLevel[0].levelName)
     getQueryShifts()
     getQueryElectric()   
   },[])
@@ -228,12 +232,15 @@ export default function Index() {
           <div style={{ display: 'flex', }}>
             <Form.Item label="园区选择" name="area">
               <Select
+              defaultValue={0}
                 style={{ width: 200 }} 
                 fieldNames={{
                   label: "name",
                   value: "id"
                 }}
-                options={arealist}
+                options={areaOptions}
+                // options={arealist}
+                
                 onChange={changeArea}
               ></Select>
             </Form.Item>

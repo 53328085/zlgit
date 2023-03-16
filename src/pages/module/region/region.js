@@ -137,9 +137,7 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
-  console.log('fields~~~~~~~~~~~~~~~~~')
- 
-  console.log(allLevel)
+
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
@@ -159,11 +157,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const [deviceSummary, setDeviceSummary] = useState([]);
   const [deviceSub, setDeviceSub] = useState([]);
   const [Unselected, setUnSelected] = useState([]);
-  //const [leveloption, setLevelOption] = useState({})
+  const [leveloption, setLevelOption] = useState({})
 
   const [columns, setColumns] = useState([]);
   //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
-  const [topAreaId, setTopAreaId] = useState(0)
+  const [topAreaId, setTopAreaId] = useState()
 /*   const [fields, setFields] = useState({
     field: [],
     type: [],
@@ -180,9 +178,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   console.log(fields)
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
-  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
-  const leveloption = useRef({});
-  // const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
+  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  
+
   const curareaId = useRef(null);
   let params = {
     //查询
@@ -204,10 +201,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     fields: [],
   };
 
-  const getLevelOption = async (parentId = 0, level = 1) => {
-    // 查询层级
-   
-    if (Array.isArray(leveloption.current.level1) && level == 1) return; // 第一级只需查一遍
+  const getLevelOption = async (parentId = 0, level = 1) => {   
     try {
       let { success, data } = await Area.QueryAll({
         projectId,
@@ -216,17 +210,13 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       });
       if (success && Array.isArray(data)) {
         setTopAreaId(data[0]?.id)
-       
-        /*  
-{id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
-      
-        leveloption.current[`level${level}`] = data;
+        setLevelOption([...data])   
       } else {
-        leveloption.current[`level${level}`] = [];
+        setLevelOption([])
       }
-      console.log(leveloption);
+     
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
   //   级联选择 start
@@ -483,8 +473,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
 
-  const getTableData = ({ current, pageSize }, formData) => {
-    console.log(formData)
+  const getTableData = ({ current, pageSize }, formData) => {    
     // 列表查询
     if (isNaN(level)) return;
     params = Object.assign(
@@ -718,9 +707,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   };
   useEffect(() => {
     console.log("zhu");
-    getLevelOption();
+   // getLevelOption();
   }, []);
   useEffect(() => {
+    getLevelOption();
     if (level == 1) {
       form.setFieldsValue({
         topAreaId: null,
@@ -735,7 +725,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   
   return (
     <Mainbox ref={boxref}>
-      <Form form={form} layout="inline" initialValues={{name: "" }}>
+      <Form form={form} layout="inline" initialValues={{name: "", topAreaId }}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}查询`}>
@@ -752,7 +742,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             <>
               <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
-                  options={leveloption.current[`level1`]}
+                  options={leveloption}
                   fieldNames={{
                     label: "name",
                     value: "id",

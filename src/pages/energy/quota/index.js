@@ -5,7 +5,7 @@ import OtherPage from './otherPage'
 import MainPage from './mainPage'
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import { AreaSetting } from '@api/api.js'
 
 export default function Index() {
@@ -19,35 +19,13 @@ export default function Index() {
     })
   }
   const projectId = useSelector(selectProjectId);
-  const { QueryAllArea } = AreaSetting
+  const areaList = useSelector(selectOneLevel)
   //园区
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const [areaName, setAreaName] = useState('')
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-        setAreaName(data[0].name)
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [areaName, setAreaName] = useState(areaList[0].name)
   const changeArea = (value) => {
     setAreaId(value)
-    areaList.map(item => {
-      if(item.id == value){
-        setAreaName(item.name)
-      }
-    })
   }
 
   const getValueFromOther = (param)=>{

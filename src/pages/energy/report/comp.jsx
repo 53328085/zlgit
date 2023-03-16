@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle, useState, useContext, useEffect,useCallback } from 'react'
+import React, { useRef, forwardRef, useImperativeHandle, useState, useContext, useEffect,useCallback, useMemo } from 'react'
 import { Form, Select, Button, Divider, DatePicker } from 'antd'
 import Table from '@com/useTable'
 import style from './style.module.less'
@@ -6,12 +6,20 @@ import CustContext from '@com/content'
 import moment from 'moment'
 export default forwardRef(
     function Comp({ istime = false, isenergy = true, getTableData, areavalue, ...other }, ref) {
-        const [dataSource, setDataSource] = useState()
+        const [dataSource, setDataSource] = useState([])
         const [pickertype, setPickertype] = useState(1)
         const [loading,setLoading] =useState()
         const [form] = Form.useForm()
         const content = useContext(CustContext)
         const tableRef = useRef()
+     
+        // const tabledata =useMemo(()=>{
+        //     if(dataSource.length>0){
+        //         return  dataSource
+        //     }
+        //     return []
+           
+        // },dataSource)
         const btncss = {
             width: 96,
             height: 32
