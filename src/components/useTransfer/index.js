@@ -109,7 +109,6 @@ export default function index (props) {
                 for(let j = 0;j<selectedRowKeys.length;j++){
                     if(arr[i].id == selectedRowKeys[j]){
                         for(let x = 0;x< copyArr.length;x++){
-                            console.log(copyArr[x])
                             if(arr[i].id == copyArr[x].id){
                                 copyArr.splice(x, 1)
                             }
@@ -131,6 +130,7 @@ export default function index (props) {
     const [selectedSubKeys, setSelectedSubKeys] = useState([]);
     const onSelectSub = (newSelectedRowKeys) => {
         setSelectedSubKeys(newSelectedRowKeys);
+        console.log(newSelectedRowKeys)
     };
     const subSelection = {
         selectedSubKeys,
@@ -151,7 +151,6 @@ export default function index (props) {
                 for(let j = 0;j<selectedSubKeys.length;j++){
                     if(arr[i].id == selectedSubKeys[j]){
                         for(let x = 0;x< copyArr.length;x++){
-                            console.log(copyArr[x])
                             if(arr[i].id == copyArr[x].id){
                                 copyArr.splice(x, 1)
                             }
@@ -165,7 +164,7 @@ export default function index (props) {
             setUnknownCopy(unknownCopy.concat(arr2));
             setSubData(arr)
             setSubCopy(copyArr)
-            // setSelectedSubKeys([])
+            setSelectedSubKeys([])
         }
     }
 
@@ -183,6 +182,8 @@ export default function index (props) {
 
     const onSearchSub = (value) => {
         let arr = [];
+        console.log(123)
+        setSelectedSubKeys([])
         if(value == '') {
             setSubData([...subCopy]);
         }else{
@@ -197,6 +198,7 @@ export default function index (props) {
 
     const onSearchUnknown = (value) => {
         let arr = [];
+        setSelectedRowKeys([])
         if(value == '') {
             setUnknownData([...unknownCopy]);
         }else{

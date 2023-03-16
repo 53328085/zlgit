@@ -27,23 +27,23 @@ export default function Index(props){
       },
       xAxis: {
         type: 'category',
-        data: lineData.dateList
+        data: lineData.x
       },
       yAxis: {
         type: 'value'
       },
       series: [
         {
-          name: lineData.Unit,
-          data: lineData.valueList,
+          name: props.Unit,
+          data: lineData.y,
           type: 'line'
         }
       ]
     })
-  },[])
+  })
   return <div className={style.chartTab}>
-    <div className={style.itemTitle}><span>{ lineData.Name }</span></div>
-    <div style={{width:424,height:334,margin:12}}  id={lineId}></div>
+    <div className={style.itemTitle}><span>{ props.Name }</span></div>
+    <div style={{width:456,height:334,}}  id={lineId}></div>
   </div>
     
 }

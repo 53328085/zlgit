@@ -326,7 +326,7 @@ export default function Index() {
           </div>
         </div>
         <div className={style.card}>
-          <div className={style.cardTitle}>正泰物联杭州园区煤炭价</div>
+          <div className={style.cardTitle}>{areaName}煤炭价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>煤炭价&nbsp;(元/吨)</div>
             {coalPrice ? <div className={style.contentMiddle}>

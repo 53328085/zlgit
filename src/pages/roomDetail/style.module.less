@@ -88,9 +88,25 @@
         .topRight{
             width: 1400px;
             height: 416px;
-            margin-left: 12px;
+            margin-left: 16px;
             border-radius: 4px;
             background-color: #fff;
+            :global{
+                .ant-radio-button-wrapper{
+                    width: 64px;
+                    font-weight: 400;
+                    font-size: 12px;
+                    text-align: center;
+                    &:nth-child(1){
+                        border-bottom-left-radius: 24px;
+                        border-top-left-radius: 24px;
+                    }
+                    &:nth-child(3){
+                        border-bottom-right-radius: 24px;
+                        border-top-right-radius: 24px;
+                    }
+                }
+            }
         }
     }
     .contentBottom{

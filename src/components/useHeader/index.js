@@ -7,10 +7,10 @@ import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import { eneryShift } from '@api/api.js'
 //dayjs bug
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 export default function Index(props) {
   const { Option } = Select;
@@ -19,8 +19,8 @@ export default function Index(props) {
     messageApi.open({
       type,
       content,
-    })
-  }
+    });
+  };
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
@@ -28,28 +28,28 @@ export default function Index(props) {
   const [defaultArea, setDefaultArea] = useState(areaList[0].id)
   const [areaId,setAreaId] = useState(areaList[0].id)
   const changeArea = (value) => {
-    setAreaId(value)
-  }
+    setAreaId(value);
+  };
   //能源类型
   const [energyType, setEnergyType] = useState(props.comprehensive ? 0 : 1)
   const changeEnergyType = val => {
     setEnergyType(val)
   }
   //日期选择
-  const [type, setType] = useState('year')
-  let time = new Date()
-  let year = time.getFullYear()
-  let month = time.getMonth() + 1 
-  month = month > 9 ? month : '0' + month
-  let day = time.getDate()
-  day = day > 9 ? day : '0' + day
-  const [date, setDate] = useState(year.toString()+'-01-01')
-  const changeDateType = val => {
-    setType(val)
-    if(val == 'year') setDate(year.toString()+'-01-01')
-    if(val == 'month') setDate(year+'-'+month+'-01')
-    if(val == 'date') setDate(year+'-'+month+'-'+day)
-  }
+  const [type, setType] = useState("year");
+  let time = new Date();
+  let year = time.getFullYear();
+  let month = time.getMonth() + 1;
+  month = month > 9 ? month : "0" + month;
+  let day = time.getDate();
+  day = day > 9 ? day : "0" + day;
+  const [date, setDate] = useState(year.toString() + "-01-01");
+  const changeDateType = (val) => {
+    setType(val);
+    if (val == "year") setDate(year.toString() + "-01-01");
+    if (val == "month") setDate(year + "-" + month + "-01");
+    if (val == "date") setDate(year + "-" + month + "-" + day);
+  };
   const changeDate = (date, dateString) => {
     if(type == 'year') setDate(dateString+'-01-01')
     if(type == 'month') setDate(dateString+'-01')
@@ -66,79 +66,83 @@ export default function Index(props) {
     if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
   },[date])
   //班次
-  const [shift, setShift] = useState(0)
-  const changeShift = val => {
-    setShift(val)
-  }
-  const [shiftList, setShiftList] = useState([])
+  const [shift, setShift] = useState(0);
+  const changeShift = (val) => {
+    setShift(val);
+  };
+  const [shiftList, setShiftList] = useState([]);
   const getShifts = () => {
-    return queryShifts(projectId).then(res => {
-      let { success, data } = res
-      if(success){
-        setShiftList(data)
-      }else{
-        messageContent('error', res.errMsg)
+    return queryShifts(projectId).then((res) => {
+      let { success, data } = res;
+      if (success) {
+        setShiftList(data);
+      } else {
+        messageContent("error", res.errMsg);
       }
-    })
-  }
-  const { data:shiftsData, run: runShift } = useRequest(getShifts,{
+    });
+  };
+  const { data: shiftsData, run: runShift } = useRequest(getShifts, {
     manual: true,
-    onSuccess:(result,params) => {}
-  })
-  useEffect(()=> {
-    if(props.isShift){
-      runShift()
-    }else{
+    onSuccess: (result, params) => {},
+  });
+  useEffect(() => {
+    if (props.isShift) {
+      runShift();
+    } else {
       return;
     }
-  },[])
+  }, []);
   //导出
   const handleExport = () => {
-    props.export()
-  }
+    props.export();
+  };
 
   //数据类型
-  const [tab, setTab] = useState('energy')
-  const changeTab = val => {
-    setTab(val)
-  }
+  const [tab, setTab] = useState("energy");
+  const changeTab = (val) => {
+    setTab(val);
+  };
 
-  useEffect(()=> {
-    if(areaId == 0) {
+  useEffect(() => {
+    if (areaId == 0) {
       return;
-    }else{
+    } else {
       let params = {
-        areaId, 
-        shift, 
-        energyType, 
-        type, 
+        areaId,
+        shift,
+        energyType,
+        type,
         date,
-        tab
-      }
-      props.getValues(params)
+        tab,
+      };
+      props.getValues(params);
     }
-  },[areaId, shift, energyType, type, date, tab])
-
+  }, [areaId, shift, energyType, type, date, tab]);
   return (
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span style={{marginLeft: '16px',marginRight: 16}}>园区选择</span>
+        <span style={{ marginLeft: "16px", marginRight: 16 }}>园区选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
           key={defaultArea}
           defaultValue={defaultArea}
-          style={{width: '200px'}}
+          style={{ width: "200px" }}
           onChange={changeArea}
         >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          {areaList.map((item) => {
+            return (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            );
           })}
         </Select>
-        {props.isEnergy ? <>
-          <div className={style.line}></div>
-          <span>能源类型</span>
+        {props.isEnergy ? (
+          <>
+            <div className={style.line}></div>
+            <span>能源类型</span>
             <Select
             size="middle"
             style={{width: '126px', marginLeft: '16px'}}
@@ -149,7 +153,7 @@ export default function Index(props) {
             <Option value={2}>水</Option>
             <Option value={3}>燃气</Option>
           </Select> 
-        </> : null}
+        </>) : null}
         {(props.isEnergy == false && props.comprehensive) ? <>
           <div className={style.line}></div>
           <span>能源类型</span>
@@ -171,42 +175,74 @@ export default function Index(props) {
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', borderRadius: 16, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} value="energy">能耗</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', borderRadius: 16, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} value="cost">费用</Radio.Button>
             </Radio.Group>
-          </> : null
-        }
-        {props.isDate ? <>
-          <div className={style.line}></div>
-          <Select
-            size="middle"
-            style={{width: '80px', marginRight: '16px'}}
-            defaultValue={"year"}
-            onChange={changeDateType}
-          >
-            <Option value="date">日</Option>
-            <Option value="month">月</Option>
-            <Option value="year">年</Option>
-          </Select>
-          <PickerWithType 
-            style={{width: '160px', marginRight: '16px'}} 
-            type={type} 
-            onChange={changeDate}
-          ></PickerWithType>
-        </> : null}
-        {props.isShift ? <>
-          <Select
-            size="middle"
-            style={{width: '112px', marginLeft:16, marginRight: '16px'}}
-            defaultValue={0}
-            onChange={changeShift}
-          >
-            <Option value={0}>全部班次</Option>
-            {shiftList.map(item =>{
-              return <Option key={item.id} value={item.id}>{item.name}</Option>
-            })}
-          </Select> 
-        </> : null}
-        {props.isExport ? <><Button style={{marginRight:16,marginLeft:'auto', borderRadius:4, width:96 }} size='middle' onClick={()=>handleExport()}>导出</Button></> : null}
-        {props.isSearch ? <><Button style={{marginRight:16, borderRadius:4, width:96 }} size='middle'>查询</Button></> : null}
+          </>
+         : null}
+        {props.isDate ? (
+          <>
+            <div className={style.line}></div>
+            <Select
+              size="middle"
+              style={{ width: "80px", marginRight: "16px" }}
+              defaultValue={"year"}
+              onChange={changeDateType}
+            >
+              <Option value="date">日</Option>
+              <Option value="month">月</Option>
+              <Option value="year">年</Option>
+            </Select>
+            <PickerWithType
+              style={{ width: "160px", marginRight: "16px" }}
+              type={type}
+              onChange={changeDate}
+            ></PickerWithType>
+          </>
+        ) : null}
+        {props.isShift ? (
+          <>
+            <Select
+              size="middle"
+              style={{ width: "112px", marginLeft: 16, marginRight: "16px" }}
+              defaultValue={0}
+              onChange={changeShift}
+            >
+              <Option value={0}>全部班次</Option>
+              {shiftList.map((item) => {
+                return (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                );
+              })}
+            </Select>
+          </>
+        ) : null}
+        {props.isExport ? (
+          <>
+            <Button
+              style={{
+                marginRight: 16,
+                marginLeft: "auto",
+                borderRadius: 4,
+                width: 96,
+              }}
+              size="middle"
+              onClick={() => handleExport()}
+            >
+              导出
+            </Button>
+          </>
+        ) : null}
+        {props.isSearch ? (
+          <>
+            <Button
+              style={{ marginRight: 16, borderRadius: 4, width: 96 }}
+              size="middle"
+            >
+              查询
+            </Button>
+          </>
+        ) : null}
       </div>
     </div>
-  )
+  );
 }

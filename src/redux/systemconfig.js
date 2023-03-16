@@ -27,7 +27,8 @@ const initialState = {
       //  allRunMenus: [],
       //  allsinderRunMenus: {},
     },
-   onelevel: []
+   onelevel: [], // 一级
+   shifts: [], // 班次
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -61,9 +62,11 @@ const system = createSlice({
         getSetMenus(state, actions) {
             return Object.assign({}, state, {setMenus: actions.payload })
         },
-        getOnelevel(state, actions) {
-            console.log(actions)
+        getOnelevel(state, actions) {          
             return Object.assign({}, state, {onelevel: actions.payload })
+        },
+        getshifts(state, actions) {           
+            return Object.assign({}, state, {shifts: actions.payload })
         }
     },
     extraReducers: {      
@@ -93,5 +96,6 @@ export const setMenus  = state => state.system.menus?.setMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state => state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id
-export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel} = actions
+export const selectshifts = state => state.system.shifts
+export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts} = actions
 export default system.reducer
