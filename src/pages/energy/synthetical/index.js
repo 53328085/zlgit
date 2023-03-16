@@ -215,7 +215,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   let shifts = useSelector(selectshifts) // ?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
   const [allshifts] = useState(() => {
-    shifts.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
+    Array.isArray(shifts) && shifts?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
     return shifts
   }) 
   const [form] = Form.useForm();
