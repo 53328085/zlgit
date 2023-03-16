@@ -545,15 +545,15 @@ const Phone = React.memo(Phonelog)
     <Logbox>  
       <Logtype>
         <span onClick={() => {
-          navigate('user')
+        //  navigate('user')
           toggle()
-          }} style={stylefn(type)}>账户登录</span>
+          }} style={stylefn(state)}>账户登录</span>
         <span onClick={() => {
-           navigate('mobile')
+          // navigate('mobile')
            toggle()
-        }} style={stylefn(!type)}>手机登录</span>
+        }} style={stylefn(!state)}>手机登录</span>
       </Logtype> 
-      {type ? <Userlog />  : <Phonelog/>}
+      {state ? <Userlog />  : <Phonelog/>}
     
     </Logbox>
   );

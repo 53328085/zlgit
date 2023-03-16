@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useRequest } from "ahooks";
-import style from "./style.module.less";
-import { Select, DatePicker, Button, message, Radio } from "antd";
-import dayjs from "dayjs";
-import { useSelector } from "react-redux";
-import { selectProjectId } from "@redux/systemconfig.js";
-import { AreaSetting, eneryShift } from "@api/api.js";
+import React, {useState, useEffect, useCallback} from 'react'
+import { useRequest } from 'ahooks';
+import style from './style.module.less';
+import { Select,DatePicker,Button, message, Radio } from 'antd';
+import dayjs from 'dayjs'
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import { AreaSetting, eneryShift } from '@api/api.js'
 //dayjs bug
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -47,10 +47,10 @@ export default function Index(props) {
     setAreaId(value);
   };
   //能源类型
-  const [energyType, setEnergyType] = useState(1);
-  const changeEnergyType = (val) => {
-    setEnergyType(val);
-  };
+  const [energyType, setEnergyType] = useState(props.comprehensive ? 0 : 1)
+  const changeEnergyType = val => {
+    setEnergyType(val)
+  }
   //日期选择
   const [type, setType] = useState("year");
   let time = new Date();
@@ -67,39 +67,20 @@ export default function Index(props) {
     if (val == "date") setDate(year + "-" + month + "-" + day);
   };
   const changeDate = (date, dateString) => {
-    if (type == "year") setDate(dateString + "-01-01");
-    if (type == "month") setDate(dateString + "-01");
-    if (type == "date") setDate(dateString);
-  };
-  const PickerWithType = ({ type, onChange }) => {
-    if (type === "date")
-      return (
-        <DatePicker
-          picker={type}
-          value={dayjs(date, "YYYY-MM-DD")}
-          format={"YYYY-MM-DD"}
-          onChange={onChange}
-        />
-      );
-    if (type === "month")
-      return (
-        <DatePicker
-          picker={type}
-          value={dayjs(date, "YYYY-MM")}
-          format={"YYYY-MM"}
-          onChange={onChange}
-        />
-      );
-    if (type === "year")
-      return (
-        <DatePicker
-          picker={type}
-          value={dayjs(date, "YYYY")}
-          format={"YYYY"}
-          onChange={onChange}
-        />
-      );
-  };
+    if(type == 'year') setDate(dateString+'-01-01')
+    if(type == 'month') setDate(dateString+'-01')
+    if(type == 'date') setDate(dateString)
+  }
+  // const PickerWithType = ({ type, onChange }) => {
+  //   if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
+  //   if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
+  //   if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
+  // };
+  const PickerWithType = useCallback(({ type, onChange }) => {
+    if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
+    if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
+    if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
+  },[date])
   //班次
   const [shift, setShift] = useState(0);
   const changeShift = (val) => {
@@ -179,52 +160,39 @@ export default function Index(props) {
             <div className={style.line}></div>
             <span>能源类型</span>
             <Select
-              size="middle"
-              style={{ width: "126px", marginLeft: "16px" }}
-              defaultValue={1}
-              onChange={changeEnergyType}
-            >
-              <Option value={1}>电</Option>
-              <Option value={2}>水</Option>
-              <Option value={3}>燃气</Option>
-            </Select>
-          </>
-        ) : null}
-        {props.isTab ? (
-          <>
-            <Radio.Group
-              onChange={changeTab}
-              defaultValue="energy"
-              buttonStyle="solid"
-            >
-              <Radio.Button
-                style={{
-                  width: "96px",
-                  marginLeft: 16,
-                  textAlign: "center",
-                  borderRadius: 16,
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                }}
-                value="energy"
-              >
-                能耗
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  width: "96px",
-                  textAlign: "center",
-                  borderRadius: 16,
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
-                }}
-                value="cost"
-              >
-                费用
-              </Radio.Button>
+            size="middle"
+            style={{width: '126px', marginLeft: '16px'}}
+            defaultValue={1}
+            onChange={changeEnergyType}
+          >
+            <Option value={1}>电</Option>
+            <Option value={2}>水</Option>
+            <Option value={3}>燃气</Option>
+          </Select> 
+        </>) : null}
+        {(props.isEnergy == false && props.comprehensive) ? <>
+          <div className={style.line}></div>
+          <span>能源类型</span>
+            <Select
+            size="middle"
+            style={{width: '126px', marginLeft: '16px'}}
+            defaultValue={0}
+            onChange={changeEnergyType}
+          >
+            <Option value={0}>综合能耗</Option>
+            <Option value={1}>电</Option>
+            <Option value={2}>水</Option>
+            <Option value={3}>燃气</Option>
+          </Select> 
+        </> : null}
+        {
+          props.isTab ? <>
+            <Radio.Group onChange={changeTab} defaultValue="energy" buttonStyle="solid">
+              <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', borderRadius: 16, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} value="energy">能耗</Radio.Button>
+              <Radio.Button style={{ width: '96px', textAlign: 'center', borderRadius: 16, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} value="cost">费用</Radio.Button>
             </Radio.Group>
           </>
-        ) : null}
+         : null}
         {props.isDate ? (
           <>
             <div className={style.line}></div>

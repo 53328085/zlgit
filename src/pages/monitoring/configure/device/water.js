@@ -18,7 +18,8 @@ const {
     AddWater,
     UpdateWater,
     DeleteWater,
-    ImportWater
+    ImportWater,
+    OneLevel
   }
 } = Monitoring
 
@@ -46,10 +47,14 @@ export default function gateway({ deviceStyle }) {
   const ErrModalRef = useRef()
   const errlistRef =useRef()
   const tableLoadRef = useRef()
+
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
+  const levelname = useRef("")
   let delid;
-  let flies
+  let flies;
+  let tag=false;
+  let edittag=false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -83,7 +88,7 @@ export default function gateway({ deviceStyle }) {
         if (Array.isArray(gatewaylist)) {
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
           return (
-            <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].category}</span>
+            <span>{gatewayfilter[0]['id'] === 0 ? '/' : gatewayfilter[0].sn}</span>
           )
         }
 
@@ -130,7 +135,7 @@ export default function gateway({ deviceStyle }) {
 
   //确认编辑
   const editOk = async () => {
-    addform.validateFields().then(async () => {
+    editform.validateFields().then(async () => {
       const {
         id,
         areaId,
@@ -175,6 +180,58 @@ export default function gateway({ deviceStyle }) {
     
   
   }
+  //确认编辑应用
+  const editSure =async ()=>{
+    editform.validateFields().then(async () => {
+      const {
+        id,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol,
+        commAddress,
+        factor } = editform.getFieldValue()
+      let params = {
+        id,
+        projectId,
+        areaId,
+        alarmPlanId,
+        address,
+        remark,
+        gatewayId,
+        category,
+        sn,
+        name,
+        customerType,
+        commPort,
+        commProtocol: commProtocol ? commProtocol : 0,
+        commAddress,
+        factor
+      }
+      const resp = await UpdateWater(params)
+      if (resp.success) {
+        message.success("更新成功")
+        edittag=true
+       
+      } else {
+        message.error(resp.errMsg)
+      }
+    })
+  }
+  const editCancel=()=>{
+    if(edittag){
+      
+      getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    EditModalFormRef?.current?.onCancel()
+  }
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
@@ -209,6 +266,10 @@ export default function gateway({ deviceStyle }) {
 
   //打开新增窗口
   const addopen = () => {
+    if(!levelname.current){
+      message.warning('请添加区域')
+      return 
+    }
     addform.setFieldsValue({
       areaId: '',
       alarmPlanId: '',
@@ -261,16 +322,62 @@ export default function gateway({ deviceStyle }) {
 
 
   }
+  //确认新增应用
+  const addSure=async ()=>{
+    addform.validateFields().then(async () => {
+      const formvalue = addform.getFieldsValue()
+      let params = {
+        id: 0,
+        projectId,
+        areaId: formvalue.areaId,
+        alarmPlanId: formvalue.alarmPlanId,
+        address: formvalue.address,
+        remark: formvalue.remark,
+        gatewayId: formvalue.gatewayId,
+        category: formvalue.category,
+        sn: formvalue.sn,
+        name: formvalue.name,
+        customerType: formvalue.customerType,
+        commPort: formvalue.commPort ? formvalue.commPort : 0,
+        commProtocol: 0,
+        commAddress:  0,
+        factor:1
+      }
+      const res = await AddWater(params)
+      if (res.success) {
+        message.success('新增成功!')
+        tag=true
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const addCancel =()=>{  
+    if(tag){
+      getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    }
+    modalFormRef?.current?.onCancel()
+  }
   //打开批量导入窗口
   const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
+  //获取第一级区域名
+  const getOneLevel=async()=>{
+    const res =  await OneLevel(projectId)
+    if(res.success &&res.data){
+      levelname.current = res.data.name
+      getAeraQueryAll(res.data.name)
+    }else{
+     message.error(res.errMsg)
+    }
+   }
   //获取园区
-  const getAeraQueryAll = async () => {
+  const getAeraQueryAll = async (name) => {
     try {
       const resp = await AeraQueryAll(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        const data = [{ name: '全部园区', id: 0 }, ...resp.data]
+        const data = [{ name, id: 0 }, ...resp.data]
         setSelectopts(() => [...data])
         setAddOpts(() => [...resp.data])
       }
@@ -299,7 +406,7 @@ export default function gateway({ deviceStyle }) {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
         const arr = resp.data.map(it => ({ ...it }))
-        setGatewaylist(() => ([{ category: '(无)直连设备', id: 0 }, ...arr]));
+        setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
         setDevicelist([])
       }
@@ -370,8 +477,9 @@ export default function gateway({ deviceStyle }) {
   }
 
   useEffect(() => {
+    getOneLevel()
     getQueryByPageWater()
-    getAeraQueryAll()
+    // getAeraQueryAll()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
@@ -395,7 +503,9 @@ export default function gateway({ deviceStyle }) {
     addopts,
     gatewaylist,
     devicelist,
-    onOk: addOk
+    onOk: addOk,
+    onSure: addSure,
+    onCancel: addCancel,
   }
   const uploadprops = {
     maxCount:1,
@@ -417,7 +527,9 @@ export default function gateway({ deviceStyle }) {
     EditModalFormRef,
     width: 746,
     name: '编辑水表',
-    onOk: editOk
+    onOk: editOk,
+    onSure:editSure,
+    onCancel:editCancel,
   }
   const ErrModalProps = {
     ErrModalRef,
@@ -435,13 +547,13 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageWater(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除水表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <ErrorMessage {...ErrModalProps}></ErrorMessage>

@@ -489,7 +489,7 @@ tableProps.pagination.size="default" // 页码大小默认
   const { chineseTitle, englishTitle, systemLogoImage } = useSelector(
     (state) => state.system
   );
-  const { loginName } = useSelector((state) => state.user);
+  const { name } = useSelector((state) => state.user);
 
   return (
       
@@ -514,7 +514,7 @@ tableProps.pagination.size="default" // 页码大小默认
           </Space>
           <Space size={32}>
             <UserOutlined style={{ color: "#fff", fontSize: "32px" }} />
-            <span className="loginName">{loginName}</span>
+            <span className="loginName">{name}</span>
             <PoweroffOutlined
               style={{ fontSize: "30px", cursor: "pointer" }}
               className="exit"

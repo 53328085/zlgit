@@ -315,7 +315,7 @@ export default function Electric() {
   }
   let deviceProps = {
     value: 0,
-    name: '新增电表类型',
+    name: '新增变压器类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
@@ -324,7 +324,8 @@ export default function Electric() {
     open,
     ModalRef,
     exportExecel,
-    onCancel
+    onCancel,
+    title:'配置变压器类型'
   };
   let editFormProps = {
     editForm,
@@ -340,8 +341,8 @@ export default function Electric() {
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content: '是否确认删除电表类型?',
-    name: '删除电表类型',
+    content: '是否确认删除变压器类型?',
+    name: '删除变压器类型',
     onOk: delOK
   }
   return (
@@ -358,7 +359,7 @@ export default function Electric() {
         ></Table>
       </DeviceContent>
       <Modal mold='cust' {...editModalProps}>
-        <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+        <BlueColumn name='编辑变压器类型' styled={{ padding: '24px 0px' }}></BlueColumn>
         <EditModal {...editFormProps}></EditModal>
       </Modal>
       <DeleteModal {...delModalProps}></DeleteModal>

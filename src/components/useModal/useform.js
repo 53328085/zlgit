@@ -44,16 +44,35 @@ import {Form, Select, Input, Switch} from 'antd'
     <Item
       label="用户名"
       name="name"
+      tooltip="用户名不能超过16个字符"
       rules={[
         {
           required: true,
           message: "用户名必填",
         },
+        {
+          min: 1,
+          max: 16,
+          message: "用户名不能超过16个字符"
+        }
       ]}
     >
       <Input />
     </Item>
-    <Item label="用户姓名" name="nickName" required>
+    <Item label="用户姓名" name="nickName"      
+     tooltip="不能超过32个字符"
+     rules={[
+      {
+        required: true,
+        message: "用户名必填",
+      },
+      {
+        min: 1,
+        max: 32,
+        message: "用户姓名不能超过32个字符"
+      }
+    ]}
+     >
       <Input />
     </Item>
     <Item label="密码" name="pwd" required>

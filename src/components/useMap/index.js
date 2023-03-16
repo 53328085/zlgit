@@ -67,10 +67,7 @@ import {
         console.log(error)
     }  
   }
-  const moveend = ({type, target}) => {
-     console.log(type)
-     console.log(target)
-  }  
+  
   const serachcomplete = (res) => {
    // console.log(serachMap.getStatus())
     if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {

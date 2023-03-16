@@ -19,7 +19,7 @@ export default function gateway() {
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 8,
     hideOnSinglePage: false
   });
   const ModalRef = useRef(null)
@@ -157,6 +157,7 @@ export default function gateway() {
     const { data, errMsg, success, total, pageNum, pageSize } = result;
     if (success && Array.isArray(data)) {
       setTableParams({
+        ...tableParams,
         current: pageNum,
         pageSize: pageSize,
         total: total
@@ -195,7 +196,8 @@ export default function gateway() {
     onOk,
     name: '新增网关类型',
     width: 520,
-    exportExecel
+    exportExecel,
+    title:'配置网关类型'
   };
   let editModal = {
     cancelText: '返回',

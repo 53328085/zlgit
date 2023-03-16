@@ -1,56 +1,38 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Card, Grid } from "antd";
+import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs} from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
 import Pagecontent from "@com/pagecontent/maincontent";
 import { drawEcharts } from "@com/useEcharts";
-
+import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { useRequest } from 'ahooks';
+import {useSelector} from 'react-redux'
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import moment from 'moment';
 import imgurl from "./icon";
+import { queries } from "@testing-library/dom";
 const { Group, Button: Rbutton } = Radio;
-const Groupbox = styled(Group)`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
-`;
-const RadioBt = styled(Rbutton)`
-  width: 64px;
-  &:first-of-type {
-    border-radius: 16px 0 0 16px;
-  }
-  &:last-of-type {
-    border-radius: 0 16px 16px 0;
-  }
-`;
+
+
 const Laybox = styled.div`
   display: grid;
-  grid-template-columns: 1264px 400px;
-  column-gap: 16px;
+ // grid-template-columns: 1264px 400px;
+  grid-template-rows: 512px 1fr;
+  row-gap: 16px;
   flex: 1;
   .left {
     display: grid;
-    grid-template-rows: ${props => props.value === '1' ? '48px 512px 272px' : "48px 1fr"};
-    row-gap: 16px;
-    .leftdown {
-      display: grid;
-      grid-template-columns: 432px repeat(4, 192px);
-      column-gap: 16px;
-    }
+    grid-template-columns: 1256px 1fr;
+    column-gap: 16px; 
   }
   .right {
     display: grid;
-    grid-template-rows: ${props =>props.value === '1' ? '576px 272px' : '224px 624px'};
-    row-gap: 16px;
-    .rightdown {
-      display: grid;
-      grid-template-columns: 192px 192px;
-      column-gap: 16px;
-    }
-    
+     grid-template-columns: repeat(11, 196px);
+    row-gap: 16px; 
   }
 `;
 const Custspan = styled.span`
@@ -101,6 +83,42 @@ const Divbox = styled.div`
     }
   }
 `;
+const Tabsbox = styled(Tabs)`
+  .ant-tabs-nav {
+    margin-bottom: 0px;
+   .ant-tabs-nav-list {
+    .ant-tabs-tab {
+        border-radius: 4px 4px 0 0;
+        height: 41px;
+        width: 114px;
+        justify-content: center;
+        font-size: 14px;
+        background-color: #fff;  
+        transition: none;
+        &:hover {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .ant-tabs-tab-btn{
+            transition: none;
+        }
+        .ant-tabs-tab-btn:active {
+            color:#fff
+        }
+    }
+    .ant-tabs-tab.ant-tabs-tab-active {
+        background-color: var(--ant-primary-color);
+       
+        .ant-tabs-tab-btn {
+            color:#fff;
+            transition: none;
+        }
+    }
+   }  
+ 
+}
+`
 const UDbox = styled.div`
   display: grid;
   grid-template-rows: 64px 1fr;
@@ -130,15 +148,39 @@ const UDbox = styled.div`
 const UDboxbord = styled(Divbox)`  
   border-top: 1px dotted #d7d7d7;
 `
+const Echartbox = styled.div`
+   height: 100%;
+   width: 100%;
+   background-color: #fff;
+   padding: 16px;
+`
 export default function Index() {
   const ref = useRef()
   const elref = useRef(null)
   const pieref = useRef();
+  const projectId = useSelector(selectProjectId);
   
   const [form] = Form.useForm();
+  const {Item} = Form
   const [value, setvalue] = useState("1");
+  const [qverview, setOverview] = useState({})
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
+  const picker= ['', 'date', 'month', 'year'][timetype];
+  const detail = queries['detail'];
+  const Chartbox = (data) => {
+
+    useEffect(() => {
+
+    })
+    return (
+      <Echartbox ref={ref}>
+ 
+      </Echartbox>
+    )
+  
+}
   const tabs = [
-    { label: "综合能耗", key: "1" },
+    { label: "综合能耗", key: "1", children: <Chartbox   /> },
     { label: "电", key: "2" },
     { label: "冷水", key: "3" },
     { label: "热水", key: "4" },
@@ -147,6 +189,44 @@ export default function Index() {
     { label: "燃油", key: "7" },
     { label: "其他", key: "8" },
   ];
+
+
+  const getData = async () => {
+    const {area, date, type} = form.getFieldsValue()
+    let time;
+    if (type == 1)  {
+      time = date.format('YYYY-MM-DD')
+    } else if(type == 2) {
+      time = date.format('YYYY-MM') + '-01'
+
+    } else if(type == 3) {
+       time = date.format('YYYY')+ '-01-01'
+    }
+    const querys = {
+      type,
+      projectId,
+      date: time
+   }
+    const param = [area]
+    try {
+     let {success, data} =  await EnergyComprehensive.EnergyOverViewRuntime(querys, param)
+     if(success) {
+      setOverview({...qverview, data})
+     }else {
+       return {}
+     }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const ontabChange = (e) => {
+
+  }
+  useEffect(() => {
+    getData()
+  }, [])
+
+
   const datasetDay = {
     dimensions: ["time", "今日能耗(吨标煤)", "昨日能耗(吨标煤)"],
     source: [
@@ -236,224 +316,78 @@ export default function Index() {
       </Custspan>
     );
   };
-  const testDatas = [
-    {
-      title: "能耗总量",
-      sub: "(吨标煤)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z08",
-    },
-    {
-      title: "碳排放量",
-      sub: "(吨CO2)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z07",
-    },
-    {
-      title: "用电量",
-      sub: "(kWh)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z06",
-    },
-    {
-      title: "用水量",
-      sub: "(m3)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z05",
-    },
-    /* {
-        title: '用燃气量',
-        sub: '(m3)',
-        cmonth: 200.21,
-        smonth: 180.52,
-        hb: 8.21,
-        tb: 10.21,
-        icon: 'z04'
-      },
-      {
-        title: '耗煤量',
-        sub: '(吨)',
-        cmonth: 200.21,
-        smonth: 180.52,
-        hb: 8.21,
-        tb: 10.21,
-        icon: 'z01'
-      } */
-  ];
-  const testDatas2 = [
-    {
-      title: "用燃气量",
-      sub: "(m3)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z04",
-    },
-    {
-      title: "耗煤量",
-      sub: "(吨)",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-  ];
-
-  const testDatas3 = [
-    {
-      title: "日用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: 8.21,
-      tb: 10.21,
-      icon: "z04",
-    },
-    {
-      title: "月用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: -8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-    {
-      title: "年用电量",
-      sub: "kWh",
-      cmonth: 200.21,
-      smonth: 180.52,
-      hb: -8.21,
-      tb: 10.21,
-      icon: "z01",
-    },
-  ];
+ 
   const Arrow = ({num}) => {
     if (Number.isNaN(num)) return
     return num > 0  ? ( <ArrowUpOutlined style={{ color: "#f00" }} />) :  (<ArrowDownOutlined style={{ color: "#06f" }} />)
+  }
+
+  const timechange = (e) => {
+     setTimetype(e);
+     getData()
+  }
+  const CustView = () => {
+   const viewstyle = {
+      display: 'flex',
+       justifyContent: "space-between",
+       flex: 1
+    }
+    return (
+      <div style={viewstyle}>
+       <Item nostyle name="view">
+        <Radio.Group
+        options={[
+          {
+            label: '能耗',
+            value: 'Apple',
+          },
+          {
+            label: '费用',
+            value: 'Pear',
+          }]}
+        optionType="button"
+        buttonStyle="solid"
+         />
+        </Item>
+      <Space size={16}>
+        <Item label="日期选择" name="type" initialValue={1}>
+           <Select style={{width: '80px'}}   options={[
+            {value: 1, label: '日'},
+            {value: 2, label: '月'},
+            {value: 3, label: '年'},
+           ]}
+           onChange={timechange}
+           ></Select>
+        </Item>
+        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} />
+        </Item>
+      </Space>
+      </div>
+    )
   }
   return (
     <CustContext.Provider
       value={{
         form,
-        names: ["RegioId", "BuildingId", "FloorId"],
-        tabs,
+        custview: <CustView />,
+       // tabs,
+        handler: getData,
         value,
         setvalue,
       }}
     >
+
+      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px'}}>
+      <UserSearch></UserSearch>
       <Laybox value={value}>
         <div className="left">
-          <UserSearch></UserSearch>
-          <Pagecontent>
-            <Groupbox
-              defaultValue="day"
-              buttonStyle="solid"
-              size="middle"
-              onChange={changeTime}
-            >
-              <RadioBt value="day">本日</RadioBt>
-              <RadioBt value="month">本月</RadioBt>
-              <RadioBt value="year">本年</RadioBt>
-            </Groupbox>
-            {value === '1' ? (<div ref={ref} style={{ flex: 1, position: "relative" }}>
-
-            </div>) : (
-              <div ref={elref} style={{ flex: 1, position: "relative" }}>
-
-              </div>
-            )
-             }
-          </Pagecontent>
-          {value === '1' && (<div className="leftdown">
-            <Titlelayout
-              title={<Title title="年度能耗指标" subtitle="吨标煤" jc={true} />}
-              extra={<Ebutton>能耗正常</Ebutton>}
-            >
-              <Divbox>
-                <Image
-                  src={imgurl.z02}
-                  preview={false}
-                  width={64}
-                  height={64}
-                />
-                <div className="list">
-                  <div className="item">
-                    <span>本年度定额能</span>
-                    <span>2000.00</span>
-                  </div>
-                  <div className="item">
-                    <span>本年累计使用</span>
-                    <span>1500.00</span>
-                  </div>
-                  <div className="item">
-                    <span>本年剩余额度</span>
-                    <span>500.00</span>
-                  </div>
-                </div>
-              </Divbox>
-              <Progress type="line" strokeWidth={24} percent={30} />
-            </Titlelayout>
-            {testDatas.map((item) => (
-              <Titlelayout
-                title={<Title title={item.title} subtitle={item.sub} />}
-                key={nanoid()}
-              >
-                <UDbox>
-                  <Image
-                    src={imgurl[item.icon]}
-                    preview={false}
-                    width={64}
-                    height={64}
-                  />
-                  <div className="list">
-                    <div className="item">
-                      <span>本月</span>
-                      <span>{item.cmonth}</span>
-                    </div>
-                    <div className="item">
-                      <span>上月</span>
-                      <span>{item.smonth}</span>
-                    </div>
-                    <div className="item">
-                      <span>环比</span>
-                      <span>
-                        +{item.hb}%{" "}
-                        {<ArrowUpOutlined style={{ color: "#f00" }} />}
-                      </span>
-                    </div>
-                    <div className="item">
-                      <span>同比</span>
-                      <span>
-                        +{item.tb}%{" "}
-                        {<ArrowUpOutlined style={{ color: "#0f0" }} />}
-                      </span>
-                    </div>
-                  </div>
-                </UDbox>
-              </Titlelayout>
-            ))}
-          </div>)}
-        </div>
-        <div className="right">
-        { value=== '1' ? 
-
-        (  <>
-           <Titlelayout title={<Title title="能耗总量" />}>
+          
+          <Tabsbox items={tabs} onChange={ontabChange}>
+            
+             
+          </Tabsbox>
+          <Titlelayout title={<Title title="能耗总量" />}>
             <Divbox>
               <div
                 style={{
@@ -510,143 +444,15 @@ export default function Index() {
               ></div>
             </Titlelayout>
           </Titlelayout>
-          <div className="rightdown">
-            {testDatas2.map((item) => (
-              <Titlelayout
-                title={<Title title={item.title} subtitle={item.sub} />}
-                key={nanoid()}
-              >
-                <UDbox>
-                  <Image
-                    src={imgurl[item.icon]}
-                    preview={false}
-                    width={64}
-                    height={64}
-                  />
-                  <div className="list">
-                    <div className="item">
-                      <span>本月</span>
-                      <span>{item.cmonth}</span>
-                    </div>
-                    <div className="item">
-                      <span>上月</span>
-                      <span>{item.smonth}</span>
-                    </div>
-                    <div className="item">
-                      <span>环比</span>
-                      <span>
-                        +{item.hb}%{" "}
-                        <Arrow num={item.hb}/>
-                      </span>
-                    </div>
-                    <div className="item">
-                      <span>同比</span>
-                      <span>
-                        +{item.tb}%{" "}
-                        <Arrow num={item.tb}/>
-                      </span>
-                    </div>
-                  </div>
-                </UDbox>
-              </Titlelayout>
-            ))}
-          </div>
-          </>
-          )
-         : (
-          <>
-        
-         <Titlelayout
-              title={<Title title="年度用电指标"  jc={true} />}
-              extra={<Ebutton>能耗正常</Ebutton>}
-            >
-              <Divbox>
-                <Image
-                  src={imgurl.z02}
-                  preview={false}
-                  width={64}
-                  height={64}
-                />
-                <div className="list">
-                  <div className="item">
-                    <span>本年度定额能</span>
-                    <span>2000.00</span>
-                  </div>
-                  <div className="item">
-                    <span>本年累计使用</span>
-                    <span>1500.00</span>
-                  </div>
-                  <div className="item">
-                    <span>本年剩余额度</span>
-                    <span>500.00</span>
-                  </div>
-                </div>
-              </Divbox>
-              <Progress type="line" strokeWidth={24} percent={30} />
-            </Titlelayout>
-         
-        <Titlelayout title={<Title title="用电量统计" />}>
-          <div style={{display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', height: '100%'}}>
-           {
-            testDatas3.map((item) => (
-              <UDboxbord>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                 <span style={{ color: "#999" }}>
-                 ({item.title})
-                </span>
-                <Image
-                  src={imgurl[item.icon]}
-                  preview={false}
-                  width={64}
-                  height={64}
-                />
-                <span style={{ color: "#999", marginTop: "10px" }}>
-                 ({item.sub})
-                </span>
-              </div>
-
-              <div className="list">
-                <div className="item">
-                  <span>今日能耗：</span>
-                  <span>{item.cmonth}</span>
-                </div>
-                <div className="item">
-                  <span>昨日能耗：</span>
-                  <span>{item.smonth}</span>
-                </div>
-                <div className="item">
-                  <span>同比</span>
-                  <span>
-                    {item.hb}
-                    <Arrow num={item.hb}/>
-                  </span>
-                </div>
-                <div className="item">
-                  <span>环比</span>
-                  <span>
-                    {item.tb}
-                    <Arrow num={item.tb}/>
-                  </span>
-                </div>
-              </div>
-            </UDboxbord>
-            ))
-           }
-           </div>
-        </Titlelayout>
-         </>
-         )
-         }
+          
+          
+        </div>
+        <div className="right">
+      
         </div>
      
       </Laybox>
+      </div>
     </CustContext.Provider>
   );
 }

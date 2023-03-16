@@ -58,6 +58,8 @@ const Tagbox = styled(Tag)`
 `
 export default function Release({CModal, projectId}) { 
   const modal = useRef(null)
+  const delmodal = useRef(null)
+  const projectName = useRef('')
   const {publishProject, queryProjectPublishInfo, DeleteProject} = ProjectSetting 
   const [phone, setPhone] = useState([]);
   const [title, setTitle] = useState('')
@@ -70,8 +72,7 @@ export default function Release({CModal, projectId}) {
     return  queryProjectPublishInfo(projectId).then(res => {
       let {success, data } = res
     
-      if (success && data) {
-        console.log('ssss')
+      if (success && data) {      
         return {
           total: 1,   // 返回的是对象
           list: [data]
@@ -147,13 +148,23 @@ const onOk =async () => { // 发布 // 取消发布
   }
   
 }
-const delProject = async (id) => {
+const projectNameChange = (e) => {
+  projectName.current = e.target.value
+}
+const delProject = async () => {
   try {
-    const {success, errMsg}  = await  DeleteProject(id);
-    success ? message.success('删除成功') && refresh() : message.warning(errMsg || '数据出错')
-    
+     if (!projectName.current.trim()) return message.warning('请输入项目名称')
+    const {success, errMsg}  = await  DeleteProject(curProjectId, projectName.current);
+    if (success) {
+      delmodal.current.onCancel()
+      message.success('删除成功')
+      refresh()
+    }else {
+     return message.warning(errMsg || '数据出错')
+    }
+  
   } catch (error) {
-    
+    console.log(error)
   }
  
 }
@@ -164,7 +175,7 @@ const delProject = async (id) => {
         <div className='content'>
             <div className="upper">
                 <div className='left'>
-                 <Tagbox>{item.name}</Tagbox>
+                 <Tagbox><Text ellipsis={{tooltip: (<span>{item.name}</span>)}}>{item.name}</Text></Tagbox>
                  <Tagbox>应用模块({item.templateCnt})</Tagbox>
                  <Tagbox>设备数量({item.meterCnt})</Tagbox>
                  <Tagbox>网关数量({item.gatewayCnt})</Tagbox>
@@ -174,7 +185,10 @@ const delProject = async (id) => {
                  </div>
                  <div className='right'>
                  <Switch key={stateV.current}  checkedChildren="发布"  unCheckedChildren="未发布" style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
-                 <Link underline type="danger" onClick={() => delProject(item.id)}>删除项目</Link>
+                 <Link underline type="danger" onClick={() => {
+                   delmodal.current.onOpen()
+                   setCurProject(item.id)}
+                  }>删除项目</Link>
                  </div>
             </div>
             <div className="lower">
@@ -202,6 +216,20 @@ const delProject = async (id) => {
                  <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}}>{phone}</Button><Countdown /></Space></Paragraph>
                  <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
                  <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
+               </div>
+           </CModal>
+
+           <CModal ref={delmodal} title='删除项目' mold='cust' onOk={delProject} width={640} type="warn">
+               <div>
+                 <Title level={4}>删除项目时 用户需知：</Title>
+                 <Paragraph>1、删除项目后会同步删除所有项目下员工及管理员账号；</Paragraph>
+                 <Paragraph>2、删除项目后会同步删除项目下所有区域、设备、网关档案；</Paragraph>
+                 <Paragraph>3、删除项目后将清除所有设备历史数据；</Paragraph>
+                 <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
+                 <Paragraph>该操作不可逆，一旦操作成功，应用内所有内容将被删除。</Paragraph>
+                 <Paragraph>请在下方输入框中输入项目名称以确定操作</Paragraph>               
+                 <Paragraph><Input style={{width: '422px'}}   onChange={projectNameChange} allowClear /></Paragraph>
+               
                </div>
            </CModal>
          </Maibox>

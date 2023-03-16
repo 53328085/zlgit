@@ -6,6 +6,8 @@ import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
+import upCloud from './imgs/upcloud.png'
+const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal=({DelModalRef,name='',content='',...other})=>{
     return(
@@ -331,4 +333,18 @@ export let AddModal = forwardRef(
     )
   }
 ) 
- 
+
+//批量上传导入
+export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',name='' ,uploadprops,...other }) => {
+  return (
+    <Modal mold='cust' ref={modalImportRef} {...other}>
+      <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <Dragger {...uploadprops}>
+        <img src={upCloud}></img>
+
+        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>
+        <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={link}>下载模板</a>
+      </Dragger>
+    </Modal>
+  )
+}

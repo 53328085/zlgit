@@ -1,38 +1,38 @@
 import {nanoid} from '@reduxjs/toolkit'
 export default [
     {
-      dataIndex: "Name",
-      title: "线路名称",
+      dataIndex: "name",
+      title: "名称",
       align:'center',
       width: '278px'
     },
     {
-      dataIndex: "StartTime",
+      dataIndex: "startDate",
       title: "开始日期",
       align:'center',
       width: '178px'
     },{
-        dataIndex: "EndTime",
+        dataIndex: "endDate",
         title: "结束日期",
         align:'center',
         width: '178px'
       },{
-        dataIndex: "Total",
+        dataIndex: "meterTotalValue",
         title: "用电量-总表(Kwh)",
         align:'center',
         width: '174px'
       },{
-        dataIndex: "Per",
+        dataIndex: "meterSubValue",
         title: "用电量-分表(Kwh)",
         align:'center',
         width: '174px'
       },{
-        dataIndex: "Difference",
+        dataIndex: "lossValue",
         title: "总-分差额(Kwh)",
         align:'center',
         width: '174px'
       },{
-        dataIndex: "Rate",
+        dataIndex: "LossPercent",
         title: "线损率(%)",
         align:'center'
       },

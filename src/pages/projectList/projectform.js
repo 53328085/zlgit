@@ -113,7 +113,7 @@ const Info = styled.span`
   
   const params = {
     name: "",
-    alidStageTime: "", //项目有效期
+    validStageTime: "", //项目有效期
    // imgLogo: "",
    // imgProject: '',
     address: "",
@@ -192,11 +192,11 @@ const Info = styled.span`
  
   const onSubmint = () => {
    let fileds = form.getFieldValue()
-   let {alidStageTime, lng, lat, ...other} = fileds;
+   let {validStageTime, lng, lat, ...other} = fileds;
    other['lngLat'] = lng + ','+lat;
    if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
    if (!imgProject)  return message.warning('项目图片必须上传', 1);
-   const params = Object.assign({}, other, {imgLogo, imgProject, alidStageTime: alidStageTime.format('YYYY-MM-DD')})
+   const params = Object.assign({}, other, {imgLogo, imgProject, validStageTime: validStageTime.format('YYYY-MM-DD')})
   // console.log(params);
    return params;
   }  
@@ -219,7 +219,7 @@ const Info = styled.span`
       <Item label="项目名称" required name="name">
         <Comipt placeholder="请输入项目名称" />
       </Item>
-      <Item label="项目有效期" required name="alidStageTime">
+      <Item label="项目有效期" required name="validStageTime">
         <CdatePicker placeholder="请选择项目有效期" defaultValue={moment('2023-01-01', 'YYYY-MM-DD')} />
       </Item>
       {/*  imgLogo: "",

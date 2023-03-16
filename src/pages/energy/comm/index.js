@@ -63,11 +63,11 @@ export default function Index(props) {
     setHeaderData(data);
   };
   const [treeIdList, setTreeIdList] = useState([]);
-    const [energySub, setEnergySub] = useState([]);
+  const [energySub, setEnergySub] = useState([]);
   //自定义调用方法
   const pageInfo = () => {
     if (headerData.energyType === 1 && headerData.type === "year") {
-      // 当选择能源类型是:电，时间类型是:年 时
+      // 当选择能源类型是:电，时间类型是:年
       return queryElectricYear(
         projectId,
         headerData.areaId,
@@ -75,16 +75,16 @@ export default function Index(props) {
         headerData.shift,
         treeIdList
       ).then((res) => {
-        let {success, data} = res;
-      if(success && data){
-        console.log(data.energySub);
-        setEnergySub(data.energySub)
-      }else{
-        messageContent('error', res.errMsg)
-      }
+        let { success, data } = res;
+        if (success && data) {
+          console.log(data.energySub);
+          setEnergySub(data.energySub);
+        } else {
+          messageContent("error", res.errMsg);
+        }
       });
     } else if (headerData.energyType === 1 && headerData.type === "date") {
-      // 当选择能源类型是:电，时间类型是:日 时
+      // 当选择能源类型是:电，时间类型是:日
       return queryElectricDay(
         projectId,
         headerData.areaId,
@@ -92,17 +92,17 @@ export default function Index(props) {
         headerData.shift,
         treeIdList
       ).then((res) => {
-        let {success, data} = res;
-        if(success && data){
-          setAreaList(data.energySub)
-          setDefaultArea(data[0].id)
-          setAreaId(data[0].id)
-        }else{
-          messageContent('error', res.errMsg)
+        let { success, data } = res;
+        if (success && data) {
+          setAreaList(data.energySub);
+          setDefaultArea(data[0].id);
+          setAreaId(data[0].id);
+        } else {
+          messageContent("error", res.errMsg);
         }
       });
     } else if (headerData.energyType === 1 && headerData.type === "month") {
-      // 当选择能源类型是:电，时间类型是:月 时
+      // 当选择能源类型是:电，时间类型是:月
       return queryElectricMonth(
         projectId,
         headerData.areaId,
@@ -111,7 +111,7 @@ export default function Index(props) {
         treeIdList
       ).then((res) => {});
     } else if (headerData.energyType === 2 && headerData.type === "date") {
-      // 当选择能源类型是:水，时间类型是:日 时
+      // 当选择能源类型是:水，时间类型是:日
       return queryWaterDay(
         projectId,
         headerData.areaId,
@@ -120,7 +120,7 @@ export default function Index(props) {
         treeIdList
       ).then((res) => {});
     } else if (headerData.energyType === 2 && headerData.type === "month") {
-      // 当选择能源类型是:水，时间类型是:月 时
+      // 当选择能源类型是:水，时间类型是:月
       return queryWaterMonth(
         projectId,
         headerData.areaId,
@@ -129,7 +129,7 @@ export default function Index(props) {
         treeIdList
       ).then((res) => {});
     } else if (headerData.energyType === 2 && headerData.type === "year") {
-      // 当选择能源类型是:水，时间类型是:年 时
+      // 当选择能源类型是:水，时间类型是:年
       return queryWaterYear(
         projectId,
         headerData.areaId,
@@ -138,7 +138,7 @@ export default function Index(props) {
         treeIdList
       ).then((res) => {});
     } else if (headerData.energyType === 3 && headerData.type === "date") {
-      // 当选择能源类型是:燃气，时间类型是:日 时
+      // 当选择能源类型是:燃气，时间类型是:日
       return queryGasDay(
         projectId,
         headerData.areaId,
@@ -146,8 +146,8 @@ export default function Index(props) {
         headerData.shift,
         treeIdList
       ).then((res) => {});
-    } else if (headerData.energyType === 3 && headerData.type === "date") {
-      // 当选择能源类型是:燃气，时间类型是:月 时
+    } else if (headerData.energyType === 3 && headerData.type === "month") {
+      // 当选择能源类型是:燃气，时间类型是:月
       return queryGasMonth(
         projectId,
         headerData.areaId,
@@ -155,8 +155,8 @@ export default function Index(props) {
         headerData.shift,
         treeIdList
       ).then((res) => {});
-    } else if (headerData.energyType === 3 && headerData.type === "date") {
-      // 当选择能源类型是:燃气，时间类型是:年 时
+    } else if (headerData.energyType === 3 && headerData.type === "year") {
+      // 当选择能源类型是:燃气，时间类型是:年
       return queryGasYear(
         projectId,
         headerData.areaId,
@@ -206,7 +206,6 @@ export default function Index(props) {
     });
     setTreeIdList(() => [...arr]);
   };
-  console.log(treeIdList);
   const [showElectricity, setShowElectricity] = useState(true);
   useEffect(() => {
     if (headerData.energyType) {
@@ -217,6 +216,7 @@ export default function Index(props) {
     } else {
       setShowElectricity(false);
     }
+    runPageInfo();
   }, [headerData.energyType]);
 
   return (
@@ -247,7 +247,9 @@ export default function Index(props) {
               <span className={style.title}>公共能耗占比</span>
               <Ringchart></Ringchart>
             </div>
-            <Percent energySubGive={energySub}></Percent>
+            {energySub.length !== 0 ? (
+              <Percent energySubGive={energySub}></Percent>
+            ) : null}
           </div>
         ) : null}
       </div>
