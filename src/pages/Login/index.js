@@ -36,11 +36,11 @@ const List = styled.div`
     .text {
       color: #fff;
       font-style: italic;
-      font-size: 56px;
+      font-size: 52px;
       z-index: 2;
       position: absolute;
-      width: 560px;
-      left: 40px;
+      min-width: 744px;
+      left: 20px;
     }
     position: relative;
     height: 90px;
@@ -48,7 +48,7 @@ const List = styled.div`
   }
   .block {
     display: block;
-    width: 640px;
+    width: 775px;
     height: 35px;
     background-color: #012BD2;
     position: absolute;
@@ -58,14 +58,15 @@ const List = styled.div`
   .entitle {
     font-size: 28px;
     line-height: 2;
-    color: rgba(255,255,255,0.3);
-    padding-left: 40px;
+    color: rgba(255,255,255,0.7);
+    padding-left: 20px;
     padding-bottom: 72px;
+    font-style: oblique;
   }
   .itemlist {
     display: flex;
     flex-direction: column;
-    padding-left: 40px;
+    padding-left: 20px;
     .item{
      
       display: flex;
@@ -276,10 +277,10 @@ const Loglist = () => {
   return (
     <List>
       <div className="chtitle">
-        <p className="text">正泰智慧能源服务平台</p>
+        <p className="text">NIS6000 正泰综合能源服务平台</p>
         <p className="block"></p>
        </div>
-       <p className="entitle">Chint Smart Energy Service Platform</p>
+       <p className="entitle">Integrated Energy Service Platform</p>
        <div className="itemlist">        
          {items.map((i, index) =>  (<div className="item" key={index}><span className="icon"></span><span className="text">{i}</span></div>))}
        </div>
@@ -312,7 +313,7 @@ function UserLog() {
     dispatch(clearToken()) // 返回登录页面时清楚token
   }, [])
   useEffect(() => {
-    document.title = 'NES600智慧能源服务平台'
+    document.title = 'NIS6000 正泰综合能源服务平台'
 
   }, [])
   useEffect(() => {
