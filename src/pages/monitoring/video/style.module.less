@@ -84,14 +84,16 @@
     background-color: #fff;
     border: 1px solid rgb(204, 204, 204);
     border-radius: 4px;
+    position: relative;
     .contentTitle{
         height: 32px;
-        border-left: 4px solid #237ae4;
+        // border-left: 4px solid #237ae4;
         display: flex;
         align-items: center;
+        justify-content: flex-start;
         font-size: 14px;
         color: #515151;
-        padding-left: 16px;
+        // padding-left: 16px;
     }
     .tableList{
         margin-top: 16px;
@@ -114,6 +116,18 @@
             }
         }
     }
+    .pageNum{
+      position: absolute;
+      right: 0;
+      margin-right: 16px;
+      bottom: 16px;
+      :global(.ant-pagination-item-active){
+          background-color: #237ae4;
+          :global(a){
+              color: #fff;
+          }
+      }
+  }
 }
 
 .dialogBody{

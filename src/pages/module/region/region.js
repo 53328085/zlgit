@@ -175,7 +175,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     deviceSub: [],
     selected: [],
   });
-  console.log(fields)
+ 
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  
@@ -503,6 +503,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           parentIdGroup = [],
         } = data || {};
         let cols = [];
+        let index = header.findIndex(h => h == '备注')
+        if(index > -1) header.splice(index,1)
+        console.log(header)
         for (let k of header) {
           let col = {
             title: k,
@@ -513,6 +516,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         }
         let colums = [
           ...cols,
+          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: null,
           {
             title: "操作",
             key: "action",
@@ -589,7 +593,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       console.log(values)
       console.log(lngLat)
       console.log(fields)
-      let parent_id = isAdd ? parentId.pop() : parentId;
+      let parent_id = isAdd && level > 1 ?   parentId.pop() : parentId;
       let other = [];
       for (let key of fields) {
         let obj = {}
@@ -695,6 +699,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
               step="0.01"
               precision={2}
               style={{ width: "100%" }}
+              min={0}
               addonAfter="㎡"
             />
           </Item>
