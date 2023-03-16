@@ -1,8 +1,6 @@
 import React, {useEffect,useState,Fragment} from "react";
 import * as echarts from "echarts";
 import style from './style.module.less'
-import hidden from './images/hidden.png'
-import warning from './images/warning.png'
 
 export default function ChartData({opts, itemValue }){
     let mainId = 'lineChart' + Math.random();

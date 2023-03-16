@@ -55,6 +55,7 @@ export default function Index() {
         seteleConsumes(data.eleConsumes)
         setwaterConsumes(data.waterConsumes)
         setgasConsumes(data.gasConsumes)
+        charts()
       } else {
         messageApi.open({
           type: 'error',
@@ -87,10 +88,7 @@ export default function Index() {
     getData()
     getStatusData()
     getMonthUsage(1)
-    charts()
-    console.log('useEffect')
-    console.log(eleConsumes)
-  }, [areaId])
+  }, [areaId,eleConsumes.length])
 const charts=()=>{
   drawEcharts(elref.current, {
     dataset: datasetMonth,
@@ -150,12 +148,6 @@ const charts=()=>{
   const getFromChild = data => {
     console.log(data.areaId)//园区id
     setAreaId(data.areaId)
-    getData()
-    getStatusData()
-    getMonthUsage(1)
-    setTimeout(()=>{
-      charts()
-    },1000)
   }
   return (
     <div>

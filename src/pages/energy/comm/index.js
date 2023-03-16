@@ -63,7 +63,13 @@ export default function Index(props) {
     setHeaderData(data);
   };
   const [treeIdList, setTreeIdList] = useState([]);
+  //右下角 公共能耗同比  能耗数据展示
   const [energySub, setEnergySub] = useState([]);
+  const [energyTotal, setEnergyTotal] = useState({});
+  //右上角环形
+  const [proportion, setProportionl] = useState([]);
+  //柱状图
+  const [detail, setDetail] = useState({});
   //自定义调用方法
   const pageInfo = () => {
     if (headerData.energyType === 1 && headerData.type === "year") {
@@ -77,8 +83,10 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          console.log(data.energySub);
           setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
         }
@@ -94,9 +102,10 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setAreaList(data.energySub);
-          setDefaultArea(data[0].id);
-          setAreaId(data[0].id);
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
         }
@@ -109,7 +118,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 2 && headerData.type === "date") {
       // 当选择能源类型是:水，时间类型是:日
       return queryWaterDay(
@@ -118,7 +137,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 2 && headerData.type === "month") {
       // 当选择能源类型是:水，时间类型是:月
       return queryWaterMonth(
@@ -127,7 +156,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 2 && headerData.type === "year") {
       // 当选择能源类型是:水，时间类型是:年
       return queryWaterYear(
@@ -136,7 +175,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 3 && headerData.type === "date") {
       // 当选择能源类型是:燃气，时间类型是:日
       return queryGasDay(
@@ -145,7 +194,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 3 && headerData.type === "month") {
       // 当选择能源类型是:燃气，时间类型是:月
       return queryGasMonth(
@@ -154,7 +213,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     } else if (headerData.energyType === 3 && headerData.type === "year") {
       // 当选择能源类型是:燃气，时间类型是:年
       return queryGasYear(
@@ -163,7 +232,17 @@ export default function Index(props) {
         headerData.date,
         headerData.shift,
         treeIdList
-      ).then((res) => {});
+      ).then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          setEnergySub(data.energySub);
+          setEnergyTotal(data.energyTotal);
+          setProportionl(data.proportion);
+          setDetail(data.detail);
+        } else {
+          messageContent("error", res.errMsg);
+        }
+      });
     }
   };
   const { run: runPageInfo } = useRequest(pageInfo, {
@@ -232,23 +311,28 @@ export default function Index(props) {
         ></Searchtree>
         {showElectricity ? (
           <div className={style.contentMiddle}>
-            <span className={style.title}>公共能耗</span>
-            <Barchart></Barchart>
+            <span className={style.title}>公共能耗1</span>
+            {detail!== {} ? (<Barchart detailGive={detail}></Barchart>) : null}
           </div>
         ) : (
           <div className={style.contentMiddleBig}>
             <span className={style.title}>公共能耗</span>
-            <Barchart></Barchart>
+            {detail== "" ? (<Barchart detailGive={detail}></Barchart>) : null}
           </div>
         )}
         {showElectricity ? (
           <div className={style.contentRight}>
             <div className={style.rightTop}>
               <span className={style.title}>公共能耗占比</span>
-              <Ringchart></Ringchart>
+              {proportion.length !== 0 ? (
+                <Ringchart proportionGive={proportion}></Ringchart>
+              ) : null}
             </div>
-            {energySub.length !== 0 ? (
-              <Percent energySubGive={energySub}></Percent>
+            {energySub.length !== 0 && energyTotal !== {} ? (
+              <Percent
+                energySubGive={energySub}
+                energyTotalGive={energyTotal}
+              ></Percent>
             ) : null}
           </div>
         ) : null}
