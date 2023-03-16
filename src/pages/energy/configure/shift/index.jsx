@@ -6,8 +6,8 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 import dashed from '@imgs/dashed.png'
 import { eneryShift } from '@api/api.js'
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {useSelector, useDispatch} from 'react-redux'
+import {selectProjectId, getshifts} from '@redux/systemconfig.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
@@ -15,6 +15,7 @@ import warning from '@imgs/warning.png'
 export default function Index() {
   const aref = useRef()
   const dref = useRef()
+  const dispatch = useDispatch();
   const projectId = useSelector(selectProjectId);
   const [messageApi, contextHolder] = message.useMessage();
   const { queryShifts, insertShift, updateShift, deleteShift } = eneryShift
@@ -59,7 +60,11 @@ export default function Index() {
     return queryShifts(projectId).then(res => {
       if(res.success){
         setShiftList(res.data)
-        console.log(shiftList)
+        if(res.data){
+          dispatch(getshifts(res.data));
+        }else{
+          dispatch(getshifts([]));
+        }
       }else{
         messageApi.open({
           type:'error',
