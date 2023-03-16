@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import Comp from './comp'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 import { energyReport } from '@api/api'
 import { message } from 'antd'
 
-export default function Energyconsum({ areavalue, arealistRef }) {
+  function Energyconsum({ areavalue=0, arealistRef }) {
   const contentRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const times = []
@@ -94,6 +94,7 @@ export default function Energyconsum({ areavalue, arealistRef }) {
       console.log(e)
     }
   }
+
   useEffect(() => {
     getTableData(areavalue)
   }, [areavalue])
@@ -111,6 +112,6 @@ export default function Energyconsum({ areavalue, arealistRef }) {
   )
 }
 
-
+export default Energyconsum
 
 

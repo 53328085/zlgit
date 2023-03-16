@@ -1,11 +1,11 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle ,useContext, useRef} from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useContext, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 
 
-const { DeviceManager:{ OneLevel } } = Monitoring
+const { DeviceManager: { OneLevel } } = Monitoring
 
 export default forwardRef(function Comp(props, ref) {
     const {
@@ -21,10 +21,10 @@ export default forwardRef(function Comp(props, ref) {
         levelname,
         page
     } = props
-    const projectId = useSelector(state=>state.system.menus.projectId)
-    const [selvalue, setSelvalue] = useState(0)
+    const projectId = useSelector(state => state.system.menus.projectId)
+    const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
-    const [energyVal,setEnergyVal] = useState()
+    const [energyVal, setEnergyVal] = useState()
     const selOptions = [{
         label: '全部用能类型',
         value: 0
@@ -36,53 +36,51 @@ export default forwardRef(function Comp(props, ref) {
         value: 2
     }]
 
-       
-    const changeSelect = (value) => {  
-        setPage(()=>({
+
+    const changeSelect = (value) => {
+        setPage(() => ({
             ...page,
             current: 1,
         }))
         setSelvalue(value)
         console.log(page)
-        getList && getList(1,page.pageSize,value, inpvalue,energyVal)
+        getList && getList(1, page.pageSize, value, inpvalue, energyVal)
         // getList && getList(value, inpvalue,energyVal)
     }
     const getDeviceSearch = () => {
-        setPage(()=>({
+        setPage(() => ({
             ...page,
             current: 1,
         }))
-        getList && getList(1,page.pageSize,selvalue, inpvalue,energyVal)
+        getList && getList(1, page.pageSize, selvalue, inpvalue, energyVal)
     }
-    const changeEnergy=(v)=>{
+    const changeEnergy = (v) => {
         console.log(v)
         setEnergyVal(v)
-        setPage(()=>({
+        setPage(() => ({
             ...page,
             current: 1,
         }))
-        getList && getList(1,page.pageSize,selvalue, inpvalue,v)
+        getList && getList(1, page.pageSize, selvalue, inpvalue, v)
     }
-    
+
     useImperativeHandle(ref, () => ({
         selvalue,
         inpvalue,
         energyVal,
-  
+
     }))
-    useEffect(()=>{
-        console.log(levelname)
-        // if(levelname.current){
-        //     setSelvalue(levelname.current)
-        // }
-    },[])
+    useEffect(() => {
+        if (selectopts && selectopts.length > 0) {
+            setSelvalue(0)
+        }
+    }, [selectopts])
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
                         <Select
-                            // defaultValue={{label:levelname.current,value:0}}
                             style={{
                                 width: 264,
                             }}

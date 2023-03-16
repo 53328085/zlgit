@@ -242,6 +242,7 @@ export default function parkstreet({areaList,levelname}) {
     modalImport,
     exportTable,
     tableParamsRef,
+    levelname,
     getList:getStreetLightAdd
   }
   const addModalProps = {
