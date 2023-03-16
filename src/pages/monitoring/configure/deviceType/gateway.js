@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext } from 'react'
 import DeviceContent from './deviceContent'
 import style from './style.module.less'
 import AllColumns from './columns'
@@ -9,9 +9,11 @@ import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import WarningPng from '@imgs/warning.png'
-
+import cusContext from '@com/content'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
 export default function gateway() {
+ 
+  const content =useContext(cusContext)
   const [form] = Form.useForm();
   const [editform] = Form.useForm()
   const [selectOptions, setSelectOptions] = useState([])//下拉选项
@@ -110,7 +112,8 @@ export default function gateway() {
   const delOk = async () => {
     const res = await DeleteCategory({
       projectId,
-      category: categoryId
+      category: categoryId,
+      deviceStyle:parseInt(content.value)
     })
     if (res.success) {
       if(tableParams.total%(tableParams.pageSize*(tableParams.current-1 ))===1){
@@ -124,7 +127,7 @@ export default function gateway() {
       message.success('删除成功')
       
     } else {
-      message.error('删除失败')
+      message.error(res.errMsg)
     }
     DelModalRef.current.onCancel()
 
@@ -494,6 +497,7 @@ let EditModal = ({ name, EditModalRef, editform, ...other }) => {
 }
 //删除网关窗口
 let DeleteModal = ({ DelModalRef, ...other }) => {
+
   return (
     <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
       <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>

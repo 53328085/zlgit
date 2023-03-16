@@ -446,13 +446,13 @@ export const Monitoring =  {
         AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
         QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
         UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
-        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除网关设备
+        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除网关设备
         DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用设备类型
         DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`), //获取对应设备类型的详细信息
         AddDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/AddCategory`,data),//新增设备类型
         DeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryByPageFull?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
         UpdateDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/UpdateCategory`,data),//更新设备
-        DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}`),//删除设备
+        DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除设备
     },
     //设备管理
     DeviceManager:{
@@ -530,6 +530,10 @@ export const Monitoring =  {
         RuntimeStatus:(data)=>server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
         RuntimeQueryMonthUsage:(data)=>server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
     }
+}
+//分类能耗
+export class energyClassified{
+   static QueryEnergy=(data)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,{},{params:data})
 }
 //能耗排名
 export class energyRanking{

@@ -43,36 +43,8 @@ export default function Index() {
     label: '电',
     value: 1
   }]
-  const divcss = {
-    width:96,
-    height:32,
-    textAlign: 'center',
-    lineHeight: '32px',
-    border: '1px solid #d7d7d7',
-    borderRadius: 4,
-    cursor: 'pointer'
-  }
+
  
-  //获取区域
-  // const getAreaAll = async () => {
-  //   try {
-  //     const resp = await energyShare.AeraQueryAll(projectId)
-  //     if (resp.success) {
-  //       if (Array.isArray(resp.data)) {
-  //         setArealist([{ name: '全部园区', id: 0 }, ...resp.data])
-  //         form.setFieldValue('area' ,0) 
-  //         getQuerySpaceTrees(0,"全部园区")
-         
-  //       } else {
-  //         setArealist([])
-  //       }
-  //     } else {
-  //       message.error(resp.errMsg)
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
   //获取班次
   const getQueryShifts = async () => {
     const res = await energyShare.QueryShifts(projectId)
@@ -209,7 +181,6 @@ export default function Index() {
   setTreeData(()=>{return filterData})
   }
   useEffect(()=>{
-    // getAreaAll()
     getQuerySpaceTrees(0,oneLevel[0].levelName)
     getQueryShifts()
     getQueryElectric()   
@@ -267,7 +238,6 @@ export default function Index() {
                 ></Select>
             </Form.Item>
             </div>
-            <div style={divcss}>导出</div>
         </div>
       </Form>
       <div className={style.sharecontent}>

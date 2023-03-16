@@ -2,7 +2,7 @@ import React, { useContext,useEffect,useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Comp from './comp'
 import Table from '@com/useTable'
-import {Addmodal,EditModal,DeleteModal,MultImport} from './modalcomp'
+import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
 import { Form, message } from 'antd'
 import {Monitoring} from '@api/api'
 
@@ -26,6 +26,8 @@ export default function parkstreet({areaList,levelname}) {
   const DelModalRef=useRef()
   const modalImportRef=useRef()
   const tableRef =useRef()
+  const ErrModalRef=useRef()
+  const errlistRef =useRef()
   const projectId = useSelector(state=>state.system.menus.projectId)
   let flies;
   let deleteId;
@@ -192,13 +194,27 @@ export default function parkstreet({areaList,levelname}) {
     formData.append("projectId",projectId)
  
    const res = await StreetLightImport(formData)
+
    if(res.success) {
-    message.success("上传成功")
-    modalImportRef.current.onCancel()
-    getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
-   }else{
+    if (res.data.success) {
+      message.success("上传成功")
+      modalImportRef.current.onCancel()
+      getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+    }else{
+      errlistRef.current.setList([...res.data.data])
+      ErrModalRef.current.onOpen()
+    } 
+  }else{
     message.error(res.errMsg)
-   }
+  }
+
+  //  if(res.success) {
+  //   message.success("上传成功")
+  //   modalImportRef.current.onCancel()
+  //   getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+  //  }else{
+  //   message.error(res.errMsg)
+  //  }
   }
   //分页
   const changePage = (page)=>{
@@ -271,6 +287,7 @@ export default function parkstreet({areaList,levelname}) {
   }
 
   const uploadprops = {
+    maxCount: 1,
     beforeUpload(file,fileList){
       console.log(file,fileList)
       flies=[...fileList]
@@ -284,7 +301,11 @@ export default function parkstreet({areaList,levelname}) {
     uploadprops,
     onOk:onImportOk
   }
- 
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
+  }
 
   useEffect(()=>{
     getStreetLightAdd()
@@ -306,6 +327,7 @@ export default function parkstreet({areaList,levelname}) {
      <EditModal {...editModalProps}></EditModal>
      <DeleteModal {...delModalProps}></DeleteModal>
      <MultImport {...multModalProps}></MultImport>
+     <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect,useContext, forwardRef, useImperativeHandle, useState,useRef } from 'react'
+import React, { useEffect,useContext, forwardRef, useImperativeHandle, useState,useRef,useMemo} from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
@@ -6,18 +6,20 @@ import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
  function Comp(props,ref) {
     const context = useContext(CustContext)
-    const [selvalue,setSelValue]=useState("")
+    const [selvalue,setSelValue]=useState()
     const [inpvalue,setInpValue]=useState()
     const selRef = useRef(selvalue)
     selRef.current =selvalue
     const inpRef = useRef(inpvalue)
     inpRef.current =inpvalue
+    const oneLevel = useSelector(state=>state.system.onelevel)
+    const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+    console.log(areaOptions)
     const {
         placeholder = '输入控制器编号/安装地址',
         inplabel = '设备查询',
         addopen = () => { },
         isenergy = false,
-        areaList=[],
         tableParams,
         setTableParams,
         modalImport,
@@ -55,18 +57,14 @@ import CustContext from '@com/content'
     selRef,
     inpRef
    }))
-    useEffect(() => {
-        if(areaList&&areaList.length>0){
-            setSelValue(0)
-        }
-    }, [areaList])
+  
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
                         <Select   
-                           value={selvalue}
+                           
                            fieldNames={{
                             label:'name',
                             value:'id'
@@ -74,7 +72,9 @@ import CustContext from '@com/content'
                             style={{
                                 width: 264,
                             }}
-                            options={areaList}
+                            defaultValue={0}
+                            value={selvalue}
+                            options={areaOptions}
                             onChange={changeSelect}
                         />
                     </Col>

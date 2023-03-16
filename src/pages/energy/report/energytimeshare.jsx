@@ -77,6 +77,7 @@ export default function Energytimeshare({ areavalue, arealistRef }) {
         arrs = [areaId]
       }
       const res = await energyReport.QueryConsume(parmas, arrs)
+      contentRef.current.setLoading(false)
       if (res.success) {
         if(Array.isArray(res.data)){
           contentRef.current.setDataSource([...res.data])

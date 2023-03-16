@@ -28,12 +28,12 @@ export default function Index() {
   ])
   const [tabs,setTabs] =useState([
     {key: '0',label: '网关'},
-    {key: '1',label: '电表'},
-    {key: '2',label: '水表'},
-    {key: '3',label: '燃气表'},
-    {key: '4',label: '传感器'},
-    {key: '5',label: '变压器'},
-    {key: '6',label: '视频监控'},
+    // {key: '1',label: '电表'},
+    // {key: '2',label: '水表'},
+    // {key: '3',label: '燃气表'},
+    // {key: '4',label: '传感器'},
+    // {key: '5',label: '变压器'},
+    // {key: '6',label: '视频监控'},
   ])
   let dataProps={
     value,
@@ -41,31 +41,7 @@ export default function Index() {
     tabs,
 
   }
-  // //获取第一级区域名
-  // const getOneLevel=async()=>{
-  //   const res =  await OneLevel(projectId)
-  //   if(res.success &&res.data){
-  //     levelname.current =res.data.name
-  //     getAeraQueryAll(res.data.name)
-  //   }else{
-  //    message.error(res.errMsg)
-  //   }
-  //  }
-  // //获取园区
-  // const getAeraQueryAll = async (name) => {
-  //   try {
-  //     console.log(content)
-  //     const resp = await AeraQueryAll(projectId)
-  //     if (resp.success && Array.isArray(resp.data)) {
-  //       const data = [{ name, id: 0 }, ...resp.data]
-  //       console.log(data)
-  //       setSelectopts([...data])
-  //       setAddOpts([...resp.data])
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
+
  
   const getAllDeviceStyle=async ()=>{
     const resp = await AllDeviceStyle()
@@ -88,6 +64,10 @@ export default function Index() {
         }else if(k.name==='视频监控'){
           arr[6]=<Video deviceStyle={k.deviceStyle}/>
         }
+        const tabs = data.map(it=>{return {key:it.deviceStyle,label:it.name}})
+        setTabs([{key: '0',label: '网关'},
+        ...tabs
+      ])
       }
       setComs(()=>arr)
       console.log(arr)

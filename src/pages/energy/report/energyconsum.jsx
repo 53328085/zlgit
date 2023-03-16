@@ -81,11 +81,12 @@ import { message } from 'antd'
         arrs = [areaId]
       }
       const res = await energyReport.QueryConsume(parmas, arrs)
+      contentRef.current.setLoading(false)
       if (res.success) {
-        if(Array.isArray(res.data)&&res.data.length>0){
-          contentRef.current.setDataSource([...res.data,{name:'11',sn:123,type:'elec'}])
+        if(Array.isArray(res.data)){
+          contentRef.current.setDataSource([...res.data])
         }else{
-          contentRef.current.setDataSource([])
+          contentRef.current.setDataSource(null)
         } 
       } else {
         message.error(res.errMsg)
@@ -96,7 +97,7 @@ import { message } from 'antd'
   }
 
   useEffect(() => {
-    getTableData(areavalue)
+    // getTableData(areavalue)
   }, [areavalue])
   const compProps = {
     columns,

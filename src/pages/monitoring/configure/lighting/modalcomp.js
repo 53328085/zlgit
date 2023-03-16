@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState,forwardRef,useImperativeHandle  } from 'react'
 import { Form,Divider,Row,Col,Select,Input,Upload } from 'antd'
+import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
@@ -163,3 +164,27 @@ export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',na
       </Modal>
     )
   }
+
+//批量上传报错
+export let ErrorMessage=forwardRef(
+    (props,ref)=>{
+      const {ErrModalRef,...other}=props
+      const [list,setList]=useState([])
+     useImperativeHandle(ref,()=>({
+      setList
+     }))
+      const columns=[{
+        title:'错误行',
+        dataIndex:'row'
+      },{
+        title:'错误原因',
+        dataIndex:'cause'
+      }]
+      return (
+        <Modal mold='cust' ref={ErrModalRef} {...other}>
+           <Table columns={columns} dataSource={list} style={{marginTop: 32}}></Table>
+        </Modal>
+       
+      )
+    }
+  )

@@ -160,7 +160,6 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         dataSource={pointSource}
         rowKey={record => record.index}
         pagination={tableParams}
-    
         onChange={
           (page, pageSize) => {
             setTableParams({ ...page })

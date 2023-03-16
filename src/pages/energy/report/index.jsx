@@ -30,16 +30,7 @@ export default function Index() {
     <Energyconsum areavalue={areavalue} arealistRef={arealistRef}/>,
     <Energytimeshare areavalue={areavalue} arealistRef={arealistRef}/>
   ]
-  // //获取区域
-  // const getAeraQueryAll=async ()=>{
-  //   const res =await energyReport.AeraQueryAll(projectId)
-  //   if(res.success){
-  //     setAreas([{name:'全部园区',id:0},...res.data])
-  //     form.setFieldValue('area',0) 
-  //   }else{
-  //     message.error(res.errMsg)
-  //   }
-  // }
+
   //改变区域
   const changeArea =(v)=>{
     console.log(v)
@@ -52,8 +43,8 @@ export default function Index() {
     form
   }
   useEffect(()=>{
-    // getAeraQueryAll()
-  },[projectId])
+ 
+  },[])
   return (
     <>
 

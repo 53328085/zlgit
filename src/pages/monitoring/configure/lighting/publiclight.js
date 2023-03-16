@@ -2,7 +2,7 @@ import React, { useContext,useEffect,useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Comp from './comp'
 import Table from '@com/useTable'
-import {Addmodal,EditModal,DeleteModal,MultImport} from './modalcomp'
+import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
 import { Form, message } from 'antd'
 import {Monitoring} from '@api/api'
 const {PubliclightManager:{PublicLightAdd,PublicLightQueryByPage,PublicLightUpdate,PublicLightDelete,PublicLightImport}}=Monitoring
@@ -25,6 +25,8 @@ export default function parkstreet({areaList,levelname}) {
   const DelModalRef=useRef()
   const modalImportRef=useRef()
   const tableRef =useRef()
+  const ErrModalRef=useRef()
+  const errlistRef =useRef()
   const projectId = useSelector(state=>state.system.menus.projectId)
   let deleteId;
   let flies;
@@ -190,13 +192,27 @@ export default function parkstreet({areaList,levelname}) {
       formData.append("projectId",projectId)
    
      const res = await PublicLightImport(formData)
+
      if(res.success) {
-      message.success("上传成功")
-      modalImportRef.current.onCancel()
-      getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
-     }else{
+      if (res.data.success) {
+        message.success("上传成功")
+        modalImportRef.current.onCancel()
+        getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+      }else{
+        errlistRef.current.setList([...res.data.data])
+        ErrModalRef.current.onOpen()
+      } 
+    }else{
       message.error(res.errMsg)
-     }
+    }
+
+    //  if(res.success) {
+    //   message.success("上传成功")
+    //   modalImportRef.current.onCancel()
+    //   getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+    //  }else{
+    //   message.error(res.errMsg)
+    //  }
     }
   //分页
   const changePage = (page)=>{
@@ -231,13 +247,7 @@ export default function parkstreet({areaList,levelname}) {
    }
   } 
 
-  const uploadprops = {
-    beforeUpload(file,fileList){
-      console.log(file,fileList)
-      flies=[...fileList]
-      return false
-    }
-  };
+
   const comProps={
     addopen,
     areaList,
@@ -272,12 +282,25 @@ export default function parkstreet({areaList,levelname}) {
     content:"是否确认删除该公共照明设备?",
     onOk:onDelOk
   }
+  const uploadprops = {
+    maxCount:1,
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      flies=[...fileList]
+      return false
+    }
+  };
   const multModalProps={
     modalImportRef,
     link:'/deviceExcel/publicLight.xlsx',
     name:"批量导入",
     uploadprops,
     onOk:onImportOk
+  }
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
   }
   useEffect(()=>{
     getPublicLightQueryByPage()
@@ -299,6 +322,7 @@ export default function parkstreet({areaList,levelname}) {
      <EditModal {...editModalProps}></EditModal>
      <DeleteModal {...delModalProps}></DeleteModal>
      <MultImport {...multModalProps}></MultImport>
+     <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )
 }

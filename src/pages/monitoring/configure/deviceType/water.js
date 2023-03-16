@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
 import DeviceContent from './deviceContent'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
@@ -7,9 +7,10 @@ import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
-
+import cusContext from '@com/content'
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
+  const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource, setTableDataSource] = useState([])//主页表格数据
   const [defaultTableData, setDefaultTableData] = useState(null)//新增时表格默认数据
@@ -65,7 +66,8 @@ export default function Electric() {
   const delOK = async () => {
     const resp = await DeleteDeviceCategory({
       projectId,
-      category: categoryId
+      category: categoryId,
+      deviceStyle:parseInt(content.value)
     })
     if (resp.success) {
       DelModalRef.current.onCancel()
@@ -157,6 +159,16 @@ export default function Electric() {
   const onOkEditModal = async () => {
     console.log(editFromRef.current.pointSource, editForm.getFieldsValue())
     const tableforvalues = editFromRef.current.pointSource
+
+    let count =0;
+    tableforvalues.forEach(it=>{
+      it.watchPoint&& count++
+    })
+    if(count===0){
+      message.warning('请至少选择一项标记检测运行点！')
+      return
+    }
+
     const formvalues = editForm.getFieldsValue()
     const tableData = tableforvalues.map(it => ({
       name: it.dataMark,
@@ -263,6 +275,16 @@ export default function Electric() {
   }
   //保存新增设备
   const onOk = async () => {
+    let count =0;
+    console.log(foRef.current.pointSource)
+    foRef.current.pointSource.forEach(it=>{
+      it.watchPoint&& count++
+    })
+    if(count===0){
+      message.warning('请至少选择一项标记检测运行点！')
+      return
+    }
+
     const formValue = addForm.getFieldsValue()
     const tableData = foRef.current.pointSource.map(it => ({
       name: it.dataMark,

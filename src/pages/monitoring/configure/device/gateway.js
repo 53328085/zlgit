@@ -4,7 +4,7 @@ import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { MultImport, DeleteModal } from './modalCom'
+import { MultImport, DeleteModal ,ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'
 import { Form, Row, Col, Select, Input, Divider, Upload, message,Button } from 'antd'
 import { Monitoring } from '@api/api.js'
@@ -43,6 +43,8 @@ export default function gateway() {
   const keyParamRef = useRef() //参数下发Ref
   const modalDelRef = useRef() //删除Ref
   const tableLoadRef = useRef()
+  const errlistRef =useRef()
+  const ErrModalRef = useRef()
   const [editform] = Form.useForm()
   const [addForm] = Form.useForm()
   const content =useContext(cutContext)
@@ -382,13 +384,19 @@ export default function gateway() {
     formData.append("file", flies[0])
     formData.append("projectId", projectId)
     const res = await GatewayImport(formData)
-    if (res.data.success) {
-      message.success("上传成功")
-      modalImportRef.current.onCancel()
-      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
-    } else {
-      message.error(res.data.errMsg)
+    if(res.success){
+      if (res.data.success) {
+        message.success("上传成功")
+        modalImportRef.current.onCancel()
+        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
+      } else {
+        errlistRef.current.setList([...res.data.data])
+        ErrModalRef.current.onOpen()
+      }
+    }else{
+      message.error(res.errMsg)
     }
+    
   }
   const ComProps = {
     addopen,
@@ -415,6 +423,7 @@ export default function gateway() {
     levelname
   }
   const uploadprops = {
+    maxCount:1,
     beforeUpload(file, fileList) {
       console.log(file, fileList)
       flies = [...fileList]
@@ -437,6 +446,12 @@ export default function gateway() {
     onSure:editSure,
     onCancel: editCancel,
     levelname
+  }
+
+  const ErrModalProps = {
+    ErrModalRef,
+    ref:errlistRef,
+    onOk:()=>{ErrModalRef.current.onCancel()}
   }
   useEffect(() => {
     getOneLevel()
@@ -467,6 +482,8 @@ export default function gateway() {
       <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn}></KeyParam>
       <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
       <EditModalForm {...EditProps}></EditModalForm>
+      <ErrorMessage {...ErrModalProps}></ErrorMessage>
+    
     </div>
   )
 }

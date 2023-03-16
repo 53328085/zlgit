@@ -83,7 +83,7 @@ export default function gateway({ deviceStyle }) {
     
     {
       title: '额定容量(kVA)',
-      dataIndex: 'name'
+      dataIndex: 'capacity'
     },
     {
       title: '所属网关',

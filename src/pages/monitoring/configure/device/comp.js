@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle, useContext, useRef } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle,useMemo, useContext, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
@@ -14,7 +14,6 @@ export default forwardRef(function Comp(props, ref) {
         addopen = () => { },
         isenergy = false,
         multExport,
-        selectopts = [],
         getList = "",
         setPage,
         exportExecel,
@@ -22,6 +21,8 @@ export default forwardRef(function Comp(props, ref) {
         page
     } = props
     const projectId = useSelector(state => state.system.menus.projectId)
+    const oneLevel = useSelector(state=>state.system.onelevel)
+    const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
     const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal, setEnergyVal] = useState()
@@ -71,10 +72,8 @@ export default forwardRef(function Comp(props, ref) {
 
     }))
     useEffect(() => {
-        if (selectopts && selectopts.length > 0) {
-            setSelvalue(0)
-        }
-    }, [selectopts])
+        
+    }, [])
     return (
         <div>
             <Row justify='space-between'  >
@@ -88,9 +87,10 @@ export default forwardRef(function Comp(props, ref) {
                                 label: 'name',
                                 value: 'id'
                             }}
+                            defaultValue={0}
                             value={selvalue}
                             onChange={changeSelect}
-                            options={selectopts}
+                            options={areaOptions}
                         />
                     </Col>
                     <Col style={{ margin: '0 20px' }}>

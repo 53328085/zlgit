@@ -8,18 +8,11 @@ export default forwardRef(
     function Comp({ istime = false, isenergy = true, getTableData, areavalue, ...other }, ref) {
         const [dataSource, setDataSource] = useState([])
         const [pickertype, setPickertype] = useState(1)
-        const [loading,setLoading] =useState()
+        const [loading,setLoading] =useState(true)
         const [form] = Form.useForm()
         const content = useContext(CustContext)
         const tableRef = useRef()
-     
-        // const tabledata =useMemo(()=>{
-        //     if(dataSource.length>0){
-        //         return  dataSource
-        //     }
-        //     return []
-           
-        // },dataSource)
+
         const btncss = {
             width: 96,
             height: 32
@@ -74,12 +67,13 @@ export default forwardRef(
         }
      
         useEffect(() => {
-
+            getTableData(areavalue)
         }, [])
         useImperativeHandle(ref, () => ({
             setDataSource,
             form,
-            pickertype
+            pickertype,
+            setLoading
         }))
         return (
             <div>

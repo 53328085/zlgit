@@ -10,11 +10,12 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
+import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
   const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
   const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
-
+  
  
   
 
@@ -25,17 +26,24 @@ export default function Index() {
   };
  
   const getAllDeviceStyle = async () => {
-    const result = await AllDeviceStyle()
-    const { data, errMsg, success } = result;
-    if (success && Array.isArray(data)) {
-     let arr= data.map(item => ({
-        key: `${item.deviceStyle}`,
-        label: `${item.name}类型`
-      }))
-      arr.unshift({ key: '0', label: '网关类型' })
-      setTabs(arr)
-      dataProps = {...dataProps,  tabs } 
-    }
+    try{
+      const result = await AllDeviceStyle()
+      const { data, errMsg, success } = result;
+      if (success) {
+        if(Array.isArray(data)){
+          let arr= data.map(item => ({
+            key: `${item.deviceStyle}`,
+            label: `${item.name}类型`
+          }))
+          arr.unshift({ key: '0', label: '网关类型' })
+          setTabs(arr)
+          dataProps = {...dataProps,  tabs } 
+        }
+      }else{
+        message.error(errMsg)
+      }
+    }catch(e){console.log(e)}
+  
   }
   let Coms = [
     <GateWay />,

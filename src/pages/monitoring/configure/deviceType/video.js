@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import { useSelector } from 'react-redux'
 import DeviceContent from './deviceContent'
@@ -11,8 +11,10 @@ import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import WarningPng from '@imgs/warning.png'
 import { MultImport } from  './modalCom'
+import cusContext from '@com/content'
 const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory, UpdateDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function video() {
+  const content =useContext(cusContext)
   const [selectOption, setSelectOption] = useState(null)
   const [dataSource, setDataSource] = useState(null)
   const [loading, setLoading] = useState(false);
@@ -145,7 +147,7 @@ export default function video() {
       }
     },
     {
-      title: '已用传感器数量',
+      title: '已用监控数量',
       dataIndex: 'cnt'
     },
     {
@@ -165,7 +167,8 @@ export default function video() {
   const onOkDel = async () => {
     let params = {
       projectId,
-      category: categoryId
+      category: categoryId,
+      deviceStyle:parseInt(content.value)
     }
     const resp = await DeleteDeviceCategory(params)
     if (resp.success) {
@@ -173,6 +176,9 @@ export default function video() {
       message.success('删除成功!')
       getDeviceQueryCategory()
       getDeviceQueryNotUsed()
+    }else{
+  
+      message.error(resp.errMsg)
     }
   }
   //获取未使用的监控设备

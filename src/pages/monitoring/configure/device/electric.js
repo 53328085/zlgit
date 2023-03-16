@@ -263,7 +263,6 @@ export default function gateway({ deviceStyle }) {
     }else{
       message.error(errMsg)
     }
-    console.log(res)
   }
   //打开倍率窗口
   const onFactor=(record)=>{

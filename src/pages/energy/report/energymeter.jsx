@@ -59,6 +59,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
         arrs = [areaId]
       }
       const res = await energyReport.QueryReading(parmas, arrs)
+      contentRef.current.setLoading(false)
       if (res.success) {
         if(Array.isArray(res.data)){
           contentRef.current.setDataSource([...res.data])

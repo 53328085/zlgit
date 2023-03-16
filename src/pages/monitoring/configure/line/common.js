@@ -459,6 +459,9 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     const close = () => {
         closeDrawer()
         setSearchValue("")
+        setSelectedRowKeys([])
+        setSubMeterRowKeys([])
+        setSummaryRowKeys([])
     }
     //未选择线路check
     const onSelectChange = (newSelectedRowKeys, selectedRows, info) => {
@@ -477,24 +480,34 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     }
     //未选择to分表
     const subToLeft = () => {
+        if(selectedRows.length<=0){
+            message.warning('请至少选择一项!')
+            return
+        }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
         const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
-        console.log(arr)
+        console.log(489,selectedRows)
         setSubMeter([...selectedRows, ...subMeter])
         setSubMeterRowKeys([])
         setDataSource([...arr])
         setCopydataSource([...unarr])
-        
-        
+        setSelectedRowKeys([])
+        setSelectedRows([])
     }
     //分表to未选择
     const subToRight = () => {
+        if(subSelectedRows.length<=0){
+            message.warning('请至少选择一项!')
+            return
+        }
         const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
-        console.log(arr, subMeter, subSelectedRows)
+        console.log(arr, selectedRowKeys, selectedRows)
         setDataSource([...subSelectedRows, ...dataSource])
         setCopydataSource([...subSelectedRows, ...copydataSource])
         setSubMeter([...arr])
         setSelectedRowKeys([])
+        setSubSelectedRows([])
+        setSubMeterRowKeys([])
     }
     //未选择to总表
     const summaryToLeft = () => {
@@ -502,19 +515,32 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
             message.warning('总表最多为一条')
             return
         }
+        if(dataSource.length<=0){
+            message.warning('请至少选择一项!')
+            return
+        }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
         const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
         setSummaryMeter([...selectedRows])
         setDataSource([...arr])
         setCopydataSource([...unarr])
+        setSelectedRowKeys([])
+        setSelectedRows([])
+        
+        
     }
     //总表to未选择
     const summaryToRight = () => {
-        console.log(summarySelectedRows)
+       if(!summarySelectedRows || summarySelectedRows?.length<=0){
+        message.warning('请至少选择一项!')
+        return
+       } 
         setDataSource([...summarySelectedRows, ...dataSource])
         setCopydataSource([...summarySelectedRows, ...copydataSource])
         setSummaryMeter([])
         setSelectedRowKeys([])
+        setSummaryRowKeys([])
+        setSummarySelectedRows([])
     }
     //保存线路编辑
     const saveConfig = async () => {
@@ -538,8 +564,8 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     }
     //搜索
     const onSearch = async (value, event) => {
-        console.log(treelist)
-        
+        setSelectedRowKeys([])
+        setSelectedRows([])
         if(!value){
             setDataSource([...copydataSource])
             return
@@ -547,6 +573,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
         const filterarr = copydataSource.filter(it => {
             return (it.sn.includes(value)  || it.address.includes(value) )
         })
+   
         setDataSource([...filterarr])
         console.log(filterarr)
     }
@@ -565,7 +592,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
         <div style={{ position: 'absolute', width: 1686, height: 755, top: 73, left: open ? -17 : 2000, background: "#003366", transition: 'all .5s 0s', padding: 32, display: 'flex' }}>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ marginBottom: 32, background: "#ffffff", padding: 16 }} >
-                    <BlueColumn name="线路总线" styled={{ marginBottom: 16 }}></BlueColumn>
+                    <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
                     <Table
                         bordered
                         pagination={false}
