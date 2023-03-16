@@ -222,11 +222,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   //   级联选择 start
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState([])
-    console.log(level)
-    const getOptions = async () => {
+    console.log(level) // level = 2 显示前一级， = 3 显示前两两级
+    const getOptions = async () => { // 第一级
      let {success, data} = await Area.QueryAll({projectId,level: 1, parentId: 0 })
      if (success && Array.isArray(data)) {
-      let cardata = data.map(i => ({...i, children: [], isLeaf: level - 1 == 1}))
+      let cardata = data.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
       setLevelOption([...cardata])
      }
     }
@@ -236,21 +236,30 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       children: 'children'
     }
     const loadData = async (selectedOptions) => {
-      
+    
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
+        console.log(targetOption)
         targetOption.loading = true;
-        let {id, level} = targetOption
+        let {id, level: curlevel} = targetOption // level:3 , curlevel: 2, 1
+        console.log(level)
+        console.log(curlevel)
+        if ((level - curlevel) == 1)  {
+          targetOption.children = [];
+          targetOption.isLeaf = true
+          setLevelOption([...leveloptions])
+          return
+        } else {
         const params = {
           projectId,
-          level: level + 1,
+          level: curlevel + 1,
           parentId: id,
         }
         
       let {data, success} =  await Area.QueryAll(params) 
        targetOption.loading = false
        if (success && Array.isArray(data)) {
-        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - 1 == 1}))
+        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - curlevel == 1}))
         targetOption.children = cardata;
         setLevelOption([...leveloptions])
         /* setLevelOption(arr => {
@@ -266,7 +275,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         targetOption.isLeaf = true
         setLevelOption([...leveloptions])
        }
-      
+      }
        // targetOption.loading = false;
        
       } catch (error) {
@@ -935,7 +944,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           }}
         >
           {isAdd
-            ? <CascaderSct />           
+            ?  
+              
+             level > 1 && <CascaderSct /> 
             : limitlevle?.map((lv, index, array) => {
                 return (
                   <Item label={`${lv?.name}名称`} name={lv?.name}>
