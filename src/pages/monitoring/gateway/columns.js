@@ -11,17 +11,33 @@ export default [{
         title: "网关型号",
     },
     {
+        dataIndex: "internet",
+        title: "网络连接",
+    },
+    {
+        dataIndex: "linkWay",
+        title: "联网方式",
+    },
+    {
+        dataIndex: "categryC",
+        title: "子设备",
+    },
+    {
+        dataIndex: "project",
+        title: "所属项目",
+    },
+    {
         dataIndex: "address",
         title: "安装地址",
     },
+    // {
+    //     dataIndex: "enabled",
+    //     title: "是否启用",
+    //     render: (text) => <span> {text === 1 ? '启用' : '未启用'} </span>
+    // },
     {
-        dataIndex: "enabled",
-        title: "是否启用",
-        render: (text) => <span> {text === 1 ? '启用' : '未启用'} </span>
-    },
-    {
-        dataIndex: 'imei',
-        title: "IMEI"
+        dataIndex: 'time',
+        title: "更新时间"
     }
 ]
 
