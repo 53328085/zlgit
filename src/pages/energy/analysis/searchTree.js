@@ -1,8 +1,6 @@
-import React, {useState, forwardRef, useImperativeHandle} from 'react'
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from 'react'
 import style from './style.module.less';
 import {Input, Tree } from 'antd';
-import dashLine from '@imgs/line.png'
-import { cloneDeep } from 'lodash';
 
 function Index(props ,ref){
   const { getValues } = props;

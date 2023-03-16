@@ -137,9 +137,7 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
-  console.log('fields~~~~~~~~~~~~~~~~~')
- 
-  console.log(allLevel)
+
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
@@ -159,11 +157,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const [deviceSummary, setDeviceSummary] = useState([]);
   const [deviceSub, setDeviceSub] = useState([]);
   const [Unselected, setUnSelected] = useState([]);
-  //const [leveloption, setLevelOption] = useState({})
+  const [leveloption, setLevelOption] = useState({})
 
   const [columns, setColumns] = useState([]);
   //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
-  const [topAreaId, setTopAreaId] = useState(0)
+  const [topAreaId, setTopAreaId] = useState()
 /*   const [fields, setFields] = useState({
     field: [],
     type: [],
@@ -177,12 +175,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     deviceSub: [],
     selected: [],
   });
-  console.log(fields)
+ 
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
-  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称
-  const leveloption = useRef({});
-  // const topAreaId =useMemo(() => level == 1 ? 0 :  leveloption.current['level1'] && leveloption.current['level1'][0]?.id || 0,  [level]);
+  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  
+
   const curareaId = useRef(null);
   let params = {
     //查询
@@ -204,10 +201,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     fields: [],
   };
 
-  const getLevelOption = async (parentId = 0, level = 1) => {
-    // 查询层级
-   
-    if (Array.isArray(leveloption.current.level1) && level == 1) return; // 第一级只需查一遍
+  const getLevelOption = async (parentId = 0, level = 1) => {   
     try {
       let { success, data } = await Area.QueryAll({
         projectId,
@@ -216,27 +210,23 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       });
       if (success && Array.isArray(data)) {
         setTopAreaId(data[0]?.id)
-       
-        /*  
-{id: 1, level: 1, levelName: "开发区", name: "正泰量测园区", remark: "打发斯蒂芬"}*/
-      
-        leveloption.current[`level${level}`] = data;
+        setLevelOption([...data])   
       } else {
-        leveloption.current[`level${level}`] = [];
+        setLevelOption([])
       }
-      console.log(leveloption);
+     
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
   //   级联选择 start
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState([])
-    console.log(level)
-    const getOptions = async () => {
+    console.log(level) // level = 2 显示前一级， = 3 显示前两两级
+    const getOptions = async () => { // 第一级
      let {success, data} = await Area.QueryAll({projectId,level: 1, parentId: 0 })
      if (success && Array.isArray(data)) {
-      let cardata = data.map(i => ({...i, children: [], isLeaf: level - 1 == 1}))
+      let cardata = data.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
       setLevelOption([...cardata])
      }
     }
@@ -246,21 +236,30 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       children: 'children'
     }
     const loadData = async (selectedOptions) => {
-      
+    
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
+        console.log(targetOption)
         targetOption.loading = true;
-        let {id, level} = targetOption
+        let {id, level: curlevel} = targetOption // level:3 , curlevel: 2, 1
+        console.log(level)
+        console.log(curlevel)
+        if ((level - curlevel) == 1)  {
+          targetOption.children = [];
+          targetOption.isLeaf = true
+          setLevelOption([...leveloptions])
+          return
+        } else {
         const params = {
           projectId,
-          level: level + 1,
+          level: curlevel + 1,
           parentId: id,
         }
         
       let {data, success} =  await Area.QueryAll(params) 
        targetOption.loading = false
        if (success && Array.isArray(data)) {
-        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - 1 == 1}))
+        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - curlevel == 1}))
         targetOption.children = cardata;
         setLevelOption([...leveloptions])
         /* setLevelOption(arr => {
@@ -276,7 +275,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         targetOption.isLeaf = true
         setLevelOption([...leveloptions])
        }
-      
+      }
        // targetOption.loading = false;
        
       } catch (error) {
@@ -483,8 +482,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
 
-  const getTableData = ({ current, pageSize }, formData) => {
-    console.log(formData)
+  const getTableData = ({ current, pageSize }, formData) => {    
     // 列表查询
     if (isNaN(level)) return;
     params = Object.assign(
@@ -505,6 +503,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           parentIdGroup = [],
         } = data || {};
         let cols = [];
+        let index = header.findIndex(h => h == '备注')
+        if(index > -1) header.splice(index,1)
+        console.log(header)
         for (let k of header) {
           let col = {
             title: k,
@@ -515,6 +516,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         }
         let colums = [
           ...cols,
+          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: null,
           {
             title: "操作",
             key: "action",
@@ -591,7 +593,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       console.log(values)
       console.log(lngLat)
       console.log(fields)
-      let parent_id = isAdd ? parentId.pop() : parentId;
+      let parent_id = isAdd && level > 1 ?   parentId.pop() : parentId;
       let other = [];
       for (let key of fields) {
         let obj = {}
@@ -697,6 +699,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
               step="0.01"
               precision={2}
               style={{ width: "100%" }}
+              min={0}
               addonAfter="㎡"
             />
           </Item>
@@ -718,9 +721,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   };
   useEffect(() => {
     console.log("zhu");
-    getLevelOption();
+   // getLevelOption();
   }, []);
   useEffect(() => {
+    getLevelOption();
     if (level == 1) {
       form.setFieldsValue({
         topAreaId: null,
@@ -735,7 +739,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   
   return (
     <Mainbox ref={boxref}>
-      <Form form={form} layout="inline" initialValues={{name: "" }}>
+      <Form form={form} layout="inline" initialValues={{name: "", topAreaId }}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}查询`}>
@@ -752,7 +756,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             <>
               <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
-                  options={leveloption.current[`level1`]}
+                  options={leveloption}
                   fieldNames={{
                     label: "name",
                     value: "id",
@@ -945,7 +949,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           }}
         >
           {isAdd
-            ? <CascaderSct />           
+            ?  
+              
+             level > 1 && <CascaderSct /> 
             : limitlevle?.map((lv, index, array) => {
                 return (
                   <Item label={`${lv?.name}名称`} name={lv?.name}>

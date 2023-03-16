@@ -7,6 +7,7 @@ import UseHeader from '@com/useHeader'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import { EnergyFlowRuntime } from '@api/api.js'
+import kong from '@imgs/empty.png'
 
 export default function Index() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -140,7 +141,7 @@ export default function Index() {
       <div className={style.content}>
         <div className={style.contentRight}>
           <div className={style.rightTitle}>能源流向</div>
-          {data.length == 0 ? <Empty style={{marginTop: 150}}></Empty> : <Sankey style={{width:'1400px',height:650,marginLeft:'120px'}} {...config} /> }
+          {data.length == 0 ? <img src={kong} style={{marginTop: 150, marginLeft: 700}}></img> : <Sankey style={{width:'1400px',height:650,marginLeft:'120px'}} {...config} /> }
         </div>
       </div>
     </div>

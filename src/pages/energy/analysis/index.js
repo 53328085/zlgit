@@ -190,6 +190,7 @@ export default function Index() {
     setLineParams(values)
   }
   const getLineTable = () => {
+    console.log(lineParams);
     let params = {
       projectId,
       areaId,

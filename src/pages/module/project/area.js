@@ -63,7 +63,8 @@ const [tableData, setTableData] = useState([])
  const del = async () => {
    try {
       let {success, errMsg} = await DeleteAreaLevel({projectId, level: levelid})
-      levelid =''; 
+     // levelid =''; 
+      setLevelid('')
       success && message.success({
          content: '删除成功',
          duration: 0.3,
@@ -96,7 +97,8 @@ const [tableData, setTableData] = useState([])
    try {
       const params = {...modalform.getFieldsValue(), level: level, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
-      levelid = '';
+    //  levelid = '';
+      setLevelid('')
       success && message.success({
          content: '修改成功',
          duration: 0.3,

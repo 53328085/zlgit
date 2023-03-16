@@ -25,14 +25,14 @@ import {
   DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
-import { ProjectList } from "@api/api.js";
+import { ProjectList, eneryShift } from "@api/api.js";
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getSetMenus, getOnelevel } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
@@ -353,6 +353,13 @@ export default function Index() {
             !lsuccess && dispatch(getOnelevel([]));
           } catch (error) {
              console.log(error)
+          }
+          try {
+            let {success: sces, data: shitfsData} = await eneryShift.queryShifts(id)
+            sces && dispatch(getshifts(shitfsData || []));
+            !sces && dispatch(getshifts([]));
+          } catch (error) {
+            console.log(error)
           }
          
         } catch (error) {

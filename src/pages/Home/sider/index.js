@@ -70,14 +70,11 @@ export default function Sider() {
   useEffect(() => {  
     try {
       SetConfig(store.getState()?.system.configState)
-      let state = location.state || {}
-      console.log(state)
+      let state = location.state || {}    
       let {nested, primary } = state;
       setPath(primary)
       let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];
-      console.log('sidermenu')
-      console.log(sidermenu)
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];     
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {

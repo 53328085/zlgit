@@ -1,12 +1,11 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
-import { Input, Button, Table, message } from 'antd';
-import dashed from '@imgs/dashed.png'
-import { useRequest } from 'ahooks';
+import { Input, Button, Table, message, Space } from 'antd';
 import { EnergyQuotaRuntime } from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import CustomProgress from '@com/useProgress'
+import { Link } from 'react-router-dom';
 export default function MainPage(props){
   const { Search } = Input;
   const [searchData, setSearchData] = useState('')
@@ -23,6 +22,7 @@ export default function MainPage(props){
     setSearchData(values)
     getRoomTable(projectId, props.areaId, values)
   }
+
   const toRoomDetail = (item) =>{
     console.log(item);
     window.open('/roomDetail','_blank')
@@ -36,6 +36,10 @@ export default function MainPage(props){
       dataIndex:'areaName',
       key:'areaName',
       align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{props.areaName}</span>
+        </Space>)
     },{
       title:'建筑物',
       dataIndex:'buildingName',
@@ -45,7 +49,17 @@ export default function MainPage(props){
       title:'房间',
       dataIndex:'roomName',
       key:'roomName',
-      align:'center'
+      align:'center',
+      render: (_, record) => (
+        <Space size="middle">
+          {/* <span style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}} onClick={()=>toRoomDetail(record)}>{record.roomName}</span> */}
+          <Link 
+          to={{pathname:'/roomDetail', search:JSON.stringify({areaName:props.areaName, data:record})}} 
+          target='_blank'
+          state={props.areaName} 
+          style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}}
+          >{record.roomName}</Link>
+        </Space>)
     },{
       title:'综合能耗用能剩余',
       key: 'action',
@@ -53,7 +67,7 @@ export default function MainPage(props){
       width:'258px',
       render: (_, record) => (
         <Space size="middle">
-          <CustomProgress progress={parseFloat(record.comprehensiveQuotaLeaved) / parseFloat(record.comprehensiveQuota) }></CustomProgress>
+          <CustomProgress progress={parseInt(record.comprehensiveQuota) > 0 ? (Number(record.comprehensiveQuotaLeaved) / Number(record.comprehensiveQuota)) : 0 }></CustomProgress>
         </Space>)
     },{
       title:(<div>年度综合能耗<br/>剩余/定额(吨标煤)</div>),
@@ -155,7 +169,7 @@ export default function MainPage(props){
           </div>
         </div>
         <div className={style.tableList}>
-          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='Id' scroll={{y: 650}} />;
+          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} />;
         </div>
       </div>
     </div>
