@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message} from 'antd'
+import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message,Pagination} from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
-import Header from './header'
+// import Header from './header'
+import UseHeader from '@com/useHeader'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import cameraBG from '@imgs/carmeraBG.png'
@@ -93,14 +94,25 @@ export default function Index() {
     )
   }
 
-  const columns =[{
-    title:'摄像机名称',
+  const columns =[
+    {
+      title:'序号',
+      dataIndex:'Id',
+      align:'center'
+    },
+    {
+    title:'监控设备编号',
     dataIndex:'CameraName',
     align:'center'
   },{
-    title:'安装位置',
+    title:'监控设备名称',
     dataIndex:'Position',
     align:'center'
+  },{
+    title:'安装地址',
+    dataIndex:'AccessMode',
+    align:'center',
+    render: (text) => <span> {text === 1 ? '云监控' : '本地监控'} </span>
   },{
     title:'监控类型',
     dataIndex:'AccessMode',
@@ -344,11 +356,24 @@ export default function Index() {
   const preventJump = (e) => {
     e.preventDefault()
   }
-
+  const headerProps = {
+    isEnergy: false,//能耗类型
+    isDate: false,//日期
+    isShift: false,//班次
+    isTab: false,//能耗、费用radioButton
+    isSearch: false,//查询按钮
+    isExport: false,//导出按钮
+    //export: exportData //导出调用方法
+  }
+  const getFromChild = data => {
+    console.log(data.areaId)//园区id
+    // setAreaId(data.areaId)
+  }
+  const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(()=>{})
   return (
     <div className={style.video}>
-      <Header />
+      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div id='cameraData' className={style.cameraData}>
         <CameraValue img={totalCamera} title={'监控总数'} value={5}></CameraValue>
         <CameraValue img={cloudCamera} title={'云监控'} value={2}></CameraValue>
@@ -359,13 +384,15 @@ export default function Index() {
       </div> */}
       <div className={style.content}>
         <div className={style.contentTitle}>
-          <span>视频监控</span>
-          <Input placeholder='请输入摄像头名称查询' style={{ width:240, marginLeft:'auto', marginRight:16 }} size='middle'></Input>
-          <Button type="primary" size='middle' style={{ width:96 }} icon={<SearchOutlined />}>查询</Button>
+          <span>设备查询</span>
+          <Input placeholder='请输入设备编号/安装地址' style={{ width:240, marginLeft:16 }} size='middle'></Input>
+          <Button size='middle' style={{ width:80,backgroundColor:'rgb(245,247,250)' }} >查询</Button>
         </div>
+        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         <div className={style.tableList}>
-          <Table bordered columns={columns} dataSource={dataSource} rowKey='Id' size='small' />
+          <Table bordered columns={columns} dataSource={dataSource} rowKey='Id' size='small' pagination={false}/>
         </div>
+        <Pagination className={style.pageNum} size="small" total={50} showTotal={showTotal} defaultPageSize={10} />
       </div>
       <Modal
         title="A区-1号楼-低压配电房"

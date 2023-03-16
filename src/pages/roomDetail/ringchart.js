@@ -1,68 +1,68 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
-import { Pie } from '@ant-design/plots';
+import * as echarts from "echarts";
 
-export default function Index(){
-    const ringData = [
-        {
-            type:'点',
-            value: 24.36,
+export default function Index(props){
+  let totalvalues = 0 ;
+  console.log(props)
+  props.ringData.map(item => {
+    totalvalues += Number(item.value)
+  })
+  const drawLine = ()=>{
+    console.log(123)
+    let ringChart = echarts.init(document.getElementById('ringChart'))
+    ringChart.setOption({
+      //环形图中间文字
+      title: {
+        text: "总",
+        subtext: totalvalues.toFixed(2),
+        textStyle: {
+          fontSize: 16,
+          color: "rgba(0,0,0,0.65)",
+          fontWeight: 400
         },
-        {
-            type:'水',
-            value: 12.95,
+        subtextStyle: {
+          fontSize: 20,
+          color: "#000000",
+          fontWeight: 500
         },
+        textAlign: "center", //图例文字居中显示
+        x: "48%",   //距离左边的距离
+        y: "40%"    //距离上边的距离
+      },
+      tooltip:{},
+      //数据的颜色设置
+      // color: ["#237ae4", "#F6BD16", "#FF3B30"],
+      //鼠标移入显示的文字
+      //图例设置
+      legend: {
+        type:'scroll',
+        bottom: '1%',
+        left: 'center',
+        icon:'circle'
+      },
+      series: [
         {
-            type:'燃气',
-            value: 18.71,
+          radius: ["55%", "65%"], //第一个是中间圆的大小，第二个是外边圆的大小
+          center: ["50%", "50%"], //左边的距离，上边的距离
+          type: "pie",
+          startAngle: 90,
+          labelLine:{
+            length:12,
+            length2: 0,
+            smooth:true,
+          },
+          data: props.ringData
         }
-    ]
+      ]
+    }, true)
+  }
+  useEffect(()=>{
+    drawLine()
+  })
     
-    const config = {
-        appendPadding: 10,
-        data:ringData,
-        angleField: 'value',
-        colorField: 'type',
-        radius: 0.8,
-        innerRadius: 0.8,
-        legend: {
-            layout: 'horizontal',
-            position: 'bottom'
-          },
-        label: {
-          type: 'spider',
-          offset: '-50%',
-          content: '{value}',
-          style: {
-            textAlign: 'center',
-            fontSize: 14,
-          },
-        },
-        interactions: [
-          {
-            type: 'element-selected',
-          },
-          {
-            type: 'element-active',
-          },
-        ],
-        statistic: {
-          title: false,
-          content: {
-            style: {
-              whiteSpace: 'pre-wrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              fontSize: 14,
-              color:'#666',
-            },
-            content: '总\n56.02',
-          },
-        },
-      };
-
     return <div className={style.chartTab}>
         <div className={style.itemTitle}><span>能耗分布</span></div>
-        <Pie style={{width:456,height:334,margin:12}} {...config} />
+        <div style={{width:456,height:334}} id='ringChart' ></div>
     </div>
 }

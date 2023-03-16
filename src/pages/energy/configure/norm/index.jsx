@@ -264,16 +264,18 @@ export default function Index() {
             type:'success',
             content:'能耗定额配置成功!'
           })
+          setRef.current.onCancel()
+          form.resetFields()
           runTable()
         }else{
-          messageApi.open({
-            type:'error',
-            content:res.errMsg
-          })
+          // messageApi.open({
+          //   type:'error',
+          //   content:res.errMsg
+          // })
+          message.error(res.errMsg)
         }
       })
-      setRef.current.onCancel()
-      form.resetFields()
+      
     }catch(errorInfo){}
     
   }

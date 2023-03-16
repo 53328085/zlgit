@@ -9,23 +9,26 @@ import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
 import moment from 'moment';
 import imgurl from "./icon";
 
-const { Group, Button: Rbutton } = Radio;
-
+ 
 
 const Laybox = styled.div`
   display: grid;
   flex: 1;
   &.zonghe {
-   grid-template-rows: 40px 472px 272px;
-  row-gap: 16px;
+   grid-template-rows: 512px 272px;
+   row-gap: 16px;
   .up {
     display: grid;
     grid-template-columns: 1256px 408px;
     column-gap: 16px; 
+    .upleft {
+      display: grid;
+      grid-template-rows: 40px 472px ;
+    }
   }
   .down { 
       display: grid;
@@ -34,13 +37,16 @@ const Laybox = styled.div`
       overflow: hidden;
   }
   }
-  &.classify {
+  &&.classify {
     .up {
       flex:1;
       display: grid;
-      grid-template-columns: 1264px 400px;
+      grid-template-columns: 1264px 1fr;
       column-gap: 16px;
-
+      .upleft {
+       display: grid;
+       grid-template-rows: 40px 1fr;
+      }
     }
   
   }
@@ -56,26 +62,38 @@ const Custspan = styled.span`
     padding-left: 1em;
   }
 `;
-const Ebutton = styled(Button)`
-  &,
-  &:hover {
-    height: 32px;
-    border: 1px solid #80cc80;
-    background-color: #ccffb3;
-    color: #339900;
-    line-height: 32px;
-    font-size: 14px;
-    padding-top: 0;
-    padding-bottom: 0;
-    width: 96px;
-  }
-`;
+
 const Divbox = styled.div`
   display: grid;
   grid-template-columns: 40% 1fr;
   column-gap: 16px;
   margin: 8px 0 8px 0;
   align-items: center;
+  .list {
+    display: grid;
+    grid-auto-rows: 30px;
+    align-items: flex-end;
+    .item {
+      display: flex;
+      justify-content: space-between;
+      span:first-child {
+        color: #999;
+        font-size: 14px;
+      }
+      span:last-child {
+        color: #515151;
+        font-size: 16px;
+      }
+    }
+  }
+`;
+const Engbox = styled.div`
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  column-gap: 32px;
+  height: 100%;
+  align-items: ${props => props.type == 2 ? 'center' : 'start'};
+  padding-top:${props => props.type == 2 ? '0px' : '35px'}; ;
   .list {
     display: grid;
     grid-auto-rows: 30px;
@@ -119,6 +137,9 @@ const Tabsbox = styled(Tabs)`
             color:#fff
         }
     }
+    .ant-tabs-tab + .ant-tabs-tab {
+      margin: 0 0 0 16px;
+    }
     .ant-tabs-tab.ant-tabs-tab-active {
         background-color: var(--ant-primary-color);
        
@@ -160,38 +181,82 @@ const UDbox = styled.div`
     }
   }
 `;
-const UDboxbord = styled(Divbox)`  
-  border-top: 1px dotted #d7d7d7;
-`
+
 const Echartbox = styled.div`
-   height: 477px;
-   width: 1256px;
+   height: 100%;
+   width: 100%;
    background-color: #fff;
    padding: 16px;
    border: 1px solid #d7d7d7;
 `
-export default function Index() {
-  const elref = useRef(null)
-  const pieref = useRef();
+const ElectricRight = styled.div`
+   display: grid;
+   grid-template-rows: ${props => props.type == 2 ? '200px 440px 128px' : '656px 128px'} ;
+   row-gap: 16px;
+   
+`
+const Radiogroup = styled(Radio.Group)`
+  && {
+    .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
+      width: 96px;
+      text-align: center;
+      &:first-child {
+        border-radius: 16px 0 0 16px;
+      }
+     &:last-child {
+      border-radius: 0 16px 16px 0;
+     }
+    }
+  }
+
+
+`
+export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  
+  let shifts = useSelector(selectshifts) // ?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
+  const [allshifts] = useState(() => {
+    shifts.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
+    return shifts
+  }) 
   const [form] = Form.useForm();
   const {Item} = Form
   const [value, setvalue] = useState("1");
   const [qverview, setOverview] = useState({})
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-  const [tabvalue, setTabvalue] = useState('1')
+  const [tabvalue, setTabvalue] = useState(1)
+  const [op, setOp] = useState(1) // 能耗 1， 费用 2
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total, proportion, coalStandard, ...energyitem} = qverview;
-  console.log(coalStandard)
+  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
+  
   let type = ['', '日', '月', '年'][timetype]
   const Chartbox = ({data}) => {
     const ref = useRef()
     const charw = () => {
      try {
-      let {x, y, y1} = data
-      let dimensions = ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`]
-      let source = x.map((v, index) => ({time: v, [`本${type}能耗(吨标煤)`]: y[index], [`昨${type}能耗(吨标煤)`]: y1[index]}))
+      let {x =[], y=[], y1=[]} = data || {}
+
+      let cost = ['',
+      ["time", `本${type}(万元)`, `昨${type}(万元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(元)`, `昨${type}(元)`],
+    ]
+      let energy = ['',
+      ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`],
+      ["time", `本${type}(kWh)`, `昨${type}(kWh)`],
+      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
+      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
+      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
+      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
+      ["time", `今${type}(吨)`, `昨${type}(吨)`],
+      ["time", `今${type}(吨)`, `昨${type}(吨)`],
+    ]
+      let dimensions = ['', energy, cost ][op][tabvalue]      
+      let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
       drawEcharts(ref.current, {
         dataset: {dimensions, source},
         series: [{ type: "bar" }, { type: "bar" }],
@@ -220,7 +285,7 @@ const EngItem = ({icon, data, sub, ...otherprop}) => {
  >
    <UDbox>
      <Image
-       src={imgurl.z02}
+       src={imgurl[icon]}
        preview={false}
        width={64}
        height={64}
@@ -285,15 +350,83 @@ const Energyitem = () => {
    return (
     <>
       {
-        items.map(item => <EngItem  {...item} key={item.type}/>)
+        items.map(item => <EngItem  {...item} key={nanoid()}/>)
       }
     </>
   
 
    )
 }
+const Electric = ({data, des}) => {
+  const pieref = useRef()
+  useEffect(() => {
+    drawEcharts(pieref.current, {
+      pieData: { data: proportion, total: 100 },
+      type: 3,
+      legend: {
+        bottom: 0,
+        top: 'auto',
+        itemGap: 5
+      },
+      grid: {
+        bottom: 20
+      }
+    });
+  }, [])
+  return (
+    <ElectricRight type={tabvalue}>
+      <Titlelayout title={<Title title={data?.name} />}>
+      <Engbox type={tabvalue}>
+        <Image
+          src={imgurl.z08}
+          preview={false}
+          width={64}
+          height={64}
+        />
+      <div className="list">
+        <div className="item">
+          <span>本{type}：</span>
+          <span>{data.periodValue}</span>
+          <span>同比</span>
+          <span>
+          {data.yoy}
+            <ArrowDownOutlined style={{ color: "#f00" }} />
+          </span>
+        </div>
+        <div className="item">
+          <span>昨{type}：</span>
+          <span>{data.lastMonthPeriodValue}</span>
+          <span>环比</span>
+          <span>
+            {data.mom}
+            <ArrowUpOutlined style={{ color: "#f00" }} />
+          </span>
+        </div>
+      </div>
+     </Engbox>
+    </Titlelayout>
+    { tabvalue == 2 && <Titlelayout
+      type="inner"
+      title={<Title title={`本${type}能耗占比`} />}
+    >
+      <div
+        style={{ width: "368px", height: "356px" }}
+        ref={pieref}
+      ></div>
+    </Titlelayout>
+   }
+      <Titlelayout title="能耗分析">
+        <div style={{flex: 1, display:'flex', alignItems: 'center', height: '100%'}}>
+         <Space size={8}><span style={{color: "#0c6", fontSize: '18px'}}>&#9673;</span><span style={{color: '#515151'}}>{des}</span></Space>
+        </div>
+      </Titlelayout>
+    </ElectricRight>
+  )
 
+
+}
 const CoalStandard =({data={}}) => {
+  const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
       pieData: { data: proportion, total: 100 },
@@ -320,13 +453,13 @@ const CoalStandard =({data={}}) => {
         }}
       >
         <Image
-          src={imgurl.z08}
+          src={imgurl['coalStandard']}
           preview={false}
-          width={80}
-          height={80}
+          width={64}
+          height={64}
         />
         <span style={{ color: "#999", marginTop: "10px" }}>
-          (吨标煤)
+         {op ==1 ? <>（吨标煤）</> : <>（万）</>}
         </span>
       </div>
 
@@ -368,20 +501,21 @@ const CoalStandard =({data={}}) => {
   </Titlelayout>
   )
 }
+
   const tabs = [
-    { label: "综合能耗", key: "1", },
-    { label: "电", key: "2",  },
-    { label: "冷水", key: "3" },
-    { label: "热水", key: "4" },
-    { label: "燃气", key: "5" },
-    { label: "煤炭", key: "6" },
-    { label: "燃油", key: "7" },
-    { label: "其他", key: "8" },
+    { label: "综合能耗", key: 1, },
+    { label: "电", key: 2,  },
+    { label: "冷水", key: 3 },
+    { label: "热水", key: 4 },
+    { label: "蒸汽", key: 5 },
+    { label: "燃气", key: 6 },
+    { label: "煤炭", key: 7 },
+    { label: "燃油", key: 8 },
   ];
 
 
   const getData = async () => {
-    const {area, date, type} = form.getFieldsValue()
+    const {area, date, type, shiftNo, view} = form.getFieldsValue()
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')
@@ -393,13 +527,17 @@ const CoalStandard =({data={}}) => {
     }
     const querys = {
       type,
+      shiftNo,
       projectId,
       date: time
    }
     const param = [area]
+    let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
+    let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
+    let handler = ['', energy, cost][view][tabvalue]
     try {
-     let {success, data} =  await EnergyComprehensive.EnergyOverViewRuntime(querys, param)
-     console.log(data)
+     let {success, data} =  await EnergyComprehensive[handler](querys, param)
+   
      if(success) {
       setOverview({...qverview, ...data})
      }else {
@@ -437,24 +575,35 @@ const CoalStandard =({data={}}) => {
      setTimetype(e);
      getData()
   }
+  const opchange = (e) => {   
+     console.log(typeof e.target.value) 
+     setOp(e.target.value)
+    // form.resetFields()
+     getData()
+  }
   const CustView = () => {
    const viewstyle = {
       display: 'flex',
        justifyContent: "space-between",
-       flex: 1
+       flex: 1,
+       'marginLeft': '32px',
+      'paddingLeft': '32px',
+      'borderLeft': '1px dotted #d7d7d7',
     }
     return (
       <div style={viewstyle}>
-       <Item nostyle name="view">
-        <Radio.Group
+       <Item nostyle   initialValue={1} name="view">
+        <Radiogroup
+        onChange={opchange}   
+        value={op}    
         options={[
           {
             label: '能耗',
-            value: 'Apple',
+            value: 1,
           },
           {
             label: '费用',
-            value: 'Pear',
+            value: 2,
           }]}
         optionType="button"
         buttonStyle="solid"
@@ -470,8 +619,14 @@ const CoalStandard =({data={}}) => {
            onChange={timechange}
            ></Select>
         </Item>
+
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} />
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
+        </Item>
+        <Item  noStyle name="shiftNo" initialValue={0}>
+           <Select style={{width: '96px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
+              onChange={getData}
+           ></Select>
         </Item>
       </Space>
       </div>
@@ -491,20 +646,17 @@ const CoalStandard =({data={}}) => {
 
       <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
       <UserSearch></UserSearch>
-      <Laybox value={value} className={ tabvalue == '1' ? 'zonghe' : 'classify'}>
+      <Laybox value={value} className={ tabvalue == 1 ? 'zonghe' : 'classify'}>
         <div className="up">
-          
-          <Tabsbox defaultActiveKey="1" items={tabs} onChange={ontabChange}>
-          </Tabsbox>
-          <Chartbox  data={detail} />
-           <div>
-          
-            <CoalStandard data={coalStandard} />
+          <div className="upleft">
+             <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange}>
+             </Tabsbox>
+             <Chartbox  data={detail} />
            </div>
-     
-          
-        </div>
-       {tabvalue == '1' && <div className="down">
+           {tabvalue == 1 ? <CoalStandard/> : <Electric data={consume} des={analysisDes} /> }
+         </div>  
+        
+       {tabvalue == 1 && <div className="down">
              <Energyitem />
         </div>
        }
