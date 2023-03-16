@@ -1,12 +1,101 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less'
 import logo from './images/logo.png'
-import {Progress, Radio} from 'antd';
+import {Progress, Radio, message} from 'antd';
 import BarChart from './barchart';
 import Ringchart from './ringchart';
 import LineChart from './linechart';
+import { useLocation } from 'react-router';
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
+import { EnergyQuotaRuntime } from '@api/api.js'
+import { useRequest } from 'ahooks';
 
 export default function Index(){
+    let location = useLocation()
+    let search = location.search.substr(1, location.search.length)
+    const searchObj = JSON.parse(decodeURI(search))
+    let areaName = searchObj.areaName
+    let roomData = searchObj.data
+    const projectId = useSelector(selectProjectId);
+    const { queryQueryRoomDetail } = EnergyQuotaRuntime
+    const [type, setType] = useState(1)
+    const onChange = val=>{
+        setType(val)
+    }
+    const [values, setValues] = useState({
+        "address":"",
+        "energyType":"电/水/燃气",
+        "roomName":"10",
+        "ComprehensiveQuota":"0.00", //年度综合定额
+        "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
+        "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
+        "proportion":[],
+        "detail":{
+            "x":[],
+            "y":[]
+        },
+        "detailEletric":{
+            "x":[],
+            "y":[]
+        },
+        "detailWater":{
+            "x":[],
+            "y":[]
+        },
+        "detailGas":{
+            "x":[],
+            "y":[]
+        }
+    }) 
+    const getroomDetail = () => {
+        return queryQueryRoomDetail(projectId,roomData.roomId, type).then(res => {
+            let { success, data } = res
+            if(success){
+                if(data){
+                    setValues(data[0])
+                }else{
+                    setValues({
+                        "address":"",
+                        "energyType":"",
+                        "roomName":"",
+                        "ComprehensiveQuota":"0.00", //年度综合定额
+                        "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
+                        "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
+                        "proportion":[],
+                        "detail":{
+                            "x":[],
+                            "y":[]
+                        },
+                        "detailEletric":{
+                            "x":[],
+                            "y":[]
+                        },
+                        "detailWater":{
+                            "x":[],
+                            "y":[]
+                        },
+                        "detailGas":{
+                            "x":[],
+                            "y":[]
+                        }
+                    })
+                }
+            }else{
+                message.error(res.errMsg)
+            }
+        })
+    }
+    const { run: runQuery } = useRequest(getroomDetail,{
+        manual: true
+    })
+
+    useEffect(()=>{
+        runQuery()
+    },[type])
+
+    
+
     const energyData = {
       Name:'月度用电',
       Unit:'用电量(kWh)',
@@ -39,13 +128,10 @@ export default function Index(){
                     <div className={style.leftItem}>
                         <div className={style.itemTitle}><span>房间基本信息</span></div>
                         <div className={style.itemData}>
-                            <span>房间地址</span><span>正泰物联滨江园区-研发1号楼-203</span>
+                            <span>房间地址</span><span>{values.address}</span>
                         </div>
                         <div className={style.itemData}>
-                            <span>房间类别</span><span>研发中心实验室</span>
-                        </div>
-                        <div className={style.itemData}>
-                            <span>能耗种类</span><span>电 / 水 / 燃气</span>
+                            <span>能耗种类</span><span>{values.energyType}</span>
                         </div>
                     </div>
                     <div className={style.leftItem}>
@@ -53,40 +139,42 @@ export default function Index(){
                         <div className={style.itemData}>
                             <div className={style.dataList}>
                                 <span>定额能耗(吨标煤)</span>
-                                <span className={style.energyData}>100.00</span>
+                                <span className={style.energyData}>{Number(values.ComprehensiveQuota).toFixed(2)}</span>
                             </div>
                             <div className={style.dataList}>
                                 <span>已用能耗</span>
-                                <span className={style.energyData}>75.00</span>
+                                <span className={style.energyData}>{Number(values.ComprehensiveQuotaUsed).toFixed(2)}</span>
                             </div>
                             <div className={style.dataList}>
                                 <span>剩余能耗</span>
-                                <span className={style.energyData}>25.00</span>
+                                <span className={style.energyData}>{Number(values.ComprehensiveQuotaLeaved).toFixed(2)}</span>
                             </div>
                         </div>
                         <div className={style.itemData}>
                             <span>能耗剩余</span>
-                            <Progress style={{width:'280px'}} percent={25} trailColor='#ebeef5' strokeWidth={20} />
+                            <Progress style={{width:'280px'}} 
+                            percent={Number(values.ComprehensiveQuota) > 0 ? (Number(values.ComprehensiveQuotaLeaved)/Number(values.ComprehensiveQuota)).toFixed(2) : 0} 
+                            trailColor='#ebeef5' strokeWidth={20} />
                         </div>
                     </div>
                 </div>
                 <div className={style.topRight}>
                     <div className={style.itemTitle}>
                         <span>综合能耗</span>
-                        <Radio.Group size='middle' style={{marginLeft:'auto',marginRight: 12}} defaultValue="day" buttonStyle="solid">
-                            <Radio.Button value="day">本日</Radio.Button>
-                            <Radio.Button value="month">本月</Radio.Button>
-                            <Radio.Button value="year">本年</Radio.Button>
+                        <Radio.Group size='middle' style={{marginLeft:'auto',marginRight: 12}} defaultValue={1} buttonStyle="solid" onChange={e =>onChange(e.target.value)}>
+                            <Radio.Button value={1}>本日</Radio.Button>
+                            <Radio.Button value={2}>本月</Radio.Button>
+                            <Radio.Button value={3}>本年</Radio.Button>
                         </Radio.Group>
                     </div>
-                    <BarChart></BarChart>
+                    <BarChart barData = { values.detail }></BarChart>
                 </div>
             </div>
             <div className={style.contentBottom}>
-                <Ringchart></Ringchart>
-                <LineChart lineData = { energyData }></LineChart>
-                <LineChart lineData = { waterData }></LineChart>
-                <LineChart lineData = { gasData }></LineChart>
+                <Ringchart ringData = {values.proportion}></Ringchart>
+                <LineChart lineData = { values.detailEletric } Unit={'用电量(kWh)'} Name={type==1?'本日用电' : type ==2 ?'月度用电' :'年度用电'}></LineChart>
+                <LineChart lineData = { values.detailWater } Unit={'用水量(m³)'} Name={type==1?'本日用水' : type ==2 ?'月度用水' :'年度用水'}></LineChart>
+                <LineChart lineData = { values.detailGas } Unit={'用气量(m³)'} Name={type==1?'本日用燃气' : type ==2 ?'月度用燃气' :'年度用燃气'}></LineChart>
             </div>
         </div>
     </div>

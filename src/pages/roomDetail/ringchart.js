@@ -2,26 +2,14 @@ import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
 import * as echarts from "echarts";
 
-export default function Index(){
-  const chartData = [
-    {
-      name:'电',
-      value: '24.36',
-    },
-    {
-      name:'水',
-      value: '12.95',
-    },
-    {
-      name:'燃气',
-      value: '18.71',
-    }
-  ]
+export default function Index(props){
   let totalvalues = 0 ;
-  chartData.map(item => {
+  console.log(props)
+  props.ringData.map(item => {
     totalvalues += Number(item.value)
   })
-  useEffect(()=>{
+  const drawLine = ()=>{
+    console.log(123)
     let ringChart = echarts.init(document.getElementById('ringChart'))
     ringChart.setOption({
       //环形图中间文字
@@ -64,14 +52,17 @@ export default function Index(){
             length2: 0,
             smooth:true,
           },
-          data: chartData
+          data: props.ringData
         }
       ]
-    })
-  },[])
+    }, true)
+  }
+  useEffect(()=>{
+    drawLine()
+  })
     
     return <div className={style.chartTab}>
         <div className={style.itemTitle}><span>能耗分布</span></div>
-        <div style={{width:456,height:334,margin:12}} id='ringChart' ></div>
+        <div style={{width:456,height:334}} id='ringChart' ></div>
     </div>
 }

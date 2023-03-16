@@ -1312,6 +1312,7 @@ export class EnergyQuotaRuntime {
     server.post(
       `Energy/EnergyQuotaRuntime/QueryRoomQuota?projectId=${projectId}&areaId=${areaId}&roomName=${roomName}`
     );
+  static queryQueryRoomDetail= (projectId, roomId, type) => server.post( `Energy/EnergyQuotaRuntime/QueryRoomDetail?projectId=${projectId}&roomId=${roomId}&type=${type}`);
 }
 //公共能耗
 export class EnergyPublicRuntime {
