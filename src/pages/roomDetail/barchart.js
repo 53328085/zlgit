@@ -2,6 +2,7 @@ import React, {useState, useEffect, Fragment} from 'react'
 import * as echarts from "echarts";
 
 export default function Index(props){
+  console.log(props)
   useEffect(()=>{
     let barChart = echarts.init(document.getElementById('barChart'));
     barChart.setOption({
@@ -37,6 +38,6 @@ export default function Index(props){
         }
       ]
     })
-  })
+  },[props.barData])
   return <div style={{width:1368,height:334}} id='barChart'></div>
 }

@@ -40,7 +40,7 @@ export default function Index(props){
         }
       ]
     })
-  })
+  },[lineData])
   return <div className={style.chartTab}>
     <div className={style.itemTitle}><span>{ props.Name }</span></div>
     <div style={{width:456,height:334,}}  id={lineId}></div>

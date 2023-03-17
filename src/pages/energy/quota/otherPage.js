@@ -7,6 +7,7 @@ import RingChart from './ringChart'
 import area from './img/area-1.png'
 import { useRequest } from 'ahooks';
 import { EnergyQuotaRuntime } from '@api/api.js'
+import kong from '@imgs/empty.png'
 
 export default function Index(props){
     const { queryQuotaOverview } = EnergyQuotaRuntime
@@ -88,7 +89,8 @@ export default function Index(props){
                             <span>园区能耗分布</span>
                         </div>
                         <div style={{width:288,height:256}}>
-                            {itemData.buildingConsumeDistribution.length > 0 ?<RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>:<Empty></Empty>}
+                            {itemData.buildingConsumeDistribution.length > 0 ?<RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>:
+                            <img src={kong} style={{width: 240, height: 240, marginLeft: 24,marginTop:8 }}></img>}
                         </div>
                     </div>
                     <Button type='primary' style={{width: 288, height: 40}} onClick={toMainPage}>查看房间能耗详情</Button>
