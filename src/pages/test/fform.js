@@ -1,54 +1,91 @@
-import React, {useState, useRef, useEffect} from 'react'
+import { Table } from 'antd';
+//import qs from 'qs';
+import { useEffect, useState } from 'react';
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    sorter: true,
+    render: (name) => `${name.first} ${name.last}`,
+    width: '20%',
+  },
+  {
+    title: 'Gender',
+    dataIndex: 'gender',
+    filters: [
+      {
+        text: 'Male',
+        value: 'male',
+      },
+      {
+        text: 'Female',
+        value: 'female',
+      },
+    ],
+    width: '20%',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+  },
+];
+const getRandomuserParams = (params) => ({
+  results: params.pagination?.pageSize,
+  page: params.pagination?.current,
+  ...params,
+});
+const App = () => {
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
+  const fetchData = () => {
+    setLoading(true);
+    fetch(`https://randomuser.me/api?${JSON.stringify(getRandomuserParams(tableParams))}`)
+      .then((res) => res.json())
+      .then(({ results }) => {
+        setData(results);
+        setLoading(false);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: 200,
+            // 200 is mock data, you should read it from server
+            // total: data.totalCount,
+          },
+        });
+      });
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(tableParams)]);
+  const handleTableChange = (pagination, filters, sorter) => {
+    setTableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
 
-function Child() {
-  const [count, setCount] = useState(0)
-  console.log('child111')
-  useEffect(() => {
-    console.log('child')
-  })
+    // `dataSource` is useless since `pageSize` changed
+    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+      setData([]);
+    }
+  };
   return (
-    <div>
-      <h1>child</h1>
-       <button onClick={() => setCount(count + 1)}>child{count}</button>
-    </div>
-  )
-}
-function Parent(props) {
-  const [num, setNum] = useState(0);
-  
-  useEffect(() => {
-    console.log('parent' + num)
-  })
-  return (
-    <div>
-      <h1>parent</h1>
-       <button onClick={() => setNum(num + 1)}>parent{num}</button>
-       {props.children}
-    </div>
-  )
-}
-export default function Index() {
-  const [count, setCount] = useState(0)
- 
-  const onChange = () =>  {
-    setCount(count + 1)
-  }
-  const log = () => {
-    console.log(count)
-  }
-  useEffect(() => {
-    console.log('Index')
-  }, [count])
-  return (
-    <div>
-      <h1>Index</h1>
-      <h2>{count}</h2>
-      <p><button onClick={onChange}>index</button></p>
-      <Parent>
-         <Child  />
-      </Parent>
-     
-    </div>
-  )
-}
+    <Table
+      columns={columns}
+      rowKey={(record) => record.login.uuid}
+      dataSource={data}
+      pagination={tableParams.pagination}
+      loading={loading}
+      onChange={handleTableChange}
+    />
+  );
+};
+export default App
