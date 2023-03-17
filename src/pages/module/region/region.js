@@ -695,17 +695,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const tableOnchange = (e) => {
     console.log(e)
     let {current} = e
-    setPagination({
-      ...pagination,
-      current,
-    })
-   // params.pageNum = current;
-   // getTableData();
+      setPagination({
+        ...pagination,
+        current,
+      })
+   
   }
-  useEffect(() => {
-    if(pagination.current > 1)  {
+ useEffect(() => {
       getTableData()
-    }
     
   }, [pagination.current])
   useEffect(() => {
