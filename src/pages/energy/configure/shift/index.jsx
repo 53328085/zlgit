@@ -252,7 +252,7 @@ export default function Index() {
         })
       }
       updateShift(projectId, params).then(res => {
-        if(res.sussess){
+        if(res.success){
           messageApi.open({
             type: 'success',
             content:'班次方案修改成功!'
