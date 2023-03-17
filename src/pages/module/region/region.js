@@ -2,15 +2,11 @@ import React, {
   useState,
   useRef,
   useEffect,
-  useMemo,
-  forwardRef,
-  useImperativeHandle,
 } from "react";
 import {
   Input,
   Button,
   Space,
-  Modal,
   Form,
   message,
   Typography,
@@ -29,7 +25,8 @@ import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap";
-
+import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {useSelector} from 'react-redux'
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -47,7 +44,7 @@ const Formbox = styled(Form)`
       ? `repeat(${p.rowes + 5}, 32px)`
       : `repeat(${p.rowes}, 32px)`};
   column-gap: 32px;
-  row-gap: 16px;
+  row-gap: 20px;
   grid-auto-flow: ${(p) => (p.islngLat ? "column" : "row")};
   .address {
     grid-column: 2;
@@ -137,7 +134,8 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
-
+  const oneLevel = useSelector(selectOneLevel) // 一级
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
@@ -157,17 +155,21 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const [deviceSummary, setDeviceSummary] = useState([]);
   const [deviceSub, setDeviceSub] = useState([]);
   const [Unselected, setUnSelected] = useState([]);
-  const [leveloption, setLevelOption] = useState({})
-
+  
+  const [tabelData, setTableData] = useState([])
   const [columns, setColumns] = useState([]);
   //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
-  const [topAreaId, setTopAreaId] = useState()
+  const [topAreaId, setTopAreaId] = useState(oneLevelDefaultId)
 /*   const [fields, setFields] = useState({
     field: [],
     type: [],
   }); */
 
-
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 15,
+    total: 0
+  })
  
   const devices = useRef({
     unselected: [],
@@ -178,13 +180,13 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
  
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
-  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  
+  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
 
   const curareaId = useRef(null);
   let params = {
     //查询
-    pageNum: 1,
-    pageSize: 15,
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
     level,
     topAreaId: 0,
     name: "",
@@ -201,35 +203,13 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     fields: [],
   };
 
-  const getLevelOption = async (parentId = 0, level = 1) => {   
-    try {
-      let { success, data } = await Area.QueryAll({
-        projectId,
-        level,
-        parentId,
-      });
-      if (success && Array.isArray(data)) {
-        setTopAreaId(data[0]?.id)
-        setLevelOption([...data])   
-      } else {
-        setLevelOption([])
-      }
-     
-    } catch (error) {
-      console.log(error)
-    }
-  };
-  //   级联选择 start
+
   const  CascaderSct = () => {
-    const [leveloptions, setLevelOption] = useState([])
-    console.log(level) // level = 2 显示前一级， = 3 显示前两两级
-    const getOptions = async () => { // 第一级
-     let {success, data} = await Area.QueryAll({projectId,level: 1, parentId: 0 })
-     if (success && Array.isArray(data)) {
-      let cardata = data.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
-      setLevelOption([...cardata])
-     }
-    }
+    const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
+
+
+     // level = 2 显示前一级， = 3 显示前两两级, 依次类推
+   
     const fieldNames = {
       label: 'name',
       value: 'id',
@@ -288,9 +268,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
      console.log(value)
      console.log(selectedOptions)
    }
-   useEffect(() => {
-    getOptions()
-   }, [])
+  
     return (
       <Item label="父节点" name="parentId" rules={[
         {
@@ -482,19 +460,18 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
 
-  const getTableData = ({ current, pageSize }, formData) => {    
+  const getTableData = () => {    
     // 列表查询
     if (isNaN(level)) return;
-    params = Object.assign(
-      {},
-      params,
-      { pageNum: current, pageSize },
-      formData
-    );
-
-    return Area.QueryByPage(params)
+    
+    let value = form.getFieldsValue()
+   
+    params = {...params, ...value }
+    console.log(pagination)
+    console.log(params)
+     Area.QueryByPage(params)
       .then((res) => {
-        let { success, data } = res;
+        let { success, data, total } = res;
         let {
           body = [],
           header = [],
@@ -516,7 +493,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         }
         let colums = [
           ...cols,
-          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: null,
+          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
             title: "操作",
             key: "action",
@@ -551,15 +528,21 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           return row;
         });
         if (success && data) {
-          return {
+          setTableData([...formart])
+          setPagination({
+            ...pagination,
+            total: total,
+          })
+         /*  return {
             total: colums.length,
             list: formart,
-          };
+          }; */
         } else {
-          return {
+          setTableData([])
+        /*   return {
             total: 0,
             list: [],
-          };
+          }; */
         }
       })
       .catch((e) => {
@@ -567,16 +550,6 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       });
   };
 
-  const { tableProps, search, refresh } = useAntdTable(getTableData, {
-    form,
-    refreshDeps: [level],
-    defaultPageSize: 15,
-    onError: (e) => {
-      console.log(e);
-    },
-  });
-
-  const { submit } = search;
 
   const add = () => {
     address.current = "";
@@ -626,7 +599,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           content: isAdd ? "新增成功" : "编辑成功",
           onClose: () => {
             nref.current.onCancel();
-            refresh();
+            getTableData();
           },
         });
       !success && custMsg({ success, content: errMsg || "数据出错" });
@@ -719,27 +692,41 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         );
     }
   };
+  const tableOnchange = (e) => {
+    console.log(e)
+    let {current} = e
+    setPagination({
+      ...pagination,
+      current,
+    })
+   // params.pageNum = current;
+   // getTableData();
+  }
   useEffect(() => {
-    console.log("zhu");
+    if(pagination.current > 1)  {
+      getTableData()
+    }
+    
+  }, [pagination.current])
+  useEffect(() => {
    // getLevelOption();
-  }, []);
-  useEffect(() => {
-    getLevelOption();
     if (level == 1) {
       form.setFieldsValue({
         topAreaId: null,
       });
+      getTableData()
     }else if (level > 1) {
       form.setFieldsValue({
         topAreaId,
       });
+      getTableData()
     }
   
   }, [level]);
   
   return (
     <Mainbox ref={boxref}>
-      <Form form={form} layout="inline" initialValues={{name: "", topAreaId }}>
+      <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}查询`}>
@@ -748,7 +735,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
                 allowClear
                 enterButton="查询"
                 style={{ width: "550px" }}
-                onSearch={submit}
+                onSearch={getTableData}
               />
             </Form.Item>
           )}
@@ -756,14 +743,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             <>
               <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
-                  options={leveloption}
+                  options={oneLevel}
                   fieldNames={{
                     label: "name",
                     value: "id",
                     options: "options",
                   }}
                   style={{ width: "200px" }}
-                  onChange={submit}
+                  onChange={getTableData}
                 ></Select>
               </Item>
               <Form.Item name="name" label={`${name}查询`}>
@@ -772,7 +759,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
                   allowClear
                   enterButton="查询"
                   style={{ width: "550px" }}
-                  onSearch={submit}
+                  onSearch={getTableData}
                 />
               </Form.Item>
             </>
@@ -784,7 +771,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           </Form.Item>
         </Space>
       </Form>
-      <UserTable columns={columns} {...tableProps} rowKey="areaId" />
+      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
 

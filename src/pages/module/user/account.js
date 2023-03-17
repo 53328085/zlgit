@@ -55,13 +55,15 @@ const showModl = () => {
  }
  const restOk = async () => {
    try {
-    const {id, pwd} = Record
+    const {id} = Record
     const {success, errMsg} =  await ResetPassword({id, pwd: newpwd.current})
-    custMsg({success, content: '密码重置成功',  onClose: () => {
-      refresh()
+    console.log(success)
+    success && custMsg({success, content: '密码重置成功',  onClose: () => {
+     
       rref.current.onCancel()
+      refresh()
     }})
-    custMsg({success: !success, content: errMsg, type: 'warning'} )
+    !success && custMsg({success, content: errMsg, type: 'warning'} )
     
    } catch (error) {
      console.log(error)
@@ -165,7 +167,7 @@ const showModl = () => {
       mref.current.onCancel();
       refresh()
     }})
-    !success && custMsg({success: !success, content: errMsg, type: 'warning'} )
+    !success && custMsg({success, content: errMsg, type: 'warning'} )
 
   
    

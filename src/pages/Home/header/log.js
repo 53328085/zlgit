@@ -154,13 +154,14 @@ export default function Log() {
   )
   const onOk = () => {
     form.validateFields().then(() => {
-      let {mobile, pwd, Pwd} = form.getFieldsValue(true)
-      Login.UpdateCurrentAccount({mobile, pwd, Pwd}).then(res => {
-         let {success} = res
+      let {mobile, pwd, oldPwd} = form.getFieldsValue()
+      console.log(oldPwd)
+      Login.UpdateCurrentAccount({mobile, pwd, oldPwd}).then(res => {
+         let {success, errMsg} = res
          if(success) {
           return message.success("保存成功", 1, user.current.onCancel())
          }
-         return message.warning('保存失败', 1)
+         return message.warning(errMsg || '保存失败', 1)
       })
       
     }).catch(e => {
@@ -251,7 +252,7 @@ export default function Log() {
       ]}>
       <Cipt placeholder="请输入手机号码" />
     </Item>
-    <Item label="输入旧密码" name="pwd"  rules={
+    <Item label="输入旧密码" name="oldPwd"  rules={
       [
         {
           required: true,
@@ -266,7 +267,7 @@ export default function Log() {
     }>
     <Ciptpd placeholder="请输入旧密码" />
     </Item>
-    <Item label="输入新密码" name="Pwd" rules={
+    <Item label="输入新密码" name="pwd" rules={
       [
         {
           required: true,
@@ -286,7 +287,7 @@ export default function Log() {
         },
         ({ getFieldValue }) => ({
           validator(_, value) {
-            if (!value || getFieldValue('Pwd') === value) {
+            if (!value || getFieldValue('pwd') === value) {
               return Promise.resolve();
             }
             return Promise.reject(new Error('两次输入的新密码不匹配'));
