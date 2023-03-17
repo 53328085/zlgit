@@ -7,13 +7,12 @@ dayjs.extend(customParseFormat);
 import dashed from '@imgs/dashed.png'
 import { eneryShift } from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
-import {selectProjectId, getshifts} from '@redux/systemconfig.js'
+import {selectProjectId, getshifts, selectshifts} from '@redux/systemconfig.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 
 export default function Index() {
-  const aref = useRef()
   const dref = useRef()
   const dispatch = useDispatch();
   const projectId = useSelector(selectProjectId);
@@ -145,22 +144,19 @@ export default function Index() {
             type:'success',
             content:'新增班次成功!'
           })
+          setTime1(null)
+          setTime2(null)
+          setTime3(null)
+          setTime4(null)
+          setDisabledTime1(null)
+          setDisabledTime2(null)
+          setDisabledTime3(null)
+          setDisabledTime4(null)
+          shiftQuery()
+          setNextModal(false)
         }else{
-          messageApi.open({
-            type:'error',
-            content: res.errMsg
-          })
+          message.error(res.errMsg)
         }
-        setTime1(null)
-        setTime2(null)
-        setTime3(null)
-        setTime4(null)
-        setDisabledTime1(null)
-        setDisabledTime2(null)
-        setDisabledTime3(null)
-        setDisabledTime4(null)
-        shiftQuery()
-        setNextModal(false)
       })
     }catch(errorInfo){}
   }
@@ -261,22 +257,20 @@ export default function Index() {
             type: 'success',
             content:'班次方案修改成功!'
           })
+          setEditTime1(null)
+          setEditTime2(null)
+          setEditTime3(null)
+          setEditTime4(null)
+          setDisabledEditTime1(null)
+          setDisabledEditTime2(null)
+          setDisabledEditTime3(null)
+          setDisabledEditTime4(null)
+          shiftQuery()
+          setEditModal(false)
         }else{
-          messageApi.open({
-            type: 'error',
-            content: res.errMsg || '班次方案修改失败，请重试!'
-          })
+          message.error(res.errMsg || '班次方案修改失败，请重试!')
         }
-        setEditTime1(null)
-        setEditTime2(null)
-        setEditTime3(null)
-        setEditTime4(null)
-        setDisabledEditTime1(null)
-        setDisabledEditTime2(null)
-        setDisabledEditTime3(null)
-        setDisabledEditTime4(null)
-        shiftQuery()
-        setEditModal(false)
+        
       })
     } catch(errorInfo){}
   }

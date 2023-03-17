@@ -15,8 +15,7 @@ export default function Index(){
     let location = useLocation()
     let search = location.search.substr(1, location.search.length)
     const searchObj = JSON.parse(decodeURI(search))
-    let areaName = searchObj.areaName
-    let roomData = searchObj.data
+    let roomId = searchObj.id
     const projectId = useSelector(selectProjectId);
     const { queryQueryRoomDetail } = EnergyQuotaRuntime
     const [type, setType] = useState(1)
@@ -25,8 +24,8 @@ export default function Index(){
     }
     const [values, setValues] = useState({
         "address":"",
-        "energyType":"电/水/燃气",
-        "roomName":"10",
+        "energyType":"",
+        "roomName":"",
         "ComprehensiveQuota":"0.00", //年度综合定额
         "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
         "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
@@ -49,7 +48,7 @@ export default function Index(){
         }
     }) 
     const getroomDetail = () => {
-        return queryQueryRoomDetail(projectId,roomData.roomId, type).then(res => {
+        return queryQueryRoomDetail(projectId, roomId, type).then(res => {
             let { success, data } = res
             if(success){
                 if(data){
@@ -91,6 +90,7 @@ export default function Index(){
     })
 
     useEffect(()=>{
+        console.log(123)
         runQuery()
     },[type])
 

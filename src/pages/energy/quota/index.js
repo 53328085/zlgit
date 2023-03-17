@@ -1,12 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import style from './style.module.less';
 import { Select, Button, message } from 'antd';
 import OtherPage from './otherPage'
 import MainPage from './mainPage'
-import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
-import { AreaSetting } from '@api/api.js'
 
 export default function Index() {
   const {Option} = Select
@@ -26,6 +24,11 @@ export default function Index() {
   const [areaName, setAreaName] = useState(areaList[0].name)
   const changeArea = (value) => {
     setAreaId(value)
+    areaList.map(item => {
+      if(item.id == value){
+        setAreaName(item.name)
+      }
+    })
   }
 
   const getValueFromOther = (param)=>{

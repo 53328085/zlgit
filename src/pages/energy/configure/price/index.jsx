@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import { Select,Button, Space, message, Form, Input } from 'antd';
 import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
-import { AreaSetting } from '@api/api.js'
 
 export default function Index() {
   const aref = useRef()
@@ -18,8 +17,8 @@ export default function Index() {
   const [editform] = Form.useForm()
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
+  const areaList = useSelector(selectOneLevel)
   const [messageApi, contextHolder] = message.useMessage();
-  const { QueryAllArea } = AreaSetting
   const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
   const [elecPrice, setElecPrice] = useState()
   const [waterPrice, setWaterPrice] = useState()
@@ -40,30 +39,9 @@ export default function Index() {
   }
 
   //园区
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const[areaName, setAreaName] = useState('')
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-        setAreaName(data[0].name)
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    })
-  }
-
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [areaName, setAreaName] = useState(areaList[0].name)
   const changeArea = (value) => {
     setAreaId(value)
     areaList.map(item => {

@@ -23,11 +23,6 @@ export default function MainPage(props){
     getRoomTable(projectId, props.areaId, values)
   }
 
-  const toRoomDetail = (item) =>{
-    console.log(item);
-    window.open('/roomDetail','_blank')
-  }
-
   //表格数据
   const [tableData, setTableData] = useState([])
   const columns = [
@@ -54,7 +49,7 @@ export default function MainPage(props){
         <Space size="middle">
           {/* <span style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}} onClick={()=>toRoomDetail(record)}>{record.roomName}</span> */}
           <Link 
-          to={{pathname:'/roomDetail', search:JSON.stringify({areaName:props.areaName, data:record})}} 
+          to={{pathname:'/roomDetail', search:JSON.stringify({id:record.roomId})}} 
           target='_blank'
           state={props.areaName} 
           style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}}
@@ -169,7 +164,7 @@ export default function MainPage(props){
           </div>
         </div>
         <div className={style.tableList}>
-          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} />;
+          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} pagination={false} />;
         </div>
       </div>
     </div>

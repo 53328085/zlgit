@@ -1,16 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
 import * as echarts from "echarts";
+import { cloneDeep } from 'lodash';
 
 export default function Index(props){
   let totalvalues = 0 ;
-  console.log(props)
   props.ringData.map(item => {
     totalvalues += Number(item.value)
   })
+  const ringId = 'ringChart'
+  
   const drawLine = ()=>{
-    console.log(123)
-    let ringChart = echarts.init(document.getElementById('ringChart'))
+    let ringChart = echarts.init(document.getElementById(ringId))
+    ringChart.clear()
     ringChart.setOption({
       //环形图中间文字
       title: {
@@ -59,10 +61,10 @@ export default function Index(props){
   }
   useEffect(()=>{
     drawLine()
-  })
+  },[props.ringData])
     
     return <div className={style.chartTab}>
         <div className={style.itemTitle}><span>能耗分布</span></div>
-        <div style={{width:456,height:334}} id='ringChart' ></div>
+        <div style={{width:456,height:334}} id={ringId} ></div>
     </div>
 }

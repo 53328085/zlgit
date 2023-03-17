@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import { Select, Button, Space, message, Form, Input, Table } from 'antd';
 import style from './style.module.less'
 import SearchTree from '@com/searchTree'
@@ -8,7 +8,6 @@ import Custmodl from '@com/useModal'
 import dashed from '@imgs/dashed.png'
 import { energyQuota } from '@api/api.js'
 import { useRequest } from 'ahooks';
-import { AreaSetting } from '@api/api.js'
 
 export default function Index() {
   const setRef = useRef()
@@ -16,34 +15,13 @@ export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
-  const { QueryAllArea } = AreaSetting
+  const areaList = useSelector(selectOneLevel)
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
   //园区
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    })
-  }
-
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
   const changeArea = (value) => {
-    setPageNum(1)
     setAreaId(value)
   }
 
