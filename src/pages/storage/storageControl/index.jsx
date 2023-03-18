@@ -3,6 +3,7 @@ import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import Automate from './automate'
 import Manual from './manual'
+import CModal from '@com/useModal'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 export default function Index() {
@@ -25,7 +26,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={propsData}>
     <Pagecount showserach={true}>   
-        <ProjectCom projectId={projectId} />
+        <ProjectCom projectId={projectId} CModal={CModal} />
     </Pagecount>
     </CustContext.Provider>
   )

@@ -9,8 +9,8 @@ import Loading from '@pages/Loading';
 export default function Index(props) {
   let location = useLocation()
   useEffect(() => {
-    document.title = `NES600智慧能源服务平台 ${location.state?.title}`
-    return () => document.title= 'NES600智慧能源服务平台'
+    document.title = `NIS6000 正泰综合能源服务平台 ${location.state?.title}`
+    return () => document.title= 'NIS6000 正泰综合能源服务平台'
   },[location])  
   const index = useMemo(() => location?.state?.index, [location.state]); 
   let Defaultlayout = (

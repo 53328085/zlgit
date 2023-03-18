@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const Boxdiv = styled(Card)`
   padding: 16px;
   border-radius: 4px;
-  border: 1px solid #d7d7d7;
+  border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `${props.hv || '32px'} 1fr` : '1fr'};
   flex:1;
@@ -36,6 +36,9 @@ const Boxdiv = styled(Card)`
   padding: 0;
  }
 `
+Boxdiv.defaultProps = {
+  bordered: 'y'
+}
 export default function Titlelayout({title='', children, ...other}) {
   return (
     <Boxdiv title={title} {...other}> 

@@ -74,6 +74,17 @@ const Bigbutton = styled(Button)`
     font-size: 18px;
     border-radius: 4px;
 `
+const Timeipt = styled(Input)`
+    && {
+        width: 52px;
+    height: 40px; 
+    background-color: rgba(242, 242, 242, 1); 
+    border: 1px solid rgba(215, 215, 215, 1); 
+    color: #333333;
+    border-radius: 0px;
+    box-shadow: none;
+    }
+`
 export default function Manual({projectId}) {
   return (
     <Mainbox>
@@ -146,10 +157,15 @@ export default function Manual({projectId}) {
         <div className='foot'>
             <Space size={16}>
                <Title level={4}>手动模式运行时长：</Title>
-               
+               <Timeipt /><Text>天</Text>
+               <Timeipt /><Text>时</Text>
+               <Timeipt /><Text>分</Text>
             </Space>
             <Space>
             <Title level={4}>本次启用时间：</Title>
+               <Timeipt /><Text>天</Text>
+               <Timeipt /><Text>时</Text>
+               <Timeipt /><Text>分</Text>
             </Space>
             <Space size={32}>
                 <Bigbutton type='primary'  >启用手动模式</Bigbutton>
