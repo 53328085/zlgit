@@ -1,9 +1,10 @@
-import React, { useEffect,useState, useMemo } from "react";
+;import React, { useEffect,useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import {useNavigate, useParams } from 'react-router-dom'
 import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
 import { systemConfig} from "@redux/systemconfig";
-import {useBoolean, useCountDown, useRequest } from 'ahooks'
+import {useBoolean, useCountDown, useRequest } from 'ahooks';
+import { ProjectList } from "@api/api.js";
 import {
   Button,
   Checkbox,
@@ -302,8 +303,24 @@ function UserLog() {
   const hostname = process.env.NODE_ENV === "production" ? new URL(window.location.href).hostname  : "10.5.7.60";
   const submit = async (value) => {
     const {name, pwd} = value
-   let { success,errMsg } = await dispatch(loginByName({ name, pwd })).unwrap();
-   if (success) navigate("/projectlist", {});
+   let { success,errMsg,data } = await dispatch(loginByName({ name, pwd })).unwrap();
+   if (success){
+    if(data.roleType==1||data.roleType==2){
+      navigate("/projectlist", {
+     });
+  }else if(data.roleType==3||data.roleType==4){
+    navigate("/index/runtimeProject", {
+      state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
+    })
+    return ProjectList.QueryMenus(data.projectId).then((res)=>{
+      let { success, data } = res;
+      if (success && data) {
+        console.log(data);
+      } else {
+      }
+    })
+  }
+   } 
    if (!success) message.warning(errMsg || '系统繁忙,请稍后再试')
   };
   const onFinishFailed = (error) => {
