@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar} from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
 import imgurl from './icon'
 import Titlelayout from '@com/titlelayout'
 
-const {Text, Link, Title} = Typography
+const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -66,9 +66,11 @@ const Mainbox = styled.div`
              border-radius: 0px;
              box-shadow: none;
              display: grid;
-             grid-template-rows: 1fr 56px;
+             grid-template-rows: 550px 56px;
              .toprightup {
                 padding: 32px;
+                display: flex;
+
              }
              .toprightdown {
                 background-color: rgba(242, 242, 242, 1);
@@ -89,9 +91,10 @@ const Formbox = styled(Form)`
     && {
         display: grid;
         grid-auto-rows: 36px;
-        grid-template-columns: 646px;
+      //  grid-template-columns: 646px;
         row-gap: 32px;
         padding-top: 32px;
+        padding-left: 16px;
        .ant-form-item {
         margin-bottom: 0px;
        }
@@ -118,6 +121,44 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
+const Viewbox = styled.div`
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 854px 510px;
+    height: 484px;
+    padding: 32px 0;
+`
+const CustCalendar = styled(Calendar)`
+  && {
+    .ant-picker-calendar-header {
+        justify-content: flex-start;
+    }
+    .ant-picker-cell {
+        border: 1px solid #d7d7d7;
+        color:#ccc;
+        background-color: #f2f2f2;
+        cursor: not-allowed
+
+    }
+    .ant-picker-cell.ant-picker-cell-in-view {
+        background-color: #fff;
+        color:#515151;
+        span.el {
+            color: #237ae4;
+        }
+    }
+  }
+
+`
+const Datebox = styled.div`
+ width: 122px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  padding: 0 8px;
+  align-items: flex-end;
+`
  function Automate({projectId, Foot, Strategy, CModal}) {
   const [nameform] = Form.useForm()
   const [plans, setPlan] = useState([
@@ -127,6 +168,7 @@ const Timeipt = styled(Input)`
   ])  
 
   const [curplan, setCurplan] = useState(plans[0]?.id)
+  const [isView, setIsview] = useState(false)
   const pref = useRef()
   const planName = useRef('')
   const showarrow = plans?.length > 4
@@ -144,7 +186,9 @@ const Timeipt = styled(Input)`
     setPlan([...plans, {name: planName, id: nanoid()}])
     pref.current.onCancel()
   }
- 
+  const changeview = () => {
+     setIsview(f => !f)
+  }
   return (
     <Mainbox>
         <div className='top'>
@@ -162,12 +206,12 @@ const Timeipt = styled(Input)`
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                     <Strategy /> 
+                { isView ?  <Planview></Planview> : <Strategy /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
-                        <Normalbt type="primary">策略设置</Normalbt>
-                        <Normalbt type="primary" ghost>策略预览</Normalbt>
+                        <Normalbt type="primary" onClick={changeview} ghost={isView}>策略设置</Normalbt>
+                        <Normalbt type="primary" ghost={!isView} onClick={changeview}>策略预览</Normalbt>
                     </Space>
                     <Space size={16}>
                         <Normalbt  danger>删除</Normalbt>
@@ -214,6 +258,30 @@ const Timeipt = styled(Input)`
   )
 }
 
+const Planview = () => {
+    const dateCellRender =(value) => {
+        let date = value.date()
+        console.log(date)
+        return (
+            <Datebox>
+            <span >{date}日</span>
+            <span className='el'>充电</span>
+            </Datebox>
+        )
+    }
+    return (
+        <Titlelayout title={<Space size={32}><span>策略预览</span><span style={{color: '#999'}}>查看策略执行计划及内容</span></Space>} bordered={'n'} style={{flex: 1}}>
+            <Viewbox>
+                <div style={{height: '386px'}}>
+                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} /> 
+                </div>
+                <div>
+
+                </div>
+            </Viewbox>
+        </Titlelayout>
+    )
+}
 const Strategy = ({name='自动策略'}) => {
    const [options, setOptions] = useState(
     [
@@ -228,7 +296,7 @@ const Strategy = ({name='自动策略'}) => {
    )
    return (
       <Titlelayout title={name} bordered={'n'}>
-         <Formbox>
+         <Formbox style={{width: '640px'}} labelCol={{flex: '96px'}} labelAlign="left">
             <Item  label="模板名称">
                 <Space>
                 <Item noStyle>
@@ -276,14 +344,14 @@ const Strategy = ({name='自动策略'}) => {
                 ></Select>               
             </Item>
             <Item label="生效日期" >
-                   <RangePicker />
+                   <RangePicker style={{width: '100%'}} />
             </Item>
             <Item label='' > 
-                   <Checkbox.Group options={options} defaultValue={[1,2,3,4,5,6]}   /> 
+                   <Checkbox.Group options={options} defaultValue={[1,2,3,4,5,6]}    /> 
             </Item>
             <Item  label="策略模板">
                 <Select
-                  style={{width: '200px'}}
+                  style={{width: '100%'}}
                   options={[
                     {
                         label: '充电策略1',
