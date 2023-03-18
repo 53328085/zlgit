@@ -4,7 +4,7 @@ import style from './style.module.less';
 import { Select,DatePicker,Button, message, Radio } from 'antd';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, selectshifts} from '@redux/systemconfig.js'
 import { eneryShift } from '@api/api.js'
 //dayjs bug
 import weekday from "dayjs/plugin/weekday";
@@ -55,11 +55,7 @@ export default function Index(props) {
     if(type == 'month') setDate(dateString+'-01')
     if(type == 'date') setDate(dateString)
   }
-  // const PickerWithType = ({ type, onChange }) => {
-  //   if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
-  //   if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
-  //   if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
-  // };
+
   const PickerWithType = useCallback(({ type, onChange }) => {
     if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
     if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;

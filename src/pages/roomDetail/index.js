@@ -15,8 +15,7 @@ export default function Index(){
     let location = useLocation()
     let search = location.search.substr(1, location.search.length)
     const searchObj = JSON.parse(decodeURI(search))
-    let areaName = searchObj.areaName
-    let roomData = searchObj.data
+    let roomId = searchObj.id
     const projectId = useSelector(selectProjectId);
     const { queryQueryRoomDetail } = EnergyQuotaRuntime
     const [type, setType] = useState(1)
@@ -25,8 +24,8 @@ export default function Index(){
     }
     const [values, setValues] = useState({
         "address":"",
-        "energyType":"电/水/燃气",
-        "roomName":"10",
+        "energyType":"",
+        "roomName":"",
         "ComprehensiveQuota":"0.00", //年度综合定额
         "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
         "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
@@ -49,7 +48,7 @@ export default function Index(){
         }
     }) 
     const getroomDetail = () => {
-        return queryQueryRoomDetail(projectId,roomData.roomId, type).then(res => {
+        return queryQueryRoomDetail(projectId, roomId, type).then(res => {
             let { success, data } = res
             if(success){
                 if(data){
@@ -93,27 +92,6 @@ export default function Index(){
     useEffect(()=>{
         runQuery()
     },[type])
-
-    
-
-    const energyData = {
-      Name:'月度用电',
-      Unit:'用电量(kWh)',
-      dateList:['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      valueList:[125.36, 125.36, 321.25, 587.36, 258.14, 298.36, 301.32, 428.69, 298.54, 125.96, 189.15, 315.45,],
-    };
-    const waterData = {
-      Name:'月度用水',
-      Unit:'用水量(㎡)',
-      dateList:['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      valueList:[125.36, 125.36, 321.25, 587.36, 258.14, 298.36, 301.32, 428.69, 298.54, 125.96, 189.15, 315.45,],
-    };
-    const gasData = {
-      Name:'月度用燃气',
-      Unit:'用气量(m³)',
-      dateList:['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      valueList:[125.36, 125.36, 321.25, 587.36, 258.14, 298.36, 301.32, 428.69, 298.54, 125.96, 189.15, 315.45,],
-    };
 
     return <div className={style.roomDetail}>
         <div className={style.header}>

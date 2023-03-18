@@ -20,9 +20,9 @@ export class Login {
     server.get("/Project/GetMenuByRoleType", { params }); // 根据登录人查询项目和侧边栏
   static SystemQueryLoginConfigInfo = (data = {}) =>
     server.get("/System/QueryLoginConfigInfo", data); // 查询登录页配置
-  static UpdateCurrentAccount = ({ mobile, pwd, Pwd }) =>
+  static UpdateCurrentAccount = ({ mobile, pwd, oldPwd }) =>
     server.post(
-      `User/ResetLoginPersonPassword?mobile=${mobile}&pwd=${pwd}&oldPwd=${Pwd}`
+      `/General/User/ResetLoginPersonPassword?mobile=${mobile}&pwd=${pwd}&oldPwd=${oldPwd}`
     );
   static LoginOut = () => server.post("User/Logout");
   static GetUseMenus = (projectId, userId) =>
@@ -1090,7 +1090,8 @@ export const Monitoring =  {
 }
 //分类能耗
 export class energyClassified{
-   static QueryEnergy=(data)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,{},{params:data})
+   static QueryEnergy=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,areaId,{params:data})
+   static QueryEnergyCost=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergyCost`,areaId,{params:data})
 }
 //能耗排名
 export class energyRanking{
