@@ -46,6 +46,7 @@ const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Topology = lazy(() => import("../pages/topology"))
 
+const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const Notfound = lazy(() => import("./notfound"))
 import {designerComponents, designerChildrenRoute} from "./designer";
@@ -189,7 +190,7 @@ store.subscribe(() => {
      
     }) 
     
-    routes[2].children = [...RunRoute,];  
+    routes[2].children = [...RunRoute,{path: 'devicedetail', element: <Devicedetail />}];  
     routes[3].children = DesignerRoute; 
   } catch (error) {
     console.log(error);
