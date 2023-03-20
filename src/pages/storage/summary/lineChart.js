@@ -2,7 +2,6 @@ import React, {useState, useEffect, Fragment} from 'react'
 import * as echarts from "echarts";
 
 export default function Index(props){
-  console.log(props)
   useEffect(()=>{
     let lineChart = echarts.init(document.getElementById('lineChart'));
     lineChart.setOption({
