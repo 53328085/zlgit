@@ -1,12 +1,11 @@
-import React, {useEffect, useState, Fragment} from 'react'
+import React, {useState, useEffect} from "react";
 import style from './style.module.less'
-import { Select, Form, Table } from 'antd'
+import { Select, Form, Button } from 'antd'
 import {useSelector} from 'react-redux'
 import {selectOneLevel} from '@redux/systemconfig.js'
-import * as echarts from 'echarts'
-import topology from './imgs/topology_zhanwei.png'
-import { Pie } from '@ant-design/plots';
-import warningPoint from '@imgs/warningPoint.png'
+import MainPage from './mainPage'
+import SubPage from './subPage'
+import BatteryPage from './batteryPage'
 
 export default function Index() {
   const areaList = useSelector(selectOneLevel)
@@ -16,174 +15,63 @@ export default function Index() {
   const pcsList = [
     {
       id:1,
-      name:'PCS#1',
+      name:'电池簇_1',
     },{
       id:2,
-      name:'PCS#2',
+      name:'电池簇_2',
     },{
       id: 3,
-      name:'PCS#3',
+      name:'电池簇_3',
     },
   ]
-
-  const voltageData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[732.25, 758.32, 721.39, 701.54, 723.45, 720.15, 718.96, 728.36, 714.32, 701.36, 704.96, 724.36, 718.32 ]
-  }
-  const currentData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[9.84, 9.15, 9.98, 10.25, 10.01, 10, 9.87, 9.98, 9.99, 9.84, 9.15, 9.98, 10.25]
-  }
-  const powerData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[7321.25, 7158.32, 7214.39, 7019.54, 7236.45, 7200.15, 7148.96, 7285.36, 7148.32, 7014.36, 7048.96, 7245.36, 7189.32 ]
-  }
-  const config = (lineId, color, Unit, lineData)=> {
-    let chart = echarts.init(document.getElementById(lineId));
-    chart.setOption({
-      color:[color],
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      },
-      legend: {
-        top: '0',
-        left: 'center'
-      },
-      grid: {
-        left: '0%',
-        right: '0%',
-        bottom: '0%',
-        top: '20%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: true,
-        axisTick:{
-          alignWithLabel:true
-        },
-        data: lineData.x
-      },
-      yAxis: {
-        type: 'value',
-        // min: 24
-        scale: true, //自适应
-      },
-      series: [
-        {
-          name: Unit,
-          data: lineData.y,
-          type: 'line',
-          symbol:'none', 
-          smooth: true,
-          areaStyle: {}
-        }
-      ]
-    })
-  }
-  const WarningItem = props => {
-    return <div className={style.item}>
-      <div className={style.itemTitle}>{props.title}</div>
-      <span className={style.itemCount}>{props.count}</span>
-    </div>
-  }
-
-  //告警等级
-  const warningLevelData = [
+  //storage list
+  const storageList = [
     {
-      name: '一级告警',
-      value: 2,
-    },
-    {
-      name: '二级告警',
-      value: 2,
-    },
-    {
-      name: '三级告警',
-      value: 5,
-    }
-  ];
-  const pieConfig = {
-    appendPadding: 10,
-    data: warningLevelData,
-    angleField: 'value',
-    colorField: 'name',
-    radius: 1,
-    // 设置圆弧起始角度
-    startAngle: Math.PI,
-    endAngle: Math.PI * 1.5,
-    legend:{
-      layout: 'horizontal',
-      position: 'bottom',
-      flipPage: false,
-      itemSpacing: 2
-    },
-    label: {
-      type: 'inner',
-      offset: '-8%',
-      content: '{value}',
-      style: {
-        fontSize: 18,
-      },
-    },
-    interactions: [
-      {
-        type: 'element-active',
-      },
-    ],
-    pieStyle: {
-      lineWidth: 0,
-    },
-  };
-
-  const WarningCard = props => {
-    return <div className={style.warningItem}>
-      <div className={style.leftImg}>
-        <img src={warningPoint} className={style.warningPoint}></img>
-      </div>
-      <div className={style.warningData}>
-        <div className={style.warningtop}>
-          <span className={style.time}>{props.data.time}</span>
-          <span className={style.description}>{props.data.description}</span>
-        </div>
-        <div className={style.warningbottom}>
-          <span className={style.sn}>{props.data.sn}</span>
-          <span className={style.level}>{props.data.level == 1? '一级告警' : props.data.level == 2? '二级告警' :'三级告警'}</span>
-        </div>
-      </div>
-    </div>
-  }
-  const warningData = [
-    {
-      time:'13:48:23',
-      description:'1#电池簇  低电压告警',
-      sn:'1#1_1_42',
-      level:2
+      id:1,
+      name:'储能室#1',
     },{
-      time:'13:20:23',
-      description:'1#电池簇  低SOC告警',
-      sn:'1#1_1_42',
-      level:2
-    }
+      id:2,
+      name:'储能室#2',
+    },{
+      id: 3,
+      name:'储能室#3',
+    },
   ]
-  const toWarning = () => {
-    window.location.href = '/index/runtimeStorage/alarmMessage'
+  //电池列表
+  const batteryList = [
+    {
+      id:1,
+      name:'电池簇1_1',
+    },{
+      id:2,
+      name:'电池簇1_2',
+    },{
+      id: 3,
+      name:'电池簇1_3',
+    },
+  ] 
+  const [showPage, setShowPage] = useState('mainPage')
+  const getFromChild = val => {
+    setShowPage(val)
   }
 
+  const backBMS = () => {
+    setShowPage('mainPage')
+  }
+  const goback = () => {
+    setShowPage('subPage')
+  }
   useEffect(()=>{
     form.setFieldValue('areaId', areaList[0].id)
     form.setFieldValue('PCSId', pcsList[0].id)
-    config('totalVoltage', '#237ae4','总电压 (V)', voltageData)
-    config('totalCurrent', '#ff6701','总电流 (A)', currentData)
-    config('totalPower', '#1ba41b','总功率 (kW)', powerData)
+    form.setFieldValue('storageId', storageList[0].id)
+    form.setFieldValue('batteryId', batteryList[0].id)
   },[])
   return (
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
+          { showPage == 'mainPage' ? <>
           <Item name='areaId' label={ areaList[0]?.levelName + '选择' || '园区选择'} style={{marginLeft:16}}>
             <Select
               placeholder="请选择园区"
@@ -196,7 +84,7 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='PCSId' label='PCS选择' style={{marginLeft:16}}>
+          <Item name='PCSId' label='电池簇选择' style={{marginLeft:16}}>
             <Select
               placeholder="请选择PCS"
               size="middle"
@@ -207,50 +95,44 @@ export default function Index() {
               })}
             </Select>
           </Item>
+          </> : null}
+          { showPage == 'subPage' ? 
+          <>
+          <Item name='storageId' label='储能室选择' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择储能室"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+            >
+              {storageList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          </>: null }
+          { showPage == 'batteryPage' ? 
+          <>
+          <Item name='batteryId' label='电池簇选择' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+            >
+              {batteryList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          </>: null }
         </Form>
+        { (showPage == 'subPage' ||showPage == 'batteryPage') ? 
+        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回BMS</Button> : null }
+        { showPage == 'batteryPage' ? 
+        <Button size="middle" style={{ marginRight: 16, width: 96}} onClick={()=> goback()}>返回</Button> : null }
       </div>
-      <div className={style.bmsContent}>
-        <div className={style.left}>
-          <div className={style.leftCard}>
-            <div className={style.cardTitle}>总电压 (V)</div>
-            <div className={style.cardChart} id='totalVoltage'></div>
-          </div>
-          <div className={style.leftCard}>
-            <div className={style.cardTitle}>总电流 (A)</div>
-            <div className={style.cardChart} id='totalCurrent'></div>
-          </div>
-          <div className={style.leftCard}>
-            <div className={style.cardTitle}>总功率 (kW)</div>
-            <div className={style.cardChart} id='totalPower'></div>
-          </div>
-        </div>
-        <div className={style.middle}>
-          <img src={topology} className={style.zhanwei}></img>
-        </div>
-        <div className={style.right}>
-          <div className={style.topCard}>
-            <div className={style.cardTitle}>告警信息</div>
-            <div className={style.warningMessage}>
-              <WarningItem title='告警总数' count={9}></WarningItem>
-              <WarningItem title='今日告警' count={2}></WarningItem>
-            </div>
-            <div className={style.cardTitle} style={{marginTop: 27}}>告警等级</div>
-            <Pie {...pieConfig} style={{width: 272, height: 272}} />
-          </div>
-          <div className={style.newWarning}>
-          <div className={style.cardTitle}>最新告警</div>
-            <span className={style.toWarning} onClick={()=>toWarning()}>查看详情</span>
-            <div className={style.warningDetails}>
-              {warningData.map((item, index) => {
-                return <Fragment key={index}>
-                  <WarningCard data={item} ></WarningCard>
-                  {warningData.length > (index + 1) ? <div className={style.dashed} style={{marginTop: 21, marginBottom: 21}}></div> : null }
-                </Fragment>
-              } )}
-            </div>
-          </div>
-        </div>
-      </div>
+      { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild}></MainPage> : null }
+      { showPage == 'subPage' ? <SubPage getshowTab={getFromChild}></SubPage> : null }
+      { showPage == 'batteryPage' ? <BatteryPage getshowTab={getFromChild}></BatteryPage> : null }
     </div>
   )
 }

@@ -1390,3 +1390,15 @@ export class EnergyPublicRuntime {
       data
     );
 }
+//储能概述
+export class StorageSummaryRuntime {
+  static statistic = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/Statistic?projectId=${projectId}&areaId=${areaId}`)
+  static queryEchartsInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryEchartsInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryPowerTrends = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}`)
+  static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryRealtimeData = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryRealtimeData?projectId=${projectId}&areaId=${areaId}`)
+}
+//储能告警信息
+export class StorageAlarmRuntime {
+  static alarmStatistic = (projectId, areaId) => server.get(`Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`)
+}
