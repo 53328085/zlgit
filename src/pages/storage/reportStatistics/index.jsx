@@ -4,17 +4,15 @@ import Pagecount from '@com/pagecontent'
 import CModal from '@com/useModal'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
+
+import {Form} from 'antd'
 export default function Index() {  
   const projectId = useSelector(selectProjectId)
-  const coms = {
-   Manual: Manual,
-   Automate: Automate,  
-  }
-  const ProjectCom = coms[value] || Manual
+  const [form] = Form.useForm
   return (
     <CustContext.Provider>
-    <Pagecount showserach={true}>   
-        <ProjectCom projectId={projectId} CModal={CModal} />
+    <Pagecount showserach={true} value={{form}}>   
+       {/*  <Report projectId={projectId} CModal={CModal} /> */}
     </Pagecount>
     </CustContext.Provider>
   )

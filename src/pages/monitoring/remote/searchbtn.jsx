@@ -31,18 +31,20 @@ export default function Searchbtn(props) {
                 <Option value="3">燃气表</Option>
             </Select>
             <div className={style.line}></div>
+            <span style={{lineHeight:'32px',marginRight:16,}}>设备查询</span>
             <Input   style={{ width: 260,height: 32,fontSize: 14}} placeholder="请输入设备编号/安装地址" />
-            <Button type="primary" icon={<SearchOutlined />} style={btnstyle} size="default">查询</Button>
+            <Button style={{width:'80px',height:'32px',backgroundColor:'rgb(245,247,250)'}}  size="default">查询</Button>
             <div className={style.line}></div>
            
         </Input.Group>
         <Input.Group className={style.searchbtn}>
         <Button type="primary" style={btnstyle} size="default" onClick={realReadout}>实时抄读</Button>
+        <Button type="primary" style={{...btnstyle,marginLeft:16}} size="default" onClick={log}>操作日志</Button>
             <div className={style.line}></div>
             <Button type="primary" danger style={{ ...btnstyle, marginRight: 16, backgroundColor: '#f56c6c' }} size="default" onClick={fenzha}>分闸</Button>
             <Button type="primary" danger style={{ ...btnstyle, backgroundColor: '#f56c6c' }} size="default" onClick={hezha}>合闸</Button>
-            <div className={style.line}></div>
-            <Button type="primary" style={btnstyle} size="default" onClick={log}>操作日志</Button>
+            {/* <div className={style.line}></div> */}
+            
         </Input.Group>
         </>
       

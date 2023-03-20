@@ -91,7 +91,7 @@ export default function Index() {
        
     </Pagecount>
     <Modal
-        title={<Bluecolumn name="远程控制"/>}
+        title={<Bluecolumn name="分闸控制"/>}
         width={640}
         open={brake}
         centered={true}
@@ -99,9 +99,17 @@ export default function Index() {
         className={styles.readout}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        // onCancel={handleCancel}
+        footer={[
+          <Button key="back" style={{width:96,height:32,borderColor:'rgb(204,204,204)',color:'#999'}} onClick={handleCancel}>
+            取消
+          </Button>,
+          <Button key="submit" style={{backgroundColor:'#FF4D4F', color:'#fff',width:96,height:32}}  onClick={handleCancel}>
+            确定
+          </Button>,
+        ]}
       >
-        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn} className={styles.imgclass}></img>确认要对所选设备进行分闸操作？</p>
+        <div style={{fontSize: '18px',height:'106px',lineHeight: '106px',display:'flex',alignItems:'center'}}><img src={redwarn} className={styles.imgclass}></img><p style={{lineHeight:'48px',height:'106px',fontSize:'16px',width:257}}>分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！</p></div>
       </Modal>
       <Modal
         title={<Bluecolumn name="远程控制"/>}
@@ -112,9 +120,17 @@ export default function Index() {
         className={styles.readout}
         // onOk={handleOk}
         // confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        //onCancel={handleCancel}
+        footer={[
+          <Button key="back" style={{width:96,height:32,borderColor:'rgb(204,204,204)',color:'#999'}} onClick={handleCancel}>
+            取消
+          </Button>,
+          <Button key="submit" style={{backgroundColor:'#FF4D4F', color:'#fff',width:96,height:32}}  onClick={handleCancel}>
+            确定
+          </Button>,
+        ]}
       >
-        <p style={{fontSize: '18px',height:'106px',lineHeight: '106px'}}><img src={redwarn} className={styles.imgclass}></img>确认要对所选设备进行合闸操作？</p>
+                <div style={{fontSize: '18px',height:'106px',lineHeight: '106px',display:'flex',alignItems:'center'}}><img src={redwarn} className={styles.imgclass}></img><p style={{lineHeight:'48px',height:'106px',fontSize:'16px',width:257}}>合闸后,该电表控制内的所有用电设备将恢复供电，请确认！</p></div>
       </Modal>
       <Modal
       title={<Bluecolumn name="实时抄读"/>}

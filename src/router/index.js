@@ -46,6 +46,9 @@ const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Topology = lazy(() => import("../pages/topology"))
 
+const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
+const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
+const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const Notfound = lazy(() => import("./notfound"))
 import {designerComponents, designerChildrenRoute} from "./designer";
@@ -123,6 +126,19 @@ const childrenRoute = {
     path: "/topology",
     element: <Topology />
   },
+  {
+    path: '/devicedetail',
+    element: <Devicedetail />
+  },
+  {
+    path: '/devicedtl',
+    element: <Devicedetail />
+  },
+  {
+    path: '/gatewayDetail',
+    element: <GatewayDetail />
+  },
+
    {
      path: '/antdconfig',
      element: <Antdconfig/>
@@ -188,8 +204,8 @@ store.subscribe(() => {
       }
      
     }) 
- 
-    routes[2].children = RunRoute;  
+    
+    routes[2].children = RunRoute ;  
     routes[3].children = DesignerRoute; 
   } catch (error) {
     console.log(error);
