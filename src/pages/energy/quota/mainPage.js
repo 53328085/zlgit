@@ -164,7 +164,7 @@ export default function MainPage(props){
           </div>
         </div>
         <div className={style.tableList}>
-          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} pagination={false} />;
+          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} pagination={false} />
         </div>
       </div>
     </div>

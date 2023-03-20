@@ -95,7 +95,7 @@ export default function Index() {
 
   const columns = [
     {
-      title:'园区',
+      title: areaList[0]?.levelName || '园区',
       dataIndex:'area',
       key:'area',
       align:'center',
@@ -288,9 +288,9 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span className={style.headerTitle}>园区选择</span>
+        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
         <Select
-          placeholder="请选择园区"
+          placeholder="请选择"
           size="middle"
           key={defaultArea}
           defaultValue={defaultArea}

@@ -1,0 +1,165 @@
+.header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    .line{
+        width: 0;
+        height: 33px;
+        margin: 0 24px;
+        border-left: 1px dashed #d7d7d7;
+    }
+}
+
+.pcsContent{
+    margin-top: 16px;
+    display: flex;
+    .left{
+        width: 544px;
+        height: 800px;
+        border-radius: 4px;
+        background-color: rgb(0, 0, 51);
+        padding: 16px;
+        .title{
+            padding-left: 16px;
+            height: 32px;
+            border-left: 4px solid #237ae4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            font-size: 14px;
+            .pcsName{
+                display: inline-block;
+                width: 96px;
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                font-size: 12px;
+                background-color: #237ae3;
+            }
+        }
+        .pcsImgs{
+            margin-top: 24px;
+            margin-bottom: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            .imgTitle{
+                display: inline-block;
+                width: 96px;
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                font-size: 12px;
+                background-color: #237ae3;
+                color: #fff;
+            }
+            .pcsImg{
+                width: 136px;
+                height: 136px;
+            }
+        }
+        .dataCard{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .card{
+                width: 160px;
+                height: 80px;
+                background-color: rgb(0, 51, 102);
+                border-radius: 2px 2px 0 0;
+                .cardtitle{
+                    margin-top: 5px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #fff;
+                    height: 20px;
+                }
+                .unit{
+                    text-align: center;
+                    font-size: 12px;
+                    color: #fff;
+                    height: 16px;
+                }
+                .values{
+                    text-align: center;
+                    font-size: 26px;
+                    color: #0f0;
+                }
+            }
+        }
+        .line{
+            width: 100%;
+            height: 0;
+            border-top: 1px dashed #d7d7d7;
+            opacity: 0.5;
+            margin: 16px 0;
+        }
+        .status{
+            width: 512px;
+            height: 210px;
+            border: 1px solid rgba(215,215,215, 0.5);
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            .stateItem{
+                width: 127px;
+                height: 69px;
+                border-right: 1px dashed rgba(215,215,215, 0.4);
+                border-bottom: 1px dashed rgba(215,215,215, 0.4);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #f2f2f2;
+                font-size: 14px;
+                line-height: 20px;
+                .stateImg{
+                    width: 20px;
+                    height: 20px;
+                    margin-top: 8px;
+                }
+            }
+        }
+    }
+    .right{
+        margin-left: 16px;
+        .chartCard{
+            margin-bottom: 16px;
+            width: 1120px;
+            height: 248px;
+            padding: 16px;
+            background-color: #fff;
+            border: 1px solid #d7d7d7;
+            .chartTitle{
+                padding-left: 16px;
+                border-left: 4px solid #237ae4;
+                height: 32px;
+                line-height: 32px;
+                font-size: 14px;
+                color: #333;
+            }
+        }
+        .tableList{
+            width: 1120px;
+            margin-bottom: 14px;
+            :global{
+                th{
+                    background-color: #036;
+                    color: #fff;
+                    width: 160px;
+                    height: 32px!important;
+                }
+                .ant-table-cell{
+                    height: 32px!important;
+                    padding: 0;
+                }
+            }
+        }
+    }
+}

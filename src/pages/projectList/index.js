@@ -412,13 +412,13 @@ export default function Index() {
     },
     {
       title: "状态",
-      dataIndex: "enabled",
-      key: "enabled",
+      dataIndex: "publishState",
+      key: "publishState",
       align: "center",
       width: 180,
-      render: (text) => {
-        return text == 1 ? "已发布" : "未发布";
-      },
+      // render: (text) => {
+      //   return text == 1 ? "已发布" : "未发布";
+      // },
     },
     {
       title: "有效期",

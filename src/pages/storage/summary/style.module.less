@@ -1,0 +1,264 @@
+.content{
+    margin-top: 16px;
+    display: flex;
+    color: #515151;
+    .cardTitle{
+        margin: 16px;
+        border-left: 4px solid #237ae4;
+        padding-left: 16px;
+        font-size: 14px;
+        height: 32px;
+        line-height: 32px;
+    }
+    .left{
+        .leftCard{
+            width: 480px;
+            // height: 240px;
+            margin-bottom: 16px;
+            background-color: #f7f7f7;
+            border: 1px solid rgb(215, 215, 215);
+            border-radius: 4px;
+        }
+        .dataItem{
+            margin-left: 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .itemValues{
+                width: 140px;
+                .values{
+                    font-size: 16px;
+                    line-height: 32px;
+                    color: #000;
+                }
+            }
+        }
+        .line{
+            width: 413px;
+            height: 0;
+            border-top: 1px dashed rgb(215, 215, 215);
+            margin-left: 36px;
+            margin-bottom: 12px;
+        }
+        .totalGet{
+            margin-left: 36px;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 12px;
+            span{
+                display: inline-block;
+                width: 140px;
+            }
+        }
+    }
+    .middle{
+        width: 800px;
+        margin: 0 16px;
+        .headerTips{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .tips{
+                width: 188px;
+                height: 96px;
+                background-color: #f7f7f7;
+                border: 1px solid rgb(215, 215, 215);
+                border-radius: 4px;
+                .tipTitle{
+                    width: 182px;
+                    height: 48px;
+                    margin: 2px;
+                    background-color: rgb(0, 51, 102);
+                    border-radius: 2px;
+                    border-bottom-right-radius: 0;
+                    border-bottom-left-radius: 0;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #fff;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .tipValues{
+                    text-align: center;
+                    font-size: 20px;
+                    line-height: 46px;
+                }
+            }
+        }
+        .topology{
+            margin-top: 16px;
+            width: 800px;
+            height: 688px;
+            background-color: rgb(0, 0, 51);
+            border-radius: 4px;
+            .topologyPic{
+                width: 800px;
+                height: 688px;
+            }
+        }
+    }
+    .right{
+        .rightCard{
+            width: 368px;
+            margin-bottom: 16px;
+            background-color: #f7f7f7;
+            border: 1px solid rgb(215, 215, 215);
+            border-radius: 4px;
+            position: relative;
+        }
+        .tips{
+            display: flex;
+            justify-content: space-between;
+            margin: 0 16px;
+            .tipItem{
+                width: 95px;
+                height: 64px;
+                border: 1px solid #d7d7d7;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                .titles{
+                    font-size: 14px;
+                    color: #000;
+                }
+                .tipValues{
+                    font-size: 16px;
+                    color: #000;
+                    font-weight: 700;
+                    .unit{
+                        font-weight: 400;
+                        color: #666;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+        .dashed{
+            margin: 16px;
+            // width: 100%;
+            height: 0;
+            border-top: 1px dashed #d7d7d7;
+        }
+        .bgStrip{
+            width: 336px;
+            margin: 16px;
+            background-color: #575757;
+            height: 32px;
+            display: flex;
+            .chargeProgress{
+                height: 32px;
+                background-color: #44de94;
+            }
+            .dischargeProgress{
+                height: 32px;
+                background-color: #f93;
+            }
+        }
+        .progressdata{
+            margin: 16px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            
+            .progresstitle{
+                display: inline-block;
+                width: 54px;
+                height: 20px;
+                line-height: 20px;
+                text-align: center;
+                font-size: 12px;
+            }
+            .progressvalue{
+                display: inline-block;
+                width: 94px;
+                height: 20px;
+                background-color: rgb(228, 228,228);
+                font-size: 14px;
+                text-align: center;
+                color: #000;
+            }
+        }
+        .stateItems{
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin:0 16px;
+            .stateCard{
+                height: 64px;
+                margin-bottom: 16px;
+                border: 1px solid rgb(215, 215, 215);
+            }
+            .stateTitle{
+                height: 24px;
+                margin:2px;
+                background-color: rgb(228, 228,228);
+                text-align: center;
+                line-height: 24px;
+                font-size: 14px;
+                color: #000;
+            }
+            .stateValue{
+                text-align: center;
+                height: 32px;
+                line-height: 28px;
+                color: #000;
+                font-size: 18px;
+            }
+        }
+        .toWarning{
+            position: absolute;
+            right: 16px;
+            top: 18px;
+            color: #237ae4;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .warningDetails{
+            margin: 16px;
+            margin-top: 0;
+            .warningItem{
+                display: flex;
+                align-items:flex-start;
+                .leftImg{
+                    margin-top: 4px;
+                    margin-right: 16px;
+                    width: 16px;
+                    height: 16px;
+                    border: 1px solid #f00;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    .warningPoint{
+                        width: 10px;
+                        height: 10px;
+                    }
+                }
+                .warningData{
+                    width: 300px;
+                    .warningtop{
+                        font-size: 14px;
+                        color: #1e1e1e;
+                        height: 20px;
+                        line-height: 20px;
+                        .description{
+                            margin-left: 16px;
+                        }
+                    }
+                    .warningbottom{
+                        margin-top: 6px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        color: #6b6b6b;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+}

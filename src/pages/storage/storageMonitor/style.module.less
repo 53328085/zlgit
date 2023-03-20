@@ -1,0 +1,156 @@
+.header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    .line{
+        width: 0;
+        height: 33px;
+        margin: 0 24px;
+        border-left: 1px dashed #d7d7d7;
+    }
+}
+.bmsContent{
+    margin-top: 16px;
+    display: flex;
+    .cardTitle{
+        border-left: 4px solid #237ae4;
+        padding-left: 16px;
+        font-size: 14px;
+        color: #515151;
+        height: 32px;
+        line-height: 32px;
+    }
+    .left{
+        width:480px;
+        .leftCard{
+            width: 480px;
+            height: 256px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #fff;
+            border-radius: 4px;
+            border: 1px solid #d7d7d7;
+            
+            .cardChart{
+                width: 448px;
+                height: 176px;
+            }
+        }
+    }
+    .middle{
+        margin: 0 16px;
+        width: 880px;
+        height: 800px;
+        background-color: rgb(0, 0, 51);
+        border-radius: 4px;
+        .zhanwei{
+            width: 880px;
+            height: 800px;
+        }
+    }
+    .right{
+        .topCard{
+            width: 288px;
+            height: 464px;
+            background-color: #fff;
+            border: 1px solid #d7d7d7;
+            border-radius: 4px;
+            padding: 16px;
+            .warningMessage{
+                display: flex;
+                justify-content: space-between;
+                margin-top: 16px;
+                .item{
+                 width: 120px;
+                 height: 64px;
+                 border: 1px solid #d7d7d7;
+                 text-align: center;
+                 color: #000;
+                   .itemTitle{
+                    width: 116px;
+                    height: 24px;
+                    margin: 1px;
+                    background-color: rgb(228, 228, 228);
+                    line-height: 24px;
+                    font-size: 14px;
+                   }
+                   .itemCount{
+                    font-size: 18px;
+                    height: 36px;
+                    line-height: 36px;
+                   } 
+                }
+            }
+            
+        }
+        .newWarning{
+            width: 288px;
+            height: 320px;
+            margin-top: 16px;
+            background-color: #fff;
+            border: 1px solid #d7d7d7;
+            border-radius: 4px;
+            padding: 16px;
+            position: relative;
+            .toWarning{
+                position: absolute;
+                right: 16px;
+                top: 18px;
+                color: #237ae4;
+                text-decoration: underline;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .dashed{
+                // width: 100%;
+                height: 0;
+                border-top: 1px dashed #d7d7d7;
+            }
+            .warningDetails{
+                margin-top: 16px;
+                .warningItem{
+                    display: flex;
+                    align-items:flex-start;
+                    .leftImg{
+                        margin-top: 4px;
+                        margin-right: 16px;
+                        border: 1px solid #f00;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        .warningPoint{
+                            width: 10px;
+                            height: 10px;
+                            margin: 3px;
+                        }
+                    }
+                    .warningData{
+                        width: 300px;
+                        .warningtop{
+                            font-size: 14px;
+                            color: #1e1e1e;
+                            height: 20px;
+                            line-height: 20px;
+                            .description{
+                                margin-left: 16px;
+                            }
+                        }
+                        .warningbottom{
+                            margin-top: 6px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            color: #6b6b6b;
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

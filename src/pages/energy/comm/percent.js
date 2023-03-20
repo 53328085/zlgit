@@ -9,7 +9,8 @@ import up from "@imgs/up.png";
 import down from "@imgs/down.png";
 
 export default function Index(props) {
-  // console.log(props,"公共能耗同比");
+  const { energySubGive, energyTotalGive } = props;
+  console.log(energySubGive, "公共能耗同比");
   return (
     <div className={style.rightBottom}>
       <span className={style.title}>公共能耗同比</span>
@@ -19,9 +20,9 @@ export default function Index(props) {
           <img className={style.itemImg} src={totalPublic}></img>
         </div>
         <div className={style.itemData}>
-          <span>{props.energyTotalGive.name}</span>
+          <span>{energyTotalGive.name}</span>
           <span className={style.dataStyle} style={{ color: "#039" }}>
-            {props.energyTotalGive.periodValue}
+            {energyTotalGive.periodValue}
           </span>
         </div>
         <img className={style.upOrDown} src={up}></img>
@@ -34,9 +35,9 @@ export default function Index(props) {
           <img className={style.lightingImg} src={lighting}></img>
         </div>
         <div className={style.itemData}>
-          <span>{props.energySubGive[0].name}</span>
+          <span>{energySubGive[0].name}</span>
           <span className={style.dataStyle}>
-            {props.energySubGive[0].periodValue}
+            {energySubGive[0].periodValue}
           </span>
         </div>
         <img className={style.upOrDown} src={up}></img>
@@ -49,9 +50,9 @@ export default function Index(props) {
           <img className={style.airConditionImg} src={airCondition}></img>
         </div>
         <div className={style.itemData}>
-          <span>{props.energySubGive[1].name}</span>
+          <span>{energySubGive[1].name}</span>
           <span className={style.dataStyle}>
-            {props.energySubGive[1].periodValue}
+            {energySubGive[1].periodValue}
           </span>
         </div>
         <img className={style.upOrDown} src={up}></img>
@@ -64,9 +65,9 @@ export default function Index(props) {
           <img className={style.powerImg} src={power}></img>
         </div>
         <div className={style.itemData}>
-          <span>{props.energySubGive[2].name}</span>
+          <span>{energySubGive[2].name}</span>
           <span className={style.dataStyle}>
-            {props.energySubGive[2].periodValue}
+            {energySubGive[2].periodValue}
           </span>
         </div>
         <img className={style.upOrDown} src={down}></img>
@@ -79,9 +80,9 @@ export default function Index(props) {
           <img className={style.specialImg} src={special}></img>
         </div>
         <div className={style.itemData}>
-          <span>{props.energySubGive[3].name}</span>
+          <span>{energySubGive[3].name}</span>
           <span className={style.dataStyle}>
-            {props.energySubGive[3].periodValue}
+            {energySubGive[3].periodValue}
           </span>
         </div>
         <img className={style.upOrDown} src={down}></img>

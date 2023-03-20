@@ -140,9 +140,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -159,9 +159,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -178,9 +178,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -197,9 +197,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -216,9 +216,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -235,9 +235,9 @@ export default function Index(props) {
       ).then((res) => {
         let { success, data } = res;
         if (success && data) {
-          setEnergySub(data.energySub);
-          setEnergyTotal(data.energyTotal);
-          setProportionl(data.proportion);
+          // setEnergySub(data.energySub);
+          // setEnergyTotal(data.energyTotal);
+          // setProportionl(data.proportion);
           setDetail(data.detail);
         } else {
           messageContent("error", res.errMsg);
@@ -295,6 +295,7 @@ export default function Index(props) {
     } else {
       setShowElectricity(false);
     }
+    console.log(headerData.energyType);
     runPageInfo();
   }, [headerData.energyType]);
 
@@ -312,15 +313,25 @@ export default function Index(props) {
         {showElectricity ? (
           <div className={style.contentMiddle}>
             <span className={style.title}>公共能耗1</span>
-            {detail!== {} ? (<Barchart detailGive={detail}></Barchart>) : null}
+            {detail !== {} ? (
+              <Barchart
+                detailGive={detail}
+                energyType={showElectricity}
+              ></Barchart>
+            ) : null}
           </div>
         ) : (
           <div className={style.contentMiddleBig}>
-            <span className={style.title}>公共能耗</span>
-            {detail== "" ? (<Barchart detailGive={detail}></Barchart>) : null}
+            <span className={style.title}>公共能耗2</span>
+            {detail !== {} ? (
+              <Barchart
+                detailGive={detail}
+                energyType={showElectricity}
+              ></Barchart>
+            ) : null}
           </div>
         )}
-        {showElectricity ? (
+        {showElectricity == 1 ? (
           <div className={style.contentRight}>
             <div className={style.rightTop}>
               <span className={style.title}>公共能耗占比</span>
