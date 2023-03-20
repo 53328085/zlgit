@@ -1086,6 +1086,12 @@ export const Monitoring =  {
         RuntimeStatistics:(data)=>server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
         RuntimeStatus:(data)=>server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
         RuntimeQueryMonthUsage:(data)=>server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
+    },
+    //网关检测
+    RuntimeGateway:{
+        RuntimeGatewayStatistics:(data)=>server.get(`/Monitor/RuntimeGateway/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//
+        Overview:(data)=>server.post(`/Monitor/RuntimeGateway/Overview`,data),//
+        CategoryImages:(data)=>server.post(`/Monitor/RuntimeGateway/CategoryImages`,data),//
     }
 }
 //分类能耗
@@ -1128,6 +1134,10 @@ export class energyDesigner {
     static queryStreetLights = (projectId, content, areaId) => server.post(`Energy/EnergyStreetLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询路灯列表
     static lineOn = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯
     static lineOff = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯
+    static querOverviewLight = (projectId, type, areaId, date) => server.post(`Energy/EnergyPublicLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询照明能耗概览
+    static queryPublicLights = (projectId, content, areaId) => server.post(`Energy/EnergyPublicLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询照明灯列表
+    static lineOnLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯（照明
+    static lineOffLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯（照明
 }
 //能源定价
 export class energyPrice {

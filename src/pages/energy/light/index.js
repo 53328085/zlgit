@@ -38,15 +38,8 @@ export default function Index(props) {
   let [lightDateYesterday, setlightDateYesterday] = useState('去年');
   let energyInfo = {
     total: {
-      periodValue: '',
-      lastMonthPeriodValue: '',
-      mom: '',
-      yoy: ''
     },
     detail: {
-      x: [],
-      y: [],
-      y1: []
     }
   };
   const aref = useRef()
@@ -63,7 +56,7 @@ export default function Index(props) {
       let { success, data } = res
       if (success && data) {
         energyInfo = data
-        console.log(4)
+        console.log(energyInfo)
       } else {
         messageApi.open({
           type: 'error',
@@ -279,15 +272,13 @@ export default function Index(props) {
                   <div style={{ borderRadius: '50%', width: 64, height: 64, backgroundColor: '#237AE4', marginTop: 16 }}><Image src={imgurl.logo} preview={false} width={64} height={64}></Image></div>
                   {/* </div> */}
                   <div className={style.airEnergyData}>
-                    <p>{lightDate} :{energyInfo.total ? energyInfo.total.periodValue : '0.00'}</p>
-                    <div style={{display:'flex',alignItems:'center'}}>同比 :{parseFloat(energyInfo.total.mom) > 0 ? '+' + energyInfo.total.mom : energyInfo.total.mom}
-                      {parseFloat(energyInfo.total.mom) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={2} ></Image> :energyInfo.total.mom?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
-
-
+                    <p>{lightDate} :{energyInfo.total.periodValue  ? energyInfo.total.periodValue : '0.00'}</p>
+                    <div style={{display:'flex',alignItems:'center'}}>同比 :{energyInfo.total.mom  ?  energyInfo.total.mom : '0.00'}
+                      {(energyInfo.total.mom-0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={2} ></Image> :energyInfo.total.mom?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
                     </div>
-                    <p>{lightDateYesterday}  :{energyInfo.total ? energyInfo.total.lastMonthPeriodValue : '0.00'}</p>
-                    <div style={{display:'flex',alignItems:'center'}}>环比 :{parseFloat(energyInfo.total.yoy) > 0 ? '+' + energyInfo.total.yoy : energyInfo.total.yoy}
-                      {parseFloat(energyInfo.total.yoy) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={22}></Image> : energyInfo.total.yoy?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
+                    <p>{lightDateYesterday}  :{energyInfo.total.lastMonthPeriodValue ? energyInfo.total.lastMonthPeriodValue : '0.00'}</p>
+                    <div style={{display:'flex',alignItems:'center'}}>环比 :{energyInfo.total.yoy ?  energyInfo.total.yoy : '0.00'}
+                      {(energyInfo.total.yoy-0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={22}></Image> : energyInfo.total.yoy?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
                     </div>
                   </div>
                 </div>

@@ -15,17 +15,16 @@ const Oplog = lazy(() => import("../pages/monitoring/oplog"))
 const menus = [];
 const components = {
     '010501': Summary,
-    '010502': Point,
-    '010503': Gateway,
-    '010504': Remote,
-    '010505': Warning,
-    '010506': Video,
-    '010507': Electrical,
-    '010508': Oplog,
-    '010509': Report,
+    '010502': Gateway,
+    '010503': Point,
+    '010504': Video,
+    '010505': Remote,
+    '010506': Oplog,
+    '010507': Report,
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor'] 
+    console.log(runmen)
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
