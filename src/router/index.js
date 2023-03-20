@@ -188,8 +188,8 @@ store.subscribe(() => {
       }
      
     }) 
- 
-    routes[2].children = RunRoute;  
+    
+    routes[2].children = [...RunRoute,];  
     routes[3].children = DesignerRoute; 
   } catch (error) {
     console.log(error);
