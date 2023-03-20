@@ -1,0 +1,255 @@
+import React, { useState, useRef, useEffect } from 'react'
+import styled from 'styled-components'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions } from 'antd'
+import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
+import {nanoid} from "@reduxjs/toolkit"
+ import moment from 'moment'
+import Titlelayout from '@com/titlelayout'
+import { drawEcharts } from "@com/useEcharts";
+const {Text, Link, Title, Paragraph} = Typography
+const {Item} = Form
+const { RangePicker } = DatePicker;
+const Mainbox = styled.div`
+    && {
+       display: grid;
+       grid-template-rows: 110px 673px;
+       row-gap: 16px; 
+       flex: 1;
+       color:#515151;
+       .top {
+        display: flex;
+        padding: 16px;
+        .list {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 528px);
+            grid-template-rows: 78px;
+            column-gap: 32px;
+            .listitem {
+              display: flex;
+              flex-direction: column;
+              color:#fff;
+              width: 172px;
+              border-right: 2px solid #fff;
+              .up {
+                 background-color: rgba(0,51,102,1);
+                 font-size: 12px;
+                 height: 32px;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+              }
+              .downinfo {
+                background-color: rgba(0,51,204,1);
+                 font-size: 14px;
+                 height: 40px;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+              }
+            }
+        }
+        
+          
+        }
+        .down {
+            padding: 16px;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            
+        } 
+       }
+`
+ 
+ 
+ 
+ function Maincom({projectId,  Statistical, CModal}) {
+  const [picker, setPicker] = useState(1)
+  const ref = useRef()
+  const fref = useRef()
+  const {from} = Form.useForm()
+  const dataset = {
+    dimensions: ["time", "收益元"],
+    source: [
+      { time: "1月", "收益元": 5600,},
+      { time: "2月", "收益元": 4600 },
+      { time: "3月", "收益元": 3600,},
+      { time: "4月", "收益元": 5600 },
+      { time: "5月", "收益元": 5600 },
+      { time: "6月", "收益元": 4600 },
+      { time: "7月", "收益元": -3600},
+      { time: "8月", "收益元": 5000 },
+      { time: "9月", "收益元": 6600 },
+      { time: "10月", "收益元": 5800 },
+      { time: "11月", "收益元": 4600 },
+      { time: "12月", "收益元": 1800 },
+    ],
+  }
+  const tdataset = {
+    dimensions: ["time", "收益元"],
+    source: [
+      { time: "1月", "收益元": 5600,},
+      { time: "2月", "收益元": 4600 },
+      { time: "3月", "收益元": 3600,},
+      { time: "4月", "收益元": 5600 },
+      { time: "5月", "收益元": 5600 },
+      { time: "6月", "收益元": 4600 },
+      { time: "7月", "收益元": -3600},
+      { time: "8月", "收益元": 5000 },
+      { time: "9月", "收益元": 6600 },
+      { time: "10月", "收益元": 5800 },
+      { time: "11月", "收益元": 4600 },
+      { time: "12月", "收益元": 1800 },
+    ],
+  };
+  const datechange = () => {}
+  const timechange = () => {}
+  const Formlayout = () => {
+   
+    return (
+      <Form layout='inline' form={from}>
+        <Space size={16}>
+          <Item noStyle name="type" initialValue={1}>
+           <Select style={{width: '80px'}}   options={[
+            {value: 1, label: '日'},
+            {value: 2, label: '月'},
+            {value: 3, label: '年'},
+           ]}
+           onChange={timechange}
+           ></Select>
+        </Item>
+
+        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{width: '160px'}} />
+        </Item>
+        </Space>
+      </Form>
+    )
+  }
+  useEffect(() => {
+    drawEcharts(
+      ref.current, {
+        dataset,
+        series: [{ type: "line", areaStyle: {color: '#bdd2fd'} }]
+      }
+    )
+  }, [picker])
+  useEffect(() => {
+    drawEcharts(
+      fref.current, {
+        dataset,
+        series: [{ type: "line", areaStyle: {color: '#bdd2fd'} }]
+      }
+    )
+  }, [picker])
+  return (
+    <Mainbox>
+        <div className='top'>
+          <Statistical />
+        </div>
+        <div className='down'>
+          <Titlelayout title={ <Space size={32}><span>收益趋势</span>  <Formlayout/> </Space>  } bordered={'n'} style={{flex: 1}}>
+            <div ref={ref} style={{height: '264px'}}></div>
+          </Titlelayout>
+          <Titlelayout title={ <Space size={32}><span>充放电趋势</span>  <Formlayout/> </Space>  } bordered={'n'} style={{flex: 1}}>
+            <div ref={fref} style={{height: '264px'}}></div>
+          </Titlelayout>
+        </div>
+      
+    </Mainbox>
+  )
+}
+
+const Statistical = ({data}) => {
+  const contentStyle = {
+    width: '172px',
+    height: '40px',
+    backgroundColor: 'rgba(0, 51, 204, 1)',
+    fontsize: '14px',
+    color: '#FFFFFF',
+    alignItems: 'center',
+    justifyCcontent: 'center',
+    paddingBottom: '0px'
+  }
+  const labelStyle = {
+    width: '172px',
+    height: '40px',
+    backgroundColor: 'rgba(0, 51, 102, 1)',
+    fontsize: '12px',
+    color: '#FFFFFF',
+    alignItems: 'center',
+    justifyCcontent: 'center',
+    paddingBottom: '0px'
+  }
+  return (
+     <div className='list'>
+      <div style={{display: 'flex', border: '2px solid #fff'}}>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        </div>
+        <div style={{display: 'flex', border: '2px solid #fff'}}>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        </div>
+        <div style={{display: 'flex', border: '2px solid #fff'}}>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当日放电量(kwh)
+              </div>
+              <div className='downinfo'>200</div> 
+        </div>
+        </div>
+     </div>
+  )
+}
+
+
+export default function Index(props) {
+    return (
+        <Maincom {...props}   Statistical={Statistical}   />
+    )
+}

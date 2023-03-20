@@ -17,7 +17,74 @@ export default function Index(props) {
     props.sendToIndex(display);
   }
   const projectId = useSelector(selectProjectId)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [state, setstate] = useState('open');
+  const [modelChange, setmodal] = useState('cold');
+  let [temp, settemp] = useState(23);
+  const [Ctitle, setCtitle] = useState({});
+  const [isOnClick, setisOnClick] = useState(true);
+  const [operateState, setoperateState] = useState(true);
+  const [isOnClickModal, setisOnClickModal] = useState(true);
+  let [lightDate, setlightDate] = useState('本年');
+  let [lightDateYesterday, setlightDateYesterday] = useState('去年');
+  let [numfirst, setnumfirst] = useState(0);
+  let [numlast, setnumlast] = useState(9);
+  let arr = {
+    list: [
+      {
+        name: '1号楼0层中央空调',
+        value: 25.68,
+        state: '运行中'
+      }, {
+        name: '1号楼1层中央空调',
+        value: 25.68,
+        state: '未运行'
+      }, {
+        name: '1号楼2层中央空调',
+        value: 25.68,
+        state: '运行中'
+      }, {
+        name: '1号楼3层中央空调',
+        value: 25.68,
+        state: '未运行'
+      }, {
+        name: '1号楼4层中央空调',
+        value: 25.68,
+        state: '运行中'
+      }, {
+        name: '1号楼5层中央空调',
+        value: 25.68,
+        state: '未运行'
+      }, {
+        name: '1号楼6层中央空调',
+        value: 25.68,
+        state: '运行中'
+      }, {
+        name: '1号楼7层中央空调',
+        value: 25.68,
+        state: '未运行'
+      }, {
+        name: '1号楼8层中央空调',
+        value: 25.68,
+        state: '运行中'
+      }, {
+        name: '1号楼9层中央空调',
+        value: 25.68,
+        state: '未运行'
+      },
+    ]
+  }
+  let [airList, setairList] = useState(arr.list);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
+  const aref = useRef()
   const elref = useRef(null)
+  const formInfo = {
+    changeType: 3,
+    changeAreaId: 1,
+    changeDate: '2023-01-01',
+    changeInput: ''
+  }
   const datasetMonth = {
     dimensions: ["time", "2020", "2019"],
     source: [
@@ -68,69 +135,17 @@ export default function Index(props) {
     hv: '24px',
     fc: '#333'
   }
-  let arr = {
-    list: [
-      {
-        name: '1号楼0层中央空调',
-        value: 25.68,
-        state: '运行中'
-      }, {
-        name: '1号楼1层中央空调',
-        value: 25.68,
-        state: '未运行'
-      }, {
-        name: '1号楼2层中央空调',
-        value: 25.68,
-        state: '运行中'
-      }, {
-        name: '1号楼3层中央空调',
-        value: 25.68,
-        state: '未运行'
-      }, {
-        name: '1号楼4层中央空调',
-        value: 25.68,
-        state: '运行中'
-      }, {
-        name: '1号楼5层中央空调',
-        value: 25.68,
-        state: '未运行'
-      }, {
-        name: '1号楼6层中央空调',
-        value: 25.68,
-        state: '运行中'
-      }, {
-        name: '1号楼7层中央空调',
-        value: 25.68,
-        state: '未运行'
-      }, {
-        name: '1号楼8层中央空调',
-        value: 25.68,
-        state: '运行中'
-      }, {
-        name: '1号楼9层中央空调',
-        value: 25.68,
-        state: '未运行'
-      },
-    ]
-  }
+  
   const airdata = {
     today: '25.68',
     todayper: '-10.00%',
     yesterday: '80.12',
     yesterdayper: '2.50%'
   }
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [state, setstate] = useState('open');
-  const [modelChange, setmodal] = useState('cold');
-  let [temp, settemp] = useState(23);
-  const [Ctitle, setCtitle] = useState({});
-  const [isOnClick, setisOnClick] = useState(true);
-  const [operateState, setoperateState] = useState(true);
-  const [isOnClickModal, setisOnClickModal] = useState(true);
   const onclickBtn = (e) => {
     setCtitle(e)
     setIsModalOpen(true);
-  }
+  }//点击远程控制按钮，跳出弹窗
   // const onOk = () => {
   //   setIsModalOpen(false);
   // }
@@ -143,10 +158,10 @@ export default function Index(props) {
         aref.current.onOpen()
       }
     }, 3000)
-  };
+  };//控制空调
   const handleCancel = () => {
     setIsModalOpen(false);
-  };
+  };//关闭空调命令面板
   const onclickOpen = (type) => {
     if (type == 'open') {
       setisOnClick(true)
@@ -156,7 +171,7 @@ export default function Index(props) {
       setstate('close')
     }
 
-  }
+  }//开关空调
   const onclickModal = (type) => {
     if (type == 'cold') {
       setisOnClickModal(true)
@@ -165,23 +180,17 @@ export default function Index(props) {
       setisOnClickModal(false)
       setmodal('hot')
     }
-  }
+  }//调整冷热模式
   const onclickTemp = (type) => {
     if (type == 'add') {
       settemp(++temp)
     } else {
       settemp(--temp)
     }
-  }
-  const [loading, setLoading] = useState(false);
-  const aref = useRef()
+  }//调整温度
   const onOkAlert = () => {
     aref.current.onCancel()
-  }
-  let [numfirst, setnumfirst] = useState(0);
-  let [numlast, setnumlast] = useState(9);
-  let [airList, setairList] = useState(arr.list);
-  const [messageApi, contextHolder] = message.useMessage();
+  }//关闭操作提示结果
   const gotoHref = () => {
     if (numlast < arr.list.length) {
       setnumfirst(++numfirst)
@@ -193,7 +202,7 @@ export default function Index(props) {
         content: '当前已为最后一个……',
       });
     }
-  }
+  }//点击下一个
   const cometoHref = () => {
     if (numfirst > 0) {
       setnumfirst(--numfirst)
@@ -205,7 +214,7 @@ export default function Index(props) {
         content: '当前已为第一个……',
       });
     }
-  }
+  }//点击上一个
   //   const { 
   //     queryElectricClassifys, 
   //     insertEnergyClassify, 
@@ -232,6 +241,13 @@ export default function Index(props) {
   //   refreshDeps:[changeTag],
   //   manual: true,
   // })
+  const onSearchList = () => {//点击查询按钮
+    //queryDataList()
+    console.log(formInfo.changeInput)
+  }
+  const onChangeValue = e => {//输入框内容变化回调
+    formInfo.changeInput = e.target.value
+  }
   const headerProps = {
     isEnergy: false,//能耗类型
     isDate: true,//日期
@@ -242,7 +258,12 @@ export default function Index(props) {
     //export: exportData //导出调用方法
   }
   const getFromChild = data => {
-  }
+    formInfo.changeAreaId = data.areaId
+    formInfo.changeDate = data.date
+    formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
+    setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
+    setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
+  }//head变化传值
   return (
     <div>
       {contextHolder}
@@ -255,19 +276,17 @@ export default function Index(props) {
               </div>
             </div>
             <div className={style.contentTopRight}>
-              <Titlelayout title={'本日空调能耗 (kWh)'}{...fs} style={{ width: '100%', height: '100%' }}>
+              <Titlelayout title={lightDate+'空调能耗 (kWh)'}{...fs} style={{ width: '100%', height: '100%' }}>
                 <div className={style.airEnergy} style={{ width: '100%', height: '100%', padding: 16 }}>
                   <div style={{ width: '100%', height: '100%', paddingTop: 16 }}>
                     <Image src={imgurl.logo} preview={false} width={64} height={64}></Image>
                   </div>
                   <div className={style.airEnergyData}>
-                    <p>本日 :{airdata.today}</p>
+                    <p>{lightDate} :{airdata.today}</p>
                     <div>同比 :{parseFloat(airdata.todayper) > 0 ? '+' + airdata.todayper : airdata.todayper}
                       {parseFloat(airdata.todayper) > 0 ? <Image src={imgurl.up} preview={false} width={9} height={14} style={{ margin: 16 }}></Image> : <Image src={imgurl.down} preview={false} width={9} height={14} style={{ margin: 16 }}></Image>}
-
-
                     </div>
-                    <p>昨日  :{airdata.yesterday}</p>
+                    <p>{lightDateYesterday}  :{airdata.yesterday}</p>
                     <div>环比 :{parseFloat(airdata.yesterdayper) > 0 ? '+' + airdata.yesterdayper : airdata.yesterdayper}
                       {parseFloat(airdata.yesterdayper) > 0 ? <Image src={imgurl.up} preview={false} width={9} height={14} style={{ margin: 16 }}></Image> : <Image src={imgurl.down} preview={false} width={9} height={14} style={{ margin: 16 }}></Image>}
                     </div>
@@ -278,8 +297,8 @@ export default function Index(props) {
           </div>
           <div className={style.contentBottom}>
             <div className={style.contentBottomTop}>
-              <span>空调控制</span><Input size="middle" placeholder='请输入空调名称' style={{ width: '260px', marginLeft: 16 }} />
-              <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />}>查询</Button>
+              <span>空调控制</span><Input size="middle" placeholder='请输入空调名称' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue}/>
+              <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />} onClick={() => { onSearchList() }}>查询</Button>
             </div>
             <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
             <div className={style.contentBottomBottom}>

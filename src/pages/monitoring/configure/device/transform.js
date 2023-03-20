@@ -295,7 +295,10 @@ export default function gateway({ deviceStyle }) {
         capacity:formvalue.capacity,
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
-        ratedFrequency:formvalue.ratedFrequency
+        ratedFrequency:formvalue.ratedFrequency,
+        commPort: formvalue.commPort,
+        commAddress: formvalue.commAddress,
+        commProtocol: 0,
       }
       const res = await AddTransformer(params)
       if (res.success) {
@@ -309,8 +312,8 @@ export default function gateway({ deviceStyle }) {
     })
 
 
-
   }
+  //新增应用
   const addSure=()=>{
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
@@ -328,7 +331,10 @@ export default function gateway({ deviceStyle }) {
         capacity:formvalue.capacity,
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
-        ratedFrequency:formvalue.ratedFrequency
+        ratedFrequency:formvalue.ratedFrequency,
+        commPort: formvalue.commPort,
+        commAddress: formvalue.commAddress,
+        commProtocol: 0,
       }
       const res = await AddTransformer(params)
       if (res.success) {
@@ -457,10 +463,12 @@ export default function gateway({ deviceStyle }) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
         getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-      }else{
+      }else if(res.data.data && Array.isArray(res.data.data)){
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      } 
+      } else{
+        message.error(res.data.errMsg)
+      }
     }else{
       message.error(res.errMsg)
     }
@@ -560,16 +568,24 @@ export const FormComp = (props) => {
   const { TextArea } = Input
   const { addopts, gatewaylist, devicelist, alarmopts, form ,levelname } = useContext(MyContext)
   const [area, setArea] = useState([])
+  const [coms, setComs] = useState(0)
   const rules = [{
     required: true
   }]
-  
+  let options = []
+  for (let i = 1; i <= coms; i++) {
+    options.push({
+      label: `COM ${i}`,
+      value: i
+    })
+  }
   const changeGateway = (v, option) => {
     console.log(v, option)
     if (v) {
       const arr = addopts?.filter(it => (it.id === option.areaId))
       setArea([...arr])
-      form.setFieldsValue({ areaId: arr[0].id, commPort: '', commProtocol: 0 })
+      setComs(option.com)
+      form.setFieldsValue({ areaId: arr[0].id, commPort: undefined, commProtocol: 0 })
     } else {
       setArea([])
       form.setFieldsValue({areaId:''})
@@ -596,7 +612,7 @@ export const FormComp = (props) => {
       labelCol={{
         span: 7
       }}
-      validateTrigger="onFinish"
+      // validateTrigger="onFinish"
     >
       <Row className={style.customItem}>
         <Col flex={1}>
@@ -667,6 +683,34 @@ export const FormComp = (props) => {
           <Form.Item label="额定频率" name="ratedFrequency" rules={[{ validator:validatorfunc}]}>
             <Input suffix={<span>(Hz)</span>}/>
           </Form.Item>
+          {
+            form.getFieldsValue().gatewayId ? (
+              <>
+                <Form.Item label="通讯端口" name="commPort" rules={rules}>
+                  <Select
+                    placeholder='请选择通讯端口'
+                    options={options}
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.resolve()
+                    } else {
+                      if (Number(value) < 255 && Number(value) > 0) {
+                        return Promise.resolve()
+                      } else {
+                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                      }
+                    }
+                  }
+                }]}>
+                  <Input placeholder='通讯地址范围(0-255)' />
+                  {/* 默认1-255 */}
+                </Form.Item>
+              </>
+            ) : null
+          }
         </Col>
       </Row>
     </Form>
@@ -675,12 +719,12 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other}>
-      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }} footer={[
+    <Modal mold='cust' ref={modalFormRef} {...other} footer={[
       <Button onClick={other.onCancel}>取消</Button>,
       <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
       <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}></BlueColumn>
+  ]}>
+      <BlueColumn name={other.name} styled={{ padding: '24px 0px' }} ></BlueColumn>
       <FormComp >
       </FormComp>
     </Modal>
@@ -717,6 +761,13 @@ export const EditFormComp = (props) => {
   const rules = [{
     required: true
   }]
+  let options = []
+  for (let i = 1; i <= coms; i++) {
+    options.push({
+      label: `COM ${i}`,
+      value: i
+    })
+  }
   const changeGateway = (v, option) => {
     console.log(v, option)
     setIsdisable(false)
@@ -829,6 +880,34 @@ export const EditFormComp = (props) => {
           <Form.Item label="额定频率" name="ratedFrequency" rules={[{ validator:validatorfunc}]}>
             <Input suffix={<span>(Hz)</span>}/>
           </Form.Item>
+          {
+            form.getFieldsValue().gatewayId ? (
+              <>
+                <Form.Item label="通讯端口" name="commPort" rules={rules}>
+                  <Select
+                    placeholder='请选择通讯端口'
+                    options={options}
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.resolve()
+                    } else {
+                      if (Number(value) < 255 && Number(value) > 0) {
+                        return Promise.resolve()
+                      } else {
+                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                      }
+                    }
+                  }
+                }]}>
+                  <Input placeholder='通讯地址范围(0-255)' />
+                  {/* 默认1-255 */}
+                </Form.Item>
+              </>
+            ) : null
+          }
         </Col>
       </Row>
     </Form>

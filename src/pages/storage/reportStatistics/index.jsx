@@ -1,7 +1,19 @@
-import React from 'react'
+import React, {useState} from 'react'
+import CustContext from '@com/content.js'
+import Pagecount from '@com/pagecontent'
+import CModal from '@com/useModal'
+import {useSelector} from 'react-redux'
+import {selectProjectId} from '@redux/systemconfig.js'
 
-export default function Index() {
+import {Form} from 'antd'
+export default function Index() {  
+  const projectId = useSelector(selectProjectId)
+  const [form] = Form.useForm
   return (
-    <div>报表统计</div>
+    <CustContext.Provider>
+    <Pagecount showserach={true} value={{form}}>   
+       {/*  <Report projectId={projectId} CModal={CModal} /> */}
+    </Pagecount>
+    </CustContext.Provider>
   )
 }

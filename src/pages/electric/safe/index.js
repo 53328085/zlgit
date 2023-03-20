@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {NavLink ,useLocation,useNavigate} from "react-router-dom";
-
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Progress, Timeline,Select,Divider} from 'antd'
-import {Liquid} from "@ant-design/charts"
+import { Form, Image, Progress, Timeline, Select, Divider, Space, DatePicker, message } from 'antd'
+import { Liquid } from "@ant-design/charts"
 import { drawEcharts } from "@com/useEcharts"
-import { useSelector,useStore } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
-
+import { safeElectric } from '@api/api'
+import moment from 'moment'
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
@@ -28,7 +28,8 @@ const Mainbox = styled.div`
         min-height: 330px;
       }
       .stack {
-        min-height: 312px;
+        // min-height: 312px;
+        height:100%
       }
     }
 
@@ -103,7 +104,7 @@ justify-items: center;
         align-items: center;
         justify-content: space-around;
         & span:last-child{
-            color:#ff00a5;
+            color:#ff0000;
             font-size: 14px;
         }
     }
@@ -141,7 +142,7 @@ min-height: 142px;
    color:#6b6b6b;
  }
 `
-const DemoLiquid = () => {
+const DemoLiquid = ({ warnData }) => {
   const config = {
     percent: 0.4,
     outline: {
@@ -151,37 +152,37 @@ const DemoLiquid = () => {
     wave: {
       length: 128,
     },
-  
-      statistic: {
-        title: {
-          formatter: () => '今日报警',
-          style: {
-            fontSize: 14,
-            color: '#333',
-            
-          }
+
+    statistic: {
+      title: {
+        formatter: () => '今日报警',
+        style: {
+          fontSize: 14,
+          color: '#333',
+
+        }
+      },
+      content: {
+        style: {
+          fontSize: 26,
+          color: '#fff'
         },
-        
-        content: {
-          style: {
-            fontSize: 14,
-            color: '#fff'
-          },
-          customHtml: () => {
-            return <span>30次</span>
-          }
+        offsetY: 18,
+        customHtml: () => {
+          return <span>{warnData?.todayWarningCnt}次</span>
         }
       }
-   
+    }
+
   };
   return <Liquid {...config} />;
 };
 
 const headercss = {
-  background:'#fff ' ,
-  marginBottom:16,
-  border:'1px solid #d7d7d7',
-  borderRadius:4,
+  background: '#fff ',
+  marginBottom: 16,
+  border: '1px solid #d7d7d7',
+  borderRadius: 4,
   padding: '8px 16px'
 }
 export default function Index() {
@@ -191,12 +192,15 @@ export default function Index() {
   const opref = useRef(null)
   const lref = useRef(null)
   const store = useStore();
-  const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
-  const location = useLocation()
   const navigate = useNavigate()
-  console.log(location)
-  //console.log(siderRunMenus, siderDesignerMenus)
-  const arealist = useSelector(state=>state.system.onelevel)
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const arealist = useSelector(state => state.system.onelevel)
+  const levellist = [{ name: arealist[0].levelName, id: 0 }, ...arealist]
+
+  const [warnData, setWarnData] = useState()
+  const [areaId, setAreaId] = useState()
+  const [datasetMonthl, setDatasetMonthl] = useState()
+  const [warnlist, setWarnlist] = useState([])//最新告警
   const grid = {
     // 图表 grid
     left: "0px",
@@ -205,223 +209,455 @@ export default function Index() {
     bottom: "0px",
     containLabel: true,
   }
-  const datasetStack = {
-    dimensions: ["type", "一级报警", "二级报警", "三级报警"],
-    source: [
-      {type: "掉电", "一级报警": 5600, "二级报警": 9600, "三级报警": 9600, },
-      {type: "过温", "一级报警": 4600, "二级报警": 3644,"三级报警": 7600, },
-      { type: "过流", "一级报警": 3600, "二级报警": 4644,"三级报警": 8600, },
-      { type: "缺相报警", "一级报警": 5611, "二级报警": 9655,"三级报警": 6600, },
-      { type: "电流不平衡", "一级报警": 5644, "二级报警": 3677,"三级报警": 4600,},
-      { type: "电压不平衡", "一级报警": 4677, "二级报警": 3633,"三级报警": 9874, },
-      { type: "频率超限", "一级报警": 3688, "二级报警": 4655,"三级报警": 4789, },
-      { type: "欠压报警", "一级报警": 5088, "二级报警": 2644,"三级报警": 3698, },
-      { type: "过压报警", "一级报警": 6677, "二级报警": 2641,"三级报警": 7532, },
-      { type: "剩余电量过流", "一级报警": 5866, "二级报警": 5641,"三级报警": 9521, },
-     
-    ],
-  };
-  const datasetMonthl = {
-    dimensions: ["time", "本月", "上月"],
-    source: [
-      { time: "1", "本月": 5600, "上月": 9600 },
-      { time: "2", "本月": 4600, "上月": 3644 },
-      { time: "3", "本月": 3600, "上月": 4644 },
-      { time: "4", "本月": 5611, "上月": 9655 },
-      { time: "5", "本月": 5644, "上月": 3677 },
-      { time: "6", "本月": 4677, "上月": 3633 },
-      { time: "7", "本月": 3688, "上月": 4655 },
-      { time: "8", "本月": 5088, "上月": 2644 },
-      { time: "9", "本月": 6677, "上月": 2641 },
-      { time: "10", "本月": 5866, "上月": 5641 },
-      { time: "11", "本月": 4677, "上月": 7645 },
-      { time: "12", "本月": 1877, "上月": 2645 },
-    ],
-  };
-  const pieData = [
-    { value: 30.4, name: "组合式电气火灾监测器" },
-    { value: 25.7, name: "智能微断" },
-    { value: 25.6, name: "导轨表" },
-    { value: 15.6, name: "其他" },
-  ];
-  const opieData = [
-    { value: 20.4, name: "1级报警" },
-    { value: 35.7, name: "2级报警" },
-    { value: 15.6, name: "3级报警" },
-  
-  ];
-  useEffect(() => {
-    drawEcharts(bref.current, {
-        xAxis: {
-            type: 'value'
-          },
-          yAxis: {
-            type: 'category',
-            axisLabel: {
-                color:"#545454"
-            },
-            axisTick: {
-                alignWithLabel: true,
-                lineStyle: {
-                    color:"#4bcb82"
-                }
-            },
-            axisLine: {
-                lineStyle: {
-                    color:"#4bcb82"
-                }
-            }
-          },    
-      dataset: datasetStack,
-      series: [{ type: "bar",  stack: 'total' }, { type: "bar",  stack: 'total' },{ type: "bar",  stack: 'total' }],
-      grid: {
-        top: '10px',
-        bottom: "30px",
-        right: '0px',
-        left: '0px',
-        containLabel: true,
-      },
-      legend: {   
-        top: 'auto',
-        bottom: 0,
-        icon: 'rect',
-        itemHeight: 8,
-        itemWidth: 8,
-        itemGap: 20
+  let params = {
+    projectId,
+    areaId
+  }
+  // const datasetMonthl = {
+  //   dimensions: ["time", "本月", "上月"],
+  //   source: [
+  //     { time: "1", "本月": 5600, "上月": 9600 },
+  //     { time: "2", "本月": 4600, "上月": 3644 },
+  //     { time: "3", "本月": 3600, "上月": 4644 },
+  //     { time: "4", "本月": 5611, "上月": 9655 },
+  //     { time: "5", "本月": 5644, "上月": 3677 },
+  //     { time: "6", "本月": 4677, "上月": 3633 },
+  //     { time: "7", "本月": 3688, "上月": 4655 },
+  //     { time: "8", "本月": 5088, "上月": 2644 },
+  //     { time: "9", "本月": 6677, "上月": 2641 },
+  //     { time: "10", "本月": 5866, "上月": 5641 },
+  //     { time: "11", "本月": 4677, "上月": 7645 },
+  //     { time: "12", "本月": 1877, "上月": 2645 },
+  //   ],
+  // };
+
+
+  //查询今日告警
+  const getQueryWarningDetails = async () => {
+    const res = await safeElectric.TodayWarningStatistics(params)
+    if (res.success) {
+      setWarnData({ ...res.data })
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  //查询本月告警趋势
+  const getQueryMonthWarningTrends = async () => {
+    const res = await safeElectric.QueryMonthWarningTrends(params)
+    if (res.success) {
+      const length = Math.max(res.data.lastMonth.length, res.data.month.length)
+      let arr = []
+      for (let i = 0; i < length; i++) {
+        arr.push({
+          time: i + 1,
+          "本月": res.data.month[i].value,
+          "上月": res.data.lastMonth[i].value
+        })
       }
-    })   
-    drawEcharts(pref.current,  {pieData: {data: pieData, radius: '65%'}, type: 3, legend: {
-     
-       top: 'auto',
-       bottom: 0,
-     
-    },})
-    drawEcharts(opref.current,  {pieData: {data: opieData, radius: ['45%', '65%']}, type: 3, legend: {
-     
-        top: 'auto',
-        bottom: 0,
-      
-     },})
-    drawEcharts(lref.current, {
-      dataset: datasetMonthl,
-      series: [{ type: "line" }, { type: "line" }],
-      grid: {
-        top: '30px',
-        left: 0,
-        right: 0,
-        bottom: '30px',
-        containLabel: true,
-      },
-      legend: {
-        top: 'auto',
-        bottom: 0,
-        icon: 'rect',
-        itemHeight: 2,
-        itemWidth: 12,
-        itemGap: 20,
-      }
-    })
+      setDatasetMonthl(() => ({ dimensions: ["time", "本月", "上月"], source: arr }))
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  drawEcharts(lref.current, {
+    dataset: datasetMonthl,
+    series: [{ type: "line" }, { type: "line" }],
+    grid: {
+      top: '30px',
+      left: 0,
+      right: 0,
+      bottom: '30px',
+      containLabel: true,
+    },
+    legend: {
+      top: 'auto',
+      bottom: 0,
+      icon: 'rect',
+      itemHeight: 2,
+      itemWidth: 12,
+      itemGap: 20,
+    }
   })
+
+
+  //查询最新告警
+  const getQueryTodayWarningDetails = async () => {
+    const res = await safeElectric.QueryTodayWarningDetails(params)
+  
+    if (res.success) {
+      if (res.data && Array.isArray(res.data)) {
+        console.log(res)
+        setWarnlist([...res.data])
+      } else {
+        setWarnlist([])
+      }
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  useEffect(() => {
+    getQueryWarningDetails()
+    getQueryMonthWarningTrends()
+    getQueryTodayWarningDetails()
+  }, [areaId])
   const fs = {
     hv: '24px',
     fc: '#333'
   }
 
+
+
   return (
-    <CustContext.Provider value={{form}}>
+    <CustContext.Provider value={{ form }}>
       <Pagecount bgcolor="transparent" pd="0px">
         <div style={headercss}>
-          <span style={{paddingRight:16}}>园区选择</span>
-          <Select options={arealist} style={{width:200}} fieldNames={{label:'name',value:'id'}} defaultValue={arealist[0].id}></Select>
+          <span style={{ paddingRight: 16 }}>园区选择</span>
+          <Select
+            options={levellist}
+            style={{ width: 200 }}
+            fieldNames={{ label: 'name', value: 'id' }}
+            defaultValue={0}
+            onChange={(v) => { setAreaId(v);console.log(v) }}
+          ></Select>
         </div>
         <Mainbox>
-        <Titlelayout title={'今日告警'} {...fs}>
-        <Warnbox>
-          <div style={{width: '148px', height: '148px'}}>
-              <DemoLiquid></DemoLiquid>
-              
-          </div>
-          <div className='alarm'>
-             <div className='warning'>
-              <img src={first} style={{width:36,height:36}}></img>
-              <span style={{padding:'0 40px 0 16px'}}>一级告警</span>
-              <span style={{fontSize:18}}>3 </span>
-             </div>
-              <Divider style={{margin: 0,borderColor:"#d7d7d7"}} dashed/>
-             <div className='warning'>
-             <img src={second} style={{width:36,height:36}}></img>
-             <span style={{padding:'0 40px 0 16px'}}>二级告警</span>
-              <span style={{fontSize:18}}>3 </span>
+          <Titlelayout title={'今日告警'} {...fs}>
+            <Warnbox>
+              <div style={{ width: '148px', height: '148px' }}>
+                <DemoLiquid warnData={warnData}></DemoLiquid>
 
-             </div>
-             <Divider style={{margin: 0,borderColor:"#d7d7d7"}} dashed />
-             <div className='warning'>
-             <img src={third} style={{width:36,height:36}}></img>
-             <span style={{padding:'0 40px 0 16px'}}>三级告警</span>
-              <span style={{fontSize:18}}>3 </span>    
-             </div>
+              </div>
+              <div className='alarm'>
+                <div className='warning'>
+                  <img src={first} style={{ width: 36, height: 36 }}></img>
+                  <span style={{ padding: '0 40px 0 16px' }}>一级告警</span>
+                  <span style={{ fontSize: 18 }}>{warnData?.levelOneCnt} </span>
+                </div>
+                <Divider style={{ margin: 0, borderColor: "#d7d7d7" }} dashed />
+                <div className='warning'>
+                  <img src={second} style={{ width: 36, height: 36 }}></img>
+                  <span style={{ padding: '0 40px 0 16px' }}>二级告警</span>
+                  <span style={{ fontSize: 18 }}>{warnData?.levelTwoCnt} </span>
+
+                </div>
+                <Divider style={{ margin: 0, borderColor: "#d7d7d7" }} dashed />
+                <div className='warning'>
+                  <img src={third} style={{ width: 36, height: 36 }}></img>
+                  <span style={{ padding: '0 40px 0 16px' }}>三级告警</span>
+                  <span style={{ fontSize: 18 }}>{warnData?.levelThreeCnt} </span>
+                </div>
+
+              </div>
+              <div className='info'>
+                <div>
+                  <span style={{ fontSize: 14 }}>本周告警</span>
+                  <span style={{ fontSize: 16 }}>{warnData?.weekWarningCnt}</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: 14 }}>本月告警</span>
+                  <span style={{ fontSize: 16 }}>{warnData?.monthWarningCnt}</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: 14 }}>本年告警</span>
+                  <span style={{ fontSize: 16 }}>{warnData?.yearWarningCnt}</span>
+                </div>
+              </div>
+            </Warnbox>
+          </Titlelayout>
+       
+          {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
+          <Titlelayout title={'最新告警'} extra={<NavLink to={{ pathname: "/index/runtimeSafe/alarmDetail" }} state={{ title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe' }}>查看详情</NavLink>} {...fs}>
+            <Timelinebox>
            
-          </div>
-           <div className='info'>
-              <div>
-                <span>本周告警</span>
-                <span>120</span>
-              </div>
-              <div>
-                <span>本月告警</span>
-                <span>420</span>
-              </div>
-              <div>
-                <span>本年告警</span>
-                <span>5220</span>
-              </div>
-           </div>
-        </Warnbox>
-      </Titlelayout>
-      {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
-     <Titlelayout title={'最新告警'} extra={<NavLink   to={{ pathname:"/index/runtimeSafe/alarmDetail" }} state={{title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}}>查看详情</NavLink>} {...fs}>
-      <Timelinebox>
-          <Timeline.Item>
-              <div>
-                <p className='title'>13:48:55  设备过温</p>
-                <p className='content'>正泰物联滨江园区-研发1号楼-12层-401    SN 102362256232</p>
-              </div>
-          </Timeline.Item>
-          <Timeline.Item>
-              <div>
-                <p className='title'>13:20:23  设备过温</p>
-                <p className='content'>正泰物联滨江园区-研发1号楼-12层-403    SN 102362256238</p>
-              </div>
-          </Timeline.Item>
-          <Timeline.Item>
-              <div>
-                <p className='title'>13:20:23  设备过流</p>
-              
-              </div>
-          </Timeline.Item>         
-        </Timelinebox>
-        </Titlelayout>
-        <Titlelayout className="down"  title="本月告警趋势" {...fs}>
-                <div className='chart' ref={lref}>                  
-                 
-                </div>  
-        </Titlelayout>
-        <Titlelayout className="pie"  title="告警分布" {...fs}>
-                <div className='chart'>  
-                  <div ref={pref}></div>                
-                  <div ref={opref}></div>
-                </div>  
-        </Titlelayout>
-        <Titlelayout className="down"  title="告警类型排名" {...fs}>
-                <div className='stack' ref={bref}>  
-                 
-                </div>  
-        </Titlelayout>
-    
+              {
+             warnlist&&warnlist.length>0?
+              warnlist.map(
+                it => {
+                  return (
+                    <Timeline.Item>
+                      <div>
+                        <p className='title'>{it.warningTime}  {it.alarmEvent}</p>
+                        <p className='content'>{it.address}    SN {it.sn}</p>
+                      </div>
+                    </Timeline.Item>
+                  )
+                }
+              ):null
+             }
+            </Timelinebox>
+          </Titlelayout>
+          <Titlelayout className="down" title="本月告警趋势" {...fs}>
+            <div className='chart' ref={lref}>
 
-        
-         </Mainbox>
+            </div>
+          </Titlelayout>
+
+          <Alarm pref={pref} opref={opref} areaId={areaId} />
+          <AlarmRank bref={bref} areaId={areaId} />
+        </Mainbox>
       </Pagecount>
     </CustContext.Provider>
   )
 }
+
+//告警分布组件
+const Alarm = ({ pref, opref, areaId }) => {
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const [pieData, setPieData] = useState()
+  const [opieData, setOpieData] = useState()
+  const [dateform] = Form.useForm()
+  const getQueryWarningDistributed = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
+    let params = {
+      projectId,
+      type,
+      date,
+      areaId,
+    }
+    const res = await safeElectric.QueryWarningDistributed(params)
+    if (res.success) {
+      if (res.data.deviceGroup && Array.isArray(res.data.deviceGroup)) {
+        if(res.data.deviceGroup.length > 0) {
+          setPieData([...res.data.deviceGroup])
+        }else{
+          setPieData(null)
+        }
+   
+      } else {
+        setPieData(null)
+      }
+
+      if (res.data.levelGroup && Array.isArray(res.data.levelGroup)) {
+        if(res.data.levelGroup.length > 0) {
+          setOpieData([...res.data.levelGroup])
+        }else{
+          setOpieData(null)
+        }
+       
+      } else {
+        setOpieData(null)
+      }
+
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  //获取日期格式
+  const getdateformat = (dateType, date) => {
+  
+    if (dateType === 1) {
+      date = moment(date).format('YYYY-MM-01')
+    } else if (dateType === 2) {
+      date = moment(date).format('YYYY-01-01')
+    }
+    return date
+  }
+  //修改日期类型
+  const changedate = (v, callback) => {
+    const datevalue = dateform.getFieldsValue().datevalue
+    const date = getdateformat(v, datevalue)
+    callback(v)
+    getQueryWarningDistributed(v, date)
+  }
+  //修改日期
+  const changPicker = (v, datecatrgory) => {
+    const date = getdateformat(datecatrgory, v)
+    getQueryWarningDistributed(datecatrgory, date)
+  }
+
+ 
+  useEffect(() => {
+    const formvalue = dateform.getFieldsValue()
+    const type = formvalue.datetype
+    const date = getdateformat(type, formvalue.datevalue)
+    getQueryWarningDistributed(type, date)
+  }, [areaId])
+  useEffect(()=>{
+    drawEcharts(pref.current, {
+      pieData: { data: pieData, radius: '65%' }, type: 3, legend: {
+  
+        top: 'auto',
+        bottom: 0,
+  
+      },
+    })
+  },[pieData])
+  useEffect(()=>{
+     
+  drawEcharts(opref.current, {
+    pieData: { data: opieData, radius: ['45%', '65%'] }, type: 3, legend: {
+
+      top: 'auto',
+      bottom: 0,
+
+    },
+  })
+  },[opieData])
+  return (
+    <Titlelayout
+      className="pie"
+      title="告警分布"
+      {...fs}
+      extra={<DateComp ChangDate={changedate} changPicker={changPicker} dateform={dateform} />} >
+      <div className='chart'>
+        {pieData?<div ref={pref}></div>:null}
+        {opieData?<div ref={opref}></div>:null}
+        
+      </div>
+    </Titlelayout>
+  )
+
+}
+// const datasetStack = {
+//   dimensions: ["type", "一级报警", "二级报警", "三级报警"],
+//   source: [
+//     { type: "掉电", "一级报警": 5600, "二级报警": 9600, "三级报警": 9600, },
+//     { type: "过温", "一级报警": 4600, "二级报警": 3644, "三级报警": 7600, },
+//     { type: "过流", "一级报警": 3600, "二级报警": 4644, "三级报警": 8600, },
+//     { type: "缺相报警", "一级报警": 5611, "二级报警": 9655, "三级报警": 6600, },
+//     { type: "电流不平衡", "一级报警": 5644, "二级报警": 3677, "三级报警": 4600, },
+//     { type: "电压不平衡", "一级报警": 4677, "二级报警": 3633, "三级报警": 9874, },
+//     { type: "频率超限", "一级报警": 3688, "二级报警": 4655, "三级报警": 4789, },
+//     { type: "欠压报警", "一级报警": 5088, "二级报警": 2644, "三级报警": 3698, },
+//     { type: "过压报警", "一级报警": 6677, "二级报警": 2641, "三级报警": 7532, },
+//     { type: "剩余电量过流", "一级报警": 5866, "二级报警": 5641, "三级报警": 9521, },
+
+//   ],
+// };
+
+
+
+//告警类型排名
+const AlarmRank = ({ bref, areaId }) => {
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const [dateform] = Form.useForm()
+  let lengend = { dimensions: ["type", "一级报警", "二级报警", "三级报警"] }
+  const [datasetStack, setDatasetStack] = useState()
+  const getQueryWarningTypeRanking = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
+    let params = {
+      projectId,
+      type,
+      date,
+      areaId
+    }
+    const res = await safeElectric.QueryWarningTypeRanking(params)
+    if (res.success) {
+      if(Array.isArray(res.data)&&res.data.length > 0) {
+      const data = res.data.map(it => {
+        return {
+          type: it.warningType,
+          "一级报警": it.level1Cnt,
+          "二级报警": it.level2Cnt,
+          "三级报警": it.level3Cnt
+        }
+      })
+      setDatasetStack({ ...lengend, source: data })
+    }else{
+      setDatasetStack(null)
+    }
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  //获取日期格式
+  const getdateformat = (dateType, date) => {
+    if (dateType === 1) {
+      date = moment(date).format('YYYY-MM-01')
+    } else if (dateType === 2) {
+      date = moment(date).format('YYYY-01-01')
+    }
+    return date
+  }
+  //修改日期类型
+  const changedate = (v, callback) => {
+    const datevalue = dateform.getFieldsValue().datevalue
+    const date = getdateformat(v, datevalue)
+    callback(v)
+    getQueryWarningTypeRanking(v, date)
+  }
+  //修改日期值
+  const changPicker = (v, datecatrgory) => {
+    const date = getdateformat(datecatrgory, v)
+    getQueryWarningTypeRanking(datecatrgory, date)
+  }
+  drawEcharts(bref.current, {
+    xAxis: {
+      type: 'value'
+    },
+    yAxis: {
+      type: 'category',
+      axisLabel: {
+        color: "#545454"
+      },
+      axisTick: {
+        alignWithLabel: true,
+        lineStyle: {
+          color: "#4bcb82"
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: "#4bcb82"
+        }
+      }
+    },
+    dataset: datasetStack,
+    series: [{ type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }],
+    grid: {
+      top: '30px',
+      bottom: "30px",
+      right: '0px',
+      left: '0px',
+      containLabel: true,
+    },
+    legend: {
+      top: 'auto',
+      bottom: 0,
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20
+    }
+  })
+  useEffect(() => {
+    const formvalue = dateform.getFieldsValue()
+    const type = formvalue.datetype
+
+    const date = getdateformat(type, formvalue.datevalue)
+    getQueryWarningTypeRanking(type, date)
+  }, [areaId])
+  return (
+    <Titlelayout className="down" title="告警类型排名" {...fs} extra={<DateComp ChangDate={changedate} changPicker={changPicker} dateform={dateform} />} >
+      {datasetStack?  <div className='stack' ref={bref}></div>:null}
+    
+    </Titlelayout>
+  )
+
+}
+//日期选择组件
+const DateComp = ({ ChangDate, changPicker, dateform }) => {
+  const [datecatrgory, setDatecatrgory] = useState(1)
+  const dateOptions = [
+    { label: '月', value: 1 },
+    { label: '年', value: 2 },
+  ]
+  return (
+    <Form
+      style={{ display: 'flex' }}
+      form={dateform}
+      initialValues={
+        {
+          datetype: datecatrgory,
+          datevalue: moment(),
+        }
+      }
+    >
+      <Form.Item name="datetype" style={{ margin: 0, width: 80 }}>
+        <Select options={dateOptions} onChange={(v) => { ChangDate(v, setDatecatrgory) }} ></Select>
+      </Form.Item>
+      <Form.Item name="datevalue" style={{ margin: 0, width: 160, marginLeft: 16 }}>
+        <DatePicker picker={datecatrgory === 1 ? 'month' : 'year'} onChange={(v) => { changPicker(v, datecatrgory) }} />
+      </Form.Item>
+    </Form>
+  )
+}
+

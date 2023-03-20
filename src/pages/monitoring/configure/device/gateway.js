@@ -30,7 +30,7 @@ export default function gateway() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 2,
     hideOnSinglePage: false
   })
   const pageRef = useRef(page)
@@ -388,10 +388,18 @@ export default function gateway() {
       if (res.data.success) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
-        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
-      } else {
+        // getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
+        getQueryByPageGateWay(1, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
+        setPage({
+          ...page,
+          current:1
+        })
+        // pageRef.current.current =1
+      } else if(res.data.data && Array.isArray(res.data.data)){
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
+      }else{
+        message.error(res.data.errMsg)
       }
     }else{
       message.error(res.errMsg)
