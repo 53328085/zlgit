@@ -482,10 +482,12 @@ export default function gateway({ deviceStyle }) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
         getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-      }else{
+      }else if(res.data.data && Array.isArray(res.data.data)){
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      } 
+      } else{
+        message.error(res.data.errMsg)
+      }
     }else{
       message.error(res.errMsg)
     }

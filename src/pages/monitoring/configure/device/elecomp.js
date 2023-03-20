@@ -76,14 +76,14 @@ let Com = ({ form, coms }) => {
                             if(!value){
                                 return Promise.resolve()
                             }else{
-                                if(Number(value)<=255&&Number(value)>=1){
+                                if(Number(value)<255&&Number(value)>0){
                                      return Promise.resolve()
                                 }else{
-                                    return Promise.reject(new Error("通讯地址范围1-255"))
+                                    return Promise.reject(new Error("通讯地址范围(0-255)"))
                                 }
                             }
                         }}]}>
-                            <Input placeholder='通讯地址范围1-255' />
+                            <Input placeholder='通讯地址范围(0-255)' />
                             {/* 默认1-255 */}
                         </Form.Item> : null
                     }
@@ -296,8 +296,18 @@ let EditCom = ({ form, coms }) => {
                         ></Select>
                     </Form.Item>
                     {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true, }]}>
-                            <Input />
+                        isaddress ? <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true},{validator:(_,value)=>{
+                            if(!value){
+                                return Promise.resolve()
+                            }else{
+                                if(Number(value)<255&&Number(value)>0){
+                                     return Promise.resolve()
+                                }else{
+                                    return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                }
+                            }
+                        }}]}>
+                            <Input placeholder='通讯地址范围(0-255)'/>
                             {/* 默认1-255 */}
                         </Form.Item> : null
                     }
@@ -397,8 +407,22 @@ export const EditFormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={rules}>
-                        <Input />
+                    <Form.Item label="设备编号" name="sn" rules={[...rules,{
+                        validator:(_,value)=>{
+                            if(!value){
+                                return Promise.resolve()
+                            }else{
+                                let val = value.trim()
+                                 
+                                if(val.split(" ").join("").length !==12){
+                                    return Promise.reject(new Error("设备编号长度12位"))
+                                }else{
+                                    return Promise.resolve()
+                                }
+                            }
+                        }   
+                    }]}>
+                        <Input placeholder='设备编号长度12为'/>
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />

@@ -48,8 +48,7 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, handler, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) 
-  const { type, changeType, submit =()=>{}, reset=() => {} } = search || {};
+  const {form, handler, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
 
   const levelone = useSelector(selectOneLevel)

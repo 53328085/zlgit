@@ -1094,6 +1094,14 @@ export const Monitoring =  {
         CategoryImages:(data)=>server.post(`/Monitor/RuntimeGateway/CategoryImages`,data),//
     }
 }
+//电气安全
+export class safeElectric {
+  static TodayWarningStatistics=(data)=>server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`,{params:data})//查询今日告警
+  static QueryTodayWarningDetails=(data)=>server.get(`/Safe/SafeRuntime/QueryTodayWarningDetails`,{params:data})//查询最新告警
+  static QueryWarningDistributed=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningDistributed`,{params:data})//查询告警分布
+  static QueryWarningTypeRanking=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningTypeRanking`,{params:data})//查询告警类型排名
+  static QueryMonthWarningTrends=(data)=>server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`,{params:data})//查询告警趋势
+}
 //分类能耗
 export class energyClassified{
    static QueryEnergy=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,areaId,{params:data})

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Divider } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
 import imgurl from './icon'
@@ -127,6 +127,50 @@ const Viewbox = styled.div`
     grid-template-columns: 854px 510px;
     height: 484px;
     padding: 32px 0;
+   column-gap: 32px;
+    .detl {
+        height: 365px;
+        border: 1px solid rgba(215, 215, 215, 1); 
+        margin-top: 40px;
+       .title {
+       
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #237ae4;
+        color: #fff;
+        font-size: 16px;
+       } 
+       .content {
+        padding: 16px;
+        display: grid;
+        grid-auto-rows: auto 4px 1fr;
+        row-gap: 16px;
+       }
+       .item {
+        width: 4px;
+        height: 36px;
+        background-color: rgba(0, 153, 51, 1);
+        border: none;
+        border-radius: 0px;
+       }
+       .list {
+       /*  display: flex;
+        justify-content: space-between; */
+        display: grid;
+        grid-template-columns: repeat(94, 4px);
+        column-gap: 1px;
+       }
+
+    }
+`
+const Itembox = styled.div`
+      width: 4px;
+      height: 36px;
+      background-color: ${props => props.type == 'warn' ? '#ff9933' : props.type=='info' ? '#00ccff' : '#009933' };
+      border: none;
+      border-radius: 0px;
 `
 const CustCalendar = styled(Calendar)`
   && {
@@ -269,14 +313,28 @@ const Planview = () => {
             </Datebox>
         )
     }
+    const items = Array.from({length: 94}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))
+    console.log(items)
     return (
         <Titlelayout title={<Space size={32}><span>策略预览</span><span style={{color: '#999'}}>查看策略执行计划及内容</span></Space>} bordered={'n'} style={{flex: 1}}>
             <Viewbox>
                 <div style={{height: '386px'}}>
                     <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} /> 
                 </div>
-                <div>
-
+                <div className='detl'>
+                   <div className='title'>策略详细</div>
+                   <div className='content'>
+                      <Descriptions  bordered column={1} size="small">
+                        <Descriptions.Item label="策略名称">充电</Descriptions.Item>
+                        <Descriptions.Item label="策略模板">削峰平谷</Descriptions.Item>
+                        <Descriptions.Item label="优先级">2</Descriptions.Item>
+                       </Descriptions>
+                       <Divider/>
+                       <div className='list'>
+                         {items.map(i => <Itembox type={i.type} />)}
+                       </div>
+                   </div>
+                  
                 </div>
             </Viewbox>
         </Titlelayout>
