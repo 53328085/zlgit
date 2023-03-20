@@ -1105,6 +1105,7 @@ export class safeElectric {
 //告警详情
 export class warnDetail {
   static QueryWarningStatistics=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningStatistics`,{params:data})//查询告警数
+  static QueryWarningDetails=(data)=>server.post(`/Safe/SafeRuntime/QueryWarningDetails`,data)//获取最新告警
 }
 //分类能耗
 export class energyClassified{

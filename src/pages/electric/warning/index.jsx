@@ -1,5 +1,5 @@
-import React from 'react'
-import { Form, Select, Button, Checkbox } from 'antd'
+import React,{useEffect, useState} from 'react'
+import { Form, Select, Button, Checkbox, message } from 'antd'
 import WarnContent from './warncontent'
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
@@ -7,43 +7,74 @@ import total from '../imgs/total.png'
 import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
-
+import {warnDetail} from '@api/api'
 const { Item } = Form
 export default function Index() {
     const projectId = useSelector(state => state.system.menus.projectId)
     const arealist = useSelector(state => state.system.onelevel)
     const onelevel = arealist[0].levelName
+    const [form] = Form.useForm()
+    const [warndata,setWarndata]=useState(null)
+    //获取告警
+    const warnTotal = async (areaId) => {
+        let param={
+            projectId,
+            areaId:areaId?areaId:0
+        }
+        const res = await warnDetail.QueryWarningStatistics(param)
+        if(res.success){
+            setWarndata(res.data)
+        }else{
+            message.error(res.errMsg)
+        }
+    }
+    //改变区域
+    const changeArea=async(v)=>{
+        console.log(v)
+     warnTotal(v)
+     
+    }
+    useEffect(()=>{
+        warnTotal() 
+    },[])
     return (
         <div className={style.warning}>
             <div className={style.header}>
                 <Form
                     layout='inline'
+                    form={form}
                     className={style.formstyle}
+                    initialValues={
+                        {
+                            area:0
+                        }
+                    }
                 >
-                    <Item label="园区选择" >
+                    <Item label="园区选择" name="area">
                         <Select
                             style={{ width: 200 }}
                             options={[{ name: onelevel, id: 0 }, ...arealist]}
                             fieldNames={{ label: 'name', value: 'id' }}
-                            defaultValue={0}
+                           
+                            onChange={changeArea}
                         >
                         </Select>
                     </Item>
                 </Form>
             </div>
-            <div style={{display:'flex'}}>
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+            <div style={{ display: 'flex' }}>
+                <Card count={warndata?.yearWarningCnt} />
+                <Card png={first} count={warndata?.levelOneCnt} percent={warndata?.levelOneRate} />
+                <Card png={second} count={warndata?.levelTwoCnt} percent={warndata?.levelTwoRate}/>
+                <Card png={third} count={warndata?.levelThreeCnt} percent={warndata?.levelThreeRate}/>
             </div>
 
-            <WarnContent style={style} />
+            <WarnContent style={style} form={form}/>
         </div>
     )
 }
 
-let Card = ({ png = total }) => {
+let Card = ({ png = total ,count=0,percent=0}) => {
     const divcss = {
         width: 320,
         height: 64,
@@ -60,8 +91,13 @@ let Card = ({ png = total }) => {
     return (
         <div style={divcss}>
             <img src={png} alt="" />
-            <span style={{ fontSize: 16, paddingLeft: 16 }}>告警总数</span>
-            <div style={{ marginLeft: 'auto' }}>2000</div>
+            <span style={{ fontSize: 16, paddingLeft: 16 }}>告警总数</span>  
+            {png!==total?
+            <>
+             <div style={{ paddingLeft:32}}>{count}</div>
+             <div style={{ fontSize: 14,marginLeft: 'auto' }}>{percent}%</div>
+            </>
+            :<div style={{ marginLeft: 'auto'}}>{count}</div>}   
         </div>
     )
 }

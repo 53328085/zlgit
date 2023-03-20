@@ -74,9 +74,10 @@ import { message } from 'antd'
         endDate: formvalues.endtime.format(fomatstyle)
       }
       let arrs = []
+      console.log(areaId,arealistRef)
       if (areaId === 0) {
-        arealistRef.current.shift()
-        arrs = arealistRef.current.map(it => it.id)
+        // arealistRef.shift()
+        arrs = arealistRef.map(it => it.id)
       } else {
         arrs = [areaId]
       }
@@ -97,8 +98,8 @@ import { message } from 'antd'
   }
 
   useEffect(() => {
-    // getTableData(areavalue)
-  }, [areavalue])
+    getTableData(areavalue)
+  }, [])
   const compProps = {
     columns,
     scroll: { x: 3022},
