@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Button } from 'antd';
+import { Input, Button,Form } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 import UserTable from '@com/useTable'
 import { columns } from './columns'
@@ -35,6 +35,7 @@ export default function Warncontent({ style }) {
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
                 <BlueColumn name="告警信息"/>
+
             </div>
             <div style={{ marginTop: 16 }}>
                 <UserTable columns={columns} {...tableProps} rowKey="sn" ></UserTable>

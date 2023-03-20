@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { Form, Row, Col, Select, Input, Divider, Upload,Button } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
 import style from './style.module.less'
-export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [],levelname:{current:''} })
+export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [], levelname: { current: '' } })
 
 //新增com
 let Com = ({ form, coms }) => {
+    const { type = 1 } = useContext(MyContext)
+    console.log(type)
     let options = []
     const rules = [{
         required: true,
@@ -27,9 +29,26 @@ let Com = ({ form, coms }) => {
                             placeholder
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
-                        <Select options={[{ label: "CJT188-2004", value: 0 }]} disabled></Select>
-                    </Form.Item>
+                    {
+                        type === 1 ? <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                            <Select options={[{ label: "CJT188-2004", value: 0 }]} disabled></Select>
+                        </Form.Item> : <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.resolve()
+                                } else {
+                                    if (Number(value) < 255 && Number(value) > 0) {
+                                        return Promise.resolve()
+                                    } else {
+                                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                    }
+                                }
+                            }
+                        }]}>
+                            <Input placeholder='通讯地址范围(0-255)' />
+                            {/* 默认1-255 */}
+                        </Form.Item>
+                    }
                 </> : null}
         </>
     )
@@ -37,14 +56,13 @@ let Com = ({ form, coms }) => {
 //新增form表单组件
 export const FormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const rules = [{
         required: true
     }]
     const changeGateway = (v, option) => {
-        console.log(v, option)
         if (v) {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
@@ -141,8 +159,8 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
     return (
         <Modal mold='cust' ref={modalFormRef} {...other} footer={[
             <Button onClick={other.onCancel}>取消</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <FormComp >
@@ -160,8 +178,8 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
         <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
             <Button onClick={other.onCancel}>取消</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <EditFormComp >
@@ -172,6 +190,7 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
 }
 //编辑com组件
 let EditCom = ({ form, coms }) => {
+    const { type = 1 } = useContext(MyContext)
 
     let options = []
     const rules = [{
@@ -186,7 +205,7 @@ let EditCom = ({ form, coms }) => {
     }
     return (
         <>
-            {form.getFieldValue('gatewayId') ?
+            {form?.getFieldValue('gatewayId') ?
                 <>
                     <Form.Item label="通讯端口" name="commPort" rules={rules}>
                         <Select
@@ -194,11 +213,29 @@ let EditCom = ({ form, coms }) => {
                             placeholder
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                    {type === 1 ? <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
                         <Select
                             options={[{ label: "CJT188-2004", value: 0 }]} disabled
                         ></Select>
-                    </Form.Item>
+                    </Form.Item> :
+                        <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.resolve()
+                                } else {
+                                    if (Number(value) < 255 && Number(value) > 0) {
+                                        return Promise.resolve()
+                                    } else {
+                                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                    }
+                                }
+                            }
+                        }]}>
+                            <Input placeholder='通讯地址范围(0-255)' />
+                            {/* 默认1-255 */}
+                        </Form.Item>
+                    }
+
                 </> : null}
         </>
     )
@@ -206,10 +243,11 @@ let EditCom = ({ form, coms }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
+    const { type = 1 } = useContext(MyContext)
     const rules = [{
         required: true
     }]
@@ -220,7 +258,7 @@ export const EditFormComp = (props) => {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
             setComs(option.com)
-            form.setFieldsValue({ areaId: arr[0].id, commPort: '', commAddress: 0, commProtocol: '' })
+            form.setFieldsValue({ areaId: arr[0].id, commPort: '', commAddress: type === 1 ? 0 : '', commProtocol: 0 })
         } else {
             setArea([])
             form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 })

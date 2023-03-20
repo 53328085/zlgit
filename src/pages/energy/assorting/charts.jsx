@@ -2,10 +2,10 @@ import { Area, Pie } from '@ant-design/plots';
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
 //折线图
 export let Charts = ({ consumeDetail, color }) => {
-  const data = consumeDetail.x.map((it, index) => {
+  const data = consumeDetail.y.map((it, index) => {
     return {
-      x: it,
-      y: Number(consumeDetail.y[index]),
+      x: consumeDetail.x[index],
+      y: Number(it),
       type: '吨标煤'
     }
 

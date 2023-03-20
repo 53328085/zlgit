@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
-import { MultImport,ErrorMessage } from './modalCom'
+import { MultImport, ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm } from './formcomp'
@@ -47,13 +47,14 @@ export default function gateway({ deviceStyle }) {
   const ErrModalRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
-  const errlistRef =useRef()
+  const errlistRef = useRef()
   const tableLoadRef = useRef()
-  const levelname =useRef()
+  const levelname = useRef()
   let delid;
   let flies;
-  let tag=false;
-  let edittag=false
+  let tag = false;
+  let edittag = false
+  let type = 2
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -178,7 +179,7 @@ export default function gateway({ deviceStyle }) {
     })
   }
   //确认应用编辑
-  const editSure=async()=>{
+  const editSure = async () => {
     editform.validateFields().then(async () => {
       const {
         id,
@@ -215,16 +216,16 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateGas(params)
       if (resp.success) {
         message.success("更新成功")
-        edittag=true
-        
-       
+        edittag = true
+
+
       } else {
         message.error(resp.errMsg)
       }
     })
   }
-  const editCancel=()=>{
-    if(edittag){
+  const editCancel = () => {
+    if (edittag) {
       getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
     }
     EditModalFormRef?.current?.onCancel()
@@ -261,9 +262,9 @@ export default function gateway({ deviceStyle }) {
 
   //打开新增窗口
   const addopen = () => {
-    if(!levelname.current){
+    if (!levelname.current) {
       message.warning('请添加区域')
-      return 
+      return
     }
     addform.setFieldsValue({
       areaId: '',
@@ -277,7 +278,7 @@ export default function gateway({ deviceStyle }) {
       customerType: '',
       commPort: '',
       commProtocol: 0,
-      commAddress: 0,
+      commAddress: '',
       factor: 1
     })
     modalFormRef?.current?.onOpen()
@@ -301,7 +302,7 @@ export default function gateway({ deviceStyle }) {
         customerType: formvalue.customerType,
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: 0,
-        commAddress: 0,
+        commAddress: formvalue.commAddress,
         factor: 1
       }
       const res = await AddGas(params)
@@ -318,39 +319,39 @@ export default function gateway({ deviceStyle }) {
 
   }
   //确认新增应用
-  const addSure=async()=>{
-    addform.validateFields().then(async () => {
-      const formvalue = addform.getFieldsValue()
-      let params = {
-        id: 0,
-        projectId,
-        areaId: formvalue.areaId,
-        alarmPlanId: formvalue.alarmPlanId,
-        address: formvalue.address,
-        remark: formvalue.remark,
-        gatewayId: formvalue.gatewayId,
-        category: formvalue.category,
-        sn: formvalue.sn,
-        name: formvalue.name,
-        customerType: formvalue.customerType,
-        commPort: formvalue.commPort ? formvalue.commPort : 0,
-        commProtocol: 0,
-        commAddress: 0,
-        factor: 1
-      }
-      const res = await AddGas(params)
-      if (res.success) {
-        message.success('新增成功!')
-        tag=true
-       
-       
-      } else {
-        message.error(res.errMsg)
-      }
-    })
+  const addSure = async () => {
+    try {
+      addform.validateFields().then(async () => {
+        const formvalue = addform.getFieldsValue()
+        let params = {
+          id: 0,
+          projectId,
+          areaId: formvalue.areaId,
+          alarmPlanId: formvalue.alarmPlanId,
+          address: formvalue.address,
+          remark: formvalue.remark,
+          gatewayId: formvalue.gatewayId,
+          category: formvalue.category,
+          sn: formvalue.sn,
+          name: formvalue.name,
+          customerType: formvalue.customerType,
+          commPort: formvalue.commPort ? formvalue.commPort : 0,
+          commProtocol: 0,
+          commAddress: formvalue.commAddress,
+          factor: 1
+        }
+        const res = await AddGas(params)
+        if (res.success) {
+          message.success('新增成功!')
+          tag = true
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    } catch (e) { console.log(e) }
   }
-  const cancelOk=()=>{
-    if(tag){
+  const cancelOk = () => {
+    if (tag) {
       getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
     }
     modalFormRef?.current?.onCancel()
@@ -360,15 +361,15 @@ export default function gateway({ deviceStyle }) {
     modalImportRef?.current?.onOpen()
   }
   //获取第一级区域名
-  const getOneLevel=async()=>{
-    const res =  await OneLevel(projectId)
-    if(res.success &&res.data){
-      levelname.current=res.data.name
+  const getOneLevel = async () => {
+    const res = await OneLevel(projectId)
+    if (res.success && res.data) {
+      levelname.current = res.data.name
       getAeraQueryAll(res.data.name)
-    }else{
-     message.error(res.errMsg)
+    } else {
+      message.error(res.errMsg)
     }
-   }
+  }
   //获取园区
   const getAeraQueryAll = async (name) => {
     try {
@@ -449,8 +450,8 @@ export default function gateway({ deviceStyle }) {
       setDataSource([])
     }
   }
-   //导出
-   const exportExecel = () => {
+  //导出
+  const exportExecel = () => {
     tableLoadRef.current.download()
   }
   //批量上传
@@ -460,19 +461,21 @@ export default function gateway({ deviceStyle }) {
     formData.append("projectId", projectId)
     const res = await ImportGas(formData)
     console.log(res)
-    if(res.success) {
+    if (res.success) {
       if (res.data.success) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
         getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-      }else{
+      } else if (res.data.data && Array.isArray(res.data.data)) {
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      } 
-    }else{
+      } else {
+        message.error(res.data.errMsg)
+      }
+    } else {
       message.error(res.errMsg)
     }
-    
+
   }
 
 
@@ -508,7 +511,7 @@ export default function gateway({ deviceStyle }) {
     onSure: addSure,
   }
   const uploadprops = {
-    maxCount:1,
+    maxCount: 1,
     beforeUpload(file, fileList) {
       console.log(file, fileList)
       flies = [...fileList]
@@ -522,20 +525,20 @@ export default function gateway({ deviceStyle }) {
     name: '燃气表导入',
     uploadprops,
     onOk: onImportOk,
-   
+
   }
   const EditModalFormProps = {
     EditModalFormRef,
     width: 746,
     name: '编辑燃气表',
     onOk: editOk,
-    onSure:editSure,
+    onSure: editSure,
     onCancel: editCancel
   }
   const ErrModalProps = {
     ErrModalRef,
-    ref:errlistRef,
-    onOk:()=>{ErrModalRef.current.onCancel()}
+    ref: errlistRef,
+    onOk: () => { ErrModalRef.current.onCancel() }
   }
 
   return (
@@ -548,13 +551,13 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageGas(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname, type }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除燃气表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname, type }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <ErrorMessage {...ErrModalProps}></ErrorMessage>

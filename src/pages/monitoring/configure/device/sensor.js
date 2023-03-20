@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message ,Button} from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message, Button } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import { MultImport,ErrorMessage } from './modalCom'
+import { MultImport, ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
@@ -47,16 +47,16 @@ export default function gateway({ deviceStyle }) {
   const modalImportRef = useRef()
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
-  const ErrModalRef=useRef()
-  const errlistRef =useRef()
+  const ErrModalRef = useRef()
+  const errlistRef = useRef()
   const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname = useRef("")
   let delid;
   let flies;
-  let tag=false;
-  let edittag=false
+  let tag = false;
+  let edittag = false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -172,7 +172,7 @@ export default function gateway({ deviceStyle }) {
 
   }
   //确认编辑应用
-  const editSure=async ()=>{
+  const editSure = async () => {
     editform.validateFields().then(async () => {
       const {
         id,
@@ -209,17 +209,17 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateSensor(params)
       if (resp.success) {
         message.success("更新成功")
-        edittag=true
-        
+        edittag = true
+
       } else {
         message.error(resp.errMsg)
       }
     })
   }
-  const editCancel=()=>{
-    if(edittag){
-    
-        getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+  const editCancel = () => {
+    if (edittag) {
+
+      getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
     }
     EditModalFormRef?.current?.onCancel()
   }
@@ -256,9 +256,9 @@ export default function gateway({ deviceStyle }) {
 
   //打开新增窗口
   const addopen = () => {
-    if(!levelname.current){
+    if (!levelname.current) {
       message.warning('请添加区域')
-      return 
+      return
     }
     addform.setFieldsValue({
       areaId: '',
@@ -270,9 +270,9 @@ export default function gateway({ deviceStyle }) {
       sn: '',
       name: '',
       customerType: 0,
-      commPort: 0,
+      commPort: '',
       commProtocol: 0,
-      commAddress: 0,
+      commAddress: '',
       factor: 0
     })
     modalFormRef?.current?.onOpen()
@@ -294,9 +294,9 @@ export default function gateway({ deviceStyle }) {
         sn: formvalue.sn,
         name: formvalue.name,
         customerType: 0,
-        commPort: 0,
+        commPort: formvalue.commPort,
         commProtocol: 0,
-        commAddress: 0,
+        commAddress: formvalue.commAddress,
         factor: 1
       }
       const res = await AddSensor(params)
@@ -313,7 +313,7 @@ export default function gateway({ deviceStyle }) {
 
   }
   //确认新增应用
-  const addSure=async()=>{
+  const addSure = async () => {
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
@@ -328,24 +328,24 @@ export default function gateway({ deviceStyle }) {
         sn: formvalue.sn,
         name: formvalue.name,
         customerType: 0,
-        commPort: 0,
+        commPort: formvalue.commPort,
         commProtocol: 0,
-        commAddress: 0,
+        commAddress: formvalue.commAddress,
         factor: 1
       }
       const res = await AddSensor(params)
       if (res.success) {
         message.success('新增成功!')
-        tag=true
-        
-        
+        tag = true
+
+
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  const addCancel=()=>{
-    if(tag){
+  const addCancel = () => {
+    if (tag) {
       getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
     }
     modalFormRef?.current?.onCancel()
@@ -355,16 +355,16 @@ export default function gateway({ deviceStyle }) {
     modalImportRef?.current?.onOpen()
   }
   //获取第一级区域名
-  const getOneLevel=async()=>{
-    const res =  await OneLevel(projectId)
-    if(res.success &&res.data){
-      levelname.current=res.data.name
+  const getOneLevel = async () => {
+    const res = await OneLevel(projectId)
+    if (res.success && res.data) {
+      levelname.current = res.data.name
       getAeraQueryAll(res.data.name)
-      
-    }else{
-     message.error(res.errMsg)
+
+    } else {
+      message.error(res.errMsg)
     }
-   }
+  }
   //获取园区
   const getAeraQueryAll = async (name) => {
     try {
@@ -452,16 +452,18 @@ export default function gateway({ deviceStyle }) {
     formData.append("file", flies[0])
     formData.append("projectId", projectId)
     const res = await ImportSensor(formData)
-    if(res.success) {
+    if (res.success) {
       if (res.data.success) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
         getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-      }else{
+      } else if (res.data.data && Array.isArray(res.data.data)) {
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      } 
-    }else{
+      } else {
+        message.error(res.data.errMsg)
+      }
+    } else {
       message.error(res.errMsg)
     }
   }
@@ -500,7 +502,7 @@ export default function gateway({ deviceStyle }) {
     gatewaylist,
     devicelist,
     onOk: addOk,
-    onSure:addSure,
+    onSure: addSure,
     onCancel: addCancel
   }
   const uploadprops = {
@@ -524,13 +526,13 @@ export default function gateway({ deviceStyle }) {
     width: 746,
     name: '编辑传感器',
     onOk: editOk,
-    onSure:editSure,
+    onSure: editSure,
     onCancel: editCancel
   }
   const ErrModalProps = {
     ErrModalRef,
-    ref:errlistRef,
-    onOk:()=>{ErrModalRef.current.onCancel()}
+    ref: errlistRef,
+    onOk: () => { ErrModalRef.current.onCancel() }
   }
 
   return (
@@ -543,13 +545,13 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageSensor(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除传感器？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
@@ -561,17 +563,26 @@ export default function gateway({ deviceStyle }) {
 //新增form表单组件
 export const FormComp = (props) => {
   const { TextArea } = Input
-  const { addopts, gatewaylist, devicelist, alarmopts, form,levelname } = useContext(MyContext)
+  const { addopts, gatewaylist, devicelist, alarmopts, form, levelname } = useContext(MyContext)
   const [area, setArea] = useState([])
+  const [coms, setComs] = useState()
   const rules = [{
     required: true
   }]
+  let options = []
+  for (let i = 1; i <= coms; i++) {
+    options.push({
+      label: `COM ${i}`,
+      value: i
+    })
+  }
   const changeGateway = (v, option) => {
     console.log(v, option)
     if (v) {
       const arr = addopts?.filter(it => (it.id === option.areaId))
       setArea([...arr])
-      form.setFieldsValue({ areaId: arr[0].id, commPort: '', commProtocol: 0 })
+      setComs(option.com)
+      form.setFieldsValue({ areaId: arr[0].id, commPort: null, commProtocol: 0 })
     } else {
       setArea([])
     }
@@ -642,6 +653,34 @@ export const FormComp = (props) => {
           <Form.Item label="传感器名称" name="name" rules={rules}>
             <Input />
           </Form.Item>
+          {
+            form.getFieldsValue().gatewayId ? (
+              <>
+                <Form.Item label="通讯端口" name="commPort" rules={rules}>
+                  <Select
+                    options={options}
+                    placeholder='请选择通讯端口'
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.resolve()
+                    } else {
+                      if (Number(value) < 255 && Number(value) > 0) {
+                        return Promise.resolve()
+                      } else {
+                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                      }
+                    }
+                  }
+                }]}>
+                  <Input placeholder='通讯地址范围(0-255)' />
+                  {/* 默认1-255 */}
+                </Form.Item>
+              </>
+            ) : null
+          }
         </Col>
       </Row>
     </Form>
@@ -652,9 +691,9 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
     <Modal mold='cust' ref={modalFormRef} {...other} footer={[
       <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+    ]}>
       <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
       <FormComp >
       </FormComp>
@@ -671,9 +710,9 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
     <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
       <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+    ]}>
       <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditFormComp >
       </EditFormComp>
@@ -685,13 +724,20 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
   const { TextArea } = Input
-  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
   const [area, setArea] = useState([])
   const [coms, setComs] = useState(0)
   const [isdisable, setIsdisable] = useState(false)
   const rules = [{
     required: true
   }]
+  let options = []
+  for (let i = 1; i <= coms; i++) {
+    options.push({
+      label: `COM ${i}`,
+      value: i
+    })
+  }
   const changeGateway = (v, option) => {
     console.log(v, option)
     setIsdisable(false)
@@ -699,7 +745,7 @@ export const EditFormComp = (props) => {
       const arr = addopts?.filter(it => (it.id === option.areaId))
       setArea([...arr])
       setComs(option.com)
-      form.setFieldsValue({ areaId: arr[0].id, commPort: '', commAddress: 0, commProtocol: '' })
+      form.setFieldsValue({ areaId: arr[0].id, commPort: null, commAddress: '', commProtocol: 0 })
     } else {
       setArea([])
       form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 })
@@ -779,6 +825,34 @@ export const EditFormComp = (props) => {
           <Form.Item label="传感器名称" name="name" rules={rules}>
             <Input />
           </Form.Item>
+          {
+            form.getFieldsValue().gatewayId ? (
+              <>
+                <Form.Item label="通讯端口" name="commPort" rules={rules}>
+                  <Select
+                    options={options}
+                    placeholder='请选择通讯端口'
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.resolve()
+                    } else {
+                      if (Number(value) < 255 && Number(value) > 0) {
+                        return Promise.resolve()
+                      } else {
+                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                      }
+                    }
+                  }
+                }]}>
+                  <Input placeholder='通讯地址范围(0-255)' />
+                  {/* 默认1-255 */}
+                </Form.Item>
+              </>
+            ) : null
+          }
         </Col>
       </Row>
     </Form>
