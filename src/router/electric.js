@@ -3,11 +3,12 @@ import {lazy} from 'react'
 import store from '@redux/store'
 const Safe = lazy(() => import("../pages/electric/safe"))
 const Warning= lazy(() => import("../pages/electric/warning"))
+const Runreport = lazy(() => import("../pages/electric/runreport"))
 const menus = [];
 const components = {
     '010601': Safe,
     '010602': Warning,
-    
+    '010603': Runreport
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeSafe'] 

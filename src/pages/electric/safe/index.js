@@ -1,20 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react'
+import {NavLink ,useLocation,useNavigate} from "react-router-dom";
 
-import {nanoid} from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Progress, Timeline} from 'antd'
+import {Form, Image, Progress, Timeline,Select,Divider} from 'antd'
 import {Liquid} from "@ant-design/charts"
 import { drawEcharts } from "@com/useEcharts"
-
+import { useSelector,useStore } from 'react-redux'
+import first from '../imgs/first.png'
+import second from '../imgs/second.png'
+import third from '../imgs/third.png'
 
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-columns: 432px 432px 784px;
-  grid-template-rows: 320px 464px;
+  grid-template-columns: 1fr 432px 784px;
+  grid-template-rows: 384px 400px;
   gap: 16px;
   justify-content: flex-end;
   .down {
@@ -22,10 +25,10 @@ const Mainbox = styled.div`
       display: grid;
       grid-template-rows:20px 1fr;
       .chart {
-        min-height: 256px;
+        min-height: 330px;
       }
       .stack {
-        min-height: 402px;
+        min-height: 312px;
       }
     }
 
@@ -37,7 +40,7 @@ const Mainbox = styled.div`
       .chart {
          display: grid;
          grid-template-columns: 400px 400px;
-         grid-template-rows: minmax(402px, auto);
+         grid-template-rows: minmax(312px, auto);
          justify-content: space-between;
       }
     }
@@ -77,9 +80,9 @@ const Mainbox = styled.div`
 const Warnbox = styled.div`
 position: relative;
 display: grid;
-
+height: 100%;
 grid-template-columns: 148px 1fr;
-grid-template-rows: 148px 75px;
+grid-template-rows: 1fr 75px;
 gap: 32px;
  align-items: center;
 justify-items: center;
@@ -87,7 +90,7 @@ justify-items: center;
     grid-area: 2 / 1 / 3 /3;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    background-color: #f2f2f2;
+    background-color: #f7f7f7;
     border: 1px solid #dedede;
     border-radius: 4px;
     height: 75px;
@@ -107,20 +110,21 @@ justify-items: center;
 }
 .alarm {
  display: grid;
- grid-template-rows: repeat(2, 50px);
+ grid-template-rows: 24px 1px 24px 1px 24px;
  row-gap: 16px;
  div {
   padding-left: 12px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-   &:first-of-type {
-    border-left: 2px solid #f8857d;
-   }
-   &:last-of-type {
-    border-left: 2px solid #5d9fff;
-   }
+  //  &:first-of-type {
+  //   border-left: 2px solid #f8857d;
+  //  }
+  //  &:last-of-type {
+  //   border-left: 2px solid #5d9fff;
+  //  }
  }
+ 
 }`
 const Timelinebox = styled(Timeline)`
 min-height: 142px;
@@ -173,13 +177,26 @@ const DemoLiquid = () => {
   return <Liquid {...config} />;
 };
 
-
+const headercss = {
+  background:'#fff ' ,
+  marginBottom:16,
+  border:'1px solid #d7d7d7',
+  borderRadius:4,
+  padding: '8px 16px'
+}
 export default function Index() {
   const [form] = Form.useForm()
   const bref = useRef(null)
   const pref = useRef(null)
   const opref = useRef(null)
   const lref = useRef(null)
+  const store = useStore();
+  const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
+  const location = useLocation()
+  const navigate = useNavigate()
+  console.log(location)
+  //console.log(siderRunMenus, siderDesignerMenus)
+  const arealist = useSelector(state=>state.system.onelevel)
   const grid = {
     // 图表 grid
     left: "0px",
@@ -292,12 +309,12 @@ export default function Index() {
         top: '30px',
         left: 0,
         right: 0,
-        bottom: '0',
+        bottom: '30px',
         containLabel: true,
       },
       legend: {
-        top: 0,
-       // bottom: 0,
+        top: 'auto',
+        bottom: 0,
         icon: 'rect',
         itemHeight: 2,
         itemWidth: 12,
@@ -309,10 +326,14 @@ export default function Index() {
     hv: '24px',
     fc: '#333'
   }
+
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="transparent" pd="0px">
-        
+        <div style={headercss}>
+          <span style={{paddingRight:16}}>园区选择</span>
+          <Select options={arealist} style={{width:200}} fieldNames={{label:'name',value:'id'}} defaultValue={arealist[0].id}></Select>
+        </div>
         <Mainbox>
         <Titlelayout title={'今日告警'} {...fs}>
         <Warnbox>
@@ -321,14 +342,25 @@ export default function Index() {
               
           </div>
           <div className='alarm'>
-             <div>
-                 <span>未确认 10%</span>
-                 <span>3 条</span>
+             <div className='warning'>
+              <img src={first} style={{width:36,height:36}}></img>
+              <span style={{padding:'0 40px 0 16px'}}>一级告警</span>
+              <span style={{fontSize:18}}>3 </span>
              </div>
-             <div>
-                 <span>已确认 90%</span>
-                 <span>27 条</span>
+              <Divider style={{margin: 0,borderColor:"#d7d7d7"}} dashed/>
+             <div className='warning'>
+             <img src={second} style={{width:36,height:36}}></img>
+             <span style={{padding:'0 40px 0 16px'}}>二级告警</span>
+              <span style={{fontSize:18}}>3 </span>
+
              </div>
+             <Divider style={{margin: 0,borderColor:"#d7d7d7"}} dashed />
+             <div className='warning'>
+             <img src={third} style={{width:36,height:36}}></img>
+             <span style={{padding:'0 40px 0 16px'}}>三级告警</span>
+              <span style={{fontSize:18}}>3 </span>    
+             </div>
+           
           </div>
            <div className='info'>
               <div>
@@ -346,7 +378,8 @@ export default function Index() {
            </div>
         </Warnbox>
       </Titlelayout>
-     <Titlelayout title={'最新告警'} {...fs}>
+      {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
+     <Titlelayout title={'最新告警'} extra={<NavLink   to={{ pathname:"/index/runtimeSafe/alarmDetail" }} state={{title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}}>查看详情</NavLink>} {...fs}>
       <Timelinebox>
           <Timeline.Item>
               <div>
@@ -368,7 +401,7 @@ export default function Index() {
           </Timeline.Item>         
         </Timelinebox>
         </Titlelayout>
-        <Titlelayout className="down"  title="本月告警事件" {...fs}>
+        <Titlelayout className="down"  title="本月告警趋势" {...fs}>
                 <div className='chart' ref={lref}>                  
                  
                 </div>  

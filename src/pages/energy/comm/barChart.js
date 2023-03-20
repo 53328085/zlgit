@@ -1,12 +1,13 @@
 import React, { useState, useEffect, Fragment } from "react";
 import style from "./style.module.less";
-import { Column } from "@ant-design/plots";
+// import { Column } from "@ant-design/plots";
 import { cloneDeep } from "lodash";
 import * as echarts from "echarts";
 
 export default function Index(props) {
-  const barData = cloneDeep(props.detailGive);
-  // setBarData(props.detailGive);
+  console.log(props, "柱状图");
+  const { detailGive, energyType } = props;
+  const barData = cloneDeep(detailGive);
   useEffect(() => {
     let barChart = echarts.init(document.getElementById("barChartInfo"));
     // return;
@@ -56,5 +57,11 @@ export default function Index(props) {
       ],
     });
   }, [barData]);
-  return <div style={{ height: 700, margin: 12 }} id="barChartInfo"></div>;
+  return (
+    <div
+      style={{ height: 700, margin: 12 }}
+      id="barChartInfo"
+      className={energyType == true ? style.barMinWidth : style.barMaxWidth}
+    ></div>
+  );
 }

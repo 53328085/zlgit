@@ -47,7 +47,7 @@ export default function parkstreet({areaList,levelname}) {
     key:'address',
   },
   {
-    title:'公共照明名称',
+    title:'路灯名称',
     dataIndex:'name',
     key:'name',
   },

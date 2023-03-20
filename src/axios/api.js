@@ -1090,7 +1090,8 @@ export const Monitoring =  {
 }
 //分类能耗
 export class energyClassified{
-   static QueryEnergy=(data)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,{},{params:data})
+   static QueryEnergy=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,areaId,{params:data})
+   static QueryEnergyCost=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergyCost`,areaId,{params:data})
 }
 //能耗排名
 export class energyRanking{

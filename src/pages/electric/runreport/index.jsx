@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Cost() {
+export default function Index() {
   return (
     <div>
-      费用
+        运行报告
     </div>
   )
 }
