@@ -147,7 +147,7 @@ export default function Index(props) {
 
   let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
-    return CategoryImages(overView.categories).then(res => {
+    return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
       let { success, data } = res
       if (success && data) {
         setimageList(data)
@@ -202,9 +202,6 @@ export default function Index(props) {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }//数据导出
-  const gotoDetail = (data) => {
-
-  }//点击跳转网关详情
   useEffect(() => {
     getData()
     queryData()
@@ -278,11 +275,11 @@ export default function Index(props) {
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         {isCard ? <div className={style.cardBox}>
           {overView.details!=null?overView.details.map((item, index) => {
-            return <div key={index} onClick={() => { gotoDetail(index) }}>
+            return <div key={index}>
               <Link to={{
-                pathname: "/user",
-                data: { item } }} target="_blank">
-                  <Icard img={imgUrl ? imgUrl : imgurl.category} title={item.name}
+                pathname: "/gatewayDetail",
+                search:(item.sn)}}   target="_blank">
+                  <Icard img={imgUrl ? 'data:image/png;base64,'+imgUrl : imgurl.category} title={item.name}
                     value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
                     lastSampleTime={item.lastSampleTime} category={item.category} /></Link>
             </div>
