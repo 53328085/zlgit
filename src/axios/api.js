@@ -1096,6 +1096,10 @@ export class safeElectric {
   static QueryWarningTypeRanking=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningTypeRanking`,{params:data})//查询告警类型排名
   static QueryMonthWarningTrends=(data)=>server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`,{params:data})//查询告警趋势
 }
+//告警详情
+export class warnDetail {
+  static QueryWarningStatistics=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningStatistics`,{params:data})//查询告警数
+}
 //分类能耗
 export class energyClassified{
    static QueryEnergy=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,areaId,{params:data})

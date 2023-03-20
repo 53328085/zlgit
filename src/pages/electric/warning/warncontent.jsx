@@ -6,6 +6,7 @@ import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import { Warning } from '@api/api'
 import BlueColumn from '@com/bluecolumn'
+import {warnDetail} from '@api/api'
 const { Search } = Input;
 export default function Warncontent({ style }) {
     const param = {
@@ -18,6 +19,9 @@ export default function Warncontent({ style }) {
         pageSize: 15,
         alike: ''
     }
+    const tabledata = [
+        {name:'ceshi'}
+    ]
     const getTableData = async ({ current, pageSize }, FormData) => {
         const resp = await Warning.FindAlikeDevice({...param,pageNum:current,pageSize,})
         return {
@@ -38,7 +42,7 @@ export default function Warncontent({ style }) {
 
             </div>
             <div style={{ marginTop: 16 }}>
-                <UserTable columns={columns} {...tableProps} rowKey="sn" ></UserTable>
+                <UserTable columns={columns} {...tableProps} dataSource ={tabledata}   rowKey="sn" ></UserTable>
             </div>
 
         </div>
