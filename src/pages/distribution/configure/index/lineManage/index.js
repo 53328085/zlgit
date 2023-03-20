@@ -362,7 +362,7 @@ export default function Index() {
       {contextHolder}
       {transTag =='open' ? <div className={style.mask}></div> : null }
       <div className={style.header}>
-        <span className={style.headerTitle}>园区选择</span>
+        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"

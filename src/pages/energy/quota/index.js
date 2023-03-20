@@ -46,7 +46,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span style={{marginLeft: '16px',marginRight: 16}}>园区选择</span>
+        <span style={{marginLeft: '16px',marginRight: 16}}>{areaList[0]?.levelName || '园区'}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
