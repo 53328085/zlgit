@@ -36,7 +36,8 @@ export default function Index(props){
         data: props.data.x
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        scale: true, //自适应
       },
       series: [
         {
