@@ -10,7 +10,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
    
   return (
-    <CustContext.Provider>
+    <CustContext.Provider value={{}}>
     <Pagecount showserach={true}>   
         <Report projectId={projectId} CModal={CModal} />
     </Pagecount>
