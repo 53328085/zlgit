@@ -76,142 +76,49 @@ const P = styled(Paragraph)`
 `
 const columns = [
     {
-        title: '日期',
-        dataIndex: 'date',
-        key: 'date',
+        title: '最新告警时间',
+        dataIndex: 'warningTime',
+        key: 'warningTime',
         align: 'center'
     },
     {
-        title: '充电电量(kwh)',
-        children: [
-             {
-                title: '尖',
-                dataIndex: 'chargeE1',
-                key: 'chargeE1',
-                align: 'center'
-             },
-             {
-                title: '峰',
-                dataIndex: 'chargeE2',
-                key: 'chargeE2',
-                align: 'center'
-             },
-             {
-                title: '平',
-                dataIndex: 'chargeE3',
-                key: 'chargeE3',
-                align: 'center'
-             },
-             {
-                title: '谷',
-                dataIndex: 'chargeE4',
-                key: 'chargeE4',
-                align: 'center'
-             }
-        ]
-    },
-    {
-        title: '充电成本(元)',
-        children: [
-             {
-                title: '尖',
-                dataIndex: 'chargeCost1',
-                key: 'chargeCost1',
-                align: 'center'
-             },
-             {
-                title: '峰',
-                dataIndex: 'chargeCost2',
-                key: 'chargeCost2',
-                align: 'center'
-             },
-             {
-                title: '平',
-                dataIndex: 'chargeCost3',
-                key: 'chargeCost3',
-                align: 'center'
-             },
-             {
-                title: '谷',
-                dataIndex: 'chargeCost4',
-                key: 'chargeCost4',
-                align: 'center'
-             }
-        ]
-    },
-   
-    {
-        title: '放电电量(kwh)',
-        children: [
-             {
-                title: '尖',
-                dataIndex: 'disChargeE1',
-                key: 'disChargeE1',
-                align: 'center'
-             },
-             {
-                title: '峰',
-                dataIndex: 'disChargeE2',
-                key: 'disChargeE2',
-                align: 'center'
-             },
-             {
-                title: '平',
-                dataIndex: 'disChargeE3',
-                key: 'disChargeE3',
-                align: 'center'
-             },
-             {
-                title: '谷',
-                dataIndex: 'disChargeE4',
-                key: 'disChargeE4',
-                align: 'center'
-             }
-        ]
-    },
-    {
-        title: '放电收益(元)',
-        children: [
-             {
-                title: '尖',
-                dataIndex: 'disChargeIncome1',
-                key: 'disChargeIncome1',
-                align: 'center'
-             },
-             {
-                title: '峰',
-                dataIndex: 'disChargeIncome2',
-                key: 'disChargeIncome2',
-                align: 'center'
-             },
-             {
-                title: '平',
-                dataIndex: 'disChargeIncome3',
-                key: 'disChargeIncome3',
-                align: 'center'
-             },
-             {
-                title: '谷',
-                dataIndex: 'disChargeIncome4',
-                key: 'disChargeIncome4',
-                align: 'center'
-             }
-        ]
-    },
-    {
-        title: <div><p>实际收益（元）</p><p>放电成本+充电成本</p></div>,
-        dataIndex: 'income',
-        key: 'income',
+        title: '告警描述',
+        dataIndex: 'alarmEvent',
+        key: 'alarmEvent',
         align: 'center'
-
-    }
+    },
+    {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'address',
+      align: 'center'
+  },
+  {
+    title: '告警等级',
+    dataIndex: 'level',
+    key: 'level',
+    align: 'center'
+   },
+   {
+    title: '设备类型',
+    dataIndex: 'meterType',
+    key: 'meterType',
+    align: 'center'
+   },
+   {
+    title: '设备名称',
+    dataIndex: 'sn',
+    key: 'sn',
+    align: 'center'
+   },
    ]
 const titles = ['告警总数', '今日新增告警', '一级告警', '二级告警', '三级告警', 'PCS告警', 'BMS告警', '消防告警', '环境告警']
  function Main({projectId, areaId }) {
+   const [form] = Form.useForm()
    const [statistics ,setStatistics] = useState([])
    const [tableData, setTableData] = useState([])
-   const startime = '2023-03-03'
-   const endtime = '2023-03-23'
+   const startime = '2023-03-20'
+   const endtime = '2024-03-20'
    const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
    const [pagination, setPagination] = useState({
     current: 1,
@@ -233,25 +140,20 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
  const timechange = (data, dateStrings) => { 
      setDates([...data])
  }
-  const params = {
-    start: '',
-    end: '',
+  let params = {
+    start: '2023-03-20',
+    end: '2024-03-20',
     projectId,
     pageNum: pagination.current,
     pageSize: pagination.pageSize,
+    content : "",
+    deviceType: 0,
+    level: 0
   }
  
   const QueryReports = async() => {   
     try {
-        let [start, end] = dates;
-        if ( start instanceof moment) {
-            
-            params.start = start.format('YYYY-MM-DD')
-        }
-        if (end instanceof moment) {
-            params.end = end.format('YYYY-MM-DD')
-        }
-        let {success, data, total} = await StorageAlarmruntime.QueryStorageAlarmByPage(params, areaId)
+        let {success, data, total} = await StorageAlarmruntime.QueryStorageAlarmByPage(params)
         if (success && Array.isArray(data) && data.length >0) {
            
            setTableData([...data])   
@@ -265,10 +167,26 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
     }
    
   }
-  const rest = () => {
-    params.end = endtime;
-    params.start = startime;
-    QueryReports();
+  const onQuery = () => {
+    try {
+      let {time, ...other} = form.getFieldsValue()
+      
+      if(Array.isArray(time) && time.length >1) {
+        params.start = time[0].format('YYYY-MM-DD') || ''
+        params.end = time[1].format('YYYY-MM-DD') || ''
+      }
+     
+      params = {...params, ...other};
+      QueryReports()
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
+  const rest = () => { 
+    form.resetFields()
+    onQuery()
+
   }
   const tableOnchange = (e) => { 
     let {current} = e
@@ -303,10 +221,50 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
       </div>
     <Titlelayout title="最新告警" layout="flex" >
     <div className='content'>
-        <div className='top'>
-          <Space size={16}><RangePicker value={dates} onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/><Button onClick={QueryReports}>查询</Button><Button onClick={rest}>重置</Button></Space>
-          
-        </div>
+        <Form form={form} className='top' layout='inline' initialValues={{
+          content: '',
+          deviceType:0,
+          level: 0,
+          time: dates
+        }}>
+          <Space size={16}>
+             <Item label="告警查询" name="content">
+              <Input placeholder='告警内容/设备名称' />
+             </Item>
+             <Divider style={{margin: '0', height: '32px'}}  type="vertical" />
+             <Item label="设备类型" name="deviceType">
+              <Select options={[
+                {label: '全部', value: 0},
+                {label: 'PCS', value: 1},
+                {label: '电堆', value: 2}
+              ]}
+              style={{width: '112px'}}
+              ></Select>
+             </Item>
+             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
+             <Item label="告警等级" name="level">
+              <Select options={[
+                {label: '全部告警', value: 0},
+                {label: '一级告警', value: 2},
+                {label: '二级告警', value: 3},
+                {label: '三级告警', value: 4},
+              ]}
+              style={{width: '112px'}}
+              ></Select>
+             </Item>
+             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
+             <Item label="告警时间" name="time" >
+               <RangePicker  onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/>
+            </Item>
+            <Item noStyle>
+              <Space>
+                <Button onClick={onQuery}>查询</Button>
+                <Button onClick={rest}>重置</Button>
+                </Space>
+            </Item>
+           </Space>
+        </Form>
+        
          <Divider style={{margin: '0px'}}/>
         <Usetable columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} />
       
