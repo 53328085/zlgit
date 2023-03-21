@@ -250,6 +250,7 @@ export class EnergyComprehensive {
 // 储能管理--报表统计
 export class StorageReportRuntime {
   static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageReportRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
+  static QueryReports = (params={}, areaId) => server.post(`/Storage/StorageReportRuntime/QueryReports?areaId=${areaId}`, params);
 }
 
 //
