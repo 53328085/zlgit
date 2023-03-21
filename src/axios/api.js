@@ -231,17 +231,22 @@ export class EnergyComprehensive {
   static QueryCoal = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryCoal?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
   static QueryOil = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOil?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
 
-  // 费用
-  static QueryOverviewCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverviewCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)// 综合能耗
-  static QueryElectricCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectricCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-  static QueryWaterColdCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterColdCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-  static QueryWaterHotCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterHotCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-  static QuerySteamCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QuerySteamCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params) // 蒸汽
-  static QueryGasCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryGasCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-  static QueryCoalCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryCoalCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-  static QueryOilCost = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    // 费用
+    static QueryOverviewCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverviewCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)// 综合能耗
+    static QueryElectricCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectricCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    static QueryWaterColdCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterColdCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    static QueryWaterHotCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterHotCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    static QuerySteamCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QuerySteamCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params) // 蒸汽
+    static QueryGasCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryGasCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    static QueryCoalCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryCoalCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+    static QueryOilCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+   
+  }
+ // 储能管理-- 能耗统计
+  export class ConsumeStatisticsRuntime {
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncomeprojectId=${projectId}&areaId=${areaId}`);
+  }
 
-}
 
 //
 // zl api end

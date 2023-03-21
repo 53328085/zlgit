@@ -6,6 +6,7 @@ import Manual from './manual'
 import CModal from '@com/useModal'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
+import {From} from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('Manual')
   const projectId = useSelector(selectProjectId)
