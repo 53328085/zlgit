@@ -5,8 +5,10 @@ import * as echarts from 'echarts'
 import topology from './imgs/topology_zhanwei.png'
 import { Pie } from '@ant-design/plots';
 import warningPoint from '@imgs/warningPoint.png'
+import { useNavigate } from 'react-router-dom'
 
 export default function Index() {
+  const navigate = useNavigate()
   const voltageData = {
     x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
     y:[732.25, 758.32, 721.39, 701.54, 723.45, 720.15, 718.96, 728.36, 714.32, 701.36, 704.96, 724.36, 718.32 ]
@@ -152,7 +154,9 @@ export default function Index() {
     }
   ]
   const toWarning = () => {
-    window.location.href = '/index/runtimeStorage/alarmMessage'
+    navigate('/index/runtimeStorage/alarmMessage',{
+      state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
+    })
   }
 
   useEffect(()=>{

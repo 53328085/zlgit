@@ -3,7 +3,9 @@ import React, {useState, Fragment} from "react";
 import style from "./style.module.less";
 import subMiddle from './imgs/subMiddle.png'
 import warningPoint from '@imgs/warningPoint.png'
+import { useNavigate } from "react-router-dom";
 export default function Index() {
+    const navigate = useNavigate()
     const Items = props => {
         return <div className={style.items} style={{width:props.width}}>
             {props.data.map((item, index) => {
@@ -146,7 +148,9 @@ export default function Index() {
           }
     ]
     const toWarning = () => {
-        window.location.href = '/index/runtimeStorage/alarmMessage'
+      navigate('/index/runtimeStorage/alarmMessage',{
+        state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
+      })
     }
   return (
     <div className={style.bmsContent}>
