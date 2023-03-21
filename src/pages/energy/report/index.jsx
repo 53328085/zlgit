@@ -9,15 +9,13 @@ import { Form, message, Select } from 'antd'
 import {energyReport} from '@api/api'
 
 export default function Index() {
-  const [value, setvalue] = useState()
+  const [value, setvalue] = useState('0')
   const [tabs, setTabs] = useState([
     { key: '0', label: '能耗抄表' },
     { key: '1', label: '能耗用量' },
     { key: '2', label: '分时能耗' },
   ])
-
-  const [areavalue,setAreavalue]=useState(0)
-
+  const [areavalue,setAreavalue]=useState()
   const [form]=Form.useForm()
   const projectId = useSelector(state=>state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
