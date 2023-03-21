@@ -1,80 +1,71 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions } from 'antd'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
-import imgurl from './icon'
+ 
 import Titlelayout from '@com/titlelayout'
-
+import {StorageReportRuntime} from '@api/api'
+import { area } from '@antv/g2plot'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 110px 673px;
+       grid-template-rows: 32px 4px 1fr;
        row-gap: 16px; 
        flex: 1;
        color:#515151;
-       .top {
-        display: grid;
-        padding: 16px;
-        grid-template-columns: repeat(3, 528px);
-       grid-template-rows: 78px;
-        
-          
-        }
-        .down {
-            padding: 16px;
-            display: grid;
-            grid-template-rows: 1fr 1fr;
+       padding-top: 16px;
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
         }
        }
 `
  
  
  
- function Main({projectId, Foot, Strategy, CModal}) {
- 
+ function Main({projectId, areaId, Strategy, CModal}) {
+   const {price ,setPrice} = useState({})
+
+  const   getPrice = async() => {
+    try {
+        let {success, data} = await StorageReportRuntime.QueryPrice(projectId, areaId)
+        success && setPrice({...price, ...data})
+    } catch (error) {
+        console.log(error)
+    }
+   
+
+  } 
+  useEffect(() => {
+    getPrice()
+  }, [])
   return (
+    <Titlelayout title="报表统计">
     <Mainbox>
         <div className='top'>
-          
-       
-       
+          <Space size={16}><RangePicker style={{width: '320px'}}/><Button>查询</Button><Button>重置</Button></Space>
+          <Tag style={{lineHeight: '32px'}}>
+            <Space>
+            <Text>分时电价（元/kwh）</Text>
+            <Text>尖电价： {price.item1}</Text>
+            <Text>峰电价： {price.item2}</Text>
+            <Text>平电价： {price.item3}</Text>
+            <Text>谷电价： {price.item4}</Text>
+            </Space>
+          </Tag>
         </div>
         <div className='down'>
             
         </div>
-        <CModal
-        width={592}
-        title='新增策略'
-        ref={pref}
-        onOk={planOk}
-        mold="cust"
-      >
-        <Form   labelCol={{flex: '96px'}} style={{maxWidth: 600}} form={nameform} preserve={false}>
-            <Item label="策略名称">
-                <Space>
-              <Item name="planName" noStyle rules={[
-                {
-                    required: true,
-                    message: '名称必填'
-                },
-                {
-                    max: 8,
-                    type: 'string',
-                    message: '名称最多8个字符'
-                }
-              ]}>
-                <Input style={{width: '224px'}} showCount />
-              </Item>
-              <Text>最多8个字符</Text>
-              </Space>
-            </Item>
-        </Form>
-      </CModal>
+      
     </Mainbox>
+    </Titlelayout>
   )
 }
 

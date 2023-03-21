@@ -244,9 +244,13 @@ export class EnergyComprehensive {
   }
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncomeprojectId=${projectId}&areaId=${areaId}`);
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
   }
 
+// 储能管理--报表统计
+export class StorageReportRuntime {
+  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageReportRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
+}
 
 //
 // zl api end
