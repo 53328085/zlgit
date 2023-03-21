@@ -11,8 +11,8 @@ import Table from '@com/useTable'
 
 export default function GatewayDetail(props) {
     let location = useLocation()
-    console.log(location.search)
-    let search = location.search.substr(4, location.search.length)
+    let qs=require('query-string')
+    let search=qs.parse(location.search)
     console.log(search)
     const projectId = useSelector(selectProjectId)
   const [messageApi, contextHolder] = message.useMessage();
@@ -34,8 +34,7 @@ export default function GatewayDetail(props) {
             dataIndex: 'sn',
             key: 'sn',
             render: (sn) => <Link to={{
-                pathname: "/deviceDetail",
-                search:sn
+                pathname: "/deviceDetail?"+sn,
             }} target="_blank"> {sn} </Link>,
             id: 'id'
         },
@@ -45,12 +44,6 @@ export default function GatewayDetail(props) {
             key: 'category',
             id: 'id'
         },
-        // {
-        //     title: '设备名称',
-        //     dataIndex: 'state',
-        //     key: 'state',
-        //     id: 'id'
-        // },
         {
             title: '安装地址',
             dataIndex: 'address',
@@ -111,10 +104,13 @@ export default function GatewayDetail(props) {
         setpageLog(page)
   }
       const getData = () => {//网关详情
-        return RuntimeGatewayDetail( projectId, search ).then(res => {
+        return RuntimeGatewayDetail( projectId, search.sn ).then(res => {
           let { success, data } = res
           if (success && data) {
             setDetail(data)
+            if(detail.category){
+                getGatewayImages()
+            }
           } else {
             messageApi.open({
               type: 'error',
@@ -127,7 +123,7 @@ export default function GatewayDetail(props) {
         projectId:projectId,
         pageNum:page,
         pageSize:12,
-        sn:search
+        sn:search.sn
       }
       const getChildrenData = () => {//网关子设备详情
         return Children( params ).then(res => {
@@ -147,7 +143,7 @@ export default function GatewayDetail(props) {
         projectId:projectId,
         pageNum:pageLog,
         pageSize:12,
-        sn:search
+        sn:search.sn
       }
       const getLogData = () => {//网关子设备详情
         return Log( paramsLog ).then(res => {
@@ -168,16 +164,7 @@ export default function GatewayDetail(props) {
         return CategoryImages({projectId:projectId,group:[detail.category]}).then(res => {
           let { success, data } = res
           if (success && data) {
-            setimageList(data)
-            data.map((item, index) => {
-              overView.details.map((items, indexs) => {
-                if (item.category == items.category) {
-                  setimgUrl(item.imageBase64)
-                } else {
-                  setimgUrl()
-                }
-              })
-            })
+            setimgUrl(data[0].imageBase64)
           } else {
             messageApi.open({
               type: 'error',
@@ -188,14 +175,18 @@ export default function GatewayDetail(props) {
       }
       useEffect(() => {
         getData()
+        
+      }, [search.sn,projectId])
+      useEffect(() => {
         getGatewayImages()
-      }, [search,projectId])
+        
+      }, [detail.category,projectId])
       useEffect(() => {
         getChildrenData()
-      }, [search,projectId,page,params.pageSize])
+      }, [search.sn,projectId,page,params.pageSize])
       useEffect(() => {
         getLogData()
-      }, [search,projectId,pageLog,paramsLog.pageSize])
+      }, [search.sn,projectId,pageLog,paramsLog.pageSize])
     return (
         <div className={style.main}>
             <div className={style.head}>
