@@ -5,7 +5,7 @@ import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const Custbtn = styled(Button)`
   && {
-    width: 96px;
+    width: ${props => props.wh || '96px'};
     height: 32px;
     background: #237ae4;
     border-color: #237ae4;
@@ -37,6 +37,9 @@ const Custbtn = styled(Button)`
     margin-right: 8px;
   }
 `;
+Custbtn.defaultProps={
+  wh: '96px'
+}
 const Deltbtn = styled(Button)`
   && {
     width: 96px;

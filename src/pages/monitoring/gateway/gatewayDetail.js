@@ -5,14 +5,16 @@ import imgurl from './images/index.js'
 import {  Pagination,message} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
-import { Link, useNavigate } from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Table from '@com/useTable'
 
 export default function GatewayDetail(props) {
     let location = useLocation()
-    console.log(location.search)
-    let search = location.search.substr(4, location.search.length)
+    console.log(location)
+    // let search = location?.search.split('=')[1]
+    // console.log(location.search)
+   let search = location.search.substr(4, location.search.length)
     console.log(search)
     const projectId = useSelector(selectProjectId)
   const [messageApi, contextHolder] = message.useMessage();
@@ -33,10 +35,14 @@ export default function GatewayDetail(props) {
             title: '设备编号',
             dataIndex: 'sn',
             key: 'sn',
-            render: (sn) => <Link to={{
-                pathname: "/deviceDetail",
-                search:sn
-            }} target="_blank"> {sn} </Link>,
+            render: (sn) =>{
+              return (
+                <Link to={{
+                  pathname: "/deviceDetail",
+                  // search:sn
+              }} target="_blank"> {sn} </Link>
+              )
+            },
             id: 'id'
         },
         {

@@ -242,15 +242,25 @@ export class EnergyComprehensive {
     static QueryOilCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
    
   }
+  // 储能管理-- 储能控制
+  export class StorageControlRuntime {
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+  }
+
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
   }
 
 // 储能管理--报表统计
 export class StorageReportRuntime {
   static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageReportRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
   static QueryReports = (params={}, areaId) => server.post(`/Storage/StorageReportRuntime/QueryReports?areaId=${areaId}`, params);
+}
+// 储能管理--告警信息
+export class StorageAlarmruntime {
+  static AlarmStatistics = (projectId, areaId) => server.get(`/Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`);
+  static QueryStorageAlarmByPage = (params={}) => server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
 }
 
 //

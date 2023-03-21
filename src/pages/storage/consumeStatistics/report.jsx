@@ -4,6 +4,7 @@ import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Check
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
  import moment from 'moment'
+ import {ConsumeStatisticsRuntime} from '@api/api'
 import Titlelayout from '@com/titlelayout'
 import { drawEcharts } from "@com/useEcharts";
 const {Text, Link, Title, Paragraph} = Typography
@@ -19,20 +20,44 @@ const Mainbox = styled.div`
        .top {
         display: flex;
         padding: 16px;
+        background-color: #fff;
         .list {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(3, 528px);
             grid-template-rows: 78px;
             column-gap: 32px;
+            .listbox {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              border: 2px solid #d7d7d7;
+            }
             .listitem {
               display: flex;
               flex-direction: column;
               color:#fff;
               width: 172px;
               border-right: 2px solid #fff;
+              &:last-of-type {
+                border-right: none;
+              }
+              &:first-of-type {
+                .up {
+                  background-color: #56b653;
+                }
+              }
+              &:nth-of-type(2) {
+                .up {
+                  background-color: #4370ff;
+                }
+              }
+              &:last-of-type {
+                .up {
+                  background-color: #9951fe;
+                }
+              }
               .up {
-                 background-color: rgba(0,51,102,1);
+                 
                  font-size: 12px;
                  height: 32px;
                  display: flex;
@@ -40,12 +65,16 @@ const Mainbox = styled.div`
                  justify-content: center;
               }
               .downinfo {
-                background-color: rgba(0,51,204,1);
+                 background-color: #f2f2f2;
                  font-size: 14px;
                  height: 40px;
                  display: flex;
                  align-items: center;
                  justify-content: center;
+                 color: #333;
+                 .ant-typography.ant-typography-ellipsis.ant-typography-single-line {
+                  margin-bottom: 0;
+                 }
               }
             }
         }
@@ -53,7 +82,6 @@ const Mainbox = styled.div`
           
         }
         .down {
-            padding: 16px;
             display: grid;
             grid-template-rows: 1fr 1fr;
             
@@ -63,11 +91,26 @@ const Mainbox = styled.div`
  
  
  
- function Maincom({projectId,  Statistical, CModal}) {
+ function Maincom({projectId,  Statistical, areaId}) {
   const [picker, setPicker] = useState(1)
+  const [income, setIncome] = useState({})
   const ref = useRef()
   const fref = useRef()
   const {from} = Form.useForm()
+  const getIncome = async () => {
+     let  {success, data} =  await  ConsumeStatisticsRuntime.QueryIncome(projectId, areaId)
+     if (success && data) {
+       
+       setIncome({...income, ...data})
+     }else {
+      setIncome({})
+     }
+
+  }
+
+  useEffect(() => {
+    getIncome()
+  }, [areaId])
   const dataset = {
     dimensions: ["time", "收益元"],
     source: [
@@ -145,7 +188,7 @@ const Mainbox = styled.div`
   return (
     <Mainbox>
         <div className='top'>
-          <Statistical />
+          <Statistical data={income} />
         </div>
         <div className='down'>
           <Titlelayout title={ <Space size={32}><span>收益趋势</span>  <Formlayout/> </Space>  } bordered={'n'} style={{flex: 1}}>
@@ -161,6 +204,7 @@ const Mainbox = styled.div`
 }
 
 const Statistical = ({data}) => {
+
   const contentStyle = {
     width: '172px',
     height: '40px',
@@ -183,64 +227,80 @@ const Statistical = ({data}) => {
   }
   return (
      <div className='list'>
-      <div style={{display: 'flex', border: '2px solid #fff'}}>
+      <div className='listbox'>
         <div   className='listitem'>
             <div className='up' >
-                  当日放电量(kwh)
+                  当日充电量(kwh)
               </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        </div>
-        <div style={{display: 'flex', border: '2px solid #fff'}}>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'>
+                  <Paragraph ellipsis={{tooltip: data.todayChargeE}}>{data.todayChargeE}</Paragraph>
+               </div> 
         </div>
         <div   className='listitem'>
             <div className='up' >
                   当日放电量(kwh)
               </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.todayDisChargeE}}>{data.todayDisChargeE}</Paragraph>
+              </div> 
         </div>
         <div   className='listitem'>
             <div className='up' >
                   当日放电量(kwh)
               </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.todayIncome}}>{data.todayIncome}</Paragraph>
+                </div> 
         </div>
         </div>
-        <div style={{display: 'flex', border: '2px solid #fff'}}>
+        <div className='listbox'>
         <div   className='listitem'>
             <div className='up' >
-                  当日放电量(kwh)
+                  当月充电量(kwh)
               </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.monthIncome}}>{data.monthIncome}</Paragraph>
+                </div> 
         </div>
         <div   className='listitem'>
             <div className='up' >
-                  当日放电量(kwh)
+                  当月放电量(kwh)
               </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.monthDisChargeE}}>{data.monthDisChargeE}</Paragraph>
+                </div> 
         </div>
         <div   className='listitem'>
             <div className='up' >
-                  当日放电量(kwh)
+                  当日收益(元)
               </div>
-              <div className='downinfo'>200</div> 
+              <div className='downinfo'> <Paragraph ellipsis={{tooltip: data.monthIncome}}>{data.monthIncome}</Paragraph></div> 
+        </div>
+        </div>
+        <div className='listbox'>
+        <div   className='listitem'>
+            <div className='up' >
+                  当年充电量(kwh)
+              </div>
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.yearChargeE}}>{data.yearChargeE}</Paragraph>
+                </div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当年放电量(kwh)
+              </div>
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.yearDisChargeE}}>{data.yearDisChargeE}</Paragraph>
+                </div> 
+        </div>
+        <div   className='listitem'>
+            <div className='up' >
+                  当年收益(元)
+              </div>
+              <div className='downinfo'>
+              <Paragraph ellipsis={{tooltip: data.yearIncome}}>{data.yearIncome}</Paragraph>
+                </div> 
         </div>
         </div>
      </div>

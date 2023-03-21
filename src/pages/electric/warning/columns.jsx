@@ -1,4 +1,7 @@
 import {Space} from 'antd'
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
+
+// const navigate = useNavigate()
 export const  columns = [
     {
         title: '最新告警时间',
@@ -42,7 +45,10 @@ export const  columns = [
         key: 'option',
         align:'center',
         render:(_,val)=>(
-            <a style={{textDecoration:'underline'}} href="/devicedetail" target="blank">设备信息</a>
+            <a style={{textDecoration:'underline'}}
+             href="/devicedetail" target="blank" 
+            //  onClick={()=>{navigate("/devicedetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}
+             >设备信息</a>
         ),
       },
       // {
