@@ -5,7 +5,7 @@ import imgurl from './images/index.js'
 import {  Pagination,message} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
-import { Link, useNavigate } from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Table from '@com/useTable'
 

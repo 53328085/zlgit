@@ -30,7 +30,7 @@ export default function gateway() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
-    pageSize: 2,
+    pageSize: 10,
     hideOnSinglePage: false
   })
   const pageRef = useRef(page)
@@ -234,7 +234,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval:heartInterval? Number(heartInterval):30,
+        heartInterval:heartInterval? parseInt(heartInterval):30,
         remark
       }
       const { data, success, errMsg } = await GatewayAdd(params)
@@ -261,7 +261,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval:heartInterval? Number(heartInterval):30,
+        heartInterval:heartInterval? parseInt(heartInterval):30,
         remark
       }
       const { data, success, errMsg } = await GatewayAdd(params)
@@ -292,7 +292,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval: Number(heartInterval),
+        heartInterval: parseInt(heartInterval),
         remark
       }
       console.log(params)
@@ -319,7 +319,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval: Number(heartInterval),
+        heartInterval: parseInt(heartInterval),
         remark
       }
       console.log(params)
@@ -498,7 +498,6 @@ export default function gateway() {
 
 //新增网关组件
 let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...other }) => {
-  console.log(475,levelname)
   const rules ={ required: true,}
   return (
     <Modal mold='cust' ref={modalFormRef} {...other} footer={[
@@ -553,7 +552,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...
             <Form.Item label="网关名称" name="name" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="心跳周期" name="heartInterval">
+            <Form.Item label="心跳周期" name="heartInterval" rules={[{pattern:  /^[1-9]+[0-9]*$/,message:'心跳周期需为正整数'}]}>
               <Count></Count>
             </Form.Item>
           </Col>
@@ -571,7 +570,7 @@ let Count = ({ value, onChange }) => {
   const [number, setNumber] = useState(value ? value : 30)
   
   const reduce = () => {
-    number > 0 && number > 0 && setNumber(number - 1)
+    number > 0 && setNumber(number - 1)
     onChange(number - 1)
   }
 
@@ -673,7 +672,7 @@ const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
             <Form.Item label="网关名称" name="name" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="心跳周期" name="heartInterval">
+            <Form.Item label="心跳周期" name="heartInterval" rules={[{pattern: /^[1-9]+[0-9]*$/,message:'心跳周期需为正整数'}]}>
               <Count></Count>
             </Form.Item>
           </Col>

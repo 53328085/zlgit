@@ -3,7 +3,7 @@ import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import {  Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
@@ -286,6 +286,7 @@ export default function Index(props) {
             return <div key={index}>
               <Link  to={`/gatewayDetail?sn=${item.sn}`}   target="_blank">
                   <Icard img={imageList[index]? 'data:image/png;base64,'+imageList[index] : imgurl.category} title={item.name}
+
                     value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
                     lastSampleTime={item.lastSampleTime} category={item.category} />
                     </Link>
