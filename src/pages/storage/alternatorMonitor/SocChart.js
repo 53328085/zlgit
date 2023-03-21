@@ -1,12 +1,14 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import style from './style.module.less';
 import * as echarts from "echarts";
 
 export default function Index(props){
   const { lineData } = props;
   let lineId = 'socChart'
+  const socRef = useRef()
   useEffect(()=>{
-    let socChart = echarts.init(document.getElementById(lineId));
+    echarts.dispose(socRef.current)
+    let socChart = echarts.init(socRef.current);
     socChart.setOption({
       color:[props.color],
       tooltip: {
@@ -48,8 +50,8 @@ export default function Index(props){
           areaStyle: {}
         }
       ]
-    })
+    }, true)
   },[props.lineData])
-  return <div style={{width:1068, height: 184, marginLeft: 16}}  id={lineId}></div>
+  return <div style={{width:1068, height: 184, marginLeft: 16}}  id={lineId} ref={socRef}></div>
     
 }

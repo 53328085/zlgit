@@ -1,5 +1,6 @@
 import React,{Fragment, useState}from 'react'
 import style from './style.module.less'
+import { useNavigate } from 'react-router-dom'
 import UseHeader from '@com/useHeader'
 import { StorageSummaryRuntime, StorageAlarmRuntime } from '@api/api.js'
 import { message } from 'antd'
@@ -16,10 +17,11 @@ export default function Index() {
     queryTopologyDiagramInfo, 
     queryRealtimeData } = StorageSummaryRuntime
   const { alarmStatistic } = StorageAlarmRuntime
+  const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
   const [barData, setBarData] = useState({}) //收益统计
-  const [powerData, setPowerData] = useState({}) //收益统计
-  const [realData, setRealData] = useState({})
+  const [powerData, setPowerData] = useState({}) //实时功率
+  const [realData, setRealData] = useState({})//实时状态
   const getFromHeader = values => {
     let { projectId, areaId } = values
     statistic(projectId, areaId).then(res => {
@@ -80,6 +82,9 @@ export default function Index() {
       }
     })
 
+    queryTopologyDiagramInfo(projectId, areaId).then(res => {
+      if(res.success){}
+    })
 
     queryRealtimeData(projectId, areaId).then(res => {
       let {success, data} = res
@@ -92,10 +97,6 @@ export default function Index() {
       }else{
         message.error(res.errMsg)
       }
-    })
-
-    alarmStatistic(projectId, areaId).then(res => {
-      if(res.success){}
     })
   }
   const CardItem = props => {
@@ -146,7 +147,7 @@ export default function Index() {
         </div>
         <div className={style.warningbottom}>
           <span className={style.sn}>{props.data.sn}</span>
-          <span className={style.level}>{props.data.level == 1? '一级告警' : props.data.level == 2? '二级告警' :'三级告警'}</span>
+          <span className={style.level} style={{marginRight: 8}}>{props.data.level == 1? '一级告警' : props.data.level == 2? '二级告警' :'三级告警'}</span>
         </div>
       </div>
     </div>
@@ -165,7 +166,7 @@ export default function Index() {
     }
   ]
   const toWarning = () => {
-    window.location.href = '/index/runtimeStorage/alarmMessage'
+    navigate('/index/runtimeStorage/alarmMessage')
   }
 
   return (

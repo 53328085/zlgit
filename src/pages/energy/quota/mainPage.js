@@ -47,9 +47,14 @@ export default function MainPage(props){
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          {/* <span style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}} onClick={()=>toRoomDetail(record)}>{record.roomName}</span> */}
           <Link 
-          to={{pathname:'/roomDetail', search:JSON.stringify({id:record.roomId})}} 
+          to={{pathname:'/roomDetail', search:JSON.stringify({id:record.roomId,
+            areaName:props.areaName, 
+            buildingName:record.buildingName, 
+            roomName:record.roomName,
+            comprehensiveQuota: record.comprehensiveQuota,
+            comprehensiveQuotaLeaved: record.comprehensiveQuotaLeaved
+          })}} 
           target='_blank'
           state={props.areaName} 
           style={{color:'#237ae4', cursor:'pointer', textDecoration:'underline'}}
