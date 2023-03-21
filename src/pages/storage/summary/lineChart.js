@@ -1,9 +1,11 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import * as echarts from "echarts";
 
 export default function Index(props){
+  const lineRef = useRef()
   useEffect(()=>{
-    let lineChart = echarts.init(document.getElementById('lineChart'));
+    echarts.dispose(lineRef.current)
+    let lineChart = echarts.init(lineRef.current);
     lineChart.setOption({
       color:['#b8cdf8'],
       tooltip: {
@@ -48,5 +50,5 @@ export default function Index(props){
       ]
     })
   },[props.data])
-  return <div style={{width:448,height:199}} id='lineChart'></div>
+  return <div style={{width:448,height:199}} id='lineChart' ref={lineRef}></div>
 }

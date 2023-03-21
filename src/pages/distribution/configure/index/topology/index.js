@@ -1,11 +1,66 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRequest } from 'ahooks';
 import { Select, Button, Table, Space, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
+import {useSelector} from 'react-redux'
+import {utils, writeFile} from 'xlsx'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { distributionRoom } from '@api/api.js'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
 import firstwarn from '@imgs/warning.png' 
 
 export default function Index() {
+  const projectId = useSelector(selectProjectId);
+  //园区选择
+  const areaList = useSelector(selectOneLevel)
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
+  const handleChange = (values) => {
+    setPageNum(1)
+    setAreaId(values)
+  }
+  //配电房下拉框
+  const { queryPageRoom } = distributionRoom
+  const [roomList, setRoomList] = useState([])
+  const [defaultRoom, setDefaultRoom] = useState()
+  const [roomId, setRoomId] = useState()
+  const getRoomData = () => {
+    return queryPageRoom( projectId, areaId, 0, 0).then(res => {
+      if(res.success){
+        setRoomList(res.data)
+        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
+        setRoomId(res.data.length > 0  ? res.data[0].id : null)
+        if(res.data.length == 0){
+          messageApi.open({
+            type: 'warning',
+            content:"当前园区没有配电房"
+          })
+        }
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg
+        })
+      }
+    })
+  }
+  const { run : queryRoom } = useRequest(getRoomData,{
+    manual: true,
+  })
+  useEffect(()=>{
+    if(areaId == 0){
+      return
+    }else{
+      queryRoom()
+    }
+  },[areaId])
+  const ChangeRoom = values => {
+    setPageNum(1)
+    setDefaultRoom(values)
+    setRoomId(values)
+  }
+
   const columns = [
     {
       align:'center',
@@ -86,24 +141,28 @@ export default function Index() {
         <Select
           placeholder="请选择园区"
           size="middle"
-          defaultValue="1"
+          key={defaultArea}
+          defaultValue={defaultArea}
           style={{width: '200px'}}
+          onChange={handleChange}
         >
-          <Option value="1">正泰物联全部园区</Option>
-          <Option value="2">正泰物联滨江园区</Option>
-          <Option value="3">正泰物联温州园区</Option>
+          {areaList.map(item => {
+            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          })}
         </Select>
         <div className={style.division}></div>
         <Select
           placeholder="请选择配电房"
           size="middle"
-          defaultValue="1"
-          style={{width: '240px'}}
+          // key={defaultRoom}
+          // defaultValue={defaultRoom}
+          value={defaultRoom}
+          style={{width: '200px'}}
+          onChange={ChangeRoom}
         >
-          <Option value="1">正泰大厦1号楼低压配电房</Option>
-          <Option value="2">正泰大厦2号楼低压配电房</Option>
-          <Option value="3">正泰大厦3号楼低压配电房</Option>
-          <Option value="4">正泰大厦4号楼低压配电房</Option>
+          {roomList.map((item) => {
+            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+          })}
         </Select>
       </div>
       <div className={style.mainContent}>

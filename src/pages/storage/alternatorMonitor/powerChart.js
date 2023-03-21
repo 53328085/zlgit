@@ -1,12 +1,15 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import style from './style.module.less';
 import * as echarts from "echarts";
 
 export default function Index(props){
   const { lineData } = props;
   let lineId = 'lineChart'
+  const lineRef = useRef()
   useEffect(()=>{
-    let powerChart = echarts.init(document.getElementById(lineId));
+    // let powerChart = echarts.init(document.getElementById(lineId));
+    echarts.dispose(lineRef.current)
+    let powerChart = echarts.init(lineRef.current)
     powerChart.setOption({
       color:[props.color],
       tooltip: {
@@ -50,8 +53,8 @@ export default function Index(props){
           areaStyle: {}
         }
       ]
-    })
+    }, true)
   },[props.lineData])
-  return <div style={{width:1068, height: 184, marginLeft: 16}}  id={lineId}></div>
+  return <div style={{width:1068, height: 184, marginLeft: 16}}  id={lineId} ref={lineRef}></div>
     
 }

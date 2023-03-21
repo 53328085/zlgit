@@ -9,11 +9,11 @@ import {Form} from 'antd'
 export default function Index() {  
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
-  const {form} = Form.useForm
+  let [AreaID, setAreaid] = useState(areaId)
   return (
-    <CustContext.Provider>
-    <Pagecount showserach={true} value={{form}}>   
-      <Report projectId={projectId}  areaId={areaId} /> 
+    <CustContext.Provider value={{handler: setAreaid}}>
+    <Pagecount showserach={true} >   
+      <Report projectId={projectId}  areaId={AreaID} /> 
     </Pagecount>
     </CustContext.Provider>
   )

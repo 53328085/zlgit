@@ -16,6 +16,10 @@ export default function Index(){
     let search = location.search.substr(1, location.search.length)
     const searchObj = JSON.parse(decodeURI(search))
     let roomId = searchObj.id
+    const address = searchObj.areaName + '-' +searchObj.buildingName + '-' + searchObj.roomName
+    const comprehensiveQuota = searchObj.comprehensiveQuota || 0
+    const comprehensiveQuotaLeaved = searchObj.comprehensiveQuotaLeaved || 0
+    const comprehensiveQuotaUsed = parseFloat(comprehensiveQuota) - parseFloat(comprehensiveQuotaLeaved)
     const projectId = useSelector(selectProjectId);
     const { queryQueryRoomDetail } = EnergyQuotaRuntime
     const [type, setType] = useState(1)
@@ -26,9 +30,6 @@ export default function Index(){
         "address":"",
         "energyType":"",
         "roomName":"",
-        "ComprehensiveQuota":"0.00", //年度综合定额
-        "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
-        "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
         "proportion":[],
         "detail":{
             "x":[],
@@ -52,15 +53,12 @@ export default function Index(){
             let { success, data } = res
             if(success){
                 if(data){
-                    setValues(data[0])
+                    setValues(data)
                 }else{
                     setValues({
                         "address":"",
                         "energyType":"",
                         "roomName":"",
-                        "ComprehensiveQuota":"0.00", //年度综合定额
-                        "ComprehensiveQuotaUsed":"0.00",//年度综合定额使用
-                        "ComprehensiveQuotaLeaved":"0.00",////年度综合定额剩余
                         "proportion":[],
                         "detail":{
                             "x":[],
@@ -106,7 +104,7 @@ export default function Index(){
                     <div className={style.leftItem}>
                         <div className={style.itemTitle}><span>房间基本信息</span></div>
                         <div className={style.itemData}>
-                            <span>房间地址</span><span>{values.address}</span>
+                            <span>房间地址</span><span>{address}</span>
                         </div>
                         <div className={style.itemData}>
                             <span>能耗种类</span><span>{values.energyType}</span>
@@ -117,21 +115,21 @@ export default function Index(){
                         <div className={style.itemData}>
                             <div className={style.dataList}>
                                 <span>定额能耗(吨标煤)</span>
-                                <span className={style.energyData}>{Number(values.ComprehensiveQuota).toFixed(2)}</span>
+                                <span className={style.energyData}>{Number(comprehensiveQuota).toFixed(2)}</span>
                             </div>
                             <div className={style.dataList}>
                                 <span>已用能耗</span>
-                                <span className={style.energyData}>{Number(values.ComprehensiveQuotaUsed).toFixed(2)}</span>
+                                <span className={style.energyData}>{Number(comprehensiveQuotaUsed).toFixed(2)}</span>
                             </div>
                             <div className={style.dataList}>
                                 <span>剩余能耗</span>
-                                <span className={style.energyData}>{Number(values.ComprehensiveQuotaLeaved).toFixed(2)}</span>
+                                <span className={style.energyData}>{Number(comprehensiveQuotaLeaved).toFixed(2)}</span>
                             </div>
                         </div>
                         <div className={style.itemData}>
                             <span>能耗剩余</span>
                             <Progress style={{width:'280px'}} 
-                            percent={Number(values.ComprehensiveQuota) > 0 ? (Number(values.ComprehensiveQuotaLeaved)/Number(values.ComprehensiveQuota)).toFixed(2) : 0} 
+                            percent={Number(comprehensiveQuota) > 0 ? (Number(comprehensiveQuotaLeaved)/Number(comprehensiveQuota)).toFixed(2) : 0} 
                             trailColor='#ebeef5' strokeWidth={20} />
                         </div>
                     </div>

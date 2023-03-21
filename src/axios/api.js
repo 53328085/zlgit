@@ -242,15 +242,25 @@ export class EnergyComprehensive {
     static QueryOilCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
    
   }
+  // 储能管理-- 储能控制
+  export class StorageControlRuntime {
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+  }
+
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
   }
 
 // 储能管理--报表统计
 export class StorageReportRuntime {
   static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageReportRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
   static QueryReports = (params={}, areaId) => server.post(`/Storage/StorageReportRuntime/QueryReports?areaId=${areaId}`, params);
+}
+// 储能管理--告警信息
+export class StorageAlarmruntime {
+  static AlarmStatistics = (projectId, areaId) => server.get(`/Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`);
+  static QueryStorageAlarmByPage = (params={}) => server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
 }
 
 //
@@ -1292,6 +1302,11 @@ export class distributionRoom {
 
 //配电房设备
 export class DistributionMeter {
+  //变压器
+  static queryPageTransformer = (projectId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionMeter/QueryPageTransformer?projectId=${projectId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`);
+  static queryUsedTransformer = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUsedTransformer?projectId=${projectId}&roomId=${roomId}`);
+  static queryUnusedTransformer = (projectId, roomId) => server.get(`Distribution/DistributionMeter/QueryUnusedTransformer?projectId=${projectId}&roomId=${roomId}`);
+  static configureTransformer = (data) => server.post(`Distribution/DistributionMeter/ConfigureTransformer`, data);
   //监控设备
   static queryPageCamera = (projectId, roomId, pageNum, pageSize) =>
     server.get(
@@ -1437,4 +1452,14 @@ export class StorageSummaryRuntime {
 //储能告警信息
 export class StorageAlarmRuntime {
   static alarmStatistic = (projectId, areaId) => server.get(`Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`)
+}
+
+//pcsMonitor
+export class PCSMonitorRuntime {
+  static queryPCSList = (projectId, areaId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}`)
+  static queryPCSInfo = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSInfo?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+  static queryPowerTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+  static querySocTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QuerySocTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+  static queryAcTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryAcTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+  static queryPileTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPileTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
 }

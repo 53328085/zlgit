@@ -6,7 +6,7 @@ import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {utils, writeFile} from 'xlsx'
 import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
-import { AreaSetting, distributionRoom, DistributionMeter } from '@api/api.js'
+import { distributionRoom, DistributionMeter } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 
 import dashed from '@imgs/dashed.png'
@@ -14,9 +14,8 @@ import firstwarn from '@imgs/warning.png'
 
 export default function Index() {
   const tableRef = useRef()
-  const { QueryAllArea } = AreaSetting
   const { queryPageRoom } = distributionRoom
-  const { queryPageSensor, queryUnusedSensor, configureSensor } = DistributionMeter
+  const { queryPageTransformer, queryUnusedTransformer, configureTransformer } = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
     messageApi.open({
@@ -78,7 +77,7 @@ export default function Index() {
   const [total, setTotal] = useState(0)
   const pageSize = 10
   const getTableData = () => {
-    return queryPageSensor(projectId, roomId, pageNum, pageSize).then(res => {
+    return queryPageTransformer(projectId, roomId, pageNum, pageSize).then(res => {
       if(res.success){
         if(res.data){
           setData(res.data)
@@ -103,26 +102,36 @@ export default function Index() {
   const columns = [
     {
       align:'center',
-      title: '传感器编号',
+      title: '变压器编号',
       dataIndex: 'sn',
       key: 'sn',
     },{
+        align:'center',
+        title: '变压器型号',
+        dataIndex: 'category',
+        key: 'category',
+      },{
       align:'center',
-      title: '传感器名称',
+      title: '变压器名称',
       dataIndex: 'name',
       key: 'name',
-    },{
-      align:'center',
-      title: '传感器型号',
-      dataIndex: 'category',
-      key: 'category',
     },{
       align:'center',
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       width: 480
-    },{
+    },,{
+        align:'center',
+        title: '额定容量 (kVA)',
+        dataIndex: 'capacity',
+        key: 'capacity',
+      },,{
+        align:'center',
+        title: '额定电压 (kVA)',
+        dataIndex: 'vlotage',
+        key: 'vlotage',
+      },{
       align:'center',
       title: '所属网关',
       dataIndex: 'gatewayName',
@@ -172,7 +181,7 @@ export default function Index() {
       roomId,
       group
     }
-    configureSensor(data).then(res=> {
+    configureTransformer(data).then(res=> {
       if(res.success){
         messageContent('success','设备删除成功!')
         if(subTable.length == 1 && pageNum > 1){
@@ -199,7 +208,7 @@ export default function Index() {
   const [transTag, setTransTag] = useState('')
   const settingClick =() => {
     if(roomId){
-      queryUnusedSensor(projectId, roomId).then(res => {
+        queryUnusedTransformer(projectId, roomId).then(res => {
         let { success, data } = res
         if(success){
           if(data){
@@ -228,9 +237,9 @@ export default function Index() {
       roomId,
       group
     }
-    configureSensor(data).then(res=> {
+    configureTransformer(data).then(res=> {
       if(res.success){
-        messageContent('success','传感器设备配置成功!')
+        messageContent('success','变压器设备配置成功!')
         queryTable()
         setTransTag('close')
       }else{
@@ -267,8 +276,8 @@ export default function Index() {
 
   const transferTitle = {
     mainTitle:'',
-    subTitle:'配电房传感器',
-    unknownTitle:'未选中的传感器设备'
+    subTitle:'配电房变压器',
+    unknownTitle:'未选中的变压器设备'
   }  
   //分页
   const paginationProps = {
@@ -294,7 +303,7 @@ export default function Index() {
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
     let file =  "xlsx";
-    writeFile(workbook, '配电房传感器.xlsx', { bookType: file }); // 下载
+    writeFile(workbook, '配电房变压器.xlsx', { bookType: file }); // 下载
   }
 
   return (
@@ -332,7 +341,7 @@ export default function Index() {
       </div>
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
-            <span>配电房传感器</span>
+            <span>配电房变压器</span>
             <div>
             <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
                 选择设备
@@ -353,7 +362,7 @@ export default function Index() {
         <div className={style.deleteHeader}>删除提示</div>
         <div className={style.deleteBody}>
           <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认在该配电房中删除该传感器？</span>
+          <span>是否确认在该配电房中删除该变压器？</span>
         </div>
       </Modal>
       </div>

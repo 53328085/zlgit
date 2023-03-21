@@ -34,7 +34,7 @@ const Boxdiv = styled(Card)`
   }
  .ant-card-body {
   padding: 0;
-  
+  display: ${props => props.layout || 'block'}
  }
 `
 Boxdiv.defaultProps = {
