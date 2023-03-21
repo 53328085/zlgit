@@ -5,7 +5,7 @@ import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 
 import dashed from '@imgs/dashed.png'
@@ -27,27 +27,9 @@ export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
 
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    })
-  }
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const areaList = useSelector(selectOneLevel)
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
   const handleChange = (values) => {
     setAreaId(values)
   }

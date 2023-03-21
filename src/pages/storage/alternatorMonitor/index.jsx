@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import style from './style.module.less'
-import { Select, Form, Table } from 'antd'
+import { Select, Form, Table, message } from 'antd'
 import {useSelector} from 'react-redux'
-import {selectOneLevel} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
+import {PCSMonitorRuntime } from '@api/api.js'
+import { useRequest } from 'ahooks'
 
 import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
@@ -12,22 +14,37 @@ import offline from './imgs/offline.png'
 import error from './imgs/error.png'
 
 export default function Index() {
+  const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
+  const { queryPCSList, 
+    queryPCSInfo, 
+    queryPowerTrends, 
+    querySocTrends, 
+    queryAcTable, 
+    queryPileTable } = PCSMonitorRuntime
   const [form] = Form.useForm()
   const {Item}  = Form
   //PCS list
-  const pcsList = [
-    {
-      id:1,
-      name:'PCS#1',
-    },{
-      id:2,
-      name:'PCS#2',
-    },{
-      id: 3,
-      name:'PCS#3',
-    },
-  ]
+  const [pcsList, setPcsList] = useState([])
+  const getPCSList = () => {
+    return queryPCSList (projectId, form.getFieldValue('areaId')).then(res => {
+      if(res.success){
+        if(res.data){
+          setPcsList(res.data)
+          form.setFieldValue('PCSId', res.data[0].id)
+          getContent()
+        }else{
+          setPcsList([])
+          message.warning('当前'+ areaList[0]?.levelName + '不存在PCS!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const {run: queryPCS} = useRequest(getPCSList, {manual: true})
+
+  //页面组件
   const Card = props => {
     return <div className={style.card}>
       <div className={style.cardtitle}>{props.title}</div>
@@ -36,33 +53,77 @@ export default function Index() {
     </div>
   }
   const StateItem = props => {
+    let { state } = props
+    state = state == 0 ? 'offline' : state == 1 ? 'normal' : 'error'
     return <div className={style.stateItem} style={props.styles}>
       <span>{props.name}</span>
-      <img src={props.state == 'offline' ? offline : props.state == 'normal' ? online : error} className={style.stateImg}></img>
+      <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
     </div>
   }
-  const powerData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[7321.25, 7158.32, 7214.39, 7019.54, 7236.45, 7200.15, 7148.96, 7285.36, 7148.32, 7014.36, 7048.96, 7245.36, 7189.32 ]
-  }
-  const socData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[25.3, 26.4, 28.39, 29.54, 32.45, 34.15, 36.96, 40.36, 48.32, 50.36, 45.96, 42.36, 41.5 ]
-  }
 
-  const leftValues = {
-    exchange: 'offline',
-    directCurrent:'offline',
-    onGrid:'normal',
-    offGrid: 'offline',
-    PCSCom:'normal',
-    BMSCom:'offline',
-    Control:'offline',
-    PCSError:'normal',
-    PCSWarning:'normal',
-    BMSLevelOne:'warning',
-    BMSLevelTwo:'normal',
-    BMSLevelThree: 'normal'
+  //页面参数
+  const [leftValues, setLeftValues] = useState({})
+  const [powerData, setPowerData] = useState({})
+  const [socData, setSocData] = useState({})
+  const getContent = () => {
+    //左侧数据
+    queryPCSInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+      if(res.success){
+        if(res.data){
+          setLeftValues(res.data)
+        }else{
+          setLeftValues({})
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //实时功率
+    queryPowerTrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+      if(res.success){
+        if(res.data){
+          let x= [];
+          let y = [];
+          res.data.map((item, index) => {
+            x.push(item.name)
+            y.push(item.value)
+          })
+          setPowerData({
+            x,
+            y
+          })
+        }else{
+          setPowerData({x:[], y:[]})
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //soc
+    querySocTrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+      if(res.success){
+        if(res.data){
+          let x= [];
+          let y = [];
+          res.data.map((item, index) => {
+            x.push(item.name)
+            y.push(item.value)
+          })
+          setSocData({
+            x,
+            y
+          })
+        }else{
+          setSocData({x:[], y:[]})
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //ac Table
+    queryAcTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {})
+    //pile Table
+    queryPileTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {})
   }
 
   const AcClomns = [
@@ -206,19 +267,26 @@ export default function Index() {
     },
   ]
 
+  const changeArea = val => {
+    queryPCS()
+  }
+  const changePCS = val => {
+    getContent()
+  }
   useEffect(()=>{
     form.setFieldValue('areaId', areaList[0].id)
-    form.setFieldValue('PCSId', pcsList[0].id)
+    queryPCS()
   },[])
   return (
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaList[0]?.levelName + '选择' || '园区选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={ areaList[0]?.levelName + '选择'} style={{marginLeft:16}}>
             <Select
-              placeholder="请选择园区"
+              placeholder="请选择"
               size="middle"
               style={{marginLeft: 16, width: '200px'}}
+              onChange={changeArea}
             >
               {areaList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
@@ -231,6 +299,7 @@ export default function Index() {
               placeholder="请选择PCS"
               size="middle"
               style={{marginLeft: 16, width: '200px'}}
+              onChange={changePCS}
             >
               {pcsList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
@@ -250,35 +319,35 @@ export default function Index() {
             <img className={style.pcsImg} src={pcs}></img>
           </div>
           <div className={style.dataCard}>
-            <Card title='总有功功率' unit='kWh' values='50.21'></Card>
-            <Card title='视在功率' unit='kVA' values='48.25'></Card>
-            <Card title='总无功功率' unit='kVar' values='0.00'></Card>
+            <Card title='总有功功率' unit='kWh' values={leftValues?.p || '0.00'}></Card>
+            <Card title='视在功率' unit='kVA' values={leftValues?.ps || '0.00'}></Card>
+            <Card title='总无功功率' unit='kVar' values={leftValues?.q || '0.00'}></Card>
           </div>
           <div className={style.line}></div>
           <div className={style.dataCard}>
-            <Card title='BMS SOC' unit='%' values='21.21'></Card>
-            <Card title='BMS 可充电量' unit='kWh' values='148.00'></Card>
-            <Card title='BMS 可放电量' unit='kWh' values='52.00'></Card>
+            <Card title='BMS SOC' unit='%' values={leftValues?.soc || '0.00'}></Card>
+            <Card title='BMS 可充电量' unit='kWh' values={leftValues?.chargeCapacity || '0.00'}></Card>
+            <Card title='BMS 可放电量' unit='kWh' values={leftValues?.disChargeCapacity || '0.00'}></Card>
           </div>
           <div className={style.line}></div>
           <div className={style.dataCard}>
-            <Card title='DCAC 温度' unit='℃' values='31.2'></Card>
-            <Card title='DCDC 温度' unit='℃' values='19.2'></Card>
-            <Card title='电芯最高/最低温度' unit='℃' values='29.2 / 19.2'></Card>
+            <Card title='DCAC 温度' unit='℃' values={leftValues?.dcacTemp || '0.00'}></Card>
+            <Card title='DCDC 温度' unit='℃' values={leftValues?.dcdcTemp || '0.00'}></Card>
+            <Card title='电芯最高/最低温度' unit='℃' values={(leftValues?.electricCoreMaxTemp || '0.00') + ' / ' +(leftValues?.electricCoreMinTemp || '0.00')}></Card>
           </div>
           <div className={style.status}>
-            <StateItem name='交流调度' state={leftValues.exchange}></StateItem>
-            <StateItem name='直流调度' state={leftValues.directCurrent}></StateItem>
-            <StateItem name='并网' state={leftValues.onGrid}></StateItem>
+            <StateItem name='交流调度' state={leftValues.acDispatching}></StateItem>
+            <StateItem name='直流调度' state={leftValues.dcDispatching}></StateItem>
+            <StateItem name='并网' state={leftValues.gridConnection}></StateItem>
             <StateItem name='离网' state={leftValues.offGrid} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='PCS通讯' state={leftValues.PCSCom}></StateItem>
-            <StateItem name='BMS通讯' state={leftValues.BMSCom}></StateItem>
-            <StateItem name='远程控制' state={leftValues.Control}></StateItem>
-            <StateItem name='PCS系统故障' state={leftValues.PCSError} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='PCS系统告警' state={leftValues.PCSWarning} styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS一级告警' state={leftValues.BMSLevelOne}styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS二级告警' state={leftValues.BMSLevelTwo}styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS三级告警' state={leftValues.BMSLevelThree} styles={{borderRight:'none', borderBottom:'none'}}></StateItem>
+            <StateItem name='PCS通讯' state={leftValues.pcsCommunication}></StateItem>
+            <StateItem name='BMS通讯' state={leftValues.bmsCommunication}></StateItem>
+            <StateItem name='远程控制' state={leftValues.remoteControl}></StateItem>
+            <StateItem name='PCS系统故障' state={leftValues.pcsHitch} styles={{borderRight:'none'}}></StateItem>
+            <StateItem name='PCS系统告警' state={leftValues.pcsAlarm} styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='BMS一级告警' state={leftValues.bmsAlarmLevel1}styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='BMS二级告警' state={leftValues.bmsAlarmLevel2}styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='BMS三级告警' state={leftValues.bmsAlarmLevel3} styles={{borderRight:'none', borderBottom:'none'}}></StateItem>
           </div>
         </div>
         <div className={style.right}>

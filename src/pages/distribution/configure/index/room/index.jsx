@@ -7,7 +7,7 @@ import firstwarn from '@imgs/warning.png'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 
 export default function Index() {
   const { QueryAllArea } = AreaSetting
@@ -71,28 +71,9 @@ export default function Index() {
   ];
 
   const [dataSource, setDataSource] = useState([])
-  const [areaList, setAreaList] = useState([])
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState(0)
-  const getAreaData = () =>{
-    return QueryAllArea (projectId, 1).then(res=> {
-      let {success, data} = res
-      if(success && data){
-        setAreaList(data)
-        setDefaultArea(data[0].id)
-        setAreaId(data[0].id)
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    })
-  }
-
-  const { data:AreaData } = useRequest(getAreaData,{
-    onSuccess:(result,params) => {}
-  })
+  const areaList = useSelector(selectOneLevel)
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [areaId,setAreaId] = useState(areaList[0].id)
 
   const handleChange = (values) => {
     setPageNum(1)

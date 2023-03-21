@@ -1,12 +1,14 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import style from './style.module.less';
 import * as echarts from "echarts";
 
 export default function Index(props){
   const { lineData } = props;
   let lineId = 'lineChart' + Math.random();
+  const lineRef = useRef()
   useEffect(()=>{
     let lineChart = echarts.init(document.getElementById(lineId));
+    // let lineChart = echarts.init(lineRef.current)
     lineChart.setOption({
       color:['#237ae4'],
       tooltip: {
@@ -43,7 +45,7 @@ export default function Index(props){
   },[lineData])
   return <div className={style.chartTab}>
     <div className={style.itemTitle}><span>{ props.Name }</span></div>
-    <div style={{width:456,height:334,}}  id={lineId}></div>
+    <div style={{width:456,height:334,}}  id={lineId} ref={lineRef}></div>
   </div>
     
 }
