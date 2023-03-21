@@ -2,7 +2,7 @@ import { React, useState,useEffect } from "react";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import {  Pagination,} from 'antd'
+import {  Pagination,message} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
 import { Link, useNavigate } from 'react-router-dom'
@@ -11,9 +11,12 @@ import Table from '@com/useTable'
 
 export default function GatewayDetail(props) {
     let location = useLocation()
-    let search = location.search.substr(1, location.search.length)
+    console.log(location.search)
+    let search = location.search.substr(4, location.search.length)
+    console.log(search)
     const projectId = useSelector(selectProjectId)
-  const { RuntimeGateway: { RuntimeGatewayDetail, Children, Log } } = Monitoring
+  const [messageApi, contextHolder] = message.useMessage();
+  const { RuntimeGateway: { RuntimeGatewayDetail, Children, Log,CategoryImages } } = Monitoring
     let [state, setstate] = useState(true)
     let [detail,setDetail]=useState({})
     const onchangeTab = () => {
@@ -32,7 +35,7 @@ export default function GatewayDetail(props) {
             key: 'sn',
             render: (sn) => <Link to={{
                 pathname: "/deviceDetail",
-                search:JSON.stringify(sn)
+                search:sn
             }} target="_blank"> {sn} </Link>,
             id: 'id'
         },
@@ -42,34 +45,35 @@ export default function GatewayDetail(props) {
             key: 'category',
             id: 'id'
         },
-        {
-            title: '设备名称',
-            dataIndex: 'state',
-            key: 'state',
-            id: 'id'
-        },
+        // {
+        //     title: '设备名称',
+        //     dataIndex: 'state',
+        //     key: 'state',
+        //     id: 'id'
+        // },
         {
             title: '安装地址',
-            dataIndex: 'connMethod',
-            key: 'connMethod',
-            id: 'id'
-        },
-        {
-            title: '通信地址',
-            dataIndex: 'childrenCnt',
-            key: 'childrenCnt',
-            id: 'id'
-        },
-        {
-            title: '通信端口',
             dataIndex: 'address',
             key: 'address',
             id: 'id'
         },
         {
+            title: '通信地址',
+            dataIndex: 'commAddress',
+            key: 'commAddress',
+            id: 'id'
+        },
+        {
+            title: '通信端口',
+            dataIndex: 'commPort',
+            key: 'commPort',
+            id: 'id'
+        },
+        {
             title: '通信协议',
-            dataIndex: 'lastSampleTime',
-            key: 'lastSampleTime',
+            dataIndex: 'commProtocol',
+            render: (commProtocol) => <span>{commProtocol==1?'Modbus':'DL645'}</span>,
+            key: 'commProtocol',
             id: 'id'
         },
     ];
@@ -101,9 +105,11 @@ export default function GatewayDetail(props) {
     ])
     let [dataSourceLog, setdataSourceLog] = useState([])
     const onChangePage = (page, pageSize) => {
-        console.log(page,pageSize)
-        setpage(page)
+            setpage(page)
       }
+      const onChangePageLog = (page, pageSize) => {
+        setpageLog(page)
+  }
       const getData = () => {//网关详情
         return RuntimeGatewayDetail( projectId, search ).then(res => {
           let { success, data } = res
@@ -126,8 +132,52 @@ export default function GatewayDetail(props) {
       const getChildrenData = () => {//网关子设备详情
         return Children( params ).then(res => {
           let { success, data } = res
-          if (success && data) {
+          if (success ) {
             setdataSource(data)
+            setTotal(total)
+          } else {
+            messageApi.open({
+              type: 'error',
+              content: res.errMsg
+            })
+          }
+        })
+      }
+      let paramsLog={
+        projectId:projectId,
+        pageNum:pageLog,
+        pageSize:12,
+        sn:search
+      }
+      const getLogData = () => {//网关子设备详情
+        return Log( paramsLog ).then(res => {
+          let { success, data } = res
+          if (success ) {
+            setdataSourceLog(data)
+            setTotalLog(total)
+          } else {
+            messageApi.open({
+              type: 'error',
+              content: res.errMsg
+            })
+          }
+        })
+      }
+      let [imgUrl,setimgUrl]=useState([])
+      const getGatewayImages = () => {//网关图片
+        return CategoryImages({projectId:projectId,group:[detail.category]}).then(res => {
+          let { success, data } = res
+          if (success && data) {
+            setimageList(data)
+            data.map((item, index) => {
+              overView.details.map((items, indexs) => {
+                if (item.category == items.category) {
+                  setimgUrl(item.imageBase64)
+                } else {
+                  setimgUrl()
+                }
+              })
+            })
           } else {
             messageApi.open({
               type: 'error',
@@ -138,10 +188,14 @@ export default function GatewayDetail(props) {
       }
       useEffect(() => {
         getData()
+        getGatewayImages()
       }, [search,projectId])
       useEffect(() => {
         getChildrenData()
       }, [search,projectId,page,params.pageSize])
+      useEffect(() => {
+        getLogData()
+      }, [search,projectId,pageLog,paramsLog.pageSize])
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -153,7 +207,7 @@ export default function GatewayDetail(props) {
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>网关详情</p></div>
                     <div className={style.leftImgBox}>
-                        <img src={imgurl.category} className={style.leftImg} ></img>
+                        <img src={imgUrl?'data:image/png;base64,'+imgUrl:imgurl.category} className={style.leftImg} ></img>
                         <div className={style.leftImgState}>{detail.state==2?'网关在线':'网关失联'}</div>
                     </div>
                     <div className={style.leftBottom}>
@@ -182,11 +236,11 @@ export default function GatewayDetail(props) {
                         {state ?
                             <div>
                                 <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ></Table>
-                            {/* <Pagination className={style.pageNumD} size="small" current={page} total={total}  defaultPageSize={12} onChange={onChangePage(1)} /> */}
+                            <Pagination className={style.pageNumD} size="small" current={page} total={total}  defaultPageSize={12} onChange={onChangePage} />
                             </div>
                             : <div>
-                                <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columns => columns.id} ></Table>
-                                <Pagination className={style.pageNumD} size="small" current={pageLog} total={totalLog}  defaultPageSize={12} onChange={onChangePage(2)} />
+                                <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} ></Table>
+                                <Pagination className={style.pageNumD} size="small" current={pageLog} total={totalLog}  defaultPageSize={12} onChange={onChangePageLog} />
                             </div>}
                             
                     </div>
