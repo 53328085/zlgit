@@ -62,6 +62,11 @@ const Mainbox = styled.div`
             align-items: center;
 
         }
+        .ant-table-thead {
+            tr:first-of-type th {
+              background-color: #f0f9ff;
+            }
+        }
       }
        
        }

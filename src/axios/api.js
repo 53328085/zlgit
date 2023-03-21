@@ -242,6 +242,11 @@ export class EnergyComprehensive {
     static QueryOilCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
    
   }
+  // 储能管理-- 储能控制
+  export class StorageControlRuntime {
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+  }
+
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
     static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
