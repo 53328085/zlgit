@@ -1,6 +1,6 @@
 import React, {useState, useContext, useMemo, useEffect, useRef} from "react";
 
-import { Form, Select, Button, Dropdown, Space, Divider} from "antd";
+import { Form, Select, Button, Dropdown, Space, Divider,} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
 import {useSelector} from 'react-redux'
@@ -48,16 +48,19 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {form, handler, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload, names=['RegioId', 'BuildingId', 'FloorId', 'Type', 'State']} = useContext(CustContext) || {}
+  const {handler, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
-
+  const {form} = Form.useForm()
   const levelone = useSelector(selectOneLevel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
  
   const allData = useRef();
   const onChange = (e) => {
+     console.log(e)
+     console.log(typeof handler)
      if (typeof handler == 'function') {
-        handler()
+        console.log('ddddd')
+        handler(e)
      }
   }
   const btns = [
@@ -90,14 +93,8 @@ export default function useSerach(props) {
      handlePrint();
   }
   const { Item } = Form;
-  const { Option } = Select;
-  const initialValues = useMemo(() => {
-    let items = {}
-    for(let key of names) {
-      items[key] = null
-    }
-    return items
-  }, [names])  
+
+ 
   return (  
   
     <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
