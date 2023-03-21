@@ -98,14 +98,13 @@ import { message } from 'antd'
   }
 
   useEffect(() => {
-    getTableData(areavalue)
+    // getTableData(areavalue)
   }, [])
   const compProps = {
     columns,
     scroll: { x: 3022},
     ref: contentRef,
-    getTableData,
-    areavalue
+    api:energyReport.QueryConsume
   }
   return (
     <div>

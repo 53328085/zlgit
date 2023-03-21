@@ -20,7 +20,7 @@ export default function Warncontent({ style,form }) {
           pageSize: 1,
           hideOnSinglePage:false
       });
-    const [tabledata,setTabledata]=useState()
+    const [tabledata,setTabledata]=useState([{name:'11'}])
     const datetypes=[
         {
             label:'日',
@@ -77,9 +77,9 @@ export default function Warncontent({ style,form }) {
                 total:res.total
             })
             if(res.data&&res.data.length>0){
-                setTabledata(()=>(res.data)) 
+                // setTabledata(()=>(res.data)) 
             }else{
-                setTabledata([])
+                // setTabledata([])
             }
            
         }else{

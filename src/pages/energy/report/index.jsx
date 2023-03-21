@@ -8,28 +8,25 @@ import Energytimeshare from './energytimeshare'
 import { Form, message, Select } from 'antd'
 import {energyReport} from '@api/api'
 
-// const CountContext = createContext();
 export default function Index() {
-  const [value, setvalue] = useState('0')
+  const [value, setvalue] = useState()
   const [tabs, setTabs] = useState([
     { key: '0', label: '能耗抄表' },
     { key: '1', label: '能耗用量' },
     { key: '2', label: '分时能耗' },
   ])
-  // const [areas,setAreas] = useState([])
-  // const  arealistRef = useRef()
-  // arealistRef.current=areas
+
   const [areavalue,setAreavalue]=useState(0)
 
   const [form]=Form.useForm()
   const projectId = useSelector(state=>state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
   const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
-  console.log(areaOptions)
+
   let Coms = [
-    <Energymeter areavalue={areavalue} arealistRef={areaOptions}/>,
-    <Energyconsum areavalue={areavalue} arealistRef={areaOptions}/>,
-    <Energytimeshare areavalue={areavalue} arealistRef={areaOptions}/>
+    <Energymeter />,
+    <Energyconsum />,
+    <Energytimeshare />
   ]
 
   //改变区域
@@ -42,7 +39,8 @@ export default function Index() {
     setvalue,
     tabs,
     form,
-    areavalue
+    areavalue,
+    arealistRef:areaOptions
   }
   useEffect(()=>{
  

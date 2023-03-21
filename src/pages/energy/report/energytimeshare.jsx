@@ -92,13 +92,13 @@ export default function Energytimeshare({ areavalue, arealistRef }) {
     }
   }
   useEffect(() => {
-    getTableData(areavalue)
+    // getTableData(areavalue)
   }, [])
   const compProps = {
     columns,
     ref: contentRef,
-    getTableData,
-    areavalue
+    api:energyReport.QueryTimeConsume,
+    isenergy:false
   }
   return (
     <div>

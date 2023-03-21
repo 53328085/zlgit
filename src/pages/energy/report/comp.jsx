@@ -1,16 +1,17 @@
 import React, { useRef, forwardRef, useImperativeHandle, useState, useContext, useEffect,useCallback, useMemo } from 'react'
-import { Form, Select, Button, Divider, DatePicker } from 'antd'
+import { Form, Select, Button, Divider, DatePicker,Input } from 'antd'
 import Table from '@com/useTable'
 import style from './style.module.less'
 import CustContext from '@com/content'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 export default forwardRef(
-    function Comp({ istime = false, isenergy = true, getTableData, ...other }, ref) {
+    function Comp({ istime = false, isenergy = true,api, ...other }, ref) {
         const [dataSource, setDataSource] = useState([])
         const [pickertype, setPickertype] = useState(1)
         const [loading,setLoading] =useState(true)
         const [form] = Form.useForm()
-        const {areavalue} = useContext(CustContext)
+        const {areavalue,arealistRef} = useContext(CustContext)
         const tableRef = useRef()
         const projectId = useSelector(state => state.system.menus.projectId)
         const btncss = {
@@ -65,32 +66,37 @@ export default forwardRef(
         const disabledEndDate=(current)=>{
             return current && current < form.getFieldValue('starttime');
         }
+        //获取数据
         const getTableData = async (areaId = 0) => {
             try {
               const formvalues = form.getFieldValue()
-              const fomatstyle = pickertype === 1 ? 'YYYY-MM-DD' : pickertype === 2 ? 'YYYY-MM-01' : 'YYYY-01-01'
+              const startstyle = pickertype === 1 ? 'YYYY-MM-DD' : pickertype === 2 ? 'YYYY-MM-01' : 'YYYY-01-01'
+              const endDate = pickertype ===1?moment(formvalues.endtime).endOf('day').format('YYYY-MM-DD')
+              :pickertype ===2?moment(formvalues.endtime).endOf('month').format('YYYY-MM-DD')
+              :moment(formvalues.endtime).endOf('year').format('YYYY-MM-DD')
               let parmas = {
                 projectId,
                 meterType: formvalues.energytype,
                 type: formvalues.time,
-                startDate: formvalues.starttime.format(fomatstyle),
-                endDate: formvalues.endtime.format(fomatstyle)
+                startDate: formvalues.starttime.format(startstyle),
+                endDate,
               }
               let arrs = []
+              let list = [...arealistRef]
               if (areaId === 0) {
-                arealistRef.shift()
-                arrs = arealistRef.map(it => it.id)
+                list?.shift()
+                arrs = list?.map(it => it.id)
               } else {
                 arrs = [areaId]
               }
-              const res = await energyReport.QueryReading(parmas, arrs)
-              console.log(62,contentRef)
-              contentRef.current.setLoading(false)
+              console.log(areaId,list,arealistRef)
+              const res = await api(parmas, arrs)
+                setLoading(false)
               if (res.success) {
                 if(Array.isArray(res.data)){
-                  contentRef.current.setDataSource([...res.data])
+                  setDataSource([...res.data])
                 }else{
-                  contentRef.current.setDataSource([])
+                  setDataSource([])
                 } 
               } else {
                 message.error(res.errMsg)
@@ -100,7 +106,7 @@ export default forwardRef(
             }
           }
         useEffect(() => {
-          
+            getTableData(areavalue)
         }, [areavalue])
         useImperativeHandle(ref, () => ({
             setDataSource,
@@ -124,8 +130,7 @@ export default forwardRef(
                 >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Form.Item label="能源类型" style={{ marginBottom: 0 }} name="energytype">{
-                            isenergy ? <Select style={{ width: 112 }} options={energyoptions}></Select> :
-                                <Input style={{ width: 112 }} disabled></Input>
+                             <Select style={{ width: 112 }} options={energyoptions} disabled={isenergy ?false:true}></Select>  
                         }
                         </Form.Item>
                         <Divider type="vertical" style={{ height: 30, margin: '0 32px' }} dashed></Divider>
