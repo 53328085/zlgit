@@ -5,12 +5,12 @@ import style from './style.module.less'
 import CustContext from '@com/content'
 import moment from 'moment'
 export default forwardRef(
-    function Comp({ istime = false, isenergy = true, getTableData, areavalue, ...other }, ref) {
+    function Comp({ istime = false, isenergy = true, getTableData, ...other }, ref) {
         const [dataSource, setDataSource] = useState([])
         const [pickertype, setPickertype] = useState(1)
         const [loading,setLoading] =useState(true)
         const [form] = Form.useForm()
-        const content = useContext(CustContext)
+        const {areavalue} = useContext(CustContext)
         const tableRef = useRef()
 
         const btncss = {
@@ -67,8 +67,9 @@ export default forwardRef(
         }
      
         useEffect(() => {
-            getTableData(areavalue)
-        }, [])
+            // console.log(areavalue)
+            // getTableData(areavalue)
+        }, [areavalue])
         useImperativeHandle(ref, () => ({
             setDataSource,
             form,

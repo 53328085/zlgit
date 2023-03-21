@@ -579,45 +579,7 @@ const AlarmRank = ({ bref, areaId }) => {
     const date = getdateformat(datecatrgory, v)
     getQueryWarningTypeRanking(datecatrgory, date)
   }
-  drawEcharts(bref.current, {
-    xAxis: {
-      type: 'value'
-    },
-    yAxis: {
-      type: 'category',
-      axisLabel: {
-        color: "#545454"
-      },
-      axisTick: {
-        alignWithLabel: true,
-        lineStyle: {
-          color: "#4bcb82"
-        }
-      },
-      axisLine: {
-        lineStyle: {
-          color: "#4bcb82"
-        }
-      }
-    },
-    dataset: datasetStack,
-    series: [{ type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }],
-    grid: {
-      top: '30px',
-      bottom: "30px",
-      right: '0px',
-      left: '0px',
-      containLabel: true,
-    },
-    legend: {
-      top: 'auto',
-      bottom: 0,
-      icon: 'rect',
-      itemHeight: 8,
-      itemWidth: 8,
-      itemGap: 20
-    }
-  })
+
   useEffect(() => {
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
@@ -625,6 +587,47 @@ const AlarmRank = ({ bref, areaId }) => {
     const date = getdateformat(type, formvalue.datevalue)
     getQueryWarningTypeRanking(type, date)
   }, [areaId])
+  useEffect(()=>{
+    drawEcharts(bref.current, {
+      xAxis: {
+        type: 'value'
+      },
+      yAxis: {
+        type: 'category',
+        axisLabel: {
+          color: "#545454"
+        },
+        axisTick: {
+          alignWithLabel: true,
+          lineStyle: {
+            color: "#4bcb82"
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            color: "#4bcb82"
+          }
+        }
+      },
+      dataset: datasetStack,
+      series: [{ type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }],
+      grid: {
+        top: '30px',
+        bottom: "30px",
+        right: '0px',
+        left: '0px',
+        containLabel: true,
+      },
+      legend: {
+        top: 'auto',
+        bottom: 0,
+        icon: 'rect',
+        itemHeight: 8,
+        itemWidth: 8,
+        itemGap: 20
+      }
+    })
+  },[datasetStack])
   return (
     <Titlelayout className="down" title="告警类型排名" {...fs} extra={<DateComp ChangDate={changedate} changPicker={changPicker} dateform={dateform} />} >
       {datasetStack?  <div className='stack' ref={bref}></div>:null}

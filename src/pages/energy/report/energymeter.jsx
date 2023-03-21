@@ -41,6 +41,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
   //获取表格数据
   const getTableData = async (areaId = 0) => {
     try {
+      console.log(44,contentRef)
       const formvalues = contentRef.current.form.getFieldValue()
       const pickertype = contentRef.current.pickertype
       const fomatstyle = pickertype === 1 ? 'YYYY-MM-DD' : pickertype === 2 ? 'YYYY-MM-01' : 'YYYY-01-01'
@@ -53,12 +54,13 @@ export default function Energymeter({ areavalue, arealistRef }) {
       }
       let arrs = []
       if (areaId === 0) {
-        arealistRef.current.shift()
-        arrs = arealistRef.current.map(it => it.id)
+        arealistRef.shift()
+        arrs = arealistRef.map(it => it.id)
       } else {
         arrs = [areaId]
       }
       const res = await energyReport.QueryReading(parmas, arrs)
+      console.log(62,contentRef)
       contentRef.current.setLoading(false)
       if (res.success) {
         if(Array.isArray(res.data)){
@@ -75,7 +77,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
   }
   useEffect(() => {
     getTableData(areavalue)
-  }, [areavalue])
+  }, [])
   const compProps = {
     columns,
     ref: contentRef,

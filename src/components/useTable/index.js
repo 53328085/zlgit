@@ -41,7 +41,7 @@ import {utils, writeFile} from 'xlsx'
   }))
  
   const paginationProp = pagination ? Object.assign( {}, {
-    hideOnSinglePage: true,
+  //  hideOnSinglePage: true,
     showTotal: (total) => `共${total}条记录`,
   }, pagination) : false
 
@@ -64,7 +64,7 @@ import {utils, writeFile} from 'xlsx'
   `
   return (
     <Divbox>
-        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} { ...otherprops}  />
+        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} { ...otherprops}   />
     </Divbox>
   )
 }

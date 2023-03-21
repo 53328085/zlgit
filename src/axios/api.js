@@ -42,11 +42,11 @@ export class ProjectList {
 }
 // 公共模块---项目设置--- 项目基础设置,  项目发布
 export class ProjectSetting {
-    static QueryProjectInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectInfo?projectId=${projectId}`) //  查询项目信息
-    static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
-    static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
-    static publishProject = ({projectId, state, code, moble}) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
-    static DeleteProject = (projectId, name) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&name=${name}`) //  删除项目
+  static QueryProjectInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectInfo?projectId=${projectId}`) //  查询项目信息
+  static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
+  static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
+  static publishProject = ({ projectId, state, code, moble }) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
+  static DeleteProject = (projectId, name) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&name=${name}`) //  删除项目
 }
 // 公共模块---项目设置---区域设置
 export class AreaSetting {
@@ -220,16 +220,16 @@ export class EnergyOverView {
 }
 
 // 能源管理--园区能耗
-  export class EnergyComprehensive {
-    // 能耗
-    static QueryOverview = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)// 综合能耗
-    static QueryElectric = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-    static QueryWaterCold = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterCold?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-    static QueryWaterHot = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterHot?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-    static QuerySteam = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QuerySteam?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params) // 蒸汽
-    static QueryGas = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryGas?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-    static QueryCoal = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryCoal?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
-    static QueryOil = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOil?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+export class EnergyComprehensive {
+  // 能耗
+  static QueryOverview = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverview?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)// 综合能耗
+  static QueryElectric = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+  static QueryWaterCold = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterCold?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+  static QueryWaterHot = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryWaterHot?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+  static QuerySteam = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QuerySteam?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params) // 蒸汽
+  static QueryGas = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryGas?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+  static QueryCoal = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryCoal?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
+  static QueryOil = ({ projectId, type, date, shiftNo } = {}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOil?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
 
     // 费用
     static QueryOverviewCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOverviewCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)// 综合能耗
@@ -242,6 +242,16 @@ export class EnergyOverView {
     static QueryOilCost = ({projectId, type, date, shiftNo}={}, params) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryOilCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}`, params)
    
   }
+ // 储能管理-- 能耗统计
+  export class ConsumeStatisticsRuntime {
+    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+  }
+
+// 储能管理--报表统计
+export class StorageReportRuntime {
+  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageReportRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
+  static QueryReports = (params={}, areaId) => server.post(`/Storage/StorageReportRuntime/QueryReports?areaId=${areaId}`, params);
+}
 
 //
 // zl api end
@@ -919,71 +929,71 @@ export const GetCamerasVideosByProjectId = (Id) =>
 export const leftControl = (params, url, ip, channel, user, pwd) =>
   server.post(
     "http://" +
-      url +
-      "/V1/Ptz/PtzLeft?ip=" +
-      ip +
-      "&channel=" +
-      channel +
-      "&user=" +
-      user +
-      "&pwd=" +
-      pwd,
+    url +
+    "/V1/Ptz/PtzLeft?ip=" +
+    ip +
+    "&channel=" +
+    channel +
+    "&user=" +
+    user +
+    "&pwd=" +
+    pwd,
     params
   );
 export const bottomControl = (params, url, ip, channel, user, pwd) =>
   server.post(
     "http://" +
-      url +
-      "/V1/Ptz/PtzDown?ip=" +
-      ip +
-      "&channel=" +
-      channel +
-      "&user=" +
-      user +
-      "&pwd=" +
-      pwd,
+    url +
+    "/V1/Ptz/PtzDown?ip=" +
+    ip +
+    "&channel=" +
+    channel +
+    "&user=" +
+    user +
+    "&pwd=" +
+    pwd,
     params
   );
 export const rightControl = (params, url, ip, channel, user, pwd) =>
   server.post(
     "http://" +
-      url +
-      "/V1/Ptz/PtzRight?ip=" +
-      ip +
-      "&channel=" +
-      channel +
-      "&user=" +
-      user +
-      "&pwd=" +
-      pwd,
+    url +
+    "/V1/Ptz/PtzRight?ip=" +
+    ip +
+    "&channel=" +
+    channel +
+    "&user=" +
+    user +
+    "&pwd=" +
+    pwd,
     params
   );
 export const topControl = (params, url, ip, channel, user, pwd) =>
   server.post(
     "http://" +
-      url +
-      "/V1/Ptz/PtzUp?ip=" +
-      ip +
-      "&channel=" +
-      channel +
-      "&user=" +
-      user +
-      "&pwd=" +
-      pwd,
+    url +
+    "/V1/Ptz/PtzUp?ip=" +
+    ip +
+    "&channel=" +
+    channel +
+    "&user=" +
+    user +
+    "&pwd=" +
+    pwd,
     params
   );
 export const stopControl = (params, url, ip, channel, user, pwd) =>
   server.post(
     "http://" +
-      url +
-      "/V1/Ptz/PtzStop?ip=" +
-      ip +
-      "&channel=" +
-      channel +
-      "&user=" +
-      user +
-      "&pwd=" +
-      pwd,
+    url +
+    "/V1/Ptz/PtzStop?ip=" +
+    ip +
+    "&channel=" +
+    channel +
+    "&user=" +
+    user +
+    "&pwd=" +
+    pwd,
     params
   );
 
@@ -995,157 +1005,165 @@ export class UISummary {
     server.get(`UISummary/UISummary/Query?projectId=${projectId}`); // 查询UI
 }
 //运行监控
-export const Monitoring =  {
-    //设备类型管理
-    DeviceTypeManager:{
-        GatewayCategory:(data)=>server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
-        AllDeviceStyle:()=>server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
-        AddCategory:(data)=>server.post('/Monitor/GatewayCategory/AddCategory',data),//新增网管类型
-        QueryNotUsed:(id)=>server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId='+id),//查询未使用的网关类型
-        UpdateCategory:(data)=>server.post('/Monitor/GatewayCategory/UpdateCategory',data),//更新网关设备类型
-        DeleteCategory:(data)=>server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除网关设备
-        DeviceQueryNotUsed:(data)=>server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用设备类型
-        DeviceQueryCategoryFull:(data)=>server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`), //获取对应设备类型的详细信息
-        AddDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/AddCategory`,data),//新增设备类型
-        DeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryByPageFull?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
-        UpdateDeviceCategory:(data)=>server.post(`/Monitor/DeviceCategory/UpdateCategory`,data),//更新设备
-        DeleteDeviceCategory:(data)=>server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除设备
-    },
-    //设备管理
-    DeviceManager:{
-        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域
-        OneLevel:(projectId)=>server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`),//获取1级区域名
-        QueryByPageElectric:(data)=>server.post(`/Monitor/Device/QueryByPageElectric`,data),//获取电表
-        QueryByPageGateWay:(data)=>server.post(`/Monitor/Gateway/QueryByPage`,data),//获取网关
-        QueryListGateWay:(projectId)=>server.get(`/Monitor/Gateway/QueryList?projectId=${projectId}`),//网关列表
-        QueryUsedGateway:(projectId)=>server.get(`/Monitor/GatewayCategory/QueryUsed?projectId=${projectId}`),//获取使用的网关
-        QueryUsedDeviceCategory:(data)=>server.get(`/Monitor/DeviceCategory/QueryUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取设备类型
-        GatewayAdd:(data)=>server.post(`/Monitor/Gateway/Add`,data),//新增网关
-        GatewayUpdate:(data)=>server.post(`/Monitor/Gateway/Update`,data),//更新网关
-        GatewayDelete:(data)=>server.delete(`/Monitor/Gateway/Delete?projectId=${data.projectId}&id=${data.id}`),//删除网关
-        QueryPlanList:(projectId)=>server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`),//告警计划
-        AddElectric:(data)=>server.post(`/Monitor/Device/AddElectric`,data),//新增电表
-        UpdateElectric:(data)=>server.post(`/Monitor/Device/UpdateElectric`,data),//更新电表
-        UpdateFactor:(data)=>server.get(`/Monitor/Device/UpdateFactor?projectId=${data.projectId}&id=${data.id}&factor=${data.factor}`),//更新倍率
-        DeleteElectric:(data)=>server.delete(`/Monitor/Device/DeleteElectric?projectId=${data.projectId}&id=${data.id}`),//删除电表
-        QueryByPageWater:(data)=>server.post(`/Monitor/Device/QueryByPageWater`,data),//查询水表
-        AddWater:(data)=>server.post(`/Monitor/Device/AddWater`,data),//新增水表
-        UpdateWater:(data)=>server.post(`/Monitor/Device/UpdateWater`,data),//更新水表
-        DeleteWater:(data)=>server.delete(`/Monitor/Device/DeleteWater?projectId=${data.projectId}&id=${data.id}`),//删除水表
-        QueryByPageGas:(data)=>server.post(`/Monitor/Device/QueryByPageGas`,data),//查询燃气表
-        AddGas:(data)=>server.post(`/Monitor/Device/AddGas`,data),//新增燃气表
-        UpdateGas:(data)=>server.post(`/Monitor/Device/UpdateGas`,data),//更新燃气表
-        DeleteGas:(data)=>server.delete(`/Monitor/Device/DeleteGas?projectId=${data.projectId}&id=${data.id}`),//删除燃气表
-        QueryByPageSensor:(data)=>server.post(`/Monitor/Device/QueryByPageSensor`,data),//查询传感器
-        AddSensor:(data)=>server.post(`/Monitor/Device/AddSensor`,data),//新增传感器
-        UpdateSensor:(data)=>server.post(`/Monitor/Device/UpdateSensor`,data),//更新传感器
-        DeleteSensor:(data)=>server.delete(`/Monitor/Device/DeleteSensor?projectId=${data.projectId}&id=${data.id}`),//删除传感器
-        QueryByPageTransformer:(data)=>server.post(`/Monitor/Device/QueryByPageTransformer`,data),//查询变压器
-        AddTransformer:(data)=>server.post(`/Monitor/Device/AddTransformer`,data),//新增变压器
-        UpdateTransformer:(data)=>server.post(`/Monitor/Device/UpdateTransformer`,data),//更新变压器
-        DeleteTransformer:(data)=>server.delete(`/Monitor/Device/DeleteTransformer?projectId=${data.projectId}&id=${data.id}`),//删除变压器
-        QueryByPageCamera:(data)=>server.post(`/Monitor/Device/QueryByPageCamera`,data),//查询视频监控
-        AddCamera:(data)=>server.post(`/Monitor/Device/AddCamera`,data),//新增视频监控
-        UpdateCamera:(data)=>server.post(`/Monitor/Device/UpdateCamera`,data),//更新视频监控
-        DeleteCamera:(data)=>server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
-        StartReboot:(sn)=>server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
-        GatewayImport:(data)=>server.post(`/Monitor/Gateway/Import`,data),//导入网关
-        ImportElectric:(data)=>server.post(`/Monitor/Device/ImportElectric`,data),//导入电表
-        ImportWater:(data)=>server.post(`/Monitor/Device/ImportWater`,data),//导入水表
-        ImportGas:(data)=>server.post(`/Monitor/Device/ImportGas`,data),//导入燃气表
-        ImportSensor:(data)=>server.post(`/Monitor/Device/ImportSensor`,data),//导入传感器
-        ImportTransformer:(data)=>server.post(`/Monitor/Device/ImportTransformer`,data),//导入变压器
-        ImportCamera:(data)=>server.post(`/Monitor/Device/ImportCamera`,data),//导入视频监控
-    },
-    //公共照明管理
-    PubliclightManager:{
-        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
-        PublicLightAdd:(data)=>server.post(`/Monitor/PublicLight/Add`,data),//新增公共照明
-        PublicLightQueryByPage:(data)=>server.post(`/Monitor/PublicLight/QueryByPage`,data),//公共照明
-        PublicLightUpdate:(data)=>server.post(`/Monitor/PublicLight/Update`,data),//更新公共照明
-        PublicLightDelete:(data)=>server.delete(`/Monitor/PublicLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除公共照明
-        PublicLightImport:(data)=>server.post(`/Monitor/PublicLight/Import`,data),//批量导入
-        StreetLightAdd:(data)=>server.post(`/Monitor/StreetLight/Add`,data),//新增园区照明
-        StreetLightQueryByPage:(data)=>server.post(`/Monitor/StreetLight/QueryByPage`,data),//园区照明
-        StreetLightUpdate:(data)=>server.post(`/Monitor/StreetLight/Update`,data),//更新园区照明
-        StreetLightDelete:(data)=>server.delete(`/Monitor/StreetLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除园区照明
-        StreetLightImport:(data)=>server.post(`/Monitor/StreetLight/Import`,data),//批量导入
-    },
-    //线路管理
-    LineManager:{
-        AeraQueryAll:(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
-        LineManagerQuery:(data)=>server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
-        LineManagerAdd:(data)=>server.post(`/Monitor/LineManager/Add`,data),//新增线路       
-        LineManagerUpdate:(data)=>server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
-        LineManagerDelete:(data)=>server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
-        QueryUnusedMeter:(data)=>server.get(`/Monitor/LineManager/QueryUnusedMeter?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}&alike=${data.alike}`),//未使用线路
-        ConfigureMeter:(data)=>server.post(`/Monitor/LineManager/ConfigureMeter`,data)//线路管理
-    },
-    //运行监控
-    Runtime:{
-        RuntimeStatistics:(data)=>server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
-        RuntimeStatus:(data)=>server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
-        RuntimeQueryMonthUsage:(data)=>server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
-    },
-    //网关检测
-    RuntimeGateway:{
-        RuntimeGatewayStatistics:(data)=>server.get(`/Monitor/RuntimeGateway/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//
-        Overview:(data)=>server.post(`/Monitor/RuntimeGateway/Overview`,data),//
-        CategoryImages:(data)=>server.post(`/Monitor/RuntimeGateway/CategoryImages`,data),//
-    }
+export const Monitoring = {
+  //设备类型管理
+  DeviceTypeManager: {
+    GatewayCategory: (data) => server.get(`/Monitor/GatewayCategory/QueryByPage?projectId=${data.projectId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`), //获取网关列表
+    AllDeviceStyle: () => server.get('/Monitor/DeviceCategory/AllDeviceStyle'),//获取设备类型
+    AddCategory: (data) => server.post('/Monitor/GatewayCategory/AddCategory', data),//新增网管类型
+    QueryNotUsed: (id) => server.get('/Monitor/GatewayCategory/QueryNotUsed?projectId=' + id),//查询未使用的网关类型
+    UpdateCategory: (data) => server.post('/Monitor/GatewayCategory/UpdateCategory', data),//更新网关设备类型
+    DeleteCategory: (data) => server.delete(`/Monitor/GatewayCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除网关设备
+    DeviceQueryNotUsed: (data) => server.get(`/Monitor/DeviceCategory/QueryNotUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取未使用设备类型
+    DeviceQueryCategoryFull: (data) => server.get(`/Monitor/DeviceCategory/QueryCategoryFull?projectId=${data.projectId}&category=${data.category}`), //获取对应设备类型的详细信息
+    AddDeviceCategory: (data) => server.post(`/Monitor/DeviceCategory/AddCategory`, data),//新增设备类型
+    DeviceCategory: (data) => server.get(`/Monitor/DeviceCategory/QueryByPageFull?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`),//获取设备列表
+    UpdateDeviceCategory: (data) => server.post(`/Monitor/DeviceCategory/UpdateCategory`, data),//更新设备
+    DeleteDeviceCategory: (data) => server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除设备
+  },
+  //设备管理
+  DeviceManager: {
+    AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域
+    OneLevel: (projectId) => server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`),//获取1级区域名
+    QueryByPageElectric: (data) => server.post(`/Monitor/Device/QueryByPageElectric`, data),//获取电表
+    QueryByPageGateWay: (data) => server.post(`/Monitor/Gateway/QueryByPage`, data),//获取网关
+    QueryListGateWay: (projectId) => server.get(`/Monitor/Gateway/QueryList?projectId=${projectId}`),//网关列表
+    QueryUsedGateway: (projectId) => server.get(`/Monitor/GatewayCategory/QueryUsed?projectId=${projectId}`),//获取使用的网关
+    QueryUsedDeviceCategory: (data) => server.get(`/Monitor/DeviceCategory/QueryUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取设备类型
+    GatewayAdd: (data) => server.post(`/Monitor/Gateway/Add`, data),//新增网关
+    GatewayUpdate: (data) => server.post(`/Monitor/Gateway/Update`, data),//更新网关
+    GatewayDelete: (data) => server.delete(`/Monitor/Gateway/Delete?projectId=${data.projectId}&id=${data.id}`),//删除网关
+    QueryPlanList: (projectId) => server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`),//告警计划
+    AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data),//新增电表
+    UpdateElectric: (data) => server.post(`/Monitor/Device/UpdateElectric`, data),//更新电表
+    UpdateFactor: (data) => server.get(`/Monitor/Device/UpdateFactor?projectId=${data.projectId}&id=${data.id}&factor=${data.factor}`),//更新倍率
+    DeleteElectric: (data) => server.delete(`/Monitor/Device/DeleteElectric?projectId=${data.projectId}&id=${data.id}`),//删除电表
+    QueryByPageWater: (data) => server.post(`/Monitor/Device/QueryByPageWater`, data),//查询水表
+    AddWater: (data) => server.post(`/Monitor/Device/AddWater`, data),//新增水表
+    UpdateWater: (data) => server.post(`/Monitor/Device/UpdateWater`, data),//更新水表
+    DeleteWater: (data) => server.delete(`/Monitor/Device/DeleteWater?projectId=${data.projectId}&id=${data.id}`),//删除水表
+    QueryByPageGas: (data) => server.post(`/Monitor/Device/QueryByPageGas`, data),//查询燃气表
+    AddGas: (data) => server.post(`/Monitor/Device/AddGas`, data),//新增燃气表
+    UpdateGas: (data) => server.post(`/Monitor/Device/UpdateGas`, data),//更新燃气表
+    DeleteGas: (data) => server.delete(`/Monitor/Device/DeleteGas?projectId=${data.projectId}&id=${data.id}`),//删除燃气表
+    QueryByPageSensor: (data) => server.post(`/Monitor/Device/QueryByPageSensor`, data),//查询传感器
+    AddSensor: (data) => server.post(`/Monitor/Device/AddSensor`, data),//新增传感器
+    UpdateSensor: (data) => server.post(`/Monitor/Device/UpdateSensor`, data),//更新传感器
+    DeleteSensor: (data) => server.delete(`/Monitor/Device/DeleteSensor?projectId=${data.projectId}&id=${data.id}`),//删除传感器
+    QueryByPageTransformer: (data) => server.post(`/Monitor/Device/QueryByPageTransformer`, data),//查询变压器
+    AddTransformer: (data) => server.post(`/Monitor/Device/AddTransformer`, data),//新增变压器
+    UpdateTransformer: (data) => server.post(`/Monitor/Device/UpdateTransformer`, data),//更新变压器
+    DeleteTransformer: (data) => server.delete(`/Monitor/Device/DeleteTransformer?projectId=${data.projectId}&id=${data.id}`),//删除变压器
+    QueryByPageCamera: (data) => server.post(`/Monitor/Device/QueryByPageCamera`, data),//查询视频监控
+    AddCamera: (data) => server.post(`/Monitor/Device/AddCamera`, data),//新增视频监控
+    UpdateCamera: (data) => server.post(`/Monitor/Device/UpdateCamera`, data),//更新视频监控
+    DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
+    StartReboot: (sn) => server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
+    GatewayImport: (data) => server.post(`/Monitor/Gateway/Import`, data),//导入网关
+    ImportElectric: (data) => server.post(`/Monitor/Device/ImportElectric`, data),//导入电表
+    ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data),//导入水表
+    ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data),//导入燃气表
+    ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data),//导入传感器
+    ImportTransformer: (data) => server.post(`/Monitor/Device/ImportTransformer`, data),//导入变压器
+    ImportCamera: (data) => server.post(`/Monitor/Device/ImportCamera`, data),//导入视频监控
+  },
+  //公共照明管理
+  PubliclightManager: {
+    AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
+    PublicLightAdd: (data) => server.post(`/Monitor/PublicLight/Add`, data),//新增公共照明
+    PublicLightQueryByPage: (data) => server.post(`/Monitor/PublicLight/QueryByPage`, data),//公共照明
+    PublicLightUpdate: (data) => server.post(`/Monitor/PublicLight/Update`, data),//更新公共照明
+    PublicLightDelete: (data) => server.delete(`/Monitor/PublicLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除公共照明
+    PublicLightImport: (data) => server.post(`/Monitor/PublicLight/Import`, data),//批量导入
+    StreetLightAdd: (data) => server.post(`/Monitor/StreetLight/Add`, data),//新增园区照明
+    StreetLightQueryByPage: (data) => server.post(`/Monitor/StreetLight/QueryByPage`, data),//园区照明
+    StreetLightUpdate: (data) => server.post(`/Monitor/StreetLight/Update`, data),//更新园区照明
+    StreetLightDelete: (data) => server.delete(`/Monitor/StreetLight/Delete?projectId=${data.projectId}&id=${data.id}`),//删除园区照明
+    StreetLightImport: (data) => server.post(`/Monitor/StreetLight/Import`, data),//批量导入
+  },
+  //线路管理
+  LineManager: {
+    AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
+    LineManagerQuery: (data) => server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
+    LineManagerAdd: (data) => server.post(`/Monitor/LineManager/Add`, data),//新增线路       
+    LineManagerUpdate: (data) => server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
+    LineManagerDelete: (data) => server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
+    QueryUnusedMeter: (data) => server.get(`/Monitor/LineManager/QueryUnusedMeter?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}&alike=${data.alike}`),//未使用线路
+    ConfigureMeter: (data) => server.post(`/Monitor/LineManager/ConfigureMeter`, data)//线路管理
+  },
+  //运行监控
+  Runtime: {
+    RuntimeStatistics: (data) => server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
+    RuntimeStatus: (data) => server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
+    RuntimeQueryMonthUsage: (data) => server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
+  },
+  //网关检测
+  RuntimeGateway: {
+    RuntimeGatewayStatistics: (data) => server.get(`/Monitor/RuntimeGateway/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//
+    Overview: (data) => server.post(`/Monitor/RuntimeGateway/Overview`, data),//
+    CategoryImages: ({ projectId, group }) => server.post(`/Monitor/RuntimeGateway/CategoryImages`, { projectId, group }),//网关图片
+    RuntimeGatewayDetail: (projectId, sn) => server.get(`/Monitor/RuntimeGateway/Detail?projectId=${projectId}&sn=${sn}`),//网关详情
+    Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data),//网关子设备
+    Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data),//日志
+  }
 }
 //电气安全
 export class safeElectric {
-  static TodayWarningStatistics=(data)=>server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`,{params:data})//查询今日告警
-  static QueryTodayWarningDetails=(data)=>server.get(`/Safe/SafeRuntime/QueryTodayWarningDetails`,{params:data})//查询最新告警
-  static QueryWarningDistributed=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningDistributed`,{params:data})//查询告警分布
-  static QueryWarningTypeRanking=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningTypeRanking`,{params:data})//查询告警类型排名
-  static QueryMonthWarningTrends=(data)=>server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`,{params:data})//查询告警趋势
+  static TodayWarningStatistics = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`, { params: data })//查询今日告警
+  static QueryTodayWarningDetails = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningDetails`, { params: data })//查询最新告警
+  static QueryWarningDistributed = (data) => server.get(`/Safe/SafeRuntime/QueryWarningDistributed`, { params: data })//查询告警分布
+  static QueryWarningTypeRanking = (data) => server.get(`/Safe/SafeRuntime/QueryWarningTypeRanking`, { params: data })//查询告警类型排名
+  static QueryMonthWarningTrends = (data) => server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`, { params: data })//查询告警趋势
+}
+//告警详情
+export class warnDetail {
+  static QueryWarningStatistics=(data)=>server.get(`/Safe/SafeRuntime/QueryWarningStatistics`,{params:data})//查询告警数
+  static QueryWarningDetails=(data)=>server.post(`/Safe/SafeRuntime/QueryWarningDetails`,data)//获取最新告警
 }
 //分类能耗
-export class energyClassified{
-   static QueryEnergy=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`,areaId,{params:data})
-   static QueryEnergyCost=(data,areaId)=>server.post(`/Energy/EnergyClassifyRuntime/QueryEnergyCost`,areaId,{params:data})
+export class energyClassified {
+  static QueryEnergy = (data, areaId) => server.post(`/Energy/EnergyClassifyRuntime/QueryEnergy`, areaId, { params: data })
+  static QueryEnergyCost = (data, areaId) => server.post(`/Energy/EnergyClassifyRuntime/QueryEnergyCost`, areaId, { params: data })
 }
 //能耗排名
-export class energyRanking{
-    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
-    static Query=(data)=>server.post(`/Energy/EnergyRankingRuntime/Query`,data)//能耗排名
+export class energyRanking {
+  static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+  static QueryShifts = (projectId) => server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+  static Query = (data) => server.post(`/Energy/EnergyRankingRuntime/Query`, data)//能耗排名
 }
 //分时能耗
-export class energyShare{
-    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-    static QueryShifts=(projectId)=>server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
-    static QuerySpaceTrees=(data)=>server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`,{params:data})//查询树
-    static QueryElectric=(data)=>server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`,data)//分时能耗
+export class energyShare {
+  static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+  static QueryShifts = (projectId) => server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
+  static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
+  static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
 }
 //数据报表
-export class energyReport{
-    static AeraQueryAll=(projectId)=>server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-    static QueryReading=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryReading`,areaId,{params:data})//能耗抄表
-    static QueryConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryConsume`,areaId,{params:data})//能耗用量
-    static QueryTimeConsume=(data,areaId)=>server.post(`/Energy/DataReportRuntime/QueryTimeConsume`,areaId,{params:data})//分时能耗
+export class energyReport {
+  static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
+  static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
+  static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
+  static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
-    static queryElectricClassifys = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?projectId=${projectId}&type=${type}`)
-    //单个插入
-    static insertEnergyClassify = (projectId, parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?projectId=${projectId}&parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
-    static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`,data)
-    static updateEnergyClassify = (projectId, type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?projectId=${projectId}&type=${type}&classifyId=${classifyId}&name=${name}`)
-    static deleteEnergyClassify =  (projectId, classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?projectId=${projectId}&classifyId=${classifyId}`)
-    static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
-    static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
-    static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,data)
-    static querOverview = (projectId, type, areaId, date) => server.post(`Energy/EnergyStreetLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询路灯能耗概览
-    static queryStreetLights = (projectId, content, areaId) => server.post(`Energy/EnergyStreetLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询路灯列表
-    static lineOn = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯
-    static lineOff = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯
-    static querOverviewLight = (projectId, type, areaId, date) => server.post(`Energy/EnergyPublicLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询照明能耗概览
-    static queryPublicLights = (projectId, content, areaId) => server.post(`Energy/EnergyPublicLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询照明灯列表
-    static lineOnLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯（照明
-    static lineOffLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯（照明
+  static queryElectricClassifys = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryElectricClassifys?projectId=${projectId}&type=${type}`)
+  //单个插入
+  static insertEnergyClassify = (projectId, parentClassifyId, type, name) => server.get(`Energy/EnergyClassifyDesigner/InsertEnergyClassify?projectId=${projectId}&parentClassifyId=${parentClassifyId}&type=${type}&name=${name}`)
+  static insertEnergyClassifys = (data) => server.post(`Energy/EnergyClassifyDesigner/InsertEnergyClassifys`, data)
+  static updateEnergyClassify = (projectId, type, classifyId, name) => server.get(`Energy/EnergyClassifyDesigner/UpdateEnergyClassify?projectId=${projectId}&type=${type}&classifyId=${classifyId}&name=${name}`)
+  static deleteEnergyClassify = (projectId, classifyId) => server.delete(`Energy/EnergyClassifyDesigner/DeleteEnergyClassify?projectId=${projectId}&classifyId=${classifyId}`)
+  static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`)
+  static queryEnergyNoConfigedDevices = (projectId, type) => server.get(`Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`)
+  static saveEnergyDevices = (projectId, type, classifyId, data) => server.post(`Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`, data)
+  static querOverview = (projectId, type, areaId, date) => server.post(`Energy/EnergyStreetLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询路灯能耗概览
+  static queryStreetLights = (projectId, content, areaId) => server.post(`Energy/EnergyStreetLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询路灯列表
+  static lineOn = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯
+  static lineOff = (projectId, sn, lineNo) => server.post(`Energy/EnergyStreetLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯
+  static querOverviewLight = (projectId, type, areaId, date) => server.post(`Energy/EnergyPublicLightRuntime/QuerOverview?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`)//查询照明能耗概览
+  static queryPublicLights = (projectId, content, areaId) => server.post(`Energy/EnergyPublicLightRuntime/QueryStreetLights?projectId=${projectId}&content=${content}&areaId=${areaId}`)//查询照明灯列表
+  static lineOnLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOn?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动开灯（照明
+  static lineOffLight = (projectId, sn, lineNo) => server.post(`Energy/EnergyPublicLightRuntime/LineOff?projectId=${projectId}&sn=${sn}&lineNo=${lineNo}`)//手动关灯（照明
 }
 //能源定价
 export class energyPrice {
@@ -1359,7 +1377,7 @@ export class EnergyQuotaRuntime {
     server.post(
       `Energy/EnergyQuotaRuntime/QueryRoomQuota?projectId=${projectId}&areaId=${areaId}&roomName=${roomName}`
     );
-  static queryQueryRoomDetail= (projectId, roomId, type) => server.post( `Energy/EnergyQuotaRuntime/QueryRoomDetail?projectId=${projectId}&roomId=${roomId}&type=${type}`);
+  static queryQueryRoomDetail = (projectId, roomId, type) => server.post(`Energy/EnergyQuotaRuntime/QueryRoomDetail?projectId=${projectId}&roomId=${roomId}&type=${type}`);
 }
 //公共能耗
 export class EnergyPublicRuntime {

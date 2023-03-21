@@ -16,19 +16,20 @@ export default function Index() {
     { key: '1', label: '能耗用量' },
     { key: '2', label: '分时能耗' },
   ])
-  const [areas,setAreas] = useState([])
-  const  arealistRef = useRef()
-  arealistRef.current=areas
+  // const [areas,setAreas] = useState([])
+  // const  arealistRef = useRef()
+  // arealistRef.current=areas
   const [areavalue,setAreavalue]=useState(0)
 
   const [form]=Form.useForm()
   const projectId = useSelector(state=>state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
   const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+  console.log(areaOptions)
   let Coms = [
-    <Energymeter areavalue={areavalue} arealistRef={arealistRef}/>,
-    <Energyconsum areavalue={areavalue} arealistRef={arealistRef}/>,
-    <Energytimeshare areavalue={areavalue} arealistRef={arealistRef}/>
+    <Energymeter areavalue={areavalue} arealistRef={areaOptions}/>,
+    <Energyconsum areavalue={areavalue} arealistRef={areaOptions}/>,
+    <Energytimeshare areavalue={areavalue} arealistRef={areaOptions}/>
   ]
 
   //改变区域
@@ -40,7 +41,8 @@ export default function Index() {
     value,
     setvalue,
     tabs,
-    form
+    form,
+    areavalue
   }
   useEffect(()=>{
  

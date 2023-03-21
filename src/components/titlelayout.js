@@ -2,7 +2,7 @@ import React from 'react'
 import {Card, Space} from 'antd'
 import styled from 'styled-components'
 const Boxdiv = styled(Card)`
-  padding: 16px;
+  padding: ${props => props.pv};
   border-radius: 4px;
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
@@ -34,10 +34,12 @@ const Boxdiv = styled(Card)`
   }
  .ant-card-body {
   padding: 0;
+  display: ${props => props.layout || 'block'}
  }
 `
 Boxdiv.defaultProps = {
-  bordered: 'y'
+  bordered: 'y',
+  pv: '16px'
 }
 export default function Titlelayout({title='', children, ...other}) {
   return (
