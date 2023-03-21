@@ -71,12 +71,12 @@ export default function Energytimeshare({ areavalue, arealistRef }) {
       }
       let arrs = []
       if (areaId === 0) {
-        arealistRef.current.shift()
-        arrs = arealistRef.current.map(it => it.id)
+        arealistRef.shift()
+        arrs = arealistRef.map(it => it.id)
       } else {
         arrs = [areaId]
       }
-      const res = await energyReport.QueryConsume(parmas, arrs)
+      const res = await energyReport.QueryTimeConsume(parmas, arrs)
       contentRef.current.setLoading(false)
       if (res.success) {
         if(Array.isArray(res.data)){
@@ -93,7 +93,7 @@ export default function Energytimeshare({ areavalue, arealistRef }) {
   }
   useEffect(() => {
     getTableData(areavalue)
-  }, [areavalue])
+  }, [])
   const compProps = {
     columns,
     ref: contentRef,

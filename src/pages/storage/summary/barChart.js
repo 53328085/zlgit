@@ -2,7 +2,6 @@ import React, {useState, useEffect, Fragment} from 'react'
 import * as echarts from "echarts";
 
 export default function Index(props){
-  console.log(props)
   useEffect(()=>{
     let barChart = echarts.init(document.getElementById('barChart'));
     barChart.setOption({
@@ -22,8 +21,8 @@ export default function Index(props){
       grid: {
         top: '20px',
         left: '16px',
-        right: '0%',
-        bottom: '32px',
+        right: '6px',
+        bottom: '16px',
         containLabel: true
       },
       xAxis: {

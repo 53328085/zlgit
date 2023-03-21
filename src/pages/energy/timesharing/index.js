@@ -119,6 +119,8 @@ export default function Index() {
   }
   //园区改变
   const changeArea=(v,option)=>{
+    setSelectkeys([])
+    selectRef.current=[]
     getQuerySpaceTrees(v,option.name)
     getQueryElectric()
   }

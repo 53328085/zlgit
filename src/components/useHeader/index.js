@@ -104,6 +104,7 @@ export default function Index(props) {
       return;
     } else {
       let params = {
+        projectId,
         areaId,
         shift,
         energyType,

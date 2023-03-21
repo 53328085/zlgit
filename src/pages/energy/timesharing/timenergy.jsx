@@ -33,19 +33,19 @@ export default forwardRef(function Timenergy({},ref) {
     for(let i=0;i<list.x.length;i++){
       data.push({
         xvalue:list.x[i],
-        yvalue:list.y[i],
+        yvalue:Number(list.y[i]),
         type: "尖电量"
       },{
         xvalue:list.x[i],
-        yvalue:list.y1[i],
+        yvalue:Number(list.y1[i]),
         type: "峰电量"
       },{
         xvalue:list.x[i],
-        yvalue:list.y2[i],
+        yvalue:Number(list.y2[i]),
         type: "平电量"
       },{
         xvalue:list.x[i],
-        yvalue:list.y3[i],  
+        yvalue:Number(list.y3[i]),  
         type: "谷电量"
       })
     }

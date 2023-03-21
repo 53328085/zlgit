@@ -2,33 +2,39 @@ import {Space} from 'antd'
 export const  columns = [
     {
         title: '最新告警时间',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'warningTime',
+        key: 'warningTime',
+        align:'center',
       },
       {
         title: '最新告警事件',
-        dataIndex: 'alarmTime',
-        key: 'alarmTime',
+        dataIndex: 'alarmEvent',
+        key: 'alarmEvent',
+        align:'center',
       },
       {
         title: '告警等级',
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'level',
+        key: 'level',
+        align:'center',
       },
       {
         title: '设备编号',
-        dataIndex: 'place',
-        key: 'place',
+        dataIndex: 'sn',
+        key: 'sn',
+        align:'center',
       },
       {
         title: '设备类型',
-        dataIndex: 'address',
-        key: 'address',
+        dataIndex: 'meterType',
+        key: 'meterType',
+        align:'center',
       },
       {
         title: '安装地址',
-        dataIndex: 'category',
-        key: 'category',
+        dataIndex: 'address',
+        key: 'address',
+        align:'center',
       },
  
       {
@@ -36,15 +42,15 @@ export const  columns = [
         key: 'option',
         align:'center',
         render:(_,val)=>(
-            <a style={{color:'red',textDecoration:'underline'}}>设备信息</a>
+            <a style={{textDecoration:'underline'}} href="/devicedetail" target="blank">设备信息</a>
         ),
       },
-      {
-        title: '设备详情',
-        key: 'deteail',
-        align:'center',
-        render: (_, record) => (
-            <a  style={{textDecoration:'underline'}}>详情</a>
-        ),
-      },
+      // {
+      //   title: '设备详情',
+      //   key: 'deteail',
+      //   align:'center',
+      //   render: (_, record) => (
+      //       <a  style={{textDecoration:'underline'}}>详情</a>
+      //   ),
+      // },
 ]
