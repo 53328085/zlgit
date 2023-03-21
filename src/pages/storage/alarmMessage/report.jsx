@@ -6,48 +6,74 @@ import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {StorageReportRuntime} from '@api/api'
-
+import {StorageAlarmruntime} from '@api/api'
+import imgurl from './icon'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
     && {
-       display: grid;
-       grid-template-rows: 32px 4px 1fr;
-       row-gap: 16px; 
-       flex: 1;
-       color:#515151;
-       padding-top: 16px;
+      display: grid;
+      grid-template-rows: 96px 688px;
+      row-gap: 16px;
+      .items {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+        .item {
+          width: 200px;
+          height: 96px;
+          background-color: rgba(255, 255, 255, 1); 
+          border: 1px solid rgba(215, 215, 215, 1); 
+          border-radius: 4px; 
+          box-shadow: none;
+          padding: 16px 8px;
+          display: grid;
+          grid-template-columns: 48px 1fr;
+          align-items: center;
+          justify-items: center;
+          .info {
+            width: 114px;
+            height: 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+          } 
+        }
+        .item.small {
+          width: 138px;
+          .info {
+            width: 58px;
+          }
+         
+        }
+      }
+      .content {
+        display: grid;
+        grid-template-rows: 32px 4px 1fr;
+        row-gap: 16px; 
+        flex: 1;
+        color:#515151;
+        padding-top: 16px;
         .top {
             display: flex;
             justify-content: space-between;
             align-items: center;
 
         }
-        .ant-table-thead {
-            tr:first-of-type th {
-              background-color: #f0f9ff;
-            }
-            tr:last-of-type {
-              th:nth-of-type(4n+1) {
-                background-color: #f99;
-              }
-              th:nth-of-type(4n+2) {
-                background-color: #fc3;
-              }
-              th:nth-of-type(4n+3) {
-                background-color: #9f9
-              }
-              th:nth-of-type(4n+4) {
-                background-color: #3cf;
-              }
-            }
-        }
+      }
+       
        }
 
 `
+const P = styled(Paragraph)`
+&& {
+  margin-bottom: 0px;
+  line-height: 1;
+}
  
+`
 const columns = [
     {
         title: '日期',
@@ -180,9 +206,9 @@ const columns = [
 
     }
    ]
- 
+const titles = ['告警总数', '今日新增告警', '一级告警', '二级告警', '三级告警', 'PCS告警', 'BMS告警', '消防告警', '环境告警']
  function Main({projectId, areaId }) {
-   const [price ,setPrice] = useState({})
+   const [statistics ,setStatistics] = useState([])
    const [tableData, setTableData] = useState([])
    const startime = '2023-03-03'
    const endtime = '2023-03-23'
@@ -192,11 +218,13 @@ const columns = [
     pageSize: 15,
     total: 0
   })
-  const getPrice = async() => {
+  const getData = async() => {
     try {
-        let {success, data} = await StorageReportRuntime.QueryPrice(projectId, areaId)
-        success && setPrice({...price, ...data})
-        !success && setPrice({})
+        let {success, data} = await StorageAlarmruntime.AlarmStatistics(projectId, areaId)
+        console.log(Object.keys(data))
+        console.log(Object.values(data))
+        success && setStatistics([...Object.values(data)])
+        !success && setStatistics([])
     } catch (error) {
         console.log(error)
     }
@@ -223,7 +251,7 @@ const columns = [
         if (end instanceof moment) {
             params.end = end.format('YYYY-MM-DD')
         }
-        let {success, data, total} = await StorageReportRuntime.QueryReports(params, areaId)
+        let {success, data, total} = await StorageAlarmruntime.QueryStorageAlarmByPage(params, areaId)
         if (success && Array.isArray(data) && data.length >0) {
            
            setTableData([...data])   
@@ -254,30 +282,37 @@ const columns = [
     QueryReports()
   }, [])
   useEffect(() => {
-    getPrice()
+    getData()
     QueryReports()
   }, [areaId])
  
   return (
-    <Titlelayout title="报表统计" layout="flex" >
     <Mainbox>
+      <div className='items'>
+           {
+            statistics.map((s, index) => {
+              console.log(s)
+              return <div className={index > 4 ? 'item small' : 'item'}>
+              <Image src={imgurl.gas} preview={false} height={48} width={48}></Image>
+              <div className='info'>
+                 <P ellipsis={{tooltip: titles[index]}} style={{fontSize: '16px'}}>{titles[index]}</P>
+                 <P ellipsis={{tooltip: s}} strong style={{fontSize: '28px'}}>{s}</P>
+              </div>
+            </div>})
+           }
+      </div>
+    <Titlelayout title="最新告警" layout="flex" >
+    <div className='content'>
         <div className='top'>
           <Space size={16}><RangePicker value={dates} onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/><Button onClick={QueryReports}>查询</Button><Button onClick={rest}>重置</Button></Space>
-          <Tag style={{lineHeight: '32px'}}>
-            <Space>
-            <Text>分时电价（元/kwh）</Text>
-            <Text>尖电价： {price.item1}</Text>
-            <Text>峰电价： {price.item2}</Text>
-            <Text>平电价： {price.item3}</Text>
-            <Text>谷电价： {price.item4}</Text>
-            </Space>
-          </Tag>
+          
         </div>
          <Divider style={{margin: '0px'}}/>
         <Usetable columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} />
       
-    </Mainbox>
+    </div>
     </Titlelayout>
+    </Mainbox>
   )
 }
 export default function Index(props) {
