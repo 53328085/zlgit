@@ -12,7 +12,7 @@ export default forwardRef(
         const [form] = Form.useForm()
         const {areavalue} = useContext(CustContext)
         const tableRef = useRef()
-
+        const projectId = useSelector(state => state.system.menus.projectId)
         const btncss = {
             width: 96,
             height: 32
@@ -65,10 +65,42 @@ export default forwardRef(
         const disabledEndDate=(current)=>{
             return current && current < form.getFieldValue('starttime');
         }
-     
+        const getTableData = async (areaId = 0) => {
+            try {
+              const formvalues = form.getFieldValue()
+              const fomatstyle = pickertype === 1 ? 'YYYY-MM-DD' : pickertype === 2 ? 'YYYY-MM-01' : 'YYYY-01-01'
+              let parmas = {
+                projectId,
+                meterType: formvalues.energytype,
+                type: formvalues.time,
+                startDate: formvalues.starttime.format(fomatstyle),
+                endDate: formvalues.endtime.format(fomatstyle)
+              }
+              let arrs = []
+              if (areaId === 0) {
+                arealistRef.shift()
+                arrs = arealistRef.map(it => it.id)
+              } else {
+                arrs = [areaId]
+              }
+              const res = await energyReport.QueryReading(parmas, arrs)
+              console.log(62,contentRef)
+              contentRef.current.setLoading(false)
+              if (res.success) {
+                if(Array.isArray(res.data)){
+                  contentRef.current.setDataSource([...res.data])
+                }else{
+                  contentRef.current.setDataSource([])
+                } 
+              } else {
+                message.error(res.errMsg)
+              }
+            } catch (e) {
+              console.log(e)
+            }
+          }
         useEffect(() => {
-            // console.log(areavalue)
-            // getTableData(areavalue)
+          
         }, [areavalue])
         useImperativeHandle(ref, () => ({
             setDataSource,

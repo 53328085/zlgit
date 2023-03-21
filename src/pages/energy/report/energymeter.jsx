@@ -76,7 +76,10 @@ export default function Energymeter({ areavalue, arealistRef }) {
     }
   }
   useEffect(() => {
-    getTableData(areavalue)
+    if(contentRef.current){
+      getTableData(areavalue)
+    }
+    
   }, [])
   const compProps = {
     columns,

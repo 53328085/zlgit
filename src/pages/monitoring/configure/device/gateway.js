@@ -30,7 +30,7 @@ export default function gateway() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
-    pageSize: 2,
+    pageSize: 10,
     hideOnSinglePage: false
   })
   const pageRef = useRef(page)
