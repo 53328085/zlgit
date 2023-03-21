@@ -20,14 +20,19 @@ const Mainbox = styled.div`
        color:#515151;
        .left {
          padding: 32px;
-         grid-auto-rows: auto;
-         row-gap: 32px;
-         background: #fff;
-         display: grid;
+         display: flex;
+         flex-direction: column;
+         background: #fff; 
          .content {
           padding: 32px 0;
           display: grid;
-          row-grid: 32px;
+          row-gap: 32px;
+          .ant-radio-group.ant-radio-group-solid {
+            width: 100%;
+            .ant-radio-group.ant-radio-group-solid {
+              width: 50%;
+            }
+          }
          }
        }
        .ant-form-inline.ant-form-item {
@@ -54,21 +59,27 @@ const Mainbox = styled.div`
                     fieldNames={{label: 'name', value: 'id', options: 'options'}}
                     style={{width: '320px'}}
                     ></Select> 
+                     <Divider  style={{margin: '0px'}} />
                   </div>
+                 
           </Titlelayout> 
-           <Divider  style={{margin: '0px'}} />
-           <Titlelayout title='运行报告' bordered={'n'} style={{flex: 1}} > 
+          
+           <Titlelayout title='运行报告' bordered={'n'} style={{flex: 1}} pv="0px" > 
                  
             <div className="content">
-              <Radio.Group options={[{
+              <Radio.Group  options={[{
                 label: '月度报告',
                 value: 'month'
               }, {
                 label: '年度报告',
                 value: 'year'
-              }]} onChange={onChange} value={type} />
+              }]} onChange={onChange} value={type}
+              optionType="button"
+              buttonStyle="solid"
+               style={{width: '100%'}}
+              />
                   
-                  <Divider type="vertical" style={{  margin: '0px'}} />
+                  <Divider   style={{  margin: '0px'}} />
                   </div>
                 
                
