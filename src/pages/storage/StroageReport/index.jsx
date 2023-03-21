@@ -10,8 +10,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const {form} = Form.useForm
   return (
-    <CustContext.Provider>
-    <Pagecount showserach={true} value={{form}} bgcolor="transparent" pd="0px">   
+    <CustContext.Provider value={{}}>
+    <Pagecount showserach={true}  bgcolor="transparent" pd="0px">   
        <Report projectId={projectId} CModal={CModal} />
     </Pagecount>
     </CustContext.Provider>
