@@ -249,7 +249,7 @@ export class EnergyComprehensive {
 
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
   }
 
 // 储能管理--报表统计
