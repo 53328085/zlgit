@@ -1488,3 +1488,9 @@ export class BMSRuntime {
   static queryEnvironmentInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
   static queryBMSAlarms = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSAlarms?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
 }
+//告警管理
+export class AlarmManagement {
+  static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static QueryAddAlarm = (data) => server.get(`Safe/Alarm/QueryPlanPage?projectId`,data)
+  
+}
