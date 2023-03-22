@@ -193,6 +193,7 @@ export default function Index() {
       <Form
         className={style.mgbt0}
         form={form}
+        colon={false}
         initialValues={
           {
             energytype: 1,
@@ -203,10 +204,11 @@ export default function Index() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', background: '#fff' }}>
           <div style={{ display: 'flex', }}>
-            <Form.Item label="园区选择" name="area">
+            <Form.Item label={oneLevel[0].levelName} name="area">
               <Select
               defaultValue={0}
                 style={{ width: 200 }} 
+                
                 fieldNames={{
                   label: "name",
                   value: "id"

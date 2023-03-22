@@ -1,39 +1,34 @@
 import {Space} from 'antd'
 export const  columns = [
     {
-        title: '最新报告时间',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
         title: '最新告警时间',
-        dataIndex: 'alarmTime',
-        key: 'alarmTime',
+        dataIndex: 'time',
+        key: 'time',
       },
       {
-        title: '所属项目',
-        dataIndex: 'customer',
-        key: 'customer',
-      },
-      {
-        title: '所属区域/建筑/楼层',
-        dataIndex: 'place',
-        key: 'place',
-      },
-      {
-        title: '安装地址',
-        dataIndex: 'address',
-        key: 'address',
-      },
-      {
-        title: '设备类型',
-        dataIndex: 'category',
-        key: 'category',
+        title: '告警详情',
+        dataIndex: 'content',
+        key: 'content',
       },
       {
         title: '设备编号',
         dataIndex: 'sn',
         key: 'sn',
+      },
+      {
+        title: '设备型号',
+        dataIndex: 'category',
+        key: 'category',
+      },
+      {
+        title: '设备名称',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: '安装地址',
+        dataIndex: 'address',
+        key: 'address',
       },
       {
         title: '操作',

@@ -4,16 +4,35 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom"
 // const navigate = useNavigate()
 export const  columns = [
     {
-        title: '最新告警时间',
-        dataIndex: 'warningTime',
-        key: 'warningTime',
+        title: '告警时间',
+        dataIndex: 'alarmTime',
+        key: 'alarmTime',
         align:'center',
       },
       {
-        title: '最新告警事件',
+        title: '告警事件',
         dataIndex: 'alarmEvent',
         key: 'alarmEvent',
         align:'center',
+      },
+      {
+        title: '消警时间',
+        dataIndex: 'recoveryTime',
+        key: 'recoveryTime',
+        align:'center',
+      },
+      {
+        title: '消警事件',
+        dataIndex: 'recoveryEvent',
+        key: 'recoveryEvent',
+        align:'center',
+      },
+      {
+        title: '告警状态',
+        dataIndex: 'status',
+        key: 'status',
+        align:'center',
+        render:(text)=>(<span>{text===1?'告警':'消警'}</span>)
       },
       {
         title: '告警等级',
@@ -51,12 +70,5 @@ export const  columns = [
              >设备信息</a>
         ),
       },
-      // {
-      //   title: '设备详情',
-      //   key: 'deteail',
-      //   align:'center',
-      //   render: (_, record) => (
-      //       <a  style={{textDecoration:'underline'}}>详情</a>
-      //   ),
-      // },
+
 ]

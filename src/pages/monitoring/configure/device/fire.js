@@ -39,6 +39,7 @@ export default function gateway({ deviceStyle }) {
   pageRef.current = page
   const [dataSource, setDataSource] = useState([])
   const projectId = useSelector(state => state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
   const compRef = useRef()
   const modalFormRef = useRef()
   const modalImportRef = useRef()
@@ -62,7 +63,7 @@ export default function gateway({ deviceStyle }) {
   }
   const columns = [
     {
-      title: '园区名称',
+      title:  oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
       dataIndex: 'areaName'
     },
     {

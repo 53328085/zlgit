@@ -129,19 +129,32 @@ function Comp({ api,setColumns,cols, ...other }, ref) {
     label: '年',
     value: 3
   }]
-
+//计算天数
 const   enumerateDaysBetweenDates =(startDate, endDate)=> { // 假定你已经保证了startDate 小于endDate，且二者不相等
   let daysList = [];
   let SDate=moment(startDate);
   let EDate=moment(endDate);
   let xt;
-  daysList.push(SDate.format("MM-DD"));
+  daysList.push(SDate.format("YYYY-MM-DD"));
   while( SDate.add(1,"days").isBefore( EDate) ){  // 注意这里add方法处理后SDate对象已经改变。      
-      daysList.push( SDate.format("MM-DD") );
+      daysList.push( SDate.format("YYYY-MM-DD") );
   } 
-  daysList.push( EDate.format("MM-DD") );
+  console.log(EDate.format("YYYY-MM-DD"))
+  // daysList.push( EDate.format("YYYY-MM-DD") );
   return daysList;
-
+}
+//计算月份
+const enumeratemonthBetweenDates=(startDate, endDate)=>{
+  let daysList = [];
+  let SDate=moment(startDate);
+  let EDate=moment(endDate);
+  let xt;
+  daysList.push(SDate.format("YYYY-MM"));
+  while( SDate.add(1,"month").isBefore( EDate) ){  // 注意这里add方法处理后SDate对象已经改变。      
+      daysList.push( SDate.format("YYYY-MM") );
+  } 
+  // daysList.push( EDate.format("YYYY-MM") );
+  return daysList;
 }
   //日期类型改变
   const changeTime = (v) => {
@@ -215,19 +228,38 @@ const   enumerateDaysBetweenDates =(startDate, endDate)=> { // 假定你已经�
   }
   //查询
   const search = () => {
-   const dd= enumerateDaysBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
-   const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'days')
    let timelist=[]
-   console.log(dd,daydiff,(600+parseInt(daydiff)*100))
    if(pickertype===1){
-    for(let i=0;i<daydiff;i++){
+    const dd= enumerateDaysBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
+    const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'days')
+    console.log(dd,daydiff)
+    for(let i=0;i<=daydiff;i++){
       timelist.push({title:dd[i],dataIndex:dd[i]})
-   
     }
     setColumns([...cols,...timelist])
     setscroll({x:(600+parseInt(daydiff)*100)})
    }
-  //  console.log(daydiff)
+   if(pickertype===2 ){
+    const dd= enumeratemonthBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
+    const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'month')
+    console.log(dd,daydiff)
+    for(let i = 0; i <=daydiff;i++){
+      timelist.push({title:dd[i],dataIndex:dd[i]})
+    }
+    setColumns([...cols,...timelist])
+    setscroll({x:(600+parseInt(daydiff)*100)})
+   }
+   if(pickertype===3){
+    const startyear = moment(form.getFieldValue('starttime')).format('YYYY')
+    const endyear = moment(form.getFieldValue('endtime')).format('YYYY')
+    const daydiff=endyear-startyear
+    console.log(startyear,endyear,endyear-startyear)
+    for(let i = startyear; i <=endyear;i++){
+      timelist.push({title:i,dataIndex:i})
+    }
+    setColumns([...cols,...timelist])
+    setscroll({x:(600+parseInt(daydiff)*100)})
+   }
     getTableData(areavalue)
   }
 
