@@ -381,11 +381,15 @@
                 .tabBoxW {
                     background-color: #fff;
                     color: #000;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
                 }
 
                 .tabBoxB {
                     background-color: #237AE4;
                     color: #fff;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
                 }
             }
 
@@ -412,9 +416,50 @@
             }
 
             .tableBox {
-                padding: 16px;
+                padding:8px 16px 0 16px;
                 width: 100%;
                 height: calc(100%-112px);
+                .dataHeader{
+                    width: 1536px;
+                    height: 36px;
+                    background-color: #237AE4;
+                    padding: 0 16px;
+                    color: #fff;
+                    line-height: 36px;
+                }
+                .dataBottom{
+                    display: grid;
+                    grid-template-columns: repeat(3,512px);
+                    .itemBox{
+                    display: flex;
+                    flex-direction: row;
+                    .itemHead{
+                        background-color: rgb(236,245,255);
+                        width: 260px;
+                        height: 36px;
+                        line-height: 36px;
+                        padding-left: 16px;
+                        text-align: left;
+                        border: 1px solid rgb(228,228,288);
+                        border-top: none;
+                        border-right: none;
+                        font-size: 14px;
+                        color: #333;
+                    }
+                    .itemTail{
+                        width: 252px;
+                        height: 36px;
+                        line-height: 36px;
+                        padding-right: 16px;
+                        text-align: right;
+                        border: 1px solid rgb(228,228,288);
+                        border-top: none;
+                        font-size: 14px;
+                        color: #333;
+                    }
+                }
+                }
+                
 
                 
             }

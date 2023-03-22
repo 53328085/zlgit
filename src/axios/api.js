@@ -250,6 +250,8 @@ export class EnergyComprehensive {
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
     static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryIncomeTrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
+    static QueryDisChargeETrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
   }
 
 // 储能管理--报表统计
@@ -1115,6 +1117,18 @@ export const Monitoring = {
     RuntimeGatewayDetail: (projectId, sn) => server.get(`/Monitor/RuntimeGateway/Detail?projectId=${projectId}&sn=${sn}`),//网关详情
     Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data),//网关子设备
     Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data),//日志
+  },
+  RuntimeDevice:{
+    Statistics: (data) => server.get(`/Monitor/RuntimeDevice/Statistics?projectId=${data.projectId}&areaId=${data.areaId}&deviceStyle=${data.deviceStyle}`),//设备信息
+    Overview: (data) => server.post(`/Monitor/RuntimeDevice/Overview`, data),//
+    CategoryImages: ({ projectId, group }) => server.post(`/Monitor/RuntimeDevice/CategoryImages`, { projectId, group }),//设备图片
+    Detail: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/Detail?projectId=${projectId}&sn=${sn}`),//设备详情
+    Current: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/Current?projectId=${projectId}&sn=${sn}`),//设备
+    HistoryTrend: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTrend`, data),//
+    HistoryTable: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTable`, data),//
+    EnergyActuary: (data) => server.post(`/Monitor/RuntimeDevice/EnergyActuary`, data),//
+    EnergyReport: (data) => server.post(`/Monitor/RuntimeDevice/EnergyReport`, data),//
+    AlarmPage: (data) => server.post(`/Monitor/RuntimeDevice/AlarmPage`, data),//
   }
 }
 //电气安全
