@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, message} from 'antd'
 import {StorageControlRuntime} from '@api/api'
 import imgurl from './icon'
 const {Text, Link, Title} = Typography
@@ -37,6 +37,7 @@ const Mainbox = styled.div`
                     align-items: center;
                     justify-content: space-around;
                     cursor: pointer;
+                    transition: all 200ms;
                  }
                  .cotrl.active {
                     border: 1px solid #237ae4;
@@ -50,7 +51,7 @@ const Mainbox = styled.div`
                  .cotrl.disabled {
                     background-color: rgba(242, 242, 242, 1);
                     border: 1px solid rgba(204, 204, 204, 1);  
-                    opacity: 0.9;
+                    opacity: 0.8;
                     .ant-typography {
                         color: #666666;
                         font-size: 18px;
@@ -112,6 +113,20 @@ export default function Manual({projectId, areaId}) {
         qform.setFieldValue('cq',q)
      }
   }
+  // UpdateSiteOnOffGrid
+  const updatestate = async (type, state) => {
+     let handler = ['', 'UpdateSiteSwitchOnOff', 'UpdateSiteOnOffGrid'][type];
+     if (type == 1) setOnoff(state);
+     if (type == 2) setOngrid(state);
+     let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, state)
+     let msg = ['', ['','系统开机成功', '系统关机成功'],['','系统并网成功', '系统离线成功']][type][state]
+     success && message.success(msg)
+     !success && message.error(errMsg || '数据出错')
+  }
+  const onUpdateP = async () => {
+    let {p} = pform.getFieldsValue()
+     await StorageControlRuntime.UpdateP(projectId, areaId, p)
+  }
   useEffect(() => {
     querySiteStatus()
   }, [areaId])
@@ -125,11 +140,11 @@ export default function Manual({projectId, areaId}) {
                     <Text>当前运行状态：关机</Text>
                 </div>
                 <div className='item'>
-                    <div className={onoff== 1 ? 'cotrl active' : 'cotrl disabled'}>
+                    <div className={onoff== 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 1)}>
                         <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统开机</Text>
                     </div>
-                    <div className={onoff== 0 ? 'cotrl active' : 'cotrl disabled'}>
+                    <div className={onoff!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 2)}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统关机</Text>
                     </div>
@@ -141,13 +156,13 @@ export default function Manual({projectId, areaId}) {
                     <Text>当前运行状态：关机</Text>
                 </div>
                 <div className='item'>
-                    <div className='cotrl'>
-                        <Image src={imgurl.coal} height={42} width={42}  />
-                        <Text>系统关机</Text>
+                    <div className={ongrid== 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 1)}>
+                        <Image src={imgurl.coal} height={42} width={42} preview={false}  />
+                        <Text>系统并网</Text>
                     </div>
-                    <div className='cotrl disabled'>
-                       <Image src={imgurl.coal} height={42} width={42} />
-                        <Text>系统关机</Text>
+                    <div className={ongrid!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 2)}>
+                       <Image src={imgurl.coal} height={42} width={42} preview={false}  />
+                        <Text>系统离网</Text>
                     </div>
                 </div>
             </div>
@@ -158,11 +173,11 @@ export default function Manual({projectId, areaId}) {
                         <Item label="当前有功功率" name="cp">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置有功功率" name="sp">
+                        <Item label="设置有功功率" name="p">
                             <Input addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
-                            <Button type="primary">确定</Button>
+                            <Button type="primary" onClick={onUpdateP}>确定</Button>
                         </Item>
                     </Space>
                 </Formbox>

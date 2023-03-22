@@ -1,7 +1,7 @@
 import React from 'react'
 import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
-export default function index() {
+export default function Index() {
  const { Header, Footer, Sider, Content } = Layout;   
   return (
    /*   <Layout>
