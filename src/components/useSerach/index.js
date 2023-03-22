@@ -50,18 +50,17 @@ const Cform = styled(Form)`
 export default function useSerach(props) {
   const {handler, form: forms, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
-  console.log(forms)
+  
   const [form] =forms ? [forms] : Form.useForm()
   const levelone = useSelector(selectOneLevel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
  
   const allData = useRef();
   const onChange = (e) => {
-     let values = form.getFieldsValue()
-     console.log(values)
+     console.log(e)
      if (typeof handler == 'function') {
         console.log('ddddd')
-        handler(values)
+        handler(e)
      }
   }
   const btns = [

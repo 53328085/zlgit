@@ -250,7 +250,8 @@ export class EnergyComprehensive {
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
     static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
-    static QueryIncomeTrends = (projectId, areaId, date) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}`);
+    static QueryIncomeTrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
+    static QueryDisChargeETrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
   }
 
 // 储能管理--报表统计
