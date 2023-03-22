@@ -115,7 +115,7 @@ export default function Manual({projectId, areaId}) {
   }
   // UpdateSiteOnOffGrid
   const updatestate = async (type, state) => {
-     let handler = ['', 'UpdateSiteSwitchOnOff', 'UpdateSiteOnOffGrid'][type];
+     let handler = ['', 'UpdateSiteSwitchOnOff', 'UpdateSiteOnOffGrid'][type]; // state 1 开， 2 关/离
      if (type == 1) setOnoff(state);
      if (type == 2) setOngrid(state);
      let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, state)
@@ -144,7 +144,7 @@ export default function Manual({projectId, areaId}) {
                         <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统开机</Text>
                     </div>
-                    <div className={onoff!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 2)}>
+                    <div className={onoff == 0 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 0)}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统关机</Text>
                     </div>
@@ -160,7 +160,7 @@ export default function Manual({projectId, areaId}) {
                         <Image src={imgurl.coal} height={42} width={42} preview={false}  />
                         <Text>系统并网</Text>
                     </div>
-                    <div className={ongrid!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 2)}>
+                    <div className={ongrid!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 0)}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false}  />
                         <Text>系统离网</Text>
                     </div>
