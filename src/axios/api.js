@@ -1442,12 +1442,12 @@ export class EnergyPublicRuntime {
     );
 }
 //储能概述
-export class StorageSummaryRuntime {
-  static statistic = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/Statistic?projectId=${projectId}&areaId=${areaId}`)
-  static queryEchartsInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryEchartsInfo?projectId=${projectId}&areaId=${areaId}`)
-  static queryPowerTrends = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}`)
-  static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)
-  static queryRealtimeData = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryRealtimeData?projectId=${projectId}&areaId=${areaId}`)
+export class SiteSummaryRuntime {
+  static querySiteInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QuerySiteInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryStorageIncome = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageIncome?projectId=${projectId}&areaId=${areaId}`)
+  static queryStorageWarning = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageWarning?projectId=${projectId}&areaId=${areaId}`)
+  static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryRealtimeData = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryRealtimeData?projectId=${projectId}&areaId=${areaId}`)
 }
 //储能告警信息
 export class StorageAlarmRuntime {
@@ -1462,4 +1462,15 @@ export class PCSMonitorRuntime {
   static querySocTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QuerySocTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryAcTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryAcTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryPileTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPileTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+}
+
+// bmsRuntime
+export class BMSRuntime {
+  static queryBatterClusterList = (projectId, areaId) => server.get(`Storage/BMSRuntime/QueryBatteryClusterList?projectId=${projectId}&areaId=${areaId}`)
+  static querySOCTrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QuerySOCTrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryVTrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryVTrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryITrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryITrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryBMSInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryEnvironmentInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryBMSAlarms = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSAlarms?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
 }

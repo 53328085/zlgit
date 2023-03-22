@@ -121,16 +121,16 @@ export default function Index() {
       dataIndex: 'address',
       key: 'address',
       width: 480
-    },,{
+    },{
         align:'center',
         title: '额定容量 (kVA)',
         dataIndex: 'capacity',
         key: 'capacity',
       },,{
         align:'center',
-        title: '额定电压 (kVA)',
-        dataIndex: 'vlotage',
-        key: 'vlotage',
+        title: '额定电压 (V)',
+        dataIndex: 'ratedU',
+        key: 'ratedU',
       },{
       align:'center',
       title: '所属网关',

@@ -12,6 +12,18 @@
         margin: 0 24px;
         border-left: 1px dashed #d7d7d7;
     }
+    .border{
+        margin-left: 16px;
+        height: 32px;
+        line-height: 32px;
+        border-left: 4px solid #237ae4;
+        font-size: 14px;
+        color: #000;
+        padding-left: 16px;
+    }
+    .breadcrumb{
+        margin: 0 8px;
+    }
     :global{
         .ant-form-item-label > label::after{
             display: none;
@@ -172,9 +184,18 @@
         height: 800px;
         background-color: rgb(0, 0, 51);
         border-radius: 4px;
+        position: relative;
         .zhanwei{
             width: 880px;
             height: 800px;
+        }
+        .clickDiv{
+            width: 194px;
+            height: 363px;
+            position: absolute;
+            left: 43px;
+            bottom: 40px;
+            cursor: pointer;
         }
     }
     .right{
@@ -214,7 +235,7 @@
         }
         .newWarning{
             width: 288px;
-            min-height: 320px;
+            min-height: 280px;
             margin-top: 16px;
             background-color: #fff;
             border: 1px solid #d7d7d7;
@@ -236,10 +257,12 @@
                 border-top: 1px dashed #d7d7d7;
             }
             .warningDetails{
-                margin-top: 16px;
+                height: 216px;
+                overflow-y: auto;
                 .warningItem{
                     display: flex;
                     align-items:flex-start;
+                    margin-top: 16px;
                     .leftImg{
                         margin-top: 4px;
                         margin-right: 16px;
@@ -251,22 +274,25 @@
                         .warningPoint{
                             width: 10px;
                             height: 10px;
-                            margin: 3px;
+                            margin: 2px;
                         }
                     }
                     .warningData{
                         width: 300px;
+                        padding-right: 4px;
                         .warningtop{
                             font-size: 14px;
                             color: #1e1e1e;
                             height: 20px;
                             line-height: 20px;
+                            display: flex;
+                            justify-content: space-between;
                             .description{
                                 margin-left: 16px;
                             }
                         }
                         .warningbottom{
-                            margin-top: 6px;
+                            // margin-top: 6px;
                             display: flex;
                             align-items: center;
                             justify-content: space-between;
@@ -289,12 +315,12 @@
                 border: 1px solid #d7d7d7;
                 margin-top: 16px;
                 .itemName{
-                    width: 252px;
+                    // width: 252px;
                     height: 24px;
                     background-color: rgb(51,51,204);
                     font-size: 12px;
                     line-height: 24px;
-                    margin: 1px;
+                    // margin: 1px;
                     text-align: center;
                     color: #fff;
                 }
@@ -306,20 +332,15 @@
                     text-align: center;
                 }
                 .temData{
-                    padding-top: 12px;
+                    padding-top: 6px;
                     display: flex;
                     align-items: center;
                     .tem{
-                        height: 61px;
+                        // height: 61px;
                         width: 127px;
                         font-size: 12px;
                         color: #515151;
                         padding-left: 24px;
-                    }
-                    .separate{
-                        width: 0;
-                        height: 61px;
-                        border-left: 1px dashed #d7d7d7;
                     }
                 }
             }

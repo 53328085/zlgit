@@ -34,7 +34,7 @@ export default function Index(props){
         axisTick:{
           alignWithLabel:true
         },
-        data: props.data.x
+        data: props.data.date
       },
       yAxis: [
         {
@@ -51,19 +51,19 @@ export default function Index(props){
       series: [
         {
           name:'充电金额(元)',
-          data: props.data.y,
+          data: props.data.chargingIncome,
           type: 'bar'
         },
         {
           name:'放电金额(元)',
-          data: props.data.z,
+          data: props.data.disChargingIncome,
           type: 'bar',
           barGap:'0',
         },
         {
           name:'收益(元)',
           yAxisIndex: 1,
-          data: props.data.line,
+          data: props.data.storageIncome,
           type: 'line',
           symbol:'circle', 
           smooth: false,
