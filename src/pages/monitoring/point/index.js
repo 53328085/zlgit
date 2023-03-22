@@ -1,225 +1,370 @@
-import React, {useState, useEffect, useRef, Suspense, useMemo} from 'react'
-import {useSelector} from 'react-redux'
-import {useAntdTable, usePagination} from 'ahooks'
-import {Table, Form, message, Space, Checkbox, Select, Divider, Button } from 'antd'
+import React, { useState, useEffect, useContext, useRef } from 'react'
+import { useSelector, useStore, useDispatch } from 'react-redux'
+import UseHeader from '@com/useHeader'
+import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
+import { SearchOutlined } from '@ant-design/icons';
+import {  Link, useNavigate, useLocation } from 'react-router-dom'
+import { useRequest } from "ahooks";
+import style from './style.module.less'
+import Icard from './card'
+import imgurl from './images/index.js'
+import { Monitoring } from '@api/api.js'
+import { selectProjectId,selectOneLevel } from '@redux/systemconfig.js'
+import { SemanticClassificationFormat } from 'typescript';
+import Table from '@com/useTable'
 
-import Pagecount from '@com/pagecontent'
-import UserTable from '@com/useTable'
-import UserCard from '@com/useCard'
-import {Cradiogroup} from '@com/comstyled'
-import {Meter} from '@api/api.js'
-import {selectCurProject} from '@redux/user.js'
-import CustContext from '@com/content.js'
-import columns,  { onDesc} from './columns'
-export default function Index() {
-  const [form] = Form.useForm()
-  const [formparams, setFormparams] = useState(form.getFieldsValue())
-  const [value, setvalue] = useState('electric')
-  const projectId = useSelector(selectCurProject)?.id 
-  let [display, setDisplay] = useState(true)  
-  const [total, setTotal] = useState(0)
-  const [stateV, setStateV] = useState();
-  const [listdata, setListdata] = useState([])
-  const tableref = useRef()
-  const tableall = useRef()
-  const meterType = {
-    electric: 1,
-    water: 2,
-    gas: 3
-  }
+
+export default function Index(props) {
+  const tableLoadRef = useRef()
+  const projectId = useSelector(selectProjectId)
+  const [messageApi, contextHolder] = message.useMessage();
+  const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
+  let [areaId, setAreaId] = useState(1)
+  let [statistics, setStatistics] = useState({})
+  let [overView, setoverView] = useState({ details: [], categories: [] })
+  const areaList = useSelector(selectOneLevel)
+  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  
+  // const headerProps = {
+  //   isEnergy: false,//能耗类型
+  //   isDate: false,//日期
+  //   isShift: false,//班次
+  //   isTab: false,//能耗、费用radioButton
+  //   isSearch: false,//查询按钮
+  //   isExport: false,//导出按钮
+  //   //export: exportData //导出调用方法
+  // }
+  let [optionsGateway, setoptionsGateway] = useState([])
+  const [changeTag, setChangeTag] = useState('')
+  const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
+  let inputValue = ''
+  const [page, setpage] = useState(1)
+  let [total, setTotal] = useState(0)
+  let [imageList, setimageList] = useState([])
+  let [pageNum, setPageNum] = useState(1)
   let params = {
     projectId: projectId,
-    meterType: meterType[value],
-    lineStatus: 0,
-    bindStatus: 0,
-   
+    areaId: areaId,
+    category: '',
     alike: '',
+    state: 0,
+    pageNum: page,
+    pageSize: 12,
   }
-  const header = useMemo(() => columns.map(i => i.dataIndex), [columns])
-  const firstRow = useMemo(() => {
-    let obj = {}
-    columns.forEach(col => {
-      obj[col.dataIndex] = col.title
-    });
-    return obj
-  }, [columns])  
-  const onDownload = () => {
-    params.pageSize = total
-    Meter.Overview(params).then(res => {
-      let {success, data } = res
-      let tbData = data?.data      
-      if (!success) return message.warning('下载数据出错')
-      if(success && Array.isArray(tbData)) {
-        let jsondata = tbData.map(d => {
-          let obj = {}
-          for(let key of header) {
-             if (key == 'status') {
-               obj[key] = ['', '离线', '在线'][d[key]] || ''              
-             } else {
-              obj[key] = d[key]
-             } 
-          }
-          return obj
-        } )  
-        let colinfo = [ // wch 字符, wpx 像素          
-          {
-            wch: 20
-          },
-          {
-            wch: 16,
-          },
-          {wch: 10},
-          {wch: 10},
-          {wch: 10},
-          {wch: 60}
-        ] 
-    
-        tableref.current.downloadByData({header, data:[firstRow, ...jsondata], sheetName: '测试', option: {colinfo} })
-      }
-    }).catch((e) => {
-      console.log(e)
-      message.warning('下载数据出错')
-    })
-    
-  }
+  // let [arr,setArr] = useState([])
+  const showTotal = (total) => `共 ${total} 条记录`;
+  const columns = [
+    {
+      title: '设备详情',
+      dataIndex: 'sn',
+      render: (text) => <span style={{textAlign:'center'}}> {'>'}</span>,
+      key: 'sn',
+      id: 'id',
+    },
+    {
+      title: '设备编号',
+      dataIndex: 'sn',
+      render: (sn) => <Link to={{
+        pathname: "/deviceDetail?"+sn,
+    }} target="_blank"> {sn} </Link>,
+      key: 'sn',
+      id: 'id'
+    },
+    {
+      title: '设备型号',
+      dataIndex: 'category',
+      key: 'category',
+      id: 'id'
+    },
+    {
+      title: '电流(A)',
+      dataIndex: 'connMethod',
+      key: 'connMethod',
+      id: 'id'
+    },
+    {
+      title: '电压(V)',
+      dataIndex: 'childrenCnt',
+      key: 'childrenCnt',
+      id: 'id'
+    },
+    {
+      title: '功率(kW)',
+      dataIndex: 'childrenCnt',
+      key: 'childrenCnt',
+      id: 'id'
+    },
+    {
+      title: '用电量(kWh)',
+      dataIndex: 'childrenCnt',
+      key: 'childrenCnt',
+      id: 'id'
+    },
+    {
+      title: '设备状态',
+      dataIndex: 'childrenCnt',
+      key: 'childrenCnt',
+      id: 'id'
+    },
+    {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'address',
+      id: 'id'
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'lastSampleTime',
+      key: 'lastSampleTime',
+      id: 'id'
+    },
+  ];
+  let [dataSource, setdataSource] = useState([])
 
-
-  const tabs = [
-    {label: '电表', value: 'electric'},
-    {label: '水表', value: 'water'},
-    {label: '燃气表', value: 'gas'},
-    {label: '传感器', value: 'sensor'},
-  ]
-  
-
-  const getTableData = ({current, pageSize}, formData) => {     
-    setFormparams((form) => ({...form, ...formData}))
-   
-    if (!display) return;
-    params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
-    return  Meter.Overview(params).then(res => {
-      let {success, data, totalNum} = res
-       setTotal(totalNum)
-      if (success && Array.isArray(data?.data)) {
-        return {
-          total: totalNum,
-          list: data.data
-        }
-      
-      }else {
-        return {
-          total: 0,
-          list: []
-        }
-      }
-    })
-  }
-  const getCardData = ({current, pageSize}) => {  
-   // console.log(11111);
-   if (display) return;
-    params = Object.assign({}, params, {pageNum: current, pageSize}, formparams)
-    return  Meter.Overview(params).then(res => {
-      let {success, data, totalNum} = res
-      if (success && Array.isArray(data?.data)) {
-        return {
-          total: totalNum,
-          list: data.data
-        }
-      
-      }else {
-        return {
-          total: 0,
-          list: []
-        }
+  const getData = () => {//设备统计
+    return RuntimeGatewayStatistics({ projectId, areaId }).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        setStatistics(data)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
       }
     })
   }
-  const {tableProps, search} = useAntdTable(getTableData, {
-    form,
-    defaultParams: [
-     { current: 1, pageSize: 12}, // 分页参数
-     params, // 表单参数
-    ],
-    refreshDeps: [projectId, value, display], // projectId: 项目ID， value: 电表、水表、燃气表，  display: 表格或卡片模式
-   //defaultPageSize: 12,
-   }) 
-   //console.log(search);
-   const {data, pagination} = usePagination(getCardData, {
-    refreshDeps: [projectId, value, formparams],
-    defaultPageSize: 12,
 
-   })
-const printContent = () => tableref.current?.printContent;
-const PrintAllContent = async () => {
- /*   try {
-    await runAsync({current:1, pageSize: total})
-    return tableref.current?.printContent;
-   } catch (error) {
-     console.log(error);
-   } */
-   const {list} = await getTableData({current: 1, pageSize: total}, formparams)
-   console.log(list)
-  
-   setListdata(() => [...list])
-  
-   return () => tableall.current
-}
-const propsData = { 
-  //tabs, 
-  value,
-  setvalue,
-  form,
-  search,
-  display,
-  apply: true,
-  data: true,
-  print: true,
-  printContent,
-  PrintAllContent,
-  setDisplay,
-  onDownload,
-}
- const checkChange = ({target: {value}}) => {
-   setvalue(value)
- }
-const changeState = (value) => {
-  console.log(value);
-  setStateV(value)
-};
-  return (
-    <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true}>     
-        <div className='button--tabs'>
-         <Cradiogroup options={tabs} onChange={checkChange} value={value} optionType="button" />
-         <Space>
-          <Divider type="vertical" style={{height: '32px'}} />
-          <Select 
-           allowClear
-           placeholder="水表型号"           
-           style={{width: '160px'}}
-           defaultValue="lucy"
-           options={[{ value: 'lucy', label: 'Lucy' }]}
-           ></Select>
-          <Divider type="vertical" style={{height: '32px'}} />
-         <Checkbox.Group onChange={changeState} value={stateV}>
-            <Space>
-             <Button><Checkbox  value={1}>正常</Checkbox></Button>
-            <Button><Checkbox  value={2}>告警</Checkbox></Button> 
-            <Button> <Checkbox  value={3}>失联</Checkbox></Button>
-            </Space>
-         </Checkbox.Group>
-         </Space>
-        </div>    
-       {display ? <UserTable columns={columns}  expandable={onDesc} {...tableProps}  rowKey='id' ref={tableref}/> : 
-        <UserCard   {...{data, pagination}} /> 
-       
+  const getGatewayUsed = () => {//使用的网关
+    return QueryUsedGateway(projectId).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        setoptionsGateway(data)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
+  }
+  const getOverviewData = () => {//设备统计
+    return Overview(params).then(res => {
+      let { success, data, total, pageNum } = res
+      if (success && data) {
+        setoverView(data)
+        setTotal(total)
+        setPageNum(pageNum)
+        //  if(data.categories!=null){
+        //    getGatewayImages()
+        //  }
+        setdataSource(data.details)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
+  }
+
+  let [imgUrl, setimgUrl] = useState()
+  const getGatewayImages = () => {//网关图片
+    return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
+      let { success, data } = res
+      if (success && data) {
+        // setimageList(data)
+        if(data!=[]){
+          // console.log(data)
+          let imgList=[]
+            overView.details.map((item, index) => {
+              data.map((items,indexs)=>{
+                // console.log(data[indexs].category , item.category)
+                if (data[indexs].category == item.category) {
+                  imgList.push(data[indexs].imageBase64)
+                } else {
+                  // setimageList(()=>{imageList.push('')})
+                }
+              })
+            })
+            setimageList(imgList)
+          // console.log(imageList,imgList)
+        }
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: res.errMsg
+        })
+      }
+    })
+  }
+  const { run: queryData } = useRequest(getGatewayUsed, {
+    refreshDeps: [changeTag],
+    manual: true,
+  })
+
+  // const getFromChild = data => {
+  //   //园区id
+  //   setAreaId(data.areaId)
+  // }
+  const changeArea = (value) => {
+    setAreaId(value);
+  };
+  const onChangeValue = e => {
+    inputValue = e.target.value
+  }//输入框改变值
+  const onSearchList = () => {
+    params.alike = inputValue
+    getOverviewData()
+  }//点击查询按钮
+  const handleChange = e => {
+    params.category = e
+    getOverviewData()
+  }//网关型号选择
+  const handleChangeState = e => {
+    params.state = e
+    getOverviewData()
+  }//网关状态选择
+  const changeTab = val => {
+    setisCard(val.target.value == 'card' ? true : false)
+    setpage(1)
+    getOverviewData()
+  }//切换卡片列表模式
+
+  const exportExecel = () => {
+    tableLoadRef.current.download()
+  }//数据导出
+  useEffect(() => {
+    getData()
+    queryData()
+  }, [areaId, changeTag])
+  useEffect(() => {
+    getOverviewData()
+    console.log('getOverviewData')
+  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
+  useEffect(() => {
+    if (overView.categories) {
+      getGatewayImages()
+      console.log(456)
     }
-    <div   style={{display: 'none'}}>    
-       <Table columns={columns}  expandable={onDesc} dataSource={listdata} pagination={false} rowKey='id'  ref={tableall}  />
-   </div>
- 
- 
-    </Pagecount>
-    </CustContext.Provider>
+  }, [overView.categories])
+  const onChangePage = (page, pageSize) => {
+    setpage(page)
+  }
+  return (
+    <div>
+      {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
+      <div className={style.header}>
+      <span style={{ marginLeft: "16px", marginRight: 16 }}>{areaList[0]?.levelName || '园区'}选择</span>
+      <Select
+          placeholder="请选择园区"
+          size="middle"
+          key={defaultArea}
+          defaultValue={defaultArea}
+          style={{ width: "200px" }}
+          onChange={changeArea}
+        >
+          {areaList.map((item) => {
+            return (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            );
+          })}
+        </Select>
+        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
+        <span style={{  marginRight: 16 }}>表计类型</span>
+        {/* <Select
+          placeholder="请选择表计类型"
+          size="middle"
+          key={defaultArea}
+          defaultValue={defaultArea}
+          style={{ width: "200px" }}
+          onChange={changeArea}
+        >
+          {areaList.map((item) => {
+            return (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            );
+          })}
+        </Select> */}
+      </div>
+      <div className={style.bottom}>
+        <div className={style.bottomTab}>
+           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' }} size="middle" onClick={() => { onSearchList() }}>查询</Button>
+            <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
+          <span>表计型号</span>
+          <Select
+            defaultValue=''
+            style={{
+              width: 200, marginLeft: 16
+            }}
+            onChange={handleChange}
+          >
+            <Select.Option value={''}>全部型号</Select.Option>
+            {optionsGateway.map((item, index) => {
+              return (
+                <Select.Option key={index} value={item}>
+                  {item}
+                </Select.Option>
+              );
+            })}
+          </Select>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>表计状态</span>
+            <Select
+              defaultValue={0}
+              style={{
+                width: 200, marginLeft: 16
+              }}
+              onChange={handleChangeState}
+              options={[
+                {
+                  value: 0,
+                  label: '全部(' + statistics.all + ')',
+                },
+                {
+                  value: 2,
+                  label: '正常(' + statistics.on + ')',
+                },
+                {
+                  value: 1,
+                  label: '失联(' + statistics.off + ')',
+                },
+                {
+                  value: 3,
+                  label: '告警(' + statistics.off + ')',
+                },
+              ]}
+            /></div> 
+          <div className={style.radioBox}>
+            <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
+              <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
+              <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
+            </Radio.Group>
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>数据导出</Button>
+          </div>
+        </div>
+        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
+        {isCard ? <div className={style.cardBox}>
+          {overView.details!=null?overView.details.map((item, index) => {
+            return <div key={index}>
+              <Link  to={`/gatewayDetail?sn=${item.sn}`}   target="_blank">
+                  <Icard img={imageList[index]? 'data:image/png;base64,'+imageList[index] : imgurl.category} title={item.name}
+
+                    value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
+                    lastSampleTime={item.lastSampleTime} category={item.category} />
+                    </Link>
+            </div>
+          }):''}
+      </div> : <div className={style.tableHead}>
+        <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef}></Table>
+      </div>}
+      <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
+    </div>
+
+    </div >
   )
 }

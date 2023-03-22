@@ -2,6 +2,15 @@
 //     width:160px;
 //     margin-bottom: 12px;
 // }
+.header{
+    background-color: #fff;
+    height: 48px;
+    width: 1680px;
+    border: 1px solid rgb(204,204,204);
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
 .bottom {
     width: 1680px;
     height: 800px;
@@ -50,8 +59,8 @@
     }
 
     .cardImg {
-        width: 112px;
-        height: 112px;
+        width: 90px;
+        height: 127px;
         // margin-left: 24px;
         // background-color: #237ae4;
     }
@@ -87,11 +96,12 @@
         .btnStyle {
             display: grid;
             grid-template-columns: repeat(2, 200px);
-            grid-template-rows: repeat(1, 35px);
+            grid-template-rows: repeat(2, 35px);
 
             .btnBoxStyle {
                 display: flex;
                 flex-direction: row;
+                border-radius: 93px;
             }
 
             .timeStyle {
@@ -102,10 +112,12 @@
                 color: #fff;
                 text-align: center;
                 line-height: 24px;
+                border-radius: 40px;
+                z-index: 10;
             }
 
             .timeValueStyle {
-                width: 100px;
+                width: 120px;
                 height: 24px;
                 background-color: #fff;
                 color: #003366;
@@ -114,6 +126,9 @@
                 text-align: right;
                 line-height: 24px;
                 padding-right: 8px;
+                border-radius: 40px;
+                margin-left: -20px;
+                z-index: 0;
             }
         }
     }
@@ -162,6 +177,17 @@
         text-align: center;
         font-size: 14px;
     }
+    .stateAlarm{
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(255, 77, 79);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
 }
 
 .cardBox {
@@ -193,6 +219,11 @@
     :global(.ant-table-thead > tr > th) {
         background-color: rgb(236, 245, 255);
         height: 32px;
+        
+    }
+    :global(.ant-table-thead > tr > th:first-child){
+        text-align: center;
+        width: 80px;
     }
 
     :global(.ant-table-thead > tr > th) {
@@ -209,6 +240,12 @@
         border-bottom: 1px solid rgb(204, 204, 204);
         border-right: 1px solid rgb(204, 204, 204);
         padding-left: 8px;
+    }
+    :global(.ant-table-row){
+        :global(.ant-table-cell:first-child){
+            text-align: center;
+            width: 80px;
+        }
     }
 }
 
