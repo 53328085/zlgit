@@ -1,55 +1,44 @@
 import React, {useState, useEffect} from "react";
 import style from './style.module.less'
-import { Select, Form, Button } from 'antd'
+import { useRequest } from "ahooks";
+import { Select, Form, Button, message } from 'antd'
 import {useSelector} from 'react-redux'
-import {selectOneLevel} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import MainPage from './mainPage'
-import SubPage from './subPage'
 import BatteryPage from './batteryPage'
+import {BMSRuntime} from '@api/api.js'
 
 export default function Index() {
+  const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
+  const { queryBatterClusterList } = BMSRuntime
   const [form] = Form.useForm()
   const {Item}  = Form
   //PCS list
-  const pcsList = [
-    {
-      id:1,
-      name:'电池簇_1',
-    },{
-      id:2,
-      name:'电池簇_2',
-    },{
-      id: 3,
-      name:'电池簇_3',
-    },
-  ]
-  //storage list
-  const storageList = [
-    {
-      id:1,
-      name:'储能室#1',
-    },{
-      id:2,
-      name:'储能室#2',
-    },{
-      id: 3,
-      name:'储能室#3',
-    },
-  ]
-  //电池列表
-  const batteryList = [
-    {
-      id:1,
-      name:'电池簇1_1',
-    },{
-      id:2,
-      name:'电池簇1_2',
-    },{
-      id: 3,
-      name:'电池簇1_3',
-    },
-  ] 
+  const  [bmsList, setBmsList] = useState([])
+  const [headerValues, setHeaderValues] = useState()
+  const getbmsList = () => {
+    return queryBatterClusterList(projectId, form.getFieldValue('areaId')).then(res=>{
+      if(res.success && res.data){
+        setBmsList(res.data)
+        form.setFieldValue('bcId', res.data[0].id)
+        setHeaderValues(form.getFieldsValue(true))
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const {run: runQuery } = useRequest(getbmsList, {manual: true})
+
+  const changeArea = val => {
+    runQuery()
+  }
+
+  const changeBMS = val => {
+    console.log(val)
+    setHeaderValues(form.getFieldsValue(true))
+  }
+
   const [showPage, setShowPage] = useState('mainPage')
   const getFromChild = val => {
     setShowPage(val)
@@ -58,14 +47,10 @@ export default function Index() {
   const backBMS = () => {
     setShowPage('mainPage')
   }
-  const goback = () => {
-    setShowPage('subPage')
-  }
+
   useEffect(()=>{
     form.setFieldValue('areaId', areaList[0].id)
-    form.setFieldValue('PCSId', pcsList[0].id)
-    form.setFieldValue('storageId', storageList[0].id)
-    form.setFieldValue('batteryId', batteryList[0].id)
+    runQuery()
   },[])
   return (
     <div>
@@ -77,6 +62,7 @@ export default function Index() {
               placeholder="请选择园区"
               size="middle"
               style={{marginLeft: 16, width: '200px'}}
+              onChange={changeArea}
             >
               {areaList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
@@ -84,54 +70,36 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='PCSId' label='电池簇选择' style={{marginLeft:16}}>
+          <Item name='bcId' label='电池簇选择' style={{marginLeft:16}}>
             <Select
-              placeholder="请选择PCS"
+              placeholder="请选择"
               size="middle"
               style={{marginLeft: 16, width: '200px'}}
+              onChange={changeBMS}
             >
-              {pcsList.map(item => {
+              {bmsList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
           </Item>
           </> : null}
-          { showPage == 'subPage' ? 
-          <>
-          <Item name='storageId' label='储能室选择' style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择储能室"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-            >
-              {storageList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          </>: null }
-          { showPage == 'batteryPage' ? 
-          <>
-          <Item name='batteryId' label='电池簇选择' style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-            >
-              {batteryList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          </>: null }
         </Form>
-        { (showPage == 'subPage' ||showPage == 'batteryPage') ? 
+        {
+          showPage == 'batteryPage' ?
+          <div>
+            <div className={style.border}>
+              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池簇_1</span>
+              <span className={style.breadcrumb}> { '>' }</span>
+              <span>电池包1_1</span>
+            </div>
+          </div>: null
+        }
+        { (showPage == 'subPage') ? 
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回BMS</Button> : null }
         { showPage == 'batteryPage' ? 
-        <Button size="middle" style={{ marginRight: 16, width: 96}} onClick={()=> goback()}>返回</Button> : null }
+        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回</Button> : null }
       </div>
-      { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild}></MainPage> : null }
-      { showPage == 'subPage' ? <SubPage getshowTab={getFromChild}></SubPage> : null }
+      { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild} headerValues={headerValues}></MainPage> : null }
       { showPage == 'batteryPage' ? <BatteryPage getshowTab={getFromChild}></BatteryPage> : null }
     </div>
   )

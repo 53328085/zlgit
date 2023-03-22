@@ -9,6 +9,7 @@ import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
+import { constant } from "lodash";
 const Cdiv = styled.div`
   display: flex;
   height: 64px;
@@ -132,6 +133,7 @@ export default function Log() {
   const name = useSelector((state) => state.user)?.name;
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
+  const userIdentity=sessionStorage.getItem('userIdentity');
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
@@ -203,12 +205,12 @@ export default function Log() {
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
-        <Idiv4 onClick={onConfigure}>
+        {userIdentity==='1'||userIdentity==='2'?(<Idiv4 onClick={onConfigure}>
           <span>项目设置</span>
-        </Idiv4>
-        <Idiv2 onClick={projectcfg}>
+        </Idiv4>):null}
+        {userIdentity==='1'||userIdentity==='2'?(<Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
-        </Idiv2>
+        </Idiv2>):null}
         </>
         }
         <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less'
-import { Select } from 'antd'
+import { Select,message } from 'antd'
 import Icard from './card'
 import { drawEcharts } from '@com/useEcharts'
 import ChartData from './chartData'
@@ -12,6 +12,7 @@ import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
   const projectId = useSelector(selectProjectId)
+  const [messageApi, contextHolder] = message.useMessage();
   const elref = useRef(null)
   const wlref = useRef(null)
   const glref = useRef(null)
@@ -25,7 +26,7 @@ export default function Index() {
   const getData = () => {//设备统计
     return RuntimeStatistics({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success&&data) {
         setStatistics(data)
       } else {
         messageApi.open({
@@ -38,29 +39,27 @@ export default function Index() {
   const getStatusData = () => {//在线情况
     return RuntimeStatus({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success&&data ) {
         setStatus(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
+        // messageApi.open({
+        //   type: 'error',
+        //   content: res.errMsg
+        // })
       }
     })
   }
   const getMonthUsage = (type) => {//月用量
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success&&data) {
         seteleConsumes(data.eleConsumes)
         setwaterConsumes(data.waterConsumes)
         setgasConsumes(data.gasConsumes)
         charts()
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -87,8 +86,10 @@ export default function Index() {
   useEffect(() => {
     getData()
     getStatusData()
+  }, [areaId,projectId])
+  useEffect(() => {
     getMonthUsage(1)
-  }, [areaId,eleConsumes.length])
+  }, [areaId,eleConsumes.length,projectId])
 const charts=()=>{
   drawEcharts(elref.current, {
     dataset: datasetMonth,

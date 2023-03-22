@@ -312,21 +312,23 @@ export default function Index(props) {
         ></Searchtree>
         {showElectricity ? (
           <div className={style.contentMiddle}>
-            <span className={style.title}>公共能耗1</span>
+            <span className={style.title}>公共能耗</span>
             {detail !== {} ? (
               <Barchart
                 detailGive={detail}
                 energyType={showElectricity}
+                className={style.barChart}
               ></Barchart>
             ) : null}
           </div>
         ) : (
           <div className={style.contentMiddleBig}>
-            <span className={style.title}>公共能耗2</span>
+            <span className={style.title}>公共能耗</span>
             {detail !== {} ? (
               <Barchart
                 detailGive={detail}
                 energyType={showElectricity}
+                className={style.barChart}
               ></Barchart>
             ) : null}
           </div>

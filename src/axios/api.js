@@ -244,12 +244,21 @@ export class EnergyComprehensive {
   }
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
+    static UpdateSiteSwitchOnOff = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteSwitchOnOff?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
+    static UpdateSiteOnOffGrid = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteOnOffGrid?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1： 联网， 2： 离网
+    
+
+    static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
+  
+  
   }
 
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
     static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryIncomeTrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
+    static QueryDisChargeETrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
   }
 
 // 储能管理--报表统计
@@ -1115,6 +1124,18 @@ export const Monitoring = {
     RuntimeGatewayDetail: (projectId, sn) => server.get(`/Monitor/RuntimeGateway/Detail?projectId=${projectId}&sn=${sn}`),//网关详情
     Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data),//网关子设备
     Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data),//日志
+  },
+  RuntimeDevice:{
+    Statistics: (data) => server.get(`/Monitor/RuntimeDevice/Statistics?projectId=${data.projectId}&areaId=${data.areaId}&deviceStyle=${data.deviceStyle}`),//设备信息
+    Overview: (data) => server.post(`/Monitor/RuntimeDevice/Overview`, data),//
+    CategoryImages: ({ projectId, group }) => server.post(`/Monitor/RuntimeDevice/CategoryImages`, { projectId, group }),//设备图片
+    Detail: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/Detail?projectId=${projectId}&sn=${sn}`),//设备详情
+    Current: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/Current?projectId=${projectId}&sn=${sn}`),//设备
+    HistoryTrend: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTrend`, data),//
+    HistoryTable: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTable`, data),//
+    EnergyActuary: (data) => server.post(`/Monitor/RuntimeDevice/EnergyActuary`, data),//
+    EnergyReport: (data) => server.post(`/Monitor/RuntimeDevice/EnergyReport`, data),//
+    AlarmPage: (data) => server.post(`/Monitor/RuntimeDevice/AlarmPage`, data),//
   }
 }
 //运维管理
@@ -1453,12 +1474,12 @@ export class EnergyPublicRuntime {
     );
 }
 //储能概述
-export class StorageSummaryRuntime {
-  static statistic = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/Statistic?projectId=${projectId}&areaId=${areaId}`)
-  static queryEchartsInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryEchartsInfo?projectId=${projectId}&areaId=${areaId}`)
-  static queryPowerTrends = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}`)
-  static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)
-  static queryRealtimeData = (projectId, areaId) => server.get(`Storage/StorageSummaryRuntime/QueryRealtimeData?projectId=${projectId}&areaId=${areaId}`)
+export class SiteSummaryRuntime {
+  static querySiteInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QuerySiteInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryStorageIncome = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageIncome?projectId=${projectId}&areaId=${areaId}`)
+  static queryStorageWarning = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageWarning?projectId=${projectId}&areaId=${areaId}`)
+  static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryRealtimeData = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryRealtimeData?projectId=${projectId}&areaId=${areaId}`)
 }
 //储能告警信息
 export class StorageAlarmRuntime {
@@ -1473,4 +1494,21 @@ export class PCSMonitorRuntime {
   static querySocTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QuerySocTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryAcTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryAcTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryPileTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPileTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+}
+
+// bmsRuntime
+export class BMSRuntime {
+  static queryBatterClusterList = (projectId, areaId) => server.get(`Storage/BMSRuntime/QueryBatteryClusterList?projectId=${projectId}&areaId=${areaId}`)
+  static querySOCTrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QuerySOCTrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryVTrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryVTrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryITrends = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryITrends?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryBMSInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryEnvironmentInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryBMSAlarms = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSAlarms?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+}
+//告警管理
+export class AlarmManagement {
+  static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static QueryAddAlarm = (data) => server.get(`Safe/Alarm/QueryPlanPage?projectId`,data)
+  
 }

@@ -1,12 +1,18 @@
 import React, {useEffect, useState, Fragment} from 'react'
 import style from './style.module.less'
-import { Select, Form } from 'antd'
+import { message } from 'antd'
 import * as echarts from 'echarts'
 import topology from './imgs/topology_zhanwei.png'
-import { Pie } from '@ant-design/plots';
-import warningPoint from '@imgs/warningPoint.png'
+import warningPoint from './imgs/warningPoint.png'
+import { useNavigate } from 'react-router-dom'
+import {BMSRuntime} from '@api/api.js'
+import {useSelector} from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
 
-export default function Index() {
+export default function Index(props) {
+  const { querySOCTrends, queryVTrends, queryITrends, queryBMSInfo, queryEnvironmentInfo, queryBMSAlarms } = BMSRuntime
+  const projectId = useSelector(selectProjectId)
+  const navigate = useNavigate()
   const voltageData = {
     x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
     y:[732.25, 758.32, 721.39, 701.54, 723.45, 720.15, 718.96, 728.36, 714.32, 701.36, 704.96, 724.36, 718.32 ]
@@ -15,9 +21,9 @@ export default function Index() {
     x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
     y:[9.84, 9.15, 9.98, 10.25, 10.01, 10, 9.87, 9.98, 9.99, 9.84, 9.15, 9.98, 10.25]
   }
-  const powerData = {
+  const SOCData = {
     x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[7321.25, 7158.32, 7214.39, 7019.54, 7236.45, 7200.15, 7148.96, 7285.36, 7148.32, 7014.36, 7048.96, 7245.36, 7189.32 ]
+    y:[25, 32, 39, 54, 45, 15, 66, 36, 32, 36, 43, 36, 32 ]
   }
   const config = (lineId, color, Unit, lineData)=> {
     let chart = echarts.init(document.getElementById(lineId));
@@ -65,61 +71,6 @@ export default function Index() {
       ]
     })
   }
-  const WarningItem = props => {
-    return <div className={style.item}>
-      <div className={style.itemTitle}>{props.title}</div>
-      <span className={style.itemCount}>{props.count}</span>
-    </div>
-  }
-
-  //告警等级
-  const warningLevelData = [
-    {
-      name: '一级告警',
-      value: 2,
-    },
-    {
-      name: '二级告警',
-      value: 2,
-    },
-    {
-      name: '三级告警',
-      value: 5,
-    }
-  ];
-  const pieConfig = {
-    appendPadding: 10,
-    data: warningLevelData,
-    angleField: 'value',
-    colorField: 'name',
-    color:['#ff4e0d', '#26b391', '#4a738b'],
-    radius: 1,
-    // 设置圆弧起始角度
-    startAngle: Math.PI,
-    endAngle: Math.PI * 1.5,
-    legend:{
-      layout: 'horizontal',
-      position: 'bottom',
-      flipPage: false,
-      itemSpacing: 2
-    },
-    label: {
-      type: 'inner',
-      offset: '-30%',
-      content: '{value}',
-      style: {
-        fontSize: 18,
-      },
-    },
-    interactions: [
-      {
-        type: 'element-active',
-      },
-    ],
-    pieStyle: {
-      lineWidth: 0,
-    },
-  };
 
   const WarningCard = props => {
     return <div className={style.warningItem}>
@@ -128,42 +79,113 @@ export default function Index() {
       </div>
       <div className={style.warningData}>
         <div className={style.warningtop}>
-          <span className={style.time}>{props.data.time}</span>
-          <span className={style.description}>{props.data.description}</span>
+          <span className={style.time}>{props.data.warningTime}</span>
+          <span className={style.sn}>{props.data.sn}</span>
         </div>
         <div className={style.warningbottom}>
-          <span className={style.sn}>{props.data.sn}</span>
-          <span className={style.level}>{props.data.level == 1? '一级告警' : props.data.level == 2? '二级告警' :'三级告警'}</span>
+          <span className={style.description}>{props.data.content}</span>
+          <span className={style.level}>{props.data.level }</span>
         </div>
       </div>
     </div>
   }
-  const warningData = [
-    {
-      time:'13:48:23',
-      description:'1#电池簇  低电压告警',
-      sn:'1#1_1_42',
-      level:2
-    },{
-      time:'13:20:23',
-      description:'1#电池簇  低SOC告警',
-      sn:'1#1_1_42',
-      level:2
-    }
-  ]
   const toWarning = () => {
-    window.location.href = '/index/runtimeStorage/alarmMessage'
+    navigate('/index/runtimeStorage/alarmMessage',{
+      state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
+    })
+  }
+  const toBattery =() => {
+    props.getshowTab('batteryPage')
+  }
+
+  const [warningData, setWarningData] = useState([])//告警信息
+  const [environmentData, setEnvironmentData] = useState({})
+  const getContent = () => {
+    let { areaId, bcId } = props.headerValues
+    //soc
+    querySOCTrends(projectId, areaId, bcId).then(res => {
+      if(res.success){
+        if(res.data){
+          config('totalSOC', '#1ba41b','SOC (%)', res.data)
+        }else{
+          config('totalSOC', '#1ba41b','SOC (%)', SOCData)
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //电压趋势
+    queryVTrends(projectId, areaId, bcId).then(res => {
+      if(res.success){
+        if(res.data){
+          config('totalVoltage', '#237ae4','总电压 (V)', res.data)
+        }else{
+          config('totalVoltage', '#237ae4','总电压 (V)', voltageData)
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //电流趋势
+    queryITrends(projectId, areaId, bcId).then(res => {
+      if(res.success){
+        if(res.data){
+          config('totalCurrent', '#ff6701','总电流 (A)', res.data)
+        }else{
+          config('totalCurrent', '#ff6701','总电流 (A)', currentData)
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //储能系统
+    queryBMSInfo(projectId, areaId, bcId).then(res => {
+      let {success, data} = res
+      if(success){}else{
+        message.error(res.errMsg)
+      }
+    })
+    //告警信息
+    queryBMSAlarms(projectId, areaId, bcId).then(res => {
+      let {success, data} = res 
+      if(success){
+        if(data){
+          setWarningData(data)
+        }else{
+          setWarningData([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    //环境监控
+    queryEnvironmentInfo(projectId, areaId, bcId).then(res => {
+      let {success, data} = res
+      if(success){
+        if(data){
+          setEnvironmentData(data)
+        }else{
+          setEnvironmentData({})
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
 
   useEffect(()=>{
-    config('totalVoltage', '#237ae4','总电压 (V)', voltageData)
-    config('totalCurrent', '#ff6701','总电流 (A)', currentData)
-    config('totalPower', '#1ba41b','总功率 (kW)', powerData)
-  },[])
+    if(props.headerValues){
+      getContent()
+    }
+  },[props.headerValues])
   return (
     <div>
       <div className={style.bmsContent}>
         <div className={style.left}>
+          <div className={style.leftCard}>
+            <div className={style.cardTitle}>SOC ($)</div>
+            <div className={style.cardChart} id='totalSOC'></div>
+          </div>
           <div className={style.leftCard}>
             <div className={style.cardTitle}>总电压 (V)</div>
             <div className={style.cardChart} id='totalVoltage'></div>
@@ -172,33 +194,73 @@ export default function Index() {
             <div className={style.cardTitle}>总电流 (A)</div>
             <div className={style.cardChart} id='totalCurrent'></div>
           </div>
-          <div className={style.leftCard}>
-            <div className={style.cardTitle}>总功率 (kW)</div>
-            <div className={style.cardChart} id='totalPower'></div>
-          </div>
         </div>
         <div className={style.middle}>
-          <img src={topology} className={style.zhanwei}></img>
-          <div></div>
+          <img src={topology} className={style.zhanwei}></img>  
+          <div className={style.clickDiv} onClick={toBattery}></div>
         </div>
         <div className={style.right}>
-          <div className={style.topCard}>
-            <div className={style.cardTitle}>告警信息</div>
-            <div className={style.warningMessage}>
-              <WarningItem title='告警总数' count={9}></WarningItem>
-              <WarningItem title='今日告警' count={2}></WarningItem>
+          <div className={style.environment} style={{height: 503}}>
+                <div className={style.cardTitle}>环境监控</div>
+                <div className={style.item} style={{borderColor:'#237ae4'}}>
+                    <div className={style.itemName} style={{backgroundColor:'#237ae4'}}>空调监控</div>
+                    <div className={style.temData}>
+                        <div className={style.tem} style={{color:'#237ae4'}}>
+                            <span>温度</span>
+                            <div>
+                                <span style={{fontSize:24}}>{ environmentData.temp }</span>
+                                <span style={{fontSize:14, marginLeft: 8}}>℃</span>
+                            </div>
+                        </div>
+                        <div className={style.separate}></div>
+                        <div className={style.tem} style={{color:'#237ae4'}}>
+                            <span>湿度</span>
+                            <div>
+                                <span style={{fontSize:24}}>{ environmentData.humidity }</span>
+                                <span style={{fontSize:14, marginLeft: 8}}>%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={style.itemData} style={{height:'28px', lineHeight:'28px'}}>
+                        <span style={{color:'#999'}}>{environmentData?.airInformTime}</span>
+                    </div>
+                </div>
+                <div className={style.item}>
+                    <div className={style.itemName} style={{backgroundColor:'#093'}}>烟感监控</div>
+                    <div className={style.itemData} style={{color:'#237ae4'}}>
+                        <span>{ environmentData.somkeInformTime }</span>
+                        <span style={{marginLeft:16}}>{ environmentData.smokeDetectorWarning }</span>
+                    </div>
+                </div>
+                <div className={style.item}>
+                    <div className={style.itemName} style={{backgroundColor:'#093'}}>水浸监控</div>
+                    <div className={style.itemData} style={{color:'#237ae4'}}>
+                        <span>{ environmentData.waterOutInformTime }</span>
+                        <span style={{marginLeft:16}}>{ environmentData.waterOutWarning }</span>
+                    </div>
+                </div>
+                <div className={style.item}>
+                    <div className={style.itemName} style={{backgroundColor:'#093'}}>灭火器监控</div>
+                    <div className={style.itemData} style={{color:'#237ae4'}}>
+                        <span>{ environmentData.fireInformTime }</span>
+                        <span style={{marginLeft:16}}>{ environmentData.fireWarning }</span>
+                    </div>
+                </div>
+                <div className={style.item}>
+                    <div className={style.itemName} style={{backgroundColor:'#f33'}}>门禁监控</div>
+                    <div className={style.itemData} style={{color:'#f33'}}>
+                        <span>{ environmentData.doorInformTime }</span>
+                        <span style={{marginLeft:16}}>{ environmentData.doorStatus }</span>
+                    </div>
+                </div>
             </div>
-            <div className={style.cardTitle} style={{marginTop: 27}}>告警等级</div>
-            <Pie {...pieConfig} style={{width: 272, height: 272}} />
-          </div>
           <div className={style.newWarning}>
-          <div className={style.cardTitle}>最新告警</div>
+          <div className={style.cardTitle}>告警信息</div>
             <span className={style.toWarning} onClick={()=>toWarning()}>查看详情</span>
             <div className={style.warningDetails}>
               {warningData.map((item, index) => {
                 return <Fragment key={index}>
                   <WarningCard data={item} ></WarningCard>
-                  {warningData.length > (index + 1) ? <div className={style.dashed} style={{marginTop: 21, marginBottom: 21}}></div> : null }
                 </Fragment>
               } )}
             </div>

@@ -128,7 +128,7 @@ const childrenRoute = {
   },
   {
     path: '/devicedetail',
-    element: <Devicedetail />
+    element: <DeviceDetail />
   },
   {
     path: '/devicedtl',

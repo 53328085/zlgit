@@ -158,7 +158,7 @@ const delProject = async () => {
     if (success) {
       delmodal.current.onCancel()
       message.success('删除成功')
-      refresh()
+      window.location.href="/"
     }else {
      return message.warning(errMsg || '数据出错')
     }

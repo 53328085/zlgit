@@ -8,7 +8,7 @@ export default function Index(props){
     echarts.dispose(barRef.current)
     let barChart = echarts.init(barRef.current)
     barChart.setOption({
-      color:['#237ae4'],
+      color:['#5fba5c', '#4d77ff', '#9951fe'],
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -18,14 +18,14 @@ export default function Index(props){
       legend: {
         top: '0px',
         left: 'center',
-        itemWidth: 16,
+        itemWidth: 12,
         itemHeight: 12
       },
       grid: {
-        top: '20px',
-        left: '16px',
+        top: '28px',
+        left: '6px',
         right: '6px',
-        bottom: '16px',
+        bottom: '0px',
         containLabel: true
       },
       xAxis: {
@@ -34,19 +34,42 @@ export default function Index(props){
         axisTick:{
           alignWithLabel:true
         },
-        data: props.data.x
+        data: props.data.date
       },
-      yAxis: {
-        type: 'value'
-      },
+      yAxis: [
+        {
+          type: 'value',
+          scale: true, //自适应,
+          splitNumber:5,
+        },
+        {
+          type: 'value',
+          scale: true, //自适应
+          splitNumber:5,
+        },
+      ],
       series: [
         {
-          name:'储能系统收益(元)',
-          data: props.data.y,
+          name:'充电金额(元)',
+          data: props.data.chargingIncome,
           type: 'bar'
-        }
+        },
+        {
+          name:'放电金额(元)',
+          data: props.data.disChargingIncome,
+          type: 'bar',
+          barGap:'0',
+        },
+        {
+          name:'收益(元)',
+          yAxisIndex: 1,
+          data: props.data.storageIncome,
+          type: 'line',
+          symbol:'circle', 
+          smooth: false,
+        },
       ]
     })
   },[props.barData])
-  return <div style={{width:448,height:199}} id='barChart' ref ={barRef}></div>
+  return <div style={{width:504,height:392}} id='barChart' ref ={barRef}></div>
 }

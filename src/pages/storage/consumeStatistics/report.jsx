@@ -87,16 +87,25 @@ const Mainbox = styled.div`
             
         } 
        }
-`
- 
- 
+` 
  
  function Maincom({projectId,  Statistical, areaId}) {
+  
   const [picker, setPicker] = useState(1)
   const [income, setIncome] = useState({})
+  const [dataset, setDataset] = useState({
+    dimensions: ['name', '收益(元)'],
+    source: [],
+  })
+  const [tdataset, setTdataset] = useState({
+    dimensions: ["date", "充电量(kWh)", "放电量(kWh)"],
+    source: [],
+  })
   const ref = useRef()
   const fref = useRef()
-  const {from} = Form.useForm()
+  const [form] = Form.useForm()
+  const [sform] = Form.useForm()
+  
   const getIncome = async () => {
      let  {success, data} =  await  ConsumeStatisticsRuntime.QueryIncome(projectId, areaId)
      if (success && data) {
@@ -107,28 +116,83 @@ const Mainbox = styled.div`
      }
 
   }
-
+ 
   useEffect(() => {
     getIncome()
   }, [areaId])
-  const dataset = {
-    dimensions: ["time", "收益元"],
-    source: [
-      { time: "1月", "收益元": 5600,},
-      { time: "2月", "收益元": 4600 },
-      { time: "3月", "收益元": 3600,},
-      { time: "4月", "收益元": 5600 },
-      { time: "5月", "收益元": 5600 },
-      { time: "6月", "收益元": 4600 },
-      { time: "7月", "收益元": -3600},
-      { time: "8月", "收益元": 5000 },
-      { time: "9月", "收益元": 6600 },
-      { time: "10月", "收益元": 5800 },
-      { time: "11月", "收益元": 4600 },
-      { time: "12月", "收益元": 1800 },
-    ],
+
+  const getchartData = async () => {
+    try {
+      const { date, type} = form.getFieldsValue() || {}   
+      let time;
+      if (type == 1)  {
+        time = date.format('YYYY-MM-DD')
+      } else if(type == 2) {
+        time = date.format('YYYY-MM') + '-01'
+  
+      } else if(type == 3) {
+         time = date.format('YYYY')+ '-01-01'
+      }
+      
+      let {success, data} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId, areaId, time, type)
+      if(success && Array.isArray(data) && data.length > 0) {
+         let source = data.map(d => ({name: d.name, '收益(元)': d.value, }))
+         console.log(source)
+         setDataset({
+            ...dataset,
+            source,
+         })
+      }else {
+        setDataset({
+          ...dataset,
+          source: [],
+       })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  
   }
-  const tdataset = {
+  const queryDisChargeETrends = async () => {
+    try {
+      
+   
+    const { date, type} = form.getFieldsValue() || {}
+   
+    let time;
+    if (type == 1)  {
+      time = date.format('YYYY-MM-DD')
+    } else if(type == 2) {
+      time = date.format('YYYY-MM') + '-01'
+
+    } else if(type == 3) {
+       time = date.format('YYYY')+ '-01-01'
+    }
+    
+    let {success, data} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId, areaId, time, type)
+    if(success && Array.isArray(data) && data.length > 0) {
+      let source = data.map(d => ({date: d.date, '充电量(kWh)': d.chargeE, '放电量(kWh)': d.disChargeE}))
+      console.log(source)
+      setTdataset({
+         ...tdataset,
+         source,
+      })
+      }else {
+        setTdataset({
+          ...tdataset,
+          source: [],
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getchartData()
+    queryDisChargeETrends()
+  }, [areaId])
+
+/*   const tdataset = {
     dimensions: ["time", "充电量", "放电量"],
     source: [
       { time: "1月", "充电量": 5600, "放电量": 5120,},
@@ -144,57 +208,68 @@ const Mainbox = styled.div`
       { time: "11月", "充电量": 4600, "放电量": 2600,  },
       { time: "12月", "充电量": 1800, "放电量": 1600,  },
     ],
-  };
-  const datechange = () => {}
-  const timechange = () => {}
-  const Formlayout = () => {
+  }; */
+  const Formlayout = ({form, handler}) => {
    
     return (
-      <Form layout='inline' form={from}>
+      <Form layout='inline' form={form} initialValues={{
+        type: 1,
+        date: moment(new Date(), 'YYYY-MM-DD')
+      }}>
         <Space size={16}>
-          <Item noStyle name="type" initialValue={1}>
+          <Item noStyle name="type">
            <Select style={{width: '80px'}}   options={[
             {value: 1, label: '日'},
             {value: 2, label: '月'},
             {value: 3, label: '年'},
            ]}
-           onChange={timechange}
+           onChange={handler}
            ></Select>
         </Item>
 
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{width: '160px'}} />
+        <Item nostyle name="date" >
+          <DatePicker placeholder="请选择日期"  format="YYYY-MM-DD" picker={picker} onChange={handler} style={{width: '160px'}} />
         </Item>
         </Space>
       </Form>
     )
   }
+  const eparams = {
+    smooth: true, 
+     lineStyle: {
+      width: 0
+     },
+    showSymbol: false
+  }
   useEffect(() => {
     drawEcharts(
-      ref.current, {
+       ref.current, {
         dataset,
-        series: [{ type: "line", areaStyle: {color: '#bdd2fd'} }]
+        series: [{ type: "line", areaStyle: {color: '#bdd2fd', },  ...eparams }]
       }
     )
-  }, [picker])
+  }, [dataset])
   useEffect(() => {
     drawEcharts(
       fref.current, {
-        tdataset,
-        series: [{ type: "line", areaStyle: {color: '#bdd2fd'},  stack: 'Total',  }]
+        dataset: tdataset,
+       // series: [{ type: "line", areaStyle: {color: '#bdd2fd', },  ...eparams }]
+        series: [{ type: "line", areaStyle: {color: '#d6e0be'}, ...eparams, stack: 'x'}, { type: "line", areaStyle: {color: '#ffe7d6'}, ...eparams, stack: 'x'}]
       }
     )
-  }, [picker])
+  }, [tdataset])
   return (
     <Mainbox>
         <div className='top'>
           <Statistical data={income} />
         </div>
         <div className='down'>
-          <Titlelayout title={ <Space size={32}><span>收益趋势</span>  <Formlayout/> </Space>  } bordered={'n'} style={{flex: 1}}>
+          <Titlelayout title={ <Space size={32}><span>收益趋势</span>  <Formlayout form={form} handler={getchartData} /> </Space>  } bordered={'n'} style={{flex: 1}}>
+               
+
             <div ref={ref} style={{height: '264px'}}></div>
           </Titlelayout>
-          <Titlelayout title={ <Space size={32}><span>充放电趋势</span>  <Formlayout/> </Space>  } bordered={'n'} style={{flex: 1}}>
+          <Titlelayout title={ <Space size={32}><span>充放电趋势</span>  <Formlayout form={sform} handler={queryDisChargeETrends} /> </Space>  } bordered={'n'} style={{flex: 1}}>
             <div ref={fref} style={{height: '264px'}}></div>
           </Titlelayout>
         </div>

@@ -1,25 +1,32 @@
-;import React, { useEffect,useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import {useNavigate, useParams } from 'react-router-dom'
-import { loginByName, selectLoading, selectMemorize, selectMemoPhone, clearToken, memorizeName, memorizePhone, selectUser} from "@redux/user";
-import { systemConfig} from "@redux/systemconfig";
-import {useBoolean, useCountDown, useRequest } from 'ahooks';
-import { ProjectList } from "@api/api.js";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  message,
-  Space,
-  Image
-} from "antd";
-import styled from 'styled-components'
-import {LoginLayout} from "@com/layout";
-import {pwdValidator, phoneValidator, codeValidator} from '../rule'
-import {Login as Logapi} from '@api/api'
+  loginByName,
+  selectLoading,
+  selectMemorize,
+  selectMemoPhone,
+  clearToken,
+  memorizeName,
+  memorizePhone,
+  selectUser,
+} from "@redux/user";
+import { systemConfig } from "@redux/systemconfig";
+import { useBoolean, useCountDown, useRequest } from "ahooks";
+import { Area, ProjectList, eneryShift } from "@api/api.js";
+import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
+import styled from "styled-components";
+import { LoginLayout } from "@com/layout";
+import { pwdValidator, phoneValidator, codeValidator } from "../rule";
+import { Login as Logapi } from "@api/api";
 import imgurl from "./icon";
-import bgImg from './logBg.png'
+import bgImg from "./logBg.png";
+import {
+  configProject,
+  getMenus,
+  getshifts,
+  getOnelevel,
+} from "@redux/systemconfig";
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
@@ -27,7 +34,7 @@ const Logmain = styled.div`
     height: calc(100vh - 138px - 24px);
     overflow-y: auto;
   }
-`
+`;
 
 const List = styled.div`
   width: 660px;
@@ -51,15 +58,15 @@ const List = styled.div`
     display: block;
     width: 775px;
     height: 35px;
-    background-color: #012BD2;
+    background-color: #012bd2;
     position: absolute;
-    top:59px;
+    top: 59px;
     transform: skewX(-20deg);
   }
   .entitle {
     font-size: 28px;
     line-height: 2;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255, 255, 255, 0.7);
     padding-left: 20px;
     padding-bottom: 72px;
     font-style: oblique;
@@ -68,22 +75,20 @@ const List = styled.div`
     display: flex;
     flex-direction: column;
     padding-left: 20px;
-    .item{
-     
+    .item {
       display: flex;
       align-items: center;
     }
     .text {
       display: inline-block;
       font-size: 16px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
     }
     .icon {
-      
       display: inline-block;
       width: 16px;
       height: 16px;
-      background-color: #1F83FE;
+      background-color: #1f83fe;
       transform: rotate(45deg);
       margin-right: 16px;
     }
@@ -91,13 +96,13 @@ const List = styled.div`
       margin-top: 24px;
     }
   }
-`
+`;
 const Logbox = styled.div`
   width: 402px;
   color: #fff;
   background: transparent;
   margin-left: auto;
-`
+`;
 const Logtype = styled.div`
   display: flex;
   justify-content: space-between;
@@ -106,28 +111,28 @@ const Logtype = styled.div`
   span {
     font-style: italic;
     transition: font-size 0.3s, color 0.3s;
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }
-`
-const {Item} = Form
+`;
+const { Item } = Form;
 const Itembox = styled(Item)`
-   &:not(:last-child) {
+  &:not(:last-child) {
     margin-bottom: 64px;
   }
   .ant-input-affix-wrapper-lg {
     height: 48px;
   }
-`
+`;
 const Ipticon = styled.span`
   display: inline-block;
   width: 32px;
   height: 32px;
- 
+
   background-size: 32px 32px;
-  transition: all 0.3s; 
-`  
+  transition: all 0.3s;
+`;
 const Logipt = styled(Input)`
   font-size: 14px;
   background-color: transparent !important;
@@ -135,7 +140,8 @@ const Logipt = styled(Input)`
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
-  &:focus, &:hover {    
+  &:focus,
+  &:hover {
     border-color: #1f83fe !important;
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
@@ -154,18 +160,17 @@ const Logipt = styled(Input)`
   }
   .ant-input {
     background-color: transparent;
-    color:#999;
-  
-  } 
- .ant-input::placeholder {
     color: #999;
-    }
+  }
+  .ant-input::placeholder {
+    color: #999;
+  }
   input:-internal-autofill-previewed,
   input:-internal-autofill-selected {
     -webkit-text-fill-color: #999 !important;
-　　transition: background-color 5000s ease-in-out 0s !important;
+    　　transition: background-color 5000s ease-in-out 0s !important;
   }
-`
+`;
 const Logpsd = styled(Input.Password)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
@@ -173,11 +178,12 @@ const Logpsd = styled(Input.Password)`
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
-  &:focus, &:hover {    
+  &:focus,
+  &:hover {
     border-color: #1f83fe !important;
     ${Ipticon} {
-    background-image: url(${(props) => props.aurl});
-  }
+      background-image: url(${(props) => props.aurl});
+    }
     .ant-input {
       color: #1f83fe;
     }
@@ -191,20 +197,19 @@ const Logpsd = styled(Input.Password)`
     }
   }
   .ant-input-password-icon.anticon {
-      color: #999
-    }
+    color: #999;
+  }
   .ant-input-affix-wrapper-status-error {
     background-color: transparent !important;
   }
   .ant-input {
     background-color: transparent;
-    color:#999;
-  
-  } 
- .ant-input::placeholder {
     color: #999;
-    }
-`
+  }
+  .ant-input::placeholder {
+    color: #999;
+  }
+`;
 const Logck = styled(Checkbox)`
   display: flex;
   align-items: center;
@@ -212,23 +217,23 @@ const Logck = styled(Checkbox)`
     .ant-checkbox:hover {
       border-color: #9c9ea4;
     }
-  
- }
- .ant-checkbox+span {
-  padding-left: 0;
-  padding-right: 0;
-  color: #999;
-  font-size: 16px;
- }
- .ant-checkbox-checked .ant-checkbox-inner:after {
-  transform: rotate(45deg) scale(2) translate(-25%,-50%);
- }
+  }
+  .ant-checkbox + span {
+    padding-left: 0;
+    padding-right: 0;
+    color: #999;
+    font-size: 16px;
+  }
+  .ant-checkbox-checked .ant-checkbox-inner:after {
+    transform: rotate(45deg) scale(2) translate(-25%, -50%);
+  }
   .ant-checkbox {
     width: 32px;
     height: 32px;
     margin-right: 16px;
-    top:0px;
-    .ant-checkbox-input, .ant-checkbox-inner {
+    top: 0px;
+    .ant-checkbox-input,
+    .ant-checkbox-inner {
       width: inherit;
       height: inherit;
       background-color: transparent;
@@ -241,348 +246,479 @@ const Logck = styled(Checkbox)`
       }
     }
   }
-  
-`
+`;
 
 const Logbtn = styled(Button)`
   border-color: #0e2db3;
   background-color: #0e2db3;
   font-size: 18px;
-  color:#fff;
+  color: #fff;
   &:hover {
     border-color: #0728ae;
     background-color: #0728ae;
-    color:#fff;
+    color: #fff;
   }
-`
+`;
 
 const Title = styled.div`
   display: flex;
   height: inherit;
   flex: 1;
-  padding: 0 84px 0 96px; 
+  padding: 0 84px 0 96px;
   justify-content: space-between;
   align-items: flex-end;
-`
+`;
 
 const Logtitle = () => {
- return (  
- <Title>
-    <Image src={imgurl.logo} preview={false}  />
-    <Image src={imgurl.credentials} preview={false} />
-   </Title>
- )
-}
+  return (
+    <Title>
+      <Image src={imgurl.logo} preview={false} />
+      <Image src={imgurl.credentials} preview={false} />
+    </Title>
+  );
+};
 const Loglist = () => {
-  let items = ['运行监控', '电气安全', '配电管理', '结算收费', '光伏发电', '碳排管理', '运维管理']
+  let items = [
+    "运行监控",
+    "电气安全",
+    "配电管理",
+    "结算收费",
+    "光伏发电",
+    "碳排管理",
+    "运维管理",
+  ];
   return (
     <List>
       <div className="chtitle">
         <p className="text">NIS6000 正泰综合能源服务平台</p>
         <p className="block"></p>
-       </div>
-       <p className="entitle">Integrated Energy Service Platform</p>
-       <div className="itemlist">        
-         {items.map((i, index) =>  (<div className="item" key={index}><span className="icon"></span><span className="text">{i}</span></div>))}
-       </div>
+      </div>
+      <p className="entitle">Integrated Energy Service Platform</p>
+      <div className="itemlist">
+        {items.map((i, index) => (
+          <div className="item" key={index}>
+            <span className="icon"></span>
+            <span className="text">{i}</span>
+          </div>
+        ))}
+      </div>
     </List>
-  )
-}
-function UserLog() { 
+  );
+};
+function UserLog() {
+  const store = useStore();
 
-  const store = useStore()
- 
   const navigate = useNavigate();
-  let initloaidng = useSelector(selectLoading)  
-  let [loading, setLoading] = useState(initloaidng);  
+  let initloaidng = useSelector(selectLoading);
+  let [loading, setLoading] = useState(initloaidng);
   const dispatch = useDispatch();
-  store.subscribe(() => {   
-    setLoading(store.getState()?.user?.loading)
-   
-  })
-  const hostname = process.env.NODE_ENV === "production" ? new URL(window.location.href).hostname  : "10.5.7.60";
+  store.subscribe(() => {
+    setLoading(store.getState()?.user?.loading);
+  });
+  const projectRun = ({ key, label }) => {
+    navigate(`/index/${key}`, {
+      state: { type: "index", primary: key, index: true, title: label },
+    });
+  };
+  const hostname =
+    process.env.NODE_ENV === "production"
+      ? new URL(window.location.href).hostname
+      : "10.5.7.60";
   const submit = async (value) => {
-    const {name, pwd} = value
-   let { success,errMsg,data } = await dispatch(loginByName({ name, pwd })).unwrap();
-   if (success){
-    if(data.roleType==1||data.roleType==2){
-      navigate("/projectlist", {
-     });
-  }else if(data.roleType==3||data.roleType==4){
-    navigate("/index/runtimeProject", {
-      state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
-    })
-    return ProjectList.QueryMenus(data.projectId).then((res)=>{
-      let { success, data } = res;
-      if (success && data) {
-        console.log(data);
-      } else {
+    const { name, pwd } = value;
+    let { success, errMsg, data } = await dispatch(
+      loginByName({ name, pwd })
+    ).unwrap();
+    if (success) {
+      let userIdentity = sessionStorage.setItem("userIdentity", data.roleType);
+      if (data.roleType == 1 || data.roleType == 2) {
+        navigate("/projectlist", {});
+      } else if (data.roleType == 3 || data.roleType == 4) {
+        try {
+          let {
+            data: dataQueryMenus,
+            success,
+            errMsg,
+          } = await ProjectList.QueryMenus(data.projectId);
+          if (success && Array.isArray(dataQueryMenus)) {
+            try {
+              const setMenus = dataQueryMenus.filter((m) => {
+                ["0101", "0103"].includes(m.no);
+              });
+
+              const runMenus = dataQueryMenus
+                .filter(
+                  // && m.no !== "0102"
+                  (m) => m.parentNo == "01" && m.select == 1
+                )
+                .filter((m) => !["0101", "0102", "0103"].includes(m.no)); // 运行功能 菜单
+              let exclude = ["01", "02", "0101", "0102", "0103", "0104"]; // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+
+              const sidermenu = dataQueryMenus
+                .filter((m) => m.parentNo != "01")
+                .filter((m) => m.parentNo != "02")
+                .filter((m) => !exclude.includes(m.no));
+
+              const siderRunMenus = {}; // 运行功能 选择的子菜单
+              runMenus.forEach((item) => {
+                console.log(item);
+                let { no, key, parentNo } = item;
+                if (!exclude.includes(item.no)) {
+                  siderRunMenus[key] = sidermenu.filter(
+                    (m) => m.parentNo == no && m.select == 1
+                  );
+                }
+              });
+              const siderDesignerMenus = {};
+              const menus = {
+                siderDesignerMenus,
+                runMenus,
+                siderRunMenus,
+                setMenus,
+                projectId: data.projectId,
+              };
+              let type = 2;
+              dispatch(getMenus(menus));
+              dispatch(configProject(type === 1));
+              if (type == 2) {
+                let runitem =
+                  runMenus?.find((item) => item.no == "0104") || runMenus[0]; //此处还需要增加404页面路径
+                projectRun(runitem);
+              }
+
+              try {
+                let { success: lsuccess, data: levelData } =
+                  await Area.QueryAll({
+                    projectId: data.projectId,
+                    level: 1,
+                    parentId: 0,
+                  });
+                lsuccess && dispatch(getOnelevel(levelData));
+                !lsuccess && dispatch(getOnelevel([]));
+              } catch (error) {
+                console.log(error);
+              }
+              try {
+                let { success: sces, data: shitfsData } =
+                  await eneryShift.queryShifts(data.projectId);
+                sces && dispatch(getshifts(shitfsData || []));
+                !sces && dispatch(getshifts([]));
+              } catch (error) {
+                console.log(error);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            return message.warning(errMsg || "数据出错,请重试");
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
-    })
-  }
-   } 
-   if (!success) message.warning(errMsg || '系统繁忙,请稍后再试')
+    }
+
+    if (!success) message.warning(errMsg || "系统繁忙,请稍后再试");
   };
   const onFinishFailed = (error) => {
-    console.log(error)
-  }
+    console.log(error);
+  };
   useEffect(() => {
-    dispatch(clearToken()) // 返回登录页面时清楚token
-  }, [])
+    dispatch(clearToken()); // 返回登录页面时清楚token
+  }, []);
   useEffect(() => {
-    document.title = 'NIS6000 正泰综合能源服务平台'
-
-  }, [])
+    document.title = "NIS6000 正泰综合能源服务平台";
+  }, []);
   useEffect(() => {
-    
     dispatch(systemConfig(hostname));
   }, [hostname]);
 
+  const [userform] = Form.useForm();
 
-  const [userform] = Form.useForm()
-  
-  const [state, { toggle  }] = useBoolean(true);
-  
+  const [state, { toggle }] = useBoolean(true);
+
   const stylefn = (state) => {
-    return state ? {fontSize: '28px', color: '#fff'} : {fontSize: '26px', color: '#515151'}
-  }
+    return state
+      ? { fontSize: "28px", color: "#fff" }
+      : { fontSize: "26px", color: "#515151" };
+  };
 
-
- const iconsty = {
-  fontSize: '26px', 
-  color: '#999',
-  marginRight: '16px'
- }
- const Userlog = () => {
-  let initmemorize = useSelector(selectMemorize) 
-  let {name} = useSelector(selectUser)
-  const auto = useMemo(()=> initmemorize ? 'on' : 'off', [initmemorize])
-  const userName = useMemo(()=> initmemorize ? name : '', [initmemorize])
-  const ckChange = (e) => {
-    dispatch(memorizeName(e.target.checked))
-  }
-  store.subscribe(() => {
-    initmemorize = store.getState()?.memorize
-  })
-  useEffect(() => {
-    return () => {
-      setLoading(false)
-    }
-  })
-  return (
- 
-    <Form
-    layout="horizontal"
-    labelCol={{flex: '4em'}}
-    wrapperCol={{flex:1}}
-    labelWrap
-    form={userform}
-    name='login'
-    onFinish={submit}
-    onFinishFailed={onFinishFailed}
-    initialValues={{
-      name: userName,
-      pwd: 'chint_123456'
-    }}
-   
-  >
-    <Itembox
-       name="name"
-       hasFeedback
-       rules={[
-        {
-          required: true,
-          message: '请输入用户姓名',             
-        },
-        {
-          type: 'string',
-          min: 2,
-          max: 20,
-          message: '用户名2至20个字符串'
-        }
-      ]}
+  const iconsty = {
+    fontSize: "26px",
+    color: "#999",
+    marginRight: "16px",
+  };
+  const Userlog = () => {
+    let initmemorize = useSelector(selectMemorize);
+    let { name } = useSelector(selectUser);
+    const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
+    const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
+    const ckChange = (e) => {
+      dispatch(memorizeName(e.target.checked));
+    };
+    store.subscribe(() => {
+      initmemorize = store.getState()?.memorize;
+    });
+    useEffect(() => {
+      return () => {
+        setLoading(false);
+      };
+    });
+    return (
+      <Form
+        layout="horizontal"
+        labelCol={{ flex: "4em" }}
+        wrapperCol={{ flex: 1 }}
+        labelWrap
+        form={userform}
+        name="login"
+        onFinish={submit}
+        onFinishFailed={onFinishFailed}
+        initialValues={{
+          name: userName,
+          pwd: "chint_123456",
+        }}
       >
-       <Logipt prefix={<Ipticon />} url={imgurl.user}  aurl={imgurl.usera} placeholder="请输入用户名" allowClear autoComplete={auto} />
-      </Itembox>
-      <Itembox
-       name="pwd"
-       hasFeedback
-       rules={[
-        {
-          required: true,
-          message: '请输入密码',             
-        },
-       /*  {
+        <Itembox
+          name="name"
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "请输入用户姓名",
+            },
+            {
+              type: "string",
+              min: 2,
+              max: 20,
+              message: "用户名2至20个字符串",
+            },
+          ]}
+        >
+          <Logipt
+            prefix={<Ipticon />}
+            url={imgurl.user}
+            aurl={imgurl.usera}
+            placeholder="请输入用户名"
+            allowClear
+            autoComplete={auto}
+          />
+        </Itembox>
+        <Itembox
+          name="pwd"
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "请输入密码",
+            },
+            /*  {
             validator: pwdValidator
         }, */
-     
-      ]}
-      >         
-       <Logpsd prefix={<Ipticon />} url={imgurl.pwd}  aurl={imgurl.pwda} placeholder="请输入密码" />
-      </Itembox>
-      <Itembox
-      
-       valuePropName="checked"
-      >
-        <Logck   onChange={ckChange}  defaultChecked={initmemorize} >记住用户名</Logck>
-      </Itembox>
-      <Itembox>
-          <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
-      </Itembox>
-  </Form>
-  )
-    }
-function Phonelog(){
-    const {GetVerification} = Logapi
-    const [phoneform] = Form.useForm()
-    let initPhone = useSelector(selectMemoPhone)   
-    let {mobile} = useSelector(selectUser)  
-    const auto = useMemo(()=> initPhone ? 'on' : 'off', [initPhone])
-    const initMobile = useMemo(()=> initPhone ? mobile : '', [initPhone])
+          ]}
+        >
+          <Logpsd
+            prefix={<Ipticon />}
+            url={imgurl.pwd}
+            aurl={imgurl.pwda}
+            placeholder="请输入密码"
+          />
+        </Itembox>
+        <Itembox valuePropName="checked">
+          <Logck onChange={ckChange} defaultChecked={initmemorize}>
+            记住用户名
+          </Logck>
+        </Itembox>
+        <Itembox>
+          <Logbtn
+            htmlType="submit"
+            block
+            loading={loading}
+            style={{ height: "56px" }}
+          >
+            立即登录
+          </Logbtn>
+        </Itembox>
+      </Form>
+    );
+  };
+  function Phonelog() {
+    const { GetVerification } = Logapi;
+    const [phoneform] = Form.useForm();
+    let initPhone = useSelector(selectMemoPhone);
+    let { mobile } = useSelector(selectUser);
+    const auto = useMemo(() => (initPhone ? "on" : "off"), [initPhone]);
+    const initMobile = useMemo(() => (initPhone ? mobile : ""), [initPhone]);
     const ckchange = (e) => {
-      dispatch(memorizePhone(e.target.checked))
-    }
+      dispatch(memorizePhone(e.target.checked));
+    };
     store.subscribe(() => {
-      initPhone = store.getState()?.memoPhone
-    }) 
-    const [targetDate, setTargetDate] = useState(0)
+      initPhone = store.getState()?.memoPhone;
+    });
+    const [targetDate, setTargetDate] = useState(0);
     const [countdown] = useCountDown({
-      targetDate
-    })
-    const {loading, run } = useRequest(GetVerification, { // 获取验证码
-      manual: true,   
+      targetDate,
+    });
+    const { loading, run } = useRequest(GetVerification, {
+      // 获取验证码
+      manual: true,
       onSuccess: (res) => {
-        let {success, data} = res
-        if (success) phoneform.setFieldValue('code', data.code)
+        let { success, data } = res;
+        if (success) phoneform.setFieldValue("code", data.code);
       },
       onError: (error) => {
-        console.log(error)
-      }
-    })
+        console.log(error);
+      },
+    });
     const getCode = () => {
-      const phone = phoneform.getFieldValue('mobile')    
-      phoneform.validateFields(['mobile']).then(res => {
-        setTargetDate(Date.now() + 1000*60)
-        run(phone)
-        
-      }).catch(e => {
-        console.log(e)
-      })
-     
-    }
+      const phone = phoneform.getFieldValue("mobile");
+      phoneform
+        .validateFields(["mobile"])
+        .then((res) => {
+          setTargetDate(Date.now() + 1000 * 60);
+          run(phone);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
     const Countdown = () => {
-     
       return (
-         <Logbtn  style={{height: '48px', width: '112px', fontSize: '16px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
-               {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
-         </Logbtn>
-         )
-}
-   useEffect(() => {
-   
-   })
+        <Logbtn
+          style={{ height: "48px", width: "112px", fontSize: "16px" }}
+          onClick={() => getCode()}
+          disabled={countdown !== 0}
+        >
+          {countdown === 0 ? "获取验证码" : ` ${Math.round(countdown / 1000)}s`}
+        </Logbtn>
+      );
+    };
+    useEffect(() => {});
     return (
-    <Form
-    layout="horizontal"
-    labelCol={{flex: '4em'}}
-    wrapperCol={{flex:1}}
-    labelWrap 
-    form={phoneform}
-    name='phonelogin'  
-    onFinish={submit}
-    onFinishFailed={onFinishFailed}   
-    initialValues= {
-      {
-        mobile: initMobile,
-        remember: initPhone
-      }
-    }
-  >
-    <Itembox
-       name="mobile"
-       hasFeedback
-       rules={[
-        {
-          required: true,
-          message: '请输入手机号',             
-        },
-        {
-          validator: phoneValidator
-        }
-      ]}
+      <Form
+        layout="horizontal"
+        labelCol={{ flex: "4em" }}
+        wrapperCol={{ flex: 1 }}
+        labelWrap
+        form={phoneform}
+        name="phonelogin"
+        onFinish={submit}
+        onFinishFailed={onFinishFailed}
+        initialValues={{
+          mobile: initMobile,
+          remember: initPhone,
+        }}
       >
-       <Logipt prefix={<Ipticon/>} url={imgurl.phone} aurl={imgurl.phonea} placeholder="请输入手机号" autoComplete={auto} />
-      </Itembox>
-      <Itembox   >         
-      <Space size={16}> 
-        <Item   
-        name="code"
-        hasFeedback
-        rules={[
-        { 
-          required: true,
-          message: '请输入验证码',             
-        },
-        {
-          validator: codeValidator
-        }
-
-       
-      ]} noStyle> 
-       <Logipt  prefix={<Ipticon/>} url={imgurl.code} aurl={imgurl.codea}  placeholder="请输入验证码" style={{width: '275px'}} /> 
-       </Item>
-       <Item noStyle>
-       {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
+        <Itembox
+          name="mobile"
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "请输入手机号",
+            },
+            {
+              validator: phoneValidator,
+            },
+          ]}
+        >
+          <Logipt
+            prefix={<Ipticon />}
+            url={imgurl.phone}
+            aurl={imgurl.phonea}
+            placeholder="请输入手机号"
+            autoComplete={auto}
+          />
+        </Itembox>
+        <Itembox>
+          <Space size={16}>
+            <Item
+              name="code"
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "请输入验证码",
+                },
+                {
+                  validator: codeValidator,
+                },
+              ]}
+              noStyle
+            >
+              <Logipt
+                prefix={<Ipticon />}
+                url={imgurl.code}
+                aurl={imgurl.codea}
+                placeholder="请输入验证码"
+                style={{ width: "275px" }}
+              />
+            </Item>
+            <Item noStyle>
+              {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
                {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
          </Button> */}
-         <Countdown/>
-         </Item>
-      </Space>
-      </Itembox>
-      <Itembox
-       name='remember'
-       valuePropName="checked"
-      >
-        <Logck   onChange={ckchange}  >记住手机号</Logck>
-      </Itembox>
-      <Itembox>
-          <Logbtn  htmlType="submit" block loading={loading} style={{height: '56px'}}>立即登录</Logbtn>
-      </Itembox>
-  </Form>
-  )
-}
+              <Countdown />
+            </Item>
+          </Space>
+        </Itembox>
+        <Itembox name="remember" valuePropName="checked">
+          <Logck onChange={ckchange}>记住手机号</Logck>
+        </Itembox>
+        <Itembox>
+          <Logbtn
+            htmlType="submit"
+            block
+            loading={loading}
+            style={{ height: "56px" }}
+          >
+            立即登录
+          </Logbtn>
+        </Itembox>
+      </Form>
+    );
+  }
 
-const Phone = React.memo(Phonelog)
-  const params = useParams()
+  const Phone = React.memo(Phonelog);
+  const params = useParams();
   const type = useMemo(() => {
-    let param =  Object.values(params)?.[0]
+    let param = Object.values(params)?.[0];
 
-      return !param || param == 'user'
-  }, [params])
+    return !param || param == "user";
+  }, [params]);
   return (
-    <Logbox>  
+    <Logbox>
       <Logtype>
-        <span onClick={() => {
-        //  navigate('user')
-          toggle()
-          }} style={stylefn(state)}>账户登录</span>
-        <span onClick={() => {
-          // navigate('mobile')
-           toggle()
-        }} style={stylefn(!state)}>手机登录</span>
-      </Logtype> 
-      {state ? <Userlog />  : <Phonelog/>}
-    
+        <span
+          onClick={() => {
+            //  navigate('user')
+            toggle();
+          }}
+          style={stylefn(state)}
+        >
+          账户登录
+        </span>
+        <span
+          onClick={() => {
+            // navigate('mobile')
+            toggle();
+          }}
+          style={stylefn(!state)}
+        >
+          手机登录
+        </span>
+      </Logtype>
+      {state ? <Userlog /> : <Phonelog />}
     </Logbox>
   );
 }
-export default function Login() {  
-  return <LoginLayout login={true} header={<Logtitle /> } bgImg={bgImg}>
-        <Logmain>
-          <Loglist>
-
-          </Loglist>
-          <UserLog /> 
-          </Logmain>
-    </LoginLayout>;
+export default function Login() {
+  return (
+    <LoginLayout login={true} header={<Logtitle />} bgImg={bgImg}>
+      <Logmain>
+        <Loglist></Loglist>
+        <UserLog />
+      </Logmain>
+    </LoginLayout>
+  );
 }
