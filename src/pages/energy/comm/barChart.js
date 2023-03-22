@@ -61,7 +61,6 @@ export default function Index(props) {
     <div
       style={{ height: 700, margin: 12 }}
       id="barChartInfo"
-      className={energyType == true ? style.barMinWidth : style.barMaxWidth}
     ></div>
   );
 }
