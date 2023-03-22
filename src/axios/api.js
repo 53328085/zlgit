@@ -244,7 +244,7 @@ export class EnergyComprehensive {
   }
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
   }
 
  // 储能管理-- 能耗统计

@@ -253,9 +253,10 @@ const [tableData, setTableData] = useState([])
                  </Item>
                  <Item name="type" label="区域用途">
                       <Select>
-                         <Select.Option value={0}  >无</Select.Option>
-                         <Select.Option value={1}  >楼层</Select.Option>
-                         <Select.Option value={2} >房间</Select.Option>
+                         <Select.Option value={0} >无</Select.Option>
+                         <Select.Option value={1}>楼栋</Select.Option> 
+                         <Select.Option value={2}>楼层</Select.Option>
+                         <Select.Option value={3}>房间</Select.Option>
                       </Select>
                  </Item>
              </Form>

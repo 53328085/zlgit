@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input} from 'antd'
+import {StorageControlRuntime} from '@api/api'
 import imgurl from './icon'
 const {Text, Link, Title} = Typography
 const {Item} = Form
@@ -30,19 +31,30 @@ const Mainbox = styled.div`
 
                 .cotrl {   
                     width: 240px;
-                   height: 96px;
-                   border: 1px solid #237ae4;
-                   border-radius: 4px; 
-                   color: #237AE4;
+                    height: 96px;
+                    border-radius: 4px; 
                     display: flex;
                     align-items: center;
                     justify-content: space-around;
+                    cursor: pointer;
+                 }
+                 .cotrl.active {
+                    border: 1px solid #237ae4;
+                    background-color: #237ae4;
+                   
+                    .ant-typography {
+                        color: #fff;
+                        font-size: 18px;
+                    }
                  }
                  .cotrl.disabled {
                     background-color: rgba(242, 242, 242, 1);
                     border: 1px solid rgba(204, 204, 204, 1);  
-                    color: #666666;
                     opacity: 0.9;
+                    .ant-typography {
+                        color: #666666;
+                        font-size: 18px;
+                    }
                  }
                 }
             }
@@ -85,7 +97,24 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
-export default function Manual({projectId}) {
+export default function Manual({projectId, areaId}) {
+  const [onoff, setOnoff] = useState()
+  const [ongrid, setOngrid] = useState()
+  const [pform] = Form.useForm()
+  const [qform] = Form.useForm()
+  const querySiteStatus = async () => {
+     let {success, data} = await StorageControlRuntime.QuerySiteStatus(projectId, areaId)
+     if(success) {
+        let {onOffSwitch, onOffGrid, p, q} = data ;
+        setOnoff(onOffSwitch)
+        setOngrid(onOffGrid)
+        pform.setFieldValue('cp', p)
+        qform.setFieldValue('cq',q)
+     }
+  }
+  useEffect(() => {
+    querySiteStatus()
+  }, [areaId])
   return (
     <Mainbox>
         <div className='top'>
@@ -96,13 +125,13 @@ export default function Manual({projectId}) {
                     <Text>当前运行状态：关机</Text>
                 </div>
                 <div className='item'>
-                    <div className='cotrl'>
-                        <Image src={imgurl.coal} height={42} width={42} />
-                        <Link>系统关机</Link>
+                    <div className={onoff== 1 ? 'cotrl active' : 'cotrl disabled'}>
+                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
+                        <Text>系统开机</Text>
                     </div>
-                    <div className='cotrl disabled'>
-                       <Image src={imgurl.coal} height={42} width={42} />
-                        <Link>系统关机</Link>
+                    <div className={onoff== 0 ? 'cotrl active' : 'cotrl disabled'}>
+                       <Image src={imgurl.coal} height={42} width={42} preview={false} />
+                        <Text>系统关机</Text>
                     </div>
                 </div>
             </div>
@@ -114,22 +143,22 @@ export default function Manual({projectId}) {
                 <div className='item'>
                     <div className='cotrl'>
                         <Image src={imgurl.coal} height={42} width={42}  />
-                        <Link>系统关机</Link>
+                        <Text>系统关机</Text>
                     </div>
                     <div className='cotrl disabled'>
                        <Image src={imgurl.coal} height={42} width={42} />
-                        <Link>系统关机</Link>
+                        <Text>系统关机</Text>
                     </div>
                 </div>
             </div>
             </div>
             <div className='topright'>
-                <Formbox layout="inline"  >
+                <Formbox layout="inline" form={pform} >
                     <Space size={16}>
-                        <Item label="当前有功功率">
+                        <Item label="当前有功功率" name="cp">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置有功功率">
+                        <Item label="设置有功功率" name="sp">
                             <Input addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
@@ -137,12 +166,12 @@ export default function Manual({projectId}) {
                         </Item>
                     </Space>
                 </Formbox>
-                <Formbox layout="inline" >
+                <Formbox layout="inline" form={qform}>
                     <Space size={16}>
-                        <Item label="当前有功功率">
+                        <Item label="当前无功功率" name="cq">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置有功功率">
+                        <Item label="设置无功功率" name="sq">
                             <Input addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
