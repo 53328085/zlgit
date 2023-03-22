@@ -513,7 +513,7 @@ const CoalStandard =({data={}}) => {
 
 
   const getData = async () => {
-    const {area, date, type, shiftNo, view} = form.getFieldsValue()
+    const {area, date, type, shiftNo, view=1} = form.getFieldsValue() || {}
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')

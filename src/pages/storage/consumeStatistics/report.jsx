@@ -97,6 +97,8 @@ const Mainbox = styled.div`
   const ref = useRef()
   const fref = useRef()
   const {from} = Form.useForm()
+  let defaultTime = '2023-03-20'
+  const [date, setDates] = useState([moment(defaultTime, 'YYYY-MM-DD')])
   const getIncome = async () => {
      let  {success, data} =  await  ConsumeStatisticsRuntime.QueryIncome(projectId, areaId)
      if (success && data) {
@@ -107,10 +109,17 @@ const Mainbox = styled.div`
      }
 
   }
-
+ 
   useEffect(() => {
     getIncome()
   }, [areaId])
+
+  const getchartData = async () => {
+    let {success, data} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId, areaId, date)
+  }
+  useEffect(() => {
+    getchartData()
+  }, [areaId, date])
   const dataset = {
     dimensions: ["time", "收益元"],
     source: [
@@ -173,7 +182,9 @@ const Mainbox = styled.div`
     drawEcharts(
       ref.current, {
         dataset,
-        series: [{ type: "line", areaStyle: {color: '#bdd2fd'} }]
+        series: [{ type: "line", areaStyle: {color: '#bdd2fd', }, smooth: true,  lineStyle: {
+          width: 0
+        },showSymbol: false, }]
       }
     )
   }, [picker])

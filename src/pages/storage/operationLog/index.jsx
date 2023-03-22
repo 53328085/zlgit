@@ -13,7 +13,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={{handler: setAreaid}}>
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
-      <Report projectId={projectId}  areaId={AreaID} /> 
+      <Report projectId={projectId}  areaId={AreaID.area} /> 
     </Pagecount>
     </CustContext.Provider>
   )

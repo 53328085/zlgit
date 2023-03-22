@@ -10,10 +10,11 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
+  
   return (
     <CustContext.Provider value={{}}>
     <Pagecount showserach={true} bgcolor="transparent" pd="0px">   
-        <Report projectId={projectId} areaId={AreaID}/>
+        <Report projectId={projectId} areaId={AreaID.area}/>
     </Pagecount>
     </CustContext.Provider>
   )
