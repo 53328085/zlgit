@@ -2,10 +2,11 @@ import React,{Fragment, useState}from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
 import UseHeader from '@com/useHeader'
-import { StorageSummaryRuntime, StorageAlarmRuntime } from '@api/api.js'
+import { SiteSummaryRuntime, StorageAlarmRuntime } from '@api/api.js'
 import { message } from 'antd'
 import { range } from 'lodash'
 import BarChart from './barChart'
+
 import zhandian from './imgs/zhandian.png'
 import zhanwei from './imgs/zhanwei.png'
 import warningPoint from '@imgs/warningPoint.png'
@@ -16,25 +17,20 @@ import totalChargeCost from './imgs/totalChargeCost.png'
 import totalDischargeCost from './imgs/totalDischargeCost.png'
 
 export default function Index() {
-  const { statistic, 
-    queryEchartsInfo, 
-    queryPowerTrends, 
+  const { querySiteInfo, 
+    queryStorageIncome, 
+    queryStorageWarning, 
     queryTopologyDiagramInfo, 
-    queryRealtimeData } = StorageSummaryRuntime
+    queryRealtimeData } = SiteSummaryRuntime
   const { alarmStatistic } = StorageAlarmRuntime
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
-  const [barData, setBarData] = useState({
-    x:['3月1日', '3月2日', '3月3日', '3月4日', '3月5日', '3月6日', '3月7日'],
-    y:['523.23', '418.58', '306.98', '489.32', '874.59', '742.63', '684.25'],
-    z:['685.25', '514.23', '415.36', '598.32', '957.32', '845.36', '874.39'],
-    line:['162.02', '95.65', '144.38', '109', '82.73', '107.73', '190.14']
-  }) //收益统计
-  const [powerData, setPowerData] = useState({}) //实时功率
+  const [barData, setBarData] = useState({}) //收益统计
   const [realData, setRealData] = useState({})//实时状态
+  const [warningData, setWarningData] = useState([])
   const getFromHeader = values => {
     let { projectId, areaId } = values
-    statistic(projectId, areaId).then(res => {
+    querySiteInfo(projectId, areaId).then(res => {
       if(res.success){
         setCardData(res.data)
       }else{
@@ -42,34 +38,26 @@ export default function Index() {
       }
     })
 
-    queryEchartsInfo(projectId, areaId).then(res => {
+    queryStorageIncome(projectId, areaId).then(res => {
       let {success, data} = res
       if(success) {
-
+        if(data){
+          setBarData(data)
+        }else{
+          setBarData({})
+        }
       }else{
         message.error(res.errMsg)
       }
     })
 
-    queryPowerTrends(projectId, areaId).then(res => {
+    queryStorageWarning(projectId, areaId).then(res => {
       let {success, data} = res
       if(success) {
         if(data){
-          let x= [];
-          let y = [];
-          data.map((item, index) => {
-            x.push(item.name)
-            y.push(item.value)
-          })
-          setPowerData({
-            x,
-            y
-          })
+          setWarningData(data)
         }else{
-          setPowerData({
-            x:[],
-            y:[]
-          })
+          setWarningData([])
         }
       }else{
         message.error(res.errMsg)
@@ -154,9 +142,9 @@ export default function Index() {
       </div>
       <div className={style.warningData}>
         <div className={style.warningtop}>
-          <span className={style.time}>{props.data.time}</span>
-          <span className={style.description}>{props.data.description}</span>
-          <span className={style.level} style={{fontSize: 12, color:'#6b6b6b'}}>{props.data.level == 1? '一级告警' : props.data.level == 2? '二级告警' :'三级告警'}</span>
+          <span className={style.time}>{props.data.warningTime}</span>
+          <span className={style.description}>{props.data.content}</span>
+          <span className={style.level} style={{fontSize: 12, color:'#6b6b6b'}}>{props.data.level}</span>
         </div>
         <div className={style.warningbottom}>
           <span className={style.sn}>{props.data.sn}</span>
@@ -164,19 +152,6 @@ export default function Index() {
       </div>
     </div>
   }
-  const warningData = [
-    {
-      time:'13:48:23',
-      description:'BMS 电池告警',
-      sn:'PCS_TGA_4FA3',
-      level:1
-    },{
-      time:'13:20:23',
-      description:'SOC 低告警',
-      sn:'TGA_9GG3S',
-      level:2
-    }
-  ]
   const toWarning = () => {
     navigate('/index/runtimeStorage/alarmMessage',{
       state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage'  } 
@@ -194,63 +169,63 @@ export default function Index() {
               <div className={style.siteData}>
                 <div>
                   <span className={style.siteTitle}>设备类型</span>
-                  <span className={style.siteValue}>分布式储能</span>
+                  <span className={style.siteValue}>{ cardData?.meterType }</span>
                 </div>
                 <div>
                   <span className={style.siteTitle}>运行功率</span>
-                  <span className={style.siteValue}>120 &nbsp;kW</span>
+                  <span className={style.siteValue}> { cardData?.runtimeP }&nbsp;kW</span>
                 </div>
                 <div>
                   <span className={style.siteTitle}>储能容量</span>
-                  <span className={style.siteValue}>200 &nbsp;kWh</span>
+                  <span className={style.siteValue}>{ cardData?.storageCapacity } &nbsp;kWh</span>
                 </div>
                 <div>
                   <span className={style.siteTitle}>投运时间</span>
-                  <span className={style.siteValue}>2023/01/20</span>
+                  <span className={style.siteValue}>{cardData?.useDate}</span>
                 </div>
               </div>
             </div>
           </CardItem>
           <CardItem title='实时状态' height='558px'>
             <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'系统状态'} value={'正常'} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
-              <StateCard width={'156px'} title={'运行状态'} value={'充电中'} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
+              <StateCard width={'156px'} title={'系统状态'} value={realData?.status} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
+              <StateCard width={'156px'} title={'运行状态'} value={realData?.runtimeStatus} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
             </div>
             <div className={style.division} style={{marginTop:0}}></div>
-            <CustomProgress dischargeData={'60.40'} chargeData={'139.60'}></CustomProgress>
+            <CustomProgress dischargeData={realData?.canChargingCapacity} chargeData={realData?.canDisChargingCapacity}></CustomProgress>
             <div className={style.systemData}>
               <div className={style.leftItem}>
                 <span className={style.diamond} style={{backgroundColor:'#4370ff'}}></span>
-                <span>{'可放电量: 60.40 kWh'}</span>
+                <span>{'可放电量: '+ realData?.canChargingCapacity + ' kWh'}</span>
               </div>
               <div className={style.leftItem}>
                 <span className={style.diamond} style={{backgroundColor:'#f93'}}></span>
-                <span>{'可充电量: 139.60 kWh'}</span>
+                <span>{'可充电量: '+ realData?.canDisChargingCapacity + ' kWh'}</span>
               </div>
             </div>
             <div className={style.division}></div>
             <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'储能效率 (%)'} value={'98.2'} ></StateCard>
-              <StateCard width={'156px'} title={'SOC (%)'} value={'30.2'}></StateCard>
-              <StateCard width={'156px'} title={'放电功率 (kW)'} value={'0'} ></StateCard>
-              <StateCard width={'156px'} title={'充电功率 (kWh)'} value={'65.2'}></StateCard>
+              <StateCard width={'156px'} title={'储能效率 (%)'} value={realData?.storageEfficiency} ></StateCard>
+              <StateCard width={'156px'} title={'SOC (%)'} value={realData?.soc}></StateCard>
+              <StateCard width={'156px'} title={'放电功率 (kW)'} value={realData?.disChargingP} ></StateCard>
+              <StateCard width={'156px'} title={'充电功率 (kWh)'} value={realData?.chargingP}></StateCard>
             </div>
             <div className={style.division} style={{marginTop:0}}></div>
             <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'交流总有功功率 (kW)'} value={'65.2'} ></StateCard>
-              <StateCard width={'156px'} title={'交流总无功功率 (kW)'} value={'65.2'}></StateCard>
-              <StateCard width={'156px'} title={'防逆流总功率 (kW)'} value={'0.00'} ></StateCard>
-              <StateCard width={'156px'} title={'防逆流总电量 (kWh)'} value={'0.2'}></StateCard>
+              <StateCard width={'156px'} title={'交流总有功功率 (kW)'} value={realData?.totalP} ></StateCard>
+              <StateCard width={'156px'} title={'交流总无功功率 (kW)'} value={realData?.totalQ}></StateCard>
+              <StateCard width={'156px'} title={'防逆流总功率 (kW)'} value={realData?.antiRefluxP} ></StateCard>
+              <StateCard width={'156px'} title={'防逆流总电量 (kWh)'} value={realData?.antiRefluxE}></StateCard>
             </div>
           </CardItem>
         </div>
         <div className={style.right}>
           <div className={style.top}>
-            <Tips imgUrl={totalCharge} title={'总充电量 (kWh)'} value={'2154.25'} bgcolor={'#56b653'}></Tips>
-            <Tips imgUrl={totalDischarge} title={'总放电电量 (kWh)'} value={'1987.85'} bgcolor={'#4370ff'}></Tips>
-            <Tips imgUrl={totalChargeCost} title={'总充电金额 (元)'} value={'879.32'} bgcolor={'#fea526'}></Tips>
-            <Tips imgUrl={totalDischargeCost} title={'总放电金额 (元)'} value={'1804.25'} bgcolor={'#ff6642'}></Tips>
-            <Tips imgUrl={totalIncome} title={'储能总收益 (元)'} value={'924.33'} bgcolor={'#9951fe'} width={'280px'}></Tips>
+            <Tips imgUrl={totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity} bgcolor={'#56b653'}></Tips>
+            <Tips imgUrl={totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity} bgcolor={'#4370ff'}></Tips>
+            <Tips imgUrl={totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount} bgcolor={'#fea526'}></Tips>
+            <Tips imgUrl={totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount} bgcolor={'#ff6642'}></Tips>
+            <Tips imgUrl={totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome} bgcolor={'#9951fe'} width={'280px'}></Tips>
           </div>
           <div className={style.bottom}>
             <div className={style.topology}>
