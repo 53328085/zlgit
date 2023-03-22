@@ -245,6 +245,13 @@ export class EnergyComprehensive {
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
+    static UpdateSiteSwitchOnOff = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteSwitchOnOff?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
+    static UpdateSiteOnOffGrid = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteOnOffGrid?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1： 联网， 2： 离网
+    
+
+    static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
+  
+  
   }
 
  // 储能管理-- 能耗统计
