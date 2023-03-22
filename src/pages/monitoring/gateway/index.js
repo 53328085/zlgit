@@ -131,11 +131,10 @@ export default function Index(props) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
-        if(data.categories!=null){
-          getGatewayImages()
-        }
+        //  if(data.categories!=null){
+        //    getGatewayImages()
+        //  }
         setdataSource(data.details)
-        console.log(dataSource)
       } else {
         messageApi.open({
           type: 'error',
@@ -150,16 +149,23 @@ export default function Index(props) {
     return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
       let { success, data } = res
       if (success && data) {
-        setimageList(data)
-        data.map((item, index) => {
-          overView.details.map((items, indexs) => {
-            if (item.category == items.category) {
-              setimgUrl(item.imageBase64)
-            } else {
-              setimgUrl()
-            }
-          })
-        })
+        // setimageList(data)
+        if(data!=[]){
+          // console.log(data)
+          let imgList=[]
+            overView.details.map((item, index) => {
+              data.map((items,indexs)=>{
+                // console.log(data[indexs].category , item.category)
+                if (data[indexs].category == item.category) {
+                  imgList.push(data[indexs].imageBase64)
+                } else {
+                  // setimageList(()=>{imageList.push('')})
+                }
+              })
+            })
+            setimageList(imgList)
+          // console.log(imageList,imgList)
+        }
       } else {
         messageApi.open({
           type: 'error',
@@ -207,13 +213,15 @@ export default function Index(props) {
     queryData()
   }, [areaId, changeTag])
   useEffect(() => {
-    if (overView.categories != null) {
+    getOverviewData()
+    console.log('getOverviewData')
+  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
+  useEffect(() => {
+    if (overView.categories != []) {
       getGatewayImages()
+      console.log(456)
     }
   }, [overView.categories])
-  useEffect(() => {
-    getOverviewData()
-  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
   const onChangePage = (page, pageSize) => {
     setpage(page)
   }
@@ -276,8 +284,9 @@ export default function Index(props) {
         {isCard ? <div className={style.cardBox}>
           {overView.details!=null?overView.details.map((item, index) => {
             return <div key={index}>
-              <Link   to={{pathname:`/gatewayDetail`,search:item.sn}}  target="_blank">
-                  <Icard img={imgUrl ? 'data:image/png;base64,'+imgUrl : imgurl.category} title={item.name}
+              <Link  to={`/gatewayDetail?sn=${item.sn}`}   target="_blank">
+                  <Icard img={imageList[index]? 'data:image/png;base64,'+imageList[index] : imgurl.category} title={item.name}
+
                     value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
                     lastSampleTime={item.lastSampleTime} category={item.category} />
                     </Link>
