@@ -72,6 +72,7 @@ export default function Index() {
       <div className={style.headform}>
         <Form
           className={style.formstyle}
+          colon={false}
           form={form}
           initialValues={{
             area: 0,
@@ -81,7 +82,7 @@ export default function Index() {
           }}
         >
           <div className={style.divflex}>
-            <Form.Item label="园区选择" name="area" className={style.mgbt0}>
+            <Form.Item label={oneLevel[0].levelName} name="area" className={style.mgbt0}>
               <Select
                 options={areaOptions}
                 fieldNames={{ label: 'name', value: 'id' }}

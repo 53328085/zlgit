@@ -29,6 +29,7 @@ export default function parkstreet({areaList,levelname}) {
   const ErrModalRef=useRef()
   const errlistRef =useRef()
   const projectId = useSelector(state=>state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
   let flies;
   let deleteId;
   const optcss = {
@@ -37,7 +38,7 @@ export default function parkstreet({areaList,levelname}) {
     cursor: 'pointer',
   }
   const columns=[{
-    title:'园区名称',
+    title:oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
     dataIndex:'areaName',
     key:'areaName',
   },

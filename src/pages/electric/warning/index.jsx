@@ -44,13 +44,14 @@ export default function Index() {
                     layout='inline'
                     form={form}
                     className={style.formstyle}
+                    colon={false}
                     initialValues={
                         {
                             area:0
                         }
                     }
                 >
-                    <Item label="园区选择" name="area">
+                    <Item label={onelevel} name="area">
                         <Select
                             style={{ width: 200 }}
                             options={[{ name: onelevel, id: 0 }, ...arealist]}
@@ -63,10 +64,10 @@ export default function Index() {
                 </Form>
             </div>
             <div style={{ display: 'flex' }}>
-                <Card count={warndata?.yearWarningCnt} />
-                <Card png={first} count={warndata?.levelOneCnt} percent={warndata?.levelOneRate} />
-                <Card png={second} count={warndata?.levelTwoCnt} percent={warndata?.levelTwoRate}/>
-                <Card png={third} count={warndata?.levelThreeCnt} percent={warndata?.levelThreeRate}/>
+                <Card count={warndata?.allCnt} />
+                <Card png={first} count={warndata?.levelOneCnt} percent={warndata?.levelOneRate} name="一级告警"/>
+                <Card png={second} count={warndata?.levelTwoCnt} percent={warndata?.levelTwoRate} name="二级告警"/>
+                <Card png={third} count={warndata?.levelThreeCnt} percent={warndata?.levelThreeRate} name="三级告警"/>
             </div>
 
             <WarnContent style={style} form={form}/>
@@ -74,7 +75,7 @@ export default function Index() {
     )
 }
 
-let Card = ({ png = total ,count=0,percent=0}) => {
+let Card = ({ png = total ,count=0,percent=0,name="告警总数"}) => {
     const divcss = {
         width: 320,
         height: 64,
@@ -91,7 +92,7 @@ let Card = ({ png = total ,count=0,percent=0}) => {
     return (
         <div style={divcss}>
             <img src={png} alt="" />
-            <span style={{ fontSize: 16, paddingLeft: 16 }}>告警总数</span>  
+            <span style={{ fontSize: 16, paddingLeft: 16 }}>{name}</span>  
             {png!==total?
             <>
              <div style={{ paddingLeft:32}}>{count}</div>
