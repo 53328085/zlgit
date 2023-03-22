@@ -68,8 +68,10 @@ const [tableData, setTableData] = useState([])
       success && message.success({
          content: '删除成功',
          duration: 0.3,
-         onClose: () => queryarealevels().then(() =>  dref.current.onCancel()),
       })
+         queryarealevels().then(() =>{
+          dref.current.onCancel()
+         }),
       !success && message.warning(errMsg || '数据出错')
      
    } catch (error) {
@@ -84,7 +86,7 @@ const [tableData, setTableData] = useState([])
   const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        success && setDatas(data) ;
+        success && setDatas(data);
        
      } catch (error) {
         console.log(error);
@@ -126,8 +128,6 @@ const [tableData, setTableData] = useState([])
    } catch (error) {
       console.log(error)
    }
-   
-
 }
   const onOk = () => {
        console.log(handler);
@@ -183,8 +183,10 @@ const [tableData, setTableData] = useState([])
       console.log(levelid);
     // let {success, data} =  await QueryAreaLevelFields({projectId, level})
     // success && setTableData([...data]) ;
-    queyFiled(level)
+    queyFiled(level).then(()=>{
+      
      fref.current.onOpen();
+    })
     
    } catch (error) {
       console.log(error)
@@ -195,6 +197,7 @@ const [tableData, setTableData] = useState([])
    fref.current.onCancel()
   }
   const addfiled = () => {
+   ffrom.resetFields()
    nfref.current.onOpen()
   }
 

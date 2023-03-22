@@ -480,8 +480,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         } = data || {};
         let cols = [];
         let index = header.findIndex(h => h == '备注')
-        if(index > -1) header.splice(index,1)
-        console.log(header)
+        // if(index > -1) header.splice(index,1)
+        if(index > -1){
+          header.splice(index,'备注')
+        }
         for (let k of header) {
           let col = {
             title: k,
@@ -490,9 +492,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           };
           cols.push(col);
         }
+        console.log(index);
         let colums = [
           ...cols,
-          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
+          // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
             title: "操作",
             key: "action",
@@ -512,8 +515,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             ),
           },
         ];
+          
         setColumns(colums);
-
+        console.log(colums);
         let formart = body.map((r, i) => {
           let row = {
             areaId: idGroup[i],
@@ -526,8 +530,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           });
           return row;
         });
+        console.log(formart);
         if (success && data) {
           setTableData([...formart])
+          console.log(tabelData);
           setPagination({
             ...pagination,
             total: total,

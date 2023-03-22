@@ -208,14 +208,14 @@ const showModl = () => {
                             
                 </Select>
              </Item>
-             <Item label="用户名" name="nickName" rules={[
+             <Item label="用户名" name="name" rules={[
                   {
                     required: true,
                     message: '请输入用户名！',
                   }]}>
                 <Input />
              </Item>
-             <Item label="用户姓名" name="name" rules={[
+             <Item label="用户姓名" name="nickName" rules={[
                   {
                     required: true,
                     message: '请输入用户姓名！',
