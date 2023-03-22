@@ -10,7 +10,12 @@ import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 
 export default function Index(props) {
-  const { querySOCTrends, queryVTrends, queryITrends, queryBMSInfo, queryEnvironmentInfo, queryBMSAlarms } = BMSRuntime
+  const { querySOCTrends, 
+    queryVTrends, 
+    queryITrends, 
+    queryBMSInfo, 
+    queryEnvironmentInfo, 
+    queryBMSAlarms } = BMSRuntime
   const projectId = useSelector(selectProjectId)
   const navigate = useNavigate()
   const voltageData = {
@@ -72,6 +77,18 @@ export default function Index(props) {
     })
   }
 
+  //自定义电池样式
+  const CustomBattery = props => {
+    return <div className={style.customBattery}>
+      <div className={style.batteryTop}></div>
+      <div className={style.batteryBody}>
+        <div className={style.progress} style={{ height: props.value, backgroundColor: props.color}}></div>
+        <span>{props.name}</span>
+        <span>{props.value}</span>
+      </div>
+    </div>
+  }
+
   const WarningCard = props => {
     return <div className={style.warningItem}>
       <div className={style.leftImg}>
@@ -95,11 +112,16 @@ export default function Index(props) {
     })
   }
   const toBattery =() => {
-    props.getshowTab('batteryPage')
+    props.getshowTab({
+      pageName:'batteryPage',
+      batteryPackId:1,
+      batteryPackName: '电池包1_1'
+    })
   }
 
   const [warningData, setWarningData] = useState([])//告警信息
   const [environmentData, setEnvironmentData] = useState({})
+  const [bmsInfo, setBmsInfo] = useState({})
   const getContent = () => {
     let { areaId, bcId } = props.headerValues
     //soc
@@ -141,7 +163,16 @@ export default function Index(props) {
     //储能系统
     queryBMSInfo(projectId, areaId, bcId).then(res => {
       let {success, data} = res
-      if(success){}else{
+      if(success){
+        if(data){
+          setBmsInfo({
+            name: props.bmsName,
+            ...data
+          })
+        }else{
+          setBmsInfo({})
+        }
+      }else{
         message.error(res.errMsg)
       }
     })
@@ -196,7 +227,33 @@ export default function Index(props) {
           </div>
         </div>
         <div className={style.middle}>
-          <img src={topology} className={style.zhanwei}></img>  
+          <img src={topology} className={style.zhanwei}></img>
+          <div style={{position:'absolute', left: 140, top: 102}}>
+            <CustomBattery name={'SOC'} value={ bmsInfo.soc + '%'} color="#0c6"></CustomBattery>
+          </div> 
+          <div style={{position:'absolute', left: 196, top: 102}}>
+            <CustomBattery name={'SOH'} value={bmsInfo.soh + '%'} color="#06c"></CustomBattery>
+          </div>
+          <div className={style.bmsData}>
+            <div className={style.bmsName}>{bmsInfo.bmsName}</div>
+            <div className={style.bmsStatus}>{bmsInfo.status}</div>
+            <div className={style.bmsTitle}>
+              <span>日充电量(kWh)</span>
+              <span>日放电量(kWh)</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span style={{backgroundColor:'#039'}}>{bmsInfo.chargingE}</span>
+              <span style={{backgroundColor:'#039'}}>{ bmsInfo.disChargingE }</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span>累计充电量(kWh)</span>
+              <span>累计放电量(kWh)</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span style={{backgroundColor:'#039'}}>{bmsInfo.accumulateChargingE}</span>
+              <span style={{backgroundColor:'#039'}}>{ bmsInfo.accumulateDisChargingE }</span>
+            </div>
+          </div>   
           <div className={style.clickDiv} onClick={toBattery}></div>
         </div>
         <div className={style.right}>

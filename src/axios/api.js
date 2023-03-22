@@ -1487,4 +1487,7 @@ export class BMSRuntime {
   static queryBMSInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
   static queryEnvironmentInfo = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
   static queryBMSAlarms = (projectId, areaId, bcId) => server.get(`Storage/BMSRuntime/QueryBMSAlarms?projectId=${projectId}&areaId=${areaId}&bcId=${bcId}`)
+  static queryBatteryPackInfo = (projectId, areaId, batteryPackId) => server.get(`Storage/BMSRuntime/QueryBatteryPackInfo?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`)
+  static queryBatteryInfo = (areaId, batteryPackId, batteryNo, data) => server.post(`Storage/BMSRuntime/QueryBatteryInfo?areaId=${areaId}&batteryPackId=${batteryPackId}&batteryNo=${batteryNo}`, data)
+  static queryBatteryWarning = (projectId, areaId, batteryPackId, data) => server.post(`Storage/BMSRuntime/QueryBatteryWarning?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`, data)
 }
