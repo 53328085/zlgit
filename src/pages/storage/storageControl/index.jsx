@@ -1,10 +1,12 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import Automate from './automate'
 import Manual from './manual'
 import CModal from '@com/useModal'
+import {StorageControlRuntime} from '@api/api'
 import {useSelector} from 'react-redux'
+
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {From} from 'antd'
 export default function Index() {
@@ -12,6 +14,13 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
+  const getinfo = async () => {
+    try {
+      await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const propsData ={
     tabs: [
       {label: '自动模式', key: 'Automate'},
@@ -26,6 +35,9 @@ export default function Index() {
    Manual: Manual,
    Automate: Automate,  
   }
+  useEffect(() => {
+    getinfo()
+  }, [areaId, projectId])
   const ProjectCom = coms[value] || Manual
   return (
     <CustContext.Provider value={propsData}>

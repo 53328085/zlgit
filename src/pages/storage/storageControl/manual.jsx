@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, message} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
 import {StorageControlRuntime} from '@api/api'
+import {custMsg}  from '@com/usehandler'
 import imgurl from './icon'
 const {Text, Link, Title} = Typography
 const {Item} = Form
@@ -28,14 +29,16 @@ const Mainbox = styled.div`
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-
+                 .ant-typography{
+                    font-size: 16px;
+                 }
                 .cotrl {   
                     width: 240px;
                     height: 96px;
                     border-radius: 4px; 
                     display: flex;
                     align-items: center;
-                    justify-content: space-around;
+                    justify-content: center;
                     cursor: pointer;
                     transition: all 200ms;
                  }
@@ -103,6 +106,8 @@ export default function Manual({projectId, areaId}) {
   const [ongrid, setOngrid] = useState()
   const [pform] = Form.useForm()
   const [qform] = Form.useForm()
+  const ontext = onoff == 1 ? '开机': '关机'
+  const gridtext = ongrid == 1 ? '并网': '离网'
   const querySiteStatus = async () => {
      let {success, data} = await StorageControlRuntime.QuerySiteStatus(projectId, areaId)
      if(success) {
@@ -118,16 +123,43 @@ export default function Manual({projectId, areaId}) {
      let handler = ['', 'UpdateSiteSwitchOnOff', 'UpdateSiteOnOffGrid'][type]; // state 1 开， 2 关/离
      if (type == 1) setOnoff(state);
      if (type == 2) setOngrid(state);
-     let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, state)
-     let msg = ['', ['','系统开机成功', '系统关机成功'],['','系统并网成功', '系统离线成功']][type][state]
+     let statev = state == 1  ? 1 : 2;
+     let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, statev)    
+     let msg = ['', ['系统关机成功','系统开机成功'],['系统离线成功','系统并网成功']][type][state]
      success && message.success(msg)
      !success && message.error(errMsg || '数据出错')
   }
-  const onUpdateP = async () => {
-    let {p} = pform.getFieldsValue()
-     await StorageControlRuntime.UpdateP(projectId, areaId, p)
+  const  Updatedata = async (type) => {
+    try {
+        let  value;
+    if (type == 0) {
+        let {p} = pform.getFieldsValue()
+        value = p
+    }else if(type == 1){
+        let {q} =qform.getFieldsValue()
+        value = q
+    }
+     console.log(Number(value))
+     if (isNaN(value)) return message.info('请输入数值')
+    let handler = ['UpdateP', 'UpdateQ'][type]
+     let msg = ['设置有功功率成功', '设置无关功率成功'][type]
+    let {success, errMsg} =  await StorageControlRuntime[handler](projectId, areaId, value)
+     success && custMsg({content: msg, onClose: () => {
+        querySiteStatus()
+     }})
+      
+     
+    } catch (error) {
+       console.log(error) 
+    }
+    
+     
+  }
+  const querySiteDateAndMode= async () => {
+     await StorageControlRuntime.QuerySiteDateAndMode(projectId,areaId)
   }
   useEffect(() => {
+    querySiteDateAndMode()
     querySiteStatus()
   }, [areaId])
   return (
@@ -137,32 +169,40 @@ export default function Manual({projectId, areaId}) {
             <div className='topleftitem'>
                 <div className='item'>
                     <Text>手动切换站点各个子系统的启动停止</Text>
-                    <Text>当前运行状态：关机</Text>
+                    <Text>当前运行状态：<Link>{ontext}</Link></Text>
                 </div>
                 <div className='item'>
                     <div className={onoff== 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 1)}>
+                        <Space size={32}>
                         <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统开机</Text>
+                        </Space>
                     </div>
                     <div className={onoff == 0 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 0)}>
+                    <Space size={32}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
                         <Text>系统关机</Text>
+                        </Space>
                     </div>
                 </div>
             </div>
             <div className='topleftitem'>
                 <div className='item'>
                     <Text>手动切换站点各个子系统的启动停止</Text>
-                    <Text>当前运行状态：关机</Text>
+                    <Text>当前运行状态：<Link>{gridtext}</Link></Text>
                 </div>
                 <div className='item'>
                     <div className={ongrid== 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 1)}>
+                    <Space size={32}>
                         <Image src={imgurl.coal} height={42} width={42} preview={false}  />
                         <Text>系统并网</Text>
+                        </Space>
                     </div>
-                    <div className={ongrid!= 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 0)}>
+                    <div className={ongrid== 0 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(2, 0)}>
+                    <Space size={32}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false}  />
                         <Text>系统离网</Text>
+                        </Space>
                     </div>
                 </div>
             </div>
@@ -174,10 +214,10 @@ export default function Manual({projectId, areaId}) {
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
                         <Item label="设置有功功率" name="p">
-                            <Input addonAfter="kw" style={{width: '168px'}}  /> 
+                          <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
-                            <Button type="primary" onClick={onUpdateP}>确定</Button>
+                            <Button type="primary" onClick={() => Updatedata(0)}>确定</Button>
                         </Item>
                     </Space>
                 </Formbox>
@@ -187,10 +227,10 @@ export default function Manual({projectId, areaId}) {
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
                         <Item label="设置无功功率" name="sq">
-                            <Input addonAfter="kw" style={{width: '168px'}}  /> 
+                        <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
-                            <Button type="primary">确定</Button>
+                            <Button type="primary" onClick={() => Updatedata(1)}>确定</Button>
                         </Item>
                     </Space>
                 </Formbox>

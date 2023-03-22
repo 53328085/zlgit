@@ -244,14 +244,18 @@ export class EnergyComprehensive {
   }
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
+    static QueryStorageControlInfo = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}`);
+
+
+
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
     static UpdateSiteSwitchOnOff = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteSwitchOnOff?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
     static UpdateSiteOnOffGrid = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteOnOffGrid?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1： 联网， 2： 离网
     
-
+    static QuerySiteDateAndMode = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/QuerySiteRuntimeDateAndMode?projectId=${projectId}&areaId=${areaId}`); 
     static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
   
-  
+    static UpdateQ = (projectId, areaId, q) => server.get(`/Storage/StorageControlRuntime/UpdateQ?projectId=${projectId}&areaId=${areaId}&p=${q}`); 
   }
 
  // 储能管理-- 能耗统计
