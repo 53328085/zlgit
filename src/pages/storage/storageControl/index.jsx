@@ -8,7 +8,8 @@ import {StorageControlRuntime} from '@api/api'
 import {useSelector} from 'react-redux'
 
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-import {From} from 'antd'
+
+
 export default function Index() {
   const [value, setvalue] = useState('Manual')
   const projectId = useSelector(selectProjectId)
