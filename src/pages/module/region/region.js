@@ -343,8 +343,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       let {
         data: { deviceSummary, deviceSub },
         success: suc,
-      } = await Area.QueryUsedMeter({ projectId, type: 0, areaId }); // 已选中
-
+      } = await Area.QueryUsedMeter({ projectId, type: 0, areaId }); // 已选中 type: 0
       if (suc && Array.isArray(deviceSummary)) {
         setDeviceSummary([...deviceSummary]);
         devices.current.deviceSub = deviceSub;

@@ -1,0 +1,535 @@
+// .selectCss{
+//     width:160px;
+//     margin-bottom: 12px;
+// }
+.header{
+    background-color: #fff;
+    height: 48px;
+    width: 1680px;
+    border: 1px solid rgb(204,204,204);
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+.bottom {
+    width: 1680px;
+    height: 800px;
+    padding: 16px;
+    background-color: #fff;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 4px;
+    margin-top: 16px;
+    position: relative;
+
+    .bottomTab {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+
+        .radioBox {
+            position: absolute;
+            right: 0;
+        }
+    }
+}
+
+.cardItem {
+    width: 538px;
+    height: 152px;
+    background-color: #fff;
+    border: 1px solid rgb(215, 215, 215);
+    border-radius: 4px;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-image: url(./images/bgi.png);
+    background-size: 100% 100%;
+    position: relative;
+    overflow: hidden;
+
+    .cardImgBox {
+        width: 112px;
+        height: 112px;
+        margin-left: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cardImg {
+        width: 90px;
+        height: 127px;
+        // margin-left: 24px;
+        // background-color: #237ae4;
+    }
+
+    .ItemValue {
+        margin-left: 12px;
+        margin-right: auto;
+        text-align: left;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-around;
+
+        .valueTitle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #000;
+            font-weight: 700;
+            text-align: left;
+            width: 64%;
+        }
+
+        .valueData {
+            //margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .btnStyle {
+            display: grid;
+            grid-template-columns: repeat(2, 200px);
+            grid-template-rows: repeat(2, 35px);
+
+            .btnBoxStyle {
+                display: flex;
+                flex-direction: row;
+                border-radius: 93px;
+            }
+
+            .timeStyle {
+                width: 80px;
+                height: 24px;
+                font-size: 12px;
+                background-color: #237ae4;
+                color: #fff;
+                text-align: center;
+                line-height: 24px;
+                border-radius: 40px;
+                z-index: 10;
+            }
+
+            .timeValueStyle {
+                width: 120px;
+                height: 24px;
+                background-color: #fff;
+                color: #003366;
+                border: 1px solid rgb(215, 215, 215);
+                font-size: 14px;
+                text-align: right;
+                line-height: 24px;
+                padding-right: 8px;
+                border-radius: 40px;
+                margin-left: -20px;
+                z-index: 0;
+            }
+        }
+    }
+
+    .boxCard {
+        width: 200px;
+        height: 112px;
+        position: absolute;
+        right: 5px;
+        background-color: rgba(242, 242, 242, 0.75);
+        border: 1px solid rgb(228, 228, 228);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+        padding: 16px;
+
+        p {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .state {
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(0, 153, 102);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .stateOff {
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(0102, 102, 102);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+    .stateAlarm{
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(255, 77, 79);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+}
+
+.cardBox {
+    display: grid;
+    grid-template-columns: repeat(3, 554px);
+    grid-template-rows: repeat(4, 170px);
+}
+
+.pageNum {
+    position: absolute;
+    right: 0;
+    margin-right: 16px;
+    bottom: 16px;
+
+    :global(.ant-pagination-item-active) {
+        background-color: #237ae4;
+
+        :global(a) {
+            color: #fff;
+        }
+    }
+}
+
+.tableHead {
+    border: 1px solid rgb(204, 204, 204);
+    border-right: none;
+    border-bottom: none;
+
+    :global(.ant-table-thead > tr > th) {
+        background-color: rgb(236, 245, 255);
+        height: 32px;
+        
+    }
+    :global(.ant-table-thead > tr > th:first-child){
+        text-align: center;
+        width: 80px;
+    }
+
+    :global(.ant-table-thead > tr > th) {
+        padding: 0;
+        height: 32px;
+        border-right: 1px solid rgb(204, 204, 204);
+        border-bottom: 1px solid rgb(204, 204, 204);
+        padding-left: 8px;
+    }
+
+    :global(.ant-table-tbody > tr > td) {
+        padding: 0;
+        height: 32px;
+        border-bottom: 1px solid rgb(204, 204, 204);
+        border-right: 1px solid rgb(204, 204, 204);
+        padding-left: 8px;
+    }
+    :global(.ant-table-row){
+        :global(.ant-table-cell:first-child){
+            text-align: center;
+            width: 80px;
+        }
+    }
+}
+
+.btnBoxStyle {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
+
+    .timeStyle {
+        width: 80px;
+        height: 24px;
+        font-size: 12px;
+        background-color: #237ae4;
+        color: #fff;
+        text-align: center;
+        line-height: 24px;
+    }
+
+    .timeValueStyle {
+        width: 300px;
+        height: 24px;
+        background-color: #fff;
+        color: #003366;
+        border: 1px solid rgb(215, 215, 215);
+        font-size: 14px;
+        text-align: right;
+        line-height: 24px;
+        padding-right: 8px;
+    }
+}
+
+.main {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(19, 90, 189);
+
+    .head {
+        width: 100%;
+        height: 64px;
+        background-color: rgb(0, 51, 102);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .headImg {
+            width: 162px;
+            height: 64px;
+            margin-right: 24px;
+            margin-left: 16px;
+        }
+
+        p {
+            color: #fff;
+            font-size: 24px;
+            height: 32px;
+            line-height: 32px;
+        }
+    }
+
+    .body {
+        width: 100%;
+        height: calc(100%-64px);
+        padding: 16px;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+
+        .left {
+            width: 304px;
+            height: 864px;
+            background-color: #fff;
+            padding: 16px;
+            margin-right: 16px;
+
+            .leftHead {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 16px;
+
+                .leftHeadLine {
+                    width: 4px;
+                    height: 32px;
+                    margin-right: 16px;
+                    background-color: rgb(35, 122, 228);
+                }
+
+                p {
+                    line-height: 32px;
+                    height: 32px;
+                    color: #666;
+                }
+            }
+
+            .leftImgBox {
+                width: 272px;
+                height: 148px;
+                background-color: rgb(19, 90, 189);
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                .leftImg {
+                    height: 124px;
+                    width: 124px;
+                }
+
+                .leftImgState {
+                    width: 96px;
+                    height: 32px;
+                    background-color: rgba(0, 255, 0, 0.5);
+                    border: 1px solid rgb(0, 204, 0);
+                    color: #fff;
+                    position: absolute;
+                    top: 16px;
+                    right: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            .leftBottom {
+                width: 272px;
+                height: 620px;
+                border: 1px solid rgb(215, 215, 215);
+                padding: 16px;
+                margin-top: 16px;
+
+                p {
+                    height: 32px;
+                    line-height: 32px;
+                    color: #666;
+
+                    .leftBottomSpan {
+                        margin-right: 5px;
+                        width: 70px;
+                    }
+                }
+
+                .line {
+                    width: 241px;
+                    margin: 16px 0;
+                    border-top: 0.5px solid rgb(211, 210, 210);
+                }
+            }
+        }
+
+        .right {
+            width: 1568px;
+            height: 864px;
+            background-color: #fff;
+            position: relative;
+
+            .rightHead {
+                height: 40px;
+                background-color: #135ABD;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                flex-direction: row;
+
+                div {
+                    width: 144px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .tabBoxW {
+                    background-color: #fff;
+                    color: #000;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+
+                .tabBoxB {
+                    background-color: #237AE4;
+                    color: #fff;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+            }
+
+            .rightHead div {
+                margin-right: 16px;
+            }
+
+            .newTime {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding: 16px;
+
+                .time {
+                    width: 18px;
+                    height: 18px;
+                    margin-right: 12px;
+                }
+            }
+
+            .timeline {
+                width: 1537px;
+                height: 2px;
+            }
+
+            .tableBox {
+                padding:8px 16px 0 16px;
+                width: 100%;
+                height: 760px;
+                overflow-y: scroll;
+                .dataHeader{
+                    width: 1536px;
+                    height: 36px;
+                    background-color: #237AE4;
+                    padding: 0 16px;
+                    color: #fff;
+                    line-height: 36px;
+                }
+                .dataBottom{
+                    display: grid;
+                    grid-template-columns: repeat(3,512px);
+                    .itemBox{
+                    display: flex;
+                    flex-direction: row;
+                    .itemHead{
+                        background-color: rgb(236,245,255);
+                        width: 260px;
+                        height: 36px;
+                        line-height: 36px;
+                        padding-left: 16px;
+                        text-align: left;
+                        border: 1px solid rgb(228,228,288);
+                        border-top: none;
+                        border-right: none;
+                        font-size: 14px;
+                        color: #333;
+                    }
+                    .itemTail{
+                        width: 252px;
+                        height: 36px;
+                        line-height: 36px;
+                        padding-right: 16px;
+                        text-align: right;
+                        border: 1px solid rgb(228,228,288);
+                        border-top: none;
+                        font-size: 14px;
+                        color: #333;
+                    }
+                }
+                }
+                .chartsBox{
+                    width: 100%;
+                    .title{
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        .blueLine{
+                            height: 32px;
+                            width: 4px;
+                            background-color: #237AE4;
+                            margin-right: 16px;
+                        }
+                        p{
+                            color: #333;
+                        }
+                    }
+                }
+
+                
+            }
+            .pageNumD {
+                position: absolute;
+                bottom: 16px;
+                right: 16px;
+                :global(.ant-pagination-item-active) {
+                    background-color: #237ae4!important;
+            
+                    :global(a) {
+                        color: #fff!important;
+                    }
+                }
+            }
+        }
+    }
+}

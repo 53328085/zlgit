@@ -244,7 +244,18 @@ export class EnergyComprehensive {
   }
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
-    static QueryIncomeprojectId = (projectId, areaId) => server.post(`/Solar/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
+    static QueryStorageControlInfo = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}`);
+
+
+
+    static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
+    static UpdateSiteSwitchOnOff = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteSwitchOnOff?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
+    static UpdateSiteOnOffGrid = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteOnOffGrid?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1： 联网， 2： 离网
+    
+    static QuerySiteDateAndMode = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/QuerySiteRuntimeDateAndMode?projectId=${projectId}&areaId=${areaId}`); 
+    static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
+  
+    static UpdateQ = (projectId, areaId, q) => server.get(`/Storage/StorageControlRuntime/UpdateQ?projectId=${projectId}&areaId=${areaId}&p=${q}`); 
   }
 
  // 储能管理-- 能耗统计
@@ -1131,6 +1142,17 @@ export const Monitoring = {
     AlarmPage: (data) => server.post(`/Monitor/RuntimeDevice/AlarmPage`, data),//
   }
 }
+//运维管理
+export class operation {
+ static  AlarmCurrent = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmCurrent`,{params:data})//获取当前告警
+ static  AlarmMonth = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmMonth`,{params:data})//获取本月告警
+ static  MonthOrderStatistics =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderStatistics`,{params:data})//获取本月订单
+ static  InspectionStatistics = (data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics`,{params:data})//巡检任务
+ static  MonthOrderTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderTrend`,{params:data})//本月派单
+ static  MonthAlarmTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthAlarmTrend`,{params:data})//本月告警事件
+ static  AlarmPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmPage`,data)//告警信息
+}
+
 //电气安全
 export class safeElectric {
   static TodayWarningStatistics = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`, { params: data })//查询今日告警
@@ -1490,4 +1512,9 @@ export class BMSRuntime {
   static queryBatteryPackInfo = (projectId, areaId, batteryPackId) => server.get(`Storage/BMSRuntime/QueryBatteryPackInfo?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`)
   static queryBatteryInfo = (areaId, batteryPackId, batteryNo, data) => server.post(`Storage/BMSRuntime/QueryBatteryInfo?areaId=${areaId}&batteryPackId=${batteryPackId}&batteryNo=${batteryNo}`, data)
   static queryBatteryWarning = (projectId, areaId, batteryPackId, data) => server.post(`Storage/BMSRuntime/QueryBatteryWarning?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`, data)
+}
+//告警管理
+export class AlarmManagement {
+  static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static QueryAddAlarm = (data) => server.get(`Safe/Alarm/QueryPlanPage?projectId`,data)
 }

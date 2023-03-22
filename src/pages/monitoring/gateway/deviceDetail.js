@@ -1,12 +1,16 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect,useRef } from "react";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import { Pagination, message,DatePicker,Button } from 'antd'
+import { Pagination, message, DatePicker, Button } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
 import { Link, useNavigate } from 'react-router-dom'
+import { drawEcharts } from '@com/useEcharts'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import { selectProjectId } from '@redux/systemconfig.js'
 import Table from '@com/useTable'
 import Item from "antd/lib/list/Item";
@@ -22,6 +26,9 @@ export default function GatewayDetail(props) {
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     let [current, setCurrent] = useState({})
+    const elref=useRef(null)
+    const vlref=useRef(null)
+    const alref=useRef(null)
     let [dataList, setdataList] = useState([
         {
             name: 'A相电流（A）',
@@ -43,6 +50,31 @@ export default function GatewayDetail(props) {
     const onchangeTab = val => {
         setstate(val)
     }//切换tab
+    const disabledDate = (current) => {
+        // Can not select days before today and today
+        return current && current < dayjs().endOf('day');
+    };
+    const range = (start, end) => {
+        const result = [];
+        for (let i = start; i < end; i++) {
+          result.push(i);
+        }
+        return result;
+      };
+    const disabledRangeTime = (_, type) => {
+        if (type === 'start') {
+          return {
+            disabledHours: () => range(0, 60),
+            disabledMinutes: () => range(0, 60),
+            disabledSeconds: () => [55, 56],
+          };
+        }
+        return {
+          disabledHours: () => range(0, 60).splice(4, 20),
+          disabledMinutes: () => range(0, 60),
+          disabledSeconds: () => [55, 56],
+        };
+      };
     const getData = () => {//设备详情
         return Current(projectId, search).then(res => {
             let { success, data } = res
@@ -69,9 +101,107 @@ export default function GatewayDetail(props) {
             }
         })
     }
+    let dataToday=new Date()
+    let paramsTrend={
+      sn:search,
+      start:dataToday,
+      end:dataToday
+    }
+    const getHistoryTrend = () => {//
+        return HistoryTrend(paramsTrend).then(res => {
+            let { success, data } = res
+            if (success && data) {
+                //setDetail(data)
+                
+                console.log(JSON.parse(data))
+                charts()
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: res.errMsg
+                })
+            }
+        })
+    }
+    const getHistoryTable = () => {//
+        return HistoryTable(paramsTrend).then(res => {
+            let { success, data } = res
+            if (success && data) {
+                //setDetail(data)
+                
+                console.log(JSON.parse(data))
+               // charts()
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: res.errMsg
+                })
+            }
+        })
+    }
+    const datasetMonthV = {
+        dimensions: ["name", "value"],
+        source:[] ,
+      };
+      const datasetMonthA = {
+        dimensions: ["name", "value"],
+        source:[] ,
+      };
+      const datasetMonthE = {
+        dimensions: ["name", "value"],
+        source:[] ,
+      };
+      const grid = {
+        // 图表 grid
+        left: "0px",
+        right: "0",
+        top: "30px",
+        bottom: "0px",
+        containLabel: true,
+      }
+    const charts=()=>{
+        drawEcharts(vlref.current, {
+          dataset: datasetMonthV,
+          series: [{ type: "line" ,name:'电压 (V)'}],
+          grid,
+          legend: {
+            icon: 'rect',
+            itemHeight: 8,
+            itemWidth: 8,
+            itemGap: 20
+          },
+          
+        })
+        drawEcharts(alref.current, {
+          dataset: datasetMonthA,
+          series: [{ type: "line" ,name:'电流 (A)'}],
+          grid,
+          legend: {
+            icon: 'rect',
+            itemHeight: 8,
+            itemWidth: 8,
+            itemGap: 20
+          },
+          
+        })
+        drawEcharts(elref.current, {
+          dataset: datasetMonthE,
+          series: [{ type: "line" ,name:'电度 (kWh)'}],
+          grid,
+          legend: {
+            icon: 'rect',
+            itemHeight: 8,
+            itemWidth: 8,
+            itemGap: 20
+          },
+          
+        })
+      }
     useEffect(() => {
         getData()
         getDetailData()
+        getHistoryTrend()
+        getHistoryTable()
     }, [search, projectId])
     return (
         <div className={style.main}>
@@ -111,7 +241,13 @@ export default function GatewayDetail(props) {
                         <p>数据最新更新时间：{current.lastSampleTime}</p>
                     </div>
                         <img src={imgurl.line} className={style.timeline} ></img></div> : state == 2 ? <div className={style.newTime}>
-                         <span style={{marginRight:16}}>请选择日期范围</span><RangePicker format= 'YYYY/MM/DD'/><Button style={{marginLeft:16}} type="primary"  icon={<SearchOutlined />} >查询</Button>
+                            <span style={{ marginRight: 16 }}>请选择日期范围</span>
+                            <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} 
+                                showTime={{
+                                    hideDisabledOptions: true,
+                                    defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+                                }} />
+                            <Button style={{ marginLeft: 16,width:96,height:32 }} type="primary" icon={<SearchOutlined />} >查询</Button>
                         </div> : state == 3 ? <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
@@ -133,7 +269,13 @@ export default function GatewayDetail(props) {
                                     }) : ''}
                                 </div>
                             </div>
-                            : state == 2 ? <div>2
+                            : state == 2 ? <div className={style.chartsBox}>
+                                <div className={style.title}><div className={style.blueLine}></div><p>电压 (V)</p></div>
+                                <div ref={vlref} style={{ width: '100%', height: 320, padding: 16 }}></div>
+                                <div className={style.title}><div className={style.blueLine}></div><p>电流 (A)</p></div>
+                                <div ref={alref} style={{ width: '100%', height: 320, padding: 16 }}></div> 
+                                <div className={style.title}><div className={style.blueLine}></div><p>电度 (kWh)</p></div>
+                                <div ref={elref} style={{ width: '100%', height: 320, padding: 16 }}></div>
                             </div> : state == 3 ? <div>3</div> : <div>4</div>}
 
                     </div>

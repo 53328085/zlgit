@@ -259,7 +259,7 @@ const columns = [
   }, [areaId])
  
   return (
-    <Titlelayout title="报表统计" layout="flex" >
+    <Titlelayout title="收益统计" layout="flex" >
     <Mainbox>
         <div className='top'>
           <Space size={16}><RangePicker value={dates} onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/><Button onClick={QueryReports}>查询</Button><Button onClick={rest}>重置</Button></Space>

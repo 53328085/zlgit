@@ -48,6 +48,7 @@ export default function gateway() {
   const [editform] = Form.useForm()
   const [addForm] = Form.useForm()
   const content =useContext(cutContext)
+  const oneLevel = useSelector(state=>state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const levelname =useRef()
   const optcss = {
@@ -61,7 +62,7 @@ export default function gateway() {
   let edittag=false
   const columns = [
     {
-      title: '园区名称',
+      title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
       dataIndex: 'areaName'
     },
     {

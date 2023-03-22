@@ -136,7 +136,7 @@ const Mainbox = styled.div`
       
       let {success, data} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId, areaId, time, type)
       if(success && Array.isArray(data) && data.length > 0) {
-         let source = data.map(d => ({name: d.name, '收益(元)': d.value}))
+         let source = data.map(d => ({name: d.name, '收益(元)': d.value, }))
          console.log(source)
          setDataset({
             ...dataset,
@@ -154,8 +154,11 @@ const Mainbox = styled.div`
   
   }
   const queryDisChargeETrends = async () => {
+    try {
+      
+   
     const { date, type} = form.getFieldsValue() || {}
-    console.log(date.format('YYYY-MM-DD'))
+   
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')
@@ -167,7 +170,22 @@ const Mainbox = styled.div`
     }
     
     let {success, data} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId, areaId, time, type)
-
+    if(success && Array.isArray(data) && data.length > 0) {
+      let source = data.map(d => ({date: d.date, '充电量(kWh)': d.chargeE, '放电量(kWh)': d.disChargeE}))
+      console.log(source)
+      setTdataset({
+         ...tdataset,
+         source,
+      })
+      }else {
+        setTdataset({
+          ...tdataset,
+          source: [],
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   useEffect(() => {
     getchartData()
@@ -216,13 +234,18 @@ const Mainbox = styled.div`
       </Form>
     )
   }
+  const eparams = {
+    smooth: true, 
+     lineStyle: {
+      width: 0
+     },
+    showSymbol: false
+  }
   useEffect(() => {
     drawEcharts(
-      ref.current, {
+       ref.current, {
         dataset,
-        series: [{ type: "line", areaStyle: {color: '#bdd2fd', }, smooth: true,  lineStyle: {
-          width: 0
-        },showSymbol: false, }]
+        series: [{ type: "line", areaStyle: {color: '#bdd2fd', },  ...eparams }]
       }
     )
   }, [dataset])
@@ -230,7 +253,8 @@ const Mainbox = styled.div`
     drawEcharts(
       fref.current, {
         dataset: tdataset,
-        series: [{ type: "line", areaStyle: {color: '#d6e0be'},  stack: 'Total'}, { type: "line", areaStyle: {color: '#ffe7d6'},  stack: 'Total'}]
+       // series: [{ type: "line", areaStyle: {color: '#bdd2fd', },  ...eparams }]
+        series: [{ type: "line", areaStyle: {color: '#d6e0be'}, ...eparams, stack: 'x'}, { type: "line", areaStyle: {color: '#ffe7d6'}, ...eparams, stack: 'x'}]
       }
     )
   }, [tdataset])

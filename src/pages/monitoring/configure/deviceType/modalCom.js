@@ -327,7 +327,10 @@ export let AddModal = forwardRef(
         </Row>
         <Divider dashed />
         <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
+        <div className={style.minHt}>
         <TableForm  ref={tableRef} defaultTableData={editDefaultTableData}  ></TableForm>
+        </div>
+       
       </Form>
     )
   }

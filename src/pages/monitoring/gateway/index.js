@@ -217,7 +217,8 @@ export default function Index(props) {
     console.log('getOverviewData')
   }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
   useEffect(() => {
-    if (overView.categories != []) {
+    console.log(overView)
+    if (overView.categories ) {
       getGatewayImages()
       console.log(456)
     }
