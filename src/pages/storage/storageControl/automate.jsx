@@ -26,6 +26,7 @@ const Mainbox = styled.div`
             grid-auto-rows: 48px;
             row-gap: 16px;
             display: grid;
+            border: 1px solid #d7d7d7;
             .move {
                 grid-column: -1 / -2;
                 display: flex;
