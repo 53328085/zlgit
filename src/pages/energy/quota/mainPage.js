@@ -67,7 +67,7 @@ export default function MainPage(props){
       width:'258px',
       render: (_, record) => (
         <Space size="middle">
-          <CustomProgress progress={parseInt(record.comprehensiveQuota) > 0 ? (Number(record.comprehensiveQuotaLeaved) / Number(record.comprehensiveQuota)) : 0 }></CustomProgress>
+          <CustomProgress progress={parseInt(record.comprehensiveQuota) > 0 ? ((Number(record.comprehensiveQuotaLeaved)/Number(record.comprehensiveQuota)) * 100) : 0 }></CustomProgress>
         </Space>)
     },{
       title:(<div>年度综合能耗<br/>剩余/定额(吨标煤)</div>),
