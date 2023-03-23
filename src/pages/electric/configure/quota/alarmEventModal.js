@@ -23,6 +23,7 @@ export default function Index(props) {
 
   const Item = Form.Item;
   //   新增告警事件-告警规则逻辑
+  const [modalTitle, setModalTitle] = useState("");
   const [defaultAlarmType, setDefaultAlarmType] = useState(1);
   //   const [showData, setShowData] = useState();
   //   const [alarmList, setalarmList] = useState();

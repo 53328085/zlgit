@@ -3,7 +3,7 @@ import React , { useEffect, useState, useRef, useMemo } from 'react'
 import style from './style.module.less'
 import {Form,Select} from 'antd'
 import { useSelector } from 'react-redux'
-import InspectionManage from './inspectionManage'
+import OrderContent from './ordercontent'
 export default function Index() {
   const [form] =Form.useForm()
   const [areavalue, setAreavalue] = useState(0)
@@ -26,7 +26,7 @@ export default function Index() {
             </Form.Item>
           </Form>
         </div>
-       <InspectionManage style={style}></InspectionManage>
+       <OrderContent style={style}></OrderContent>
     </div>
   )
 }

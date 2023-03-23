@@ -18,22 +18,13 @@ export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
   const [messageApi, contextHolder] = message.useMessage();
-  const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
+  const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
   let [areaId, setAreaId] = useState(1)
+  let [deviceStyle, setdeviceStyle] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: [], categories: [] })
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  
-  // const headerProps = {
-  //   isEnergy: false,//能耗类型
-  //   isDate: false,//日期
-  //   isShift: false,//班次
-  //   isTab: false,//能耗、费用radioButton
-  //   isSearch: false,//查询按钮
-  //   isExport: false,//导出按钮
-  //   //export: exportData //导出调用方法
-  // }
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
@@ -45,13 +36,14 @@ export default function Index(props) {
   let params = {
     projectId: projectId,
     areaId: areaId,
-    category: '',
+    gatewayId: 0,
+    deviceStyle:deviceStyle,
+    category:'',
     alike: '',
     state: 0,
     pageNum: page,
     pageSize: 12,
   }
-  // let [arr,setArr] = useState([])
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
     {
@@ -102,8 +94,9 @@ export default function Index(props) {
     },
     {
       title: '设备状态',
-      dataIndex: 'childrenCnt',
-      key: 'childrenCnt',
+      dataIndex: 'state',
+      render: (state) => <span> {state==1?'失联':state==2?'在线':'告警'}</span>,
+      key: 'state',
       id: 'id'
     },
     {
@@ -122,7 +115,7 @@ export default function Index(props) {
   let [dataSource, setdataSource] = useState([])
 
   const getData = () => {//设备统计
-    return RuntimeGatewayStatistics({ projectId, areaId }).then(res => {
+    return Statistics({ projectId, areaId,deviceStyle }).then(res => {
       let { success, data } = res
       if (success && data) {
         setStatistics(data)
@@ -134,9 +127,8 @@ export default function Index(props) {
       }
     })
   }
-
   const getGatewayUsed = () => {//使用的网关
-    return QueryUsedGateway(projectId).then(res => {
+    return QueryUsedDeviceCategory({projectId:projectId,deviceStyle:deviceStyle}).then(res => {
       let { success, data } = res
       if (success && data) {
         setoptionsGateway(data)
@@ -155,9 +147,6 @@ export default function Index(props) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
-        //  if(data.categories!=null){
-        //    getGatewayImages()
-        //  }
         setdataSource(data.details)
       } else {
         messageApi.open({
@@ -173,22 +162,17 @@ export default function Index(props) {
     return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
       let { success, data } = res
       if (success && data) {
-        // setimageList(data)
         if(data!=[]){
-          // console.log(data)
           let imgList=[]
             overView.details.map((item, index) => {
               data.map((items,indexs)=>{
-                // console.log(data[indexs].category , item.category)
                 if (data[indexs].category == item.category) {
                   imgList.push(data[indexs].imageBase64)
                 } else {
-                  // setimageList(()=>{imageList.push('')})
                 }
               })
             })
             setimageList(imgList)
-          // console.log(imageList,imgList)
         }
       } else {
         messageApi.open({
@@ -203,13 +187,13 @@ export default function Index(props) {
     manual: true,
   })
 
-  // const getFromChild = data => {
-  //   //园区id
-  //   setAreaId(data.areaId)
-  // }
   const changeArea = (value) => {
     setAreaId(value);
   };
+  const handleChangeDevice=(value)=>{
+    console.log(value)
+    setdeviceStyle(value)
+  }
   const onChangeValue = e => {
     inputValue = e.target.value
   }//输入框改变值
@@ -237,11 +221,11 @@ export default function Index(props) {
   useEffect(() => {
     getData()
     queryData()
-  }, [areaId, changeTag])
+  }, [areaId, changeTag,deviceStyle])
   useEffect(() => {
     getOverviewData()
     console.log('getOverviewData')
-  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
+  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page,params.deviceStyle])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()
@@ -274,22 +258,35 @@ export default function Index(props) {
         </Select>
         <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
         <span style={{  marginRight: 16 }}>表计类型</span>
-        {/* <Select
-          placeholder="请选择表计类型"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{ width: "200px" }}
-          onChange={changeArea}
-        >
-          {areaList.map((item) => {
-            return (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            );
-          })}
-        </Select> */}
+        <Select
+              defaultValue={1}
+              style={{
+                width: 200, marginLeft: 16
+              }}
+              onChange={handleChangeDevice}
+              options={[
+                {
+                  value: 1,
+                  label: '电表',
+                },
+                {
+                  value: 2,
+                  label: '水表',
+                },
+                {
+                  value: 3,
+                  label: '燃气表',
+                },
+                {
+                  value: 4,
+                  label: '变压器',
+                },
+                {
+                  value: 5,
+                  label: '传感器',
+                },
+              ]}
+            />
       </div>
       <div className={style.bottom}>
         <div className={style.bottomTab}>
@@ -335,7 +332,7 @@ export default function Index(props) {
                 },
                 {
                   value: 3,
-                  label: '告警(' + statistics.off + ')',
+                  label: '告警(' + statistics.alarm + ')',
                 },
               ]}
             /></div> 
@@ -351,10 +348,10 @@ export default function Index(props) {
         {isCard ? <div className={style.cardBox}>
           {overView.details!=null?overView.details.map((item, index) => {
             return <div key={index}>
-              <Link  to={`/gatewayDetail?sn=${item.sn}`}   target="_blank">
-                  <Icard img={imageList[index]? 'data:image/png;base64,'+imageList[index] : imgurl.category} title={item.name}
+              <Link  to={`/deviceDetail?sn=${item.sn}`}   target="_blank">
+                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.name}
 
-                    value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
+                    value={item.address} state={item.state} fields={item.fields} 
                     lastSampleTime={item.lastSampleTime} category={item.category} />
                     </Link>
             </div>

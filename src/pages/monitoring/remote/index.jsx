@@ -1,7 +1,9 @@
 import React,{useState} from 'react'
 import { useAntdTable, usePagination } from 'ahooks'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
 import { Remote } from '@api/api.js'
-import {Button, Form,Modal } from 'antd'
+import {Button, Form,message,Modal } from 'antd'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import {columns,realcolumns} from './columns'
@@ -12,6 +14,7 @@ import redwarn from '@imgs/redwarn.png'
 import styles from './style.module.less'
 
 export default function Index() {
+  const projectId = useSelector(selectProjectId)
   const tabs = [
     {label: '单表控制', key: 'single'},
     {label: '批量控制', key: 'batch'},
@@ -24,34 +27,29 @@ export default function Index() {
   const [brake,setbrake] = useState(false) //分闸弹窗显示
   const [switching,setswitching] = useState(false) //合闸弹窗显示
   const [readout,setreadout] = useState(false) //实时抄读显示
+  const [areaId,setareaId] = useState(1) //areaId
   const [form] =Form.useForm()
   let params = {
-    meterType: meterType[value],
-    projectId: 1,
-    regionId: 0,
-    buildingId: 0,
-    floorId: 0,
-    roomId: 0,
-    type: 0,
     pageNum: 1,
     pageSize: 14,
-    alike: ''
+    projectId: projectId,
+    areaId:areaId,
+    gatewayId:0,
+    deviceStyle:1,
+    category:'',
+    alike:'',
+    state:0
   }
-  const getTableData =async ({current,pageSize},formData)=>{
-    const res =await Remote.AllMeter({...params,formData})
-    let {success,data,totalNum} =res
-    console.log(res)
+  const getTableData =()=>{
+    return Remote.AllMeter(params).then(res=>{
+      let {success,data,totalNum} =res
+      console.log(res)
     if(success&&Array.isArray(data)){
-      return {
-        total:totalNum,
-        list:data
-      }
+      
     }else{
-      return{
-        total:0,
-        list:[]
-      }
+      message.error(res.errMsg)
     }
+    })
   }
  
   const {tableProps,search} = useAntdTable(getTableData,{

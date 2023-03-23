@@ -477,8 +477,13 @@
                             color: #333;
                         }
                     }
+                    
                 }
-
+                div{
+                    .timeline{
+                        margin: 16px 0;
+                    }
+                }
                 
             }
             .pageNumD {
@@ -494,5 +499,84 @@
                 }
             }
         }
+    }
+}
+.energyHead{
+    display: grid;
+    grid-template-columns: repeat(3,336px) 528px;
+    grid-template-rows: repeat(1,152px);
+    height: 152px;
+    .dateData{
+        width: 320px;
+        height: 152px;
+        background-color: rgba(242, 242, 242, 0.5);
+        border: 1px solid rgb(233,233,233);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        p{
+            width: 256px;
+            height: 19px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+        }
+        div{
+            width: 256px;
+            height: 40px;
+            background-color: #fff;
+            border: 1px solid rgb(215,215,215);
+            padding-left: 16px;
+            font-size: 28px;
+            line-height: 40px;
+        }
+    }
+    .dateDataLast{
+        width: 528px;
+        height: 152px;
+        background-color: rgba(242, 242, 242, 0.5);
+        border: 1px solid rgb(233,233,233);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        div{
+            width: 130px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-direction: column;
+            .rightImg{
+                width: 68px;
+                height: 68px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 5px;
+            }
+            p{
+                height: 24px;
+                line-height: 24px;
+            }
+        }
+    }
+}
+.chartHead{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.alarmTable{
+    :global(.ant-table-thead > tr > th) {
+        background-color: #237AE4;
+        text-align: center;
+        color: #fff;
+    }
+
+    :global(.ant-table-tbody > tr > td) {
+       text-align: center;
     }
 }
