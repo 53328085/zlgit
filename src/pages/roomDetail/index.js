@@ -129,7 +129,7 @@ export default function Index(){
                         <div className={style.itemData}>
                             <span>能耗剩余</span>
                             <Progress style={{width:'280px'}} 
-                            percent={Number(comprehensiveQuota) > 0 ? (Number(comprehensiveQuotaLeaved)/Number(comprehensiveQuota)).toFixed(2) : 0} 
+                            percent={Number(comprehensiveQuota) > 0 ? ((Number(comprehensiveQuotaLeaved)/Number(comprehensiveQuota)) * 100) .toFixed(2) : 0} 
                             trailColor='#ebeef5' strokeWidth={20} />
                         </div>
                     </div>

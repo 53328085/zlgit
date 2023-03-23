@@ -76,10 +76,10 @@ const Idiv5 = styled(Idiv)`
 `;
 const Triangle = styled.div`
     width: 0; 
- 	height: 0;
- 	border-width: 32px;
- 	border-style: solid;
- 	border-color: transparent #135abd transparent transparent;
+     height: 0;
+     border-width: 32px;
+     border-style: solid;
+     border-color: transparent #135abd transparent transparent;
 `;
 const Citem = styled(Menu.Item)`
   && {
@@ -137,7 +137,7 @@ export default function Log() {
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
-
+ 
   })
   const Item = Form.Item
   const [form] = Form.useForm()
@@ -205,9 +205,9 @@ export default function Log() {
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
-
  
-
+ 
+ 
         { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
           <span>项目设置</span>
         </Idiv4>):null}
@@ -304,7 +304,7 @@ export default function Log() {
   
   
   </Form>
-
+ 
       </CModal>
     </Cdiv>
   );

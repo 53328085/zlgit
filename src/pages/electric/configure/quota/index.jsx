@@ -19,8 +19,13 @@ import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 export default function Index() {
-  const { QueryAlarmPage, QueryAddAlarm, DeletePlanAlarm, UpdatePlanAlarm } =
-    AlarmManagement;
+  const {
+    QueryAlarmPage,
+    QueryAddAlarm,
+    DeletePlanAlarm,
+    UpdatePlanAlarm,
+    QueryAlarmEvents,
+  } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
   const messageContent = (type, content) => {
@@ -35,7 +40,7 @@ export default function Index() {
   //告警管理数据
   const [pageNum, setPageNum] = useState(1);
   const [modalTitle, setModalTitle] = useState("");
-  // const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(0);
   const pageSize = 10;
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
@@ -44,10 +49,9 @@ export default function Index() {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
         if (res.data) {
-          setDataSource(JSON.parse(res.data));
+          setDataSource(res.data);
+          setTotal(res.total);
         }
-        // setTotal(res.total);
-        console.log(dataSource);
       } else {
         messageApi.open({
           type: "error",
@@ -63,7 +67,7 @@ export default function Index() {
   const paginationProps = {
     current: pageNum, //当前页码
     pageSize, // 每页数据条数
-    // total, // 总条数
+    total, // 总条数
     onChange: (page) => handlePageChange(page), //改变页码的函数
     hideOnSinglePage: false,
     showSizeChanger: false,
@@ -76,13 +80,13 @@ export default function Index() {
     {
       align: "center",
       title: "告警方案名称",
-      dataIndex: "Name",
-      key: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "备注",
-      dataIndex: "Tag",
-      key: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       align: "center",
     },
     {
@@ -104,59 +108,61 @@ export default function Index() {
       ),
     },
   ];
-  const columnsType=[
+  const columnsType = [
     {
       align: "center",
       title: "告警事件",
-      dataIndex: "Name",
-      key: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "数据标识",
-      dataIndex: "Tag",
-      key: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       align: "center",
-    },{
+    },
+    {
       align: "center",
       title: "告警描述",
-      dataIndex: "Name",
-      key: "Name",
-      width:300
+      dataIndex: "name",
+      key: "name",
+      width: 300,
     },
     {
       title: "APP推送",
-      dataIndex: "Tag",
-      key: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       align: "center",
     },
     {
       align: "center",
       title: "微信推送",
-      dataIndex: "Name",
-      key: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "短信推送",
-      dataIndex: "Tag",
-      key: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       align: "center",
-    },{
+    },
+    {
       align: "center",
       title: "是否推送",
-      dataIndex: "Name",
-      key: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "间隔时间",
-      dataIndex: "Tag",
-      key: "Tag",
+      dataIndex: "tag",
+      key: "tag",
       align: "center",
     },
     {
       title: "操作",
       key: "action",
       align: "center",
-      width:120,
+      width: 120,
       render: (_, record) => (
         <Space size="middle">
           <span className={style.editText} onClick={() => edit(record)}>
@@ -170,12 +176,12 @@ export default function Index() {
           </span>
         </Space>
       ),
-    }
-  ]
+    },
+  ];
 
   //  新增告警声明初始化
-  const [Name, setName] = useState();
-  const [Tag, setTag] = useState();
+  const [name, setName] = useState();
+  const [tag, setTag] = useState();
 
   //新增告警事件
   const [addAlarmEvent, setAddAlarmEvent] = useState(false);
@@ -210,19 +216,19 @@ export default function Index() {
   // 删除
   const [deleteId, setDeleteId] = useState();
   const deleteRecord = (record) => {
-    setDeleteId(record.Id);
+    setDeleteId(record.id);
     setDeleteModal(true);
   };
   //编辑
   const [editId, setEditId] = useState();
   const [editType, setEditType] = useState(false);
   const edit = (record) => {
-    // UpdatePlanAlarm(record.Id,Name,Tag).then(res=>{
-
-    //   console.log(record);
-    // })
+    console.log(record);
+    QueryAlarmEvents(record.id).then((res) => {
+      console.log(res);
+    });
     setEditType(true);
-    setEditId(record.Id);
+    setEditId(record.id);
     setModalTitle("编辑告警方案");
     setaddAlarmModal(true);
     form.setFieldsValue(record);
@@ -242,13 +248,13 @@ export default function Index() {
     // return
     try {
       const values = await form.validateFields();
-      setName(values.Name);
-      setTag(values.Tag);
-      console.log(values, Name, Tag);
+      setName(values.name);
+      setTag(values.tag);
+      console.log(values, name, tag);
       let params = {
         projectId: projectId,
-        name: values.Name,
-        tag: values.Tag,
+        name: values.name,
+        tag: values.tag,
       };
       QueryAddAlarm(params).then((res) => {
         if (res.success) {
@@ -294,11 +300,10 @@ export default function Index() {
   //新增保存--编辑告警方案
   const addAlarmOk = async () => {
     const values = await form.validateFields();
-    console.log(values.Name,typeof(values.Name));
     let params = {
       id: editId,
-      name: values.Name,
-      tag: values.Tag,
+      name: values.name,
+      tag: values.tag,
     };
     // return
     UpdatePlanAlarm(params).then((res) => {
@@ -318,6 +323,9 @@ export default function Index() {
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
   };
+  useEffect(() => {
+    getAlarmData();
+  }, [pageNum]);
   return (
     <div className={style.box}>
       <div className={style.content}>
@@ -385,13 +393,13 @@ export default function Index() {
               name="addform"
             >
               <Item
-                name="Name"
+                name="name"
                 label="方案名称 (必填)"
                 rules={[{ required: true, message: "请输入方案名称" }]}
               >
                 <Input placeholder="请输入告警方案名称" />
               </Item>
-              <Item name="Tag" label="备注信息">
+              <Item name="tag" label="备注信息">
                 <Input />
               </Item>
             </Form>
@@ -420,25 +428,31 @@ export default function Index() {
                 name="addform"
               >
                 <Item
-                  name="Name"
+                  name="name"
                   label="方案名称 (必填)"
                   rules={[{ required: true, message: "请输入方案名称" }]}
                 >
                   <Input placeholder="请输入告警方案名称" />
                 </Item>
-                <Item name="Tag" label="备注信息">
+                <Item name="tag" label="备注信息">
                   <Input />
                 </Item>
               </Form>
             ) : (
               <div>
-                <p>方案名称：{Name}</p>
-                <p>方案备注：{Tag}</p>
+                <p>方案名称：{name}</p>
+                <p>方案备注：{tag}</p>
               </div>
             )}
             <Divider dashed />
             <p>请配置项目需要推送的系统分析告警类型</p>
-            <Table style={{marginTop:'16px'}} columns={columnsType} dataSource={dataSourceType} rowKey='key' bordered></Table>
+            <Table
+              style={{ marginTop: "16px" }}
+              columns={columnsType}
+              dataSource={dataSourceType}
+              rowKey="key"
+              bordered
+            ></Table>
             <Button
               onClick={() => showAddAlarmEvent()}
               block
@@ -452,6 +466,7 @@ export default function Index() {
         <AlarmEventModal
           AddAlarmEventGive={addAlarmEvent}
           callBack={changeAddAlarmEvent}
+          resetForm={showAddAlarmEvent}
         ></AlarmEventModal>
       </div>
     </div>

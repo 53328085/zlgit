@@ -14,6 +14,7 @@ export default function Index() {
     console.log(v)
     setAreavalue(v)
   }
+
   return (
     <div className={style.Order}>
       <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px',  border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -26,7 +27,7 @@ export default function Index() {
             </Form.Item>
           </Form>
         </div>
-       <OrderContent style={style}></OrderContent>
+       <OrderContent style={style} areavalue={areavalue}></OrderContent>
     </div>
   )
 }

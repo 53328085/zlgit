@@ -17,7 +17,7 @@ import Table from '@com/useTable'
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
   let [areaId, setAreaId] = useState(1)
   let [statistics, setStatistics] = useState({})
@@ -100,13 +100,10 @@ export default function Index(props) {
   const getData = () => {//设备统计
     return RuntimeGatewayStatistics({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setStatistics(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -114,20 +111,17 @@ export default function Index(props) {
   const getGatewayUsed = () => {//使用的网关
     return QueryUsedGateway(projectId).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setoptionsGateway(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getOverviewData = () => {//设备统计
     return Overview(params).then(res => {
       let { success, data, total, pageNum } = res
-      if (success && data) {
+      if (success) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
@@ -136,10 +130,7 @@ export default function Index(props) {
         //  }
         setdataSource(data.details)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -148,29 +139,21 @@ export default function Index(props) {
   const getGatewayImages = () => {//网关图片
     return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
       let { success, data } = res
-      if (success && data) {
-        // setimageList(data)
+      if (success ) {
         if(data!=[]){
-          // console.log(data)
           let imgList=[]
             overView.details.map((item, index) => {
               data.map((items,indexs)=>{
-                // console.log(data[indexs].category , item.category)
                 if (data[indexs].category == item.category) {
                   imgList.push(data[indexs].imageBase64)
                 } else {
-                  // setimageList(()=>{imageList.push('')})
                 }
               })
             })
             setimageList(imgList)
-          // console.log(imageList,imgList)
         }
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }

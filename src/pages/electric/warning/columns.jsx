@@ -20,12 +20,14 @@ export const  columns = [
         dataIndex: 'recoveryTime',
         key: 'recoveryTime',
         align:'center',
+        render:(text)=>(text?text:'/')
       },
       {
         title: '消警事件',
         dataIndex: 'recoveryEvent',
         key: 'recoveryEvent',
         align:'center',
+        render:(text)=>(text?text:'/')
       },
       {
         title: '告警状态',

@@ -60,7 +60,8 @@ export default function Energy({ showData, dateType }) {
           </div>
         </div>))
       }
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      {
+        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={style.piestyle}>
           <Bluecolumn name="分类能耗占比" />
           <div style={{ width: 368, height: 360, marginTop: 16 }}>
@@ -78,7 +79,9 @@ export default function Energy({ showData, dateType }) {
             }
           </div>
         </div>
-      </div>
+      </div>):null
+      }
+     
     </div>
   )
 }

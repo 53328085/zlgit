@@ -92,12 +92,18 @@ export default function Index() {
   const getQueryElectric =async ()=>{
     const {plan,area,...formvalue} = form.getFieldValue()
     const date = getdateformat()
+    let areaId
+      if(area){
+        areaId= [area]
+      }else{
+        areaId= oneLevel.map(it=>it.id)
+      }
     let params = {
       projectId,
       shift:plan?plan:0,
       type:formvalue.datetype,
       date,
-      areaIds:[area?area:0],
+      areaIds:areaId,
       lineIds:selectRef.current
     }
    const res = await energyShare.QueryElectric(params)

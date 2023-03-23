@@ -22,7 +22,7 @@ export default function GatewayDetail(props) {
     console.log(search)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
-    const [messageApi, contextHolder] = message.useMessage();
+    // const [messageApi, contextHolder] = message.useMessage();
     const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
@@ -90,7 +90,7 @@ export default function GatewayDetail(props) {
     const getData = () => {//设备详情
         return Current(projectId, search).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 setCurrent(data)
                 setdataList(data.fields)
             } else {
@@ -101,7 +101,7 @@ export default function GatewayDetail(props) {
     const getDetailData = () => {//设备详情
         return Detail(projectId, search).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 setDetail(data)
             } else {
                 message.error(res.errMsg)
@@ -118,7 +118,7 @@ export default function GatewayDetail(props) {
     const getHistoryTrend = () => {//
         return HistoryTrend(paramsTrend).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 sethistoryTrend(data)
                 console.log(JSON.parse(data))
                 charts()
@@ -130,7 +130,7 @@ export default function GatewayDetail(props) {
     const getHistoryTable = () => {//
         return HistoryTable(paramsTrend).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success ) {
                 //setDetail(data)
 
                 console.log(JSON.parse(data))
@@ -144,7 +144,7 @@ export default function GatewayDetail(props) {
     const getEnergyTrend = () => {//
         return EnergyActuary(projectId, search).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 setactuary(data)
             } else {
                 message.error(res.errMsg)
@@ -165,7 +165,7 @@ export default function GatewayDetail(props) {
     const getAlarmPage = () => {//
         return AlarmPage(paramsAlarm).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 setalarmPage(data)
                 settotalalarm(res.total)
             } else {
@@ -187,7 +187,7 @@ export default function GatewayDetail(props) {
     const getEnergyReport = () => {//
         return EnergyReport(paramsReport).then(res => {
             let { success, data } = res
-            if (success && data) {
+            if (success) {
                 setEnergyReport(data)
                 let x = []
                 let y = []
@@ -368,7 +368,7 @@ export default function GatewayDetail(props) {
 
     }//切换趋势列表
     const exportExecel = () => {
-        //tableLoadRef.current.download()
+        tableLoadRef.current.download()
     }//数据导出
     const columnsLog = [
         {
