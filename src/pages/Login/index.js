@@ -330,7 +330,6 @@ function UserLog() {
       loginByName({ name, pwd })
     ).unwrap();
     if (success) {
-      let userIdentity = sessionStorage.setItem("userIdentity", data.roleType);
       if (data.roleType == 1 || data.roleType == 2) {
         navigate("/projectlist", {});
       } else if (data.roleType == 3 || data.roleType == 4) {

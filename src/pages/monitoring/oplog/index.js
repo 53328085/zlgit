@@ -78,8 +78,9 @@ export default function Index() {
   }
 
   return (
-    <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true}>
+    <div>
+    {/* // <CustContext.Provider value={propsData}>
+    // <Pagecount showserach={true}> */}
       <Form form={form}  layout="inline"  initialValues={{
         date: [moment().subtract(1, 'M'), moment(),],
         like: ''
@@ -105,7 +106,8 @@ export default function Index() {
       </Form.Item>
       </Form>
       <UserTable columns={columns} rowKey={(record) => record.updateTime + record.sn} {...tableProps} ></UserTable>
-    </Pagecount>
-    </CustContext.Provider>
+    {/* // </Pagecount>
+    // </CustContext.Provider> */}
+    </div>
   )
 }

@@ -13,16 +13,16 @@ export default function Icard(props){
                 <div className={style.btnStyle}>
                     
                     <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>电流</p><p className={style.timeValueStyle}>{props.childrenCnt}</p>
+                        <p className={style.timeStyle}>{props.fields[0]?props.fields[0].name:''}</p><p className={style.timeValueStyle}>{props.fields[0]?props.fields[0].value:''}</p>
                     </div>
                     <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>电压</p><p className={style.timeValueStyle}>{props.connMethod}</p>
+                        <p className={style.timeStyle}>{props.fields[1]?props.fields[1].name:''}</p><p className={style.timeValueStyle}>{props.fields[1]?props.fields[1].value:''}</p>
                     </div>
                     <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>功率</p><p className={style.timeValueStyle}>{props.connMethod}</p>
+                        <p className={style.timeStyle}>{props.fields[2]?props.fields[2].name:''}</p><p className={style.timeValueStyle}>{props.fields[2]?props.fields[2].value:''}</p>
                     </div>
                     <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>用电量</p><p className={style.timeValueStyle}>{props.connMethod}</p>
+                        <p className={style.timeStyle}>{props.fields[3]?props.fields[3].name:''}</p><p className={style.timeValueStyle}>{props.fields[3]?props.fields[3].value:''}</p>
                     </div>
                 </div>
             </div>

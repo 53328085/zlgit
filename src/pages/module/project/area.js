@@ -74,12 +74,12 @@ const [curlevel, setCurlevel] = useState({})
       success && message.success({
          content: '删除成功',
          duration: 0.3,
-         onClose: () =>  queryarealevels().then(() =>dref.current.onCancel() ).catch((e) => {}),
+         onClose: () => queryarealevels().then(() =>  dref.current.onCancel()),
       })
       !success && message.warning(errMsg || '数据出错')
      
    } catch (error) {
-    console.log(error)
+      
    }
    
  }
@@ -139,6 +139,8 @@ const [curlevel, setCurlevel] = useState({})
    } catch (error) {
       console.log(error)
    }
+   
+
 }
   const onOk = () => {
        console.log(handler);
@@ -194,10 +196,8 @@ const [curlevel, setCurlevel] = useState({})
       console.log(levelid);
     // let {success, data} =  await QueryAreaLevelFields({projectId, level})
     // success && setTableData([...data]) ;
-    queyFiled(level).then(()=>{
-      
+    queyFiled(level)
      fref.current.onOpen();
-    })
     
    } catch (error) {
       console.log(error)
@@ -207,8 +207,8 @@ const [curlevel, setCurlevel] = useState({})
   const closefiled = () => {
    fref.current.onCancel()
   }
-  const addfiled = () => {
-   ffrom.resetFields()
+  const addfiled = () => {  
+    ffrom.resetFields()
    nfref.current.onOpen()
   }
 
@@ -242,7 +242,7 @@ const [curlevel, setCurlevel] = useState({})
                <span>{numberFormat(d.level)}级区域</span>
                <div className='iptbox'>                
                    <Item name={d.id.toString() + d.level} label="" initialValue={d.name}>
-                   <Input  />
+                   <Input  disabled/>
                    </Item>
                    <Button type='primary' ghost onClick={() => edit(d)}>修改区域</Button>
                    <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d.level)}>删除</Button>

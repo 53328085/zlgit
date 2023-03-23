@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import dashed from "@imgs/dashed.png";
 import { PlusOutlined } from "@ant-design/icons";
+import firstwarn from "@imgs/warning.png";
 import {
   Button,
   Table,
@@ -10,7 +11,7 @@ import {
   Form,
   Input,
   Divider,
-  message 
+  message,
 } from "antd";
 import AlarmEventModal from "./alarmEventModal";
 import { AlarmManagement } from "@api/api.js";
@@ -18,23 +19,39 @@ import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 export default function Index() {
-  const { QueryAlarmPage, QueryAddAlarm } = AlarmManagement;
+  const {
+    QueryAlarmPage,
+    QueryAddAlarm,
+    DeletePlanAlarm,
+    UpdatePlanAlarm,
+    QueryAlarmEvents,
+  } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
+  const messageContent = (type, content) => {
+    messageApi.open({
+      type,
+      content,
+    });
+  };
   const tableRef = useRef();
 
   const Item = Form.Item;
   //告警管理数据
   const [pageNum, setPageNum] = useState(1);
+  const [modalTitle, setModalTitle] = useState("");
   const [total, setTotal] = useState(0);
   const pageSize = 10;
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
+  const [dataSourceType, setDataSourceType] = useState([]);
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
-        setDataSource(JSON.parse(res.data));
-        // setTotal(res.total);
+        if (res.data) {
+          setDataSource(res.data);
+          setTotal(res.total);
+        }
       } else {
         messageApi.open({
           type: "error",
@@ -78,10 +95,83 @@ export default function Index() {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <span className={style.editText} onClick={() => edit()}>
+          <span className={style.editText} onClick={() => edit(record)}>
             编辑
           </span>
-          <span className={style.deleteText} onClick={() => deleteRecord()}>
+          <span
+            className={style.deleteText}
+            onClick={() => deleteRecord(record)}
+          >
+            删除
+          </span>
+        </Space>
+      ),
+    },
+  ];
+  const columnsType = [
+    {
+      align: "center",
+      title: "告警事件",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "数据标识",
+      dataIndex: "tag",
+      key: "tag",
+      align: "center",
+    },
+    {
+      align: "center",
+      title: "告警描述",
+      dataIndex: "name",
+      key: "name",
+      width: 300,
+    },
+    {
+      title: "APP推送",
+      dataIndex: "tag",
+      key: "tag",
+      align: "center",
+    },
+    {
+      align: "center",
+      title: "微信推送",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "短信推送",
+      dataIndex: "tag",
+      key: "tag",
+      align: "center",
+    },
+    {
+      align: "center",
+      title: "是否推送",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "间隔时间",
+      dataIndex: "tag",
+      key: "tag",
+      align: "center",
+    },
+    {
+      title: "操作",
+      key: "action",
+      align: "center",
+      width: 120,
+      render: (_, record) => (
+        <Space size="middle">
+          <span className={style.editText} onClick={() => edit(record)}>
+            编辑
+          </span>
+          <span
+            className={style.deleteText}
+            onClick={() => deleteRecord(record)}
+          >
             删除
           </span>
         </Space>
@@ -100,37 +190,85 @@ export default function Index() {
   //新增告警方案
   const [addAlarmModal, setaddAlarmModal] = useState(false);
   const [form] = Form.useForm();
-  //删除
-  const deleteRecord = () => {
-    setAddModal(true);
+  //删除弹窗
+  const [deleteModal, setDeleteModal] = useState(false);
+  //删除确认
+  const deleteOk = () => {
+    // return
+    DeletePlanAlarm(projectId, deleteId).then((res) => {
+      if (res.success) {
+        message.success("告警方案删除成功！");
+        getAlarmData();
+        // if(dataSource.length == 1 && pageNum > 1){
+        //   setPageNum(pageNum - 1)
+        // }else{
+        //   getAlarmData()
+        // }
+      } else {
+        message.error("删除失败,请重试！");
+      }
+    });
+    setDeleteModal(false);
   };
+  const handleDelete = () => {
+    setDeleteModal(false);
+  };
+  // 删除
+  const [deleteId, setDeleteId] = useState();
+  const deleteRecord = (record) => {
+    setDeleteId(record.id);
+    setDeleteModal(true);
+  };
+  //编辑
+  const [editId, setEditId] = useState();
+  const [editType, setEditType] = useState(false);
+  const edit = (record) => {
+    console.log(record);
+    QueryAlarmEvents(record.id).then((res) => {
+      console.log(res);
+    });
+    setEditType(true);
+    setEditId(record.id);
+    setModalTitle("编辑告警方案");
+    setaddAlarmModal(true);
+    form.setFieldsValue(record);
+  };
+
   //新增告警
   const showAdd = () => {
+    form.resetFields();
+    setModalTitle("新增告警方案");
     setAddModal(true);
   };
   //下一步
   const addOk = async () => {
+    // setAddModal(false);
+    // setaddAlarmModal(true);
+    setEditType(false);
+    // return
     try {
       const values = await form.validateFields();
+      setName(values.name);
+      setTag(values.tag);
+      console.log(values, name, tag);
       let params = {
         projectId: projectId,
         name: values.name,
         tag: values.tag,
       };
-      return
-        QueryAddAlarm(params).then((res) => {
-          if (res.success) {
-            messageApi.open({
-              type: "success",
-              content: "告警方案新增成功！",
-            });
-          } else {
-            messageApi.open({
-              type: "error",
-              content: res.errMsg || "新增失败,请重试！",
-            });
-          }
-        });
+      QueryAddAlarm(params).then((res) => {
+        if (res.success) {
+          // messageApi.open({
+          //   type: "success",
+          //   content: "告警方案新增成功！",
+          // });
+        } else {
+          messageApi.open({
+            type: "error",
+            content: res.errMsg || "新增失败,请重试！",
+          });
+        }
+      });
       // else if(modalTitle == '编辑配电房'){
       //   params.id = editId
       //   updateRoom(params).then(res => {
@@ -155,10 +293,28 @@ export default function Index() {
   const handleCancel = () => {
     setAddModal(false);
     setaddAlarmModal(false);
+    if (addAlarmModal === true) {
+      getAlarmData();
+    }
   };
-  //新增告警方案
-  const addAlarmOk = () => {
-    setaddAlarmModal(true);
+  //新增保存--编辑告警方案
+  const addAlarmOk = async () => {
+    const values = await form.validateFields();
+    let params = {
+      id: editId,
+      name: values.name,
+      tag: values.tag,
+    };
+    // return
+    UpdatePlanAlarm(params).then((res) => {
+      if (res.success) {
+        message.success("告警方案编辑成功！");
+        getAlarmData();
+        setaddAlarmModal(false);
+      } else {
+        message.error("告警方案编辑失败！");
+      }
+    });
   };
   //新增告警事件
   const showAddAlarmEvent = () => {
@@ -167,6 +323,9 @@ export default function Index() {
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
   };
+  useEffect(() => {
+    getAlarmData();
+  }, [pageNum]);
   return (
     <div className={style.box}>
       <div className={style.content}>
@@ -185,11 +344,32 @@ export default function Index() {
           style={{ marginTop: "16px" }}
           columns={columns}
           dataSource={dataSource}
-          rowKey="id"
+          rowKey="key"
           size="small"
           pagination={paginationProps}
           ref={tableRef}
+          bordered
         ></Table>
+        <Modal
+          className={style.deleteModal}
+          open={deleteModal}
+          onOk={deleteOk}
+          onCancel={handleDelete}
+          width={512}
+          cancelText={"取消"}
+          centered={true}
+          closable={false}
+          maskClosable={false}
+          okText={"确认"}
+          okType={"primary"}
+          okButtonProps={{ danger: true }}
+        >
+          <div className={style.deleteHeader}>删除提示</div>
+          <div className={style.deleteBody}>
+            <img className={style.warnIcon} src={firstwarn}></img>
+            <span>是否确认删除告警方案？</span>
+          </div>
+        </Modal>
         <Modal
           className={style.addModal}
           open={addModal}
@@ -230,7 +410,7 @@ export default function Index() {
           open={addAlarmModal}
           onOk={addAlarmOk}
           onCancel={handleCancel}
-          width={600}
+          width={1000}
           centered={true}
           closable={true}
           maskClosable={false}
@@ -238,12 +418,41 @@ export default function Index() {
           okType={"primary"}
           // okButtonProps={{ primary: true }}
         >
-          <div className={style.addHeader}>新增告警</div>
+          <div className={style.addHeader}>{modalTitle}</div>
           <div className={style.addBody}>
-            <p>方案名称：告警方案1</p>
-            <p>方案备注：正泰物联杭州园区</p>
+            {editType === true ? (
+              <Form
+                form={form}
+                layout="vertical"
+                autoComplete="off"
+                name="addform"
+              >
+                <Item
+                  name="name"
+                  label="方案名称 (必填)"
+                  rules={[{ required: true, message: "请输入方案名称" }]}
+                >
+                  <Input placeholder="请输入告警方案名称" />
+                </Item>
+                <Item name="tag" label="备注信息">
+                  <Input />
+                </Item>
+              </Form>
+            ) : (
+              <div>
+                <p>方案名称：{name}</p>
+                <p>方案备注：{tag}</p>
+              </div>
+            )}
             <Divider dashed />
             <p>请配置项目需要推送的系统分析告警类型</p>
+            <Table
+              style={{ marginTop: "16px" }}
+              columns={columnsType}
+              dataSource={dataSourceType}
+              rowKey="key"
+              bordered
+            ></Table>
             <Button
               onClick={() => showAddAlarmEvent()}
               block
@@ -257,6 +466,7 @@ export default function Index() {
         <AlarmEventModal
           AddAlarmEventGive={addAlarmEvent}
           callBack={changeAddAlarmEvent}
+          resetForm={showAddAlarmEvent}
         ></AlarmEventModal>
       </div>
     </div>
