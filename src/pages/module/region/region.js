@@ -25,8 +25,9 @@ import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap";
-import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-import {useSelector} from 'react-redux'
+import {selectOneLevel, selectOneLevelDefaultId, getOnelevel} from '@redux/systemconfig.js'
+import {useSelector, useDispatch} from 'react-redux'
+
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -134,7 +135,8 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
-  const oneLevel = useSelector(selectOneLevel) // 一级
+  const dispatch = useDispatch();
+  const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const [levelone] = useState(allLevel[0]);
 
@@ -202,7 +204,16 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     id: 0,
     fields: [],
   };
-
+  const upateOneLevel = async () => {
+     if(level !=1) return
+     try {
+      let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId,level: 1,parentId: 0})  
+      lsuccess && dispatch(getOnelevel(levelData));
+      !lsuccess && dispatch(getOnelevel([]));
+     } catch (error) {
+       console.log(error)
+     }
+  }
 
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
@@ -453,7 +464,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         onClose: () => {
           dref.current.onCancel();
           getTableData();
-          refresh();
+          upateOneLevel()
         },
       });
     !success && custMsg({ success, content: errMsg || "数据出错" });
@@ -605,6 +616,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           onClose: () => {
             nref.current.onCancel();
             getTableData();
+            upateOneLevel();
           },
         });
       !success && custMsg({ success, content: errMsg || "数据出错" });
@@ -998,8 +1010,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         type="warn"
         mold="cust"
       >
-        <p>
-          <WarningFilled />
+        <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
+        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>
           是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?
         </p>
       </CModal>
