@@ -133,7 +133,6 @@ export default function Log() {
   const name = useSelector((state) => state.user)?.name;
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
-  const userIdentity=sessionStorage.getItem('userIdentity');
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
@@ -205,12 +204,12 @@ export default function Log() {
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
-        {userIdentity==='1'||userIdentity==='2'?(<Idiv4 onClick={onConfigure}>
+       <Idiv4 onClick={onConfigure}>
           <span>项目设置</span>
-        </Idiv4>):null}
-        {userIdentity==='1'||userIdentity==='2'?(<Idiv2 onClick={projectcfg}>
+        </Idiv4>
+       <Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
-        </Idiv2>):null}
+        </Idiv2>
         </>
         }
         <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
