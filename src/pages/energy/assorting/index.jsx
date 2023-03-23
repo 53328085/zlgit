@@ -44,7 +44,14 @@ export default function Index() {
         date,
         shiftsNo: formvalues.plan
       }
-      let areaId = [formvalues.area]
+      let areaId
+      if(formvalues.area){
+        areaId= [formvalues.area]
+      }else{
+        areaId= oneLevel.map(it=>it.id)
+      }
+      
+    
       let res;
       if(showType===1){
         res= await energyClassified.QueryEnergy(params, areaId)

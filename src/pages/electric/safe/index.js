@@ -135,7 +135,7 @@ const Timelinebox = styled(Timeline)`
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:transY ${props=>(props.children.props.children?.length*2)}s .5s linear infinite
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>(props.children.props.children?.length*2)}s 0s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;
@@ -550,7 +550,7 @@ const Alarm = ({ pref, opref, areaId }) => {
       bottom: 0,
 
     },
-    color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)'],
+    color:['rgb(255,112,112)','rgb(255,183,38)','rgb(176,126,249)'],
   })
   },[opieData])
   return (
@@ -687,7 +687,7 @@ const AlarmRank = ({ bref, areaId }) => {
         itemWidth: 8,
         itemGap: 20
       },
-      color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)']
+      color:['rgb(255,112,112)','rgb(255,183,38)','rgb(176,126,249)']
     })
   },[datasetStack])
   return (

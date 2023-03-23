@@ -11,6 +11,7 @@ import { operation } from '@api/api'
 const { Search } = Input;
 export default function Warncontent({ style,areavalue }) {
     const tableRef =useRef()
+    const modalRef =useRef()
     const projectId = useSelector(state => state.system.menus.projectId)
     const [tableParam,setTableParam] = useState({
         current:1,
@@ -55,7 +56,7 @@ export default function Warncontent({ style,areavalue }) {
             key: 'option',
             align:'center',
             render:(_,val)=>(
-                <span style={{color:'red',textDecoration:'underline',cursor:'pointer'}} onClick={dispatchOrder}>派单</span>
+                <span style={{color:'red',textDecoration:'underline',cursor:'pointer'}} onClick={()=>{dispatchOrder(_,val)}}>派单</span>
             ),
           },
           {
@@ -67,10 +68,7 @@ export default function Warncontent({ style,areavalue }) {
             ),
           },
     ]
-    //派单
-    const dispatchOrder = ()=>{
-        setOpen(true)
-    }
+    let dispatchId;
     //分页
     const changePage=(page)=>{
         const {current,pageSize}=page
@@ -99,6 +97,25 @@ export default function Warncontent({ style,areavalue }) {
         }else{
             message.error(res.errMsg)
         }
+    }
+     //派单
+     const dispatchOrder = (text,record)=>{
+        modalRef.current.onOpen()
+        dispatchId =record.id
+        console.log(text,record)
+    }
+    //确认派单
+    const dispatchOrderOk =async ()=>{
+      const res =   await operation.DispachOrder({
+        projectId,
+        alarmId:dispatchId
+      })  
+      if(res.success){
+        modalRef.current.onCancel()
+        message.success('派单成功！')
+      }else{
+        message.error(res.errMsg)
+      }
     }
     useEffect(()=>{
         getAlarmPage()
@@ -139,7 +156,12 @@ export default function Warncontent({ style,areavalue }) {
                 onChange={changePage}
                 ></UserTable>
             </div>
-            <Modal mold = 'cust' open={open} okText="立即派单" onCancel={()=>{setOpen(false)}}>
+            <Modal 
+            ref={modalRef}
+            mold = 'cust' 
+            okText="立即派单" 
+            onOk={dispatchOrderOk}
+            >
                 <BlueColumn name="派单提示" styled={{padding: '24px 0'}}/>
                 <div style={{margin:'16px 0'}}>
                     <img src={unknow} alt="" style={{margin:'0 16px'}}/>

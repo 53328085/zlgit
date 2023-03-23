@@ -35,17 +35,27 @@ export let Charts = ({ consumeDetail, color }) => {
 
 //饼图
 export let PieCharts = ({proportion}) => {
-    let total = 0
-    proportion.forEach(it=>total+=Number(it.value))
+  console.log(proportion)
+    const data = proportion.map(it=>{
+      return {
+        ...it,
+        value:Number(it.value)
+      }
+    })
+    let total=0
+    data.forEach(it=>{total+=it.value})
+
     const config = {
-      data:proportion,
+      data,
       angleField: 'value',
       colorField: 'name',
       radius: 0.8,
       innerRadius: 0.75,
       legend: {
         position: 'bottom',
-        offsetY: 0
+        offsetY: 0,
+        flipPage:false,
+        itemSpacing:10
       },
       label: {
         type: 'outer',
@@ -63,7 +73,9 @@ export let PieCharts = ({proportion}) => {
             fontWeight: 'normal',
             fontSize: '16px'
           },
-          content: `${total > 0 ? (<div><div>总</div><div>{total}</div></div>) : ''}`,
+          customHtml:useCallback((container,view,datum,data)=>{return (<p><p style={{marginBottom:12}}>总</p><p>{total.toFixed(2)}</p></p>)},[total])
+          // formatter:useCallback((a,b,v)=>{console.log(a,b,v)})
+          // content: total > 0 ? (<div><div>总</div><div>100</div></div>) : '',
         },
       },
     };
