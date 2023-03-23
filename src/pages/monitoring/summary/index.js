@@ -12,7 +12,6 @@ import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
   const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
   const elref = useRef(null)
   const wlref = useRef(null)
   const glref = useRef(null)
@@ -26,34 +25,27 @@ export default function Index() {
   const getData = () => {//设备统计
     return RuntimeStatistics({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success&&data) {
+      if (success) {
         setStatistics(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getStatusData = () => {//在线情况
     return RuntimeStatus({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success&&data ) {
+      if (success ) {
         setStatus(data)
       } else {
         message.error(res.errMsg)
-        // messageApi.open({
-        //   type: 'error',
-        //   content: res.errMsg
-        // })
       }
     })
   }
   const getMonthUsage = (type) => {//月用量
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
-      if (success&&data) {
+      if (success) {
         seteleConsumes(data.eleConsumes)
         setwaterConsumes(data.waterConsumes)
         setgasConsumes(data.gasConsumes)
