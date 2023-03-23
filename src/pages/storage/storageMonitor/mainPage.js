@@ -1,16 +1,26 @@
-import React, {useEffect, useState, Fragment} from 'react'
+import React, {useEffect, useState, Fragment, useRef} from 'react'
 import style from './style.module.less'
+import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons'
 import { message } from 'antd'
 import * as echarts from 'echarts'
-import topology from './imgs/topology_zhanwei.png'
-import warningPoint from './imgs/warningPoint.png'
 import { useNavigate } from 'react-router-dom'
 import {BMSRuntime} from '@api/api.js'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
+import BatteryPack from './batteryPack'
+import topology from './imgs/topology_zhanwei.png'
+import warningPoint from './imgs/warningPoint.png'
 
 export default function Index(props) {
-  const { querySOCTrends, queryVTrends, queryITrends, queryBMSInfo, queryEnvironmentInfo, queryBMSAlarms } = BMSRuntime
+  const socRef = useRef()
+  const volRef = useRef()
+  const currRef = useRef()
+  const { querySOCTrends, 
+    queryVTrends, 
+    queryITrends, 
+    queryBMSInfo, 
+    queryEnvironmentInfo, 
+    queryBMSAlarms } = BMSRuntime
   const projectId = useSelector(selectProjectId)
   const navigate = useNavigate()
   const voltageData = {
@@ -26,7 +36,7 @@ export default function Index(props) {
     y:[25, 32, 39, 54, 45, 15, 66, 36, 32, 36, 43, 36, 32 ]
   }
   const config = (lineId, color, Unit, lineData)=> {
-    let chart = echarts.init(document.getElementById(lineId));
+    let chart = echarts.init(lineId);
     chart.setOption({
       color:[color],
       tooltip: {
@@ -72,6 +82,18 @@ export default function Index(props) {
     })
   }
 
+  //自定义电池样式
+  const CustomBattery = props => {
+    return <div className={style.customBattery}>
+      <div className={style.batteryTop}></div>
+      <div className={style.batteryBody}>
+        <div className={style.progress} style={{ height: props.value, backgroundColor: props.color}}></div>
+        <span>{props.name}</span>
+        <span>{props.value}</span>
+      </div>
+    </div>
+  }
+
   const WarningCard = props => {
     return <div className={style.warningItem}>
       <div className={style.leftImg}>
@@ -94,21 +116,49 @@ export default function Index(props) {
       state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
     })
   }
-  const toBattery =() => {
-    props.getshowTab('batteryPage')
+  const toBattery =(item) => {
+    props.getshowTab({
+      pageName:'batteryPage',
+      batteryPackId:1,
+      batteryPackName: item.batteryPackName
+    })
   }
 
   const [warningData, setWarningData] = useState([])//告警信息
   const [environmentData, setEnvironmentData] = useState({})
+  const [bmsInfo, setBmsInfo] = useState({
+    batteryPackInfos:[]
+  })
+  const getTopology = () => {
+    let { areaId, bcId } = props.headerValues
+    //储能系统
+    queryBMSInfo(projectId, areaId, bcId).then(res => {
+      let {success, data} = res
+      if(success){
+        if(data){
+          setBmsInfo({
+            name: props.bmsName,
+            ...data
+          })
+        }else{
+          setBmsInfo({
+            batteryPackInfos:[]
+          })
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
   const getContent = () => {
     let { areaId, bcId } = props.headerValues
     //soc
     querySOCTrends(projectId, areaId, bcId).then(res => {
       if(res.success){
         if(res.data){
-          config('totalSOC', '#1ba41b','SOC (%)', res.data)
+          config( socRef.current, '#1ba41b','SOC (%)', res.data)
         }else{
-          config('totalSOC', '#1ba41b','SOC (%)', SOCData)
+          config( socRef.current, '#1ba41b','SOC (%)', SOCData)
         }
       }else{
         message.error(res.errMsg)
@@ -118,9 +168,9 @@ export default function Index(props) {
     queryVTrends(projectId, areaId, bcId).then(res => {
       if(res.success){
         if(res.data){
-          config('totalVoltage', '#237ae4','总电压 (V)', res.data)
+          config(volRef.current, '#237ae4','总电压 (V)', res.data)
         }else{
-          config('totalVoltage', '#237ae4','总电压 (V)', voltageData)
+          config(volRef.current, '#237ae4','总电压 (V)', voltageData)
         }
       }else{
         message.error(res.errMsg)
@@ -130,18 +180,11 @@ export default function Index(props) {
     queryITrends(projectId, areaId, bcId).then(res => {
       if(res.success){
         if(res.data){
-          config('totalCurrent', '#ff6701','总电流 (A)', res.data)
+          config(currRef.current, '#ff6701','总电流 (A)', res.data)
         }else{
-          config('totalCurrent', '#ff6701','总电流 (A)', currentData)
+          config(currRef.current, '#ff6701','总电流 (A)', currentData)
         }
       }else{
-        message.error(res.errMsg)
-      }
-    })
-    //储能系统
-    queryBMSInfo(projectId, areaId, bcId).then(res => {
-      let {success, data} = res
-      if(success){}else{
         message.error(res.errMsg)
       }
     })
@@ -173,9 +216,24 @@ export default function Index(props) {
     })
   }
 
+  const [count, setCount] = useState(0)
+  const translateRight = () => {
+    if((count)<= 0) return;
+    setCount(count - 1)
+  }
+  const translateLeft = () => {
+    if((count + 3)>= bmsInfo.batteryPackInfos.length) return;
+    setCount(count + 1)
+  }
+
   useEffect(()=>{
     if(props.headerValues){
       getContent()
+      getTopology()
+      const timer = setInterval(()=> {
+        getTopology()
+      }, 60000);
+      return ()=> clearInterval(timer)
     }
   },[props.headerValues])
   return (
@@ -184,20 +242,58 @@ export default function Index(props) {
         <div className={style.left}>
           <div className={style.leftCard}>
             <div className={style.cardTitle}>SOC ($)</div>
-            <div className={style.cardChart} id='totalSOC'></div>
+            <div className={style.cardChart} id='totalSOC' ref={socRef}></div>
           </div>
           <div className={style.leftCard}>
             <div className={style.cardTitle}>总电压 (V)</div>
-            <div className={style.cardChart} id='totalVoltage'></div>
+            <div className={style.cardChart} id='totalVoltage' ref={volRef}></div>
           </div>
           <div className={style.leftCard}>
             <div className={style.cardTitle}>总电流 (A)</div>
-            <div className={style.cardChart} id='totalCurrent'></div>
+            <div className={style.cardChart} id='totalCurrent' ref={currRef}></div>
           </div>
         </div>
         <div className={style.middle}>
-          <img src={topology} className={style.zhanwei}></img>  
-          <div className={style.clickDiv} onClick={toBattery}></div>
+          <img src={topology} className={style.zhanwei}></img>
+          <div style={{position:'absolute', left: 140, top: 102}}>
+            <CustomBattery name={'SOC'} value={ bmsInfo.soc + '%'} color="#0c6"></CustomBattery>
+          </div> 
+          <div style={{position:'absolute', left: 196, top: 102}}>
+            <CustomBattery name={'SOH'} value={bmsInfo.soh + '%'} color="#06c"></CustomBattery>
+          </div>
+          <div className={style.bmsData}>
+            <div className={style.bmsName}>{bmsInfo.bmsName}</div>
+            <div className={style.bmsStatus}>{bmsInfo.status}</div>
+            <div className={style.bmsTitle}>
+              <span>日充电量(kWh)</span>
+              <span>日放电量(kWh)</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span style={{backgroundColor:'#039'}}>{bmsInfo.chargingE}</span>
+              <span style={{backgroundColor:'#039'}}>{ bmsInfo.disChargingE }</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span>累计充电量(kWh)</span>
+              <span>累计放电量(kWh)</span>
+            </div>
+            <div className={style.bmsTitle}>
+              <span style={{backgroundColor:'#039'}}>{bmsInfo.accumulateChargingE}</span>
+              <span style={{backgroundColor:'#039'}}>{ bmsInfo.accumulateDisChargingE }</span>
+            </div>
+          </div>
+          <div className={style.batteryPack}>
+            <div className={style.rightButton} onClick={()=>translateLeft()}>
+              <CaretRightOutlined />
+            </div>
+            <div className={style.leftButton} onClick={()=>translateRight()}>
+              <CaretLeftOutlined />
+            </div>
+            <div className={style.transLate} style={{ left: (-(count * 296) + 24)}}>
+              {bmsInfo.batteryPackInfos.map((item, index) => {
+                return <BatteryPack data={item} key={index} toBattery={()=>toBattery(item)}></BatteryPack>
+              })}
+            </div>
+          </div>   
         </div>
         <div className={style.right}>
           <div className={style.environment} style={{height: 503}}>

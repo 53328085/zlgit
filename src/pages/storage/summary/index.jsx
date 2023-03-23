@@ -6,15 +6,8 @@ import { SiteSummaryRuntime, StorageAlarmRuntime } from '@api/api.js'
 import { message } from 'antd'
 import { range } from 'lodash'
 import BarChart from './barChart'
-
-import zhandian from './imgs/zhandian.png'
-import zhanwei from './imgs/zhanwei.png'
+import imgurl from './imgs'
 import warningPoint from '@imgs/warningPoint.png'
-import totalCharge from './imgs/totalCharge.png'
-import totalDischarge from './imgs/totalDischarge.png'
-import totalIncome from './imgs/totalIncome.png'
-import totalChargeCost from './imgs/totalChargeCost.png'
-import totalDischargeCost from './imgs/totalDischargeCost.png'
 
 export default function Index() {
   const { querySiteInfo, 
@@ -27,7 +20,11 @@ export default function Index() {
   const [cardData, setCardData] = useState({})//卡片数据
   const [barData, setBarData] = useState({}) //收益统计
   const [realData, setRealData] = useState({})//实时状态
-  const [warningData, setWarningData] = useState([])
+  const [warningData, setWarningData] = useState([])//最新告警
+  const [topologyData, setTopologyData] = useState({
+    lineInfo:{},
+    solarPointBaseInfo:{},
+  }) //接线图数据
   const getFromHeader = values => {
     let { projectId, areaId } = values
     querySiteInfo(projectId, areaId).then(res => {
@@ -65,7 +62,15 @@ export default function Index() {
     })
 
     queryTopologyDiagramInfo(projectId, areaId).then(res => {
-      if(res.success){}
+      if(res.success){
+        if(res.data){
+          setTopologyData(res.data)
+        }else{
+          setTopologyData({})
+        }
+      }else{
+        message.error(res.errMsg)
+      }
     })
 
     queryRealtimeData(projectId, areaId).then(res => {
@@ -74,7 +79,10 @@ export default function Index() {
         if(data){
           setRealData(data)
         }else{
-          setRealData({})
+          setRealData({
+            lineInfo:{},
+            solarPointBaseInfo:{},
+          })
         }
       }else{
         message.error(res.errMsg)
@@ -152,9 +160,9 @@ export default function Index() {
       </div>
     </div>
   }
-  const toWarning = () => {
-    navigate('/index/runtimeStorage/alarmMessage',{
-      state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage'  } 
+  const toPage = (key ,label) => {
+    navigate(`/index/runtimeStorage/${key}`,{
+      state: { type: 'index', primary: 'runtimeStorage', title: label,  nested: key  } 
     })
   }
 
@@ -165,7 +173,7 @@ export default function Index() {
         <div className={style.left}>
           <CardItem title='站点信息' height='226px'>
             <div className={style.information}>
-              <img src={zhandian} className={style.siteImg}></img>
+              <img src={imgurl.zhandian} className={style.siteImg}></img>
               <div className={style.siteData}>
                 <div>
                   <span className={style.siteTitle}>设备类型</span>
@@ -221,22 +229,71 @@ export default function Index() {
         </div>
         <div className={style.right}>
           <div className={style.top}>
-            <Tips imgUrl={totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity} bgcolor={'#56b653'}></Tips>
-            <Tips imgUrl={totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity} bgcolor={'#4370ff'}></Tips>
-            <Tips imgUrl={totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount} bgcolor={'#fea526'}></Tips>
-            <Tips imgUrl={totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount} bgcolor={'#ff6642'}></Tips>
-            <Tips imgUrl={totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome} bgcolor={'#9951fe'} width={'280px'}></Tips>
+            <Tips imgUrl={imgurl.totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity} bgcolor={'#56b653'}></Tips>
+            <Tips imgUrl={imgurl.totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity} bgcolor={'#4370ff'}></Tips>
+            <Tips imgUrl={imgurl.totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount} bgcolor={'#fea526'}></Tips>
+            <Tips imgUrl={imgurl.totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount} bgcolor={'#ff6642'}></Tips>
+            <Tips imgUrl={imgurl.totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome} bgcolor={'#9951fe'} width={'280px'}></Tips>
           </div>
           <div className={style.bottom}>
             <div className={style.topology}>
-              <img src={zhanwei} className={style.zhanwei}></img>
+              <img src={imgurl.zhanwei} className={style.zhanwei}></img>
+              {/* 储能电表 */}
+              <div className={style.storageMeter}>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电压:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.v }</span>
+                  <span className={style.dataUnit}>(V)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电流:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.i }</span>
+                  <span className={style.dataUnit}>(A)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>功率:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p }</span>
+                  <span className={style.dataUnit}>(kW)</span>
+                </div>
+              </div>
+              {/*交流器*/}
+              <div className={style.transformer}>
+                <div className={style.transItem}>
+                  <img src={imgurl.error} className={style.transImg}></img>
+                  <span>{ topologyData?.pcsType }</span>
+                </div>
+                <div className={style.transItem}>
+                  <img src={imgurl.normal} className={style.transImg}></img>
+                  <span>{ topologyData?.status + ' . . .' }</span>
+                </div>
+              </div>
+              {/*电池簇*/}
+              <div className={style.batterys}>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电压:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v }</span>
+                  <span className={style.dataUnit}>(V)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电流:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i }</span>
+                  <span className={style.dataUnit}>(A)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>SOC:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.soc }</span>
+                  <span className={style.dataUnit}>(%)</span>
+                </div>
+              </div>
+              <div className={style.transPlaceholder} onClick={() => toPage('PCSMonitor', 'PCS监控')}></div>
+              <div className={style.batteryPlaceholder} onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
             <div className={style.otherDatas}>
               <RightItem title='能耗收益统计' height={'473px'}>
                 <BarChart data={barData}></BarChart>
               </RightItem>
               <RightItem title='最新告警' height={'207px'}>
-                <span className={style.toWarning} onClick={()=>toWarning()}>查看详情</span>
+                <span className={style.toWarning} onClick={()=>toPage('alarmMessage', '告警信息')}>查看详情</span>
                 <div className={style.warningDetails}>
                   {warningData.map((item, index) => {
                     return <Fragment key={index}>

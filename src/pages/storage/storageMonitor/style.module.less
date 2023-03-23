@@ -490,6 +490,7 @@
         width: 416px;
         height: 800px;
         border-radius: 4px;
+        position: relative;
         .zhanwei{
             width: 416px;
             height: 800px;
@@ -580,10 +581,10 @@
     .singleWarning{
         width: 302px;
         height: 800px;
-        background-color: #000;
-        border: 1px solid #d7d7d7;
+        // background-color: #000;
+        // border: 1px solid #d7d7d7;
         margin-left: 16px;
-        padding: 16px;
+        // padding: 16px;
         .warningButton{
             margin-top: 16px;
             width: 270px;
@@ -619,6 +620,8 @@
     }
     .warningDetails{
         margin-top: 16px;
+        height: 450px;
+        overflow-y: auto;
         .warningItem{
             display: flex;
             align-items:flex-start;
@@ -659,6 +662,134 @@
                     font-size: 14px;
                 }
             }
+        }
+    }
+}
+
+.customBattery{
+    .batteryTop{
+        margin-left: 11px;
+        width: 26px;
+        height: 8px;
+        background-color: #003;
+        border: 1px solid rgb(107, 107, 107);
+        border-radius: 2px;
+        border-bottom-right-radius:0;
+        border-bottom-left-radius: 0;
+    }
+    .batteryBody{
+        width: 48px;
+        height: 128px;
+        background-color: #003;
+        border: 1px solid rgb(107, 107, 107);
+        border-radius: 2px;
+        margin-top: -1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #fff;
+        font-size: 12px;
+        position: relative;
+        span{
+            z-index: 1;
+        }
+        .progress{
+            position: absolute;
+            left: 1px;
+            bottom: 1px;
+            width: 44px;
+            z-index: 0;
+            max-height: 124px;
+        }
+    }
+}
+.bmsData{
+    position: absolute;
+    width: 286px;
+    height: 192px;
+    border: 1px solid rgb(107, 107, 107);
+    background-color: #000;
+    border-radius: 2px;
+    left: 455px;
+    top: 72px;
+    font-size: 14px;
+    color: #fff;
+    padding: 6px;
+    text-align: center; 
+    .bmsName{
+        width: 100%;
+        text-align: center;
+        height: 32px;
+        line-height: 32px;
+    }
+    .bmsStatus{
+       width: 273px;
+       height: 28px;
+       background-color: #039;
+       color: #3f0;
+    }
+    .bmsTitle{
+        width: 273px;
+        span{
+            display: inline-block;
+            width: 136px;
+            height: 30px;
+            line-height: 30px;
+            background-color: #237ae4;
+            &:nth-child(1){
+                margin-right: 1px;
+            }
+        }
+    }
+}
+.batteryPack{
+    width: 805px;
+    height: 475px;
+    position: absolute;
+    left: 39px;
+    top: 318px;
+    background-color: #003;
+    padding-left: 24px;
+    overflow: hidden;
+    .transLate{
+        display:flex;
+        width:200%;
+        transition: all 1s;
+        position: absolute;
+        left: 24px;
+        top: 0;
+    }
+    .leftButton{
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        left: -10px;
+        top: 24px;
+        z-index: 1;
+        line-height: 48px;
+        text-align: center;
+        font-size: 48px;
+        color: #3c3c62;
+        cursor: pointer;
+        &:hover{
+            color: #f2f2f2;
+        }
+    }
+    .rightButton{
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        right: -10px;
+        top: 24px;
+        z-index: 1;
+        line-height: 48px;
+        text-align: center;
+        font-size: 48px;
+        color: #3c3c62;
+        cursor: pointer;
+        &:hover{
+            color: #f2f2f2;
         }
     }
 }

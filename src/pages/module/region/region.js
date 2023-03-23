@@ -25,8 +25,9 @@ import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap";
-import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-import {useSelector} from 'react-redux'
+import {selectOneLevel, selectOneLevelDefaultId, getOnelevel} from '@redux/systemconfig.js'
+import {useSelector, useDispatch} from 'react-redux'
+
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -134,7 +135,8 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
-  const oneLevel = useSelector(selectOneLevel) // 一级
+  const dispatch = useDispatch();
+  const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const [levelone] = useState(allLevel[0]);
 
@@ -202,12 +204,19 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     id: 0,
     fields: [],
   };
-
+  const upateOneLevel = async () => {
+     if(level !=1) return
+     try {
+      let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId,level: 1,parentId: 0})  
+      lsuccess && dispatch(getOnelevel(levelData));
+      !lsuccess && dispatch(getOnelevel([]));
+     } catch (error) {
+       console.log(error)
+     }
+  }
 
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
-
-
      // level = 2 显示前一级， = 3 显示前两两级, 依次类推
    
     const fieldNames = {
@@ -228,6 +237,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           targetOption.children = [];
           targetOption.isLeaf = true
           setLevelOption([...leveloptions])
+          console.log(setLevelOption);
           return
         } else {
         const params = {
@@ -235,7 +245,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           level: curlevel + 1,
           parentId: id,
         }
-        
+        console.log(setLevelOption);
       let {data, success} =  await Area.QueryAll(params) 
        targetOption.loading = false
        if (success && Array.isArray(data)) {
@@ -453,7 +463,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         content: "删除成功",
         onClose: () => {
           dref.current.onCancel();
-          refresh();
+          getTableData();
+          upateOneLevel()
         },
       });
     !success && custMsg({ success, content: errMsg || "数据出错" });
@@ -480,8 +491,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         } = data || {};
         let cols = [];
         let index = header.findIndex(h => h == '备注')
-        if(index > -1) header.splice(index,1)
-        console.log(header)
+        // if(index > -1) header.splice(index,1)
+        if(index > -1){
+          header.splice(index,'备注')
+        }
         for (let k of header) {
           let col = {
             title: k,
@@ -490,9 +503,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           };
           cols.push(col);
         }
+        console.log(index);
         let colums = [
           ...cols,
-          index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
+          // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
             title: "操作",
             key: "action",
@@ -512,8 +526,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             ),
           },
         ];
+          
         setColumns(colums);
-
+        console.log(colums);
         let formart = body.map((r, i) => {
           let row = {
             areaId: idGroup[i],
@@ -526,8 +541,10 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           });
           return row;
         });
+        console.log(formart);
         if (success && data) {
           setTableData([...formart])
+          console.log(tabelData);
           setPagination({
             ...pagination,
             total: total,
@@ -599,6 +616,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           onClose: () => {
             nref.current.onCancel();
             getTableData();
+            upateOneLevel();
           },
         });
       !success && custMsg({ success, content: errMsg || "数据出错" });
@@ -992,8 +1010,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         type="warn"
         mold="cust"
       >
-        <p>
-          <WarningFilled />
+        <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
+        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>
           是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?
         </p>
       </CModal>

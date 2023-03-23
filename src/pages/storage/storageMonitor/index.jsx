@@ -17,12 +17,17 @@ export default function Index() {
   //PCS list
   const  [bmsList, setBmsList] = useState([])
   const [headerValues, setHeaderValues] = useState()
+  const [bmsName, setBmsName] = useState('')
   const getbmsList = () => {
     return queryBatterClusterList(projectId, form.getFieldValue('areaId')).then(res=>{
       if(res.success && res.data){
         setBmsList(res.data)
         form.setFieldValue('bcId', res.data[0].id)
-        setHeaderValues(form.getFieldsValue(true))
+        setBmsName(res.data[0].name)
+        setHeaderValues({
+          bmsName: res.data[0].name,
+          ...form.getFieldsValue(true)
+        })
       }else{
         message.error(res.errMsg)
       }
@@ -35,13 +40,29 @@ export default function Index() {
   }
 
   const changeBMS = val => {
-    console.log(val)
-    setHeaderValues(form.getFieldsValue(true))
+    bmsList.map(item => {
+      if(item.id == val) {
+        setBmsName(item.name)
+        setHeaderValues( {
+          bmsName: item.name,
+          ...form.getFieldsValue(true)
+        } )
+      }
+    })
+    
   }
 
   const [showPage, setShowPage] = useState('mainPage')
+  const [batteryData, setBatteryData] = useState({})
   const getFromChild = val => {
-    setShowPage(val)
+    let { pageName, batteryPackId, batteryPackName } = val
+    setShowPage(pageName)
+    setBatteryData({
+      batteryPackId,
+      batteryPackName,
+      projectId,
+      areaId:form.getFieldValue('areaId'),
+    })
   }
 
   const backBMS = () => {
@@ -88,9 +109,9 @@ export default function Index() {
           showPage == 'batteryPage' ?
           <div>
             <div className={style.border}>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池簇_1</span>
+              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>{bmsName}</span>
               <span className={style.breadcrumb}> { '>' }</span>
-              <span>电池包1_1</span>
+              <span>{batteryData.batteryPackName}</span>
             </div>
           </div>: null
         }
@@ -100,7 +121,7 @@ export default function Index() {
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回</Button> : null }
       </div>
       { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild} headerValues={headerValues}></MainPage> : null }
-      { showPage == 'batteryPage' ? <BatteryPage getshowTab={getFromChild}></BatteryPage> : null }
+      { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData}></BatteryPage> : null }
     </div>
   )
 }
