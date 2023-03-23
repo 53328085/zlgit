@@ -120,12 +120,12 @@ export default function Manual({projectId, areaId}) {
   }
   // UpdateSiteOnOffGrid
   const updatestate = async (type, state) => {
-     let handler = ['', 'UpdateSiteSwitchOnOff', 'UpdateSiteOnOffGrid'][type]; // state 1 开， 2 关/离
+     let handler = ['', 'UpdateSiteSwitchOnOff'][type]; // state 1 开， 2 关/离
      if (type == 1) setOnoff(state);
      if (type == 2) setOngrid(state);
      let statev = state == 1  ? 1 : 2;
      let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, statev)    
-     let msg = ['', ['系统关机成功','系统开机成功'],['系统离线成功','系统并网成功']][type][state]
+     let msg = ['', ['系统关机成功','系统开机成功']][type][state]
      success && message.success(msg)
      !success && message.error(errMsg || '数据出错')
   }
@@ -186,7 +186,7 @@ export default function Manual({projectId, areaId}) {
                     </div>
                 </div>
             </div>
-            <div className='topleftitem'>
+           {/*  <div className='topleftitem'>
                 <div className='item'>
                     <Text>手动切换站点各个子系统的启动停止</Text>
                     <Text>当前运行状态：<Link>{gridtext}</Link></Text>
@@ -205,7 +205,7 @@ export default function Manual({projectId, areaId}) {
                         </Space>
                     </div>
                 </div>
-            </div>
+            </div> */}
             </div>
             <div className='topright'>
                 <Formbox layout="inline" form={pform} >

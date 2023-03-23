@@ -208,14 +208,14 @@ const showModl = () => {
                             
                 </Select>
              </Item>
-             <Item label="用户名" name="nickName" rules={[
+             <Item label="用户名" name="name" rules={[
                   {
                     required: true,
                     message: '请输入用户名！',
                   }]}>
                 <Input />
              </Item>
-             <Item label="用户姓名" name="name" rules={[
+             <Item label="用户姓名" name="nickName" rules={[
                   {
                     required: true,
                     message: '请输入用户姓名！',
@@ -276,7 +276,8 @@ const showModl = () => {
          
      </CModal>
      <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>
-         <p><WarningFilled />是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
+     <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
+        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
      </CModal>
      </Mainbox>
      
