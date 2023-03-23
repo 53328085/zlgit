@@ -36,12 +36,18 @@ export default function Region({projectId, CModal}) {
  const [ffrom] = Form.useForm()
  const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields, InsertAreaLevelField, DeleteAreaLevelField} = AreaSetting 
 const [title, setTitle] = useState()
-const [datas, setDatas] = useState(null)
+const [datas, setDatas] = useState([])
 const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
 const [levelid, setLevelid] = useState()
 const [tableData, setTableData] = useState([])
- const edit = ({name, type, level}) => {
+const [curlevel, setCurlevel] = useState({})
+ const edit = (d) => {
+       let {name, type, level} = d
+       setCurlevel({
+        ...curlevel,
+        ...d,
+       })
       setLevel(level);
       setHandler(2);
      setTitle('修改区域')
@@ -84,7 +90,7 @@ const [tableData, setTableData] = useState([])
   const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        success && setDatas(data);
+        success && setDatas([...data]);
        
      } catch (error) {
         console.log(error);
@@ -94,15 +100,22 @@ const [tableData, setTableData] = useState([])
 
   }
   const editArea = async () => {
+    console.log(curlevel)
+    let {id, level} = curlevel
    try {
+      const {name} = modalform.getFieldsValue()
       const params = {...modalform.getFieldsValue(), level: level, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
     //  levelid = '';
-      setLevelid('')
+    //  setLevelid('')
       success && message.success({
          content: '修改成功',
          duration: 0.3,
-         onClose: () =>  queryarealevels().then(() => mref.current.onCancel() ).catch((e) => {}),
+         onClose: () => { 
+         // setLevelid('')
+            mref.current.onCancel()
+            queryarealevels().then(() => form.setFieldValue([id.toString()+level], name))
+         },
       })
       !success && message.warning(errMsg || '数据出错')
       

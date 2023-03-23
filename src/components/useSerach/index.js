@@ -53,6 +53,7 @@ export default function useSerach(props) {
   
   const [form] =forms ? [forms] : Form.useForm()
   const levelone = useSelector(selectOneLevel)
+  const varlabel = levelone[0]?.label
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
  
   const allData = useRef();
@@ -99,7 +100,7 @@ export default function useSerach(props) {
   
     <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
       
-      <Item label="园区选择" name='area'>
+      <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} allowClear options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
