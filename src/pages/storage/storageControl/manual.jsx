@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
+import {ExclamationCircleFilled} from '@ant-design/icons'
 import {StorageControlRuntime} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import imgurl from './icon'
@@ -16,7 +17,7 @@ const Mainbox = styled.div`
        color:#515151;
        .top {
         display: grid;
-        grid-template-columns: 544px 1fr;
+        grid-template-columns: 554px 1fr;
         background-color: #fff;
         padding: 32px;
         .topleft {
@@ -135,22 +136,26 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
-export default function Manual({projectId, areaId, startTime, p, q}) {
+export default function Manual({projectId, areaId, startTime, p, q, getinfo}) {
   const [onoff, setOnoff] = useState() 
   const [pform] = Form.useForm()
   const [qform] = Form.useForm()
- 
+  console.log('q', q)
   // UpdateSiteOnOffGrid
-  const updatestate = async (state) => { //开启手动模式、关闭手动模式
+  const updatestate = async () => { //开启手动模式、关闭手动模式
      
+    if (isNaN(onoff)) return
    
-   
-     let {success, errMsg} = await StorageControlRuntime.UpdateHandModeStatus(projectId, areaId, statev)    
-     let msg = ['','开启手动模式','关闭手动模式'][state]
-     success && message.success(msg)
+     let {success, errMsg} = await StorageControlRuntime.UpdateHandModeStatus(projectId, areaId, onoff)    
+     let msg = ['','开启手动模式','关闭手动模式'][onoff]
+     if (success) {
+        message.success(msg) 
+        getinfo()
+     }  
      !success && message.error(errMsg || '数据出错')
   }
   const  Updatedata = async (type) => {
+    console.log('p', type)
     try {
         let  value;
     if (type == 0) {
@@ -160,13 +165,13 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
         let {q} =qform.getFieldsValue()
         value = q
     }
-     console.log(Number(value))
+     
      if (isNaN(value)) return message.info('请输入数值')
     let handler = ['UpdateP', 'UpdateQ'][type]
      let msg = ['设置有功功率成功', '设置无关功率成功'][type]
     let {success, errMsg} =  await StorageControlRuntime[handler](projectId, areaId, value)
      success && custMsg({content: msg, onClose: () => {
-        
+        getinfo()
      }})
       
      
@@ -176,13 +181,7 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
     
      
   }
-  const querySiteDateAndMode= async () => {
-     await StorageControlRuntime.QuerySiteDateAndMode(projectId,areaId)
-  }
-  useEffect(() => {
-    querySiteDateAndMode()
-    
-  }, [areaId])
+ 
   return (
     <Mainbox>
         <div className='top'>
@@ -204,6 +203,9 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
                         <Text>关闭手动模式</Text>
                         </Space>
                     </div>
+                </div>
+                <div className='item'>
+                    <Text><ExclamationCircleFilled style={{color: '#237ae4', marginRight: '16px', fontSize: '22px'}}/>注意：当前为自动运行模式，开启手动模式后自动运行模式将会被停止。</Text> 
                 </div>
             </div>
            {/*  <div className='topleftitem'>
@@ -228,7 +230,9 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
             </div> */}
             </div>
             <div className='topright'>
-                <Formbox layout="inline" form={pform} >
+                <Formbox layout="inline" form={pform} initialValues={{
+                    cp: p,
+                }}>
                     <Space size={16}>
                         <Item label="当前有功功率" name="cp">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
@@ -241,12 +245,12 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
                         </Item>
                     </Space>
                 </Formbox>
-                <Formbox layout="inline" form={qform}>
+                <Formbox layout="inline" form={qform} initialValues={{cq: q}}>
                     <Space size={16}>
                         <Item label="当前无功功率" name="cq">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置无功功率" name="sq">
+                        <Item label="设置无功功率" name="q">
                         <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
                         <Item nostyle>
@@ -263,7 +267,7 @@ export default function Manual({projectId, areaId, startTime, p, q}) {
                 <strong>本次启用时间：</strong>  <span>{startTime}</span>
              </div>
           
-            <Bigbutton type='primary'  >确认</Bigbutton>
+            <Bigbutton type='primary'  onClick={updatestate}>确认</Bigbutton>
                
         </div>
     </Mainbox>

@@ -250,12 +250,14 @@ export class EnergyComprehensive {
 
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
     static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
-   
     
+    
+    static QueryRuntimePlan = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryRuntimePlan?projectId=${projectId}&areaId=${areaId}`);
+   
     static QuerySiteDateAndMode = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/QuerySiteRuntimeDateAndMode?projectId=${projectId}&areaId=${areaId}`); 
     static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
   
-    static UpdateQ = (projectId, areaId, q) => server.get(`/Storage/StorageControlRuntime/UpdateQ?projectId=${projectId}&areaId=${areaId}&p=${q}`); 
+    static UpdateQ = (projectId, areaId, q) => server.get(`/Storage/StorageControlRuntime/UpdateQ?projectId=${projectId}&areaId=${areaId}&q=${q}`); 
   }
 
  // 储能管理-- 能耗统计

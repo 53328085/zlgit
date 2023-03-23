@@ -3,7 +3,7 @@ import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate} from "react-router-dom"
-import { clearToken} from "@redux/user";
+import { clearToken, selectUser} from "@redux/user";
 import { configProject} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
@@ -130,10 +130,10 @@ export default function Log() {
   const user = useRef()
   const navgite = useNavigate()
   const dispatch = useDispatch()
-  const name = useSelector((state) => state.user)?.name;
+  const {name, roleType} = useSelector(selectUser) || {};
+    
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
-  const userIdentity=sessionStorage.getItem('userIdentity');
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
@@ -205,10 +205,13 @@ export default function Log() {
         <Idiv1>
           <span> 数据大屏</span>
         </Idiv1>
-        {userIdentity==='1'||userIdentity==='2'?(<Idiv4 onClick={onConfigure}>
+
+ 
+
+        { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
           <span>项目设置</span>
         </Idiv4>):null}
-        {userIdentity==='1'||userIdentity==='2'?(<Idiv2 onClick={projectcfg}>
+        { roleType < 4 ? (<Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
         </Idiv2>):null}
         </>
