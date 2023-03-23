@@ -831,41 +831,22 @@ export class SettingManage {
 }
 //远程控制
 export class Remote {
-  static AllMeter = (data) =>
-    server.get(
-      `Remote/AllMeter?meterType=${data.meterType}&projectId=${data.projectId}&regionId=${data.regionId}&buildingId=${data.buildingId}&floorId=${data.floorId}&roomId=${data.roomId}&alike=${data.alike}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`
-    ); //查询设备
-  static FindPowerProtect = (projectId) =>
-    server.get(`Remote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
-  static StartBatchValveTask = (data) =>
-    server.post(`Remote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
-  static BatchValveResponse = (data) =>
-    server.post(`Remote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
+  static AllMeter = (data) =>server.post( `Remote/Overview`,data); //查询设备
+  static FindPowerProtect = (projectId) =>server.get(`Remote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
+  static StartBatchValveTask = (data) => server.post(`Remote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
+  static BatchValveResponse = (data) =>server.post(`Remote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
   static StartCalling = (data) => server.post(`Remote/StartCalling`, data); //发起批量抄读测点任务
-  static CallingResponse = (data) =>
-    server.post(`Remote/CallingResponse`, data); //查询批量抄读测点结果
+  static CallingResponse = (data) =>server.post(`Remote/CallingResponse`, data); //查询批量抄读测点结果
   static Open = (data) => server.post(`Remote/Open`, data); //批量分闸
   static OpenForce = (data) => server.post(`Remote/OpenForce`, data); //拉闸结算
   static Close = (data) => server.post(`Remote/Close`, data); //批量合闸
-  static SetPowerProtect = (powerSolutionId, data) =>
-    server.post(
-      `Remote/SetPowerProtect?powerSolutionId=${powerSolutionId}`,
-      data
-    ); //设置保电方案
-  static RemovePowerProtect = (data) =>
-    server.post(`Remote/RemovePowerProtect`, data); //取消保电方案
-  static FindAlarmSolution = (projectId) =>
-    server.get(`Remote/FindAlarmSolution?projectId=${projectId}`); //获取报警方案简易列表
-  static SetAlarmSolution = (alarmSolutionId, data) =>
-    server.post(
-      `Remote/SetAlarmSolution?alarmSolutionId=${alarmSolutionId}`,
-      data
-    ); //设置报警方案
-  static RemoveAlarmSolution = (data) =>
-    server.post(`Remote/RemoveAlarmSolution`, data); //取消告警方案
+  static SetPowerProtect = (powerSolutionId, data) =>server.post(`Remote/SetPowerProtect?powerSolutionId=${powerSolutionId}`,data); //设置保电方案
+  static RemovePowerProtect = (data) =>server.post(`Remote/RemovePowerProtect`, data); //取消保电方案
+  static FindAlarmSolution = (projectId) =>server.get(`Remote/FindAlarmSolution?projectId=${projectId}`); //获取报警方案简易列表
+  static SetAlarmSolution = (alarmSolutionId, data) =>server.post(`Remote/SetAlarmSolution?alarmSolutionId=${alarmSolutionId}`,data); //设置报警方案
+  static RemoveAlarmSolution = (data) =>server.post(`Remote/RemoveAlarmSolution`, data); //取消告警方案
   static Log = (data) => server.post(`Remote/Log`, data); //查询操作日志
-  static BatchValveStatus = (data) =>
-    server.post(`Remote/BatchValveStatus`, data); //批量查询阀门当前状态
+  static BatchValveStatus = (data) =>server.post(`Remote/BatchValveStatus`, data); //批量查询阀门当前状态
 }
 export const OpLog = (data) => server.post(`Remote/Log`, data);
 //能源账户充值
@@ -1139,9 +1120,14 @@ export const Monitoring = {
     Current: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/Current?projectId=${projectId}&sn=${sn}`),//设备
     HistoryTrend: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTrend`, data),//
     HistoryTable: (data) => server.post(`/Monitor/RuntimeDevice/HistoryTable`, data),//
-    EnergyActuary: (data) => server.post(`/Monitor/RuntimeDevice/EnergyActuary`, data),//
+    EnergyActuary: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/EnergyActuary?projectId=${projectId}&sn=${sn}`),//
     EnergyReport: (data) => server.post(`/Monitor/RuntimeDevice/EnergyReport`, data),//
     AlarmPage: (data) => server.post(`/Monitor/RuntimeDevice/AlarmPage`, data),//
+  },
+  //视频监控
+  RuntimeCamera:{
+    Statistics: (projectId,areaId) => server.get(`/Monitor/RuntimeCamera/Statistics?projectId=${projectId}&areaId=${areaId}`),//
+    Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
   }
 }
 //运维管理
@@ -1520,5 +1506,7 @@ export class BMSRuntime {
 //告警管理
 export class AlarmManagement {
   static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
-  static QueryAddAlarm = (data) => server.get(`Safe/Alarm/QueryPlanPage?projectId`,data)
+  static QueryAddAlarm = (data) => server.post(`Safe/Alarm/AddPlan`,data)
+  static DeletePlanAlarm = (projectId,planId) => server.delete(`Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`)
+  static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
 }
