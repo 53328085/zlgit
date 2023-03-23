@@ -490,6 +490,7 @@
         width: 416px;
         height: 800px;
         border-radius: 4px;
+        position: relative;
         .zhanwei{
             width: 416px;
             height: 800px;
@@ -739,6 +740,56 @@
             &:nth-child(1){
                 margin-right: 1px;
             }
+        }
+    }
+}
+.batteryPack{
+    width: 805px;
+    height: 475px;
+    position: absolute;
+    left: 39px;
+    top: 318px;
+    background-color: #003;
+    padding-left: 24px;
+    overflow: hidden;
+    .transLate{
+        display:flex;
+        width:200%;
+        transition: all 1s;
+        position: absolute;
+        left: 24px;
+        top: 0;
+    }
+    .leftButton{
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        left: -10px;
+        top: 24px;
+        z-index: 1;
+        line-height: 48px;
+        text-align: center;
+        font-size: 48px;
+        color: #3c3c62;
+        cursor: pointer;
+        &:hover{
+            color: #f2f2f2;
+        }
+    }
+    .rightButton{
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        right: -10px;
+        top: 24px;
+        z-index: 1;
+        line-height: 48px;
+        text-align: center;
+        font-size: 48px;
+        color: #3c3c62;
+        cursor: pointer;
+        &:hover{
+            color: #f2f2f2;
         }
     }
 }

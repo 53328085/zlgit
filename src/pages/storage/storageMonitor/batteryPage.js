@@ -177,6 +177,46 @@ export default function Index(props) {
         })
     }
 
+    //电池单体接线图数据--仿
+    const battery ={
+        position:'absolute',
+        display:'inline-block',
+        height:299,
+        width: 169,
+        lineHeight:'20px',
+        left: 125,
+        bottom: 51,
+        padding:16,
+        backgroundColor: '#000',
+        border: '1px solid rgb(35, 122, 228)',
+        borderRadius: 2,
+        color:'#fff',
+        fontSize: 12,
+        cursor:'pointer',
+    }
+    const NormalValue = props => {
+        return (
+            <div style={{width: 136, border:'1px solid #d7d7d7', borderRadius: 2, marginBottom: 12}}>
+                <div style={{width: '100%', height: 24, lineHeight:'24px', backgroundColor:'#237ae4',borderBottom:'1px solid #d7d7d7'}}>
+                    <span style={{display:"inline-block", width: 66, textAlign:'center'}}>{props.title[0]}</span>
+                    <span style={{display:"inline-block", width: 66, textAlign:'center'}}>{props.title[1]}</span>
+                </div>
+                <div style={{width: '100%', height: 24, lineHeight:'24px'}}>
+                    <span style={{display:"inline-block", width: 66, textAlign:'center'}}>{props.value[0]}</span>
+                    <span style={{display:"inline-block", width: 66, textAlign:'center'}}>{props.value[1]}</span>
+                </div>
+            </div>
+        )
+    }
+    const Progress = props => {
+        return (
+            <div style={{ position:'relative',marginBottom: 10, width: 136, height: 24, background:'#2b2b2b', border:"1px solid rgb(153, 153, 153)", borderRadius: 2, display:'flex', alignItems:'center',justifyContent:'center'}}>
+                <div style={{ position:'absolute',zIndex:0, left:-1, top: -1, width: props.value, height: 24, background: props.color, border:"1px solid rgb(228, 228, 228)", borderRadius: 2,borderRight:'none'}}></div>
+                <span style={{zIndex: 1}}>{ props.title + ' ' + props.value }</span>
+            </div>
+        )
+    }
+
     useEffect(() => {
         getBatteryList()
     },[searchInput, pageNum])
@@ -185,6 +225,10 @@ export default function Index(props) {
         getContent()
         getBatteryList()
         getwarningData()
+        const timer = setInterval(()=> {
+            getContent()
+          }, 60000);
+          return ()=> clearInterval(timer)
     },[])
 
     return (
@@ -223,6 +267,14 @@ export default function Index(props) {
             </div>
             <div className={style.diagramPic}>
                 <img src={batteryMiddle} className={style.zhanwei}></img>
+                <div style={battery}>
+                <NormalValue title={['可充电', '可放电']} value={[parseInt(batteryPackInfo.canChargingE) +'(kWh)', parseInt(batteryPackInfo.canDisChargingE) + '(kWh)']}></NormalValue>
+                <Progress title={'SOC'} value={batteryPackInfo.soc +'%'} color={'#060'}></Progress>
+                <Progress title={'SOH'} value={batteryPackInfo.soh + '%'} color={'#06f'}></Progress>
+                <div style={{ height: 0, border:'1px dashed #666', margin:'16px 0'}}></div>
+                <NormalValue title={['电压高值', '电压低值']} value={[batteryPackInfo.maxV + '(V)', batteryPackInfo.minV + '(V)']}></NormalValue>
+                <NormalValue title={['温度高值', '温度低值']} value={[batteryPackInfo.maxTemp + '(℃)', batteryPackInfo.minTemp + '(℃)']}></NormalValue>
+            </div>
             </div>
             <div className={style.singleMonitor}>
                 <div className={style.cardTitle} style={{color:'#fff'}}>
