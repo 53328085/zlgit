@@ -349,7 +349,7 @@ export default function Index() {
          }
           try {
             let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: id,level: 1,parentId: 0})  
-            lsuccess && dispatch(getOnelevel(levelData));
+            lsuccess && dispatch(getOnelevel(levelData || []));
             !lsuccess && dispatch(getOnelevel([]));
           } catch (error) {
              console.log(error)

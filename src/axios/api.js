@@ -249,8 +249,8 @@ export class EnergyComprehensive {
 
 
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
-    static UpdateSiteSwitchOnOff = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteSwitchOnOff?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
-    static UpdateSiteOnOffGrid = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSiteOnOffGrid?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1： 联网， 2： 离网
+    static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
+   
     
     static QuerySiteDateAndMode = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/QuerySiteRuntimeDateAndMode?projectId=${projectId}&areaId=${areaId}`); 
     static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
@@ -1160,6 +1160,8 @@ export class safeElectric {
   static QueryWarningDistributed = (data) => server.get(`/Safe/SafeRuntime/QueryWarningDistributed`, { params: data })//查询告警分布
   static QueryWarningTypeRanking = (data) => server.get(`/Safe/SafeRuntime/QueryWarningTypeRanking`, { params: data })//查询告警类型排名
   static QueryMonthWarningTrends = (data) => server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`, { params: data })//查询告警趋势
+  static WarningDetailsPage = (data)=>server.post(`/Safe/SafeRuntime/WarningDetailsPage`,data)//查询分页告警
+  static WarningDetailsList =(data)=>server.get(`/Safe/SafeRuntime/WarningDetailsList`,{ params: data })//查询告警列表
 }
 //告警详情
 export class warnDetail {

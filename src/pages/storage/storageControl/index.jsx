@@ -6,9 +6,10 @@ import Manual from './manual'
 import CModal from '@com/useModal'
 import {StorageControlRuntime} from '@api/api'
 import {useSelector} from 'react-redux'
-import {Tabs} from 'antd'
+import {Tabs, Typography} from 'antd'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import styled from 'styled-components'
+const {Text} = Typography
 const Contentbox = styled.div`
   display: grid;
   grid-template-rows: 48px 1fr;
@@ -22,6 +23,16 @@ const Contentbox = styled.div`
     background-color: rgba(0, 0, 51, 1); 
     border: 1px solid rgba(215, 215, 215, 1);
     border-radius: 4px;
+    padding: 0 16px;
+    .circle {
+      font-size: 18px;
+      color: #0f0;
+      padding-right: 16px;
+    }
+  }
+  .tabbox {
+    display: grid;
+    grid-template-rows: 40px 1fr;
   }
 `
 const Tabsbox = styled(Tabs)`
@@ -62,7 +73,7 @@ const Tabsbox = styled(Tabs)`
     }
    }  
    .ant-tabs-content-holder {
-    display: none;
+     display: none;
    }
   }
 }
@@ -72,13 +83,29 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
+  const [infoData, setInfoData] = useState({})
+  const [mode, setMode] = useState()
+ 
   const getinfo = async () => {
     try {
-      await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId)
+      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId)
+
+      if (success) {
+        let {runtimeMode} = data;
+        setMode(runtimeMode)
+        setInfoData({...infoData, ...data})
+      } else {
+        setInfoData({})
+      }
     } catch (error) {
       console.log(error)
     }
   }
+ const tabs =  [
+    {label: '手动模式', key: 1},
+    {label: '自动模式', key: 2},
+   
+  ]
   const propsData ={
   /*   tabs: [
       {label: '自动模式', key: 'Automate'},
@@ -89,22 +116,29 @@ export default function Index() {
     handler: setAreaid
     
   }
-  const coms = {
-   Manual: Manual,
-   Automate: Automate,  
-  }
+   
+  
   useEffect(() => {
     getinfo()
   }, [areaId, projectId])
-  const ProjectCom = coms[value] || Manual
+ 
   return (
     <CustContext.Provider value={propsData}>      
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
          <Contentbox>
            <div className='info'>
-               &spades;
+              <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.runtimeStatus}</span></span>
+              <span><span className='circle'>&#x25CF;</span>当前运行模式：{infoData.runtimeModeStr}</span>
+              <span><span className='circle'>&#x25CF;</span>运行计划：{infoData.runtimePlan}</span>
+              <span><span className='circle'>&#x25CF;</span>策略模板：{infoData.strategyTemplate}</span>
+              <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.day}天{infoData.runHour}小时{infoData.runMin}分</span>
            </div>
-           <ProjectCom projectId={projectId} CModal={CModal} areaId={AreaID} />
+           <div className='tabbox'>
+                <Tabsbox items={tabs} activeKey={mode} onChange={setMode}></Tabsbox>
+               {
+                 mode==1 ?  <Manual projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData}  /> : mode ==2 ? <Automate projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData}  /> : null
+               }  
+           </div>
         </Contentbox>
     </Pagecount>
     </CustContext.Provider>

@@ -128,11 +128,24 @@ justify-items: center;
  
 }`
 const Timelinebox = styled(Timeline)`
-min-height: 142px;
-  padding-top: 16px;
+  height: 280px;
+  overflow: hidden;
+  margin-top: 28px;
   background-color: #fff;
+  padding-left: 5px;
+  padding-top: 15px;
+  & .transformcss{
+    animation:transY ${props=>(props.children.props.children?.length*2)}s .5s linear infinite
+  }
+  .transformcss:hover{
+    animation-play-state: paused;
+  }
+ &::-webkit-scrollbar{
+    width:0px
+  }
  .ant-timeline-item {
-   padding-bottom: 8px;
+   padding-bottom: 24px;
+   padding-top:5px
  }
  .title {
    color:#1e1e1e;
@@ -140,6 +153,14 @@ min-height: 142px;
  .content {
    font-size: 12px;
    color:#6b6b6b;
+ }
+ @keyframes transY{
+   0%{
+      transform:translateY(0)
+   }
+   100%{
+      transform:translateY(${props=>{ if(-(props.children.props.children?.length)*64){return -(props.children.props.children?.length)*64} }}px)
+   }
  }
 `
 const DemoLiquid = ({ warnData }) => {
@@ -198,9 +219,17 @@ export default function Index() {
   const levellist = [{ name: arealist[0].levelName, id: 0 }, ...arealist]
 
   const [warnData, setWarnData] = useState()
-  const [areaId, setAreaId] = useState()
+  const [areaId, setAreaId] = useState(0)
   const [datasetMonthl, setDatasetMonthl] = useState()
   const [warnlist, setWarnlist] = useState([])//最新告警
+  
+  const pageParmasRef = useRef()
+  pageParmasRef.current = {
+      pageSize:6,
+      pageNum:1,
+  }
+  const pageTotalRef = useRef()
+  pageTotalRef.current = 0
   const grid = {
     // 图表 grid
     left: "0px",
@@ -280,13 +309,33 @@ export default function Index() {
   })
 
 
-  //查询最新告警
-  const getQueryTodayWarningDetails = async () => {
-    const res = await safeElectric.QueryTodayWarningDetails(params)
+  //查询最新告警(分页)
+  const getWarningDetailsPage= async () => {
+    let parma ={
+      ...params,
+      ...pageParmasRef.current
+    }
+    const res = await safeElectric.WarningDetailsPage(parma)
   
     if (res.success) {
+      pageTotalRef.current = res.total
       if (res.data && Array.isArray(res.data)) {
-        console.log(res)
+        setWarnlist([...res.data])
+      } else {
+        setWarnlist([])
+      }
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  //查询最新告警（总数）
+  const getWarningDetailsList= async () => {
+    const res = await safeElectric.WarningDetailsList(params)
+  
+    if (res.success) {
+      pageTotalRef.current = res.data.length*64
+      console.log(pageTotalRef.current)
+      if (res.data && Array.isArray(res.data)) {
         setWarnlist([...res.data])
       } else {
         setWarnlist([])
@@ -298,7 +347,8 @@ export default function Index() {
   useEffect(() => {
     getQueryWarningDetails()
     getQueryMonthWarningTrends()
-    getQueryTodayWarningDetails()
+    // getWarningDetailsPage()
+    getWarningDetailsList()
   }, [areaId])
   const fs = {
     hv: '24px',
@@ -368,13 +418,20 @@ export default function Index() {
           {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
           <Titlelayout title={'最新告警'} extra={<NavLink to={{ pathname: "/index/runtimeSafe/alarmDetail" }} state={{ title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe' }}>查看详情</NavLink>} {...fs}>
             <Timelinebox>
-           
+              <div className='transformcss' pageTotalRef={pageTotalRef}>
               {
              warnlist&&warnlist.length>0?
               warnlist.map(
                 it => {
                   return (
-                    <Timeline.Item>
+                    <Timeline.Item dot={<div 
+                    style={{
+                      borderRadius:'50%', width:16,height:16,border:'1px solid',
+                      display:'flex',justifyContent: 'center',alignItems: 'center',
+                      borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                      <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                      </div >
+                      </div>}>
                       <div>
                         <p className='title'>{it.warningTime}  {it.alarmEvent}</p>
                         <p className='content'>{it.address}    SN {it.sn}</p>
@@ -384,6 +441,9 @@ export default function Index() {
                 }
               ):null
              }
+              </div>
+           
+            
             </Timelinebox>
           </Titlelayout>
           <Titlelayout className="down" title="本月告警趋势" {...fs}>
@@ -490,6 +550,7 @@ const Alarm = ({ pref, opref, areaId }) => {
       bottom: 0,
 
     },
+    color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)'],
   })
   },[opieData])
   return (
@@ -625,7 +686,8 @@ const AlarmRank = ({ bref, areaId }) => {
         itemHeight: 8,
         itemWidth: 8,
         itemGap: 20
-      }
+      },
+      color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)']
     })
   },[datasetStack])
   return (
