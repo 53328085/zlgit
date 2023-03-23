@@ -206,8 +206,6 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 
   const  CascaderSct = () => {
     const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
-
-
      // level = 2 显示前一级， = 3 显示前两两级, 依次类推
    
     const fieldNames = {
@@ -228,6 +226,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           targetOption.children = [];
           targetOption.isLeaf = true
           setLevelOption([...leveloptions])
+          console.log(setLevelOption);
           return
         } else {
         const params = {
@@ -235,7 +234,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           level: curlevel + 1,
           parentId: id,
         }
-        
+        console.log(setLevelOption);
       let {data, success} =  await Area.QueryAll(params) 
        targetOption.loading = false
        if (success && Array.isArray(data)) {
@@ -453,6 +452,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         content: "删除成功",
         onClose: () => {
           dref.current.onCancel();
+          getTableData();
           refresh();
         },
       });

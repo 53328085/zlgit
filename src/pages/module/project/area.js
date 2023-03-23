@@ -68,14 +68,12 @@ const [tableData, setTableData] = useState([])
       success && message.success({
          content: '删除成功',
          duration: 0.3,
+         onClose: () =>  queryarealevels().then(() =>dref.current.onCancel() ).catch((e) => {}),
       })
-         queryarealevels().then(() =>{
-          dref.current.onCancel()
-         }),
       !success && message.warning(errMsg || '数据出错')
      
    } catch (error) {
-      
+    console.log(error)
    }
    
  }
