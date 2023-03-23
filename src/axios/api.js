@@ -1516,5 +1516,6 @@ export class BMSRuntime {
 //告警管理
 export class AlarmManagement {
   static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
-  static QueryAddAlarm = (data) => server.get(`Safe/Alarm/QueryPlanPage?projectId`,data)
+  static QueryAddAlarm = (data) => server.post(`Safe/Alarm/AddPlan`,data)
+  static DeletePlan = (projectId,planId) => server.delete(`Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`)
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import dashed from "@imgs/dashed.png";
 import { PlusOutlined } from "@ant-design/icons";
+import firstwarn from '@imgs/warning.png' ;
 import {
   Button,
   Table,
@@ -18,7 +19,7 @@ import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 export default function Index() {
-  const { QueryAlarmPage, QueryAddAlarm } = AlarmManagement;
+  const { QueryAlarmPage, QueryAddAlarm,DeletePlan } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
   const tableRef = useRef();
@@ -26,15 +27,18 @@ export default function Index() {
   const Item = Form.Item;
   //告警管理数据
   const [pageNum, setPageNum] = useState(1);
-  const [total, setTotal] = useState(0);
+  // const [total, setTotal] = useState(0);
   const pageSize = 10;
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
-        setDataSource(JSON.parse(res.data));
+        if(res.data){
+           setDataSource(JSON.parse(res.data));
+        }
         // setTotal(res.total);
+        console.log(dataSource);
       } else {
         messageApi.open({
           type: "error",
@@ -50,7 +54,7 @@ export default function Index() {
   const paginationProps = {
     current: pageNum, //当前页码
     pageSize, // 每页数据条数
-    total, // 总条数
+    // total, // 总条数
     onChange: (page) => handlePageChange(page), //改变页码的函数
     hideOnSinglePage: false,
     showSizeChanger: false,
@@ -63,13 +67,13 @@ export default function Index() {
     {
       align: "center",
       title: "告警方案名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "Name",
+      key: "Name",
     },
     {
       title: "备注",
-      dataIndex: "tag",
-      key: "tag",
+      dataIndex: "Tag",
+      key: "Tag",
       align: "center",
     },
     {
@@ -78,10 +82,10 @@ export default function Index() {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <span className={style.editText} onClick={() => edit()}>
+          <span className={style.editText} onClick={() => edit(record)}>
             编辑
           </span>
-          <span className={style.deleteText} onClick={() => deleteRecord()}>
+          <span className={style.deleteText} onClick={() => deleteRecord(record)}>
             删除
           </span>
         </Space>
@@ -100,10 +104,41 @@ export default function Index() {
   //新增告警方案
   const [addAlarmModal, setaddAlarmModal] = useState(false);
   const [form] = Form.useForm();
+  //删除弹窗
+  const [deleteModal, setDeleteModal] = useState(false)
   //删除
-  const deleteRecord = () => {
-    setAddModal(true);
+  const deleteOk = () => {
+    // return
+    DeletePlan(projectId,deleteId).then(res=>{
+      if(res.success){
+        messageApi.open({
+          type:'success',
+          content:'告警方案删除成功！',
+        })
+        if(dataSource.length == 1 && pageNum > 1){
+          setPageNum(pageNum - 1)
+        }else{
+          getAlarmData()
+        }
+      }else{
+        messageApi.open({
+          type:'error',
+          content:res.errMsg || '删除失败,请重试！',
+        })
+      }
+    })
+    setDeleteModal(false)
+  }
+  const handleDelete = () => {
+    setDeleteModal(false)
+  }
+  const [deleteId, setDeleteId] = useState();
+  const deleteRecord = (record) => {
+    console.log(record);
+    setDeleteId(record.Id)
+    setDeleteModal(true)
   };
+
   //新增告警
   const showAdd = () => {
     setAddModal(true);
@@ -112,18 +147,18 @@ export default function Index() {
   const addOk = async () => {
     try {
       const values = await form.validateFields();
+      console.log(values);
       let params = {
         projectId: projectId,
         name: values.name,
         tag: values.tag,
       };
-      return
         QueryAddAlarm(params).then((res) => {
           if (res.success) {
-            messageApi.open({
-              type: "success",
-              content: "告警方案新增成功！",
-            });
+            // messageApi.open({
+            //   type: "success",
+            //   content: "告警方案新增成功！",
+            // });
           } else {
             messageApi.open({
               type: "error",
@@ -190,6 +225,13 @@ export default function Index() {
           pagination={paginationProps}
           ref={tableRef}
         ></Table>
+        <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
+        <div className={style.deleteHeader}>删除提示</div>
+        <div className={style.deleteBody}>
+          <img className={style.warnIcon} src={firstwarn}></img>
+          <span>是否确认删除告警方案？</span>
+        </div>
+      </Modal>
         <Modal
           className={style.addModal}
           open={addModal}
