@@ -9,14 +9,16 @@ const {Item} = Form
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 640px 104px;
-       column-gap: 16px;
-       padding: 16px;
+       grid-template-rows: 576px 104px;
+       row-gap: 16px;
+       padding-bottom: 16px;
        flex: 1;
        color:#515151;
        .top {
         display: grid;
         grid-template-columns: 544px 1fr;
+        background-color: #fff;
+        padding: 32px;
         .topleft {
             grid-auto-rows: 144px;
             row-gap: 64px;
@@ -42,21 +44,33 @@ const Mainbox = styled.div`
                     cursor: pointer;
                     transition: all 200ms;
                  }
-                 .cotrl.active {
+                 .cotrl.on {
                     border: 1px solid #237ae4;
-                    background-color: #237ae4;
-                   
+                    color: #237ae4;
+                    .ant-typography {
+                        color: #237ae4;
+                        font-size: 18px;
+                    }
+                 }
+                 .cotrl.on.active { 
+                    background-color: #237ae4; 
                     .ant-typography {
                         color: #fff;
                         font-size: 18px;
                     }
                  }
-                 .cotrl.disabled {
-                    background-color: rgba(242, 242, 242, 1);
-                    border: 1px solid rgba(204, 204, 204, 1);  
-                    opacity: 0.8;
+                 .cotrl.off {
+                    border: 1px solid #ff5757;
+                   
                     .ant-typography {
-                        color: #666666;
+                        color: #ff5757;
+                        font-size: 18px;
+                    }
+                 }
+                 .cotrl.off.active {
+                    background-color:  #ff5757;
+                    .ant-typography {
+                        color: #fff;
                         font-size: 18px;
                     }
                  }
@@ -75,6 +89,26 @@ const Mainbox = styled.div`
         .foot {
             display: flex;
             justify-content: space-between;
+            background-color: #fff;
+            padding: 0 16px 0 32px;
+            align-items: center;
+            .start {
+                width: 368px;
+                height: 48px; 
+                background-color: rgba(242, 242, 242, 1);
+                box-sizing: border-box;
+                border-width: 1px;
+                border-style: solid;
+                border-color: rgba(215, 215, 215, 1);
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+                color: #515151;
+                padding: 16px;
+                span {
+                    color:#666;
+                }
+            }
         }
        }
 `
@@ -101,31 +135,18 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
-export default function Manual({projectId, areaId}) {
-  const [onoff, setOnoff] = useState()
-  const [ongrid, setOngrid] = useState()
+export default function Manual({projectId, areaId, startTime, p, q}) {
+  const [onoff, setOnoff] = useState() 
   const [pform] = Form.useForm()
   const [qform] = Form.useForm()
-  const ontext = onoff == 1 ? '开机': '关机'
-  const gridtext = ongrid == 1 ? '并网': '离网'
-  const querySiteStatus = async () => {
-     let {success, data} = await StorageControlRuntime.QuerySiteStatus(projectId, areaId)
-     if(success) {
-        let {onOffSwitch, onOffGrid, p, q} = data ;
-        setOnoff(onOffSwitch)
-        setOngrid(onOffGrid)
-        pform.setFieldValue('cp', p)
-        qform.setFieldValue('cq',q)
-     }
-  }
+ 
   // UpdateSiteOnOffGrid
-  const updatestate = async (type, state) => {
-     let handler = ['', 'UpdateSiteSwitchOnOff'][type]; // state 1 开， 2 关/离
-     if (type == 1) setOnoff(state);
-     if (type == 2) setOngrid(state);
-     let statev = state == 1  ? 1 : 2;
-     let {success, errMsg} = await StorageControlRuntime[handler](projectId, areaId, statev)    
-     let msg = ['', ['系统关机成功','系统开机成功']][type][state]
+  const updatestate = async (state) => { //开启手动模式、关闭手动模式
+     
+   
+   
+     let {success, errMsg} = await StorageControlRuntime.UpdateHandModeStatus(projectId, areaId, statev)    
+     let msg = ['','开启手动模式','关闭手动模式'][state]
      success && message.success(msg)
      !success && message.error(errMsg || '数据出错')
   }
@@ -145,7 +166,7 @@ export default function Manual({projectId, areaId}) {
      let msg = ['设置有功功率成功', '设置无关功率成功'][type]
     let {success, errMsg} =  await StorageControlRuntime[handler](projectId, areaId, value)
      success && custMsg({content: msg, onClose: () => {
-        querySiteStatus()
+        
      }})
       
      
@@ -160,7 +181,7 @@ export default function Manual({projectId, areaId}) {
   }
   useEffect(() => {
     querySiteDateAndMode()
-    querySiteStatus()
+    
   }, [areaId])
   return (
     <Mainbox>
@@ -168,20 +189,19 @@ export default function Manual({projectId, areaId}) {
             <div className='topleft'>
             <div className='topleftitem'>
                 <div className='item'>
-                    <Text>手动切换站点各个子系统的启动停止</Text>
-                    <Text>当前运行状态：<Link>{ontext}</Link></Text>
+                    <Text>手动切换站点各个子系统的启动停止</Text> 
                 </div>
                 <div className='item'>
-                    <div className={onoff== 1 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 1)}>
+                    <div className={onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => setOnoff(1)}>
                         <Space size={32}>
                         <Image src={imgurl.coal} height={42} width={42} preview={false} />
-                        <Text>系统开机</Text>
+                        <Text>开启手动模式</Text>
                         </Space>
                     </div>
-                    <div className={onoff == 0 ? 'cotrl active' : 'cotrl disabled'} onClick={() => updatestate(1, 0)}>
+                    <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => setOnoff(2)}>
                     <Space size={32}>
                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
-                        <Text>系统关机</Text>
+                        <Text>关闭手动模式</Text>
                         </Space>
                     </div>
                 </div>
@@ -239,22 +259,12 @@ export default function Manual({projectId, areaId}) {
        
         </div>
         <div className='foot'>
-            <Space size={16}>
-               <Title level={4}>手动模式运行时长：</Title>
-               <Timeipt /><Text>天</Text>
-               <Timeipt /><Text>时</Text>
-               <Timeipt /><Text>分</Text>
-            </Space>
-            <Space>
-            <Title level={4}>本次启用时间：</Title>
-               <Timeipt /><Text>天</Text>
-               <Timeipt /><Text>时</Text>
-               <Timeipt /><Text>分</Text>
-            </Space>
-            <Space size={32}>
-                <Bigbutton type='primary'  >启用手动模式</Bigbutton>
-                <Bigbutton type='primary'   disabled>停止手动模式</Bigbutton>
-            </Space>
+             <div className='start'>
+                <strong>本次启用时间：</strong>  <span>{startTime}</span>
+             </div>
+          
+            <Bigbutton type='primary'  >确认</Bigbutton>
+               
         </div>
     </Mainbox>
   )
