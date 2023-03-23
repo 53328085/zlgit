@@ -1,29 +1,32 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Divider } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
 import imgurl from './icon'
 import Titlelayout from '@com/titlelayout'
-
+import {StorageControlRuntime} from '@api/api'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 608px 104px;
+       grid-template-rows: 576px 104px;
        row-gap: 16px; 
        flex: 1;
        color:#515151;
        .top {
         display: grid;
-        grid-template-columns: 174px 1460px;
+        grid-template-columns: 180px 1fr;
         column-gap: 16px;
+        background-color: #fff;
+        padding: 16px;
         .topleft {
-            grid-auto-rows: 64px;
+            grid-auto-rows: 48px;
             row-gap: 16px;
             display: grid;
+            border: 1px solid #d7d7d7;
             .move {
                 grid-column: -1 / -2;
                 display: flex;
@@ -66,7 +69,7 @@ const Mainbox = styled.div`
              border-radius: 0px;
              box-shadow: none;
              display: grid;
-             grid-template-rows: 550px 56px;
+             grid-template-rows: 1fr 58px;
              .toprightup {
                 padding: 32px;
                 display: flex;
@@ -84,6 +87,26 @@ const Mainbox = styled.div`
         .foot {
             display: flex;
             justify-content: space-between;
+            background-color: #fff;
+            padding: 0 16px 0 32px;
+            align-items: center;
+            .start {
+                width: 368px;
+                height: 48px; 
+                background-color: rgba(242, 242, 242, 1);
+                box-sizing: border-box;
+                border-width: 1px;
+                border-style: solid;
+                border-color: rgba(215, 215, 215, 1);
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+                color: #515151;
+                padding: 16px;
+                span {
+                    color:#666;
+                }
+            }
         }
        }
 `
@@ -203,7 +226,7 @@ const Datebox = styled.div`
   padding: 0 8px;
   align-items: flex-end;
 `
- function Automate({projectId, Foot, Strategy, CModal}) {
+ function Automate({projectId, areaId, startTime, Strategy, CModal}) {
   const [nameform] = Form.useForm()
   const [plans, setPlan] = useState([
     {name: '充电计划', id: 1},
@@ -225,6 +248,10 @@ const Datebox = styled.div`
      pref.current.onOpen()
 
   }
+
+  const getPlans = async () => {
+     let {success} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
+  }
   const planOk = () => {
     let {planName} = nameform.getFieldsValue(); 
     setPlan([...plans, {name: planName, id: nanoid()}])
@@ -233,6 +260,10 @@ const Datebox = styled.div`
   const changeview = () => {
      setIsview(f => !f)
   }
+  const updatestate = () => {}
+  useEffect(() => {
+    getPlans()
+  }, [areaId])
   return (
     <Mainbox>
         <div className='top'>
@@ -268,7 +299,12 @@ const Datebox = styled.div`
        
         </div>
         <div className='foot'>
-             <Foot />
+             <div className='start'>
+                <strong>本次启用时间：</strong>  <span>{startTime}</span>
+             </div>
+          
+            <Bigbutton type='primary'  onClick={updatestate}>确认</Bigbutton>
+               
         </div>
         <CModal
         width={592}

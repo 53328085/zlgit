@@ -48,7 +48,7 @@ const Tabsbox = styled(Tabs)`
         font-size: 14px;
         background-color: #fff;  
         transition: none;
-        &:hover {
+        &:hover:not(.ant-tabs-tab-disabled) {
             background-color: var(--ant-primary-color);
             color: #fff;
             transition: all 0.3s;
@@ -86,6 +86,12 @@ export default function Index() {
   const [infoData, setInfoData] = useState({})
   const [mode, setMode] = useState()
  
+  const tabs = [
+   /*  {label: '手动模式', key: 1, disabled: mode==2},
+    {label: '自动模式', key: 2, disabled: mode==1}, */
+    {label: '手动模式', key: 1,  },
+    {label: '自动模式', key: 2, },
+  ]
   const getinfo = async () => {
     try {
       let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId)
@@ -101,11 +107,7 @@ export default function Index() {
       console.log(error)
     }
   }
- const tabs =  [
-    {label: '手动模式', key: 1},
-    {label: '自动模式', key: 2},
    
-  ]
   const propsData ={
   /*   tabs: [
       {label: '自动模式', key: 'Automate'},
@@ -116,12 +118,14 @@ export default function Index() {
     handler: setAreaid
     
   }
-   
+   const tabChange = (e) => {
+     setMode(e)
+   }
   
   useEffect(() => {
     getinfo()
   }, [areaId, projectId])
- 
+  const ProjectCom = [Manual, Manual, Automate][mode]
   return (
     <CustContext.Provider value={propsData}>      
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
@@ -134,10 +138,8 @@ export default function Index() {
               <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.day}天{infoData.runHour}小时{infoData.runMin}分</span>
            </div>
            <div className='tabbox'>
-                <Tabsbox items={tabs} activeKey={mode} onChange={setMode}></Tabsbox>
-               {
-                 mode==1 ?  <Manual projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData}  /> : mode ==2 ? <Automate projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData}  /> : null
-               }  
+                <Tabsbox items={tabs} activeKey={mode} onChange={tabChange}></Tabsbox>
+              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
            </div>
         </Contentbox>
     </Pagecount>
