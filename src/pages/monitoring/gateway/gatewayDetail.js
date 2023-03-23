@@ -52,8 +52,8 @@ export default function GatewayDetail(props) {
         },
         {
             title: '通信地址',
-            dataIndex: 'commAddress',
-            key: 'commAddress',
+            dataIndex: 'commAddressName',
+            key: 'commAddressName',
             id: 'id'
         },
         {
