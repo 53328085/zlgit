@@ -19,8 +19,9 @@ export default function Index() {
       <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px',  border: '1px solid #d7d7d7', borderRadius: 4 }}>
           <Form
             form={form}
+            colon={false}
           >
-            <Form.Item label="园区选择" name="area" style={{ marginBottom: 0 }}>
+            <Form.Item label={oneLevel[0].levelName} name="area" style={{ marginBottom: 0 }}>
               <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={0}></Select>
             </Form.Item>
           </Form>
