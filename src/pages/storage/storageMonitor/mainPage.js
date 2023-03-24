@@ -241,7 +241,7 @@ export default function Index(props) {
       <div className={style.bmsContent}>
         <div className={style.left}>
           <div className={style.leftCard}>
-            <div className={style.cardTitle}>SOC ($)</div>
+            <div className={style.cardTitle}>SOC (%)</div>
             <div className={style.cardChart} id='totalSOC' ref={socRef}></div>
           </div>
           <div className={style.leftCard}>
@@ -256,10 +256,10 @@ export default function Index(props) {
         <div className={style.middle}>
           <img src={topology} className={style.zhanwei}></img>
           <div style={{position:'absolute', left: 140, top: 102}}>
-            <CustomBattery name={'SOC'} value={ bmsInfo.soc + '%'} color="#0c6"></CustomBattery>
+            <CustomBattery name={'SOC'} value={ bmsInfo.soc ? bmsInfo.soc  + '%' :'0.00%' } color="#0c6"></CustomBattery>
           </div> 
           <div style={{position:'absolute', left: 196, top: 102}}>
-            <CustomBattery name={'SOH'} value={bmsInfo.soh + '%'} color="#06c"></CustomBattery>
+            <CustomBattery name={'SOH'} value={bmsInfo.soh ? bmsInfo.soh  + '%' :'0.00%'} color="#06c"></CustomBattery>
           </div>
           <div className={style.bmsData}>
             <div className={style.bmsName}>{bmsInfo.bmsName}</div>

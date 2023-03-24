@@ -25,11 +25,12 @@ export default function Index(props) {
   const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState()
+  const [areaId,setAreaId] = useState()
   const changeArea = (value) => {
     setAreaId(value);
   };
+  
   //能源类型
   const [energyType, setEnergyType] = useState(props.comprehensive ? 0 : 1)
   const changeEnergyType = val => {
@@ -82,6 +83,13 @@ export default function Index(props) {
     onSuccess: (result, params) => {},
   });
   useEffect(() => {
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未创建园区!')
+      return;
+    }else{
+      setDefaultArea(areaList[0].id)
+      setAreaId(areaList[0].id)
+    }
     if (props.isShift) {
       runShift();
     } else {

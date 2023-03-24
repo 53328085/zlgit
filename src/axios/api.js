@@ -1510,3 +1510,8 @@ export class AlarmManagement {
   static DeletePlanAlarm = (projectId,planId) => server.delete(`Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`)
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
 }
+//储能--环境监控
+export class StorageEnvironmentRuntime {
+  static queryEnvironmentInfo = (projectId, areaId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&stroageRoomId=${storageRoomId}&date=${date}`)
+}
