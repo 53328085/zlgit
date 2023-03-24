@@ -72,7 +72,7 @@ const Mainbox = styled.div`
                 background-color: #e4e4e4;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-evenly;
             }
           }
           .topright {
@@ -417,6 +417,9 @@ const Planview = () => {
     )
 }
 const Strategy = ({name='自动策略'}) => {
+ /*   const QueryStrategyList = () => {
+    QueryStrategyList
+   } */
    const [options, setOptions] = useState(
     [
       {label: '周一', value: 1},
@@ -429,7 +432,7 @@ const Strategy = ({name='自动策略'}) => {
     ]
    )
    return (
-      <Titlelayout title={name} bordered={'n'}>
+      <Titlelayout title='运行计划设置' bordered={'n'}>
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left">
           
             <Item  label="模板名称" tooltip="最长8个字符">

@@ -246,7 +246,7 @@ export class EnergyComprehensive {
   export class StorageControlRuntime {
     static QueryStorageControlInfo = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}`);
 
-
+    static QueryStrategyList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStrategyList??projectId=${projectId}&areaId=${areaId}`);
 
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
     static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
