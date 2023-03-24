@@ -25,8 +25,8 @@ export default function Index(props) {
   const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
   //园区
-  const [defaultArea, setDefaultArea] = useState()
-  const [areaId,setAreaId] = useState()
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const changeArea = (value) => {
     setAreaId(value);
   };
@@ -86,9 +86,6 @@ export default function Index(props) {
     if(areaList.length == 0 || !areaList){
       message.error('当前项目尚未创建园区!')
       return;
-    }else{
-      setDefaultArea(areaList[0].id)
-      setAreaId(areaList[0].id)
     }
     if (props.isShift) {
       runShift();
