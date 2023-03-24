@@ -51,7 +51,7 @@ export default function Index(props){
     })
 
     useEffect(()=> {
-        if(props.areaId == 0) return;
+        if(props.areaId == 0 || !props.areaId) return;
         runQuery()
     },[props.areaId])
 

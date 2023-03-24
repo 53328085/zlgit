@@ -26,6 +26,7 @@ export default function Index() {
     solarPointBaseInfo:{},
   }) //接线图数据
   const getFromHeader = values => {
+    if(!values.areaId) return;
     let { projectId, areaId } = values
     querySiteInfo(projectId, areaId).then(res => {
       if(res.success){

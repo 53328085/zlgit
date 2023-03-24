@@ -35,8 +35,8 @@ export default function Index() {
   const { querySpaceTrees } = energyQuota
   const { queryByLine, queryByBuilding } = EnergyLossRuntime
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const changeArea = (value) => {
     setAreaId(value)
   }
@@ -154,12 +154,17 @@ export default function Index() {
   })
 
   useEffect(()=>{
-    if(areaId == 0) {return;}
-    if(value == 'line'){
-      runLine()
-    }
-    if(value == 'building'){
-      runBuilding()
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
+    }else{
+      if(areaId == 0) {return;}
+      if(value == 'line'){
+        runLine()
+      }
+      if(value == 'building'){
+        runBuilding()
+      }
     }
   },[areaId, value, energyType])
 
@@ -190,7 +195,6 @@ export default function Index() {
     setLineParams(values)
   }
   const getLineTable = () => {
-    console.log(lineParams);
     let params = {
       projectId,
       areaId,
@@ -217,7 +221,7 @@ export default function Index() {
     manual: true
   })
   useEffect(()=> {
-    if(areaId == 0) return;
+    if(areaId == 0 || !areaId) return;
     if(value == 'line'){
       setSelectBuildIds([])
       setPageNum(1)
@@ -258,7 +262,7 @@ export default function Index() {
     manual: true
   })
   useEffect(()=> {
-    if(areaId == 0) return;
+    if(areaId == 0 || !areaId) return;
     if(value == 'building'){
       setLineParams([])
       setPageNum(1)

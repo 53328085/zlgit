@@ -152,7 +152,7 @@ export default function MainPage(props){
   }
 
   useEffect(()=> {
-    if(props.areaId == 0) return;
+    if(props.areaId == 0 || !props.areaId) return;
     setSearchData('')
     getRoomTable(projectId, props.areaId, '')
   },[props.areaId])

@@ -274,14 +274,18 @@ export default function Index() {
     getContent()
   }
   useEffect(()=>{
-    form.setFieldValue('areaId', areaList[0].id)
-    queryPCS()
+    if(areaList.length == 0|| !areaList){
+      message.error('当前项目尚未创建园区!')
+    }else{
+      form.setFieldValue('areaId', areaList[0].id)
+      queryPCS()
+    }
   },[])
   return (
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaList[0]?.levelName + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={ areaList[0]?.levelName || '园区' + '选择'} style={{marginLeft:16}}>
             <Select
               placeholder="请选择"
               size="middle"
