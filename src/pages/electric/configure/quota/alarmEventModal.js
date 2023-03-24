@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import {
   Button,
-  Table,
   Space,
   Modal,
   Form,
@@ -12,18 +11,19 @@ import {
   Switch,
   Radio,
 } from "antd";
+
+import { AlarmManagement } from "@api/api.js";
+import { useSelector } from "react-redux";
+import { selectProjectId } from "@redux/systemconfig.js";
 export default function Index(props) {
   const { AddAlarmEventGive } = props;
-  const addAlarmOk = () => {
-    props.callBack();
-  };
-  const handleCancel = () => {
-    props.callBack();
-  };
+  console.log(props);
+  const projectId = useSelector(selectProjectId);
+  const { AddAlarmEventInterval } = AlarmManagement;
 
+  const [form] = Form.useForm();
   const Item = Form.Item;
   //   新增告警事件-告警规则逻辑
-  const [modalTitle, setModalTitle] = useState("");
   const [defaultAlarmType, setDefaultAlarmType] = useState(1);
   //   const [showData, setShowData] = useState();
   //   const [alarmList, setalarmList] = useState();
@@ -71,6 +71,14 @@ export default function Index(props) {
       value: "greaterhan",
     },
   ];
+  const addAlarmOk = () => {
+    props.callBack();
+    console.log(defaultAlarmType);
+  };
+  const handleCancel = () => {
+    props.callBack();
+  };
+
   const changeAlarmType = (val) => {
     setDefaultAlarmType(val);
   };
@@ -92,6 +100,9 @@ export default function Index(props) {
   useEffect(() => {
     setCompareValue(compareValue);
   }, [compareValue]);
+  useEffect(() => {
+      form.resetFields();
+  }, [AddAlarmEventGive]);
   return (
     <div>
       <Modal
@@ -105,7 +116,7 @@ export default function Index(props) {
         maskClosable={false}
         okText={"完成"}
         okType={"primary"}
-        okButtonProps={{ primary: true }}
+        // okButtonProps={{ primary: true }}
       >
         <div className={style.addHeader}>新增告警事件</div>
         <div className={style.addBody}>
@@ -117,6 +128,7 @@ export default function Index(props) {
             wrapperCol={{ flex: 1 }}
             className={style.form}
             size="small"
+            form={form}
           >
             <Item
               label="告警事件名称："
@@ -193,7 +205,7 @@ export default function Index(props) {
                 <Select.Option value="5">离线告警</Select.Option> */}
                 {alarmList.map((item) => {
                   return (
-                    <Select.Option key={item.id} value={item.id}>
+                    <Select.Option key={item} value={item.id}>
                       {item.name}
                     </Select.Option>
                   );

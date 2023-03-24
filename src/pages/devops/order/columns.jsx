@@ -7,58 +7,61 @@ import React from 'react'
  let  cols = [
     {
         title: '工单编号',
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'name',
+        key: 'name',
         // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
-        title: '状态',
-        dataIndex: 'alarmTime',
-        key: 'alarmTime',
+        title: '告警事件',
+        dataIndex: 'content',
+        key: 'content',
         width: 124,
-        render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
+        // render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
       },
       {
-        title: '所属项目',
-        dataIndex: 'customer',
-        key: 'customer',
+        title: '告警设备名称',
+        dataIndex: 'deviceName',
+        key: 'deviceName',
       },
       {
-        title: '所属区域/建筑/楼层',
-        dataIndex: 'place',
-        key: 'place',
+        title: '告警地址',
+        dataIndex: 'deviceAddress',
+        key: 'deviceAddress',
       },
       {
-        title: '安装地址',
-        dataIndex: 'address',
-        key: 'address',
+        title: '派单人',
+        dataIndex: 'creator',
+        key: 'creator',
       },
       {
-        title: '设备类型',
-        dataIndex: 'category',
-        key: 'category',
+        title: '派单时间',
+        dataIndex: 'createTime',
+        key: 'createTime',
       },
       {
-        title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        width:200,
+        onCell:(record, index)=>{
+      
+        
+            return {
+              style:{
+                background: record.state===1?'rgb(255,51,51)':record.state===2?'rgb(0,204,255)':rgb(0,153,102),
+                color: '#fff'
+              }
+          }
+          
+        
+          
+          
       },
-      {
-        title: '事件信息',
-        key: 'option',
-        align:'center',
-        render:(_,val)=>(
-            <span >过温  65℃</span>
-        ),
+        render:(text,record)=>{
+         return text===1?<div>待处理</div>:text===2?<div>处理中</div>:<div>已完成</div>
+        }
       },
-      {
-        title: '派单人/派单时间',
-        key: 'deteail',
-        align:'center',
-        render: (_, record) => (
-            <span >AAA   2020/11/30 09:12:36</span>
-        ),
-      },
+     
 ]
-let columns =  cols.map(item=>({...item,item,align:"center"}))
+let columns =  cols.map(item=>({...item,align:"center"}))
 export  {columns} 

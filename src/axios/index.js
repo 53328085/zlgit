@@ -39,8 +39,7 @@ server.interceptors.response.use(
     },
     error => {       
         let msg = error?.response?.statusText
-        let state = error?.response?.status
-       
+        let state = error?.response?.status       
         if (state >= 400 && state < 500 && state != 401 )  {
             console.info(msg)
         }
@@ -51,7 +50,7 @@ server.interceptors.response.use(
            
         })
         }
-        if (state >= 500)   message.error(msg)
+        if (state >= 500)   message.error(msg || '数据出错')
         return Promise.reject(error)
     })
 export default server

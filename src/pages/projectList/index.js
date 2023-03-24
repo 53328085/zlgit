@@ -332,9 +332,7 @@ export default function Index() {
           siderDesignerMenus,
           runMenus,
           siderRunMenus, 
-          setMenus,
-         // allRunMenus,
-        //  allsinderRunMenus,
+          setMenus,        
           projectId: id,
          }
          dispatch(getMenus(menus));

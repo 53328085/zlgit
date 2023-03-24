@@ -1128,6 +1128,11 @@ export const Monitoring = {
   RuntimeCamera:{
     Statistics: (projectId,areaId) => server.get(`/Monitor/RuntimeCamera/Statistics?projectId=${projectId}&areaId=${areaId}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
+  },
+  //系统日志
+  RuntimeLog:{
+    QueryOperationLogs: (data) => server.post(`/Monitor/RuntimeLog/QueryOperationLogs`, data),//操作日志
+    QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
   }
 }
 //运维管理
@@ -1139,6 +1144,10 @@ export class operation {
  static  MonthOrderTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderTrend`,{params:data})//本月派单
  static  MonthAlarmTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthAlarmTrend`,{params:data})//本月告警事件
  static  AlarmPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmPage`,data)//告警信息
+ static  DispachOrder=(data)=>server.get(`/Maintenance/MaintenanceRuntime/DispachOrder`,{params:data})//派单
+ static  OrderPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderPage`,data)//工单查询
+ static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`,data)//订单查询
+ static  OrderDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`,{params:data})//工单详情
 }
 
 //电气安全
@@ -1509,6 +1518,8 @@ export class AlarmManagement {
   static QueryAddAlarm = (data) => server.post(`Safe/Alarm/AddPlan`,data)
   static DeletePlanAlarm = (projectId,planId) => server.delete(`Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`)
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
+  static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)
+  static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
 }
 //储能--环境监控
 export class StorageEnvironmentRuntime {

@@ -17,14 +17,14 @@ import Table from '@com/useTable'
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
   let [areaId, setAreaId] = useState(1)
   let [deviceStyle, setdeviceStyle] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: [], categories: [] })
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
@@ -117,42 +117,33 @@ export default function Index(props) {
   const getData = () => {//设备统计
     return Statistics({ projectId, areaId,deviceStyle }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setStatistics(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getGatewayUsed = () => {//使用的网关
     return QueryUsedDeviceCategory({projectId:projectId,deviceStyle:deviceStyle}).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setoptionsGateway(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getOverviewData = () => {//设备统计
     return Overview(params).then(res => {
       let { success, data, total, pageNum } = res
-      if (success && data) {
+      if (success) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
         setdataSource(data.details)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -161,7 +152,7 @@ export default function Index(props) {
   const getGatewayImages = () => {//网关图片
     return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         if(data!=[]){
           let imgList=[]
             overView.details.map((item, index) => {
@@ -175,10 +166,7 @@ export default function Index(props) {
             setimageList(imgList)
         }
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
