@@ -463,10 +463,11 @@ export default function gateway() {
     onOk:()=>{ErrModalRef.current.onCancel()}
   }
   useEffect(() => {
-    getOneLevel()
-    getQueryByPageGateWay()
-   
-    getQueryUsedGateway()
+    if(oneLevel?.length>0){
+      getOneLevel()
+      getQueryByPageGateWay()
+      getQueryUsedGateway()
+    }   
   }, [])
 
   return (

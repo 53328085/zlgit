@@ -474,14 +474,13 @@ export default function gateway({ deviceStyle }) {
   }
 
   useEffect(() => {
-    getQueryByPageSensor()
-    getOneLevel()
-    // getAeraQueryAll()
-    getQueryUsedDeviceCategory()
-    getQueryPlanList()
-    getQueryListGateWay()
-
-
+    if(oneLevel.length > 0) {
+      getQueryByPageSensor()
+      getOneLevel()
+      getQueryUsedDeviceCategory()
+      getQueryPlanList()
+      getQueryListGateWay()
+    }
   }, [])
   //传入props对象
   const ComProps = {

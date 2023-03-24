@@ -496,12 +496,14 @@ export default function gateway({ deviceStyle }) {
 
 
   useEffect(() => {
-    // getAeraQueryAll()
-    getOneLevel()
+    if(oneLevel?.length>0){
+      getOneLevel()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
     getQueryByPageCamera()
+    }
+    
   }, [])
 
   //传入props对象

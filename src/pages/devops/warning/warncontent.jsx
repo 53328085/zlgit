@@ -13,6 +13,7 @@ export default function Warncontent({ style,areavalue }) {
     const tableRef =useRef()
     const modalRef =useRef()
     const projectId = useSelector(state => state.system.menus.projectId)
+    const oneLevel = useSelector(state => state.system.onelevel)
     const [tableParam,setTableParam] = useState({
         current:1,
         pageSize:10,  
@@ -118,7 +119,7 @@ export default function Warncontent({ style,areavalue }) {
       }
     }
     useEffect(()=>{
-        getAlarmPage()
+      oneLevel.length>0&&getAlarmPage()
     },[areavalue])
 
     return (

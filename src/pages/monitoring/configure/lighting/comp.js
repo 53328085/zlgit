@@ -13,7 +13,7 @@ import CustContext from '@com/content'
     const inpRef = useRef(inpvalue)
     inpRef.current =inpvalue
     const oneLevel = useSelector(state=>state.system.onelevel)
-    const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+    const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) :[]
     console.log(areaOptions)
     const {
         placeholder = '输入控制器编号/安装地址',
@@ -72,7 +72,7 @@ import CustContext from '@com/content'
                             style={{
                                 width: 264,
                             }}
-                            defaultValue={0}
+                            defaultValue={oneLevel.length>0?0:null}
                             value={selvalue}
                             options={areaOptions}
                             onChange={changeSelect}

@@ -22,7 +22,7 @@ export default forwardRef(function Comp(props, ref) {
     } = props
     const projectId = useSelector(state => state.system.menus.projectId)
     const oneLevel = useSelector(state=>state.system.onelevel)
-    const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+    const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) :[]
     const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal, setEnergyVal] = useState()
@@ -87,7 +87,7 @@ export default forwardRef(function Comp(props, ref) {
                                 label: 'name',
                                 value: 'id'
                             }}
-                            defaultValue={0}
+                            defaultValue={oneLevel.length>0?0:null}
                             value={selvalue}
                             onChange={changeSelect}
                             options={areaOptions}

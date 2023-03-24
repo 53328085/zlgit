@@ -477,12 +477,14 @@ export default function gateway({ deviceStyle }) {
 
 
   useEffect(() => {
-    getQueryByPageTransformer()
-    // getAeraQueryAll()
+    if(oneLevel?.length>0){
+      getQueryByPageTransformer()
     getOneLevel()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
+    }
+    
     
 
   }, [])

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo,useRef } from 'react'
 import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message  } from 'antd';
 import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons'
-import { CompleteIcon, ResolveIcon, WaitIcon } from './completeicon'
+import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeicon'
 import UserTable from '@com/useTable'
 import BlueColumn from '@com/bluecolumn'
 import { useSelector } from 'react-redux'
@@ -30,6 +30,7 @@ export default function Warncontent({ style ,areavalue}) {
     }])
     const orderSn=useRef()
     const projectId = useSelector(state => state.system.menus.projectId)
+    const oneLevel = useSelector(state => state.system.onelevel)
     columns[0].render = (_,record,rowIndex)=>(<a style={{textDecoration:'underline'}} onClick={()=>{
         setOrder(true);
         orderSn.current=_
@@ -109,11 +110,15 @@ export default function Warncontent({ style ,areavalue}) {
        
     }
     useEffect(()=>{
-        getOrderPage()
+        if(oneLevel.length>0){
+            getOrderPage()
         getOrderStatistics()
+        }
+        
     },[areavalue])
     useEffect(()=>{
-        getOrderPage()
+        oneLevel.length>0&&getOrderPage()
+        
     },[status])
     return (
         <div className={style.OrderContent}>
@@ -129,7 +134,7 @@ export default function Warncontent({ style ,areavalue}) {
                 <Divider type='vertical' style={{height:32,borderColor:'#d7d7d7',margin:'0 32px'}} dashed/>
                 <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button>
             </div>
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 16,display:'flex',height:700 }}>
                 <UserTable 
                 columns={columns} 
                 dataSource={tableData} 
@@ -140,7 +145,7 @@ export default function Warncontent({ style ,areavalue}) {
                 ></UserTable>
             </div>
             <Modal
-                title={(<div style={{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:16}}>
+                title={(<div style={{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:16,padding:16}}>
                     <BlueColumn name="工单详情"/>
                     <div>工单编号:{orderSn.current}</div>
                     <div style={{width:96,height:32,lineHeight:'32px',textAlign:'center',color:'#fff',borderRadius:2,backgroundColor:'#237ae4',fontSize:14,cursor:'pointer'}} onClick={() => { setOrder(false) }}>关闭</div>
@@ -149,6 +154,7 @@ export default function Warncontent({ style ,areavalue}) {
                 width={960}
                 onCancel={()=>{setOrder(false)}}
                 closable={false}
+                bodyStyle={{paddingLeft:52}}
                 footer={
                     null
                     // <div style={{ textAlign: 'center' }}>
@@ -157,38 +163,40 @@ export default function Warncontent({ style ,areavalue}) {
                 }
                 >
                 <Timeline mode='left' >
-                    {/* <div style={{ margin: '0px 0 24px 5px' }}>工单编号:202011276323</div> */}
                     <Timeline.Item label={orderdetail?.createTime} dot={<CompleteIcon />} className={style.timeline}>
                         <div style={{ minHeight: 50,fontWeight:'bold' }} >平台派单</div>
                     </Timeline.Item>
-                    <Timeline.Item label={orderdetail?.confirmTime} dot={<CompleteIcon />} className={style.timeline}>
-                        <div style={{ minHeight: 50 }}><span style={{paddingRight:64,fontWeight:'bold',}}>派单已确认</span>{orderdetail?.operator}</div>
+                    <Timeline.Item label={orderdetail?.state!==1?orderdetail?.confirmTime:null} dot={orderdetail?.state!==1?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
+                        <div style={{ minHeight: 50 }}><span style={{paddingRight:64,fontWeight:'bold',color:orderdetail?.state!==1?'#000':'#ccc'}}>派单确认</span>{orderdetail?.operator}</div>
                     </Timeline.Item>
-                    <Timeline.Item label={orderdetail?.arriveTime} dot={<CompleteIcon />} className={style.timeline}>
+                    <Timeline.Item label={orderdetail?.state>2?orderdetail?.arriveTime:null} dot={orderdetail?.state>2?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
                         <div style={{ minHeight: 100 }}>
-                            <div style={{fontWeight:'bold'}}>到达故障点</div>
+                            <div style={{fontWeight:'bold',color:orderdetail?.state>2?'#000':'#ccc'}}>到达现场</div>
                             {orderdetail?.arriveImages?.map((it,index)=>{
                                 return   <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} key={index}></img>
                             })}
+                            {!orderdetail?.arriveImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
                         </div>
-                        <div style={{paddingTop:12,fontWeight:'bold',minHeight: 100}}>故障点图片活视频</div>
+                       
+                    </Timeline.Item>
+                    <Timeline.Item label={orderdetail?.state>3?orderdetail?.finishTime:null} dot={orderdetail?.state>3?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
+                        <div style={{fontWeight:'bold',color:orderdetail?.state>3?'#000':'#ccc'}}>故障处理</div>
                         {
                             orderdetail?.processImages?.map((it,index)=>{
                                 return  <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
                             })
                         }
-                        
+                        {!orderdetail?.processImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
                         {/* <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
                         <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
                         <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img> */}
-                        <div style={{padding:'12px 0'}}>处理详情描述:</div>
+                        <div style={{padding:'12px 0',color:orderdetail?.state>3?'#000':'#ccc'}}>处理详情描述:</div>
                         <div>
-                        <TextArea rows={4} style={{width:528,height:80}} defaultValue={orderdetail?.result}/>
+                        <TextArea rows={4} style={{width:528,height:80}} value={orderdetail?.result}/>
                         </div>
-                          
-                    </Timeline.Item>
-                    <Timeline.Item label={orderdetail?.finishTime} dot={<CompleteIcon />} className={style.timeline}>
-                        <div style={{fontWeight:'bold'}}>处理完成</div>
+                    </Timeline.Item> 
+                    <Timeline.Item  dot={orderdetail?.state>3?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
+                        <div style={{fontWeight:'bold',color:orderdetail?.state>3?'#000':'#ccc'}}>完成</div>
                     </Timeline.Item>
                 </Timeline>
 

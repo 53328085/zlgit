@@ -326,7 +326,7 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
     }
   }
   useEffect(() => {
-    getTableData(areavalue)
+    areavalue&&getTableData(areavalue)
   }, [areavalue])
 
   return (

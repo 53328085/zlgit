@@ -62,7 +62,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
 
 const Comp =({api,columns,setColumns},ref)=>{
     const [dataSource, setDataSource] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [form] = Form.useForm()
     const { areavalue, arealistRef } = useContext(CustContext)
     const tableRef = useRef()
@@ -91,6 +91,7 @@ const Comp =({api,columns,setColumns},ref)=>{
     //获取数据
     const getTableData = async (areaId = 0) => {
         try {
+            setLoading(true)
             const formvalues = form.getFieldValue()
             let parmas ={
                 projectId,
@@ -139,7 +140,8 @@ const Comp =({api,columns,setColumns},ref)=>{
         }
     }
     useEffect(() => {
-        getTableData(areavalue)
+        areavalue&& getTableData(areavalue)
+       
     }, [areavalue])
     
     return (

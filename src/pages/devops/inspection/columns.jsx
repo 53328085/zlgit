@@ -1,64 +1,73 @@
 
-import {CompleteIcon,ResolveIcon,WaitIcon} from './completeicon'
+import {ProcessIcon,ResolveIcon,WaitIcon} from './completeicon'
 import React from 'react'
 
 
-
+const flexcss ={
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}
  let  cols = [
     {
-        title: '工单编号',
-        dataIndex: 'number',
-        key: 'number',
+        title: '巡检工单',
+        dataIndex: 'name',
+        key: 'name',
         // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
-        title: '状态',
-        dataIndex: 'alarmTime',
-        key: 'alarmTime',
+        title: '计划时间',
+        dataIndex: 'planTime',
+        key: 'planTime',
         width: 124,
-        render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
+        // render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
       },
       {
-        title: '所属项目',
-        dataIndex: 'customer',
-        key: 'customer',
+        title: '计划名称',
+        dataIndex: 'planName',
+        key: 'planName',
       },
       {
-        title: '所属区域/建筑/楼层',
-        dataIndex: 'place',
-        key: 'place',
+        title: '巡检区域',
+        dataIndex: 'area',
+        key: 'area',
       },
       {
-        title: '安装地址',
-        dataIndex: 'address',
-        key: 'address',
+        title: '计划任务',
+        dataIndex: 'planContent',
+        key: 'planContent',
       },
       {
-        title: '设备类型',
-        dataIndex: 'category',
-        key: 'category',
+        title: '巡检周期',
+        dataIndex: 'cycle',
+        key: 'cycle',
+        render(text){
+        return  text===1?'日':text===2?'周':text===3?'年':'/'
+        }
       },
       {
-        title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
+        title: '巡检人员',
+        dataIndex: 'operator',
+        key: 'operator',
       },
       {
-        title: '事件信息',
-        key: 'option',
-        align:'center',
-        render:(_,val)=>(
-            <span >过温  65℃</span>
-        ),
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        width:200,
+      //   onCell:(record, index)=>{
+      //       return {
+      //         style:{
+      //           background: record.state===1?'rgb(255,51,51)':record.state===2?'rgb(0,204,255)':rgb(0,153,102),
+      //           color: '#fff'
+      //         }
+      //     }   
+      // },
+        render:(text,record)=>{
+         return text===1?<div style={flexcss}><WaitIcon/>待处理</div>:(text===2||text===3)?<div style={flexcss}><ProcessIcon/>处理中</div>:<div style={flexcss}><ResolveIcon/>已完成</div>
+        }
       },
-      {
-        title: '派单人/派单时间',
-        key: 'deteail',
-        align:'center',
-        render: (_, record) => (
-            <span >AAA   2020/11/30 09:12:36</span>
-        ),
-      },
+     
 ]
-let columns =  cols.map(item=>({...item,item,align:"center"}))
+let columns =  cols.map(item=>({...item,align:"center"}))
 export  {columns} 
