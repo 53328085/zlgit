@@ -16,7 +16,7 @@ import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
   let [areaId, setAreaId] = useState(1)
   const changeArea = (value) => {
     setAreaId(value);

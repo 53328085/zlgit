@@ -1,9 +1,10 @@
+// 还没写完……操作日志页面表格数据、设备日志接口
 import React, { useState, useEffect } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 import { useRequest, useToggle, useAntdTable } from 'ahooks'
-import { GetLogOperation, OpLog } from '@api/api.js'
-import { Form, DatePicker, Input, Button, Table, Pagination, Select } from 'antd'
+import { GetLogOperation, OpLog ,Monitoring} from '@api/api.js'
+import { Form, DatePicker, Input, Button, Table, Pagination, Select ,message} from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
@@ -19,14 +20,77 @@ export default function Index() {
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0].id)
   let [areaId, setAreaId] = useState(1)
+  let [pageNum, setpageNum] = useState(1)
+  let [totalalarm, settotalalarm] = useState(20)
+  let [dataSourceLog, setdataSourceLog] = useState([])
+  let [dataSourceLogD, setdataSourceLogD] = useState([])
+  let [pageNumD, setpageNumD] = useState(1)
+  let [totalalarmD, settotalalarmD] = useState(1)
+  let [alike, setalike] = useState('')
+  let year = new Date().getFullYear()
+  let month = new Date().getMonth() + 1
+  let day = new Date().getDate()
+  // let date = year + '-' + (month > 10 ? month : '0' + month) + '-' + (day > 10 ? day : '0' + day)
+  let date=new Date()
+  let [startTime,setstartTime]=useState(date)
+  let [endTime,setendTime]=useState(date)
+  let [startTimeD,setstartTimeD]=useState(date)
+  let [endTimeD,setendTimeD]=useState(date)
+  const { RuntimeLog: { QueryOperationLogs, QueryDeviceLogs } } = Monitoring
+  let params={
+    projectId:projectId,
+    pageNum:pageNum,
+    pageSize:18,
+    start:startTime,
+    end:endTime
+  }
+  const getData = () => {//设备统计
+    return QueryOperationLogs(params).then(res => {
+      let { success, data } = res
+      if (success) {
+        setdataSourceLog(data)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  useEffect(() => {
+    getData()
+  }, [ projectId,pageNum])
+  let paramsDevice={
+    projectId:projectId,
+    pageNum:pageNumD,
+    pageSize:18,
+    start:startTimeD,
+    end:endTimeD
+  }
+  const getDeviceData = () => {//设备统计
+    return QueryDeviceLogs(areaId,alike,paramsDevice).then(res => {
+      let { success, data } = res
+      if (success) {
+        setdataSourceLogD(data)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  useEffect(() => {
+    getDeviceData()
+  }, [areaId, projectId,pageNumD])
   const changeArea = (value) => {
     setAreaId(value);
   };
   const submit = (data, dataString) => {
     console.log(dataString)
+    if(dataString.length>1){
+      setstartTime(dataString[0])
+      setendTime(dataString[1])
+    }else{
+      setstartTime(dataString[0])
+    }
   }
   const changeType = () => {
-
+    getData()
   }
   let [state, setstate] = useState(1)
   const changeTab = val => {
@@ -117,16 +181,12 @@ export default function Index() {
       id: 'id'
     },
   ];
-  let [dataSourceLog, setdataSourceLog] = useState([])
-  let [dataSourceLogD, setdataSourceLogD] = useState([])
-  let [pageNumD, setpageNumD] = useState(1)
-  let [totalalarmD, settotalalarmD] = useState(1)
+  
   const onChangePageLogD = (page, pageSize) => {
     console.log(page)
     setpageNumD(page)
   }
-  let [pageNum, setpageNum] = useState(1)
-  let [totalalarm, settotalalarm] = useState(1)
+  
   const onChangePageLog = (page, pageSize) => {
     console.log(page)
     setpageNum(page)

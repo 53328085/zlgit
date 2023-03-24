@@ -46,9 +46,9 @@ export default function Index() {
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
       if (success) {
-        seteleConsumes(data.eleConsumes)
-        setwaterConsumes(data.waterConsumes)
-        setgasConsumes(data.gasConsumes)
+        seteleConsumes(data?data.eleConsumes:[])
+        setwaterConsumes(data?data.waterConsumes:[])
+        setgasConsumes(data?data.gasConsumes:[])
         charts()
       } else {
         message.error(res.errMsg)

@@ -25,8 +25,8 @@ export default function Index(props) {
   const areaList = useSelector(selectOneLevel)
   const { queryShifts } = eneryShift
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
+  const [areaId,setAreaId] = useState(areaList[0]?areaList[0].id:'')
   const changeArea = (value) => {
     setAreaId(value);
   };

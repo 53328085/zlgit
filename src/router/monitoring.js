@@ -19,8 +19,8 @@ const components = {
     '010503': Point,
     '010504': Video,
     '010505': Remote,
-    '010506': Oplog,
-    '010507': Report,
+    '010506': Report,
+    '010507': Oplog,
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor'] 
