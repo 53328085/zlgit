@@ -15,7 +15,7 @@ export default function GatewayDetail(props) {
     let search=qs.parse(location.search)
     console.log(search)
     const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
+//   const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeGateway: { RuntimeGatewayDetail, Children, Log,CategoryImages } } = Monitoring
     let [state, setstate] = useState(true)
     let [detail,setDetail]=useState({})
@@ -106,16 +106,13 @@ export default function GatewayDetail(props) {
       const getData = () => {//网关详情
         return RuntimeGatewayDetail( projectId, search.sn ).then(res => {
           let { success, data } = res
-          if (success && data) {
+          if (success) {
             setDetail(data)
             if(detail.category){
                 getGatewayImages()
             }
           } else {
-            messageApi.open({
-              type: 'error',
-              content: res.errMsg
-            })
+            message.error(res.errMsg)
           }
         })
       }
@@ -132,10 +129,7 @@ export default function GatewayDetail(props) {
             setdataSource(data)
             setTotal(total)
           } else {
-            messageApi.open({
-              type: 'error',
-              content: res.errMsg
-            })
+            message.error(res.errMsg)
           }
         })
       }
@@ -152,10 +146,7 @@ export default function GatewayDetail(props) {
             setdataSourceLog(data)
             setTotalLog(total)
           } else {
-            messageApi.open({
-              type: 'error',
-              content: res.errMsg
-            })
+            message.error(res.errMsg)
           }
         })
       }
@@ -163,13 +154,10 @@ export default function GatewayDetail(props) {
       const getGatewayImages = () => {//网关图片
         return CategoryImages({projectId:projectId,group:[detail.category]}).then(res => {
           let { success, data } = res
-          if (success && data) {
+          if (success) {
             setimgUrl(data[0].imageBase64)
           } else {
-            messageApi.open({
-              type: 'error',
-              content: res.errMsg
-            })
+            message.error(res.errMsg)
           }
         })
       }

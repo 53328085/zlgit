@@ -72,8 +72,8 @@ export default function Index() {
 
   const [dataSource, setDataSource] = useState([])
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
 
   const handleChange = (values) => {
     setPageNum(1)
@@ -107,6 +107,10 @@ export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
   const showAdd = () => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区!')
+      return;
+    }
     setModalTitle('新增配电房')
     setAddModal(true)
     form.resetFields();
@@ -204,10 +208,15 @@ export default function Index() {
   }
   // 只有当 areaId, pageNum 改变后才会重新创建订阅
   useEffect(()=>{
-    if(areaId == 0){
-      return
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
     }else{
-      queryRoom()
+      if(areaId == 0 || !areaId){
+        return
+      }else{
+        queryRoom()
+      }
     }
   },[areaId, pageNum])
 

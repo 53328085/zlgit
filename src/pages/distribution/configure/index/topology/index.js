@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRequest } from 'ahooks';
-import { Select, Button, Table, Space, Modal } from 'antd';
+import { Select, Button, Table, Space, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import {useSelector} from 'react-redux'
 import {utils, writeFile} from 'xlsx'
@@ -14,8 +14,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   //园区选择
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const handleChange = (values) => {
     setPageNum(1)
     setAreaId(values)
@@ -49,10 +49,15 @@ export default function Index() {
     manual: true,
   })
   useEffect(()=>{
-    if(areaId == 0){
-      return
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
     }else{
-      queryRoom()
+      if(areaId == 0 || !areaId){
+        return
+      }else{
+        queryRoom()
+      }
     }
   },[areaId])
   const ChangeRoom = values => {
@@ -98,24 +103,16 @@ export default function Index() {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      regionName:'正泰杭州园区',
-      distributionName:'1号楼低压配电房',
-      distributionAddress:'1号楼高压配电房',
-      tag:'一次图'
-    },{
-      id: 2,
-      regionName:'正泰杭州园区',
-      distributionName:'2号楼低压配电房',
-      distributionAddress:'2号楼高压配电房',
-      tag:'一次图'
+  const data = []
+
+
+  const showAdd = () => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区!')
+      return;
     }
-  ]
-
-
-  const showAdd = () => {}
+    window.open(`/topology`, '_blank')
+  }
 
   const edit = (record) => {
     console.log(record)
@@ -173,7 +170,7 @@ export default function Index() {
         <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>
         新增
       </Button>
-      <Table style={{marginTop:'16px'}} columns={columns} dataSource={data} rowKey='id'></Table>
+      <Table style={{marginTop:'16px'}} columns={columns} bordered dataSource={data} rowKey='id'></Table>
       <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
         <div className={style.deleteHeader}>删除提示</div>
         <div className={style.deleteBody}>

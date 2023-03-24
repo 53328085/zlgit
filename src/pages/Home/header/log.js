@@ -131,7 +131,7 @@ export default function Log() {
   const navgite = useNavigate()
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
-    
+   console.log(roleType) 
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
@@ -211,7 +211,7 @@ export default function Log() {
         { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
           <span>项目设置</span>
         </Idiv4>):null}
-        { roleType < 4 ? (<Idiv2 onClick={projectcfg}>
+        { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
         </Idiv2>):null}
         </>

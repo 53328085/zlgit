@@ -19,8 +19,8 @@ export default function Index() {
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const changeArea = (value) => {
     setAreaId(value)
   }
@@ -42,7 +42,8 @@ export default function Index() {
     manual: true
   })
   useEffect(()=>{
-    if(areaId == 0){
+    if(areaId == 0 || !areaId){
+      message.error('当前项目尚未配置园区!')
       return
     }else{
       setParams([{id:areaId, level: 1}])

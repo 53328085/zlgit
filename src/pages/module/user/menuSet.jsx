@@ -94,10 +94,16 @@ const Tabsbox = styled(Tabs)`
     })) 
     const saveMenu = async () => { 
         const getno = (data) => {
+          let include = ['0101', '0102', '0103', '0104'];
           let Nos = []
             for(let [key, value] of Object.entries(data)) {
                if(Array.isArray(value) && value.length > 0) {
-                  Nos = [...Nos, ...value]
+                  let i = value[0].slice(0, 4)
+                  if (!include.includes(i)) {
+                    Nos = [...Nos, i, ...value]
+                  }else {
+                    Nos = [...Nos, ...value]
+                  }
                }
             }
           return [...new Set(Nos)]
@@ -346,7 +352,7 @@ const Tabsbox = styled(Tabs)`
           <Checkdiv>
             
              <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll} className="checktitle">
-                       {title}模块
+                       {title}
              </Checkbox>
              
             <CheckboxGroup  value={checkedList} onChange={onChange} >

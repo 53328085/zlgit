@@ -245,9 +245,9 @@ export class EnergyComprehensive {
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
     static QueryStorageControlInfo = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}`);
-
-
-
+    static QueryStrategyList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStrategyList?projectId=${projectId}&areaId=${areaId}`);
+    static QueryPcsList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryPcsList?projectId=${projectId}&areaId=${areaId}`);
+    
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
     static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
     
@@ -1128,6 +1128,11 @@ export const Monitoring = {
   RuntimeCamera:{
     Statistics: (projectId,areaId) => server.get(`/Monitor/RuntimeCamera/Statistics?projectId=${projectId}&areaId=${areaId}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
+  },
+  //系统日志
+  RuntimeLog:{
+    QueryOperationLogs: (data) => server.post(`/Monitor/RuntimeLog/QueryOperationLogs`, data),//操作日志
+    QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
   }
 }
 //运维管理
@@ -1519,4 +1524,9 @@ export class AlarmManagement {
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
   static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)
   static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
+}
+//储能--环境监控
+export class StorageEnvironmentRuntime {
+  static queryEnvironmentInfo = (projectId, areaId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}`)
+  static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&stroageRoomId=${storageRoomId}&date=${date}`)
 }

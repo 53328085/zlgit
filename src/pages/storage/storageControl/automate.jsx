@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Divider } from 'antd'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
 import {nanoid} from "@reduxjs/toolkit"
 import imgurl from './icon'
@@ -22,17 +22,23 @@ const Mainbox = styled.div`
         column-gap: 16px;
         background-color: #fff;
         padding: 16px;
+      
         .topleft {
+            display: grid;
+            grid-template-rows: 36px 1fr 54px;
+            .title {
+               background-color: #000033;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               color:#fff;
+            }
+            .content {
             grid-auto-rows: 48px;
             row-gap: 16px;
             display: grid;
-            border: 1px solid #d7d7d7;
-            .move {
-                grid-column: -1 / -2;
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-            }
+            border: 1px solid #d7d7d7; 
+            padding: 16px;
             .plan {
                 position: relative;
                 display: flex;
@@ -61,7 +67,13 @@ const Mainbox = styled.div`
                  align-items: center
                 } */
              }
-               
+            }
+            .footer {
+                background-color: #e4e4e4;
+                display: flex;
+                align-items: center;
+                justify-content: space-evenly;
+            }
           }
           .topright {
              border: 1px solid rgba(215, 215, 215, 1); 
@@ -113,11 +125,23 @@ const Mainbox = styled.div`
 const Formbox = styled(Form)`
     && {
         display: grid;
-        grid-auto-rows: 36px;
+        grid-template-rows: repeat(5, 36px);
+        grid-template-columns: repeat(2, 496px);
       //  grid-template-columns: 646px;
         row-gap: 32px;
+        column-gap: 64px;
         padding-top: 32px;
         padding-left: 16px;
+        grid-auto-flow: column;
+        .priority {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        .date {
+            grid-column: 2;
+            grid-row: 2;
+        }
+      
        .ant-form-item {
         margin-bottom: 0px;
        }
@@ -228,13 +252,10 @@ const Datebox = styled.div`
 `
  function Automate({projectId, areaId, startTime, Strategy, CModal}) {
   const [nameform] = Form.useForm()
-  const [plans, setPlan] = useState([
-    {name: '充电计划', id: 1},
-    {name: '放电计划', id: 2},
-    {name: '维护计划', id: 3},
-  ])  
-
-  const [curplan, setCurplan] = useState(plans[0]?.id)
+  const [plans, setPlan] = useState([])  
+  const [strategy, setStrategy] = useState([])
+  const [pcs, setPcs] = useState([])
+  const [curplan, setCurplan] = useState()
   const [isView, setIsview] = useState(false)
   const pref = useRef()
   const planName = useRef('')
@@ -248,9 +269,44 @@ const Datebox = styled.div`
      pref.current.onOpen()
 
   }
-
+  const QueryStrategyList = async () => {
+     try {
+        let {success, data} = await  StorageControlRuntime.QueryStrategyList(projectId, areaId)
+        success && setStrategy([...data])
+        !success && setStrategy([])
+     } catch (error) {
+        console.log(error)
+     }
+    
+ } 
+ const QueryPcsList = async () => {
+    try {
+       let {success, data} = await  StorageControlRuntime.QueryPcsList(projectId, areaId)
+       success && setPcs([...data])
+       !success && setPcs([])
+    } catch (error) {
+       console.log(error)
+    }
+   
+} 
   const getPlans = async () => {
-     let {success} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
+    try {
+        let {success, data} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
+
+        if(success && Array.isArray(data) && data.length > 0) {
+            setCurplan(data[0].id)
+            setPlan([...data])
+        }else {
+            success && setPlan([]) 
+            setCurplan(null)
+        }
+        
+        
+    } catch (error) {
+        console.log(error)
+    }
+     
+
   }
   const planOk = () => {
     let {planName} = nameform.getFieldsValue(); 
@@ -263,25 +319,32 @@ const Datebox = styled.div`
   const updatestate = () => {}
   useEffect(() => {
     getPlans()
+    QueryStrategyList()
+    QueryPcsList()
   }, [areaId])
   return (
     <Mainbox>
         <div className='top'>
             <div className='topleft'> 
-                 {plans.map(p => <div key={nanoid()} className={curplan == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
-                     {p.name}  {curplan == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
-                    </div>)
-                    } 
+                <div className='title'>
+                    运行计划
+                </div>
+                <div className='content'>
+                    {plans.map(p => <div key={nanoid()} className={curplan == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
+                        {p.name}  {curplan == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
+                        </div>)
+                        } 
                    
-                 <div className='plan' onClick={addplan}>+</div>
-                 { showarrow && <div className='move'>
-                   <CaretUpFilled style={{fontSize: '34px'}} /> <CaretDownFilled style={{fontSize: '34px'}} />
+                    <div className='plan' onClick={addplan}>+</div>
+                
                  </div>
-                 }
+                 <div className='footer'> 
+                   <CaretUpFilled style={{fontSize: '34px'}} /> <CaretDownFilled style={{fontSize: '34px'}} /> 
+                 </div>
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview></Planview> : <Strategy /> }
+                { isView ?  <Planview></Planview> : <Strategy data={strategy} pcs={pcs} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -376,7 +439,8 @@ const Planview = () => {
         </Titlelayout>
     )
 }
-const Strategy = ({name='自动策略'}) => {
+const Strategy = ({data, pcs}) => {
+   let checkpcs = pcs?.map(p => ({label: p.name, value: p.id})) || [];
    const [options, setOptions] = useState(
     [
       {label: '周一', value: 1},
@@ -389,79 +453,72 @@ const Strategy = ({name='自动策略'}) => {
     ]
    )
    return (
-      <Titlelayout title={name} bordered={'n'}>
-         <Formbox style={{width: '640px'}} labelCol={{flex: '96px'}} labelAlign="left">
-            <Item  label="模板名称">
-                <Space>
-                <Item noStyle>
-                    <Input style={{width: '200px'}} />
-                </Item>
-                <Text>最长8个字符</Text>
-                </Space>
+      <Titlelayout title='运行计划设置' bordered={'n'}>
+         <Formbox   labelCol={{flex: '96px'}} labelAlign="left">
+          
+            <Item  label="模板名称" tooltip="最长8个字符" name="name">
+                 <Input style={{width: '200px'}} />
             </Item>
-            <Item  label="执行周期">
+            <Item  label="执行周期" name="executionCycle">
                 <Select
                   style={{width: '200px'}}
                   options={[
                     {
                         label: '每天重复',
-                        value: 'day'
+                        value: 1
                     },
                     {
                         label: '长期',
-                        value: 'longtime'
+                        value: 2
                     },
                     {
                         label: '每周重复',
-                        value: 'week'
+                        value: 3
                     }
                   ]}
                 ></Select>               
             </Item>
-            <Item  label="优先级">
+            
+            <Item label="选择重复" name="dateChoose"  className='datechoose' >
+                <Checkbox.Group options={options}    />  
+            </Item>
+             
+            <Item  label="策略模板" name="strategyId">
+                <Select
+                  fieldNames={{label: 'name', value: 'id'}}
+                  style={{width: '100%'}}
+                  options={data}
+                ></Select>               
+            </Item>
+            <Item  label="储能子系统" name="pcsIds">
+                 <Checkbox.Group options={checkpcs}    />        
+            </Item>
+            <Item  label="优先级" className='priority' name="priority">
                 <Select
                   style={{width: '200px'}}
                   options={[
                     {
                         label: '1',
-                        value: '1'
+                        value: 1
                     },
                     {
                         label: '2',
-                        value: '2'
+                        value: 2
                     },
                     {
                         label: '3',
-                        value: '3'
+                        value: 3
                     }
                   ]}
                 ></Select>               
             </Item>
-            <Item label="生效日期" >
+            <Item label="生效日期" className='date'>
                    <RangePicker style={{width: '100%'}} />
             </Item>
-            <Item label='' > 
+          {/*   <Item label='' > 
                    <Checkbox.Group options={options} defaultValue={[1,2,3,4,5,6]}    /> 
-            </Item>
-            <Item  label="策略模板">
-                <Select
-                  style={{width: '100%'}}
-                  options={[
-                    {
-                        label: '充电策略1',
-                        value: '1'
-                    },
-                    {
-                        label: '充电策略2',
-                        value: '2'
-                    },
-                    {
-                        label: '充电策略3',
-                        value: '3'
-                    }
-                  ]}
-                ></Select>               
-            </Item>
+            </Item> */}
+           
          </Formbox>
          
       </Titlelayout>

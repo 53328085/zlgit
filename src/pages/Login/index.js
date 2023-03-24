@@ -326,98 +326,83 @@ function UserLog() {
       : "10.5.7.60";
   const submit = async (value) => {
     const { name, pwd } = value;
-    let { success, errMsg, data } = await dispatch(
-      loginByName({ name, pwd })
-    ).unwrap();
+    let { success, errMsg, data: usedata } = await dispatch(loginByName({ name, pwd })).unwrap();
     if (success) {
-      if (data.roleType == 1 || data.roleType == 2) {
-        navigate("/projectlist", {});
-      } else if (data.roleType == 3 || data.roleType == 4) {
-        try {
-          let {
-            data: dataQueryMenus,
-            success,
-            errMsg,
-          } = await ProjectList.QueryMenus(data.projectId);
-          if (success && Array.isArray(dataQueryMenus)) {
-            try {
-              const setMenus = dataQueryMenus.filter((m) => {
-                ["0101", "0103"].includes(m.no);
-              });
-
-              const runMenus = dataQueryMenus
-                .filter(
-                  // && m.no !== "0102"
-                  (m) => m.parentNo == "01" && m.select == 1
-                )
-                .filter((m) => !["0101", "0102", "0103"].includes(m.no)); // 运行功能 菜单
-              let exclude = ["01", "02", "0101", "0102", "0103", "0104"]; // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
-
-              const sidermenu = dataQueryMenus
-                .filter((m) => m.parentNo != "01")
-                .filter((m) => m.parentNo != "02")
-                .filter((m) => !exclude.includes(m.no));
-
-              const siderRunMenus = {}; // 运行功能 选择的子菜单
-              runMenus.forEach((item) => {
-                console.log(item);
-                let { no, key, parentNo } = item;
+      if (usedata.roleType == 1 || usedata.roleType == 2)  return navigate("/projectlist", {})
+      if (usedata.roleType == 3 || usedata.roleType == 4) {
+     let {data ,success,errMsg,} = await ProjectList.QueryMenus(usedata.projectId);
+       try {
+          if (success && Array.isArray(data)) { 
+              
+               const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+               const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+             //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
+               const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+               let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+              
+               const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+      
+               const siderRunMenus = {}; // 运行功能 选择的子菜单
+              // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+               runMenus.forEach(item => {
+                let {no, key, parentNo} = item 
+                if (!exclude.includes(item.no)) { 
+                   siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
+                   
+                }   
+               }) 
+            /*    allRunMenus.forEach(item => {
+                let {no, key, parentNo} = item 
                 if (!exclude.includes(item.no)) {
-                  siderRunMenus[key] = sidermenu.filter(
-                    (m) => m.parentNo == no && m.select == 1
-                  );
-                }
-              });
-              const siderDesignerMenus = {};
-              const menus = {
+                   allsinderRunMenus[key] = sidermenu?.filter(m => m.parentNo == no) 
+                }   
+               })  */
+               const siderDesignerMenus = {};
+               designerMenus.forEach(item => {
+                let {no, key, parentNo} = item 
+                if (!exclude.includes(item.no)) {
+                  siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+                }   
+               }) 
+               const menus =  {
+                designerMenus, 
                 siderDesignerMenus,
                 runMenus,
-                siderRunMenus,
-                setMenus,
-                projectId: data.projectId,
-              };
-              let type = 2;
-              dispatch(getMenus(menus));
-              dispatch(configProject(type === 1));
-              if (type == 2) {
-                let runitem =
-                  runMenus?.find((item) => item.no == "0104") || runMenus[0]; //此处还需要增加404页面路径
-                projectRun(runitem);
-              }
-
-              try {
-                let { success: lsuccess, data: levelData } =
-                  await Area.QueryAll({
-                    projectId: data.projectId,
-                    level: 1,
-                    parentId: 0,
-                  });
-                lsuccess && dispatch(getOnelevel(levelData));
+                siderRunMenus, 
+                setMenus,        
+                projectId: usedata.projectId,
+               }
+               dispatch(getMenus(menus));
+               dispatch(configProject(type === 2))
+               try {
+                let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: usedata.projectId,level: 1,parentId: 0})  
+                lsuccess && dispatch(getOnelevel(levelData || []));
                 !lsuccess && dispatch(getOnelevel([]));
               } catch (error) {
-                console.log(error);
+                 console.log(error)
               }
               try {
-                let { success: sces, data: shitfsData } =
-                  await eneryShift.queryShifts(data.projectId);
+                let {success: sces, data: shitfsData} = await eneryShift.queryShifts(usedata.projectId)
                 sces && dispatch(getshifts(shitfsData || []));
                 !sces && dispatch(getshifts([]));
               } catch (error) {
-                console.log(error);
+                console.log(error)
               }
-            } catch (error) {
-              console.log(error);
-            }
-          } else {
+              let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
+              projectRun(runitem)
+          }
+              
+           
+           else {
             return message.warning(errMsg || "数据出错,请重试");
           }
         } catch (error) {
           console.log(error);
         }
       }
+    } else {
+      message.warning(errMsg || "系统繁忙,请稍后再试");
     }
-
-    if (!success) message.warning(errMsg || "系统繁忙,请稍后再试");
   };
   const onFinishFailed = (error) => {
     console.log(error);

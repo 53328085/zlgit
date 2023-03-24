@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {useRequest} from 'ahooks'
 import {UserReportApi} from '@api/api.js'
+import { useSelector, useStore, useDispatch } from 'react-redux'
 import style from './style.module.less'
 import { Select,Radio, DatePicker, Button } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
@@ -8,9 +9,18 @@ import PageList from './pageList'
 import searchFile from './images/searchFile.png'
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
+import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+
 
 
 export default function Index() {
+  const projectId = useSelector(selectProjectId)
+  const areaList = useSelector(selectOneLevel)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
+  let [areaId, setAreaId] = useState(1)
+  const changeArea = (value) => {
+    setAreaId(value);
+  };
   const {Option} = Select
   const options = [{
     label:'月度报告',
@@ -49,15 +59,24 @@ export default function Index() {
     <div className={style.content}>
       <div className={style.selectDiv}>
         <div className={style.item}>
-          <div className={style.itemTitle}>园区选择</div>
+        <div className={style.itemTitle}>{areaList[0]?.levelName || '园区'}选择</div>
+        {/* <span style={{ marginLeft: "16px", marginRight: 16 }}>{areaList[0]?.levelName || '园区'}选择</span> */}
           <Select
-            placeholder="请选择园区"
-            style={{width: '324px'}}
-          >
-            <Option value="1">正泰物联全部园区</Option>
-            <Option value="2">正泰物联滨江园区</Option>
-            <Option value="3">正泰物联温州园区</Option>
-          </Select>
+              placeholder="请选择园区"
+              style={{width: '324px'}}
+              size="middle"
+              key={defaultArea}
+              defaultValue={defaultArea}
+              onChange={changeArea}
+            >
+              {areaList.map((item) => {
+                return (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
         </div>
         <div className={style.item}>
           <div className={style.itemTitle}>报告类型</div>

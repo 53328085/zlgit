@@ -284,6 +284,9 @@ export default function Index() {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {
         formmodal.current.onCancel()
+        navigate(`/config/designerCommon/project?item=set`, {
+          state: { type: 'config', primary: 'designerCommon',  title: '项目设置', nested: 'project'  } 
+        })
        }})
        !success && custMsg({content: errMsg || '数据出错', type: 'warning'})
     }).catch(e => {
@@ -332,9 +335,7 @@ export default function Index() {
           siderDesignerMenus,
           runMenus,
           siderRunMenus, 
-          setMenus,
-         // allRunMenus,
-        //  allsinderRunMenus,
+          setMenus,        
           projectId: id,
          }
          dispatch(getMenus(menus));
@@ -379,7 +380,7 @@ export default function Index() {
     })
   };
 
-  const projectDesigner = ({key, label}) => {
+ const projectDesigner = ({key, label}) => {
     navigate(`/config/${key}/project`, {
       state: { type: 'config', primary: key,  title: label, nested: 'project'  } 
     })
