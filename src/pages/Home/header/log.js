@@ -177,10 +177,11 @@ export default function Log() {
       state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
     })
   }
-  const onConfigure = () => {
+
+  const onConfigure = () => {   // 
     dispatch(configProject(true));
-    navgite("/config/designerCommon/project", {
-      state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
+    navgite("/config/designerCommon/base", {
+      state: {type: 'config', nested: "base",  title: "基础设置", primary: 'designerCommon' },
     })
   }
   const projectcfg =() => {

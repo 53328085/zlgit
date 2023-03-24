@@ -4,6 +4,8 @@ import {Typography, Space, Form, Input, Select, Switch, message} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
 import {User} from '@api/api.js'
+import {useSelector} from 'react-redux'
+import {selectUser} from "@redux/user";
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
@@ -24,6 +26,8 @@ export default function Account({projectId, CModal}) {
  const newpwd = useRef(null)
  const [Record, setRecord] = useState({})
  const [isAdd, setIsAdd] = useState(true)
+ const {roleType} = useSelector(selectUser) || {};
+ const showview = roleType == 1 || roleType == 2
  const title = isAdd ? '新增账号' : '编辑账号';
 const showModl = () => { 
    setIsAdd(true)
@@ -177,7 +181,9 @@ const showModl = () => {
 }
  
   return (
-     <Mainbox>
+  <Mainbox>
+     {  showview ? 
+        <>
         <Form form={form} layout="inline" initialValues={{alike: ''}}>
             <Form.Item name="alike" label="账号查询">
                 <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
@@ -279,6 +285,9 @@ const showModl = () => {
      <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
         <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
      </CModal>
+     </>
+       : null
+                  }
      </Mainbox>
      
   )
