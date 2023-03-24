@@ -373,7 +373,7 @@ function UserLog() {
                 projectId: usedata.projectId,
                }
                dispatch(getMenus(menus));
-
+               dispatch(configProject(type === 2))
                try {
                 let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: usedata.projectId,level: 1,parentId: 0})  
                 lsuccess && dispatch(getOnelevel(levelData || []));

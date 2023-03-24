@@ -131,7 +131,7 @@ export default function Log() {
   const navgite = useNavigate()
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
-    
+   console.log(roleType) 
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
