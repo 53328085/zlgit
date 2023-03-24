@@ -125,7 +125,7 @@ const Mainbox = styled.div`
 const Formbox = styled(Form)`
     && {
         display: grid;
-        grid-template-rows: repeat(4, 36px);
+        grid-template-rows: repeat(5, 36px);
         grid-template-columns: repeat(2, 496px);
       //  grid-template-columns: 646px;
         row-gap: 32px;
@@ -141,6 +141,7 @@ const Formbox = styled(Form)`
             grid-column: 2;
             grid-row: 2;
         }
+      
        .ant-form-item {
         margin-bottom: 0px;
        }
@@ -252,7 +253,8 @@ const Datebox = styled.div`
  function Automate({projectId, areaId, startTime, Strategy, CModal}) {
   const [nameform] = Form.useForm()
   const [plans, setPlan] = useState([])  
-
+  const [strategy, setStrategy] = useState([])
+  const [pcs, setPcs] = useState([])
   const [curplan, setCurplan] = useState()
   const [isView, setIsview] = useState(false)
   const pref = useRef()
@@ -267,7 +269,26 @@ const Datebox = styled.div`
      pref.current.onOpen()
 
   }
-
+  const QueryStrategyList = async () => {
+     try {
+        let {success, data} = await  StorageControlRuntime.QueryStrategyList(projectId, areaId)
+        success && setStrategy([...data])
+        !success && setStrategy([])
+     } catch (error) {
+        console.log(error)
+     }
+    
+ } 
+ const QueryPcsList = async () => {
+    try {
+       let {success, data} = await  StorageControlRuntime.QueryPcsList(projectId, areaId)
+       success && setPcs([...data])
+       !success && setPcs([])
+    } catch (error) {
+       console.log(error)
+    }
+   
+} 
   const getPlans = async () => {
     try {
         let {success, data} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
@@ -298,6 +319,8 @@ const Datebox = styled.div`
   const updatestate = () => {}
   useEffect(() => {
     getPlans()
+    QueryStrategyList()
+    QueryPcsList()
   }, [areaId])
   return (
     <Mainbox>
@@ -321,7 +344,7 @@ const Datebox = styled.div`
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview></Planview> : <Strategy /> }
+                { isView ?  <Planview></Planview> : <Strategy data={strategy} pcs={pcs} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -416,10 +439,8 @@ const Planview = () => {
         </Titlelayout>
     )
 }
-const Strategy = ({name='自动策略'}) => {
- /*   const QueryStrategyList = () => {
-    QueryStrategyList
-   } */
+const Strategy = ({data, pcs}) => {
+   let checkpcs = pcs?.map(p => ({label: p.name, value: p.id})) || [];
    const [options, setOptions] = useState(
     [
       {label: '周一', value: 1},
@@ -435,75 +456,58 @@ const Strategy = ({name='自动策略'}) => {
       <Titlelayout title='运行计划设置' bordered={'n'}>
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left">
           
-            <Item  label="模板名称" tooltip="最长8个字符">
+            <Item  label="模板名称" tooltip="最长8个字符" name="name">
                  <Input style={{width: '200px'}} />
             </Item>
-            <Item  label="执行周期">
+            <Item  label="执行周期" name="executionCycle">
                 <Select
                   style={{width: '200px'}}
                   options={[
                     {
                         label: '每天重复',
-                        value: 'day'
+                        value: 1
                     },
                     {
                         label: '长期',
-                        value: 'longtime'
+                        value: 2
                     },
                     {
                         label: '每周重复',
-                        value: 'week'
+                        value: 3
                     }
                   ]}
                 ></Select>               
             </Item>
-            <Item  label="策略模板">
+            
+            <Item label="选择重复" name="dateChoose"  className='datechoose' >
+                <Checkbox.Group options={options}    />  
+            </Item>
+             
+            <Item  label="策略模板" name="strategyId">
                 <Select
+                  fieldNames={{label: 'name', value: 'id'}}
                   style={{width: '100%'}}
-                  options={[
-                    {
-                        label: '充电策略1',
-                        value: '1'
-                    },
-                    {
-                        label: '充电策略2',
-                        value: '2'
-                    },
-                    {
-                        label: '充电策略3',
-                        value: '3'
-                    }
-                  ]}
+                  options={data}
                 ></Select>               
             </Item>
-            <Item  label="储能子系统">
-                 <Checkbox.Group options={[
-                    {
-                    label: 'PCS_1', value: 1
-                    },
-                    {
-                        label: 'PCS_2', value: 2
-                     },
-                     {
-                        label: 'PCS_3', value: 3
-                     }
-                 ]}    />        
+            <Item  label="储能子系统" name="pcsIds">
+                 <Checkbox.Group options={checkpcs}    />        
             </Item>
-            <Item  label="优先级" className='priority'>
+            <Item  label="优先级" className='priority' name="priority">
                 <Select
                   style={{width: '200px'}}
                   options={[
                     {
                         label: '1',
-                        value: '1'
+                        value: 1
                     },
                     {
                         label: '2',
-                        value: '2'
+                        value: 2
                     },
                     {
                         label: '3',
-                        value: '3'
+                        value: 3
                     }
                   ]}
                 ></Select>               
