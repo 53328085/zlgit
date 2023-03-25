@@ -1135,7 +1135,7 @@ export const Monitoring = {
     QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
   }
 }
-//运维管理
+//运维管理(运行)
 export class operation {
  static  AlarmCurrent = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmCurrent`,{params:data})//获取当前告警
  static  AlarmMonth = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmMonth`,{params:data})//获取本月告警
@@ -1152,7 +1152,10 @@ export class operation {
  static  InspectionDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`,{params:data})//巡检详细
  
 }
-
+//运维管理(设计)
+export class operationDesigin{
+  // static QueryPageDevice = () => server.post()
+}
 //电气安全
 export class safeElectric {
   static TodayWarningStatistics = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`, { params: data })//查询今日告警
