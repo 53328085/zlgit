@@ -1154,7 +1154,8 @@ export class operation {
 }
 //运维管理(设计)
 export class operationDesigin{
-  // static QueryPageDevice = () => server.post()
+  static QueryPageDevice = (data) => server.post(`/Maintenance/MaintenanceDesigner/QueryPageDevice`,data)//设备管理
+  static InspectionPlanPage = (data) => server.post(`/Maintenance/MaintenanceDesigner/InspectionPlanPage`,data)//巡检计划
 }
 //电气安全
 export class safeElectric {
