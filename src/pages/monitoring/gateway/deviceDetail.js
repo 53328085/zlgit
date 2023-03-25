@@ -22,10 +22,10 @@ export default function GatewayDetail(props) {
     console.log(search)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
-    // const [messageApi, contextHolder] = message.useMessage();
     const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
+    let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
     const vlref = useRef(null)
@@ -120,7 +120,6 @@ export default function GatewayDetail(props) {
             let { success, data } = res
             if (success) {
                 sethistoryTrend(data)
-                console.log(JSON.parse(data))
                 charts()
             } else {
                 message.error(res.errMsg)
@@ -131,9 +130,7 @@ export default function GatewayDetail(props) {
         return HistoryTable(paramsTrend).then(res => {
             let { success, data } = res
             if (success ) {
-                //setDetail(data)
-
-                console.log(JSON.parse(data))
+                setHistoryTable(data)
                 // charts()
             } else {
                 message.error(res.errMsg)

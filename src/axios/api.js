@@ -1133,6 +1133,10 @@ export const Monitoring = {
   RuntimeLog:{
     QueryOperationLogs: (data) => server.post(`/Monitor/RuntimeLog/QueryOperationLogs`, data),//操作日志
     QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
+  },
+  //运行报告
+  RuntimeReport:{
+    QueryReport:(data) => server.get(`/Monitor/RuntimeReport/QueryReport?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}&date=${data.date}`),//
   }
 }
 //运维管理(运行)

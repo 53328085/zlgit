@@ -3,8 +3,8 @@ import style from './style.module.less'
 import {drawEcharts} from '@com/useEcharts'
 import { Table } from "antd";
 
-export default function PageList() {
-
+export default function PageList(props) {
+console.log(props.query)
     const Header = ()=>{
         return (
             <div className={style.pageHeader}>
@@ -16,23 +16,21 @@ export default function PageList() {
 
     const datasetDay = {
         dimensions: ["time", "日用电量(kWh)",],
-        source: [
-          { time: "9-1", "日用电量(kWh)":3699.23 },
-          { time: "9-2", "日用电量(kWh)":5500.36 },
-          { time: "9-3", "日用电量(kWh)":5062.25 },
-          { time: "9-4", "日用电量(kWh)":4412.36 },
-          { time: "9-5", "日用电量(kWh)":3427.85 },
-          { time: "9-6", "日用电量(kWh)":3787.65 },
-          { time: "9-7", "日用电量(kWh)":5058.96 },
-          { time: "9-8", "日用电量(kWh)":6333.23 },
-          { time: "9-9", "日用电量(kWh)":5425.63 },
-          { time: "9-10", "日用电量(kWh)":6874.59 },
-          { time: "9-11", "日用电量(kWh)":7125.36 },
-          { time: "9-12", "日用电量(kWh)":7423.25 },
-        ],
-      };
+        source: [],
+      };//props.query?.eleConsums
     const [dataset, setDataset] = useState(datasetDay);
-
+    useEffect(() => {
+        if(props.query){
+            let arr = []
+            for (let i = 0; i < props.query.eleConsums.length; i++) {
+              arr.push({
+                time: props.query.eleConsums[i].name,
+                "日用电量(kWh)":  props.query.eleConsums[i].value,
+              })
+            }
+            setDataset(() => ({ dimensions: ["time", "日用电量(kWh)"], source: arr }))
+        }
+      }, []);
     const datasetLine = {
         dimensions: ["time", "tokyo",],
         source: [
@@ -252,7 +250,7 @@ export default function PageList() {
                         </div>
                     </div>
                     <div className={style.mainTitle}>2.用电量分析</div>
-                    <div className={style.mainText}>该变配电站监测周期内总耗电量160194kW·h， 日平均耗电量5167.55kW·h，单日最大耗电量7432.25kW·h，日耗电情况详见下图:</div>
+                    <div className={style.mainText}>该变配电站监测周期内总耗电量{props.query?.e}kW·h， 日平均耗电量{props.query?.avgE}kW·h，单日最大耗电量{props.query?.maxE}kW·h，日耗电情况详见下图:</div>
                     <div className={style.currChart} id="currChart"></div>
                 </div>
             </div>

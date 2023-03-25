@@ -11,7 +11,7 @@ import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
 import moment from 'moment';
 import { themeData } from './themeData'
-
+import {selectUser} from '@redux/user'
 import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
@@ -20,8 +20,8 @@ import {  leftControl, bottomControl, rightControl, topControl, stopControl,Moni
 
 export default function Index() {
   const { RuntimeCamera:{ Statistics, Overview } } = Monitoring
+  const {token} = useSelector(selectUser); 
   const projectId = useSelector(selectProjectId)
-  console.log(projectId)
   const { Panel } = Collapse;
   const { Item } = Form
   const [form] = Form.useForm();
@@ -111,7 +111,7 @@ let [areaId,setAreaId]=useState('')
     setTimeout(() => {
       player = new EZUIKit.EZUIKitPlayer({
         id: 'replay',
-        accessToken: 'at.9cl77yip98abfs927jrhscoj8cagttcz-9nyz8ow4cj-1e2lldl-xfyg9vtih',
+        accessToken: token,
         url: "ezopen://open.ys7.com/G88471891/1.hd.live",
         width: 1280,
         height: 717,
@@ -247,17 +247,18 @@ let [areaId,setAreaId]=useState('')
   }
 
   const showCameraDialog = (record) => {
-    if (record.AccessMode == 1) {
-      showModal()
-    } else {
-      if (record.AccessMode == 2) {
-        setLocalModal(true);
-        setCameraTitle(record.CameraName)
-        // setwsType('h264')
-        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-      }
-    }
+    message.error('暂未开通')
+    // if (record.AccessMode == 1) {
+    //   showModal()
+    // } else {
+    //   if (record.AccessMode == 2) {
+    //     setLocalModal(true);
+    //     setCameraTitle(record.CameraName)
+    //     // setwsType('h264')
+    //     setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+    //     chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+    //   }
+    // }
   }
 
 
@@ -450,7 +451,7 @@ let [areaId,setAreaId]=useState('')
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         <div className={style.tableList}>
-          <Table bordered columns={columns} dataSource={dataSource} rowKey='Id' size='small' pagination={false} />
+          <Table bordered columns={columns} dataSource={overView} rowKey='Id' size='small' pagination={false} />
         </div>
         <Pagination className={style.pageNum} current={pageNum} size="small" total={total} showTotal={showTotal} defaultPageSize={10} onChange={onChangePage} />
       </div>
