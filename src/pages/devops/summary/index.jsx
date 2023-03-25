@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 
-import { nanoid } from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
@@ -9,13 +8,14 @@ import { Form, Image, message, Progress, Select } from 'antd'
 //import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
 import { drawEcharts } from "@com/useEcharts";
 import { useSelector } from 'react-redux'
-import Mapcom from '@com/useMap'
+// import Mapcom from '@com/useMap'
 import BlueColumn from '@com/bluecolumn'
 import first from './imgs/first.png'
 import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
+import Map from './mapcomp'
 
 const Mainbox = styled.div`
   display: grid;
@@ -66,7 +66,7 @@ const Mainbox = styled.div`
       .cl {
         display: flex;
         align-items: center;
-        // justify-content: center;
+        padding-left:20px;
         color:#515151;
         font-size: 24px;
         font-weight: bold;
@@ -133,6 +133,7 @@ export default function Index() {
   const [task,setTask]=useState()//巡检任务
   const [datasetMonth,setDatasetMonth] =useState() //派单
   const [datasetMonthl,setDatasetMonthl]=useState()//告警事件
+  const [alarmPosition,setAlarmPosition] =useState()
   let params = {
     projectId,
     areaId: areavalue
@@ -199,6 +200,7 @@ export default function Index() {
       const { data: { all, one, two, three, alarmPosition }, errMsg, success } = await operation.AlarmCurrent(params)
       if (success) {
         setWarn({ all, one, two, three })
+        setAlarmPosition(alarmPosition)
       } else {
         message.error(errMsg)
       }
@@ -366,8 +368,8 @@ export default function Index() {
               </div>
             </div>
 
-            <Mapcom></Mapcom>
-
+            {/* <Mapcom></Mapcom> */}
+           {alarmPosition?<Map points={alarmPosition}></Map>:null} 
           </div>
 
           <div className='rigth'>

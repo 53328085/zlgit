@@ -135,7 +135,7 @@ const Timelinebox = styled(Timeline)`
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>(props.children.props.children?.length*2)}s 0s linear infinite
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*2)}s 0s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;
@@ -467,6 +467,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   const [pieData, setPieData] = useState()
   const [opieData, setOpieData] = useState()
   const [dateform] = Form.useForm()
+  const arealist = useSelector(state => state.system.onelevel)
   const getQueryWarningDistributed = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
     let params = {
       projectId,
@@ -527,12 +528,12 @@ const Alarm = ({ pref, opref, areaId }) => {
 
  
   useEffect(() => {
-  
-    if(!areaId)return 
+     console.log(areaId)
+    if(arealist.length===0)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
     const date = getdateformat(type, formvalue.datevalue)
-    // getQueryWarningDistributed(type, date)
+    getQueryWarningDistributed(type, date)
   }, [areaId])
   useEffect(()=>{
     drawEcharts(pref.current, {
@@ -593,6 +594,7 @@ const Alarm = ({ pref, opref, areaId }) => {
 //告警类型排名
 const AlarmRank = ({ bref, areaId }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const arealist = useSelector(state => state.system.onelevel)
   const [dateform] = Form.useForm()
   let lengend = { dimensions: ["type", "一级报警", "二级报警", "三级报警"] }
   const [datasetStack, setDatasetStack] = useState()
@@ -645,7 +647,7 @@ const AlarmRank = ({ bref, areaId }) => {
   }
 
   useEffect(() => {
-    if(!areaId)return 
+    if(arealist.length===0)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
 
