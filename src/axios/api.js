@@ -1158,7 +1158,8 @@ export class operation {
 }
 //运维管理(设计)
 export class operationDesigin{
-  // static QueryPageDevice = () => server.post()
+  static QueryPageDevice = (data) => server.post(`/Maintenance/MaintenanceDesigner/QueryPageDevice`,data)//设备管理
+  static InspectionPlanPage = (data) => server.post(`/Maintenance/MaintenanceDesigner/InspectionPlanPage`,data)//巡检计划
 }
 //电气安全
 export class safeElectric {
@@ -1531,6 +1532,11 @@ export class AlarmManagement {
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
   static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)
   static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
+  static AddAlarmEventOverrun = (data) => server.post(`Safe/Alarm/AddAlarmEventOverrun`,data)
+  static AddAlarmEventDeflection = (data) => server.post(`Safe/Alarm/AddAlarmEventDeflection`,data)
+  static AddAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/AddAlarmEventSOE`,data)
+  static AddAlarmEventCommunication = (data) => server.post(`Safe/Alarm/AddAlarmEventCommunication`,data)
+  static DeleteAlarmEvent = (projectId,id) => server.delete(`Safe/Alarm/DeleteAlarmEvent?projectId=${projectId}&id=${id}`)
 }
 //储能--环境监控
 export class StorageEnvironmentRuntime {

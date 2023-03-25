@@ -77,11 +77,31 @@
       font-style: normal;
       font-size: 16px;
     }
+    .addSourceTypeTable {
+      .editText {
+        color: #237ae4;
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      .deleteText {
+        color: #f33;
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
     .form {
       .divBox {
         display: flex;
         align-items: center;
         // justify-content: space-around;
+        .colorRed {
+          &::placeholder {
+            color: red !important;
+            font-size: 8px;
+          }
+        }
       }
       .qujianLi,
       .lessThan,
@@ -91,7 +111,7 @@
         justify-content: flex-start;
         position: relative;
         .title {
-          padding: 40px 35px 0 0px;
+          padding: 40px 20px 0 5px;
           text-align: left;
           font-size: 14px;
           display: inline-block;
@@ -217,36 +237,36 @@
   }
 }
 
-.deleteModal{
-  :global{
-      .ant-modal-footer{
-          border: none;
-          padding-right: 32px;
-          padding-bottom: 32px;
-      }
-      .ant-modal-body{
-          padding: 32px;
-      }
+.deleteModal {
+  :global {
+    .ant-modal-footer {
+      border: none;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    }
+    .ant-modal-body {
+      padding: 32px;
+    }
   }
-  .deleteHeader{
-      height: 32px;
-      border-left: 4px solid #ff4d4f;
-      font-size: 16px;
-      color: #ff4d4f;
-      line-height: 32px;
-      padding-left: 12px;
+  .deleteHeader {
+    height: 32px;
+    border-left: 4px solid #ff4d4f;
+    font-size: 16px;
+    color: #ff4d4f;
+    line-height: 32px;
+    padding-left: 12px;
   }
-  .deleteBody{
-      margin-top: 43px;
-      margin-left: 20px;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      color: #333;
-      .warnIcon{
-          width: 42px;
-          height: 42px;
-          margin-right: 12px;
-      }
+  .deleteBody {
+    margin-top: 43px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+    .warnIcon {
+      width: 42px;
+      height: 42px;
+      margin-right: 12px;
+    }
   }
 }

@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button } from 'antd'
+import { Select, Divider, Input, Button, message } from 'antd'
 import { useSelector } from 'react-redux'
 import Table from '@com/useTable'
+import {operationDesigin} from '@api/api'
 export default function Index() {
   const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
@@ -39,9 +40,16 @@ export default function Index() {
          }
       }
   `
+  const [tableParams,setTableParams]=useState({
+    pageNum:1,
+    pageSize:10
+  }) 
  
   const onelevel = useSelector(state => state.system.onelevel);
+  const projectId = useSelector(state => state.system.menus.projectId)
   const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName, id: 0 }, ...onelevel]), [onelevel]) : []
+  const [alike,setAlike] =useState()
+  const [areaId,setAreaId] = useState(onelevel.length>0?0:null)
   const columns = [
     {title:onelevel[0]?.levelName,dataIndex:''},
     {title:'安装地址',dataIndex:''},
@@ -53,7 +61,26 @@ export default function Index() {
     {title:'备注',dataIndex:''},
     {title:'操作',dataIndex:''}
   ]
+  //获取设备
+  const getQueryPageDevice=async ()=>{
+    let params={
+      projectId,
+      ...tableParams,
+      areaId,
+      alike
+
+    } 
+  const res =   await operationDesigin.QueryPageDevice(params)
+  if(res.success){
+
+  }else{
+    message.error(res.errMsg)
+  }
+  }
   const search = () => { }
+  useEffect(()=>{
+    getQueryPageDevice()
+  },[])
   return (
     <ContainerDiv>
       <BlueColumn name="设备管理" />
