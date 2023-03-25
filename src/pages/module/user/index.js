@@ -8,18 +8,22 @@ import CustContext from '@com/content.js'
 import Account from './account'
 import Power from './power'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId} from '@redux/systemconfig.js' 
+import {manager} from '@redux/user'  
 import CModal from '@com/useModal'
 export default function Index() {
   const projectId = useSelector(selectProjectId);
-  const [value, setvalue] = useState('account')
 
 
-  const tabs = [
+  const ismanager = useSelector(manager)
+  const tabs = ismanager ? [ 
+    {label: '权限管理', key: 'power'},
+  ] : [
     {label: '账号管理', key: 'account'},
     {label: '权限管理', key: 'power'},
    
   ]
+  const [value, setvalue] = useState(tabs[0].key)
   const propsData ={
     tabs,
     value,

@@ -5,6 +5,7 @@ import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} 
 import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user.js'
+import {manager } from '@redux/user'  
 import log from './log.png'
  
  
@@ -65,6 +66,7 @@ export default function Release({CModal, projectId}) {
   const [title, setTitle] = useState('')
  // const [moblies, setMoblie] = useState();
  const {mobile} = useSelector(selectUser)
+ const ismanager = useSelector(manager)
   const code =useRef();
   const stateV = useRef('');
   const [curProjectId, setCurProject] = useState();
@@ -152,6 +154,7 @@ const projectNameChange = (e) => {
   projectName.current = e.target.value
 }
 const delProject = async () => {
+
   try {
      if (!projectName.current.trim()) return message.warning('请输入项目名称')
     const {success, errMsg}  = await  DeleteProject(curProjectId, projectName.current);
@@ -185,10 +188,10 @@ const delProject = async () => {
                  </div>
                  <div className='right'>
                  <Switch key={stateV.current}  checkedChildren="发布"  unCheckedChildren="未发布" style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
-                 <Link underline type="danger" onClick={() => {
+                 {!ismanager && <Link underline type="danger" onClick={() => {
                    delmodal.current.onOpen()
                    setCurProject(item.id)}
-                  }>删除项目</Link>
+                  }>删除项目</Link>}
                  </div>
             </div>
             <div className="lower">

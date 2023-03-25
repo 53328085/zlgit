@@ -134,6 +134,13 @@ const Dcheckbox = styled.div`
   .ant-checkbox-disabled+span {
     color: #fff;
   }
+  .ant-checkbox.ant-checkbox-disabled+span {
+    color:#999;
+  }
+
+  .ant-checkbox.ant-checkbox-checked.ant-checkbox-disabled+span{
+    color:#fff;
+  }
   .ant-checkbox-wrapper.ant-checkbox-wrapper-checked {
     color:#fff;
     background-color: #237ae4;
@@ -188,7 +195,7 @@ export default function ProjectSet({projectId}) {
   const ismanager = useSelector(manager)
   const ismaintenance = useSelector(maintenance)
   const ispublish = useSelector(publishState)
-  console.log(ispublish)
+
 
 
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
@@ -363,6 +370,7 @@ const checkProject = (_, value) => {
  
 }
 const setAaddress = (value) => {
+  if (ispublish) return;
   try {
    console.log(value)
   let {lng, lat, address, province, city, district, street, streetNumber} = value
@@ -405,17 +413,23 @@ useEffect(() => {
       labelAlign="left"
       size="middle"
       scrollToFirstError={true}
+      disabled={ispublish}
       onFinish={onFinish}
+      validateMessages={
+       { required: "缺少'${label}' 数据"}
+      }
     >
      
       <Item label="项目ID" name="id">
         <Input placeholder="系统自增项目ID" disabled />
       </Item>
-      <Item label="项目名称" required name="name">
+      <Item label="项目名称"  name="name" rules={[{
+        required: true
+      }]}>
         <Input placeholder="请输入项目名称" />
       </Item>
       <Item label="项目有效期" required name="validStageTime" {...config}>
-        <DatePicker  showTime format="YYYY-MM-DD HH:mm:ss" />
+        <DatePicker   format="YYYY-MM-DD" />
       </Item>
       <Item label="默认模块">
           <Dcheckbox>
@@ -484,7 +498,7 @@ useEffect(() => {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}}   /> 
+              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
@@ -496,7 +510,7 @@ useEffect(() => {
                 validator: checkProject,
               },
             ]}>
-            <Cupload wpx={248} hpx={168} swpx={220} shpx={114}  /> 
+            <Cupload wpx={248} hpx={168} swpx={220} shpx={114} isDel={ispublish} /> 
             </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
