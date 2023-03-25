@@ -13,7 +13,6 @@ export default function Index() {
   const [datetype, setDatetype] = useState(1)
   const datetypeRef =useRef()
   datetypeRef.current = datetype
-  const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
   const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
   const buildRef= useRef(null)//建筑
   const lineRef = useRef(null)//线路
@@ -21,7 +20,7 @@ export default function Index() {
   const [form] = Form.useForm()
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
-  const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
+  const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]):[]
   const typeoptions = [{
     label: '日',
     value: 1
@@ -142,8 +141,11 @@ export default function Index() {
   }
   useEffect(() => {         
     // getAreaAll()
-    getQueryShifts()
+    if(oneLevel.length>0){
+      getQueryShifts()
     getQuery()
+    }
+    
   }, [])
   
   return (
@@ -163,7 +165,7 @@ export default function Index() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', background: '#fff' }}>
           <div style={{ display: 'flex', }}>
-            <Form.Item label={oneLevel[0].levelName} name="area">
+            <Form.Item label={oneLevel[0]?.levelName} name="area">
               <Select
                 style={{ width: 200 }}
                 fieldNames={{
@@ -171,7 +173,7 @@ export default function Index() {
                   value: "id"
                 }}
                 colon={false}
-                defaultValue={0}
+                defaultValue={oneLevel.length>0?0:null}
                 options={areaOptions}
                 onChange={changeArea}
               ></Select>

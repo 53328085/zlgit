@@ -99,7 +99,7 @@ import {
  const mapstyle = {
    height: '100%',
    width: '100%',
-   minHeight: '360px',
+   minHeight: '370px',
    minWidth: '410px'
  }
   return (

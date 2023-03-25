@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import style from './style.module.less';
 import { Select, Button, message } from 'antd';
 import OtherPage from './otherPage'
@@ -19,9 +19,9 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
-  const [areaName, setAreaName] = useState(areaList[0].name)
+  const [defaultArea, setDefaultArea] = useState()
+  const [areaId,setAreaId] = useState()
+  const [areaName, setAreaName] = useState()
   const changeArea = (value) => {
     setAreaId(value)
     areaList.map(item => {
@@ -40,7 +40,16 @@ export default function Index() {
   const goBack = () => {
     setDisplay(true)
   }
-
+ useEffect(()=> {
+  if(areaList.length == 0 || !areaList) {
+    message.error('当前项目尚未配置园区!')
+    return;
+  }else{
+    setDefaultArea(areaList[0].id)
+    setAreaName(areaList[0].name)
+    setAreaId(areaList[0].id)
+  }
+ },[])
 
   return (
     <div>

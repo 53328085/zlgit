@@ -27,6 +27,7 @@ export default function Index() {
   }
   const [headerData, setHeaderData] = useState({})
   const getFromChild = data => {
+    if(!data.areaId || data.areaId == 0) return;
     setHeaderData(data)
   }
 

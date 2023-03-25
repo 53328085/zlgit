@@ -12,7 +12,7 @@ const { Item } = Form
 export default function Index() {
     const projectId = useSelector(state => state.system.menus.projectId)
     const arealist = useSelector(state => state.system.onelevel)
-    const onelevel = arealist[0].levelName
+    const onelevel = arealist[0]?.levelName
     const [form] = Form.useForm()
     const [warndata,setWarndata]=useState(null)
     //获取告警
@@ -35,7 +35,11 @@ export default function Index() {
      
     }
     useEffect(()=>{
-        warnTotal() 
+        console.log(onelevel)
+        if(onelevel){
+            warnTotal() 
+        }
+       
     },[])
     return (
         <div className={style.warning}>
@@ -47,16 +51,15 @@ export default function Index() {
                     colon={false}
                     initialValues={
                         {
-                            area:0
+                            area:onelevel?0:null
                         }
                     }
                 >
                     <Item label={onelevel} name="area">
                         <Select
                             style={{ width: 200 }}
-                            options={[{ name: onelevel, id: 0 }, ...arealist]}
+                            options={onelevel?[{ name: onelevel, id: 0 }, ...arealist]:[]}
                             fieldNames={{ label: 'name', value: 'id' }}
-                           
                             onChange={changeArea}
                         >
                         </Select>

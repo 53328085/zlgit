@@ -3,7 +3,7 @@ import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
-import {  Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
@@ -17,9 +17,9 @@ import Table from '@com/useTable'
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
-  let [areaId, setAreaId] = useState(1)
+  let [areaId, setAreaId] = useState('')
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: [], categories: [] })
   const headerProps = {
@@ -100,13 +100,10 @@ export default function Index(props) {
   const getData = () => {//设备统计
     return RuntimeGatewayStatistics({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setStatistics(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -114,20 +111,17 @@ export default function Index(props) {
   const getGatewayUsed = () => {//使用的网关
     return QueryUsedGateway(projectId).then(res => {
       let { success, data } = res
-      if (success && data) {
+      if (success) {
         setoptionsGateway(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getOverviewData = () => {//设备统计
     return Overview(params).then(res => {
       let { success, data, total, pageNum } = res
-      if (success && data) {
+      if (success) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
@@ -136,41 +130,30 @@ export default function Index(props) {
         //  }
         setdataSource(data.details)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
 
   let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
-    return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
+    return CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
       let { success, data } = res
-      if (success && data) {
-        // setimageList(data)
-        if(data!=[]){
-          // console.log(data)
-          let imgList=[]
-            overView.details.map((item, index) => {
-              data.map((items,indexs)=>{
-                // console.log(data[indexs].category , item.category)
-                if (data[indexs].category == item.category) {
-                  imgList.push(data[indexs].imageBase64)
-                } else {
-                  // setimageList(()=>{imageList.push('')})
-                }
-              })
+      if (success) {
+        if (data != []) {
+          let imgList = []
+          overView.details.map((item, index) => {
+            data.map((items, indexs) => {
+              if (data[indexs].category == item.category) {
+                imgList.push(data[indexs].imageBase64)
+              } else {
+              }
             })
-            setimageList(imgList)
-          // console.log(imageList,imgList)
+          })
+          setimageList(imgList)
         }
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
@@ -181,7 +164,11 @@ export default function Index(props) {
 
   const getFromChild = data => {
     //园区id
-    setAreaId(data.areaId)
+    if (data.areaId == undefined) {
+      return
+    } else {
+      setAreaId(data.areaId)
+    }
   }
 
   const onChangeValue = e => {
@@ -209,16 +196,20 @@ export default function Index(props) {
     tableLoadRef.current.download()
   }//数据导出
   useEffect(() => {
-    getData()
-    queryData()
+    if (areaId) {
+      getData()
+      queryData()
+    }
   }, [areaId, changeTag])
   useEffect(() => {
-    getOverviewData()
-    console.log('getOverviewData')
+    if (areaId) {
+      getOverviewData()
+      console.log('getOverviewData')
+    }
   }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
   useEffect(() => {
     console.log(overView)
-    if (overView.categories ) {
+    if (overView.categories) {
       getGatewayImages()
       console.log(456)
     }
@@ -261,15 +252,15 @@ export default function Index(props) {
               options={[
                 {
                   value: 0,
-                  label: '全部(' + statistics.all + ')',
+                  label: '全部(' + (statistics.all==undefined?0:statistics.all) + ')',
                 },
                 {
                   value: 2,
-                  label: '正常(' + statistics.on + ')',
+                  label: '正常(' + (statistics.on==undefined?0:statistics.on) + ')',
                 },
                 {
                   value: 1,
-                  label: '失联(' + statistics.off + ')',
+                  label: '失联(' + (statistics.off==undefined?0:statistics.off) + ')',
                 },
               ]}
             /></div> : ''}
@@ -283,21 +274,21 @@ export default function Index(props) {
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         {isCard ? <div className={style.cardBox}>
-          {overView.details!=null?overView.details.map((item, index) => {
+          {overView.details != null ? overView.details.map((item, index) => {
             return <div key={index}>
-              <Link  to={`/gatewayDetail?sn=${item.sn}`}   target="_blank">
-                  <Icard img={imageList[index]? 'data:image/png;base64,'+imageList[index] : imgurl.category} title={item.name}
+              <Link to={`/gatewayDetail?sn=${item.sn}`} target="_blank">
+                <Icard img={imageList[index] ? 'data:image/png;base64,' + imageList[index] : imgurl.category} title={item.name}
 
-                    value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
-                    lastSampleTime={item.lastSampleTime} category={item.category} />
-                    </Link>
+                  value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
+                  lastSampleTime={item.lastSampleTime} category={item.category} />
+              </Link>
             </div>
-          }):''}
-      </div> : <div className={style.tableHead}>
-        <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef}></Table>
-      </div>}
-      <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
-    </div>
+          }) : ''}
+        </div> : <div className={style.tableHead}>
+          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef}></Table>
+        </div>}
+        <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
+      </div>
 
     </div >
   )

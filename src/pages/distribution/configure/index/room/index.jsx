@@ -7,14 +7,58 @@ import firstwarn from '@imgs/warning.png'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
 
 export default function Index() {
-  const { QueryAllArea } = AreaSetting
+  const isPublish = useSelector(publishState)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
-  const columns = [
+  const columns = isPublish ? [
+    {
+      align:'center',
+      title: '配电房名称',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    { 
+      align:'center',
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: '配电房容量(kVA)',
+      dataIndex: 'capacity',
+      key: 'capacity',
+      align:'center',
+    },
+    {
+      title: '申报需量(kW)',
+      dataIndex: 'demand',
+      key: 'demand',
+      align:'center',
+    },
+    {
+      title: '电压等级(kV)',
+      dataIndex: 'level',
+      key: 'level',
+      align:'center',
+    },
+    {
+      title: '变压器数量',
+      dataIndex: 'cnt',
+      key: 'cnt',
+      align:'center',
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+      align:'center',
+    }
+  ] : 
+  [
     {
       align:'center',
       title: '配电房名称',
@@ -72,8 +116,8 @@ export default function Index() {
 
   const [dataSource, setDataSource] = useState([])
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
 
   const handleChange = (values) => {
     setPageNum(1)
@@ -107,6 +151,10 @@ export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
   const showAdd = () => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区!')
+      return;
+    }
     setModalTitle('新增配电房')
     setAddModal(true)
     form.resetFields();
@@ -204,10 +252,15 @@ export default function Index() {
   }
   // 只有当 areaId, pageNum 改变后才会重新创建订阅
   useEffect(()=>{
-    if(areaId == 0){
-      return
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
     }else{
-      queryRoom()
+      if(areaId == 0 || !areaId){
+        return
+      }else{
+        queryRoom()
+      }
     }
   },[areaId, pageNum])
 
@@ -249,9 +302,7 @@ export default function Index() {
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>
-        新增
-      </Button>
+        { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
       <Modal className={style.addModal} open={addModal} onOk={addOk} onCancel={handleCancel} width={592} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'保存'} okType={'primary'} >
         <div className={style.addHeader}>{ modalTitle }</div>

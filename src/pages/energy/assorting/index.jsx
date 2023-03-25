@@ -10,7 +10,7 @@ export default function Index() {
   const shiftsOptions = useMemo(() => ([{ name: "全部班次", id: 0 }, ...shifts]), [shifts])
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions = useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel])
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]):[]
   const dateOptions = [{ label: '日', value: 1 }, { label: '月', value: 2 }, { label: '年', value: 3 }]
   const [dateType, setDateType] = useState(1)
   const [showType, setShowType] = useState(1)
@@ -44,7 +44,14 @@ export default function Index() {
         date,
         shiftsNo: formvalues.plan
       }
-      let areaId = [formvalues.area]
+      let areaId
+      if(formvalues.area){
+        areaId= [formvalues.area]
+      }else{
+        areaId= oneLevel?.map(it=>it.id)
+      }
+      
+    
       let res;
       if(showType===1){
         res= await energyClassified.QueryEnergy(params, areaId)
@@ -65,7 +72,10 @@ export default function Index() {
  
  
   useEffect(() => {
-    getEnergyData()
+    if(oneLevel.length>0){
+      getEnergyData()
+    }
+  
   }, [showType,datetype])
   return (
     <>
@@ -75,14 +85,14 @@ export default function Index() {
           colon={false}
           form={form}
           initialValues={{
-            area: 0,
+            area:oneLevel.length>0?0:null,
             datetype: 1,
             datevalue: moment(),
             plan: 0
           }}
         >
           <div className={style.divflex}>
-            <Form.Item label={oneLevel[0].levelName} name="area" className={style.mgbt0}>
+            <Form.Item label={oneLevel[0]?.levelName} name="area" className={style.mgbt0}>
               <Select
                 options={areaOptions}
                 fieldNames={{ label: 'name', value: 'id' }}

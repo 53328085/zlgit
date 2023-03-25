@@ -9,6 +9,7 @@ import warning from '@imgs/warning.png'
 import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
+import { MemoryRouter } from 'react-router-dom';
 
 
 export default function Index () {
@@ -33,8 +34,8 @@ export default function Index () {
     configEnergyStructure,
     queryEnergyStructureConfig } = energyStructure
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const changeArea = (value) => {
     setAreaId(value)
   }
@@ -55,8 +56,11 @@ export default function Index () {
     manual: true
   })
   useEffect(()=> {
-    if(areaId != 0){
+    if(areaId && areaId != 0){
       queryRun()
+    }else{
+      message.error('当前项目尚未配置园区!')
+      return;
     }
   }, [areaId])
 
@@ -118,6 +122,10 @@ export default function Index () {
     aref.current.onOpen()
   }
   const addMain = () => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区！')
+      return;
+    }
     setModalTitle('新增主节点')
     setFormLabel('主节点名称')
     setParentId(0)

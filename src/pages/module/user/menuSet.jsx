@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useLayoutEffect, useRef, forwardRef, useImperativeHandle, useMemo} from 'react'
 import {flushSync} from 'react-dom'
 import {Drawer, Button, Table, Typography, Checkbox, Tabs, Space, Spin, Radio} from 'antd' 
+import {nanoid} from '@reduxjs/toolkit'
 import styled from 'styled-components' 
 import { User } from "@api/api.js";
 import {custMsg} from '@com/usehandler'
+
 import CModal from '@com/useModal'
  
 const { Text, Link, Paragraph  } = Typography
@@ -94,10 +96,16 @@ const Tabsbox = styled(Tabs)`
     })) 
     const saveMenu = async () => { 
         const getno = (data) => {
+          let include = ['0101', '0102', '0103', '0104'];
           let Nos = []
             for(let [key, value] of Object.entries(data)) {
                if(Array.isArray(value) && value.length > 0) {
-                  Nos = [...Nos, ...value]
+                  let i = value[0].slice(0, 4)
+                  if (!include.includes(i)) {
+                    Nos = [...Nos, i, ...value]
+                  }else {
+                    Nos = [...Nos, ...value]
+                  }
                }
             }
           return [...new Set(Nos)]
@@ -105,9 +113,11 @@ const Tabsbox = styled(Tabs)`
         try {        
             let runnos = getno(MenuNos.current);
             let desnos = getno(Dmenunos.current)
-            let paramsNos = [...runnos, ...desnos]
+            let paramsNos = [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])]
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
-            success &&  custMsg({content: '保存成功'})
+            success &&  custMsg({content: '保存成功', onClose: ()=> {
+              mref.current.onCancel()
+            }})
             !success && custMsg({success, content: errMsg || '数据出错'})
         } catch (error) {
             console.log(error)
@@ -122,7 +132,7 @@ const Tabsbox = styled(Tabs)`
       const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
       const [AllDesignMenus, setAllDesignMenus] = useState([])
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
-     let exclude = [ '0101','0102', '0103', '0104'];
+     let exclude = [ '0101', '0103'];
        const queryUserMenus =  () => { 
         let f = !!projectId && !!userId
         if (!f)  return;
@@ -130,9 +140,11 @@ const Tabsbox = styled(Tabs)`
              let {success, data} = res
              if (success && Array.isArray(data)) {
              //let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
-             let runmenu = data.filter(m => m.parentNo == '01')
+             let runmenu = data.filter(m => m.parentNo == '01').filter(m => !['0102', '0104'].includes(m.no))
              setAllRunMenus([...runmenu]);
-             let designmenu = data.filter(m => m.parentNo == '02');   
+             let designmenu = data.filter(m => m.parentNo == '02').filter(m => m.no !='0201');   
+           
+
              setAllDesignMenus([...designmenu])     
              let sider = {}, design = {};
               runmenu.forEach(item => {
@@ -145,6 +157,8 @@ const Tabsbox = styled(Tabs)`
                 } 
              })
              setAllSinderRunMenus({...sider})
+
+             console.log(designmenu)
              designmenu.forEach(item => {
               let {no, key } = item  
               let arr = data?.filter(m => m.parentNo == no);
@@ -155,7 +169,8 @@ const Tabsbox = styled(Tabs)`
               }
               
                 
-            })         
+            })     
+            console.log(design)    
             setallSinderDesignMenus({...design})
           }
          }).catch(e => {
@@ -186,13 +201,13 @@ const Tabsbox = styled(Tabs)`
             setIndeterminate(false)
             setAllSinderRunMenus(pre => {
                 let menus = {}
-                for(let [key, sider] of Object.entries(pre)) {
+                for(let [key, sider] of Object.entries(pre)) { 
                     let ms = []
                     sider.forEach(s => {
                       s.select = Number(checked);
                       ms.push(s);
                     })
-                    menus[key] = ms
+                    menus[key] = ms 
                 }
                 return menus  
   
@@ -216,8 +231,32 @@ const Tabsbox = styled(Tabs)`
               <Checkdiv style={{paddingTop: '0px'}}>
               <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall} indeterminate={indeterminate}>选择全部</Checkbox></Checkdiv>
               </Checkdiv>
+
+              <Checkdiv>
+            
+            <Checkbox  checked disabled className="checktitle">
+                      项目设置
+            </Checkbox>
+        
+              <CheckboxGroup value={["0102"]}>
+                         <Checkbox value="0102" checked disabled>项目设置</Checkbox>
+              </CheckboxGroup>
+        </Checkdiv>
+        <Checkdiv>
+        
+        <Checkbox  checked disabled className="checktitle">
+                  项目概述
+        </Checkbox>
+    
+          <CheckboxGroup value={["0104"]}>
+                     <Checkbox value="0104" checked disabled>项目概述</Checkbox>
+          </CheckboxGroup>
+    </Checkdiv>
+
              { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
               
+           
+           
             </>
           )
          }
@@ -265,13 +304,31 @@ const Tabsbox = styled(Tabs)`
            
           }, [isall])
 
-
+          const selectedmenu = [
+            {no: "020101", label: '基础设置'},
+            {no: "020102", label: '项目设置'},
+            {no: "020103", label: '用户管理'},
+            {no: "020104", label: '区域管理'}
+          ]
           return (
             <>
           <Checkdiv style={{paddingTop: '0px'}}>
           <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall} indeterminate={indeterminate}>选择全部</Checkbox></Checkdiv>
             </Checkdiv>
-      
+            <Checkdiv>
+        
+        <Checkbox  checked disabled className="checktitle">
+                  公共模块
+        </Checkbox>
+    
+          <CheckboxGroup value={['020101', '020102','020103', '020104']} disabled>
+          <Space size={16} wrap>
+                      {
+                        selectedmenu?.map((d) => <Checkbox value={d.no} key={d.no} disabled >{d.label}</Checkbox>)
+                      }
+                 </Space>
+          </CheckboxGroup>
+      </Checkdiv>
            { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
            </>
           )
@@ -302,9 +359,15 @@ const Tabsbox = styled(Tabs)`
   
  
 
-   const CheckboxList = ({data, title, mod, type,  setIsall }) => { 
-    if (!Array.isArray(data))  return  
+   const CheckboxList = ({data, title, mod, type,  setIsall }) => {    
     
+   /* projectSet 项目设置， runtimeProject 项目概述 必选 */
+
+   
+
+    if (!Array.isArray(data))  return  
+     
+     
     const [checkedList, setCheckedList] = useState(() => data?.filter(d => d.select == 1)?.map(d => d.no));
     const [allSelect] = useState(() => data.map(d => d.no) || []) 
     const [indeterminate, setIndeterminate] = useState(() => {
@@ -346,13 +409,13 @@ const Tabsbox = styled(Tabs)`
           <Checkdiv>
             
              <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll} className="checktitle">
-                       {title}模块
+                       {title}
              </Checkbox>
              
-            <CheckboxGroup  value={checkedList} onChange={onChange} >
+            <CheckboxGroup  value={checkedList} onChange={onChange}  >
                  <Space size={16} wrap>
                       {
-                        data?.map((d) => <Checkbox value={d.no} key={d.no}>{d.label}</Checkbox>)
+                        data?.map((d) => <Checkbox value={d.no} key={d.no}  >{d.label}</Checkbox>)
                       }
                  </Space>
                   
@@ -370,7 +433,7 @@ const Tabsbox = styled(Tabs)`
   
     return (
 
-        <CModal mold="cust"    title="菜单权限设置" footer={false} ref={mref} width={1600} closable={true} closeIcon={<Button type="primary" onClick={saveMenu}  style={{top: '18px', right: '32px'}}>保存</Button>}>
+        <CModal mold="cust" okText="保存" cancelText="关闭" className="cstTitle" maskClosable={false} title="菜单权限设置"   ref={mref} width={1600} onOk={saveMenu} >
           <Menulist />
         </CModal>
 

@@ -27,8 +27,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   //园区选择
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const handleChange = (values) => {
     setPageNum(1)
     setAreaId(values)
@@ -61,7 +61,11 @@ export default function Index() {
     manual: true,
   })
   useEffect(()=>{
-    if(areaId == 0){
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
+    }
+    if(areaId == 0 || !areaId){
       return
     }else{
       queryRoom()
@@ -209,6 +213,10 @@ export default function Index() {
   //穿梭框
   const [transTag, setTransTag] = useState('')
   const settingClick =() => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区!')
+      return;
+    }
     if(roomId){
       queryUnusedCamera(projectId, roomId).then(res => {
         let { success, data } = res

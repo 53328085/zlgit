@@ -10,7 +10,7 @@ import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
-
+import {publishState} from '@redux/systemconfig'
 const {
   DeviceManager: {
     QueryByPageSensor,
@@ -27,6 +27,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
   const [devicelist, setDevicelist] = useState()
@@ -63,7 +64,7 @@ export default function gateway({ deviceStyle }) {
     textDecoration: 'underline',
     cursor: 'pointer',
   }
-  const columns = [
+  let columns = [
     {
       title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
       dataIndex: 'areaName'
@@ -118,6 +119,9 @@ export default function gateway({ deviceStyle }) {
   ]
   for (let val of columns) {
     val.align = 'center'
+  }
+  if(publish){
+    columns.pop()
   }
   //打开编辑窗口
   const onEdit = (record) => {
@@ -474,14 +478,13 @@ export default function gateway({ deviceStyle }) {
   }
 
   useEffect(() => {
-    getQueryByPageSensor()
-    getOneLevel()
-    // getAeraQueryAll()
-    getQueryUsedDeviceCategory()
-    getQueryPlanList()
-    getQueryListGateWay()
-
-
+    if(oneLevel.length > 0) {
+      getQueryByPageSensor()
+      getOneLevel()
+      getQueryUsedDeviceCategory()
+      getQueryPlanList()
+      getQueryListGateWay()
+    }
   }, [])
   //传入props对象
   const ComProps = {

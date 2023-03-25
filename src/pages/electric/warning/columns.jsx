@@ -20,12 +20,14 @@ export const  columns = [
         dataIndex: 'recoveryTime',
         key: 'recoveryTime',
         align:'center',
+        render:(text)=>(text?text:'/')
       },
       {
         title: '消警事件',
         dataIndex: 'recoveryEvent',
         key: 'recoveryEvent',
         align:'center',
+        render:(text)=>(text?text:'/')
       },
       {
         title: '告警状态',
@@ -65,7 +67,7 @@ export const  columns = [
         align:'center',
         render:(_,val)=>(
             <a style={{textDecoration:'underline'}}
-             href="/devicedetail" target="blank" 
+             href={`/devicedetail?sn=${val.sn}`} target="blank" 
             //  onClick={()=>{navigate("/devicedetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}
              >设备信息</a>
         ),

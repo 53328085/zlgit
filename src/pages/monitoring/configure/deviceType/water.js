@@ -8,8 +8,10 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
+import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
+  const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource, setTableDataSource] = useState([])//主页表格数据
@@ -120,7 +122,7 @@ export default function Electric() {
     // console.log(watchPointArr)
     // editFromRef.current.setSwitched(watchPointArr)
   }
-  const columns = [
+  let columns = [
     {
       title: '设备型号',
       dataIndex: 'category'
@@ -154,7 +156,9 @@ export default function Electric() {
       }
     }
   ]
-
+  if(publish){
+    columns.pop()
+  }
   //保存编辑
   const onOkEditModal = async () => {
     console.log(editFromRef.current.pointSource, editForm.getFieldsValue())

@@ -1,4 +1,5 @@
 /* 获取系统配置 */
+import { CodeSandboxCircleFilled } from '@ant-design/icons'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
     updateTime: "0001-01-01 00:00:00",
     url: "",
     configState: false, // 项目是否处于配置状态   
+    publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     menus: {
         projectId: 0, // 项目ID
         runMenus: [], // 项目top菜单栏 左边 选择的
@@ -24,6 +26,7 @@ const initialState = {
         siderRunMenus: [], // 项目 sider
         siderDesignerMenus: [], // 设置 sider
         setMenus: [], // 项目top菜单栏 右边
+        comSet: [], //公共设置
       //  allRunMenus: [],
       //  allsinderRunMenus: {},
     },
@@ -67,8 +70,12 @@ const system = createSlice({
         },
         getshifts(state, actions) {           
             return Object.assign({}, state, {shifts: actions.payload })
+        },
+        getpublishState(state, actions) {           
+            return Object.assign({}, state, {publishState: actions.payload })
         }
     },
+
     extraReducers: {      
         [systemConfig.fulfilled]: (state, {payload}) => {           
            let {success, errMsg, data} = payload
@@ -91,11 +98,16 @@ export const designerMenus  = state => state.system.menus?.designerMenus
 export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMenus
 export const siderRunMenus  = state => state.system.menus?.siderRunMenus
 export const setMenus  = state => state.system.menus?.setMenus
+export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state => state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id
 export const selectshifts = state => state.system.shifts
-export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts} = actions
+export const publishState = state => {
+    console.log(state.system.publishState)
+  return  state.system.publishState == 1
+}
+export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
 export default system.reducer

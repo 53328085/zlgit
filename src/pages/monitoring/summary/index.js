@@ -12,11 +12,10 @@ import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
   const projectId = useSelector(selectProjectId)
-  const [messageApi, contextHolder] = message.useMessage();
   const elref = useRef(null)
   const wlref = useRef(null)
   const glref = useRef(null)
-  let [areaId, setAreaId] = useState(1)
+  let [areaId, setAreaId] = useState('')
   let [statistics, setStatistics] = useState({})
   let [status, setStatus] = useState({})
   let [eleConsumes,seteleConsumes]=useState([])
@@ -26,37 +25,30 @@ export default function Index() {
   const getData = () => {//设备统计
     return RuntimeStatistics({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success&&data) {
+      if (success) {
         setStatistics(data)
       } else {
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+        message.error(res.errMsg)
       }
     })
   }
   const getStatusData = () => {//在线情况
     return RuntimeStatus({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success&&data ) {
+      if (success ) {
         setStatus(data)
       } else {
         message.error(res.errMsg)
-        // messageApi.open({
-        //   type: 'error',
-        //   content: res.errMsg
-        // })
       }
     })
   }
   const getMonthUsage = (type) => {//月用量
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
-      if (success&&data) {
-        seteleConsumes(data.eleConsumes)
-        setwaterConsumes(data.waterConsumes)
-        setgasConsumes(data.gasConsumes)
+      if (success) {
+        seteleConsumes(data?data.eleConsumes:[])
+        setwaterConsumes(data?data.waterConsumes:[])
+        setgasConsumes(data?data.gasConsumes:[])
         charts()
       } else {
         message.error(res.errMsg)
@@ -84,11 +76,15 @@ export default function Index() {
     containLabel: true,
   }
   useEffect(() => {
-    getData()
+    if(areaId){
+      getData()
     getStatusData()
+    }
   }, [areaId,projectId])
   useEffect(() => {
-    getMonthUsage(1)
+    if(areaId){
+      getMonthUsage(1)
+    }
   }, [areaId,eleConsumes.length,projectId])
 const charts=()=>{
   drawEcharts(elref.current, {
@@ -148,7 +144,11 @@ const charts=()=>{
   }
   const getFromChild = data => {
     console.log(data.areaId)//园区id
-    setAreaId(data.areaId)
+    if(data.areaId==undefined){
+      return
+    }else{
+      setAreaId(data.areaId)
+    }
   }
   return (
     <div>

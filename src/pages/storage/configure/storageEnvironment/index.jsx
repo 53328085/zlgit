@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Index() {
   return (
-    <div>运行报告</div>
+    <div>环境监控管理</div>
   )
 }

@@ -12,8 +12,10 @@ import style from './style.module.less'
 import WarningPng from '@imgs/warning.png'
 import { MultImport } from  './modalCom'
 import cusContext from '@com/content'
+import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory, UpdateDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function video() {
+  const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [selectOption, setSelectOption] = useState(null)
   const [dataSource, setDataSource] = useState(null)
@@ -128,7 +130,7 @@ export default function video() {
       message.error(resp.errMsg)
     }
   }
-  const columns = [
+  let columns = [
     {
       title: '监控设备厂家',
       dataIndex: 'manufacturer'
@@ -163,6 +165,9 @@ export default function video() {
       }
     },
   ]
+  if(publish){
+    columns.pop()
+  }
   //保存删除
   const onOkDel = async () => {
     let params = {

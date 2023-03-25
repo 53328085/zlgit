@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate} from "react-router-dom"
 import { clearToken, selectUser} from "@redux/user";
-import { configProject} from "@redux/systemconfig";
+import { configProject, comSetFirst} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -131,7 +131,7 @@ export default function Log() {
   const navgite = useNavigate()
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
-    
+  const comurl = useSelector(comSetFirst) 
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
@@ -177,11 +177,20 @@ export default function Log() {
       state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
     })
   }
-  const onConfigure = () => {
-    dispatch(configProject(true));
-    navgite("/config/designerCommon/project", {
-      state: {type: 'config', nested: "project",  title: "项目管理", primary: 'designerCommon' },
-    })
+
+  const onConfigure = () => {   // 
+     console.log(comurl)
+     let {key, label} = comurl || {}
+    if (!!comurl && comurl.key) {
+      dispatch(configProject(true));
+      navgite(`/config/designerCommon/${key}`, {
+        state: {type: 'config', nested: key,  title: label, primary: 'designerCommon' },
+      })
+      
+    }else {
+      return message.warning('请先设置用户权限')
+    }
+   
   }
   const projectcfg =() => {
     navgite("/projectList")
@@ -211,7 +220,7 @@ export default function Log() {
         { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
           <span>项目设置</span>
         </Idiv4>):null}
-        { roleType < 4 ? (<Idiv2 onClick={projectcfg}>
+        { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
           <span>平台配置</span>
         </Idiv2>):null}
         </>

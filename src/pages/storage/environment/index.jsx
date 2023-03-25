@@ -2,18 +2,23 @@ import React, {useState, useEffect, useRef} from 'react'
 import UseHeader from '@com/useHeader'
 import styled from 'styled-components'
 import style from './style.module.less'
-import { Button, DatePicker } from 'antd'
+import { Button, DatePicker, message, Form } from 'antd'
 import moment from 'moment'
 import { CaretLeftOutlined, CaretRightOutlined, SearchOutlined  } from '@ant-design/icons'
 import CustModal from '@com/useModal'
 import * as echarts from 'echarts'
 import bgImg from './imgs/background.png'
-
+import { StorageEnvironmentRuntime } from '@api/api'
 
 export default function Index() {
   const TempRef = useRef()
   const lineRef = useRef()
+  const { queryEnvironmentInfo, queryTrends } =  StorageEnvironmentRuntime
   const today = new Date().toLocaleDateString().replace(/\//g, '-')
+  const [form] = Form.useForm()
+  const Item = Form.Item
+
+  //页面组件
   const CustomCss = styled.div`
     width: 234px;
     height: 680px;
@@ -81,7 +86,7 @@ export default function Index() {
         }
         .monitorData{
           height: 40px;
-          padding: 0 16px;
+          padding: 0 10px;
           font-size: 14px;
           color: #000;
           display: flex;
@@ -114,7 +119,6 @@ export default function Index() {
       }
   `
   const [count, setCount] = useState(0)
-  let length = 5;
   const transLeft = () => {
     if((count)<= 0) return;
     setCount(count - 1)
@@ -124,79 +128,134 @@ export default function Index() {
     setCount(count + 1)
   }
   const CustomData = props => {
+    let {data} = props
+    let infos = data.environmentInfo
     return <CustomCss>
-      <div className='name'>电池簇_1</div>
+      <div className='name'>{data.storageRoomName}</div>
       <div className='itemTitle'>环境监控</div>
       <div className='itemData'>
-        <div className='item' style={{cursor:'pointer'}} onClick={()=>showChart()}>
+        <div className='item' style={{cursor:'pointer'}} onClick={()=>showChart(data.storageRoomId)}>
           <div className='monitorTitle' style={{backgroundColor:'#237ae4', border: '1px solid #237ae4'}}>空调监控</div>
           <div className='temData'>
             <div className='tem'>
               <span>温度</span>
               <div>
-                <span style={{fontSize:20}}>{ 23.5 }</span>
+                <span style={{fontSize:20}}>{ infos.temp }</span>
                 <span style={{fontSize:14, marginLeft: 8}}>℃</span>
               </div>
             </div>
             <div className='tem'>
               <span>湿度</span>
               <div>
-                <span style={{fontSize:20}}>{ 54.2 }</span>
+                <span style={{fontSize:20}}>{ infos.humidity }</span>
                 <span style={{fontSize:14, marginLeft: 8}}>%</span>
               </div>
             </div>
           </div>
-          <div className='tempTime'> 2023-03-10 18:00</div>
+          <div className='tempTime'> {infos.airInformTime}</div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>烟感监控</div>
           <div className='monitorData'>
-            <span>2023/03/10 18:00</span>
-            <span>无告警</span>
+            <span>{ infos.somkeInformTime }</span>
+            <span>{ infos.smokeDetectorWarning }</span>
           </div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>水浸监控</div>
           <div className='monitorData'>
-            <span>2023/03/10 18:00</span>
-            <span>无告警</span>
+            <span>{ infos.waterOutInformTime }</span>
+            <span>{ infos.waterOutWarning }</span>
           </div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>灭火器监控</div>
           <div className='monitorData'>
-            <span>2023/03/10 18:00</span>
-            <span>无告警</span>
+            <span>{ infos.fireInformTime }</span>
+            <span>{ infos.fireWarning }</span>
           </div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#f33', border: '1px solid #f33'}}>门禁监控</div>
           <div className='monitorData' style={{color:'#f33'}}>
-            <span>2023/03/10 18:00</span>
-            <span>打开</span>
+            <span>{ infos.doorInformTime }</span>
+            <span>{ infos.doorStatus }</span>
           </div>
         </div>
       </div>
     </CustomCss>
   }
 
-  const getFromChild = val => {}
-  const showChart = () => {
-    TempRef.current.onOpen()
-    const data = {
-      x:['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
-      y:['26.3', '26.4', '26.2', '27.1', '28.4', '29.1', '29.4', '29.3', '30.3', '27.5', '26.4', '25.4'],
-      z:['56.3', '51.3', '56.6', '57.4', '56.4', '58.6', '59.4', '56.3', '54.3', '54.2', '53.2', '56.7'],
-    }
-    setTimeout(()=>{
-      drawLine(data)
+  //页面数据
+  const [storageData, setStorageData] = useState([])
+  const [headerData, setHeaderData] = useState({})
+  const getFromChild = val => {
+    if(!val.areaId) return;
+    setHeaderData(val)
+    queryEnvironmentInfo(val.projectId, val.areaId).then(res => {
+      if(res.success){
+        if(res.data){
+          setStorageData(res.data)
+        }else{
+          setStorageData([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
     })
   }
+
+   //弹窗
+  const [roomId, setRoomId] = useState(0)
+  const getTrends = (projectId, roomId, date) => {
+    queryTrends(projectId, roomId, date).then(res=> {
+      let {success, data} = res
+      if(success){
+        if(data){
+          let tempTrends = []
+          let humidityTrends = []
+          let time = []
+          data.tempTrends.map(item => {
+            tempTrends.push([item.x, item.y]),
+            time.push(item.x)
+          })
+          data.humidityTrends.map(item => {
+            humidityTrends.push([item.x, item.y])
+            time.push(item.x)
+          })
+          time = [...new Set(time)]
+          TempRef.current.onOpen()
+          setTimeout(()=>{
+            drawLine({
+              time,
+              humidityTrends,
+              tempTrends,
+            })
+          })
+        }else{
+          drawLine({
+            time:[],
+            tempTrends:[],
+            humidityTrends:[],
+          })
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const showChart = (id) => {
+    setRoomId(id)
+    getTrends(headerData.projectId, id, today) 
+  }
+ 
   const onOk = () => {
     TempRef.current.onCancel()
   }
   const drawLine = (lineData)=> {
+    form.setFieldValue('date', moment(today,'YYYY-MM-DD'))
     let lineChart = echarts.init(lineRef.current);
+    lineChart.clear()
     lineChart.setOption({
       color:['#237ae4', '#093'],
       tooltip: {
@@ -222,7 +281,7 @@ export default function Index() {
         axisTick:{
           alignWithLabel:true
         },
-        data: lineData.x
+        data: lineData.time
       },
       yAxis: {
         type: 'value',
@@ -236,19 +295,25 @@ export default function Index() {
       series: [
         {
           name: '温度(℃)',
-          data: lineData.y,
+          data: lineData.tempTrends,
           type: 'line',
           symbol:'circle', 
         },
         {
           name: '湿度(%)',
-          data: lineData.z,
+          data: lineData.humidityTrends,
           type: 'line',
           symbol:'circle', 
         }
       ]
-    })
+    }, true)
   }
+  const onSearch = () => {
+    const date = form.getFieldValue('date').format('YYYY-MM-DD')
+    getTrends(headerData.projectId, roomId, date) 
+  }
+
+  //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
     <div>
       <UseHeader getValues={getFromChild}></UseHeader>
@@ -257,22 +322,24 @@ export default function Index() {
         <div className={style.yaxis}></div>
         <div className={style.xaxis}></div>
         <div className={style.dataList}>
-          <div className={style.transLate} style={{ width: (parseInt(length / 4) + 1) * 100 + '%', left: (-(count * 382) + 65)}}>
-            <CustomData></CustomData>
-            <CustomData></CustomData>
-            <CustomData></CustomData>
-            <CustomData></CustomData>
-            <CustomData></CustomData>
+          <div className={style.transLate} style={{ width: (parseInt(storageData.length / 4) + 1) * 100 + '%', left: (-(count * 382) + 65)}}>
+            { storageData.map((item, index) =>{
+              return <CustomData data={item} key={index}></CustomData>
+            } ) }
           </div>
           <LeftButton onClick={()=>transLeft()}></LeftButton>
           <RightButton onClick={()=>transRight()}></RightButton>
         </div>
       </div>
       <CustModal title='温湿度趋势' ref={TempRef}  mold="cust" width={1680}  onOk={()=>onOk()}>
-        <div style={{ position:'absolute', right: 32, top:32}}>
+        <div style={{ position:'absolute', right: 32, top:32, display: 'flex',alignItems:'center'}}>
           <span>日期</span>
-          <DatePicker style={{width: 182, margin: '0 16px' }} defaultValue={moment(today,'YYYY-MM-DD')}></DatePicker>
-          <Button type='primary' icon={<SearchOutlined />} style={{width: 96}}>查询</Button>
+          <Form name='addForm' form={form}>
+            <Item name='date' label=''>
+              <DatePicker style={{width: 182, margin: '0 16px' }} ></DatePicker>
+            </Item>
+          </Form>
+          <Button type='primary' icon={<SearchOutlined />} style={{width: 96}} onClick={()=> onSearch()}>查询</Button>
         </div>
         <div className={style.lineChart} ref={lineRef}></div>
       </CustModal>

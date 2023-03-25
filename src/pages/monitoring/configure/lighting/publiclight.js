@@ -5,6 +5,7 @@ import Table from '@com/useTable'
 import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
 import { Form, message } from 'antd'
 import {Monitoring} from '@api/api'
+import { publishState } from '@redux/systemconfig'
 const {PubliclightManager:{PublicLightAdd,PublicLightQueryByPage,PublicLightUpdate,PublicLightDelete,PublicLightImport}}=Monitoring
 export default function parkstreet({areaList,levelname}) {
   const [tableParams,setTableParams]=useState({
@@ -29,14 +30,15 @@ export default function parkstreet({areaList,levelname}) {
   const errlistRef =useRef()
   const projectId = useSelector(state=>state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
+  const publish = useSelector(publishState)
   let deleteId;
   let flies;
-  const optcss = {
+  let optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
     cursor: 'pointer',
   }
-  const columns=[{
+  let columns=[{
     title:oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
     dataIndex:'areaName',
     key:'areaName',
@@ -79,6 +81,9 @@ export default function parkstreet({areaList,levelname}) {
     }
   }]
   columns.forEach(it=>{it.align='center'})
+  if(publish){
+    columns.pop()
+  }
   //打开编辑窗口
   const onEdit=(record)=>{
     editModalRef.current.onOpen()

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 
-import { nanoid } from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
@@ -9,13 +8,14 @@ import { Form, Image, message, Progress, Select } from 'antd'
 //import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
 import { drawEcharts } from "@com/useEcharts";
 import { useSelector } from 'react-redux'
-import Mapcom from '@com/useMap'
+// import Mapcom from '@com/useMap'
 import BlueColumn from '@com/bluecolumn'
 import first from './imgs/first.png'
 import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
+import Map,{EmptyMap} from './mapcomp'
 
 const Mainbox = styled.div`
   display: grid;
@@ -66,7 +66,7 @@ const Mainbox = styled.div`
       .cl {
         display: flex;
         align-items: center;
-        // justify-content: center;
+        padding-left:20px;
         color:#515151;
         font-size: 24px;
         font-weight: bold;
@@ -126,13 +126,14 @@ export default function Index() {
   const [areavalue, setAreavalue] = useState(0)
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions = useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel])
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]):[]
   const [warn, setWarn] = useState()//当前告警
   const [allwarn, setAllwarn] = useState() //本月告警
   const [order, setOrder] = useState() //工单
   const [task,setTask]=useState()//巡检任务
   const [datasetMonth,setDatasetMonth] =useState() //派单
   const [datasetMonthl,setDatasetMonthl]=useState()//告警事件
+  const [alarmPosition,setAlarmPosition] =useState()
   let params = {
     projectId,
     areaId: areavalue
@@ -199,6 +200,7 @@ export default function Index() {
       const { data: { all, one, two, three, alarmPosition }, errMsg, success } = await operation.AlarmCurrent(params)
       if (success) {
         setWarn({ all, one, two, three })
+        setAlarmPosition(alarmPosition)
       } else {
         message.error(errMsg)
       }
@@ -282,12 +284,15 @@ export default function Index() {
     }
   }
   useEffect(() => {
-    getAlarmCurrent()
-    getAlarmMonth()
-    getMonthOrderStatistics()
-    getInspectionStatistics()
-    getMonthOrderTrend()
-    getMonthAlarmTrend()
+    if(oneLevel.length>0){
+      getAlarmCurrent()
+      getAlarmMonth()
+      getMonthOrderStatistics()
+      getInspectionStatistics()
+      getMonthOrderTrend()
+      getMonthAlarmTrend()
+    }
+   
   }, [areavalue])
   useEffect(() => {
     drawEcharts(bref.current, {
@@ -337,8 +342,8 @@ export default function Index() {
             form={form}
             colon={false}
           >
-            <Form.Item label={oneLevel[0].levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={0}></Select>
+            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
             </Form.Item>
           </Form>
 
@@ -363,8 +368,8 @@ export default function Index() {
               </div>
             </div>
 
-            <Mapcom></Mapcom>
-
+            {/* <Mapcom></Mapcom> */}
+           {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>} 
           </div>
 
           <div className='rigth'>

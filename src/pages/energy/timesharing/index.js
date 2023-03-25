@@ -27,8 +27,7 @@ export default function Index() {
   const { Search } = Input;
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state=>state.system.onelevel)
-  const areaOptions =useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) 
-  console.log(oneLevel)
+  const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]):[]
   const typeoptions = [{
     label: '日',
     value: 1
@@ -92,12 +91,18 @@ export default function Index() {
   const getQueryElectric =async ()=>{
     const {plan,area,...formvalue} = form.getFieldValue()
     const date = getdateformat()
+    let areaId
+      if(area){
+        areaId= [area]
+      }else{
+        areaId= oneLevel?.map(it=>it.id)
+      }
     let params = {
       projectId,
       shift:plan?plan:0,
       type:formvalue.datetype,
       date,
-      areaIds:[area?area:0],
+      areaIds:areaId,
       lineIds:selectRef.current
     }
    const res = await energyShare.QueryElectric(params)
@@ -183,9 +188,12 @@ export default function Index() {
   setTreeData(()=>{return filterData})
   }
   useEffect(()=>{
-    getQuerySpaceTrees(0,oneLevel[0].levelName)
-    getQueryShifts()
-    getQueryElectric()   
+    if(oneLevel.length>0){
+      getQuerySpaceTrees(0,oneLevel[0]?.levelName)
+      getQueryShifts()
+      getQueryElectric() 
+    }
+     
   },[])
   
   return (
@@ -204,9 +212,9 @@ export default function Index() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', background: '#fff' }}>
           <div style={{ display: 'flex', }}>
-            <Form.Item label={oneLevel[0].levelName} name="area">
+            <Form.Item label={oneLevel[0]?.levelName} name="area">
               <Select
-              defaultValue={0}
+              defaultValue={oneLevel.length>0?0:null}
                 style={{ width: 200 }} 
                 
                 fieldNames={{

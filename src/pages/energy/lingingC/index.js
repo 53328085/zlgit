@@ -42,8 +42,8 @@ export default function Index(props) {
   const [messageApi, contextHolder] = message.useMessage();
   const formInfo = {
     changeType: 3,
-    changeAreaId: 1,
-    changeDate: '2023-01-01',
+    changeAreaId: '',
+    changeDate: '',
     changeInput: ''
   }
   // let [energyInfo,setenergyInfo]=useState(
@@ -61,8 +61,8 @@ export default function Index(props) {
   //   }
   // }
   // )
-  let energyInfo={
-        total: {
+  let energyInfo = {
+    total: {
     },
     detail: {
     }
@@ -87,15 +87,7 @@ export default function Index(props) {
     return queryPublicLights(projectId, formInfo.changeInput, formInfo.changeAreaId).then(res => {
       let { success, data } = res
       if (success && data) {
-        setairList([{
-          id: 1,
-          name: '123456',
-          boxName: 'xxx',
-          sn: '0123456789',
-          controlLine: 1,
-          address: 'zxxx',
-          state: 0
-        }])
+        setairList(data)
       } else {
         messageApi.open({
           type: 'error',
@@ -149,16 +141,16 @@ export default function Index(props) {
     return drawEcharts(c, { ...option, type: 2 })
   }
   useEffect(() => {
-    //if (formInfo.changeType && formInfo.changeAreaId && formInfo.changeDate) {
-      queryData()
-      queryDataList()
-      console.log(energyInfo.detail)
-      //echarts.dispose(elref.current);
-      // tdrawEcharts(elref.current, option(charts[0], charts[1]))
-      // return () => {
-      //   echarts.dispose(elref.current);
-      // };
-    //}
+    if (formInfo.changeType && formInfo.changeAreaId && formInfo.changeDate) {
+    queryData()
+    queryDataList()
+    console.log(energyInfo.detail)
+    //echarts.dispose(elref.current);
+    // tdrawEcharts(elref.current, option(charts[0], charts[1]))
+    // return () => {
+    //   echarts.dispose(elref.current);
+    // };
+    }
   }, [changeState]);
   const fs = {
     hv: '24px',
@@ -257,20 +249,26 @@ export default function Index(props) {
   }
   const getFromChild = data => {
     console.log(formInfo)
-    formInfo.changeAreaId = data.areaId
-    formInfo.changeDate = data.date
-    formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
-    setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
-    setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
-    charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
-    setchangeState(data)
-    console.log(changeState)
-    queryDataList()
-    queryData()
-    setTimeout(() => {
-       tdrawEcharts(elref.current, option(charts[0], charts[1]))
-    }, 1000)
-    //echarts.dispose(elref.current);
+    if (data.areaId == undefined) {
+      return
+    } else {
+      formInfo.changeAreaId = data.areaId
+      formInfo.changeDate = data.date
+      formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
+      setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
+      setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
+      charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
+      setchangeState(data)
+      console.log(changeState)
+      queryDataList()
+      queryData()
+      setTimeout(() => {
+        tdrawEcharts(elref.current, option(charts[0], charts[1]))
+      }, 1000)
+      //echarts.dispose(elref.current);
+    }
+
+
   }
   return (
     <div>

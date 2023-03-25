@@ -3,8 +3,12 @@ import style from './style.module.less'
 import { Button, Tree } from "antd";
 import dashed from '@imgs/dashed.png'
 import { cloneDeep } from "lodash";
+import {useSelector} from 'react-redux'
+import {publishState} from '@redux/systemconfig.js'
 
 export default function Water (props) {
+  const isPublish = useSelector(publishState)
+  console.log(isPublish)
   const { getValues } = props;
   //线路图
   const {TreeNode} = Tree;
@@ -31,12 +35,12 @@ export default function Water (props) {
         item.energyName = (
             <div style={nodeTitle}>
                 <span style={ item.parentId == 0 ? { fontSize: 16 }:{} }>{item.energyName}</span>
-                <div style={nodeAction}>
+                { isPublish ? null : <div style={nodeAction}>
                     {item.parentId == 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item)}>新增子项</span> : null}
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline', marginLeft: 32, marginRight: 32}} onClick={()=>edit(name, item.energyId)}>编辑</span>
                     {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>}
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item)}>删除</span>
-                </div>
+                </div> }
             </div>
         )
 
@@ -105,10 +109,10 @@ export default function Water (props) {
         <div className={style.classfyContent}>
             <div className={style.headerTitle}>
                 <span>{props.title}</span>
-                <div className={style.headerButton}>
+                { isPublish ? null : <div className={style.headerButton}>
                     <Button type="primary" size="middle" style={{width: 112, marginRight: 16, height: 36}} onClick={()=>addParent()}>新增能耗分类</Button>
                     <Button type="primary" size="middle" style={{width: 112,  height: 36}} onClick ={()=> importData()}> 批量导入</Button>
-                </div>
+                </div> }
             </div>
             <img className={style.dashedLine} src={dashed}></img>
             <div className={style.mainContent}>

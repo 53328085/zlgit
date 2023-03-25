@@ -3,6 +3,7 @@ import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import {Select,Divider,DatePicker} from 'antd'
 import { useSelector } from 'react-redux'
+import logo from '@imgs/chintlog.png'
 
 export default function Index() {
   const arealist = useSelector(state => state.system.onelevel)
@@ -10,7 +11,7 @@ export default function Index() {
   return (
     <div className={style.container}>
         <div className={style.leftcss}>
-        <BlueColumn name={arealist[0].levelName}/>
+        <BlueColumn name={arealist[0]?.levelName}/>
         <Select 
         options={arealist} 
         style={{width:'100%',marginTop:32}}
@@ -41,7 +42,30 @@ export default function Index() {
         </div>
         </div>
         <div className={style.rightcss}>
-
+            <div className={style.report}>
+              <div style={{padding:16}}>
+                <img src={logo} alt="" style={{width:77,height:58,marginRight:16}}/>
+                <span style={{fontSize:20}}>正泰综合能源服务平台</span>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',justifyContent: 'center',alignItems: 'center',}}>
+                <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>电气安全运行分析报告</p>
+                <div style={{
+                  width:431,
+                  height:136,
+                  background:'#f2f2f2',
+                  border:'1px solid #ccc',
+                  padding:'16px',
+                  display:'flex',
+                  flexDirection:'column',
+                  fontSize:18
+                  }}>
+                  <p style={{flex:1}}>项目名称:</p>
+                  <p style={{flex:1}}>项目地址:</p>
+                  <p style={{flex:1}}>报告日期:</p>
+                </div>
+              </div>
+              <div className={style.bgimage}></div>
+            </div>
         </div>
     </div>
   )

@@ -135,7 +135,7 @@ const Timelinebox = styled(Timeline)`
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:transY ${props=>(props.children.props.children?.length*2)}s .5s linear infinite
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*2)}s 0s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;
@@ -216,10 +216,10 @@ export default function Index() {
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
   const arealist = useSelector(state => state.system.onelevel)
-  const levellist = [{ name: arealist[0].levelName, id: 0 }, ...arealist]
-
+  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName, id: 0 }, ...arealist]:[]
+  console.log(arealist)
   const [warnData, setWarnData] = useState()
-  const [areaId, setAreaId] = useState(0)
+  const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
   const [datasetMonthl, setDatasetMonthl] = useState()
   const [warnlist, setWarnlist] = useState([])//最新告警
   
@@ -345,6 +345,7 @@ export default function Index() {
     }
   }
   useEffect(() => {
+    if(arealist.length===0)return
     getQueryWarningDetails()
     getQueryMonthWarningTrends()
     // getWarningDetailsPage()
@@ -361,12 +362,12 @@ export default function Index() {
     <CustContext.Provider value={{ form }}>
       <Pagecount bgcolor="transparent" pd="0px">
         <div style={headercss}>
-          <span style={{ paddingRight: 16 }}>{arealist[0].levelName}</span>
+          <span style={{ paddingRight: 16 }}>{arealist[0]?.levelName}</span>
           <Select
             options={levellist}
             style={{ width: 200 }}
             fieldNames={{ label: 'name', value: 'id' }}
-            defaultValue={0}
+            defaultValue={areaId}
             onChange={(v) => { setAreaId(v);console.log(v) }}
           ></Select>
         </div>
@@ -466,6 +467,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   const [pieData, setPieData] = useState()
   const [opieData, setOpieData] = useState()
   const [dateform] = Form.useForm()
+  const arealist = useSelector(state => state.system.onelevel)
   const getQueryWarningDistributed = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
     let params = {
       projectId,
@@ -526,6 +528,8 @@ const Alarm = ({ pref, opref, areaId }) => {
 
  
   useEffect(() => {
+     console.log(areaId)
+    if(arealist.length===0)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
     const date = getdateformat(type, formvalue.datevalue)
@@ -550,7 +554,7 @@ const Alarm = ({ pref, opref, areaId }) => {
       bottom: 0,
 
     },
-    color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)'],
+    color:['rgb(255,112,112)','rgb(255,183,38)','rgb(176,126,249)'],
   })
   },[opieData])
   return (
@@ -590,6 +594,7 @@ const Alarm = ({ pref, opref, areaId }) => {
 //告警类型排名
 const AlarmRank = ({ bref, areaId }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const arealist = useSelector(state => state.system.onelevel)
   const [dateform] = Form.useForm()
   let lengend = { dimensions: ["type", "一级报警", "二级报警", "三级报警"] }
   const [datasetStack, setDatasetStack] = useState()
@@ -642,6 +647,7 @@ const AlarmRank = ({ bref, areaId }) => {
   }
 
   useEffect(() => {
+    if(arealist.length===0)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
 
@@ -687,7 +693,7 @@ const AlarmRank = ({ bref, areaId }) => {
         itemWidth: 8,
         itemGap: 20
       },
-      color:['rgb(255,112,112)','rgb(255 183 38)','rgb(176,126,249)']
+      color:['rgb(255,112,112)','rgb(255,183,38)','rgb(176,126,249)']
     })
   },[datasetStack])
   return (

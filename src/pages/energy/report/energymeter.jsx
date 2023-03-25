@@ -12,6 +12,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
 
   const contentRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
+
   const [columns,setColumns] =useState([
     {
       title: '名称',
@@ -62,10 +63,11 @@ export default function Energymeter({ areavalue, arealistRef }) {
 
 const Comp =({api,columns,setColumns},ref)=>{
     const [dataSource, setDataSource] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [form] = Form.useForm()
     const { areavalue, arealistRef } = useContext(CustContext)
     const tableRef = useRef()
+    const oneLevel = useSelector(state=>state.system.onelevel)
     const projectId = useSelector(state => state.system.menus.projectId)
     const btncss = {
         width: 96,
@@ -91,6 +93,7 @@ const Comp =({api,columns,setColumns},ref)=>{
     //获取数据
     const getTableData = async (areaId = 0) => {
         try {
+            setLoading(true)
             const formvalues = form.getFieldValue()
             let parmas ={
                 projectId,
@@ -139,7 +142,8 @@ const Comp =({api,columns,setColumns},ref)=>{
         }
     }
     useEffect(() => {
-        getTableData(areavalue)
+        oneLevel.length>0&&getTableData(areavalue)
+       
     }, [areavalue])
     
     return (

@@ -10,6 +10,7 @@ import { Form, Row, Col, Select, Input, Divider, Upload, message,Button } from '
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import cutContext from  '@com/content'
+import {publishState} from '@redux/systemconfig'
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -21,6 +22,7 @@ const { DeviceManager:
     OneLevel,
     StartReboot } } = Monitoring
 export default function gateway() {
+  const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
   const [addopts, setAddOpts] = useState()
   const [usecategory, setUsecategory] = useState()
@@ -60,7 +62,7 @@ export default function gateway() {
   let flies;
   let tag=false;
   let edittag=false
-  const columns = [
+  let columns = [
     {
       title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
       dataIndex: 'areaName'
@@ -106,6 +108,10 @@ export default function gateway() {
     },
   ]
   columns.forEach(it => it.align = 'center')
+  if(publish){
+    columns.pop()
+  }
+ 
   //打开参数下发弹窗
   const onKeyParam = (record) => {
     setGatewaySn(record.sn)
@@ -463,10 +469,11 @@ export default function gateway() {
     onOk:()=>{ErrModalRef.current.onCancel()}
   }
   useEffect(() => {
-    getOneLevel()
-    getQueryByPageGateWay()
-   
-    getQueryUsedGateway()
+    if(oneLevel?.length>0){
+      getOneLevel()
+      getQueryByPageGateWay()
+      getQueryUsedGateway()
+    }   
   }, [])
 
   return (

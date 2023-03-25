@@ -39,9 +39,9 @@ export default function Index() {
   }
 
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0].id)
-  const [areaId,setAreaId] = useState(areaList[0].id)
-  const [areaName, setAreaName] = useState(areaList[0].name)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined )
+  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
+  const [areaName, setAreaName] = useState(areaList[0]?.name || undefined)
   const changeArea = (value) => {
     setAreaId(value)
     areaList.map(item => {
@@ -96,6 +96,10 @@ export default function Index() {
   })
 
   const addPrice = (title) => {
+    if(areaId == 0 || !areaId){
+      message.warning('请先选择园区！')
+      return;
+    }
     setChangeTag(title);
     aref.current.onOpen()
   }
@@ -229,7 +233,12 @@ export default function Index() {
   }
 
   useEffect(()=>{
-    queryRun()
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未配置园区!')
+      return;
+    }else{
+      queryRun()
+    }
   },[areaId])
 
 

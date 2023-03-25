@@ -13,12 +13,13 @@ import downpng from './imgs/down.png'
 import empty from './imgs/empty.png'
 export default function Energy({ showData, dateType }) {
   const { bg1class, bg2class, bg3class } = style
-  let consumeTotal = []
-  let consumeDetail = []
-  let proportion = []
+  let consumeTotal 
+  let consumeDetail 
+  let proportion 
   let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
   if (showData) {
     consumeTotal = showData.consumeTotal
+    console.log(consumeTotal)
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
   }
@@ -60,7 +61,8 @@ export default function Energy({ showData, dateType }) {
           </div>
         </div>))
       }
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      {
+        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={style.piestyle}>
           <Bluecolumn name="分类能耗占比" />
           <div style={{ width: 368, height: 360, marginTop: 16 }}>
@@ -78,7 +80,9 @@ export default function Energy({ showData, dateType }) {
             }
           </div>
         </div>
-      </div>
+      </div>):null
+      }
+     
     </div>
   )
 }

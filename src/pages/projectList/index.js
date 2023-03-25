@@ -32,7 +32,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
@@ -253,7 +253,6 @@ export default function Index() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [proform] =  Form.useForm()
-  console.log(proform)
   const [count, setCount] = useState(0); 
   const modal = useRef()
   const formmodal = useRef()
@@ -280,10 +279,16 @@ export default function Index() {
   const onSubmit = () => {
     let params =  projectform.current.onSubmint();
     console.log(params);
+
+
+    return 
     ProjectList.createProject(params).then(res => {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {
         formmodal.current.onCancel()
+       /*  navigate(`/config/designerCommon/base`, {
+          state: { type: 'config', primary: 'designerCommon',  title: '基础设置', nested: 'base'  } 
+        }) */ // 还需要设置菜单栏
        }})
        !success && custMsg({content: errMsg || '数据出错', type: 'warning'})
     }).catch(e => {
@@ -291,8 +296,11 @@ export default function Index() {
     })
   }
 
-  const startProject = async ({id, type}) => {  
+  const startProject = async ({id, type, publishState, validStageTime}) => {  
+
      try {
+       
+       dispatch(getpublishState(publishState)) 
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
 
       if (success && Array.isArray(data)) {    
@@ -301,10 +309,13 @@ export default function Index() {
          const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
        //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
          const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+
+         const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
+
          let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
         
          const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
-
+         
          const siderRunMenus = {}; // 运行功能 选择的子菜单
         // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
          runMenus.forEach(item => {
@@ -332,21 +343,14 @@ export default function Index() {
           siderDesignerMenus,
           runMenus,
           siderRunMenus, 
-          setMenus,
-         // allRunMenus,
-        //  allsinderRunMenus,
+          setMenus,  
+          comSet,      
           projectId: id,
          }
          dispatch(getMenus(menus));
          dispatch(configProject(type === 1))
 
-         if (type == 2) {
-           let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
-           projectRun(runitem)
-         }else if(type == 1) {
-           let desitem = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
-           projectDesigner(desitem)
-         }
+        
           try {
             let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: id,level: 1,parentId: 0})  
             lsuccess && dispatch(getOnelevel(levelData || []));
@@ -361,7 +365,13 @@ export default function Index() {
           } catch (error) {
             console.log(error)
           }
-         
+          if (type == 2) {
+            let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
+            projectRun(runitem)
+          }else if(type == 1) {
+            let desitem = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
+            projectDesigner(desitem)
+          }
         } catch (error) {
           console.log(error);
         }   
@@ -379,10 +389,10 @@ export default function Index() {
     })
   };
 
-  const projectDesigner = ({key, label}) => {
-    navigate(`/config/${key}/project`, {
-      state: { type: 'config', primary: key,  title: label, nested: 'project'  } 
-    })
+ const projectDesigner = ({key, label}) => { 
+      navigate(`/config/${key}/base`, {
+        state: { type: 'config', primary: key,  title: label, nested: 'base'  } 
+      }) 
   }
   /* 新增项目  start*/
   const showproject = () => {
@@ -412,8 +422,8 @@ export default function Index() {
     },
     {
       title: "状态",
-      dataIndex: "publishState",
-      key: "publishState",
+      dataIndex: "publishStateStr",
+      key: "publishStateStr",
       align: "center",
       width: 180,
       // render: (text) => {
@@ -435,13 +445,15 @@ export default function Index() {
       align: "center",
       render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1})}>
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1, publishState: record.publishState
+})}>
             项目配置
           </CustBtn>
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
-              startProject({id: record.id, type: 2})
+              startProject({id: record.id, type: 2, publishState: record.publishState
+              })
             }
           >
             进入项目

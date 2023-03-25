@@ -85,10 +85,11 @@ export default function Energytimeshare({ areavalue, arealistRef }) {
 function Comp({ api,  ...other }, ref) {
   const [dataSource, setDataSource] = useState([])
   const [pickertype, setPickertype] = useState(1)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
   const { areavalue, arealistRef } = useContext(CustContext)
   const tableRef = useRef()
+  const oneLevel = useSelector(state=>state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const btncss = {
     width: 96,
@@ -156,6 +157,7 @@ function Comp({ api,  ...other }, ref) {
   //获取数据
   const getTableData = async (areaId = 0) => {
     try {
+      setLoading(true)
       const formvalues = form.getFieldValue()
       const startstyle = pickertype === 3 ?'YYYY-01-01' :pickertype === 2?'YYYY-MM-01':'YYYY-MM-DD'  
       const endDate = pickertype === 1 ? moment(formvalues.endtime).format('YYYY-MM-DD')
@@ -192,7 +194,7 @@ function Comp({ api,  ...other }, ref) {
 }
   }
 useEffect(() => {
-  getTableData(areavalue)
+  oneLevel.length>0&&getTableData(areavalue)
 }, [areavalue])
 
 return (
