@@ -12,6 +12,7 @@ export default function Energymeter({ areavalue, arealistRef }) {
 
   const contentRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
+
   const [columns,setColumns] =useState([
     {
       title: '名称',
@@ -66,6 +67,7 @@ const Comp =({api,columns,setColumns},ref)=>{
     const [form] = Form.useForm()
     const { areavalue, arealistRef } = useContext(CustContext)
     const tableRef = useRef()
+    const oneLevel = useSelector(state=>state.system.onelevel)
     const projectId = useSelector(state => state.system.menus.projectId)
     const btncss = {
         width: 96,
@@ -140,7 +142,7 @@ const Comp =({api,columns,setColumns},ref)=>{
         }
     }
     useEffect(() => {
-        areavalue&& getTableData(areavalue)
+        oneLevel.length>0&&getTableData(areavalue)
        
     }, [areavalue])
     

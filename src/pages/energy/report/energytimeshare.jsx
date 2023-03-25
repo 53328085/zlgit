@@ -89,6 +89,7 @@ function Comp({ api,  ...other }, ref) {
   const [form] = Form.useForm()
   const { areavalue, arealistRef } = useContext(CustContext)
   const tableRef = useRef()
+  const oneLevel = useSelector(state=>state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const btncss = {
     width: 96,
@@ -193,7 +194,7 @@ function Comp({ api,  ...other }, ref) {
 }
   }
 useEffect(() => {
-  areavalue&&getTableData(areavalue)
+  oneLevel.length>0&&getTableData(areavalue)
 }, [areavalue])
 
 return (

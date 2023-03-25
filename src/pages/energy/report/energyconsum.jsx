@@ -98,6 +98,7 @@ function Comp({ api,setColumns,cols, ...other }, ref) {
   const { areavalue, arealistRef } = useContext(CustContext)
   const tableRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
+  const oneLevel = useSelector(state=>state.system.onelevel)
   const [scroll,setscroll]=useState( { x: 3022 })
   // let   scroll =  { x: 3022 }
   const btncss = {
@@ -326,7 +327,7 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
     }
   }
   useEffect(() => {
-    areavalue&&getTableData(areavalue)
+    oneLevel.length>0&&getTableData(areavalue)
   }, [areavalue])
 
   return (
