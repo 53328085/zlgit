@@ -7,6 +7,8 @@ import { Select,Radio, DatePicker, Button, message } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
+import downFile from './images/down.png'
+import printFile from './images/print.png'
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
@@ -92,7 +94,12 @@ useEffect(() => {
       message.error('请选择日期范围！')
     }
   }
+const printReport=()=>{
 
+}
+const downloadReport=()=>{
+  
+}
   return (
     <div className={style.content}>
       <div className={style.selectDiv}>
@@ -129,7 +136,17 @@ useEffect(() => {
           <img src={searchFile} className={style.searchFile}></img>
           <span>生成报告</span>
         </div>
+        <div className={style.buttonR} onClick={printReport}>
+        <img src={printFile} className={style.searchFile}></img>
+          <span>打印报告</span>
+        </div>
+        <div className={style.buttonR} onClick={downloadReport}>
+        <img src={downFile} className={style.searchFile} style={{zIndex:1}}></img>
+          <span>导出报告</span>
+        </div>
       </div>
+      {/* <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
+      <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button> */}
       <div className={style.report}>
         <div className={style.firstPage}>
           <div className={style.header}>
@@ -146,8 +163,7 @@ useEffect(() => {
         </div>
         {display ? <PageList query={queryData}></PageList> : null }
       </div>
-      <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
-      <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button>
+      
     </div>
   )
 }
