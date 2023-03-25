@@ -1511,4 +1511,9 @@ export class AlarmManagement {
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
   static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)
   static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
+  static AddAlarmEventOverrun = (data) => server.post(`Safe/Alarm/AddAlarmEventOverrun`,data)
+  static AddAlarmEventDeflection = (data) => server.post(`Safe/Alarm/AddAlarmEventDeflection`,data)
+  static AddAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/AddAlarmEventSOE`,data)
+  static AddAlarmEventCommunication = (data) => server.post(`Safe/Alarm/AddAlarmEventCommunication`,data)
+  static DeleteAlarmEvent = (projectId,id) => server.delete(`Safe/Alarm/DeleteAlarmEvent?projectId=${projectId}&id=${id}`)
 }

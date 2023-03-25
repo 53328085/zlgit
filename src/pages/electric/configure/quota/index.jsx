@@ -25,6 +25,12 @@ export default function Index() {
     DeletePlanAlarm,
     UpdatePlanAlarm,
     QueryAlarmEvents,
+    AddAlarmEventInterval,
+    AddAlarmEventOverrun,
+    AddAlarmEventDeflection,
+    AddAlarmEventSOE,
+    AddAlarmEventCommunication,
+    DeleteAlarmEvent,
   } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
@@ -108,76 +114,6 @@ export default function Index() {
       ),
     },
   ];
-  const columnsType = [
-    {
-      align: "center",
-      title: "告警事件",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "数据标识",
-      dataIndex: "tag",
-      key: "tag",
-      align: "center",
-    },
-    {
-      align: "center",
-      title: "告警描述",
-      dataIndex: "name",
-      key: "name",
-      width: 300,
-    },
-    {
-      title: "APP推送",
-      dataIndex: "tag",
-      key: "tag",
-      align: "center",
-    },
-    {
-      align: "center",
-      title: "微信推送",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "短信推送",
-      dataIndex: "tag",
-      key: "tag",
-      align: "center",
-    },
-    {
-      align: "center",
-      title: "是否推送",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "间隔时间",
-      dataIndex: "tag",
-      key: "tag",
-      align: "center",
-    },
-    {
-      title: "操作",
-      key: "action",
-      align: "center",
-      width: 120,
-      render: (_, record) => (
-        <Space size="middle">
-          <span className={style.editText} onClick={() => edit(record)}>
-            编辑
-          </span>
-          <span
-            className={style.deleteText}
-            onClick={() => deleteRecord(record)}
-          >
-            删除
-          </span>
-        </Space>
-      ),
-    },
-  ];
 
   //  新增告警声明初始化
   const [name, setName] = useState();
@@ -223,17 +159,136 @@ export default function Index() {
   const [editId, setEditId] = useState();
   const [editType, setEditType] = useState(false);
   const edit = (record) => {
-    console.log(record);
+    setDataSourceType();
+    setEditId(record.id);
     QueryAlarmEvents(record.id).then((res) => {
-      console.log(res);
+      if (res.success) {
+        if (res.data) {
+          setDataSourceType(JSON.parse(res.data));
+          dataSourceType.map((item) => {
+            //   console.log(item);
+            //   if (item.Push === true) {
+            //   if(item.AlarmCondition==="Greater"){
+            //     return  (item.AlarmCondition = "区间告警");
+            //   }
+            //     return (item.Push = "是");
+            //   } else {
+            //     return (item.Push = "否");
+            //   }
+          });
+        }
+      } else {
+        messageApi.open({
+          type: "error",
+          content: res.errMsg,
+        });
+      }
     });
     setEditType(true);
-    setEditId(record.id);
     setModalTitle("编辑告警方案");
     setaddAlarmModal(true);
     form.setFieldsValue(record);
   };
 
+  // const { run: runEdit } = useRequest(edit, {
+  //   manual: true,
+  // });
+  const columnsType = [
+    {
+      align: "center",
+      title: "告警事件",
+      dataIndex: "Name",
+      key: "Name",
+    },
+    {
+      title: "数据标识",
+      dataIndex: "PointIdentifier",
+      key: "PointIdentifier",
+      align: "center",
+    },
+    {
+      align: "center",
+      title: "告警描述",
+      dataIndex: "Content",
+      key: "Content",
+      width: 300,
+    },
+    // {
+    //   align: "center",
+    //   title: "告警类型",
+    //   dataIndex: "AlarmCondition",
+    //   key: "AlarmCondition",
+    // },
+    // {
+    //   title: "APP推送",
+    //   dataIndex: "tag",
+    //   key: "tag",
+    //   align: "center",
+    // },
+    // {
+    //   align: "center",
+    //   title: "微信推送",
+    //   dataIndex: "name",
+    //   key: "name",
+    // },
+    // {
+    //   title: "短信推送",
+    //   dataIndex: "tag",
+    //   key: "tag",
+    //   align: "center",
+    // },
+    {
+      title: "是否推送",
+      dataIndex: "Push",
+      key: "Push",
+      align: "center",
+    },
+    {
+      title: "间隔时间/秒",
+      dataIndex: "Time",
+      key: "Time",
+      align: "center",
+    },
+    {
+      title: "操作",
+      key: "action",
+      align: "center",
+      width: 120,
+      render: (_, record) => (
+        <Space size="middle">
+          <span
+            className={style.editText}
+            onClick={() => editAlarmInfo(record)}
+          >
+            编辑
+          </span>
+          <span
+            className={style.deleteText}
+            onClick={() => deleteAlarmInfo(record)}
+          >
+            删除
+          </span>
+        </Space>
+      ),
+    },
+  ];
+  //删除告警配置
+  const deleteAlarmInfo = (record) => {
+    console.log(record);
+    DeleteAlarmEvent(projectId, record.Id).then((res) => {
+      if (res.success) {
+        message.success("删除成功！");
+      } else {
+        message.error("删除失败！");
+      }
+    });
+  };
+  //编辑告警配置
+  const [giveChildFormRecord,setGiveChildFormRecord]=useState({});
+  const editAlarmInfo = (record) => {
+    setGiveChildFormRecord(record);
+    setAddAlarmEvent(true);
+  };
   //新增告警
   const showAdd = () => {
     form.resetFields();
@@ -242,15 +297,11 @@ export default function Index() {
   };
   //下一步
   const addOk = async () => {
-    // setAddModal(false);
-    // setaddAlarmModal(true);
     setEditType(false);
-    // return
     try {
       const values = await form.validateFields();
       setName(values.name);
       setTag(values.tag);
-      console.log(values, name, tag);
       let params = {
         projectId: projectId,
         name: values.name,
@@ -258,10 +309,6 @@ export default function Index() {
       };
       QueryAddAlarm(params).then((res) => {
         if (res.success) {
-          // messageApi.open({
-          //   type: "success",
-          //   content: "告警方案新增成功！",
-          // });
         } else {
           messageApi.open({
             type: "error",
@@ -305,7 +352,6 @@ export default function Index() {
       name: values.name,
       tag: values.tag,
     };
-    // return
     UpdatePlanAlarm(params).then((res) => {
       if (res.success) {
         message.success("告警方案编辑成功！");
@@ -316,16 +362,78 @@ export default function Index() {
       }
     });
   };
-  //新增告警事件
+
   const showAddAlarmEvent = () => {
     setAddAlarmEvent(true);
   };
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
   };
+
+  //新增告警事件《新增告警事件》表单数据
+  const [childFormInfo, setChildFormInfo] = useState({});
+  const getFromChild = (data) => {
+    setChildFormInfo(data);
+  };
+  const childformInfo = () => {
+    childFormInfo.planId = editId;
+    if (childFormInfo.alarmRule === 2) {
+      return AddAlarmEventInterval(childFormInfo).then((res) => {
+        if (res.success) {
+          setAddAlarmEvent(false);
+          message.success("新增告警事件成功！");
+        } else {
+          message.error("新增告警事件失败！");
+        }
+      });
+    } else if (childFormInfo.alarmRule === 1) {
+      return AddAlarmEventOverrun(childFormInfo).then((res) => {
+        if (res.success) {
+          setAddAlarmEvent(false);
+          message.success("新增告警事件成功！");
+        } else {
+          message.error("新增告警事件失败！");
+        }
+      });
+    } else if (childFormInfo.alarmRule === 3) {
+      return AddAlarmEventDeflection(childFormInfo).then((res) => {
+        if (res.success) {
+          setAddAlarmEvent(false);
+          message.success("新增告警事件成功！");
+        } else {
+          message.error("新增告警事件失败！");
+        }
+      });
+    } else if (childFormInfo.alarmRule === 4) {
+      return AddAlarmEventSOE(childFormInfo).then((res) => {
+        if (res.success) {
+          setAddAlarmEvent(false);
+          message.success("新增告警事件成功！");
+        } else {
+          message.error("新增告警事件失败！");
+        }
+      });
+    } else if (childFormInfo.alarmRule === 5) {
+      return AddAlarmEventCommunication(childFormInfo).then((res) => {
+        if (res.success) {
+          setAddAlarmEvent(false);
+          message.success("新增告警事件成功！");
+        } else {
+          message.error("新增告警事件失败！");
+        }
+      });
+    }
+  };
+  const { run: runChildformInfo } = useRequest(childformInfo, {
+    manual: true,
+  });
+  //获取子组件
   useEffect(() => {
     getAlarmData();
   }, [pageNum]);
+  useEffect(() => {
+    runChildformInfo();
+  }, [childFormInfo]);
   return (
     <div className={style.box}>
       <div className={style.content}>
@@ -344,7 +452,7 @@ export default function Index() {
           style={{ marginTop: "16px" }}
           columns={columns}
           dataSource={dataSource}
-          rowKey="key"
+          rowKey={(record) => record.id}
           size="small"
           pagination={paginationProps}
           ref={tableRef}
@@ -452,6 +560,8 @@ export default function Index() {
               dataSource={dataSourceType}
               rowKey="key"
               bordered
+              size="small"
+              className={style.addSourceTypeTable}
             ></Table>
             <Button
               onClick={() => showAddAlarmEvent()}
@@ -466,7 +576,8 @@ export default function Index() {
         <AlarmEventModal
           AddAlarmEventGive={addAlarmEvent}
           callBack={changeAddAlarmEvent}
-          resetForm={showAddAlarmEvent}
+          getValues={getFromChild}
+          giveChildForm={giveChildFormRecord}
         ></AlarmEventModal>
       </div>
     </div>
