@@ -1530,3 +1530,9 @@ export class StorageEnvironmentRuntime {
   static queryEnvironmentInfo = (projectId, areaId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}`)
   static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&stroageRoomId=${storageRoomId}&date=${date}`)
 }
+
+//储能--收益统计
+export class StorageRevenueRuntime {
+  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
+  static QueryRevenueReports = (params={}, areaId) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?areaId=${areaId}`, params);
+}
