@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import UseHeader from '@com/useHeader'
 import styled from 'styled-components'
 import style from './style.module.less'
-import { Button, DatePicker, message } from 'antd'
+import { Button, DatePicker, message, Form } from 'antd'
 import moment from 'moment'
 import { CaretLeftOutlined, CaretRightOutlined, SearchOutlined  } from '@ant-design/icons'
 import CustModal from '@com/useModal'
@@ -15,6 +15,8 @@ export default function Index() {
   const lineRef = useRef()
   const { queryEnvironmentInfo, queryTrends } =  StorageEnvironmentRuntime
   const today = new Date().toLocaleDateString().replace(/\//g, '-')
+  const [form] = Form.useForm()
+  const Item = Form.Item
 
   //页面组件
   const CustomCss = styled.div`
@@ -84,7 +86,7 @@ export default function Index() {
         }
         .monitorData{
           height: 40px;
-          padding: 0 16px;
+          padding: 0 10px;
           font-size: 14px;
           color: #000;
           display: flex;
@@ -155,15 +157,15 @@ export default function Index() {
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>烟感监控</div>
           <div className='monitorData'>
-            <span>2023/03/10 18:00</span>
-            <span>无告警</span>
+            <span>{ infos.somkeInformTime }</span>
+            <span>{ infos.smokeDetectorWarning }</span>
           </div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>水浸监控</div>
           <div className='monitorData'>
-            <span>{ infos.somkeInformTime }</span>
-            <span>{ infos.smokeDetectorWarning }</span>
+            <span>{ infos.waterOutInformTime }</span>
+            <span>{ infos.waterOutWarning }</span>
           </div>
         </div>
         <div className='item'>
@@ -251,7 +253,9 @@ export default function Index() {
     TempRef.current.onCancel()
   }
   const drawLine = (lineData)=> {
+    form.setFieldValue('date', moment(today,'YYYY-MM-DD'))
     let lineChart = echarts.init(lineRef.current);
+    lineChart.clear()
     lineChart.setOption({
       color:['#237ae4', '#093'],
       tooltip: {
@@ -302,8 +306,14 @@ export default function Index() {
           symbol:'circle', 
         }
       ]
-    })
+    }, true)
   }
+  const onSearch = () => {
+    const date = form.getFieldValue('date').format('YYYY-MM-DD')
+    getTrends(headerData.projectId, roomId, date) 
+  }
+
+  //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
     <div>
       <UseHeader getValues={getFromChild}></UseHeader>
@@ -322,10 +332,14 @@ export default function Index() {
         </div>
       </div>
       <CustModal title='温湿度趋势' ref={TempRef}  mold="cust" width={1680}  onOk={()=>onOk()}>
-        <div style={{ position:'absolute', right: 32, top:32}}>
+        <div style={{ position:'absolute', right: 32, top:32, display: 'flex',alignItems:'center'}}>
           <span>日期</span>
-          <DatePicker style={{width: 182, margin: '0 16px' }} defaultValue={moment(today,'YYYY-MM-DD')}></DatePicker>
-          <Button type='primary' icon={<SearchOutlined />} style={{width: 96}}>查询</Button>
+          <Form name='addForm' form={form}>
+            <Item name='date' label=''>
+              <DatePicker style={{width: 182, margin: '0 16px' }} ></DatePicker>
+            </Item>
+          </Form>
+          <Button type='primary' icon={<SearchOutlined />} style={{width: 96}} onClick={()=> onSearch()}>查询</Button>
         </div>
         <div className={style.lineChart} ref={lineRef}></div>
       </CustModal>

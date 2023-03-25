@@ -21,6 +21,7 @@
   }
   .react-grid-item {
     box-sizing: border-box;
+    border-radius: 4px;
     /* width: 220px!important; */
   }
   .react-grid-item:not(.react-grid-placeholder) {

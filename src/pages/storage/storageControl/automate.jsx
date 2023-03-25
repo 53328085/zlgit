@@ -141,7 +141,10 @@ const Formbox = styled(Form)`
             grid-column: 2;
             grid-row: 2;
         }
-      
+        .datechoose {
+            grid-row: 3;
+            grid-column: 1/ 3;
+        }
        .ant-form-item {
         margin-bottom: 0px;
        }
@@ -452,6 +455,7 @@ const Strategy = ({data, pcs}) => {
       {label: '周日', value: 7},
     ]
    )
+   const [days, setDays] = useState(() =>  Array.from({length: 31}).map((i) => ({label: i < 10 ? '0'+i : i, value: 1 })))
    return (
       <Titlelayout title='运行计划设置' bordered={'n'}>
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left">
@@ -464,23 +468,27 @@ const Strategy = ({data, pcs}) => {
                   style={{width: '200px'}}
                   options={[
                     {
-                        label: '每天重复',
+                        label: '每日',
                         value: 1
                     },
                     {
-                        label: '长期',
+                        label: '每周',
                         value: 2
                     },
                     {
-                        label: '每周重复',
+                        label: '每月',
                         value: 3
                     }
                   ]}
                 ></Select>               
             </Item>
             
-            <Item label="选择重复" name="dateChoose"  className='datechoose' >
-                <Checkbox.Group options={options}    />  
+            <Item label="选择重复" name="dateChoose"  className='datechoose' shouldUpdate={['executionCycle']} >
+               {
+                ({getFieldsValue}) => {
+                    getFieldsValue('executionCycle') == 3 &&  <Checkbox.Group options={options}    /> 
+                }
+               }  
             </Item>
              
             <Item  label="策略模板" name="strategyId">

@@ -11,14 +11,14 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig } from "@redux/systemconfig";
+import { systemConfig, getpublishState } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
 import { pwdValidator, phoneValidator, codeValidator } from "../rule";
-import { Login as Logapi } from "@api/api";
+import { Login as Logapi, ProjectSetting } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
 import {
@@ -328,9 +328,17 @@ function UserLog() {
     const { name, pwd } = value;
     let { success, errMsg, data: usedata } = await dispatch(loginByName({ name, pwd })).unwrap();
     if (success) {
-      if (usedata.roleType == 1 || usedata.roleType == 2)  return navigate("/projectlist", {})
-      if (usedata.roleType == 3 || usedata.roleType == 4) {
-     let {data ,success,errMsg,} = await ProjectList.QueryMenus(usedata.projectId);
+        let {projectId, roleType} = usedata
+      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
+      if (roleType == 3 || roleType == 4) {
+       try {
+        let {success, data} = await ProjectSetting.queryProjectPublishInfo(projectId)
+        success && getpublishState(data?.state)
+       } catch (error) {
+        console.log(error)
+       }
+
+       let {data ,success,errMsg,} = await ProjectList.QueryMenus(usedata.projectId);
        try {
           if (success && Array.isArray(data)) { 
               
@@ -339,7 +347,7 @@ function UserLog() {
              //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
                const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
                let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
-              
+               const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
                const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
       
                const siderRunMenus = {}; // 运行功能 选择的子菜单
@@ -369,7 +377,8 @@ function UserLog() {
                 siderDesignerMenus,
                 runMenus,
                 siderRunMenus, 
-                setMenus,        
+                setMenus,  
+                comSet,      
                 projectId: usedata.projectId,
                }
                dispatch(getMenus(menus));
