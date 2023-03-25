@@ -8,6 +8,7 @@ import {publishState} from '@redux/systemconfig'
 
 export default function DeviceContent(props,ref) {
   const publish = useSelector(publishState)
+  console.log(publish)
   const {
     value,
     name='新增网关类型',
