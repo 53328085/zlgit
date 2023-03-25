@@ -18,6 +18,13 @@ import moment from 'moment';
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
 import Cupload from "@com/useUpload.js" 
+
+import {useSelector} from "react-redux";
+import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
+import {publishState} from '@redux/systemconfig' // 布尔值 发布状态 
+ 
+
+
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 578px 720px;
@@ -177,6 +184,13 @@ const Ccheckbox = styled(Checkbox.Group)`
  }
 `
 export default function ProjectSet({projectId}) {
+
+  const ismanager = useSelector(manager)
+  const ismaintenance = useSelector(maintenance)
+  const ispublish = useSelector(publishState)
+  
+
+
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
   const map = useRef();
