@@ -1,20 +1,22 @@
-import React, { useEffect,useContext, forwardRef, useImperativeHandle, useState,useRef,useMemo} from 'react'
+import React, { useEffect, useContext, forwardRef, useImperativeHandle, useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
- function Comp(props,ref) {
+import { publishState } from '@redux/systemconfig'
+function Comp(props, ref) {
+    const publish = useSelector(publishState)
     const context = useContext(CustContext)
-    const [selvalue,setSelValue]=useState()
-    const [inpvalue,setInpValue]=useState()
+    const [selvalue, setSelValue] = useState()
+    const [inpvalue, setInpValue] = useState()
     const selRef = useRef(selvalue)
-    selRef.current =selvalue
+    selRef.current = selvalue
     const inpRef = useRef(inpvalue)
-    inpRef.current =inpvalue
-    const oneLevel = useSelector(state=>state.system.onelevel)
-    const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) :[]
-    console.log(areaOptions)
+    inpRef.current = inpvalue
+    const oneLevel = useSelector(state => state.system.onelevel)
+    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]) : []
+
     const {
         placeholder = '输入控制器编号/安装地址',
         inplabel = '设备查询',
@@ -26,53 +28,53 @@ import CustContext from '@com/content'
         exportTable,
         tableParamsRef,
         levelname,
-        getList=()=>{}
+        getList = () => { }
     } = props
-   
-   const changeSelect=(v)=>{
-    setSelValue(v)
-    selRef.current=v
-    setTableParams({
-        ...tableParams,
-        current:1
-    })
-    getList({pageSize:tableParams.pageSize,pageNum:1,areaId:v,alike:inpRef.current?inpRef.current:""})
-   }
-   const changeInp=(e)=>{
-    setInpValue(e.target.value)
 
-   }
-   const searchBtn=()=>{
-    setTableParams({
-        ...tableParams,
-        current:1
-    })
-    console.log(selRef)
-    getList({pageSize:tableParams.pageSize,pageNum:1,alike:inpvalue,areaId:selRef.current?selRef.current:0})
-   
-   }
-   useImperativeHandle(ref,()=>({
-    selvalue,
-    inpvalue,
-    selRef,
-    inpRef
-   }))
-  
+    const changeSelect = (v) => {
+        setSelValue(v)
+        selRef.current = v
+        setTableParams({
+            ...tableParams,
+            current: 1
+        })
+        getList({ pageSize: tableParams.pageSize, pageNum: 1, areaId: v, alike: inpRef.current ? inpRef.current : "" })
+    }
+    const changeInp = (e) => {
+        setInpValue(e.target.value)
+
+    }
+    const searchBtn = () => {
+        setTableParams({
+            ...tableParams,
+            current: 1
+        })
+        console.log(selRef)
+        getList({ pageSize: tableParams.pageSize, pageNum: 1, alike: inpvalue, areaId: selRef.current ? selRef.current : 0 })
+
+    }
+    useImperativeHandle(ref, () => ({
+        selvalue,
+        inpvalue,
+        selRef,
+        inpRef
+    }))
+
     return (
         <div>
             <Row justify='space-between'  >
                 <Row align='middle'>
                     <Col>
-                        <Select   
-                           
-                           fieldNames={{
-                            label:'name',
-                            value:'id'
-                           }}
+                        <Select
+
+                            fieldNames={{
+                                label: 'name',
+                                value: 'id'
+                            }}
                             style={{
                                 width: 264,
                             }}
-                            defaultValue={oneLevel.length>0?0:null}
+                            defaultValue={oneLevel.length > 0 ? 0 : null}
                             value={selvalue}
                             options={areaOptions}
                             onChange={changeSelect}
@@ -85,7 +87,7 @@ import CustContext from '@com/content'
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
-                        <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp}/>
+                        <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp} />
                     </Col>
                     <Col>
                         <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={searchBtn}>查询</Button>
@@ -100,8 +102,11 @@ import CustContext from '@com/content'
                     }
                 </Row>
                 <Row>
-                    <div className={style.divmgr16} onClick={addopen}>+新增</div>
-                    <div className={style.divmgr16} onClick={modalImport}>批量导入</div>
+                    {publish ? null : <>
+                        <div className={style.divmgr16} onClick={addopen}>+新增</div>
+                        <div className={style.divmgr16} onClick={modalImport}>批量导入</div>
+                    </>}
+
                     <div className={style.divmgr16} onClick={exportTable}>导出</div>
                 </Row>
             </Row>

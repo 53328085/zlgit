@@ -20,12 +20,12 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
-  let [areaId, setAreaId] = useState('')
   let [deviceStyle, setdeviceStyle] = useState(0)
   let [statistics, setStatistics] = useState({})
-  let [overView, setoverView] = useState({ details: [], categories: [] })
+  let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
+  let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false

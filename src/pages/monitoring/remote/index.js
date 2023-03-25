@@ -571,8 +571,8 @@ export default function Index() {
                         </div>
                         <img src={imgurl.line} className={style.timeline} ></img>
                         <div className={style.btnBox}>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', marginRight: 16, color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeType() }}>操作日志</Button>
+                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
+                            {/* <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeType() }}>操作日志</Button> */}
                             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>

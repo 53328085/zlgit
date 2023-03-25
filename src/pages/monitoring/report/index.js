@@ -1,23 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import {useRequest} from 'ahooks'
-import {UserReportApi} from '@api/api.js'
+import {Monitoring} from '@api/api.js'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import style from './style.module.less'
-import { Select,Radio, DatePicker, Button } from 'antd'
+import { Select,Radio, DatePicker, Button, message } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+import moment from "moment";
 
 
 
 export default function Index() {
+  const { RuntimeReport: { QueryReport } } = Monitoring
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:'')
-  let [areaId, setAreaId] = useState(1)
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
+  let [areaId, setAreaId] = useState(defaultArea)
+  const [queryData,setqueryData]=useState()
+  const today = moment();
   const changeArea = (value) => {
     setAreaId(value);
   };
@@ -30,12 +34,41 @@ export default function Index() {
     value:'year'
   }]
   const [radioValue,setRadioValue] = useState('month');
+  const [date,setdate] = useState();
   const changeType = ({ target: { value } }) =>{
     setRadioValue(value);
   }
+  let params={
+    projectId:projectId,
+    areaId:areaId,
+    type:radioValue=='month'?1:2,
+    date:date
+  }
 
+const getData=()=>{
+  QueryReport(params).then(res=>{
+    let {success,data}=res
+    if(success){
+      setqueryData(data)
+    }else{
+      message.error(res.errMsg)
+    }
+  })
+}
+//   useEffect(() => {
+//     if (areaId&&date) {
+//         getData()
+//     }
+// }, [projectId, areaId, params.type])
+useEffect(() => {
+  if(areaList.length == 0 || !areaList){
+    message.error('当前项目尚未创建园区!')
+    return;
+  }
+}, []);
   const changeDate = (date, dateString) =>{
     console.log(date,dateString)
+    setdate(dateString)
   }
 
   const [display, setdisplay] = useState(false);
@@ -47,12 +80,17 @@ export default function Index() {
   });
 
   const createReport = () =>{
-    setdisplay(true);
+    if(date){
+      setdisplay(true);
+    getData()
     setcoverData({
       ProjectName:'正泰物联',
       Address:'浙江省杭州市滨江区月明路560号',
       Date:new Date().toLocaleDateString()
     })
+    }else{
+      message.error('请选择日期范围！')
+    }
   }
 
   return (
@@ -84,7 +122,8 @@ export default function Index() {
         </div>
         <div className={style.item}>
           <div className={style.itemTitle}>日期范围</div>
-          <DatePicker style={{width:324}} onChange={changeDate} picker={radioValue}></DatePicker>
+          <DatePicker style={{width:324}} onChange={changeDate} picker={radioValue} ></DatePicker>
+          {/* defaultValue={moment(today)} */}
         </div>
         <div className={style.button} onClick={createReport}>
           <img src={searchFile} className={style.searchFile}></img>
@@ -105,7 +144,7 @@ export default function Index() {
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        {display ? <PageList></PageList> : null }
+        {display ? <PageList query={queryData}></PageList> : null }
       </div>
       <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
       <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button>
