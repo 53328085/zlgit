@@ -67,7 +67,31 @@ export default function Index() {
     setRoomId(values)
   }
 
-  const columns = [
+  const columns = isPublish ? [
+    {
+      align:'center',
+      title: '园区名称',
+      dataIndex: 'regionName',
+      key: 'regionName',
+    },
+    { 
+      align:'center',
+      title: '配电房名称',
+      dataIndex: 'distributionName',
+      key: 'distributionName',
+    },
+    {
+      title: '配电房地址',
+      dataIndex: 'distributionAddress',
+      key: 'distributionAddress',
+      align:'center',
+    },{
+      title: '备注',
+      dataIndex: 'tag',
+      key: 'tag',
+      align:'center',
+    },
+  ]:[
     {
       align:'center',
       title: '园区名称',
