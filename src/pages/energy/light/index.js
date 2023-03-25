@@ -21,8 +21,8 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   const formInfo = {
     changeType: 3,
-    changeAreaId: 1,
-    changeDate: '2023-01-01',
+    changeAreaId: '',
+    changeDate: '',
     changeInput: ''
   }
   let [state, setstate] = useState('开启');
@@ -71,13 +71,13 @@ export default function Index(props) {
       if (success && data) {
         //setairList(data)
         setairList([{
-          id:1,
-          name:'123456',
-          boxName:'xxx',
-          sn:'0123456789',
-          controlLine:1,
-          address:'zxxx',
-          state:0
+          id: 1,
+          name: '123456',
+          boxName: 'xxx',
+          sn: '0123456789',
+          controlLine: 1,
+          address: 'zxxx',
+          state: 0
         }])
         console.log(3)
       } else {
@@ -241,17 +241,21 @@ export default function Index(props) {
     export: exportData //导出调用方法
   }
   const getFromChild = data => {
-    formInfo.changeAreaId = data.areaId
-    formInfo.changeDate = data.date
-    formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
-    charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
-    setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
-    setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
-    queryDataList()
-    queryData()
-    setTimeout(() => {
-      tdrawEcharts(elref.current, option(charts[0], charts[1]))
-    }, 1000)
+    if (data.areaId == undefined) {
+      return
+    } else {
+      formInfo.changeAreaId = data.areaId
+      formInfo.changeDate = data.date
+      formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
+      charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
+      setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
+      setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
+      queryDataList()
+      queryData()
+      setTimeout(() => {
+        tdrawEcharts(elref.current, option(charts[0], charts[1]))
+      }, 1000)
+    }
   }
 
   return (
@@ -272,13 +276,13 @@ export default function Index(props) {
                   <div style={{ borderRadius: '50%', width: 64, height: 64, backgroundColor: '#237AE4', marginTop: 16 }}><Image src={imgurl.logo} preview={false} width={64} height={64}></Image></div>
                   {/* </div> */}
                   <div className={style.airEnergyData}>
-                    <p>{lightDate} :{energyInfo.total.periodValue  ? energyInfo.total.periodValue : '0.00'}</p>
-                    <div style={{display:'flex',alignItems:'center'}}>同比 :{energyInfo.total.mom  ?  energyInfo.total.mom : '0.00'}
-                      {(energyInfo.total.mom-0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={2} ></Image> :energyInfo.total.mom?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
+                    <p>{lightDate} :{energyInfo.total.periodValue ? energyInfo.total.periodValue : '0.00'}</p>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>同比 :{energyInfo.total.mom ? energyInfo.total.mom : '0.00'}
+                      {(energyInfo.total.mom - 0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={2} ></Image> : energyInfo.total.mom ? <Image src={imgurl.down} preview={false} width={11} height={22} ></Image> : ''}
                     </div>
                     <p>{lightDateYesterday}  :{energyInfo.total.lastMonthPeriodValue ? energyInfo.total.lastMonthPeriodValue : '0.00'}</p>
-                    <div style={{display:'flex',alignItems:'center'}}>环比 :{energyInfo.total.yoy ?  energyInfo.total.yoy : '0.00'}
-                      {(energyInfo.total.yoy-0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={22}></Image> : energyInfo.total.yoy?<Image src={imgurl.down} preview={false} width={11} height={22} ></Image>:''}
+                    <div style={{ display: 'flex', alignItems: 'center' }}>环比 :{energyInfo.total.yoy ? energyInfo.total.yoy : '0.00'}
+                      {(energyInfo.total.yoy - 0) > 0 ? <Image src={imgurl.up} preview={false} width={11} height={22}></Image> : energyInfo.total.yoy ? <Image src={imgurl.down} preview={false} width={11} height={22} ></Image> : ''}
                     </div>
                   </div>
                 </div>
@@ -304,7 +308,7 @@ export default function Index(props) {
                     {item.state == 1 ? <Image src={imgurl.light} preview={false} width={110} height={110}></Image> : <Image src={imgurl.light} preview={false} width={110} height={110} style={{ opacity: 0.3 }}></Image>}
                     <div className={style.airState}>
                       {item.state == 1 ? <div style={{ width: 14, height: 14, backgroundColor: '#66FF00', borderRadius: '50%' }}></div> : <div style={{ width: 14, height: 14, backgroundColor: '#000', borderRadius: '50%' }}></div>}
-                      {item.state == 1 ? <span style={{ fontSize: 12, color: '#fff', marginLeft: 5 }}>{item.state==1?'开启':'关闭'}</span> : <span style={{ fontSize: 12, color: '#003366', marginLeft: 5 }}>{item.state==1?'开启':'关闭'}</span>}
+                      {item.state == 1 ? <span style={{ fontSize: 12, color: '#fff', marginLeft: 5 }}>{item.state == 1 ? '开启' : '关闭'}</span> : <span style={{ fontSize: 12, color: '#003366', marginLeft: 5 }}>{item.state == 1 ? '开启' : '关闭'}</span>}
                     </div>
                     {/* <Divider className={style.dividerLine} dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} /> */}
                     <div style={{ marginTop: 16, marginBottom: 16, width: 137, borderTop: "1px dashed #fff" }} ></div>

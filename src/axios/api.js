@@ -831,22 +831,22 @@ export class SettingManage {
 }
 //远程控制
 export class Remote {
-  static AllMeter = (data) =>server.post( `Remote/Overview`,data); //查询设备
-  static FindPowerProtect = (projectId) =>server.get(`Remote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
-  static StartBatchValveTask = (data) => server.post(`Remote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
-  static BatchValveResponse = (data) =>server.post(`Remote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
-  static StartCalling = (data) => server.post(`Remote/StartCalling`, data); //发起批量抄读测点任务
-  static CallingResponse = (data) =>server.post(`Remote/CallingResponse`, data); //查询批量抄读测点结果
-  static Open = (data) => server.post(`Remote/Open`, data); //批量分闸
-  static OpenForce = (data) => server.post(`Remote/OpenForce`, data); //拉闸结算
-  static Close = (data) => server.post(`Remote/Close`, data); //批量合闸
-  static SetPowerProtect = (powerSolutionId, data) =>server.post(`Remote/SetPowerProtect?powerSolutionId=${powerSolutionId}`,data); //设置保电方案
-  static RemovePowerProtect = (data) =>server.post(`Remote/RemovePowerProtect`, data); //取消保电方案
-  static FindAlarmSolution = (projectId) =>server.get(`Remote/FindAlarmSolution?projectId=${projectId}`); //获取报警方案简易列表
-  static SetAlarmSolution = (alarmSolutionId, data) =>server.post(`Remote/SetAlarmSolution?alarmSolutionId=${alarmSolutionId}`,data); //设置报警方案
-  static RemoveAlarmSolution = (data) =>server.post(`Remote/RemoveAlarmSolution`, data); //取消告警方案
-  static Log = (data) => server.post(`Remote/Log`, data); //查询操作日志
-  static BatchValveStatus = (data) =>server.post(`Remote/BatchValveStatus`, data); //批量查询阀门当前状态
+  static AllMeter = (data) =>server.post( `/Monitor/RuntimeRemote/Overview`,data); //查询设备
+  static FindPowerProtect = (projectId) =>server.get(`/Monitor/RuntimeRemote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
+  static StartBatchValveTask = (data) => server.post(`/Monitor/RuntimeRemote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
+  static BatchValveResponse = (data) =>server.post(`/Monitor/RuntimeRemote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
+  static StartCalling = (data) => server.post(`/Monitor/RuntimeRemote/StartCalling`, data); //发起批量抄读测点任务
+  static CallingResponse = (data) =>server.post(`/Monitor/RuntimeRemote/CallingResponse`, data); //查询批量抄读测点结果
+  static Open = (data) => server.post(`/Monitor/RuntimeRemote/Open`, data); //批量分闸
+  static OpenForce = (data) => server.post(`/Monitor/RuntimeRemote/OpenForce`, data); //拉闸结算
+  static Close = (data) => server.post(`/Monitor/RuntimeRemote/Close`, data); //批量合闸
+  static SetPowerProtect = (powerSolutionId, data) =>server.post(`/Monitor/RuntimeRemote/SetPowerProtect?powerSolutionId=${powerSolutionId}`,data); //设置保电方案
+  static RemovePowerProtect = (data) =>server.post(`/Monitor/RuntimeRemote/RemovePowerProtect`, data); //取消保电方案
+  static FindAlarmSolution = (projectId) =>server.get(`/Monitor/RuntimeRemote/FindAlarmSolution?projectId=${projectId}`); //获取报警方案简易列表
+  static SetAlarmSolution = (alarmSolutionId, data) =>server.post(`/Monitor/RuntimeRemote/SetAlarmSolution?alarmSolutionId=${alarmSolutionId}`,data); //设置报警方案
+  static RemoveAlarmSolution = (data) =>server.post(`/Monitor/RuntimeRemote/RemoveAlarmSolution`, data); //取消告警方案
+  static Log = (data) => server.post(`/Monitor/RuntimeRemote/Log`, data); //查询操作日志
+  static BatchValveStatus = (data) =>server.post(`/Monitor/RuntimeRemote/BatchValveStatus`, data); //批量查询阀门当前状态
 }
 export const OpLog = (data) => server.post(`Remote/Log`, data);
 //能源账户充值

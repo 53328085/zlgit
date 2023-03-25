@@ -12,6 +12,7 @@ import { Monitoring } from '@api/api.js'
 import { selectProjectId,selectOneLevel } from '@redux/systemconfig.js'
 import { SemanticClassificationFormat } from 'typescript';
 import Table from '@com/useTable'
+import { area } from '@antv/g2plot';
 
 
 export default function Index(props) {
@@ -19,7 +20,7 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
-  let [areaId, setAreaId] = useState(1)
+  let [areaId, setAreaId] = useState('')
   let [deviceStyle, setdeviceStyle] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: [], categories: [] })
@@ -206,13 +207,24 @@ export default function Index(props) {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }//数据导出
+  
   useEffect(() => {
-    getData()
+    if(areaList.length == 0 || !areaList){
+      message.error('当前项目尚未创建园区!')
+      return;
+    }
+  }, [])
+  useEffect(() => {
+    if(areaId){
+      getData()
     queryData()
+    }
   }, [areaId, changeTag,deviceStyle])
   useEffect(() => {
-    getOverviewData()
+    if(areaId){
+      getOverviewData()
     console.log('getOverviewData')
+    }
   }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page,params.deviceStyle])
   useEffect(() => {
     if (overView.categories) {
