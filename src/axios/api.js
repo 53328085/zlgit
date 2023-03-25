@@ -1133,6 +1133,10 @@ export const Monitoring = {
   RuntimeLog:{
     QueryOperationLogs: (data) => server.post(`/Monitor/RuntimeLog/QueryOperationLogs`, data),//操作日志
     QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
+  },
+  //运行报告
+  RuntimeReport:{
+    QueryReport:(data) => server.get(`/Monitor/RuntimeReport/QueryReport?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}&date=${data.date}`),//
   }
 }
 //运维管理(运行)
@@ -1528,6 +1532,11 @@ export class AlarmManagement {
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
   static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)
   static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
+  static AddAlarmEventOverrun = (data) => server.post(`Safe/Alarm/AddAlarmEventOverrun`,data)
+  static AddAlarmEventDeflection = (data) => server.post(`Safe/Alarm/AddAlarmEventDeflection`,data)
+  static AddAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/AddAlarmEventSOE`,data)
+  static AddAlarmEventCommunication = (data) => server.post(`Safe/Alarm/AddAlarmEventCommunication`,data)
+  static DeleteAlarmEvent = (projectId,id) => server.delete(`Safe/Alarm/DeleteAlarmEvent?projectId=${projectId}&id=${id}`)
 }
 //储能--环境监控
 export class StorageEnvironmentRuntime {

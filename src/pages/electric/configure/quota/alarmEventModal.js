@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import {
   Button,
-  Space,
   Modal,
   Form,
   Input,
@@ -10,6 +9,8 @@ import {
   Select,
   Switch,
   Radio,
+  Space,
+  InputNumber,
 } from "antd";
 
 import { AlarmManagement } from "@api/api.js";
@@ -20,15 +21,7 @@ export default function Index(props) {
   console.log(props);
   const projectId = useSelector(selectProjectId);
   const { AddAlarmEventInterval } = AlarmManagement;
-
-  const [form] = Form.useForm();
   const Item = Form.Item;
-  //   新增告警事件-告警规则逻辑
-  const [defaultAlarmType, setDefaultAlarmType] = useState(1);
-  //   const [showData, setShowData] = useState();
-  //   const [alarmList, setalarmList] = useState();
-  const [value, setValue] = useState("inner");
-  const [compareValue, setCompareValue] = useState("lessThan");
   const alarmList = [
     {
       id: 1,
@@ -54,26 +47,108 @@ export default function Index(props) {
   const conditionOptions = [
     {
       label: "区间内",
-      value: "inner",
+      value: 1,
     },
     {
       label: "区间外",
-      value: "outer",
+      value: 2,
     },
   ];
   const compareOptions = [
     {
       label: "小于等于",
-      value: "lessThan",
+      value: 2,
     },
     {
       label: "大于等于",
-      value: "greaterhan",
+      value: 1,
     },
   ];
-  const addAlarmOk = () => {
-    props.callBack();
-    console.log(defaultAlarmType);
+  const levelList = [
+    {
+      id: 1,
+      name: "1级",
+    },
+    {
+      id: 2,
+      name: "2级",
+    },
+    {
+      id: 3,
+      name: "3级",
+    },
+  ];
+  //  新增告警事件声明初始化
+  // const [name, setName] = useState();
+  // const [pointIdentifier, setPointIdentifier] = useState();
+  const [level, setLevel] = useState(levelList[0].id);
+  const [push, setPush] = useState(true);
+  // const [time, setTime] = useState();
+  const [enable, setEnable] = useState(true);
+  //   新增告警事件-告警规则逻辑
+  const [defaultAlarmType, setDefaultAlarmType] = useState(alarmList[0].id);
+  const [value, setValue] = useState(1);
+  const [compareValue, setCompareValue] = useState(2);
+
+  const [formInfo] = Form.useForm();
+  if (props.giveChildFormRecord) {
+    setFormInfo(props.giveChildFormRecord);
+    formInfo.setFieldsValue(props.giveChildFormRecord);
+  }
+  const addAlarmOk = async () => {
+    try {
+      const values = await formInfo.validateFields();
+      console.log(values);
+      console.log(push, enable);
+      let data = {
+        projectId: projectId,
+        name: values.name,
+        pointIdentifier: values.pointIdentifier,
+        level: values.level,
+        push: push,
+        time: values.time,
+        enable: enable,
+        alarmRule: defaultAlarmType,
+      };
+      if (defaultAlarmType === 2) {
+        //区间告警
+        let changeInfo = {
+          alarmCondition: value,
+          minCriticalValue: values.minCriticalValue,
+          maxCriticalValue: values.maxCriticalValue,
+        };
+        const params = { ...data, ...changeInfo };
+        props.getValues(params);
+      } else if (defaultAlarmType === 1) {
+        //越限告警
+        let changeInfo = {
+          alarmCondition: compareValue,
+          criticalValue: values.criticalValue,
+        };
+        const params = { ...data, ...changeInfo };
+        props.getValues(params);
+      } else if (defaultAlarmType === 3) {
+        //变位告警
+        let changeInfo = {
+          alarmValue: values.alarmValue,
+          recoverValue: values.recoverValue,
+        };
+        const params = { ...data, ...changeInfo };
+        props.getValues(params);
+      } else if (defaultAlarmType === 4) {
+        //SOE告警
+        let changeInfo = {
+          alarmLabel: values.alarmLabel,
+          recoverLabel: values.recoverLabel,
+        };
+        const params = { ...data, ...changeInfo };
+        props.getValues(params);
+      } else if (defaultAlarmType === 5) {
+        //离线告警
+        const params = { ...data };
+        props.getValues(params);
+      }
+    } catch (errorInfo) {}
   };
   const handleCancel = () => {
     props.callBack();
@@ -91,6 +166,22 @@ export default function Index(props) {
     console.log(value);
     setCompareValue(value);
   };
+  const changeAlarmLevel = (value) => {
+    setLevel(value);
+  };
+  // 是否连续推送变化时的回调函数
+  const pushChange = (value) => {
+    setPush(value);
+    console.log(value, push);
+  };
+  // 是否启用变化时的回调函数
+  const enableChange = (value) => {
+    setEnable(value);
+    console.log(value, enable);
+  };
+  useEffect(() => {
+    formInfo.resetFields();
+  }, [AddAlarmEventGive]);
   useEffect(() => {
     setDefaultAlarmType(defaultAlarmType);
   }, [defaultAlarmType]);
@@ -101,8 +192,11 @@ export default function Index(props) {
     setCompareValue(compareValue);
   }, [compareValue]);
   useEffect(() => {
-      form.resetFields();
-  }, [AddAlarmEventGive]);
+    setPush(push);
+  }, [push]);
+  useEffect(() => {
+    setEnable(enable);
+  }, [enable]);
   return (
     <div>
       <Modal
@@ -116,7 +210,7 @@ export default function Index(props) {
         maskClosable={false}
         okText={"完成"}
         okType={"primary"}
-        // okButtonProps={{ primary: true }}
+        destroyOnClose //关闭时销毁子元素
       >
         <div className={style.addHeader}>新增告警事件</div>
         <div className={style.addBody}>
@@ -124,73 +218,112 @@ export default function Index(props) {
           <Form
             labelCol={{ flex: "110px" }}
             labelAlign="left"
-            labelWrap
             wrapperCol={{ flex: 1 }}
             className={style.form}
-            size="small"
-            form={form}
+            // size="small"
+            form={formInfo}
+            name="addform"
           >
-            <Item
-              label="告警事件名称："
-              rules={[{ required: true }]}
-              style={{ width: 500 }}
-            >
-              <Input style={{ width: 310 }} />
+            <Space style={{ alignItems: "baseline" }}>
+              <Item
+                name="name"
+                label="告警事件名称："
+                rules={[{ required: true, message: "请输入告警事件名称" }]}
+                style={{ width: 415 }}
+              >
+                <Input
+                  style={{ width: 290 }}
+                  placeholder="请输入告警事件名称"
+                />
+              </Item>
               <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-            </Item>
-            <Item
-              label="数据标识："
-              rules={[{ required: true }]}
-              style={{ width: 500 }}
-            >
-              <Input style={{ width: 310 }} />
+            </Space>
+            <Space style={{ alignItems: "baseline" }}>
+              <Item
+                label="数据标识："
+                rules={[{ required: true, message: "请输入数据标识" }]}
+                style={{ width: 415 }}
+                name="pointIdentifier"
+              >
+                <Input style={{ width: 290 }} />
+              </Item>
               <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-            </Item>
+            </Space>
             <div className={style.divBox}>
               <Item
                 label="告警等级："
-                style={{ width: 305 }}
-                labelCol={{ flex: "110px" }}
+                labelCol={{ flex: "100px" }}
+                style={{ width: 305, marginLeft: 10 }}
+                name="level"
               >
-                <Select style={{ width: 110 }}>
-                  <Select.Option value="demo1">1级</Select.Option>
-                  <Select.Option value="demo2">2级</Select.Option>
-                  <Select.Option value="demo3">3级</Select.Option>
+                <Select
+                  style={{ width: 110 }}
+                  key={level}
+                  defaultValue={level}
+                  onChange={changeAlarmLevel}
+                >
+                  {levelList.map((item) => {
+                    return (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
               </Item>
               <Item
                 label="是否连续推送："
                 valuePropName="checked"
                 style={{ width: 220 }}
+                name="push"
               >
-                <Switch checked />
+                <Switch
+                  checkedChildren="是"
+                  unCheckedChildren="否"
+                  defaultChecked
+                  onChange={pushChange}
+                />
               </Item>
             </div>
             <div className={style.divBox}>
-              <Item
-                label="持续时间≥："
-                rules={[{ required: true }]}
-                labelCol={{ flex: "110px" }}
-                style={{ width: 300 }}
-              >
-                <Input style={{ width: 110 }} /> 秒
-                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-              </Item>
+              <Space style={{ alignItems: "baseline" }}>
+                <Item
+                  label="持续时间≥："
+                  rules={[{ required: true, message: "请输入持续时间" }]}
+                  labelCol={{ flex: "110px" }}
+                  style={{ width: 220 }}
+                  name="time"
+                >
+                  {/* 使用precision，对输入的内容做保留0位小数处理 */}
+                  <InputNumber min="0" style={{ width: 110 }} precision={0} />
+                </Item>
+                秒
+                <span style={{ color: "#999", width: 42, display: "block" }}>
+                  (必填)
+                </span>
+              </Space>
               <Item
                 label="是否启用："
                 valuePropName="checked"
                 labelCol={{ flex: "103px" }}
-                style={{ width: 220, marginLeft: 5 }}
+                style={{ width: 220, marginLeft: 30 }}
+                name="enable"
               >
-                <Switch checked />
+                <Switch
+                  checkedChildren="是"
+                  unCheckedChildren="否"
+                  defaultChecked
+                  onChange={enableChange}
+                />
               </Item>
             </div>
             <Divider dashed style={{ margin: 0 }} />
             <p className={style.titleModal}>告警规则</p>
             <Item
               label="告警类型："
-              labelCol={{ flex: "95px" }}
+              labelCol={{ flex: "85px" }}
               style={{ width: 400 }}
+              name="defaultAlarmType"
             >
               <Select
                 style={{ width: 210 }}
@@ -205,7 +338,7 @@ export default function Index(props) {
                 <Select.Option value="5">离线告警</Select.Option> */}
                 {alarmList.map((item) => {
                   return (
-                    <Select.Option key={item} value={item.id}>
+                    <Select.Option key={item.id} value={item.id}>
                       {item.name}
                     </Select.Option>
                   );
@@ -216,40 +349,85 @@ export default function Index(props) {
 
             {defaultAlarmType === 1 ? (
               <div className={style.intervalAlarm}>
-                <Item label="告警条件：" labelCol={{ flex: "95px" }}>
-                  {/* <Radio.Group value="a">
-                  <Radio value="a">区间内</Radio>
-                  <Radio value="b">区间外</Radio>
-                </Radio.Group> */}
+                <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                   <Radio.Group
                     options={conditionOptions}
                     onChange={conditionOnChange}
                     value={value}
+                    name="alarmCondition"
                   />
                 </Item>
                 <div className={style.divBox}>
-                  <Item
-                    label="低限："
-                    labelCol={{ flex: "70px" }}
-                    rules={[{ required: true }]}
-                    style={{ width: 300, marginLeft: 27 }}
-                  >
-                    <Input style={{ width: 110 }} />
-                    <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-                  </Item>
-                  <Item
-                    label="高限："
-                    labelCol={{ flex: "70px" }}
-                    rules={[{ required: true }]}
-                    style={{ width: 300, marginLeft: 15, height: 30 }}
-                  >
-                    <Input style={{ width: 110 }} />
-                    <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-                    <p style={{ color: "red", fontSize: 8 }}>且高值≥低值</p>
-                  </Item>
+                  <Space style={{ alignItems: "baseline" }}>
+                    <Item
+                      label="低限："
+                      labelCol={{ flex: "70px" }}
+                      rules={[
+                        { required: true, message: "请输入低限值(整数)" },
+                      ]}
+                      style={{ width: 200, marginLeft: 18 }}
+                      name="minCriticalValue"
+                    >
+                      <InputNumber
+                        style={{ width: 125 }}
+                        placeholder="请输入低限值"
+                      />
+                    </Item>
+                    <span
+                      style={{
+                        color: "#999",
+                        width: 50,
+                        display: "block",
+                      }}
+                    >
+                      (必填)
+                    </span>
+                  </Space>
+                  <Space style={{ alignItems: "baseline" }}>
+                    <Item
+                      label="高限："
+                      labelCol={{ flex: "70px" }}
+                      rules={[
+                        { required: true, message: "请输入高限值(整数)" },
+                      ]}
+                      style={{
+                        width: 200,
+                        height: 30,
+                        width: 200,
+                        marginLeft: 18,
+                      }}
+                      name="maxCriticalValue"
+                    >
+                      <InputNumber
+                        style={{ width: 125 }}
+                        placeholder=" 且高值≥低值"
+                        className={style.colorRed}
+                      />
+                    </Item>
+                    <span
+                      style={{
+                        color: "#999",
+                        width: 50,
+                        display: "block",
+                      }}
+                    >
+                      (必填)
+                    </span>
+                    {/* <p
+                      style={{
+                        color: "red",
+                        fontSize: 8,
+                        width: 150,
+                        marginLeft:-140,
+                        marginTop:40
+                      }}
+                    >
+                     
+                    </p> */}
+                  </Space>
                 </div>
                 {/* -----区间内----- */}
-                {value === "inner" ? (
+                {value === 1 ? (
                   <Item>
                     <div className={style.qujianLi}>
                       <span className={style.title}>告警说明：</span>
@@ -293,25 +471,32 @@ export default function Index(props) {
             ) : defaultAlarmType === 2 ? (
               // {/* //越限告警 */}
               <div className={style.OverLimitAlarm}>
-                <Item label="告警条件：" labelCol={{ flex: "95px" }}>
+                <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                   <Radio.Group
                     options={compareOptions}
                     onChange={compareOnChange}
                     value={compareValue}
                   />
                 </Item>
-                <Item
-                  label="临界值："
-                  labelCol={{ flex: "85px" }}
-                  rules={[{ required: true }]}
-                  style={{ width: 300, marginLeft: 15 }}
-                >
-                  <Input style={{ width: 110 }} />
-                  <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-                </Item>
-
+                <Space style={{ alignItems: "baseline" }}>
+                  <Item
+                    label="临界值："
+                    labelCol={{ flex: "85px" }}
+                    rules={[
+                      { required: true, message: "请输入临界值(正整数)" },
+                    ]}
+                    style={{ width: 240, marginLeft: 5 }}
+                    name="criticalValue"
+                  >
+                    <InputNumber
+                      style={{ width: 130 }}
+                      placeholder="请输入临界值"
+                    />
+                  </Item>
+                  <span style={{ color: "#999", marginLeft: -25 }}>(必填)</span>
+                </Space>
                 {/* -----小于等于----- */}
-                {compareValue === "lessThan" ? (
+                {compareValue === 2 ? (
                   <Item labelCol={{ flex: "95px" }}>
                     <div className={style.lessThan}>
                       <span className={style.title}>告警说明：</span>
@@ -346,28 +531,39 @@ export default function Index(props) {
               </div>
             ) : defaultAlarmType === 3 ? (
               <div>
-                <Item
-                  label="告警值："
-                  labelCol={{ flex: "95px" }}
-                  rules={[{ required: true }]}
-                  style={{ width: 300 }}
-                >
-                  <Input style={{ width: 110 }} />
-                  <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-                </Item>
-                <Item
-                  label="消警值："
-                  labelCol={{ flex: "95px" }}
-                  rules={[{ required: true }]}
-                  style={{ width: 300 }}
-                >
-                  <Input style={{ width: 110 }} />
-                  <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-                </Item>
+                <Space style={{ alignItems: "baseline" }}>
+                  <Item
+                    label="告警值："
+                    labelCol={{ flex: "80px" }}
+                    rules={[
+                      { required: true, message: "请输入告警值(正整数)" },
+                    ]}
+                    style={{ width: 300, marginLeft: 5 }}
+                    name="alarmValue"
+                  >
+                    <Input style={{ width: 110 }} placeholder="请输入告警值" />
+                  </Item>
+                  <span style={{ marginLeft: -90, color: "#999" }}>(必填)</span>
+                </Space>
+
+                <Space style={{ alignItems: "baseline" }}>
+                  <Item
+                    label="消警值："
+                    labelCol={{ flex: "80px" }}
+                    rules={[
+                      { required: true, message: "请输入消警值(正整数)" },
+                    ]}
+                    style={{ width: 240, marginLeft: 5 }}
+                    name="recoverValue"
+                  >
+                    <Input style={{ width: 110 }} placeholder="请输入消警值" />
+                  </Item>
+                  <span style={{ marginLeft: -30, color: "#999" }}>(必填)</span>
+                </Space>
                 <Item
                   label="告警说明："
-                  labelCol={{ flex: "95px" }}
-                  rules={[{ required: true }]}
+                  labelCol={{ flex: "85px" }}
+                  rules={[{ required: true, message: "请输入告警说明" }]}
                   style={{ width: 300 }}
                 >
                   <span style={{ color: "red" }}>告警值和消警值都必须填写</span>
@@ -377,23 +573,21 @@ export default function Index(props) {
               <div>
                 <Item
                   label="告警标识："
-                  labelCol={{ flex: "95px" }}
+                  labelCol={{ flex: "85px" }}
                   style={{ width: 300 }}
+                  name="alarmLabel"
                 >
-                  <Input style={{ width: 110 }} />
+                  <Input style={{ width: 120 }} placeholder="请输入告警标识" />
                 </Item>
                 <Item
                   label="消警标识："
-                  labelCol={{ flex: "95px" }}
+                  labelCol={{ flex: "85px" }}
                   style={{ width: 300 }}
+                  name="recoverLabel"
                 >
-                  <Input style={{ width: 110 }} />
+                  <Input style={{ width: 120 }} placeholder=" 请输入消警标识" />
                 </Item>
-                <Item
-                  label="告警说明："
-                  labelCol={{ flex: "95px" }}
-                  rules={[{ required: true }]}
-                >
+                <Item label="告警说明：" labelCol={{ flex: "85px" }}>
                   <span style={{ color: "red", fontSize: 10 }}>
                     告警标识和消警标识二者至少要填写其中一个，且内容不能相同
                   </span>
@@ -402,8 +596,7 @@ export default function Index(props) {
             ) : (
               <Item
                 label="告警条件："
-                labelCol={{ flex: "95px" }}
-                rules={[{ required: true }]}
+                labelCol={{ flex: "85px" }}
                 style={{ width: 300 }}
               >
                 <span style={{ color: "#999" }}>设备离线</span>
