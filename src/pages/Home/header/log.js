@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate} from "react-router-dom"
 import { clearToken, selectUser} from "@redux/user";
-import { configProject} from "@redux/systemconfig";
+import { configProject, comSetFirst} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -131,7 +131,7 @@ export default function Log() {
   const navgite = useNavigate()
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
-   console.log(roleType) 
+  const comurl = useSelector(comSetFirst) 
   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
@@ -179,10 +179,18 @@ export default function Log() {
   }
 
   const onConfigure = () => {   // 
-    dispatch(configProject(true));
-    navgite("/config/designerCommon/base", {
-      state: {type: 'config', nested: "base",  title: "基础设置", primary: 'designerCommon' },
-    })
+     console.log(comurl)
+     let {key, label} = comurl || {}
+    if (!!comurl && comurl.key) {
+      dispatch(configProject(true));
+      navgite(`/config/designerCommon/${key}`, {
+        state: {type: 'config', nested: key,  title: label, primary: 'designerCommon' },
+      })
+      
+    }else {
+      return message.warning('请先设置用户权限')
+    }
+   
   }
   const projectcfg =() => {
     navgite("/projectList")
