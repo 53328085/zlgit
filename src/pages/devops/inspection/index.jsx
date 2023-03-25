@@ -8,7 +8,7 @@ export default function Index() {
   const [form] =Form.useForm()
   const [areavalue, setAreavalue] = useState(0)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions = useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel])
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]):null
   //改变区域
   const changeArea = (v) => {
     console.log(v)
@@ -21,8 +21,8 @@ export default function Index() {
             form={form}
             colon={false}
           >
-            <Form.Item label={oneLevel[0].levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={0}></Select>
+            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
             </Form.Item>
           </Form>
         </div>

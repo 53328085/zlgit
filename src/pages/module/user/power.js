@@ -21,6 +21,8 @@ import {
 import {WarningFilled} from '@ant-design/icons'
 import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
+import {useSelector} from 'react-redux'
+import {selectUser} from "@redux/user";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
 //import Custdrawer from './drawer'
@@ -129,7 +131,8 @@ export default function Account({projectId, CModal}) {
  const [person, setPerson] = useState(0) // 新增项目管理员 新增运维人员
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
- 
+ const {roleType} = useSelector(selectUser) || {};
+ const showview = roleType == 1 || roleType == 2
 
   const menufn = (id, type) => {
     flushSync(() => {
@@ -332,8 +335,8 @@ export default function Account({projectId, CModal}) {
   return (
     <Mainbox>
      
-      
-        <div className="admin">
+        
+      { roleType ==1 ?  <div className="admin">
           <Title level={5} className="title">
             运营管理员（支持添加多位运营管理员）
           </Title>
@@ -368,8 +371,9 @@ export default function Account({projectId, CModal}) {
             </div>
           ))}
         </div>
-        
-       
+        : null
+          }
+      {roleType == 2 || roleType == 1 ?  
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
@@ -416,9 +420,9 @@ export default function Account({projectId, CModal}) {
           </>)
            }
         </div>
-       
-       
-        <div className="admin">
+       : null
+      }  
+     {roleType == 3 || roleType == 1  ? <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
               运维人员（支持添加多位运维人员）
@@ -438,19 +442,19 @@ export default function Account({projectId, CModal}) {
               {admin?.length > 0 && RenderItem(admin)}
              </Form>
         </div>
-     
-      
+      : null
+      }
       <Custmodl
               title={title}
               ref={fmodal} 
               fromprops={{enable: true}}
             //  onCancal={cancal}
               onOk={addManager}
-              mold="default"
+              mold="default"             
             >
 
             </Custmodl>
-      <Custmodl mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={mref}>
+      <Custmodl mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={mref} >
          <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delinfo}?</p>
       </Custmodl>
      {/*   <Drawer open={menuopen} title="项目权限选择" width={608} closable={false} extra={<Button type="primary">保存</Button>}>

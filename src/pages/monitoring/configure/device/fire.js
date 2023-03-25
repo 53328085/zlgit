@@ -481,12 +481,14 @@ export default function gateway({ deviceStyle }) {
 
 
   useEffect(() => {
-    getQueryByPageGas()
+    if(oneLevel?.length>0){
+      getQueryByPageGas()
     getOneLevel()
-    //getAeraQueryAll()
     getQueryUsedDeviceCategory()
     getQueryPlanList()
     getQueryListGateWay()
+    }
+    
   }, [])
   //传入props对象
   const ComProps = {

@@ -10,7 +10,7 @@ export default function Index() {
   return (
     <div className={style.container}>
         <div className={style.leftcss}>
-        <BlueColumn name={arealist[0].levelName}/>
+        <BlueColumn name={arealist[0]?.levelName}/>
         <Select 
         options={arealist} 
         style={{width:'100%',marginTop:32}}

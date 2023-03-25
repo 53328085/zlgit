@@ -216,10 +216,10 @@ export default function Index() {
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
   const arealist = useSelector(state => state.system.onelevel)
-  const levellist = [{ name: arealist[0].levelName, id: 0 }, ...arealist]
-
+  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName, id: 0 }, ...arealist]:[]
+  console.log(arealist)
   const [warnData, setWarnData] = useState()
-  const [areaId, setAreaId] = useState(0)
+  const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
   const [datasetMonthl, setDatasetMonthl] = useState()
   const [warnlist, setWarnlist] = useState([])//最新告警
   
@@ -345,6 +345,7 @@ export default function Index() {
     }
   }
   useEffect(() => {
+    if(arealist.length===0)return
     getQueryWarningDetails()
     getQueryMonthWarningTrends()
     // getWarningDetailsPage()
@@ -361,12 +362,12 @@ export default function Index() {
     <CustContext.Provider value={{ form }}>
       <Pagecount bgcolor="transparent" pd="0px">
         <div style={headercss}>
-          <span style={{ paddingRight: 16 }}>{arealist[0].levelName}</span>
+          <span style={{ paddingRight: 16 }}>{arealist[0]?.levelName}</span>
           <Select
             options={levellist}
             style={{ width: 200 }}
             fieldNames={{ label: 'name', value: 'id' }}
-            defaultValue={0}
+            defaultValue={areaId}
             onChange={(v) => { setAreaId(v);console.log(v) }}
           ></Select>
         </div>
@@ -526,10 +527,12 @@ const Alarm = ({ pref, opref, areaId }) => {
 
  
   useEffect(() => {
+  
+    if(!areaId)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
     const date = getdateformat(type, formvalue.datevalue)
-    getQueryWarningDistributed(type, date)
+    // getQueryWarningDistributed(type, date)
   }, [areaId])
   useEffect(()=>{
     drawEcharts(pref.current, {
@@ -642,6 +645,7 @@ const AlarmRank = ({ bref, areaId }) => {
   }
 
   useEffect(() => {
+    if(!areaId)return 
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
 

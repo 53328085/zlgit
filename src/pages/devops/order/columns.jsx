@@ -1,9 +1,13 @@
 
-import {CompleteIcon,ResolveIcon,WaitIcon} from './completeicon'
+import {ProcessIcon,ResolveIcon,WaitIcon} from './completeicon'
 import React from 'react'
 
 
-
+const flexcss ={
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}
  let  cols = [
     {
         title: '工单编号',
@@ -43,22 +47,16 @@ import React from 'react'
         dataIndex: 'state',
         key: 'state',
         width:200,
-        onCell:(record, index)=>{
-      
-        
-            return {
-              style:{
-                background: record.state===1?'rgb(255,51,51)':record.state===2?'rgb(0,204,255)':rgb(0,153,102),
-                color: '#fff'
-              }
-          }
-          
-        
-          
-          
-      },
+      //   onCell:(record, index)=>{
+      //       return {
+      //         style:{
+      //           background: record.state===1?'rgb(255,51,51)':record.state===2?'rgb(0,204,255)':rgb(0,153,102),
+      //           color: '#fff'
+      //         }
+      //     }   
+      // },
         render:(text,record)=>{
-         return text===1?<div>待处理</div>:text===2?<div>处理中</div>:<div>已完成</div>
+         return text===1?<div style={flexcss}><WaitIcon/>待处理</div>:text===2?<div style={flexcss}><ProcessIcon/>处理中</div>:<div style={flexcss}><ResolveIcon/>已完成</div>
         }
       },
      
