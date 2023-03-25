@@ -48,7 +48,7 @@ export default function Index() {
                 <span style={{fontSize:20}}>正泰综合能源服务平台</span>
               </div>
               <div style={{display:'flex',flexDirection:'column',justifyContent: 'center',alignItems: 'center',}}>
-                <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>电气安全运行分析报告</p>
+                <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>运维管理分析报告</p>
                 <div style={{
                   width:431,
                   height:136,

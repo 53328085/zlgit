@@ -4,8 +4,10 @@ import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
+import {publishState} from '@redux/systemconfig'
 
 export default function DeviceContent(props,ref) {
+  const publish = useSelector(publishState)
   const {
     value,
     name='新增网关类型',
@@ -37,7 +39,7 @@ export default function DeviceContent(props,ref) {
       <div className={style.optionBtn}>
           <div>{title}</div>
           <div className={style.btns}>
-            <div className={style.btn} onClick={openAdd}>+新增</div>
+          {publish?null:(<div className={style.btn} onClick={openAdd}>+新增</div>)}  
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>

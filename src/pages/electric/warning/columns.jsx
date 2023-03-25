@@ -67,7 +67,7 @@ export const  columns = [
         align:'center',
         render:(_,val)=>(
             <a style={{textDecoration:'underline'}}
-             href="/devicedetail" target="blank" 
+             href={`/devicedetail?sn=${val.sn}`} target="blank" 
             //  onClick={()=>{navigate("/devicedetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}
              >设备信息</a>
         ),

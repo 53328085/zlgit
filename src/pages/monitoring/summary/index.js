@@ -15,7 +15,7 @@ export default function Index() {
   const elref = useRef(null)
   const wlref = useRef(null)
   const glref = useRef(null)
-  let [areaId, setAreaId] = useState(1)
+  let [areaId, setAreaId] = useState('')
   let [statistics, setStatistics] = useState({})
   let [status, setStatus] = useState({})
   let [eleConsumes,seteleConsumes]=useState([])
@@ -76,11 +76,15 @@ export default function Index() {
     containLabel: true,
   }
   useEffect(() => {
-    getData()
+    if(areaId){
+      getData()
     getStatusData()
+    }
   }, [areaId,projectId])
   useEffect(() => {
-    getMonthUsage(1)
+    if(areaId){
+      getMonthUsage(1)
+    }
   }, [areaId,eleConsumes.length,projectId])
 const charts=()=>{
   drawEcharts(elref.current, {
@@ -140,7 +144,11 @@ const charts=()=>{
   }
   const getFromChild = data => {
     console.log(data.areaId)//园区id
-    setAreaId(data.areaId)
+    if(data.areaId==undefined){
+      return
+    }else{
+      setAreaId(data.areaId)
+    }
   }
   return (
     <div>

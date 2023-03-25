@@ -65,7 +65,8 @@ export default function Warncontent({ style,areavalue }) {
             key: 'deteail',
             align:'center',
             render: (_, record) => (
-                <a  style={{textDecoration:'underline'}}>详情</a>
+                <a  style={{textDecoration:'underline'}} href={`/deviceDetail?sn=${record.sn}`} target='blank'>详情</a>
+              
             ),
           },
     ]
