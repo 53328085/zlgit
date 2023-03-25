@@ -8,6 +8,7 @@ import {publishState} from '@redux/systemconfig.js'
 
 export default function Water (props) {
   const isPublish = useSelector(publishState)
+  console.log(isPublish)
   const { getValues } = props;
   //线路图
   const {TreeNode} = Tree;

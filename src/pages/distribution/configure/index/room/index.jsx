@@ -14,7 +14,51 @@ export default function Index() {
   const { queryPageRoom, addRoom, updateRoom, deleteRoom } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
-  const columns = [
+  const columns = isPublish ? [
+    {
+      align:'center',
+      title: '配电房名称',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    { 
+      align:'center',
+      title: '地址',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: '配电房容量(kVA)',
+      dataIndex: 'capacity',
+      key: 'capacity',
+      align:'center',
+    },
+    {
+      title: '申报需量(kW)',
+      dataIndex: 'demand',
+      key: 'demand',
+      align:'center',
+    },
+    {
+      title: '电压等级(kV)',
+      dataIndex: 'level',
+      key: 'level',
+      align:'center',
+    },
+    {
+      title: '变压器数量',
+      dataIndex: 'cnt',
+      key: 'cnt',
+      align:'center',
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+      align:'center',
+    }
+  ] : 
+  [
     {
       align:'center',
       title: '配电房名称',
@@ -57,7 +101,7 @@ export default function Index() {
       key: 'remark',
       align:'center',
     },
-    isPublish ? null : {
+    {
       title: '操作',
       key: 'action',
       align:'center',
