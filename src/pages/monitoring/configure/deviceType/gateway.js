@@ -10,9 +10,10 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import WarningPng from '@imgs/warning.png'
 import cusContext from '@com/content'
+import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
 export default function gateway() {
- 
+  const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [form] = Form.useForm();
   const [editform] = Form.useForm()
@@ -31,15 +32,19 @@ export default function gateway() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const ForwardAddModal = forwardRef(AddModal)
   let categoryId = ''
-
-  AllColumns[0][3].render = (t, v) => {
-    return (
-      <div>
-        <span style={{ paddingRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
-        <span style={{ color: 'rgb(244,67,54)', cursor: 'pointer' }} onClick={() => { openDelModal(v) }}>删除</span>
-      </div>
-    )
+  if(publish){
+    AllColumns[0][3]={}
+  }else{
+    AllColumns[0][3].render = (t, v) => {
+      return (
+        <div>
+          <span style={{ paddingRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
+          <span style={{ color: 'rgb(244,67,54)', cursor: 'pointer' }} onClick={() => { openDelModal(v) }}>删除</span>
+        </div>
+      )
+    }
   }
+  
 
 
   //获取未使用的网关型号

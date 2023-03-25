@@ -1,4 +1,4 @@
-import { render } from "less";
+
 
 export default [
     [
