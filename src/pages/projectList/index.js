@@ -279,6 +279,9 @@ export default function Index() {
   const onSubmit = () => {
     let params =  projectform.current.onSubmint();
     console.log(params);
+
+
+    return 
     ProjectList.createProject(params).then(res => {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {
@@ -296,7 +299,8 @@ export default function Index() {
   const startProject = async ({id, type, publishState, validStageTime}) => {  
 
      try {
-       getpublishState(publishState)
+       
+       dispatch(getpublishState(publishState)) 
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
 
       if (success && Array.isArray(data)) {    
@@ -418,8 +422,8 @@ export default function Index() {
     },
     {
       title: "状态",
-      dataIndex: "publishState",
-      key: "publishState",
+      dataIndex: "publishStateStr",
+      key: "publishStateStr",
       align: "center",
       width: 180,
       // render: (text) => {
@@ -441,13 +445,15 @@ export default function Index() {
       align: "center",
       render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1})}>
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1, publishState: record.publishState
+})}>
             项目配置
           </CustBtn>
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
-              startProject({id: record.id, type: 2})
+              startProject({id: record.id, type: 2, publishState: record.publishState
+              })
             }
           >
             进入项目

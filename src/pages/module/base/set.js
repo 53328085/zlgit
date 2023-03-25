@@ -188,7 +188,7 @@ export default function ProjectSet({projectId}) {
   const ismanager = useSelector(manager)
   const ismaintenance = useSelector(maintenance)
   const ispublish = useSelector(publishState)
-  
+  console.log(ispublish)
 
 
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting

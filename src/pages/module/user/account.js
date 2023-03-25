@@ -229,6 +229,14 @@ const showModl = () => {
                   >
                 <Input />
              </Item>
+             <Item label="账号有效期" name="validStageTime" rules={[
+                  {
+                    required: true,
+                    message: '请输入用户姓名！',
+                  }]}
+                  >
+                <Input />
+             </Item>
              {
               isAdd &&
              (<>

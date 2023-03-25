@@ -1,4 +1,5 @@
 /* 获取系统配置 */
+import { CodeSandboxCircleFilled } from '@ant-design/icons'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
@@ -104,6 +105,9 @@ export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state => state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id
 export const selectshifts = state => state.system.shifts
-export const publishState = state => parseInt(state.system.publishState) === 1
+export const publishState = state => {
+    console.log(state.system.publishState)
+  return  state.system.publishState == 1
+}
 export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
 export default system.reducer
