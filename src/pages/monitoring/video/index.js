@@ -32,7 +32,7 @@ export default function Index() {
   const [disabledendDate, setdisabledendDate] = useState(() => (current => current && current > moment().endOf('day')))
   const [startTime, setStartTime] = useState(null)
   const [endTime, setEndTime] = useState(null)
-let [areaId,setAreaId]=useState(1)
+let [areaId,setAreaId]=useState('')
   const [cameraTitle, setCameraTitle] = useState('')
   const [wsType, setwsType] = useState('');
   const [wsUrl, setWsUrl] = useState('');
@@ -414,14 +414,22 @@ let [areaId,setAreaId]=useState(1)
   }
   const getFromChild = data => {
     console.log(data.areaId)//园区id
-     setAreaId(data.areaId)
+     if(data.areaId==undefined){
+      return
+     }else{
+      setAreaId(data.areaId)
+     }
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
-    getStatistics()
+    if(areaId){
+      getStatistics()
+    }
    },[projectId,areaId])
    useEffect(() => {
-    getOverview()
+    if(areaId){
+      getOverview()
+    }
    },[projectId,areaId,params.alike,params.pageNum])
   return (
     <div className={style.video}>
