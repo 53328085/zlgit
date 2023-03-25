@@ -333,7 +333,7 @@ function UserLog() {
       if (roleType == 3 || roleType == 4) {
        try {
         let {success, data} = await ProjectSetting.queryProjectPublishInfo(projectId)
-        success && getpublishState(data?.state)
+        success && dispatch(getpublishState(data?.state))
        } catch (error) {
         console.log(error)
        }

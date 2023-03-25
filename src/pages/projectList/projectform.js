@@ -21,7 +21,7 @@ import {Comipt, Comtext, CdatePicker} from "@com/comstyled"
 const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(9, 36px);
+  grid-template-rows: repeat(10, 36px);
   gap: 16px 128px;
   grid-auto-flow: column;
   .ant-form-item {
@@ -84,6 +84,10 @@ const Formbox = styled(Form)`
     grid-row: 3 / -1;
     width: 487px;
     justify-self: end;
+  }
+  .lnglat {
+    grid-column: 2;
+    grid-row: 2 / 3;
   }
   .ant-btn-default,
   .ant-btn-primary {
@@ -190,15 +194,29 @@ const Info = styled.span`
     return false;
   };
  
-  const onSubmint = () => {
+  const onSubmint =async () => {
+    if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
+    if (!imgProject)  return message.warning('项目图片必须上传', 1);
+    form.validateFields().then(res => {
+      let {validStageTime, lng, lat, ...other} = res;
+      other['lngLat'] = lng + ','+lat;
+     
+      const params = Object.assign({}, other, {imgLogo, imgProject, validStageTime: validStageTime.format('YYYY-MM-DD')})
+      Promise.resolve(params)
+
+    }).catch(e => {
+      console.log(e)
+      Promise.reject(e)
+    })
+   console.log(data)
+ /*   return
    let fileds = form.getFieldValue()
    let {validStageTime, lng, lat, ...other} = fileds;
    other['lngLat'] = lng + ','+lat;
-   if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
-   if (!imgProject)  return message.warning('项目图片必须上传', 1);
+  
    const params = Object.assign({}, other, {imgLogo, imgProject, validStageTime: validStageTime.format('YYYY-MM-DD')})
-  // console.log(params);
-   return params;
+   
+   return params; */
   }  
 
   useImperativeHandle(ref, () => ({
@@ -216,10 +234,18 @@ const Info = styled.span`
       <Item label="项目ID">
         <Comipt placeholder="系统自增项目ID" disabled />
       </Item>
-      <Item label="项目名称" required name="name">
+      <Item label="项目名称" required name="name" rules={[
+        {
+          required: true 
+        }
+      ]}>
         <Comipt placeholder="请输入项目名称" />
       </Item>
-      <Item label="项目有效期" required name="validStageTime">
+      <Item label="项目有效期" required name="validStageTime" rules={[
+        {
+          required: true 
+        }
+      ]}>
         <CdatePicker placeholder="请选择项目有效期" defaultValue={moment('2023-01-01', 'YYYY-MM-DD')} />
       </Item>
       {/*  imgLogo: "",
@@ -247,7 +273,7 @@ const Info = styled.span`
       <Item label="项目备注" name="remark" className="remark">
         <Comtext  placeholder="请输入备注0-99字" maxLength={99} h="140px" />
       </Item>
-      <Item label="项目地址" className="address" name="address">
+      <Item label="项目地址" className="address" name="address" tooltip="请从地图上点击获取">
        {/*  <Item noStyle>
           <Cascader
             options={options}
@@ -263,15 +289,25 @@ const Info = styled.span`
         </Item> */} 
           <Comipt placeholder="请输入项目的详细地址" /> 
       </Item>
-      <Item label="经纬度" required>
+      <Item label="经纬度"  className="lnglat" tooltip="请从地图上点击获取">
         <Row gutter={16}>
           <Col span={12}>
-            <Item name="lng">
+            <Item name="lng" rules={[
+        {
+          required: true,
+          message: '请从地图上点击获取'
+        }
+      ]}>
               <Comipt placeholder="经度" />
             </Item>
           </Col>
           <Col span={12}>
-            <Item name="lat">
+            <Item name="lat" rules={[
+        {
+          required: true,
+          message: '请从地图上点击获取'
+        }
+      ]}>
               <Comipt placeholder="纬度" />
             </Item>
           </Col>
