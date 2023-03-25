@@ -166,7 +166,7 @@ export default function video() {
     },
   ]
   if(publish){
-    columns[4]={}
+    columns.pop()
   }
   //保存删除
   const onOkDel = async () => {

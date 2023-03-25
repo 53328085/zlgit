@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext } from 'react'
 import DeviceContent from './deviceContent'
 import style from './style.module.less'
-import AllColumns from './columns'
+// import AllColumns from './columns'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import { Button, Form, Input, Row, Col, Select, message, Upload, Image } from 'antd';
@@ -32,10 +32,33 @@ export default function gateway() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const ForwardAddModal = forwardRef(AddModal)
   let categoryId = ''
+  let AllColumns =   [
+    {
+        title: '网关型号',
+        dataIndex: 'category',
+        key:'category'
+      },
+      {
+        title: '网关缩略图',
+        dataIndex: 'imageBase64',
+        key:'imageBase64',
+        render:(t,r,i)=>(<img src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></img>)
+      },
+      {
+        title: '已用网关数量',
+        dataIndex: 'cnt',
+        key:'cnt'
+      },
+      {
+        title: '操作',
+        dataIndex: 'options',
+        key:'options',
+      },
+] 
   if(publish){
-    AllColumns[0][3]={}
+    AllColumns.pop()
   }else{
-    AllColumns[0][3].render = (t, v) => {
+    AllColumns[3].render = (t, v) => {
       return (
         <div>
           <span style={{ paddingRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
@@ -226,7 +249,7 @@ export default function gateway() {
     <div>
       <DeviceContent {...deviceProps} >
         <Table
-          columns={AllColumns[0]}
+          columns={AllColumns}
           bordered={false}
           dataSource={dataSource}
           ref={tableLoadRef}

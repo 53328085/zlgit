@@ -9,7 +9,7 @@ import WarningPng from '@imgs/warning.png'
 import { Monitoring } from '@api/api'
 // import Table from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-
+import { publishState } from '@redux/systemconfig'
 const { LineManager: {
     AeraQueryAll,
     LineManagerQuery,
@@ -26,10 +26,11 @@ export default function Common({ type }) {
     const [tdata, setTdata] = useState([])
     const [areaOpts, setAreaOpts] = useState([])
     const [open, setOpen] = useState(false)
-    const [treelist,setTreeList] = useState([])
+    const [treelist, setTreeList] = useState([])
     const [addmianform] = Form.useForm()
     const [selform] = Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
+    const publish = useSelector(publishState)
     const addmianRef = useRef()
     const setforwardRef = useRef()
     const titlelinecss = {
@@ -115,7 +116,7 @@ export default function Common({ type }) {
     }
 
     //获取线路数据
-    const gettablelineData = async (tree='') => {
+    const gettablelineData = async (tree = '') => {
         let params = {
             projectId,
             type,
@@ -129,13 +130,13 @@ export default function Common({ type }) {
             setforwardRef.current.setSelectedRowKeys([])
             setforwardRef.current.setSubMeterRowKeys([])
             setforwardRef.current.setSummaryRowKeys([])
-            if(tree){
+            if (tree) {
                 tree.deviceSub ? setforwardRef.current.setSubMeter([...tree.deviceSub]) : setforwardRef.current.setSubMeter([])
                 tree.deviceSummary ? setforwardRef.current.setSummaryMeter([...tree.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
-            }else{
+            } else {
                 treelist.deviceSub ? setforwardRef.current.setSubMeter([...treelist.deviceSub]) : setforwardRef.current.setSubMeter([])
                 treelist.deviceSummary ? setforwardRef.current.setSummaryMeter([...treelist.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
-            }      
+            }
         } else {
             setforwardRef.current.setDataSource([])
         }
@@ -180,7 +181,8 @@ export default function Common({ type }) {
                             <Select style={{ width: 264 }} options={areaOpts} fieldNames={{ label: 'name', value: 'id' }} onChange={changeSelection}></Select>
                         </Form.Item>
                     </Form>
-                    <div className={commonstyle.divBtn} onClick={addMainLine}>新增主线</div>
+                    {publish ? null : <div className={commonstyle.divBtn} onClick={addMainLine}>新增主线</div>}
+
                 </div>
                 <Divider style={{ borderColor: '#d7d7d7', margin: '16px 0' }} dashed></Divider>
                 <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
@@ -212,7 +214,7 @@ let Treeline = forwardRef(
         const editmodalRef = useRef()
         const delmodalRef = useRef()
         const projectId = useSelector(state => state.system.menus.projectId)
-
+        const publish = useSelector(publishState)
         const optcss = {
             color: '#237ae4',
             textDecoration: 'underline',
@@ -335,10 +337,15 @@ let Treeline = forwardRef(
                             {tree.deviceCount}
                         </div>
                         <div style={{ display: 'flex' }}>
-                            <div style={optcss} onClick={() => { openAdd(tree, alldata) }}>新增</div>
-                            <div style={optcss} onClick={() => { openEdit(tree) }}>编辑</div>
+                            {publish ? null : <>
+                                <div style={optcss} onClick={() => { openAdd(tree, alldata) }}>新增</div>
+                                <div style={optcss} onClick={() => { openEdit(tree) }}>编辑</div>
+                            </>}
                             <div style={optcss} onClick={() => { opneSet() }}>配置</div>
-                            <div style={{ ...optcss, color: '#ff0000' }} onClick={() => { openDel(tree) }}>删除</div>
+                            {
+                                publish ? null : <div style={{ ...optcss, color: '#ff0000' }} onClick={() => { openDel(tree) }}>删除</div>
+                            }
+
                         </div>
                     </div>
                     <AddModal {...addmodalprops}></AddModal>
@@ -415,10 +422,11 @@ let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
 }
 
 //配置线路
-let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, ref) => {
+let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, ref) => {
+    const publish = useSelector(publishState)
     const { Search } = Input;
     const [dataSource, setDataSource] = useState([])//未选data
-    const [copydataSource,setCopydataSource] = useState([])
+    const [copydataSource, setCopydataSource] = useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState(null);//未选线路check
     const [selectedRows, setSelectedRows] = useState([]);//未选线路选中data
     const [subMeter, setSubMeter] = useState([]); //分表data
@@ -434,7 +442,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
         { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
         { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
         { title: '安装地址', dataIndex: 'address', align: "center", },
-    
+
     ]
     const btncss = {
         width: 68,
@@ -480,13 +488,13 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     }
     //未选择to分表
     const subToLeft = () => {
-        if(selectedRows.length<=0){
+        if (selectedRows.length <= 0) {
             message.warning('请至少选择一项!')
             return
         }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
         const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
-        console.log(489,selectedRows)
+        console.log(489, selectedRows)
         setSubMeter([...selectedRows, ...subMeter])
         setSubMeterRowKeys([])
         setDataSource([...arr])
@@ -496,7 +504,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     }
     //分表to未选择
     const subToRight = () => {
-        if(subSelectedRows.length<=0){
+        if (subSelectedRows.length <= 0) {
             message.warning('请至少选择一项!')
             return
         }
@@ -511,11 +519,11 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     }
     //未选择to总表
     const summaryToLeft = () => {
-        if (selectedRows.length !== 1 || summaryMeter.length===1) {
+        if (selectedRows.length !== 1 || summaryMeter.length === 1) {
             message.warning('总表最多为一条')
             return
         }
-        if(dataSource.length<=0){
+        if (dataSource.length <= 0) {
             message.warning('请至少选择一项!')
             return
         }
@@ -526,15 +534,15 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
         setCopydataSource([...unarr])
         setSelectedRowKeys([])
         setSelectedRows([])
-        
-        
+
+
     }
     //总表to未选择
     const summaryToRight = () => {
-       if(!summarySelectedRows || summarySelectedRows?.length<=0){
-        message.warning('请至少选择一项!')
-        return
-       } 
+        if (!summarySelectedRows || summarySelectedRows?.length <= 0) {
+            message.warning('请至少选择一项!')
+            return
+        }
         setDataSource([...summarySelectedRows, ...dataSource])
         setCopydataSource([...summarySelectedRows, ...copydataSource])
         setSummaryMeter([])
@@ -566,14 +574,14 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
     const onSearch = async (value, event) => {
         setSelectedRowKeys([])
         setSelectedRows([])
-        if(!value){
+        if (!value) {
             setDataSource([...copydataSource])
             return
         }
         const filterarr = copydataSource.filter(it => {
-            return (it.sn.includes(value)  || it.address.includes(value) )
+            return (it.sn.includes(value) || it.address.includes(value))
         })
-   
+
         setDataSource([...filterarr])
         console.log(filterarr)
     }
@@ -620,22 +628,25 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
 
             </div>
             <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
-                <div style={{ marginTop: 21 }}>
-                    <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div style={btncss} className={commonstyle.btnhover} onClick={summaryToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                        <div style={btncss} className={commonstyle.btnhover} onClick={summaryToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                {publish ? null : <>
+                    <div style={{ marginTop: 21 }}>
+                        <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={btncss} className={commonstyle.btnhover} onClick={summaryToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                            <div style={btncss} className={commonstyle.btnhover} onClick={summaryToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                        </div>
                     </div>
-                </div>
-                <div style={{ marginTop: 150 }}>
-                    <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                        <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                    <div style={{ marginTop: 150 }}>
+                        <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                            <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                        </div>
                     </div>
-                </div>
+                </>}
+
                 <div>
-                    <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>
+                    {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>}
                     <div style={{ ...btnstyle, color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>关闭</div>
                 </div>
             </div>
@@ -644,7 +655,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery,treelist }, r
                     <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
                     <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
                         <span>设备搜索</span>
-                        <Search style={{ width: 372, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e)=>{setSearchValue(e.target.value)}}></Search>
+                        <Search style={{ width: 372, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
                     </div>
                     <Table
                         bordered

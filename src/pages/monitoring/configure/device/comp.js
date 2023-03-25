@@ -1,9 +1,9 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle,useMemo, useContext, useRef } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useMemo, useContext, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
-
+import { publishState } from '@redux/systemconfig'
 
 const { DeviceManager: { OneLevel } } = Monitoring
 
@@ -20,9 +20,10 @@ export default forwardRef(function Comp(props, ref) {
         levelname,
         page
     } = props
+    const publish = useSelector(publishState)
     const projectId = useSelector(state => state.system.menus.projectId)
-    const oneLevel = useSelector(state=>state.system.onelevel)
-    const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName,id:0},...oneLevel]),[oneLevel]) :[]
+    const oneLevel = useSelector(state => state.system.onelevel)
+    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]) : []
     const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal, setEnergyVal] = useState()
@@ -72,7 +73,7 @@ export default forwardRef(function Comp(props, ref) {
 
     }))
     useEffect(() => {
-        
+
     }, [])
     return (
         <div>
@@ -87,7 +88,7 @@ export default forwardRef(function Comp(props, ref) {
                                 label: 'name',
                                 value: 'id'
                             }}
-                            defaultValue={oneLevel.length>0?0:null}
+                            defaultValue={oneLevel.length > 0 ? 0 : null}
                             value={selvalue}
                             onChange={changeSelect}
                             options={areaOptions}
@@ -115,8 +116,11 @@ export default forwardRef(function Comp(props, ref) {
                     }
                 </Row>
                 <Row>
-                    <div className={style.divmgr16} onClick={addopen}>+新增</div>
-                    <div className={style.divmgr16} onClick={multExport}>批量导入</div>
+                    {publish ? null : <>
+                        <div className={style.divmgr16} onClick={addopen}>+新增</div>
+                        <div className={style.divmgr16} onClick={multExport}>批量导入</div>
+                    </>}
+
                     <div className={style.divmgr16} onClick={exportExecel}>导出</div>
                 </Row>
             </Row>

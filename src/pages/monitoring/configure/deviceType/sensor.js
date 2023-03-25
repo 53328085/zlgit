@@ -156,7 +156,7 @@ let columns =  [
     }
 ]
 if(publish){
-  columns[4]={}
+  columns.pop()
 }
 //保存编辑
   const onOkEditModal=async ()=>{

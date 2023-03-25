@@ -5,7 +5,7 @@ import Table from '@com/useTable'
 import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
 import { Form, message } from 'antd'
 import {Monitoring} from '@api/api'
-
+import { publishState } from '@redux/systemconfig'
 const {PubliclightManager:{StreetLightAdd,StreetLightQueryByPage,StreetLightUpdate,StreetLightDelete,StreetLightImport}}=Monitoring
 export default function parkstreet({areaList,levelname}) {
   const [tableParams,setTableParams]=useState({
@@ -14,6 +14,7 @@ export default function parkstreet({areaList,levelname}) {
     hideOnSinglePage:false,
     total:0
   })
+  const publish = useSelector(publishState)
   const tableParamsRef = useRef(tableParams)
   tableParamsRef.current = tableParams
   const [dataSource,setDataSource]=useState()
@@ -37,7 +38,7 @@ export default function parkstreet({areaList,levelname}) {
     textDecoration: 'underline',
     cursor: 'pointer',
   }
-  const columns=[{
+  let columns=[{
     title:oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
     dataIndex:'areaName',
     key:'areaName',
@@ -80,6 +81,9 @@ export default function parkstreet({areaList,levelname}) {
     }
   }]
   columns.forEach(it=>{it.align='center'})
+  if(publish){
+    columns.pop()
+  }
   //打开编辑窗口
   const onEdit=(record)=>{
     editModalRef.current.onOpen()
