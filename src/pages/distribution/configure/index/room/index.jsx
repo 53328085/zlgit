@@ -7,10 +7,10 @@ import firstwarn from '@imgs/warning.png'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
 
 export default function Index() {
-  const { QueryAllArea } = AreaSetting
+  const isPublish = useSelector(publishState)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
@@ -57,7 +57,7 @@ export default function Index() {
       key: 'remark',
       align:'center',
     },
-    {
+    isPublish ? null : {
       title: '操作',
       key: 'action',
       align:'center',
@@ -258,9 +258,7 @@ export default function Index() {
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>
-        新增
-      </Button>
+        { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
       <Modal className={style.addModal} open={addModal} onOk={addOk} onCancel={handleCancel} width={592} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'保存'} okType={'primary'} >
         <div className={style.addHeader}>{ modalTitle }</div>

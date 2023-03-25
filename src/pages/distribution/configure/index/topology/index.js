@@ -4,13 +4,14 @@ import { Select, Button, Table, Space, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import {useSelector} from 'react-redux'
 import {utils, writeFile} from 'xlsx'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
 import firstwarn from '@imgs/warning.png' 
 
 export default function Index() {
+  const isPublish = useSelector(publishState)
   const projectId = useSelector(selectProjectId);
   //园区选择
   const areaList = useSelector(selectOneLevel)
@@ -90,7 +91,7 @@ export default function Index() {
       key: 'tag',
       align:'center',
     },
-    {
+    isPublish ? null : {
       title: '操作',
       key: 'action',
       align:'center',
@@ -167,9 +168,7 @@ export default function Index() {
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>
-        新增
-      </Button>
+        { isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button>}
       <Table style={{marginTop:'16px'}} columns={columns} bordered dataSource={data} rowKey='id'></Table>
       <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
         <div className={style.deleteHeader}>删除提示</div>

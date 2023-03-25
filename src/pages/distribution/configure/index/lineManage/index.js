@@ -5,14 +5,14 @@ import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 
 import dashed from '@imgs/dashed.png'
 import firstwarn from '@imgs/warning.png' 
 
 export default function Index() {
-  const { QueryAllArea } = AreaSetting
+  const isPublish = useSelector(publishState)
   const { queryPageRoom, queryLine, addLine, updateLine, deleteLine, queryUnusedLineMeter, configLineMeter } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
@@ -230,12 +230,12 @@ export default function Index() {
             <div style={nodeTitle}>
                 <span>{item.name}</span>
                 <div style={nodeDevice}>{item.deviceCount}</div>
-                <div style={nodeAction}>
+                { isPublish ? null : <div style={nodeAction}>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, item.deviceSummary, item.deviceSub)}>配置</span>
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
-                </div>
+                </div>}
             </div>
         )
         if(item.nodes){
@@ -383,9 +383,7 @@ export default function Index() {
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
             <span>配电房线路图</span>
-            <Button type="primary" onClick={()=>showAdd()} style={{marginRight:0}}>
-                新增主线
-            </Button>
+            { isPublish ? null : <Button type="primary" onClick={()=>showAdd()} style={{marginRight:0}}>新增主线</Button> }
         </div>
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
