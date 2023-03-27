@@ -69,7 +69,7 @@ import {
   }
   
   const serachcomplete = (res) => {
-   // console.log(serachMap.getStatus())
+    console.log(serachMap.getStatus())
     if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {
       let len = res.getCurrentNumPois();
       if (len > 0) {
