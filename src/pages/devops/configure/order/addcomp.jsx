@@ -306,18 +306,20 @@ let  SetPosition =({positionRef})=>{
     )
 }
 let LoaclForm =()=>{
-    const [inpvalue,setInpvalue] =useState()
+    // const [inpvalue,setInpvalue] =useState()
+    const inpvalueRef = useRef()
     const [loacl,setLoacl] = useState()
     const mapRef = useRef()
     const search=(text)=>{
-        mapRef.current.serachMap.search(inpvalue)
+        mapRef.current.serachMap.search(inpvalueRef.current)
         console.log(inpvalue)
         // setInpvalue(inpvalue)
         // console.log(mapRef.current.serachMap,inpvalue)
     }
     const setAaddress=(mes)=>{
         console.log(mes)
-        setInpvalue(mes.address)
+        // setInpvalue(mes.address)
+        inpvalueRef.current=mes.address
         setLoacl(`${mes.lng},${mes.lat}`)
     }
     return (
@@ -330,7 +332,8 @@ let LoaclForm =()=>{
               margin: '16px 0'
             }}
             placeholder="输入地址信息"
-            value={inpvalue}
+            value={  inpvalueRef.current}
+            onChange={(e)=>{  inpvalueRef.current=e.target.value}}
           />
           <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
         </div>
