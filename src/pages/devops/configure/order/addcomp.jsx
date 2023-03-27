@@ -11,7 +11,7 @@ import Modal from '@com/useModal'
 import UseMap from '@com/useMap'
 
 //配置线路
-export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
+export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     const [open,setOpen] = useState(false)
     const publish = useSelector(publishState)
     const { Search } = Input;
@@ -19,12 +19,13 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
     const [copydataSource, setCopydataSource] = useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState(null);//未选线路check
     const [selectedRows, setSelectedRows] = useState([]);//未选线路选中data
-    const [subMeter, setSubMeter] = useState([]); //选中data
+    const [subMeter, setSubMeter] = useState([]); //选择设备data
     const [subMeterRowKeys, setSubMeterRowKeys] = useState([]);//选中check
-    const [subSelectedRows, setSubSelectedRows] = useState([]);//选中data
+    const [subSelectedRows, setSubSelectedRows] = useState([]);//选中设备data
 
     const [lineId, setLineId] = useState(null);
     const [searchValue, setSearchValue] = useState(""); //搜索值
+    const [devicetype,setDeviceType] = useState(0);//设备类型
     const projectId = useSelector(state => state.system.menus.projectId)
     const positionRef =useRef()
     const deviceoptions=[
@@ -71,6 +72,7 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
    const res = await operationDesigin.QueryDeviceList(params)
    if(res.success){
     setDataSource([...res.data.unused])
+    setCopydataSource([...res.data.unused])
     setSubMeter([...res.data.used])
    }else{
     setDataSource([])
@@ -82,6 +84,7 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
     const close = () => {
         setOpen(false)
         setSearchValue("")
+        setDeviceType(0)
         setSelectedRowKeys([])
         setSubMeterRowKeys([])
         // setSummaryRowKeys([])
@@ -165,48 +168,109 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
     //     setSummaryRowKeys([])
     //     setSummarySelectedRows([])
     // }
+
+
     //保存线路编辑
     const saveConfig = async () => {
         setSearchValue("")
-        const summatysn = summaryMeter.map(it => it.sn)
-        const subsn = subMeter.map(it => it.sn)
+        const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat}) )
         let params = {
             projectId,
-            lineId,
-            deviceSummary: summatysn,
-            deviceSub: subsn
+            group:subsn
         }
-        const resp = await ConfigureMeter(params)
+        const resp = await operationDesigin.ConfigureDevice(params)
         if (resp.success) {
             message.success('线路配置成功')
             setOpen(false)
-            getLineManagerQuery()
+            getQueryPageDevice()
         } else {
             message.error(resp.errMsg)
         }
     }
     //搜索
     const onSearch = async (value, event) => {
+        console.log(devicetype)
         setSelectedRowKeys([])
         setSelectedRows([])
-        if (!value) {
-            setDataSource([...copydataSource])
-            return
+        let filterarr;
+        if(devicetype===0){
+            if (!value) {
+                setDataSource([...copydataSource])
+                return
+            }else{
+                filterarr = copydataSource.filter(it => {
+                    return (it.sn.includes(value) || it.address.includes(value))
+                }) 
+            }
+          
+        }else{
+            if (!value) {
+                filterarr=  copydataSource.filter(it=>{
+                    return it.deviceStyle === devicetype
+                })
+                setDataSource([...filterarr])
+                return
+            }else{
+                filterarr = copydataSource.filter(it => {
+                    return (it.sn.includes(value) || it.address.includes(value))&&it.deviceStyle === devicetype
+                })
+            }
+        
         }
-        const filterarr = copydataSource.filter(it => {
-            return (it.sn.includes(value) || it.address.includes(value))
-        })
-
         setDataSource([...filterarr])
         console.log(filterarr)
     }
     //设备类型改变
     const changeType=(v)=>{
-        getQueryDeviceList(v)
+        setDeviceType(v)
+        setSelectedRowKeys([])
+        setSelectedRows([])
+        let filterarr;
+        if(!searchValue){
+            if(v===0){
+                setDataSource([...copydataSource])
+                return
+            }else{
+                filterarr  =  copydataSource.filter(it=>{
+                    return  it.deviceStyle === v
+                })
+            }
+           
+        }else{
+
+            if(v===0){
+             filterarr= copydataSource.filter(it=>{
+                    return it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1
+                })
+                // setDataSource([...filterarr])
+                // return
+            } else{
+                filterarr= copydataSource.filter(it=>{
+                    return (it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1)&&it.deviceStyle === v
+                })
+            }
+          
+            // setDataSource([...copydataSource])
+        }
+        setDataSource([...filterarr])
     }
     //设置坐标
     const setlocal=()=>{
         positionRef.current.onOpen()      
+    }
+    //保存坐标
+    const savePosition=(local)=>{
+        console.log(local,subSelectedRows)
+        if(Array.isArray(subSelectedRows)&&subSelectedRows.length>0){
+            const arr =subSelectedRows.map(it=>{return {...it,address:local.inpvalue,lngLat:local.local}})
+            console.log(arr)
+            setSubSelectedRows([...arr])
+            positionRef.current.onCancel()    
+        }else{
+            message.warning("请先选择设备")
+        }
+        
+       
     }
     useImperativeHandle(ref, () => ({
         setDataSource,
@@ -273,7 +337,7 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
                     <div style={{display:'flex',justifyContent:'space-between'}}>
                     <div>
                     <span>设备类型</span>
-                    <Select style={{width:128, marginLeft: 16 }} options={deviceoptions} defaultValue={0} onChange={changeType}></Select>
+                    <Select style={{width:128, marginLeft: 16 }} options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
                     </div>    
                     <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
                         <span>设备搜索</span>
@@ -293,35 +357,40 @@ export let SetLine = forwardRef(({  getLineManagerQuery,areaId }, ref) => {
                     ></Table>
                 </div>
             </div>
-            <SetPosition positionRef={positionRef}/>
+            <SetPosition positionRef={positionRef} savePosition={savePosition}/>
         </div>
     )
 })
-let  SetPosition =({positionRef})=>{
+let  SetPosition =({positionRef,savePosition})=>{
+    const loaclRef=useRef()
     return (
-        <Modal mold="cust" ref={positionRef} width={800}>
+        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}}>
             <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/>
-            <LoaclForm/>
+            <LoaclForm  ref={loaclRef}/>
         </Modal>
     )
 }
-let LoaclForm =()=>{
-    // const [inpvalue,setInpvalue] =useState()
-    const inpvalueRef = useRef()
-    const [loacl,setLoacl] = useState()
+let LoaclForm =forwardRef((props,ref)=>{
+    const [inpvalue,setInpvalue] =useState()
+    // const inpvalueRef = useRef()
+    const [local,setLoacl] = useState()
     const mapRef = useRef()
     const search=(text)=>{
-        mapRef.current.serachMap.search(inpvalueRef.current)
-        console.log(inpvalueRef.current)
+        mapRef.current.serachMap.search(inpvalue)
+        // console.log(inpvalueRef.current, mapRef.current.serachMap.search)
         // setInpvalue(inpvalue)
         // console.log(mapRef.current.serachMap,inpvalue)
     }
     const setAaddress=(mes)=>{
         console.log(mes)
-        // setInpvalue(mes.address)
-        inpvalueRef.current=mes.address
+        setInpvalue(mes.address)
+        //inpvalueRef.current=mes.address
         setLoacl(`${mes.lng},${mes.lat}`)
     }
+    useImperativeHandle(ref,()=>({
+        inpvalue,
+        local
+    }))
     return (
         <>
          <div>
@@ -332,14 +401,14 @@ let LoaclForm =()=>{
               margin: '16px 0'
             }}
             placeholder="输入地址信息"
-            value={  inpvalueRef.current}
-            onChange={(e)=>{  inpvalueRef.current=e.target.value}}
+            value={inpvalue}
+            onChange={(e)=>{  setInpvalue(e.target.value)}}
           />
           <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
         </div>
         <div>
             <span style={{paddingRight:32}}>经纬度</span>
-            <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={loacl} ></Input>
+            <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
         </div>
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
         <UseMap setAaddress={setAaddress} ref={mapRef}/>
@@ -347,4 +416,4 @@ let LoaclForm =()=>{
         
         </>
     )
-}
+})

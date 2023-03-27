@@ -1161,6 +1161,7 @@ export class operation {
  static  OrderDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`,{params:data})//工单详情
  static  InspectionPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionPage`,data)//巡检
  static  InspectionDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`,{params:data})//巡检详细
+
  
 }
 //运维管理(设计)
@@ -1171,6 +1172,7 @@ export class operationDesigin{
   static QueryProjectMaintenance=(projectId) =>server.get(`/General/User/QueryProjectMaintenance?projectId=${projectId}`)//查询运维人员
   static DeleteInspectionPlan=(data)=>server.delete(`/Maintenance/MaintenanceDesigner/DeleteInspectionPlan`,{params:data})//删除巡检计划
   static QueryDeviceList=(data)=>server.get(`/Maintenance/MaintenanceDesigner/QueryDeviceList`,{params:data})//获取未选，已选设备
+  static  ConfigureDevice=(data)=>server.post(`/Maintenance/MaintenanceDesigner/ConfigureDevice`,data)//保存设备
 }
 //电气安全
 export class safeElectric {
