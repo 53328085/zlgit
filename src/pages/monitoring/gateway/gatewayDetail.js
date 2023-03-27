@@ -34,7 +34,7 @@ export default function GatewayDetail(props) {
             dataIndex: 'sn',
             key: 'sn',
             render: (sn) => <Link to={{
-                pathname: "/deviceDetail?"+sn,
+                pathname: "/deviceDetail?sn="+sn,
             }} target="_blank"> {sn} </Link>,
             id: 'id'
         },
@@ -72,30 +72,24 @@ export default function GatewayDetail(props) {
     ];
     const columnsLog = [
         {
-            title: '时间',
-            dataIndex: 'sn',
+            title: '操作时间',
+            dataIndex: 'time',
             key: 'sn',
             id: 'id'
         },
         {
-            title: '设备日志',
-            dataIndex: 'category',
+            title: '操作日志',
+            dataIndex: 'content',
             key: 'category',
             id: 'id'
-        },
+        },{
+          title: '操作者',
+          dataIndex: 'creator',
+          key: 'sn',
+          id: 'id'
+      },
     ];
-    let [dataSource, setdataSource] = useState([
-        {
-            id:1,
-            sn:202213202289,
-            category:'category',
-            state:'state',
-            connMethod:'connMethod',
-            childrenCnt:'childrenCnt',
-            address:'address',
-            lastSampleTime:'lastSampleTime'
-        }
-    ])
+    let [dataSource, setdataSource] = useState([])
     let [dataSourceLog, setdataSourceLog] = useState([])
     const onChangePage = (page, pageSize) => {
             setpage(page)
@@ -204,7 +198,7 @@ export default function GatewayDetail(props) {
                 <div className={style.right}>
                     <div className={style.rightHead}>
                         <div className={state ? style.tabBoxW : style.tabBoxB} onClick={onchangeTab}>子设备</div>
-                        <div className={!state ? style.tabBoxW : style.tabBoxB} onClick={onchangeTab}>上线日志</div>
+                        <div className={!state ? style.tabBoxW : style.tabBoxB} onClick={onchangeTab}>操作日志</div>
                     </div>
                     <div className={style.newTime}>
                         <img src={imgurl.time} className={style.time} ></img>
