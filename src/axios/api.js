@@ -1160,6 +1160,10 @@ export class operation {
 export class operationDesigin{
   static QueryPageDevice = (data) => server.post(`/Maintenance/MaintenanceDesigner/QueryPageDevice`,data)//设备管理
   static InspectionPlanPage = (data) => server.post(`/Maintenance/MaintenanceDesigner/InspectionPlanPage`,data)//巡检计划
+  static InsertInspectionPlan =(data) => server.post(`/Maintenance/MaintenanceDesigner/InsertInspectionPlan`,data)//新建巡检计划
+  static QueryProjectMaintenance=(projectId) =>server.get(`/General/User/QueryProjectMaintenance?projectId=${projectId}`)//查询运维人员
+  static DeleteInspectionPlan=(data)=>server.delete(`/Maintenance/MaintenanceDesigner/DeleteInspectionPlan`,{params:data})//删除巡检计划
+  static QueryDeviceList=(data)=>server.get(`/Maintenance/MaintenanceDesigner/QueryDeviceList`,{params:data})//获取未选，已选设备
 }
 //电气安全
 export class safeElectric {
