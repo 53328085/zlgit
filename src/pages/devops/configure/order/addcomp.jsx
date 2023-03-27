@@ -312,7 +312,7 @@ let LoaclForm =()=>{
     const mapRef = useRef()
     const search=(text)=>{
         mapRef.current.serachMap.search(inpvalueRef.current)
-        console.log(inpvalue)
+        console.log(inpvalueRef.current)
         // setInpvalue(inpvalue)
         // console.log(mapRef.current.serachMap,inpvalue)
     }
