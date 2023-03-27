@@ -1533,9 +1533,14 @@ export class AlarmManagement {
   static AddAlarmEventInterval = (data) => server.post(`Safe/Alarm/AddAlarmEventInterval`,data)
   static AddAlarmEventOverrun = (data) => server.post(`Safe/Alarm/AddAlarmEventOverrun`,data)
   static AddAlarmEventDeflection = (data) => server.post(`Safe/Alarm/AddAlarmEventDeflection`,data)
-  static AddAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/AddAlarmEventSOE`,data)
+  static AddAlarmEventSOE = (data) => server.post(`Safe/Alarm/AddAlarmEventSOE`,data)
   static AddAlarmEventCommunication = (data) => server.post(`Safe/Alarm/AddAlarmEventCommunication`,data)
   static DeleteAlarmEvent = (projectId,id) => server.delete(`Safe/Alarm/DeleteAlarmEvent?projectId=${projectId}&id=${id}`)
+  static UpdateAlarmEventInterval = (data) => server.post(`Safe/Alarm/UpdateAlarmEventInterval`,data)
+  static UpdateAlarmEventOverrun = (data) => server.post(`Safe/Alarm/UpdateAlarmEventOverrun`,data)
+  static UpdateAlarmEventDeflection = (data) => server.post(`Safe/Alarm/UpdateAlarmEventDeflection`,data)
+  static UpdateAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/UpdateAlarmEventSOE`,data)
+  static UpdateAlarmEventCommunication = (data) => server.post(`Safe/Alarm/UpdateAlarmEventCommunication`,data)
 }
 //储能--环境监控
 export class StorageEnvironmentRuntime {

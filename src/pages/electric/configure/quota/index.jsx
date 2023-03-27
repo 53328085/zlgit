@@ -51,6 +51,7 @@ export default function Index() {
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
   const [dataSourceType, setDataSourceType] = useState([]);
+  const [noDataInForm,setNoDataInForm] =useState(true);
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
@@ -128,9 +129,10 @@ export default function Index() {
   const [form] = Form.useForm();
   //删除弹窗
   const [deleteModal, setDeleteModal] = useState(false);
+  //删除告警类型弹窗
+  const [deleteTypeModal, setDeleteTypeModal] = useState(false);
   //删除确认
   const deleteOk = () => {
-    // return
     DeletePlanAlarm(projectId, deleteId).then((res) => {
       if (res.success) {
         message.success("告警方案删除成功！");
@@ -149,6 +151,25 @@ export default function Index() {
   const handleDelete = () => {
     setDeleteModal(false);
   };
+  //删除告警类型确认
+  const deleteTypeOk = () => {
+    DeleteAlarmEvent(projectId, deleteTypeId).then((res) => {
+      if (res.success) {
+        message.success("告警类型删除成功！");
+        setDeleteTypeModal(false);
+        //刷新告警类型数据
+        runEdit();
+      } else {
+        message.error("删除失败！");
+        setDeleteTypeModal(false);
+      }
+    });
+    setDeleteTypeModal(false);
+  };
+  const handleTypeDelete = () => {
+    setDeleteTypeModal(false);
+  };
+
   // 删除
   const [deleteId, setDeleteId] = useState();
   const deleteRecord = (record) => {
@@ -159,13 +180,13 @@ export default function Index() {
   const [editId, setEditId] = useState();
   const [editType, setEditType] = useState(false);
   const edit = (record) => {
-    setDataSourceType();
     setEditId(record.id);
+    setDataSourceType();
     QueryAlarmEvents(record.id).then((res) => {
       if (res.success) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
-          dataSourceType.map((item) => {
+          // dataSourceType.map((item) => {
             //   console.log(item);
             //   if (item.Push === true) {
             //   if(item.AlarmCondition==="Greater"){
@@ -175,7 +196,7 @@ export default function Index() {
             //   } else {
             //     return (item.Push = "否");
             //   }
-          });
+          // });
         }
       } else {
         messageApi.open({
@@ -189,10 +210,24 @@ export default function Index() {
     setaddAlarmModal(true);
     form.setFieldsValue(record);
   };
-
-  // const { run: runEdit } = useRequest(edit, {
-  //   manual: true,
-  // });
+  //用于告警类型  新增、修改、删除后调用
+  const alarmTypeTable = () => {
+    QueryAlarmEvents(editId).then((res) => {
+      if (res.success) {
+        if (res.data) {
+          setDataSourceType(JSON.parse(res.data));
+        }
+      } else {
+        messageApi.open({
+          type: "error",
+          content: res.errMsg,
+        });
+      }
+    });
+  };
+  const { run: runEdit } = useRequest(alarmTypeTable, {
+    manual: true,
+  });
   const columnsType = [
     {
       align: "center",
@@ -273,21 +308,17 @@ export default function Index() {
     },
   ];
   //删除告警配置
+  const [deleteTypeId, setDeleteTypeId] = useState();
   const deleteAlarmInfo = (record) => {
-    console.log(record);
-    DeleteAlarmEvent(projectId, record.Id).then((res) => {
-      if (res.success) {
-        message.success("删除成功！");
-      } else {
-        message.error("删除失败！");
-      }
-    });
+    setDeleteTypeId(record.Id);
+    setDeleteTypeModal(true);
   };
-  //编辑告警配置
-  const [giveChildFormRecord,setGiveChildFormRecord]=useState({});
+  //编辑告警类型配置
+  const [giveChildFormRecord, setGiveChildFormRecord] = useState({});
   const editAlarmInfo = (record) => {
     setGiveChildFormRecord(record);
     setAddAlarmEvent(true);
+    setNoDataInForm(false);//区分新增编辑
   };
   //新增告警
   const showAdd = () => {
@@ -309,6 +340,8 @@ export default function Index() {
       };
       QueryAddAlarm(params).then((res) => {
         if (res.success) {
+          setDataSourceType();
+          setEditId(res.data);
         } else {
           messageApi.open({
             type: "error",
@@ -362,9 +395,9 @@ export default function Index() {
       }
     });
   };
-
   const showAddAlarmEvent = () => {
     setAddAlarmEvent(true);
+    setNoDataInForm(true)
   };
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
@@ -381,6 +414,7 @@ export default function Index() {
       return AddAlarmEventInterval(childFormInfo).then((res) => {
         if (res.success) {
           setAddAlarmEvent(false);
+          runEdit();
           message.success("新增告警事件成功！");
         } else {
           message.error("新增告警事件失败！");
@@ -390,6 +424,7 @@ export default function Index() {
       return AddAlarmEventOverrun(childFormInfo).then((res) => {
         if (res.success) {
           setAddAlarmEvent(false);
+          runEdit();
           message.success("新增告警事件成功！");
         } else {
           message.error("新增告警事件失败！");
@@ -399,6 +434,7 @@ export default function Index() {
       return AddAlarmEventDeflection(childFormInfo).then((res) => {
         if (res.success) {
           setAddAlarmEvent(false);
+          runEdit();
           message.success("新增告警事件成功！");
         } else {
           message.error("新增告警事件失败！");
@@ -408,6 +444,7 @@ export default function Index() {
       return AddAlarmEventSOE(childFormInfo).then((res) => {
         if (res.success) {
           setAddAlarmEvent(false);
+          runEdit();
           message.success("新增告警事件成功！");
         } else {
           message.error("新增告警事件失败！");
@@ -417,6 +454,7 @@ export default function Index() {
       return AddAlarmEventCommunication(childFormInfo).then((res) => {
         if (res.success) {
           setAddAlarmEvent(false);
+          runEdit();
           message.success("新增告警事件成功！");
         } else {
           message.error("新增告警事件失败！");
@@ -458,6 +496,26 @@ export default function Index() {
           ref={tableRef}
           bordered
         ></Table>
+        <Modal
+          className={style.deleteModal}
+          open={deleteTypeModal}
+          onOk={deleteTypeOk}
+          onCancel={handleTypeDelete}
+          width={512}
+          cancelText={"取消"}
+          centered={true}
+          closable={false}
+          maskClosable={false}
+          okText={"确认"}
+          okType={"primary"}
+        >
+          <div className={style.deleteHeader}>删除提示</div>
+          <div className={style.deleteBody}>
+            <img className={style.warnIcon} src={firstwarn}></img>
+            <span>是否确认删除告警类型？</span>
+          </div>
+        </Modal>
+
         <Modal
           className={style.deleteModal}
           open={deleteModal}
@@ -534,6 +592,7 @@ export default function Index() {
                 layout="vertical"
                 autoComplete="off"
                 name="addform"
+                className={style.addForm}
               >
                 <Item
                   name="name"
@@ -558,10 +617,11 @@ export default function Index() {
               style={{ marginTop: "16px" }}
               columns={columnsType}
               dataSource={dataSourceType}
-              rowKey="key"
+              rowKey={(record) => record.Id}
               bordered
               size="small"
               className={style.addSourceTypeTable}
+              pagination={false}
             ></Table>
             <Button
               onClick={() => showAddAlarmEvent()}
@@ -578,6 +638,7 @@ export default function Index() {
           callBack={changeAddAlarmEvent}
           getValues={getFromChild}
           giveChildForm={giveChildFormRecord}
+          giveFormType ={noDataInForm}
         ></AlarmEventModal>
       </div>
     </div>
