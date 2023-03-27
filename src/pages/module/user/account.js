@@ -1,8 +1,9 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {useRequest, useAntdTable} from 'ahooks'
-import {Typography, Space, Form, Input, Select, Switch, message} from 'antd'
+import {Typography, Space, Form, Input, Select, Switch, message, DatePicker} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
+import moment from 'moment';
 import {User} from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectUser} from "@redux/user";
@@ -76,11 +77,15 @@ const showModl = () => {
  }
  const edit = (record) => {
     setRecord({...Record, ...record});
+     
     setIsAdd(false)
+    let {validStageTime} = record;
+    record.validStageTime = moment(validStageTime);
+    console.log(record.validStageTime)
     mform.setFieldsValue({
       ...record,
       rpwd: record.pwd,
-      enabled: Number(record.enabled)
+      enabled: Number(record.enabled),
     })
     mref.current.onOpen()
 
@@ -164,8 +169,8 @@ const showModl = () => {
     delete data.rpwd
     let handler = isAdd ? AddOperationManager : Update;
     let content = isAdd ? '新增成功' : '编辑成功';
-    let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id};
-    console.log(params);
+    let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0, validStageTime: data.validStageTime.format('YYYY-MM-DD')} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id, validStageTime: data.validStageTime.format('YYYY-MM-DD')};
+    
     let {success, errMsg} = await handler(params)
     success && custMsg({success, content,  onClose: () => {
       mref.current.onCancel();
@@ -232,10 +237,10 @@ const showModl = () => {
              <Item label="账号有效期" name="validStageTime" rules={[
                   {
                     required: true,
-                    message: '请输入用户姓名！',
+                    message: '请选择有效期！',
                   }]}
                   >
-                <Input />
+                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
              </Item>
              {
               isAdd &&

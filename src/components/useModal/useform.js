@@ -1,5 +1,5 @@
 import React, {useImperativeHandle, forwardRef, useRef} from 'react'
-import {Form, Select, Input, Switch} from 'antd'
+import {Form, Select, Input, Switch, DatePicker} from 'antd'
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
@@ -75,6 +75,14 @@ import {Form, Select, Input, Switch} from 'antd'
      >
       <Input />
     </Item>
+    <Item label="账号有效期" name="validStageTime" rules={[
+                  {
+                    required: true,
+                    message: '请选择有效期！',
+                  }]}
+                  >
+                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
+   </Item>
     <Item label="密码" name="pwd" required>
       <Input.Password />
     </Item>

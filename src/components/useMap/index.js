@@ -69,12 +69,12 @@ import {
   }
   
   const serachcomplete = (res) => {
-   // console.log(serachMap.getStatus())
+    console.log(serachMap.getStatus())
     if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {
       let len = res.getCurrentNumPois();
       if (len > 0) {
         console.dir(res.getPoi(0));
-        let { lng, lat } = res.getPoi(0)?.point;
+        let { lng, lat} = res.getPoi(0)?.point;
         setAaddress({lng, lat})
       }
     }

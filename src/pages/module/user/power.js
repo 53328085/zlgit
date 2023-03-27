@@ -124,6 +124,7 @@ export default function Account({projectId, CModal}) {
   const [areas, setAreas] = useState([]) // 项目管理员 园区权限 
   const [opvalue, setOpvalue] = useState(null) // 暂存选择的运营管理员
   const [manager, setManager] = useState(false) // 是否显示项目管理员 
+  const [role, setRole]=useState(NaN)
  const mref = useRef()
  const fmodal = useRef()
  const dref = useRef()
@@ -132,11 +133,12 @@ export default function Account({projectId, CModal}) {
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
  const {roleType} = useSelector(selectUser) || {};
- const showview = roleType == 1 || roleType == 2
+ 
 
-  const menufn = (id, type) => {
+  const menufn = (id, type, role) => {
     flushSync(() => {
       setUserId(id);
+      setRole(role)
     }) 
    
    type == 1 && dref.current.onOpen();
@@ -214,7 +216,8 @@ export default function Account({projectId, CModal}) {
   // 新增项目管理员 ,运维人员  
   try {
     console.log(fmodal.current)
-    const values = await fmodal.current.onGetvalue()     
+    const values = await fmodal.current.onGetvalue()   
+    values.validStageTime = values.validStageTime.format('YYYY-MM-DD')  
     const params = { ...values, enabled: values.enabled? 1 : 0 ,  projectId };
     let hander = ['AddProjectManager', 'InsertProjectMaintenance'][person];
     let update = [queryProjectManager, queryProjectMaintenance][person];
@@ -300,7 +303,7 @@ export default function Account({projectId, CModal}) {
   }, [projectId])  
   const RenderItem = (data) => {
   return data.map((field, index) => (
-    <div className="admin" style={{flex: 1, borderBottom: 'none'}}>
+    <div className="admin" style={{flex: 1, borderBottom: 'none'}} key={field.id}>
       <div className="item" >
          <Item name={[index, "name"]} noStyle>
                 <Input size="middle" defaultValue={field.name} />
@@ -314,8 +317,8 @@ export default function Account({projectId, CModal}) {
               <Item noStyle>
                  <div style={{ display: "flex", justifyContent: "space-between" }}>
                        <Space size={16}>  
-                        <Pbutton onClick={() => menufn(field.id, 2)}>数据权限</Pbutton>
-                        <Pbutton onClick={() => menufn(field.id, 1)}>菜单权限</Pbutton>
+                        <Pbutton onClick={() => menufn(field.id, 2, 4)}>数据权限</Pbutton>
+                        <Pbutton onClick={() => menufn(field.id, 1, 4)}>菜单权限</Pbutton>
                        
                        </Space>
                        <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
@@ -405,7 +408,7 @@ export default function Account({projectId, CModal}) {
                 <Item  noStyle shouldUpdate>
                   { ({getFieldValue }) => {
                    return <div style={{ display: "flex",justifyContent: 'justify-content' }}>
-                          <Pbutton onClick={() => menufn(getFieldValue('id'), 1)}>菜单权限</Pbutton>
+                          <Pbutton onClick={() => menufn(getFieldValue('id'), 1, 3)}>菜单权限</Pbutton>
                           <Dbutton  onClick={() => onDeleteMsg(1, getFieldValue('id'))} >删除</Dbutton>
                     </div>
                   }
@@ -469,10 +472,10 @@ export default function Account({projectId, CModal}) {
 
 
 
-       <Menuset projectId={projectId} userId={userId} ref={dref} >
+       <Menuset projectId={projectId} userId={userId} ref={dref} role={role}>
             
       </Menuset>
-      <Dataset projectId={projectId} userId={userId} ref={dpref}></Dataset>
+      <Dataset projectId={projectId} userId={userId} ref={dpref} ></Dataset>
     </Mainbox>
   );
 }

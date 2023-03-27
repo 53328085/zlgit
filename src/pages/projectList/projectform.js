@@ -117,7 +117,7 @@ const Info = styled.span`
   
   const params = {
     name: "",
-    validStageTime: "", //项目有效期
+    validStageTime: moment(), //项目有效期
    // imgLogo: "",
    // imgProject: '',
     address: "",
@@ -195,20 +195,25 @@ const Info = styled.span`
   };
  
   const onSubmint =async () => {
-    if (!imgLogo)  return message.warning('公司logo图片必须上传', 1);
-    if (!imgProject)  return message.warning('项目图片必须上传', 1);
+   return  new Promise((resolve, reject) => {
     form.validateFields().then(res => {
       let {validStageTime, lng, lat, ...other} = res;
       other['lngLat'] = lng + ','+lat;
      
       const params = Object.assign({}, other, {imgLogo, imgProject, validStageTime: validStageTime.format('YYYY-MM-DD')})
-      Promise.resolve(params)
-
+       resolve(params)
     }).catch(e => {
-      console.log(e)
-      Promise.reject(e)
+        console.log(e)
     })
-   console.log(data)
+   })
+    
+ 
+
+
+    
+
+ 
+   
  /*   return
    let fileds = form.getFieldValue()
    let {validStageTime, lng, lat, ...other} = fileds;
@@ -230,6 +235,7 @@ const Info = styled.span`
       size="middle"
       requiredMark="optional"
       colon={false}
+
     >
       <Item label="项目ID">
         <Comipt placeholder="系统自增项目ID" disabled />
@@ -246,20 +252,38 @@ const Info = styled.span`
           required: true 
         }
       ]}>
-        <CdatePicker placeholder="请选择项目有效期" defaultValue={moment('2023-01-01', 'YYYY-MM-DD')} />
+        <CdatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" />
       </Item>
       {/*  imgLogo: "",
     imgProject: '', */}
       <div className='upload'>
-         <Item label="项目logo" className="left" required>
+         <Item label="项目logo" className="left" >
            <div className="img">
+           <Item nostyle name="imgLogo" rules={
+            [
+             {
+              required: true,
+              message: '请上传项目logo'
+            }
+            ]
+           }>
             <Upload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={setImgLogo} /> 
+            </Item>
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
          <Item label="项目图片" required>
            <div className="img">
+            <Item nostyle  name="imgProject" rules={
+              [
+              {
+                required: true,
+                message: '请上传项目图片'
+              }
+             ]
+           }>
             <Upload wpx={248} hpx={168} swpx={200} shpx={116} getfile={setImgProject} /> 
+            </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>

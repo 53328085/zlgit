@@ -7,7 +7,7 @@ import {Image, message} from 'antd'
  * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB
  * @date 2022-11-11 09:38
  */
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange}) {
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel}) {
 const Preview = styled.div`
     flex: 1;
     display: flex;
@@ -161,6 +161,7 @@ const Ifile = styled.input.attrs(props => ({
     }
   }
   const delImg = () => {
+    if (isDel) return
     setUrl(null) 
     getfile(null)  
     onChange?.('')
@@ -169,6 +170,10 @@ const Ifile = styled.input.attrs(props => ({
   useEffect(() => { 
     setUrl(value); 
   }, [value])
+
+
+
+  
   return (
      <Preview>
       {

@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
+import moment from 'moment'
 import {nanoid} from "@reduxjs/toolkit"
 import imgurl from './icon'
 import Titlelayout from '@com/titlelayout'
 import {StorageControlRuntime} from '@api/api'
+import {custMsg} from '@com/usehandler'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -22,7 +24,7 @@ const Mainbox = styled.div`
         column-gap: 16px;
         background-color: #fff;
         padding: 16px;
-      
+        grid-template-rows: 544px;
         .topleft {
             display: grid;
             grid-template-rows: 36px 1fr 54px;
@@ -83,7 +85,7 @@ const Mainbox = styled.div`
              display: grid;
              grid-template-rows: 1fr 58px;
              .toprightup {
-                padding: 32px;
+                padding: 32px 32px 16px 32px;
                 display: flex;
 
              }
@@ -174,22 +176,23 @@ const Timeipt = styled(Input)`
 const Viewbox = styled.div`
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 854px 510px;
-    height: 484px;
-    padding: 32px 0;
+    grid-template-columns: 516px 1fr ;
+    grid-template-rows: 405px;
    column-gap: 32px;
     .detl {
         height: 365px;
         border: 1px solid rgba(215, 215, 215, 1); 
         margin-top: 40px;
+        display: flex;
+        flex-direction: column;
        .title {
        
         height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #237ae4;
-        color: #fff;
+        background-color: #f0f9ff;
+        color: #333;
         font-size: 16px;
        } 
        .content {
@@ -197,6 +200,16 @@ const Viewbox = styled.div`
         display: grid;
         grid-auto-rows: auto 4px 1fr;
         row-gap: 16px;
+        flex: 1;
+        .num {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color:#666;
+            width: 470px;
+            line-height: 1.5;
+        }
        }
        .item {
         width: 4px;
@@ -212,7 +225,11 @@ const Viewbox = styled.div`
         grid-template-columns: repeat(94, 4px);
         column-gap: 1px;
        }
-
+       .dsitme {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+       }
     }
 `
 const Itembox = styled.div`
@@ -253,25 +270,203 @@ const Datebox = styled.div`
   padding: 0 8px;
   align-items: flex-end;
 `
+
+const  enumerateDaysBetweenDates = (startDate, endDate) => {  
+    let daysList = [];
+    let SDate=moment(startDate);
+    let EDate=moment(endDate);
+    let xt;
+    daysList.push(SDate.format('YYYY-MM-DD'));
+    while( SDate.add(1,"days").isBefore( EDate) ){   
+        daysList.push( SDate.format('YYYY-MM-DD'));
+    } 
+    daysList.push( EDate.format('YYYY-MM-DD'));
+    return daysList;
+  }
+
+const getvalidate = (start, end, type, choosedate) => {
+    
+
+    let dayslist = enumerateDaysBetweenDates(start, end)
+    if(type == 1) return dayslist
+    if(type == 2) {
+      return  dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').day())) // 每周
+    }
+    if(type == 3) {
+      return dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').date()))
+    }
+      /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
+      const datalist = enumerateDaysBetweenDates(date[0], date[1])   
+      
+       let week = datalist.filter(d => {     
+         return dateType.includes(moment(d, 'YYYY-MM-DD').day())
+       })
+       let day = datalist.filter(d => {   
+        
+        return dateType.includes(moment(d, 'YYYY-MM-DD').date())
+       })
+      
+        let dateChoose = {
+            2: week,
+            3: day
+        }[type] */
+}
+
+
+
+
+
+
+
+  let week =  [
+    {label: '周一', value: 1},
+    {label: '周二', value: 2},
+    {label: '周三', value: 3},
+    {label: '周四', value: 4},
+    {label: '周五', value: 5},
+    {label: '周六', value: 6},
+    {label: '周日', value: 7},
+  ]
+  let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
+ 
+ 
  function Automate({projectId, areaId, startTime, Strategy, CModal}) {
+  console.log(moment().date())
+  const [form] = Form.useForm()
   const [nameform] = Form.useForm()
   const [plans, setPlan] = useState([])  
+  const [count, setCount] = useState(0)
   const [strategy, setStrategy] = useState([])
   const [pcs, setPcs] = useState([])
   const [curplan, setCurplan] = useState()
   const [isView, setIsview] = useState(false)
+  const [strategyDetail, setStrategyDetail] = useState([])
   const pref = useRef()
+  const [isadd, setIsadd] = useState(false)
   const planName = useRef('')
   const showarrow = plans?.length > 4
-  const onPlan = ({name, id}) => {
-     console.log(id)
-     setCurplan(id)
+  const showpalans = useMemo(() => {
+    let len = plans.length;
+    if (len < 6) {
+      return plans.slice(count, len)
+    } else {
+        return plans.slice(count, 5 + count)
+    }
+  }, [count, plans.length])
+  const onMove = () => {
+    if (plans.length < 6) return
+    setCount(count + 1)
+  }
+  const initform = (data) => {
+
+    let start = moment(data.startDate, 'YYYY-MM-DD hh:ss:mm')
+    let end = moment(data.endDate, 'YYYY-MM-DD hh:ss:mm')
+    form.setFieldsValue({
+        ...data,
+        date: [start, end]
+    })
+
+ }
+ const QueryStrategyDetail = async (strategyId) => {
+    try {
+        let {success, data} =  await StorageControlRuntime.QueryStrategyDetail(projectId, strategyId)
+        success && setStrategyDetail([...data])
+        !success && setStrategyDetail([])
+     } catch (error) {
+        console.log(error)
+    }
+ }
+
+  const onPlan = async (p) => {
+    initform(p)
+    let {strategyId} = p
+     setCurplan({
+       ...p
+     }) 
+     setIsadd(false)
+     setIsview(false)
+
+     QueryStrategyDetail(strategyId)
+  
+
   }
   const addplan = () => {
-    console.log(pref.current)
+    setIsview(false)
+    setIsadd(true)
+    form.resetFields()
      pref.current.onOpen()
 
   }
+
+/*   const onSave = () => {
+    if(isadd) AddRuntimePlan();
+  } */
+
+   // 新增 / 修改 计划
+
+  const onSave = async () => {
+    try {
+      let values = await form.validateFields().then(res => {
+         
+        return  Promise.resolve(res)
+       }).catch(e => {
+        console.log(e)
+       })
+       if (!values) return
+       let {date,   ...params} = values; 
+       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
+      const datalist = enumerateDaysBetweenDates(date[0], date[1])   
+      
+       let week = datalist.filter(d => {     
+         return dateType.includes(moment(d, 'YYYY-MM-DD').day())
+       })
+       let day = datalist.filter(d => {   
+        
+        return dateType.includes(moment(d, 'YYYY-MM-DD').date())
+       })
+      
+        let dateChoose = {
+            2: week,
+            3: day
+        }[type] */
+       
+      let {id: pid} = curplan;
+       
+       params.dateChoose = params.dateChoose || []
+       let startDate = date[0]?.format('YYYY-MM-DD');
+       let endDate = date[1]?.format('YYYY-MM-DD'); 
+
+       let handler = isadd ? 'AddRuntimePlan' : 'UpdateRuntimePlan'
+       let id = isadd ? 0 : pid
+       try {
+          let {success, errMsg} = await StorageControlRuntime[handler](projectId, {...params, startDate, endDate, areaId, id})
+          success && custMsg({content: '保存成功', onClose: () => {
+            getPlans()
+            setIsadd(false)
+            setIsview(false)
+          }})
+         !success && custMsg({success, content: errMsg})
+       } catch (error) {
+         console.log(error)
+       }
+      
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+  // 删除计划
+   
+ const DeleteRuntimePlan = async () => {
+    let {id} = curplan
+    let {success, errMsg} = await  StorageControlRuntime.DeleteRuntimePlan(projectId, id)
+    success && custMsg({content: '删除成功', onClose: () => {
+        getPlans()
+    }})
+    !success && custMsg({success, content: errMsg})
+ }
+
+
   const QueryStrategyList = async () => {
      try {
         let {success, data} = await  StorageControlRuntime.QueryStrategyList(projectId, areaId)
@@ -292,16 +487,20 @@ const Datebox = styled.div`
     }
    
 } 
+
+
   const getPlans = async () => {
     try {
         let {success, data} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
 
         if(success && Array.isArray(data) && data.length > 0) {
-            setCurplan(data[0].id)
+            setCurplan(data[0])
             setPlan([...data])
+            initform(data[0])
+            QueryStrategyDetail(data[0].strategyId)
         }else {
             success && setPlan([]) 
-            setCurplan(null)
+            setCurplan({})
         }
         
         
@@ -312,10 +511,19 @@ const Datebox = styled.div`
 
   }
   const planOk = () => {
+    
     let {planName} = nameform.getFieldsValue(); 
-    setPlan([...plans, {name: planName, id: nanoid()}])
+   // form.resetFields()
+    // setPlan([...plans, {name: planName, id: nanoid()}])
+    form.setFieldValue('name', planName)
     pref.current.onCancel()
   }
+
+ const onCancel = () => {
+    setIsadd(false)
+    pref.current.onCancel()
+ }
+
   const changeview = () => {
      setIsview(f => !f)
   }
@@ -333,8 +541,8 @@ const Datebox = styled.div`
                     运行计划
                 </div>
                 <div className='content'>
-                    {plans.map(p => <div key={nanoid()} className={curplan == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
-                        {p.name}  {curplan == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
+                    {showpalans.map(p => <div key={nanoid()} className={curplan.id == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
+                        {p.name}  {curplan.id == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
                         </div>)
                         } 
                    
@@ -342,12 +550,12 @@ const Datebox = styled.div`
                 
                  </div>
                  <div className='footer'> 
-                   <CaretUpFilled style={{fontSize: '34px'}} /> <CaretDownFilled style={{fontSize: '34px'}} /> 
+                   <CaretUpFilled style={{fontSize: '34px', color: "#fff", cursor: 'pointer'}} onClick={() => onMove(1)} /> <CaretDownFilled onClick={() => onMove(-1)}  style={{fontSize: '34px', color: "#fff", cursor: 'pointer'}}/> 
                  </div>
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview></Planview> : <Strategy data={strategy} pcs={pcs} /> }
+                { isView ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} pcs={pcs} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -355,8 +563,8 @@ const Datebox = styled.div`
                         <Normalbt type="primary" ghost={!isView} onClick={changeview}>策略预览</Normalbt>
                     </Space>
                     <Space size={16}>
-                        <Normalbt  danger>删除</Normalbt>
-                        <Normalbt type="primary" ghost>保存</Normalbt>
+                        <Normalbt  danger onClick={DeleteRuntimePlan}>删除</Normalbt>
+                        <Normalbt type="primary" ghost onClick={onSave}>保存</Normalbt>
                     </Space>
                 </div>
                 
@@ -374,12 +582,13 @@ const Datebox = styled.div`
         </div>
         <CModal
         width={592}
-        title='新增策略'
+        title='新增计划'
         ref={pref}
         onOk={planOk}
+        onCancel={onCancel}
         mold="cust"
       >
-        <Form   labelCol={{flex: '96px'}} style={{maxWidth: 600}} form={nameform} preserve={false}>
+        <Form   labelCol={{flex: '96px'}}  style={{maxWidth: 600}} form={nameform} preserve={false}>
             <Item label="策略名称">
                 <Space>
               <Item name="planName" noStyle rules={[
@@ -404,68 +613,99 @@ const Datebox = styled.div`
   )
 }
 
-const Planview = () => {
-    const dateCellRender =(value) => {
+const Planview = ({data, strategyDetail}) => {
+    let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
+    console.log(strategyDetail)
+    
+  /*   const disabledDate = (value) => {
+      let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
+      return  !datalist.includes(value.format('YYYY-MM-DD'))
+    } */
+    const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
+    console.log(hours)
+    const disabledDate = useCallback((value) => {
+        let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
+        return  !datalist.includes(value.format('YYYY-MM-DD'))
+    }, [priority, startDate, endDate, dateChoose])
+    const dateCellRender = useCallback((value) => {
         let date = value.date()
-        console.log(date)
         return (
             <Datebox>
             <span >{date}日</span>
-            <span className='el'>充电</span>
+            <span className='el'>{name}</span>
             </Datebox>
         )
-    }
-    const items = Array.from({length: 94}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))
-    console.log(items)
+    }, [name])
+    const items = Array.from({length: 94}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
-        <Titlelayout title={<Space size={32}><span>策略预览</span><span style={{color: '#999'}}>查看策略执行计划及内容</span></Space>} bordered={'n'} style={{flex: 1}}>
-            <Viewbox>
-                <div style={{height: '386px'}}>
-                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} /> 
-                </div>
+        <Titlelayout pv="0px" title={<Space size={32}><span>运行计划预览</span><span style={{color: '#999'}}>查看运行计划及具体内容</span></Space>} bordered={'n'} style={{flex: 1}}>
+            <Viewbox>               
                 <div className='detl'>
-                   <div className='title'>策略详细</div>
+                   <div className='title'>计划详细</div>
                    <div className='content'>
-                      <Descriptions  bordered column={1} size="small">
-                        <Descriptions.Item label="策略名称">充电</Descriptions.Item>
-                        <Descriptions.Item label="策略模板">削峰平谷</Descriptions.Item>
-                        <Descriptions.Item label="优先级">2</Descriptions.Item>
+                      <Descriptions  bordered column={3} size="small">
+                        <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
+                        <Descriptions.Item label="策略模板">{strategyName}</Descriptions.Item>
+                        <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
+                        <Descriptions.Item label="储能子系统" span={3}>{pcsName?.join(' ')}</Descriptions.Item>
                        </Descriptions>
-                       <Divider/>
+                       <Divider style={{margin: '0px'}}/>
+                       <div>
                        <div className='list'>
                          {items.map(i => <Itembox type={i.type} />)}
                        </div>
+                        <div className='num'>
+                            {hours.map(i => <span>{i}</span>)}
+                        </div>
+                        <div className='dstrategy'>
+                             {
+                                strategyDetail.map(s => <div className='dsitme'>
+                                    <span>{s.start}-{s.end}</span>
+                                    <span>{s.statusStr}</span>
+                                    <span>{s.planP}kw</span>
+                                </div>)
+                             }
+                        </div>
+                       </div>
                    </div>
                   
+                </div>
+                <div style={{height: '386px'}}>
+                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} disabledDate={disabledDate} /> 
                 </div>
             </Viewbox>
         </Titlelayout>
     )
 }
-const Strategy = ({data, pcs}) => {
+const Strategy = ({data, pcs, form}) => {
    let checkpcs = pcs?.map(p => ({label: p.name, value: p.id})) || [];
-   const [options, setOptions] = useState(
-    [
-      {label: '周一', value: 1},
-      {label: '周二', value: 2},
-      {label: '周三', value: 3},
-      {label: '周四', value: 4},
-      {label: '周五', value: 5},
-      {label: '周六', value: 6},
-      {label: '周日', value: 7},
-    ]
-   )
-   const [days, setDays] = useState(() =>  Array.from({length: 31}).map((i) => ({label: i < 10 ? '0'+i : i, value: 1 })))
+   const [show, setShow] = useState(1)
+  const [options, setOptions] = useState(week)   
+ 
+   const onChange = (e) => {
+      let opt = ['', '', week, days][e]
+      setShow(e)
+      setOptions(opt)
+   }
+  
    return (
       <Titlelayout title='运行计划设置' bordered={'n'}>
-         <Formbox   labelCol={{flex: '96px'}} labelAlign="left">
+         <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form}  validateMessages={
+       { required: "缺少'${label}' 数据"}
+      }>
           
-            <Item  label="模板名称" tooltip="最长8个字符" name="name">
-                 <Input style={{width: '200px'}} />
+            <Item  label="模板名称" tooltip="最长8个字符" name="name" rules={[
+                {required: true},
+                {max: 8, type: 'string', message: '名称不能超过8个字符'}
+            ]}>
+                 <Input  />
             </Item>
-            <Item  label="执行周期" name="executionCycle">
+            <Item  label="执行周期" name="executionCycle" rules={[
+                  {required: true},
+            ]}>
                 <Select
-                  style={{width: '200px'}}
+                 
+                  onChange={onChange}
                   options={[
                     {
                         label: '每日',
@@ -483,27 +723,32 @@ const Strategy = ({data, pcs}) => {
                 ></Select>               
             </Item>
             
-            <Item label="选择重复" name="dateChoose"  className='datechoose' shouldUpdate={['executionCycle']} >
-               {
-                ({getFieldsValue}) => {
-                    getFieldsValue('executionCycle') == 3 &&  <Checkbox.Group options={options}    /> 
-                }
-               }  
-            </Item>
+            { show!== 1 && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
+                  {required: true},
+            ]}>
+                <Checkbox.Group options={options}    /> 
+              </Item>
+            }
              
-            <Item  label="策略模板" name="strategyId">
+            <Item  label="策略模板" name="strategyId" rules={[
+                  {required: true},
+            ]}>
                 <Select
                   fieldNames={{label: 'name', value: 'id'}}
-                  style={{width: '100%'}}
+                 
                   options={data}
                 ></Select>               
             </Item>
-            <Item  label="储能子系统" name="pcsIds">
+            <Item  label="储能子系统" name="pcsIds" rules={[
+                  {required: true},
+            ]}>
                  <Checkbox.Group options={checkpcs}    />        
             </Item>
-            <Item  label="优先级" className='priority' name="priority">
+            <Item  label="优先级" className='priority' name="priority" rules={[
+                  {required: true},
+            ]}>
                 <Select
-                  style={{width: '200px'}}
+                 style={{width: '80px'}}
                   options={[
                     {
                         label: '1',
@@ -520,12 +765,11 @@ const Strategy = ({data, pcs}) => {
                   ]}
                 ></Select>               
             </Item>
-            <Item label="生效日期" className='date'>
+            <Item label="生效日期" className='date' name="date" rules={[
+                  {required: true},
+            ]}>
                    <RangePicker style={{width: '100%'}} />
             </Item>
-          {/*   <Item label='' > 
-                   <Checkbox.Group options={options} defaultValue={[1,2,3,4,5,6]}    /> 
-            </Item> */}
            
          </Formbox>
          

@@ -32,7 +32,7 @@ export default function Index(props) {
   let [lightDate, setlightDate] = useState('本年');
   let [lightDateYesterday, setlightDateYesterday] = useState('去年');
   let [state, setstate] = useState('开启');
-  let charts = ['本年（元）', '去年（元）']
+  let charts = ['本年（kWh）', '去年（kWh）']
   let [operateState, setoperateState] = useState(true);
   const [Ctitle, setCtitle] = useState({});
   let [numfirst, setnumfirst] = useState(0);
@@ -257,7 +257,7 @@ export default function Index(props) {
       formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
       setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
       setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
-      charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
+      charts = data.type == 'date' ? ['本日（kWh）', '昨日（kWh）'] : data.type == 'month' ? ['本月（kWh）', '上月（kWh）'] : ['本年（kWh）', '去年（kWh）']
       setchangeState(data)
       console.log(changeState)
       queryDataList()

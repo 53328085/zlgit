@@ -33,7 +33,7 @@ export default function Index(props) {
   let [numlast, setnumlast] = useState(9);
   const [changeTag, setChangeTag] = useState('')
   let [airList, setairList] = useState([]);
-  let charts = ['本年（元）', '去年（元）']
+  let charts = ['本年（kWh）', '去年（kWh）']
   let [lightDate, setlightDate] = useState('本年');
   let [lightDateYesterday, setlightDateYesterday] = useState('去年');
   let energyInfo = {
@@ -69,16 +69,16 @@ export default function Index(props) {
     return queryStreetLights(projectId, formInfo.changeInput, formInfo.changeAreaId).then(res => {
       let { success, data } = res
       if (success && data) {
-        //setairList(data)
-        setairList([{
-          id: 1,
-          name: '123456',
-          boxName: 'xxx',
-          sn: '0123456789',
-          controlLine: 1,
-          address: 'zxxx',
-          state: 0
-        }])
+        setairList(data)
+        // setairList([{
+        //   id: 1,
+        //   name: '123456',
+        //   boxName: 'xxx',
+        //   sn: '0123456789',
+        //   controlLine: 1,
+        //   address: 'zxxx',
+        //   state: 0
+        // }])
         console.log(3)
       } else {
         messageApi.open({
@@ -247,7 +247,7 @@ export default function Index(props) {
       formInfo.changeAreaId = data.areaId
       formInfo.changeDate = data.date
       formInfo.changeType = data.type == 'date' ? 1 : data.type == 'month' ? 2 : 3
-      charts = data.type == 'date' ? ['本日（元）', '昨日（元）'] : data.type == 'month' ? ['本月（元）', '上月（月）'] : ['本年（元）', '去年（元）']
+      charts = data.type == 'date' ? ['本日（kWh）', '昨日（kWh）'] : data.type == 'month' ? ['本月（kWh）', '上月（kWh）'] : ['本年（kWh）', '去年（kWh）']
       setlightDate(data.type == 'date' ? '本日' : data.type == 'month' ? '本月' : '本年')
       setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
       queryDataList()

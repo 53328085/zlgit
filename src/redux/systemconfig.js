@@ -106,7 +106,6 @@ export const selectOneLevel = state => state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id
 export const selectshifts = state => state.system.shifts
 export const publishState = state => {
-    console.log(state.system.publishState)
   return  state.system.publishState == 1
 }
 export const {configProject,getSetMenus, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
