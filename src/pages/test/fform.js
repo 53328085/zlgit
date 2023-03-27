@@ -1,22 +1,65 @@
-import React from 'react'
-import { Calendar, theme } from 'antd';
-const onPanelChange = (value, mode) => {
-  console.log(value.format('YYYY-MM-DD'), mode);
-};
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input } from 'antd';
+import { useEffect, useState } from 'react';
 const App = () => {
-  //const { token } = theme.useToken();
-  const wrapperStyle = {
-    width: 300,
-    border: `1px solid #d7d7d7`,
-    borderRadius:'4px',
+  const [form] = Form.useForm();
+  const [, forceUpdate] = useState({});
+
+  // To disable submit button at the beginning.
+  useEffect(() => {
+    forceUpdate({});
+  }, []);
+  const onFinish = (values) => {
+    console.log('Finish:', values);
   };
-  const onSelect = (e) => {
-    console.log(e.date());
-  }
   return (
-    <div style={wrapperStyle}>
-      <Calendar fullscreen={false} onSelect={onSelect} onPanelChange={onPanelChange} />
-    </div>
+    <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
+      <Form.Item
+        name="username"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your username!',
+          },
+        ]}
+      >
+        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your password!',
+          },
+        ]}
+      >
+        <Input
+          prefix={<LockOutlined className="site-form-item-icon" />}
+          type="password"
+          placeholder="Password"
+        />
+      </Form.Item>
+      <Form.Item shouldUpdate>
+        {
+          ({getFieldValue}) => {
+            console.log(getFieldValue('username'))
+          }
+        }
+       {/*  {() => (
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={
+              !form.isFieldsTouched(true) ||
+              !!form.getFieldsError().filter(({ errors }) => errors.length).length
+            }
+          >
+            Log in
+          </Button>
+        )} */}
+      </Form.Item>
+    </Form>
   );
 };
 export default App;

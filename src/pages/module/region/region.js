@@ -25,7 +25,7 @@ import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap";
-import {selectOneLevel, selectOneLevelDefaultId, getOnelevel} from '@redux/systemconfig.js'
+import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 
 const Mainbox = styled.div`
@@ -135,9 +135,11 @@ const Inptserach = styled(Input.Search)`
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
+ 
   const dispatch = useDispatch();
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
+  const ispublish = useSelector(publishState) 
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
@@ -347,8 +349,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
    }else {
     setUnSelected([])
    } */
+     
+   
       let { areaId } = record;
-      await getUNselect({ areaId });
+      let  topareaid = form.getFieldValue('topAreaId');
+      let topid = level == 1 ? areaId : topareaid
+      await getUNselect({ areaId: topid });
 
       let {
         data: { deviceSummary, deviceSub },
@@ -475,7 +481,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     if (isNaN(level)) return;
     
     let value = form.getFieldsValue()
-   
+    //setTopAreaId(value.topAreaId)
     params = {...params, ...value }
     console.log(pagination)
     console.log(params)
@@ -502,9 +508,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             key: k,
           };
           cols.push(col);
-        }
-        console.log(index);
-        let colums = [
+        }     
+        let colums = ispublish ? [...cols] :  [
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
@@ -527,8 +532,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           },
         ];
           
-        setColumns(colums);
-        console.log(colums);
+        setColumns(colums);       
         let formart = body.map((r, i) => {
           let row = {
             areaId: idGroup[i],
@@ -778,11 +782,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
               </Form.Item>
             </>
           )}
-          <Form.Item>
+         {!ispublish && <Form.Item>
             <CustButton style={{ justifyContent: "center" }} onClick={add}>
               +新增
             </CustButton>
           </Form.Item>
+         }
         </Space>
       </Form>
       <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />

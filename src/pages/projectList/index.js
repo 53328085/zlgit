@@ -276,12 +276,9 @@ export default function Index() {
    // modal.current.onCancel()
     //navigate("/", {});
   };
-  const onSubmit = () => {
-    let params =  projectform.current.onSubmint();
-    console.log(params);
-
-
-    return 
+  const onSubmit = async () => {
+    let params =  await projectform.current.onSubmint();
+    if(!params) return
     ProjectList.createProject(params).then(res => {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {

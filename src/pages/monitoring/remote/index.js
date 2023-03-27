@@ -50,7 +50,7 @@ export default function Index() {
         return Remote.AllMeter(params).then(res => {
             let { success, data } = res
             if (success) {
-                // setdataSourceLog(data)
+                 setdataSourceLog(data)
                 // setdataSourceLog([
                 //     {
                 //         id: 1,
@@ -100,25 +100,26 @@ export default function Index() {
         {
             title: '设备型号',
             dataIndex: 'category',
-            key: 'category',
+            key: 'sn',
             id: 'id'
         },
         {
             title: '设备名称',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'name',
+            key: 'sn',
             id: 'id'
         },
         {
             title: '安装地址',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'address',
+            key: 'sn',
             id: 'id'
         },
         {
             title: '开关状态',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'status',
+            render: (status) => <span> {status==null?'未知':(status[0] == 'Open'||status[1]=='Open') ? '分闸' : '合闸'} </span>,
+            key: 'sn',
             id: 'id'
         },
     ];
@@ -578,7 +579,7 @@ export default function Index() {
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                         </div>
 
-                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable} pagination={false} rowSelection={{
+                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
                             type: selectionType,
                             ...rowSelection,
                         }} bordered></Table>

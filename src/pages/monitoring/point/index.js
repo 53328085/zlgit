@@ -279,11 +279,11 @@ export default function Index(props) {
                 },
                 {
                   value: 4,
-                  label: '变压器',
+                  label: '传感器',
                 },
                 {
                   value: 5,
-                  label: '传感器',
+                  label: '变压器',
                 },
               ]}
             />
