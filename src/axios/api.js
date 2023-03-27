@@ -1549,3 +1549,12 @@ export class StorageRevenueRuntime {
   static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
   static QueryRevenueReports = (params={}, areaId) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?areaId=${areaId}`, params);
 }
+//储能设计-电价管理
+export class StoragePriceDesigner {
+  static QueryStoragePrice = (projectId, areaId) => server.get(`/Storage/StoragePriceDesigner/QueryStoragePrice?projectId=${projectId}&areaId=${areaId}`);
+  static UpdateStoragePrice = (projectId, areaId, params={}) => server.post(`/Storage/StoragePriceDesigner/UpdateStoragePrice?projectId=${projectId}&areaId=${areaId}`, params);
+}
+export class StorageStrategyDesigner {
+  static QueryStrategy = (projectId, areaId) => server.get(`/Storage/StorageStrategyDesigner/QueryStrategy?projectId=${projectId}&areaId=${areaId}`);
+  static AddStrategy = (projectId, areaId, name) => server.get(`/Storage/StorageStrategyDesigner/AddStrategy?projectId=${projectId}&areaId=${areaId}&name=${name}`);
+}
