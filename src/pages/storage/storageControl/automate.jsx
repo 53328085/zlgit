@@ -272,8 +272,10 @@ const getvalidate = (start, end, type, choosedate) => {
     
 
     let dayslist = enumerateDaysBetweenDates(start, end)
-    
-
+    if(type == 1) return dayslist
+    if(type == 2) {
+        datalist.filter(d => dateType.includes(moment(d, 'YYYY-MM-DD').day())) 
+    }
 
       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
       const datalist = enumerateDaysBetweenDates(date[0], date[1])   
