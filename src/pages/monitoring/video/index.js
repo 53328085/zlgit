@@ -21,6 +21,7 @@ import {  leftControl, bottomControl, rightControl, topControl, stopControl,Moni
 export default function Index() {
   const { RuntimeCamera:{ Statistics, Overview } } = Monitoring
   const {token} = useSelector(selectUser); 
+  console.log(token)
   const projectId = useSelector(selectProjectId)
   const { Panel } = Collapse;
   const { Item } = Form
@@ -105,14 +106,15 @@ let [areaId,setAreaId]=useState('')
   }
   //打开视频监控弹窗
   const showModal = () => {
-    setisModal(true)
+     setisModal(true)
+    //setLocalModal(true)
     // play.stop()
     let player
     setTimeout(() => {
       player = new EZUIKit.EZUIKitPlayer({
         id: 'replay',
         accessToken: token,
-        url: "ezopen://open.ys7.com/G88471891/1.hd.live",
+        url: "ezopen://open.ys7.com/203751922/1.live",
         width: 1280,
         height: 717,
         themeData: themeData,
@@ -122,7 +124,8 @@ let [areaId,setAreaId]=useState('')
   }
   //关闭视频监控弹窗
   const handleCancel = () => {
-    setisModal(false)
+     setisModal(false)
+  //  setLocalModal(false)
     bigplay.stop()
     // play.play()
   }
@@ -142,32 +145,36 @@ let [areaId,setAreaId]=useState('')
   }
 
   const columns = [
-    {
-      title: '序号',
-      dataIndex: 'Id',
-      align: 'center'
-    },
+    // {
+    //   title: '序号',
+    //   dataIndex: 'key',
+    //   align: 'center',
+    //   key:'sn'
+    // },
     {
       title: '监控设备编号',
-      dataIndex: 'CameraName',
-      align: 'center'
+      dataIndex: 'sn',
+      align: 'center',
+      key:'sn'
     }, {
       title: '监控设备名称',
-      dataIndex: 'Position',
-      align: 'center'
+      dataIndex: 'name',
+      align: 'center',
+      key:'sn'
     }, {
       title: '安装地址',
-      dataIndex: 'AccessMode',
+      dataIndex: 'address',
       align: 'center',
-      render: (text) => <span> {text === 1 ? '云监控' : '本地监控'} </span>
+      key:'sn'
     }, {
       title: '监控类型',
-      dataIndex: 'AccessMode',
+      dataIndex: 'accessMode',
       align: 'center',
-      render: (text) => <span> {text === 1 ? '云监控' : '本地监控'} </span>
+      key:'sn'
     }, {
       title: '查看监控',
       align: 'center',
+      key:'sn',
       render: (_, record) => (
         <Space size='middle'>
           <div className={style.playButton} onClick={() => showCameraDialog(record)}>
@@ -176,37 +183,6 @@ let [areaId,setAreaId]=useState('')
         </Space>
       )
     }]
-
-  const dataSource = [
-    {
-      Id: 1,
-      CameraName: '6楼测试摄像头',
-      Position: '正泰大厦1号楼B2低压配电房',
-      AccessMode: 1
-    }, {
-      Id: 2,
-      CameraName: 'Camera2',
-      Position: '正泰大厦1号楼B2低压配电房',
-      AccessMode: 2
-    },
-    {
-      Id: 3,
-      CameraName: '测试录像机',
-      Position: '正泰大厦1号楼B2低压配电房',
-      AccessMode: 1
-    }, {
-      Id: 4,
-      CameraName: 'Camera4',
-      Position: '正泰大厦1号楼B2低压配电房',
-      AccessMode: 2
-    },
-    {
-      Id: 5,
-      CameraName: 'Camera5',
-      Position: '正泰大厦1号楼B2低压配电房',
-      AccessMode: 2
-    }
-  ]
 
   const chooseType = (url) => {
     console.log(url);
@@ -245,20 +221,22 @@ let [areaId,setAreaId]=useState('')
       }
     });
   }
-
+const [recordData,setrecordData]=useState()
   const showCameraDialog = (record) => {
-    message.error('暂未开通')
-    // if (record.AccessMode == 1) {
-    //   showModal()
-    // } else {
-    //   if (record.AccessMode == 2) {
-    //     setLocalModal(true);
-    //     setCameraTitle(record.CameraName)
-    //     // setwsType('h264')
-    //     setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-    //     chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-    //   }
-    // }
+    console.log(record)
+    setrecordData(record)
+    //message.error('暂未开通')
+    if (record.accessMode == '本地监控') {
+      showModal()
+    } else {
+      if (record.accessMode == '云监控') {
+        setLocalModal(true);
+        setCameraTitle(record.name)
+        // setwsType('h264')
+        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+      }
+    }
   }
 
 
@@ -451,12 +429,12 @@ let [areaId,setAreaId]=useState('')
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         <div className={style.tableList}>
-          <Table bordered columns={columns} dataSource={overView} rowKey='Id' size='small' pagination={false} />
+          <Table bordered columns={columns} dataSource={overView} rowKey='sn' size='small' pagination={false} />
         </div>
         <Pagination className={style.pageNum} current={pageNum} size="small" total={total} showTotal={showTotal} defaultPageSize={10} onChange={onChangePage} />
       </div>
       <Modal
-        title="A区-1号楼-低压配电房"
+        title={recordData?.address}
         centered
         width={1680}
         footer={null}

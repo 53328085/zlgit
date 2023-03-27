@@ -37,7 +37,7 @@ export default function Index() {
     const [loading, setLoading] = useState(false);
     let params = {
         pageNum: pageNum,
-        pageSize: 18,
+        pageSize: 15,
         projectId: projectId,
         areaId: areaId,
         gatewayId: 0,
@@ -50,16 +50,8 @@ export default function Index() {
         return Remote.AllMeter(params).then(res => {
             let { success, data } = res
             if (success) {
-                 setdataSourceLog(data)
-                // setdataSourceLog([
-                //     {
-                //         id: 1,
-                //         sn: 'shcb00471705'
-                //     }, {
-                //         id: 2,
-                //         sn: 'shcb00471705'
-                //     },
-                // ])
+                setdataSourceLog(data)
+                settotalalarm(res.total)
             } else {
                 message.error(res.errMsg)
             }
@@ -118,7 +110,7 @@ export default function Index() {
         {
             title: '开关状态',
             dataIndex: 'status',
-            render: (status) => <span> {status==null?'未知':(status[0] == 'Open'||status[1]=='Open') ? '分闸' : '合闸'} </span>,
+            render: (status) => <span> {status == null ? '未知' : (status[0] == 'Open' || status[1] == 'Open') ? '分闸' : '合闸'} </span>,
             key: 'sn',
             id: 'id'
         },
@@ -126,53 +118,59 @@ export default function Index() {
     let realcolumns = [
         {
             title: '抄读时间',
-            dataIndex: 'sn',
+            dataIndex: 'LastSampleTime',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
         {
             title: '设备编号',
-            dataIndex: 'accountType',
+            dataIndex: 'sn',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
         {
             title: 'A相电压(V)',
-            dataIndex: 'deviceType',
+            dataIndex: 'Ua',
             key: 'sn',
-            id: 'id'
-
+            id: 'sn',
+        },
+        {
+            title: 'B相电压(V)',
+            dataIndex: 'Ub',
+            key: 'sn',
+            id: 'sn',
         },
         {
             title: 'C相电压(V)',
-            dataIndex: 'categoryName',
+            dataIndex: 'Uc',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
         {
             title: 'A相电流(A)',
-            dataIndex: 'customerNo',
+            dataIndex: 'Ia',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
         {
             title: 'B相电流(A)',
-            dataIndex: 'customerName',
+            dataIndex: 'Ib',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
 
         {
             title: 'C相电流(A)',
-            dataIndex: 'customerMobile',
+            dataIndex: 'Ic',
+            // render: (data) => <span> {JSON.parse(data).Ic} </span>,
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         },
         {
             title: '总电度(kWh)',
-            dataIndex: 'address',
+            dataIndex: 'EP',
             key: 'sn',
-            id: 'id'
+            id: 'sn',
         }
     ]
     let columnsRead = [
@@ -261,7 +259,7 @@ export default function Index() {
                         }
                     })
                     if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
                         let newsnList = []
                         let state = []
                         let status = true
@@ -375,7 +373,7 @@ export default function Index() {
                         }
                     })
                     if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
                         let newsnList = []
                         let state = []
                         let status = true
@@ -480,32 +478,58 @@ export default function Index() {
                     data.map((item, index) => {
                         if (item.isOk == true && item.errorCode == 0) {
                             isOkList.push({ sn: item.sn, taskNo: item.taskNo })
+                        } else {
+                            message.error('设备' + item.sn + '抄读失败！')
+                            setLoading(false)
                         }
                     })
                     if (isOkList.length > 0) {
                         let count = [1, 2, 3]
+                        let arr = []
+                        let resData = []
+                        let status=true
                         count.map((item, index) => {
                             setTimeout(() => {
-                                Remote.CallingResponse(isOkList).then(res => {
-                                    let { success, data } = res
-                                    if (success) {
-                                        data.map(item => {
-                                            if (item.isOk == true && item.errorCode == 0) {
-                                                setdataSourceRead(() => { dataSourceRead.push(item) })
-                                            } else {
-                                                isOkList = []
-                                                isOkList.push({ sn: item.sn, taskNo: item.taskNo })
-                                            }
-                                        })
-                                    } else {
-                                        message.error(res.errMsg)
-                                    }
-                                })
+                                if(status){
+                                    Remote.CallingResponse(isOkList).then(res => {
+                                        arr.push(index)
+                                        let { success, data } = res
+                                        if (success) {
+                                            resData = []
+                                            data.map(item => {
+                                                if (item.isOk == true && item.errorCode == 0) {
+                                                    resData.push(item)
+                                                } else {
+                                                    isOkList = []
+                                                    isOkList.push({ sn: item.sn, taskNo: item.taskNo })
+                                                }
+                                                console.log(arr, resData)
+                                                if (arr.length == 3 || resData.length == data.length) {
+                                                    setreadout(true)
+                                                    setLoading(false)
+                                                    status=false
+                                                     let arrlist= []
+                                                    resData.map(item=>{
+                                                       arrlist.push({...JSON.parse(item.data),sn:item.sn})
+                                                    })
+                                                    setdataSourceRead(arrlist )
+                                                    console.log(dataSourceRead)
+                                                }
+                                            })
+                                        } else {
+                                            message.error(res.errMsg)
+                                            setLoading(false)
+                                        }
+    
+                                    })
+                                }
+
                             }, 5000 * index)
+
                         })
+
                     }
-                    setreadout(true)
-                    setLoading(false)
+
                 } else {
                     message.error(res.errMsg)
                 }
@@ -646,7 +670,7 @@ export default function Index() {
                     className={style.readoutBule}
                     footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
                 >
-                    <UserTable className={style.readTable} columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.id} ></UserTable>
+                    <UserTable className={style.readTable} columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
 
                 </Modal>
             </div>

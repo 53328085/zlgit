@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
@@ -183,6 +183,8 @@ const Viewbox = styled.div`
         height: 365px;
         border: 1px solid rgba(215, 215, 215, 1); 
         margin-top: 40px;
+        display: flex;
+        flex-direction: column;
        .title {
        
         height: 36px;
@@ -190,7 +192,7 @@ const Viewbox = styled.div`
         align-items: center;
         justify-content: center;
         background-color: #f0f9ff;
-        color: #fff;
+        color: #333;
         font-size: 16px;
        } 
        .content {
@@ -198,6 +200,16 @@ const Viewbox = styled.div`
         display: grid;
         grid-auto-rows: auto 4px 1fr;
         row-gap: 16px;
+        flex: 1;
+        .num {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color:#666;
+            width: 470px;
+            line-height: 1.5;
+        }
        }
        .item {
         width: 4px;
@@ -213,7 +225,11 @@ const Viewbox = styled.div`
         grid-template-columns: repeat(94, 4px);
         column-gap: 1px;
        }
-
+       .dsitme {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+       }
     }
 `
 const Itembox = styled.div`
@@ -274,9 +290,11 @@ const getvalidate = (start, end, type, choosedate) => {
     let dayslist = enumerateDaysBetweenDates(start, end)
     if(type == 1) return dayslist
     if(type == 2) {
-        datalist.filter(d => dateType.includes(moment(d, 'YYYY-MM-DD').day())) 
+      return  dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').day())) // 每周
     }
-
+    if(type == 3) {
+      return dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').date()))
+    }
       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
       const datalist = enumerateDaysBetweenDates(date[0], date[1])   
       
@@ -317,27 +335,76 @@ const getvalidate = (start, end, type, choosedate) => {
   const [form] = Form.useForm()
   const [nameform] = Form.useForm()
   const [plans, setPlan] = useState([])  
+  const [count, setCount] = useState(0)
   const [strategy, setStrategy] = useState([])
   const [pcs, setPcs] = useState([])
   const [curplan, setCurplan] = useState()
   const [isView, setIsview] = useState(false)
+  const [strategyDetail, setStrategyDetail] = useState([])
   const pref = useRef()
+  const [isadd, setIsadd] = useState(false)
   const planName = useRef('')
   const showarrow = plans?.length > 4
-  const onPlan = (p) => {
+  const showpalans = useMemo(() => {
+    let len = plans.length;
+    if (len < 6) {
+      return plans.slice(count, len)
+    } else {
+        return plans.slice(count, 5 + count)
+    }
+  }, [count, plans.length])
+  const onMove = () => {
+    if (plans.length < 6) return
+    setCount(count + 1)
+  }
+  const initform = (data) => {
+
+    let start = moment(data.startDate, 'YYYY-MM-DD hh:ss:mm')
+    let end = moment(data.endDate, 'YYYY-MM-DD hh:ss:mm')
+    form.setFieldsValue({
+        ...data,
+        date: [start, end]
+    })
+
+ }
+ const QueryStrategyDetail = async (strategyId) => {
+    try {
+        let {success, data} =  await StorageControlRuntime.QueryStrategyDetail(projectId, strategyId)
+        success && setStrategyDetail([...data])
+        !success && setStrategyDetail([])
+     } catch (error) {
+        console.log(error)
+    }
+ }
+
+  const onPlan = async (p) => {
+    initform(p)
+    let {strategyId} = p
      setCurplan({
        ...p
-     })
+     }) 
+     setIsadd(false)
+     setIsview(false)
+
+     QueryStrategyDetail(strategyId)
+  
+
   }
   const addplan = () => {
-    console.log(pref.current)
+    setIsview(false)
+    setIsadd(true)
+    form.resetFields()
      pref.current.onOpen()
 
   }
 
-   // 新增计划
+/*   const onSave = () => {
+    if(isadd) AddRuntimePlan();
+  } */
 
-  const AddRuntimePlan = async () => {
+   // 新增 / 修改 计划
+
+  const onSave = async () => {
     try {
       let values = await form.validateFields().then(res => {
          
@@ -346,8 +413,6 @@ const getvalidate = (start, end, type, choosedate) => {
         console.log(e)
        })
        if (!values) return
-       
-       console.log(values)
        let {date,   ...params} = values; 
        /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
       const datalist = enumerateDaysBetweenDates(date[0], date[1])   
@@ -365,14 +430,22 @@ const getvalidate = (start, end, type, choosedate) => {
             3: day
         }[type] */
        
+      let {id: pid} = curplan;
+       
        params.dateChoose = params.dateChoose || []
        let startDate = date[0]?.format('YYYY-MM-DD');
        let endDate = date[1]?.format('YYYY-MM-DD'); 
+
+       let handler = isadd ? 'AddRuntimePlan' : 'UpdateRuntimePlan'
+       let id = isadd ? 0 : pid
        try {
-          let {success, errMsg} = await StorageControlRuntime.AddRuntimePlan(projectId, {...params, startDate, endDate, areaId, id: 0})
+          let {success, errMsg} = await StorageControlRuntime[handler](projectId, {...params, startDate, endDate, areaId, id})
           success && custMsg({content: '保存成功', onClose: () => {
             getPlans()
+            setIsadd(false)
+            setIsview(false)
           }})
+         !success && custMsg({success, content: errMsg})
        } catch (error) {
          console.log(error)
        }
@@ -414,6 +487,8 @@ const getvalidate = (start, end, type, choosedate) => {
     }
    
 } 
+
+
   const getPlans = async () => {
     try {
         let {success, data} = await StorageControlRuntime.QueryRuntimePlan(projectId, areaId)
@@ -421,6 +496,8 @@ const getvalidate = (start, end, type, choosedate) => {
         if(success && Array.isArray(data) && data.length > 0) {
             setCurplan(data[0])
             setPlan([...data])
+            initform(data[0])
+            QueryStrategyDetail(data[0].strategyId)
         }else {
             success && setPlan([]) 
             setCurplan({})
@@ -434,10 +511,19 @@ const getvalidate = (start, end, type, choosedate) => {
 
   }
   const planOk = () => {
+    
     let {planName} = nameform.getFieldsValue(); 
-    setPlan([...plans, {name: planName, id: nanoid()}])
+   // form.resetFields()
+    // setPlan([...plans, {name: planName, id: nanoid()}])
+    form.setFieldValue('name', planName)
     pref.current.onCancel()
   }
+
+ const onCancel = () => {
+    setIsadd(false)
+    pref.current.onCancel()
+ }
+
   const changeview = () => {
      setIsview(f => !f)
   }
@@ -455,7 +541,7 @@ const getvalidate = (start, end, type, choosedate) => {
                     运行计划
                 </div>
                 <div className='content'>
-                    {plans.map(p => <div key={nanoid()} className={curplan.id == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
+                    {showpalans.map(p => <div key={nanoid()} className={curplan.id == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
                         {p.name}  {curplan.id == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
                         </div>)
                         } 
@@ -464,12 +550,12 @@ const getvalidate = (start, end, type, choosedate) => {
                 
                  </div>
                  <div className='footer'> 
-                   <CaretUpFilled style={{fontSize: '34px'}} /> <CaretDownFilled style={{fontSize: '34px'}} /> 
+                   <CaretUpFilled style={{fontSize: '34px', color: "#fff", cursor: 'pointer'}} onClick={() => onMove(1)} /> <CaretDownFilled onClick={() => onMove(-1)}  style={{fontSize: '34px', color: "#fff", cursor: 'pointer'}}/> 
                  </div>
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview data={curplan}></Planview> : <Strategy data={strategy} pcs={pcs} form={form} /> }
+                { isView ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} pcs={pcs} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -478,7 +564,7 @@ const getvalidate = (start, end, type, choosedate) => {
                     </Space>
                     <Space size={16}>
                         <Normalbt  danger onClick={DeleteRuntimePlan}>删除</Normalbt>
-                        <Normalbt type="primary" ghost onClick={AddRuntimePlan}>保存</Normalbt>
+                        <Normalbt type="primary" ghost onClick={onSave}>保存</Normalbt>
                     </Space>
                 </div>
                 
@@ -496,9 +582,10 @@ const getvalidate = (start, end, type, choosedate) => {
         </div>
         <CModal
         width={592}
-        title='新增策略'
+        title='新增计划'
         ref={pref}
         onOk={planOk}
+        onCancel={onCancel}
         mold="cust"
       >
         <Form   labelCol={{flex: '96px'}}  style={{maxWidth: 600}} form={nameform} preserve={false}>
@@ -526,22 +613,22 @@ const getvalidate = (start, end, type, choosedate) => {
   )
 }
 
-const Planview = ({data}) => {
+const Planview = ({data, strategyDetail}) => {
     let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
+    console.log(strategyDetail)
     
-   /*  const dateCellRender =(value) => {
-        let date = value.date()
-        console.log(date)
-        return (
-            <Datebox>
-            <span >{date}日</span>
-            <span className='el'>{name}</span>
-            </Datebox>
-        )
+  /*   const disabledDate = (value) => {
+      let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
+      return  !datalist.includes(value.format('YYYY-MM-DD'))
     } */
+    const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
+    console.log(hours)
+    const disabledDate = useCallback((value) => {
+        let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
+        return  !datalist.includes(value.format('YYYY-MM-DD'))
+    }, [priority, startDate, endDate, dateChoose])
     const dateCellRender = useCallback((value) => {
         let date = value.date()
-        console.log(date)
         return (
             <Datebox>
             <span >{date}日</span>
@@ -554,7 +641,7 @@ const Planview = ({data}) => {
         <Titlelayout pv="0px" title={<Space size={32}><span>运行计划预览</span><span style={{color: '#999'}}>查看运行计划及具体内容</span></Space>} bordered={'n'} style={{flex: 1}}>
             <Viewbox>               
                 <div className='detl'>
-                   <div className='title'>策略详细</div>
+                   <div className='title'>计划详细</div>
                    <div className='content'>
                       <Descriptions  bordered column={3} size="small">
                         <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
@@ -562,9 +649,23 @@ const Planview = ({data}) => {
                         <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
                         <Descriptions.Item label="储能子系统" span={3}>{pcsName?.join(' ')}</Descriptions.Item>
                        </Descriptions>
-                       <Divider/>
+                       <Divider style={{margin: '0px'}}/>
+                       <div>
                        <div className='list'>
                          {items.map(i => <Itembox type={i.type} />)}
+                       </div>
+                        <div className='num'>
+                            {hours.map(i => <span>{i}</span>)}
+                        </div>
+                        <div className='dstrategy'>
+                             {
+                                strategyDetail.map(s => <div className='dsitme'>
+                                    <span>{s.start}-{s.end}</span>
+                                    <span>{s.statusStr}</span>
+                                    <span>{s.planP}kw</span>
+                                </div>)
+                             }
+                        </div>
                        </div>
                    </div>
                   
