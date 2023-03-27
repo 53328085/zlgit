@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { User } from "@api/api.js";
 import {custMsg} from '@com/usehandler'
 
+
+
 import CModal from '@com/useModal'
  
 const { Text, Link, Paragraph  } = Typography
@@ -80,7 +82,11 @@ const Tabsbox = styled(Tabs)`
  
 }
 `
- function Index({projectId, userId}, ref) { 
+ function Index({projectId, userId, role}, ref) {  
+
+
+    console.log(role)
+
     const mref= useRef() 
     const   MenuNos  =  useRef({}) // 运行
     const  Dmenunos = useRef({}) // 设计
@@ -113,7 +119,7 @@ const Tabsbox = styled(Tabs)`
         try {        
             let runnos = getno(MenuNos.current);
             let desnos = getno(Dmenunos.current)
-            let paramsNos = [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])]
+            let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])] : [...new Set([...runnos, ...desnos])];
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
             success &&  custMsg({content: '保存成功', onClose: ()=> {
               mref.current.onCancel()
@@ -231,27 +237,32 @@ const Tabsbox = styled(Tabs)`
               <Checkdiv style={{paddingTop: '0px'}}>
               <Checkdiv style={{backgroundColor: '#e4e4e4', padding: "0px", flex: 1}}><Checkbox checked={runall} onChange={onRunall} indeterminate={indeterminate}>选择全部</Checkbox></Checkdiv>
               </Checkdiv>
+               {
 
-              <Checkdiv>
-            
-            <Checkbox  checked disabled className="checktitle">
-                      项目设置
-            </Checkbox>
-        
-              <CheckboxGroup value={["0102"]}>
-                         <Checkbox value="0102" checked disabled>项目设置</Checkbox>
-              </CheckboxGroup>
-        </Checkdiv>
-        <Checkdiv>
-        
-        <Checkbox  checked disabled className="checktitle">
+                role == 3 && 
+              
+                  <Checkdiv>
+
+                  <Checkbox  checked disabled className="checktitle">
+                  项目设置
+                  </Checkbox>
+
+                  <CheckboxGroup value={["0102"]}>
+                  <Checkbox value="0102" checked disabled>项目设置</Checkbox>
+                  </CheckboxGroup>
+                  </Checkdiv>
+               }
+                  <Checkdiv>
+
+                  <Checkbox  checked disabled className="checktitle">
                   项目概述
-        </Checkbox>
-    
-          <CheckboxGroup value={["0104"]}>
-                     <Checkbox value="0104" checked disabled>项目概述</Checkbox>
-          </CheckboxGroup>
-    </Checkdiv>
+                  </Checkbox>
+
+                  <CheckboxGroup value={["0104"]}>
+                  <Checkbox value="0104" checked disabled>项目概述</Checkbox>
+                  </CheckboxGroup>
+                  </Checkdiv>
+           
 
              { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
               
@@ -336,7 +347,7 @@ const Tabsbox = styled(Tabs)`
   
          const cachrun = useMemo(() => <Runcom />, [AllRunMenus, allSinderRunMenus])
          const cachdes = useMemo(() => <Descom />, [AllDesignMenus, allSinderDesignMenus])
-         const items =  [
+         const items = role== 3 ? [
           {
           key: 'run',
           label: '展示模块',
@@ -347,6 +358,12 @@ const Tabsbox = styled(Tabs)`
             label: '设置模块',
             children: cachdes // <Menulist type='design' />
             }
+        ] : [
+          {
+          key: 'run',
+          label: '展示模块',
+          children:  cachrun // <Menulist type='run' />
+          }
         ]
           const tabChange =(t) => { 
             setvalue(t);

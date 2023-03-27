@@ -20,7 +20,7 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
-  let [deviceStyle, setdeviceStyle] = useState(0)
+  let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaList = useSelector(selectOneLevel)
@@ -49,7 +49,7 @@ export default function Index(props) {
   const columns = [
     {
       title: '设备详情',
-      dataIndex: 'sn',
+      dataIndex: 'id',
       render: (text) => <span style={{textAlign:'center'}}> {'>'}</span>,
       key: 'sn',
       id: 'id',
@@ -58,7 +58,7 @@ export default function Index(props) {
       title: '设备编号',
       dataIndex: 'sn',
       render: (sn) => <Link to={{
-        pathname: "/deviceDetail?"+sn,
+        pathname: "/deviceDetail?sn="+sn,
     }} target="_blank"> {sn} </Link>,
       key: 'sn',
       id: 'id'
@@ -279,11 +279,11 @@ export default function Index(props) {
                 },
                 {
                   value: 4,
-                  label: '变压器',
+                  label: '传感器',
                 },
                 {
                   value: 5,
-                  label: '传感器',
+                  label: '变压器',
                 },
               ]}
             />
@@ -349,7 +349,7 @@ export default function Index(props) {
           {overView.details!=null?overView.details.map((item, index) => {
             return <div key={index}>
               <Link  to={`/deviceDetail?sn=${item.sn}`}   target="_blank">
-                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.name}
+                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.sn}
 
                     value={item.address} state={item.state} fields={item.fields} 
                     lastSampleTime={item.lastSampleTime} category={item.category} />

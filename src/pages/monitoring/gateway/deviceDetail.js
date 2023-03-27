@@ -18,8 +18,9 @@ import moment from "moment";
 
 export default function GatewayDetail(props) {
     let location = useLocation()
-    let search = location.search.substr(4, location.search.length)
-    console.log(search)
+    let qs=require('query-string')
+    let search=qs.parse(location.search)
+    console.log(search.sn)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
     const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
@@ -36,6 +37,8 @@ export default function GatewayDetail(props) {
     let month = new Date().getMonth() + 1
     let day = new Date().getDate()
     let date = year + '-' + (month > 10 ? month : '0' + month) + '-' + (day > 10 ? day : '0' + day)
+    const today = moment();
+    const yesterday=date+' '+"00:00:00"
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -49,9 +52,9 @@ export default function GatewayDetail(props) {
     let [yline4, setyline4] = useState([])
     let [actuary, setactuary] = useState({})
     let dataToday = new Date()
-    let [startTime, setstartTime] = useState(dataToday)
+    let [startTime, setstartTime] = useState(yesterday)
     let [endTime, setendTime] = useState(dataToday)
-    let [alarmPage, setalarmPage] = useState()
+    // let [alarmPage, setalarmPage] = useState()
     let [startTimeAlarm, setstartTimeAlarm] = useState(dataToday)
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
     const onchangeTab = val => {
@@ -73,22 +76,8 @@ export default function GatewayDetail(props) {
         }
         return result;
     };
-    const disabledRangeTime = (_, type) => {
-        if (type === 'start') {
-            return {
-                disabledHours: () => range(0, 60),
-                disabledMinutes: () => range(0, 60),
-                disabledSeconds: () => [55, 56],
-            };
-        }
-        return {
-            disabledHours: () => range(0, 60).splice(4, 20),
-            disabledMinutes: () => range(0, 60),
-            disabledSeconds: () => [55, 56],
-        };
-    };
     const getData = () => {//设备详情
-        return Current(projectId, search).then(res => {
+        return Current(projectId, search.sn).then(res => {
             let { success, data } = res
             if (success) {
                 setCurrent(data)
@@ -99,7 +88,7 @@ export default function GatewayDetail(props) {
         })
     }
     const getDetailData = () => {//设备详情
-        return Detail(projectId, search).then(res => {
+        return Detail(projectId, search.sn).then(res => {
             let { success, data } = res
             if (success) {
                 setDetail(data)
@@ -110,17 +99,18 @@ export default function GatewayDetail(props) {
     }
 
     let paramsTrend = {
-        sn: search,
+        sn: search.sn,
         start: startTime,
         end: endTime
     }
-    const [historyTrend,sethistoryTrend]=useState({Data:[],Header:[]})
+    const [historyTrend, sethistoryTrend] = useState()
+    
     const getHistoryTrend = () => {//
         return HistoryTrend(paramsTrend).then(res => {
             let { success, data } = res
             if (success) {
                 sethistoryTrend(data)
-                charts()
+                dealData()
             } else {
                 message.error(res.errMsg)
             }
@@ -129,9 +119,8 @@ export default function GatewayDetail(props) {
     const getHistoryTable = () => {//
         return HistoryTable(paramsTrend).then(res => {
             let { success, data } = res
-            if (success ) {
+            if (success) {
                 setHistoryTable(data)
-                // charts()
             } else {
                 message.error(res.errMsg)
             }
@@ -139,7 +128,7 @@ export default function GatewayDetail(props) {
     }
 
     const getEnergyTrend = () => {//
-        return EnergyActuary(projectId, search).then(res => {
+        return EnergyActuary(projectId, search.sn).then(res => {
             let { success, data } = res
             if (success) {
                 setactuary(data)
@@ -148,35 +137,36 @@ export default function GatewayDetail(props) {
             }
         })
     }
-    let [pageNum,setPageNum]=useState(1)
-    let [totalalarm,settotalalarm]=useState(1)
+    let [pageNum, setPageNum] = useState(1)
+    let [totalalarm, settotalalarm] = useState(1)
     let paramsAlarm = {
-        projectId:projectId,
-        sn: search,
+        projectId: projectId,
+        sn: search.sn,
         start: startTimeAlarm,
         end: endTimeAlarm,
-        pageSize:12,
-        pageNum:pageNum
+        pageSize: 12,
+        pageNum: pageNum
     }
-    
+
     const getAlarmPage = () => {//
         return AlarmPage(paramsAlarm).then(res => {
             let { success, data } = res
             if (success) {
-                setalarmPage(data)
+                setdataSourceLog(data)
+                // setalarmPage(data)
                 settotalalarm(res.total)
             } else {
                 message.error(res.errMsg)
             }
         })
     }
-    const onChangePageLog=(page,pageSize)=>{
+    const onChangePageLog = (page, pageSize) => {
         console.log(page)
         setPageNum(page)
     }
     let paramsReport = {
         projectId: projectId,
-        sn: search,
+        sn: search.sn,
         type: reportTypeTime,
         date: dateValue
     }
@@ -204,7 +194,6 @@ export default function GatewayDetail(props) {
                 setyline2(y2)
                 setyline3(y3)
                 setyline4(y4)
-                console.log(xline, yline)
                 if (xline && yline) {
                     tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
                 }
@@ -213,65 +202,191 @@ export default function GatewayDetail(props) {
             }
         })
     }
-    const datasetMonthV = {
-        dimensions: ["Time", "Ua","Ub","Uc"],
-        source: historyTrend.Data?historyTrend.Data:[],
-    };
-    const datasetMonthA = {
-        dimensions: ["Time", "Ia","Ib","Ic"],
-        source:historyTrend.Data?historyTrend.Data:[],
-    };
-    const datasetMonthE = {
-        dimensions: ["Time", "Ep"],
-        source: historyTrend.Data?historyTrend.Data:[],
-    };
-    const grid = {
-        // 图表 grid
-        left: "0px",
-        right: "0",
-        top: "30px",
-        bottom: "0px",
-        containLabel: true,
+    let xAxisI = []
+    let yAxisIa = []
+    let yAxisIb = []
+    let yAxisIc = []
+    let xAxisU = []
+    let yAxisUa = []
+    let yAxisUb = []
+    let yAxisUc = []
+    let xAxisW = []
+    let yAxisW = []
+    const drawTrendCharts=()=>{
+        if (xAxisU && yAxisUa) {
+            tdrawEcharts(vlref.current, optionv("A相电压(V)", "B相电压(V)", "C相电压(V)"))
+        }
+         if (xAxisI && yAxisIa) {
+            tdrawEcharts(alref.current, optioni("A相电流(A)", "B相电流(A)", "C相电流(A)"))
+        }
+        if (xAxisW && yAxisW) {
+            tdrawEcharts(elref.current, optionw("有功总电能(kWh)"))
+        }
     }
-    const charts = () => {
-        drawEcharts(vlref.current, {
-            dataset: datasetMonthV,
-            series: [{ type: "line", name: 'A相电压(V)' },{ type: "line", name: 'B相电压(V)' },{ type: "line", name: 'C相电压(V)' }],
-            grid,
-            legend: {
-                icon: 'rect',
-                itemHeight: 8,
-                itemWidth: 8,
-                itemGap: 20
-            },
-
-        })
-        drawEcharts(alref.current, {
-            dataset: datasetMonthA,
-            series: [{ type: "line", name: 'A相电流(A)' },{ type: "line", name: 'B相电流(A)' },{ type: "line", name: 'C相电流(A)' }],
-            grid,
-            legend: {
-                icon: 'rect',
-                itemHeight: 8,
-                itemWidth: 8,
-                itemGap: 20
-            },
-
-        })
-        drawEcharts(elref.current, {
-            dataset: datasetMonthE,
-            series: [{ type: "line", name: '有功总电能(kWh)' }],
-            grid,
-            legend: {
-                icon: 'rect',
-                itemHeight: 8,
-                itemWidth: 8,
-                itemGap: 20
-            },
-
-        })
-
+    const dealData=()=>{
+        if (historyTrend) {
+            historyTrend.map(item => {
+                if (item.group == 'EP') {
+                    if (item.data && item.data.length != 0) {
+                        for (let i = 0; i < item.data.length; i++) {
+                                for (let j = 0; j < item.data[i].data.length; j++) {
+                                    if(item.data[i].point=='Ua'){
+                                        xAxisU.push(item.data[i].data[j].time)
+                                        yAxisUa.push(item.data[i].data[j].value)
+                                    }else if(item.data[i].point=='Ub'){
+                                        yAxisUb.push(item.data[i].data[j].value)
+                                    }else if(item.data[i].point=='Uc'){
+                                        yAxisUc.push(item.data[i].data[j].value)
+                                    }
+                                }
+                        }
+                        
+                    }
+                }else if (item.group == 'EC') {
+                    if (item.data && item.data.length != 0) {
+                        for (let i = 0; i < item.data.length; i++) {
+                                for (let j = 0; j < item.data[i].data.length; j++) {
+                                    if(item.data[i].point=='Ia'){
+                                        xAxisI.push(item.data[i].data[j].time)
+                                        yAxisIa.push(item.data[i].data[j].value)
+                                    }else if(item.data[i].point=='Ib'){
+                                        yAxisIb.push(item.data[i].data[j].value)
+                                    }else if(item.data[i].point=='Ic'){
+                                        yAxisIc.push(item.data[i].data[j].value)
+                                    }
+                                }
+                        }
+                        
+                    }
+                }else if (item.group == 'WF') {
+                    if (item.data && item.data.length != 0) {
+                        for (let i = 0; i < item.data.length; i++) {
+                                for (let j = 0; j < item.data[i].data.length; j++) {
+                                    if(item.data[i].point=='ImpEp'){
+                                        xAxisW.push(item.data[i].data[j].time)
+                                        yAxisW.push(item.data[i].data[j].value)
+                                    }
+                                }
+                        }
+                        
+                    }
+                }
+            })
+        }
+        drawTrendCharts()
     }
+    const optionv = (name, name1, name2, type = "line") => ({
+        xAxis: {
+            data: xAxisU ? xAxisU : []
+        },
+        series: [
+            {
+                data: yAxisUa ? yAxisUa : [],
+                type,
+                name: name
+            }, {
+                data: yAxisUb ? yAxisUb : [],
+                type,
+                name: name1
+            }, {
+                data: yAxisUc ? yAxisUc : [],
+                type,
+                name: name2
+            }
+        ],
+        grid: {
+            // 图表 grid
+            left: "0px",
+            right: "0",
+            top: "30px",
+            bottom: "0px",
+            containLabel: true,
+        },
+        legend: {
+            top: 0,
+            // bottom: 0,
+            icon: 'rect',
+            itemHeight: 2,
+            itemWidth: 12,
+            itemGap: 20,
+        },
+            dataZoom: {
+                start: 0,
+                end: 5,
+            }
+    });
+    const optionw = (name, type = "line") => ({
+        xAxis: {
+            data: xAxisW ? xAxisW : []
+        },
+        series: [
+            {
+                data: yAxisW ? yAxisW : [],
+                type,
+                name: name
+            },
+        ],
+        grid: {
+            // 图表 grid
+            left: "0px",
+            right: "0",
+            top: "30px",
+            bottom: "0px",
+            containLabel: true,
+        },
+        legend: {
+            top: 0,
+            // bottom: 0,
+            icon: 'rect',
+            itemHeight: 2,
+            itemWidth: 12,
+            itemGap: 20,
+        },
+            dataZoom: {
+                start: 0,
+                end: 5,
+            }
+    });
+    const optioni = (name, name1, name2, type = "line") => ({
+        xAxis: {
+            data: xAxisI ? xAxisI : []
+        },
+        series: [
+            {
+                data: yAxisIa ? yAxisIa : [],
+                type,
+                name: name
+            }, {
+                data: yAxisIb ? yAxisIb : [],
+                type,
+                name: name1
+            }, {
+                data: yAxisIc ? yAxisIc : [],
+                type,
+                name: name2
+            }
+        ],
+        grid: {
+            // 图表 grid
+            left: "0px",
+            right: "0",
+            top: "30px",
+            bottom: "0px",
+            containLabel: true,
+        },
+        legend: {
+            top: 0,
+            // bottom: 0,
+            icon: 'rect',
+            itemHeight: 2,
+            itemWidth: 12,
+            itemGap: 20,
+        },
+            dataZoom: {
+                start: 0,
+                end: 5,
+            }
+    });
     const option = (name, name1, name2, name3, name4, type = "line") => ({
         xAxis: {
             data: xline ? xline : []
@@ -320,17 +435,18 @@ export default function GatewayDetail(props) {
     const tdrawEcharts = (c, option) => {
         return drawEcharts(c, { ...option, type: 2 })
     }
-    const onTimeOk = (date,dataString) => {
+    const onTimeOk = (date, dataString) => {
         setstartTime(dataString[0])
         setendTime(dataString[1])
     }//监控趋势选择时间
-    const onTimeOkAlarm = (date,dataString) => {
-            setstartTimeAlarm(dataString[0])
-            setendTimeAlarm(dataString[1])
+    const onTimeOkAlarm = (date, dataString) => {
+        setstartTimeAlarm(dataString[0])
+        setendTimeAlarm(dataString[1])
     }//告警记录选择时间
     const onSearch = () => {
         getHistoryTrend()
         getHistoryTable()
+        //dealData()
     }//监控趋势更改时间
     const onSearchAlarm = () => {
         getAlarmPage()
@@ -340,7 +456,7 @@ export default function GatewayDetail(props) {
         setreportTypeTime(parseInt(e.target.value))
         //reportType=parseInt(e.target.value)
     }//切换日月年
-    const today = moment();
+    
     const onChangeDate = (date, dateString) => {
         console.log(dateString);
         if (reportTypeTime == 1) {
@@ -364,26 +480,27 @@ export default function GatewayDetail(props) {
         }
 
     }//切换趋势列表
+    const tableLoadRef = useRef()
     const exportExecel = () => {
         tableLoadRef.current.download()
     }//数据导出
     const columnsLog = [
         {
             title: '告警时间',
-            dataIndex: 'sn',
+            dataIndex: 'createTime',
             key: 'sn',
             id: 'id'
         },
         {
             title: '告警事件',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'name',
+            key: 'sn',
             id: 'id'
         },
         {
             title: '告警内容',
-            dataIndex: 'category',
-            key: 'category',
+            dataIndex: 'content',
+            key: 'sn',
             id: 'id'
         },
     ];
@@ -401,12 +518,14 @@ export default function GatewayDetail(props) {
             id: 'E'
         }
     ];
-
+    useEffect(() => {
+        dealData()
+    }, [historyTable,historyTrend])
     useEffect(() => {
         getData()
         getDetailData()
         getEnergyTrend()
-    }, [search, projectId])
+    }, [search.sn, projectId])
     useEffect(() => {
         getHistoryTrend()
         getHistoryTable()
@@ -418,7 +537,7 @@ export default function GatewayDetail(props) {
         if (xline && yline) {
             tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
         }
-    }, [paramsReport.date, projectId, search, paramsReport.type, trend])
+    }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
     useEffect(() => {
         if (xline && yline) {
             tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
@@ -463,13 +582,13 @@ export default function GatewayDetail(props) {
                     </div>
                         <img src={imgurl.line} className={style.timeline} ></img></div> : state == 2 ? <div className={style.newTime}>
                             <span style={{ marginRight: 16 }}>请选择日期范围</span>
-                            <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate} onChange={onTimeOk} defaultValue={[moment(today), moment(today)]} />
+                            <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime  onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} />
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
                         </div> : state == 3 ? <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate} onChange={onTimeOkAlarm} defaultValue={[moment(today), moment(today)]}/>
+                        <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate} onChange={onTimeOkAlarm} defaultValue={[moment(today), moment(today)]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
 
                     </div>}
@@ -495,7 +614,7 @@ export default function GatewayDetail(props) {
                                 <div className={style.title}><div className={style.blueLine}></div><p>电流 (A)</p></div>
                                 <div><div ref={alref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
                                 <div className={style.title}><div className={style.blueLine}></div><p>电度 (kWh)</p></div>
-                               <div> <div ref={elref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
+                                <div> <div ref={elref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
                             </div> : state == 3 ? <div>
                                 <div className={style.energyHead}>
                                     <div className={style.dateData}>
@@ -552,8 +671,8 @@ export default function GatewayDetail(props) {
                                         }
                                     </div>
                                     <div className={style.chartHeadRight}>
-                                        <Button style={{ width: 96, backgroundColor: '#FFF', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
-                                        <img src={imgurl.columnLine} style={{ width: 2, height: 33, marginRight: 32, marginLeft: 32 }} ></img>
+                                        {trend===2?<div><Button style={{ width: 96, backgroundColor: '#FFF', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
+                                        <img src={imgurl.columnLine} style={{ width: 2, height: 33, marginRight: 32, marginLeft: 32 }} ></img></div>:''}
                                         <Radio.Group defaultValue="trend" buttonStyle="solid" onChange={changeTable}>
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="trend">趋势</Radio.Button>
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="list">列表</Radio.Button>
@@ -562,13 +681,13 @@ export default function GatewayDetail(props) {
 
                                 </div>
                                 {trend === 1 ? <div><div ref={energyref} style={{ width: 1536, height: 513, marginTop: 16 }}></div></div> : trend === 2 ? <div>
-                                    <Table columns={columnsTrend} dataSource={energyReport.Data} rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
+                                    <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
                                 </div> : ''}
                             </div> : <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
-                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm}  defaultPageSize={12} onChange={onChangePageLog} />
+                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={12} onChange={onChangePageLog} />
                                 </div>
                             </div>}
 

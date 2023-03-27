@@ -277,7 +277,7 @@ export default function Index(props) {
           {overView.details != null ? overView.details.map((item, index) => {
             return <div key={index}>
               <Link to={`/gatewayDetail?sn=${item.sn}`} target="_blank">
-                <Icard img={imageList[index] ? 'data:image/png;base64,' + imageList[index] : imgurl.category} title={item.name}
+                <Icard img={imageList[index] ? 'data:image/png;base64,' + imageList[index] : imgurl.category} title={item.sn}
 
                   value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
                   lastSampleTime={item.lastSampleTime} category={item.category} />
