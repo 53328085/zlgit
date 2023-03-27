@@ -349,8 +349,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
    }else {
     setUnSelected([])
    } */
+     
+   
       let { areaId } = record;
-      await getUNselect({ areaId });
+      let  topareaid = form.getFieldValue('topAreaId');
+      let topid = level == 1 ? areaId : topareaid
+      await getUNselect({ areaId: topid });
 
       let {
         data: { deviceSummary, deviceSub },
@@ -477,7 +481,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     if (isNaN(level)) return;
     
     let value = form.getFieldsValue()
-   
+    //setTopAreaId(value.topAreaId)
     params = {...params, ...value }
     console.log(pagination)
     console.log(params)

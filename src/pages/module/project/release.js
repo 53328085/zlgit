@@ -3,9 +3,10 @@ import styled from 'styled-components'
 import { useRequest, useCountDown } from 'ahooks';
 import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} from 'antd'
 import {ProjectSetting, Login} from '@api/api.js'
-import {useSelector} from 'react-redux'
-import {selectUser} from '@redux/user.js'
+import {useSelector, useDispatch} from 'react-redux'
+// import {selectUser} from '@redux/user.js'
 import {manager } from '@redux/user'  
+import { getpublishState } from '@redux/systemconfig.js'  
 import log from './log.png'
  
  
@@ -58,6 +59,7 @@ const Tagbox = styled(Tag)`
   font-size: 14px;
 `
 export default function Release({CModal, projectId}) { 
+  const dispatch = useDispatch()
   const modal = useRef(null)
   const delmodal = useRef(null)
   const projectName = useRef('')
@@ -65,7 +67,8 @@ export default function Release({CModal, projectId}) {
   const [phone, setPhone] = useState([]);
   const [title, setTitle] = useState('')
  // const [moblies, setMoblie] = useState();
- const {mobile} = useSelector(selectUser)
+ // const {mobile} = useSelector(selectUser)
+ const [mobile, setMobile] = useState()
  const ismanager = useSelector(manager)
   const code =useRef();
   const stateV = useRef('');
@@ -74,13 +77,15 @@ export default function Release({CModal, projectId}) {
     return  queryProjectPublishInfo(projectId).then(res => {
       let {success, data } = res
     
-      if (success && data) {      
+      if (success && data) {  
+        setMobile(data.mobile)     
         return {
           total: 1,   // 返回的是对象
           list: [data]
         }
       
       }else {
+        setMobile()
         return {
           total: 0,
           list: []
@@ -105,6 +110,7 @@ export default function Release({CModal, projectId}) {
   };
 
  const Countdown = () => { // 获取验证吗
+  if (!mobile) return message.warning('手机号码不能为空')
   const getCode = async () => {
     const {data, success} = await Login.GetVerification(mobile)
     if (success) {
@@ -132,8 +138,11 @@ const onOk =async () => { // 发布 // 取消发布
     if (!code.current) {
       return message.warning('请输入验证吗')
     }
-    const {success} = await publishProject({projectId: curProjectId, state: parseInt(stateV.current) === 1 ? 0 : 1, code: code.current, moble: mobile})
+    let state = parseInt(stateV.current) === 1 ? 0 : 1
+    const {success} = await publishProject({projectId: curProjectId, state, code: code.current, moble: mobile})
+   
     if (success) {
+      dispatch(getpublishState(state))
       code.current = ''
       message.success({
         content: stateV.current === 1 ?   '取消发布成功' : '发布成功',
@@ -144,9 +153,9 @@ const onOk =async () => { // 发布 // 取消发布
           refresh()
         }
       })
-    }
+    } 
   } catch (error) {
-    
+    console.log(error)
   }
   
 }
