@@ -268,6 +268,37 @@ const  enumerateDaysBetweenDates = (startDate, endDate) => {
     return daysList;
   }
 
+const getvalidate = (start, end, type, choosedate) => {
+    
+
+    let dayslist = enumerateDaysBetweenDates(start, end)
+    if(type == 1) return dayslist
+    if(type == 2) {
+        datalist.filter(d => dateType.includes(moment(d, 'YYYY-MM-DD').day())) 
+    }
+
+      /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
+      const datalist = enumerateDaysBetweenDates(date[0], date[1])   
+      
+       let week = datalist.filter(d => {     
+         return dateType.includes(moment(d, 'YYYY-MM-DD').day())
+       })
+       let day = datalist.filter(d => {   
+        
+        return dateType.includes(moment(d, 'YYYY-MM-DD').date())
+       })
+      
+        let dateChoose = {
+            2: week,
+            3: day
+        }[type] */
+}
+
+
+
+
+
+
 
   let week =  [
     {label: '周一', value: 1},
@@ -496,7 +527,8 @@ const  enumerateDaysBetweenDates = (startDate, endDate) => {
 }
 
 const Planview = ({data}) => {
-    let {name, strategyName, priority, pcsName, startDate, endDate } = data
+    let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
+    
    /*  const dateCellRender =(value) => {
         let date = value.date()
         console.log(date)
@@ -538,7 +570,7 @@ const Planview = ({data}) => {
                   
                 </div>
                 <div style={{height: '386px'}}>
-                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} /> 
+                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} disabledDate={disabledDate} /> 
                 </div>
             </Viewbox>
         </Titlelayout>
