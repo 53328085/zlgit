@@ -246,10 +246,10 @@ export default function Index() {
       let energy = ['',
       ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`],
       ["time", `本${type}(kWh)`, `昨${type}(kWh)`],
-      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
-      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
-      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
-      ["time", `今${type}(㎡)`, `昨${type}(㎡)`],
+      ["time", `今${type}(m³)`, `昨${type}(m³)`],
+      ["time", `今${type}(m³)`, `昨${type}(m³)`],
+      ["time", `今${type}(m³)`, `昨${type}(m³)`],
+      ["time", `今${type}(m³)`, `昨${type}(m³)`],
       ["time", `今${type}(吨)`, `昨${type}(吨)`],
       ["time", `今${type}(吨)`, `昨${type}(吨)`],
     ]
@@ -290,11 +290,11 @@ const EngItem = ({icon, data, sub, ...otherprop}) => {
      />
      <div className="list">
        <div className="item">
-         <span>`本{type}`</span>
+         <span>本{type}</span>
          <span>{data.periodValue}</span>
        </div>
        <div className="item">
-         <span>`上{type}`</span>
+         <span>上{type}</span>
          <span>{data.lastMonthPeriodValue}</span>
        </div>
        <div className="item">

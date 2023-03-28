@@ -250,7 +250,8 @@ const CustCalendar = styled(Calendar)`
         border: 1px solid #d7d7d7;
         color:#ccc;
         background-color: #f2f2f2;
-        cursor: not-allowed
+        cursor: default;
+      //  cursor: not-allowed
 
     }
     .ant-picker-cell.ant-picker-cell-in-view {
@@ -271,6 +272,7 @@ const Datebox = styled.div`
   justify-content: space-between; 
   padding: 0 8px;
   align-items: flex-end;
+  background-color: ${props => props.bg};
 `
 
 const  enumerateDaysBetweenDates = (startDate, endDate) => {  
@@ -635,14 +637,16 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     } */
     const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
    
-    const disabledDate = useCallback((value) => {
-        let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
-        return  !datalist.includes(value.format('YYYY-MM-DD'))
-    }, [priority, startDate, endDate, dateChoose])
+    const datalist = useMemo(() =>  getvalidate(startDate, endDate, priority, dateChoose) 
+     , [priority, startDate, endDate, dateChoose])
+     console.log(datalist)
     const dateCellRender = useCallback((value) => {
+
+        let time = moment(value).format('YYYY-MM-DD')
+        console.log(time)
         let date = value.date()
         return (
-            <Datebox>
+            <Datebox bg={datalist.includes(time) ? '#f0f9ff' : 'none'}>
             <span >{date}日</span>
             <span className='el'>{name}</span>
             </Datebox>
@@ -683,7 +687,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                   
                 </div>
                 <div style={{height: '386px'}}>
-                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender} disabledDate={disabledDate} /> 
+                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender}  /> 
                 </div>
             </Viewbox>
         </Titlelayout>
@@ -699,7 +703,10 @@ const Strategy = ({data, pcs, form}) => {
       setShow(e)
       setOptions(opt)
    }
-  
+   const disabledDate = (current) => {
+    
+    return current && current < moment().subtract(1, 'day').endOf('day');
+    };
    return (
       <Titlelayout title='运行计划设置' bordered={'n'}>
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form}  validateMessages={
@@ -780,7 +787,7 @@ const Strategy = ({data, pcs, form}) => {
             <Item label="生效日期" className='date' name="date" rules={[
                   {required: true},
             ]}>
-                   <RangePicker style={{width: '100%'}} />
+                   <RangePicker style={{width: '100%'}}  disabledDate={disabledDate}/>
             </Item>
            
          </Formbox>
