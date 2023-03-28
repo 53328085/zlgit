@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import {
-  Button,
   Modal,
   Form,
   Input,
@@ -13,22 +12,22 @@ import {
   InputNumber,
 } from "antd";
 
-import { AlarmManagement } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 export default function Index(props) {
-  const { AddAlarmEventGive, giveFormType, giveChildForm } = props;
+  const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =
+    props;
   const projectId = useSelector(selectProjectId);
   const [formInfo] = Form.useForm();
   const Item = Form.Item;
   const alarmList = [
     {
       id: 1,
-      name: "区间告警",
+      name: "越限告警",
     },
     {
       id: 2,
-      name: "越限告警",
+      name: "区间告警",
     },
     {
       id: 3,
@@ -94,7 +93,6 @@ export default function Index(props) {
   //  新增告警事件声明初始化
   // const [name, setName] = useState();
   // const [pointIdentifier, setPointIdentifier] = useState();
-  // const [time, setTime] = useState();
   const AlarmRule = Form.useWatch("AlarmRule", formInfo);
   const [level, setLevel] = useState(levelList[0].id);
   const [push, setPush] = useState(true);
@@ -104,27 +102,42 @@ export default function Index(props) {
   const [alarmCondition, setAlarmCondition] = useState(1);
   const [compareValue, setCompareValue] = useState(2);
   const [soeValue, setSoeValue] = useState(1);
+  //告警类型
   const alarmType = {
-    Interval: 1,
-    Overrun: 2,
-    Deflection: 3,
-    SOE: 4,
-    Communication: 5,
+    "Empty": 0,
+    "Overrun": 1,
+    "Interval": 2,
+    "Deflection": 3,
+    "SOE": 4,
+    "Communication": 5,
   };
-  useEffect(() => {
-    console.log(giveChildForm);
-    if (giveChildForm) {
-      setTimeout(() => {
-        if (giveFormType === false) {
-          giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
-          console.log(giveChildForm.AlarmRule);
-          formInfo.setFieldsValue(giveChildForm);
-        } else {
-          // formInfo.resetFields();
-        }
-      });
-    }
-  }, [AddAlarmEventGive]);
+  //区间事件，触发告警的条件
+  const alarmIntervalType = {
+    "Empty": 0,
+    "Inside": 1,
+    "Outside": 2,
+  };
+  //越限事件，触发告警的条件
+  const alarmOverrunType = {
+    "Empty": 0,
+    "Greater": 1,
+    "Less": 2,
+  };
+  //变位事件，触发告警的条件
+  // const alarmDeflectionType = {
+  //   Empty: 0,
+  //   Both: 1,
+  //   Alarm: 2,
+  //   Recover: 3,
+  // };
+  //SOE事件，触发告警的条件
+  const alarmSoeType = {
+    "Empty": 0,
+    "Both": 1,
+    "Alarm": 2,
+    "Recover": 3,
+  };
+
 
   const addAlarmOk = async () => {
     try {
@@ -142,7 +155,7 @@ export default function Index(props) {
       if (AlarmRule === 2) {
         //区间告警
         let changeInfo = {
-          alarmCondition: alarmCondition,
+          alarmCondition: AlarmRule,
           minCriticalValue: values.MinCriticalValue,
           maxCriticalValue: values.MaxCriticalValue,
         };
@@ -183,7 +196,7 @@ export default function Index(props) {
   };
   const handleCancel = () => {
     props.callBack();
-    formInfo.resetFields();
+    // formInfo.resetFields();
   };
 
   const changeAlarmType = (val) => {
@@ -216,9 +229,7 @@ export default function Index(props) {
   //   } else {
   //   }
   // }, [AddAlarmEventGive]);
-  useEffect(() => {
-    // setDefaultAlarmType(AlarmRule);
-  }, [AlarmRule]);
+
   useEffect(() => {
     setAlarmCondition(alarmCondition);
   }, [alarmCondition]);
@@ -234,6 +245,45 @@ export default function Index(props) {
   useEffect(() => {
     setEnable(enable);
   }, [enable]);
+  useEffect(
+    () => {
+      if (giveChildForm) {
+        setTimeout(() => {
+          //编辑
+          if (giveFormType === false) {
+            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+            //区间事件
+            giveChildForm.AlarmCondition =
+              alarmIntervalType[giveChildForm.AlarmCondition];
+            setAlarmCondition(giveChildForm.AlarmCondition);
+            //越限事件
+            giveChildForm.AlarmCondition =
+              alarmOverrunType[giveChildForm.AlarmCondition];
+            setCompareValue(giveChildForm.AlarmCondition);
+
+            //变位事件
+            // giveChildForm.AlarmCondition =
+            // alarmDeflectionType[giveChildForm.AlarmCondition];
+
+            //SOE事件
+            giveChildForm.AlarmCondition =
+              alarmSoeType[giveChildForm.AlarmCondition];
+            setSoeValue(giveChildForm.AlarmCondition);
+            formInfo.setFieldsValue(giveChildForm);
+          } else {
+            //新增
+            formInfo.resetFields(); 
+            //当新增时重置
+            setAlarmCondition(1);
+            setCompareValue(2);
+            setSoeValue(1)
+          }
+        });
+      }
+    },
+    // [AddAlarmEventGive]);
+    [giveFormType, giveChildForm]
+  );
   return (
     <div>
       <Modal
@@ -249,7 +299,7 @@ export default function Index(props) {
         okType={"primary"}
         destroyOnClose //关闭时销毁子元素
       >
-        <div className={style.addHeader}>新增告警事件</div>
+        <div className={style.addHeader}>{giveModalTitle}</div>
         <div className={style.addBody}>
           <p className={style.titleModal}>基础配置</p>
           <Form
@@ -261,31 +311,52 @@ export default function Index(props) {
             form={formInfo}
             name="addform"
           >
-            <Space style={{ alignItems: "baseline" }}>
-              <Item
-                name="Name"
-                label="告警事件名称："
-                rules={[{ required: true, message: "请输入告警事件名称" }]}
-                style={{ width: 415 }}
-              >
+            {giveModalTitle === "新增告警事件" ? (
+              <Space style={{ alignItems: "baseline" }}>
+                <Item
+                  name="Name"
+                  label="告警事件名称："
+                  rules={[{ required: true, message: "请输入告警事件名称" }]}
+                  style={{ width: 415 }}
+                >
+                  <Input
+                    style={{ width: 290 }}
+                    placeholder="请输入告警事件名称"
+                  />
+                </Item>
+                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
+              </Space>
+            ) : (
+              <Item name="Name" label="告警事件名称：" style={{ width: 415 }}>
                 <Input
-                  style={{ width: 290 }}
+                  style={{ width: 290, border: "none" }}
+                  disabled
                   placeholder="请输入告警事件名称"
                 />
               </Item>
-              <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-            </Space>
-            <Space style={{ alignItems: "baseline" }}>
+            )}
+            {giveModalTitle === "新增告警事件" ? (
+              <Space style={{ alignItems: "baseline" }}>
+                <Item
+                  label="数据标识："
+                  rules={[{ required: true, message: "请输入数据标识" }]}
+                  style={{ width: 415 }}
+                  name="PointIdentifier"
+                >
+                  <Input style={{ width: 290 }} />
+                </Item>
+                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
+              </Space>
+            ) : (
               <Item
                 label="数据标识："
                 rules={[{ required: true, message: "请输入数据标识" }]}
                 style={{ width: 415 }}
                 name="PointIdentifier"
               >
-                <Input style={{ width: 290 }} />
+                <Input style={{ width: 290, border: "none" }} disabled />
               </Item>
-              <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-            </Space>
+            )}
             <div className={style.divBox}>
               <Item
                 label="告警等级："
@@ -357,45 +428,70 @@ export default function Index(props) {
             </div>
             <Divider dashed style={{ margin: 0 }} />
             <p className={style.titleModal}>告警规则</p>
-            <Item
-              label="告警类型："
-              labelCol={{ flex: "85px" }}
-              style={{ width: 400 }}
-              name="AlarmRule"
-              initialValue={alarmList[0].id ? alarmList[0].id : 0}
-            >
-              <Select
-                style={{ width: 210 }}
-                // key={AlarmRule}
-                // defaultValue={AlarmRule}
-                onChange={changeAlarmType}
+            {giveModalTitle === "新增告警事件" ? (
+              <Item
+                label="告警类型："
+                labelCol={{ flex: "85px" }}
+                style={{ width: 400 }}
+                name="AlarmRule"
+                initialValue={alarmList[0].id ? alarmList[0].id : 0}
               >
-                {/* <Select.Option value="1">区间告警</Select.Option>
-                <Select.Option value="2">越限告警</Select.Option>
-                <Select.Option value="3">变位告警</Select.Option>
-                <Select.Option value="4">SOE告警</Select.Option>
-                <Select.Option value="5">离线告警</Select.Option> */}
-                {alarmList.map((item) => {
-                  return (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            </Item>
+                <Select
+                  style={{ width: 210 }}
+                  // key={AlarmRule}
+                  // defaultValue={AlarmRule}
+                  onChange={changeAlarmType}
+                >
+                  {alarmList.map((item) => {
+                    return (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </Item>
+            ) : (
+              <Item
+                label="告警类型："
+                labelCol={{ flex: "85px" }}
+                style={{ width: 400 }}
+                name="AlarmRule"
+                initialValue={alarmList[0].id ? alarmList[0].id : 0}
+              >
+                <Select style={{ width: 210 }} disabled>
+                  {alarmList.map((item) => {
+                    return (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </Item>
+            )}
             {/* 区间告警 */}
 
-            {AlarmRule === 1 ? (
+            {AlarmRule === 2 ? (
               <div className={style.intervalAlarm}>
-                <Item label="告警条件：" labelCol={{ flex: "85px" }}>
-                  <Radio.Group
-                    options={conditionOptions}
-                    onChange={conditionOnChange}
-                    value={alarmCondition}
-                    name="AlarmCondition"
-                  />
-                </Item>
+                {giveModalTitle === "新增告警事件" ? (
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
+                    <Radio.Group
+                      options={conditionOptions}
+                      onChange={conditionOnChange}
+                      value={alarmCondition}
+                      // name="AlarmCondition"
+                    />
+                  </Item>
+                ) : (
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
+                    {alarmCondition === 1 ? (
+                      <span>区间内</span>
+                    ) : alarmCondition === 2 ? (
+                      <span>区间外</span>
+                    ) : null}
+                  </Item>
+                )}
                 <div className={style.divBox}>
                   <Space style={{ alignItems: "baseline" }}>
                     <Item
@@ -461,7 +557,6 @@ export default function Index(props) {
                         marginTop:40
                       }}
                     >
-                     
                     </p> */}
                   </Space>
                 </div>
@@ -507,17 +602,27 @@ export default function Index(props) {
                   </Item>
                 )}
               </div>
-            ) : AlarmRule === 2 ? (
+            ) : AlarmRule === 1 ? (
               // {/* //越限告警 */}
               <div className={style.OverLimitAlarm}>
-                <Item label="告警条件：" labelCol={{ flex: "85px" }}>
-                  <Radio.Group
-                    options={compareOptions}
-                    onChange={compareOnChange}
-                    value={compareValue}
-                    name="AlarmCondition"
-                  />
-                </Item>
+                {giveModalTitle === "新增告警事件" ? (
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
+                    <Radio.Group
+                      options={compareOptions}
+                      onChange={compareOnChange}
+                      value={compareValue}
+                      // name="AlarmCondition"
+                    />
+                  </Item>
+                ) : (
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
+                    {compareValue === 1 ? (
+                      <span>大于等于</span>
+                    ) : compareValue === 2 ? (
+                      <span>小于等于</span>
+                    ) : null}
+                  </Item>
+                )}
                 <Space style={{ alignItems: "baseline" }}>
                   <Item
                     label="临界值："
@@ -611,14 +716,29 @@ export default function Index(props) {
               </div>
             ) : AlarmRule === 4 ? (
               <div>
-                <Item label="告警条件：" labelCol={{ flex: "85px" }}>
-                  <Radio.Group
-                    options={soeOptions}
-                    onChange={soeOnChange}
-                    value={soeValue}
-                    name="AlarmCondition"
-                  />
-                </Item>
+                {giveModalTitle === "新增告警事件" ? (
+                  <Item
+                    label="告警条件："
+                    labelCol={{ flex: "85px" }}
+                  >
+                    <Radio.Group
+                      options={soeOptions}
+                      onChange={soeOnChange}
+                      value={soeValue}
+                      // name="AlarmCondition"
+                    />
+                  </Item>
+                ) : (
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
+                    {soeValue === 1 ? (
+                      <span>告警标识+消警标识</span>
+                    ) : soeValue === 2 ? (
+                      <span>告警标识</span>
+                    ) : soeValue === 3 ? (
+                      <span>消警标识</span>
+                    ) : null}
+                  </Item>
+                )}
                 {soeValue === 1 ? (
                   <div>
                     <Item

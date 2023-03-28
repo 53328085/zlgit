@@ -31,6 +31,11 @@ export default function Index() {
     AddAlarmEventSOE,
     AddAlarmEventCommunication,
     DeleteAlarmEvent,
+    UpdateAlarmEventOverrun,
+    UpdateAlarmEventInterval,
+    UpdateAlarmEventDeflection,
+    UpdateAlarmEventSOE,
+    UpdateAlarmEventCommunication,
   } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
@@ -46,12 +51,13 @@ export default function Index() {
   //告警管理数据
   const [pageNum, setPageNum] = useState(1);
   const [modalTitle, setModalTitle] = useState("");
+  const [addModalTitle, setAddModalTitle] = useState("");
   const [total, setTotal] = useState(0);
   const pageSize = 10;
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
   const [dataSourceType, setDataSourceType] = useState([]);
-  const [noDataInForm,setNoDataInForm] =useState(true);
+  const [noDataInForm, setNoDataInForm] = useState(true);
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
@@ -186,17 +192,7 @@ export default function Index() {
       if (res.success) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
-          // dataSourceType.map((item) => {
-            //   console.log(item);
-            //   if (item.Push === true) {
-            //   if(item.AlarmCondition==="Greater"){
-            //     return  (item.AlarmCondition = "区间告警");
-            //   }
-            //     return (item.Push = "是");
-            //   } else {
-            //     return (item.Push = "否");
-            //   }
-          // });
+          console.log(JSON.parse(res.data))
         }
       } else {
         messageApi.open({
@@ -205,6 +201,7 @@ export default function Index() {
         });
       }
     });
+
     setEditType(true);
     setModalTitle("编辑告警方案");
     setaddAlarmModal(true);
@@ -216,6 +213,7 @@ export default function Index() {
       if (res.success) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
+          console.log(JSON.parse(res.data))
         }
       } else {
         messageApi.open({
@@ -266,23 +264,34 @@ export default function Index() {
     //   dataIndex: "name",
     //   key: "name",
     // },
-    // {
-    //   title: "短信推送",
-    //   dataIndex: "tag",
-    //   key: "tag",
-    //   align: "center",
-    // },
+
     {
-      title: "是否推送",
+      title: "是否启用",
+      dataIndex: "Enable",
+      key: "Enable",
+      align: "center",
+      width: 80,
+      render: (text) => {
+        return <>{text === true ? <span>是</span> : <span>否</span>}</>;
+      },
+      // <Space><span>{text}</span><span>{text}</span></Space>,
+    },
+    {
+      title: "是否连续推送",
       dataIndex: "Push",
       key: "Push",
       align: "center",
+      width: 80,
+      render: (text) => {
+        return <>{text === true ? <span>是</span> : <span>否</span>}</>;
+      },
     },
     {
-      title: "间隔时间/秒",
+      title: "持续时间/秒",
       dataIndex: "Time",
       key: "Time",
       align: "center",
+      width: 100,
     },
     {
       title: "操作",
@@ -315,10 +324,14 @@ export default function Index() {
   };
   //编辑告警类型配置
   const [giveChildFormRecord, setGiveChildFormRecord] = useState({});
+  const [editTypeId, setEditTypeId] = useState({});
   const editAlarmInfo = (record) => {
+    console.log(record);
     setGiveChildFormRecord(record);
+    setEditTypeId(record.Id);
     setAddAlarmEvent(true);
-    setNoDataInForm(false);//区分新增编辑
+    setNoDataInForm(false); //区分新增编辑
+    setAddModalTitle("编辑告警事件");
   };
   //新增告警
   const showAdd = () => {
@@ -397,7 +410,8 @@ export default function Index() {
   };
   const showAddAlarmEvent = () => {
     setAddAlarmEvent(true);
-    setNoDataInForm(true)
+    setNoDataInForm(true);
+    setAddModalTitle("新增告警事件");
   };
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
@@ -409,57 +423,113 @@ export default function Index() {
     setChildFormInfo(data);
   };
   const childformInfo = () => {
-    childFormInfo.planId = editId;
-    if (childFormInfo.alarmRule === 2) {
-      return AddAlarmEventInterval(childFormInfo).then((res) => {
-        if (res.success) {
-          setAddAlarmEvent(false);
-          runEdit();
-          message.success("新增告警事件成功！");
-        } else {
-          message.error("新增告警事件失败！");
-        }
-      });
-    } else if (childFormInfo.alarmRule === 1) {
-      return AddAlarmEventOverrun(childFormInfo).then((res) => {
-        if (res.success) {
-          setAddAlarmEvent(false);
-          runEdit();
-          message.success("新增告警事件成功！");
-        } else {
-          message.error("新增告警事件失败！");
-        }
-      });
-    } else if (childFormInfo.alarmRule === 3) {
-      return AddAlarmEventDeflection(childFormInfo).then((res) => {
-        if (res.success) {
-          setAddAlarmEvent(false);
-          runEdit();
-          message.success("新增告警事件成功！");
-        } else {
-          message.error("新增告警事件失败！");
-        }
-      });
-    } else if (childFormInfo.alarmRule === 4) {
-      return AddAlarmEventSOE(childFormInfo).then((res) => {
-        if (res.success) {
-          setAddAlarmEvent(false);
-          runEdit();
-          message.success("新增告警事件成功！");
-        } else {
-          message.error("新增告警事件失败！");
-        }
-      });
-    } else if (childFormInfo.alarmRule === 5) {
-      return AddAlarmEventCommunication(childFormInfo).then((res) => {
-        if (res.success) {
-          setAddAlarmEvent(false);
-          runEdit();
-          message.success("新增告警事件成功！");
-        } else {
-          message.error("新增告警事件失败！");
-        }
-      });
+    if (addModalTitle === "新增告警事件") {
+      childFormInfo.planId = editId;
+      if (childFormInfo.alarmRule === 1) {
+        return AddAlarmEventOverrun(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("新增告警事件成功！");
+          } else {
+            message.error("新增告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 2) {
+        return AddAlarmEventInterval(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("新增告警事件成功！");
+          } else {
+            message.error("新增告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 3) {
+        return AddAlarmEventDeflection(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("新增告警事件成功！");
+          } else {
+            message.error("新增告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 4) {
+        return AddAlarmEventSOE(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("新增告警事件成功！");
+          } else {
+            message.error("新增告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 5) {
+        return AddAlarmEventCommunication(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("新增告警事件成功！");
+          } else {
+            message.error("新增告警事件失败！");
+          }
+        });
+      }
+    } else if (addModalTitle === "编辑告警事件") {
+      childFormInfo.planId = editId;
+      childFormInfo.id = editTypeId;
+      if (childFormInfo.alarmRule === 1) {
+        return UpdateAlarmEventOverrun(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("修改告警事件成功！");
+          } else {
+            message.error("修改告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 2) {
+        return UpdateAlarmEventInterval(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("修改告警事件成功！");
+          } else {
+            message.error("修改告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 3) {
+        return UpdateAlarmEventDeflection(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("修改告警事件成功！");
+          } else {
+            message.error("修改告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 4) {
+        return UpdateAlarmEventSOE(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("修改告警事件成功！");
+          } else {
+            message.error("修改告警事件失败！");
+          }
+        });
+      } else if (childFormInfo.alarmRule === 5) {
+        return UpdateAlarmEventCommunication(childFormInfo).then((res) => {
+          if (res.success) {
+            setAddAlarmEvent(false);
+            runEdit();
+            message.success("修改告警事件成功！");
+          } else {
+            message.error("修改告警事件失败！");
+          }
+        });
+      }
     }
   };
   const { run: runChildformInfo } = useRequest(childformInfo, {
@@ -638,7 +708,8 @@ export default function Index() {
           callBack={changeAddAlarmEvent}
           getValues={getFromChild}
           giveChildForm={giveChildFormRecord}
-          giveFormType ={noDataInForm}
+          giveFormType={noDataInForm}
+          giveModalTitle={addModalTitle}
         ></AlarmEventModal>
       </div>
     </div>
