@@ -1572,7 +1572,7 @@ export class AlarmManagement {
   static UpdateAlarmEventInterval = (data) => server.post(`Safe/Alarm/UpdateAlarmEventInterval`,data)
   static UpdateAlarmEventOverrun = (data) => server.post(`Safe/Alarm/UpdateAlarmEventOverrun`,data)
   static UpdateAlarmEventDeflection = (data) => server.post(`Safe/Alarm/UpdateAlarmEventDeflection`,data)
-  static UpdateAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/UpdateAlarmEventSOE`,data)
+  static UpdateAlarmEventSOE = (data) => server.post(`Safe/Alarm/UpdateAlarmEventSOE`,data)
   static UpdateAlarmEventCommunication = (data) => server.post(`Safe/Alarm/UpdateAlarmEventCommunication`,data)
 }
 //储能--环境监控
