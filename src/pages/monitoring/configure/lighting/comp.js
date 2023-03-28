@@ -111,7 +111,10 @@ function Comp(props, ref) {
                 </Row>
             </Row>
             <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />
+            <div style={{display:'flex',height:700}}>
             {props.children}
+            </div>
+            
         </div>
     )
 }

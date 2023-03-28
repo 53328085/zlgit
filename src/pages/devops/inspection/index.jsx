@@ -8,7 +8,7 @@ export default function Index() {
   const [form] =Form.useForm()
   const [areavalue, setAreavalue] = useState(0)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]):null
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):null
   //改变区域
   const changeArea = (v) => {
     console.log(v)

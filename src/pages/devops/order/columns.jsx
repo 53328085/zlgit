@@ -13,13 +13,13 @@ const flexcss ={
         title: '工单编号',
         dataIndex: 'name',
         key: 'name',
+        width: 350
         // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
         title: '告警事件',
         dataIndex: 'content',
         key: 'content',
-        width: 124,
         // render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
       },
       {
@@ -56,7 +56,7 @@ const flexcss ={
       //     }   
       // },
         render:(text,record)=>{
-         return text===1?<div style={flexcss}><WaitIcon/>待处理</div>:text===2?<div style={flexcss}><ProcessIcon/>处理中</div>:<div style={flexcss}><ResolveIcon/>已完成</div>
+         return text===1?<div style={flexcss}><WaitIcon/>待处理</div>:text===2||text===3?<div style={flexcss}><ProcessIcon/>处理中</div>:<div style={flexcss}><ResolveIcon/>已完成</div>
         }
       },
      

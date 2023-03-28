@@ -271,11 +271,17 @@ export default function Index() {
     const res =await operation.MonthAlarmTrend(params)
     if(res.success){
       const {currentMonth ,lastMonth} =res.data
-      let data = currentMonth.map((item,index)=>{
+      let arr=[]
+      if(currentMonth.length-lastMonth.length>0){
+        arr=[...currentMonth]
+      }else{
+        arr=[...length-lastMonth]
+      }
+      let data = arr.map((item,index)=>{
         return {
           x:item.x,
           '本月':item.y,
-          '上月':lastMonth[index].y
+          '上月':lastMonth[index]?.y
         }
       })
       setDatasetMonthl({dimensions:['x','本月','上月'],source:[...data]})

@@ -58,7 +58,7 @@ export default function Index() {
                     <Item label={onelevel} name="area" style={{padding:'8px 0'}}>
                         <Select
                             style={{ width: 200 }}
-                            options={onelevel?[{ name: onelevel, id: 0 }, ...arealist]:[]}
+                            options={onelevel?[{ name: onelevel+"(全部)", id: 0 }, ...arealist]:[]}
                             fieldNames={{ label: 'name', value: 'id' }}
                             onChange={changeArea}
                         >

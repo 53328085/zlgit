@@ -25,20 +25,22 @@ export default function MapComp({ points }) {
         <Map
             style={{ height: '100%' }}
             center={new BMapGL.Point(Number(centerPointer[0]?centerPointer[0]:120), Number(centerPointer[1]?centerPointer[1]:30))}
-            // zoom={12}
-            // tilt={40}
+            zoom={12}
+            tilt={40}
             enableScrollWheelZoom
            
         >
+               <CityListControl/>
             {points?.map((it,index) => {
                 const positions = it.lngLat.split(',')
                 return (<>
                     <Marker
                         position={new BMapGL.Point(Number(positions[0]), Number(positions[1]))}
-                        enableDragging
+                        // enableDragging
                         onMouseover={()=>{mouseEnter(index)}}
                         onMouseout={()=>{setShowIndex(null)}}
                     />
+                 
                     {
                      showIndex===index?<CustomOverlay 
                          position={new BMapGL.Point(Number(positions[0]), Number(positions[1]))}            
@@ -65,12 +67,16 @@ let Info = ({message}) => {
         display: 'flex',
         justifyContent: 'space-between',
         fontSize: 12,
-
+        whiteSpace: 'nowrap',
+        marginBottom: 12
+    }
+    const mgl24={
+        marginLeft: 24
     }
     return (
         <div style={{
-            width: 224,
-            height: 160,
+            // width: 224,
+            // height: 160,
             background: '#fff',
             borderRadius: 2,
             padding: 12,
@@ -81,27 +87,27 @@ let Info = ({message}) => {
         }}>
             <p style={flexcss}>
                 <div>告警坐标</div>
-                <div>{message?.lngLat}</div>
+                <div style={mgl24}>{message?.lngLat}</div>
             </p>
             <p style={flexcss}>
                 <div>设备编号</div>
-                <div>{message?.sn}</div>
+                <div style={mgl24}>{message?.sn}</div>
             </p>
             <p style={flexcss}>
                 <div>设备类型</div>
-                <div>{message?.category}</div>
+                <div style={mgl24}>{message?.category}</div>
             </p>
             <p style={flexcss}>
                 <div>告警等级</div>
-                <div>{message?.level}级</div>
+                <div style={mgl24}>{message?.level}级</div>
             </p>
             <p style={flexcss}>
                 <div>告警详情</div>
-                <div>{message?.content}</div>
+                <div style={mgl24}>{message?.content}</div>
             </p>
             <p style={flexcss}>
                 <div>告警地址</div>
-                <div>{message.address}</div>
+                <div style={mgl24}>{message.address}</div>
             </p>
         </div>
     )
