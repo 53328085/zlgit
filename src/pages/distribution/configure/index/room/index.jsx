@@ -216,6 +216,7 @@ export default function Index() {
     setEditId(record.id)
     setModalTitle('编辑配电房')
     setAddModal(true)
+    console.log(record);
     form.setFieldsValue(record)
   }
 

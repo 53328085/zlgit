@@ -41,6 +41,10 @@
     }
     .priceInput{
         margin-left: 64px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
     .rightTriggle{
         width: 28px;
@@ -55,6 +59,11 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
+        :global{
+            .ant-row{
+                flex-wrap: nowrap;
+            }
+        }
     }
  }
 }

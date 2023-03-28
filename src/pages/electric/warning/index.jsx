@@ -55,7 +55,7 @@ export default function Index() {
                         }
                     }
                 >
-                    <Item label={onelevel} name="area">
+                    <Item label={onelevel} name="area" style={{padding:'8px 0'}}>
                         <Select
                             style={{ width: 200 }}
                             options={onelevel?[{ name: onelevel, id: 0 }, ...arealist]:[]}

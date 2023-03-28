@@ -392,7 +392,7 @@ export default function Index() {
             <div className={style.treeTitle}>
                 <span className={style.treeItem}>线路图</span>
                 <span className={style.deviceItem}>设备数</span>
-                <span className={style.actionItem}>操作</span>
+                { isPublish ? null : <span className={style.actionItem}>操作</span>}
             </div>
             <div className={style.treeContent}>
                 {/* <Tree treeData={treeData} defaultExpandAll blockNode onSelect={onSelect}></Tree> */}
