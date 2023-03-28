@@ -74,8 +74,8 @@ import {
       let len = res.getCurrentNumPois();
       if (len > 0) {
         console.dir(res.getPoi(0));
-        let { lng, lat} = res.getPoi(0)?.point;
-        setAaddress({lng, lat})
+        let  geography = res.getPoi(0) || {};
+        setAaddress(geography)
       }
     }
   }
