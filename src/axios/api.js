@@ -80,6 +80,19 @@ export class AreaSetting {
     ); // 删除字段
   static QueryAllArea = (projectId, level) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`); //查询全部区域
+
+  static AddSummaryDevice = (projectId, areaId) =>
+    server.get(`/General/Area/AddSummaryDevice?projectId=${projectId}&areaId=${areaId}`); // 添加区域总表
+
+  static RemoveSummaryDevice = (projectId, areaId) =>
+    server.get(`/General/Area/RemoveSummaryDevice?projectId=${projectId}&areaId=${areaId}`); // 移除区域总表
+  
+  static AddSubDevice = (projectId, areaId) =>
+    server.get(`/General/Area/AddSubDevice?projectId=${projectId}&areaId=${areaId}`); // 添加区域分表
+ 
+  static RemoveSubDevice = (projectId, areaId) =>
+    server.get(`/General/Area/RemoveSubDevice?projectId=${projectId}&areaId=${areaId}`); // 移除区域分表
+
 }
 // 公共模块---项目设置---数据组设置
 export class DataGroups {
