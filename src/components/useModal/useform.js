@@ -3,7 +3,7 @@ import {Form, Select, Input, Switch, DatePicker} from 'antd'
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
-  const {roletype, enable, ...rest} = props
+  const {roletype, enable, password=true, ...rest} = props
   const getValue = () => {
    return  new Promise((resolve, reject) => {
     form.validateFields().then(res => {
@@ -83,17 +83,22 @@ import {Form, Select, Input, Switch, DatePicker} from 'antd'
                   >
                  <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
    </Item>
+    {
+      password &&
+      <>
     <Item label="密码" name="pwd" required>
       <Input.Password />
     </Item>
     <Item label="确认密码" name="repwd" required>
       <Input.Password />
     </Item>
+    </>
+    }
     <Item label="手机号码" name="mobile" required>
       <Input />
     </Item>
     {enable && (
-      <Item label="是否启用" name="enabled">
+      <Item label="是否启用" name="enabled" valuePropName="checked">
         <Switch checkedChildren="是" unCheckedChildren="否"   />
       </Item>
     )}

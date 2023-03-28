@@ -18,6 +18,7 @@ import {
   message,
   Tag
 } from "antd";
+import moment from "moment";
 import {WarningFilled} from '@ant-design/icons'
 import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
@@ -25,6 +26,7 @@ import {useSelector} from 'react-redux'
 import {selectUser} from "@redux/user";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
+import {custMsg} from '@com/usehandler'
 //import Custdrawer from './drawer'
 //import Drawerdata from './drawerdata'
 import Dataset from './dataSet.jsx'
@@ -49,7 +51,7 @@ const {
 const Mainbox = styled.div`
 display: grid;
 grid-template-rows: repeat(3, auto);
- max-width: 1090px;
+ //max-width: 1090px;
 row-gap: 16px;
 
 div.admin {
@@ -60,7 +62,7 @@ div.admin {
   border-bottom: 1px dotted #dedede;
   .item {
     display: grid;
-    grid-template-columns: 160px 160px 256px 1fr;
+    grid-template-columns: 160px 160px 256px 256px 1fr;
     column-gap: 16px;
     .as {
       grid-area: 1 / 1 / 2/ 3;
@@ -129,12 +131,20 @@ export default function Account({projectId, CModal}) {
  const fmodal = useRef()
  const dref = useRef()
  const dpref  = useRef();
+ const editref = useRef() ; // 编辑用户弹窗
  const [person, setPerson] = useState(0) // 新增项目管理员 新增运维人员
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
  const {roleType} = useSelector(selectUser) || {};
- 
-
+ const [editTitle, setEdit] = useState('')
+ const [initform, setInitialValues] = useState({
+  password: false,
+  enable: true,
+  initialValues: {}
+ }) // 编辑账号初始化表单数据
+ const edituerinfo = useRef(); // 编辑的账号数据
+ const newpwd = useRef();  // 重置密码
+ const rref = useRef()
   const menufn = (id, type, role) => {
     flushSync(() => {
       setUserId(id);
@@ -189,19 +199,19 @@ export default function Account({projectId, CModal}) {
    
  };
 
+ const [managerdata, setManagerData] = useState({})
  const queryProjectManager = async () => {                              // 获取项目管理员
     try {
       let {success, data} = await QueryProjectManager(projectId)
     
       if (success) {
         setManager(!!data)
-        let { name, nickName, mobile,id, areaAuthority=[] } = data || {};    
+        let {validStageTime, areaAuthority=[], ...params } = data || {};   
+        setManagerData({validStageTime, ...params}) 
         setAreas([...areaAuthority])
         form.setFieldsValue({
-         name,
-         nickName,
-         mobile,
-          id
+          ...params,
+          validStageTime: moment(validStageTime, 'YYYY-MM-DD').format('YYYY/MM/DD')
         })
       }
     } catch (error) {
@@ -295,13 +305,99 @@ export default function Account({projectId, CModal}) {
     }  
   }
 
+// 编辑账号 start
+ const editType = useRef()
+ const useEdit = (item, type) => {
+   
+  editType.current = type
+  edituerinfo.current = item;
+  let title = ['', '', '编辑运营管理员', '编辑项目管理员', '编辑运维人员'][type]
+  let name = ['', '', '运营管理员', '项目管理员', '运维人员'][type]
+  item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD hh:mm:ss')
+  item.enabled = item.enabled  == 1
+  flushSync(() => {
+    setInitialValues({
+      ...initform,
+      roletype: [{name, id: type}],
+      initialValues: {...item, RoleType: type}})
+    setEdit(title)
+  }) 
+  editref.current.onOpen()
+  
+ }
+
+const updateData = () => {  // 编辑以后更新数据
+  if (editType.current == 2) {
+    queryOperationManagers()
+    queryOperationManager()
+  }
+  if (editType.current == 3) {
+    queryProjectManager()
+  }
+  if (editType.current == 4) {
+    queryProjectMaintenance()
+  }
+}
+
+
+
+const onOkedit = async () => {
+  try {
+    let {id} =  edituerinfo.current;
+   let values = await editref.current.onGetvalue()
+
+   let {RoleType, ...params} = values
+   params.enabled = Number(params.enabled)
+
+   let {success} = await User.Update({...params, id})
+   success &&  editref.current.onCancel()
+   if (success) {
+    updateData()
+   }
+  } catch (error) {
+    console.log(error)
+  }
+   
+}
+
+// 编辑账号 end
+
+
+
+// 重置密码 start
+const [username, setUsername] = useState({})
+ 
+const reset = (record) => {
+  setUsername({...record})
+  newpwd.current = Math.random().toString().slice(2,8)
+  rref.current.onOpen();
+ }
+ const restOk = async () => {
+   try {
+    const {id} = username
+    const {success, errMsg} =  await User.ResetPassword({id, pwd: newpwd.current})
+    console.log(success)
+    success && custMsg({success, content: '密码重置成功',  onClose: () => {     
+      rref.current.onCancel()
+      updateData()
+    }})
+    !success && custMsg({success, content: errMsg, type: 'warning'} )
+    
+   } catch (error) {
+     console.log(error)
+   }
+ 
+ }
+
+
+ // 重置密码 end
   useEffect(() => { 
    queryOperationManager()
    queryOperationManagers()
    queryProjectManager()
    queryProjectMaintenance() 
   }, [projectId])  
-  const RenderItem = (data) => {
+  const RenderItem = ({data}) => {
   return data.map((field, index) => (
     <div className="admin" style={{flex: 1, borderBottom: 'none'}} key={field.id}>
       <div className="item" >
@@ -314,16 +410,21 @@ export default function Account({projectId, CModal}) {
               <Item name={[index, "mobile"]} noStyle>
                 <Input size="middle" defaultValue={field.mobile} />
               </Item>
+              <Item name={[index, "validStageTime"]} noStyle>
+                <Input size="middle" defaultValue={moment(field.validStageTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY/MM/DD')} />
+              </Item>
               <Item noStyle>
-                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                       <Space size={16}>  
+                 
+                       <Space size={16} style={{marginLeft: 'auto'}}>  
                         <Pbutton onClick={() => menufn(field.id, 2, 4)}>数据权限</Pbutton>
                         <Pbutton onClick={() => menufn(field.id, 1, 4)}>菜单权限</Pbutton>
-                       
+                        <Pbutton onClick={() => useEdit(field, 4 )}>编辑</Pbutton>
+                        <Pbutton onClick={() => reset(field)}>重置密码</Pbutton>
+                        <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
                        </Space>
-                       <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
+                     
                       {/*  <Button danger  onClick={() => onDeleteMsg(2, field.id)} style={{padding: '0px', width: '96px'}}>删除</Button> */}
-                    </div>
+                  
               </Item>
               <Item noStyle>
               
@@ -362,15 +463,21 @@ export default function Account({projectId, CModal}) {
             <Abutton  onClick={addOperation}>添加运营管理员</Abutton>
           </div>
           <div className="item">
-            <Text type="">用户名</Text> <Text>姓名</Text>{" "}
-            <Text>手机号</Text>
+            <Text type="">用户名</Text> <Text>姓名</Text>
+            <Text>手机号</Text> <Text>有效期</Text>
           </div>
           {oplist?.map((item) => (
             <div className="item" key={item.id}>
               <Input size="middle" value={item.name} readOnly />
               <Input size="middle" readOnly value={item.nickName} />
               <Input size="middle" readOnly value={item.mobile} />
-              <Dbutton   onClick={() => onDeleteMsg(0, item.id)}>删除</Dbutton>
+              <Input size="middle" readOnly value={moment(item.validStageTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY/MM/DD')} />
+              <Space size={16} style={{marginLeft: 'auto'}}>
+                 <Pbutton onClick={() => useEdit(item, 2 )}>编辑</Pbutton>
+                 <Pbutton onClick={() => reset(item)}>重置密码</Pbutton>
+                 <Dbutton   onClick={() => onDeleteMsg(0, item.id)}>删除</Dbutton>
+              </Space>
+             
             </div>
           ))}
         </div>
@@ -385,8 +492,10 @@ export default function Account({projectId, CModal}) {
             <Abutton  onClick={addProjectadmin.bind(null, 0)} disabled={manager}>添加项目管理员</Abutton>
           </Space>
           <div className="item">
-            <Text type="">用户名</Text> <Text>姓名</Text>{" "}
+            <Text type="">用户名</Text>
+            <Text>姓名</Text>
             <Text >手机号</Text>
+            <Text >有效期</Text>
           </div>
          
           {manager && (<><Form
@@ -404,13 +513,18 @@ export default function Account({projectId, CModal}) {
               <Item name="mobile" noStyle>
                 <Input size="middle" />
               </Item>
-               
+              <Item name="validStageTime" noStyle>
+                <Input size="middle" />
+              </Item>
                 <Item  noStyle shouldUpdate>
-                  { ({getFieldValue }) => {
-                   return <div style={{ display: "flex",justifyContent: 'justify-content' }}>
+                  { ({getFieldValue, getFieldsValue }) => {
+                   return <Space style={{marginLeft: 'auto'}}>
                           <Pbutton onClick={() => menufn(getFieldValue('id'), 1, 3)}>菜单权限</Pbutton>
+                          
+                          <Pbutton onClick={() => useEdit(managerdata, 3)}>编辑</Pbutton>
+                          <Pbutton onClick={() => reset(managerdata)}>重置密码</Pbutton>      
                           <Dbutton  onClick={() => onDeleteMsg(1, getFieldValue('id'))} >删除</Dbutton>
-                    </div>
+                    </Space>
                   }
                   }
                 </Item>
@@ -434,19 +548,34 @@ export default function Account({projectId, CModal}) {
             
           </Space>
           <div className="item">
-            <Text type="">用户名</Text> <Text>姓名</Text>{" "}
+            <Text>用户名</Text>
+            <Text>姓名</Text>
             <Text>手机号</Text>
+            <Text>有效期</Text>
           </div>
         
               <Form
               layout="inline"
               readOnly
             >
-              {admin?.length > 0 && RenderItem(admin)}
+              {admin?.length > 0 && <RenderItem data={admin} /> }
              </Form>
         </div>
       : null
       }
+
+       {/* 编辑账号 */}
+       <Custmodl
+              title={editTitle}
+              ref={editref} 
+              fromprops={initform}
+            //  onCancal={cancal}
+              onOk={onOkedit}
+              mold="default"             
+            >
+
+        </Custmodl>
+
       <Custmodl
               title={title}
               ref={fmodal} 
@@ -460,6 +589,11 @@ export default function Account({projectId, CModal}) {
       <Custmodl mold="cust" title='删除账号'  type="warn"  onOk={onDeletehandle} ref={mref} >
          <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}><WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除{delinfo}?</p>
       </Custmodl>
+
+      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
+         <p>账号： <Link>{username.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
+         
+     </CModal>
      {/*   <Drawer open={menuopen} title="项目权限选择" width={608} closable={false} extra={<Button type="primary">保存</Button>}>
        
          <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>

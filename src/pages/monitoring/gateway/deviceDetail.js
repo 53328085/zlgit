@@ -23,7 +23,7 @@ export default function GatewayDetail(props) {
     console.log(search.sn)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
-    const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
+    const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     let [historyTable, setHistoryTable] = useState()
@@ -54,7 +54,6 @@ export default function GatewayDetail(props) {
     let dataToday = new Date()
     let [startTime, setstartTime] = useState(yesterday)
     let [endTime, setendTime] = useState(dataToday)
-    // let [alarmPage, setalarmPage] = useState()
     let [startTimeAlarm, setstartTimeAlarm] = useState(dataToday)
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
     const onchangeTab = val => {
@@ -153,7 +152,6 @@ export default function GatewayDetail(props) {
             let { success, data } = res
             if (success) {
                 setdataSourceLog(data)
-                // setalarmPage(data)
                 settotalalarm(res.total)
             } else {
                 message.error(res.errMsg)
@@ -681,7 +679,8 @@ export default function GatewayDetail(props) {
 
                                 </div>
                                 {trend === 1 ? <div><div ref={energyref} style={{ width: 1536, height: 513, marginTop: 16 }}></div></div> : trend === 2 ? <div>
-                                    <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
+                                    <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{y: 475,}}
+                                    rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
                                 </div> : ''}
                             </div> : <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>

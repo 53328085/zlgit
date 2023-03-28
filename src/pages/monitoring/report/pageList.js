@@ -30,7 +30,7 @@ console.log(props.query)
             }
             setDataset(() => ({ dimensions: ["time", "日用电量(kWh)"], source: arr }))
         }
-      }, []);
+      }, [props.query]);
     const datasetLine = {
         dimensions: ["time", "tokyo",],
         source: [
@@ -228,7 +228,8 @@ console.log(props.query)
       
     return(
         <Fragment>
-            <div className={style.pages}>
+            <div id='contentPage' >
+            <div className={style.pages} >
                 <Header></Header>
                 <div className={style.pageContent}>
                     <div className={style.mainTitle}>1.配电房概况</div>
@@ -305,6 +306,7 @@ console.log(props.query)
                     <div className={style.mainTitle}>7. 现场运维情况</div>
                     <div className={style.mainText}>本周期内，该变配电站共完成巡检0次，巡检过程未发现缺陷。</div>
                 </div>
+            </div>
             </div>
         </Fragment>
     )
