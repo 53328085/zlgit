@@ -390,7 +390,15 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       devices.current.selected = selectedRows;
     },
   };
+  const AddSummaryDevice = () => {
+    Area.AddSummaryDevice(projectId, areaId)
+  }
+
   const onMove = (type) => {
+    let {areaId} = Record
+       
+
+   
     let selected = devices.current.selected;
     const choose = (arr) =>
       arr.filter((a) => {
@@ -420,7 +428,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     devices.current.selected = [];
   };
 
-  const configureMeter = async () => {
+/*   const configureMeter = async () => {
     let params = {
       projectId,
       areaId: Record.areaId,
@@ -436,7 +444,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         },
       });
     !success && custMsg({ success, content: errMsg || "数据出错" });
-  };
+  }; */
   const handlersearch = (e) => {
     let str = e.trim();
     str &&
@@ -518,9 +526,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-                <Link underline onClick={() => config(record)}>
+              {/*   <Link underline onClick={() => config(record)}>
                   配置
-                </Link>
+                </Link> */}
                 <Link underline onClick={() => edit(record)}>
                   编辑
                 </Link>
@@ -874,14 +882,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             </Space>
           </div>
           <div>
-            <Button
+            {/* <Button
               type="primary"
               block
               style={{ marginBottom: "16px" }}
               onClick={configureMeter}
             >
               保存
-            </Button>
+            </Button> */}
             <Button block onClick={drawClose}>
               关闭
             </Button>

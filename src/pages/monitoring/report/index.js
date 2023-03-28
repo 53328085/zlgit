@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect,useRef } from 'react'
 import {useRequest} from 'ahooks'
 import {Monitoring} from '@api/api.js'
 import { useSelector, useStore, useDispatch } from 'react-redux'
@@ -13,11 +13,15 @@ import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import moment from "moment";
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import ReactToPrint from "react-to-print";
 
 
 
 export default function Index() {
   const { RuntimeReport: { QueryReport } } = Monitoring
+  let componentRef = useRef();
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
@@ -52,16 +56,16 @@ const getData=()=>{
     let {success,data}=res
     if(success){
       setqueryData(data)
+      setcoverData({
+        ProjectName:data?.projectName,
+        Address:data?.projectAddress,
+        Date:new Date().toLocaleDateString()
+      })
     }else{
       message.error(res.errMsg)
     }
   })
 }
-//   useEffect(() => {
-//     if (areaId&&date) {
-//         getData()
-//     }
-// }, [projectId, areaId, params.type])
 useEffect(() => {
   if(areaList.length == 0 || !areaList){
     message.error('当前项目尚未创建园区!')
@@ -86,8 +90,8 @@ useEffect(() => {
       setdisplay(true);
     getData()
     setcoverData({
-      ProjectName:'正泰物联',
-      Address:'浙江省杭州市滨江区月明路560号',
+      ProjectName:queryData?.projectName,
+      Address:queryData?.projectAddress,
       Date:new Date().toLocaleDateString()
     })
     }else{
@@ -96,9 +100,54 @@ useEffect(() => {
   }
 const printReport=()=>{
 
-}
+}//打印报表
 const downloadReport=()=>{
-  
+  //先生成图片再导出
+  html2canvas(document.getElementById('contentPage'),{
+    // 导出pdf清晰度
+    allowTaint: true,
+    taintTest: false,
+    scale: '2',//设置放大倍数
+    height: document.getElementById('contentPage').scrollHeight,
+    windowHeight: document.getElementById('contentPage').scrollHeight,
+    dpi: '192',
+    background: '#fff',
+    // 开启跨域配置
+    useCORS: true,//支持图片跨域
+  }).then((canvas) => {
+    let contentWidth = canvas.width;
+    let contentHeight = canvas.height;
+    // 一页pdf显示html页面生成的canvas高度;
+    let pageHeight = contentWidth / 592.28 * 841.89;
+    // 未生成pdf的html页面高度
+    let leftHeight = contentHeight;
+    // pdf页面偏移
+    let position = -8;
+    // html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
+    let imgWidth = 595.28;
+    let imgHeight = 592.28 / contentWidth * contentHeight;
+
+    let pageData = canvas.toDataURL('image/jpeg', 1);
+    let pdf = new jsPDF('', 'pt', 'a4');
+
+    // 有两个高度需要区分，一个是html页面的实际高度leftHeight，和生成pdf的页面高度(841.89)pageHeight
+    // 当内容未超过pdf一页显示的范围，无需分页
+    if (leftHeight < pageHeight) {
+      pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+    } else {
+      while (leftHeight > 0) {
+        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+        leftHeight -= (pageHeight+20);
+        //原来高度是841.89，因为页面之间有20的padding,还有多余的7是因为页面比A4的高多了一点
+        position -= 869.89;
+        // 避免添加空白页
+        if (leftHeight > 841.89) {
+          pdf.addPage();
+        }
+      }
+    }
+    pdf.save('客户报告.pdf');
+  });
 }
   return (
     <div className={style.content}>
@@ -136,10 +185,17 @@ const downloadReport=()=>{
           <img src={searchFile} className={style.searchFile}></img>
           <span>生成报告</span>
         </div>
-        <div className={style.buttonR} onClick={printReport}>
+        <ReactToPrint
+          trigger={() => <div className={style.buttonR} onClick={printReport}>
+          <img src={printFile} className={style.searchFile}></img>
+            <span>打印报告</span>
+          </div>}
+          content={() => componentRef}
+        />
+        {/* <div className={style.buttonR} onClick={printReport}>
         <img src={printFile} className={style.searchFile}></img>
           <span>打印报告</span>
-        </div>
+        </div> */}
         <div className={style.buttonR} onClick={downloadReport}>
         <img src={downFile} className={style.searchFile} style={{zIndex:1}}></img>
           <span>导出报告</span>
@@ -147,11 +203,11 @@ const downloadReport=()=>{
       </div>
       {/* <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
       <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button> */}
-      <div className={style.report}>
+      <div className={style.report}   ref={(el) => (componentRef = el)}>
         <div className={style.firstPage}>
           <div className={style.header}>
             <img src={logo} className={style.logo}></img>
-            <span>正泰智慧能源服务平台</span>
+            <span>正泰综合能源服务平台</span>
           </div>
           <div className={style.mainTitle}>运行监控报告</div>
           <div className={style.mainDetail}>
@@ -161,7 +217,7 @@ const downloadReport=()=>{
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        {display ? <PageList query={queryData}></PageList> : null }
+        {display ? <PageList  query={queryData}></PageList> : null }
       </div>
       
     </div>
