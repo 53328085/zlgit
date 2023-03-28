@@ -7,8 +7,7 @@ import BlueColumn from '@com/bluecolumn'
 import commonstyle from './commonstyle.module.less'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
-import Modal from '@com/useModal'
-import UseMap from '@com/useMap'
+import {SetPosition} from './position'
 
 //配置线路
 export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
@@ -176,7 +175,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat}) )
         let params = {
             projectId,
-            group:subsn
+            group:subsn,
+            areaId
         }
         const resp = await operationDesigin.ConfigureDevice(params)
         if (resp.success) {
@@ -260,17 +260,31 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     }
     //保存坐标
     const savePosition=(local)=>{
-        console.log(local,subSelectedRows)
-        if(Array.isArray(subSelectedRows)&&subSelectedRows.length>0){
-            const arr =subSelectedRows.map(it=>{return {...it,address:local.inpvalue,lngLat:local.local}})
-            console.log(arr)
-            setSubSelectedRows([...arr])
-            positionRef.current.onCancel()    
-        }else{
-            message.warning("请先选择设备")
+        console.log(local,subSelectedRows,subMeter)
+        if(!local.local){
+            message.warning("请先设置坐标！")
+            return
         }
-        
-       
+        if(Array.isArray(subSelectedRows)&&subSelectedRows.length>0){
+            const arr =subSelectedRows.map(it=>{return {...it,lngLat:local.local}})
+            let updatearr=[...subMeter]
+            // for(let i=0;i<subMeter.length;i++){
+            //     updatearr.push(false)
+            // }  
+            console.log(updatearr,subMeter)
+           for(let i=0;i<subMeter.length;i++){
+             for(let j=0;j<arr.length;j++){
+                if (subMeter[i].id === arr[j].id){
+                    updatearr[i]=arr[j]
+                }
+             }
+           }
+         setSubMeter(()=>[...updatearr])
+         positionRef.current.onCancel()
+             
+        }else{
+            message.warning("请先选择设备！")
+        }       
     }
     useImperativeHandle(ref, () => ({
         setDataSource,
@@ -284,7 +298,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         getQueryDeviceList
     }))
     useEffect(()=>{
-        getQueryDeviceList()
+        // getQueryDeviceList()
     },[areaId])
     return (
         <div style={{ position: 'absolute', width: 1686, height: 770, top: 101, left: open ? 0 : 2000, background: "#003366", transition: 'all .5s linear', padding: 32, display: 'flex' }}>
@@ -361,59 +375,60 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         </div>
     )
 })
-let  SetPosition =({positionRef,savePosition})=>{
-    const loaclRef=useRef()
-    return (
-        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}}>
-            <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/>
-            <LoaclForm  ref={loaclRef}/>
-        </Modal>
-    )
-}
-let LoaclForm =forwardRef((props,ref)=>{
-    const [inpvalue,setInpvalue] =useState()
-    // const inpvalueRef = useRef()
-    const [local,setLoacl] = useState()
-    const mapRef = useRef()
-    const search=(text)=>{
-        mapRef.current.serachMap.search(inpvalue)
-        // console.log(inpvalueRef.current, mapRef.current.serachMap.search)
-        // setInpvalue(inpvalue)
-        // console.log(mapRef.current.serachMap,inpvalue)
-    }
-    const setAaddress=(mes)=>{
-        console.log(mes)
-        setInpvalue(mes.address)
-        //inpvalueRef.current=mes.address
-        setLoacl(`${mes.lng},${mes.lat}`)
-    }
-    useImperativeHandle(ref,()=>({
-        inpvalue,
-        local
-    }))
-    return (
-        <>
-         <div>
-          <span style={{ paddingRight: 16, }} >设备查询</span>
-          <Input
-            style={{
-              width: 565,
-              margin: '16px 0'
-            }}
-            placeholder="输入地址信息"
-            value={inpvalue}
-            onChange={(e)=>{  setInpvalue(e.target.value)}}
-          />
-          <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-        </div>
-        <div>
-            <span style={{paddingRight:32}}>经纬度</span>
-            <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
-        </div>
-        <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
-        <UseMap setAaddress={setAaddress} ref={mapRef}/>
-        </div>
+// let  SetPosition =({positionRef,savePosition})=>{
+//     const loaclRef=useRef()
+//     return (
+//         <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}}>
+//             <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/>
+//             <LoaclForm  ref={loaclRef}/>
+//         </Modal>
+//     )
+// }
+// let LoaclForm =forwardRef((props,ref)=>{
+//     const [inpvalue,setInpvalue] =useState()
+//     // const inpvalueRef = useRef()
+//     const [local,setLoacl] = useState()
+//     const mapRef = useRef()
+//     const search=(text)=>{
+//         mapRef.current.serachMap.search(inpvalue)
+//     }
+//     const setAaddress=(mes)=>{
+//         console.log(mes)
+//         setInpvalue(mes.address)
+//         if(mes.point){
+//             setLoacl(`${mes.point.lng},${mes.point.lat}`) 
+//         }else{
+//             setLoacl(`${mes.lng},${mes.lat}`)
+//         }
+       
+//     }
+//     useImperativeHandle(ref,()=>({
+//         inpvalue,
+//         local
+//     }))
+//     return (
+//         <>
+//          <div>
+//           <span style={{ paddingRight: 16, }} >设备查询</span>
+//           <Input
+//             style={{
+//               width: 565,
+//               margin: '16px 0'
+//             }}
+//             placeholder="输入地址信息"
+//             value={inpvalue}
+//             onChange={(e)=>{  setInpvalue(e.target.value)}}
+//           />
+//           <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
+//         </div>
+//         <div>
+//             <span style={{paddingRight:32}}>经纬度</span>
+//             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
+//         </div>
+//         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
+//         <UseMap setAaddress={setAaddress} ref={mapRef}/>
+//         </div>
         
-        </>
-    )
-})
+//         </>
+//     )
+// })

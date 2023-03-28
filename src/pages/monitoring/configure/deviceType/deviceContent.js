@@ -45,7 +45,10 @@ export default function DeviceContent(props,ref) {
             <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>
         </div>
-        {other.children}
+        <div style={{display:'flex',height:700}}>
+          {other.children}
+        </div>
+        
         <Modal ref={ModalRef} mold='cust' {...modalProps}>
             <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
             {AddModal}

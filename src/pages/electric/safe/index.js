@@ -216,7 +216,7 @@ export default function Index() {
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
   const arealist = useSelector(state => state.system.onelevel)
-  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName, id: 0 }, ...arealist]:[]
+  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName+'(全部)', id: 0 }, ...arealist]:[]
   console.log(arealist)
   const [warnData, setWarnData] = useState()
   const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
