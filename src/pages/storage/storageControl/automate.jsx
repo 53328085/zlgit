@@ -207,7 +207,7 @@ const Viewbox = styled.div`
             justify-content: space-between;
             font-size: 12px;
             color:#666;
-            width: 470px;
+           // width: 470px;
             line-height: 1.5;
         }
        }
@@ -222,8 +222,10 @@ const Viewbox = styled.div`
        /*  display: flex;
         justify-content: space-between; */
         display: grid;
-        grid-template-columns: repeat(94, 4px);
+        grid-template-columns: repeat(96, 4px);
         column-gap: 1px;
+        border: 1px solid #d7d7d7;
+        padding: 1px;
        }
        .dsitme {
         display: flex;
@@ -235,7 +237,7 @@ const Viewbox = styled.div`
 const Itembox = styled.div`
       width: 4px;
       height: 36px;
-      background-color: ${props => props.type == 'warn' ? '#ff9933' : props.type=='info' ? '#00ccff' : '#009933' };
+      background-color: ${props => props.type == '1' ? '#4370ff' : props.type=='2' ? '#ff9933' : '#0dc6d1' };
       border: none;
       border-radius: 0px;
 `
@@ -346,16 +348,16 @@ const getvalidate = (start, end, type, choosedate) => {
   const planName = useRef('')
   const showarrow = plans?.length > 4
   const showpalans = useMemo(() => {
-    let len = plans.length;
-    if (len < 6) {
-      return plans.slice(count, len)
-    } else {
-        return plans.slice(count, 5 + count)
-    }
-  }, [count, plans.length])
-  const onMove = () => {
-    if (plans.length < 6) return
-    setCount(count + 1)
+    let len = plans.length;  // 7 0，5 1，6 2，7
+    return plans.slice(count, 5+count)
+   
+  }, [count, plans])
+  const onMove = (n) => {
+      let num = count + n
+      if ((num+5) > plans.length) return
+      if(num < 0) return
+      if (plans.length < 6 ) return
+      setCount(num)
   }
   const initform = (data) => {
 
@@ -541,7 +543,7 @@ const getvalidate = (start, end, type, choosedate) => {
                     运行计划
                 </div>
                 <div className='content'>
-                    {showpalans.map(p => <div key={nanoid()} className={curplan.id == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
+                    {  showpalans?.map(p => <div key={nanoid()} className={curplan.id == p.id ? 'plan active' : 'plan'} onClick={() => onPlan(p)}>
                         {p.name}  {curplan.id == p.id && <CaretRightOutlined style={{position: "absolute", right: '16px'}}  />}
                         </div>)
                         } 
@@ -613,16 +615,26 @@ const getvalidate = (start, end, type, choosedate) => {
   )
 }
 
-const Planview = ({data, strategyDetail}) => {
+const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机
     let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
-    console.log(strategyDetail)
-    
+   
+
+    const getminutes = (end, start) => moment(end, 'hh:mm').diff(moment(start, 'hh:mm'), 'minutes')   
+    let status =   strategyDetail.map(s => ({start: getminutes(s.start, '00:00') / 15, end: getminutes(s.end, '00:00') / 15, type: s.status}) )   
+    const items = Array.from({length: 96}, (v, i) => ({index: i+1, type: 3}))  
+     status.forEach(s => {
+        items.forEach(i => {
+            if(i.index >s.start && i.index <=s.end) {
+                i.type = s.type
+            }
+        })
+     });
   /*   const disabledDate = (value) => {
       let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
       return  !datalist.includes(value.format('YYYY-MM-DD'))
     } */
     const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
-    console.log(hours)
+   
     const disabledDate = useCallback((value) => {
         let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
         return  !datalist.includes(value.format('YYYY-MM-DD'))
@@ -636,7 +648,7 @@ const Planview = ({data, strategyDetail}) => {
             </Datebox>
         )
     }, [name])
-    const items = Array.from({length: 94}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
+   // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
         <Titlelayout pv="0px" title={<Space size={32}><span>运行计划预览</span><span style={{color: '#999'}}>查看运行计划及具体内容</span></Space>} bordered={'n'} style={{flex: 1}}>
             <Viewbox>               
