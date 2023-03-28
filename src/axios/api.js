@@ -1573,5 +1573,5 @@ export class StoragePriceDesigner {
 }
 export class StorageStrategyDesigner {
   static QueryStrategy = (projectId, areaId) => server.get(`/Storage/StorageStrategyDesigner/QueryStrategy?projectId=${projectId}&areaId=${areaId}`);
-  static AddStrategy = (projectId, areaId, name) => server.get(`/Storage/StorageStrategyDesigner/AddStrategy?projectId=${projectId}&areaId=${areaId}&name=${name}`);
+  static AddStrategy = (projectId, areaId, name) => server.post(`/Storage/StorageStrategyDesigner/AddStrategy?projectId=${projectId}&areaId=${areaId}&name=${name}`);
 }
