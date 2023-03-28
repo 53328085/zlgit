@@ -21,7 +21,8 @@ import {  leftControl, bottomControl, rightControl, topControl, stopControl,Moni
 export default function Index() {
   const { RuntimeCamera:{ Statistics, Overview } } = Monitoring
   const {token} = useSelector(selectUser); 
-  console.log(token)
+  // const {name, roleType} = useSelector(selectUser) || {};
+console.log(useSelector(selectUser))
   const projectId = useSelector(selectProjectId)
   const { Panel } = Collapse;
   const { Item } = Form
@@ -73,7 +74,7 @@ let [areaId,setAreaId]=useState('')
     alike:''
   }
   let [overView,setoverView]=useState()
-  let [total,settotal]=useState(1)
+  let [total,settotal]=useState(0)
   const getOverview=()=>{
     return Overview(params).then((res)=>{
       let { success, data } = res
@@ -205,6 +206,7 @@ let [areaId,setAreaId]=useState('')
     ws.addEventListener('open', function (event) { });
     ws.addEventListener('message', function (event) {
       let data = new Uint8Array(event.data);
+      console.log(data)
       if (data.length == 1) {
         ws.close();
         if (data[0] == 1) {
@@ -226,10 +228,10 @@ const [recordData,setrecordData]=useState()
     console.log(record)
     setrecordData(record)
     //message.error('暂未开通')
-    if (record.accessMode == '本地监控') {
+    if (record.accessMode == '云监控') {
       showModal()
     } else {
-      if (record.accessMode == '云监控') {
+      if (record.accessMode == '本地监控') {
         setLocalModal(true);
         setCameraTitle(record.name)
         // setwsType('h264')
@@ -319,7 +321,7 @@ const [recordData,setrecordData]=useState()
     if (wsType == 'h264') {
       wsocket.close();
     } else {
-      closeWeb();
+      //closeWeb();
     }
   }
 
@@ -341,7 +343,7 @@ const [recordData,setrecordData]=useState()
     if (wsType == 'h264') {
       wsocket.close();
     } else {
-      closeWeb();
+     // closeWeb();
     }
     let start = changeUTC(startTime);
     let end = changeUTC(endTime);
