@@ -34,7 +34,12 @@ export default function Index() {
     let [brakeC, setbrakeC] = useState(false)
     let [readout, setreadout] = useState(false)
     let [brakeResult, setbrakeResult] = useState(false)
+    const [selectTableList, setselectTableList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [selectTableListRadio, setselectTableListRadio] = useState([])
+    const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
+    // const [selectTableKeyRadio, setselectTableKeyRadio] = useState([])
+    // const [selectTableKeyCheckbox, setselectTableKeyCheckbox] = useState([])
     let params = {
         pageNum: pageNum,
         pageSize: 15,
@@ -77,8 +82,10 @@ export default function Index() {
         setpageNum(1)
         if (val == 2) {
             setSelectionType("checkbox")
+            setselectTableList(selectTableListCheckbox)
         } else if (val == 1) {
             setSelectionType("radio")
+            setselectTableList(selectTableListRadio)
         }
     }
     const [selectionType, setSelectionType] = useState("radio");
@@ -212,13 +219,19 @@ export default function Index() {
         console.log(value)
         setdeviceStyle(value)
     }
-    const [selectTableList, setselectTableList] = useState([])
     let snList = []
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
+    const rowSelectionRadio = {
+        selectTableListRadio,
+        onChange:(selectedRowKeys, selectedRows)=>{
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setselectTableList(selectedRows)
-
+             setselectTableListRadio(selectedRows)
+        },
+    }
+    const rowSelectionCheckbox = {
+        selectTableListCheckbox,
+        onChange:(selectedRowKeys, selectedRows)=>{
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            setselectTableListCheckbox(selectedRows)
         },
     }
     const handleCancel = () => {
@@ -603,11 +616,19 @@ export default function Index() {
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                         </div>
 
+                        {selectionType=='radio'?<div>
                         <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
-                            type: selectionType,
-                            ...rowSelection,
+                            type: 'radio',
+                            ...rowSelectionRadio,
                         }} bordered></Table>
                         <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                        </div>:<div>
+                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                            type: 'checkbox',
+                            ...rowSelectionCheckbox,
+                        }} bordered></Table>
+                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                        </div>}
                     </div>
                 </div>
                 <Modal
