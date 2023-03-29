@@ -15,7 +15,7 @@ function Comp(props, ref) {
     const inpRef = useRef(inpvalue)
     inpRef.current = inpvalue
     const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]) : []
+    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
 
     const {
         placeholder = '输入控制器编号/安装地址',

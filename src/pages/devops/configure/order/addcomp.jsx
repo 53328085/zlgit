@@ -314,7 +314,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
                         columns={columns}
-                        scroll={{ y: 360 }}
+                        scroll={{ y: 560 }}
                         size={'small'}
                         dataSource={subMeter}
                         rowKey={record => record.id}

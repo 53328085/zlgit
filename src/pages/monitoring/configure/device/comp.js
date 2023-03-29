@@ -23,7 +23,7 @@ export default forwardRef(function Comp(props, ref) {
     const publish = useSelector(publishState)
     const projectId = useSelector(state => state.system.menus.projectId)
     const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]) : []
+    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
     const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal, setEnergyVal] = useState()
