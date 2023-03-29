@@ -325,7 +325,7 @@ const Energyitem = () => {
        case 'waterHot':
        case 'steam':
        case 'gas':
-       return '(㎡)'
+       return '(m³)'
        case 'oil':
         return '(吨)'
        default:
