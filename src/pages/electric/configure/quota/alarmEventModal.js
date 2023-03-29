@@ -92,14 +92,11 @@ export default function Index(props) {
     },
   ];
   //  新增告警事件声明初始化
-  // const [name, setName] = useState();
-  // const [pointIdentifier, setPointIdentifier] = useState();
   const AlarmRule = Form.useWatch("AlarmRule", formInfo);
   const [level, setLevel] = useState(levelList[0].id);
   const [push, setPush] = useState(true);
   const [enable, setEnable] = useState(true);
   //   新增告警事件-告警规则逻辑
-  // const [AlarmRule, setDefaultAlarmType] = useState(alarmList[0].id);
   const [alarmCondition, setAlarmCondition] = useState(1);
   const [compareValue, setCompareValue] = useState(2);
   const [soeValue, setSoeValue] = useState(1);
@@ -214,12 +211,9 @@ export default function Index(props) {
   };
   const handleCancel = () => {
     props.callBack();
-    // formInfo.resetFields();
   };
 
-  const changeAlarmType = (val) => {
-    // setDefaultAlarmType(val);
-  };
+  const changeAlarmType = (val) => {};
   ///区间告警-区间内外切换
   const conditionOnChange = ({ target: { value } }) => {
     setAlarmCondition(value);
@@ -263,60 +257,57 @@ export default function Index(props) {
   useEffect(() => {
     setEnable(enable);
   }, [enable]);
-  useEffect(
-    () => {
-      if (giveChildForm) {
-        setTimeout(() => {
-          //编辑
-          if (giveFormType === false) {
-            //区间事件
-            if (
-              giveChildForm.AlarmCondition === "Inside" ||
-              giveChildForm.AlarmCondition === "Outside"
-            ) {
-              giveChildForm.AlarmCondition =
-                alarmIntervalType[giveChildForm.AlarmCondition];
-              setAlarmCondition(giveChildForm.AlarmCondition);
-              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
-            } else if (
-              giveChildForm.AlarmCondition === "Greater" ||
-              giveChildForm.AlarmCondition === "Less"
-            ) {
-              //越限事件
-              giveChildForm.AlarmCondition =
-                alarmOverrunType[giveChildForm.AlarmCondition];
-              setCompareValue(giveChildForm.AlarmCondition);
-              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
-            } else if (
-              giveChildForm.AlarmCondition === "Both" ||
-              giveChildForm.AlarmCondition === "Alarm" ||
-              giveChildForm.AlarmCondition === "Recover"
-            ) {
-              //SOE事件
-              giveChildForm.AlarmCondition =
-                alarmSoeType[giveChildForm.AlarmCondition];
-              setSoeValue(giveChildForm.AlarmCondition);
-              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
-            } else if (giveChildForm.AlarmCondition === "Empty") {
-              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
-            }
-            formInfo.setFieldsValue(giveChildForm);
-            //变位事件
-            // giveChildForm.AlarmCondition =
-            // alarmDeflectionType[giveChildForm.AlarmCondition];
-          } else {
-            //新增
-            formInfo.resetFields();
-            //当新增时重置
-            setAlarmCondition(1);
-            setCompareValue(2);
-            setSoeValue(1);
+  useEffect(() => {
+    if (giveChildForm) {
+      setTimeout(() => {
+        //编辑
+        if (giveFormType === false) {
+          //区间事件
+          if (
+            giveChildForm.AlarmCondition === "Inside" ||
+            giveChildForm.AlarmCondition === "Outside"
+          ) {
+            giveChildForm.AlarmCondition =
+              alarmIntervalType[giveChildForm.AlarmCondition];
+            setAlarmCondition(giveChildForm.AlarmCondition);
+            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+          } else if (
+            giveChildForm.AlarmCondition === "Greater" ||
+            giveChildForm.AlarmCondition === "Less"
+          ) {
+            //越限事件
+            giveChildForm.AlarmCondition =
+              alarmOverrunType[giveChildForm.AlarmCondition];
+            setCompareValue(giveChildForm.AlarmCondition);
+            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+          } else if (
+            giveChildForm.AlarmCondition === "Both" ||
+            giveChildForm.AlarmCondition === "Alarm" ||
+            giveChildForm.AlarmCondition === "Recover"
+          ) {
+            //SOE事件
+            giveChildForm.AlarmCondition =
+              alarmSoeType[giveChildForm.AlarmCondition];
+            setSoeValue(giveChildForm.AlarmCondition);
+            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+          } else if (giveChildForm.AlarmCondition === "Empty") {
+            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           }
-        });
-      }
-    },
-    [giveFormType, giveChildForm]
-  );
+          formInfo.setFieldsValue(giveChildForm);
+          //变位事件
+          // giveChildForm.AlarmCondition =
+          // alarmDeflectionType[giveChildForm.AlarmCondition];
+        } else {
+          //新增
+          formInfo.resetFields();
+          //当新增时重置
+          setAlarmCondition(1);
+          setCompareValue(2);
+          setSoeValue(1);
+        }
+      });
+    }
+  }, [giveFormType, giveChildForm]);
   return (
     <div>
       <Modal
@@ -582,16 +573,6 @@ export default function Index(props) {
                     >
                       (必填)
                     </span>
-                    {/* <p
-                      style={{
-                        color: "red",
-                        fontSize: 8,
-                        width: 150,
-                        marginLeft:-140,
-                        marginTop:40
-                      }}
-                    >
-                    </p> */}
                   </Space>
                 </div>
                 {/* -----区间内----- */}

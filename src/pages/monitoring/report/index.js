@@ -15,13 +15,13 @@ import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-import ReactToPrint from "react-to-print";
-
+// import ReactToPrint from "react-to-print";
+import printJs from 'print-js'
 
 
 export default function Index() {
   const { RuntimeReport: { QueryReport } } = Monitoring
-  let componentRef = useRef();
+  // let componentRef = useRef();
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
@@ -99,7 +99,37 @@ useEffect(() => {
     }
   }
 const printReport=()=>{
+  let printDom = document.getElementById('contentPage');
+  let wholeNodes = document.querySelectorAll(".pages")
+  //打印的时候因为页面高度问题，需要改变margin-bottom的值
+  for(let i = 0;i<wholeNodes.length;i++){
+    if(i!==6){
+      wholeNodes[i].classList.replace('pageMargin','printPageMargin')
+    }
+  }
 
+  html2canvas(printDom,{
+    height:printDom.scrollHeight,
+    windowHeight: printDom.scrollHeight,
+    allowTaint:true,
+    scale: '2',//设置放大倍数
+    dpi: '192',
+    background: '#fff',
+    // 开启跨域配置
+    useCORS: true,//支持图片跨域
+  }).then(canvas=>{
+    let pageData = canvas.toDataURL('image/jpeg',1.0)
+    printJS({
+      printable:pageData,
+      type:'image',
+      style: '@page{size:auto;margin: 0cm 0cm 0cm 0cm;}' // 去除页眉页脚
+    })
+  })
+  for(let i = 0;i<wholeNodes.length;i++){
+    if(i!==6){
+      wholeNodes[i].classList.replace('printPageMargin' , 'pageMargin')
+    }
+  }
 }//打印报表
 const downloadReport=()=>{
   //先生成图片再导出
@@ -185,19 +215,24 @@ const downloadReport=()=>{
           <img src={searchFile} className={style.searchFile}></img>
           <span>生成报告</span>
         </div>
-        <ReactToPrint
+        {/* <ReactToPrint
           trigger={() => <div className={style.buttonR} onClick={printReport}>
           <img src={printFile} className={style.searchFile}></img>
             <span>打印报告</span>
           </div>}
           content={() => componentRef}
-        />
+        /> */}
+        <div className={style.buttonR} onClick={printReport}>
+          <img src={printFile} className={style.searchFile}></img>
+            <span>打印报告</span>
+          </div>
         <div className={style.buttonR} onClick={downloadReport}>
         <img src={downFile} className={style.searchFile} style={{zIndex:1}}></img>
           <span>导出报告</span>
         </div>
       </div>
-      <div className={style.report}  ref={(el) => (componentRef = el)} >
+      <div className={style.report} >
+      {/*  ref={(el) => (componentRef = el)} */}
         <div className={style.firstPage} >
           <div className={style.header}>
             <img src={logo} className={style.logo}></img>
@@ -211,7 +246,7 @@ const downloadReport=()=>{
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        {display ? <PageList   query={queryData}></PageList> : null }
+        <div >{display ? <PageList   query={queryData}></PageList> : null }</div>
       </div>
       
     </div>

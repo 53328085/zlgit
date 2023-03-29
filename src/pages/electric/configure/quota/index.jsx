@@ -167,7 +167,7 @@ export default function Index() {
         //   getAlarmData()
         // }
       } else {
-        message.error("删除失败,请重试！");
+        message.error(res.errMsg ? res.errMsg : "删除失败,请重试！");
       }
     });
     setDeleteModal(false);
@@ -184,7 +184,7 @@ export default function Index() {
         //刷新告警类型数据
         runEdit();
       } else {
-        message.error("删除失败！");
+        message.error(res.errMsg ? res.errMsg : "删除失败！");
         setDeleteTypeModal(false);
       }
     });
@@ -422,7 +422,7 @@ export default function Index() {
         getAlarmData();
         setaddAlarmModal(false);
       } else {
-        message.error("告警方案编辑失败！");
+        message.error(res.errMsg ? res.errMsg : "告警方案编辑失败！");
       }
     });
   };
@@ -504,7 +504,7 @@ export default function Index() {
             runEdit();
             message.success("修改告警事件成功！");
           } else {
-            message.error("修改告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "修改告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 2) {
@@ -514,7 +514,7 @@ export default function Index() {
             runEdit();
             message.success("修改告警事件成功！");
           } else {
-            message.error("修改告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "修改告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 3) {
@@ -524,7 +524,7 @@ export default function Index() {
             runEdit();
             message.success("修改告警事件成功！");
           } else {
-            message.error("修改告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "修改告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 4) {
@@ -534,7 +534,7 @@ export default function Index() {
             runEdit();
             message.success("修改告警事件成功！");
           } else {
-            message.error("修改告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "修改告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 5) {
@@ -544,7 +544,7 @@ export default function Index() {
             runEdit();
             message.success("修改告警事件成功！");
           } else {
-            message.error("修改告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "修改告警事件失败！");
           }
         });
       }
