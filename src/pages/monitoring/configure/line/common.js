@@ -336,7 +336,7 @@ let Treeline = forwardRef(
                         <div className={commonstyle.numcss}>
                             {tree.deviceCount}
                         </div>
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: 'flex',width:208,justifyContent:publish?'center':'none' }}>
                             {publish ? null : <>
                                 <div style={optcss} onClick={() => { openAdd(tree, alldata) }}>新增</div>
                                 <div style={optcss} onClick={() => { openEdit(tree) }}>编辑</div>
@@ -645,7 +645,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
                     </div>
                 </>}
 
-                <div>
+                <div style={{marginTop:publish?560:0}}>
                     {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>}
                     <div style={{ ...btnstyle, color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>关闭</div>
                 </div>

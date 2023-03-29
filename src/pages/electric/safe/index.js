@@ -135,7 +135,7 @@ const Timelinebox = styled(Timeline)`
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*2)}s 0s linear infinite
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 0s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;
@@ -159,7 +159,7 @@ const Timelinebox = styled(Timeline)`
       transform:translateY(0)
    }
    100%{
-      transform:translateY(${props=>{ if(-(props.children.props.children?.length)*64){return -(props.children.props.children?.length)*64} }}px)
+      transform:translateY(${props=>{ if(-(props.children.props.children?.length)*69.84){return -(props.children.props.children?.length)*69.84+280} }}px)
    }
  }
 `
@@ -216,7 +216,7 @@ export default function Index() {
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
   const arealist = useSelector(state => state.system.onelevel)
-  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName, id: 0 }, ...arealist]:[]
+  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName+'(全部)', id: 0 }, ...arealist]:[]
   console.log(arealist)
   const [warnData, setWarnData] = useState()
   const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
@@ -422,7 +422,7 @@ export default function Index() {
               <div className='transformcss' pageTotalRef={pageTotalRef}>
               {
              warnlist&&warnlist.length>0?
-              warnlist.map(
+              [...warnlist.map(
                 it => {
                   return (
                     <Timeline.Item dot={<div 
@@ -440,7 +440,57 @@ export default function Index() {
                     </Timeline.Item>
                   )
                 }
-              ):null
+              ),<Timeline.Item dot={<div 
+                style={{
+                  borderRadius:'50%', width:16,height:16,border:'1px solid',
+                  display:'flex',justifyContent: 'center',alignItems: 'center',
+                  borderColor: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                  <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                  </div >
+                  </div>}>
+                  <div>
+                    <p className='title'>{warnlist[0]?.warningTime}  {warnlist[0]?.alarmEvent}</p>
+                    <p className='content'>{warnlist[0]?.address}    SN {warnlist[0]?.sn}</p>
+                  </div>
+                </Timeline.Item>,
+                <Timeline.Item dot={<div 
+                  style={{
+                    borderRadius:'50%', width:16,height:16,border:'1px solid',
+                    display:'flex',justifyContent: 'center',alignItems: 'center',
+                    borderColor: warnlist[1]?.level===1?'rgb(255,112,112)':warnlist[1]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                    <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[1]?.level===1?'rgb(255,112,112)':warnlist[1]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                    </div >
+                    </div>}>
+                    <div>
+                      <p className='title'>{warnlist[1]?.warningTime}  {warnlist[1]?.alarmEvent}</p>
+                      <p className='content'>{warnlist[1]?.address}    SN {warnlist[1]?.sn}</p>
+                    </div>
+                  </Timeline.Item>,<Timeline.Item dot={<div 
+                style={{
+                  borderRadius:'50%', width:16,height:16,border:'1px solid',
+                  display:'flex',justifyContent: 'center',alignItems: 'center',
+                  borderColor: warnlist[2]?.level===1?'rgb(255,112,112)':warnlist[2]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                  <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[2]?.level===1?'rgb(255,112,112)':warnlist[2]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                  </div >
+                  </div>}>
+                  <div>
+                    <p className='title'>{warnlist[2]?.warningTime}  {warnlist[2]?.alarmEvent}</p>
+                    <p className='content'>{warnlist[2]?.address}    SN {warnlist[2]?.sn}</p>
+                  </div>
+                </Timeline.Item>,
+                <Timeline.Item dot={<div 
+                  style={{
+                    borderRadius:'50%', width:16,height:16,border:'1px solid',
+                    display:'flex',justifyContent: 'center',alignItems: 'center',
+                    borderColor: warnlist[3]?.level===1?'rgb(255,112,112)':warnlist[3]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                    <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[3]?.level===1?'rgb(255,112,112)':warnlist[3]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                    </div >
+                    </div>}>
+                    <div>
+                      <p className='title'>{warnlist[3]?.warningTime}  {warnlist[3]?.alarmEvent}</p>
+                      <p className='content'>{warnlist[3]?.address}    SN {warnlist[3]?.sn}</p>
+                    </div>
+                  </Timeline.Item>]:null
              }
               </div>
            

@@ -260,9 +260,9 @@ console.log(props.query)
                 <Header></Header>
                 <div className={style.pageContent}>
                     <div className={style.mainTitle}>3. 线路能耗情况</div>
-                    <div className={style.lineChart} id="lineChart"></div>
+                    <div className={style.lineChart} style={{width:'100%'}} id="lineChart"></div>
                     <div className={style.mainTitle}>4. 变压器运行情况</div>
-                    <Table dataSource={dataSource} columns={columns} pagination={false} bordered style={{width:525}} ></Table>
+                    <Table dataSource={dataSource} columns={columns} pagination={false} bordered className={style.tableStyle}  ></Table>
                 </div>
             </div>
 

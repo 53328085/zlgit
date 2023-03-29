@@ -116,10 +116,13 @@ const Tabsbox = styled(Tabs)`
             }
           return [...new Set(Nos)]
         }
+        
         try {        
             let runnos = getno(MenuNos.current);
             let desnos = getno(Dmenunos.current)
-            let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])] : [...new Set([...runnos, ...desnos])];
+            let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])] 
+            : role == 4 ? [...new Set([...runnos, ...desnos, '0104'])] :
+             [...new Set([...runnos, ...desnos])];
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
             success &&  custMsg({content: '保存成功', onClose: ()=> {
               mref.current.onCancel()

@@ -4,7 +4,7 @@ import { useRequest, useCountDown } from 'ahooks';
 import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} from 'antd'
 import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
-// import {selectUser} from '@redux/user.js'
+ import {selectUser} from '@redux/user.js'
 import {manager } from '@redux/user'  
 import { getpublishState } from '@redux/systemconfig.js'  
 import log from './log.png'
@@ -67,7 +67,8 @@ export default function Release({CModal, projectId}) {
   const [phone, setPhone] = useState([]);
   const [title, setTitle] = useState('')
  // const [moblies, setMoblie] = useState();
- // const {mobile} = useSelector(selectUser)
+ const {mobile: logMobile} = useSelector(selectUser)
+ const [loguerphone, setLoguerphoe] = useState('') 
  const [mobile, setMobile] = useState()
  const ismanager = useSelector(manager)
   const code =useRef();
@@ -78,14 +79,14 @@ export default function Release({CModal, projectId}) {
       let {success, data } = res
     
       if (success && data) {  
-        setMobile(data.mobile)     
+       // setMobile(data.mobile)     
         return {
           total: 1,   // 返回的是对象
           list: [data]
         }
       
       }else {
-        setMobile()
+        //setMobile()
         return {
           total: 0,
           list: []
@@ -98,18 +99,19 @@ export default function Release({CModal, projectId}) {
   //  onError: (e) => message.warning(e.message || '数据出错'),
   })
   
-  const onChange = async (f, {id, state}) => { 
+  const onChange = async (f, {id, state, mobile}) => { 
     stateV.current = state;
     let text = stateV.current == 1 ? '项目取消发布' : '项目发布'
     setTitle(text)
-    setCurProject(id)
+    setCurProject(id)     
+     setMobile(mobile)
     let phone = mobile?.split('');
     phone.splice(3, 4, '*', '*', "*", "*" ).join();
     setPhone(phone)
      modal.current.onOpen() 
   };
 
- const Countdown = () => { // 获取验证吗
+ const Countdown = ({mobile}) => { // 获取验证吗
   if (!mobile) return message.warning('手机号码不能为空')
   const getCode = async () => {
     const {data, success} = await Login.GetVerification(mobile)
@@ -144,15 +146,17 @@ const onOk =async () => { // 发布 // 取消发布
     if (success) {
       dispatch(getpublishState(state))
       code.current = ''
+      modal.current.onCancel();
       message.success({
         content: stateV.current === 1 ?   '取消发布成功' : '发布成功',
-        duration: 0.3,
+        duration: 0.2,
         onClose: () => {
-          modal.current.onCancel();
-          code.current = '';
+          //modal.current.onCancel();
+          // code.current = '';
           refresh()
         }
       })
+     
     } 
   } catch (error) {
     console.log(error)
@@ -162,11 +166,23 @@ const onOk =async () => { // 发布 // 取消发布
 const projectNameChange = (e) => {
   projectName.current = e.target.value
 }
+
+// 删除 start 
+const onDel = (item) => {
+    logMobile
+    let phone = logMobile?.split('');
+     phone.splice(3, 4, '*', '*', "*", "*" ).join();
+     setLoguerphoe(phone)
+     setCurProject(item.id)
+     delmodal.current.onOpen()
+  
+   
+}
 const delProject = async () => {
 
   try {
-     if (!projectName.current.trim()) return message.warning('请输入项目名称')
-    const {success, errMsg}  = await  DeleteProject(curProjectId, projectName.current);
+     if (!projectName.current.trim()) return message.warning('请输入短信验证吗')
+    const {success, errMsg}  = await  DeleteProject(curProjectId, logMobile, projectName.current);
     if (success) {
       delmodal.current.onCancel()
       message.success('删除成功')
@@ -197,10 +213,7 @@ const delProject = async () => {
                  </div>
                  <div className='right'>
                  <Switch key={stateV.current}  checkedChildren="发布"  unCheckedChildren="未发布" style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
-                 {!ismanager && <Link underline type="danger" onClick={() => {
-                   delmodal.current.onOpen()
-                   setCurProject(item.id)}
-                  }>删除项目</Link>}
+                 {!ismanager && <Link underline type="danger" onClick={() => onDel(item)}>删除项目</Link>}
                  </div>
             </div>
             <div className="lower">
@@ -225,7 +238,7 @@ const delProject = async () => {
                  <Title level={4}>取消发布项目时 用户需知</Title>
                  <Paragraph>1、项目取消发布后，项目管理中的各项设置将处于可编辑状态</Paragraph>
                  <Paragraph>2、项目取消发布后，设备及网关档案将处于可编辑状态</Paragraph>
-                 <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}}>{phone}</Button><Countdown /></Space></Paragraph>
+                 <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}}>{phone}</Button><Countdown mobile={mobile} /></Space></Paragraph>
                  <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
                  <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
                </div>
@@ -239,8 +252,10 @@ const delProject = async () => {
                  <Paragraph>3、删除项目后将清除所有设备历史数据；</Paragraph>
                  <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
                  <Paragraph>该操作不可逆，一旦操作成功，应用内所有内容将被删除。</Paragraph>
-                 <Paragraph>请在下方输入框中输入项目名称以确定操作</Paragraph>               
-                 <Paragraph><Input style={{width: '422px'}}   onChange={projectNameChange} allowClear /></Paragraph>
+                 <Paragraph> <Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>登录用户手机号</Text> <Button style={{width: '148px'}}>{loguerphone}</Button><Countdown mobile={logMobile} /></Space></Paragraph>
+                 <Paragraph><Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={projectNameChange} /></Space></Paragraph>
+              {/*    <Paragraph>请在下方输入框中输入项目名称以确定操作</Paragraph>               
+                 <Paragraph><Input style={{width: '422px'}}   onChange={projectNameChange} allowClear /></Paragraph> */}
                
                </div>
            </CModal>

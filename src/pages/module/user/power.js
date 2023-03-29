@@ -23,7 +23,9 @@ import {WarningFilled} from '@ant-design/icons'
 import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
 import {useSelector} from 'react-redux'
+//levelDefaultLabel
 import {selectUser} from "@redux/user";
+import {levelDefaultLabel} from "@redux/systemconfig";
 import {CustButton} from "@com/useButton"
 import  Custmodl from '@com/useModal'
 import {custMsg} from '@com/usehandler'
@@ -136,6 +138,7 @@ export default function Account({projectId, CModal}) {
  const title = ['新增项目管理员', '新增运维人员'][person]
  const [form] = Form.useForm()
  const {roleType} = useSelector(selectUser) || {};
+ const defaultLabel = useSelector(levelDefaultLabel)
  const [editTitle, setEdit] = useState('')
  const [initform, setInitialValues] = useState({
   password: false,
@@ -431,7 +434,7 @@ const reset = (record) => {
               </Item>
       </div>
       <Space size={8} wrap>
-                <Text>园区选择</Text>  {field.areaAuthority?.map(item => (<Ctag key="item">{item.name}</Ctag>))} 
+                <Text>{defaultLabel}权限</Text>  {field.areaAuthority?.map(item => (<Ctag key="item">{item.name}</Ctag>))} 
        </Space>
       </div>
     ))
@@ -532,7 +535,7 @@ const reset = (record) => {
             </Form>
            
           <Space size={8} wrap>
-             <Text>园区选择</Text> {areas.map(item => (<Ctag key="item">{item.name}</Ctag>))}
+             <Text>{defaultLabel}权限</Text> {areas.map(item => (<Ctag key="item">{item.name}</Ctag>))}
           </Space>
           </>)
            }

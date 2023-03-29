@@ -126,7 +126,7 @@ export default function Index() {
   const [areavalue, setAreavalue] = useState(0)
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName, id: 0 }, ...oneLevel]), [oneLevel]):[]
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const [warn, setWarn] = useState()//当前告警
   const [allwarn, setAllwarn] = useState() //本月告警
   const [order, setOrder] = useState() //工单
@@ -271,11 +271,17 @@ export default function Index() {
     const res =await operation.MonthAlarmTrend(params)
     if(res.success){
       const {currentMonth ,lastMonth} =res.data
-      let data = currentMonth.map((item,index)=>{
+      let arr=[]
+      if(currentMonth.length-lastMonth.length>0){
+        arr=[...currentMonth]
+      }else{
+        arr=[...lastMonth]
+      }
+      let data = arr.map((item,index)=>{
         return {
           x:item.x,
           '本月':item.y,
-          '上月':lastMonth[index].y
+          '上月':lastMonth[index]?.y
         }
       })
       setDatasetMonthl({dimensions:['x','本月','上月'],source:[...data]})

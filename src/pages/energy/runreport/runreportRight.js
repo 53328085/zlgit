@@ -10,7 +10,7 @@ export default function Index(props) {
   const { getReportInfo, getElectricityDate, dataInfoAll } = props;
   console.log(dataInfoAll);
   return (
-    <div className={style.contentRight}>
+    <div className={style.contentRight} id="rightInfo">
       <div className={style.showInfo}>
         <img src={chintLogo} className={style.chintLogo}></img>
         <span className={style.chinName}>正泰综合能源服务平台</span>
@@ -76,9 +76,18 @@ export default function Index(props) {
               <p className={style.title}>2. 用电量分析</p>
               <p className={style.smallTitle}>
                 正泰物联杭州园区监测周期内总耗电量
-                <span>160194kW·h consumeTotal</span>， 日平均耗电量 ConsumeAvg
+                <span>
+                  160194kW·h
+                  {/* consumeTotal */}
+                </span>
+                ， 日平均耗电量
+                {/* ConsumeAvg */}
                 <span>5167.55kW·h</span>，单日最大耗电量
-                <span>7432.25kW·h ConsumeMax</span>，日耗电情况详见下图：
+                <span>
+                  7432.25kW·h
+                  {/* ConsumeMax */}
+                </span>
+                ，日耗电情况详见下图：
               </p>
               <div className={style.lineChart}>
                 {getElectricityDate ? (

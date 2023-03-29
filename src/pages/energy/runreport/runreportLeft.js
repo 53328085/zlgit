@@ -101,7 +101,7 @@ export default function Index(props) {
   return (
     <div className={style.contentLeft}>
       <div className={style.parkSelect}>
-        <span className={style.title}>园区选择</span>
+        <span className={style.title}>{areaList[0]?.levelName||'园区'}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
@@ -173,7 +173,7 @@ export default function Index(props) {
         </Button>
         <Button
           type="primary"
-          onClick={() => enterLoading(1)}
+          onClick={() => props.reportPrintGive()}
           className={style.btn}
         >
           <PrinterOutlined />

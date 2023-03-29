@@ -1,4 +1,4 @@
-import React, { useState,  useRef } from "react";
+import React, { useState,  useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ import {
   Table,
   Layout,
   message,
+  DatePicker
 } from "antd";
 import {
   UserOutlined,
@@ -34,6 +35,7 @@ import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
 import { configProject, getMenus, getshifts, getOnelevel, getpublishState } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
+import UseTabel from '@com/useTable'
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
@@ -142,6 +144,8 @@ const Mainbox = styled.div`
     row-gap: 32px;
     height: calc(100vh - 165px);
     .serach {
+      display: flex;
+      justify-content: space-between;
       .ant-form-item {
         margin-right: 0px;
       }
@@ -247,7 +251,16 @@ const Modalbox = styled(Modal)`
     }
   }
 `;
-
+const Opbox = styled.div`
+ display: grid;
+ grid-template-rows: 32px 1fr;
+ row-gap: 16px;
+ flex:1;
+ padding-top: 16px;
+ border-top: 1px dotted #d7d7d7;
+ min-height: 408px;
+`
+const { RangePicker } = DatePicker
 export default function Index() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -507,6 +520,136 @@ tableProps.pagination.size="default" // 页码大小默认
   );
   const { name } = useSelector((state) => state.user);
 
+  // 操作记录 start
+  const opref = useRef()
+  const opRecord = () => {
+    opref.current.onOpen()
+ }
+ const opclose = () => {
+  opref.current.onCancel()
+ }
+ const OprecordCom = () => {
+
+  const [opform] = Form.useForm()
+  const [opdata, setOpdata] = useState([])
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 12,
+    total: 0
+  })
+
+  let params = {
+    //查询
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+    start:  '',
+    end: ''
+  };
+  const tableOnchange = (e) => {
+    console.log(e)
+    let {current} = e
+      setPagination({
+        ...pagination,
+        current,
+      })
+   
+  }
+
+
+  const opcolumns = [ 
+    {
+      dataIndex: "projectId",
+      title: '项目ID',
+      key: "projectId",
+      align: "center",
+    },
+    {
+      dataIndex: "projectName",
+      title: '项目名称',
+      key: "projectName",
+      align: "center",
+    },
+    {
+      dataIndex: "creatorInfo",
+      title: '操作者/手机号',
+      key: "creatorInfo",
+      align: "center",
+    },
+    {
+      dataIndex: "operate",
+      title: '操作类型',
+      key: "operate",
+      align: "center",
+    },
+    {
+      dataIndex: "detail",
+      title: '备注',
+      key: "detail",
+      align: "center",
+      width: 546
+    },
+    {
+      dataIndex: "operationTime",
+      title: '操作时间',
+      key: "operationTime",
+      align: "center",
+    },
+  ]
+  const getRecord = async () => {
+     let start = '0001-01-01'
+     let end = '0001-01-01'
+     try {
+      let {date} = opform.getFieldsValue()
+       if (Array.isArray(date) && date.length > 1) {
+        start = date[0].format('YYYY-MM-DD')
+         end = date[1].format('YYYY-MM-DD')
+       }
+      params = {...params, start, end} 
+    let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
+     if (success) {
+      setOpdata([...data])
+      setPagination({
+        ...pagination,
+        total,
+      })
+     }else {
+      setOpdata([])
+      setPagination({
+        ...pagination,
+        total: 0,
+      })
+     }     
+   
+     } catch (error) {
+       console.log(error)
+     }
+     
+  }
+ useEffect(() => {
+  getRecord()
+ }, [pagination.current])
+ return  <Opbox>
+         
+  <Form
+    form={opform}
+  >
+    
+      <Item label="操作时间" name="date">
+         <RangePicker style={{width: '408px'}} onChange={getRecord} />
+      </Item>
+  </Form>
+<UseTabel
+    columns={opcolumns}
+    dataSource={opdata}
+    pagination={pagination} 
+    onChange={tableOnchange}
+    
+    rowKey="id"
+  />  
+</Opbox>
+ }
+
+// 操作记录 end
   return (
       
       <Mainbox>
@@ -544,19 +687,8 @@ tableProps.pagination.size="default" // 页码大小默认
             className="serach"
             form={form}
           >
-            <Space size={32} style={{ flex: 1 }}>
-              <Item>
-                <CustBtn
-                  onClick={showproject}
-                  icon={
-                    <PlusCircleOutlined
-                      style={{ color: "#fff", fontSize: "24px" }}
-                    />
-                  }
-                >
-                  新增项目
-                </CustBtn>
-              </Item>
+            <Space size={32} >
+              
               <Item name="name">
               <Iptserach
                    placeholder="请输入项目名称"
@@ -599,12 +731,34 @@ tableProps.pagination.size="default" // 页码大小默认
                 </Cselect>
               </Item>
              
-              <Item>
+             {/*  <Item>
                 <Space>
                 <span style={{ color: "#ccc", fontSize: "16px" }}>
                   当前账户共有{count}个项目
                 </span> 
                 </Space>
+              </Item> */}
+            </Space>
+            <Space size={32}>
+              <Item noStyle>
+                <CustBtn
+                  onClick={showproject}
+                  icon={
+                    <PlusCircleOutlined
+                      style={{ color: "#fff", fontSize: "24px" }}
+                    />
+                  }
+                >
+                  新增项目
+                </CustBtn>
+              </Item>
+              <Item noStyle>
+                  <CustBtn
+                  onClick={opRecord}
+                   
+                   >
+                  操作记录
+                </CustBtn>
               </Item>
             </Space>
           </Form>
@@ -642,6 +796,18 @@ tableProps.pagination.size="default" // 页码大小默认
         type="dark"
       >
         <Projectform ref={projectform} />
+      </Custmodal>
+
+
+      <Custmodal
+        title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>项目操作历史</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>关闭</Button></div>}
+        ref={opref} 
+        width={1424} 
+        mold="cust"   
+        footer={null}
+      >
+         <OprecordCom />
+         
       </Custmodal>
       </Mainbox>
      
