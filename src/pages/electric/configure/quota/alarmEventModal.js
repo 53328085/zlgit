@@ -10,6 +10,7 @@ import {
   Radio,
   Space,
   InputNumber,
+  message,
 } from "antd";
 
 import { useSelector } from "react-redux";
@@ -64,15 +65,15 @@ export default function Index(props) {
   ];
   const soeOptions = [
     {
-      label: "告警标识+消警标识",
+      label: "告警+消警",
       value: 1,
     },
     {
-      label: "告警标识",
+      label: "告警",
       value: 2,
     },
     {
-      label: "消警标识",
+      label: "消警",
       value: 3,
     },
   ];
@@ -104,24 +105,24 @@ export default function Index(props) {
   const [soeValue, setSoeValue] = useState(1);
   //告警类型
   const alarmType = {
-    "Empty": 0,
-    "Overrun": 1,
-    "Interval": 2,
-    "Deflection": 3,
-    "SOE": 4,
-    "Communication": 5,
+    Empty: 0,
+    Overrun: 1,
+    Interval: 2,
+    Deflection: 3,
+    SOE: 4,
+    Communication: 5,
   };
   //区间事件，触发告警的条件
   const alarmIntervalType = {
-    "Empty": 0,
-    "Inside": 1,
-    "Outside": 2,
+    Empty: 0,
+    Inside: 1,
+    Outside: 2,
   };
   //越限事件，触发告警的条件
   const alarmOverrunType = {
-    "Empty": 0,
-    "Greater": 1,
-    "Less": 2,
+    Empty: 0,
+    Greater: 1,
+    Less: 2,
   };
   //变位事件，触发告警的条件
   // const alarmDeflectionType = {
@@ -132,12 +133,11 @@ export default function Index(props) {
   // };
   //SOE事件，触发告警的条件
   const alarmSoeType = {
-    "Empty": 0,
-    "Both": 1,
-    "Alarm": 2,
-    "Recover": 3,
+    Empty: 0,
+    Both: 1,
+    Alarm: 2,
+    Recover: 3,
   };
-
 
   const addAlarmOk = async () => {
     try {
@@ -154,13 +154,17 @@ export default function Index(props) {
       };
       if (AlarmRule === 2) {
         //区间告警
-        let changeInfo = {
-          alarmCondition: AlarmRule,
-          minCriticalValue: values.MinCriticalValue,
-          maxCriticalValue: values.MaxCriticalValue,
-        };
-        const params = { ...data, ...changeInfo };
-        props.getValues(params);
+        if (values.MaxCriticalValue >= values.MinCriticalValue) {
+          let changeInfo = {
+            alarmCondition: alarmCondition,
+            minCriticalValue: values.MinCriticalValue,
+            maxCriticalValue: values.MaxCriticalValue,
+          };
+          const params = { ...data, ...changeInfo };
+          props.getValues(params);
+        } else {
+          message.warning("提示：高限值必须大于或等于低限值！");
+        }
       } else if (AlarmRule === 1) {
         //越限告警
         let changeInfo = {
@@ -180,13 +184,27 @@ export default function Index(props) {
         props.getValues(params);
       } else if (AlarmRule === 4) {
         //SOE告警
-        let changeInfo = {
-          alarmCondition: soeValue,
-          alarmLabel: values.AlarmLabel,
-          recoverLabel: values.RecoverLabel,
-        };
-        const params = { ...data, ...changeInfo };
-        props.getValues(params);
+        if (soeValue === 1) {
+          if (values.AlarmLabel === values.RecoverLabel) {
+            message.warning("提示：告警标识和消警标识内容不能相同！");
+          } else {
+            let changeInfo = {
+              alarmCondition: soeValue,
+              alarmLabel: values.AlarmLabel,
+              recoverLabel: values.RecoverLabel,
+            };
+            const params = { ...data, ...changeInfo };
+            props.getValues(params);
+          }
+        } else {
+          let changeInfo = {
+            alarmCondition: soeValue,
+            alarmLabel: values.AlarmLabel ? values.AlarmLabel : "",
+            recoverLabel: values.RecoverLabel ? values.RecoverLabel : "",
+          };
+          const params = { ...data, ...changeInfo };
+          props.getValues(params);
+        }
       } else if (AlarmRule === 5) {
         //离线告警
         const params = { ...data };
@@ -223,12 +241,12 @@ export default function Index(props) {
   const enableChange = (value) => {
     setEnable(value);
   };
-  // useEffect(() => {
-  //   if (giveFormType === true) {
-  //     formInfo.resetFields(); //当新增时重置
-  //   } else {
-  //   }
-  // }, [AddAlarmEventGive]);
+  useEffect(() => {
+    if (giveFormType === true) {
+      formInfo.resetFields(); //当新增时重置
+    } else {
+    }
+  }, [AddAlarmEventGive]);
 
   useEffect(() => {
     setAlarmCondition(alarmCondition);
@@ -251,37 +269,52 @@ export default function Index(props) {
         setTimeout(() => {
           //编辑
           if (giveFormType === false) {
-            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
             //区间事件
-            giveChildForm.AlarmCondition =
-              alarmIntervalType[giveChildForm.AlarmCondition];
-            setAlarmCondition(giveChildForm.AlarmCondition);
-            //越限事件
-            giveChildForm.AlarmCondition =
-              alarmOverrunType[giveChildForm.AlarmCondition];
-            setCompareValue(giveChildForm.AlarmCondition);
-
+            if (
+              giveChildForm.AlarmCondition === "Inside" ||
+              giveChildForm.AlarmCondition === "Outside"
+            ) {
+              giveChildForm.AlarmCondition =
+                alarmIntervalType[giveChildForm.AlarmCondition];
+              setAlarmCondition(giveChildForm.AlarmCondition);
+              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+            } else if (
+              giveChildForm.AlarmCondition === "Greater" ||
+              giveChildForm.AlarmCondition === "Less"
+            ) {
+              //越限事件
+              giveChildForm.AlarmCondition =
+                alarmOverrunType[giveChildForm.AlarmCondition];
+              setCompareValue(giveChildForm.AlarmCondition);
+              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+            } else if (
+              giveChildForm.AlarmCondition === "Both" ||
+              giveChildForm.AlarmCondition === "Alarm" ||
+              giveChildForm.AlarmCondition === "Recover"
+            ) {
+              //SOE事件
+              giveChildForm.AlarmCondition =
+                alarmSoeType[giveChildForm.AlarmCondition];
+              setSoeValue(giveChildForm.AlarmCondition);
+              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+            } else if (giveChildForm.AlarmCondition === "Empty") {
+              giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+            }
+            formInfo.setFieldsValue(giveChildForm);
             //变位事件
             // giveChildForm.AlarmCondition =
             // alarmDeflectionType[giveChildForm.AlarmCondition];
-
-            //SOE事件
-            giveChildForm.AlarmCondition =
-              alarmSoeType[giveChildForm.AlarmCondition];
-            setSoeValue(giveChildForm.AlarmCondition);
-            formInfo.setFieldsValue(giveChildForm);
           } else {
             //新增
-            formInfo.resetFields(); 
+            formInfo.resetFields();
             //当新增时重置
             setAlarmCondition(1);
             setCompareValue(2);
-            setSoeValue(1)
+            setSoeValue(1);
           }
         });
       }
     },
-    // [AddAlarmEventGive]);
     [giveFormType, giveChildForm]
   );
   return (
@@ -535,8 +568,9 @@ export default function Index(props) {
                     >
                       <InputNumber
                         style={{ width: 125 }}
-                        placeholder=" 且高值≥低值"
+                        placeholder="且高值≥低值"
                         className={style.colorRed}
+                        // prefix="且高值≥低值"
                       />
                     </Item>
                     <span
@@ -717,10 +751,7 @@ export default function Index(props) {
             ) : AlarmRule === 4 ? (
               <div>
                 {giveModalTitle === "新增告警事件" ? (
-                  <Item
-                    label="告警条件："
-                    labelCol={{ flex: "85px" }}
-                  >
+                  <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                     <Radio.Group
                       options={soeOptions}
                       onChange={soeOnChange}
@@ -731,14 +762,15 @@ export default function Index(props) {
                 ) : (
                   <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                     {soeValue === 1 ? (
-                      <span>告警标识+消警标识</span>
+                      <span>告警+消警</span>
                     ) : soeValue === 2 ? (
-                      <span>告警标识</span>
+                      <span>告警</span>
                     ) : soeValue === 3 ? (
-                      <span>消警标识</span>
+                      <span>消警</span>
                     ) : null}
                   </Item>
                 )}
+
                 {soeValue === 1 ? (
                   <div>
                     <Item
@@ -746,6 +778,10 @@ export default function Index(props) {
                       labelCol={{ flex: "85px" }}
                       style={{ width: 300 }}
                       name="AlarmLabel"
+                      rules={[
+                        { required: true, message: "请输入告警标识" },
+                        { pattern: /^(?!\s)/, message: "禁止首字符输入空格" },
+                      ]}
                     >
                       <Input
                         style={{ width: 132 }}
@@ -757,6 +793,10 @@ export default function Index(props) {
                       labelCol={{ flex: "85px" }}
                       style={{ width: 300 }}
                       name="RecoverLabel"
+                      rules={[
+                        { required: true, message: "请输入消警标识" },
+                        { pattern: /^(?!\s)/, message: "禁止首字符输入空格" },
+                      ]}
                     >
                       <Input
                         style={{ width: 130 }}
@@ -770,6 +810,10 @@ export default function Index(props) {
                     labelCol={{ flex: "85px" }}
                     style={{ width: 300 }}
                     name="AlarmLabel"
+                    rules={[
+                      { required: true, message: "请输入告警标识" },
+                      { pattern: /^(?!\s)/, message: "禁止首字符输入空格" },
+                    ]}
                   >
                     <Input
                       style={{ width: 132 }}
@@ -782,6 +826,10 @@ export default function Index(props) {
                     labelCol={{ flex: "85px" }}
                     style={{ width: 300 }}
                     name="RecoverLabel"
+                    rules={[
+                      { required: true, message: "请输入消警标识" },
+                      { pattern: /^(?!\s)/, message: "禁止首字符输入空格" },
+                    ]}
                   >
                     <Input
                       style={{ width: 130 }}

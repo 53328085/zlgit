@@ -15,10 +15,13 @@ import {
 } from "antd";
 import AlarmEventModal from "./alarmEventModal";
 import { AlarmManagement } from "@api/api.js";
-import { useSelector } from "react-redux";
-import { selectProjectId } from "@redux/systemconfig.js";
+import { selectProjectId, publishState } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
+
+import { useSelector } from "react-redux";
 export default function Index() {
+  const ispublish = useSelector(publishState);
+  console.log(ispublish);
   const {
     QueryAlarmPage,
     QueryAddAlarm,
@@ -89,38 +92,53 @@ export default function Index() {
     setPageNum(page);
   };
 
-  const columns = [
-    {
-      align: "center",
-      title: "告警方案名称",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "备注",
-      dataIndex: "tag",
-      key: "tag",
-      align: "center",
-    },
-    {
-      title: "操作",
-      key: "action",
-      align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          <span className={style.editText} onClick={() => edit(record)}>
-            编辑
-          </span>
-          <span
-            className={style.deleteText}
-            onClick={() => deleteRecord(record)}
-          >
-            删除
-          </span>
-        </Space>
-      ),
-    },
-  ];
+  const columns = ispublish
+    ? [
+        {
+          align: "center",
+          title: "告警方案名称",
+          dataIndex: "name",
+          key: "name",
+        },
+        {
+          title: "备注",
+          dataIndex: "tag",
+          key: "tag",
+          align: "center",
+        },
+      ]
+    : [
+        {
+          align: "center",
+          title: "告警方案名称",
+          dataIndex: "name",
+          key: "name",
+        },
+        {
+          title: "备注",
+          dataIndex: "tag",
+          key: "tag",
+          align: "center",
+        },
+        {
+          title: "操作",
+          key: "action",
+          align: "center",
+          render: (_, record) => (
+            <Space size="middle">
+              <span className={style.editText} onClick={() => edit(record)}>
+                编辑
+              </span>
+              <span
+                className={style.deleteText}
+                onClick={() => deleteRecord(record)}
+              >
+                删除
+              </span>
+            </Space>
+          ),
+        },
+      ];
 
   //  新增告警声明初始化
   const [name, setName] = useState();
@@ -192,7 +210,7 @@ export default function Index() {
       if (res.success) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
-          console.log(JSON.parse(res.data))
+          console.log(JSON.parse(res.data));
         }
       } else {
         messageApi.open({
@@ -209,11 +227,12 @@ export default function Index() {
   };
   //用于告警类型  新增、修改、删除后调用
   const alarmTypeTable = () => {
+    setDataSourceType();
     QueryAlarmEvents(editId).then((res) => {
       if (res.success) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
-          console.log(JSON.parse(res.data))
+          console.log(JSON.parse(res.data));
         }
       } else {
         messageApi.open({
@@ -274,7 +293,6 @@ export default function Index() {
       render: (text) => {
         return <>{text === true ? <span>是</span> : <span>否</span>}</>;
       },
-      // <Space><span>{text}</span><span>{text}</span></Space>,
     },
     {
       title: "是否连续推送",
@@ -432,7 +450,7 @@ export default function Index() {
             runEdit();
             message.success("新增告警事件成功！");
           } else {
-            message.error("新增告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 2) {
@@ -442,7 +460,7 @@ export default function Index() {
             runEdit();
             message.success("新增告警事件成功！");
           } else {
-            message.error("新增告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 3) {
@@ -452,7 +470,7 @@ export default function Index() {
             runEdit();
             message.success("新增告警事件成功！");
           } else {
-            message.error("新增告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 4) {
@@ -462,7 +480,7 @@ export default function Index() {
             runEdit();
             message.success("新增告警事件成功！");
           } else {
-            message.error("新增告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
         });
       } else if (childFormInfo.alarmRule === 5) {
@@ -472,7 +490,7 @@ export default function Index() {
             runEdit();
             message.success("新增告警事件成功！");
           } else {
-            message.error("新增告警事件失败！");
+            message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
         });
       }
@@ -549,13 +567,15 @@ export default function Index() {
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => showAdd()}
-        >
-          新增方案
-        </Button>
+        {ispublish ? null : (
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => showAdd()}
+          >
+            新增方案
+          </Button>
+        )}
         <Table
           style={{ marginTop: "16px" }}
           columns={columns}
