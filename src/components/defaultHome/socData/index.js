@@ -52,7 +52,7 @@ export default function DefaultHome(){
   
   return (
     <Titlelayout title='站点SOC' {...fs}>
-        <div style={{width: '424px', height: '338px'}}>
+        <div style={{width: '424px', height: '338px', marginTop: 20}}>
               <DemoLiquid></DemoLiquid>
               
           </div>
