@@ -18,6 +18,14 @@ import EnergyTrend from '../../components/defaultHome/energyTrend'
 import RealLoad from '../../components/defaultHome/load'
 import WarningSpread from '../../components/defaultHome/spread'
 import ElectricAnalysis from '../../components/defaultHome/electricAnalysis'
+import TotalCharge from '@com/defaultHome/totalCharge'
+import TotalDischarge from '@com/defaultHome/totalDischarge'
+import ChargeCost from '@com/defaultHome/chargeCost'
+import DischargeCost from '@com/defaultHome/disChargeCost'
+import TotalIncome from '@com/defaultHome/totalIncome'
+import StorageStatistics from '@com/defaultHome/storageStatistics'
+import StorageTrend from '@com/defaultHome/storageTrend'
+import SocData from '@com/defaultHome/socData'
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
@@ -93,6 +101,14 @@ export default function Index() {
         { i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null }
         { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null }
+        { i.indexOf('总充电量') != -1 ? <TotalCharge></TotalCharge> : null }
+        { i.indexOf('总放电量') != -1 ? <TotalDischarge></TotalDischarge> : null }
+        { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
+        { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
+        { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
+        { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
+        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
+        { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
       </div>
     )
   }

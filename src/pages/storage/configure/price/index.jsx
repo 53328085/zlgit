@@ -6,6 +6,8 @@ import imgurl from './imgs'
 import {timeList, timeToValue, valueToTime} from './time'
 import { StoragePriceDesigner } from '@api/api.js'
 import { cloneDeep } from 'lodash';
+import finished from '@imgs/finished.png'
+import { CaretRightOutlined } from '@ant-design/icons';
 
 export default function Index() {
   const [pointedForm] = Form.useForm()
@@ -194,11 +196,14 @@ export default function Index() {
     setHeaderData(data)
     queryData(data.projectId, data.areaId)
   }
+  const [monthList, setMonthList] = useState([])
   const queryData = (projectId, areaId) => {
     QueryStoragePrice(projectId, areaId).then(res => {
       let {success, data, errMsg} = res
       if(success && data){
-        data.map(item => {
+        setMonthList(data)
+        let arrList = cloneDeep(data[activeTab - 1].storageMonthPrice)
+        arrList.map(item => {
           item.startTime1 = item.startTime1 == -1 ? -1 : timeToValue[item.startTime1] 
           item.endTime1 = item.endTime1 == -1 ? -1 : timeToValue[item.endTime1]
           item.startTime2 = item.startTime2 == -1 ? -1 : timeToValue[item.startTime2]
@@ -396,20 +401,72 @@ export default function Index() {
     param2 = changeData(param2)
     param3 = changeData(param3)
     param4 = changeData(param4)
-    UpdateStoragePrice(headerData.projectId, headerData.areaId, [param1, param2, param3, param4]).then(res =>{
+    if(tag == 'add'){
+      param1.id = 0
+      param2.id = 0
+      param3.id = 0
+      param4.id = 0
+    }
+    UpdateStoragePrice(headerData.projectId, headerData.areaId, activeTab, [param1, param2, param3, param4]).then(res =>{
       let {success, data, errMsg} = res
       if(success){
-        message.success('电价保存成功!')
+        message.success(activeTab + '月电价保存成功!')
         queryData(headerData.projectId, headerData.areaId)
       }else{
         message.error(errMsg)
       }
     })
   }
+  const [activeTab, setActiveTab] = useState(1)
+  const [tag, setTag] = useState('add');
+  const changeTab = values => {
+    if(activeTab == values.month) return;
+    setActiveTab(values.month)
+    if(values.storageMonthPrice.length == 0) {
+      setTag('add');
+      return;
+    }else{
+      setTag('edit')
+      let arrList = cloneDeep(values.storageMonthPrice)
+      arrList.map(item => {
+        item.startTime1 = item.startTime1 == -1 ? -1 : timeToValue[item.startTime1] 
+        item.endTime1 = item.endTime1 == -1 ? -1 : timeToValue[item.endTime1]
+        item.startTime2 = item.startTime2 == -1 ? -1 : timeToValue[item.startTime2]
+        item.endTime2 = item.endTime2 == -1 ? -1 : timeToValue[item.endTime2]
+        item.startTime3 = item.startTime3 == -1 ? -1 : timeToValue[item.startTime3]
+        item.endTime3 = item.endTime3 == -1 ? -1 : timeToValue[item.endTime3]
+        if(item.type == 1){
+          pointedForm.setFieldsValue(item)
+        }
+        if(item.type == 2){
+          peakForm.setFieldsValue(item)
+        }
+        if(item.type == 3){
+          flatForm.setFieldsValue(item)
+        }
+        if(item.type == 4){
+          valleyForm.setFieldsValue(item)
+        }
+      })
+    }
+    
+  }
+
   return (
     <div>
       <UseHeader getValues={getFromChild}></UseHeader>
-      <div className={style.priceContent}>
+      <div className={style.mainContent}>
+        <div className={style.monthList}>
+          <div className={style.monthTitle}>月份选择</div>
+          {monthList.map((item, index) => {
+            return <div key={index} className={style.monthTab} style={{ backgroundColor: activeTab == item.month ? '#237ae4':''}} onClick={()=>changeTab(item)}>
+              { item.storageMonthPrice .length == 0 ? null : <img src={finished} className={style.success}></img>}
+              <span style={{color:activeTab == item.month ? '#fff': '#515151'}}>{item.month}月电价</span>
+              <CaretRightOutlined className={style.rightIcon} style={{color:activeTab == item.month ? '#fff': '#ccc'}}/>
+            </div>
+          })}
+        </div>
+        <div className={style.priceContent}>
         <div className={style.headerTitle}>
           <span>计费管理</span>
           <Button type='primary' style={{ width: 96 }} onClick={()=>onSave()}>保存</Button>
@@ -418,6 +475,7 @@ export default function Index() {
         <CustomPrice title='峰' formName={peakForm} imgs={imgurl.feng} disChange={[disPeak2, disPeak3]}></CustomPrice>
         <CustomPrice title='平' formName={flatForm} imgs={imgurl.ping} disChange={[disFlat2, disFlat3]}></CustomPrice>
         <CustomPrice title='谷' formName={valleyForm} imgs={imgurl.gu} disChange={[disValley2, disValley3]}></CustomPrice>
+      </div>
       </div>
     </div>
   )

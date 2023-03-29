@@ -19,6 +19,14 @@ import EnergyTrend from '../../../components/defaultHome/energyTrend'
 import RealLoad from '../../../components/defaultHome/load'
 import WarningSpread from '../../../components/defaultHome/spread'
 import ElectricAnalysis from '../../../components/defaultHome/electricAnalysis'
+import TotalCharge from '@com/defaultHome/totalCharge'
+import TotalDischarge from '@com/defaultHome/totalDischarge'
+import ChargeCost from '@com/defaultHome/chargeCost'
+import DischargeCost from '@com/defaultHome/disChargeCost'
+import TotalIncome from '@com/defaultHome/totalIncome'
+import StorageStatistics from '@com/defaultHome/storageStatistics'
+import StorageTrend from '@com/defaultHome/storageTrend'
+import SocData from '@com/defaultHome/socData'
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
@@ -48,6 +56,14 @@ import energyCost from './itemImgs/energyCost.png'
 import energyTrend from './itemImgs/energyTrend.png'
 import costTrend from './itemImgs/costTrend.png'
 import energyRank from './itemImgs/energyRank.png'
+import charge from './itemImgs/charge.png'
+import discharge from './itemImgs/discharge.png'
+import cost from './itemImgs/cost.png'
+import dischargeCost from './itemImgs/dischargeCost.png'
+import income from './itemImgs/income.png'
+import storageStatistics from './itemImgs/storageStatistics.png'
+import storageTrend from './itemImgs/storageTrend.svg';
+import soc from './itemImgs/soc.svg';
 import firstwarn from '../../../assets/image/warning.png'
 import finished from '@imgs/finished.png'
 import { useRequest } from 'ahooks';
@@ -68,7 +84,7 @@ export default function Index() {
   const [activeName, setactiveName] = useState(null);
   const SelectTab = (props) =>{
     return <div className={style.selectTab} style={{backgroundColor: props.tabName == activeName? '#237ae4' :'#003366'  }}  onClick={() => changeTab(props.tabName)}>
-      <img className={style.configIcon} src={configIcon}></img>
+      <img className={style.configIcon} src={configIcon} ></img>
       {props.tabName.length< 5 ? <div className={style.configName}>{props.tabName}</div> : <div className={style.specialConfigName}>{props.tabName}</div> }
     </div>
   }
@@ -106,6 +122,16 @@ export default function Index() {
     {img:costTrend, itemName:'能耗费用趋势', draggable:false },
     {img:energyRank, itemName:'能耗排名', draggable:false },
   ]
+  const storageItems = [
+    {img:charge, itemName:'总充电量', draggable:true },
+    {img:discharge, itemName:'总放电量', draggable:true },
+    {img:cost, itemName:'总充电金额', draggable:true },
+    {img:dischargeCost, itemName:'总放电金额', draggable:true },
+    {img:income, itemName:'储能总收益', draggable:true },
+    {img:storageStatistics, itemName:'储能收益统计', draggable:true },
+    {img:storageTrend, itemName:'充放电量趋势', draggable:true },
+    {img:soc, itemName:'站点soc', draggable:true },
+  ]
   const changeTab = (value) =>{
      if(value == activeName) {
       return;
@@ -132,6 +158,10 @@ export default function Index() {
       setDragList(energyItems)
       setDragListCopy(energyItems)
     }
+    if(value == '储能管理'){
+      setDragList(storageItems)
+      setDragListCopy(storageItems)
+    }
   }
 
   const [basicOpen, setbasicOpen] = useState(false);
@@ -146,9 +176,10 @@ export default function Index() {
   }
 
   const AddItem = (props) => {
+    //props.dragTag
     return (
-      <div className={style.dragItem} draggable={props.dragTag} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
-        <img className={style.itemImg} src={props.imgUrl}></img>
+      <div className={style.dragItem} draggable={true} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
+        <img className={style.itemImg} src={props.imgUrl} style={{width: 52, height: 52}}></img>
         <span className={style.itemName}>{props.itemName}</span>
       </div>
     )
@@ -234,6 +265,14 @@ export default function Index() {
         { i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null }
         { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null }
+        { i.indexOf('总充电量') != -1 ? <TotalCharge></TotalCharge> : null }
+        { i.indexOf('总放电量') != -1 ? <TotalDischarge></TotalDischarge> : null }
+        { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
+        { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
+        { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
+        { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
+        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
+        { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
       </div>
     )
   }
@@ -244,7 +283,9 @@ export default function Index() {
   const onAddlayout = (xValue, yValue) => {
     let newlayout ;
     let time = new Date()
-    if(classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析'){
+    console.log(classOfName)
+    if(classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
+    classOfName == '充放电量趋势' || classOfName == '站点soc'){
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x:xValue,
@@ -267,8 +308,31 @@ export default function Index() {
       })
       setlayoutItem (newlayout)
       setNewCounter(newCounter + 1);
+    }else if(classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
+    classOfName == '储能总收益' ){
+      newlayout = layoutItem.concat({
+        i: classOfName + '_' + Date.now(),
+        x:xValue,
+        y:yValue,
+        w:1,
+        h:1,
+        'description': classOfName
+      })
+      setlayoutItem (newlayout)
+      setNewCounter(newCounter + 1);
+    }else if(classOfName == '储能收益统计' ){
+      newlayout = layoutItem.concat({
+        i: classOfName + '_' + Date.now(),
+        x:xValue,
+        y:yValue,
+        w:4,
+        h:2,
+        'description': classOfName
+      })
+      setlayoutItem (newlayout)
+      setNewCounter(newCounter + 1);
     }else{
-      messageContent('warning', '当前模块尚未配置，请等待后续版本更新!')
+      message.warning('当前模块尚未配置，请等待后续版本更新!')
       return;
     }
     
@@ -333,6 +397,7 @@ export default function Index() {
         <SelectTab tabName={'运维工单'}></SelectTab>
         <SelectTab tabName={'配电房信息'}></SelectTab>
         <SelectTab tabName={'能耗统计'}></SelectTab>
+        <SelectTab tabName={'储能管理'}></SelectTab>
       </div>
       <div className={style.reset} onClick={() => showResetModal()}>重置</div>
       <div className={style.confirm} onClick={run}>保存</div>

@@ -1587,9 +1587,11 @@ export class StorageRevenueRuntime {
 //储能设计-电价管理
 export class StoragePriceDesigner {
   static QueryStoragePrice = (projectId, areaId) => server.get(`/Storage/StoragePriceDesigner/QueryStoragePrice?projectId=${projectId}&areaId=${areaId}`);
-  static UpdateStoragePrice = (projectId, areaId, params={}) => server.post(`/Storage/StoragePriceDesigner/UpdateStoragePrice?projectId=${projectId}&areaId=${areaId}`, params);
+  static UpdateStoragePrice = (projectId, areaId, month, params={}) => server.post(`/Storage/StoragePriceDesigner/UpdateStoragePrice?projectId=${projectId}&areaId=${areaId}&month=${month}`, params);
 }
 export class StorageStrategyDesigner {
   static QueryStrategy = (projectId, areaId) => server.get(`/Storage/StorageStrategyDesigner/QueryStrategy?projectId=${projectId}&areaId=${areaId}`);
   static AddStrategy = (projectId, areaId, name) => server.post(`/Storage/StorageStrategyDesigner/AddStrategy?projectId=${projectId}&areaId=${areaId}&name=${name}`);
+  static UpdateStrategy = (projectId, data) => server.post(`/Storage/StorageStrategyDesigner/UpdateStrategy?projectId=${projectId}`, data);
+  static DeleteStrategy = (projectId, strategyId) => server.delete(`/Storage/StorageStrategyDesigner/DeleteStrategy?projectId=${projectId}&strategyId=${strategyId}`);
 }
