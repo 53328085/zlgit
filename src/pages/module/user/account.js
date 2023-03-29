@@ -43,11 +43,11 @@ const showModl = () => {
   try {
     let {success, errMsg} =  await DeleteAccount(id)
 
-   custMsg({success, content: '删除成功',  onClose: () => {
+   success && custMsg({ content: '删除成功',  onClose: () => {
       refresh()
       dref.current.onCancel()
     }})
-    custMsg({success: !success, content: errMsg, type: 'warning'} )
+   !success &&  custMsg({content: errMsg, type: 'warning'} )
    
   } catch (error) {
     
