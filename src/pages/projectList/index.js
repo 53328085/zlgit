@@ -144,6 +144,8 @@ const Mainbox = styled.div`
     row-gap: 32px;
     height: calc(100vh - 165px);
     .serach {
+      display: flex;
+      justify-content: space-between;
       .ant-form-item {
         margin-right: 0px;
       }
@@ -685,7 +687,7 @@ tableProps.pagination.size="default" // 页码大小默认
             className="serach"
             form={form}
           >
-            <Space size={32} style={{ flex: 1 }}>
+            <Space size={32} >
               
               <Item name="name">
               <Iptserach
