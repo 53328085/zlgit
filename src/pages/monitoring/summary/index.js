@@ -154,22 +154,22 @@ const charts=()=>{
     <div>
       <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.cardList}>
-        <Icard img={imgurl.category} title={'设备总数'} value={statistics.deviceCount} />
-        <Icard img={imgurl.category} title={'传感器数量'} value={statistics.sensorCount} />
-        <Icard img={imgurl.category} title={'变压器数量'} value={statistics.transformerCount} />
-        <Icard img={imgurl.category} title={'监控数量'} value={statistics.monitorCount}
+        <Icard img={imgurl.device} title={'设备总数'} value={statistics.deviceCount} />
+        <Icard img={imgurl.chuan} title={'传感器数量'} value={statistics.sensorCount} />
+        <Icard img={imgurl.bian} title={'变压器数量'} value={statistics.transformerCount} />
+        <Icard img={imgurl.monitor} title={'监控数量'} value={statistics.monitorCount}
           isShow={true} on={'云监控'} off={'本地监控'} per={''} onValue={statistics.onlineMonitorCount}
           offValue={statistics.localMonitorCount} />
-        <Icard img={imgurl.category} title={'网关'} value={status.gatewayCount}
+        <Icard img={imgurl.gateway} title={'网关'} value={status.gatewayCount}
           isShow={true} on={'网关在线'} off={'网关离线'} per={'在线率'} onValue={status.gatewayOnlineCount}
           offValue={status.gatewayOfflineCount} perValue={status.gatewayOnlineRate} isRed={true} isGreen={true} isredE={false} />
-        <Icard img={imgurl.category} title={'电表'} value={status.electricMeterCount}
+        <Icard img={imgurl.ele} title={'电表'} value={status.electricMeterCount}
           isShow={true} on={'电表在线'} off={'电表离线'} per={'电表告警'} onValue={status.electricMeterOnlineCount}
           offValue={status.electricMeterOfflineCount} perValue={status.electricMeterAlarmCount} isRed={true} isGreen={true} isredE={true} />
-        <Icard img={imgurl.category} title={'水表'} value={status.waterMeterCount}
+        <Icard img={imgurl.water} title={'水表'} value={status.waterMeterCount}
           isShow={true} on={'水表在线'} off={'水表离线'} per={'在线率'} onValue={status.waterMeterOnlineCount}
           offValue={status.waterMeterOfflineCount} perValue={status.waterMeterOnlineRate} isRed={true} isGreen={true} isredE={false} />
-        <Icard img={imgurl.category} title={'燃气表'} value={status.gasCount}
+        <Icard img={imgurl.gas} title={'燃气表'} value={status.gasCount}
           isShow={true} on={'燃气表在线'} off={'燃气表离线'} per={'在线率'} onValue={status.gasOnlineCount}
           offValue={status.gasOfflineCount} perValue={status.gasOnlineRate} isRed={true} isGreen={true} isredE={false} />
       </div>

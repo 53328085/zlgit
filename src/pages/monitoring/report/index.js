@@ -7,7 +7,7 @@ import { Select,Radio, DatePicker, Button, message } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
-import downFile from './images/down.png'
+import downFile from './images/img.jpg'
 import printFile from './images/print.png'
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
@@ -192,32 +192,26 @@ const downloadReport=()=>{
           </div>}
           content={() => componentRef}
         />
-        {/* <div className={style.buttonR} onClick={printReport}>
-        <img src={printFile} className={style.searchFile}></img>
-          <span>打印报告</span>
-        </div> */}
         <div className={style.buttonR} onClick={downloadReport}>
         <img src={downFile} className={style.searchFile} style={{zIndex:1}}></img>
           <span>导出报告</span>
         </div>
       </div>
-      {/* <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
-      <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button> */}
-      <div className={style.report}   ref={(el) => (componentRef = el)}>
-        <div className={style.firstPage}>
+      <div className={style.report}  ref={(el) => (componentRef = el)} >
+        <div className={style.firstPage} >
           <div className={style.header}>
             <img src={logo} className={style.logo}></img>
             <span>正泰综合能源服务平台</span>
           </div>
           <div className={style.mainTitle}>运行监控报告</div>
-          <div className={style.mainDetail}>
+          <div className={style.mainDetail} >
             <div className={style.detailItem}>项目名称: <span style={{marginLeft:18}}>{ coverData.ProjectName }</span></div>
             <div className={style.detailItem}>项目地址: <span style={{marginLeft:18}}>{ coverData.Address }</span></div>
             <div className={style.detailItem}>报告日期: <span style={{marginLeft:18}}>{ coverData.Date }</span></div>
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        {display ? <PageList  query={queryData}></PageList> : null }
+        {display ? <PageList   query={queryData}></PageList> : null }
       </div>
       
     </div>

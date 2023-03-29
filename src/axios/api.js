@@ -36,9 +36,13 @@ export class ProjectList {
       `/General/PlatConfig/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&name=${name}&state=${state}`
     );
   static createProject = (data) =>
-    server.post("General/PlatConfig/CreateProject", data); // 新增项目
+    server.post("/General/PlatConfig/CreateProject", data); // 新增项目
   static QueryMenus = (projectId) =>
-    server.get(`General/User/QueryMenus?projectId=${projectId}`); // 查询菜单栏
+    server.get(`/General/User/QueryMenus?projectId=${projectId}`); // 查询菜单栏
+
+  // /General/ProjectSetting/QueryProjectLog?pageNum=2&pageSize=1'
+  static QueryProjectLog = ({pageNum, pageSize, start, end}) =>
+  server.get(`/General/ProjectSetting/QueryProjectLog?start=${start}&end=${end}&pageNum=${pageNum}&pageSize=${pageSize}`); // 查询操作记录
 }
 // 公共模块---项目设置--- 项目基础设置,  项目发布
 export class ProjectSetting {
