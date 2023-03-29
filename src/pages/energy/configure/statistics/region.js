@@ -23,7 +23,7 @@ import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
 import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
-import { custMsg } from "@com/usehandler";
+ 
 import Mapcom from "@com/useMap";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
@@ -217,84 +217,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
      }
   }
 
-  const  CascaderSct = () => {
-    const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
-     // level = 2 显示前一级， = 3 显示前两两级, 依次类推
-   
-    const fieldNames = {
-      label: 'name',
-      value: 'id',
-      children: 'children'
-    }
-    const loadData = async (selectedOptions) => {
-    
-      try {
-        const targetOption = selectedOptions[selectedOptions.length - 1];
-        console.log(targetOption)
-        targetOption.loading = true;
-        let {id, level: curlevel} = targetOption // level:3 , curlevel: 2, 1
-        console.log(level)
-        console.log(curlevel)
-        if ((level - curlevel) == 1)  {
-          targetOption.children = [];
-          targetOption.isLeaf = true
-          setLevelOption([...leveloptions])
-          console.log(setLevelOption);
-          return
-        } else {
-        const params = {
-          projectId,
-          level: curlevel + 1,
-          parentId: id,
-        }
-        console.log(setLevelOption);
-      let {data, success} =  await Area.QueryAll(params) 
-       targetOption.loading = false
-       if (success && Array.isArray(data)) {
-        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - curlevel == 1}))
-        targetOption.children = cardata;
-        setLevelOption([...leveloptions])
-        /* setLevelOption(arr => {
-          let i = arr.findIndex(ar => ar.id == id);
-          if (i > -1) {
 
-          }
-          arr.splice(i,1, targetOption)
-          return arr
-        }) */
-       } else {
-        targetOption.children = [];
-        targetOption.isLeaf = true
-        setLevelOption([...leveloptions])
-       }
-      }
-       // targetOption.loading = false;
-       
-      } catch (error) {
-        console.log(error)
-      }
-    
-
-    }
-   const onChagne =(value, selectedOptions) => {
-     console.log(value)
-     console.log(selectedOptions)
-   }
-  
-    return (
-      <Item label="父节点" name="parentId" rules={[
-        {
-          required: true,
-          message: '请选择父节点'
-        }
-      ]}>
-         <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne}   />
-      </Item>
-    )
-
-
-  }
- //   级联选择 end
+ 
 
   //  配置 start
   const deviceColumns = [
@@ -314,16 +238,19 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       key: "address",
     },
   ];
-  const drawClose = () => {
+
+  const [devietype, setDevietype] = useState(1) // 设备类型
+
+  const drawClose = () => {   
     setOpen(false);
+    sfrom.resetFields()
   };
   const drawopen = () => {
     setOpen(true);
   };
 
-  const getUNselect = async ({ type = 1, areaId, alike = "" } = {}) => {
-    curareaId.current = areaId;
-    console.log(curareaId);
+  const getUNselect = async ({ type = devietype, areaId, alike = "" } = {}) => {
+    curareaId.current = areaId;  
     try {
       let { success, data } = await Area.QueryUnusedMeter({
         projectId,
@@ -339,6 +266,28 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       }
     } catch (error) {}
   };
+
+const getSelected = async ({areaId, type=devietype}) => {
+  let {
+    data: { deviceSummary, deviceSub },
+    success,
+  } = await Area.QueryUsedMeter({ projectId, type, areaId }); // 已选中 type: 0
+  if (success && Array.isArray(deviceSummary)) {
+    setDeviceSummary([...deviceSummary]);
+    devices.current.deviceSub = deviceSub;
+  } else {
+    setDeviceSummary([]);
+  }
+  if (success && Array.isArray(deviceSub)) {
+    setDeviceSub([...deviceSub]);
+  } else {
+    setDeviceSub([]);
+  }
+
+
+}
+
+
   const deviceData = async (record) => {
     try {
       /*  let {type, areaId} = record   
@@ -355,22 +304,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       let  topareaid = form.getFieldValue('topAreaId');
       let topid = level == 1 ? areaId : topareaid
       await getUNselect({ areaId: topid });
-
-      let {
-        data: { deviceSummary, deviceSub },
-        success: suc,
-      } = await Area.QueryUsedMeter({ projectId, type: 0, areaId }); // 已选中 type: 0
-      if (suc && Array.isArray(deviceSummary)) {
-        setDeviceSummary([...deviceSummary]);
-        devices.current.deviceSub = deviceSub;
-      } else {
-        setDeviceSummary([]);
-      }
-      if (suc && Array.isArray(deviceSub)) {
-        setDeviceSub([...deviceSub]);
-      } else {
-        setDeviceSub([]);
-      }
+      await getSelected({ areaId })
+      
     } catch (error) {
       console.log(error);
     }
@@ -391,39 +326,22 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     },
   };
 
-
-  const onMove = (type) => {
-    let {areaId} = Record
-       
-
-   
+  const onMove = async (type) => { 
+     console.log(type)
+    let {areaId} = Record 
     let selected = devices.current.selected;
-    const choose = (arr) =>
-      arr.filter((a) => {
-        return !selected.find((s) => s.id == a.id);
-      });
-
-    switch (type) {
-      case 1:
-        setDeviceSummary((arr) => [...arr, ...selected]);
-        setUnSelected(choose);
-        break;
-      case 2:
-        setUnSelected((arr) => [...arr, ...selected]);
-        setDeviceSummary(choose);
-        break;
-      case 3:
-        setDeviceSub((arr) => [...arr, ...selected]);
-        setUnSelected(choose);
-        break;
-      case 4:
-        setUnSelected((arr) => [...arr, ...selected]);
-        setDeviceSub(choose);
-        break;
-      default:
-        break;
-    }
-    devices.current.selected = [];
+    if (selected.length < 1) return message.warning('请选择设备', 2)
+    let params = selected.map(s => s.sn);
+    let handler = ['', 'AddSummaryDevice', 'RemoveSummaryDevice', 'AddSubDevice', 'RemoveSubDevice'][type]
+     let {success, errMsg} =  await Area[handler](projectId, areaId, params)
+      if (success) {
+        devices.current.selected = [];
+        getSelected({areaId})
+        getUNselect({areaId})       
+      }else {
+        message.error(errMsg || '数据出错', 2)
+      }
+    
   };
 
 /*   const configureMeter = async () => {
@@ -453,34 +371,17 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   };
   const changeUnselected = () => {
     let params = sfrom.getFieldsValue();
-    console.log(params);
+    let {type} = params
+    setDevietype(type)
     try {
       getUNselect({ areaId: curareaId.current, ...params });
+      getSelected({ areaId: curareaId.current, type})
     } catch (error) {
       console.log(e);
     }
   };
 
   //  配置 end
-
-  const del = (record) => {
-    setRecord({ ...Record, ...record });
-    dref.current.onOpen();
-  };
-  const delOk = async () => {
-    let { areaId } = Record;
-    let { success, errMsg } = await Area.DeleteArea({ projectId, areaId });
-    success &&
-      message.success({
-        content: "删除成功",
-        onClose: () => {
-          dref.current.onCancel();
-          getTableData();
-          upateOneLevel()
-        },
-      });
-    !success && custMsg({ success, content: errMsg || "数据出错" });
-  };
 
   const getTableData = () => {    
     // 列表查询
@@ -524,15 +425,15 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-              {/*   <Link underline onClick={() => config(record)}>
+               <Link underline onClick={() => config(record)}>
                   配置
-                </Link> */}
-                <Link underline onClick={() => edit(record)}>
+                </Link>  
+               {/*  <Link underline onClick={() => edit(record)}>
                   编辑
                 </Link>
                 <Link underline type="danger" onClick={() => del(record)}>
                   删除
-                </Link>
+                </Link> */}
               </Space>
             ),
           },
@@ -577,148 +478,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   };
 
 
-  const add = () => {
-    address.current = "";
-    setIsAdd(true);
-    nref.current.onOpen();
-  };
 
-  const onOk = async () => {
-    // 新增、编辑
-
-    try {
-      let values = await nform.validateFields();
-      let { remark, name, parentId = Record.parentId, lngLat={} } = values; // 编辑时 parentId=Record.parentId
-      console.log(values)
-      console.log(lngLat)
-      console.log(fields)
-      let parent_id = isAdd && level > 1 ?   parentId.pop() : parentId;
-      let other = [];
-      for (let key of fields) {
-        let obj = {}
-        if (key.type == 1) {
-          obj = {
-            name: key.name,
-            value: lngLat[key.name]
-          }
-        }else {
-          obj = {
-            name: key.name,
-            value: values[key.name],
-         }
-         
-        };
-        other.push(obj);
-      } 
-      let methods = isAdd ? "Insert" : "UpdateArea";
-      let params = {
-        ...defaultParams,
-        remark,
-        name,
-        parentId: parent_id,
-        id: isAdd ? 0 : Record.areaId,
-        fields: other,
-      };    
-      let { success, errMsg } = await Area[methods](params);
-      success &&
-        message.success({
-          content: isAdd ? "新增成功" : "编辑成功",
-          onClose: () => {
-            nref.current.onCancel();
-            getTableData();
-            upateOneLevel();
-          },
-        });
-      !success && custMsg({ success, content: errMsg || "数据出错" });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const edit = (record) => {
-    console.log(record)
-    let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
-    
-    setIsAdd(false);
-    setRecord({ ...Record, ...record });
-    let { 名称, 备注, areaId, ...keys } = record;
-     
-    nform.setFieldsValue({
-      name: record["名称"],
-      remark: record["备注"],
-      ...keys,
-    });
-    for(let key of fields) {
-      if(key.type == 1) {
-         nform.setFieldValue(['lngLat', `${key.name}`], record[key.name]);
-       }else {
-         nform.setFieldValue(key.name, record[key.name]);
-       }
-
-     }
-    nref.current.onOpen();
-  };
-  const setAaddress = (adr) => {
-   let {lngLat} = nform.getFieldsValue();
-   //console.log(lngLat)
-   //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
-   
-   for(let key in lngLat) {   
-    console.log(lngLat[key]) 
-     if(!lngLat[key]){
-        nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
-        break
-     }
-
-   }
-    nform.setFieldsValue({
-     // 'lngLat.经纬度': `${adr.lng},${adr.lat}`,
-      address: adr.address,
-    });
-  };
-  const inputType = (f, type) => {
-    switch (type) {
-      case 0:
-        return (
-          <Item label={f} name={f}>
-            <Input />
-          </Item>
-        );
-      case 1:
-        return (
-          <Item label={f} name={['lngLat', f]} tooltip="为保证精度点击地图获取,清空后再重新获取" rules={[{
-            required: true,
-          }]} >
-            <Input allowClear />
-          </Item>
-        );
-      case 2:
-        return (
-          <Item label={f} name={f} tooltip="面积类数据保留两位小数" key={f}>
-            <InputNumber
-              step="0.01"
-              precision={2}
-              style={{ width: "100%" }}
-              min={0}
-              addonAfter="㎡"
-            />
-          </Item>
-        );
-
-      case 3:
-        return (
-          <Item label={f} name={f} tooltip="楼层数据为整数" key={f}>
-            <InputNumber precision={0} style={{ width: "100%" }} />
-          </Item>
-        );
-      default:
-        return (
-          <Item label={f} name={f}>
-            <Input />
-          </Item>
-        );
-    }
-  };
   const tableOnchange = (e) => {
     console.log(e)
     let {current} = e
@@ -788,12 +548,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
               </Form.Item>
             </>
           )}
-         {!ispublish && <Form.Item>
-            <CustButton style={{ justifyContent: "center" }} onClick={add}>
-              +新增
-            </CustButton>
-          </Form.Item>
-         }
+        
         </Space>
       </Form>
       <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
@@ -939,93 +694,6 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           />
         </div>
       </Drawerbox>
-
-      {/* 新增 / 编辑*/}
-      <CModal
-        width={islngLat ? 1024 : 554}
-        title={title}
-        ref={nref}
-        onOk={onOk}
-        mold="cust"
-      >
-        <Formbox
-          islngLat={islngLat}
-          rowes={limitlevle.length + 2 + fields.length}
-          form={nform}
-          size="middle"
-          labelCol={{ flex: "7em" }}
-          labelAlign="left"
-          preserve={false}
-          validateMessages={{
-            required: "'${label}' 是必选字段",
-          }}
-        >
-          {isAdd
-            ?  
-              
-             level > 1 && <CascaderSct /> 
-            : limitlevle?.map((lv, index, array) => {
-                return (
-                  <Item label={`${lv?.name}名称`} name={lv?.name}>
-                    <Input disabled={!isAdd} />
-                  </Item>
-                );
-              })}
-
-          <Item
-            label={`${name}名称`}
-            name="name"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Item>
-
-          {fields?.map((f, index) => inputType(f.name, f.type))}
-          <Item
-            label="备注"
-            name="remark"
-          >
-            <Input />
-          </Item>
-          {islngLat && (
-            <>
-              <Item
-                label="地址"
-                className="address"
-                name="address"
-                tooltip="请从地图获取地址"
-              >
-                <Input
-                  placeholder="请从地图获取地址"
-                  allowClear
-                  value={address.current}
-                />
-              </Item>
-              <div className="map">
-                <Mapcom setAaddress={setAaddress} ref={mapref} />
-              </div>
-            </>
-          )}
-        </Formbox>
-      </CModal>
-      {/* 删除 */}
-      <CModal
-        width={554}
-        title={`删除${name}`}
-        ref={dref}
-        onOk={delOk}
-        type="warn"
-        mold="cust"
-      >
-        <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
-        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>
-          是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?
-        </p>
-      </CModal>
     </Mainbox>
   );
 }
