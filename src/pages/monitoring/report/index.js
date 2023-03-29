@@ -7,7 +7,7 @@ import { Select,Radio, DatePicker, Button, message } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
-import downFile from './images/down.png'
+import downFile from './images/img.jpg'
 import printFile from './images/print.png'
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
@@ -15,13 +15,13 @@ import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-import ReactToPrint from "react-to-print";
-
+// import ReactToPrint from "react-to-print";
+import printJs from 'print-js'
 
 
 export default function Index() {
   const { RuntimeReport: { QueryReport } } = Monitoring
-  let componentRef = useRef();
+  // let componentRef = useRef();
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
@@ -99,7 +99,37 @@ useEffect(() => {
     }
   }
 const printReport=()=>{
+  let printDom = document.getElementById('contentPage');
+  let wholeNodes = document.querySelectorAll(".pages")
+  //打印的时候因为页面高度问题，需要改变margin-bottom的值
+  for(let i = 0;i<wholeNodes.length;i++){
+    if(i!==6){
+      wholeNodes[i].classList.replace('pageMargin','printPageMargin')
+    }
+  }
 
+  html2canvas(printDom,{
+    height:printDom.scrollHeight,
+    windowHeight: printDom.scrollHeight,
+    allowTaint:true,
+    scale: '2',//设置放大倍数
+    dpi: '192',
+    background: '#fff',
+    // 开启跨域配置
+    useCORS: true,//支持图片跨域
+  }).then(canvas=>{
+    let pageData = canvas.toDataURL('image/jpeg',1.0)
+    printJS({
+      printable:pageData,
+      type:'image',
+      style: '@page{size:auto;margin: 0cm 0cm 0cm 0cm;}' // 去除页眉页脚
+    })
+  })
+  for(let i = 0;i<wholeNodes.length;i++){
+    if(i!==6){
+      wholeNodes[i].classList.replace('printPageMargin' , 'pageMargin')
+    }
+  }
 }//打印报表
 const downloadReport=()=>{
   //先生成图片再导出
@@ -185,39 +215,38 @@ const downloadReport=()=>{
           <img src={searchFile} className={style.searchFile}></img>
           <span>生成报告</span>
         </div>
-        <ReactToPrint
+        {/* <ReactToPrint
           trigger={() => <div className={style.buttonR} onClick={printReport}>
           <img src={printFile} className={style.searchFile}></img>
             <span>打印报告</span>
           </div>}
           content={() => componentRef}
-        />
-        {/* <div className={style.buttonR} onClick={printReport}>
-        <img src={printFile} className={style.searchFile}></img>
-          <span>打印报告</span>
-        </div> */}
+        /> */}
+        <div className={style.buttonR} onClick={printReport}>
+          <img src={printFile} className={style.searchFile}></img>
+            <span>打印报告</span>
+          </div>
         <div className={style.buttonR} onClick={downloadReport}>
         <img src={downFile} className={style.searchFile} style={{zIndex:1}}></img>
           <span>导出报告</span>
         </div>
       </div>
-      {/* <Button icon={<ExportOutlined />}  style={{marginLeft:'auto',marginRight:16, width: 100}}>导出</Button>
-      <Button icon={<PrinterOutlined />} style={{width:100}}>打印</Button> */}
-      <div className={style.report}   ref={(el) => (componentRef = el)}>
-        <div className={style.firstPage}>
+      <div className={style.report} >
+      {/*  ref={(el) => (componentRef = el)} */}
+        <div className={style.firstPage} >
           <div className={style.header}>
             <img src={logo} className={style.logo}></img>
             <span>正泰综合能源服务平台</span>
           </div>
           <div className={style.mainTitle}>运行监控报告</div>
-          <div className={style.mainDetail}>
+          <div className={style.mainDetail} >
             <div className={style.detailItem}>项目名称: <span style={{marginLeft:18}}>{ coverData.ProjectName }</span></div>
             <div className={style.detailItem}>项目地址: <span style={{marginLeft:18}}>{ coverData.Address }</span></div>
             <div className={style.detailItem}>报告日期: <span style={{marginLeft:18}}>{ coverData.Date }</span></div>
           </div>
           <img src={firstPage} className={style.backgroundImg}></img>
         </div>
-        {display ? <PageList  query={queryData}></PageList> : null }
+        <div >{display ? <PageList   query={queryData}></PageList> : null }</div>
       </div>
       
     </div>

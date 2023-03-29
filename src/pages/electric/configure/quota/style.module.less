@@ -63,7 +63,7 @@
   }
   .addBody {
     margin-top: 32px;
-    .addForm{
+    .addForm {
       width: 300px;
     }
     p {
@@ -99,11 +99,13 @@
         display: flex;
         align-items: center;
         // justify-content: space-around;
-        .colorRed {
-          &::placeholder {
-            color: red !important;
-            font-size: 8px;
-          }
+        // .colorRed {
+        //   &::placeholder {
+        //     color: red !important;
+        //     font-size: 8px;
+        //   }
+        // }
+        
         }
       }
       .qujianLi,
@@ -238,7 +240,7 @@
       }
     }
   }
-}
+
 
 .deleteModal {
   :global {
@@ -272,4 +274,9 @@
       margin-right: 12px;
     }
   }
+}
+.colorRed{
+  &::placeholder{
+  color: red !important;
+}
 }

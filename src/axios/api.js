@@ -36,9 +36,13 @@ export class ProjectList {
       `/General/PlatConfig/QueryProjects?pageNum=${pageNum}&pageSize=${pageSize}&name=${name}&state=${state}`
     );
   static createProject = (data) =>
-    server.post("General/PlatConfig/CreateProject", data); // 新增项目
+    server.post("/General/PlatConfig/CreateProject", data); // 新增项目
   static QueryMenus = (projectId) =>
-    server.get(`General/User/QueryMenus?projectId=${projectId}`); // 查询菜单栏
+    server.get(`/General/User/QueryMenus?projectId=${projectId}`); // 查询菜单栏
+
+  // /General/ProjectSetting/QueryProjectLog?pageNum=2&pageSize=1'
+  static QueryProjectLog = ({pageNum, pageSize, start, end}) =>
+  server.get(`/General/ProjectSetting/QueryProjectLog?start=${start}&end=${end}&pageNum=${pageNum}&pageSize=${pageSize}`); // 查询操作记录
 }
 // 公共模块---项目设置--- 项目基础设置,  项目发布
 export class ProjectSetting {
@@ -46,7 +50,7 @@ export class ProjectSetting {
   static SaveProjectInfo = (params) => server.post(`/General/ProjectSetting/SaveProjectInfo`, params) //  保存项目信息
   static queryProjectPublishInfo = (projectId) => server.get(`/General/ProjectSetting/QueryProjectPublishInfo?projectId=${projectId}`) // 查询项目发布信息
   static publishProject = ({ projectId, state, code, moble }) => server.post(`/General/ProjectSetting/PublishProject?projectId=${projectId}&state=${state}&code=${code}&moble=${moble}`)//  项目发布/取消发布
-  static DeleteProject = (projectId, name) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&name=${name}`) //  删除项目
+  static DeleteProject = (projectId, mobile, code) => server.post(`/General/ProjectSetting/DeleteProject?projectId=${projectId}&mobile=${mobile}&code=${code}`) //  删除项目
 }
 // 公共模块---项目设置---区域设置
 export class AreaSetting {
@@ -80,19 +84,6 @@ export class AreaSetting {
     ); // 删除字段
   static QueryAllArea = (projectId, level) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=${level}`); //查询全部区域
-
-  static AddSummaryDevice = (projectId, areaId, params) =>
-    server.post(`/General/Area/AddSummaryDevice?projectId=${projectId}&areaId=${areaId}`, params); // 添加区域总表
-
-  static RemoveSummaryDevice = (projectId, areaId, params) =>
-    server.post(`/General/Area/RemoveSummaryDevice?projectId=${projectId}&areaId=${areaId}`, params); // 移除区域总表
-  
-  static AddSubDevice = (projectId, areaId, params) =>
-    server.post(`/General/Area/AddSubDevice?projectId=${projectId}&areaId=${areaId}`, params); // 添加区域分表
- 
-  static RemoveSubDevice = (projectId, areaId, params) =>
-    server.post(`/General/Area/RemoveSubDevice?projectId=${projectId}&areaId=${areaId}`, params); // 移除区域分表
-
 }
 // 公共模块---项目设置---数据组设置
 export class DataGroups {
@@ -221,6 +212,18 @@ export class Area {
     );
   static ConfigureMeter = (params = {}) =>
     server.post(`/General/Area/ConfigureMeter`, params);
+
+    static AddSummaryDevice = (projectId, areaId, params) =>
+    server.post(`/General/Area/AddSummaryDevice?projectId=${projectId}&areaId=${areaId}`, params); // 添加区域总表
+
+  static RemoveSummaryDevice = (projectId, areaId, params) =>
+    server.post(`/General/Area/RemoveSummaryDevice?projectId=${projectId}&areaId=${areaId}`, params); // 移除区域总表
+  
+  static AddSubDevice = (projectId, areaId, params) =>
+    server.post(`/General/Area/AddSubDevice?projectId=${projectId}&areaId=${areaId}`, params); // 添加区域分表
+ 
+  static RemoveSubDevice = (projectId, areaId, params) =>
+    server.post(`/General/Area/RemoveSubDevice?projectId=${projectId}&areaId=${areaId}`, params); // 移除区域分表  
   ///V1/General/Area/QueryUnusedMeter
 }
 // 能源管理--能源概述
@@ -1572,7 +1575,7 @@ export class AlarmManagement {
   static UpdateAlarmEventInterval = (data) => server.post(`Safe/Alarm/UpdateAlarmEventInterval`,data)
   static UpdateAlarmEventOverrun = (data) => server.post(`Safe/Alarm/UpdateAlarmEventOverrun`,data)
   static UpdateAlarmEventDeflection = (data) => server.post(`Safe/Alarm/UpdateAlarmEventDeflection`,data)
-  static UpdateAlarmEventSOE = (data) => server.post(`/V1/Safe/Alarm/UpdateAlarmEventSOE`,data)
+  static UpdateAlarmEventSOE = (data) => server.post(`Safe/Alarm/UpdateAlarmEventSOE`,data)
   static UpdateAlarmEventCommunication = (data) => server.post(`Safe/Alarm/UpdateAlarmEventCommunication`,data)
 }
 //储能--环境监控
