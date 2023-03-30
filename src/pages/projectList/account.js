@@ -1,7 +1,7 @@
 import React, {useState, useRef} from 'react'
 import {useAntdTable} from 'ahooks'
 import {flushSync} from 'react-dom'
-import {Typography, Space, Form, Input, Button} from 'antd'
+import {Typography, Space, Form, Input, Divider} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
 import moment from 'moment';
@@ -13,7 +13,7 @@ import CModal from "@com/useModal";
 
 const Mainbox = styled.div`
   display: grid;
-  grid-template-rows: 65px 1fr;
+  grid-template-rows: 32px 2px 1fr;
   row-gap: 16px;
   height: 568px;
 `
@@ -84,7 +84,7 @@ const showModl = () => {
     setRecord({...item});
      
     setIsAdd(false)
-    item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD hh:mm:ss')
+    item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
    item.enabled = item.enabled  == 1
    flushSync(() => {
     setInitialValues({
@@ -203,6 +203,7 @@ const showModl = () => {
                 <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+新增</CustButton>
             </Form.Item>
         </Form>
+        <Divider style={{margin: 0}} /> 
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
 
       
