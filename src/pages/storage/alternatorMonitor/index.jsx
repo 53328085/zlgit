@@ -285,7 +285,7 @@ export default function Index() {
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaList[0]?.levelName || '园区' + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={ (areaList[0]?.levelName  || '园区') + '选择'} style={{marginLeft:16}}>
             <Select
               placeholder="请选择"
               size="middle"
