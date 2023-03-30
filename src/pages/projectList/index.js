@@ -26,7 +26,10 @@ import {
   DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
+ 
 import { ProjectList, eneryShift } from "@api/api.js";
+import {selectUser} from '@redux/user'
+
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
@@ -264,7 +267,9 @@ const { RangePicker } = DatePicker
 export default function Index() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [form] = Form.useForm();
+
   const [proform] =  Form.useForm()
   const [count, setCount] = useState(0); 
   const modal = useRef()
@@ -519,7 +524,7 @@ tableProps.pagination.size="default" // 页码大小默认
     (state) => state.system
   );
   const { name } = useSelector((state) => state.user);
-
+  
   // 操作记录 start
   const opref = useRef()
   const opRecord = () => {
@@ -650,6 +655,12 @@ tableProps.pagination.size="default" // 页码大小默认
  }
 
 // 操作记录 end
+
+// 运维管理员管理 start
+ const {roleType} = useSelector(selectUser)
+
+
+
   return (
       
       <Mainbox>
@@ -740,8 +751,8 @@ tableProps.pagination.size="default" // 页码大小默认
               </Item> */}
             </Space>
             <Space size={32}>
-              <Item noStyle>
-                <CustBtn
+            <Item noStyle>
+              {  roleType == 2 &&    <CustBtn
                   onClick={showproject}
                   icon={
                     <PlusCircleOutlined
@@ -751,6 +762,18 @@ tableProps.pagination.size="default" // 页码大小默认
                 >
                   新增项目
                 </CustBtn>
+               }
+                 {  roleType == 1 &&    <CustBtn
+                  onClick={showproject}
+                  icon={
+                    <PlusCircleOutlined
+                      style={{ color: "#fff", fontSize: "24px" }}
+                    />
+                  }
+                >
+                  运维管理员管理
+                </CustBtn>
+               }
               </Item>
               <Item noStyle>
                   <CustBtn

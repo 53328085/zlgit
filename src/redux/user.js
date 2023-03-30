@@ -62,7 +62,7 @@ export const selectUser =  (state) => {
     return {name,mobile,roleType,token,userId}
  }
 export const manager = state => state.user?.roleType == 3 // 是否是项目管理员
-export const maintenance = state => state.user?.roleType == 4 // 是否是项目管理员
+export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员
 export const selectMemorize = state => state.user.memorize
 export const selectMemoPhone = state => state.user.memoPhone
 export const {clearToken, memorizeName, memorizePhone} = actions
