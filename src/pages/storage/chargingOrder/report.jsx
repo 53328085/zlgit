@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState,   useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
+import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  Divider} from 'antd'
  import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
@@ -8,6 +8,7 @@ import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {StorageOrderRuntime} from '@api/api'
 import {ExportButton} from '@com/useButton'
+import CModal from '@com/useModal'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -65,16 +66,12 @@ const Mainbox = styled.div`
   
    const [soption, setSoption] = useState([])
    const [toption, setToption] = useState([])
-   const [tableData, setTableData] = useState([])
+   
    const [form] = Form.useForm();
-   const startime = moment().add(7, 'day')
-   const endtime = moment()
-   const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
-   const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-    total: 0
-  })
+   const end = moment().add(7, 'day')
+   const star = moment()
+   const [dates, setDates] = useState([moment(star, 'YYYY-MM-DD'), moment(end, 'YYYY-MM-DD')])
+ 
   const getStatus = async() => {
     try {
         let {success, data} = await StorageOrderRuntime.QueryRuntimeStatus()
@@ -102,8 +99,27 @@ const Mainbox = styled.div`
     }
    
   }
- 
+const [Record, setRecord] = useState({})
+  const rref = useRef()
+ const onView = (record) => {
+   setRecord(record)
+   rref.current.onOpen()
+ }
 
+ const onclose = () => {
+  rref.current.onCancel()
+ }
+ const labelStyle ={
+    height: '32px',
+    padding: '2px 16px',
+    backgroundColor: "#f0f9ff",
+    color: "#515151"
+    
+ }
+ const contentStyle = {
+  height: '32px',
+    padding: '2px 16px'
+ }
   /* {
   "projectId": 0,
   "pageNum": 0,
@@ -124,7 +140,7 @@ const columns = [
       dataIndex: 'type',
       key: 'type',
       align: 'center',
-      render: (text) => {}
+      render: (text) =>  <span>{text == 1 ? '充电': text == 2 ? '放电' : null}</span>
   },
   {
     title: '电量(kwh)',
@@ -165,22 +181,15 @@ const columns = [
   {
     title: '操作',
     key: 'op',
+    align: 'center',
     render: (_,record) => <Space size={16}>
        <Link underline onClick={onView.bind(null, record)}>订单详情</Link>
   </Space>
   }
  ]
 
-const defuldata = [
-  {label: '充电电量', value: '', key: 'chargingAmount'},
-  {label: '充电时长', value:  '', key: 'chargingDuration'},
-  {label: '充电金额', value: '', key: 'chargingCapacity'},
-  {label: '放电电量', value: '', key: 'disChargingAmount'},
-  {label: '放电时间', value: '', key: 'disChargingDuration'},
-  {label: '放电金额', value: '', key: 'disChargingCapacity'},
-  {label: '收益', value: '', key: 'torageIncome'},
-]
-const [charData, setCharData] = useState([])
+ 
+const [charData, setCharData] = useState({})
  const getTableData = ({current, pageSize}, formData) => {
   let {state, type, date} = formData
   let start = date[0].format('YYYY-MM-DD')
@@ -197,9 +206,7 @@ const [charData, setCharData] = useState([])
      let {success, data, total} = res
      if (success && data) {
        let {orderDetails, ...values} = data 
-      Object.entries(values).forEach(v => {
-            
-      })
+      setCharData({...values})
       return {
         list: orderDetails,
         total
@@ -272,16 +279,62 @@ const {submit} = search
         </div>
         
          <Divider style={{margin: '0px'}}/>
+ 
+
          <div className='info'>
            
-               {charData.map(v => <div className='item' key={v.key}>
-                {v.label}
-                <Text ellipsis={{tooltip: v.value}}>{v.value}</Text>
-               </div>)}
+               <div className='item'>
+                 充电电量
+                <Text ellipsis={{tooltip: charData.chargingAmount}}>{charData.chargingAmount} &nbsp;kWh</Text>
+               </div>
+               <div className='item'>
+                 充电时长
+                <Text ellipsis={{tooltip: charData.chargingDuration}}>{charData.chargingDuration} &nbsp;小时</Text>
+               </div>
+               <div className='item'>
+                 充电金额
+                <Text ellipsis={{tooltip: charData.chargingCapacity}}>{charData.chargingCapacity} &nbsp;元</Text>
+               </div>
+
+               <div className='item'>
+                 放电电量
+                <Text ellipsis={{tooltip: charData.disChargingAmount}}>{charData.disChargingAmount} &nbsp;kWh</Text>
+               </div>
+               <div className='item'>
+                 充电时长
+                <Text ellipsis={{tooltip: charData.disChargingDuration}}>{charData.disChargingDuration} &nbsp;小时</Text>
+               </div>
+               <div className='item'>
+                 放电金额
+                <Text ellipsis={{tooltip: charData.disChargingCapacity}}>{charData.disChargingCapacity} &nbsp;元</Text>
+               </div>
+               <div className='item'>
+                 收益
+                <Text ellipsis={{tooltip: charData.storageIncome}}>{charData.storageIncome} &nbsp;元</Text>
+               </div>
               <ExportButton style={{marginLeft: 'auto'}}/>
          </div>
         <Usetable columns={columns}   rowKey={nanoid()}  {...tableProps} />
-      
+        <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
+        <Descriptions  column={1} bordered labelStyle={labelStyle} contentStyle={contentStyle}>
+    <Descriptions.Item label="运行单号">{Record.orderNo}</Descriptions.Item>
+    <Descriptions.Item label="运行单状态">{Record.status}</Descriptions.Item>
+    <Descriptions.Item label="创建时间">{Record.createTime}</Descriptions.Item>
+    <Descriptions.Item label="更新时间">{Record.updateTime}</Descriptions.Item>
+    <Descriptions.Item label="运行单类型">{Record.type== 1 ? '充电' : '放电'}</Descriptions.Item>
+    <Descriptions.Item label="运行单电量">{Record.e}</Descriptions.Item>
+    <Descriptions.Item label="总金额">{Record.income}</Descriptions.Item>
+    <Descriptions.Item label="尖时段电量">{Record.e1}</Descriptions.Item>
+    <Descriptions.Item label="峰时段电量">{Record.e2}</Descriptions.Item>
+    <Descriptions.Item label="平时段电量">{Record.e3}</Descriptions.Item>
+    <Descriptions.Item label="谷时段电量">{Record.e4}</Descriptions.Item>
+    <Descriptions.Item label="开始SOC">{Record.startSoc}</Descriptions.Item>
+    <Descriptions.Item label="结束SOC">{Record.endSoc}</Descriptions.Item>
+    <Descriptions.Item label="开始时间">{Record.startTime}</Descriptions.Item>
+    <Descriptions.Item label="充电时长">{Record.duration}</Descriptions.Item>
+  </Descriptions> 
+         
+        </CModal>
     </Mainbox>
     </Titlelayout>
   )

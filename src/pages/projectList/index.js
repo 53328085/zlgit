@@ -262,7 +262,8 @@ const Opbox = styled.div`
  flex:1;
  padding-top: 16px;
  border-top: 1px dotted #d7d7d7;
- min-height: 408px;
+ min-height: 760px;
+ min-height: 760px;
 `
 const { RangePicker } = DatePicker
 export default function Index() {
