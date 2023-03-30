@@ -129,6 +129,7 @@ export default function Warncontent({ style,areavalue }) {
       })  
       if(res.success){
         modalRef.current.onCancel()
+        getAlarmPage(tableParam.current)
         message.success('派单成功！')
       }else{
         message.error(res.errMsg)

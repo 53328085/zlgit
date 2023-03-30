@@ -1203,6 +1203,7 @@ export class operationDesigin{
   static ConfigureDevice=(data)=>server.post(`/Maintenance/MaintenanceDesigner/ConfigureDevice`,data)//保存设备
   static ConfigureOneDevice=(data)=>server.post(`/Maintenance/MaintenanceDesigner/ConfigureOneDevice`,data)//编辑设备
   static RemoveOne=(data)=>server.delete(`/Maintenance/MaintenanceDesigner/RemoveOne`,{params:data})//移除已添加设备
+  static QueryProjectMaintenanceArea=(data)=>server.get(`/General/User/QueryProjectMaintenanceArea`,{params:data})//查询巡检人
  
 }
 //电气安全
