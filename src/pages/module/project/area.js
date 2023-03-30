@@ -219,7 +219,7 @@ const [curlevel, setCurlevel] = useState({})
       if(!success) return message.warning(errMsg || '数据出错')
       success && nfref.current.onCancel()
      // QueryAreaLevelFields({projectId, level})
-      queyFiled(level)
+      queyFiled(levelid)
     } catch (error) {
       
     }

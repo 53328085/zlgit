@@ -21,7 +21,6 @@ import { useRequest } from "ahooks";
 import { useSelector } from "react-redux";
 export default function Index() {
   const ispublish = useSelector(publishState);
-  console.log(ispublish);
   const {
     QueryAlarmPage,
     QueryAddAlarm,
@@ -60,7 +59,7 @@ export default function Index() {
   //表格展示数据
   const [dataSource, setDataSource] = useState([]);
   const [dataSourceType, setDataSourceType] = useState([]);
-  const [noDataInForm, setNoDataInForm] = useState(true);
+  const [noDataInForm, setNoDataInForm] = useState();
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success) {
@@ -285,9 +284,9 @@ export default function Index() {
     // },
 
     {
-      title: "是否启用",
-      dataIndex: "Enable",
-      key: "Enable",
+      title: "是否连续推送",
+      dataIndex: "Push",
+      key: "Push",
       align: "center",
       width: 80,
       render: (text) => {
@@ -295,9 +294,9 @@ export default function Index() {
       },
     },
     {
-      title: "是否连续推送",
-      dataIndex: "Push",
-      key: "Push",
+      title: "是否启用",
+      dataIndex: "Enable",
+      key: "Enable",
       align: "center",
       width: 80,
       render: (text) => {
@@ -344,7 +343,6 @@ export default function Index() {
   const [giveChildFormRecord, setGiveChildFormRecord] = useState({});
   const [editTypeId, setEditTypeId] = useState({});
   const editAlarmInfo = (record) => {
-    console.log(record);
     setGiveChildFormRecord(record);
     setEditTypeId(record.Id);
     setAddAlarmEvent(true);
@@ -446,9 +444,9 @@ export default function Index() {
       if (childFormInfo.alarmRule === 1) {
         return AddAlarmEventOverrun(childFormInfo).then((res) => {
           if (res.success) {
-            setAddAlarmEvent(false);
             runEdit();
             message.success("新增告警事件成功！");
+            setAddAlarmEvent(false);
           } else {
             message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
@@ -456,9 +454,9 @@ export default function Index() {
       } else if (childFormInfo.alarmRule === 2) {
         return AddAlarmEventInterval(childFormInfo).then((res) => {
           if (res.success) {
-            setAddAlarmEvent(false);
             runEdit();
             message.success("新增告警事件成功！");
+            setAddAlarmEvent(false);
           } else {
             message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
@@ -466,9 +464,9 @@ export default function Index() {
       } else if (childFormInfo.alarmRule === 3) {
         return AddAlarmEventDeflection(childFormInfo).then((res) => {
           if (res.success) {
-            setAddAlarmEvent(false);
             runEdit();
             message.success("新增告警事件成功！");
+            setAddAlarmEvent(false);
           } else {
             message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
@@ -476,9 +474,9 @@ export default function Index() {
       } else if (childFormInfo.alarmRule === 4) {
         return AddAlarmEventSOE(childFormInfo).then((res) => {
           if (res.success) {
-            setAddAlarmEvent(false);
             runEdit();
             message.success("新增告警事件成功！");
+            setAddAlarmEvent(false);
           } else {
             message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
@@ -486,9 +484,9 @@ export default function Index() {
       } else if (childFormInfo.alarmRule === 5) {
         return AddAlarmEventCommunication(childFormInfo).then((res) => {
           if (res.success) {
-            setAddAlarmEvent(false);
             runEdit();
             message.success("新增告警事件成功！");
+            setAddAlarmEvent(false);
           } else {
             message.error(res.errMsg ? res.errMsg : "新增告警事件失败！");
           }
@@ -672,7 +670,7 @@ export default function Index() {
           maskClosable={false}
           okText={"完成"}
           okType={"primary"}
-          // okButtonProps={{ primary: true }}
+          footer={editType === true ? undefined : null}
         >
           <div className={style.addHeader}>{modalTitle}</div>
           <div className={style.addBody}>
@@ -712,6 +710,7 @@ export default function Index() {
               size="small"
               className={style.addSourceTypeTable}
               pagination={false}
+              scroll={{ y: 240 }}
             ></Table>
             <Button
               onClick={() => showAddAlarmEvent()}

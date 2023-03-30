@@ -55,12 +55,11 @@ export default function Index(props) {
   ];
   const compareOptions = [
     {
-      label: "小于等于",
-      value: 2,
-    },
-    {
       label: "大于等于",
       value: 1,
+    },{
+      label: "小于等于",
+      value: 2,
     },
   ];
   const soeOptions = [
@@ -135,6 +134,9 @@ export default function Index(props) {
     Alarm: 2,
     Recover: 3,
   };
+  const CommunicationType = {
+    Empty: 0,
+  };
 
   const addAlarmOk = async () => {
     try {
@@ -174,7 +176,7 @@ export default function Index(props) {
         //变位告警
         let changeInfo = {
           alarmCondition: 1,
-          alarmValue: values.AlarmRule,
+          alarmValue: values.AlarmValue,
           recoverValue: values.RecoverValue,
         };
         const params = { ...data, ...changeInfo };
@@ -235,12 +237,11 @@ export default function Index(props) {
   const enableChange = (value) => {
     setEnable(value);
   };
-  useEffect(() => {
-    if (giveFormType === true) {
-      formInfo.resetFields(); //当新增时重置
-    } else {
-    }
-  }, [AddAlarmEventGive]);
+  // useEffect(() => {
+  //   if (giveFormType === false) {
+  //     formInfo.resetFields(); //当新增时重置
+  //   }
+  // }, [AddAlarmEventGive]);
 
   useEffect(() => {
     setAlarmCondition(alarmCondition);
@@ -291,6 +292,8 @@ export default function Index(props) {
             setSoeValue(giveChildForm.AlarmCondition);
             giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           } else if (giveChildForm.AlarmCondition === "Empty") {
+            giveChildForm.AlarmCondition =
+              CommunicationType[giveChildForm.AlarmCondition];
             giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           }
           formInfo.setFieldsValue(giveChildForm);
@@ -298,16 +301,19 @@ export default function Index(props) {
           // giveChildForm.AlarmCondition =
           // alarmDeflectionType[giveChildForm.AlarmCondition];
         } else {
-          //新增
+          //新增时重置
+          if (AddAlarmEventGive === true) {
           formInfo.resetFields();
-          //当新增时重置
+          setPush(true);
+          setEnablee(true);
           setAlarmCondition(1);
           setCompareValue(2);
           setSoeValue(1);
+          }
         }
       });
     }
-  }, [giveFormType, giveChildForm]);
+  }, [giveFormType, giveChildForm, AddAlarmEventGive]);
   return (
     <div>
       <Modal
@@ -334,6 +340,7 @@ export default function Index(props) {
             // size="small"
             form={formInfo}
             name="addform"
+            preserve={false}
           >
             {giveModalTitle === "新增告警事件" ? (
               <Space style={{ alignItems: "baseline" }}>
@@ -367,7 +374,10 @@ export default function Index(props) {
                   style={{ width: 415 }}
                   name="PointIdentifier"
                 >
-                  <Input style={{ width: 290 }} />
+                  <Input
+                    style={{ width: 290 }}
+                    placeholder="若存在多个标识，请用'|'隔开"
+                  />
                 </Item>
                 <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
               </Space>
