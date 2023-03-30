@@ -274,9 +274,9 @@ export default function GatewayDetail(props) {
         drawTrendCharts()
     }
     const optionv = (name, name1, name2, type = "line") => ({
-        xAxis: {
+        xAxis: [{
             data: xAxisU ? xAxisU : []
-        },
+        }],
         series: [
             {
                 data: yAxisUa ? yAxisUa : [],
@@ -309,14 +309,15 @@ export default function GatewayDetail(props) {
             itemGap: 20,
         },
             dataZoom: {
+                 type: 'inside',
                 start: 0,
                 end: 5,
             }
     });
     const optionw = (name, type = "line") => ({
-        xAxis: {
+        xAxis: [{
             data: xAxisW ? xAxisW : []
-        },
+        }],
         series: [
             {
                 data: yAxisW ? yAxisW : [],
@@ -341,14 +342,15 @@ export default function GatewayDetail(props) {
             itemGap: 20,
         },
             dataZoom: {
+                 type: 'inside',
                 start: 0,
                 end: 5,
             }
     });
     const optioni = (name, name1, name2, type = "line") => ({
-        xAxis: {
-            data: xAxisI ? xAxisI : []
-        },
+        xAxis: [{
+            data: xAxisI ? xAxisI : [],
+        }],
         series: [
             {
                 data: yAxisIa ? yAxisIa : [],
@@ -381,13 +383,14 @@ export default function GatewayDetail(props) {
             itemGap: 20,
         },
             dataZoom: {
+                 type: 'inside',
                 start: 0,
                 end: 5,
             }
     });
     const option = (name, name1, name2, name3, name4, type = "line") => ({
         xAxis: {
-            data: xline ? xline : []
+            data: xline ? xline : [],
         },
         series: [
             {
@@ -552,7 +555,7 @@ export default function GatewayDetail(props) {
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
-                        <img src={detail.imageBase64 ? 'data:image/png;base64,' + detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
+                        <img src={detail.imageBase64 ? detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
                         <div className={style.leftImgState}>{detail.state == 1 ? '设备离线' : detail.state == 2 ? '设备在线' : '设备告警'}</div>
                     </div>
                     <div className={style.leftBottom}>

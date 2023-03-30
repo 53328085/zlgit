@@ -1092,6 +1092,8 @@ export const Monitoring = {
     UpdateCamera: (data) => server.post(`/Monitor/Device/UpdateCamera`, data),//更新视频监控
     DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
     StartReboot: (sn) => server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
+    StartDownloadTask: (projectId,sn) => server.get(`/Monitor/Gateway/StartDownloadTask?projectId=${projectId}&sn=${sn}`),//参数下发
+    DownloadTaskState: (projectId,sn) => server.get(`/Monitor/Gateway/DownloadTaskState?projectId=${projectId}&sn=${sn}`),//参数下发
     State: (sn) => server.get(`/Monitor/Gateway/State?sn=${sn}`),//重启网关状态
     GatewayImport: (data) => server.post(`/Monitor/Gateway/Import`, data),//导入网关
     ImportElectric: (data) => server.post(`/Monitor/Device/ImportElectric`, data),//导入电表
