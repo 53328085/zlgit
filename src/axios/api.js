@@ -305,6 +305,14 @@ export class StorageAlarmruntime {
   static QueryStorageAlarmByPage = (params={}) => server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
 }
 
+// 储能管理--充放订单
+export class StorageOrderRuntime {
+  static QueryRuntimeStatus = () => server.get(`/Storage/StorageOrderRuntime/QueryRuntimeStatus`);
+  static QueryType = () => server.get(`/Storage/StorageOrderRuntime/QueryType`);
+  static QueryStorageOrders = (areaId,status,type, params) => server.post(`/Storage/StorageOrderRuntime/QueryStorageOrders?areaId=${areaId}&runtimeStatus=${status}&type=${type}`, params);
+}
+
+
 //
 // zl api end
 // 主页

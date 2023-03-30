@@ -608,7 +608,7 @@ tableProps.pagination.size="default" // 页码大小默认
       let {date} = opform.getFieldsValue()
        if (Array.isArray(date) && date.length > 1) {
         start = date[0].format('YYYY-MM-DD')
-         end = date[1].format('YYYY-MM-DD')
+         end = date[1].format('YYYY-MM-DD')+" 23:59:59"
        }
       params = {...params, start, end} 
     let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
