@@ -7,6 +7,7 @@ import BlueColumn from '@com/bluecolumn'
 import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
+import { current } from '@reduxjs/toolkit';
 const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal=({DelModalRef,name='',content='',...other})=>{
@@ -57,11 +58,26 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
   let TableForm = forwardRef(({ defaultTableData }, ref) => {
     
     const [pointSource, setPointSource] = useState([...defaultTableData])
+    const tableDataRef =useRef()
+    tableDataRef.current=[...pointSource]
     let checedList=[]
     defaultTableData.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-    console.log(pointSource)
+    
+    const choosemes =()=>{
+      console.log(pointSource)
+      let count =0;
+      tableDataRef.current?.forEach(it=>{
+        it.watchPoint&& count++
+      })
+      if(count===0){
+       // message.warning('请至少选择一项标记检测运行点！')
+        return false
+      }
+      return  tableDataRef.current
+    }
+   
     const columns = [
       {
         title: '序号',
@@ -125,6 +141,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
                     it.watchPoint = o
                   }
                 })
+                setPointSource([...pointSource])
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
@@ -146,13 +163,17 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         }
       },
     ]
+    
      useEffect(()=>{
+      // choosemes(pointSource)
      },[])
     useImperativeHandle(ref, () => ({
       setSwitched,
       pointSource,
       setPointSource,
-      setTableParams
+      setTableParams,
+      choosemes,
+      tabledata:tableDataRef.current
     }))
     return (
       <Table
@@ -179,23 +200,27 @@ export let AddModal = forwardRef(
       const [isControl,setIsControl] = useState()
       const [IsCount,setIsCount] = useState()
       const handleChange = async (option) => {
-        await getDeviceQueryCategoryFull(option)
+        getDeviceQueryCategoryFull(option)
         setIsControl(addForm.getFieldsValue().Control)
         setIsCount(addForm.getFieldsValue().IsCount)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
-        //tableRef.current.setSwitched([])
       }
   
       useEffect(() => {
         setIsControl(addForm.getFieldsValue().Control)
         setIsCount(addForm.getFieldsValue().IsCount)
       },[])
+      useEffect(()=>{
+        console.log(tableRef.current.tabledata)
+      },[tableRef.current?.tabledata])
+
       useImperativeHandle(ref, () => ({
         pointSource: tableRef.current.pointSource,
         setPointSource: tableRef.current.setPointSource,
-        setSwitched:tableRef.current.setSwitched
-        // handleChange: tableRef.current.handleChange,
-  
+        setSwitched:tableRef.current.setSwitched,
+        choosemes:tableRef.current.choosemes,
+        tabledata:tableRef.current.tabledata,
+        handleChange,
       }))
       return (
         <Form
@@ -252,7 +277,7 @@ export let AddModal = forwardRef(
           <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
           {/* <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index}></Table> */}
           <div className={style.minHt}>
-          <TableForm ref={tableRef} defaultTableData={defaultTableData}  ></TableForm>
+          <TableForm ref={tableRef} defaultTableData={defaultTableData} ></TableForm>
           </div>
           
         </Form>

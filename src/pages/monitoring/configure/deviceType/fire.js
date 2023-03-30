@@ -287,18 +287,22 @@ if(publish){
   //保存新增设备
   const onOk = async () => {
 
-    let count =0;
-    console.log(foRef.current.pointSource)
-    foRef.current.pointSource.forEach(it=>{
-      it.watchPoint&& count++
-    })
-    if(count===0){
-      message.warning('请至少选择一项标记检测运行点！')
-      return
-    }
-
+    // let count =0;
+    // console.log(foRef.current.pointSource)
+    // foRef.current.pointSource.forEach(it=>{
+    //   it.watchPoint&& count++
+    // })
+    // if(count===0){
+    //   message.warning('请至少选择一项标记检测运行点！')
+    //   return
+    // }
+    const result= foRef.current?.choosemes()
+   if(!result){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
     const formValue = addForm.getFieldsValue()
-    const tableData =  foRef.current.pointSource.map(it=>({
+    const tableData =  result.map(it=>({
       name:it.dataMark,
       isSave:it.isSave,
       isRuningPoint:it.watchPoint,

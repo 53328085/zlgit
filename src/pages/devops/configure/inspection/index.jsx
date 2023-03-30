@@ -62,7 +62,7 @@ export default function Index() {
     { title: '计划内容', dataIndex: 'content' },
     { title: '计划开始日期', dataIndex: 'startTime' },
     { title: '计划结束日期', dataIndex: 'endTime' },
-    { title: '巡检周期', dataIndex: 'cycle' },
+    { title: '巡检周期', dataIndex: 'cycle' ,render(text){return(text===1?'每日':text===2?'每周':text===3?'每月':'/')}},
     { title: '巡检日期', dataIndex: 'timeS' },
     { title: '创建日期', dataIndex: 'createTime' },
     { title: '巡检人', dataIndex: 'operator' },
@@ -187,7 +187,7 @@ let AddPlan = forwardRef(
     const arealist = onelevel.length > 0 ? onelevel : []
     const dateopts = [{ label: '每日', value: 1 }, { label: '每周', value: 2 }, { label: '每月', value: 3 }]
     const [dateCycle, setDataCycle] = useState(1)
-    const mapuserlist = userList.map(it => ({ ...it, label: it.nickName + "/" + it.mobile }))
+    const mapuserlist = userList?.map(it => ({ ...it, label: it.name + "/" + it.mobile }))
     const rule = {
       required: true
     }
@@ -224,11 +224,18 @@ let AddPlan = forwardRef(
 
     //开始时间禁用
     const disabledStartDate = (current) => {
-      return current && current > form.getFieldValue('endtime');
+
+      console.log(form.getFieldValue('endtime'))
+     
+      if(!form.getFieldValue('endtime'))
+      {
+        form.setFieldValue('endtime',undefined)
+      }
+      return current&&(current<moment().subtract(1,'days') || current > form.getFieldValue('endtime'));
     }
     //结束时间禁用
     const disabledEndDate = (current) => {
-      return current && current < form.getFieldValue('starttime');
+      return current &&(current<moment().subtract(1,'days') || current <= form.getFieldValue('starttime'));
     }
     //新增巡检计划
     const getInsertInspectionPlan = () => {
