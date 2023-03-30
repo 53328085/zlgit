@@ -107,6 +107,10 @@ export const FormComp = (props) => {
                     <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
                         <Select
                             options={alarmopts}
+                            fieldNames={{
+                                label:'name',
+                                value: 'id',
+                            }}
                         ></Select>
                     </Form.Item>
                     <Form.Item label="备注" name="remark" >
@@ -199,7 +203,7 @@ let EditCom = ({ form, coms }) => {
     }]
     for (let i = 1; i <= coms; i++) {
         options.push({
-            label: `COM ${i}`,
+            label: `COM${i}`,
             value: i
         })
     }
@@ -307,6 +311,10 @@ export const EditFormComp = (props) => {
                     <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
                         <Select
                             options={alarmopts}
+                            fieldNames={{
+                                label:'name',
+                                value: 'id',
+                            }}
                         ></Select>
                     </Form.Item>
                     <Form.Item label="备注" name="remark" >

@@ -421,9 +421,9 @@ export default function gateway({ deviceStyle }) {
     console.log(res)
 
     if (res.success && Array.isArray(res.data)) {
-      setAlarmopts([{ label: '不启用告警方案', value: 0 }, ...res.data])
+      setAlarmopts([{ name: '不启用告警方案', id: 0 }, ...res.data])
     } else {
-      setAlarmopts([{ label: '不启用告警方案', value: 0 }])
+      setAlarmopts([{ name: '不启用告警方案', id: 0 }])
     }
   }
   //获取变压器列表
@@ -582,7 +582,7 @@ export const FormComp = (props) => {
   let options = []
   for (let i = 1; i <= coms; i++) {
     options.push({
-      label: `COM ${i}`,
+      label: `COM${i}`,
       value: i
     })
   }
@@ -647,6 +647,10 @@ export const FormComp = (props) => {
           <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
             <Select
               options={alarmopts}
+              fieldNames={{
+                label:'name',
+                value: 'id',
+            }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark">
@@ -771,7 +775,7 @@ export const EditFormComp = (props) => {
   let options = []
   for (let i = 1; i <= coms; i++) {
     options.push({
-      label: `COM ${i}`,
+      label: `COM${i}`,
       value: i
     })
   }
@@ -844,6 +848,10 @@ export const EditFormComp = (props) => {
           <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
             <Select
               options={alarmopts}
+              fieldNames={{
+                label:'name',
+                value: 'id',
+            }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark" >

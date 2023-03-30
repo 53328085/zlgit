@@ -148,6 +148,10 @@ export const FormComp = (props) => {
                     <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
                         <Select
                             options={alarmopts}
+                            fieldNames={{
+                                label:'name',
+                                value: 'id',
+                            }}
                         ></Select>
                     </Form.Item>
                     <Form.Item label="备注" name="remark" >
@@ -251,7 +255,7 @@ let EditCom = ({ form, coms }) => {
     }]
     for (let i = 1; i <= coms; i++) {
         options.push({
-            label: `COM ${i}`,
+            label: `COM${i}`,
             value: i
         })
     }
@@ -358,7 +362,7 @@ export const EditFormComp = (props) => {
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
+                    <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
                                 fieldNames={{
@@ -382,9 +386,13 @@ export const EditFormComp = (props) => {
                     <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
                         <Select
                             options={alarmopts}
+                            fieldNames={{
+                                label:'name',
+                                value: 'id',
+                            }}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="备注" name="remark" rules={rules}>
+                    <Form.Item label="备注" name="remark">
                         <TextArea />
                     </Form.Item>
                 </Col>
