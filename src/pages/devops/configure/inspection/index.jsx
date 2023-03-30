@@ -47,7 +47,7 @@ export default function Index() {
     current: 1,
     pageSize: 10
   })
-  const [userList, setUserList] = useState()//运维人员列表
+
   const [tableData, setTableData] = useState()
   const addmodalRef = useRef() //modal的ref
   const addformRef = useRef() //addform的ref
@@ -97,10 +97,10 @@ export default function Index() {
     }
   }
   //查询运维人员
-  const getQueryProjectMaintenance = async () => {
-    const res = await operationDesigin.QueryProjectMaintenance(projectId)
+  const getQueryProjectMaintenance = async (areaId,callback) => {
+    const res = await operationDesigin.QueryProjectMaintenanceArea({projectId,areaId})
     if (res.success) {
-      setUserList([...res.data])
+      res.data&&callback([...res.data])
     } else {
       message.error(res.errMsg)
     }
@@ -149,7 +149,6 @@ export default function Index() {
   const search = () => { }
   useEffect(() => {
     getInspectionPlanPage()
-    getQueryProjectMaintenance()
   }, [])
 
   return (
@@ -172,7 +171,7 @@ export default function Index() {
       </div>
       <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd}>
         <BlueColumn name="新建巡检计划" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
-        <AddPlan projectId={projectId} ref={addformRef} userList={userList} />
+        <AddPlan projectId={projectId} ref={addformRef}  getQueryProjectMaintenance={getQueryProjectMaintenance}/>
       </Modal>
       <DeleteModal delModalRef={delModalRef} name="删除巡检计划" content="确认是否要删除巡检计划？" onOk={delOk} />
     </ContainerDiv>
@@ -181,8 +180,9 @@ export default function Index() {
 
 //新增巡检计划组件
 let AddPlan = forwardRef(
-  ({ projectId, userList }, ref) => {
+  ({ projectId,getQueryProjectMaintenance }, ref) => {
     const [form] = Form.useForm()
+    const [userList, setUserList] = useState([])//运维人员列表
     const onelevel = useSelector(state => state.system.onelevel);
     const arealist = onelevel.length > 0 ? onelevel : []
     const dateopts = [{ label: '每日', value: 1 }, { label: '每周', value: 2 }, { label: '每月', value: 3 }]
@@ -191,7 +191,7 @@ let AddPlan = forwardRef(
     const rule = {
       required: true
     }
-    let capitalAr = '一二三四五六七'.split('')
+    let capitalAr = '一二三四五六日'.split('')
     const time = []
     useMemo(() => {
       for (let i = 0; i < 24; i++) {
@@ -288,7 +288,11 @@ let AddPlan = forwardRef(
         <Form.Item label={onelevel.length > 0 ? onelevel[0].levelName : '园区名称'} name="areaId" rules={[rule]}>
           <Select
             options={arealist}
-            fieldNames={{ label: 'name', value: 'id' }}></Select>
+            fieldNames={{ label: 'name', value: 'id' }}
+            onChange={(v)=>{
+              getQueryProjectMaintenance(v,setUserList)
+            }}
+            ></Select>
         </Form.Item>
         <Form.Item label="计划名称" name="name" rules={[rule]}>
           <Input></Input>
