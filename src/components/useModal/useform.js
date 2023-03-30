@@ -42,18 +42,18 @@ import {Form, Select, Input, Switch, DatePicker} from 'antd'
       </Item>
     )}
     <Item
-      label="用户名"
+      label="登录账号"
       name="name"
       tooltip="用户名不能超过16个字符"
       rules={[
         {
           required: true,
-          message: "用户名必填",
+          message: "登录账号必填",
         },
         {
           min: 1,
           max: 16,
-          message: "用户名不能超过16个字符"
+          message: "登录账号不能超过16个字符"
         }
       ]}
     >
@@ -64,7 +64,7 @@ import {Form, Select, Input, Switch, DatePicker} from 'antd'
      rules={[
       {
         required: true,
-        message: "用户名必填",
+        message: "用户姓名必填",
       },
       {
         min: 1,

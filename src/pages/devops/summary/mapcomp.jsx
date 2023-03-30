@@ -46,11 +46,20 @@ export default function MapComp({ points }) {
                          position={new BMapGL.Point(Number(positions[0]), Number(positions[1]))}            
                          unit="px"
                          offset={{ 
-                             width: 120 ,
-                             height: 160,
+                             width: 155 ,
+                             height: 200,
                          }}
                         >
-                             <Info   message={it}/>
+                             <Info   message={it} 
+                             Mouseover={()=>{
+                                 setShowIndex(index)
+                             }}
+                             Mouseleave={
+                                ()=>{
+                                    setShowIndex(null) 
+                                }
+                             }
+                             />
                          </CustomOverlay>:null
                     }
                    
@@ -62,7 +71,7 @@ export default function MapComp({ points }) {
         </Map>
     )
 }
-let Info = ({message}) => {
+let Info = ({message,Mouseover,Mouseleave}) => {
     const flexcss = {
         display: 'flex',
         justifyContent: 'space-between',
@@ -75,16 +84,16 @@ let Info = ({message}) => {
     }
     return (
         <div style={{
-            // width: 224,
-            // height: 160,
             background: '#fff',
             borderRadius: 2,
             padding: 12,
             boxShadow: '2px 2px 5px #cccccc',
             display: 'grid',
             gridTemplateRows: 'repeat(5,1fr)',
-            // position:'absolute',
-        }}>
+        }}
+        onMouseEnter={Mouseover}
+        onMouseLeave={Mouseleave}
+        >
             <p style={flexcss}>
                 <div>告警坐标</div>
                 <div style={mgl24}>{message?.lngLat}</div>

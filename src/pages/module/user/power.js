@@ -316,7 +316,7 @@ export default function Account({projectId, CModal}) {
   edituerinfo.current = item;
   let title = ['', '', '编辑运营管理员', '编辑项目管理员', '编辑运维人员'][type]
   let name = ['', '', '运营管理员', '项目管理员', '运维人员'][type]
-  item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD hh:mm:ss')
+  item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
   item.enabled = item.enabled  == 1
   flushSync(() => {
     setInitialValues({
@@ -348,8 +348,10 @@ const onOkedit = async () => {
   try {
     let {id} =  edituerinfo.current;
    let values = await editref.current.onGetvalue()
+   console.log(values.validStageTime.format('YYYY-MM-DD'));
 
    let {RoleType, ...params} = values
+   params.validStageTime = params.validStageTime.format('YYYY-MM-DD')
    params.enabled = Number(params.enabled)
 
    let {success} = await User.Update({...params, id})
@@ -414,7 +416,7 @@ const reset = (record) => {
                 <Input size="middle" defaultValue={field.mobile} />
               </Item>
               <Item name={[index, "validStageTime"]} noStyle>
-                <Input size="middle" defaultValue={moment(field.validStageTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY/MM/DD')} />
+                <Input size="middle" defaultValue={moment(field.validStageTime, 'YYYY-MM-DD HH:mm:ss').format('YYYY/MM/DD')} />
               </Item>
               <Item noStyle>
                  
@@ -474,7 +476,7 @@ const reset = (record) => {
               <Input size="middle" value={item.name} readOnly />
               <Input size="middle" readOnly value={item.nickName} />
               <Input size="middle" readOnly value={item.mobile} />
-              <Input size="middle" readOnly value={moment(item.validStageTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY/MM/DD')} />
+              <Input size="middle" readOnly value={moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss').format('YYYY/MM/DD')} />
               <Space size={16} style={{marginLeft: 'auto'}}>
                  <Pbutton onClick={() => useEdit(item, 2 )}>编辑</Pbutton>
                  <Pbutton onClick={() => reset(item)}>重置密码</Pbutton>

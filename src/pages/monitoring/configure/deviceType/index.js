@@ -15,7 +15,6 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
   const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
-  
  
   
 

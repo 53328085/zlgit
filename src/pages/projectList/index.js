@@ -26,7 +26,10 @@ import {
   DesktopOutlined, 
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
+ 
 import { ProjectList, eneryShift } from "@api/api.js";
+import {selectUser} from '@redux/user'
+
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
@@ -36,6 +39,7 @@ import Projectform from './projectform'
 import { configProject, getMenus, getshifts, getOnelevel, getpublishState } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 import UseTabel from '@com/useTable'
+import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
@@ -264,7 +268,9 @@ const { RangePicker } = DatePicker
 export default function Index() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [form] = Form.useForm();
+
   const [proform] =  Form.useForm()
   const [count, setCount] = useState(0); 
   const modal = useRef()
@@ -519,7 +525,7 @@ tableProps.pagination.size="default" // 页码大小默认
     (state) => state.system
   );
   const { name } = useSelector((state) => state.user);
-
+  
   // 操作记录 start
   const opref = useRef()
   const opRecord = () => {
@@ -602,7 +608,7 @@ tableProps.pagination.size="default" // 页码大小默认
       let {date} = opform.getFieldsValue()
        if (Array.isArray(date) && date.length > 1) {
         start = date[0].format('YYYY-MM-DD')
-         end = date[1].format('YYYY-MM-DD')
+         end = date[1].format('YYYY-MM-DD')+" 23:59:59"
        }
       params = {...params, start, end} 
     let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
@@ -650,6 +656,17 @@ tableProps.pagination.size="default" // 页码大小默认
  }
 
 // 操作记录 end
+
+// 运维管理员管理 start
+ const {roleType} = useSelector(selectUser)
+ const operRef = useRef()
+ const devOps = () => {
+     operRef.current.onOpen();
+ }
+const closeModl = () => {
+  operRef.current.onCancel()
+}
+
   return (
       
       <Mainbox>
@@ -740,8 +757,8 @@ tableProps.pagination.size="default" // 页码大小默认
               </Item> */}
             </Space>
             <Space size={32}>
-              <Item noStyle>
-                <CustBtn
+            <Item noStyle>
+              {  roleType == 2 &&    <CustBtn
                   onClick={showproject}
                   icon={
                     <PlusCircleOutlined
@@ -751,6 +768,13 @@ tableProps.pagination.size="default" // 页码大小默认
                 >
                   新增项目
                 </CustBtn>
+               }
+                 {  roleType == 1 &&    <CustBtn style={{width: '144px'}}
+                  onClick={devOps}
+                >
+                  运营管理员管理
+                </CustBtn>
+               }
               </Item>
               <Item noStyle>
                   <CustBtn
@@ -807,6 +831,18 @@ tableProps.pagination.size="default" // 页码大小默认
         footer={null}
       >
          <OprecordCom />
+         
+      </Custmodal>
+
+
+      <Custmodal
+        title="运营管理员账号管理"
+        ref={operRef} 
+        width={1080} 
+        mold="cust"  
+        footer={<Space><Button onClick={closeModl}>取消</Button><Button type="primary" onClick={closeModl}>确认</Button></Space>}
+      >
+         <Account />
          
       </Custmodal>
       </Mainbox>

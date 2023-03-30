@@ -404,15 +404,15 @@ export default function Index() {
                 <div className='list'>
 
                   <div>
-                    <span>未分派</span>
+                    <span>待处理</span>
                     <span style={{ fontSize: 18 }}>{order?.wait}</span>
                   </div>
                   <div>
-                    <span>已分派</span>
+                    <span>处理中</span>
                     <span style={{ fontSize: 18 }}>{order?.process}</span>
                   </div>
                   <div>
-                    <span>已处理</span>
+                    <span>已完成</span>
                     <span style={{ fontSize: 18 }}>{order?.finish}</span>
                   </div>
                 </div>
@@ -424,11 +424,11 @@ export default function Index() {
                 <div className='list'>
 
                   <div>
-                    <span>待巡检</span>
+                    <span>待处理</span>
                     <span>{task?.wait}</span>
                   </div>
                   <div>
-                    <span>巡检中</span>
+                    <span>处理中</span>
                     <span>{task?.process}</span>
                   </div>
                   <div>

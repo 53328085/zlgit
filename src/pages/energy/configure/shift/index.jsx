@@ -288,7 +288,7 @@ export default function Index() {
         })
       }else{
         messageApi.open({
-          type:'success',
+          type:'error',
           content:res.errMsg || '删除失败，请重试！'
         })
       }

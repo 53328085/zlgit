@@ -147,9 +147,9 @@ export default function Electric() {
       dataIndex: 'options',
       render: (text, record) => {
         return (
-          <div>
-            <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
-            <span style={{ ...optionStyle, paddingLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</span>
+          <div style={{display:'flex'}}>
+            <div style={optionStyle} onClick={() => { editOption(record) }}>编辑</div>
+            <div style={{ ...optionStyle,marginLeft:32,  color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</div>
           </div>
         )
       }
@@ -222,47 +222,48 @@ export default function Electric() {
     }
   }
 
-  //获取默认电表的详细信息
-  const getDeviceQueryCategoryFull = async (category) => {
-    let params = {
-      projectId,
-      category,
-    }
-    const r = await DeviceQueryCategoryFull(params)
-    if (r.success) {
-      const data = r.data
-      console.log(213,data)
-      const arr = data.points?.map((item, index) => ({
-        index: index + 1,
-        dataMark: item.name,
-        dataName: item.description,
-        dataUnit: item.unit,
-        isSave: item.isSave,
-        watchPoint: item.isRuningPoint,
-        dataOrder: item.secquence
-      }))
-      if (foRef.current) {
-        const watchPointArr = arr.filter(it => it.watchPoint)
-        console.log(watchPointArr)
-        foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource(arr)
-      } else {
-        setDefaultTableData(arr)
+    //获取默认电表的详细信息
+    const getDeviceQueryCategoryFull = async (category) => {
+      let params = {
+        projectId,
+        category,
       }
-      addForm.setFieldsValue({
-        DeviceType: data.category,
-        Cycle: data.rateType,
-        Control: data.control,
-        IsCount: data.calculate,
-        IsRead: data.realTimeReading,
-        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
-        ImageUpload: '',
-        // Point:arr,
-      })
-      setIsAdd(true)
+      const r = await DeviceQueryCategoryFull(params)
+      if (r.success) {
+        const data = r.data
+        console.log(213,data)
+        const arr = data.points?.map((item, index) => ({
+          index: index + 1,
+          dataMark: item.name,
+          dataName: item.description,
+          dataUnit: item.unit,
+          isSave: item.isSave,
+          watchPoint: item.isRuningPoint,
+          dataOrder: item.secquence
+        }))
+        if (foRef.current) {
+          const watchPointArr = arr.filter(it => it.watchPoint)
+          console.log(watchPointArr)
+          foRef.current.setSwitched(watchPointArr)
+          foRef.current.setPointSource([...arr])
+       
+        } else {
+          setDefaultTableData(arr)
+        }
+        addForm.setFieldsValue({
+          DeviceType: data.category,
+          Cycle: data.rateType,
+          Control: data.control,
+          IsCount: data.calculate,
+          IsRead: data.realTimeReading,
+          DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
+          ImageUpload: '',
+          // Point:arr,
+        })
+        setIsAdd(true)
+      }
+  
     }
-
-  }
   //打开新增modal
   const open = () => {
     if(!isAdd)return
@@ -277,27 +278,24 @@ export default function Electric() {
     getDeviceQueryNotUsed()
     ModalRef.current.onCancel()
   }
+
   //保存新增设备
   const onOk = async () => {
-
-    let count =0;
-    console.log(foRef.current.pointSource)
-    foRef.current.pointSource.forEach(it=>{
-      it.watchPoint&& count++
-    })
-    if(count===0){
-      message.warning('请至少选择一项标记检测运行点！')
-      return
-    }
+   const result= foRef.current?.choosemes()
+   if(!result){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
 
     const formValue = addForm.getFieldsValue()
-    const tableData = foRef.current.pointSource.map(it => ({
+
+    const tableData = result.map(it => ({
       name: it.dataMark,
       isSave: it.isSave,
       isRuningPoint: it.watchPoint,
       secquence: it.dataOrder
     }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource,result)
     let params = {
       projectId,
       category: formValue.DeviceType,
@@ -318,6 +316,7 @@ export default function Electric() {
       message.error(resp.errMsg)
     }
   }
+
   //导出表格
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -338,7 +337,7 @@ export default function Electric() {
     addForm,
     dataSource,
     getDeviceQueryCategoryFull,
-    defaultTableData
+    defaultTableData,
   }
   let deviceProps = {
     value: 0,
