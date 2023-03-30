@@ -10,7 +10,7 @@ export default function Index(props) {
   const { getReportInfo, getElectricityDate, dataInfoAll } = props;
   console.log(dataInfoAll);
   return (
-    <div className={style.contentRight}>
+    <div className={style.contentRight} id="rightInfo">
       <div className={style.showInfo}>
         <img src={chintLogo} className={style.chintLogo}></img>
         <span className={style.chinName}>正泰综合能源服务平台</span>

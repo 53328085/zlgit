@@ -1,10 +1,57 @@
+.mainContent{
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    padding-bottom: 16px;
+}
+.monthList{
+    width: 184px;
+    height: 800px;
+    border: 1px solid #d7d7d7;
+    background-color: #fff;
+    .monthTitle{
+        width: 100%;
+        height: 36px;
+        line-height: 36px;
+        font-size: 14px;
+        color: #fff;
+        background-color: #237ae3;
+        text-align: center;
+    }
+    .monthTab{
+        width: 152px;
+        height: 42px;
+        border: 1px solid #d7d7d7;
+        margin: 16px 15px 0 15px;
+        line-height: 42px;
+        text-align: center;
+        position: relative;
+        font-size: 14px;
+        color: #515151;
+        cursor: pointer;
+        .success{
+           width: 22px;
+           height: 22px;
+           position: absolute;
+           left: 11px;
+           top: 10px; 
+        }
+        .rightIcon{
+            color: #ccc;
+            position: absolute;
+            right: 16px;
+            top: 14px;
+        }
+    }
+}
 .priceContent{
- width: 1680px;
+ width: 1480px;
  border: 1px solid #d7d7d7;
  background-color: #fff;
  border-radius: 4px;
  padding: 16px;
- margin-top: 16px;
+ margin-left: 16px;
+ height: 800px;
  .headerTitle{
     border-left: 4px solid #237ae4;
     padding-left: 16px;
@@ -17,7 +64,7 @@
  }
  .priceList{
     margin-top: 16px;
-    width: 1648px;
+    width: 1448px;
     height: 160px;
     border: 1px solid #d7d7d7;
     display: flex;

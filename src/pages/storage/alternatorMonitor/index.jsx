@@ -85,8 +85,8 @@ export default function Index() {
           let x= [];
           let y = [];
           res.data.map((item, index) => {
-            x.push(item.name)
-            y.push(item.value)
+            x.push(item.x)
+            y.push(item.y)
           })
           setPowerData({
             x,
@@ -106,8 +106,8 @@ export default function Index() {
           let x= [];
           let y = [];
           res.data.map((item, index) => {
-            x.push(item.name)
-            y.push(item.value)
+            x.push(item.x)
+            y.push(item.y)
           })
           setSocData({
             x,

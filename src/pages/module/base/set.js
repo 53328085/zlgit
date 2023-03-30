@@ -232,7 +232,7 @@ export default function ProjectSet({projectId}) {
     { label: '结算收费', value: 'prepayEnabled' },
     { label: '能源管理', value: 'energyEnabled' },
     { label: '光伏发电', value: 'solarEnabled' },
-    { label: '存储管理', value: 'storageEnabled' },
+    { label: '储能管理', value: 'storageEnabled' },
     { label: '碳排管理', value: 'carbonEnabled' },  
     { label: '运维管理', value: 'maintenanceEnabled' },
   ]
@@ -243,7 +243,7 @@ export default function ProjectSet({projectId}) {
     { label: '蒸汽', value: 'steamEnabled' },
     { label: '燃气', value: 'gasEnabled' },
     { label: '煤炭', value: 'coalEnabled' },
-    { label: '燃油', value: 'oilEnabled' },
+    { label: '燃油', value: 'oilEnabled' },   
   ]
   const { Item } = Form;
   const { TextArea } = Input;
