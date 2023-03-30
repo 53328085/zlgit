@@ -125,6 +125,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
                     it.watchPoint = o
                   }
                 })
+                setPointSource([...pointSource])
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
