@@ -187,7 +187,7 @@ let AddPlan = forwardRef(
     const arealist = onelevel.length > 0 ? onelevel : []
     const dateopts = [{ label: '每日', value: 1 }, { label: '每周', value: 2 }, { label: '每月', value: 3 }]
     const [dateCycle, setDataCycle] = useState(1)
-    const mapuserlist = userList.map(it => ({ ...it, label: it.name + "/" + it.mobile }))
+    const mapuserlist = userList?.map(it => ({ ...it, label: it.name + "/" + it.mobile }))
     const rule = {
       required: true
     }
