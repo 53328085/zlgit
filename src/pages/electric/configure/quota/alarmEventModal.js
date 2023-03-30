@@ -55,11 +55,12 @@ export default function Index(props) {
   ];
   const compareOptions = [
     {
-      label: "大于等于",
-      value: 1,
-    },{
       label: "小于等于",
       value: 2,
+    },
+    {
+      label: "大于等于",
+      value: 1,
     },
   ];
   const soeOptions = [
@@ -303,12 +304,12 @@ export default function Index(props) {
         } else {
           //新增时重置
           if (AddAlarmEventGive === true) {
-          formInfo.resetFields();
-          setPush(true);
-          setEnablee(true);
-          setAlarmCondition(1);
-          setCompareValue(2);
-          setSoeValue(1);
+            formInfo.resetFields();
+            setPush(true);
+            setEnable(true);
+            setAlarmCondition(1);
+            setCompareValue(2);
+            setSoeValue(1);
           }
         }
       });
@@ -531,9 +532,7 @@ export default function Index(props) {
                     <Item
                       label="低限："
                       labelCol={{ flex: "70px" }}
-                      rules={[
-                        { required: true, message: "请输入低限值(整数)" },
-                      ]}
+                      rules={[{ required: true, message: "请输入低限值" }]}
                       style={{ width: 200, marginLeft: 18 }}
                       name="MinCriticalValue"
                     >
@@ -556,9 +555,7 @@ export default function Index(props) {
                     <Item
                       label="高限："
                       labelCol={{ flex: "70px" }}
-                      rules={[
-                        { required: true, message: "请输入高限值(整数)" },
-                      ]}
+                      rules={[{ required: true, message: "请输入高限值" }]}
                       style={{
                         width: 200,
                         height: 30,
@@ -652,9 +649,7 @@ export default function Index(props) {
                   <Item
                     label="临界值："
                     labelCol={{ flex: "85px" }}
-                    rules={[
-                      { required: true, message: "请输入临界值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入临界值" }]}
                     style={{ width: 240, marginLeft: 5 }}
                     name="CriticalValue"
                   >
@@ -705,13 +700,14 @@ export default function Index(props) {
                   <Item
                     label="告警值："
                     labelCol={{ flex: "80px" }}
-                    rules={[
-                      { required: true, message: "请输入告警值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入告警值" }]}
                     style={{ width: 300, marginLeft: 5 }}
                     name="AlarmValue"
                   >
-                    <Input style={{ width: 110 }} placeholder="请输入告警值" />
+                    <InputNumber
+                      style={{ width: 130 }}
+                      placeholder="请输入告警值"
+                    />
                   </Item>
                   <span style={{ marginLeft: -90, color: "#999" }}>(必填)</span>
                 </Space>
@@ -720,13 +716,14 @@ export default function Index(props) {
                   <Item
                     label="消警值："
                     labelCol={{ flex: "80px" }}
-                    rules={[
-                      { required: true, message: "请输入消警值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入消警值" }]}
                     style={{ width: 240, marginLeft: 5 }}
                     name="RecoverValue"
                   >
-                    <Input style={{ width: 110 }} placeholder="请输入消警值" />
+                    <InputNumber
+                      style={{ width: 130 }}
+                      placeholder="请输入消警值"
+                    />
                   </Item>
                   <span style={{ marginLeft: -30, color: "#999" }}>(必填)</span>
                 </Space>

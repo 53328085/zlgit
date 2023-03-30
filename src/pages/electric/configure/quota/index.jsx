@@ -41,12 +41,6 @@ export default function Index() {
   } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
-      type,
-      content,
-    });
-  };
   const tableRef = useRef();
 
   const Item = Form.Item;
@@ -62,7 +56,7 @@ export default function Index() {
   const [noDataInForm, setNoDataInForm] = useState();
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         if (res.data) {
           setDataSource(res.data);
           setTotal(res.total);
@@ -157,7 +151,7 @@ export default function Index() {
   //删除确认
   const deleteOk = () => {
     DeletePlanAlarm(projectId, deleteId).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         message.success("告警方案删除成功！");
         getAlarmData();
         // if(dataSource.length == 1 && pageNum > 1){
@@ -177,7 +171,7 @@ export default function Index() {
   //删除告警类型确认
   const deleteTypeOk = () => {
     DeleteAlarmEvent(projectId, deleteTypeId).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         message.success("告警类型删除成功！");
         setDeleteTypeModal(false);
         //刷新告警类型数据
@@ -206,7 +200,7 @@ export default function Index() {
     setEditId(record.id);
     setDataSourceType();
     QueryAlarmEvents(record.id).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
           console.log(JSON.parse(res.data));
@@ -228,7 +222,7 @@ export default function Index() {
   const alarmTypeTable = () => {
     setDataSourceType();
     QueryAlarmEvents(editId).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
           console.log(JSON.parse(res.data));
@@ -368,34 +362,15 @@ export default function Index() {
         tag: values.tag,
       };
       QueryAddAlarm(params).then((res) => {
-        if (res.success) {
+        if (res.success === true) {
           setDataSourceType();
           setEditId(res.data);
+          setAddModal(false);
+          setaddAlarmModal(true);
         } else {
-          messageApi.open({
-            type: "error",
-            content: res.errMsg || "新增失败,请重试！",
-          });
+          message.error(res.errMsg ? res.errMsg : "新增告警方案失败！");
         }
       });
-      // else if(modalTitle == '编辑配电房'){
-      //   params.id = editId
-      //   updateRoom(params).then(res => {
-      //     if(res.success){
-      //       messageApi.open({
-      //         type:'success',
-      //         content:'配电房编辑成功！',
-      //       })
-      //       queryRoom()
-      //     }else{
-      //       messageApi.open({
-      //         type:'error',
-      //         content:res.errMsg || '配电房编辑失败,请重试！',
-      //       })
-      //     }
-
-      setAddModal(false);
-      setaddAlarmModal(true);
     } catch (errorInfo) {}
   };
   //取消告警
@@ -415,12 +390,12 @@ export default function Index() {
       tag: values.tag,
     };
     UpdatePlanAlarm(params).then((res) => {
-      if (res.success) {
+      if (res.success===true) {
         message.success("告警方案编辑成功！");
         getAlarmData();
         setaddAlarmModal(false);
       } else {
-        message.error(res.errMsg ? res.errMsg : "告警方案编辑失败！");
+        message.error(res.errMsg ? res.errMsg : "编辑告警方案失败！");
       }
     });
   };
@@ -443,7 +418,7 @@ export default function Index() {
       childFormInfo.planId = editId;
       if (childFormInfo.alarmRule === 1) {
         return AddAlarmEventOverrun(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -453,7 +428,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 2) {
         return AddAlarmEventInterval(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -463,7 +438,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 3) {
         return AddAlarmEventDeflection(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -473,7 +448,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 4) {
         return AddAlarmEventSOE(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -483,7 +458,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 5) {
         return AddAlarmEventCommunication(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -497,7 +472,7 @@ export default function Index() {
       childFormInfo.id = editTypeId;
       if (childFormInfo.alarmRule === 1) {
         return UpdateAlarmEventOverrun(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -507,7 +482,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 2) {
         return UpdateAlarmEventInterval(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -517,7 +492,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 3) {
         return UpdateAlarmEventDeflection(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -527,7 +502,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 4) {
         return UpdateAlarmEventSOE(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -537,7 +512,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 5) {
         return UpdateAlarmEventCommunication(childFormInfo).then((res) => {
-          if (res.success) {
+          if (res.success===true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
