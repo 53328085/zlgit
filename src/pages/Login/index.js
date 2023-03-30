@@ -469,7 +469,7 @@ function UserLog() {
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
-          pwd: "chint_123456",
+          pwd: "chint@123456",
         }}
       >
         <Itembox

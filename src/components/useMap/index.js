@@ -22,10 +22,10 @@ import {
   
     const { setAaddress=()=>{}, lngLat, value, onChange} = props
     const defaultpoint = lngLat || value 
-
+  
     const [lng, lat] = defaultpoint?.split(',') || []
      
-   
+    
     const [position, setPosition] = useState({
        point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
        icon: 'loc_blue'
@@ -84,7 +84,7 @@ import {
         renderOptions: { map: mapref?.current?.map },
         onSearchComplete: serachcomplete 
     }); 
-  useEffect(() => {
+  /* useEffect(() => {
    setPosition(
      {
        ...position,
@@ -92,7 +92,7 @@ import {
      }
   
     ) 
-  }, [value])
+  }, [value]) */
   useImperativeHandle(ref, () => ({
     serachMap
   }))
