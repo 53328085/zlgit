@@ -17,7 +17,7 @@ const config = {
     theme: {
       primaryColor:'#237AE4',
     },
-    locale: zhCN
+    locale: zhCN,
 }
 ConfigProvider.config(config)
 export default ConfigProvider
