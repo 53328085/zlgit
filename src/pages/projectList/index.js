@@ -39,6 +39,7 @@ import Projectform from './projectform'
 import { configProject, getMenus, getshifts, getOnelevel, getpublishState } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 import UseTabel from '@com/useTable'
+import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
 const { Content } = Layout;
 const Ccontent = styled(Content)`
@@ -658,8 +659,13 @@ tableProps.pagination.size="default" // 页码大小默认
 
 // 运维管理员管理 start
  const {roleType} = useSelector(selectUser)
-
-
+ const operRef = useRef()
+ const devOps = () => {
+     operRef.current.onOpen();
+ }
+const closeModl = () => {
+  operRef.current.onCancel()
+}
 
   return (
       
@@ -763,15 +769,10 @@ tableProps.pagination.size="default" // 页码大小默认
                   新增项目
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn
-                  onClick={showproject}
-                  icon={
-                    <PlusCircleOutlined
-                      style={{ color: "#fff", fontSize: "24px" }}
-                    />
-                  }
+                 {  roleType == 1 &&    <CustBtn style={{width: '144px'}}
+                  onClick={devOps}
                 >
-                  运维管理员管理
+                  运营管理员管理
                 </CustBtn>
                }
               </Item>
@@ -830,6 +831,18 @@ tableProps.pagination.size="default" // 页码大小默认
         footer={null}
       >
          <OprecordCom />
+         
+      </Custmodal>
+
+
+      <Custmodal
+        title="运营管理员账号管理"
+        ref={operRef} 
+        width={1080} 
+        mold="cust"  
+        footer={<Space><Button onClick={closeModl}>取消</Button><Button type="primary" onClick={closeModl}>确认</Button></Space>}
+      >
+         <Account />
          
       </Custmodal>
       </Mainbox>

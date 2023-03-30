@@ -69,30 +69,30 @@ export default function Index(props) {
       key: 'category',
       id: 'id'
     },
-    {
-      title: '电流(A)',
-      dataIndex: 'connMethod',
-      key: 'connMethod',
-      id: 'id'
-    },
-    {
-      title: '电压(V)',
-      dataIndex: 'childrenCnt',
-      key: 'childrenCnt',
-      id: 'id'
-    },
-    {
-      title: '功率(kW)',
-      dataIndex: 'childrenCnt',
-      key: 'childrenCnt',
-      id: 'id'
-    },
-    {
-      title: '用电量(kWh)',
-      dataIndex: 'childrenCnt',
-      key: 'childrenCnt',
-      id: 'id'
-    },
+    // {
+    //   title: '电流(A)',
+    //   dataIndex: 'connMethod',
+    //   key: 'connMethod',
+    //   id: 'id'
+    // },
+    // {
+    //   title: '电压(V)',
+    //   dataIndex: 'childrenCnt',
+    //   key: 'childrenCnt',
+    //   id: 'id'
+    // },
+    // {
+    //   title: '功率(kW)',
+    //   dataIndex: 'childrenCnt',
+    //   key: 'childrenCnt',
+    //   id: 'id'
+    // },
+    // {
+    //   title: '用电量(kWh)',
+    //   dataIndex: 'childrenCnt',
+    //   key: 'childrenCnt',
+    //   id: 'id'
+    // },
     {
       title: '设备状态',
       dataIndex: 'state',
@@ -291,7 +291,7 @@ export default function Index(props) {
       <div className={style.bottom}>
         <div className={style.bottomTab}>
            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' }} size="middle" onClick={() => { onSearchList() }}>查询</Button>
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' ,borderLeft:'none'}} size="middle" onClick={() => { onSearchList() }}>查询</Button>
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
           <span>表计型号</span>
           <Select
@@ -341,7 +341,7 @@ export default function Index(props) {
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
             </Radio.Group>
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>数据导出</Button>
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
           </div>
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
