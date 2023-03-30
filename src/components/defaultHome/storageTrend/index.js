@@ -16,7 +16,7 @@ export default function DefaultHome(){
     echarts.dispose(lineRef.current)
     let lineChart = echarts.init(lineRef.current);
     lineChart.setOption({
-      color:['#fff0e5', '#e5f5e5'],
+      color:['#ffe7d6', '#d6efd6'],
       tooltip: {
         trigger: 'axis',
         axisPointer: {
