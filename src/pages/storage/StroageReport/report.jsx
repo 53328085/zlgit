@@ -151,12 +151,12 @@ const Mainbox = styled.div`
               optionType="button"
               buttonStyle="solid"
               />
-                   <DatePicker />
+                   <DatePicker picker={type} />
                   <Divider   style={{  margin: '0px'}} />
                  
              </div>
              <div className='btns'>
-                    <CustButton wh="192px">生成报告</CustButton>
+                    <CustButton wh="192px" src="createrpt">生成报告</CustButton>
                     <CustButton wh="192px" src="print">打印报告</CustButton>
                     <CustButton wh="192px" src="export">导出报告</CustButton>
              </div>

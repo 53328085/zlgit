@@ -58,14 +58,13 @@ export default function GatewayDetail(props) {
         },
         {
             title: '通信端口',
-            dataIndex: 'commPort',
+            dataIndex: 'commPortName',
             key: 'commPort',
             id: 'id'
         },
         {
             title: '通信协议',
-            dataIndex: 'commProtocol',
-            render: (commProtocol) => <span>{commProtocol==1?'Modbus':'DL645'}</span>,
+            dataIndex: 'commProtocolName',
             key: 'commProtocol',
             id: 'id'
         },
@@ -102,9 +101,6 @@ export default function GatewayDetail(props) {
           let { success, data } = res
           if (success) {
             setDetail(data)
-            if(detail.category){
-                getGatewayImages()
-            }
           } else {
             message.error(res.errMsg)
           }
@@ -144,25 +140,10 @@ export default function GatewayDetail(props) {
           }
         })
       }
-      let [imgUrl,setimgUrl]=useState([])
-      const getGatewayImages = () => {//网关图片
-        return CategoryImages({projectId:projectId,group:[detail.category]}).then(res => {
-          let { success, data } = res
-          if (success) {
-            setimgUrl(data[0].imageBase64)
-          } else {
-            message.error(res.errMsg)
-          }
-        })
-      }
       useEffect(() => {
         getData()
         
       }, [search.sn,projectId])
-      useEffect(() => {
-        getGatewayImages()
-        
-      }, [detail.category,projectId])
       useEffect(() => {
         getChildrenData()
       }, [search.sn,projectId,page,params.pageSize])
@@ -180,7 +161,7 @@ export default function GatewayDetail(props) {
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>网关详情</p></div>
                     <div className={style.leftImgBox}>
-                        <img src={imgUrl?'data:image/png;base64,'+imgUrl:imgurl.category} className={style.leftImg} ></img>
+                        <img src={detail?'data:image/png;base64,'+detail.imageBase64:imgurl.category} className={style.leftImg} ></img>
                         <div className={style.leftImgState}>{detail.state==2?'网关在线':'网关失联'}</div>
                     </div>
                     <div className={style.leftBottom}>

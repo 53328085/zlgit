@@ -15,11 +15,12 @@ import { selectProjectId } from '@redux/systemconfig.js'
 import Table from '@com/useTable'
 import Item from "antd/lib/list/Item";
 import moment from "moment";
+import { index } from "@antv/x6/lib/util/dom/elem";
 
 export default function GatewayDetail(props) {
     let location = useLocation()
-    let qs=require('query-string')
-    let search=qs.parse(location.search)
+    let qs = require('query-string')
+    let search = qs.parse(location.search)
     console.log(search.sn)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
@@ -38,7 +39,7 @@ export default function GatewayDetail(props) {
     let day = new Date().getDate()
     let date = year + '-' + (month > 10 ? month : '0' + month) + '-' + (day > 10 ? day : '0' + day)
     const today = moment();
-    const yesterday=date+' '+"00:00:00"
+    const yesterday = date + ' ' + "00:00:00"
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -103,7 +104,7 @@ export default function GatewayDetail(props) {
         end: endTime
     }
     const [historyTrend, sethistoryTrend] = useState()
-    
+
     const getHistoryTrend = () => {//
         return HistoryTrend(paramsTrend).then(res => {
             let { success, data } = res
@@ -125,7 +126,6 @@ export default function GatewayDetail(props) {
             }
         })
     }
-
     const getEnergyTrend = () => {//
         return EnergyActuary(projectId, search.sn).then(res => {
             let { success, data } = res
@@ -180,118 +180,71 @@ export default function GatewayDetail(props) {
                 let y2 = []
                 let y3 = []
                 let y4 = []
-                data.Data.map((item) => { x.push(item.Time) })
-                data.Data.map((item) => { y.push(item.E) })
-                data.Data.map((item) => { y1.push(item.E1) })
-                data.Data.map((item) => { y2.push(item.E2) })
-                data.Data.map((item) => { y3.push(item.E3) })
-                data.Data.map((item) => { y4.push(item.E4) })
-                setxline(x)
-                setyline(y)
-                setyline1(y1)
-                setyline2(y2)
-                setyline3(y3)
-                setyline4(y4)
-                if (xline && yline) {
-                    tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
-                }
+                data.Data.map((item,index)=>{
+                    x.push(item.Time)
+                    y.push(item.E)
+                    y1.push(item.E1)
+                    y2.push(item.E2)
+                    y3.push(item.E3)
+                    y4.push(item.E4)
+                })
+                let objList=[{data:y,type:'line',name:'用电量-总(kWh)'},
+                {data:y1,type:'line',name:'用电量-尖(kWh)'},
+                {data:y2,type:'line',name:'用电量-峰(kWh)'},
+                {data:y3,type:'line',name:'用电量-平(kWh)'},
+                {data:y4,type:'line',name:'用电量-谷(kWh)'}]
+                tdrawEcharts(energyref.current, option(objList,x,100))
             } else {
                 message.error(res.errMsg)
             }
         })
     }
-    let xAxisI = []
-    let yAxisIa = []
-    let yAxisIb = []
-    let yAxisIc = []
-    let xAxisU = []
-    let yAxisUa = []
-    let yAxisUb = []
-    let yAxisUc = []
-    let xAxisW = []
-    let yAxisW = []
-    const drawTrendCharts=()=>{
-        if (xAxisU && yAxisUa) {
-            tdrawEcharts(vlref.current, optionv("A相电压(V)", "B相电压(V)", "C相电压(V)"))
-        }
-         if (xAxisI && yAxisIa) {
-            tdrawEcharts(alref.current, optioni("A相电流(A)", "B相电流(A)", "C相电流(A)"))
-        }
-        if (xAxisW && yAxisW) {
-            tdrawEcharts(elref.current, optionw("有功总电能(kWh)"))
-        }
+    const drawTrendCharts = () => {
+             tdrawEcharts(vlref.current, option(objList2,xAxisTrendList[1],10))
+             tdrawEcharts(alref.current, option(objList1,xAxisTrendList[0],10))
+             tdrawEcharts(elref.current, option(objList3,xAxisTrendList[2],10))
     }
-    const dealData=()=>{
+    let objList1 = []
+    let objList2 = []
+    let objList3 = []
+    let xAxisTrendList=[]
+    const dealData = () => {
         if (historyTrend) {
-            historyTrend.map(item => {
-                if (item.group == 'EP') {
-                    if (item.data && item.data.length != 0) {
-                        for (let i = 0; i < item.data.length; i++) {
-                                for (let j = 0; j < item.data[i].data.length; j++) {
-                                    if(item.data[i].point=='Ua'){
-                                        xAxisU.push(item.data[i].data[j].time)
-                                        yAxisUa.push(item.data[i].data[j].value)
-                                    }else if(item.data[i].point=='Ub'){
-                                        yAxisUb.push(item.data[i].data[j].value)
-                                    }else if(item.data[i].point=='Uc'){
-                                        yAxisUc.push(item.data[i].data[j].value)
-                                    }
-                                }
+            historyTrend.map((item,index) => {
+                if (item.data && item.data.length != 0) {
+                    for (let i = 0; i < item.data.length; i++) {
+                        let xAxisTrend = []
+                        let yAxis = []
+                        let obj = {}
+                        for (let j = 0; j < item.data[i].data.length; j++) {
+                            xAxisTrend.push(item.data[i].data[j].time)
+                            yAxis.push(item.data[i].data[j].value)
+                            obj.name = item.data[i].point
                         }
-                        
-                    }
-                }else if (item.group == 'EC') {
-                    if (item.data && item.data.length != 0) {
-                        for (let i = 0; i < item.data.length; i++) {
-                                for (let j = 0; j < item.data[i].data.length; j++) {
-                                    if(item.data[i].point=='Ia'){
-                                        xAxisI.push(item.data[i].data[j].time)
-                                        yAxisIa.push(item.data[i].data[j].value)
-                                    }else if(item.data[i].point=='Ib'){
-                                        yAxisIb.push(item.data[i].data[j].value)
-                                    }else if(item.data[i].point=='Ic'){
-                                        yAxisIc.push(item.data[i].data[j].value)
-                                    }
-                                }
+                        obj.data=yAxis
+                        obj.type='line'
+                        console.log(obj)
+                        xAxisTrendList.push(xAxisTrend)
+                        if(index==0){
+                            objList1.push(obj)
+                        }else if(index==1){
+                            objList2.push(obj)
+                        }else if(index==2){
+                            objList3.push(obj)
                         }
-                        
                     }
-                }else if (item.group == 'WF') {
-                    if (item.data && item.data.length != 0) {
-                        for (let i = 0; i < item.data.length; i++) {
-                                for (let j = 0; j < item.data[i].data.length; j++) {
-                                    if(item.data[i].point=='ImpEp'){
-                                        xAxisW.push(item.data[i].data[j].time)
-                                        yAxisW.push(item.data[i].data[j].value)
-                                    }
-                                }
-                        }
-                        
-                    }
+                    console.log(objList1,objList2,objList3)
                 }
             })
         }
-        drawTrendCharts()
+         drawTrendCharts()
     }
-    const optionv = (name, name1, name2, type = "line") => ({
+
+    const option = (objList,xAxisTrend,end) => ({
         xAxis: {
-            data: xAxisU ? xAxisU : []
+            data: xAxisTrend ? xAxisTrend : [],
         },
-        series: [
-            {
-                data: yAxisUa ? yAxisUa : [],
-                type,
-                name: name
-            }, {
-                data: yAxisUb ? yAxisUb : [],
-                type,
-                name: name1
-            }, {
-                data: yAxisUc ? yAxisUc : [],
-                type,
-                name: name2
-            }
-        ],
+        series: objList ? objList : [],
         grid: {
             // 图表 grid
             left: "0px",
@@ -308,126 +261,11 @@ export default function GatewayDetail(props) {
             itemWidth: 12,
             itemGap: 20,
         },
-            dataZoom: {
-                start: 0,
-                end: 5,
-            }
-    });
-    const optionw = (name, type = "line") => ({
-        xAxis: {
-            data: xAxisW ? xAxisW : []
-        },
-        series: [
-            {
-                data: yAxisW ? yAxisW : [],
-                type,
-                name: name
-            },
-        ],
-        grid: {
-            // 图表 grid
-            left: "0px",
-            right: "0",
-            top: "30px",
-            bottom: "0px",
-            containLabel: true,
-        },
-        legend: {
-            top: 0,
-            // bottom: 0,
-            icon: 'rect',
-            itemHeight: 2,
-            itemWidth: 12,
-            itemGap: 20,
-        },
-            dataZoom: {
-                start: 0,
-                end: 5,
-            }
-    });
-    const optioni = (name, name1, name2, type = "line") => ({
-        xAxis: {
-            data: xAxisI ? xAxisI : []
-        },
-        series: [
-            {
-                data: yAxisIa ? yAxisIa : [],
-                type,
-                name: name
-            }, {
-                data: yAxisIb ? yAxisIb : [],
-                type,
-                name: name1
-            }, {
-                data: yAxisIc ? yAxisIc : [],
-                type,
-                name: name2
-            }
-        ],
-        grid: {
-            // 图表 grid
-            left: "0px",
-            right: "0",
-            top: "30px",
-            bottom: "0px",
-            containLabel: true,
-        },
-        legend: {
-            top: 0,
-            // bottom: 0,
-            icon: 'rect',
-            itemHeight: 2,
-            itemWidth: 12,
-            itemGap: 20,
-        },
-            dataZoom: {
-                start: 0,
-                end: 5,
-            }
-    });
-    const option = (name, name1, name2, name3, name4, type = "line") => ({
-        xAxis: {
-            data: xline ? xline : []
-        },
-        series: [
-            {
-                data: yline ? yline : [],
-                type,
-                name: name
-            }, {
-                data: yline1 ? yline1 : [],
-                type,
-                name: name1
-            }, {
-                data: yline2 ? yline2 : [],
-                type,
-                name: name2
-            }, {
-                data: yline3 ? yline3 : [],
-                type,
-                name: name3
-            }, {
-                data: yline4 ? yline4 : [],
-                type,
-                name: name4
-            }
-        ],
-        grid: {
-            // 图表 grid
-            left: "0px",
-            right: "0",
-            top: "30px",
-            bottom: "0px",
-            containLabel: true,
-        },
-        legend: {
-            top: 0,
-            // bottom: 0,
-            icon: 'rect',
-            itemHeight: 2,
-            itemWidth: 12,
-            itemGap: 20,
-        },
+        dataZoom: {
+            type: 'inside',
+           start: 0,
+           end: end,
+       }
     });
 
     const tdrawEcharts = (c, option) => {
@@ -454,7 +292,7 @@ export default function GatewayDetail(props) {
         setreportTypeTime(parseInt(e.target.value))
         //reportType=parseInt(e.target.value)
     }//切换日月年
-    
+
     const onChangeDate = (date, dateString) => {
         console.log(dateString);
         if (reportTypeTime == 1) {
@@ -518,7 +356,7 @@ export default function GatewayDetail(props) {
     ];
     useEffect(() => {
         dealData()
-    }, [historyTable,historyTrend])
+    }, [historyTable, historyTrend])
     useEffect(() => {
         getData()
         getDetailData()
@@ -532,15 +370,7 @@ export default function GatewayDetail(props) {
     useEffect(() => {
         getEnergyReport()
         getEnergyTrend()
-        if (xline && yline) {
-            tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
-        }
     }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
-    useEffect(() => {
-        if (xline && yline) {
-            tdrawEcharts(energyref.current, option("用电量-总(kWh)", "用电量-尖(kWh)", "用电量-峰(kWh)", "用电量-平(kWh)", "用电量-谷(kWh)"))
-        }
-    }, [energyReport.Header, energyReport.Data, xline, yline, trend])
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -552,7 +382,7 @@ export default function GatewayDetail(props) {
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
-                        <img src={detail.imageBase64 ? 'data:image/png;base64,' + detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
+                        <img src={detail.imageBase64 ? detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
                         <div className={style.leftImgState}>{detail.state == 1 ? '设备离线' : detail.state == 2 ? '设备在线' : '设备告警'}</div>
                     </div>
                     <div className={style.leftBottom}>
@@ -580,7 +410,7 @@ export default function GatewayDetail(props) {
                     </div>
                         <img src={imgurl.line} className={style.timeline} ></img></div> : state == 2 ? <div className={style.newTime}>
                             <span style={{ marginRight: 16 }}>请选择日期范围</span>
-                            <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime  onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} />
+                            <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} />
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
                         </div> : state == 3 ? <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
@@ -669,8 +499,8 @@ export default function GatewayDetail(props) {
                                         }
                                     </div>
                                     <div className={style.chartHeadRight}>
-                                        {trend===2?<div><Button style={{ width: 96, backgroundColor: '#FFF', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
-                                        <img src={imgurl.columnLine} style={{ width: 2, height: 33, marginRight: 32, marginLeft: 32 }} ></img></div>:''}
+                                        {trend === 2 ? <div><Button style={{ width: 96, backgroundColor: '#FFF', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
+                                            <img src={imgurl.columnLine} style={{ width: 2, height: 33, marginRight: 32, marginLeft: 32 }} ></img></div> : ''}
                                         <Radio.Group defaultValue="trend" buttonStyle="solid" onChange={changeTable}>
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="trend">趋势</Radio.Button>
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="list">列表</Radio.Button>
@@ -679,8 +509,8 @@ export default function GatewayDetail(props) {
 
                                 </div>
                                 {trend === 1 ? <div><div ref={energyref} style={{ width: 1536, height: 513, marginTop: 16 }}></div></div> : trend === 2 ? <div>
-                                    <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{y: 475,}}
-                                    rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
+                                    <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
+                                        rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
                                 </div> : ''}
                             </div> : <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>

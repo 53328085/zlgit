@@ -209,6 +209,7 @@ export default function Index() {
       if(success){
         if(data){
           setTableData(data)
+          setTotal(res.total)
         }else{
           setTableData([])
         }
@@ -250,6 +251,7 @@ export default function Index() {
       if(success){
         if(data){
           setTableData(data)
+          setTotal(res.total)
         }else{
           setTableData([])
         }

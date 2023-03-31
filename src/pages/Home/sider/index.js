@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import style from './style.module.less'
 import Title from '../header/title'
 import energyicon from '@imgs/energy.png'
-
+import imgurl from './icon';
  
 const Micon = () => {
    return <span className="custicon">&#9673;</span>
@@ -15,12 +15,10 @@ const Imgbox = styled.div`
    padding: 20px 0 16px 0;
    border-bottom: 1px dotted #ffff;
    margin: 0 8px 20px 8px;
+   width: 184px;
+   height: 158px
 `
-const Showimg = () => {
-  return (
-    <Imgbox>  <Image src={energyicon} preview={false} style={{border: '1px solid #fff'}} /></Imgbox>
-   )
-}
+
 const Sdiv = styled.div`
    display: flex;
    flex-direction: column;
@@ -65,13 +63,20 @@ export default function Sider() {
   const unsubscribe = store.subscribe(() => {    
     SetConfig(store.getState()?.system.configState)
   })
-
+  const Showimg = () => {
+    let {primary} = location.state || {}   
+    let imgsrc = config ? imgurl.config : imgurl[primary]
+    return (
+      <Imgbox>  <Image  width={184} height={114} src={imgsrc} preview={false} style={{border: '1px solid #fff'}} fallback={imgurl.config} /></Imgbox>
+     )
+  }
 
   useEffect(() => {  
     try {
       SetConfig(store.getState()?.system.configState)
       let state = location.state || {}    
       let {nested, primary } = state;
+      
       setPath(primary)
       let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
       let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];     

@@ -125,43 +125,23 @@ const Info = styled.span`
     remark: "", //备注
   };
   const [initialValues] = useState(params);
-  const [defaultAdress, setDefaultAddress] = useState([]);
-  const [addressVal, setAddressVal] = useState(["", "", ""]);
+ 
+ 
   const [imgLogo, setImgLogo] = useState('')
   const [imgProject, setImgProject] = useState('')
   const setAaddress = ({
     lng = "",
     lat = "",
-    address = "",
-    province = "",
-    city = "",
-    district = "",
+    address = "", 
   } = {}) => {
     form.setFieldsValue({
       lng,
       lat,
       address,
     });
-
-    const p = options.find((i) => i.label == province);
-
-    let c, a;
-    if (Array.isArray(p?.children)) {
-      c = p.children.find((i) => i.label == city);
-      if (Array.isArray(c?.children)) {
-        a = c.children.find((i) => i.label == district)?.value;
-      }
-    }
-    setAddressVal([p.value, c.value, a]);
-    console.log(defaultAdress);
   };
-  const changeaddress = (value) => {
-    setAddressVal(value);
-  };
-  const onUpdate = (file) => {
-    console.log(file);
-    return false;
-  };
+ 
+  
  
   const onSubmint =async () => {
    return  new Promise((resolve, reject) => {

@@ -262,7 +262,8 @@ const Opbox = styled.div`
  flex:1;
  padding-top: 16px;
  border-top: 1px dotted #d7d7d7;
- min-height: 408px;
+ min-height: 760px;
+ min-height: 760px;
 `
 const { RangePicker } = DatePicker
 export default function Index() {
@@ -302,6 +303,7 @@ export default function Index() {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {
         formmodal.current.onCancel()
+        refresh()
        /*  navigate(`/config/designerCommon/base`, {
           state: { type: 'config', primary: 'designerCommon',  title: '基础设置', nested: 'base'  } 
         }) */ // 还需要设置菜单栏
@@ -508,7 +510,7 @@ export default function Index() {
       console.log(e)
     });
   };
-  const { tableProps, search } = useAntdTable(getTableData, {
+  const { tableProps, search, refresh } = useAntdTable(getTableData, {
     form,
     defaultParams: [
       { current: 1, pageSize: 10 },
@@ -608,7 +610,7 @@ tableProps.pagination.size="default" // 页码大小默认
       let {date} = opform.getFieldsValue()
        if (Array.isArray(date) && date.length > 1) {
         start = date[0].format('YYYY-MM-DD')
-         end = date[1].format('YYYY-MM-DD')
+         end = date[1].format('YYYY-MM-DD')+" 23:59:59"
        }
       params = {...params, start, end} 
     let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
@@ -769,7 +771,7 @@ const closeModl = () => {
                   新增项目
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn style={{width: '144px'}}
+                 {  roleType == 1 &&    <CustBtn 
                   onClick={devOps}
                 >
                   运营管理员管理

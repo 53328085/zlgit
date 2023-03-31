@@ -135,6 +135,9 @@ export default function Index(props) {
     Alarm: 2,
     Recover: 3,
   };
+  const CommunicationType = {
+    Empty: 0,
+  };
 
   const addAlarmOk = async () => {
     try {
@@ -174,7 +177,7 @@ export default function Index(props) {
         //变位告警
         let changeInfo = {
           alarmCondition: 1,
-          alarmValue: values.AlarmRule,
+          alarmValue: values.AlarmValue,
           recoverValue: values.RecoverValue,
         };
         const params = { ...data, ...changeInfo };
@@ -235,12 +238,11 @@ export default function Index(props) {
   const enableChange = (value) => {
     setEnable(value);
   };
-  useEffect(() => {
-    if (giveFormType === true) {
-      formInfo.resetFields(); //当新增时重置
-    } else {
-    }
-  }, [AddAlarmEventGive]);
+  // useEffect(() => {
+  //   if (giveFormType === false) {
+  //     formInfo.resetFields(); //当新增时重置
+  //   }
+  // }, [AddAlarmEventGive]);
 
   useEffect(() => {
     setAlarmCondition(alarmCondition);
@@ -291,6 +293,8 @@ export default function Index(props) {
             setSoeValue(giveChildForm.AlarmCondition);
             giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           } else if (giveChildForm.AlarmCondition === "Empty") {
+            giveChildForm.AlarmCondition =
+              CommunicationType[giveChildForm.AlarmCondition];
             giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           }
           formInfo.setFieldsValue(giveChildForm);
@@ -298,16 +302,19 @@ export default function Index(props) {
           // giveChildForm.AlarmCondition =
           // alarmDeflectionType[giveChildForm.AlarmCondition];
         } else {
-          //新增
-          formInfo.resetFields();
-          //当新增时重置
-          setAlarmCondition(1);
-          setCompareValue(2);
-          setSoeValue(1);
+          //新增时重置
+          if (AddAlarmEventGive === true) {
+            formInfo.resetFields();
+            setPush(true);
+            setEnable(true);
+            setAlarmCondition(1);
+            setCompareValue(2);
+            setSoeValue(1);
+          }
         }
       });
     }
-  }, [giveFormType, giveChildForm]);
+  }, [giveFormType, giveChildForm, AddAlarmEventGive]);
   return (
     <div>
       <Modal
@@ -334,6 +341,7 @@ export default function Index(props) {
             // size="small"
             form={formInfo}
             name="addform"
+            preserve={false}
           >
             {giveModalTitle === "新增告警事件" ? (
               <Space style={{ alignItems: "baseline" }}>
@@ -367,7 +375,10 @@ export default function Index(props) {
                   style={{ width: 415 }}
                   name="PointIdentifier"
                 >
-                  <Input style={{ width: 290 }} />
+                  <Input
+                    style={{ width: 290 }}
+                    placeholder="若存在多个标识，请用'|'隔开"
+                  />
                 </Item>
                 <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
               </Space>
@@ -521,9 +532,7 @@ export default function Index(props) {
                     <Item
                       label="低限："
                       labelCol={{ flex: "70px" }}
-                      rules={[
-                        { required: true, message: "请输入低限值(整数)" },
-                      ]}
+                      rules={[{ required: true, message: "请输入低限值" }]}
                       style={{ width: 200, marginLeft: 18 }}
                       name="MinCriticalValue"
                     >
@@ -546,9 +555,7 @@ export default function Index(props) {
                     <Item
                       label="高限："
                       labelCol={{ flex: "70px" }}
-                      rules={[
-                        { required: true, message: "请输入高限值(整数)" },
-                      ]}
+                      rules={[{ required: true, message: "请输入高限值" }]}
                       style={{
                         width: 200,
                         height: 30,
@@ -642,9 +649,7 @@ export default function Index(props) {
                   <Item
                     label="临界值："
                     labelCol={{ flex: "85px" }}
-                    rules={[
-                      { required: true, message: "请输入临界值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入临界值" }]}
                     style={{ width: 240, marginLeft: 5 }}
                     name="CriticalValue"
                   >
@@ -695,13 +700,14 @@ export default function Index(props) {
                   <Item
                     label="告警值："
                     labelCol={{ flex: "80px" }}
-                    rules={[
-                      { required: true, message: "请输入告警值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入告警值" }]}
                     style={{ width: 300, marginLeft: 5 }}
                     name="AlarmValue"
                   >
-                    <Input style={{ width: 110 }} placeholder="请输入告警值" />
+                    <InputNumber
+                      style={{ width: 130 }}
+                      placeholder="请输入告警值"
+                    />
                   </Item>
                   <span style={{ marginLeft: -90, color: "#999" }}>(必填)</span>
                 </Space>
@@ -710,13 +716,14 @@ export default function Index(props) {
                   <Item
                     label="消警值："
                     labelCol={{ flex: "80px" }}
-                    rules={[
-                      { required: true, message: "请输入消警值(正整数)" },
-                    ]}
+                    rules={[{ required: true, message: "请输入消警值" }]}
                     style={{ width: 240, marginLeft: 5 }}
                     name="RecoverValue"
                   >
-                    <Input style={{ width: 110 }} placeholder="请输入消警值" />
+                    <InputNumber
+                      style={{ width: 130 }}
+                      placeholder="请输入消警值"
+                    />
                   </Item>
                   <span style={{ marginLeft: -30, color: "#999" }}>(必填)</span>
                 </Space>

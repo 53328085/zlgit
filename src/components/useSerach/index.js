@@ -4,7 +4,7 @@ import { Form, Select, Button, Dropdown, Space, Divider,} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
 import {useSelector} from 'react-redux'
-import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {levelDefaultLabel, selectOneLevelDefaultId, selectOneLevel} from '@redux/systemconfig.js'
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import CustContext from "../content";
@@ -52,15 +52,13 @@ export default function useSerach(props) {
   //const {printArea, setPrintArea} = useState()
   
   const [form] =forms ? [forms] : Form.useForm()
-  const levelone = useSelector(selectOneLevel)
-  const varlabel = levelone[0]?.label
+  const varlabel = useSelector(levelDefaultLabel) 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
- 
+  const levelone = useSelector(selectOneLevel)
   const allData = useRef();
   const onChange = (e) => {
      console.log(e)
-     if (typeof handler == 'function') {
-        console.log('ddddd')
+     if (typeof handler == 'function') {       
         handler(e)
      }
   }
@@ -101,7 +99,7 @@ export default function useSerach(props) {
     <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
       
       <Item label={varlabel} name='area'>
-        <Select style={{ width: "200px" }} onChange={onChange} allowClear options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
       </Item>

@@ -1,16 +1,17 @@
-import React, { useEffect, useRef, useState,useContext } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { MultImport, DeleteModal ,ErrorMessage } from './modalCom'
+import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'
-import { Form, Row, Col, Select, Input, Divider, Upload, message,Button } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import cutContext from  '@com/content'
-import {publishState} from '@redux/systemconfig'
+import imgurl from './imgs/index.js'
+import cutContext from '@com/content'
+import { publishState } from '@redux/systemconfig'
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -20,7 +21,7 @@ const { DeviceManager:
     GatewayDelete,
     GatewayImport,
     OneLevel,
-    StartReboot } } = Monitoring
+    StartReboot, State, StartDownloadTask, DownloadTaskState } } = Monitoring
 export default function gateway() {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
@@ -29,6 +30,7 @@ export default function gateway() {
   const [dataSource, setDataSource] = useState()
   const [delId, setDelId] = useState()
   const [gatewaySn, setGatewaySn] = useState('')
+  const [gatewayCnt, setGatewayCnt] = useState('')
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
@@ -45,14 +47,17 @@ export default function gateway() {
   const keyParamRef = useRef() //参数下发Ref
   const modalDelRef = useRef() //删除Ref
   const tableLoadRef = useRef()
-  const errlistRef =useRef()
+  const errlistRef = useRef()
   const ErrModalRef = useRef()
   const [editform] = Form.useForm()
   const [addForm] = Form.useForm()
-  const content =useContext(cutContext)
-  const oneLevel = useSelector(state=>state.system.onelevel)
+  const content = useContext(cutContext)
+  const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
-  const levelname =useRef()
+  const levelname = useRef()
+  const [spinLoading, setspinLoading] = useState('')
+  const [spinShow, setSpinShow] = useState(false)
+  const modalReStartResRef = useRef()
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -60,36 +65,43 @@ export default function gateway() {
   }
   let startsn;
   let flies;
-  let tag=false;
-  let edittag=false
+  let tag = false;
+  let edittag = false
   let columns = [
     {
-      title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
-      dataIndex: 'areaName'
+      title: oneLevel[0]?.levelName ? oneLevel[0].levelName : '园区名称',
+      dataIndex: 'areaName',
+      key: 'sn'
     },
     {
       title: '安装地址',
-      dataIndex: 'address'
+      dataIndex: 'address',
+      key: 'sn'
     },
     {
       title: '网关编号',
-      dataIndex: 'sn'
+      dataIndex: 'sn',
+      key: 'sn'
     },
     {
       title: '网关型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      key: 'sn'
     },
     {
       title: '网关名称',
-      dataIndex: 'name'
+      dataIndex: 'name',
+      key: 'sn'
     },
     {
       title: 'IMEI',
-      dataIndex: 'imei'
+      dataIndex: 'imei',
+      key: 'sn'
     },
     {
       title: '备注',
-      dataIndex: 'remark'
+      dataIndex: 'remark',
+      key: 'sn'
     },
     {
       title: '操作',
@@ -104,17 +116,31 @@ export default function gateway() {
             <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
           </p>
         )
-      }
+      },
+      key: 'sn'
     },
   ]
   columns.forEach(it => it.align = 'center')
-  if(publish){
+  if (publish) {
     columns.pop()
   }
- 
+let errcolumns=[
+  {
+    title: '序号',
+    dataIndex: 'index',
+    render:(text)=>{return(<span>1</span>)},
+    key: 'erros'
+  },
+  {
+    title: '错误内容',
+    dataIndex: 'erros',
+    key: 'erros'
+  },
+]
   //打开参数下发弹窗
   const onKeyParam = (record) => {
     setGatewaySn(record.sn)
+    setGatewayCnt(record.cnt)
     keyParamRef?.current?.onOpen()
   }
   //打开重启网关弹窗
@@ -134,7 +160,7 @@ export default function gateway() {
   }
   //打开新增网关窗口
   const addopen = () => {
-    if(!levelname.current){
+    if (!levelname.current) {
       message.warning('请先添加区域名称')
       return
     }
@@ -160,15 +186,15 @@ export default function gateway() {
     modalDelRef?.current?.onOpen()
   }
   //获取第一级区域名
-  const getOneLevel=async()=>{
-    const res =  await OneLevel(projectId)
-    if(res.success){
-      levelname.current =res.data.name
+  const getOneLevel = async () => {
+    const res = await OneLevel(projectId)
+    if (res.success) {
+      levelname.current = res.data.name
       getAeraQueryAll(res.data.name)
-    }else{
-     message.error(res.errMsg)
+    } else {
+      message.error(res.errMsg)
     }
-   }
+  }
   //获取园区
   const getAeraQueryAll = async (name) => {
     try {
@@ -241,7 +267,7 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval:heartInterval? parseInt(heartInterval):30,
+        heartInterval: heartInterval ? parseInt(heartInterval) : 30,
         remark
       }
       const { data, success, errMsg } = await GatewayAdd(params)
@@ -256,7 +282,7 @@ export default function gateway() {
 
   }
   //确认新增应用
-  const addSure=()=>{
+  const addSure = () => {
     addForm.validateFields().then(async () => {
       const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
       let params = {
@@ -268,20 +294,20 @@ export default function gateway() {
         sn,
         pwd,
         name,
-        heartInterval:heartInterval? parseInt(heartInterval):30,
+        heartInterval: heartInterval ? parseInt(heartInterval) : 30,
         remark
       }
       const { data, success, errMsg } = await GatewayAdd(params)
       if (success) {
         message.success('应用成功')
-        tag=true; 
+        tag = true;
       } else {
         message.error(errMsg)
       }
     })
   }
   const cancelOk = () => {
-    if(tag){
+    if (tag) {
       getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
     }
     modalFormRef.current.onCancel()
@@ -314,7 +340,7 @@ export default function gateway() {
     })
   }
   //确认编辑应用
-  const editSure=()=>{
+  const editSure = () => {
     editform.validateFields().then(async () => {
       const { areaId, category, address, sn, pwd, name, heartInterval, remark, id } = editform.getFieldValue()
       let params = {
@@ -333,18 +359,18 @@ export default function gateway() {
       const { data, success, errMsg } = await GatewayUpdate(params)
       if (success) {
         message.success('更新成功')
-        edittag=true
+        edittag = true
       } else {
         message.error(errMsg)
       }
     })
   }
-  const editCancel=()=>{
-    if(edittag){
+  const editCancel = () => {
+    if (edittag) {
       getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
     }
     modalEditRef.current.onCancel()
-       
+
   }
   //确认删除
   const delOk = async () => {
@@ -371,16 +397,143 @@ export default function gateway() {
       message.error(resp.errMsg)
     }
   }
+  const [isSuccess, setisSuccess] = useState(true)
+  const [gatewayRes, setgatewayRes] = useState('')//操作结果成功失败
   //确认重启
   const startOk = async () => {
-    //  const res = await StartReboot(startsn) 
-    //  if(res.success){
-    //   message.success('重启成功')
-    //  }else{
-    //   message.error(res.errMsg)
-    //  }
+    modalReStartRef?.current?.onCancel()
+    setspinLoading('正在重启网关……')
+    setSpinShow(true)
+    const res = await StartReboot(startsn)
+    if (res.success) {
+      let data = JSON.parse(res.data)
+      if (data.code == 0) {
+        let list = []
+        let state = true
+        for (let i = 0; i < 10; i++) {
+          setTimeout(() => {
+            if (state) {
+              State(startsn).then(result => {
+                list.push(i)
+                if (result.success) {
+                  if (JSON.parse(result.data).code == 0) {
+                    state = false
+                    setisSuccess(true)
+                    modalReStartResRef?.current?.onOpen()
+                    setgatewayRes(JSON.parse(result.data).message)
+                    //message.success(JSON.parse(result.data).message)
+                    setSpinShow(false)
+                  }
+                } else {
+                  state = false
+                  setisSuccess(false)
+                  setSpinShow(false)
+                  // message.error('重启失败！')
+                  modalReStartResRef?.current?.onOpen()
+                  setgatewayRes(JSON.parse(result.data).message)
+                }
+                if (list.length == 10 && result.data.code == 1) {
+                  // message.error('任务超时，请重试！')
+                  modalReStartResRef?.current?.onOpen()
+                  setgatewayRes('任务超时，请重试！')
+                  setisSuccess(false)
+                  setSpinShow(false)
+                }
+              })
+            }
+          }, 3000 * i)
+        }
+      }
+    } else {
+      message.error(res.errMsg)
+    }
   }
- 
+
+  const operateOk = () => {
+    modalReStartResRef?.current?.onCancel()
+  }
+  const [gatewayResTips, setgatewayResTips] = useState('')//操作结果成功失败
+  const [errorList, seterrorList] = useState([])
+  //参数下发
+  const downloadOk = () => {
+    keyParamRef?.current?.onCancel()
+    let rebootNum = parseInt(gatewayCnt % 5 == 0 ? gatewayCnt / 5 : gatewayCnt / 5 < 1 ? 1 : gatewayCnt / 5 + 1)
+    let rebootTime = rebootNum < 2 ? 10 : rebootNum * 5
+    setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
+    setSpinShow(true)
+    for (let a = 0; a < (rebootNum < 2 ? 10 : rebootNum * 5); a++) {
+        setTimeout(() => {
+          if (rebootTime > 0) {
+          rebootTime--;
+          setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
+          console.log(rebootTime)
+        }else{
+          setSpinShow(false)
+        }
+        }, 1000 * a)
+    }
+    StartDownloadTask(projectId, gatewaySn).then(res => {
+      if (res.success) {
+        let list = []
+        let state = true
+        for (let i = 0; i < (rebootNum < 2 ? 2 : rebootNum); i++) {
+          setTimeout(() => {
+            if (state) {
+              DownloadTaskState(projectId, gatewaySn).then(result => {
+
+                if (result.success) {
+                  let data = JSON.parse(result.data)
+                  if (data.code == 1) {
+                    if (data.erros.length == 0) {
+                      state = false
+                      rebootTime=0
+                      setisSuccess(true)
+                      modalReStartResRef?.current?.onOpen()
+                      setgatewayRes('网关参数下发成功！')
+                      setgatewayResTips('注意：重启网关后参数才生效')
+                      setSpinShow(false)
+
+                    } else {
+                      state = false
+                      rebootTime=0
+                      setisSuccess(false)
+                      modalReStartResRef?.current?.onOpen()
+                      seterrorList(data.errors)
+                      setSpinShow(false)
+                    }
+                  } else {
+                    list.push(i)
+                    if (list.length == (rebootNum < 2 ? 2 : rebootNum)) {
+                      state = false
+                      rebootTime=0
+                      setisSuccess(false)
+                      modalReStartResRef?.current?.onOpen()
+                      setgatewayRes('网关参数下发失败！')
+                      setSpinShow(false)
+                    }
+                  }
+                } else {
+                  state = false
+                  rebootTime=0
+                  setisSuccess(false)
+                  modalReStartResRef?.current?.onOpen()
+                  setgatewayRes(JSON.parse(result.data).message)
+                  setSpinShow(false)
+                }
+              })
+            }
+          }, 5000 * i)
+        }
+      } else {
+        rebootTime=0
+        setspinLoading('')
+        setSpinShow(false)
+        setisSuccess(false)
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes(res.errMsg)
+      }
+    })
+  }
   //导出
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -391,7 +544,7 @@ export default function gateway() {
     formData.append("file", flies[0])
     formData.append("projectId", projectId)
     const res = await GatewayImport(formData)
-    if(res.success){
+    if (res.success) {
       if (res.data.success) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
@@ -399,19 +552,19 @@ export default function gateway() {
         getQueryByPageGateWay(1, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
         setPage({
           ...page,
-          current:1
+          current: 1
         })
         // pageRef.current.current =1
-      } else if(res.data.data && Array.isArray(res.data.data)){
+      } else if (res.data.data && Array.isArray(res.data.data)) {
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      }else{
+      } else {
         message.error(res.data.errMsg)
       }
-    }else{
+    } else {
       message.error(res.errMsg)
     }
-    
+
   }
   const ComProps = {
     addopen,
@@ -422,7 +575,7 @@ export default function gateway() {
     setPage,
     exportExecel,
     levelname,
-    placeholder:'输入网关编号/安装地址',
+    placeholder: '输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
   }
   let ModalFormProps = {
@@ -438,7 +591,7 @@ export default function gateway() {
     levelname
   }
   const uploadprops = {
-    maxCount:1,
+    maxCount: 1,
     beforeUpload(file, fileList) {
       console.log(file, fileList)
       flies = [...fileList]
@@ -458,61 +611,67 @@ export default function gateway() {
     editform,
     width: 772,
     onOk: editOk,
-    onSure:editSure,
+    onSure: editSure,
     onCancel: editCancel,
     levelname
   }
 
   const ErrModalProps = {
     ErrModalRef,
-    ref:errlistRef,
-    onOk:()=>{ErrModalRef.current.onCancel()}
+    ref: errlistRef,
+    onOk: () => { ErrModalRef.current.onCancel() }
   }
   useEffect(() => {
-    if(oneLevel?.length>0){
+    if (oneLevel?.length > 0) {
       getOneLevel()
       getQueryByPageGateWay()
       getQueryUsedGateway()
-    }   
+    }
   }, [])
 
   return (
-    <div>
-      <Comp {...ComProps}>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={page}
-          loading={loading}
-          ref={tableLoadRef}
-          onChange={(page, pageSize) => {
-            setPage(() => ({
-              ...page
-            }))
-            getQueryByPageGateWay(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue)
-          }}></Table>
-      </Comp>
-      <AddModalForm {...ModalFormProps}></AddModalForm>
-      <MultImport {...ImportProps}></MultImport>
-      <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
-      <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn}></KeyParam>
-      <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
-      <EditModalForm {...EditProps}></EditModalForm>
-      <ErrorMessage {...ErrModalProps}></ErrorMessage>
-    
-    </div>
+    <Spin tip={spinLoading} spinning={spinShow}>
+      <div>
+
+        <Comp {...ComProps}>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            pagination={page}
+            loading={loading}
+            ref={tableLoadRef}
+            rowKey={columns => columns.sn}
+            onChange={(page, pageSize) => {
+              setPage(() => ({
+                ...page
+              }))
+              getQueryByPageGateWay(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue)
+            }}></Table>
+        </Comp>
+        <AddModalForm {...ModalFormProps}></AddModalForm>
+        <MultImport {...ImportProps}></MultImport>
+        <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
+        <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
+        errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips}></ReStartRes>
+        <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
+        <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
+        <EditModalForm {...EditProps}></EditModalForm>
+        <ErrorMessage {...ErrModalProps}></ErrorMessage>
+
+      </div>
+    </Spin>
   )
 }
 
 //新增网关组件
-let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...other }) => {
-  const rules ={ required: true,}
+let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ...other }) => {
+  const rules = { required: true, }
   return (
     <Modal mold='cust' ref={modalFormRef} {...other} footer={[
       <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+    ]}>
       <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={addForm}
@@ -520,7 +679,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...
           span: 6
         }}
         labelAlign='left'
-        
+
       >
         <Row className={style.customItem}>
           <Col flex={1}>
@@ -560,7 +719,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...
             <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
               <Input />
             </Form.Item>
-            <Form.Item label="心跳周期" name="heartInterval" rules={[{pattern:  /^[1-9]+[0-9]*$/,message:'心跳周期需为正整数'}]}>
+            <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
               <Count></Count>
             </Form.Item>
           </Col>
@@ -576,7 +735,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,...
 let Count = ({ value, onChange }) => {
   console.log(value)
   const [number, setNumber] = useState(value ? value : 30)
-  
+
   const reduce = () => {
     number > 0 && setNumber(number - 1)
     onChange(number - 1)
@@ -612,10 +771,24 @@ let ReStart = ({ modalReStartRef, startOk }) => {
     </Modal>
   )
 }
-//参数下发组件
-const KeyParam = ({ keyParamRef, gatewaySn }) => {
+//重启结果
+let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess ,errorList,columns,gatewayResTips}) => {
   return (
-    <Modal mold='cust' ref={keyParamRef}>
+    <Modal mold='cust' ref={modalReStartResRef} footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
+      <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
+      {errorList?<div style={{ margin: '16px 32px 0' }}>
+        <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
+        <span style={{ paddingLeft: 32, fontSize: 16 }}>{gatewayRes}</span>
+        <p style={{color:'red',width:343,textAlign:'center'}}>{gatewayResTips}</p>
+      </div>:<Table bordered columns={columns} dataSource={errorList} rowKey='erros' size='small' pagination={false} />}
+
+    </Modal>
+  )
+}
+//参数下发组件
+const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
+  return (
+    <Modal mold='cust' ref={keyParamRef} onOk={downloadOk}>
       <BlueColumn name="网关参数下发" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
       <div style={{ margin: '16px 32px 0', display: 'flex', alignItems: 'center' }}>
         <div><img src={restart}></img></div>
@@ -628,14 +801,14 @@ const KeyParam = ({ keyParamRef, gatewaySn }) => {
   )
 }
 //编辑网关
-const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
-  const rules ={ required: true,}
+const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
+  const rules = { required: true, }
   return (
     <Modal mold='cust' ref={modalEditRef} {...other} footer={[
       <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+    ]}>
       <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn>
       <Form
         form={editform}
@@ -680,7 +853,7 @@ const EditModalForm = ({ modalEditRef, editform,levelname, ...other }) => {
             <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
               <Input />
             </Form.Item>
-            <Form.Item label="心跳周期" name="heartInterval" rules={[{pattern: /^[1-9]+[0-9]*$/,message:'心跳周期需为正整数'}]}>
+            <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
               <Count></Count>
             </Form.Item>
           </Col>
