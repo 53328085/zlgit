@@ -99,7 +99,7 @@ export default function useSerach(props) {
     <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
       
       <Item label={varlabel} name='area'>
-        <Select style={{ width: "200px" }} onChange={onChange} allowClear options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
       </Item>

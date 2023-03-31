@@ -98,6 +98,7 @@ const charts=()=>{
       itemGap: 20
     },
     dataZoom:{
+      type: 'inside',
       start: 0,
       end: 50,
     }
@@ -113,6 +114,7 @@ const charts=()=>{
       itemGap: 20
     },
     dataZoom:{
+      type: 'inside',
       start: 0,
       end: 50,
     }
@@ -128,6 +130,7 @@ const charts=()=>{
       itemGap: 20
     },
     dataZoom:{
+      type: 'inside',
       start: 0,
       end: 50,
     }

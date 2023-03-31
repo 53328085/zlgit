@@ -85,12 +85,12 @@ export default function Index() {
   let [AreaID, setAreaid] = useState(areaId)
   const [infoData, setInfoData] = useState({})
   const [mode, setMode] = useState()
- 
+  const modestr = ['待机', '手动模式', '自动模式'][mode] // 0 待机， 1 手动 2 自动
   const tabs = [
    /*  {label: '手动模式', key: 1, disabled: mode==2},
     {label: '自动模式', key: 2, disabled: mode==1}, */
-    {label: '手动模式', key: 1,  },
-    {label: '自动模式', key: 2, },
+    {label: '手动模式', key: 1, disabled: mode == 2  },
+    {label: '自动模式', key: 2, disabled: mode == 1 },
   ]
   const getinfo = async () => {
     try {
@@ -132,14 +132,14 @@ export default function Index() {
          <Contentbox>
            <div className='info'>
               <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.runtimeStatus}</span></span>
-              <span><span className='circle'>&#x25CF;</span>当前运行模式：{infoData.runtimeModeStr}</span>
+              <span><span className='circle'>&#x25CF;</span>当前运行模式：{modestr }</span>
               <span><span className='circle'>&#x25CF;</span>运行计划：{infoData.runtimePlan}</span>
               <span><span className='circle'>&#x25CF;</span>策略模板：{infoData.strategyTemplate}</span>
               <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.runDay}天{infoData.runHour}小时{infoData.runMin}分</span>
            </div>
            <div className='tabbox'>
                 <Tabsbox items={tabs} activeKey={mode} onChange={tabChange}></Tabsbox>
-              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} CModal={CModal} areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
+              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
            </div>
         </Contentbox>
     </Pagecount>

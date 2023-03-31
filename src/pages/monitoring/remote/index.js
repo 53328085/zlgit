@@ -25,6 +25,7 @@ export default function Index() {
     let [dataSourceLog, setdataSourceLog] = useState([])
     let [dataSourceRead, setdataSourceRead] = useState([])
     let [DataSourceReadR, setDataSourceReadR] = useState([])
+
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
@@ -184,13 +185,13 @@ export default function Index() {
         {
             title: '设备编号',
             dataIndex: 'sn',
-            key: 'sn',
+            key: 'state',
             id: 'id'
         },
         {
             title: '状态',
             dataIndex: 'state',
-            key: 'sn',
+            key: 'state',
             id: 'id'
         }
     ]
@@ -222,16 +223,18 @@ export default function Index() {
     let snList = []
     const rowSelectionRadio = {
         selectTableListRadio,
-        onChange:(selectedRowKeys, selectedRows)=>{
+        onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-             setselectTableListRadio(selectedRows)
+            setselectTableListRadio(selectedRows)
+            setselectTableList(selectedRows)
         },
     }
     const rowSelectionCheckbox = {
         selectTableListCheckbox,
-        onChange:(selectedRowKeys, selectedRows)=>{
+        onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setselectTableListCheckbox(selectedRows)
+            setselectTableList(selectedRows)
         },
     }
     const handleCancel = () => {
@@ -251,53 +254,75 @@ export default function Index() {
             })
         }
         setDataSourceReadR(() => dataSourceReadR)
-        tableRef.current = [...dataSourceReadR]
+        let all = [...dataSourceReadR]
         if (snList.length > 0) {
             Remote.Close(snList).then(res => {
                 let { success, data } = res
                 if (success) {
                     let snRemoteList = []
+                    let arr0 = []
                     data.forEach((item, index) => {
                         if (item.errorCode == 0) {
                             snRemoteList.push(item.sn)
                         } else {
-                            let arr = tableRef.current.map(items => {
+                            let arr = all.map(items => {
                                 return {
                                     ...items,
                                     state: item.description ? item.description : '操作失败'
                                 }
 
                             })
-                            setDataSourceReadR([...arr])
+                            arr0.push(arr)
+                            let aaa = arr0.flat(1)
+                            let bbb = aaa.filter(it => !!it)
+                            setDataSourceReadR([...bbb])
                         }
                     })
                     if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
                         let newsnList = []
                         let state = []
                         let status = true
-
+                        let bbb = []
+                        let ccc = []
+                        let ddd = []
                         count.map((item, index) => {
                             setTimeout(() => {
+
                                 if (status) {
                                     if (snRemoteList.length > 0) {
                                         Remote.StartBatchValveTask(snRemoteList).then((res) => {
                                             if (res.success) {
                                                 newsnList = []
                                                 state.push(index)
+                                                let arr1 = []
                                                 res.data.map((items, i) => {
                                                     if (items.errorCode == 0) {
                                                         newsnList.push(items.sn)
-                                                    } else {
+                                                    }
+                                                    else {
+                                                        let arr = all.map(item => {
+                                                            if (item.sn == items.sn) {
+                                                                return {
+                                                                    ...item,
+                                                                    state: items.errorMessage ? items.errorMessage : '操作失败'
+                                                                }
+                                                            }
+                                                        })
+                                                        arr1.push(arr)
+                                                        let aaa = arr1.flat(1)
+                                                        bbb = aaa.filter(it => !!it)
                                                     }
                                                 })
+                                                console.log(456, newsnList)
                                                 if (newsnList.length > 0) {
                                                     Remote.BatchValveStatus(newsnList).then(result => {
                                                         if (result.success) {
                                                             snRemoteList = []
+                                                            let arr1 = []
                                                             result.data.map((aitem) => {
                                                                 if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
-                                                                    let arr = tableRef.current.map(item => {
+                                                                    let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
                                                                             return {
                                                                                 ...item,
@@ -306,29 +331,34 @@ export default function Index() {
                                                                         }
 
                                                                     })
-                                                                    setDataSourceReadR([...arr])
+                                                                    arr1.push(arr)
+                                                                    let aaa = arr1.flat(1)
+                                                                    ccc = aaa.filter(it => !!it)
+                                                                    console.log(470, arr, ccc)
                                                                 } else {
                                                                     snRemoteList.push(aitem.sn)
 
                                                                 }
+                                                                let arr2 = []
                                                                 if (aitem.status[0] != 'Close' && aitem.status[1] != 'Close' && state.length == 20) {
-                                                                    let arr = tableRef.current.map(item => {
+                                                                    let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
                                                                             return {
                                                                                 ...item,
                                                                                 state: aitem.errorMessage ? aitem.errorMessage : '操作失败'
                                                                             }
                                                                         }
-
                                                                     })
-                                                                    setDataSourceReadR([...arr])
+                                                                    arr2.push(arr)
+                                                                    let aaa = arr2.flat(1)
+                                                                    ddd = aaa.filter(it => !!it)
                                                                 }
-
                                                             })
                                                             if (state.length == 20 || snRemoteList.length == 0) {
                                                                 status = false
                                                                 setisComplate(false)
                                                                 getData()
+                                                                setDataSourceReadR([...bbb, ...ccc, ...ddd])
                                                             }
 
                                                         }
@@ -365,53 +395,75 @@ export default function Index() {
             })
         }
         setDataSourceReadR(() => dataSourceReadR)
-        tableRef.current = [...dataSourceReadR]
+        let all = [...dataSourceReadR]
         if (snList.length > 0) {
             Remote.Open(snList).then(res => {
                 let { success, data } = res
                 if (success) {
                     let snRemoteList = []
+                    let arr0 = []
                     data.forEach((item, index) => {
                         if (item.errorCode == 0) {
                             snRemoteList.push(item.sn)
                         } else {
-                            let arr = tableRef.current.map(items => {
+                            let arr = all.map(items => {
                                 return {
                                     ...items,
                                     state: item.description ? item.description : '操作失败'
                                 }
 
                             })
-                            setDataSourceReadR([...arr])
+                            arr0.push(arr)
+                            let aaa = arr0.flat(1)
+                            let bbb = aaa.filter(it => !!it)
+                            setDataSourceReadR([...bbb])
                         }
                     })
                     if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
                         let newsnList = []
                         let state = []
                         let status = true
-
+                        let bbb = []
+                        let ccc = []
+                        let ddd = []
                         count.map((item, index) => {
                             setTimeout(() => {
+
                                 if (status) {
                                     if (snRemoteList.length > 0) {
                                         Remote.StartBatchValveTask(snRemoteList).then((res) => {
                                             if (res.success) {
                                                 newsnList = []
                                                 state.push(index)
+                                                let arr1 = []
                                                 res.data.map((items, i) => {
                                                     if (items.errorCode == 0) {
                                                         newsnList.push(items.sn)
-                                                    } else {
+                                                    }
+                                                    else {
+                                                        let arr = all.map(item => {
+                                                            if (item.sn == items.sn) {
+                                                                return {
+                                                                    ...item,
+                                                                    state: items.errorMessage ? items.errorMessage : '操作失败'
+                                                                }
+                                                            }
+                                                        })
+                                                        arr1.push(arr)
+                                                        let aaa = arr1.flat(1)
+                                                        bbb = aaa.filter(it => !!it)
                                                     }
                                                 })
+                                                console.log(456, newsnList)
                                                 if (newsnList.length > 0) {
                                                     Remote.BatchValveStatus(newsnList).then(result => {
                                                         if (result.success) {
                                                             snRemoteList = []
+                                                            let arr1 = []
                                                             result.data.map((aitem) => {
                                                                 if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
-                                                                    let arr = tableRef.current.map(item => {
+                                                                    let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
                                                                             return {
                                                                                 ...item,
@@ -420,29 +472,34 @@ export default function Index() {
                                                                         }
 
                                                                     })
-                                                                    setDataSourceReadR([...arr])
+                                                                    arr1.push(arr)
+                                                                    let aaa = arr1.flat(1)
+                                                                    ccc = aaa.filter(it => !!it)
+                                                                    console.log(470, arr, ccc)
                                                                 } else {
                                                                     snRemoteList.push(aitem.sn)
 
                                                                 }
+                                                                let arr2 = []
                                                                 if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
-                                                                    let arr = tableRef.current.map(item => {
+                                                                    let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
                                                                             return {
                                                                                 ...item,
                                                                                 state: aitem.errorMessage ? aitem.errorMessage : '操作失败'
                                                                             }
                                                                         }
-
                                                                     })
-                                                                    setDataSourceReadR([...arr])
+                                                                    arr2.push(arr)
+                                                                    let aaa = arr2.flat(1)
+                                                                    ddd = aaa.filter(it => !!it)
                                                                 }
-
                                                             })
                                                             if (state.length == 20 || snRemoteList.length == 0) {
                                                                 status = false
                                                                 setisComplate(false)
                                                                 getData()
+                                                                setDataSourceReadR([...bbb, ...ccc, ...ddd])
                                                             }
 
                                                         }
@@ -500,10 +557,10 @@ export default function Index() {
                         let count = [1, 2, 3]
                         let arr = []
                         let resData = []
-                        let status=true
+                        let status = true
                         count.map((item, index) => {
                             setTimeout(() => {
-                                if(status){
+                                if (status) {
                                     Remote.CallingResponse(isOkList).then(res => {
                                         arr.push(index)
                                         let { success, data } = res
@@ -520,12 +577,12 @@ export default function Index() {
                                                 if (arr.length == 3 || resData.length == data.length) {
                                                     setreadout(true)
                                                     setLoading(false)
-                                                    status=false
-                                                     let arrlist= []
-                                                    resData.map(item=>{
-                                                       arrlist.push({...JSON.parse(item.data),sn:item.sn})
+                                                    status = false
+                                                    let arrlist = []
+                                                    resData.map(item => {
+                                                        arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
                                                     })
-                                                    setdataSourceRead(arrlist )
+                                                    setdataSourceRead(arrlist)
                                                     console.log(dataSourceRead)
                                                 }
                                             })
@@ -533,7 +590,7 @@ export default function Index() {
                                             message.error(res.errMsg)
                                             setLoading(false)
                                         }
-    
+
                                     })
                                 }
 
@@ -616,18 +673,18 @@ export default function Index() {
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                         </div>
 
-                        {selectionType=='radio'?<div>
-                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
-                            type: 'radio',
-                            ...rowSelectionRadio,
-                        }} bordered></Table>
-                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
-                        </div>:<div>
-                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
-                            type: 'checkbox',
-                            ...rowSelectionCheckbox,
-                        }} bordered></Table>
-                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                        {selectionType == 'radio' ? <div>
+                            <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                                type: 'radio',
+                                ...rowSelectionRadio,
+                            }} bordered></Table>
+                            <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                        </div> : <div>
+                            <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                                type: 'checkbox',
+                                ...rowSelectionCheckbox,
+                            }} bordered></Table>
+                            <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
                         </div>}
                     </div>
                 </div>
@@ -680,7 +737,7 @@ export default function Index() {
                         </Button>,
                     ]}
                 >
-                    <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
+                    <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={realcolumns => realcolumns.sn} className={style.Table} pagination={false} bordered></Table>
                 </Modal>
                 <Modal
                     title={<Bluecolumn name="实时抄读" />}

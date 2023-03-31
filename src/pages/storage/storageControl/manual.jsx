@@ -136,8 +136,8 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
-export default function Manual({projectId, areaId, startTime, p, q, getinfo}) {
-  const [onoff, setOnoff] = useState() 
+export default function Manual({projectId, mode, areaId, startTime, p, q, getinfo}) {
+  const [onoff, setOnoff] = useState(mode) 
   const [pform] = Form.useForm()
   const [qform] = Form.useForm()
   console.log('q', q)
@@ -193,19 +193,21 @@ export default function Manual({projectId, areaId, startTime, p, q, getinfo}) {
                 <div className='item'>
                     <div className={onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => setOnoff(1)}>
                         <Space size={32}>
-                        <Image src={imgurl.coal} height={42} width={42} preview={false} />
+                        <Image src={onoff==1 ? imgurl.manualon : imgurl.manual} height={42} width={42} preview={false} />
                         <Text>开启手动模式</Text>
                         </Space>
                     </div>
                     <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => setOnoff(2)}>
                     <Space size={32}>
-                       <Image src={imgurl.coal} height={42} width={42} preview={false} />
+                       <Image src={onoff == 2 ? imgurl.close: imgurl.closed} height={42} width={42} preview={false} />
                         <Text>关闭手动模式</Text>
                         </Space>
                     </div>
                 </div>
                 <div className='item'>
-                    <Text><ExclamationCircleFilled style={{color: '#237ae4', marginRight: '16px', fontSize: '22px'}}/>注意：当前为自动运行模式，开启手动模式后自动运行模式将会被停止。</Text> 
+                    <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '22px'}}/>} {onoff== 1 ? 
+                    '注意：当前为自动运行模式，开启手动模式后自动运行模式将会被停止。' : onoff == 2  ?  '注意：当前为手动运行模式，关闭手动模式后自动运行模式将会被激活。' : null
+                }</Text> 
                 </div>
             </div>
            {/*  <div className='topleftitem'>
@@ -270,6 +272,10 @@ export default function Manual({projectId, areaId, startTime, p, q, getinfo}) {
             <Bigbutton type='primary'  onClick={updatestate}>确认</Bigbutton>
                
         </div>
+        <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
+         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
+         
+     </CModal>
     </Mainbox>
   )
 }

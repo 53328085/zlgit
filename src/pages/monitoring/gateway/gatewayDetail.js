@@ -52,20 +52,19 @@ export default function GatewayDetail(props) {
         },
         {
             title: '通信地址',
-            dataIndex: 'commAddress',
+            dataIndex: 'commAddressName',
             key: 'commAddressName',
             id: 'id'
         },
         {
             title: '通信端口',
-            dataIndex: 'commAddressName',
+            dataIndex: 'commPortName',
             key: 'commPort',
             id: 'id'
         },
         {
             title: '通信协议',
-            dataIndex: 'commProtocol',
-            render: (commProtocol) => <span>{commProtocol==1?'Modbus':'DL645'}</span>,
+            dataIndex: 'commProtocolName',
             key: 'commProtocol',
             id: 'id'
         },

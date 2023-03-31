@@ -1,11 +1,11 @@
 /*  碳排管理 */
 import {lazy} from 'react'
 import store from '@redux/store'
-//const Monitor = lazy(() => import("@pages/carbon/monitor"))
+ const Quota = lazy(() => import("@pages/carbon/configure/quota"))
 
 const menus = [];
 const components = {
-    //'011201': Monitor, 
+    '021001': Quota, 
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['carbon']

@@ -303,6 +303,7 @@ export default function Index() {
        let {success, errMsg} = res
        success && custMsg({content: '新增成功', onClose: () => {
         formmodal.current.onCancel()
+        refresh()
        /*  navigate(`/config/designerCommon/base`, {
           state: { type: 'config', primary: 'designerCommon',  title: '基础设置', nested: 'base'  } 
         }) */ // 还需要设置菜单栏
@@ -509,7 +510,7 @@ export default function Index() {
       console.log(e)
     });
   };
-  const { tableProps, search } = useAntdTable(getTableData, {
+  const { tableProps, search, refresh } = useAntdTable(getTableData, {
     form,
     defaultParams: [
       { current: 1, pageSize: 10 },
@@ -770,7 +771,7 @@ const closeModl = () => {
                   新增项目
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn style={{width: '144px'}}
+                 {  roleType == 1 &&    <CustBtn 
                   onClick={devOps}
                 >
                   运营管理员管理
