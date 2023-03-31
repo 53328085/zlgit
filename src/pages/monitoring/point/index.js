@@ -290,7 +290,7 @@ export default function Index(props) {
       </div>
       <div className={style.bottom}>
         <div className={style.bottomTab}>
-           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
+           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
             <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' ,borderLeft:'none'}} size="middle" onClick={() => { onSearchList() }}>查询</Button>
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
           <span>表计型号</span>
@@ -349,10 +349,10 @@ export default function Index(props) {
           {overView.details!=null?overView.details.map((item, index) => {
             return <div key={index}>
               <Link  to={`/deviceDetail?sn=${item.sn}`}   target="_blank">
-                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.sn}
+                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.name}
 
                     value={item.address} state={item.state} fields={item.fields} 
-                    lastSampleTime={item.lastSampleTime} category={item.category} />
+                    lastSampleTime={item.lastSampleTime} category={item.sn} />
                     </Link>
             </div>
           }):''}
