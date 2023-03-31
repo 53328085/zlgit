@@ -346,6 +346,20 @@ export default function Index() {
                   )}
                 </Item>
               </Form>
+              <div className={style.legend}>
+                <div style={{display:"flex", alignItems:'center'}}>
+                  <span className={style.square} style={{backgroundColor:'#4370ff'}}></span>
+                  <span>充电</span>
+                </div>
+                <div style={{display:"flex", alignItems:'center'}}>
+                  <span className={style.square} style={{backgroundColor:'#f93'}}></span>
+                  <span>放电</span>
+                </div>
+                <div style={{display:"flex", alignItems:'center'}}>
+                  <span className={style.square} style={{backgroundColor:'#0dc6d1'}}></span>
+                  <span>待机</span>
+                </div>
+              </div>
             </div>
             <div className={style.bottom}>
               <Button type='primary' danger style={{width: 96}} onClick={()=>onDelete()}>删除</Button>
