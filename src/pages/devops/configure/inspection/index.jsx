@@ -100,7 +100,12 @@ export default function Index() {
   const getQueryProjectMaintenance = async (areaId,callback) => {
     const res = await operationDesigin.QueryProjectMaintenanceArea({projectId,areaId})
     if (res.success) {
-      res.data&&callback([...res.data])
+      if(res.data&&Array.isArray(res.data)){
+        callback([...res.data])
+      }else{
+        callback([])
+      }
+      
     } else {
       message.error(res.errMsg)
     }
@@ -306,7 +311,7 @@ let AddPlan = forwardRef(
             onChange={changeCycle}
           ></Select>
         </Form.Item>
-        <Form.Item label="巡检日期" name="date" rules={[rule]}>
+        <Form.Item label="巡检时间" name="date" rules={[rule]}>
           <Select options={dateCycle == 1 ? time : dateCycle == 2 ? weekCycle : dateCycle == 3 ? monthCycle : []} ></Select>
         </Form.Item>
         <Form.Item label="开始周期" name="starttime" rules={[rule]}>

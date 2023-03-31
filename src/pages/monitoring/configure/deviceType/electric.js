@@ -246,10 +246,12 @@ export default function Electric() {
           console.log(watchPointArr)
           foRef.current.setSwitched(watchPointArr)
           foRef.current.setPointSource([...arr])
-       
+          foRef.current.setIsControl( data.control)
+          foRef.current.setIsCount(data.calculate)
         } else {
           setDefaultTableData(arr)
         }
+
         addForm.setFieldsValue({
           DeviceType: data.category,
           Cycle: data.rateType,
@@ -260,6 +262,7 @@ export default function Electric() {
           ImageUpload: '',
           // Point:arr,
         })
+      
         setIsAdd(true)
       }
   
