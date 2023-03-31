@@ -67,7 +67,7 @@ export default function Sider() {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
     return (
-      <Imgbox>  <Image src={imgsrc} preview={false} style={{border: '1px solid #fff'}} /></Imgbox>
+      <Imgbox>  <Image  width={184} height={114} src={imgsrc} preview={false} style={{border: '1px solid #fff'}} fallback={imgurl.config} /></Imgbox>
      )
   }
 

@@ -53,10 +53,11 @@ import {
     }
     const pt = e.latlng    
     geoc.getLocation(pt, function (rs) { 
+        console.log(rs)
         try {    
-        let { addressComponents, address, point:{lng, lat} } = rs;    
+        let { addressComponents, address, point  } = rs;    
         let { city, district, province, street, streetNumber } = addressComponents;    
-        console.log(rs)      
+        let {lng, lat} = point || {}   
         setAaddress({lng, lat, address, province, city, district, street, streetNumber})
          } catch (error) {
           console.dir(error)
