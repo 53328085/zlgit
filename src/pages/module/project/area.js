@@ -226,7 +226,7 @@ const levelid = useRef()
       if(!success) return message.warning(errMsg || '数据出错')
       success && nfref.current.onCancel()
      // QueryAreaLevelFields({projectId, level})
-      queyFiled(levelid)
+      queyFiled(levelid.current)
     } catch (error) {
       
     }
