@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
-import Automate from './automate'
-import Manual from './manual'
+import Runmode from './runmode'
+import Onoff from './onoff'
 import CModal from '@com/useModal'
 import {StorageControlRuntime} from '@api/api'
 import {useSelector} from 'react-redux'
@@ -89,8 +89,8 @@ export default function Index() {
   const tabs = [
    /*  {label: '手动模式', key: 1, disabled: mode==2},
     {label: '自动模式', key: 2, disabled: mode==1}, */
-    {label: '手动模式', key: 1, disabled: mode == 2  },
-    {label: '自动模式', key: 2, disabled: mode == 1 },
+    {label: '开关机控制', key: 1,  },
+    {label: '运行模式', key: 2,   },
   ]
   const getinfo = async () => {
     try {
@@ -125,7 +125,7 @@ export default function Index() {
   useEffect(() => {
     getinfo()
   }, [areaId, projectId])
-  const ProjectCom = [Manual, Manual, Automate][mode]
+  const ProjectCom = [Onoff, Onoff, Runmode][mode]
   return (
     <CustContext.Provider value={propsData}>      
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
