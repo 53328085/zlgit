@@ -201,6 +201,10 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
       })
    
   }
+  const tbref = useRef()
+  const onExport = () => {
+    tbref.current.download()
+  }
   useEffect(() => {
     QueryReports()
   }, [])
@@ -268,10 +272,13 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
                 </Space>
             </Item>
            </Space>
+           <Item noStyle>
+              <Button onClick={onExport} type="primary">导出</Button>
+           </Item>
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} />
+        <Usetable columns={columns} ref={tbref}  dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} sheetName="告警信息" />
       
     </div>
     </Titlelayout>
