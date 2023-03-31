@@ -283,7 +283,7 @@ export default function Index() {
                   </div> */}
                   <div className={style.progress}>
                     {colorList.map((item, index) => {
-                      return <div className={style.item} key={index} style={{background:item.type == 1 ? '#4370FF' : item.type == 2 ? '#f93' : item.type == 3 ? '#0dc6d1' :'#f2f2f2'}}></div>
+                      return <div className={style.item} key={index} style={{background:item.type == 1 ? '#4370FF' : item.type == 2 ? '#f93' : item.type == 3 ? '#0dc6d1' : item.type == 4 ? '#333' : '#f2f2f2'}}></div>
                     }) }
                   </div>
                   <div className={style.timeList}>
@@ -323,7 +323,7 @@ export default function Index() {
                           </Item>
                           <span>执行</span>
                           <Item   {...restField} name={[name, 'controlType']} shouldUpdate rules={[{required:true, message:'请选择控制类型'}]}>
-                            <Select style={{width: 196}} onChange={val => { if(val == 3){ strategyForm.setFieldValue(['strategyTime', name, 'planP' ], 0) } }}>
+                            <Select style={{width: 196}} onChange={val => { if(val == 3 || val == 4){ strategyForm.setFieldValue(['strategyTime', name, 'planP' ], 0) }}}>
                               {controlList.map(item => {
                                 return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
                               })}
@@ -332,7 +332,7 @@ export default function Index() {
                           <span style={{marginLeft: 40}}>预设计划执行功率 (kW)</span>
                           <Item   {...restField} name={[name, 'planP']} shouldUpdate={true} rules={[{required:true, message:'请输入功率'}]}>
                             {/*['strategyTime', name, 'controlType' ]  */}
-                            <Input style={{width: 200}} disabled={strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 3 ? true : false}></Input>
+                            <Input style={{width: 200}} disabled={(strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 3 || strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 4) ? true : false}></Input>
                           </Item>
                           <Button danger onClick={()=> remove(name)}>删除</Button>
                           {index == fields.length - 1 ? <Button onClick={()=> add() } type="primary" ghost>新增</Button> : null}  
@@ -358,6 +358,10 @@ export default function Index() {
                 <div style={{display:"flex", alignItems:'center'}}>
                   <span className={style.square} style={{backgroundColor:'#0dc6d1'}}></span>
                   <span>待机</span>
+                </div>
+                <div style={{display:"flex", alignItems:'center'}}>
+                  <span className={style.square} style={{backgroundColor:'#333'}}></span>
+                  <span>停机</span>
                 </div>
               </div>
             </div>
