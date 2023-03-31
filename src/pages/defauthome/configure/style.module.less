@@ -8,7 +8,7 @@
     z-index: 1111;
     position: absolute;
     top: 16px;
-    right: 0;
+    left: 0;
     width: 48px;
     height: 848px;
     background-color: rgba(51, 51, 51, 1);
@@ -43,29 +43,42 @@
         }
     }
 }
-
+.drawer{
+    font-size: 14px;
+}
 :global {
     .ant-drawer-content-wrapper{
         top: 80px!important;
-        width: 320px!important;
+        width: 284px!important;
         height: 848px!important;
         // position: relative;
+        margin-left: 48px;
+        background: transparent;
     }
     .ant-drawer-header{
         display: none;
     }
+    .ant-drawer-content{
+        background: transparent;
+    }
+    .ant-drawer-wrapper-body{
+        background: transparent;
+    }
     .ant-drawer-body{
-        background-color: #000!important;
+
+        background-color: rgba(0, 0, 0, 0.6);
         padding: 16px!important;
     }
 }
+
 .closeDrawer{
     position: absolute;
-    left: 12px;
+    right: 12px;
     bottom: 0px;
     color: #999;
     font-size: 24px;
     cursor: pointer;
+    transform: rotate(180deg);
     &:hover{
         color: #237ae4;
     }

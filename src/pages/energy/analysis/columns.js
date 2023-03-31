@@ -32,7 +32,7 @@ export default [
         align:'center',
         width: '174px'
       },{
-        dataIndex: "LossPercent",
+        dataIndex: "lossPercent",
         title: "线损率(%)",
         align:'center'
       },

@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react'
 import style from './style.module.less';
 import configIcon from './configIcon.png'
-import { Drawer, Input, message, Modal, Empty } from 'antd';
+import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
@@ -418,7 +418,7 @@ export default function Index() {
         </div>
       </Modal>
 
-      <Drawer placement='right' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true}>
+      <Drawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} className={style.drawer}>
         <div className={style.searchInput}>
           <Search 
           placeholder="模块名称" 
