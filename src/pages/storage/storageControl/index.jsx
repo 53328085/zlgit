@@ -135,7 +135,7 @@ export default function Index() {
               <span><span className='circle'>&#x25CF;</span>当前运行模式：{infoData.runtimeModeStr}</span>
               <span><span className='circle'>&#x25CF;</span>运行计划：{infoData.runtimePlan}</span>
               <span><span className='circle'>&#x25CF;</span>策略模板：{infoData.strategyTemplate}</span>
-              <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.day}天{infoData.runHour}小时{infoData.runMin}分</span>
+              <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.runDay}天{infoData.runHour}小时{infoData.runMin}分</span>
            </div>
            <div className='tabbox'>
                 <Tabsbox items={tabs} activeKey={mode} onChange={tabChange}></Tabsbox>

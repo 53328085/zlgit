@@ -16,7 +16,6 @@ const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monit
 export default function Index() {
   const [value, setvalue] = useState('0')
 
-
   const [Coms,setComs]=useState([
     <GateWay/>,
     // <Electric />,
@@ -64,18 +63,18 @@ export default function Index() {
         }else if(k.name==='视频监控'){
           arr[6]=<Video deviceStyle={k.deviceStyle}/>
         }
-        const tabs = data.map(it=>{return {key:it.deviceStyle,label:it.name}})
-        setTabs([{key: '0',label: '网关'},
-        ...tabs
-      ])
       }
-      setComs(()=>arr)
+      const tabs = data.map(it=>{return {key:it.deviceStyle.toString(),label:it.name}})
+      setTabs([{key: '0',label: '网关'},
+      ...tabs
+    ])
+      setComs([...arr])
       console.log(arr)
     }
   }
   useEffect(()=>{
     getAllDeviceStyle()
-    console.log(Coms)
+    
   },[])
  
   return (

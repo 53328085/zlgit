@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState,   useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
-import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
+import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  Divider} from 'antd'
+ import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {StorageReportRuntime} from '@api/api'
+import {StorageOrderRuntime} from '@api/api'
 import {ExportButton} from '@com/useButton'
+import CModal from '@com/useModal'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -59,145 +60,190 @@ const Mainbox = styled.div`
 
 `
  
-const columns = [
-    {
-        title: '充发单号',
-        dataIndex: 'order',
-        key: 'order',
-        align: 'center'
-    },
-    {
-        title: '充放类型',
-        dataIndex: 'type',
-        key: 'type',
-        align: 'center'
-    },
-    {
-      title: '电量',
-      dataIndex: 'electric',
-      key: 'electric',
-      align: 'center'
-    },
-    {
-      title: '总金额（元）',
-      dataIndex: 'amount',
-      key: 'amount',
-      align: 'center'
-    },
-    {
-      title: '时长',
-      dataIndex: 'time',
-      key: 'time',
-      align: 'center'
-    },
-    {
-      title: '开始时间',
-      dataIndex: 'start',
-      key: 'start',
-      align: 'center'
-    },
-    {
-      title: '结束时间',
-      dataIndex: 'start',
-      key: 'start',
-      align: 'center'
-    },
-    {
-      title: '实时状态',
-      dataIndex: 'state',
-      key: 'state',
-      align: 'center'
-    },
-    {
-      title: '操作',
-      key: 'op'
-    }
-   ]
+
  
  function Main({projectId, areaId }) {
-   const [price ,setPrice] = useState({})
-   const [tableData, setTableData] = useState([])
+  
+   const [soption, setSoption] = useState([])
+   const [toption, setToption] = useState([])
+   
    const [form] = Form.useForm();
-   const startime = '2023-03-03'
-   const endtime = '2023-03-23'
-   const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
-   const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-    total: 0
-  })
-  const getPrice = async() => {
+   const end = moment().add(7, 'day')
+   const star = moment()
+   const [dates, setDates] = useState([moment(star, 'YYYY-MM-DD'), moment(end, 'YYYY-MM-DD')])
+ 
+  const getStatus = async() => {
     try {
-        let {success, data} = await StorageReportRuntime.QueryPrice(projectId, areaId)
-        success && setPrice({...price, ...data})
-        !success && setPrice({})
+        let {success, data} = await StorageOrderRuntime.QueryRuntimeStatus()
+        if (success && Array.isArray(data)) {
+          setSoption([...data])
+        }else {
+          setSoption([])
+        }    
     } catch (error) {
         console.log(error)
     }
    
   } 
- const timechange = (data, dateStrings) => { 
-     setDates([...data])
- }
-  const params = {
-    start: '',
-    end: '',
-    projectId,
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  }
-  const vdata = [
-    {label: '充电电量', value: '20000120000000.00 kWh'},
-    {label: '充电时长', value: '1252.25 小时'},
-    {label: '充电金额', value: '7200.00 元'},
-    {label: '放电电量', value: '16000.00 kwh'},
-    {label: '放电时间', value: '1523.36 小时'},
-    {label: '放电金额', value: '20160.00 元'},
-    {label: '收益', value: '12960.00 元'},
-  ]
-  const QueryReports = async() => {   
+
+  const QueryType = async() => {
     try {
-        let [start, end] = dates;
-        if ( start instanceof moment) {
-            
-            params.start = start.format('YYYY-MM-DD')
-        }
-        if (end instanceof moment) {
-            params.end = end.format('YYYY-MM-DD')
-        }
-        let {success, data, total} = await StorageReportRuntime.QueryReports(params, areaId)
-        if (success && Array.isArray(data) && data.length >0) {
-           
-           setTableData([...data])   
-           setPagination({...pagination, total: total})
-        } else {
-            setTableData([])
-            setPagination({...pagination, total: 0})
-        }
+        let {success, data} = await StorageOrderRuntime.QueryType()
+        if (success && Array.isArray(data)) {
+          setToption([...data])
+        }else {
+          setToption([])
+        }    
     } catch (error) {
         console.log(error)
     }
    
   }
-  const rest = () => {
-    params.end = endtime;
-    params.start = startime;
-    QueryReports();
+const [Record, setRecord] = useState({})
+  const rref = useRef()
+ const onView = (record) => {
+   setRecord(record)
+   rref.current.onOpen()
+ }
+
+ const onclose = () => {
+  rref.current.onCancel()
+ }
+ const labelStyle ={
+    height: '32px',
+    padding: '2px 16px',
+    backgroundColor: "#f0f9ff",
+    color: "#515151"
+    
+ }
+ const contentStyle = {
+  height: '32px',
+    padding: '2px 16px'
+ }
+  /* {
+  "projectId": 0,
+  "pageNum": 0,
+  "pageSize": 0,
+  "start": "2023-03-30T06:32:19.204Z",
+  "end": "2023-03-30T06:32:19.204Z"
+} */
+
+const columns = [
+  {
+      title: '充发单号',
+      dataIndex: 'orderNo',
+      key: 'orderNo',
+      align: 'center'
+  },
+  {
+      title: '充放类型',
+      dataIndex: 'type',
+      key: 'type',
+      align: 'center',
+      render: (text) =>  <span>{text == 1 ? '充电': text == 2 ? '放电' : null}</span>
+  },
+  {
+    title: '电量(kwh)',
+    dataIndex: 'e',
+    key: 'e',
+    align: 'center'
+  },
+  {
+    title: '总金额（元）',
+    dataIndex: 'income',
+    key: 'income',
+    align: 'center'
+  },
+  {
+    title: '时长',
+    dataIndex: 'duration',
+    key: 'duration',
+    align: 'center'
+  },
+  {
+    title: '开始时间',
+    dataIndex: 'startTime',
+    key: 'startTime',
+    align: 'center'
+  },
+  {
+    title: '结束时间',
+    dataIndex: 'endTime',
+    key: 'endTime',
+    align: 'center'
+  },
+  {
+    title: '实时状态',
+    dataIndex: 'status',
+    key: 'status',
+    align: 'center'
+  },
+  {
+    title: '操作',
+    key: 'op',
+    align: 'center',
+    render: (_,record) => <Space size={16}>
+       <Link underline onClick={onView.bind(null, record)}>订单详情</Link>
+  </Space>
   }
-  const tableOnchange = (e) => { 
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
+ ]
+
+ 
+const [charData, setCharData] = useState({})
+ const getTableData = ({current, pageSize}, formData) => {
+  let {state, type, date} = formData
+  let start = date[0].format('YYYY-MM-DD')
+  let end = date[0].format('YYYY-MM-DD')
+  const params = {
+    projectId,
+    pageNum: current,
+    pageSize,
+    start,
+    end
+
+  }
+   return StorageOrderRuntime.QueryStorageOrders(areaId, state, type, params).then(res => {
+     let {success, data, total} = res
+     if (success && data) {
+       let {orderDetails, ...values} = data 
+      setCharData({...values})
+      return {
+        list: orderDetails,
+        total
+      }
+     } else {
+      return {
+        list: [],
+        total: 0
+       }
+     }
+   }).catch(e => {
+    console.log(e)
+   })
+     
+
+ }
+ const {tableProps, search} = useAntdTable(getTableData, {
+   form,
+   defaultParams: [
+    {current: 1, pageSize: 15},
+    {state: 1, type:1, date: [moment(), moment().add(7, 'day')]}
+   ]
    
-  }
-  useEffect(() => {
+ })
+const {submit} = search
+
+
+ 
+
+
+ 
+/*   useEffect(() => {
     QueryReports()
-  }, [])
+  }, []) */
   useEffect(() => {
-    getPrice()
-    QueryReports()
+    getStatus()
+    QueryType()
   }, [areaId])
  
   return (
@@ -206,64 +252,89 @@ const columns = [
         <div className='top'>
           <Form form={form} layout="inline">
            <Space size={16}>
-           <Item name="runstate" noStyle>
-                 <Select options={[{
-                  label: '正在充电',
-                  value: 1
-                 },
-                 {
-                  label: '正在放电',
-                  value: 2
-                 },
-                 {
-                  label: '已完成',
-                  value: 3
-                 },
-                 {
-                  label: '异常',
-                  value: 4
-                 }
-                 ]}
+           <Item name="state" noStyle>
+                 <Select options={soption}
                  placeholder="请选择运行状态"
                  style={{width: '200px'}}
+                 fieldNames={{label: 'name', value: 'id'}}
+                 onChange={submit}
                  ></Select>
            </Item>
-           <Item name="runstate" noStyle>
-                 <Select options={[{
-                  label: '充电',
-                  value: 1
-                 },
-                 {
-                  label: '在放电',
-                  value: 2
-                 }
-                 
-                 ]}
+           <Item name="type" noStyle>
+                 <Select options={toption}
+                  fieldNames={{label: 'name', value: 'id'}}
                  placeholder="请选择充放类型"
                  style={{width: '200px'}}
+                 onChange={submit}
                  ></Select>
            </Item>
            </Space>
           <Space size={32} style={{marginLeft: '32px'}}>
               <Divider style={{margin: '0', height: '32px'}} type="vertical" />
              <Item name="date" label="订单时间">
-                <RangePicker value={dates} onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/>
+                <RangePicker value={dates} onChange={submit}  format="YYYY-MM-DD" style={{width: '320px'}}/>
              </Item>
           </Space>
           </Form>
         </div>
         
          <Divider style={{margin: '0px'}}/>
+ 
+
          <div className='info'>
            
-               {vdata.map(v => <div className='item'>
-                {v.label}
-                <Text ellipsis={{tooltip: v.value}}>{v.value}</Text>
-               </div>)}
+               <div className='item'>
+                 充电电量
+                <Text ellipsis={{tooltip: charData.chargingAmount}}>{charData.chargingAmount} &nbsp;kWh</Text>
+               </div>
+               <div className='item'>
+                 充电时长
+                <Text ellipsis={{tooltip: charData.chargingDuration}}>{charData.chargingDuration} &nbsp;小时</Text>
+               </div>
+               <div className='item'>
+                 充电金额
+                <Text ellipsis={{tooltip: charData.chargingCapacity}}>{charData.chargingCapacity} &nbsp;元</Text>
+               </div>
+
+               <div className='item'>
+                 放电电量
+                <Text ellipsis={{tooltip: charData.disChargingAmount}}>{charData.disChargingAmount} &nbsp;kWh</Text>
+               </div>
+               <div className='item'>
+                 充电时长
+                <Text ellipsis={{tooltip: charData.disChargingDuration}}>{charData.disChargingDuration} &nbsp;小时</Text>
+               </div>
+               <div className='item'>
+                 放电金额
+                <Text ellipsis={{tooltip: charData.disChargingCapacity}}>{charData.disChargingCapacity} &nbsp;元</Text>
+               </div>
+               <div className='item'>
+                 收益
+                <Text ellipsis={{tooltip: charData.storageIncome}}>{charData.storageIncome} &nbsp;元</Text>
+               </div>
               <ExportButton style={{marginLeft: 'auto'}}/>
          </div>
-        <Usetable columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} />
-      
+        <Usetable columns={columns}   rowKey={nanoid()}  {...tableProps} />
+        <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
+        <Descriptions  column={1} bordered labelStyle={labelStyle} contentStyle={contentStyle}>
+    <Descriptions.Item label="运行单号">{Record.orderNo}</Descriptions.Item>
+    <Descriptions.Item label="运行单状态">{Record.status}</Descriptions.Item>
+    <Descriptions.Item label="创建时间">{Record.createTime}</Descriptions.Item>
+    <Descriptions.Item label="更新时间">{Record.updateTime}</Descriptions.Item>
+    <Descriptions.Item label="运行单类型">{Record.type== 1 ? '充电' : '放电'}</Descriptions.Item>
+    <Descriptions.Item label="运行单电量">{Record.e}</Descriptions.Item>
+    <Descriptions.Item label="总金额">{Record.income}</Descriptions.Item>
+    <Descriptions.Item label="尖时段电量">{Record.e1}</Descriptions.Item>
+    <Descriptions.Item label="峰时段电量">{Record.e2}</Descriptions.Item>
+    <Descriptions.Item label="平时段电量">{Record.e3}</Descriptions.Item>
+    <Descriptions.Item label="谷时段电量">{Record.e4}</Descriptions.Item>
+    <Descriptions.Item label="开始SOC">{Record.startSoc}</Descriptions.Item>
+    <Descriptions.Item label="结束SOC">{Record.endSoc}</Descriptions.Item>
+    <Descriptions.Item label="开始时间">{Record.startTime}</Descriptions.Item>
+    <Descriptions.Item label="充电时长">{Record.duration}</Descriptions.Item>
+  </Descriptions> 
+         
+        </CModal>
     </Mainbox>
     </Titlelayout>
   )

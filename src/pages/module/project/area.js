@@ -4,6 +4,7 @@ import styled from 'styled-components'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
+ 
 const Item = Form.Item
 const Boxitem = styled.div`
   display: grid;
@@ -39,9 +40,10 @@ const [title, setTitle] = useState()
 const [datas, setDatas] = useState([])
 const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
-const [levelid, setLevelid] = useState()
+//const [levelid, setLevelid] = useState()
 const [tableData, setTableData] = useState([])
 const [curlevel, setCurlevel] = useState({})
+const levelid = useRef()
  const edit = (d) => {
        let {name, type, level} = d
        setCurlevel({
@@ -68,23 +70,27 @@ const [curlevel, setCurlevel] = useState({})
 
  const del = async () => {
    try {
-      let {success, errMsg} = await DeleteAreaLevel({projectId, level: levelid})
-     // levelid =''; 
-      setLevelid('')
-      success && message.success({
-         content: '删除成功',
-         duration: 0.3,
-         onClose: () => queryarealevels().then(() =>  dref.current.onCancel()),
-      })
-      !success && message.warning(errMsg || '数据出错')
-     
+      let {success, errMsg} = await DeleteAreaLevel({projectId, level: levelid.current})
+      if(success) {
+        dref.current.onCancel()
+        message.success({
+          content: '删除成功',
+          duration: 0.3,
+          onClose: () => queryarealevels(),
+        })     
+       
+      } else {
+        message.warning(errMsg || '数据出错')
+      }
    } catch (error) {
       
    }
-   
  }
+
+
  const ondel = (level) => { 
-   setLevelid(level);
+  // setLevelid(level);
+   levelid.current = level
    dref.current.onOpen()
  }
   const queryarealevels = async () => {
@@ -126,7 +132,7 @@ const [curlevel, setCurlevel] = useState({})
 
 }
   const addArea = async () => {
-   try {
+   try { 
       const params = {...modalform.getFieldsValue(), level: datas.length + 1, projectId };
       let {success,errMsg} =  await InsertAreaLevel(params)
       success && message.success({
@@ -142,8 +148,7 @@ const [curlevel, setCurlevel] = useState({})
    
 
 }
-  const onOk = () => {
-       console.log(handler);
+  const onOk = () => {      
        handler == 1 && addArea();
        handler == 2 && editArea();
    
@@ -183,7 +188,7 @@ const [curlevel, setCurlevel] = useState({})
         let {success, errMsg}  =  await DeleteAreaLevelField({projectId, fieldId: id}) 
         if (!success) return message.warning(errMsg || '数据出错');
        // success && QueryAreaLevelFields({projectId, level:levelid});
-        success &&  queyFiled(levelid)
+        success &&  queyFiled(levelid.current)
       } catch (error) {
          
       }
@@ -192,12 +197,14 @@ const [curlevel, setCurlevel] = useState({})
   const editfiled = async (level) => {
    
    try {
-      setLevelid(level)
-      console.log(levelid);
+    levelid.current = level
+      
     // let {success, data} =  await QueryAreaLevelFields({projectId, level})
     // success && setTableData([...data]) ;
-    queyFiled(level)
-     fref.current.onOpen();
+    queyFiled(level).then(() => {
+      fref.current.onOpen();
+    })
+     
     
    } catch (error) {
       console.log(error)
@@ -214,12 +221,12 @@ const [curlevel, setCurlevel] = useState({})
 
   const onNewFiled = async () => {  // 新增字段
     try {
-      const params = {...ffrom.getFieldsValue(), projectId, level: levelid}
+      const params = {...ffrom.getFieldsValue(), projectId, level: levelid.current}
       let {success, errMsg} = await InsertAreaLevelField(params)
       if(!success) return message.warning(errMsg || '数据出错')
       success && nfref.current.onCancel()
      // QueryAreaLevelFields({projectId, level})
-      queyFiled(level)
+      queyFiled(levelid)
     } catch (error) {
       
     }
@@ -261,11 +268,18 @@ const [curlevel, setCurlevel] = useState({})
         </Form>
         {/* 新增，修改区域 */}
         <CModal title={title} ref={mref}  mold="cust" width={512} okText="保存" onOk={onOk}>
-             <Form name="modalform" form={modalform}>
+             <Form name="modalform" form={modalform} initialValues={{
+              type: 0
+             }}>
                  <Item name="name" label="区域名称">
                      <Input/>
                  </Item>
-                 <Item name="type" label="区域用途">
+                 <Item name="type" label="区域用途" rules={[
+                  {
+                    required: true,
+                    message: '选择区域用途'
+                  }
+                 ]}>
                       <Select>
                          <Select.Option value={0} >无</Select.Option>
                          <Select.Option value={1}>楼栋</Select.Option> 

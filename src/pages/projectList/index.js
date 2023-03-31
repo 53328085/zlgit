@@ -262,7 +262,8 @@ const Opbox = styled.div`
  flex:1;
  padding-top: 16px;
  border-top: 1px dotted #d7d7d7;
- min-height: 408px;
+ min-height: 760px;
+ min-height: 760px;
 `
 const { RangePicker } = DatePicker
 export default function Index() {
@@ -608,7 +609,7 @@ tableProps.pagination.size="default" // 页码大小默认
       let {date} = opform.getFieldsValue()
        if (Array.isArray(date) && date.length > 1) {
         start = date[0].format('YYYY-MM-DD')
-         end = date[1].format('YYYY-MM-DD')
+         end = date[1].format('YYYY-MM-DD')+" 23:59:59"
        }
       params = {...params, start, end} 
     let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
