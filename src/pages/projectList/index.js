@@ -770,7 +770,7 @@ const closeModl = () => {
                   新增项目
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn style={{width: '144px'}}
+                 {  roleType == 1 &&    <CustBtn 
                   onClick={devOps}
                 >
                   运营管理员管理
