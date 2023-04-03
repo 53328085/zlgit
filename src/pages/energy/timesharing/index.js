@@ -108,6 +108,7 @@ export default function Index() {
    const res = await energyShare.QueryElectric(params)
    if(res.success){
     pieRef.current.setPieData([...res.data.proportion])
+    pieRef.current.setAnalysisDes(res.data.analysisDes)
     columnRef.current.setList({...res.data.detail})
    }else{
     message.error(res.errMsg)

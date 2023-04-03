@@ -1217,7 +1217,8 @@ export class safeElectric {
   static QueryMonthWarningTrends = (data) => server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`, { params: data })//查询告警趋势
   static WarningDetailsPage = (data)=>server.post(`/Safe/SafeRuntime/WarningDetailsPage`,data)//查询分页告警
   static WarningDetailsList =(data)=>server.get(`/Safe/SafeRuntime/WarningDetailsList`,{ params: data })//查询告警列表
-  static MonthReport =(data)=>server.get(`/Safe/SafeRuntime/MonthReport`,{ params: data })//
+  static MonthReport =(data)=>server.get(`/Safe/SafeRuntime/MonthReport`,{ params: data })//月度报告
+  static YearReport =(data)=>server.get(`/Safe/SafeRuntime/YearReport`,{ params: data})//年度报告
 }
 //告警详情
 export class warnDetail {
