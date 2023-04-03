@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import style from './style.module.less'
 import { Select, Form, Table, message } from 'antd'
 import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime } from '@api/api.js'
@@ -16,6 +16,7 @@ import error from './imgs/error.png'
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
   const { queryPCSList, 
     queryPCSInfo, 
     queryPowerTrends, 
@@ -285,7 +286,7 @@ export default function Index() {
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ (areaList[0]?.levelName  || '园区') + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
             <Select
               placeholder="请选择"
               size="middle"

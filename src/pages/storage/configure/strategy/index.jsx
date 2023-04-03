@@ -11,6 +11,17 @@ import firstwarn from './imgs/warning.svg'
 import { cloneDeep, range } from 'lodash'
 
 export default function Index() {
+  let time = new Date()
+  let curentTieStamp =time.getTime()
+  curentTieStamp += 24 * 60 * 60 * 1000;
+  let nextDate = new Date(curentTieStamp)
+  let year = nextDate.getFullYear()
+  let month = nextDate.getMonth() + 1 
+  month = month > 9 ? month : '0' + month
+  let day = nextDate.getDate()
+  day = day > 9 ? day : '0' + day
+  let daytime = year+ '-' + month + '-' + day
+
   const addRef = useRef()
   const editRef = useRef()
   const deleteRef = useRef()
@@ -140,13 +151,16 @@ export default function Index() {
     if((count + 8)>= strategyList.length) return;
     setCount(count + 1)
   }
+
   const onSave = async() => {
     try{
       const values = await strategyForm.validateFields()
       let params = cloneDeep(values)
       params.strategyTime.map(item => {
+        console.log(item)
         item.startTime = idToTime[item.startTime]
         item.endTime = idToTime[item.endTime]
+        item.endTime = item.endTime == '24:00' ? daytime + ' 00:00' : item.endTime
         item.id = item.id? item.id: 0
         item.strategyId = activeTab
       })
@@ -214,6 +228,7 @@ export default function Index() {
       }
     }
     let colors = cloneDeep(timeList)
+    colors.splice(96, 1)
     for(let i = 0; i < colors.length; i++){
       for(let j = 0; j< arr.length; j++){
         if(colors[i].id >= arr[j].startTime && colors[i].id < arr[j].endTime){
@@ -283,7 +298,7 @@ export default function Index() {
                   </div> */}
                   <div className={style.progress}>
                     {colorList.map((item, index) => {
-                      return <div className={style.item} key={index} style={{background:item.type == 1 ? '#4370FF' : item.type == 2 ? '#f93' : item.type == 3 ? '#0dc6d1' : item.type == 4 ? '#333' : '#f2f2f2'}}></div>
+                      return <div className={style.item} title={index} key={index} style={{background:item.type == 1 ? '#4370FF' : item.type == 2 ? '#f93' : item.type == 3 ? '#0dc6d1' : item.type == 4 ? '#333' : '#f2f2f2'}}></div>
                     }) }
                   </div>
                   <div className={style.timeList}>
@@ -309,7 +324,8 @@ export default function Index() {
                           <Item   {...restField} name={[name, 'startTime']} rules={[{required:true, message:'请选择开始时间'}]}>
                             <Select style={{width: 196}}>
                               { timeList.map(item => {
-                                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                                return <Select.Option key={item.id} value={item.id}
+                                disabled={ (strategyForm.getFieldValue(['strategyTime', name, 'endTime']) <= item.id  && strategyForm.getFieldValue(['strategyTime', name, 'endTime'] )) ? true: false }>{item.label}</Select.Option>
                               })}
                             </Select>
                           </Item>
@@ -317,7 +333,8 @@ export default function Index() {
                           <Item   {...restField} name={[name, 'endTime']} rules={[{required:true, message:'请选择结束时间'}]}>
                             <Select style={{width: 196}}>
                               { timeList.map(item => {
-                                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                                return <Select.Option key={item.id} value={item.id}
+                                disabled={ (strategyForm.getFieldValue(['strategyTime', name, 'startTime']) >= item.id  && strategyForm.getFieldValue(['strategyTime', name, 'endTime'] )) ? true: false }>{item.label}</Select.Option>
                               })}
                             </Select>
                           </Item>

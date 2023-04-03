@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from './style.module.less'
 import { Topology } from '@topology/core'
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch } from "antd";
+import { Collapse, Switch, Form } from "antd";
 import { basic, flows, sgcc, ltdx } from "./Menu";
 
 import logo from './topologyLogo.png'
@@ -14,6 +14,8 @@ import '../../assets/css/font_2395018_pl6jy69tbjr/iconfont.css'
 import '../../assets/css/fonts/font/libs/iconfont.css'
 
 export default function index() {
+    const [form] = Form.useForm()
+    const Item = Form.Item
     let canvas
     const [newCanvas, setNewCanvas] = useState()
     const canvasOptions = {}
@@ -46,24 +48,24 @@ export default function index() {
             children: ltdx
         }
     ]
-    let props = {
-        node: null, // 节点
-        line: null, // 连线
-        nodes: null,
-        multi: false, // 多个对象
-        expand: false,
-        locked: false
-    }
+    const [props, setProps] = useState({
+      node: null, // 节点
+      line: null, // 连线
+      nodes: null,
+      multi: false, // 多个对象
+      expand: false,
+      locked: false
+  })
     let contextmenu = {
         left: null,
         top: null,
         bottom: null
       }
-    let canvasData = {
-        lineName:'polyline',
-        fromArrow:'',
-        toArrow:'triangleSolid'
-      } // 画布数据
+    const [canvasData, setCanvasData] = useState({
+      lineName:'polyline',
+      fromArrow:'',
+      toArrow:'triangleSolid'
+    } ) // 画布数据
     let lineColor = 'rgba(34, 34, 34, 1)'
     let [TopologyData, setTopologyData] = useState({
         grid: false, // 背景网格
@@ -78,7 +80,6 @@ export default function index() {
     const onContextMenu = (event) => {
         event.preventDefault()
         event.stopPropagation()
-        // console.log(event, '===onContextMenu')
         if (event.clientY + 360 < document.body.clientHeight) {
           contextmenu = {
             left: event.clientX + 'px',
@@ -92,87 +93,86 @@ export default function index() {
         }
       }
     const onMessage = (event, data) => {
-        // console.log('=====onMessage=====', event, data)
-        // console.log(canvas, '******canvas')
+        console.log(event)
         // 右侧输入框编辑状态时点击编辑区域其他元素，onMessage执行后才执行onUpdateProps方法，通过setTimeout让onUpdateProps先执行
         setTimeout(() => {
           switch (event) {
             case 'node':
             case 'addNode':
-              props = {
+              setProps({
                 node: data,
                 line: null,
                 multi: false,
                 expand: props.expand,
                 nodes: null,
                 locked: TopologyData.locked
-              }
-              // canvas.setValue({ id: data.id, text: 'new text' });//赋值
+              })
+              // newCanvas.setValue({ id: data.id, text: 'new text' });//赋值
               break
             case 'line':
             case 'addLine':
               data.fromArrowColor = data.fromArrowColor ? data.fromArrowColor : lineColor
               data.toArrowColor = data.toArrowColor ? data.toArrowColor : lineColor
               data.strokeStyle = data.strokeStyle ? data.strokeStyle : lineColor
-              props = {
+              setProps({
                 node: null,
                 line: data,
                 multi: false,
                 nodes: null,
                 locked: TopologyData.locked
-              }
+              })
               break
             case 'multi':
-              props = {
+              setProps({
                 node: null,
                 line: null,
                 multi: true,
                 nodes: data.length > 1 ? data : null,
                 locked: getLocked({ nodes: data })
-              }
+              })
               break
             case 'space':
-              props = {
+              setProps({
                 node: null,
                 line: null,
                 multi: false,
                 nodes: null,
                 locked: TopologyData.locked
-              }
+              })
               break
             case 'moveOut':
               break
             case 'moveNodes':
             case 'resizeNodes':
               if (data.length > 1) {
-                props = {
+                setProps({
                   node: null,
                   line: null,
                   multi: true,
                   nodes: data,
                   locked: getLocked({ nodes: data })
-                }
+                })
               } else {
-                props = {
+                setProps({
                   node: data[0],
                   line: null,
                   multi: false,
                   nodes: null,
                   locked: TopologyData.locked
-                }
+                })
               }
               break
             case 'resize':
             case 'scale':
             case 'locked':
-              if (canvas && canvas.data) {
-                canvasData = {
+              if (newCanvas && newCanvas.data) {
+                setCanvasData({
                   scale: canvas.data.scale || 1, // 当前图文缩放比例： 0 - 1
                   lineName: canvas.data.lineName, // 当前图文默认连线类型
                   fromArrowType: canvas.data.fromArrowType, // 默认连线起点箭头
                   toArrowType: canvas.data.toArrowType, // 连线终点默认箭头
                   fromArrowlockedType: canvas.data.locked // 0-未锁定，可任意编辑，1-只读模式，允许选中，2-禁止鼠标交互，无法做任何操作。纯静态画面模式
-                }
+                })
               }
               break
           }
@@ -201,9 +201,25 @@ export default function index() {
     }
 
     const onSwitchChange = val => {
-        TopologyData.grid = val
-        newCanvas.data.grid = val
-        canvas.render()
+        setTopologyData({
+          grid: val, // 背景网格
+          locked: false, // 画布锁定
+          gridColor: 'rgba(242, 242, 242, 1)',
+          bkColor:'rgba(255, 255, 255, 1)'
+        })
+        console.log(val)
+        newCanvas.render()
+    }
+
+    const onLockChange = (e) => {
+      setTopologyData({
+        grid: true, // 背景网格
+        locked: e, // 画布锁定
+        gridColor: 'rgba(242, 242, 242, 1)',
+        bkColor:'rgba(255, 255, 255, 1)'
+      })
+      newCanvas.lock(e ? 1 : 0)
+      newCanvas.render()
     }
 
     return (
@@ -234,11 +250,15 @@ export default function index() {
                     {(TopologyData.locked || (!props.node && !props.line && !props.multi)) ? <div>
                         <div className={style.title}>图文设置</div>
                         <div className={style.settings}>
-                            <div className={style.item}>
-                                <span className={style.label}>背景网格:</span>
-                                <Switch size="small" defaultChecked={TopologyData.grid} onChange={()=>onSwitchChange}></Switch>
-                            </div>
-                        </div>
+                          <Form form={form} name='form' requiredMark={false} labelAlign='left' labelCol={{span: 10}}>
+                            <Item label='背景网格' name='grid' initialValue={false} valuePropName="checked">
+                              <Switch size="small" onChange={onSwitchChange}></Switch>
+                            </Item>
+                            <Item label='画布锁定' name='locked' initialValue={false} valuePropName="checked">
+                              <Switch size="small" onChange={onLockChange}></Switch>
+                            </Item>
+                          </Form>
+                        </div>  
                     </div>:null}
                 </div>
             </div>
