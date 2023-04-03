@@ -23,7 +23,6 @@ export default function Index() {
     let [pageNum, setpageNum] = useState(1)
     let [totalalarm, settotalalarm] = useState(1)
     let [dataSourceLog, setdataSourceLog] = useState([])
-    let [dataSourceRead, setdataSourceRead] = useState([])
     let [DataSourceReadR, setDataSourceReadR] = useState([])
 
     const tableRef = useRef()
@@ -33,14 +32,10 @@ export default function Index() {
     let [deviceStyle, setdeviceStyle] = useState(0)
     let [brake, setbrake] = useState(false)
     let [brakeC, setbrakeC] = useState(false)
-    let [readout, setreadout] = useState(false)
     let [brakeResult, setbrakeResult] = useState(false)
     const [selectTableList, setselectTableList] = useState([])
-    const [loading, setLoading] = useState(false);
     const [selectTableListRadio, setselectTableListRadio] = useState([])
     const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
-    // const [selectTableKeyRadio, setselectTableKeyRadio] = useState([])
-    // const [selectTableKeyCheckbox, setselectTableKeyCheckbox] = useState([])
     let params = {
         pageNum: pageNum,
         pageSize: 15,
@@ -123,64 +118,6 @@ export default function Index() {
             id: 'id'
         },
     ];
-    let realcolumns = [
-        {
-            title: '抄读时间',
-            dataIndex: 'LastSampleTime',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: '设备编号',
-            dataIndex: 'sn',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: 'A相电压(V)',
-            dataIndex: 'Ua',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: 'B相电压(V)',
-            dataIndex: 'Ub',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: 'C相电压(V)',
-            dataIndex: 'Uc',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: 'A相电流(A)',
-            dataIndex: 'Ia',
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: 'B相电流(A)',
-            dataIndex: 'Ib',
-            key: 'sn',
-            id: 'sn',
-        },
-
-        {
-            title: 'C相电流(A)',
-            dataIndex: 'Ic',
-            // render: (data) => <span> {JSON.parse(data).Ic} </span>,
-            key: 'sn',
-            id: 'sn',
-        },
-        {
-            title: '总电度(kWh)',
-            dataIndex: 'EP',
-            key: 'sn',
-            id: 'sn',
-        }
-    ]
     let columnsRead = [
         {
             title: '设备编号',
@@ -542,83 +479,6 @@ export default function Index() {
     const handleCancelResult = () => {
         setbrakeResult(false)
     }
-    const changeReadout = () => {
-        snList = []
-        if (selectTableList.length > 0) {
-            selectTableList.map((item, index) => {
-                snList.push(item.sn)
-            })
-        }
-        console.log(snList)
-        if (selectTableList.length > 0) {
-            setLoading(true)
-            Remote.StartCalling(snList).then(res => {
-                let { success, data } = res
-                if (success) {
-                    let isOkList = []
-                    data.map((item, index) => {
-                        if (item.isOk == true && item.errorCode == 0) {
-                            isOkList.push({ sn: item.sn, taskNo: item.taskNo })
-                        } else {
-                            message.error('设备' + item.sn + '抄读失败！')
-                            setLoading(false)
-                        }
-                    })
-                    if (isOkList.length > 0) {
-                        let count = [1, 2, 3]
-                        let arr = []
-                        let resData = []
-                        let status = true
-                        count.map((item, index) => {
-                            setTimeout(() => {
-                                if (status) {
-                                    Remote.CallingResponse(isOkList).then(res => {
-                                        arr.push(index)
-                                        let { success, data } = res
-                                        if (success) {
-                                            resData = []
-                                            data.map(item => {
-                                                if (item.isOk == true && item.errorCode == 0) {
-                                                    resData.push(item)
-                                                } else {
-                                                    isOkList = []
-                                                    isOkList.push({ sn: item.sn, taskNo: item.taskNo })
-                                                }
-                                                console.log(arr, resData)
-                                                if (arr.length == 3 || resData.length == data.length) {
-                                                    setreadout(true)
-                                                    setLoading(false)
-                                                    status = false
-                                                    let arrlist = []
-                                                    resData.map(item => {
-                                                        arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
-                                                    })
-                                                    setdataSourceRead(arrlist)
-                                                    console.log(dataSourceRead)
-                                                }
-                                            })
-                                        } else {
-                                            message.error(res.errMsg)
-                                            setLoading(false)
-                                        }
-
-                                    })
-                                }
-
-                            }, 5000 * index)
-
-                        })
-
-                    }
-
-                } else {
-                    message.error(res.errMsg)
-                }
-            })
-        } else {
-            message.error('请先选择设备！')
-        }
-    }
     const changesetbrake = (type) => {
         if (selectTableList.length > 0) {
             console.log(type)
@@ -633,7 +493,6 @@ export default function Index() {
 
     }
     return (
-        <Spin tip="正在抄读，请稍候……" size="large" spinning={loading}>
             <div className={style.main}>
                 <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
                 <div className={style.header}>
@@ -674,16 +533,11 @@ export default function Index() {
                                 <Input placeholder='请输入设备编号/安装地址' style={{ width: 291, marginLeft: 16 }} size='middle' onChange={submit}></Input>
                                 <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
                             </div>
-                        </div>
-                        <img src={imgurl.line} className={style.timeline} ></img>
-                        <div className={style.btnBox}>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
-                            {/* <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeType() }}>操作日志</Button> */}
                             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
                             <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                         </div>
-
+                        <img src={imgurl.line} className={style.timeline} ></img>
                         {selectionType == 'radio' ? <div>
                             <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
                                 type: 'radio',
@@ -748,21 +602,8 @@ export default function Index() {
                         </Button>,
                     ]}
                 >
-                    <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={realcolumns => realcolumns.sn} className={style.Table} pagination={false} bordered></Table>
-                </Modal>
-                <Modal
-                    title={<Bluecolumn name="实时抄读" />}
-                    open={readout}
-                    centered={true}
-                    onCancel={() => { setreadout(false) }}
-                    width={1218}
-                    className={style.readoutBule}
-                    footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
-                >
-                    <UserTable className={style.readTable} columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
-
+                    <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
                 </Modal>
             </div>
-        </Spin>
     )
 }
