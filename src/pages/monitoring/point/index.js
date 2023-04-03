@@ -47,13 +47,6 @@ export default function Index(props) {
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
-    // {
-    //   title: '设备详情',
-    //   dataIndex: 'id',
-    //   render: (text) => <span style={{ textAlign: 'center' }}> {'>'}</span>,
-    //   key: 'sn',
-    //   id: 'id',
-    // },
     {
       title: '设备编号',
       dataIndex: 'sn',
@@ -69,30 +62,6 @@ export default function Index(props) {
       key: 'category',
       id: 'id'
     },
-    // {
-    //   title: '电流(A)',
-    //   dataIndex: 'connMethod',
-    //   key: 'connMethod',
-    //   id: 'id'
-    // },
-    // {
-    //   title: '电压(V)',
-    //   dataIndex: 'childrenCnt',
-    //   key: 'childrenCnt',
-    //   id: 'id'
-    // },
-    // {
-    //   title: '功率(kW)',
-    //   dataIndex: 'childrenCnt',
-    //   key: 'childrenCnt',
-    //   id: 'id'
-    // },
-    // {
-    //   title: '用电量(kWh)',
-    //   dataIndex: 'childrenCnt',
-    //   key: 'childrenCnt',
-    //   id: 'id'
-    // },
     {
       title: '设备状态',
       dataIndex: 'state',
