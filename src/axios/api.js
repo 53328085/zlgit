@@ -260,23 +260,32 @@ export class EnergyComprehensive {
   }
   // 储能管理-- 储能控制
   export class StorageControlRuntime {
-    static QueryStorageControlInfo = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}`);
+
+
+   // /Storage/StorageControlRuntime/QueryPcsList?projectId=2&areaId=2
+    static QueryPcsList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryPcsList?projectId=${projectId}&areaId=${areaId}&status=${status}`);
+
+
+   
+    static UpdateSystemStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateSystemStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`);
+
+    static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`);
+    // /Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=2&pcsId=2&status=2
+    static QueryStorageControlInfo = (projectId, areaId, pcsId) => server.get(`/Storage/StorageControlRuntime/QueryStorageControlInfo?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`);
     static QueryStrategyList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryStrategyList?projectId=${projectId}&areaId=${areaId}`);
-    static QueryPcsList = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryPcsList?projectId=${projectId}&areaId=${areaId}`);
+ 
     static QueryStrategyDetail = (projectId, StrategyId) => server.get(`/Storage/StorageControlRuntime/QueryStrategyDetail?projectId=${projectId}&StrategyId=${StrategyId}`);
     static DeleteRuntimePlan = (projectId, planId) => server.delete(`/Storage/StorageControlRuntime/DeleteRuntimePlan?projectId=${projectId}&planId=${planId}`);
     
+ 
 
-
-    // /V1/Storage/StorageControlRuntime/UpdateRuntimePlan
-    ///Storage/StorageControlRuntime/DeleteRuntimePlan?projectId=2&planId=2'
-    ///Storage/StorageControlRuntime/QueryStrategyDetail?projectId=2&StrategyId=2
+  
     static AddRuntimePlan = (projectId, params) => server.post(`/Storage/StorageControlRuntime/AddRuntimePlan?projectId=${projectId}`, params);
 
     static UpdateRuntimePlan = (projectId, params) => server.post(`/Storage/StorageControlRuntime/UpdateRuntimePlan?projectId=${projectId}`, params);
 
     static QuerySiteStatus = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QuerySiteStatus?projectId=${projectId}&areaId=${areaId}`);
-    static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
+   // static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
     
     
     static QueryRuntimePlan = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryRuntimePlan?projectId=${projectId}&areaId=${areaId}`);

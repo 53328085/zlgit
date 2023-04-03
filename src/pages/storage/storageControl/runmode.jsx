@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef} from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
 import {ExclamationCircleFilled} from '@ant-design/icons'
@@ -10,7 +10,7 @@ const {Item} = Form
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 576px 104px;
+       grid-template-rows: 680px;
        row-gap: 16px;
        padding-bottom: 16px;
        flex: 1;
@@ -136,91 +136,85 @@ const Timeipt = styled(Input)`
     box-shadow: none;
     }
 `
-export default function Manual({projectId, mode, areaId, startTime, p, q, getinfo, CModal}) {
-  const [onoff, setOnoff] = useState(mode) 
-  const [pform] = Form.useForm()
-  const [qform] = Form.useForm()
-  console.log('q', q)
-  // UpdateSiteOnOffGrid
-  const updatestate = async () => { //开启手动模式、关闭手动模式
-     
-    if (isNaN(onoff)) return
-   
-     let {success, errMsg} = await StorageControlRuntime.UpdateHandModeStatus(projectId, areaId, onoff)    
-     let msg = ['','开启手动模式','关闭手动模式'][onoff]
-     if (success) {
-        message.success(msg) 
-        getinfo()
-     }  
-     !success && message.error(errMsg || '数据出错')
-  }
-  const  Updatedata = async (type) => {
-    console.log('p', type)
-    try {
-        let  value;
-    if (type == 0) {
-        let {p} = pform.getFieldsValue()
-        value = p
-    }else if(type == 1){
-        let {q} =qform.getFieldsValue()
-        value = q
-    }
-     
-     if (isNaN(value)) return message.info('请输入数值')
-    let handler = ['UpdateP', 'UpdateQ'][type]
-     let msg = ['设置有功功率成功', '设置无关功率成功'][type]
-    let {success, errMsg} =  await StorageControlRuntime[handler](projectId, areaId, value)
-     success && custMsg({content: msg, onClose: () => {
-        getinfo()
-     }})
-      
-     
-    } catch (error) {
-       console.log(error) 
-    }
-    
-     
-  }
+const Pinfo = styled.p`
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-left: 32px;
+`
+export default function Manual({projectId, mode, areaId, pcsId,  getinfo, CModal}) {
+    const [onoff, setOnoff] = useState()  // 运行模式 1 手动 2 自动
  
-  return (
-    <Mainbox>
-        <div className='top'>
-            <div className='topleft'>
-            <div className='topleftitem'>
-                <div className='item'>
-                    <Text>手动切换站点各个子系统的启动停止</Text> 
-                </div>
-                <div className='item'>
-                    <div className={onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => setOnoff(1)}>
-                        <Space size={32}>
-                        <Image src={onoff==1 ? imgurl.auton : imgurl.autoa} height={42} width={42} preview={false} />
-                        <Text>自动模式</Text>
-                        </Space>
-                    </div>
-                    <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => setOnoff(2)}>
-                    <Space size={32}>
-                       <Image src={onoff == 2 ? imgurl.manuala: imgurl.manualn} height={42} width={42} preview={false} />
-                        <Text>手动模式</Text>
-                        </Space>
-                    </div>
-                </div>
-                <div className='item'>
-                    <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '22px'}}/>} {onoff== 1 ? 
-                    '注意：当前为自动运行模式，开启手动模式后自动运行模式将会被停止。' : onoff == 2  ?  '注意：当前为手动运行模式，关闭手动模式后自动运行模式将会被激活。' : null
-                }</Text> 
-                </div>
-            </div>
-          
-            </div>
-             
-       
-       
-        </div>
      
-       {/*    <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
-         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
+    let msg = ['','当前系统运行在自动模式，是否要切换到手动模式？', '当前系统运行在手动模式，是否要切换到自动模式？'][onoff]
+    const rref = useRef()
+    // UpdateSiteOnOffGrid
+    const updatestate = async (type) => { // 系统开机， 系统关机
+       
+      if (type === onoff) return
+       setOnoff(type)
+       rref.current.onOpen() 
+    }
+    useEffect(()=> {
+      setOnoff(mode)
+    }, [mode])
+    const onOk = async() => {
+        try {
+          let {success, errMsg} = await StorageControlRuntime.UpdateHandModeStatus(projectId, areaId, onoff)    
+          let msg = ['', '运行手动模式成功','运行自动模式成功'][onoff]
+          if (success) { 
+              rref.current.onCancel()
+             message.success(msg) 
+             getinfo()
+          }  else {
+              setOnoff(onoff== 1 ? 2 : 1) // 出错恢复
+              message.error(errMsg || '数据出错')
+          }
+          
+    
+        } catch (error) {
+          
+        }
+    }
+    return (
+      <Mainbox>
+          <div className='top'>
+              <div className='topleft'>
+              <div className='topleftitem'>
+                  <div className='item'>
+                      <Text>手动切换站点各个子系统的启动停止</Text> 
+                  </div>
+                  <div className='item'>
+                      <div className={onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => updatestate(1)}>
+                          <Space size={32}>
+                          <Image src={onoff==1 ? imgurl.manualon : imgurl.manual} height={42} width={42} preview={false} />
+                          <Text>手动模式</Text>
+                          </Space>
+                      </div>
+                      <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => updatestate(2)}>
+                      <Space size={32}>
+                         <Image src={onoff == 2 ? imgurl.close: imgurl.closed} height={42} width={42} preview={false} />
+                          <Text>自动模式</Text>
+                          </Space>
+                      </div>
+                  </div>
+                  <div className='item'>
+                      <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '22px'}}/>} {onoff== 1 ? 
+                      '当前系统运行在手动模式' : onoff == 2  ?  '当当前系统运行在自动模式' : null
+                  }</Text> 
+                  </div>
+              </div>
+            
+              </div>
+               
          
-     </CModal>  */}
-    </Mainbox>
-  )
+         
+          </div>
+       
+        <CModal width={554} title='运行模式切换' ref={rref} onOk={onOk}  mold='cust' >
+           <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '48px'}}/> {msg}</Pinfo>
+           
+       </CModal> 
+      </Mainbox>
+    )
 }
