@@ -78,6 +78,9 @@ export const timeList = [
     },{
       id: 23,
       label:'23:00'
+    },{
+      id: 24,
+      label:'24:00'
     }
   ]
 
