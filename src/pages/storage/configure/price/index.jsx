@@ -142,14 +142,16 @@ export default function Index() {
           <Item name='startTime1' label='开始时间' labelCol={{span:6}}>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' >
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id} 
+                disabled={((props.formName).getFieldValue('endTime1') && (props.formName).getFieldValue('endTime1') != -1 && (props.formName).getFieldValue('endTime1') <= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
           <Item name='endTime1' label='结束时间' labelCol={{span:6}}>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间'>
+            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' >
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id} 
+                disabled={((props.formName).getFieldValue('startTime1') && (props.formName).getFieldValue('startTime1') != -1 && (props.formName).getFieldValue('startTime1') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
@@ -158,14 +160,16 @@ export default function Index() {
           <Item name='startTime2' label='开始时间' labelCol={{span:6}} >
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' disabled={disChange[0]}>
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id} 
+                disabled={((props.formName).getFieldValue('endTime2') && (props.formName).getFieldValue('endTime2') != -1 && (props.formName).getFieldValue('endTime2') <= item.id) ? true : false } >{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
           <Item name='endTime2' label='结束时间' labelCol={{span:6}}>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[0]}>
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id}
+                disabled={((props.formName).getFieldValue('startTime2') && (props.formName).getFieldValue('startTime2') != -1 && (props.formName).getFieldValue('startTime2') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
@@ -174,14 +178,16 @@ export default function Index() {
           <Item name='startTime3' label='开始时间' labelCol={{span:6}}>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' disabled={disChange[1]}>
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id}
+                disabled={((props.formName).getFieldValue('endTime3') && (props.formName).getFieldValue('endTime3') != -1 && (props.formName).getFieldValue('endTime3') <= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
           <Item name='endTime3' label='结束时间' labelCol={{span:6}}>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[1]}>
               {timeList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.label}</Select.Option>
+                return <Select.Option key={item.id} value={item.id}
+                disabled={((props.formName).getFieldValue('startTime3') && (props.formName).getFieldValue('startTime3') != -1 && (props.formName).getFieldValue('startTime3') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
@@ -203,6 +209,22 @@ export default function Index() {
       if(success && data){
         setMonthList(data)
         let arrList = cloneDeep(data[activeTab - 1].storageMonthPrice)
+        if(arrList.length == 0){
+          setTag('add')
+        }else{
+          setTag('edit')
+        }
+        if(activeTab == 1 && arrList.length == 0){
+          let obj = {
+            startTime1: -1,
+            endTime1: -1,
+          }
+          pointedForm.setFieldsValue(obj)
+          peakForm.setFieldsValue(obj)
+          flatForm.setFieldsValue(obj)
+          valleyForm.setFieldsValue(obj)
+          return;
+        }
         arrList.map(item => {
           item.startTime1 = item.startTime1 == -1 ? -1 : timeToValue[item.startTime1] 
           item.endTime1 = item.endTime1 == -1 ? -1 : timeToValue[item.endTime1]
@@ -247,13 +269,13 @@ export default function Index() {
     data.endTime2 = valueToTime[data.endTime2]
     data.startTime3 = valueToTime[data.startTime3]
     data.endTime3 = valueToTime[data.endTime3]
-    if(data.endTime1 && data.endTime1 == '00:00'){
+    if(data.endTime1 && data.endTime1 == '24:00'){
       data.endTime1 = daytime + ' 00:00'
     }
-    if(data.endTime2 && data.endTime2 == '00:00'){
+    if(data.endTime2 && data.endTime2 == '24:00'){
       data.endTime2 = daytime + ' 00:00'
     }
-    if(data.endTime3 && data.endTime3 == '00:00'){
+    if(data.endTime3 && data.endTime3 == '24:00'){
       data.endTime3 = daytime + ' 00:00'
     }
     return data;
@@ -403,9 +425,13 @@ export default function Index() {
     param4 = changeData(param4)
     if(tag == 'add'){
       param1.id = 0
+      param1.type = 1
       param2.id = 0
+      param2.type = 2
       param3.id = 0
+      param3.type = 3
       param4.id = 0
+      param4.type = 4
     }
     UpdateStoragePrice(headerData.projectId, headerData.areaId, activeTab, [param1, param2, param3, param4]).then(res =>{
       let {success, data, errMsg} = res

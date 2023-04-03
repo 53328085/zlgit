@@ -27,23 +27,21 @@ const Boxitem = styled.div`
     }
   }
 `
-
-
-
 export default function Region({projectId, CModal}) {
  const mref = useRef()
  const dref = useRef()
- 
- 
+ const fref = useRef()
+ const nfref = useRef()
  const [form] = Form.useForm()
- const [modalform] = Form.useForm() 
+ const [modalform] = Form.useForm()
+ const [ffrom] = Form.useForm()
  const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields, InsertAreaLevelField, DeleteAreaLevelField} = AreaSetting 
 const [title, setTitle] = useState()
 const [datas, setDatas] = useState([])
 const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
 //const [levelid, setLevelid] = useState()
-
+const [tableData, setTableData] = useState([])
 const [curlevel, setCurlevel] = useState({})
 const levelid = useRef()
  const edit = (d) => {
@@ -108,7 +106,7 @@ const levelid = useRef()
 
   }
   const editArea = async () => {
-    
+    console.log(curlevel)
     let {id, level} = curlevel
    try {
       const {name} = modalform.getFieldsValue()
@@ -155,109 +153,47 @@ const levelid = useRef()
        handler == 2 && editArea();
    
   }
-
-// 编辑字段
-const Editfiled = ({levelid}) => {
- const [tableData, setTableData] = useState([])
- const nfref = useRef()
- const fref = useRef()
- const [ffrom]= Form.useForm() 
- const queyFiled = async ( ) => {
+  const columns = [
+   {
+      dataIndex: "name",
+      title: "字段名称",  
+      key: 'name'     
+    },
+    {
+      dataIndex: "typeDescription",
+      title: "字段用途",
+      key: 'typeDescription',
+    },
+    {
+      dataIndex: '',
+      title: '操作',
+      render: (_, data) =>{
+        return  <Button onClick={() => delFiled(data)} type="link">删除</Button>
+      },
+      align: "center",
+    }
+  ]
+  const queyFiled = async (level) => {
     try {
-      let {success, data} =  await QueryAreaLevelFields({projectId, levelid})
+      let {success, data} =  await QueryAreaLevelFields({projectId, level})
       success && setTableData([...data]) ;
     } catch (error) {
       return error
     }
    
   }
- const delFiled = async ({id}) => {
-    
-     try {
-       let {success, errMsg}  =  await DeleteAreaLevelField({projectId, fieldId: id}) 
-       if (!success) return message.warning(errMsg || '数据出错');
-     
-       success &&  queyFiled(levelid.current)
-     } catch (error) {
-        console.log(error)
-     }
-   
- }
- const addfiled = () => {  
-  ffrom.resetFields()
- nfref.current.onOpen()
-}
-
-const onNewFiled = async () => {  // 新增字段
-  try {
-    const params = {...ffrom.getFieldsValue(), projectId, level: levelid.current}
-    let {success, errMsg} = await InsertAreaLevelField(params)
-    if(!success) return message.warning(errMsg || '数据出错')
-    success && nfref.current.onCancel()
-   // QueryAreaLevelFields({projectId, level})
-    queyFiled(levelid.current)
-  } catch (error) {
-    console.log(error)
+  const delFiled = async ({id}) => {
+     console.log(id)
+      try {
+        let {success, errMsg}  =  await DeleteAreaLevelField({projectId, fieldId: id}) 
+        if (!success) return message.warning(errMsg || '数据出错');
+       // success && QueryAreaLevelFields({projectId, level:levelid});
+        success &&  queyFiled(levelid.current)
+      } catch (error) {
+         
+      }
+     // await DeleteAreaLevelField 
   }
-
-}
-const closefiled = () => {
-  fref.current.onCancel()
- }
-
-  const columns = [
-    {
-       dataIndex: "name",
-       title: "字段名称",  
-       key: 'name'     
-     },
-     {
-       dataIndex: "typeDescription",
-       title: "字段用途",
-       key: 'typeDescription',
-     },
-     {
-       dataIndex: '',
-       title: '操作',
-       render: (_, data) =>{
-         return  <Button onClick={() => delFiled(data)} type="link">删除</Button>
-       },
-       align: "center",
-     }
-   ]
-   useEffect(() => {
-     queyFiled()
-   }, [levelid])
-   return (
-    <CModal title='编辑字段' ref={fref}  mold="cust" width={874}   footer={[<Button type='primary' onClick={addfiled}>新增</Button>, <Button   ghost onClick={closefiled}>关闭</Button>
-
-  ]} >
-       <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
-        <CModal title="新增字段" ref={nfref}  mold="cust" width={512} okText="保存" onOk={onNewFiled}>
-             <Form name="modalform" form={ffrom}>
-                 <Item name="name" label="字段名称">
-                     <Input/>
-                 </Item>
-                 <Item name="type" label="字段用户">
-                      <Select>
-                         <Select.Option value={0}>无</Select.Option>
-                         <Select.Option value={1}>经纬度</Select.Option>
-                         <Select.Option value={2}>面积</Select.Option>
-                      </Select>
-                 </Item>
-             </Form>
-        </CModal>
-    </CModal>
-   )
-
-
-
-}
-
-
-  
-
-
   const editfiled = async (level) => {
    
    try {
@@ -275,8 +211,27 @@ const closefiled = () => {
    }
      
   }
+  const closefiled = () => {
+   fref.current.onCancel()
+  }
+  const addfiled = () => {  
+    ffrom.resetFields()
+   nfref.current.onOpen()
+  }
 
- 
+  const onNewFiled = async () => {  // 新增字段
+    try {
+      const params = {...ffrom.getFieldsValue(), projectId, level: levelid.current}
+      let {success, errMsg} = await InsertAreaLevelField(params)
+      if(!success) return message.warning(errMsg || '数据出错')
+      success && nfref.current.onCancel()
+     // QueryAreaLevelFields({projectId, level})
+      queyFiled(levelid.current)
+    } catch (error) {
+      console.log(error)
+    }
+  
+  }
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId])
   useEffect(() => {
      queryarealevels();
@@ -298,7 +253,7 @@ const closefiled = () => {
                    </Item>
                    <Button type='primary' ghost onClick={() => edit(d)}>修改区域</Button>
                    <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d.level)}>删除</Button>
-                   <Button type='primary' ghost onClick={() => editfiled(d)}>编辑字段</Button>
+                   <Button type='primary' ghost onClick={() => editfiled(d.level)}>编辑字段</Button>
               </div>
             </Boxitem>
            ))
@@ -337,11 +292,26 @@ const closefiled = () => {
         <CModal title='删除区域' ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
               <p>是否确认删除区域</p>
         </CModal>
-       
-             
+        <CModal title='编辑字段' ref={fref}  mold="cust" width={874}   footer={[<Button type='primary' onClick={addfiled}>新增</Button>, <Button   ghost onClick={closefiled}>关闭</Button>
+
+        ]} >
+             <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
               
-        
-        
+        </CModal>
+        <CModal title="新增字段" ref={nfref}  mold="cust" width={512} okText="保存" onOk={onNewFiled}>
+             <Form name="modalform" form={ffrom}>
+                 <Item name="name" label="字段名称">
+                     <Input/>
+                 </Item>
+                 <Item name="type" label="字段用户">
+                      <Select>
+                         <Select.Option value={0}>无</Select.Option>
+                         <Select.Option value={1}>经纬度</Select.Option>
+                         <Select.Option value={2}>面积</Select.Option>
+                      </Select>
+                 </Item>
+             </Form>
+        </CModal>
     </div>
   )
 }
