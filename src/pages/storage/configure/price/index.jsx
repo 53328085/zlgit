@@ -203,6 +203,17 @@ export default function Index() {
       if(success && data){
         setMonthList(data)
         let arrList = cloneDeep(data[activeTab - 1].storageMonthPrice)
+        if(activeTab == 1 && arrList.length == 0){
+          let obj = {
+            startTime1: -1,
+            endTime1: -1,
+          }
+          pointedForm.setFieldsValue(obj)
+          peakForm.setFieldsValue(obj)
+          flatForm.setFieldsValue(obj)
+          valleyForm.setFieldsValue(obj)
+          return;
+        }
         arrList.map(item => {
           item.startTime1 = item.startTime1 == -1 ? -1 : timeToValue[item.startTime1] 
           item.endTime1 = item.endTime1 == -1 ? -1 : timeToValue[item.endTime1]
@@ -403,9 +414,13 @@ export default function Index() {
     param4 = changeData(param4)
     if(tag == 'add'){
       param1.id = 0
+      param1.type = 1
       param2.id = 0
+      param2.type = 2
       param3.id = 0
+      param3.type = 3
       param4.id = 0
+      param4.type = 4
     }
     UpdateStoragePrice(headerData.projectId, headerData.areaId, activeTab, [param1, param2, param3, param4]).then(res =>{
       let {success, data, errMsg} = res
