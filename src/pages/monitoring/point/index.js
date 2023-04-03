@@ -3,13 +3,13 @@ import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
-import {  Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
-import { selectProjectId,selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { SemanticClassificationFormat } from 'typescript';
 import Table from '@com/useTable'
 import { area } from '@antv/g2plot';
@@ -19,12 +19,12 @@ export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
-  const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage },DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
+  const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?areaList[0].id:undefined)
+  const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
   let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
@@ -38,8 +38,8 @@ export default function Index(props) {
     projectId: projectId,
     areaId: areaId,
     gatewayId: 0,
-    deviceStyle:deviceStyle,
-    category:'',
+    deviceStyle: deviceStyle,
+    category: '',
     alike: '',
     state: 0,
     pageNum: page,
@@ -47,19 +47,19 @@ export default function Index(props) {
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
-    {
-      title: '设备详情',
-      dataIndex: 'id',
-      render: (text) => <span style={{textAlign:'center'}}> {'>'}</span>,
-      key: 'sn',
-      id: 'id',
-    },
+    // {
+    //   title: '设备详情',
+    //   dataIndex: 'id',
+    //   render: (text) => <span style={{ textAlign: 'center' }}> {'>'}</span>,
+    //   key: 'sn',
+    //   id: 'id',
+    // },
     {
       title: '设备编号',
       dataIndex: 'sn',
       render: (sn) => <Link to={{
-        pathname: "/deviceDetail?sn="+sn,
-    }} target="_blank"> {sn} </Link>,
+        pathname: "/deviceDetail?sn=" + sn,
+      }} target="_blank"> {sn} </Link>,
       key: 'sn',
       id: 'id'
     },
@@ -96,7 +96,7 @@ export default function Index(props) {
     {
       title: '设备状态',
       dataIndex: 'state',
-      render: (state) => <span> {state==1?'失联':state==2?'在线':'告警'}</span>,
+      render: (state) => <span> {state == 1 ? '失联' : state == 2 ? '在线' : '告警'}</span>,
       key: 'state',
       id: 'id'
     },
@@ -116,7 +116,7 @@ export default function Index(props) {
   let [dataSource, setdataSource] = useState([])
 
   const getData = () => {//设备统计
-    return Statistics({ projectId, areaId,deviceStyle }).then(res => {
+    return Statistics({ projectId, areaId, deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
         setStatistics(data)
@@ -126,7 +126,7 @@ export default function Index(props) {
     })
   }
   const getGatewayUsed = () => {//使用的网关
-    return QueryUsedDeviceCategory({projectId:projectId,deviceStyle:deviceStyle}).then(res => {
+    return QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
         setoptionsGateway(data)
@@ -142,7 +142,16 @@ export default function Index(props) {
         setoverView(data)
         setTotal(total)
         setPageNum(pageNum)
-        setdataSource(data.details)
+        let overViewList=[]
+        data.details.map(item=>{
+          let description=''
+          item.fields.map(items=>{
+             description+=items.name+' '+items.value+' '
+          })
+          overViewList.push({...item,description:description})
+        })
+         console.log(overViewList)
+         setdataSource(overViewList)
       } else {
         message.error(res.errMsg)
       }
@@ -151,20 +160,20 @@ export default function Index(props) {
 
   let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
-    return CategoryImages({projectId:projectId,group:overView.categories}).then(res => {
+    return CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
       let { success, data } = res
       if (success) {
-        if(data!=[]){
-          let imgList=[]
-            overView.details.map((item, index) => {
-              data.map((items,indexs)=>{
-                if (data[indexs].category == item.category) {
-                  imgList.push(data[indexs].imageBase64)
-                } else {
-                }
-              })
+        if (data != []) {
+          let imgList = []
+          overView.details.map((item, index) => {
+            data.map((items, indexs) => {
+              if (data[indexs].category == item.category) {
+                imgList.push(data[indexs].imageBase64)
+              } else {
+              }
             })
-            setimageList(imgList)
+          })
+          setimageList(imgList)
         }
       } else {
         message.error(res.errMsg)
@@ -179,7 +188,7 @@ export default function Index(props) {
   const changeArea = (value) => {
     setAreaId(value);
   };
-  const handleChangeDevice=(value)=>{
+  const handleChangeDevice = (value) => {
     console.log(value)
     setdeviceStyle(value)
   }
@@ -207,25 +216,25 @@ export default function Index(props) {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }//数据导出
-  
+
   useEffect(() => {
-    if(areaList.length == 0 || !areaList){
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
       return;
     }
   }, [])
   useEffect(() => {
-    if(areaId){
+    if (areaId) {
       getData()
-    queryData()
+      queryData()
     }
-  }, [areaId, changeTag,deviceStyle])
+  }, [areaId, changeTag, deviceStyle])
   useEffect(() => {
-    if(areaId){
+    if (areaId) {
       getOverviewData()
-    console.log('getOverviewData')
+      console.log('getOverviewData')
     }
-  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page,params.deviceStyle])
+  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page, params.deviceStyle])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()
@@ -239,8 +248,8 @@ export default function Index(props) {
     <div>
       {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
       <div className={style.header}>
-      <span style={{ marginLeft: "16px", marginRight: 16 }}>{areaList[0]?.levelName || '园区'}选择</span>
-      <Select
+        <span style={{ marginLeft: "16px", marginRight: 16 }}>{areaList[0]?.levelName || '园区'}选择</span>
+        <Select
           placeholder="请选择园区"
           size="middle"
           key={defaultArea}
@@ -257,41 +266,41 @@ export default function Index(props) {
           })}
         </Select>
         <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-        <span style={{  marginRight: 16 }}>表计类型</span>
+        <span style={{ marginRight: 16 }}>表计类型</span>
         <Select
-              defaultValue={1}
-              style={{
-                width: 200, marginLeft: 16
-              }}
-              onChange={handleChangeDevice}
-              options={[
-                {
-                  value: 1,
-                  label: '电表',
-                },
-                {
-                  value: 2,
-                  label: '水表',
-                },
-                {
-                  value: 3,
-                  label: '燃气表',
-                },
-                {
-                  value: 4,
-                  label: '传感器',
-                },
-                {
-                  value: 5,
-                  label: '变压器',
-                },
-              ]}
-            />
+          defaultValue={1}
+          style={{
+            width: 200, marginLeft: 16
+          }}
+          onChange={handleChangeDevice}
+          options={[
+            {
+              value: 1,
+              label: '电表',
+            },
+            {
+              value: 2,
+              label: '水表',
+            },
+            {
+              value: 3,
+              label: '燃气表',
+            },
+            {
+              value: 4,
+              label: '传感器',
+            },
+            {
+              value: 5,
+              label: '变压器',
+            },
+          ]}
+        />
       </div>
       <div className={style.bottom}>
         <div className={style.bottomTab}>
-           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' ,borderLeft:'none'}} size="middle" onClick={() => { onSearchList() }}>查询</Button>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={() => { onSearchList() }}>查询</Button>
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
           <span>表计型号</span>
           <Select
@@ -335,7 +344,7 @@ export default function Index(props) {
                   label: '告警(' + statistics.alarm + ')',
                 },
               ]}
-            /></div> 
+            /></div>
           <div className={style.radioBox}>
             <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
@@ -346,21 +355,33 @@ export default function Index(props) {
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         {isCard ? <div className={style.cardBox}>
-          {overView.details!=null?overView.details.map((item, index) => {
+          {overView.details != null ? overView.details.map((item, index) => {
             return <div key={index}>
-              <Link  to={`/deviceDetail?sn=${item.sn}`}   target="_blank">
-                  <Icard img={imageList[index]? imageList[index] : imgurl.category} title={item.name}
+              <Link to={`/deviceDetail?sn=${item.sn}`} target="_blank">
+                <Icard img={imageList[index] ? imageList[index] : imgurl.category} title={item.name}
 
-                    value={item.address} state={item.state} fields={item.fields} 
-                    lastSampleTime={item.lastSampleTime} category={item.sn} />
-                    </Link>
+                  value={item.address} state={item.state} fields={item.fields}
+                  lastSampleTime={item.lastSampleTime} category={item.sn} />
+              </Link>
             </div>
-          }):''}
-      </div> : <div className={style.tableHead}>
-        <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef}></Table>
-      </div>}
-      <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
-    </div>
+          }) : ''}
+        </div> : <div className={style.tableHead}>
+          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} expandable={{
+            expandedRowRender: (record) => (
+              <p
+                style={{
+                  margin: 0,
+                  textAlign:'center'
+                }}
+              >
+                {record.description}
+              </p>
+            ),
+            rowExpandable: (record) => record.description,
+          }}></Table>
+        </div>}
+        <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
+      </div>
 
     </div >
   )
