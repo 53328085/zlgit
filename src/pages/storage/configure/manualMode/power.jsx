@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
-import {ExclamationCircleFilled} from '@ant-design/icons'
+import {CheckCircleFilled } from '@ant-design/icons'
 import {RuntimePowerSettingDesigner} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
@@ -35,8 +35,13 @@ const Formbox = styled(Form)`
         }
     }
 `
- 
-export default function Manual({projectId,  areaId}) {
+const Pinfo = styled.p`
+display: flex;
+align-items: center;
+font-size: 16px;
+justify-content: center;
+`
+export default function Manual({projectId,  areaId, CModal}) {
  
   // UpdateSiteOnOffGrid
  
@@ -62,14 +67,16 @@ export default function Manual({projectId,  areaId}) {
        
   }    
   const [form] = Form.useForm()
- 
+  const rref = useRef()
+  const onshow = () => {
+    form.validateFields().then(() => {
+        rref.current.onOpen()
+    }).catch()
+    
+  }
   const  Updatedata = async () => {
    try {
-    let values = await  form.validateFields().then(res => {
-        return res
-      }).catch(e => {
-        console.log(e)
-      })
+    let values =  form.getFieldsValue()
     let {p, q} = values   
     let params = {
         p, 
@@ -79,6 +86,7 @@ export default function Manual({projectId,  areaId}) {
     }
    let {success}  = await RuntimePowerSettingDesigner.UpdateP(params)
    if (success) {
+    rref.current.onCancel()
     custMsg({content: '设置成功'})
        QueryRuntimeSetting() 
       
@@ -127,7 +135,7 @@ export default function Manual({projectId,  areaId}) {
                     
                 </Formbox>
                 <Item nostyle style={{justifySelf: 'end'}}>
-                            <Button type="primary" onClick={Updatedata}>确定</Button>
+                            <Button type="primary" onClick={onshow}>确定</Button>
                  </Item>
            
                
@@ -136,10 +144,10 @@ export default function Manual({projectId,  areaId}) {
        
        
          
-         {/* <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
-         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
+          <CModal width={592} title="操作提示" ref={rref} onOk={Updatedata}  mold='cust' >
+          <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><CheckCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '48px'}}/> 运行功率设置成功！</Pinfo>
          
-     </CModal> */}
+     </CModal>  
     </Titlelayout>
   )
 }
