@@ -197,19 +197,19 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
       const tableRef = useRef(null)
-      const [isControl,setIsControl] = useState()
-      const [IsCount,setIsCount] = useState()
+      // const [isControl,setIsControl] = useState()
+      // const [IsCount,setIsCount] = useState()
       const handleChange = async (option) => {
         getDeviceQueryCategoryFull(option)
 
-        setIsControl(addForm.getFieldsValue().Control)
-        setIsCount(addForm.getFieldsValue().IsCount)
+        // setIsControl(addForm.getFieldsValue().Control)
+        // setIsCount(addForm.getFieldsValue().IsCount)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
   
       useEffect(() => {
-        setIsControl(addForm.getFieldsValue().Control)
-        setIsCount(addForm.getFieldsValue().IsCount)
+        // setIsControl(addForm.getFieldsValue().Control)
+        // setIsCount(addForm.getFieldsValue().IsCount)
       },[])
       useEffect(()=>{
       },[])
@@ -221,8 +221,8 @@ export let AddModal = forwardRef(
         choosemes:tableRef.current.choosemes,
         tabledata:tableRef.current.tabledata,
         handleChange,
-        setIsControl,
-        setIsCount
+        // setIsControl,
+        // setIsCount
       }))
       return (
         <Form
@@ -230,7 +230,6 @@ export let AddModal = forwardRef(
           form={addForm}
          
         >
-           {isControl} {IsCount}
           <Row align='bottom'>
             <Col span={16}>
               <Row style={{ marginBottom: 16 }}>
@@ -252,7 +251,7 @@ export let AddModal = forwardRef(
                   <Form.Item label="远程控制" name="Control" valuePropName="checked">
                     <Switch 
                     checkedChildren="是" unCheckedChildren="否" 
-                    disabled={!isControl} 
+                    // disabled={!isControl} 
                     // checked={addForm.getFieldsValue().Control} 
                     />   
                   </Form.Item>
@@ -261,7 +260,8 @@ export let AddModal = forwardRef(
                 <Col className={style.ColGap}>
                   <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否" 
-                    disabled={!IsCount} />
+                    // disabled={!IsCount} 
+                    />
                     
                   </Form.Item>
                  
@@ -300,11 +300,11 @@ export let AddModal = forwardRef(
  export let EditModal =forwardRef(
   ({ editForm, getDeviceQueryCategoryFull,editDefaultTableData }, ref) => {
     const tableRef = useRef(null)
-    const [isControl,setIsControl] = useState()
-    const [IsCount,setIsCount] = useState()
+    // const [isControl,setIsControl] = useState()
+    // const [IsCount,setIsCount] = useState()
     useEffect(() => {
-      setIsControl(editForm.getFieldsValue().Control)
-      setIsCount(editForm.getFieldsValue().IsCount)
+      // setIsControl(editForm.getFieldsValue().Control)
+      // setIsCount(editForm.getFieldsValue().IsCount)
     },[])
     useImperativeHandle(ref, () => ({
       pointSource: tableRef.current.pointSource,
@@ -333,14 +333,17 @@ export let AddModal = forwardRef(
               </Col> */}
               <Col className={style.ColGap}>
                 <Form.Item label="远程控制" name="Control" valuePropName="checked">
-                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!isControl} 
+                  <Switch checkedChildren="是" unCheckedChildren="否" 
+                  //disabled={!isControl} 
                   // checked={addForm.getFieldsValue().Control} 
                   />
                 </Form.Item>
               </Col>
               <Col className={style.ColGap}>
                 <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
-                  <Switch checkedChildren="是" unCheckedChildren="否" disabled={!IsCount} />
+                  <Switch checkedChildren="是" unCheckedChildren="否" 
+                  // disabled={!IsCount} 
+                  />
                 </Form.Item>
               </Col>
               <Col className={style.ColGap}>

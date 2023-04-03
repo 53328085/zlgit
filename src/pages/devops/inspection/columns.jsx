@@ -13,17 +13,17 @@ const flexcss ={
         title: '巡检工单',
         dataIndex: 'name',
         key: 'name',
+        width:350
         // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
-        title: '计划时间',
-        dataIndex: 'planTime',
-        key: 'planTime',
-        width: 124,
+        title: '巡检时间',
+        dataIndex: 'createTime',
+        key: 'createTime',
         // render:(_,val,index)=>(<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><CompleteIcon/><span style={{paddingLeft:16}}>已完成</span></div>)
       },
       {
-        title: '计划名称',
+        title: '巡检名称',
         dataIndex: 'planName',
         key: 'planName',
       },
@@ -33,18 +33,18 @@ const flexcss ={
         key: 'area',
       },
       {
-        title: '计划任务',
+        title: '巡检任务',
         dataIndex: 'planContent',
         key: 'planContent',
       },
-      {
-        title: '巡检周期',
-        dataIndex: 'cycle',
-        key: 'cycle',
-        render(text){
-        return  text===1?'日':text===2?'周':text===3?'年':'/'
-        }
-      },
+      // {
+      //   title: '巡检周期',
+      //   dataIndex: 'cycle',
+      //   key: 'cycle',
+      //   render(text){
+      //   return  text===1?'日':text===2?'周':text===3?'年':'/'
+      //   }
+      // },
       {
         title: '巡检人员',
         dataIndex: 'operator',
