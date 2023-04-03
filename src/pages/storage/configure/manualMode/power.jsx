@@ -68,15 +68,17 @@ export default function Manual({projectId,  areaId, CModal}) {
   }    
   const [form] = Form.useForm()
   const rref = useRef()
-  const onshow = () => {
-    form.validateFields().then(() => {
-        rref.current.onOpen()
-    }).catch()
-    
-  }
+ 
+  const onClose = () => {
+    rref.current.onCancel();
+    QueryRuntimeSetting() 
+  } 
   const  Updatedata = async () => {
    try {
-    let values =  form.getFieldsValue()
+    let values = await form.validateFields().then(res => res).catch(e => {
+        console.log(e)
+    })
+    if(!values) return
     let {p, q} = values   
     let params = {
         p, 
@@ -86,9 +88,9 @@ export default function Manual({projectId,  areaId, CModal}) {
     }
    let {success}  = await RuntimePowerSettingDesigner.UpdateP(params)
    if (success) {
-    rref.current.onCancel()
-    custMsg({content: '设置成功'})
-       QueryRuntimeSetting() 
+    rref.current.onOpen()
+    
+      
       
    }else {
     custMsg({content: '设置失败', success: false})
@@ -135,7 +137,7 @@ export default function Manual({projectId,  areaId, CModal}) {
                     
                 </Formbox>
                 <Item nostyle style={{justifySelf: 'end'}}>
-                            <Button type="primary" onClick={onshow}>确定</Button>
+                            <Button type="primary" onClick={Updatedata}>确定</Button>
                  </Item>
            
                
@@ -144,7 +146,7 @@ export default function Manual({projectId,  areaId, CModal}) {
        
        
          
-          <CModal width={592} title="操作提示" ref={rref} onOk={Updatedata}  mold='cust' >
+          <CModal width={592} title="操作提示" ref={rref}   mold='cust' footer={<Button type='primary' onClick={onClose}>关闭</Button>}>
           <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><CheckCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '48px'}}/> 运行功率设置成功！</Pinfo>
          
      </CModal>  
