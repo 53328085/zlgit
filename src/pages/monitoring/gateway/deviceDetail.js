@@ -21,7 +21,6 @@ export default function GatewayDetail(props) {
     let location = useLocation()
     let qs = require('query-string')
     let search = qs.parse(location.search)
-    console.log(search.sn)
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
@@ -45,12 +44,6 @@ export default function GatewayDetail(props) {
     let [dataSourceLog, setdataSourceLog] = useState([])
     let [trend, settrend] = useState(1)
     let [energyReport, setEnergyReport] = useState({})
-    let [xline, setxline] = useState([])
-    let [yline, setyline] = useState([])
-    let [yline1, setyline1] = useState([])
-    let [yline2, setyline2] = useState([])
-    let [yline3, setyline3] = useState([])
-    let [yline4, setyline4] = useState([])
     let [actuary, setactuary] = useState({})
     let dataToday = new Date()
     let [startTime, setstartTime] = useState(yesterday)
@@ -60,6 +53,7 @@ export default function GatewayDetail(props) {
     const onchangeTab = val => {
         setstate(val)
         if (val == 3) {
+            setreportTypeTime(1)
             getEnergyReport()
         } else if (val == 2) {
             getHistoryTrend()
@@ -68,13 +62,6 @@ export default function GatewayDetail(props) {
     }//切换tab
     const disabledDate = (current) => {
         return current && current > dayjs().endOf('day');
-    };
-    const range = (start, end) => {
-        const result = [];
-        for (let i = start; i < end; i++) {
-            result.push(i);
-        }
-        return result;
     };
     const getData = () => {//设备详情
         return Current(projectId, search.sn).then(res => {
@@ -159,7 +146,6 @@ export default function GatewayDetail(props) {
         })
     }
     const onChangePageLog = (page, pageSize) => {
-        console.log(page)
         setPageNum(page)
     }
     let paramsReport = {
@@ -200,9 +186,9 @@ export default function GatewayDetail(props) {
         })
     }
     const drawTrendCharts = () => {
-             tdrawEcharts(vlref.current, option(objList2,xAxisTrendList[1],10))
-             tdrawEcharts(alref.current, option(objList1,xAxisTrendList[0],10))
-             tdrawEcharts(elref.current, option(objList3,xAxisTrendList[2],10))
+             tdrawEcharts(vlref.current, option(objList2,xAxisTrendList[1],5))
+             tdrawEcharts(alref.current, option(objList1,xAxisTrendList[0],5))
+             tdrawEcharts(elref.current, option(objList3,xAxisTrendList[2],5))
     }
     let objList1 = []
     let objList2 = []
@@ -233,7 +219,6 @@ export default function GatewayDetail(props) {
                             objList3.push(obj)
                         }
                     }
-                    console.log(objList1,objList2,objList3)
                 }
             })
         }

@@ -188,7 +188,11 @@ const levelid = useRef()
   const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        success && setDatas([...data]);
+        if (success && Array.isArray(data)) {
+          success && setDatas([...data]);
+        }else {
+          setDatas([])
+        }
        
      } catch (error) {
         console.log(error);

@@ -42,11 +42,12 @@ const showModl = () => {
   let {id} = Record
   try {
     let {success, errMsg} =  await DeleteAccount(id)
-
-   success && custMsg({ content: '删除成功',  onClose: () => {
-      refresh()
-      dref.current.onCancel()
-    }})
+   if(success) {
+     dref.current.onCancel()
+     refresh()
+     custMsg({ content: '删除成功'})
+   }
+   
    !success &&  custMsg({content: errMsg, type: 'warning'} )
    
   } catch (error) {
