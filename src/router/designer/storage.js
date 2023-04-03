@@ -3,16 +3,16 @@ import {lazy} from 'react'
 import store from '@redux/store'
 const StoragePrice = lazy(() => import("@pages/storage/configure/price"))
 const Strategy = lazy(() => import("@pages/storage/configure/strategy")) 
-const AutomaticMode = lazy(() => import("@pages/storage/configure/automaticMode")) 
-const ManualMode = lazy(() => import("@pages/storage/configure/manualMode")) 
 const StorageDevice = lazy(() => import("@pages/storage/configure/storageDevice")) 
 const StorageEnvironment = lazy(() => import("@pages/storage/configure/storageEnvironment")) 
 const StorageSetting = lazy(() => import("@pages/storage/configure/storageSetting")) 
+const AutoMode = lazy(() => import("@pages/storage/configure/autoMode")) 
+const ManualMode = lazy(() => import("@pages/storage/configure/manualMode")) 
 const menus = [];
 const components = {
     '020901': StoragePrice,
     '020902': Strategy,
-    '020903': AutomaticMode,
+    '020903': AutoMode,
     '020904': ManualMode,
     '020905': StorageDevice,
     '020906': StorageEnvironment,

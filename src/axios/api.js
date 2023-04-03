@@ -1208,7 +1208,7 @@ export class operationDesigin{
   static QueryProjectMaintenanceArea=(data)=>server.get(`/General/User/QueryProjectMaintenanceArea`,{params:data})//查询巡检人
  
 }
-//电气安全
+//电气安全(运行态)
 export class safeElectric {
   static TodayWarningStatistics = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningStatistics`, { params: data })//查询今日告警
   static QueryTodayWarningDetails = (data) => server.get(`/Safe/SafeRuntime/QueryTodayWarningDetails`, { params: data })//查询最新告警
@@ -1217,7 +1217,7 @@ export class safeElectric {
   static QueryMonthWarningTrends = (data) => server.get(`/Safe/SafeRuntime/QueryMonthWarningTrends`, { params: data })//查询告警趋势
   static WarningDetailsPage = (data)=>server.post(`/Safe/SafeRuntime/WarningDetailsPage`,data)//查询分页告警
   static WarningDetailsList =(data)=>server.get(`/Safe/SafeRuntime/WarningDetailsList`,{ params: data })//查询告警列表
-
+  static MonthReport =(data)=>server.get(`/Safe/SafeRuntime/MonthReport`,{ params: data })//
 }
 //告警详情
 export class warnDetail {

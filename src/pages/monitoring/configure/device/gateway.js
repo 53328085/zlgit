@@ -716,7 +716,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="网关名称" name="name" rules={[rules]}>
+            <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
               <Input />
             </Form.Item>
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
@@ -850,7 +850,7 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="网关名称" name="name" rules={[rules]}>
+            <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
               <Input />
             </Form.Item>
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>

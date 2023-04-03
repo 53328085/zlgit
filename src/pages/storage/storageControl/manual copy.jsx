@@ -272,10 +272,10 @@ export default function Manual({projectId, mode, areaId, startTime, p, q, getinf
             <Bigbutton type='primary'  onClick={updatestate}>确认</Bigbutton>
                
         </div>
-        <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
+         {/* <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
          <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
-     </CModal>
+     </CModal> */}
     </Mainbox>
   )
 }
