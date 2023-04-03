@@ -321,6 +321,14 @@ export class StorageOrderRuntime {
   static QueryStorageOrders = (areaId,status,type, params) => server.post(`/Storage/StorageOrderRuntime/QueryStorageOrders?areaId=${areaId}&runtimeStatus=${status}&type=${type}`, params);
 }
 
+// 储能管理设置--运行功率设置
+export class RuntimePowerSettingDesigner {
+  static QueryRuntimeSetting = (projectId, areaId) => server.get(`/Storage/RuntimePowerSettingDesigner/QueryRuntimeSetting?projectId=${projectId}&areaId=${areaId}`);
+  static UpdateP = ({projectId, id, p, q}={}) => server.get(`/Storage/RuntimePowerSettingDesigner/UpdateP?projectId=${projectId}&id=${id}&p=${p}&q=${q}`);
+  
+}
+
+
 
 //
 // zl api end
