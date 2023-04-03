@@ -127,7 +127,7 @@ export default function Index(props) {
     })
   }
 
-  let [imgUrl, setimgUrl] = useState()
+  // let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
     return CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
       let { success, data } = res
