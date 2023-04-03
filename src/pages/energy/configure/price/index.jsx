@@ -132,15 +132,15 @@ export default function Index() {
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'gas'){
-        params.PriceType = 5
+        params.PriceType = 3
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'coal'){
-        params.PriceType = 6
+        params.PriceType = 9
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'fuel'){
-        params.PriceType = 7
+        params.PriceType = 10
         params.Price = parseFloat(values.price)
       }
       insertPriceSolution(projectId, params).then(res=>{
@@ -182,15 +182,15 @@ export default function Index() {
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'gas'){
-        params.PriceType = 5
+        params.PriceType = 3
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'coal'){
-        params.PriceType = 6
+        params.PriceType = 9
         params.Price = parseFloat(values.price)
       }
       if(changeTag == 'fuel'){
-        params.PriceType = 7
+        params.PriceType = 10
         params.Price = parseFloat(values.price)
       }
       updatePriceSolution(projectId, params).then(res=>{

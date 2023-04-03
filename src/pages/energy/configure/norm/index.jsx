@@ -6,7 +6,7 @@ import style from './style.module.less'
 import SearchTree from '@com/searchTree'
 import Custmodl from '@com/useModal'
 import dashed from '@imgs/dashed.png'
-import { energyQuota } from '@api/api.js'
+import { energyQuota, Area } from '@api/api.js'
 import { useRequest } from 'ahooks';
 
 export default function Index() {
@@ -16,6 +16,7 @@ export default function Index() {
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const { AllLevel } = Area
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
   //园区
@@ -93,58 +94,154 @@ export default function Index() {
       
     }  
   }
-
-  const columns = [
-    {
-      title: areaList[0]?.levelName || '园区',
-      dataIndex:'area',
-      key:'area',
-      align:'center',
-    },{
-      title:'建筑物',
-      dataIndex:'building',
-      key:'building',
-      align:'center'
-    },{
-      title:'房间',
-      dataIndex:'room',
-      key:'room',
-      align:'center'
-    },{
-      title:'年度综合能耗定额(吨标煤)',
-      dataIndex:'quotaComprehensive',
-      key:'quotaComprehensive',
-      align:'center'
-    },{
-      title:'年度用电定额(kWh)',
-      dataIndex:'quotaElectric',
-      key:'quotaElectric',
-      align:'center'
-    },{
-      title:(<div>水(m³)<br/>剩余/定额 </div>),
-      dataIndex:'quotaWater',
-      key:'quotaWater',
-      align:'center'
-    },{
-      title:(<div>燃气(m³)<br/>剩余/定额 </div>),
-      dataIndex:'quotaGas',
-      key:'quotaGas',
-      align:'center'
-    },{
-      title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
-      dataIndex:'quotaCoal',
-      key:'quotaCoal',
-      align:'center'
-    },{
-      title:'操作',
-      key: 'action',
-      align:'center',
-      render: (_, record) => (
-        <Space size="middle">
-          <span style={{color:'#237ae4', textDecoration:'underline', cursor:'pointer'}} onClick={()=>setAll(record)}>修改</span>
-        </Space>)
-    }
-  ]
+ const [columns, setColumns] = useState([
+  {
+    title: '园区',
+    dataIndex:'area',
+    key:'area',
+    align:'center',
+  },{
+    title:'建筑物',
+    dataIndex:'building',
+    key:'building',
+    align:'center'
+  },{
+    title:'房间',
+    dataIndex:'room',
+    key:'room',
+    align:'center',
+    width: '128px',
+  },{
+    title:'年度综合能耗定额(吨标煤)',
+    dataIndex:'quotaComprehensive',
+    key:'quotaComprehensive',
+    align:'center',
+    width: '148px',
+  },{
+    title:'年度用电定额(kWh)',
+    dataIndex:'quotaElectric',
+    key:'quotaElectric',
+    align:'center',
+    width: '128px',
+  },{
+    title:(<div>水(m³)<br/>剩余/定额 </div>),
+    dataIndex:'quotaWater',
+    key:'quotaWater',
+    align:'center',
+    width: '128px',
+    render: (_, record) => (
+      <Space size="middle">
+        <span>{ record.quotaWaterLeave + '/' + record.quotaWater }</span>
+      </Space>)
+  },{
+    title:(<div>燃气(m³)<br/>剩余/定额 </div>),
+    dataIndex:'quotaGas',
+    key:'quotaGas',
+    align:'center',
+    width: '128px',
+    render: (_, record) => (
+      <Space size="middle">
+        <span>{ record.quotaGasLeave + '/' + record.quotaGas }</span>
+      </Space>)
+  },{
+    title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
+    dataIndex:'quotaCoal',
+    key:'quotaCoal',
+    align:'center',
+    width: '128px',
+    render: (_, record) => (
+      <Space size="middle">
+        <span>{ record.quotaCoalLeave + '/' + record.quotaCoal }</span>
+      </Space>)
+  },{
+    title:'操作',
+    key: 'action',
+    align:'center',
+    width: '128px',
+    render: (_, record) => (
+      <Space size="middle">
+        <span style={{color:'#237ae4', textDecoration:'underline', cursor:'pointer'}} onClick={()=>setAll(record)}>修改</span>
+      </Space>)
+  }
+])
+  useEffect(()=>{
+    AllLevel(projectId).then(res => {
+      if(res.success){
+        setColumns([
+          {
+            title: res.data[0]?.name || '园区',
+            dataIndex:'area',
+            key:'area',
+            align:'center',
+          },{
+            title: res.data[1]?.name || '建筑物',
+            dataIndex:'building',
+            key:'building',
+            align:'center'
+          },{
+            title: res.data[2]?.name || '房间',
+            dataIndex:'room',
+            key:'room',
+            align:'center',
+            width: '128px',
+          },{
+            title:'年度综合能耗定额(吨标煤)',
+            dataIndex:'quotaComprehensive',
+            key:'quotaComprehensive',
+            align:'center',
+            width: '148px',
+          },{
+            title:'年度用电定额(kWh)',
+            dataIndex:'quotaElectric',
+            key:'quotaElectric',
+            align:'center',
+            width: '128px',
+          },{
+            title:(<div>水(m³)<br/>剩余/定额 </div>),
+            dataIndex:'quotaWater',
+            key:'quotaWater',
+            align:'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span>{ record.quotaWaterLeave + '/' + record.quotaWater }</span>
+              </Space>)
+          },{
+            title:(<div>燃气(m³)<br/>剩余/定额 </div>),
+            dataIndex:'quotaGas',
+            key:'quotaGas',
+            align:'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span>{ record.quotaGasLeave + '/' + record.quotaGas }</span>
+              </Space>)
+          },{
+            title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
+            dataIndex:'quotaCoal',
+            key:'quotaCoal',
+            align:'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span>{ record.quotaCoalLeave + '/' + record.quotaCoal }</span>
+              </Space>)
+          },{
+            title:'操作',
+            key: 'action',
+            align:'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span style={{color:'#237ae4', textDecoration:'underline', cursor:'pointer'}} onClick={()=>setAll(record)}>修改</span>
+              </Space>)
+          }
+        ])
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  },[])
   const [dataSource, setDataSource] = useState([])
 
   const [pageNum, setPageNum] = useState(1)
