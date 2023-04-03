@@ -2,8 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import firstwarn from "@imgs/warning.png";
 import { useSelector } from "react-redux";
-import { Button, Table, Space, Modal, Form, Input, message } from "antd";
-import { selectProjectId, publishState } from "@redux/systemconfig.js";
+import {
+  Button,
+  Table,
+  Space,
+  Modal,
+  Form,
+  Input,
+  message,
+  Select,
+  DatePicker,
+} from "antd";
+import {
+  selectProjectId,
+  publishState,
+  selectOneLevel,
+} from "@redux/systemconfig.js";
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
@@ -14,6 +28,15 @@ export default function Index() {
   //新增 修改 弹窗
   const [addModal, setAddModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+  // 所属站点
+  const sectionList = useSelector(selectOneLevel);
+  const [defaultArea, setDefaultArea] = useState(
+    sectionList[0]?.id || undefined
+  );
+  const [areaId, setAreaId] = useState(sectionList[0]?.id || undefined);
+  const changeArea = (value) => {
+    setAreaId(value);
+  };
   const columns = ispublish
     ? [
         {
@@ -137,7 +160,7 @@ export default function Index() {
   ];
   //点击新增 打开弹框
   const showAdd = () => {
-    setModalTitle('新增站点')
+    setModalTitle("新增站点");
     setAddModal(true);
   };
   //编辑
@@ -148,9 +171,13 @@ export default function Index() {
   const deleteTypeOk = () => {};
   const handleTypeDelete = () => {};
   //新增 确认
-  const addOk = () => {};
+  const addOk = () => {
+    setAddModal(false);
+  };
   //新增 取消
-  const addCancel = () => {};
+  const addCancel = () => {
+    setAddModal(false);
+  };
   return (
     <div className={style.box}>
       <div className={style.content}>
@@ -200,7 +227,7 @@ export default function Index() {
           open={addModal}
           onOk={addOk}
           onCancel={addCancel}
-          width={600}
+          width={550}
           cancelText={"取消"}
           centered={true}
           closable={false}
@@ -208,15 +235,59 @@ export default function Index() {
           okText={"确认"}
           okType={"primary"}
         >
-          <div className={style.addHeader}>{modalTitle}</div>
-          <Form form={form} layout="vertical" autoComplete="off">
+          <div className={style.addHeaderTitle}>{modalTitle}</div>
+          <Form
+            name="addform"
+            form={form}
+            requiredMark={false}
+            autoComplete="off"
+            labelAlign="left"
+            labelCol={{ flex: "90px" }}
+          >
             <Item
               name="name"
               label="所属站点"
               rules={[{ required: true, message: "请选择所属站点" }]}
-              noStyle
             >
-              <Input placeholder="请选择所属站点" />
+              <Select
+                key={defaultArea}
+                onChange={changeArea}
+                placeholder="请选择所属站点"
+              >
+                {sectionList.map((item) => {
+                  return (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Item>
+            <Item
+              name="address"
+              label="安装地址"
+              rules={[{ required: true, message: "请输入安装地址" }]}
+            >
+              <Input placeholder="请输入安装地址" />
+            </Item>
+            <Item
+              name="capacity"
+              label="容量(kWh)"
+              rules={[{ required: true, message: "请输入储能容量" }]}
+            >
+              <Input placeholder="请输入储能容量" />
+            </Item>
+            <Item
+              label="投运时间"
+              name="time"
+              rules={[
+                {
+                  required: true,
+                  message: "请选择投运时间！",
+                },
+              ]}
+            >
+              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
             </Item>
           </Form>
         </Modal>
