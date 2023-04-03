@@ -199,13 +199,14 @@ let AddPlan = forwardRef(
     let capitalAr = '一二三四五六日'.split('')
     const time = []
     useMemo(() => {
-      for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 24; i++) {
         time.push({
           label: `${i <= 9 ? '0' + i : i}:00`,
           value: i
         })
       }
-    }, [dateCycle])
+    }, [dateCycle,userList])
+    
 
     const weekCycle = [];
     useMemo(() => {
@@ -215,7 +216,7 @@ let AddPlan = forwardRef(
           value: i + 1
         })
       }
-    }, [dateCycle])
+    }, [dateCycle,userList])
 
     const monthCycle = []
     useMemo(() => {
@@ -225,7 +226,7 @@ let AddPlan = forwardRef(
           value: i + 1
         })
       }
-    }, [dateCycle])
+    }, [dateCycle,userList])
 
     //开始时间禁用
     const disabledStartDate = (current) => {
@@ -240,6 +241,10 @@ let AddPlan = forwardRef(
     }
     //结束时间禁用
     const disabledEndDate = (current) => {
+      if(!form.getFieldValue('starttime'))
+      {
+        form.setFieldValue('starttime',undefined)
+      }
       return current &&(current<moment().subtract(1,'days') || current <= form.getFieldValue('starttime'));
     }
     //新增巡检计划

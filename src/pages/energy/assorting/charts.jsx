@@ -55,7 +55,8 @@ export let PieCharts = ({proportion}) => {
         position: 'bottom',
         offsetY: 0,
         flipPage:false,
-        itemSpacing:10
+        itemSpacing:1,
+    
       },
       label: {
         type: 'outer',
