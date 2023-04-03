@@ -288,7 +288,7 @@ export class EnergyComprehensive {
    // static UpdateHandModeStatus = (projectId, areaId, status) => server.get(`/Storage/StorageControlRuntime/UpdateHandModeStatus?projectId=${projectId}&areaId=${areaId}&status=${status}`); // 1: 开机, 2： 关机
     
     
-    static QueryRuntimePlan = (projectId, areaId) => server.get(`/Storage/StorageControlRuntime/QueryRuntimePlan?projectId=${projectId}&areaId=${areaId}`);
+     
    
     static QuerySiteDateAndMode = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/QuerySiteRuntimeDateAndMode?projectId=${projectId}&areaId=${areaId}`); 
     static UpdateP = (projectId, areaId, p) => server.get(`/Storage/StorageControlRuntime/UpdateP?projectId=${projectId}&areaId=${areaId}&p=${p}`); 
@@ -328,7 +328,23 @@ export class RuntimePowerSettingDesigner {
   
 }
 
+// 储能管理设置--自动模式管理
 
+export class StorageAutoModeDesigner {
+  static QueryRuntimePlan = (projectId, areaId) => server.get(`/Storage/StorageAutoModeDesigner/QueryRuntimePlan?projectId=${projectId}&areaId=${areaId}`);
+  static QueryStrategyDetail = (projectId, StrategyId) => server.get(`/Storage/StorageAutoModeDesigner/QueryStrategyDetail?projectId=${projectId}&StrategyId=${StrategyId}`);
+  static DeleteRuntimePlan = (projectId, planId) => server.delete(`/Storage/StorageAutoModeDesigner/DeleteRuntimePlan?projectId=${projectId}&planId=${planId}`);
+  static QueryStrategyList = (projectId, areaId) => server.get(`/Storage/StorageAutoModeDesigner/QueryStrategyList?projectId=${projectId}&areaId=${areaId}`);
+
+
+
+  static AddRuntimePlan = (projectId, params) => server.post(`/Storage/StorageAutoModeDesigner/AddRuntimePlan?projectId=${projectId}`, params);
+
+  static UpdateRuntimePlan = (projectId, params) => server.post(`/Storage/StorageAutoModeDesigner/UpdateRuntimePlan?projectId=${projectId}`, params);
+
+  static UpdateEnable = (projectId, areaId, planId, status) => server.get(`/Storage/StorageAutoModeDesigner/UpdateEnable?projectId=${projectId}&areaId=${areaId}&planId=${planId}&status=${status}`);
+  
+}
 
 //
 // zl api end
