@@ -1,7 +1,28 @@
-import React from 'react'
+import React, {useState} from 'react'
+import CustContext from '@com/content.js'
+import Pagecount from '@com/pagecontent'
+import CModal from '@com/useModal'
 
+import {useSelector} from 'react-redux'
+
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+
+import Power from './power'
+ 
+ 
+ 
 export default function Index() {
+  const projectId = useSelector(selectProjectId)
+  const areaId = useSelector(selectOneLevelDefaultId)
+  let [AreaID, setAreaid] = useState(areaId)
+  
+  
+  
   return (
-    <div>手动模式</div>
+    <CustContext.Provider  value={{handler: setAreaid}} >      
+    <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
+        <Power projectId={projectId}   CModal={CModal}    areaId={AreaID}    />   
+    </Pagecount>
+    </CustContext.Provider>
   )
 }

@@ -65,7 +65,7 @@ export default function Energy({ showData, dateType }) {
         consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={style.piestyle}>
           <Bluecolumn name="分类能耗占比" />
-          <div style={{ width: 368, height: 360, marginTop: 16 }}>
+          <div style={{ width: 378, height: 360, marginTop: 16 }}>
             {proportion && proportion.length > 0 ? <PieCharts proportion={proportion}></PieCharts> : <img src={empty}></img>}
 
           </div>

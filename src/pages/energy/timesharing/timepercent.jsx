@@ -7,6 +7,7 @@ import empty from './imgs/empty.png'
 export default  forwardRef(
     function Timepercent({},ref) {
         const [piedata,setPieData]=useState([])
+        const [analysisDes,setAnalysisDes]=useState()
         // const data = [
         //     {
         //         type: '尖占比',
@@ -25,8 +26,12 @@ export default  forwardRef(
         //         value: 15,
         //     }
         // ];
-        const data = piedata.map(it=>({type:it.name,value:it.value}))
-        
+        const data = piedata.map(it=>({type:it.name,value:Number(it.value)}))
+        let total =0;
+        piedata.forEach(it=>{
+            console.log(total)
+            total += Number(it.value)
+        })
         const config = {
             data,
             angleField: 'value',
@@ -53,12 +58,13 @@ export default  forwardRef(
                         fontWeight: 'normal',
                         fontSize: '16px'
                     },
-                    content: `${data.length>0?'总100':''}`,
+                    content: `${data.length>0?`总${total}`:''}`,
                 },
             },
         };
         useImperativeHandle(ref,()=>({
-            setPieData
+            setPieData,
+            setAnalysisDes
         }))
         return (
             <div className={style.timeper}>
@@ -74,8 +80,7 @@ export default  forwardRef(
                     <Bluecolumn name="用电分析" />
                    <div style={{padding:'16px 0',display: 'flex'}}>
                    <img src={warn} style={{marginRight:16,flexShrink:0,width:32,height:32}}></img>
-                   <div> 今日时段内,峰电量占总电量26%,占比较大。
-                   请合理利用峰谷用电。</div>
+                   <div style={{lineHeight:'32px'}}> {analysisDes}</div>
                   
                    </div>
                 </div>

@@ -256,6 +256,10 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     }
     //设置坐标
     const setlocal=()=>{
+        if(Array.isArray(subSelectedRows)&&subSelectedRows.length===0){
+            message.warning("请先选择设备！")
+            return
+        }
         positionRef.current.onOpen()      
     }
     //保存坐标

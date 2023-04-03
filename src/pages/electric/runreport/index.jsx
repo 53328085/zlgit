@@ -2,68 +2,177 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
-import {Select,Divider,DatePicker} from 'antd'
+import { Select, Divider, DatePicker, message,Table } from 'antd'
 import UseTable from '@com/useTable'
 import logo from '@imgs/chintlog.png'
 import PageComp from './pagecomp.jsx'
-import {safeElectric} from '@api/api'
+import { safeElectric } from '@api/api'
 import moment from 'moment'
-import { Pie } from '@ant-design/plots';
+import {PieCharts,LineCharts} from './charts'
+import anaylse from './imgs/anaylse.svg'
 
 export default function Index() {
-  const projectId = useSelector(state=>state.system.menus.projectId)
-  const arealist = useSelector(state => state.system.onelevel)
-  const [active,setActive]=useState(1)
-  const columns1=[
-    {title:'',dataIndex:'name',width:100},
-    {title:'',dataIndex:'message'}
+  const projectId = useSelector(state => state.system.menus.projectId)
+  // const arealist = useSelector(state => state.system.onelevel)
+  const [active, setActive] = useState(1)
+  const [datevalue,setDatevalue]=useState()
+  const [isshow,setIsshow] = useState(false)
+  const columns1 = [
+    { title: '', dataIndex: 'name', width: 100, align: 'center' },
+    { title: '', dataIndex: 'message', align: 'center' }
   ]
- 
-  let projectMes=[
+  const columns2 = [
+    { title: '', dataIndex: 'name', width: 200, },
+    { title: '', dataIndex: 'message', },
+
+  ]
+  //项目情况
+  let projectMes = [
     {
-      name:'项目名称',
-      message:'',
-      align:'center'
+      name: '项目名称',
+      message: '',
+
     },
     {
-      name:'项目地址',
-      message:''
+      name: '项目地址',
+      message: ''
     }
   ]
+  //电流监控
+  let elec = [
+    {
+      name: '最大电流发生时间',
+      message: '',
+    },
+    {
+      name: '最大电流发生位置',
+      message: '',
+    },
+    {
+      name: '最大电流值',
+      message: '',
+    },
+  ]
+  //电压监控
+  const voltage=[
+    {
+      name: '最大电压发生时间',
+      message: '',
+    },
+    {
+      name: '最大电压发生位置',
+      message: '',
+    },
+    {
+      name: '最大电压值',
+      message: '',
+    },
+  ]
+  //剩余电流
+  let leaveElec=[
+    {
+      name: '最大剩余电流发生时间',
+      message: '',
+    },
+    {
+      name: '最大剩余电流发生位置',
+      message: '',
+    },
+    {
+      name: '最大剩余电流值',
+      message: '',
+    },
+  ]
+  //剩余电压
+  let temperature=[
+    {
+      name: '最高温度发生时间',
+      message: '',
+    },
+    {
+      name: '最高温度发生位置',
+      message: '',
+    },
+    {
+      name: '最高温度值',
+      message: '',
+    },
+  ]
+  //修改日期类型
+  const changeDate=(v)=>{
+    setDatevalue(v)
+
+  }
   //月度报告
-  const getMonthReport=async()=>{
+  const getMonthReport = async (date) => {
     const res = await safeElectric.MonthReport({
       projectId,
-      date:moment().format('YYYY-MM'),
+      date:date?date.format('YYYY-MM-01'): moment().format('YYYY-MM-01'),
     })
+    if(res.success){
+
+    }else{
+      message.error(res.errMsg)
+    }
   }
-  useEffect(()=>{
-    getMonthReport()
-  },[])
+ //年度报告
+ const getYearReport = async (date) => {
+  const res = await safeElectric.YearReport({
+    projectId,
+    date:date?date.format('YYYY-01-01'): moment().format('YYYY-01-01'),
+  })
+  if(res.success){
+
+  }else{
+    message.error(res.errMsg)
+  }
+ }
+  //生成报告
+  const makeReport=()=>{
+    setIsshow(true)
+    if(active===1){
+      getMonthReport(datevalue)
+    }else{
+      getYearReport(datevalue)
+    } 
+  }
+  useEffect(() => {
+
+  }, [])
   return (
     <div className={style.container}>
-        <div className={style.leftcss}>
-        <BlueColumn name={arealist[0]?.levelName}/>
-        <Select 
-        options={arealist} 
-        style={{width:'100%',marginTop:32}}
-        fieldNames={{label:'name',value:'id'}}
+      <div className={style.leftcss}>
+        {/* <BlueColumn name={arealist[0]?.levelName} />
+        <Select
+          options={arealist}
+          style={{ width: '100%', marginTop: 32 }}
+          fieldNames={{ label: 'name', value: 'id' }}
         ></Select>
-        <Divider dashed style={{borderColor: '#d7d7d7'}}/>
-        <BlueColumn name="运行报告"/>
+        <Divider dashed style={{ borderColor: '#d7d7d7' }} /> */}
+        <BlueColumn name="运行报告" />
         <div style={{
-          width:320,
-          display:'flex',
-          margin:'32px 0',
-          borderRadius:2,
-          cursor:'pointer'
-          }}>
-          <div  onClick={()=>{setActive(1)}} className={active===1?style.active:''}  style={{flex:1,textAlign:'center',border:'1px solid #d7d7d7',height:40,lineHeight:'40px'}}>月份报告</div>
-          <div  onClick={()=>{setActive(2)}}  className={active===2?style.active:''}  style={{flex:1,textAlign:'center',border:'1px solid #d7d7d7',marginLeft:-1,height:40,lineHeight:'40px'}}>年度报告</div>
+          width: 320,
+          display: 'flex',
+          margin: '32px 0',
+          borderRadius: 2,
+          cursor: 'pointer'
+        }}>
+          <div
+          onClick={() => { setActive(1); }} 
+          className={active === 1 ? style.active : ''} 
+          style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', height: 40, lineHeight: '40px' }}
+          >月份报告
+          </div>
+          <div 
+          onClick={() => { setActive(2) }} 
+          className={active === 2 ? style.active : ''} 
+          style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', marginLeft: -1, height: 40, lineHeight: '40px' }}>
+          年度报告
+          </div>
         </div>
-        <DatePicker picker={active===1?'month':'year'} style={{width:'100%'}}/>
-        <Divider dashed style={{borderColor: '#d7d7d7',margin:'48px 0'}}/>
-        <div className={style.btnscsss}>
+        <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate}/>
+        <Divider dashed style={{ borderColor: '#d7d7d7', margin: '48px 0' }} />
+        <div className={style.btnscsss} onClick={makeReport}>
           生成报告
         </div>
         <div className={style.btnscsss}>
@@ -72,113 +181,123 @@ export default function Index() {
         <div className={style.btnscsss}>
           导出报告
         </div>
-        </div>
-        <div className={style.rightcss}>
-         
-           <div className={style.report}>
-              <div style={{padding:16}}>
-                <img src={logo} alt="" style={{width:77,height:58,marginRight:16}}/>
-                <span style={{fontSize:20}}>正泰综合能源服务平台</span>
-              </div>
-              <div style={{display:'flex',flexDirection:'column',justifyContent: 'center',alignItems: 'center',}}>
-                <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>电气安全运行分析报告</p>
-                <div style={{
-                  width:431,
-                  height:136,
-                  background:'#f2f2f2',
-                  border:'1px solid #ccc',
-                  padding:'16px',
-                  display:'flex',
-                  flexDirection:'column',
-                  fontSize:18
-                  }}>
-                  <p style={{flex:1}}>项目名称:</p>
-                  <p style={{flex:1}}>项目地址:</p>
-                  <p style={{flex:1}}>报告日期:</p>
-                </div>
-              </div>
-              <div className={style.bgimage}></div>
+      </div>
+      <div className={style.rightcss}>
+
+        <div className={style.report} style={{marginBottom:isshow? 24:0 }}>
+          <div style={{ padding: 16 }}>
+            <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
+            <span style={{ fontSize: 20 }}>正泰综合能源服务平台</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
+            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom:32 }}>电气安全运行分析报告</p>
+            <div style={{
+              width: 431,
+              height: 136,
+              background: '#f2f2f2',
+              border: '1px solid #ccc',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              fontSize: 18
+            }}>
+              <p style={{ flex: 1 }}>项目名称:</p>
+              <p style={{ flex: 1 }}>项目地址:</p>
+              <p style={{ flex: 1 }}>报告日期:</p>
             </div>
-            <PageComp>
-              <div style={{marginBottom:24}}>
-              <p style={{marginBottom:6}}>1.项目情况</p>
-              <UseTable columns={columns1} dataSource={projectMes} showHeader={false}/>
-              </div>
-              <div style={{marginBottom:24}}>
-              <p style={{marginBottom:6}}>2.电气安全详情</p>
-                  <div className={style.gridcss}>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>总报警次数</div>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>最大电流</div>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>最大电压</div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>剩余电流</div>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>最高温度</div>
-                    <div style={{backgroundColor: '#ff6600',color:'#fff'}}>烟雾报警</div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-              </div>
-              <div style={{marginBottom:24}}>
-                <p style={{marginBottom:6}}>2.1告警类型分布</p>
-                <PieCharts/>
-              </div>
-            </PageComp>
-       
-            
+          </div>
+          <div className={style.bgimage}></div>
         </div>
-       
+        {isshow?<>
+          <PageComp>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>1.项目情况</p>
+            <UseTable columns={columns1} dataSource={projectMes} showHeader={false} onCell={()=>{
+              return {
+                className:'bdcolor',
+                onClick:()=>{
+                  console.log(1111)
+                }
+              }
+            }} />
+
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>2.电气安全详情</p>
+            <div className={style.gridcss}>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>总报警次数</div>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最大电流</div>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最大电压</div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>剩余电流</div>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最高温度</div>
+              <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>烟雾报警</div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>2.1告警类型分布</p>
+            <PieCharts />
+          </div>
+        </PageComp>
+
+        <PageComp>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>3.电流监控</p>
+            <UseTable columns={columns2} dataSource={elec} showHeader={false} />
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>4.电压监控</p>
+            <UseTable columns={columns2} dataSource={voltage} showHeader={false} />
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>5.剩余电流监控</p>
+            <UseTable columns={columns2} dataSource={leaveElec} showHeader={false} />
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ marginBottom: 6 }}>6.温度监控</p>
+            <UseTable columns={columns2} dataSource={temperature} showHeader={false} />
+          </div>
+        </PageComp>
+
+        <PageComp>
+          <div style={{ marginBottom: 24 }}> 
+          <p style={{ marginBottom: 6 }}>7.用电量趋势</p>
+          <div style={{width:514,height:320}}>
+            <LineCharts/>
+          </div>
+          </div>
+          <div style={{ marginBottom: 24 }}> 
+          <p style={{ marginBottom: 6 }}>7.1用电量类型分布</p>
+          <div style={{width:516,height:320}}>
+          <PieCharts />
+          </div>
+          
+          </div>
+        </PageComp>
+        <PageComp> 
+        <div style={{ marginBottom: 24 }}> 
+        <p style={{ marginBottom: 68 }}>8.本周期用电安全监测综合分析</p>
+        <div style={{width:283,height:64,backgroundColor:'#237ae4',display:'flex',
+        alignItems:'center',margin:'0 auto'}}>
+          <img src={anaylse} alt="" style={{width:48,height:48,margin:'0 42px'}}/>
+          <span style={{fontSize:28,color:'#fff'}}>良好</span>
+        </div>
+          </div>
+          <div style={{ marginBottom: 24 }}> 
+          <p style={{ marginBottom: 6 }}>9.建议</p>
+          </div>
+        </PageComp>  
+        </>:null}
+ 
+      </div>
+
     </div>
   )
 }
 
-let PieCharts=()=>{
-  const data = [
-    {
-      type: '分类一',
-      value: 27,
-    },
-    {
-      type: '分类二',
-      value: 25,
-    },
-    {
-      type: '分类三',
-      value: 18,
-    },
-    {
-      type: '分类四',
-      value: 15,
-    },
-    {
-      type: '分类五',
-      value: 10,
-    },
- 
-  ];
-  const config = {
-    appendPadding: 10,
-    data,
-    angleField: 'value',
-    colorField: 'type',
-    radius: 0.8,
-    width:512,
-    height:360,
-    label: {
-      type: 'outer',
-    },
-    legend:{
-      position: 'bottom',
-      flipPage:false,
-      itemSpacing:15
-    },
-    interactions: [
-      {
-        type: 'element-active',
-      },
-    ],
-  };
-  return <Pie {...config} />;
-}
+
