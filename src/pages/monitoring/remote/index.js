@@ -312,6 +312,11 @@ export default function Index() {
                                                         arr1.push(arr)
                                                         let aaa = arr1.flat(1)
                                                         bbb = aaa.filter(it => !!it)
+                                                        if(bbb.length==snRemoteList.length){
+                                                            status = false
+                                                            setisComplate(false)
+                                                            setDataSourceReadR([...bbb, ...ccc, ...ddd])
+                                                        }
                                                     }
                                                 })
                                                 console.log(456, newsnList)
@@ -417,6 +422,7 @@ export default function Index() {
                             let aaa = arr0.flat(1)
                             let bbb = aaa.filter(it => !!it)
                             setDataSourceReadR([...bbb])
+                            
                         }
                     })
                     if (snRemoteList.length > 0) {
@@ -438,7 +444,7 @@ export default function Index() {
                                                 state.push(index)
                                                 let arr1 = []
                                                 res.data.map((items, i) => {
-                                                    if (items.errorCode == 0) {
+                                                    if (items.errorCode == 0&&items.isOk) {
                                                         newsnList.push(items.sn)
                                                     }
                                                     else {
@@ -453,6 +459,11 @@ export default function Index() {
                                                         arr1.push(arr)
                                                         let aaa = arr1.flat(1)
                                                         bbb = aaa.filter(it => !!it)
+                                                        if(bbb.length==snRemoteList.length){
+                                                            status = false
+                                                            setisComplate(false)
+                                                            setDataSourceReadR([...bbb, ...ccc, ...ddd])
+                                                        }
                                                     }
                                                 })
                                                 console.log(456, newsnList)
