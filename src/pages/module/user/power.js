@@ -285,7 +285,7 @@ export default function Account({projectId, CModal}) {
         queryProjectManager,
         queryProjectMaintenance
       ][deltype]; // 查询 运营管理人员， 项目管理人员 , 运维人员
-      message.error('删除成功', 1,  () => {
+      message.success('删除成功', 1,  () => {
         handler()
         mref.current.onCancel()
       });
