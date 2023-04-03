@@ -6,9 +6,10 @@ import Onoff from './onoff'
 import CModal from '@com/useModal'
 import {StorageControlRuntime} from '@api/api'
 import {useSelector} from 'react-redux'
-import {Tabs, Typography} from 'antd'
+import {Tabs, Typography, Form, Select, Divider, Space} from 'antd'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import styled from 'styled-components'
+
 const {Text} = Typography
 const Contentbox = styled.div`
   display: grid;
@@ -78,13 +79,16 @@ const Tabsbox = styled(Tabs)`
   }
 }
 `
+const {Item} = Form
 export default function Index() {
-  const [value, setvalue] = useState('Manual')
+  const [form] = Form.useForm()
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
+  const [pcsId, setPcsId] = useState(1)
   const [infoData, setInfoData] = useState({})
-  const [mode, setMode] = useState()
+  const [mode, setMode] = useState(1) // 运行模式
+  const [tab, setTab] = useState(1)
   const modestr = ['待机', '手动模式', '自动模式'][mode] // 0 待机， 1 手动 2 自动
   const tabs = [
    /*  {label: '手动模式', key: 1, disabled: mode==2},
@@ -94,10 +98,10 @@ export default function Index() {
   ]
   const getinfo = async () => {
     try {
-      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId)
+      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId)
 
       if (success) {
-        let {runtimeMode} = data;
+        let {runtimeMode, systemStatus} = data;
         setMode(runtimeMode)
         setInfoData({...infoData, ...data})
       } else {
@@ -107,7 +111,39 @@ export default function Index() {
       console.log(error)
     }
   }
-   
+
+  const CustItem = () => {
+    const [options, setOption] = useState([])
+    const QueryPcsList = async() => {
+      try {
+        let {success,data} = await StorageControlRuntime.QueryPcsList(projectId, areaId)
+        if(success && Array.isArray(data)) {
+          setOption(data)
+        }else {
+          setOption([])
+        }
+      } catch (error) {
+        console.log(error)
+      }
+
+    } 
+    const onChange = (e) => {
+      setPcsId(e)
+    }
+    useEffect(() => {
+      QueryPcsList()
+    }, [projectId, areaId])
+    return (
+       <Space size={32}>
+        <Divider type='vertical' style={{margin: "0 0 0 32px", height: '32px'}} /> 
+       <Item label="PCS选择" name="pcsId" >
+          <Select options={options} fieldNames={{label: 'name', value: 'id'}} style={{width: '200px'}} onChange={onChange}></Select>
+       </Item>
+       </Space>
+    )
+     
+
+  }
   const propsData ={
   /*   tabs: [
       {label: '自动模式', key: 'Automate'},
@@ -115,31 +151,36 @@ export default function Index() {
     ], */
    /*  value,
     setvalue, */
-    handler: setAreaid
+    handler: setAreaid,
+    form,
+    custview: <CustItem />,
+    initialValue: {
+      pcsId,
+    }
     
   }
    const tabChange = (e) => {
-     setMode(e)
+     setTab(e)
    }
   
   useEffect(() => {
     getinfo()
-  }, [areaId, projectId])
-  const ProjectCom = [Onoff, Onoff, Runmode][mode]
+  }, [areaId, projectId, pcsId])
+  const ProjectCom = [Onoff, Onoff, Runmode][tab]
   return (
     <CustContext.Provider value={propsData}>      
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
          <Contentbox>
            <div className='info'>
-              <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.runtimeStatus}</span></span>
+              <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.systemStatus == 1 ? '开机' : infoData.systemStatus == 2 ? '关机': null }</span></span>
               <span><span className='circle'>&#x25CF;</span>当前运行模式：{modestr }</span>
               <span><span className='circle'>&#x25CF;</span>运行计划：{infoData.runtimePlan}</span>
               <span><span className='circle'>&#x25CF;</span>策略模板：{infoData.strategyTemplate}</span>
-              <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.runDay}天{infoData.runHour}小时{infoData.runMin}分</span>
+             {/*  <span><span className='circle'>&#x25CF;</span>当前模式运行时长：{infoData.runDay}天{infoData.runHour}小时{infoData.runMin}分</span> */}
            </div>
            <div className='tabbox'>
-                <Tabsbox items={tabs} activeKey={mode} onChange={tabChange}></Tabsbox>
-              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
+                <Tabsbox items={tabs} activeKey={tab} onChange={tabChange}></Tabsbox>
+              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} pcsId={pcsId}    areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
            </div>
         </Contentbox>
     </Pagecount>

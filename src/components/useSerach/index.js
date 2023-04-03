@@ -48,9 +48,9 @@ const Cform = styled(Form)`
    } 
 `
 export default function useSerach(props) {
-  const {handler, form: forms, search, custview, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
+  const {handler, form: forms, search, custview, initialValue, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
-  
+  console.log(initialValue)
   const [form] =forms ? [forms] : Form.useForm()
   const varlabel = useSelector(levelDefaultLabel) 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
@@ -96,7 +96,7 @@ export default function useSerach(props) {
  
   return (  
   
-    <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId}} >
+    <Cform layout="inline" className={style.serachform} form={form} initialValues={{area: oneLevelDefaultId, ...initialValue}} >
       
       <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
