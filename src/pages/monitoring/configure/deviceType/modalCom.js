@@ -235,6 +235,7 @@ export let AddModal = forwardRef(
               <Row style={{ marginBottom: 16 }}>
                 <Form.Item label="设备型号" name="DeviceType">
                   <Select
+                    showSearch
                     style={{ width: 200 }}
                     options={dataSource}
                     onChange={handleChange}

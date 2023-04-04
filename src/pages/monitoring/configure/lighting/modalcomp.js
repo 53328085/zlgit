@@ -33,6 +33,14 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
                 <Col flex={1}>
                     <Form.Item label={levelname.current} name="areaId" >
                         <Select 
+                        showSearch
+                        filterOption={(val, opts) => {
+                          if (opts.name.includes(val)) {
+                            return true
+                          } else {
+                            return false
+                          }
+                        }}
                         fieldNames={{
                             label: "name",
                             value:  "id",
@@ -98,6 +106,14 @@ export const EditModal=(props)=>{
             <Col flex={1}>
                 <Form.Item label={levelname.current} name="areaId" >
                     <Select 
+                    showSearch
+                    filterOption={(val, opts) => {
+                      if (opts.name.includes(val)) {
+                        return true
+                      } else {
+                        return false
+                      }
+                    }}
                     fieldNames={{
                         label: "name",
                         value:  "id",

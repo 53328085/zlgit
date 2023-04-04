@@ -66,7 +66,14 @@ function Comp(props, ref) {
                 <Row align='middle'>
                     <Col>
                         <Select
-
+                            showSearch
+                            filterOption={(val,opts)=>{
+                                if(opts.name.includes(val)){
+                                    return true
+                                }else{
+                                    return false
+                                }        
+                            }}
                             fieldNames={{
                                 label: 'name',
                                 value: 'id'

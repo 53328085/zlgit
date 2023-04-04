@@ -159,108 +159,108 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
 }
   //日期类型改变
   const changeTime = (v) => {
-    let timelist=[]
-    const date = moment().endOf('month').format('DD')
-    const month = moment().format('MM')
-    const year = moment().format('YYYY')
-    console.log(date,month,year)
+    // let timelist=[]
+    // const date = moment().endOf('month').format('DD')
+    // const month = moment().format('MM')
+    // const year = moment().format('YYYY')
+    // console.log(date,month,year)
     setPickertype(v)
-    if(v===1){
-      form.setFieldsValue({
-        starttime:moment().startOf('month'),
-        endtime:moment().endOf('month')
-      })
-      for(let i=1;i<=date;i++){
-        timelist.push({
-          title:`${year}-${month}-${i}`,
-          dataIndex:`${year}-${month}-${i}`,
-          width:100
-        })
-      }
-      setscroll({x:parseInt(date)*100+600})
-      setColumns([...cols,...timelist])
-    }else if(v===2){
-      form.setFieldsValue({
-        starttime:moment().startOf('year'),
-        endtime:moment().endOf('year')
-      })
-      for(let i=1;i<=12;i++){
-        timelist.push({
-          title:`${year}-${i}`,
-          dataIndex:`${year}-${i}`,
-          width:100
-        })
-      }
-      setscroll({x:1800})
-      setColumns([...cols,...timelist])
-    }else if(v===3){
-      form.setFieldsValue({
-        starttime:moment(),
-        endtime:moment()
-      })
-      setColumns([...cols,{title:year,dataIndex:year}])
-      setscroll({x:0})
-    }else if(v===0){
-      const times = []
-      for (let i = 0; i < 24; i++) {
-        if (i < 10) {
-          times.push({
-            title: `0${i}:00`,
-            dataIndex: `0${i}:00`,
+    // if(v===1){
+    //   form.setFieldsValue({
+    //     starttime:moment().startOf('month'),
+    //     endtime:moment().endOf('month')
+    //   })
+    //   for(let i=1;i<=date;i++){
+    //     timelist.push({
+    //       title:`${year}-${month}-${i}`,
+    //       dataIndex:`${year}-${month}-${i}`,
+    //       width:100
+    //     })
+    //   }
+    //   setscroll({x:parseInt(date)*100+600})
+    //   setColumns([...cols,...timelist])
+    // }else if(v===2){
+    //   form.setFieldsValue({
+    //     starttime:moment().startOf('year'),
+    //     endtime:moment().endOf('year')
+    //   })
+    //   for(let i=1;i<=12;i++){
+    //     timelist.push({
+    //       title:`${year}-${i}`,
+    //       dataIndex:`${year}-${i}`,
+    //       width:100
+    //     })
+    //   }
+    //   setscroll({x:1800})
+    //   setColumns([...cols,...timelist])
+    // }else if(v===3){
+    //   form.setFieldsValue({
+    //     starttime:moment(),
+    //     endtime:moment()
+    //   })
+    //   setColumns([...cols,{title:year,dataIndex:year}])
+    //   setscroll({x:0})
+    // }else if(v===0){
+    //   const times = []
+    //   for (let i = 0; i < 24; i++) {
+    //     if (i < 10) {
+    //       times.push({
+    //         title: `0${i}:00`,
+    //         dataIndex: `0${i}:00`,
     
-          })
-        } else if (i == 23) {
-          times.push({
-            title: `${i}:00`,
-            dataIndex: 'i',
+    //       })
+    //     } else if (i == 23) {
+    //       times.push({
+    //         title: `${i}:00`,
+    //         dataIndex: 'i',
     
-          })
-        } else {
-          times.push({
-            title: `${i}:00`,
-            dataIndex: 'i',
+    //       })
+    //     } else {
+    //       times.push({
+    //         title: `${i}:00`,
+    //         dataIndex: 'i',
     
-          })
-        }
-      }
-      setColumns([...cols,...times])
-    }
+    //       })
+    //     }
+    //   }
+    //   setColumns([...cols,...times])
+    // }
 
   }
   //查询
   const search = () => {
-   let timelist=[]
-   if(pickertype===1){
-    const dd= enumerateDaysBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
-    const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'days')
-    console.log(dd,daydiff)
-    for(let i=0;i<=daydiff;i++){
-      timelist.push({title:dd[i],dataIndex:dd[i]})
-    }
-    setColumns([...cols,...timelist])
-    setscroll({x:(600+parseInt(daydiff)*100)})
-   }
-   if(pickertype===2 ){
-    const dd= enumeratemonthBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
-    const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'month')
-    console.log(dd,daydiff)
-    for(let i = 0; i <=daydiff;i++){
-      timelist.push({title:dd[i],dataIndex:dd[i]})
-    }
-    setColumns([...cols,...timelist])
-    setscroll({x:(600+parseInt(daydiff)*100)})
-   }
-   if(pickertype===3){
-    const startyear = moment(form.getFieldValue('starttime')).format('YYYY')
-    const endyear = moment(form.getFieldValue('endtime')).format('YYYY')
-    const daydiff=endyear-startyear
-    console.log(startyear,endyear,endyear-startyear)
-    for(let i = startyear; i <=endyear;i++){
-      timelist.push({title:i,dataIndex:i})
-    }
-    setColumns([...cols,...timelist])
-    setscroll({x:(600+parseInt(daydiff)*100)})
-   }
+  //  let timelist=[]
+  //  if(pickertype===1){
+  //   const dd= enumerateDaysBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
+  //   const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'days')
+  //   console.log(dd,daydiff)
+  //   for(let i=0;i<=daydiff;i++){
+  //     timelist.push({title:dd[i],dataIndex:dd[i]})
+  //   }
+  //   setColumns([...cols,...timelist])
+  //   setscroll({x:(600+parseInt(daydiff)*100)})
+  //  }
+  //  if(pickertype===2 ){
+  //   const dd= enumeratemonthBetweenDates(form.getFieldValue('starttime'), form.getFieldValue('endtime'))
+  //   const daydiff = form.getFieldValue('endtime').diff(form.getFieldValue('starttime'),'month')
+  //   console.log(dd,daydiff)
+  //   for(let i = 0; i <=daydiff;i++){
+  //     timelist.push({title:dd[i],dataIndex:dd[i]})
+  //   }
+  //   setColumns([...cols,...timelist])
+  //   setscroll({x:(600+parseInt(daydiff)*100)})
+  //  }
+  //  if(pickertype===3){
+  //   const startyear = moment(form.getFieldValue('starttime')).format('YYYY')
+  //   const endyear = moment(form.getFieldValue('endtime')).format('YYYY')
+  //   const daydiff=endyear-startyear
+  //   console.log(startyear,endyear,endyear-startyear)
+  //   for(let i = startyear; i <=endyear;i++){
+  //     timelist.push({title:i,dataIndex:i})
+  //   }
+  //   setColumns([...cols,...timelist])
+  //   setscroll({x:(600+parseInt(daydiff)*100)})
+  //  }
     getTableData(areavalue)
   }
 
@@ -314,8 +314,21 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
       const res = await api(parmas, arrs)
       setLoading(false)
       if (res.success) {
-        if (Array.isArray(res.data)) {
-          setDataSource([...res.data])
+        if (Array.isArray(res.data)&&res.data.length>0) {
+          const list = res.data[0]?.detailHeaders.map(it=>({title:it,dataIndex:it}))
+          let obj={}
+          let arr=[]
+          for (let i=0; i<res.data.length; i++) {
+            for (let j=0; j<res.data[i].detailHeaders.length;j++){
+               let key = res.data[i].detailHeaders[j]
+               obj[key] = res.data[i].detailValues[j]
+            }
+            console.log(obj)
+            arr.push({...obj,...res.data[i]})
+          }
+          console.log(arr)
+          setColumns([...cols,...list])
+          setDataSource([...arr])
         } else {
           setDataSource([])
         }
@@ -351,7 +364,6 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
             <Select style={{ width: 112 }} options={energyoptions}></Select>
           </Form.Item>
           <Divider type="vertical" style={{ height: 30, margin: '0 32px' ,borderColor:'#d7d7d7'  }} dashed></Divider>
-
           {
             <>
               <Form.Item label="时间" style={{ marginBottom: 0, marginRight: 16 }} name="time">
@@ -394,7 +406,6 @@ const enumeratemonthBetweenDates=(startDate, endDate)=>{
           <Button style={btncss} onClick={search}>查询</Button>
           <Button style={{ ...btncss, marginLeft: 16 }} onClick={() => { tableRef.current.download() }}>导出</Button>
         </div>
-
       </Form>
       <Divider dashed style={{borderColor:'#d7d7d7' }}></Divider>
       <div style={{ width: 1645 }} className={style.tablecss}>

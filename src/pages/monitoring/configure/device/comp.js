@@ -65,7 +65,7 @@ export default forwardRef(function Comp(props, ref) {
         }))
         getList && getList(1, page.pageSize, selvalue, inpvalue, v)
     }
-
+ 
     useImperativeHandle(ref, () => ({
         selvalue,
         inpvalue,
@@ -81,6 +81,14 @@ export default forwardRef(function Comp(props, ref) {
                 <Row align='middle'>
                     <Col>
                         <Select
+                            showSearch
+                            filterOption={(val,opts)=>{
+                                if(opts.name.includes(val)){
+                                    return true
+                                }else{
+                                    return false
+                                }        
+                            }}
                             style={{
                                 width: 264,
                             }}

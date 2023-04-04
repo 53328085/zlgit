@@ -685,6 +685,14 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
           <Col flex={1}>
             <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
+                showSearch
+                filterOption={(val,opts)=>{
+                    if(opts.name.includes(val)){
+                        return true
+                    }else{
+                        return false
+                    }        
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id'
@@ -707,6 +715,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
           <Col flex={1}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
+              showSearch
                 options={usecategory}
               ></Select>
             </Form.Item>

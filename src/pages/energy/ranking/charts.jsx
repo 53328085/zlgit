@@ -25,7 +25,7 @@ export default function Charts({list}) {
     //     },
     //   ];
     
-      let data = list.map(it=>({year:it.name,value:it.value}))
+      let data = list.map(it=>({year:it.name,value:Number(it.value)}))
       let mapData = data.map(item=>({...item,title:'用电量(kwh)'}))
       const config = {
         data:mapData,

@@ -10,7 +10,7 @@ import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
-import {publishState} from '@redux/systemconfig'
+import { publishState } from '@redux/systemconfig'
 const {
   DeviceManager: {
     QueryByPageSensor,
@@ -42,7 +42,7 @@ export default function gateway({ deviceStyle }) {
   const pageRef = useRef(page)
   pageRef.current = page
   const [dataSource, setDataSource] = useState([])
-  const oneLevel = useSelector(state=>state.system.onelevel)
+  const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
   const modalFormRef = useRef()
@@ -66,7 +66,7 @@ export default function gateway({ deviceStyle }) {
   }
   let columns = [
     {
-      title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
+      title: oneLevel[0]?.levelName ? oneLevel[0].levelName : '园区名称',
       dataIndex: 'areaName'
     },
     {
@@ -120,7 +120,7 @@ export default function gateway({ deviceStyle }) {
   for (let val of columns) {
     val.align = 'center'
   }
-  if(publish){
+  if (publish) {
     columns.pop()
   }
   //打开编辑窗口
@@ -478,7 +478,7 @@ export default function gateway({ deviceStyle }) {
   }
 
   useEffect(() => {
-    if(oneLevel.length > 0) {
+    if (oneLevel.length > 0) {
       getQueryByPageSensor()
       getOneLevel()
       getQueryUsedDeviceCategory()
@@ -605,6 +605,14 @@ export const FormComp = (props) => {
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             {
               area.length > 0 ? <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -612,6 +620,14 @@ export const FormComp = (props) => {
                 options={area}
                 disabled
               ></Select> : <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -627,9 +643,9 @@ export const FormComp = (props) => {
             <Select
               options={alarmopts}
               fieldNames={{
-                label:'name',
+                label: 'name',
                 value: 'id',
-            }}
+              }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark" >
@@ -642,6 +658,14 @@ export const FormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
+             showSearch
+             filterOption={(val, opts) => {
+               if (opts.sn.includes(val)) {
+                 return true
+               } else {
+                 return false
+               }
+             }}
               fieldNames={{
                 label: 'sn',
                 value: 'id',
@@ -652,6 +676,7 @@ export const FormComp = (props) => {
           </Form.Item>
           <Form.Item label="传感器型号" name="category" rules={rules}>
             <Select
+              showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
@@ -781,6 +806,14 @@ export const EditFormComp = (props) => {
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             {
               (area.length || isdisable) > 0 ? <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -788,11 +821,20 @@ export const EditFormComp = (props) => {
                 options={area}
                 disabled
               ></Select> : <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
                 }}
                 options={addopts}
+                disabled
               ></Select>
             }
           </Form.Item>
@@ -803,9 +845,9 @@ export const EditFormComp = (props) => {
             <Select
               options={alarmopts}
               fieldNames={{
-                label:'name',
+                label: 'name',
                 value: 'id',
-            }}
+              }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark" >
@@ -818,6 +860,14 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.sn.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
               fieldNames={{
                 label: 'sn',
                 value: 'id',
@@ -828,6 +878,7 @@ export const EditFormComp = (props) => {
           </Form.Item>
           <Form.Item label="传感器型号" name="category" rules={rules}>
             <Select
+              showSearch
               options={devicelist}
             ></Select>
           </Form.Item>

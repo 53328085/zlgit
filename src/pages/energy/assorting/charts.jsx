@@ -60,9 +60,10 @@ export let PieCharts = ({proportion}) => {
       },
       label: {
         type: 'outer',
-        formatter: useCallback((v) => {
-          return v.value + '%'
-        }, [])
+        content: ({ percent }) => `${(percent * 100).toFixed(0)}%`
+        // formatter: useCallback((v) => {
+        //   return v.value + '%'
+        // }, [])
       },
       statistic: {
         title: false,
