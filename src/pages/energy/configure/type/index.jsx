@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
@@ -19,6 +19,7 @@ export default function Index () {
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -89,12 +90,12 @@ export default function Index () {
         item.name = (
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
-                {item.parentId == 0 ? null : <div style={nodeAction}>
+                <div style={nodeAction}>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
-                </div>}
+                </div>
             </div>
         )
         if(item.nodes){
@@ -273,7 +274,7 @@ export default function Index () {
       {contextHolder}
       {transTag == 'open' ? <div className={style.mask}></div> : null}
       <div className={style.header}>
-        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"

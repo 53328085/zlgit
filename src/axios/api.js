@@ -900,6 +900,8 @@ export class SettingManage {
 //远程控制
 export class Remote {
   static AllMeter = (data) =>server.post( `/Monitor/RuntimeRemote/Overview`,data); //查询设备
+  static AllCallMeter = (data) =>server.post( `/Monitor/RuntimeRemote/Call`,data); //查询设备抄读
+  static SetResult = (data) =>server.post( `/Monitor/RuntimeRemote/SetResult`,data); //返回结果
   static FindPowerProtect = (projectId) =>server.get(`/Monitor/RuntimeRemote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
   static StartBatchValveTask = (data) => server.post(`/Monitor/RuntimeRemote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
   static BatchValveResponse = (data) =>server.post(`/Monitor/RuntimeRemote/BatchValveResponse`, data); //查询批量抄读阀门状态结果

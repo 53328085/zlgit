@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { Select, Button, Space, message, Form, Input, Table } from 'antd';
 import style from './style.module.less'
 import SearchTree from '@com/searchTree'
@@ -16,6 +16,7 @@ export default function Index() {
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const { AllLevel } = Area
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
@@ -386,7 +387,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择"
           size="middle"

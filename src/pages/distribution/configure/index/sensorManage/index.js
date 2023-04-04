@@ -5,8 +5,8 @@ import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {utils, writeFile} from 'xlsx'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
-import { AreaSetting, distributionRoom, DistributionMeter } from '@api/api.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { distributionRoom, DistributionMeter } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 
 import dashed from '@imgs/dashed.png'
@@ -14,7 +14,6 @@ import firstwarn from '@imgs/warning.png'
 
 export default function Index() {
   const tableRef = useRef()
-  const { QueryAllArea } = AreaSetting
   const { queryPageRoom } = distributionRoom
   const { queryPageSensor, queryUnusedSensor, configureSensor } = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
@@ -27,6 +26,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   //园区选择
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
   const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const handleChange = (values) => {
@@ -310,7 +310,7 @@ export default function Index() {
       {transTag =='open' ? <div className={style.mask}></div> : null }
       {contextHolder}
       <div className={style.header}>
-        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span className={style.headerTitle}>{levelName + '选择'}</span>
         <Select
           placeholder="请选择园区"
           size="middle"

@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { useRequest } from "ahooks";
 import { Select, Form, Button, message } from 'antd'
 import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
 import {BMSRuntime} from '@api/api.js'
@@ -11,6 +11,7 @@ import {BMSRuntime} from '@api/api.js'
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
   const { queryBatterClusterList } = BMSRuntime
   const [form] = Form.useForm()
   const {Item}  = Form
@@ -82,7 +83,7 @@ export default function Index() {
       <div className={style.header}>
         <Form form={form} layout='inline'>
           { showPage == 'mainPage' ? <>
-          <Item name='areaId' label={ (areaList[0]?.levelName || '园区') + '选择' } style={{marginLeft:16}}>
+          <Item name='areaId' label={ areaName + '选择' } style={{marginLeft:16}}>
             <Select
               placeholder="请选择园区"
               size="middle"

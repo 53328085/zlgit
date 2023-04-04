@@ -7,7 +7,7 @@ import firstwarn from '@imgs/warning.png'
 import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
 
 export default function Index() {
   const isPublish = useSelector(publishState)
@@ -116,6 +116,7 @@ export default function Index() {
 
   const [dataSource, setDataSource] = useState([])
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
   const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
 
@@ -285,7 +286,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           size="middle"
           key={defaultArea}

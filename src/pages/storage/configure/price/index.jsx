@@ -31,6 +31,8 @@ export default function Index() {
   const pointEnd1 = Form.useWatch('endTime1', pointedForm)
   const pointStart2 = Form.useWatch('startTime2', pointedForm)
   const pointEnd2 = Form.useWatch('endTime2', pointedForm)
+  const pointStart3 = Form.useWatch('startTime3', pointedForm)
+  const pointEnd3 = Form.useWatch('endTime3', pointedForm)
   const [disPoint2 ,setDisPoint2] = useState(true)
   const [disPoint3 ,setDisPoint3] = useState(true)
   useEffect(()=> {
@@ -48,12 +50,14 @@ export default function Index() {
     }else{
       setDisPoint3(false)
     }
-  },[pointStart1,pointEnd1, pointStart2, pointEnd2])
+  },[pointStart1,pointEnd1, pointStart2, pointEnd2, pointStart3, pointEnd3])
 
   const peakStart1 = Form.useWatch('startTime1', peakForm)
   const peakEnd1 = Form.useWatch('endTime1', peakForm)
   const peakStart2 = Form.useWatch('startTime2', peakForm)
   const peakEnd2 = Form.useWatch('endTime2', peakForm)
+  const peakStart3 = Form.useWatch('startTime3', peakForm)
+  const peakEnd3 = Form.useWatch('endTime3', peakForm)
   const [disPeak2 ,setDisPeak2] = useState(true)
   const [disPeak3 ,setDisPeak3] = useState(true)
   useEffect(()=> {
@@ -71,12 +75,14 @@ export default function Index() {
     }else{
       setDisPeak3(false)
     }
-  },[peakStart1,peakEnd1, peakStart2, peakEnd2])
+  },[peakStart1,peakEnd1, peakStart2, peakEnd2, peakStart3, peakEnd3])
 
   const flatStart1 = Form.useWatch('startTime1', flatForm)
   const flatEnd1 = Form.useWatch('endTime1', flatForm)
   const flatStart2 = Form.useWatch('startTime2', flatForm)
   const flatEnd2 = Form.useWatch('endTime2', flatForm)
+  const flatStart3 = Form.useWatch('startTime3', flatForm)
+  const flatEnd3 = Form.useWatch('endTime3', flatForm)
   const [disFlat2 ,setDisFlat2] = useState(true)
   const [disFlat3 ,setDisFlat3] = useState(true)
   useEffect(()=> {
@@ -94,12 +100,14 @@ export default function Index() {
     }else{
       setDisFlat3(false)
     }
-  },[flatStart1,flatEnd1, flatStart2, flatEnd2])
+  },[flatStart1,flatEnd1, flatStart2, flatEnd2, flatStart3, flatEnd3])
   
   const valleyStart1 = Form.useWatch('startTime1', valleyForm)
   const valleyEnd1 = Form.useWatch('endTime1', valleyForm)
   const valleyStart2 = Form.useWatch('startTime2', valleyForm)
   const valleyEnd2 = Form.useWatch('endTime2', valleyForm)
+  const valleyStart3 = Form.useWatch('startTime3', valleyForm)
+  const valleyEnd3 = Form.useWatch('endTime3', valleyForm)
   const [disValley2 ,setDisValley2] = useState(true)
   const [disValley3 ,setDisValley3] = useState(true)
   useEffect(()=> {
@@ -117,7 +125,7 @@ export default function Index() {
     }else{
       setDisValley3(false)
     }
-  },[valleyStart1,valleyEnd1, valleyStart2, valleyEnd2])
+  },[valleyStart1,valleyEnd1, valleyStart2, valleyEnd2, valleyEnd3, valleyStart3])
   
   //公用组件
   const CustomPrice = props => {
@@ -151,7 +159,7 @@ export default function Index() {
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' >
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id} 
-                disabled={((props.formName).getFieldValue('startTime1') && (props.formName).getFieldValue('startTime1') != -1 && (props.formName).getFieldValue('startTime1') >= item.id) ? true : false }>{item.label}</Select.Option>
+                disabled={(( (props.formName).getFieldValue('startTime1') || (props.formName).getFieldValue('startTime1') == 0 )&& (props.formName).getFieldValue('startTime1') != -1 && (props.formName).getFieldValue('startTime1') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
@@ -169,13 +177,13 @@ export default function Index() {
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[0]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
-                disabled={((props.formName).getFieldValue('startTime2') && (props.formName).getFieldValue('startTime2') != -1 && (props.formName).getFieldValue('startTime2') >= item.id) ? true : false }>{item.label}</Select.Option>
+                disabled={(( (props.formName).getFieldValue('startTime2') || (props.formName).getFieldValue('startTime2') == 0 ) && (props.formName).getFieldValue('startTime2') != -1 && (props.formName).getFieldValue('startTime2') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
         </Space>
         <Space size={40}>
-          <Item name='startTime3' label='开始时间' labelCol={{span:6}}>
+          <Item name='startTime3' label='开始时间' labelCol={{span:6}} shouldUpdate>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' disabled={disChange[1]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
@@ -183,11 +191,11 @@ export default function Index() {
               }) }
             </Select>
           </Item>
-          <Item name='endTime3' label='结束时间' labelCol={{span:6}}>
+          <Item name='endTime3' label='结束时间' labelCol={{span:6}} shouldUpdate>
             <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[1]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
-                disabled={((props.formName).getFieldValue('startTime3') && (props.formName).getFieldValue('startTime3') != -1 && (props.formName).getFieldValue('startTime3') >= item.id) ? true : false }>{item.label}</Select.Option>
+                disabled={(( (props.formName).getFieldValue('startTime3') || (props.formName).getFieldValue('startTime3') == 0 ) && (props.formName).getFieldValue('startTime3') != -1 && (props.formName).getFieldValue('startTime3') >= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>

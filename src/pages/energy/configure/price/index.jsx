@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { Select,Button, Space, message, Form, Input } from 'antd';
 import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
@@ -18,6 +18,7 @@ export default function Index() {
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const [messageApi, contextHolder] = message.useMessage();
   const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
   const [elecPrice, setElecPrice] = useState()
@@ -70,13 +71,13 @@ export default function Index() {
             if(item.priceType == 2){
               setWaterPrice(item)
             }
-            if(item.priceType == 5){
+            if(item.priceType == 3){
               setGasPrice(item)
             }
-            if(item.priceType == 6){
+            if(item.priceType == 9){
               setCoalPrice(item)
             }
-            if(item.priceType == 7){
+            if(item.priceType == 10){
               setFuelPrice(item)
             }
           })
@@ -246,7 +247,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span className={style.headerTitle}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
+ 
 //import CModal from '@com/useModal'
 const Item = Form.Item
 const Boxitem = styled.div`
@@ -121,6 +122,7 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
 
 
 export default function Region({projectId, CModal}) {
+ 
  const mref = useRef()
  const dref = useRef()
  const emref = useRef()
@@ -190,8 +192,10 @@ const levelid = useRef()
         let {success, data} = await QueryAreaLevels(projectId)
         if (success && Array.isArray(data)) {
           success && setDatas([...data]);
+         // dispatch(getOnelevel(data))
         }else {
           setDatas([])
+         // dispatch(getOnelevel([]))
         }
        
      } catch (error) {

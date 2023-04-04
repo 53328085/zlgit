@@ -4,7 +4,7 @@ import { Select, Button, message } from 'antd';
 import OtherPage from './otherPage'
 import MainPage from './mainPage'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 
 export default function Index() {
   const {Option} = Select
@@ -18,6 +18,7 @@ export default function Index() {
   }
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   //园区
   const [defaultArea, setDefaultArea] = useState()
   const [areaId,setAreaId] = useState()
@@ -55,7 +56,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span style={{marginLeft: '16px',marginRight: 16}}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span style={{marginLeft: '16px',marginRight: 16}}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
