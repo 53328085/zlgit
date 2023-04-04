@@ -620,16 +620,21 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         fields: other,
       };    
       let { success, errMsg } = await Area[methods](params);
-      success &&
+
+      if(success) {
+        nref.current.onCancel();
+        getTableData();
+        upateOneLevel();
         message.success({
           content: isAdd ? "新增成功" : "编辑成功",
-          onClose: () => {
-            nref.current.onCancel();
-            getTableData();
-            upateOneLevel();
+          onClose: () => { 
+           // getTableData();
+          //  upateOneLevel();
           },
         });
-      !success && custMsg({ success, content: errMsg || "数据出错" });
+      } else {
+        custMsg({ success: false, content: errMsg || "数据出错" });
+      }
     } catch (error) {
       console.log(error);
     }

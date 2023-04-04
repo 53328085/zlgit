@@ -143,15 +143,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
-  const fields = allLevel?.find(item => item.level == level)?.fields || [];
-  
+  const fields = allLevel?.find(item => item.level == level)?.fields || [];  
   const [form] = Form.useForm();
-  const [nform] = Form.useForm();
   const [sfrom] = Form.useForm();
-  const nref = useRef(); // 新增，编辑
-  const dref = useRef(); // 删除
-  
-  const mapref = useRef();
   const boxref = useRef();
   const [Record, setRecord] = useState({});
   const [isAdd, setIsAdd] = useState(true);
@@ -182,9 +176,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     selected: [],
   });
  
-  const islngLat = fields?.find(item => item.type == 1);
-  const address = useRef("");
-  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
+ 
 
   const curareaId = useRef(null);
   let params = {
@@ -568,7 +560,7 @@ const getSelected = async ({areaId, type=devietype}) => {
       >
         <div className="selected">
           <div className="total">
-            <p className="title">园区总表</p>
+            <p className="title">{name}总表</p>
             <UserTable
               columns={deviceColumns}
               rowSelection={rowSelection}
@@ -577,7 +569,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             />
           </div>
           <div className="sub">
-            <p className="title">园区分表</p>
+            <p className="title">{name}分表</p>
             <Space size={16}>
               <Text style={{ color: "#333" }}>设备搜索</Text>
               <Inptserach
@@ -597,7 +589,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         </div>
         <div className="optab">
           <div>
-            <Paragraph>选中园区总表</Paragraph>
+            <Paragraph>选中{name}总表</Paragraph>
             <Space>
               <Button
                 type="primary"
@@ -612,7 +604,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             </Space>
           </div>
           <div>
-            <Paragraph>选择园区分表</Paragraph>
+            <Paragraph>选择{name}分表</Paragraph>
             <Space>
               <Button
                 type="primary"

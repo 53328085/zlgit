@@ -14,7 +14,8 @@ import Mapcom from "@com/useMap";
 import imgurl from "@imgs"
 import Upload from '@com/useUpload'
 import {Comipt, Comtext, CdatePicker} from "@com/comstyled"
-
+import projectimg from './projectimg.png'
+import projectlog from './projectlog.png'
 const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,8 +116,8 @@ const Info = styled.span`
   const params = {
     name: "",
     validStageTime: moment(), //项目有效期
-   // imgLogo: "",
-   // imgProject: '',
+     imgLogo: projectlog,
+     imgProject: projectimg,
     address: "",
    // LineAnalysisEnabled: 0,
     //lng: "",
@@ -127,8 +128,8 @@ const Info = styled.span`
   const [initialValues] = useState(params);
  
  
-  const [imgLogo, setImgLogo] = useState('')
-  const [imgProject, setImgProject] = useState('')
+  const [imgLogo, setImgLogo] = useState(projectlog)
+  const [imgProject, setImgProject] = useState(projectimg)
   const setAaddress = ({
     lng = "",
     lat = "",
