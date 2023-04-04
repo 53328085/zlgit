@@ -90,12 +90,12 @@ export default function Index () {
         item.name = (
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
-                {item.parentId == 0 ? null : <div style={nodeAction}>
+                <div style={nodeAction}>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
-                </div>}
+                </div>
             </div>
         )
         if(item.nodes){
