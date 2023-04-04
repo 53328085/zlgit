@@ -1,12 +1,12 @@
 import { Area, Pie } from '@ant-design/plots';
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
 //折线图
-export let Charts = ({ consumeDetail, color }) => {
+export let Charts = ({ consumeDetail, color,showType }) => {
   const data = consumeDetail.y.map((it, index) => {
     return {
       x: consumeDetail.x[index],
       y: Number(it),
-      type: '吨标煤'
+      type:showType===1? '吨标煤':'元'
     }
 
   })
@@ -60,7 +60,7 @@ export let PieCharts = ({proportion}) => {
       },
       label: {
         type: 'outer',
-        content: ({ percent }) => `${(percent * 100).toFixed(0)}%`
+        content: useCallback( ({ percent }) => `${(percent * 100).toFixed(0)}%`,[])
         // formatter: useCallback((v) => {
         //   return v.value + '%'
         // }, [])
