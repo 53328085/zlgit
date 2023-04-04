@@ -4,7 +4,7 @@ import { Select, Button, Table, Space, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import {useSelector} from 'react-redux'
 import {utils, writeFile} from 'xlsx'
-import {selectProjectId, selectOneLevel, publishState} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
@@ -13,6 +13,7 @@ import firstwarn from '@imgs/warning.png'
 export default function Index() {
   const isPublish = useSelector(publishState)
   const projectId = useSelector(selectProjectId);
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   //园区选择
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
@@ -159,7 +160,7 @@ export default function Index() {
   return (
     <div>
       <div className={style.header}>
-        <span className={style.headerTitle}>园区选择</span>
+        <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"

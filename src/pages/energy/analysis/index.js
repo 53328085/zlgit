@@ -6,7 +6,7 @@ import SearchTree from './searchTree'
 import columns,  { onDesc} from './columns';
 import dayjs from 'dayjs'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { eneryShift, Monitoring, energyQuota, EnergyLossRuntime} from '@api/api.js'
 import {utils, writeFile} from 'xlsx'
 import dashLine from '@imgs/line.png'
@@ -30,6 +30,7 @@ export default function Index() {
   }
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
   const { queryShifts } = eneryShift
   const { LineManager: { LineManagerQuery } } = Monitoring
   const { querySpaceTrees } = energyQuota
@@ -313,7 +314,7 @@ export default function Index() {
     <div>
       {contextHolder}
       <div className={style.header}>
-        <span style={{marginLeft: '16px',marginRight: 16}}>{areaList[0]?.levelName || '园区'}选择</span>
+        <span style={{marginLeft: '16px',marginRight: 16}}>{areaName}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
