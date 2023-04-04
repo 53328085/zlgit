@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox, message } from 'antd'
-import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled}  from '@ant-design/icons'
+import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled, CheckCircleFilled}  from '@ant-design/icons'
 import moment from 'moment'
 import {nanoid} from "@reduxjs/toolkit"
 
@@ -182,7 +182,7 @@ const Viewbox = styled.div`
     grid-template-rows: 1fr;
     grid-template-columns: 516px 1fr ;
   //  grid-template-rows: 405px;
-   column-gap: 32px;
+   column-gap: 16px;
    padding: 16px 32px 32px 32px;
    align-items: stretch;
    height: 100%;
@@ -251,14 +251,30 @@ const Itembox = styled.div`
 `
 const CustCalendar = styled(Calendar)`
   && {
+   
     .ant-picker-calendar-header {
-        justify-content: flex-start;
+        justify-content: flex-end !important;
+    }
+     .ant-picker-content th {
+        border: 1px solid #d7d7d7;
+        background-color: #f0f9ff;
+        font-weight: bold;
+        color:#515151;
+        height: 64px;
+    }
+    .ant-picker-panel {
+        border-top: none;
+        .ant-picker-body {
+            padding: 0px;
+        }
+        
     }
     .ant-picker-cell {
         border: 1px solid #d7d7d7;
         color:#ccc;
         background-color: #f2f2f2;
         cursor: default;
+        padding: 0px;
       //  cursor: not-allowed
 
     }
@@ -273,14 +289,15 @@ const CustCalendar = styled(Calendar)`
 
 `
 const Datebox = styled.div`
- width: 122px;
-  height: 48px;
+ //width: 122px;
+ // height: 48px;
   display: flex;
   flex-direction: column;
   justify-content: space-between; 
-  padding: 0 8px;
+ // padding: 0 8px;
   align-items: flex-end;
   background-color: ${props => props.bg};
+  padding: 8px;
 `
 const Pinfo = styled.p`
 display: flex;
@@ -436,7 +453,13 @@ const getvalidate = (start, end, type, choosedate) => {
   } */
 
    // 新增 / 修改 计划
-
+  const oref = useRef()
+  const onPlanClose = () => {
+    oref.current.onCancel()
+    getPlans()
+    setIsadd(false)
+    setIsview(false)
+  }
   const onSave = async () => {
     try {
       let values = await form.validateFields().then(res => {
@@ -476,12 +499,15 @@ const getvalidate = (start, end, type, choosedate) => {
       let {id, enable} = curplan
        try {
           let {success, errMsg} = await StorageAutoModeDesigner[handler](projectId, {...params, startDate, endDate, areaId, id, enable})
-          success && custMsg({content: '保存成功', onClose: () => {
-            getPlans()
-            setIsadd(false)
-            setIsview(false)
-          }})
-         !success && custMsg({success, content: errMsg})
+          if(success) {
+            oref.current.onOpen();
+          
+          } else {
+            custMsg({success: false, content: errMsg || '数据出错'})
+          }
+
+          
+         
        } catch (error) {
          console.log(error)
        }
@@ -563,7 +589,7 @@ const getvalidate = (start, end, type, choosedate) => {
         let {success, data} = await StorageAutoModeDesigner.QueryRuntimePlan(projectId, areaId)
 
         if(success && Array.isArray(data) && data.length > 0) {
-
+            
             setCurplan(data[count])
             setPlan([...data])
             initform(data[count])
@@ -635,7 +661,7 @@ const getvalidate = (start, end, type, choosedate) => {
                     </Space>
                     <Space size={16}>
                         <Normalbt  danger onClick={showDel} disabled={disabled}>删除</Normalbt>
-                        <Normalbt type="primary" ghost onClick={onSave}>保存</Normalbt>
+                        <Normalbt type="primary" disabled={disabled} ghost onClick={onSave}>保存</Normalbt>
                     </Space>
                 </div>
                 
@@ -681,10 +707,14 @@ const getvalidate = (start, end, type, choosedate) => {
       <CModal ref={dref} title='删除策略' mold='cust' onOk={DeleteRuntimePlan} width={592} type="warn">
        <Pinfo> <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', margin: '0 32px'}}/> 是否确认删除该运行计划？</Pinfo> 
       </CModal>
+      <CModal ref={oref} title='操作提示' mold='cust'   width={592}   footer={<Button type='primary' onClick={onPlanClose}>关闭</Button>}>
+       <Pinfo style={{justifyContent: 'center'}}> <CheckCircleFilled style={{color: '#237ae4', fontSize: '38px', margin: '0 16px'}}/> 运行计划保存成功！</Pinfo> 
+      </CModal>
     </Mainbox>
     </Titlelayout>
   )
 }
+
 
 const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机
     let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
@@ -762,9 +792,9 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                    </div>
                    </div>
                 </div>
-                <div>
-                    <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender}  /> 
-                </div>
+               
+                <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender}  /> 
+              
             </Viewbox>
         </Titlelayout>
     )
