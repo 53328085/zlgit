@@ -478,6 +478,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           getTableData();
           upateOneLevel()
         },
+        duration: 0.3
       });
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
