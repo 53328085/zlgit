@@ -198,7 +198,12 @@ export default function Index() {
                 if (success) {
                     let snRemoteList = []
                     let arr0 = []
+                    let setResultInfo = {}
+                    let setResultInfoList = []
                     data.forEach((item, index) => {
+                        setResultInfo = { id: "", status: 2 }
+                        setResultInfoList.push(setResultInfo)
+                        setResultInfoList[index].id = item.id
                         if (item.errorCode == 0) {
                             snRemoteList.push(item.sn)
                         } else {
@@ -238,6 +243,7 @@ export default function Index() {
                                                         newsnList.push(items.sn)
                                                     }
                                                     else {
+                                                        setResultInfoList[i].status = 2
                                                         let arr = all.map(item => {
                                                             if (item.sn == items.sn) {
                                                                 return {
@@ -249,7 +255,7 @@ export default function Index() {
                                                         arr1.push(arr)
                                                         let aaa = arr1.flat(1)
                                                         bbb = aaa.filter(it => !!it)
-                                                        if(bbb.length==snRemoteList.length){
+                                                        if (bbb.length == snRemoteList.length) {
                                                             status = false
                                                             setisComplate(false)
                                                             setDataSourceReadR([...bbb, ...ccc, ...ddd])
@@ -262,7 +268,7 @@ export default function Index() {
                                                         if (result.success) {
                                                             snRemoteList = []
                                                             let arr1 = []
-                                                            result.data.map((aitem) => {
+                                                            result.data.map((aitem,aindex) => {
                                                                 if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
                                                                     let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
@@ -277,6 +283,7 @@ export default function Index() {
                                                                     let aaa = arr1.flat(1)
                                                                     ccc = aaa.filter(it => !!it)
                                                                     console.log(470, arr, ccc)
+                                                                    setResultInfoList[aindex].status = 1
                                                                 } else {
                                                                     snRemoteList.push(aitem.sn)
 
@@ -294,6 +301,7 @@ export default function Index() {
                                                                     arr2.push(arr)
                                                                     let aaa = arr2.flat(1)
                                                                     ddd = aaa.filter(it => !!it)
+                                                                    setResultInfoList[aindex].status = 2
                                                                 }
                                                             })
                                                             if (state.length == 20 || snRemoteList.length == 0) {
@@ -301,6 +309,7 @@ export default function Index() {
                                                                 setisComplate(false)
                                                                 getData()
                                                                 setDataSourceReadR([...bbb, ...ccc, ...ddd])
+                                                                Remote.SetResult(setResultInfoList).then((res) => { })
                                                             }
 
                                                         }
@@ -330,6 +339,7 @@ export default function Index() {
         setisComplate(true)
         setbrake(false)
         snList = []
+
         if (selectTableList.length > 0) {
             selectTableList.map((item, index) => {
                 snList.push(item.sn)
@@ -344,7 +354,12 @@ export default function Index() {
                 if (success) {
                     let snRemoteList = []
                     let arr0 = []
+                    let setResultInfo = {}
+                    let setResultInfoList = []
                     data.forEach((item, index) => {
+                        setResultInfo = { id: "", status: 2 }
+                        setResultInfoList.push(setResultInfo)
+                        setResultInfoList[index].id = item.id
                         if (item.errorCode == 0) {
                             snRemoteList.push(item.sn)
                         } else {
@@ -359,11 +374,11 @@ export default function Index() {
                             let aaa = arr0.flat(1)
                             let bbb = aaa.filter(it => !!it)
                             setDataSourceReadR([...bbb])
-                            
+
                         }
                     })
                     if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
                         let newsnList = []
                         let state = []
                         let status = true
@@ -381,10 +396,11 @@ export default function Index() {
                                                 state.push(index)
                                                 let arr1 = []
                                                 res.data.map((items, i) => {
-                                                    if (items.errorCode == 0&&items.isOk) {
+                                                    if (items.errorCode == 0 && items.isOk) {
                                                         newsnList.push(items.sn)
                                                     }
                                                     else {
+                                                        setResultInfoList[i].status = 2
                                                         let arr = all.map(item => {
                                                             if (item.sn == items.sn) {
                                                                 return {
@@ -396,7 +412,7 @@ export default function Index() {
                                                         arr1.push(arr)
                                                         let aaa = arr1.flat(1)
                                                         bbb = aaa.filter(it => !!it)
-                                                        if(bbb.length==snRemoteList.length){
+                                                        if (bbb.length == snRemoteList.length) {
                                                             status = false
                                                             setisComplate(false)
                                                             setDataSourceReadR([...bbb, ...ccc, ...ddd])
@@ -409,7 +425,7 @@ export default function Index() {
                                                         if (result.success) {
                                                             snRemoteList = []
                                                             let arr1 = []
-                                                            result.data.map((aitem) => {
+                                                            result.data.map((aitem, aindex) => {
                                                                 if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
                                                                     let arr = all.map(item => {
                                                                         if (item.sn == aitem.sn) {
@@ -424,6 +440,7 @@ export default function Index() {
                                                                     let aaa = arr1.flat(1)
                                                                     ccc = aaa.filter(it => !!it)
                                                                     console.log(470, arr, ccc)
+                                                                    setResultInfoList[aindex].status = 1
                                                                 } else {
                                                                     snRemoteList.push(aitem.sn)
 
@@ -441,6 +458,7 @@ export default function Index() {
                                                                     arr2.push(arr)
                                                                     let aaa = arr2.flat(1)
                                                                     ddd = aaa.filter(it => !!it)
+                                                                    setResultInfoList[aindex].status = 2
                                                                 }
                                                             })
                                                             if (state.length == 20 || snRemoteList.length == 0) {
@@ -448,6 +466,8 @@ export default function Index() {
                                                                 setisComplate(false)
                                                                 getData()
                                                                 setDataSourceReadR([...bbb, ...ccc, ...ddd])
+                                                                console.log(-setResultInfoList)
+                                                                Remote.SetResult(setResultInfoList).then((res) => { })
                                                             }
 
                                                         }
@@ -493,117 +513,117 @@ export default function Index() {
 
     }
     return (
-            <div className={style.main}>
-                <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
-                <div className={style.header}>
-                    <Button className={state == 1 ? style.tabon : style.taboff} onClick={() => { changeTab(1) }}>单表控制</Button>
-                    <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量控制</Button>
-                </div>
-                <div className={style.body}>
-                    <div className={style.mainBox}>
-                        <div className={style.bodyHeader}>
-                            <Select
-                                defaultValue={0}
-                                style={{
-                                    width: 128,
-                                }}
-                                onChange={handleChangeDevice}
-                                options={[
-                                    {
-                                        value: 0,
-                                        label: '全部',
-                                    },
-                                    {
-                                        value: 1,
-                                        label: '电表',
-                                    },
-                                    {
-                                        value: 2,
-                                        label: '水表',
-                                    },
-                                    {
-                                        value: 3,
-                                        label: '燃气表',
-                                    },
-                                ]}
-                            />
-                            <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                            <div className={style.contentTitle}>
-                                <span>设备查询</span>
-                                <Input placeholder='请输入设备编号/安装地址' style={{ width: 291, marginLeft: 16 }} size='middle' onChange={submit}></Input>
-                                <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
-                            </div>
-                            <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
-                        </div>
-                        <img src={imgurl.line} className={style.timeline} ></img>
-                        {selectionType == 'radio' ? <div>
-                            <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
-                                type: 'radio',
-                                ...rowSelectionRadio,
-                            }} bordered></Table>
-                            <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
-                        </div> : <div>
-                            <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
-                                type: 'checkbox',
-                                ...rowSelectionCheckbox,
-                            }} bordered></Table>
-                            <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
-                        </div>}
-                    </div>
-                </div>
-                <Modal
-                    title={<Bluecolumn name="分闸控制" />}
-                    width={640}
-                    open={brake}
-                    centered={true}
-                    closable={false}
-                    className={style.readout}
-                    footer={[
-                        <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancel}>
-                            取消
-                        </Button>,
-                        <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={openStatus}>
-                            确定
-                        </Button>,
-                    ]}
-                >
-                    <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！</p></div>
-                </Modal>
-                <Modal
-                    title={<Bluecolumn name="合闸控制" />}
-                    width={640}
-                    open={brakeC}
-                    centered={true}
-                    closable={false}
-                    className={style.readout}
-                    footer={[
-                        <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancelC}>
-                            取消
-                        </Button>,
-                        <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={closeStatus}>
-                            确定
-                        </Button>,
-                    ]}
-                >
-                    <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>合闸后,该电表控制内的所有用电设备将恢复供电，请确认！</p></div>
-                </Modal>
-                <Modal
-                    title={<Bluecolumn name="远程控制" />}
-                    width={640}
-                    className={style.readoutBule}
-                    open={brakeResult}
-                    centered={true}
-                    closable={false}
-                    footer={[
-                        <Button key="submit" disabled={isComplate} style={{ backgroundColor: '#237AE4', color: '#fff', width: 96, height: 32 }} onClick={handleCancelResult}>
-                            完成
-                        </Button>,
-                    ]}
-                >
-                    <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
-                </Modal>
+        <div className={style.main}>
+            <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
+            <div className={style.header}>
+                <Button className={state == 1 ? style.tabon : style.taboff} onClick={() => { changeTab(1) }}>单表控制</Button>
+                <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量控制</Button>
             </div>
+            <div className={style.body}>
+                <div className={style.mainBox}>
+                    <div className={style.bodyHeader}>
+                        <Select
+                            defaultValue={0}
+                            style={{
+                                width: 128,
+                            }}
+                            onChange={handleChangeDevice}
+                            options={[
+                                {
+                                    value: 0,
+                                    label: '全部',
+                                },
+                                {
+                                    value: 1,
+                                    label: '电表',
+                                },
+                                {
+                                    value: 2,
+                                    label: '水表',
+                                },
+                                {
+                                    value: 3,
+                                    label: '燃气表',
+                                },
+                            ]}
+                        />
+                        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
+                        <div className={style.contentTitle}>
+                            <span>设备查询</span>
+                            <Input placeholder='请输入设备编号/安装地址' style={{ width: 291, marginLeft: 16 }} size='middle' onChange={submit}></Input>
+                            <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
+                        </div>
+                        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
+                    </div>
+                    <img src={imgurl.line} className={style.timeline} ></img>
+                    {selectionType == 'radio' ? <div>
+                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                            type: 'radio',
+                            ...rowSelectionRadio,
+                        }} bordered></Table>
+                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                    </div> : <div>
+                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                            type: 'checkbox',
+                            ...rowSelectionCheckbox,
+                        }} bordered></Table>
+                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                    </div>}
+                </div>
+            </div>
+            <Modal
+                title={<Bluecolumn name="分闸控制" />}
+                width={640}
+                open={brake}
+                centered={true}
+                closable={false}
+                className={style.readout}
+                footer={[
+                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancel}>
+                        取消
+                    </Button>,
+                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={openStatus}>
+                        确定
+                    </Button>,
+                ]}
+            >
+                <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！</p></div>
+            </Modal>
+            <Modal
+                title={<Bluecolumn name="合闸控制" />}
+                width={640}
+                open={brakeC}
+                centered={true}
+                closable={false}
+                className={style.readout}
+                footer={[
+                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancelC}>
+                        取消
+                    </Button>,
+                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={closeStatus}>
+                        确定
+                    </Button>,
+                ]}
+            >
+                <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>合闸后,该电表控制内的所有用电设备将恢复供电，请确认！</p></div>
+            </Modal>
+            <Modal
+                title={<Bluecolumn name="远程控制" />}
+                width={640}
+                className={style.readoutBule}
+                open={brakeResult}
+                centered={true}
+                closable={false}
+                footer={[
+                    <Button key="submit" disabled={isComplate} style={{ backgroundColor: '#237AE4', color: '#fff', width: 96, height: 32 }} onClick={handleCancelResult}>
+                        完成
+                    </Button>,
+                ]}
+            >
+                <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
+            </Modal>
+        </div>
     )
 }
