@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, message, InputNumber, Select, Switch} from 'antd'
 import {CheckCircleFilled } from '@ant-design/icons'
-import {RuntimePowerSettingDesigner} from '@api/api'
+import {StorageParameterSetupDesigner} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
+import {CustButton} from '@com/useButton'
 const {Text, Link, Title} = Typography
 const {Item} = Form
 const Mainbox = styled.div`
@@ -23,15 +24,24 @@ const Mainbox = styled.div`
 const Formbox = styled(Form)`
     && {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 36px 36px;
-        row-gap: 16px;
-        
-        width: 800px;
-        padding: 16px;
-        border: 1px solid #ccc;
+        grid-template-columns: repeat(2, 432px) ;
+        grid-template-rows: 404px;
+        column-gap: 32px;
+        .items {
+            display: grid;
+            padding: 32px; 
+            grid-template-rows: repeat(7, 36px);
+            row-gap: 16px;
+            border: 1px solid #ccc;
+        }
          .ant-form-item {
             margin-right: 0;
+            .ant-form-item-control {
+                align-items: flex-end;
+            }
+            .ant-form-item-control-input-content {
+                width: 168px;
+            }
         }
     }
 `
@@ -48,16 +58,13 @@ export default function Manual({projectId,  areaId, CModal}) {
   const pid = useRef()
   const  QueryRuntimeSetting= async () => {
        try {
-        let {success, data} = await RuntimePowerSettingDesigner.QueryRuntimeSetting(projectId, areaId)
+        let {success, data} = await StorageParameterSetupDesigner.QuerySetup(projectId, areaId)
        if (success) {
-        console.log(data)
-        let {id, p, q} = data 
+        let {id, ...init} = data
         pid.current = id
+        
         form.setFieldsValue({
-            cp:p,
-            cq: q,
-            p: '',
-            q: ''
+             ...init
          })  
        }
        
@@ -86,7 +93,7 @@ export default function Manual({projectId,  areaId, CModal}) {
         id: pid.current,
         projectId
     }
-   let {success}  = await RuntimePowerSettingDesigner.UpdateP(params)
+   let {success}  = await StorageParameterSetupDesigner.Setup(params)
    if (success) {
     rref.current.onOpen()
     
@@ -102,45 +109,110 @@ export default function Manual({projectId,  areaId, CModal}) {
      
   }
   useEffect(() => {
-    QueryRuntimeSetting()
+   // QueryRuntimeSetting()
 
   }, [projectId, areaId])
   return (
-    <Titlelayout title="系统运行功率设置">
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>参数设置</span><Space size={16}><CustButton type='primary' onClick={QueryRuntimeSetting}>读取</CustButton><CustButton type='primary'>设置</CustButton></Space></div>}>
         <Mainbox>
              
             <Formbox layout="inline" form={form}  >
-                    
-                        <Item label="当前有功功率" name="cp">
+                    <div className='items'>
+                        <Item label="储能容量" name="capacity">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置有功功率" name="p" style={{justifySelf: 'end'}} rules={[
+                        <Item label="温度上限" name="tempUpperLimit"   rules={[
                             {
-                                required: true,
-                                message: '请输入有功功率数值'
+                                required: true, 
                             }
                         ]}>
-                          <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
+                          <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="℃" style={{width: '168px'}}  /> 
                         </Item> 
-                        <Item label="当前无功功率" name="cq">
+                        <Item label="SOC上限" name="socUpperLimit">
+                            <Input addonAfter="%" disabled style={{width: '168px'}} /> 
+                        </Item>
+                        <Item label="SOC下限" name="socLowerLimit"   rules={[
+                            {
+                                required: true, 
+                            }
+                        ]}>
+                        <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="%" style={{width: '168px'}}  /> 
+                        </Item>
+                        <Item name='chargeMode' label="充电模式">
+                            <Select options={[
+                                {
+                                  label: '固定模式',
+                                  value: 1,
+                                },
+                                {
+                                    label: '计划模式',
+                                    value: 2,
+                                  }
+                            ]}></Select>
+                        </Item>
+                        <Item name='disChargeMode' label="放电模式">
+                            <Select  options={[
+                                {
+                                  label: '固定模式',
+                                  value: 1,
+                                },
+                                {
+                                    label: '计划模式',
+                                    value: 2,
+                                  },
+                                  {
+                                    label: '负荷跟踪',
+                                    value: 3,
+                                  }
+                            ]}></Select>
+                        </Item>
+                        <Item name='antiReflux' label="防逆流">
+                        <Switch
+                            checkedChildren="是"
+                            unCheckedChildren="否"
+                            style={{
+                                width: "64px",
+                            }} />
+                        </Item>
+                    </div>   
+                    <div className='items'>
+                    <Item label="变压器最大需量" name="transformMaxDemand">
                             <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
                         </Item>
-                        <Item label="设置无功功率" name="q" style={{justifySelf: 'end'}} rules={[
+                        <Item label="需量上限系数" name="demandLimitCoefficient"   rules={[
                             {
-                                required: true,
-                                message: '请输入无功功率数值'
+                                required: true, 
+                            }
+                        ]}>
+                          <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="%" style={{width: '168px'}}  /> 
+                        </Item> 
+                        <Item label="电网供电功率下限" name="demandLimitCoefficient">
+                            <Input addonAfter="kw" disabled style={{width: '168px'}} /> 
+                        </Item>
+                        <Item label="电网供电功率下限误差" name="demandLimitCoefficient"   rules={[
+                            {
+                                required: true, 
                             }
                         ]}>
                         <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
-                       
-                    
-                </Formbox>
-                <Item nostyle style={{justifySelf: 'end'}}>
-                            <Button type="primary" onClick={Updatedata}>确定</Button>
-                 </Item>
-           
-               
+                        <Item name='maxVSingleThreshold' label="最高电压单体门限">
+                        <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="v" style={{width: '168px'}}  /> 
+                        </Item>
+                        <Item name='minVSingleThreshold' label="最低电压单体门限">
+                         <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="v" style={{width: '168px'}}  /> 
+                        </Item>
+                        <Item name='demandControl' label="需量控制">
+                        <Switch
+                            checkedChildren="是"
+                            unCheckedChildren="否"
+                            style={{
+                                width: "64px",
+                            }} />
+                        </Item>
+
+                    </div>
+                </Formbox> 
             </Mainbox>
        
        

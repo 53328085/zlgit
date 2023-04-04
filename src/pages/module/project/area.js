@@ -4,7 +4,7 @@ import styled from 'styled-components'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
- 
+ import {useOneLevel} from '@hooks/usePublic'
 //import CModal from '@com/useModal'
 const Item = Form.Item
 const Boxitem = styled.div`
@@ -187,11 +187,15 @@ const levelid = useRef()
    levelid.current = level
    dref.current.onOpen()
  }
+
+ const [isupdate, setIsupdate] = useState(false)
+ useOneLevel(projectId, isupdate)
   const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        if (success && Array.isArray(data)) {
+        if (success && Array.isArray(data) && data.length > 0) {
           success && setDatas([...data]);
+          if (level == 1) setIsupdate(!isupdate)
          // dispatch(getOnelevel(data))
         }else {
           setDatas([])
@@ -235,7 +239,7 @@ const levelid = useRef()
       const params = {...modalform.getFieldsValue(), level: datas.length + 1, projectId };
       let {success,errMsg} =  await InsertAreaLevel(params)
 
-
+      
       if(success) {
         mref.current.onCancel()
         message.success({
