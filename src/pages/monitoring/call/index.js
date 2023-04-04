@@ -28,19 +28,13 @@ export default function Index() {
 
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
-    let dataSourceReadR = []
     let [alike, setalike] = useState('')
     let [deviceStyle, setdeviceStyle] = useState(0)
-    let [brake, setbrake] = useState(false)
-    let [brakeC, setbrakeC] = useState(false)
     let [readout, setreadout] = useState(false)
-    let [brakeResult, setbrakeResult] = useState(false)
     const [selectTableList, setselectTableList] = useState([])
     const [loading, setLoading] = useState(false);
     const [selectTableListRadio, setselectTableListRadio] = useState([])
     const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
-    // const [selectTableKeyRadio, setselectTableKeyRadio] = useState([])
-    // const [selectTableKeyCheckbox, setselectTableKeyCheckbox] = useState([])
     let params = {
         pageNum: pageNum,
         pageSize: 15,
@@ -53,7 +47,7 @@ export default function Index() {
         state: 0
     }
     const getData = () => {//设备统计
-        return Remote.AllMeter(params).then(res => {
+        return Remote.AllCallMeter(params).then(res => {
             let { success, data } = res
             if (success) {
                 setdataSourceLog(data)
@@ -118,7 +112,7 @@ export default function Index() {
         {
             title: '设备状态',
             dataIndex: 'status',
-            render: (status) => <span> {status == null ? '未知' : (status[0] == 'Open' || status[1] == 'Open') ? '分闸' : '合闸'} </span>,
+            render: (status) => <span> {status == 1 ? '离线' : '在线'} </span>,
             key: 'sn',
             id: 'id'
         },
@@ -207,12 +201,18 @@ export default function Index() {
         setdeviceStyle(value)
     }
     let snList = []
+    const [isClick,setIsClick]=useState(false)
     const rowSelectionRadio = {
         selectTableListRadio,
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setselectTableListRadio(selectedRows)
             setselectTableList(selectedRows)
+            if(selectedRows[0].status==1){
+              setIsClick(true)
+            }else{
+              setIsClick(false)
+            }
         },
     }
     const rowSelectionCheckbox = {
@@ -221,6 +221,13 @@ export default function Index() {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setselectTableListCheckbox(selectedRows)
             setselectTableList(selectedRows)
+            selectedRows.map(item=>{
+              if(item.status==1){
+                setIsClick(true)
+              }else{
+                setIsClick(false)
+              }
+            })
         },
     }
     const changeReadout = () => {
@@ -343,7 +350,7 @@ export default function Index() {
                                 <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
                             </div>
                             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                            <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
+                            <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
                         </div>
                         <img src={imgurl.line} className={style.timeline} ></img>
                         {selectionType == 'radio' ? <div>
