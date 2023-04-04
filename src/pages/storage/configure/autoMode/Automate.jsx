@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox } from 'antd'
+import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox, message } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled}  from '@ant-design/icons'
 import moment from 'moment'
 import {nanoid} from "@reduxjs/toolkit"
@@ -11,6 +11,9 @@ import {custMsg} from '@com/usehandler'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
+moment.updateLocale('zh-cn', {
+    weekdaysMin :["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+  })
 const Mainbox = styled.div`
     && {
        display: grid;
@@ -86,7 +89,7 @@ const Mainbox = styled.div`
              display: grid;
              grid-template-rows: 1fr 58px;
              .toprightup {
-                padding: 32px 32px 16px 32px;
+                //padding: 32px 32px 16px 32px;
                 display: flex;
 
              }
@@ -178,12 +181,16 @@ const Viewbox = styled.div`
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 516px 1fr ;
-    grid-template-rows: 405px;
+  //  grid-template-rows: 405px;
    column-gap: 32px;
+   padding: 16px 32px 32px 32px;
+   align-items: stretch;
+   height: 100%;
     .detl {
-        height: 365px;
-        border: 1px solid rgba(215, 215, 215, 1); 
-        margin-top: 40px;
+      //  height: 365px;
+      //  border: 1px solid rgba(215, 215, 215, 1); 
+       // margin-top: 40px;
+
         display: flex;
         flex-direction: column;
        .title {
@@ -281,6 +288,17 @@ align-items: center;
 font-size: 16px;
 justify-content: flex-start;
 `
+const Sblock = styled.span`
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: ${props => props.bg};
+    margin-right: 4px;
+    &::after {
+        content: attr(text);
+
+    }
+`
 const  enumerateDaysBetweenDates = (startDate, endDate) => {  
     let daysList = [];
     let SDate=moment(startDate);
@@ -347,7 +365,7 @@ const getvalidate = (start, end, type, choosedate) => {
   const [plans, setPlan] = useState([])  
   const [count, setCount] = useState(0)
   const [strategy, setStrategy] = useState([])
-  const [pcs, setPcs] = useState([])
+  // const [pcs, setPcs] = useState([])
   const [curplan, setCurplan] = useState({})
   const [isView, setIsview] = useState(false)
   const [strategyDetail, setStrategyDetail] = useState([])
@@ -357,14 +375,15 @@ const getvalidate = (start, end, type, choosedate) => {
  
   const showpalans = useMemo(() => {
     let len = plans.length;  // 7 0，5 1，6 2，7
-    return plans.slice(count, 5+count)
+    return plans.slice(count, 7+count)
    
   }, [count, plans])
-  const onMove = (n) => {
+  const onMove = (n) => {     // 8; 0, 7, 1, 8
       let num = count + n
-      if ((num+5) > plans.length) return
-      if(num < 0) return
-      if (plans.length < 6 ) return
+      if ((num+7) > plans.length) return message.info('数据已到底')
+      if(num < 0) return message.info('数据已到顶')
+      if (plans.length < 8 ) return
+      onPlan(plans[num])
       setCount(num)
   }
   const initform = (data) => {
@@ -403,7 +422,10 @@ const getvalidate = (start, end, type, choosedate) => {
   const addplan = () => {
     setIsview(false)
     setIsadd(true)
-    disabled= false
+    setCurplan({
+        id: 0,
+        enable: 0
+    })
     form.resetFields()
      pref.current.onOpen()
 
@@ -441,7 +463,7 @@ const getvalidate = (start, end, type, choosedate) => {
             3: day
         }[type] */
        
-      let {id: pid} = curplan;
+    
        
        params.dateChoose = params.dateChoose || []
 
@@ -449,8 +471,9 @@ const getvalidate = (start, end, type, choosedate) => {
        let endDate = date[1]?.format('YYYY-MM-DD'); 
 
        let handler = isadd ? 'AddRuntimePlan' : 'UpdateRuntimePlan'
-       let id = isadd ? 0 : pid
-       let enable= isadd ? 0 : 1
+      // let id = isadd ? 0 : pid
+      // let enable= isadd ? 0 : 1 // 9条数据时 2-9/    5 12条数据
+      let {id, enable} = curplan
        try {
           let {success, errMsg} = await StorageAutoModeDesigner[handler](projectId, {...params, startDate, endDate, areaId, id, enable})
           success && custMsg({content: '保存成功', onClose: () => {
@@ -523,7 +546,7 @@ const getvalidate = (start, end, type, choosedate) => {
      }
     
  } 
- const QueryPcsList = async () => {
+/*  const QueryPcsList = async () => {
     try {
        let {success, data} = await  StorageControlRuntime.QueryPcsList(projectId, areaId)
        success && setPcs([...data])
@@ -532,7 +555,7 @@ const getvalidate = (start, end, type, choosedate) => {
        console.log(error)
     }
    
-} 
+}  */
 
 
   const getPlans = async () => {
@@ -540,10 +563,11 @@ const getvalidate = (start, end, type, choosedate) => {
         let {success, data} = await StorageAutoModeDesigner.QueryRuntimePlan(projectId, areaId)
 
         if(success && Array.isArray(data) && data.length > 0) {
-            setCurplan(data[0])
+
+            setCurplan(data[count])
             setPlan([...data])
-            initform(data[0])
-            QueryStrategyDetail(data[0].strategyId)
+            initform(data[count])
+            QueryStrategyDetail(data[count].strategyId)
         }else {
             success && setPlan([]) 
             setCurplan({})
@@ -577,7 +601,7 @@ const getvalidate = (start, end, type, choosedate) => {
   useEffect(() => {
     getPlans()
     QueryStrategyList()
-    QueryPcsList()
+    //QueryPcsList()
   }, [areaId])
   return (
     <Titlelayout title="自动模式管理">
@@ -602,7 +626,7 @@ const getvalidate = (start, end, type, choosedate) => {
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} disabled={disabled} form={form} /> }
+                { isView ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -699,26 +723,27 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }, [name])
    // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
-        <Titlelayout pv="0px" title={<Space size={32}><span>运行计划预览</span></Space>} bordered={'n'} style={{flex: 1}}>
+        <Titlelayout  title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
             <Viewbox>               
                 <div className='detl'>
+                   <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
+                   <div style={{border: '1px solid #d7d7d7', flex: 1, display: 'flex', flexDirection: 'column'}}>
                    <div className='title'>计划详细</div>
                    <div className='content'>
-                      <Descriptions  bordered column={3} size="small">
+                      <Descriptions  bordered column={3} size="small" labelStyle={{width: '72px',padding: '2px', textAlign: 'center'}} contentStyle={{color:'#237ae4'}}>
                         <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
                         <Descriptions.Item label="策略模板">{strategyName}</Descriptions.Item>
                         <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
-                        <Descriptions.Item label="储能子系统" span={3}>{pcsName?.join(' ')}</Descriptions.Item>
                        </Descriptions>
                        <Divider style={{margin: '0px'}}/>
-                       <div>
+                       <div style={{display: 'flex', flexDirection: 'column'}}>
                        <div className='list'>
                          {items.map(i => <Itembox type={i.type} />)}
                        </div>
                         <div className='num'>
                             {hours.map(i => <span>{i}</span>)}
                         </div>
-                        <div className='dstrategy'>
+                        <div className='dstrategy' style={{flex: 1, overflow: 'auto'}}>
                              {
                                 strategyDetail.map(s => <div className='dsitme'>
                                     <span>{s.start}-{s.end}</span>
@@ -727,18 +752,24 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                                 </div>)
                              }
                         </div>
+                        <Space size={32} style={{marginLeft: '-16px'}}>
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff'   />充电</div>
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#ff9933' />放电</div> 
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff' />待机</div> 
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#333' />停机</div> 
+                        </Space>
                        </div>
                    </div>
-                  
+                   </div>
                 </div>
-                <div style={{height: '386px'}}>
+                <div>
                     <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender}  /> 
                 </div>
             </Viewbox>
         </Titlelayout>
     )
 }
-const Strategy = ({data,   form, disabled}) => {
+const Strategy = ({data,   form, disabled, executionCycle}) => {
    
   
    const [show, setShow] = useState(1)
@@ -754,7 +785,7 @@ const Strategy = ({data,   form, disabled}) => {
     return current && current < moment().subtract(1, 'day').endOf('day');
     };
    return (
-      <Titlelayout title='运行计划设置' bordered={'n'}>
+      <Titlelayout title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
        { required: "缺少'${label}' 数据"}
       }>
@@ -788,7 +819,7 @@ const Strategy = ({data,   form, disabled}) => {
                 ></Select>               
             </Item>
             
-            { show!== 1 && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
+            { (show!== 1 || executionCycle!=1) && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
                   {required: true},
             ]}>
                 <Checkbox.Group options={options}    /> 
