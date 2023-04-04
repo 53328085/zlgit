@@ -224,10 +224,17 @@ export default function Index() {
     form.setFieldsValue(record);
   };
   //删除
-  const deleteRecord = (record) => {};
-  //删除告警类型确认
-  const deleteTypeOk = () => {};
-  const handleTypeDelete = () => {};
+  const deleteRecord = (record) => {
+    setDeleteTypeModal(true);
+  };
+  //删除站点确认
+  const deleteOk = () => {
+    setDeleteTypeModal(false);
+  };
+  //删除站点取消
+  const deleteCancel = () => {
+    setDeleteTypeModal(false);
+  };
   //新增 确认
   const addOk = () => {
     if (modalTitle === "新增站点") {
@@ -239,6 +246,7 @@ export default function Index() {
   //新增 取消
   const addCancel = () => {
     setAddModal(false);
+    setImageUrl();
   };
   const [fileList, setFileList] = useState([]); //文件列表
   const [imageUrl, setImageUrl] = useState(""); //上传的图片
@@ -249,10 +257,15 @@ export default function Index() {
   };
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
+      console.log(file);
       const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      if (file.status === "removed") {
+        setImageUrl();
+      } else {
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      }
     });
   // 上传文件之前的钩子，参数为上传的文件
   const beforeUpload = async (file) => {
@@ -271,7 +284,6 @@ export default function Index() {
 
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
   const handleCancel = () => {
-    setImageUrl();
     setPreviewOpen(false);
   };
   return (
@@ -302,8 +314,8 @@ export default function Index() {
         <Modal
           className={style.deleteModal}
           open={deleteTypeModal}
-          onOk={deleteTypeOk}
-          onCancel={handleTypeDelete}
+          onOk={deleteOk}
+          onCancel={deleteCancel}
           width={512}
           cancelText={"取消"}
           centered={true}
@@ -417,15 +429,7 @@ export default function Index() {
                 onPreview={handlePreview}
                 beforeUpload={beforeUpload}
               >
-                {imageUrl ? // <img
-                //   src={imageUrl}
-                //   alt="avatar"
-                //   style={{
-                //     width: "100%",
-                //     height: "100%",
-                //   }}
-                // />
-                null : (
+                {imageUrl ? null : (
                   <div>
                     <PlusOutlined />
                     <div
