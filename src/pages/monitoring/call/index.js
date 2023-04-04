@@ -221,13 +221,17 @@ export default function Index() {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setselectTableListCheckbox(selectedRows)
             setselectTableList(selectedRows)
-            selectedRows.map(item=>{
-              if(item.status==1){
-                setIsClick(true)
-              }else{
-                setIsClick(false)
-              }
-            })
+            if(selectedRowKeys.length>0){
+              selectedRows.map(item=>{
+                if(item.status==1){
+                  setIsClick(true)
+                }else{
+                  setIsClick(false)
+                }
+              })
+            }else{
+              setIsClick(false)
+            }
         },
     }
     const changeReadout = () => {
