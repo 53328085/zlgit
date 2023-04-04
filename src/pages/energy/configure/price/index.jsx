@@ -71,13 +71,13 @@ export default function Index() {
             if(item.priceType == 2){
               setWaterPrice(item)
             }
-            if(item.priceType == 5){
+            if(item.priceType == 3){
               setGasPrice(item)
             }
-            if(item.priceType == 6){
+            if(item.priceType == 9){
               setCoalPrice(item)
             }
-            if(item.priceType == 7){
+            if(item.priceType == 10){
               setFuelPrice(item)
             }
           })
