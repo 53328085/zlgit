@@ -6,7 +6,7 @@ import {flushSync} from 'react-dom'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
- import {useOneLevel} from '@hooks/usePublic'
+import {useOneLevel} from '@hooks/usePublic'
 //import CModal from '@com/useModal'
 const Item = Form.Item
 const Boxitem = styled.div`
