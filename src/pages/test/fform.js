@@ -1,48 +1,92 @@
-import React, { useState } from 'react';
-import { useRequest } from 'ahooks';
-
-const userSchool = (id) => {
-  switch (id) {
-    case '1':
-      return 'Tsinghua University';
-    case '2':
-      return 'Beijing University';
-    case '3':
-      return 'Zhejiang University';
-    default:
-      return '';
-  }
-};
-let num = 0
-async function getUserSchool(userId){
+import React, { useState, useEffect, useRef, useCallback, useEvent, useReducer } from "react";
+import { useLatest, useMemoizedFn } from 'ahooks';
  
-  console.log(num++)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(userSchool(userId));
-    }, 1000);
-  });
+const custuseref = (value) => {
+  const ref = useRef()
+  ref.current = value
+  return ref
+
+}
+const initialState = {count: 0}; // 数据创库
+
+function reducer(state, action) {
+  switch(action.type) {
+    case 'add':
+      return {...state, count: state.count + 1}
+    case 'decrement':
+      return {...state, count: state.count - 1}
+    default:
+      throw new Error()
+  }
 }
 
+
+function init(initialCount) {
+  return {count: initialCount};
+}
+
+function reducers(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return {count: state.count + 1};
+    case 'decrement':
+      return {count: state.count - 1};
+    case 'reset':
+      return init(action.payload);
+    default:
+      throw new Error();
+  }
+}
+
+function Counter({initialCount}) {
+  const [state, dispatch] = useReducer(reducers, initialCount, init);
+  return (
+    <>
+      Count: {state.count}
+      <button
+        onClick={() => dispatch({type: 'reset', payload: initialCount})}>
+        Reset
+      </button>
+      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+      <button onClick={() => dispatch({type: 'increment'})}>+</button>
+    </>
+  );
+}
+
+
 export default () => {
-  const [userId, setUserId] = useState('1');
-  console.log(userId)
-  const { data, loading } = useRequest(() => getUserSchool(userId), {
-    refreshDeps: [userId],
-  });
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const [count, setCount] = useState(0);
+  const timer = useRef()
+  const curcount = custuseref(count)
+  const log = () => {
+    console.log(curcount.current)
+  }
+  const add = () => {
+    let num = count + 1
+    setCount(num)
+     
+  }
+  const callbk = useMemoizedFn(() => {
+    console.log('count:'+ count)
+  })
 
   return (
+
     <div>
-      <select
-        onChange={(e) => setUserId(e.target.value)}
-        value={userId}
-        style={{ marginBottom: 16, width: 120 }}
-      >
-        <option value="1">user 1</option>
-        <option value="2">user 2</option>
-        <option value="3">user 3</option>
-      </select>
-      <p>School: {loading ? 'Loading' : data}</p>
+     <Counter initialCount={10} />
+      count: {state.count}
+
+      <br />
+
+      <button onClick={() => dispatch({type: 'add'})}>增加 1</button>
+      <br />
+      <button onClick={() => dispatch({type: 'decrement'})}>减少1</button>
+      <br />
+      <button onClick={callbk}>usecallback</button>
     </div>
+
   );
+
 };
+ 
