@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext, createContext } from 'r
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { Form, Row, Col, Select, Input, Divider, Upload,Button } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
@@ -36,17 +36,17 @@ let Com = ({ form, coms }) => {
     return (
         <>
             <Form.Item label="倍率" name="factor" rules={[...rules,
-                {
-                    validator:(_,value)=>{
-                        if(!value){
-                            return Promise.resolve()
-                        }else if(parseInt(value)<0){
-                            return Promise.reject(new Error("请输入正整数"))   
-                        }else{
-                            return Promise.resolve()
-                        }
-                    }   
-                },]}>
+            {
+                validator: (_, value) => {
+                    if (!value) {
+                        return Promise.resolve()
+                    } else if (parseInt(value) < 0) {
+                        return Promise.reject(new Error("请输入正整数"))
+                    } else {
+                        return Promise.resolve()
+                    }
+                }
+            },]}>
                 <Input />
                 {/* 默认1 */}
             </Form.Item>
@@ -71,18 +71,20 @@ let Com = ({ form, coms }) => {
                         ></Select>
                     </Form.Item>
                     {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress" 
-                        rules={[{ required: true},{validator:(_,value)=>{
-                            if(!value){
-                                return Promise.resolve()
-                            }else{
-                                if(Number(value)<255&&Number(value)>0){
-                                     return Promise.resolve()
-                                }else{
-                                    return Promise.reject(new Error("通讯地址范围(0-255)"))
+                        isaddress ? <Form.Item label="通讯地址" name="commAddress"
+                            rules={[{ required: true }, {
+                                validator: (_, value) => {
+                                    if (!value) {
+                                        return Promise.resolve()
+                                    } else {
+                                        if (Number(value) < 255 && Number(value) > 0) {
+                                            return Promise.resolve()
+                                        } else {
+                                            return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                        }
+                                    }
                                 }
-                            }
-                        }}]}>
+                            }]}>
                             <Input placeholder='通讯地址范围(0-255)' />
                             {/* 默认1-255 */}
                         </Form.Item> : null
@@ -95,7 +97,7 @@ let Com = ({ form, coms }) => {
 //新增form表单组件
 export const FormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const rules = [{
@@ -120,11 +122,11 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 6
             }}
-            
+
         >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label={levelname.current} name="areaId" rules={rules}>
+                    <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
                                 fieldNames={{
@@ -132,8 +134,24 @@ export const FormComp = (props) => {
                                     value: 'id',
                                 }}
                                 options={area}
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 disabled
                             ></Select> : <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 fieldNames={{
                                     label: 'name',
                                     value: 'id',
@@ -149,7 +167,7 @@ export const FormComp = (props) => {
                         <Select
                             options={alarmopts}
                             fieldNames={{
-                                label:'name',
+                                label: 'name',
                                 value: 'id',
                             }}
                         ></Select>
@@ -164,6 +182,14 @@ export const FormComp = (props) => {
                 <Col flex={1}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.sn.includes(val)) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }}
                             fieldNames={{
                                 label: 'sn',
                                 value: 'id',
@@ -174,28 +200,29 @@ export const FormComp = (props) => {
                     </Form.Item>
                     <Form.Item label="设备型号" name="category" rules={rules}>
                         <Select
+                            showSearch
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={[...rules,{
-                        validator:(_,value)=>{
-                            if(!value){
+                    <Form.Item label="设备编号" name="sn" rules={[...rules, {
+                        validator: (_, value) => {
+                            if (!value) {
                                 return Promise.resolve()
-                            }else{
+                            } else {
                                 let val = value.trim()
-                                 
-                                if(val.split(" ").join("").length !==12){
+
+                                if (val.split(" ").join("").length !== 12) {
                                     return Promise.reject(new Error("设备编号长度12位"))
-                                }else{
+                                } else {
                                     return Promise.resolve()
                                 }
                             }
-                        }   
+                        }
                     }]}>
                         <Input />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
-                       <Input />
+                        <Input />
                     </Form.Item>
                     <Form.Item label="用能类型" name="customerType" rules={rules}>
                         <Select
@@ -218,11 +245,11 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={modalFormRef} {...other} footer={ [
+        <Modal mold='cust' ref={modalFormRef} {...other} footer={[
             <Button onClick={other.onAddCancel}>取消</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-        ] }>
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+        ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <FormComp >
             </FormComp>
@@ -233,11 +260,11 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} {...other} footer={ [
+        <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
             <Button onClick={other.onEditCancel}>取消</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-            <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-        ] }>
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+        ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
             <EditFormComp >
             </EditFormComp>
@@ -300,18 +327,20 @@ let EditCom = ({ form, coms }) => {
                         ></Select>
                     </Form.Item>
                     {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true},{validator:(_,value)=>{
-                            if(!value){
-                                return Promise.resolve()
-                            }else{
-                                if(Number(value)<255&&Number(value)>0){
-                                     return Promise.resolve()
-                                }else{
-                                    return Promise.reject(new Error("通讯地址范围(0-255)"))
+                        isaddress ? <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.resolve()
+                                } else {
+                                    if (Number(value) < 255 && Number(value) > 0) {
+                                        return Promise.resolve()
+                                    } else {
+                                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                    }
                                 }
                             }
-                        }}]}>
-                            <Input placeholder='通讯地址范围(0-255)'/>
+                        }]}>
+                            <Input placeholder='通讯地址范围(0-255)' />
                             {/* 默认1-255 */}
                         </Form.Item> : null
                     }
@@ -323,7 +352,7 @@ let EditCom = ({ form, coms }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
@@ -387,7 +416,7 @@ export const EditFormComp = (props) => {
                         <Select
                             options={alarmopts}
                             fieldNames={{
-                                label:'name',
+                                label: 'name',
                                 value: 'id',
                             }}
                         ></Select>
@@ -402,6 +431,14 @@ export const EditFormComp = (props) => {
                 <Col flex={1}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.sn.includes(val)) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }}
                             fieldNames={{
                                 label: 'sn',
                                 value: 'id',
@@ -412,25 +449,26 @@ export const EditFormComp = (props) => {
                     </Form.Item>
                     <Form.Item label="设备型号" name="category" rules={rules}>
                         <Select
+                            showSearch
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={[...rules,{
-                        validator:(_,value)=>{
-                            if(!value){
+                    <Form.Item label="设备编号" name="sn" rules={[...rules, {
+                        validator: (_, value) => {
+                            if (!value) {
                                 return Promise.resolve()
-                            }else{
+                            } else {
                                 let val = value.trim()
-                                 
-                                if(val.split(" ").join("").length !==12){
+
+                                if (val.split(" ").join("").length !== 12) {
                                     return Promise.reject(new Error("设备编号长度12位"))
-                                }else{
+                                } else {
                                     return Promise.resolve()
                                 }
                             }
-                        }   
+                        }
                     }]}>
-                        <Input placeholder='设备编号长度12为'/>
+                        <Input placeholder='设备编号长度12为' />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />

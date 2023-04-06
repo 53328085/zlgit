@@ -335,6 +335,7 @@ let AddModal = (props, ref) => {
         name="GatewayType"
         rules={[{ required: true, message: 'Please input your username!' }]}>
         <Select
+          showSearch
           style={{ width: 256 }}
           onChange={handleChange}
           fieldNames={{
@@ -342,6 +343,7 @@ let AddModal = (props, ref) => {
             value: 'category'
           }}
           options={selectOptions}
+          filterOption={true}
         />
       </Form.Item>
       <Form.Item

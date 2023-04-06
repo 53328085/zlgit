@@ -178,7 +178,19 @@ export default function Common({ type }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Form form={selform}>
                         <Form.Item name="area">
-                            <Select style={{ width: 264 }} options={areaOpts} fieldNames={{ label: 'name', value: 'id' }} onChange={changeSelection}></Select>
+                            <Select 
+                             showSearch
+                             filterOption={(val,opts)=>{
+                                if(opts.name.includes(val)){
+                                    return true
+                                }else{
+                                    return false
+                                }        
+                            }}
+                             style={{ width: 264 }} 
+                             options={areaOpts} 
+                             fieldNames={{ label: 'name', value: 'id' }} 
+                             onChange={changeSelection}></Select>
                         </Form.Item>
                     </Form>
                     {publish ? null : <div className={commonstyle.divBtn} onClick={addMainLine}>新增主线</div>}

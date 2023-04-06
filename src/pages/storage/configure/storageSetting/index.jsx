@@ -26,11 +26,13 @@ export default function Index() {
   const [form] = Form.useForm();
   const Item = Form.Item;
   const ispublish = useSelector(publishState);
+  const oneLevel = useSelector((state) => state.system.onelevel);
   //表格展示数据
   // const [dataSource, setDataSource] = useState([]);
   const dataSource = [
     {
       id: 1,
+      station: "测试园区",
       name: "站点名称1",
       address: "1号楼B2 储能室",
       type: "分布式储能",
@@ -41,6 +43,7 @@ export default function Index() {
     },
     {
       id: 2,
+      station: "园区3",
       name: "站点名称2",
       address: "3号楼B2 储能室",
       type: "分布式储能",
@@ -84,13 +87,28 @@ export default function Index() {
   //新增 修改 弹窗
   const [addModal, setAddModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  // 所属站点
-  const sectionList = useSelector(selectOneLevel);
-  const [defaultArea, setDefaultArea] = useState(
-    sectionList[0]?.id || undefined
-  );
+  //&所属园区
+  const areaList = useSelector(selectOneLevel);
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined);
   const changeArea = (value) => {
     setDefaultArea(value);
+  };
+  // 所属站点
+  const sectionList = [
+    {
+      id: 1,
+      name: "正泰物联杭州园区",
+    },
+    {
+      id: 2,
+      name: "正泰物联温州园区",
+    },
+  ];
+  const [defaultsection, setDefaultSection] = useState(
+    sectionList[0]?.id || undefined
+  );
+  const changeSection = (value) => {
+    setDefaultSection(value);
   };
   const [defaultNature, setDefaultNature] = useState(natureList[0].id);
   const changeNature = (value) => {
@@ -98,6 +116,12 @@ export default function Index() {
   };
   const columns = ispublish
     ? [
+        {
+          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
+          dataIndex: "station",
+          key: "station",
+          align: "center",
+        },
         {
           align: "center",
           title: "站点名称",
@@ -142,6 +166,12 @@ export default function Index() {
         },
       ]
     : [
+        {
+          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
+          dataIndex: "station",
+          key: "station",
+          align: "center",
+        },
         {
           align: "center",
           title: "站点名称",
@@ -224,10 +254,17 @@ export default function Index() {
     form.setFieldsValue(record);
   };
   //删除
-  const deleteRecord = (record) => {};
-  //删除告警类型确认
-  const deleteTypeOk = () => {};
-  const handleTypeDelete = () => {};
+  const deleteRecord = (record) => {
+    setDeleteTypeModal(true);
+  };
+  //删除站点确认
+  const deleteOk = () => {
+    setDeleteTypeModal(false);
+  };
+  //删除站点取消
+  const deleteCancel = () => {
+    setDeleteTypeModal(false);
+  };
   //新增 确认
   const addOk = () => {
     if (modalTitle === "新增站点") {
@@ -239,6 +276,7 @@ export default function Index() {
   //新增 取消
   const addCancel = () => {
     setAddModal(false);
+    setImageUrl();
   };
   const [fileList, setFileList] = useState([]); //文件列表
   const [imageUrl, setImageUrl] = useState(""); //上传的图片
@@ -249,10 +287,15 @@ export default function Index() {
   };
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
+      console.log(file);
       const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      if (file.status === "removed") {
+        setImageUrl();
+      } else {
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      }
     });
   // 上传文件之前的钩子，参数为上传的文件
   const beforeUpload = async (file) => {
@@ -271,7 +314,6 @@ export default function Index() {
 
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
   const handleCancel = () => {
-    setImageUrl();
     setPreviewOpen(false);
   };
   return (
@@ -302,8 +344,8 @@ export default function Index() {
         <Modal
           className={style.deleteModal}
           open={deleteTypeModal}
-          onOk={deleteTypeOk}
-          onCancel={handleTypeDelete}
+          onOk={deleteOk}
+          onCancel={deleteCancel}
           width={512}
           cancelText={"取消"}
           centered={true}
@@ -342,13 +384,36 @@ export default function Index() {
             labelCol={{ flex: "90px" }}
           >
             <Item
+              name="station"
+              label={
+                oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+              }
+              rules={[{ required: true }]}
+            >
+              <Select
+                key={defaultArea}
+                onChange={changeArea}
+                placeholder={
+                  oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+                }
+              >
+                {areaList.map((item) => {
+                  return (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Item>
+            <Item
               name="name"
               label="所属站点"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
-                key={defaultArea}
-                onChange={changeArea}
+                key={defaultsection}
+                onChange={changeSection}
                 placeholder="请选择所属站点"
               >
                 {sectionList.map((item) => {
@@ -388,7 +453,7 @@ export default function Index() {
             </Item>
             <Item
               name="nature"
-              label="所属站点"
+              label="投资性质"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
@@ -417,15 +482,7 @@ export default function Index() {
                 onPreview={handlePreview}
                 beforeUpload={beforeUpload}
               >
-                {imageUrl ? // <img
-                //   src={imageUrl}
-                //   alt="avatar"
-                //   style={{
-                //     width: "100%",
-                //     height: "100%",
-                //   }}
-                // />
-                null : (
+                {imageUrl ? null : (
                   <div>
                     <PlusOutlined />
                     <div

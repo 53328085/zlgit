@@ -11,7 +11,9 @@ import moment from 'moment'
 import { PieCharts, LineCharts } from './charts'
 import anaylse from './imgs/anaylse.svg'
 import {exportPDF} from './topdf.js'
-
+import imgurl from '@imgs/index'
+import ReactToPrint from 'react-to-print';
+import './index.less'
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   // const arealist = useSelector(state => state.system.onelevel)
@@ -21,6 +23,7 @@ export default function Index() {
   const [report, setReport] = useState()
   const [projectMes, setProjectMes] = useState([{ name: '项目名称', message: '', }, { name: '项目地址', message: '' }])  //项目情况
   const [elec, setElec] = useState([{ name: '最大电流发生时间', message: '', }, { name: '最大电流发生位置', message: '', }, { name: '最大电流值', message: '', }])  //电流监控  
+  const printRef =useRef()
   const [voltage, setVoltage] = useState([{
     name: '最大电压发生时间',
     message: '',
@@ -186,7 +189,7 @@ export default function Index() {
     }
   }
   useEffect(() => {
-
+    console.log(printRef)
   }, [])
   return (
     <div className={style.container}>
@@ -222,17 +225,24 @@ export default function Index() {
         <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate} />
         <Divider dashed style={{ borderColor: '#d7d7d7', margin: '48px 0' }} />
         <div className={style.btnscsss} onClick={makeReport}>
-          生成报告
+         <img src={imgurl.searchFile} alt="" style={{marginRight:8}}/> 生成报告
         </div>
-        <div className={style.btnscsss} >
-          打印报告
-        </div>
+        <ReactToPrint
+        trigger={()=>{return(<div className={style.btnscsss} >
+          <img src={imgurl.print} alt="" style={{marginRight:8}}/> 打印报告
+          </div>) }}
+        content={()=>printRef.current}>
+
+        </ReactToPrint>
+        {/* <div className={style.btnscsss} >
+        <img src={imgurl.print} alt="" style={{marginRight:8}}/> 打印报告
+        </div> */}
         <div className={style.btnscsss} onClick={()=>{exportPDF('pdf','pdfid')}}>
-          导出报告
+        <img src={imgurl.export} alt="" style={{marginRight:8}}/> 导出报告
         </div>
       </div>
       <div className={style.rightcss} >
-        <div id='pdfid'>
+        <div id='pdfid' ref={printRef}>
         <div className={style.report} style={{ marginBottom: isshow ? 24 : 0 }}>
           <div style={{ padding: 16 }}>
             <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
@@ -321,7 +331,7 @@ export default function Index() {
 
             </div>
           </PageComp>
-          <PageComp>
+          <PageComp >
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 68 }}>8.本周期用电安全监测综合分析</p>
               <div style={{

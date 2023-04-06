@@ -11,7 +11,7 @@ import icon4 from './imgs/icon4.png'
 import uppng from './imgs/up.png'
 import downpng from './imgs/down.png'
 import empty from './imgs/empty.png'
-export default function Energy({ showData, dateType }) {
+export default function Energy({ showData, dateType,showType }) {
   const { bg1class, bg2class, bg3class } = style
   let consumeTotal 
   let consumeDetail 
@@ -37,7 +37,7 @@ export default function Energy({ showData, dateType }) {
           <div className={`${style.bgclass}  ${index === 0 ? "" : index === 1 ? bg1class : index === 2 ? bg2class : bg3class}`}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: 4, height: 32, backgroundColor: '#237ae4' }}></div>
-              <div style={{ fontSize: 12, color: '#666' }}><span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>(吨标煤)</div>
+              <div style={{ fontSize: 12, color: '#666' }}><span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>{showType===1?'(吨标煤)':'(元)'}</div>
             </div>
           </div>
           <div className={style.textstyle} style={{ backgroundColor: index % 2 === 0 ? '#a0cede' : '#afdb92' }} >
@@ -46,25 +46,25 @@ export default function Energy({ showData, dateType }) {
               {it?.mom}
             </span>
             {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
-             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />
+             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
             <div>{dateType === 1 ? "昨日:" : dateType === 2 ? "上月:" : "上年:"}<span className={style.pdlf16}>{it?.lastMonthPeriodValue}</span></div>
             <div style={{ display: 'flex', alignItems: 'center' }}>同比:<span className={style.pdlf16}>{it?.yoy}</span>
             {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
-             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />
+             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-            <Charts consumeDetail={consumeDetail[index]} color={color[index]} />
+            <Charts consumeDetail={consumeDetail[index]} color={color[index]} showType={showType}/>
           </div>
         </div>))
       }
       {
         consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={style.piestyle}>
-          <Bluecolumn name="分类能耗占比" />
+          <Bluecolumn name={showType===1?"分类能耗占比" :"分类能耗费用占比"}/>
           <div style={{ width: 378, height: 360, marginTop: 16 }}>
             {proportion && proportion.length > 0 ? <PieCharts proportion={proportion}></PieCharts> : <img src={empty}></img>}
 
@@ -72,7 +72,7 @@ export default function Energy({ showData, dateType }) {
 
         </div>
         <div className={style.sorts}>
-          <Bluecolumn name={<span>分类能耗<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>(吨标煤)</span></span>} />
+          <Bluecolumn name={<span>{showType===1?'分类能耗':'分类能耗费用'}<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'(吨标煤)':'(元)'}</span></span>} />
           <Divider style={{ margin: "16px 0", borderColor: '#d7d7d7' }} dashed />
           <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             {

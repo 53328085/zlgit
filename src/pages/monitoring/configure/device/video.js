@@ -613,6 +613,14 @@ export const FormComp = (props) => {
         <Col flex={1} style={{ minHeight: 536 }}>
           <Form.Item label={levelname.current} name="areaId" rules={rules} >
             <Select
+             showSearch
+             filterOption={(val, opts) => {
+               if (opts.name.includes(val)) {
+                 return true
+               } else {
+                 return false
+               }
+             }}
               fieldNames={{
                 label: 'name',
                 value: 'id',
@@ -633,6 +641,7 @@ export const FormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="设备型号" name="category" rules={rules}>
             <Select
+              showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
@@ -767,6 +776,14 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             <Select
+             showSearch
+             filterOption={(val, opts) => {
+               if (opts.name.includes(val)) {
+                 return true
+               } else {
+                 return false
+               }
+             }}
               fieldNames={{
                 label: 'name',
                 value: 'id',
@@ -788,6 +805,7 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="设备型号" name="category" rules={rules}>
             <Select
+            showSearch
               options={devicelist}
             ></Select>
           </Form.Item>

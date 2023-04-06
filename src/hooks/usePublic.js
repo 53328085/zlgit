@@ -3,16 +3,8 @@ import {message} from 'antd'
 import {getOnelevel} from '@redux/systemconfig.js'
 import { useDispatch} from 'react-redux'
 import { Area } from "@api/api.js";
-export const custMsg = ({success=true, type='success', content='', duration=0.1, onClose= () => {}} = {}) => {   
-    if (!['success','error', 'warning'].includes(type)) return ;  
-     message[success ? 'success' : 'error']({
-        content,
-        duration,
-        onClose,
-       })
-}
 
-export function useWinSize(projectId, update) {    
+export function useOneLevel(projectId, update) {    
     const dispatch = useDispatch()
     const uplevel = async () => {
       try {

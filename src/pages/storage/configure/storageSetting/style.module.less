@@ -65,4 +65,37 @@
     margin-bottom: 32px;
   }
 }
+.deleteModal {
+  :global {
+    .ant-modal-footer {
+      border: none;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    }
+    .ant-modal-body {
+      padding: 32px;
+    }
+  }
+  .deleteHeader {
+    height: 32px;
+    border-left: 4px solid #ff4d4f;
+    font-size: 16px;
+    color: #ff4d4f;
+    line-height: 32px;
+    padding-left: 12px;
+  }
+  .deleteBody {
+    margin-top: 43px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+    .warnIcon {
+      width: 42px;
+      height: 42px;
+      margin-right: 12px;
+    }
+  }
+}
 

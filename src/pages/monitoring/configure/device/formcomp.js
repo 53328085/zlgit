@@ -21,7 +21,7 @@ let Com = ({ form, coms }) => {
     }
     return (
         <>
-            {form.getFieldValue('gatewayId') ?
+            {form?.getFieldValue('gatewayId') ?
                 <>
                     <Form.Item label="通讯端口" name="commPort" rules={rules}>
                         <Select
@@ -86,6 +86,14 @@ export const FormComp = (props) => {
                     <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 fieldNames={{
                                     label: 'name',
                                     value: 'id',
@@ -93,6 +101,14 @@ export const FormComp = (props) => {
                                 options={area}
                                 disabled
                             ></Select> : <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 fieldNames={{
                                     label: 'name',
                                     value: 'id',
@@ -108,7 +124,7 @@ export const FormComp = (props) => {
                         <Select
                             options={alarmopts}
                             fieldNames={{
-                                label:'name',
+                                label: 'name',
                                 value: 'id',
                             }}
                         ></Select>
@@ -123,6 +139,14 @@ export const FormComp = (props) => {
                 <Col flex={1}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.sn.includes(val)) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }}
                             fieldNames={{
                                 label: 'sn',
                                 value: 'id',
@@ -133,6 +157,7 @@ export const FormComp = (props) => {
                     </Form.Item>
                     <Form.Item label="设备型号" name="category" rules={rules}>
                         <Select
+                            showSearch
                             options={devicelist}
                         ></Select>
                     </Form.Item>
@@ -290,6 +315,14 @@ export const EditFormComp = (props) => {
                     <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 fieldNames={{
                                     label: 'name',
                                     value: 'id',
@@ -297,10 +330,19 @@ export const EditFormComp = (props) => {
                                 options={area}
                                 disabled
                             ></Select> : <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
                                 fieldNames={{
                                     label: 'name',
                                     value: 'id',
                                 }}
+                                disabled
                                 options={addopts}
                             ></Select>
                         }
@@ -312,7 +354,7 @@ export const EditFormComp = (props) => {
                         <Select
                             options={alarmopts}
                             fieldNames={{
-                                label:'name',
+                                label: 'name',
                                 value: 'id',
                             }}
                         ></Select>
@@ -327,6 +369,14 @@ export const EditFormComp = (props) => {
                 <Col flex={1}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.sn.includes(val)) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }}
                             fieldNames={{
                                 label: 'sn',
                                 value: 'id',
@@ -337,6 +387,7 @@ export const EditFormComp = (props) => {
                     </Form.Item>
                     <Form.Item label="设备型号" name="category" rules={rules}>
                         <Select
+                            showSearch
                             options={devicelist}
                         ></Select>
                     </Form.Item>

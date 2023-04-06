@@ -321,10 +321,10 @@ export class StorageOrderRuntime {
   static QueryStorageOrders = (areaId,status,type, params) => server.post(`/Storage/StorageOrderRuntime/QueryStorageOrders?areaId=${areaId}&runtimeStatus=${status}&type=${type}`, params);
 }
 
-// 储能管理设置--运行功率设置
-export class RuntimePowerSettingDesigner {
-  static QueryRuntimeSetting = (projectId, areaId) => server.get(`/Storage/RuntimePowerSettingDesigner/QueryRuntimeSetting?projectId=${projectId}&areaId=${areaId}`);
-  static UpdateP = ({projectId, id, p, q}={}) => server.get(`/Storage/RuntimePowerSettingDesigner/UpdateP?projectId=${projectId}&id=${id}&p=${p}&q=${q}`);
+// 储能管理设置--参数设置
+export class StorageParameterSetupDesigner {
+  static QuerySetup = (projectId, areaId) => server.get(`/Storage/StorageParameterSetupDesigner/QuerySetup?projectId=${projectId}&areaId=${areaId}`);
+  static Setup = ({projectId, params}={}) => server.post(`/Storage/StorageParameterSetupDesigner/Setup?projectId=${projectId}`, params);
   
 }
 
@@ -1200,7 +1200,11 @@ export const Monitoring = {
   //视频监控
   RuntimeCamera:{
     Statistics: (projectId,areaId) => server.get(`/Monitor/RuntimeCamera/Statistics?projectId=${projectId}&areaId=${areaId}`),//
+    GetYsRealPlayUrl: (cameraSn,channelNo,protocol,quality) => server.get(`/Monitor/RuntimeCamera/GetYsRealPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&protocol=${protocol}&quality=${quality}`),//
+    GetYsHisPlayUrl: (cameraSn,channelNo,quality,startTime,stopTime) => server.get(`/Monitor/RuntimeCamera/GetYsHisPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&quality=${quality}&startTime=${startTime}&stopTime=${stopTime}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
+    StartYsPtz: (data) => server.post(`/Monitor/RuntimeCamera/StartYsPtz`, data),//
+    StopYsPtz: (data) => server.post(`/Monitor/RuntimeCamera/StopYsPtz`, data),//
   },
   //系统日志
   RuntimeLog:{

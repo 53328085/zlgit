@@ -120,7 +120,7 @@ export default function Index() {
         </Form>
       </div>
       <div className={style.content}></div>
-      <Energy showData={showData} dateType={dateType} /> 
+      <Energy showData={showData} dateType={dateType} showType={showType}/> 
     </>
 
   )

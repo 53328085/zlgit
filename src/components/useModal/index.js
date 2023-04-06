@@ -1,5 +1,5 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
-import { Modal} from "antd";
+import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
@@ -9,8 +9,8 @@ import Useform from "./useform";
   initialValues: {},
   roletype: '',
   enable: false,
-},
- 
+  
+}, 
   type = "normal",
   mold = "form",
   children = null,  
@@ -107,14 +107,15 @@ import Useform from "./useform";
     onResetform,
     onGetvalue
   }))
+  
 
  
   return (
     <CModal      
       open={open}
       onCancel={close || onCancel}
-      closable={false}
-      centered    
+      closable={false}    
+      centered  
       {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={form} /> : ''}

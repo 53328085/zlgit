@@ -626,6 +626,14 @@ export const FormComp = (props) => {
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             {
               area.length > 0 ? <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -633,6 +641,14 @@ export const FormComp = (props) => {
                 options={area}
                 disabled
               ></Select> : <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -663,6 +679,7 @@ export const FormComp = (props) => {
         <Col flex={1}>
         <Form.Item label="变压器型号" name="category" rules={rules}>
             <Select
+            showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
@@ -674,6 +691,14 @@ export const FormComp = (props) => {
           </Form.Item>
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
+             showSearch
+             filterOption={(val, opts) => {
+               if (opts.sn?.includes(val)) {
+                 return true
+               } else {
+                 return false
+               }
+             }}
               fieldNames={{
                 label: 'sn',
                 value: 'id',
@@ -827,6 +852,14 @@ export const EditFormComp = (props) => {
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             {
               (area.length || isdisable) > 0 ? <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
@@ -834,11 +867,20 @@ export const EditFormComp = (props) => {
                 options={area}
                 disabled
               ></Select> : <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
                 fieldNames={{
                   label: 'name',
                   value: 'id',
                 }}
                 options={addopts}
+                disabled
               ></Select>
             }
           </Form.Item>
@@ -864,6 +906,7 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
         <Form.Item label="变压器型号" name="category" rules={rules}>
             <Select
+            showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
@@ -875,6 +918,14 @@ export const EditFormComp = (props) => {
           </Form.Item>
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
+             showSearch
+             filterOption={(val, opts) => {
+               if (opts.sn.includes(val)) {
+                 return true
+               } else {
+                 return false
+               }
+             }}
               fieldNames={{
                 label: 'sn',
                 value: 'id',
