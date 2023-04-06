@@ -324,7 +324,7 @@ export class StorageOrderRuntime {
 // 储能管理设置--参数设置
 export class StorageParameterSetupDesigner {
   static QuerySetup = (projectId, areaId) => server.get(`/Storage/StorageParameterSetupDesigner/QuerySetup?projectId=${projectId}&areaId=${areaId}`);
-  static Setup = ({projectId}={}) => server.post(`/Storage/StorageParameterSetupDesigner/Setup?projectId=${projectId}`);
+  static Setup = ({projectId, params}={}) => server.post(`/Storage/StorageParameterSetupDesigner/Setup?projectId=${projectId}`, params);
   
 }
 
