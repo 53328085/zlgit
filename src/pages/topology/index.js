@@ -30,7 +30,6 @@ export default function index() {
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
-    canvas.on('nodeRightClick',(e) => console.log(e))
     setNewCanvas(canvas)
     
   }, [])
