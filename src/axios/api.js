@@ -8,7 +8,7 @@ export class Test {
 // 登录
 export class Login {
   static SystemConfig = (url) =>
-    server.get(`/SystemConfig/GetSystemConfigInfo?url=${url}`);
+    server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
   static LoginByName = (data = {}) =>
     server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`); // 根据用户名登录
 

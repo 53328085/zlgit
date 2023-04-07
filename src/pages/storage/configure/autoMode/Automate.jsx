@@ -548,7 +548,7 @@ const getvalidate = (start, end, type, choosedate) => {
         let {enable, id} = curplan
         console.log(curplan)
         let status =  enable == 0 ? 1 :  0
-         let {success} = await  StorageAutoModeDesigner.UpdateEnable(projectId, areaId, id, status )
+         let {success, errMsg} = await  StorageAutoModeDesigner.UpdateEnable(projectId, areaId, id, status )
          if (success) {
             getPlans()
          } else {
@@ -652,12 +652,12 @@ const getvalidate = (start, end, type, choosedate) => {
             </div>
             <div className='topright'>
                 <div className='toprightup'>
-                { isView ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
+                { (isView && curplan?.id) ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
                         <Normalbt type="primary" onClick={changeview} ghost={isView}>策略设置</Normalbt>
-                        <Normalbt type="primary" ghost={!isView} onClick={changeview}>策略预览</Normalbt>
+                        <Normalbt type="primary" disabled={ !curplan?.id} ghost={!isView} onClick={changeview}>策略预览</Normalbt>
                     </Space>
                     <Space size={16}>
                         <Normalbt  danger onClick={showDel} disabled={disabled}>删除</Normalbt>
@@ -742,12 +742,16 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     const dateCellRender = useCallback((value) => {
 
         let time = moment(value).format('YYYY-MM-DD')
-        console.log(time)
+         
         let date = value.date()
+        let issome = moment(value).isSame(moment(), 'day')
         return (
-            <Datebox bg={datalist.includes(time) ? '#f0f9ff' : 'none'}>
+          datalist.includes(time) ?  <Datebox bg={issome && datalist.includes(time) ? '#f0f9ff' : 'none'}>
             <span >{date}日</span>
             <span className='el'>{name}</span>
+            </Datebox> : <Datebox bg='none'>
+            <span >{date}日</span>
+            <span className='el'>&nbsp;</span>
             </Datebox>
         )
     }, [name])
@@ -849,7 +853,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
                 ></Select>               
             </Item>
             
-            { (show!== 1 || executionCycle!=1) && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
+            { show!== 1  && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
                   {required: true},
             ]}>
                 <Checkbox.Group options={options}    /> 

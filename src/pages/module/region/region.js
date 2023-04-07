@@ -503,11 +503,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           parentIdGroup = [],
         } = data || {};
         let cols = [];
-        let index = header.findIndex(h => h == '备注')
+       // let index = header.findIndex(h => h == '备注')
         // if(index > -1) header.splice(index,1)
-        if(index > -1){
+       /*  if(index > -1){
           header.splice(index,'备注')
-        }
+        } */
         for (let k of header) {
           let col = {
             title: k,
