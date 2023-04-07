@@ -153,12 +153,11 @@ export default function Index() {
     DeletePlanAlarm(projectId, deleteId).then((res) => {
       if (res.success===true) {
         message.success("告警方案删除成功！");
-        getAlarmData();
-        // if(dataSource.length == 1 && pageNum > 1){
-        //   setPageNum(pageNum - 1)
-        // }else{
-        //   getAlarmData()
-        // }
+        if(dataSource.length == 1 && pageNum > 1){
+          setPageNum(pageNum - 1)
+        }else{
+          getAlarmData()
+        }
       } else {
         message.error(res.errMsg ? res.errMsg : "删除失败,请重试！");
       }
