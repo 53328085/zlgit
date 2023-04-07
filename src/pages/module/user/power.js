@@ -396,11 +396,13 @@ const reset = (record) => {
 
 
  // 重置密码 end
+
   useEffect(() => { 
    queryOperationManager()
    queryOperationManagers()
    queryProjectManager()
    queryProjectMaintenance() 
+ 
   }, [projectId])  
   const RenderItem = ({data}) => {
   return data.map((field, index) => (
@@ -599,22 +601,17 @@ const reset = (record) => {
          <p>账号： <Link>{username.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
      </CModal>
-     {/*   <Drawer open={menuopen} title="项目权限选择" width={608} closable={false} extra={<Button type="primary">保存</Button>}>
-       
-         <Table rowSelection={rowSelection} columns={columns} dataSource={menus} rowKey="no" pagination={false}></Table>
-       </Drawer> */}
-
-       
      
-
-
-
 
 
        <Menuset projectId={projectId} userId={userId} ref={dref} role={role}>
             
       </Menuset>
-      <Dataset projectId={projectId} userId={userId} ref={dpref} ></Dataset>
+      <Dataset projectId={projectId} userId={userId} ref={dpref} onupdate={queryProjectMaintenance}></Dataset>
+
+
+
+
     </Mainbox>
   );
 }

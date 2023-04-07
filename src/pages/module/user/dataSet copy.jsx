@@ -44,18 +44,20 @@ const Checkdiv = styled.div`
 `;
 
 function Index({ projectId, userId, onupdate }, ref) {
-  
+  console.log('userId', userId)
 /*   const [powerData, setTableData] = useState({
     area: [],
     energy: [],
     device: [],
    
   }); */
-
+  const [area, setArea] = useState([]);
+  const [energy, setEnergy] = useState([]);
+  const [device, setDevice] = useState([]);
   const mref = useRef();
 
   const onClose = () => {
-    mref.current.onCancel()
+    mref.current.onCancal();
   };
   const onOpen = () => {
     mref.current.onOpen();
@@ -65,22 +67,12 @@ function Index({ projectId, userId, onupdate }, ref) {
     onOpen,
   }));
   const MenuNos = {};
-  const info = {
-    area: '园区至少选择一项',
-    energy: '能耗至少选择一项',
-    device: '设备权限至少选择一项',
-  }
- 
   const saveMenu = async () => {
     console.log(MenuNos)
+   
     try {
     let finish = false
-   
     for(let [key, data] of Object.entries(MenuNos)) {
-      if(data?.length == 0) {
-        return custMsg({success: false, content: info[key]})
-       }
-
        let params = null
        if (key == 'area') {
           params = data
@@ -92,11 +84,9 @@ function Index({ projectId, userId, onupdate }, ref) {
        }
        let { success, errMsg } = await User[`SetDataRights${key}`]({ projectId, userId }, params);
        finish = success
-       !success && custMsg({success: false, content: errMsg || '数据出错'})
+       !success && custMsg({type: 'warning', content: errMsg || '数据出错'})
     }
-     
      if (finish) {
-      onClose()
       custMsg({content: '设置成功'})
       onupdate()
      } 
@@ -105,15 +95,63 @@ function Index({ projectId, userId, onupdate }, ref) {
     }
   };
 
- 
+  const dkeyname = {
+    meterEnable: "测点",
+    gatewayEnable: "网关",
+    cameraEnable: "摄像头",
+    sensorEnable: "传感器",
+  };
+  const ekeyname = {
+    coalEnabled: "煤炭",
+    electricEnabled: "电",
+    gasEnabled: "燃气",
+    oilEnabled: "燃油",
+    steamEnabled: "蒸汽",
+    waterColdEnabled: "冷水",
+    waterHotEnabled: "热水",
+  };
+  const getDataRights = () => {   
+    User.GetDataRights({ projectId, userId })
+      .then((res) => {
+        let { success, data } = res;
+        if (success && data) {
+          let { area, device, energy } = data || {};
+          let devicedata = [],
+            energydata = [];
+          for (let [key, value] of Object.entries(energy)) {
+            energydata.push({
+              name: ekeyname[key],
+              select: value,
+              id: key,
+            });
+          }
+          for (let [key, value] of Object.entries(device)) {
+            devicedata.push({
+              name: dkeyname[key],
+              select: value,
+              id: key,
+            });
+          }
+          setArea([...area])
+          setDevice([...devicedata])
+          setEnergy([...energydata]) 
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  useEffect(() => {
+    getDataRights();
+  }, [userId, projectId]);
 
   const CheckboxList = ({ data, mod, title }) => {
-   
     const [checkedList, setCheckedList] = useState(() =>
       data?.filter((d) => d.select == 1)?.map((d) => d.id)
     );
     const [allSelect] = useState(() => data.map((d) => d.id) || []);
-    const [indeterminate, setIndeterminate] = useState(data.find(i => i.select == 1));
+    const [indeterminate, setIndeterminate] = useState(data.find(i => i.select == 0));
     const [checkAll, setCheckAll] = useState(
       () => data.length === checkedList.length
     );
@@ -164,68 +202,10 @@ function Index({ projectId, userId, onupdate }, ref) {
   };
 
  const Maincheck = () => {
-  const [area, setArea] = useState([]);
-  const [energy, setEnergy] = useState([]);
-  const [device, setDevice] = useState([]);
-  const [loading, setLoading] = useState(true)
-  const dkeyname = {
-    meterEnable: "测点",
-    gatewayEnable: "网关",
-    cameraEnable: "摄像头",
-    sensorEnable: "传感器",
-  };
-  const ekeyname = {
-    coalEnabled: "煤炭",
-    electricEnabled: "电",
-    gasEnabled: "燃气",
-    oilEnabled: "燃油",
-    steamEnabled: "蒸汽",
-    waterColdEnabled: "冷水",
-    waterHotEnabled: "热水",
-  };
-  const getDataRights = () => {   
-    User.GetDataRights({ projectId, userId })
-      .then((res) => {
-        let { success, data } = res;
-        if (success && data) {
-          let { area, device, energy } = data || {};
-          let devicedata = [],
-            energydata = [];
-          for (let [key, value] of Object.entries(energy)) {
-            energydata.push({
-              name: ekeyname[key],
-              select: value,
-              id: key,
-            });
-          }
-          for (let [key, value] of Object.entries(device)) {
-            devicedata.push({
-              name: dkeyname[key],
-              select: value,
-              id: key,
-            });
-          }
-          setArea([...area])
-          setDevice([...devicedata])
-          setEnergy([...energydata]) 
-          setLoading(false)
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(() => {
-    getDataRights();
-    return () => {setLoading(true)}
-  }, [userId, projectId]);
-
-   return <div style={{minHeight: '432px'}}>
-  {loading ?  <Spin tip="Loading..." /> :  <><CheckboxList data={area} mod='area' key='area' title='园区' />
-    <CheckboxList data={energy} mod='energy' key='energy' title='能耗类型' />
-    <CheckboxList data={device} mod='device' key='device' title='设备' /> 
-    </>}
+   return <div>
+        <CheckboxList data={area} mod='area' key='area' title='园区' />
+     <CheckboxList data={energy} mod='energy' key='energy' title='能耗类型' />
+            <CheckboxList data={device} mod='device' key='device' title='设备' />
    </div>
 
 
@@ -235,7 +215,7 @@ function Index({ projectId, userId, onupdate }, ref) {
   return (
     <CModal
       mold="cust"
-      title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>数据权限</span>  <Button   type="primary" onClick={saveMenu} >保存 </Button></div>}
+      title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>数据权限</span>  <Button type="primary" onClick={saveMenu} >保存 </Button></div>}
       footer={false}
       ref={mref}
       width={832}

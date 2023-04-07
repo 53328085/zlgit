@@ -114,6 +114,9 @@ export default function Index() {
   const changeNature = (value) => {
     setDefaultNature(value);
   };
+  const ChangeTime = (value) => {
+    console.log(value);
+  };
   const columns = ispublish
     ? [
         {
@@ -245,7 +248,6 @@ export default function Index() {
     setAddModal(true);
   };
   //编辑
-
   const editRecord = (record) => {
     console.log(record);
     setModalTitle("编辑站点");
@@ -388,13 +390,18 @@ export default function Index() {
               label={
                 oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
               }
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: `请选择${oneLevel[0].levelName}` },
+              ]}
             >
               <Select
                 key={defaultArea}
+                defaultValue={defaultArea}
                 onChange={changeArea}
                 placeholder={
-                  oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+                  oneLevel[0]?.levelName
+                    ? `请选择${oneLevel[0].levelName}`
+                    : "园区名称"
                 }
               >
                 {areaList.map((item) => {
@@ -413,6 +420,7 @@ export default function Index() {
             >
               <Select
                 key={defaultsection}
+                defaultValue={defaultsection}
                 onChange={changeSection}
                 placeholder="请选择所属站点"
               >
@@ -449,7 +457,11 @@ export default function Index() {
                 },
               ]}
             >
-              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              <DatePicker
+                format="YYYY-MM-DD"
+                style={{ width: "100%" }}
+                onChange={ChangeTime}
+              />
             </Item>
             <Item
               name="nature"
@@ -458,6 +470,7 @@ export default function Index() {
             >
               <Select
                 key={defaultNature}
+                defaultValue={defaultNature}
                 onChange={changeNature}
                 placeholder="请选择投资性质"
               >

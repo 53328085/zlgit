@@ -11,18 +11,17 @@ import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
 import moment from 'moment';
 import { themeData } from './themeData'
-import {selectUser} from '@redux/user'
+import { selectUser } from '@redux/user'
 import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import {  leftControl, bottomControl, rightControl, topControl, stopControl,Monitoring} from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
 
 export default function Index() {
-  const { RuntimeCamera:{ Statistics, Overview } } = Monitoring
-  const {token} = useSelector(selectUser); 
+  const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
+  const { token } = useSelector(selectUser);
   // const {name, roleType} = useSelector(selectUser) || {};
-console.log(useSelector(selectUser))
   const projectId = useSelector(selectProjectId)
   const { Panel } = Collapse;
   const { Item } = Form
@@ -33,8 +32,10 @@ console.log(useSelector(selectUser))
   const [bigplay, setbigplay] = useState('')
   const [disabledendDate, setdisabledendDate] = useState(() => (current => current && current > moment().endOf('day')))
   const [startTime, setStartTime] = useState(null)
-  const [endTime, setEndTime] = useState(null)
-let [areaId,setAreaId]=useState('')
+  const [endTime, setEndTime] = useState(null)  
+  const [startTimeHistory, setStartTimeHistory] = useState(null)
+  const [endTimeHistory, setEndTimeHistory] = useState(null)
+  let [areaId, setAreaId] = useState('')
   const [cameraTitle, setCameraTitle] = useState('')
   const [wsType, setwsType] = useState('');
   const [wsUrl, setWsUrl] = useState('');
@@ -53,9 +54,9 @@ let [areaId,setAreaId]=useState('')
   const buttonstyle = {
     width: '120px',
   }
-  let [statistics,setStatistics]=useState({cameraCount:'',localCameras:'',onlineCameras:''})
-  const getStatistics=()=>{
-    return Statistics(projectId,areaId).then((res)=>{
+  let [statistics, setStatistics] = useState({ cameraCount: '', localCameras: '', onlineCameras: '' })
+  const getStatistics = () => {
+    return Statistics(projectId, areaId).then((res) => {
       let { success, data } = res
       if (success && data) {
         setStatistics(data)
@@ -64,19 +65,41 @@ let [areaId,setAreaId]=useState('')
       }
     })
   }//监控数量
-  let [pageNum,setpageNum]=useState(1)
+  let [pageNum, setpageNum] = useState(1)
   let inputValue = ''
-  let params={
-    pageNum:pageNum,
-    pageSize:10,
-    projectId:projectId,
-    areaId:areaId,
-    alike:''
+  let params = {
+    pageNum: pageNum,
+    pageSize: 10,
+    projectId: projectId,
+    areaId: areaId,
+    alike: ''
   }
-  let [overView,setoverView]=useState()
-  let [total,settotal]=useState(0)
-  const getOverview=()=>{
-    return Overview(params).then((res)=>{
+  let [overView, setoverView] = useState()
+  let [realPlayUrl, setrealPlayUrl] = useState()
+  let [total, settotal] = useState(0)
+  const getYsRealPlayUrl = record => {
+    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality).then((res) => {
+      let { success, data } = res
+      if (success && data) {
+        setrealPlayUrl(data)
+        console.log(realPlayUrl)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }//云监控token、URL
+  const getYsHisPlayUrl = (start,end) => {
+    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality,start,end).then((res) => {
+      let { success, data } = res
+      if (success && data) {
+        setrealPlayUrl(data)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }//云监控回放
+  const getOverview = () => {
+    return Overview(params).then((res) => {
       let { success, data } = res
       if (success && data) {
         setoverView(data)
@@ -85,7 +108,7 @@ let [areaId,setAreaId]=useState('')
         message.error(res.errMsg)
       }
     })
-  }//表格数据
+  }//云监控
   const onChangeValue = e => {
     inputValue = e.target.value
   }//输入框改变值
@@ -100,33 +123,38 @@ let [areaId,setAreaId]=useState('')
 
   const changestartdate = (date, dateString) => {
     setStartTime(date)
+    setStartTimeHistory(dateString)
     setdisabledendDate(() => (current => (current < date || current > moment().endOf('day'))))
   }
   const changeEndDate = (date, dateString) => {
     setEndTime(date);
+    setEndTimeHistory(dateString)
   }
-  //打开视频监控弹窗
+  //打开视频监控弹窗yun
   const showModal = () => {
-     setisModal(true)
+    setisModal(true)
+
     //setLocalModal(true)
     // play.stop()
     let player
-    setTimeout(() => {
-      player = new EZUIKit.EZUIKitPlayer({
-        id: 'replay',
-        accessToken: token,
-        url: "ezopen://open.ys7.com/203751922/1.live",
-        width: 1280,
-        height: 717,
-        themeData: themeData,
-      })
-      setbigplay(player)
-    }, 0)
+    if(realPlayUrl){
+      setTimeout(() => {
+        player = new EZUIKit.EZUIKitPlayer({
+          id: 'replay',
+          accessToken: realPlayUrl?.token,//
+          url: realPlayUrl?.url,
+          width: 1280,
+          height: 717,
+          themeData: themeData,
+        })
+        setbigplay(player)
+      }, 0)
+    }
   }
   //关闭视频监控弹窗
   const handleCancel = () => {
-     setisModal(false)
-  //  setLocalModal(false)
+    setisModal(false)
+    //  setLocalModal(false)
     bigplay.stop()
     // play.play()
   }
@@ -156,26 +184,27 @@ let [areaId,setAreaId]=useState('')
       title: '监控设备编号',
       dataIndex: 'sn',
       align: 'center',
-      key:'sn'
+      key: 'sn'
     }, {
       title: '监控设备名称',
       dataIndex: 'name',
       align: 'center',
-      key:'sn'
+      key: 'sn'
     }, {
       title: '安装地址',
       dataIndex: 'address',
       align: 'center',
-      key:'sn'
+      key: 'sn'
     }, {
       title: '监控类型',
       dataIndex: 'accessMode',
+      render: (text) => (<span>{text == 1 ? '云监控' : '本地监控'}</span>),
       align: 'center',
-      key:'sn'
+      key: 'sn'
     }, {
       title: '查看监控',
       align: 'center',
-      key:'sn',
+      key: 'sn',
       render: (_, record) => (
         <Space size='middle'>
           <div className={style.playButton} onClick={() => showCameraDialog(record)}>
@@ -202,11 +231,11 @@ let [areaId,setAreaId]=useState('')
 
     // setwebsocket(new WebSocket(url));
     let ws = new WebSocket(url);
+    console.log(ws)
     ws.binaryType = 'arraybuffer';
-    ws.addEventListener('open', function (event) { });
+    ws.addEventListener('open', function (event) {  });
     ws.addEventListener('message', function (event) {
       let data = new Uint8Array(event.data);
-      console.log(data)
       if (data.length == 1) {
         ws.close();
         if (data[0] == 1) {
@@ -223,20 +252,19 @@ let [areaId,setAreaId]=useState('')
       }
     });
   }
-const [recordData,setrecordData]=useState()
+  const [recordData, setrecordData] = useState()
   const showCameraDialog = (record) => {
-    console.log(record)
     setrecordData(record)
-    //message.error('暂未开通')
-    if (record.accessMode == '云监控') {
+    if (record.accessMode == 1) {
       showModal()
+      getYsRealPlayUrl(record)
     } else {
-      if (record.accessMode == '本地监控') {
+      if (record.accessMode == 2) {
         setLocalModal(true);
-        setCameraTitle(record.name)
+        setCameraTitle(record.address)
         // setwsType('h264')
-        setWsUrl('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
-        chooseType('ws://10.5.7.60:8888/video?ip=10.5.107.8&type=real&user=admin&pwd=chint_2022&channel=2');
+        setWsUrl('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
+        chooseType('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
       }
     }
   }
@@ -247,44 +275,46 @@ const [recordData,setrecordData]=useState()
   const changeControl = (value) => {
     if (value == 'left') {
       setChangeType('leftControl');
-      leftControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+      leftControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
         if (res.success) {
           return;
-        } else { }
+        } else {
+          message.error(res.errMsg)
+        }
       })
     }
     if (value == 'right') {
       setChangeType('rightControl');
-      rightControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+      rightControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
         if (res.success) {
           return;
-        } else { }
+        } else { message.error(res.errMsg) }
       })
     }
     if (value == 'top') {
       setChangeType('topControl');
-      topControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+      topControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
         if (res.success) {
           return;
-        } else { }
+        } else { message.error(res.errMsg) }
       })
     }
     if (value == 'bottom') {
       setChangeType('bottomControl');
-      bottomControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+      bottomControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
         if (res.success) {
           return;
-        } else { }
+        } else { message.error(res.errMsg) }
       })
     }
   }
 
   const cancelControl = () => {
     setChangeType('');
-    stopControl({}, '10.5.7.60:8888', '10.5.107.8', 2, 'admin', 'chint_2022').then(res => {
+    stopControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
       if (res.success) {
         return;
-      } else { }
+      } else { message.error(res.errMsg) }
     })
   }
 
@@ -331,6 +361,10 @@ const [recordData,setrecordData]=useState()
   const changeActive = () => {
     setActiveCollapse([]);
   }
+  let [quality,setquality]=useState(2)
+  const changeWatchS=val=>{
+    setquality(val.target.value)
+  }
   const changeKey = (key) => {
     setActiveCollapse(key);
   }
@@ -343,7 +377,7 @@ const [recordData,setrecordData]=useState()
     if (wsType == 'h264') {
       wsocket.close();
     } else {
-     // closeWeb();
+      // closeWeb();
     }
     let start = changeUTC(startTime);
     let end = changeUTC(endTime);
@@ -359,12 +393,18 @@ const [recordData,setrecordData]=useState()
         div.setAttribute('id', 'glplayer');
         playerContainer.appendChild(div);
       }
-      let backURL = 'ws://10.5.7.60:8888/video?ip=10.5.107.8&type=track&user=admin&pwd=chint_2022&&channel=1&startTime=' + start + '&endTime=' + end;
+      let backURL = 'ws://' + recordData.serverAddress + ':' + recordData.port + '/video?ip=' + recordData.ip + '&type=track&user=' + recordData.account + '&pwd=' + recordData.pwd + '&channel=' + recordData.channel + '&startTime=' + start + '&endTime=' + end;
       setWsUrl(backURL);
       chooseType(backURL);
     }, 1000)
   }
-
+const playBackYun=()=>{
+  if (!startTime || !endTime) {
+    message.error('请选择正确的时间段！');
+    return;
+  }
+  getYsHisPlayUrl(startTimeHistory,endTimeHistory)
+}
   const changeUTC = (time) => {
     let date = new Date(time);
     let year = date.getFullYear().toString();
@@ -395,30 +435,30 @@ const [recordData,setrecordData]=useState()
   }
   const getFromChild = data => {
     console.log(data.areaId)//园区id
-     if(data.areaId==undefined){
+    if (data.areaId == undefined) {
       return
-     }else{
+    } else {
       setAreaId(data.areaId)
-     }
+    }
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
-    if(areaId){
+    if (areaId) {
       getStatistics()
     }
-   },[projectId,areaId])
-   useEffect(() => {
-    if(areaId){
+  }, [projectId, areaId])
+  useEffect(() => {
+    if (areaId) {
       getOverview()
     }
-   },[projectId,areaId,params.alike,params.pageNum])
+  }, [projectId, areaId, params.alike, params.pageNum])
   return (
     <div className={style.video}>
       <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div id='cameraData' className={style.cameraData}>
-        <CameraValue img={totalCamera} title={'监控总数'} value={statistics.cameraCount?statistics.cameraCount:'0'}></CameraValue>
-        <CameraValue img={cloudCamera} title={'云监控'} value={statistics.onlineCameras?statistics.onlineCameras:'0'}></CameraValue>
-        <CameraValue img={localCamera} title={'本地监控'} value={statistics.localCameras?statistics.localCameras:'0'}></CameraValue>
+        <CameraValue img={totalCamera} title={'监控总数'} value={statistics.cameraCount ? statistics.cameraCount : '0'}></CameraValue>
+        <CameraValue img={cloudCamera} title={'云监控'} value={statistics.onlineCameras ? statistics.onlineCameras : '0'}></CameraValue>
+        <CameraValue img={localCamera} title={'本地监控'} value={statistics.localCameras ? statistics.localCameras : '0'}></CameraValue>
       </div>
       {/* <div className={style.container}>
         <VideoList showModal={showModal} setplay={setplay}/>
@@ -427,7 +467,7 @@ const [recordData,setrecordData]=useState()
         <div className={style.contentTitle}>
           <span>设备查询</span>
           <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>
-          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }}  onClick={() => { onSearchList() }}>查询</Button>
+          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }} onClick={() => { onSearchList() }}>查询</Button>
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         <div className={style.tableList}>
@@ -455,8 +495,10 @@ const [recordData,setrecordData]=useState()
             </div>
             <div style={{ marginTop: 32 }}>
               <Collapse
+                onChange={changeKey}
                 defaultActiveKey={['1']}
                 ghost
+                activeKey={activeCollapse}
                 expandIconPosition="end">
                 <Panel header={<BlueColumn name="视频回放" styled={{ fontSize: 16 }} />} key="1">
                   <Form form={form} >
@@ -477,20 +519,21 @@ const [recordData,setrecordData]=useState()
                         showTime
                         placeholder="结束时间"
                         className={style.wd100}
+                        onChange={changeEndDate}
                         disabledDate={disabledendDate}></DatePicker>
                     </Item>
                     <Item>
-                      <Radio.Group defaultValue="a" buttonStyle="solid" className={style.wd100}>
-                        <Radio.Button value="a" style={tags}>标清</Radio.Button>
-                        <Radio.Button value="b" style={tags}>高清</Radio.Button>
+                      <Radio.Group defaultValue="2" buttonStyle="solid" className={style.wd100} onChange={changeWatchS}>
+                        <Radio.Button value="2" style={tags}>标清</Radio.Button>
+                        <Radio.Button value="1" style={tags}>高清</Radio.Button>
                       </Radio.Group>
                     </Item>
                     <Item>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button htmlType="button" style={buttonstyle}>
+                        <Button htmlType="button" style={buttonstyle} onClick={() => changeActive()}>
                           返回
                         </Button>
-                        <Button htmlType="button" style={{ ...buttonstyle, display: 'inlineBlock', marginLeft: 'auto', marginRight: 0 }}>
+                        <Button htmlType="button" onClick={()=>{playBackYun()}} style={{ ...buttonstyle, display: 'inlineBlock', marginLeft: 'auto', marginRight: 0 }}>
                           回放
                         </Button>
                       </div>

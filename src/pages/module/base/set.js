@@ -18,7 +18,7 @@ import moment from 'moment';
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
 import Cupload from "@com/useUpload.js" 
-
+import Titlelayout from '@com/titlelayout'
 import {useSelector} from "react-redux";
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
 import {publishState} from '@redux/systemconfig' // 布尔值 发布状态 
@@ -32,6 +32,9 @@ import {publishState} from '@redux/systemconfig' // 布尔值 发布状态
   gap: 16px 128px;
   grid-auto-flow: column;
   justify-content: space-between;
+  padding-top: 32px;
+    margin-top: 16px;
+    border-top: 1px dotted #d7d7d7;
   .ant-form-item {
     margin-bottom: 0px;
   }
@@ -248,41 +251,6 @@ export default function ProjectSet({projectId}) {
   const { Item } = Form;
   const { TextArea } = Input;
 
-/* 
-address: "滨江",
-appEnabled: 0, //app是否启用
-bigScreenUrl: ""， // 数据大屏
-carbonEnabled: 0, 碳排管理
-coalEnabled: 0, // 煤炭
-createTime: "2023-02-06 19:24:34"
-dataCockpitEnabled: 0, //数字驾驶创
-distributionEnabled: 0, // 配电监控
-electricEnabled: 0, // 电
-energyEnabled: 0, //能源管理
-gasEnabled:0, 燃气
-id: 2，
-imgLogo: ""， // 项目LOGO
-imgProject: "", // 项目图片
-lat: 0
-lng: 0
-maintenanceEnabled: 0, // 运维管理
-name: "测试项目2"
-oilEnabled: 0, // 燃油
-prepayEnabled: 0, //结算收费
-remark: "测试2"
-safeEnabled: 0, // 电气安全
-solarEnabled: 0, // 光伏发电
-state: 0
-steamEnabled: 0, // 蒸汽
-storageEnabled: 0, // 储能管理
-updateTime: "2023-02-06 19:24:34"
-validStageTime: "2023-02-02 00:00:00"  // 有限期
-waterColdEnabled: 0, // 冷水
-waterHotEnabled: 0, // 热水
-
-ShiftEnabled: 0, // 班次管理
- */
-
  const [lngLat, setLngLat] = useState()
 
   const params = {   
@@ -408,6 +376,7 @@ useEffect(() => {
 }, [projectId])
 
   return (
+    <Titlelayout title="基础设置">
     <Formbox
       form={form}   
       labelAlign="left"
@@ -510,7 +479,7 @@ useEffect(() => {
                 validator: checkProject,
               },
             ]}>
-            <Cupload wpx={248} hpx={168} swpx={220} shpx={114} isDel={ispublish} /> 
+            <Cupload wpx={248} hpx={168} swpx={200} shpx={114} isDel={ispublish} /> 
             </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
@@ -555,5 +524,6 @@ useEffect(() => {
          <Button type="primary" htmlType="submit">保存</Button>
       </div>
     </Formbox>
+    </Titlelayout>
   );
 }
