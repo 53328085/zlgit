@@ -443,6 +443,11 @@ let errcolumns=[
             }
           }, 3000 * i)
         }
+      }else{
+        setSpinShow(false)
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes(data.message)
+        setisSuccess(false)
       }
     } else {
       message.error(res.errMsg)
