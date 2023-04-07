@@ -182,6 +182,7 @@ export default function Index() {
         setbrakeResult(true)
         setisComplate(true)
         setbrake(false)
+        setbrakeC(false)
         setchangeBtnType(type)
         console.log(changeBtnType)
     }
@@ -407,9 +408,12 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                                             dataSourceRead[i].state = items.errorMessage ? items.errorMessage : '操作失败'
                                                         }
                                                     }
+                                                    console.log(dataSourceRead)
                                                     if (newsnList.length == 0 && i == res.data.length - 1) {
                                                         status = false
                                                         changeDisabled()
+                                                        resolve(dataSourceRead)
+                                                        Remote.SetResult(setResultInfoList).then((res) => { })
                                                     }
                                                 }
                                             })
@@ -478,6 +482,7 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
     useEffect(() => {
         if (snList && snList.length > 0) {
             getOpera().then(res => {
+                console.log(res)
                 const a = JSON.parse(JSON.stringify(res))
                 setDataSourceRead(a)
             })
