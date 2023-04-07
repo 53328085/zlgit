@@ -1,92 +1,167 @@
-import React, { useState, useEffect, useRef, useCallback, useEvent, useReducer } from "react";
-import { useLatest, useMemoizedFn } from 'ahooks';
+import { useReducer, useState } from 'react';
  
-const custuseref = (value) => {
-  const ref = useRef()
-  ref.current = value
-  return ref
-
-}
-const initialState = {count: 0}; // 数据创库
-
-function reducer(state, action) {
-  switch(action.type) {
-    case 'add':
-      return {...state, count: state.count + 1}
-    case 'decrement':
-      return {...state, count: state.count - 1}
-    default:
-      throw new Error()
-  }
-}
-
-
-function init(initialCount) {
-  return {count: initialCount};
-}
-
-function reducers(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return {count: state.count + 1};
-    case 'decrement':
-      return {count: state.count - 1};
-    case 'reset':
-      return init(action.payload);
-    default:
-      throw new Error();
-  }
-}
-
-function Counter({initialCount}) {
-  const [state, dispatch] = useReducer(reducers, initialCount, init);
+const AddTask= ({ onAddTask }) => {
+  const [text, setText] = useState('');
   return (
     <>
-      Count: {state.count}
-      <button
-        onClick={() => dispatch({type: 'reset', payload: initialCount})}>
-        Reset
+      <input
+        placeholder="Add task"
+        value={text}
+        onChange={e => setText(e.target.value)}
+      />
+      <button onClick={() => {
+        setText('');
+        onAddTask(text);
+      }}>Add</button>
+    </>
+  )
+}
+
+
+const TaskList = ({
+  tasks,
+  onChangeTask,
+  onDeleteTask
+}) => {
+  return (
+    <ul>
+      {tasks.map(task => (
+        <li key={task.id}>
+          <Task
+            task={task}
+            onChange={onChangeTask}
+            onDelete={onDeleteTask}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Task({ task, onChange, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  let taskContent;
+  if (isEditing) {
+    taskContent = (
+      <>
+        <input
+          value={task.text}
+          onChange={e => {
+            onChange({
+              ...task,
+              text: e.target.value
+            });
+          }} />
+        <button onClick={() => setIsEditing(false)}>
+          Save
+        </button>
+      </>
+    );
+  } else {
+    taskContent = (
+      <>
+        {task.text}
+        <button onClick={() => setIsEditing(true)}>
+          Edit
+        </button>
+      </>
+    );
+  }
+  return (
+    <label>
+      <input
+        type="checkbox"
+        checked={task.done}
+        onChange={e => {
+          onChange({
+            ...task,
+            done: e.target.checked
+          });
+        }}
+      />
+      {taskContent}
+      <button onClick={() => onDelete(task.id)}>
+        Delete
       </button>
-      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
-      <button onClick={() => dispatch({type: 'increment'})}>+</button>
+    </label>
+  );
+}
+
+export default function TaskApp() {
+  const [tasks, dispatch] = useReducer(
+    tasksReducer,
+    initialTasks
+  );
+ console.log(tasks)
+  function handleAddTask(text) {
+    dispatch({
+      type: 'added',
+      id: nextId++,
+      text: text,
+    });
+  }
+
+  function handleChangeTask(task) {
+    dispatch({
+      type: 'changed',
+      task: task
+    });
+  }
+
+  function handleDeleteTask(taskId) {
+    dispatch({
+      type: 'deleted',
+      id: taskId
+    });
+  }
+
+  return (
+    <>
+      <h1>Day off in Kyoto</h1>
+      <AddTask
+        onAddTask={handleAddTask}
+      />
+      <TaskList
+        tasks={tasks}
+        onChangeTask={handleChangeTask}
+        onDeleteTask={handleDeleteTask}
+      />
     </>
   );
 }
 
-
-export default () => {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const [count, setCount] = useState(0);
-  const timer = useRef()
-  const curcount = custuseref(count)
-  const log = () => {
-    console.log(curcount.current)
+function tasksReducer(tasks, action) { // 创库 ， action 数据
+  console.log(tasks)
+  console.log(action)
+  switch (action.type) {
+    case 'added': {
+      return [...tasks, {
+        id: action.id,
+        text: action.text,
+        done: false
+      }];
+    }
+    case 'changed': {
+      return tasks.map(t => {
+        if (t.id === action.task.id) {
+          return action.task;
+        } else {
+          return t;
+        }
+      });
+    }
+    case 'deleted': {
+      return tasks.filter(t => t.id !== action.id);
+    }
+    default: {
+      throw Error('Unknown action: ' + action.type);
+    }
   }
-  const add = () => {
-    let num = count + 1
-    setCount(num)
-     
-  }
-  const callbk = useMemoizedFn(() => {
-    console.log('count:'+ count)
-  })
+}
 
-  return (
-
-    <div>
-     <Counter initialCount={10} />
-      count: {state.count}
-
-      <br />
-
-      <button onClick={() => dispatch({type: 'add'})}>增加 1</button>
-      <br />
-      <button onClick={() => dispatch({type: 'decrement'})}>减少1</button>
-      <br />
-      <button onClick={callbk}>usecallback</button>
-    </div>
-
-  );
-
-};
- 
+let nextId = 3;
+const initialTasks = [
+  { id: 0, text: 'Philosopher’s Path', done: true },
+  { id: 1, text: 'Visit the temple', done: false },
+  { id: 2, text: 'Drink matcha', done: false }
+];

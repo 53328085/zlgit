@@ -239,6 +239,7 @@ const Viewbox = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
+        line-height: 2;
        }
     }
 `
@@ -717,7 +718,8 @@ const getvalidate = (start, end, type, choosedate) => {
 
 
 const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机
-    let {name, strategyName, priority, pcsName, startDate, endDate, dateChoose} = data
+    console.log(data)
+    let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
 
     const getminutes = (end, start) => moment(end, 'hh:mm').diff(moment(start, 'hh:mm'), 'minutes')   
@@ -736,8 +738,8 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     } */
     const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
    
-    const datalist = useMemo(() =>  getvalidate(startDate, endDate, priority, dateChoose) 
-     , [priority, startDate, endDate, dateChoose])
+    const datalist = useMemo(() =>  getvalidate(startDate, endDate, executionCycle, dateChoose) 
+     , [executionCycle, startDate, endDate, dateChoose])
      console.log(datalist)
     const dateCellRender = useCallback((value) => {
 
@@ -777,7 +779,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                         <div className='num'>
                             {hours.map(i => <span>{i}</span>)}
                         </div>
-                        <div className='dstrategy' style={{flex: 1, overflow: 'auto'}}>
+                        <div className='dstrategy' style={{height: '208px', overflow: 'auto'}}>
                              {
                                 strategyDetail.map(s => <div className='dsitme'>
                                     <span>{s.start}-{s.end}</span>
@@ -806,7 +808,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
 const Strategy = ({data,   form, disabled, executionCycle}) => {
    
   
-   const [show, setShow] = useState(1)
+   const [show, setShow] = useState(executionCycle)
   const [options, setOptions] = useState(week)   
  
    const onChange = (e) => {
@@ -853,7 +855,8 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
                 ></Select>               
             </Item>
             
-            { show!== 1  && <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
+            { show!== 1  && 
+            <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
                   {required: true},
             ]}>
                 <Checkbox.Group options={options}    /> 

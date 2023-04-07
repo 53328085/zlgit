@@ -62,7 +62,11 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
  
  const onNewFiled = async () => {  // 新增字段
    try {
-     const params = {...ffrom.getFieldsValue(), projectId, level}
+    let values = ffrom.validateFields().then(res => res).catch(e => {
+      console.log(e)
+    })
+    if(!values) return
+     const params = {...values, projectId, level}
      let {success, errMsg} = await InsertAreaLevelField(params)
      if(!success) return message.warning(errMsg || '数据出错')
      success && ref.current.onCancel()
@@ -103,10 +107,14 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
          <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
          <CModal title="新增字段" ref={ref}  mold="cust" width={512} okText="保存" onOk={onNewFiled}>
               <Form name="modalform" form={ffrom}  preserve={false}>
-                  <Item name="name" label="字段名称">
+                  <Item name="name" label="字段名称" rules={[{
+                    required: true
+                  }]}>
                       <Input/>
                   </Item>
-                  <Item name="type" label="字段用户">
+                  <Item name="type" label="字段用户" rules={[{
+                    required: true
+                  }]}>
                        <Select>
                           <Select.Option value={0}>无</Select.Option>
                           <Select.Option value={1}>经纬度</Select.Option>
@@ -364,7 +372,7 @@ const Add =React.forwardRef(({form,title, onOk, CModal, onCancel, newlevel}, ref
      </Space>)
 
   return  <CModal title={title} ref={ref}  mold="cust" width={512} okText="保存"   footer={CustFooter}>
-   <Form name="modalform" form={form} initialValues={{
+   <Form name="modalform"   form={form} initialValues={{
     type: 0
    }} preserve={false}>
        <Item name="name" label="区域名称" rules={[{required: true, message: '区域名称必须'}]}>
