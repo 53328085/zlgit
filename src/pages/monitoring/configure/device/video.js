@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Form, Row, Col, Select, Input, Divider, message,Button } from 'antd'
 import Comp from './comp'
@@ -58,7 +58,6 @@ export default function gateway({ deviceStyle }) {
   const levelname =useRef("")
   let delid;
   let flies;
-  let tag=false;
   let edittag=false
   const optcss = {
     color: '#237ae4',
@@ -223,7 +222,7 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateCamera(params)
       if (resp.success) {
         message.success("更新成功")
-        edittag=true
+        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
         
        
       } else {
@@ -232,9 +231,7 @@ export default function gateway({ deviceStyle }) {
     })
   }
   const  editCancel=()=>{
-    if(edittag){
-      getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+
     EditModalFormRef?.current?.onCancel()
   }
   //打开删除窗口
@@ -359,8 +356,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddCamera(params)
       if (res.success) {
         message.success('新增成功!')
-        tag=true
-       
+        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
        
       } else {
         message.error(res.errMsg)
@@ -368,9 +364,7 @@ export default function gateway({ deviceStyle }) {
     })
   }
   const addCancel=()=>{
-    if(tag){
-      getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+
     modalFormRef?.current?.onCancel()
   }
   //打开批量导入窗口
@@ -563,21 +557,37 @@ export default function gateway({ deviceStyle }) {
     ref:errlistRef,
     onOk:()=>{ErrModalRef.current.onCancel()}
   }
-
+  const AddModalComp=useMemo(()=>{
+    return (
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
+        <AddModalForm {...ModalFormProps} >
+        </AddModalForm>
+      </MyContext.Provider>
+    )
+  },[addopts, gatewaylist, devicelist, alarmopts])
+  const EditFormComp=useMemo(()=>{
+    return  (
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+        <EditModalForm {...EditModalFormProps}></EditModalForm>
+      </MyContext.Provider>
+    )
+},[addopts, gatewaylist, devicelist, alarmopts])
   return (
     <div>
       <Comp {...ComProps}>
         <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage } ref={tableLoadRef}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
+      {AddModalComp}
+      {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除视频监控？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+      {EditFormComp}
+      {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )

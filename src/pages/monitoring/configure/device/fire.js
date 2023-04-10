@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext,useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
@@ -54,8 +54,6 @@ export default function gateway({ deviceStyle }) {
   const levelname = useRef()
   let delid;
   let flies;
-  let tag = false;
-  let edittag = false
   let type = 2
   const optcss = {
     color: '#237ae4',
@@ -221,18 +219,14 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateGas(params)
       if (resp.success) {
         message.success("更新成功")
-        edittag = true
-
+        getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
 
       } else {
         message.error(resp.errMsg)
       }
     })
   }
-  const editCancel = () => {
-    if (edittag) {
-      getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-    }
+  const editCancel = () => {    
     EditModalFormRef?.current?.onCancel()
   }
   //打开删除窗口
@@ -348,7 +342,8 @@ export default function gateway({ deviceStyle }) {
         const res = await AddGas(params)
         if (res.success) {
           message.success('新增成功!')
-          tag = true
+          getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+ 
         } else {
           message.error(res.errMsg)
         }
@@ -356,9 +351,7 @@ export default function gateway({ deviceStyle }) {
     } catch (e) { console.log(e) }
   }
   const cancelOk = () => {
-    if (tag) {
-      getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-    }
+ 
     modalFormRef?.current?.onCancel()
   }
   //打开批量导入窗口
@@ -517,6 +510,12 @@ export default function gateway({ deviceStyle }) {
     onCancel: cancelOk,
     onSure: addSure,
   }
+  const AddFormComp=useMemo(()=>{
+    return <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname, type }}>
+   <AddModalForm {...ModalFormProps} >
+   </AddModalForm>
+ </MyContext.Provider>
+  },[addopts,gatewaylist,devicelist])
   const uploadprops = {
     maxCount: 1,
     beforeUpload(file, fileList) {
@@ -547,7 +546,13 @@ export default function gateway({ deviceStyle }) {
     ref: errlistRef,
     onOk: () => { ErrModalRef.current.onCancel() }
   }
-
+  const EditFormComp = useMemo(() => {
+    return (
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname, type }}>
+      <EditModalForm {...EditModalFormProps}></EditModalForm>
+    </MyContext.Provider>
+    )
+  }, [addopts, gatewaylist, devicelist, alarmopts])
   return (
     <div>
       <Comp {...ComProps}>
@@ -558,15 +563,17 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageGas(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname, type }}>
+      {AddFormComp}
+      {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname, type }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除燃气表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname, type }}>
+      {EditFormComp}
+      {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname, type }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )

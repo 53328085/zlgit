@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext,useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
@@ -55,7 +55,6 @@ export default function gateway({ deviceStyle }) {
   const levelname = useRef("")
   let delid;
   let flies;
-  let tag=false;
   let edittag=false
   const optcss = {
     color: '#237ae4',
@@ -223,18 +222,13 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateWater(params)
       if (resp.success) {
         message.success("更新成功")
-        edittag=true
-       
+        getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(resp.errMsg)
       }
     })
   }
   const editCancel=()=>{
-    if(edittag){
-      
-      getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
     EditModalFormRef?.current?.onCancel()
   }
   //打开删除窗口
@@ -351,16 +345,14 @@ export default function gateway({ deviceStyle }) {
       const res = await AddWater(params)
       if (res.success) {
         message.success('新增成功!')
-        tag=true
+        getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
     })
   }
   const addCancel =()=>{  
-    if(tag){
-      getQueryByPageWater(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+   
     modalFormRef?.current?.onCancel()
   }
   //打开批量导入窗口
@@ -516,6 +508,14 @@ export default function gateway({ deviceStyle }) {
     onSure: addSure,
     onCancel: addCancel,
   }
+  const AddFormComp=useMemo(()=>{
+    return <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
+    <AddModalForm {...ModalFormProps} >
+    </AddModalForm>
+  </MyContext.Provider> 
+  },[addopts,gatewaylist,devicelist])
+
+
   const uploadprops = {
     maxCount:1,
     beforeUpload(file,fileList){
@@ -545,7 +545,13 @@ export default function gateway({ deviceStyle }) {
     ref:errlistRef,
     onOk:()=>{ErrModalRef.current.onCancel()}
   }
-
+  const EditFormComp = useMemo(() => {
+    return (
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname }}>
+        <EditModalForm {...EditModalFormProps}></EditModalForm>
+      </MyContext.Provider>
+    )
+  }, [addopts, gatewaylist, devicelist, alarmopts])
   return (
     <div>
       <Comp {...ComProps}>
@@ -556,15 +562,17 @@ export default function gateway({ deviceStyle }) {
           getQueryByPageWater(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
-        <AddModalForm {...ModalFormProps} >
-        </AddModalForm>
-      </MyContext.Provider>
+      {
+        AddFormComp
+      }
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除水表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+      {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
+      {
+        EditFormComp
+      }
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>
   )

@@ -98,6 +98,7 @@ let Com = ({ form, coms }) => {
 export const FormComp = (props) => {
     const { TextArea } = Input
     const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
+    console.log( addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const rules = [{
@@ -243,18 +244,21 @@ export const FormComp = (props) => {
 
 
 //新增设备
-export let AddModalForm = ({ modalFormRef, ...other }) => {
+export let AddModalForm = ({ modalFormRef,transitionName,maskTransitionName, ...other }) => {
     return (
-        <Modal mold='cust' ref={modalFormRef} {...other} footer={[
-            <Button onClick={other.onAddCancel}>取消</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-        ]}>
-            <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
-            {other.FormComp}
-            {/* <FormComp >
-            </FormComp> */}
-        </Modal>
+       <>
+        {
+       <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} {...other} footer={[
+                <Button onClick={other.onAddCancel}>取消</Button>,
+                <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+                <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={()=>{other.onSure();}}>应用</Button>,
+            ]}>
+                <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+                <FormComp >
+                </FormComp>
+            </Modal>
+        }</>
+       
     )
 
 }

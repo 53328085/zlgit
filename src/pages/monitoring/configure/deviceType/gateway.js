@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext, useMemo } from 'react'
 import DeviceContent from './deviceContent'
 import style from './style.module.less'
 // import AllColumns from './columns'
@@ -17,7 +17,9 @@ export default function gateway() {
   const content =useContext(cusContext)
   const [form] = Form.useForm();
   const [editform] = Form.useForm()
-  const [selectOptions, setSelectOptions] = useState([])//下拉选项
+  // const [selectOptions, setSelectOptions] = useState([])//下拉选项
+  // const selectOptionsRef=useRef()
+  // selectOptionsRef.current=selectOptions
   const [dataSource, setDataSource] = useState([])
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
@@ -29,8 +31,8 @@ export default function gateway() {
   const EditModalRef = useRef(null)
   const DelModalRef = useRef(null)
   const tableLoadRef = useRef()
+  
   const projectId = useSelector(state => state.system.menus.projectId)
-  const ForwardAddModal = forwardRef(AddModal)
   let categoryId = ''
   let AllColumns =   [
     {
@@ -71,25 +73,29 @@ export default function gateway() {
 
 
   //获取未使用的网关型号
-  const open = async () => {
-    const result = await QueryNotUsed(projectId)
-    const { success, data } = result;
-    form.setFieldValue('Upload', '')
-    if (success && Array.isArray(data)) {
-      if (data.length > 0) {
-        ModalRef.current.onOpen()
-        setSelectOptions(data)
-        form.setFieldsValue({
-          GatewayType: data[0]['category'],
-          ComNum: data[0]['com'],
-          Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
-        })
-      } else {
-        message.warning('无可用网关新增!')
-      }
+  // const open = async () => {
+  //   const result = await QueryNotUsed(projectId)
+  //   const { success, data } = result;
+  //   form.setFieldValue('Upload', '')
+   
+  //   if (success && Array.isArray(data)) {
+    
+  //     if (data.length > 0) {
+  //       ModalRef.current.onOpen()
+  //       // setSelectOptions(data)
+  //       console.log(addformRef.current)
+  //       form.setFieldsValue({
+  //         GatewayType: data[0]['category'],
+  //         ComNum: data[0]['com'],
+  //         Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
+  //       })
+  //     } else {
+  //       message.warning('无可用网关新增!')
+  //     }
 
-    }
-  }
+  //   }
+  // }
+ 
   //保存新增网关类型
   const onOk = async () => {
     const { ComNum, GatewayType, Image, Upload = '' } = form.getFieldValue()
@@ -111,6 +117,33 @@ export default function gateway() {
       message.error(errMsg)
     }
   }
+  //确认新增应用
+  const onSure=()=>{
+    return new Promise(async(resolve,reject)=>{
+      const { ComNum, GatewayType, Image, Upload = '' } = form.getFieldValue()
+    const imageBase64 = await Upload
+    let AddCategoryParams = {
+      projectId,
+      category: GatewayType,
+      com: ComNum,
+      imageBase64: imageBase64 ? imageBase64.split(',')[1] : Image.split(',')[1],
+      download: 0
+    }
+    const res = await AddCategory(AddCategoryParams)
+    resolve(true)
+    const { success, errMsg } = res
+    if (success) {
+      message.success('应用成功')
+      // open()
+
+
+      getTableData()
+    } else {
+      message.error(errMsg)
+    }
+    })
+    
+  }
   //保存编辑
   const editOk = async () => {
     const { ComNum, GatewayType, Upload = '' } = editform.getFieldValue()
@@ -131,6 +164,30 @@ export default function gateway() {
     if (result.success) {
       message.success('保存成功')
       EditModalRef.current.onCancel()
+      getTableData()
+    } else {
+      message.error(result.errMsg)
+    }
+  }
+  //确认编辑应用
+  const onEditSure=async()=>{
+    const { ComNum, GatewayType, Upload = '' } = editform.getFieldValue()
+    if (!Upload) {
+      message.success('应用成功')
+      EditModalRef.current.onCancel()
+      return
+    }
+    const imageBase64 = await Upload
+    let params = {
+      projectId,
+      category: GatewayType,
+      com: ComNum,
+      imageBase64: imageBase64.split(',')[1],
+      download: 0
+    }
+    const result = await UpdateCategory(params)
+    if (result.success) {
+      message.success('应用成功')
       getTableData()
     } else {
       message.error(result.errMsg)
@@ -214,27 +271,32 @@ export default function gateway() {
   }, [tableParams.current])
 
   const addAodalProps = {
-    selectOptions,
     form,
+    // selectOptions
   }
   let deviceProps = {
     value: 0,
-    open,
-    AddModal: <ForwardAddModal   {...addAodalProps} />,
+    // open,
+    AddModal,
     ModalRef,
     cancelText: '返回',
     okText: '保存',
     onOk,
+    onSure,
     name: '新增网关类型',
     width: 520,
     exportExecel,
-    title:'配置网关类型'
+    title:'配置网关类型',
+    form,
+    selectOptions:''
+    // selectOptionsRef.current,
   };
+
   let editModal = {
     cancelText: '返回',
     okText: '保存',
     value: 1,
-    onOk: editOk
+    // onOk: editOk
   }
   let editModalProps = {
     editform,
@@ -245,9 +307,24 @@ export default function gateway() {
     value: 2,
     onOk: delOk,
   }
+  useEffect(()=>{
+    
+  },[])
+  const EditModalComp=useMemo(()=>{
+    return (
+      <Modal mold='cust' ref={EditModalRef} {...editModal} footer={[
+        <Button onClick={()=>{ EditModalRef.current.onCancel()}}>取消</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={editOk}>保存</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,
+    ]}>
+      <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+      <EditModal {...editModalProps}></EditModal>
+    </Modal>
+    )
+  },[])
   return (
     <div>
-      <DeviceContent {...deviceProps} >
+      <DeviceContent {...deviceProps}  >
         <Table
           columns={AllColumns}
           bordered={false}
@@ -257,11 +334,13 @@ export default function gateway() {
           loading={loading}
           onChange={onChangePage}
         ></Table>
+       
       </DeviceContent>
-      <Modal mold='cust' ref={EditModalRef} {...editModal}>
+      {EditModalComp}
+      {/* <Modal mold='cust' ref={EditModalRef} {...editModal}>
         <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn>
         <EditModal {...editModalProps}></EditModal>
-      </Modal>
+      </Modal> */}
       <DeleteModal DelModalRef={DelModalRef} {...delModal}></DeleteModal>
     </div>
   )
@@ -278,17 +357,48 @@ let ImageUpload = ({ value = {} }) => {
 
 
 //新增网关窗口
-let AddModal = (props, ref) => {
+export let AddModal =forwardRef((props, ref) => {
   const {
     form,
-    selectOptions,
+    // selectOptions,
     ...other
   } = props
-
-
+  const projectId = useSelector(state => state.system.menus.projectId)
   const [fileList, setFileList] = useState() //文件列表
   const [imageUrl, setImageUrl] = useState(''); //上传的图片
+  const [selectOptions, setSelectOptions] = useState([])//下拉选项
 
+   const open =  () => {
+    return new Promise(async(resolve, reject) =>{
+      const result = await QueryNotUsed(projectId)
+    const { success, data } = result;
+    form.setFieldValue('Upload', '')
+   
+    if (success && Array.isArray(data)) {
+   
+      if (data.length > 0) {
+        // ModalRef.current.onOpen()
+      
+        setSelectOptions(data)
+        form.setFieldsValue({
+          GatewayType: data[0]['category'],
+          ComNum: data[0]['com'],
+          Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
+        })
+        resolve(true)
+      } else {
+        message.warning('无可用网关新增!')
+        reject(false)
+      }
+
+    }
+    })
+    
+  }
+  
+  useEffect(()=>{
+    open()
+  },[])
 
   const handleChange = (v, o) => {
     console.log(o)
@@ -320,9 +430,11 @@ let AddModal = (props, ref) => {
 
   useImperativeHandle(ref, () => ({
     setImageUrl,
-    imageUrl
+    imageUrl,
+    selectOptions,
+    setSelectOptions,
+    open
   }))
-
   return (
     <Form
       labelCol={{ span: 4 }}
@@ -412,9 +524,8 @@ let AddModal = (props, ref) => {
       </Form.Item>
     </Form>
 
-
   )
-}
+}) 
 //编辑网关窗口
 let EditModal = ({ name, EditModalRef, editform, ...other }) => {
   const [fileList, setFileList] = useState() //文件列表

@@ -56,12 +56,12 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
 //表格组件
   let TableForm = forwardRef(({ defaultTableData }, ref) => {
-    
+    console.log(defaultTableData)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
     let checedList=[]
-    defaultTableData.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
+    defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
     
@@ -197,13 +197,9 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
       const tableRef = useRef(null)
-      // const [isControl,setIsControl] = useState()
-      // const [IsCount,setIsCount] = useState()
+      
       const handleChange = async (option) => {
         getDeviceQueryCategoryFull(option)
-
-        // setIsControl(addForm.getFieldsValue().Control)
-        // setIsCount(addForm.getFieldsValue().IsCount)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
   
