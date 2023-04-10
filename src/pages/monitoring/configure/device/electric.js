@@ -8,9 +8,12 @@ import BlueColumn from '@com/bluecolumn'
 import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
-import {AddModalForm, MyContext, EditModalForm} from './elecomp'
+import {
+  // AddModalForm,
+  MyContext, EditModalForm} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
+import {FormComp} from './elecomp'
 const {
   DeviceManager: {
     QueryByPageElectric,
@@ -27,7 +30,7 @@ const {
   }
 } = Monitoring
 
-export default function gateway({ deviceStyle }) {
+export default function gateway({ deviceStyle,AddModalForm }) {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -371,7 +374,8 @@ export default function gateway({ deviceStyle }) {
      
       if (res.success) {
         message.success('应用成功!')
-        tag=true
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        // tag=true
       } else {
         message.error(res.errMsg)
       }
@@ -379,9 +383,9 @@ export default function gateway({ deviceStyle }) {
   }
   //新增弹窗取消
   const onAddCancel = ()=>{
-    if(tag){
-      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+    // if(tag){
+    //   getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+    // }
     modalFormRef?.current?.onCancel()
   }
   //打开批量导入窗口
@@ -532,12 +536,13 @@ export default function gateway({ deviceStyle }) {
     modalFormRef,
     width: 746,
     name: '新增电表',
-    addopts,
-    gatewaylist,
+    // addopts,
+    // gatewaylist,
     devicelist,
     onOk: addOk,
     onSure:onSure,
-    onAddCancel:onAddCancel
+    onAddCancel:onAddCancel,
+    FormComp:<FormComp/>
   }
   const uploadprops = {
     maxCount: 1,

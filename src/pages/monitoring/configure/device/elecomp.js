@@ -251,8 +251,9 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
-            <FormComp >
-            </FormComp>
+            {other.FormComp}
+            {/* <FormComp >
+            </FormComp> */}
         </Modal>
     )
 

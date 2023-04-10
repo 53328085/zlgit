@@ -8,7 +8,7 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
-
+import {AddModalForm} from './elecomp'
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
 const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monitoring
@@ -50,7 +50,7 @@ export default function Index() {
      
       for(let k of data){
         if(k.name==='电表'){
-          arr[1]=<Electric deviceStyle={k.deviceStyle}/>
+          arr[1]=<Electric deviceStyle={k.deviceStyle} AddModalForm={AddModalForm}/>
         }else if(k.name==='水表'){
           arr[2]=<Water deviceStyle={k.deviceStyle}/>
         }
