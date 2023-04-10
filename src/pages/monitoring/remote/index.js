@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 import { useRequest, useToggle, useAntdTable } from 'ahooks'
 import { GetLogOperation, Remote, Monitoring } from '@api/api.js'
 import { Form, DatePicker, Input, Button, Table, Pagination, Select, message, Modal, Spin } from 'antd'
 import Bluecolumn from '@com/bluecolumn'
+import { flushSync } from 'react-dom'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
@@ -15,6 +16,8 @@ import imgurl from './images/index.js'
 import UseHeader from '@com/useHeader'
 import style from './style.module.less'
 import moment from 'moment'
+import { cloneDeep } from 'lodash'
+import { deepClone } from '@topology/core'
 const { RangePicker } = DatePicker;
 
 export default function Index() {
@@ -23,19 +26,23 @@ export default function Index() {
     let [pageNum, setpageNum] = useState(1)
     let [totalalarm, settotalalarm] = useState(1)
     let [dataSourceLog, setdataSourceLog] = useState([])
-    let [DataSourceReadR, setDataSourceReadR] = useState([])
-
+    const [DataSourceReadR, setDataSourceReadR] = useState()
+    const [tabledata, setTabledata] = useState()
+    const tabledataRef = useRef()
+    tabledataRef.current = tabledata
+    const myref = useRef()
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
     let [alike, setalike] = useState('')
     let [deviceStyle, setdeviceStyle] = useState(0)
-    let [brake, setbrake] = useState(false)
-    let [brakeC, setbrakeC] = useState(false)
-    let [brakeResult, setbrakeResult] = useState(false)
+    const [brake, setbrake] = useState(false)
+    const [brakeC, setbrakeC] = useState(false)
+    const [brakeResult, setbrakeResult] = useState(false)
     const [selectTableList, setselectTableList] = useState([])
     const [selectTableListRadio, setselectTableListRadio] = useState([])
     const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
+
     let params = {
         pageNum: pageNum,
         pageSize: 15,
@@ -118,20 +125,6 @@ export default function Index() {
             id: 'id'
         },
     ];
-    let columnsRead = [
-        {
-            title: '设备编号',
-            dataIndex: 'sn',
-            key: 'state',
-            id: 'id'
-        },
-        {
-            title: '状态',
-            dataIndex: 'state',
-            key: 'state',
-            id: 'id'
-        }
-    ]
     const onChangePageLog = (page, pageSize) => {
         console.log(page)
         setpageNum(page)
@@ -157,7 +150,6 @@ export default function Index() {
         console.log(value)
         setdeviceStyle(value)
     }
-    let snList = []
     const rowSelectionRadio = {
         selectTableListRadio,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -174,333 +166,53 @@ export default function Index() {
             setselectTableList(selectedRows)
         },
     }
-    const handleCancel = () => {
-        setbrake(false)
-        //setswitching(false)
-    }
-    let [isComplate, setisComplate] = useState(false)
-    const closeStatus = () => {
-        setbrakeResult(true)
-        setisComplate(true)
-        setbrakeC(false)
-        snList = []
-        if (selectTableList.length > 0) {
-            selectTableList.map((item, index) => {
-                snList.push(item.sn)
-                dataSourceReadR.push({ sn: item.sn, state: '操作中，请稍候……' })
-            })
+    const handleCancel = type => {
+        if(type=='open'){
+            setbrake(false)
+        }else if(type=='close'){
+            setbrakeC(false)
         }
-        setDataSourceReadR(() => dataSourceReadR)
-        let all = [...dataSourceReadR]
-        if (snList.length > 0) {
-            Remote.Close(snList).then(res => {
-                let { success, data } = res
-                if (success) {
-                    let snRemoteList = []
-                    let arr0 = []
-                    let setResultInfo = {}
-                    let setResultInfoList = []
-                    data.forEach((item, index) => {
-                        setResultInfo = { id: "", status: 2 }
-                        setResultInfoList.push(setResultInfo)
-                        setResultInfoList[index].id = item.id
-                        if (item.errorCode == 0) {
-                            snRemoteList.push(item.sn)
-                        } else {
-                            let arr = all.map(items => {
-                                return {
-                                    ...items,
-                                    state: item.description ? item.description : '操作失败'
-                                }
-
-                            })
-                            arr0.push(arr)
-                            let aaa = arr0.flat(1)
-                            let bbb = aaa.filter(it => !!it)
-                            setDataSourceReadR([...bbb])
-                        }
-                    })
-                    if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]// 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                        let newsnList = []
-                        let state = []
-                        let status = true
-                        let bbb = []
-                        let ccc = []
-                        let ddd = []
-                        count.map((item, index) => {
-                            setTimeout(() => {
-
-                                if (status) {
-                                    if (snRemoteList.length > 0) {
-                                        Remote.StartBatchValveTask(snRemoteList).then((res) => {
-                                            if (res.success) {
-                                                newsnList = []
-                                                state.push(index)
-                                                let arr1 = []
-                                                res.data.map((items, i) => {
-                                                    if (items.errorCode == 0) {
-                                                        newsnList.push(items.sn)
-                                                    }
-                                                    else {
-                                                        setResultInfoList[i].status = 2
-                                                        let arr = all.map(item => {
-                                                            if (item.sn == items.sn) {
-                                                                return {
-                                                                    ...item,
-                                                                    state: items.errorMessage ? items.errorMessage : '操作失败'
-                                                                }
-                                                            }
-                                                        })
-                                                        arr1.push(arr)
-                                                        let aaa = arr1.flat(1)
-                                                        bbb = aaa.filter(it => !!it)
-                                                        if (bbb.length == snRemoteList.length) {
-                                                            status = false
-                                                            setisComplate(false)
-                                                            setDataSourceReadR([...bbb, ...ccc, ...ddd])
-                                                        }
-                                                    }
-                                                })
-                                                console.log(456, newsnList)
-                                                if (newsnList.length > 0) {
-                                                    Remote.BatchValveStatus(newsnList).then(result => {
-                                                        if (result.success) {
-                                                            snRemoteList = []
-                                                            let arr1 = []
-                                                            result.data.map((aitem,aindex) => {
-                                                                if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
-                                                                    let arr = all.map(item => {
-                                                                        if (item.sn == aitem.sn) {
-                                                                            return {
-                                                                                ...item,
-                                                                                state: aitem.errorMessage ? aitem.errorMessage : '操作成功'
-                                                                            }
-                                                                        }
-
-                                                                    })
-                                                                    arr1.push(arr)
-                                                                    let aaa = arr1.flat(1)
-                                                                    ccc = aaa.filter(it => !!it)
-                                                                    console.log(470, arr, ccc)
-                                                                    setResultInfoList[aindex].status = 1
-                                                                } else {
-                                                                    snRemoteList.push(aitem.sn)
-
-                                                                }
-                                                                let arr2 = []
-                                                                if (aitem.status[0] != 'Close' && aitem.status[1] != 'Close' && state.length == 20) {
-                                                                    let arr = all.map(item => {
-                                                                        if (item.sn == aitem.sn) {
-                                                                            return {
-                                                                                ...item,
-                                                                                state: aitem.errorMessage ? aitem.errorMessage : '操作失败'
-                                                                            }
-                                                                        }
-                                                                    })
-                                                                    arr2.push(arr)
-                                                                    let aaa = arr2.flat(1)
-                                                                    ddd = aaa.filter(it => !!it)
-                                                                    setResultInfoList[aindex].status = 2
-                                                                }
-                                                            })
-                                                            if (state.length == 20 || snRemoteList.length == 0) {
-                                                                status = false
-                                                                setisComplate(false)
-                                                                getData()
-                                                                setDataSourceReadR([...bbb, ...ccc, ...ddd])
-                                                                Remote.SetResult(setResultInfoList).then((res) => { })
-                                                            }
-
-                                                        }
-                                                    })
-                                                }
-                                            } else {
-                                                message.error(res.errMsg)
-
-                                            }
-                                        })
-
-                                    }
-
-                                }
-                            }, 2000 * index)
-                        })
-
-                    }
-                } else {
-                    message.error(res.errMsg)
-                }
-            })
-        }
+        getData()
     }
-    const openStatus = () => {
+    const [isComplate, setisComplate] = useState(false)
+    const [snList, setsnList] = useState()
+
+    const [changeBtnType, setchangeBtnType] = useState('')
+    const openStatus = type => {
         setbrakeResult(true)
         setisComplate(true)
         setbrake(false)
-        snList = []
-
-        if (selectTableList.length > 0) {
-            selectTableList.map((item, index) => {
-                snList.push(item.sn)
-                dataSourceReadR.push({ sn: item.sn, state: '操作中，请稍候……' })
-            })
-        }
-        setDataSourceReadR(() => dataSourceReadR)
-        let all = [...dataSourceReadR]
-        if (snList.length > 0) {
-            Remote.Open(snList).then(res => {
-                let { success, data } = res
-                if (success) {
-                    let snRemoteList = []
-                    let arr0 = []
-                    let setResultInfo = {}
-                    let setResultInfoList = []
-                    data.forEach((item, index) => {
-                        setResultInfo = { id: "", status: 2 }
-                        setResultInfoList.push(setResultInfo)
-                        setResultInfoList[index].id = item.id
-                        if (item.errorCode == 0) {
-                            snRemoteList.push(item.sn)
-                        } else {
-                            let arr = all.map(items => {
-                                return {
-                                    ...items,
-                                    state: item.description ? item.description : '操作失败'
-                                }
-
-                            })
-                            arr0.push(arr)
-                            let aaa = arr0.flat(1)
-                            let bbb = aaa.filter(it => !!it)
-                            setDataSourceReadR([...bbb])
-
-                        }
-                    })
-                    if (snRemoteList.length > 0) {
-                        let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-                        let newsnList = []
-                        let state = []
-                        let status = true
-                        let bbb = []
-                        let ccc = []
-                        let ddd = []
-                        count.map((item, index) => {
-                            setTimeout(() => {
-
-                                if (status) {
-                                    if (snRemoteList.length > 0) {
-                                        Remote.StartBatchValveTask(snRemoteList).then((res) => {
-                                            if (res.success) {
-                                                newsnList = []
-                                                state.push(index)
-                                                let arr1 = []
-                                                res.data.map((items, i) => {
-                                                    if (items.errorCode == 0 && items.isOk) {
-                                                        newsnList.push(items.sn)
-                                                    }
-                                                    else {
-                                                        setResultInfoList[i].status = 2
-                                                        let arr = all.map(item => {
-                                                            if (item.sn == items.sn) {
-                                                                return {
-                                                                    ...item,
-                                                                    state: items.errorMessage ? items.errorMessage : '操作失败'
-                                                                }
-                                                            }
-                                                        })
-                                                        arr1.push(arr)
-                                                        let aaa = arr1.flat(1)
-                                                        bbb = aaa.filter(it => !!it)
-                                                        if (bbb.length == snRemoteList.length) {
-                                                            status = false
-                                                            setisComplate(false)
-                                                            setDataSourceReadR([...bbb, ...ccc, ...ddd])
-                                                        }
-                                                    }
-                                                })
-                                                console.log(456, newsnList)
-                                                if (newsnList.length > 0) {
-                                                    Remote.BatchValveStatus(newsnList).then(result => {
-                                                        if (result.success) {
-                                                            snRemoteList = []
-                                                            let arr1 = []
-                                                            result.data.map((aitem, aindex) => {
-                                                                if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
-                                                                    let arr = all.map(item => {
-                                                                        if (item.sn == aitem.sn) {
-                                                                            return {
-                                                                                ...item,
-                                                                                state: aitem.errorMessage ? aitem.errorMessage : '操作成功'
-                                                                            }
-                                                                        }
-
-                                                                    })
-                                                                    arr1.push(arr)
-                                                                    let aaa = arr1.flat(1)
-                                                                    ccc = aaa.filter(it => !!it)
-                                                                    console.log(470, arr, ccc)
-                                                                    setResultInfoList[aindex].status = 1
-                                                                } else {
-                                                                    snRemoteList.push(aitem.sn)
-
-                                                                }
-                                                                let arr2 = []
-                                                                if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
-                                                                    let arr = all.map(item => {
-                                                                        if (item.sn == aitem.sn) {
-                                                                            return {
-                                                                                ...item,
-                                                                                state: aitem.errorMessage ? aitem.errorMessage : '操作失败'
-                                                                            }
-                                                                        }
-                                                                    })
-                                                                    arr2.push(arr)
-                                                                    let aaa = arr2.flat(1)
-                                                                    ddd = aaa.filter(it => !!it)
-                                                                    setResultInfoList[aindex].status = 2
-                                                                }
-                                                            })
-                                                            if (state.length == 20 || snRemoteList.length == 0) {
-                                                                status = false
-                                                                setisComplate(false)
-                                                                getData()
-                                                                setDataSourceReadR([...bbb, ...ccc, ...ddd])
-                                                                console.log(-setResultInfoList)
-                                                                Remote.SetResult(setResultInfoList).then((res) => { })
-                                                            }
-
-                                                        }
-                                                    })
-                                                }
-                                            } else {
-                                                message.error(res.errMsg)
-
-                                            }
-                                        })
-
-                                    }
-
-                                }
-                            }, 2000 * index)
-                        })
-
-                    }
-                } else {
-                    message.error(res.errMsg)
-                }
-            })
-        }
-    }
-    const handleCancelC = () => {
         setbrakeC(false)
-        //setswitching(false)
+        setchangeBtnType(type)
+        console.log(changeBtnType)
     }
     const handleCancelResult = () => {
         setbrakeResult(false)
+        getData()
+    }
+    const changeDisabled = () => {
+        setisComplate(false)
     }
     const changesetbrake = (type) => {
         if (selectTableList.length > 0) {
+            setsnList([])
+            let List = []
+            if (selectTableList.length > 0) {
+                selectTableList.map((item, index) => {
+                    List.push(item.sn)
+                    dataSourceReadR.push({ sn: item.sn, state: '操作中，请稍候……' })
+
+                })
+            }
+            setsnList(List)
+            let all = [...dataSourceReadR]
+
+            setDataSourceReadR(deepClone(all))
+            setTabledata(deepClone(all))
+            myref.current?.setDataSourceRead(deepClone(all))
+            tabledataRef.current = all
+            console.log(all, dataSourceReadR, tabledataRef.current)
+            console.log(DataSourceReadR, dataSourceReadR, all)
             console.log(type)
             if (type == 1) {
                 setbrake(true)
@@ -581,10 +293,10 @@ export default function Index() {
                 closable={false}
                 className={style.readout}
                 footer={[
-                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancel}>
+                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={() => { handleCancel('open') }}>
                         取消
                     </Button>,
-                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={openStatus}>
+                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={() => { openStatus('open') }}>
                         确定
                     </Button>,
                 ]}
@@ -599,10 +311,10 @@ export default function Index() {
                 closable={false}
                 className={style.readout}
                 footer={[
-                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={handleCancelC}>
+                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={() => { handleCancel('close') }}>
                         取消
                     </Button>,
-                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={closeStatus}>
+                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={() => { openStatus('close') }}>
                         确定
                     </Button>,
                 ]}
@@ -616,14 +328,168 @@ export default function Index() {
                 open={brakeResult}
                 centered={true}
                 closable={false}
+                destroyOnClose
                 footer={[
                     <Button key="submit" disabled={isComplate} style={{ backgroundColor: '#237AE4', color: '#fff', width: 96, height: 32 }} onClick={handleCancelResult}>
                         完成
                     </Button>,
                 ]}
             >
-                <Table columns={columnsRead} dataSource={DataSourceReadR} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
+                <MyTable snList={snList} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
+
             </Modal>
+
         </div>
     )
 }
+const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
+    const [DataSourceRead, setDataSourceRead] = useState(deepClone(dataSourceRead))
+    let columnsRead = [
+        {
+            title: '设备编号',
+            dataIndex: 'sn',
+            key: 'state',
+            id: 'id'
+        },
+        {
+            title: '状态',
+            dataIndex: 'state',
+            key: 'state',
+            id: 'id'
+        }
+    ]
+    const getOpera = () => {
+        return new Promise(async (resolve, reject) => {
+            let res
+            if (changeBtnType == 'open') {
+                res = await Remote.Open(snList)
+            } else if (changeBtnType == 'close') {
+                res = await Remote.Close(snList)
+            }
+            if (res.success) {
+                let snRemoteList = []
+                let setResultInfo = {}
+                let setResultInfoList = []
+                res.data.forEach((item, index) => {
+                    setResultInfo = { id: "", status: 2 }
+                    setResultInfoList.push(setResultInfo)
+                    setResultInfoList[index].id = item.id
+                    if (item.errorCode == 0) {
+                        snRemoteList.push(item.sn)
+                    } else {
+                        for (let i = 0; i < dataSourceRead.length; i++) {
+                            if (dataSourceRead[i].sn == item.sn) {
+                                dataSourceRead[i].state = item.description ? item.description : '操作失败'
+                            }
+                        }
+                    }
+                })
+                if (snRemoteList.length > 0) {
+                    let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                    let newsnList = []
+                    let state = []
+                    let status = true
+                    count.map((item, index) => {
+                        setTimeout(() => {
+                            if (status) {
+                                if (snRemoteList.length > 0) {
+                                    Remote.StartBatchValveTask(snRemoteList).then((res) => {
+                                        if (res.success) {
+                                            newsnList = []
+                                            state.push(index)
+                                            res.data.map((items, i) => {
+                                                if (items.errorCode == 0 && items.isOk) {
+                                                    newsnList.push(items.sn)
+                                                }
+                                                else {
+                                                    setResultInfoList[i].status = 2
+                                                    for (let i = 0; i < dataSourceRead.length; i++) {
+                                                        if (dataSourceRead[i].sn == items.sn) {
+                                                            dataSourceRead[i].state = items.errorMessage ? items.errorMessage : '操作失败'
+                                                        }
+                                                    }
+                                                    console.log(dataSourceRead)
+                                                    if (newsnList.length == 0 && i == res.data.length - 1) {
+                                                        status = false
+                                                        changeDisabled()
+                                                        resolve(dataSourceRead)
+                                                        Remote.SetResult(setResultInfoList).then((res) => { })
+                                                    }
+                                                }
+                                            })
+                                            if (newsnList.length > 0) {
+                                                Remote.BatchValveStatus(newsnList).then(result => {
+                                                    if (result.success) {
+                                                        snRemoteList = []
+                                                        result.data.map((aitem, aindex) => {
+                                                            if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
+                                                                for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                    if (dataSourceRead[i].sn == aitem.sn) {
+                                                                        dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                    }
+                                                                }
+                                                                setResultInfoList[aindex].status = 1
+                                                            } else {
+                                                                snRemoteList.push(aitem.sn)
+
+                                                            }
+                                                            if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
+                                                                for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                    if (dataSourceRead[i].sn == aitem.sn) {
+                                                                        dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                    }
+                                                                }
+                                                                setResultInfoList[aindex].status = 2
+                                                            }
+                                                        })
+
+                                                        if (state.length == 20 || snRemoteList.length == 0) {
+                                                            status = false
+                                                            changeDisabled()
+                                                            resolve(dataSourceRead)
+                                                            Remote.SetResult(setResultInfoList).then((res) => { })
+                                                        }
+
+                                                    }
+                                                })
+                                            }
+                                        } else {
+                                            message.error(res.errMsg)
+
+                                        }
+                                    })
+
+                                }
+
+                            }
+                        }, 2000 * index)
+                    })
+
+                }
+            } else {
+                message.error(res.errMsg)
+            }
+        })
+
+    }
+    useImperativeHandle(ref, () => {
+        setDataSourceRead
+    })
+
+    useEffect(() => {
+        console.log(dataSourceRead)
+    }, [JSON.stringify(dataSourceRead)])
+    useEffect(() => {
+        if (snList && snList.length > 0) {
+            getOpera().then(res => {
+                console.log(res)
+                const a = JSON.parse(JSON.stringify(res))
+                setDataSourceRead(a)
+            })
+        }
+    }, [snList])
+    return (
+        <Table columns={columnsRead} dataSource={DataSourceRead} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
+    )
+}
+) 

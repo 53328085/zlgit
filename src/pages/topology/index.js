@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
-import { Topology } from '@topology/core'
+import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card } from "antd";
 import { basic, flows, sgcc, ltdx } from "./Menu";
 import { SketchPicker } from "react-color";
 
@@ -15,8 +15,10 @@ import '../../assets/css/font_2395018_pl6jy69tbjr/iconfont.css'
 import '../../assets/css/fonts/font/libs/iconfont.css'
 
 export default function index() {
+  const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
+  const [lineForm] = Form.useForm()
   const Item = Form.Item
   let canvas
   const [newCanvas, setNewCanvas] = useState()
@@ -27,10 +29,10 @@ export default function index() {
     registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
-    // canvas.data.grid = true
     canvas.render()
     setNewCanvas(canvas)
   }, [])
+  
   const { Panel } = Collapse;
   const Tools = [
     {
@@ -58,11 +60,11 @@ export default function index() {
     expand: false,
     locked: false
   })
-  let contextmenu = {
+  let [contextmenu, setContextMenu] = useState({
     left: null,
     top: null,
     bottom: null
-  }
+  })
   const [canvasData, setCanvasData] = useState({
     lineName: 'polyline',
     fromArrow: '',
@@ -81,27 +83,50 @@ export default function index() {
   const onContextMenu = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    if (event.clientY + 360 < document.body.clientHeight) {
-      contextmenu = {
-        left: event.clientX + 'px',
-        top: event.clientY + 'px'
-      }
-    } else {
-      contextmenu = {
-        left: event.clientX + 'px',
-        bottom: document.body.clientHeight - event.clientY + 'px'
-      }
-    }
+    // if(event.button == 2){
+    //   if (event.clientY + 360 < document.body.clientHeight) {
+    //     setContextMenu({
+    //       left: event.clientX - 210 + 'px',
+    //       top: event.clientY- 62 + 'px'
+    //     })
+    //   } else {
+    //     setContextMenu({
+    //       left: event.clientX + 'px',
+    //       bottom: document.body.clientHeight - event.clientY + 'px'
+    //     })
+    //   }
+    // }  
   }
-
+  const[nodeTag, setNodeTag] = useState(false)
   const onMessage = (event, data) => {
     // console.log(event)
-    console.log(data)
+    // console.log(data)
+    if(event == 'nodeRightClick'){
+      console.log(data.evs)
+      if (data.name == "text" || data.name == "rectangle") {
+        setContextMenu({
+          left: data.evs.x - 210 + 'px',
+          top: data.evs.y- 62 + 'px'
+        })
+      }else if(data.name == 'image'){
+        setContextMenu({
+          left: data.evs.x - 210 + 'px',
+          top: data.evs.y- 62 + 'px'
+        })
+      }
+      setTimeout(()=> {
+        setNodeTag(true)
+      },1000)
+    }
+    if(event == 'line' || event == 'space' || event == 'multi'){
+      setNodeTag(false)
+    }
     // 右侧输入框编辑状态时点击编辑区域其他元素，onMessage执行后才执行onUpdateProps方法，通过setTimeout让onUpdateProps先执行
     setTimeout(() => {
       switch (event) {
         case 'node':
         case 'addNode':
+          // nodeForm.resetFields()
           setProps({
             node: data,
             line: null,
@@ -114,7 +139,7 @@ export default function index() {
           // newCanvas.setValue({ id: data.id, text: 'new text' });//赋值
           break
         case 'line':
-        case 'addLine':
+          // lineForm.resetFields()
           data.fromArrowColor = data.fromArrowColor ? data.fromArrowColor : form.getFieldValue('lineColor')
           data.toArrowColor = data.toArrowColor ? data.toArrowColor : form.getFieldValue('lineColor')
           data.strokeStyle = data.strokeStyle ? data.strokeStyle : form.getFieldValue('lineColor')
@@ -125,6 +150,21 @@ export default function index() {
             nodes: null,
             locked: TopologyData.locked
           })
+          lineForm.setFieldsValue(data)
+          break
+        case 'addLine':
+          // lineForm.resetFields()
+          data.fromArrowColor = form.getFieldValue('lineColor')
+          data.toArrowColor = form.getFieldValue('lineColor')
+          data.strokeStyle = form.getFieldValue('lineColor')
+          setProps({
+            node: null,
+            line: data,
+            multi: false,
+            nodes: null,
+            locked: TopologyData.locked
+          })
+          lineForm.setFieldsValue(data)
           break
         case 'multi':
           setProps({
@@ -248,24 +288,36 @@ export default function index() {
     newCanvas.render()
   }
   const onUpdateProps = node => {
-    console.log(node)
+    // console.log(node)
     newCanvas.updateProps(node)
   }
   const onChangeDash = val => {
-    let obj = {... props}
-    obj.node = nodeForm.getFieldsValue(true)
-    setProps({...obj})
-    // setProps({
-    //   node: nodeForm.getFieldsValue(true),
-    //   line: null,
-    //   multi: false,
-    //   expand: props.expand,
-    //   nodes: null,
-    //   locked: TopologyData.locked
-    // })
-    setTimeout(()=>{
-      onUpdateProps(obj.node)
-    },0)
+    // props.node.dash = nodeForm.getFieldValue('dash')
+    let obj = nodeForm.getFieldsValue(true)
+    for (const key in obj) {
+      if (Array.isArray(obj[key])) { } else if (typeof obj[key] === 'object') {
+        for (const k in obj[key]) {
+          props.node[key][k] = obj[key][k]
+        }
+      } else {
+        props.node[key] = obj[key]
+      }
+    }
+    onUpdateProps(props.node)
+  }
+
+  const onChangeLine = val => {
+    let obj = lineForm.getFieldsValue(true)
+    for (const key in obj) {
+      if (Array.isArray(obj[key])) { } else if (typeof obj[key] === 'object') {
+        for (const k in obj[key]) {
+          props.line[key][k] = obj[key][k]
+        }
+      } else {
+        props.line[key] = obj[key]
+      }
+    }
+    onUpdateProps(props.line)
   }
 
   return (
@@ -290,7 +342,13 @@ export default function index() {
             })}
           </Collapse>
         </div>
-        <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)}></div>
+        <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{position:'relative'}}>
+        {( nodeTag )? <Card style={{width: 200, position:'absolute', ...contextmenu}} >
+          <p>Card content</p>
+          <p>Card content</p>
+          <p>Card content</p>
+        </Card>: null}
+        </div>
         <div className={style.props}>
           {/* 选中画布 */}
           {(TopologyData.locked || (!props.node && !props.line && !props.multi)) ? <div>
@@ -313,42 +371,219 @@ export default function index() {
                   <Input type='color' style={{ width: 32, height: 32, padding: 0 }} onChange={onChangeLineColor}></Input>
                 </Item>
                 <Item label='默认连线类型' name='lineName' initialValue={'curve'}>
-                  <Select style={{width: 120}} onChange={onChangeLineType}>
-                    { lineNames.map((item, index) => {
-                      return <Select.Option key={index} value={item}><i className={`iconfont icon-${item}`} style={{fontSize: 30}}></i></Select.Option>
-                    }) }
+                  <Select style={{ width: 120 }} onChange={onChangeLineType}>
+                    {lineNames.map((item, index) => {
+                      return <Select.Option key={index} value={item}><i className={`iconfont icon-${item}`} style={{ fontSize: 30 }}></i></Select.Option>
+                    })}
                   </Select>
                 </Item>
                 <Item label='默认起点箭头' name='fromArrow' initialValue={""}>
-                  <Select style={{width: 120}} onChange={onChangeFromArrow}>
-                    { arrowTypes.map((item, index) => {
-                      return <Select.Option key={index} value={item}><i className={`iconfont icon-from-${item}`} style={{fontSize: 30}}></i></Select.Option>
-                    }) }
+                  <Select style={{ width: 120 }} onChange={onChangeFromArrow}>
+                    {arrowTypes.map((item, index) => {
+                      return <Select.Option key={index} value={item}><i className={`iconfont icon-from-${item}`} style={{ fontSize: 30 }}></i></Select.Option>
+                    })}
                   </Select>
                 </Item>
                 <Item label='默认终点箭头' name='toArrow' initialValue={"triangleSolid"}>
-                  <Select style={{width: 120}} onChange={onChangeToArrow}>
-                    { arrowTypes.map((item, index) => {
-                      return <Select.Option key={index} value={item}><i className={`iconfont icon-from-${item}`} style={{fontSize: 30, transform:"rotate(180deg)"}}></i></Select.Option>
-                    }) }
+                  <Select style={{ width: 120 }} onChange={onChangeToArrow}>
+                    {arrowTypes.map((item, index) => {
+                      return <Select.Option key={index} value={item}><i className={`iconfont icon-to-${item}`} style={{ fontSize: 30 }}></i></Select.Option>
+                    })}
                   </Select>
                 </Item>
               </Form>
             </div>
           </div> : null}
           {/* 选中节点 */}
-          {(props.node && !TopologyData.locked ) ? <div>
+          {(props.node && !TopologyData.locked) ? <div>
             <div className={style.title}>节点样式</div>
             <div className={style.settings}>
-              <Form form={nodeForm} name='nodeForm' requiredMark={false} labelAlign='left' labelCol={{ span: 10 }}>
+              <Form form={nodeForm} name='nodeForm' requiredMark={false} labelAlign='left' layout={'vertical'}>
                 <Item label='线条样式' name='dash'>
-                  <Select style={{width: 120}} onChange={onChangeDash}>
-                    <Select.Option value={0}>直线</Select.Option>
+                  <Select style={{ width: 229 }} onChange={onChangeDash}>
+                    <Select.Option value={0}>实线</Select.Option>
                     <Select.Option value={1}>虚线</Select.Option>
                     <Select.Option value={2}>大虚线</Select.Option>
                     <Select.Option value={3}>断点虚线</Select.Option>
                   </Select>
-                </Item> 
+                </Item>
+                <Space>
+                  <Item label='线条颜色' name='strokeStyle' initialValue={'#222222'}>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
+                  </Item>
+                  <Item label='线条宽度(px)' name='lineWidth'>
+                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='背景颜色' name='fillStyle' initialValue={'#fff'}>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
+                  </Item>
+                  <Item label='透明度' name='globalAlpha'>
+                    <InputNumber min={0} max={1} step={0.1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                </Space>
+                <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
+                <Space>
+                  <Item label='大小' name='fontSize'>
+                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                  <Item label='加粗' name='fontWeight'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
+                      <Select.Option value='normal'>正常</Select.Option>
+                      <Select.Option value='bold'>加粗</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='颜色' name='fontColor' initialValue={'#222222'}>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
+                  </Item>
+                  <Item label='倾斜' name='fontStyle'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
+                      <Select.Option value='normal'>正常</Select.Option>
+                      <Select.Option value='italic'>倾斜</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='水平对齐' name='textAlign'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
+                      <Select.Option value='left'>左对齐</Select.Option>
+                      <Select.Option value='center'>居中</Select.Option>
+                      <Select.Option value='right'>右对齐</Select.Option>
+                    </Select>
+                  </Item>
+                  <Item label='垂直对齐' name='textBaseline'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
+                      <Select.Option value='top'>顶部对齐</Select.Option>
+                      <Select.Option value='middle'>居中</Select.Option>
+                      <Select.Option value='bottom'>底部对齐</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Item label='文本内容' name='text'>
+                  <TextArea autoSize={{ minRows: 4, maxRows: 10 }} style={{ width: 229 }} onChange={onChangeDash}></TextArea>
+                </Item>
+              </Form>
+            </div>
+          </div> : null}
+          {/* 选中连接线 */}
+          {(props.line && !TopologyData.locked) ? <div>
+            <div className={style.title}>线条样式</div>
+            <div className={style.settings}>
+              <Form form={lineForm} name='lineForm' requiredMark={false} labelAlign='left' layout={'vertical'}>
+                <Space>
+                  <Item label='线条样式' name='dash'>
+                    <Select style={{ width: 106 }} onChange={onChangeLine}>
+                      <Select.Option value={0}>实线</Select.Option>
+                      <Select.Option value={1}>虚线</Select.Option>
+                      <Select.Option value={2}>大虚线</Select.Option>
+                      <Select.Option value={3}>断点虚线</Select.Option>
+                    </Select>
+                  </Item>
+                  <Item label='连线类型' name='name'>
+                    <Select style={{ width: 106 }} onChange={onChangeLine}>
+                      <Select.Option value='curve'>贝塞尔曲线</Select.Option>
+                      <Select.Option value='polyline'>折线</Select.Option>
+                      <Select.Option value='line'>直线</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='线条颜色' name='strokeStyle'>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
+                  </Item>
+                  <Item label='线条宽度(px)' name='lineWidth'>
+                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='连线边框' name='borderColor'>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
+                  </Item>
+                  <Item label='边框宽度(px)' name='borderWidth'>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                  </Item>
+                </Space>
+                <Item label='透明度' name='globalAlpha'>
+                  <InputNumber min={0} max={1} step={0.1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                </Item>
+                <div className={style.title} style={{ width: 260, marginLeft: -15 }}>箭头样式</div>
+                <Space>
+                  <Item label='起点箭头' name='fromArrow'>
+                    <Select style={{ width: 106 }} onChange={onChangeLine}>
+                      {arrowTypes.map((item, index) => {
+                        return <Select.Option key={index} value={item}><i className={`iconfont icon-from-${item}`} style={{ fontSize: 30 }}></i></Select.Option>
+                      })}
+                    </Select>
+                  </Item>
+                  <Item label='终点箭头' name='toArrow'>
+                    <Select style={{ width: 106 }} onChange={onChangeLine}>
+                      {arrowTypes.map((item, index) => {
+                        return <Select.Option key={index} value={item}><i className={`iconfont icon-to-${item}`} style={{ fontSize: 30 }}></i></Select.Option>
+                      })}
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='起点箭头颜色' name='fromArrowColor'>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
+                  </Item>
+                  <Item label='起点箭头大小(px)' name='fromArrowSize'>
+                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='终点箭头颜色' name='toArrowColor'>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
+                  </Item>
+                  <Item label='终点箭头大小(px)' name='toArrowSize'>
+                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                  </Item>
+                </Space>
+                <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
+                <Space>
+                  <Item label='大小' name='fontSize'>
+                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                  </Item>
+                  <Item label='加粗' name='fontWeight'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
+                      <Select.Option value='normal'>正常</Select.Option>
+                      <Select.Option value='bold'>加粗</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='颜色' name='fontColor'>
+                    <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
+                  </Item>
+                  <Item label='倾斜' name='fontStyle'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
+                      <Select.Option value='normal'>正常</Select.Option>
+                      <Select.Option value='italic'>倾斜</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Space>
+                  <Item label='水平对齐' name='textAlign'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
+                      <Select.Option value='left'>左对齐</Select.Option>
+                      <Select.Option value='center'>居中</Select.Option>
+                      <Select.Option value='right'>右对齐</Select.Option>
+                    </Select>
+                  </Item>
+                  <Item label='垂直对齐' name='textBaseline'>
+                    <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
+                      <Select.Option value='top'>顶部对齐</Select.Option>
+                      <Select.Option value='middle'>居中</Select.Option>
+                      <Select.Option value='bottom'>底部对齐</Select.Option>
+                    </Select>
+                  </Item>
+                </Space>
+                <Item label='文本内容' name='text'>
+                  <TextArea autoSize={{ minRows: 4, maxRows: 10 }} style={{ width: 229 }} onChange={onChangeLine} placeholder="文本内容"></TextArea>
+                </Item>
               </Form>
             </div>
           </div> : null}

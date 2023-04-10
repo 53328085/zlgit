@@ -6,7 +6,7 @@ import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
  import {selectUser} from '@redux/user.js'
 import {manager } from '@redux/user'  
-import { getpublishState } from '@redux/systemconfig.js'  
+import { getpublishState, publishState } from '@redux/systemconfig.js'  
 import log from './log.png'
  
  
@@ -68,6 +68,7 @@ export default function Release({CModal, projectId}) {
   const [title, setTitle] = useState('')
  // const [moblies, setMoblie] = useState();
  const {mobile: logMobile} = useSelector(selectUser)
+ const publish = useSelector(publishState)
  const [loguerphone, setLoguerphoe] = useState('') 
  const [mobile, setMobile] = useState()
  const ismanager = useSelector(manager)
@@ -213,7 +214,7 @@ const delProject = async () => {
                  </div>
                  <div className='right'>
                  <Switch key={stateV.current}  checkedChildren="发布"  unCheckedChildren="未发布" style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
-                 {!ismanager && <Link underline type="danger" onClick={() => onDel(item)}>删除项目</Link>}
+                 {(!ismanager && !publish) && <Link underline type="danger" onClick={() => onDel(item)}>删除项目</Link>}
                  </div>
             </div>
             <div className="lower">

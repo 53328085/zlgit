@@ -1,12 +1,10 @@
-import React, {useState, useRef, useEffect, useCallback, useImperativeHandle, useMemo, } from 'react'
+import React, {useState, useRef, useEffect, useCallback, useImperativeHandle, } from 'react'
 import {Form, Space, Input, Button, Select, message} from 'antd'
 import styled from 'styled-components'
-import {useLatest } from 'ahooks'
-import {flushSync} from 'react-dom'
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
-import {useOneLevel} from '@hooks/usePublic'
+ import {useOneLevel} from '@hooks/usePublic'
 //import CModal from '@com/useModal'
 const Item = Form.Item
 const Boxitem = styled.div`
@@ -62,11 +60,7 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
  
  const onNewFiled = async () => {  // 新增字段
    try {
-    let values = ffrom.validateFields().then(res => res).catch(e => {
-      console.log(e)
-    })
-    if(!values) return
-     const params = {...values, projectId, level}
+     const params = {...ffrom.getFieldsValue(), projectId, level}
      let {success, errMsg} = await InsertAreaLevelField(params)
      if(!success) return message.warning(errMsg || '数据出错')
      success && ref.current.onCancel()
@@ -107,14 +101,10 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
          <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
          <CModal title="新增字段" ref={ref}  mold="cust" width={512} okText="保存" onOk={onNewFiled}>
               <Form name="modalform" form={ffrom}  preserve={false}>
-                  <Item name="name" label="字段名称" rules={[{
-                    required: true
-                  }]}>
+                  <Item name="name" label="字段名称">
                       <Input/>
                   </Item>
-                  <Item name="type" label="字段用户" rules={[{
-                    required: true
-                  }]}>
+                  <Item name="type" label="字段用户">
                        <Select>
                           <Select.Option value={0}>无</Select.Option>
                           <Select.Option value={1}>经纬度</Select.Option>
@@ -130,7 +120,8 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
  
  })
 
-  function Region({projectId, CModal, Add}) {
+
+ function Region({projectId, CModal}) {
  
  const mref = useRef()
  const dref = useRef()
@@ -143,9 +134,10 @@ const [title, setTitle] = useState()
 const [datas, setDatas] = useState([])
 const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
+//const [levelid, setLevelid] = useState()
+
 const [curlevel, setCurlevel] = useState({})
-const newlevel = useRef()
- newlevel.current = datas.length
+const levelid = useRef()
  const edit = (d) => {
        let {name, type, level} = d
        setCurlevel({
@@ -170,10 +162,9 @@ const newlevel = useRef()
      mref.current.onOpen()
  }
 
- const del = async () => { 
-     
+ const del = async () => {
    try {
-      let {success, errMsg} = await DeleteAreaLevel({projectId, level})
+      let {success, errMsg} = await DeleteAreaLevel({projectId, level: levelid.current})
       if(success) {
         dref.current.onCancel()
         message.success({
@@ -191,26 +182,23 @@ const newlevel = useRef()
  }
 
 
- const ondel = (d) => { 
+ const ondel = (level) => { 
   // setLevelid(level);
-   //levelid.current = level
-   console.log(d)
-   setLevel(d.level)
+   levelid.current = level
    dref.current.onOpen()
  }
 
  const [isupdate, setIsupdate] = useState(false)
  useOneLevel(projectId, isupdate)
-const queryarealevels = async () => {
+  const queryarealevels = async () => {
      try {
         let {success, data} = await QueryAreaLevels(projectId)
-        if (success && Array.isArray(data) && data.length > 0) {  
-            setDatas([...data]);
+        if (success && Array.isArray(data) && data.length > 0) {
+          success && setDatas([...data]);
           if (level == 1) setIsupdate(!isupdate)
          // dispatch(getOnelevel(data))
         }else {
           setDatas([])
-         
          // dispatch(getOnelevel([]))
         }
        
@@ -218,17 +206,15 @@ const queryarealevels = async () => {
         console.log(error);
      }
   }
+  const onFinish = () => {
 
+  }
   const editArea = async () => {
     
     let {id, level} = curlevel
    try {
-      let values = await modalform.validateFields().then(res => res).catch(e => {
-        console.log(e)
-      })
-      if (!values) return
-      const {name} = values
-      const params = {...values, level: level, projectId };
+      const {name} = modalform.getFieldsValue()
+      const params = {...modalform.getFieldsValue(), level: level, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
     
       success && message.success({
@@ -248,21 +234,14 @@ const queryarealevels = async () => {
    
 
 }
-  const addArea = async (type) => { 
+  const addArea = async () => {
    try { 
-     let values = await modalform.validateFields().then(res =>{
-        return res
-      }).catch(e => {
-        console.log(e)
-      })
-      if (!values) return
-      const params = {...values, level: newlevel.current + 1, projectId };
+      const params = {...modalform.getFieldsValue(), level: datas.length + 1, projectId };
       let {success,errMsg} =  await InsertAreaLevel(params)
 
       
       if(success) {
-        type && mref.current.onCancel()
-        modalform.resetFields()
+        mref.current.onCancel()
         message.success({
           content: '保存成功',
           duration: 0.3,
@@ -275,14 +254,11 @@ const queryarealevels = async () => {
    } catch (error) {
       console.log(error)
    }
-} 
-const closeArea = () => {
-  mref.current.onCancel()
+   
+
 }
-  const onOk = (type=true) => {    
-       console.log(type)  
-       console.log(handler)
-       handler == 1 && addArea(type);
+  const onOk = () => {      
+       handler == 1 && addArea();
        handler == 2 && editArea();
    
   }
@@ -307,7 +283,14 @@ const closeArea = () => {
 
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId]) // 数字格式化
 
- const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512} okText="保存" onOk={onOk} onSave={onOk} newlevel={newlevel}  />, [title])
+// 新增弹窗 start
+
+const Add = React.forwardRef(() => {
+
+  return 
+
+
+})
 
   useEffect(() => {
      queryarealevels();
@@ -317,7 +300,7 @@ const closeArea = () => {
         <Form
         style={{width: '705px'}}
          form={form}
-     
+         onFinish={onFinish}
         >
          {
            datas?.map((d, index)=> (
@@ -328,7 +311,7 @@ const closeArea = () => {
                    <Input  disabled/>
                    </Item>
                    <Button type='primary' ghost onClick={() => edit(d)}>修改区域</Button>
-                   <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d)}>删除</Button>
+                   <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d.level)}>删除</Button>
                    <Button type='primary' ghost onClick={() => editfiled(d)}>编辑字段</Button>
               </div>
             </Boxitem>
@@ -343,12 +326,28 @@ const closeArea = () => {
          
         </Form>
         {/* 新增，修改区域 */}
-
-        
-       {Addcust}
-
-          
-        
+        <CModal title={title} ref={mref}  mold="cust" width={512} okText="保存" onOk={onOk} footer={true}>
+             <Form name="modalform" form={modalform} initialValues={{
+              type: 0
+             }} preserve={false}>
+                 <Item name="name" label="区域名称">
+                     <Input/>
+                 </Item>
+                 <Item name="type" label="区域用途" rules={[
+                  {
+                    required: true,
+                    message: '选择区域用途'
+                  }
+                 ]}>
+                      <Select>
+                         <Select.Option value={0} >无</Select.Option>
+                         <Select.Option value={1}>楼栋</Select.Option> 
+                         <Select.Option value={2}>楼层</Select.Option>
+                         <Select.Option value={3}>房间</Select.Option>
+                      </Select>
+                 </Item>
+             </Form>
+        </CModal>
         <CModal title='删除区域' ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
               <p>是否确认删除区域</p>
         </CModal>
@@ -364,37 +363,3 @@ const closeArea = () => {
   )
 }
 
-const Add =React.forwardRef(({form,title, onOk, CModal, onCancel, newlevel}, ref) => {
-  const CustFooter =  (<Space>
-    <Button onClick={onCancel}>取消</Button>
-       <Button type="primary" onClick={() => onOk(false, newlevel)}>应用</Button> 
-     <Button type="primary" onClick={onOk}>确定</Button>
-     </Space>)
-
-  return  <CModal title={title} ref={ref}  mold="cust" width={512} okText="保存"   footer={CustFooter}>
-   <Form name="modalform"   form={form} initialValues={{
-    type: 0
-   }} preserve={false}>
-       <Item name="name" label="区域名称" rules={[{required: true, message: '区域名称必须'}]}>
-           <Input/>
-       </Item>
-       <Item name="type" label="区域用途" rules={[
-        {
-          required: true,
-          message: '选择区域用途'
-        }
-       ]}>
-            <Select>
-               <Select.Option value={0} >无</Select.Option>
-               <Select.Option value={1}>楼栋</Select.Option> 
-               <Select.Option value={2}>楼层</Select.Option>
-               <Select.Option value={3}>房间</Select.Option>
-            </Select>
-       </Item>
-   </Form>
-   </CModal>
-})
-
-export default function(props) {
-  return <Region {...props} Add={Add} />
-}

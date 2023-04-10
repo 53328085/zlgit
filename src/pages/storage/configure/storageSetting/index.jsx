@@ -26,11 +26,13 @@ export default function Index() {
   const [form] = Form.useForm();
   const Item = Form.Item;
   const ispublish = useSelector(publishState);
+  const oneLevel = useSelector((state) => state.system.onelevel);
   //表格展示数据
   // const [dataSource, setDataSource] = useState([]);
   const dataSource = [
     {
       id: 1,
+      station: "测试园区",
       name: "站点名称1",
       address: "1号楼B2 储能室",
       type: "分布式储能",
@@ -41,6 +43,7 @@ export default function Index() {
     },
     {
       id: 2,
+      station: "园区3",
       name: "站点名称2",
       address: "3号楼B2 储能室",
       type: "分布式储能",
@@ -84,20 +87,44 @@ export default function Index() {
   //新增 修改 弹窗
   const [addModal, setAddModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  // 所属站点
-  const sectionList = useSelector(selectOneLevel);
-  const [defaultArea, setDefaultArea] = useState(
-    sectionList[0]?.id || undefined
-  );
+  //&所属园区
+  const areaList = useSelector(selectOneLevel);
+  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined);
   const changeArea = (value) => {
     setDefaultArea(value);
+  };
+  // 所属站点
+  const sectionList = [
+    {
+      id: 1,
+      name: "正泰物联杭州园区",
+    },
+    {
+      id: 2,
+      name: "正泰物联温州园区",
+    },
+  ];
+  const [defaultsection, setDefaultSection] = useState(
+    sectionList[0]?.id || undefined
+  );
+  const changeSection = (value) => {
+    setDefaultSection(value);
   };
   const [defaultNature, setDefaultNature] = useState(natureList[0].id);
   const changeNature = (value) => {
     setDefaultNature(value);
   };
+  const ChangeTime = (value) => {
+    console.log(value);
+  };
   const columns = ispublish
     ? [
+        {
+          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
+          dataIndex: "station",
+          key: "station",
+          align: "center",
+        },
         {
           align: "center",
           title: "站点名称",
@@ -142,6 +169,12 @@ export default function Index() {
         },
       ]
     : [
+        {
+          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
+          dataIndex: "station",
+          key: "station",
+          align: "center",
+        },
         {
           align: "center",
           title: "站点名称",
@@ -215,7 +248,6 @@ export default function Index() {
     setAddModal(true);
   };
   //编辑
-
   const editRecord = (record) => {
     console.log(record);
     setModalTitle("编辑站点");
@@ -354,13 +386,42 @@ export default function Index() {
             labelCol={{ flex: "90px" }}
           >
             <Item
+              name="station"
+              label={
+                oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+              }
+              rules={[
+                { required: true, message: `请选择${oneLevel[0].levelName}` },
+              ]}
+            >
+              <Select
+                key={defaultArea}
+                defaultValue={defaultArea}
+                onChange={changeArea}
+                placeholder={
+                  oneLevel[0]?.levelName
+                    ? `请选择${oneLevel[0].levelName}`
+                    : "园区名称"
+                }
+              >
+                {areaList.map((item) => {
+                  return (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Item>
+            <Item
               name="name"
               label="所属站点"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
-                key={defaultArea}
-                onChange={changeArea}
+                key={defaultsection}
+                defaultValue={defaultsection}
+                onChange={changeSection}
                 placeholder="请选择所属站点"
               >
                 {sectionList.map((item) => {
@@ -396,15 +457,20 @@ export default function Index() {
                 },
               ]}
             >
-              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              <DatePicker
+                format="YYYY-MM-DD"
+                style={{ width: "100%" }}
+                onChange={ChangeTime}
+              />
             </Item>
             <Item
               name="nature"
-              label="所属站点"
+              label="投资性质"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
                 key={defaultNature}
+                defaultValue={defaultNature}
                 onChange={changeNature}
                 placeholder="请选择投资性质"
               >

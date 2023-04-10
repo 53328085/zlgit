@@ -15,8 +15,8 @@ export default function Index() {
   tabs,
 }
   return (
-    <CustContext.Provider value={propsData}>
-    <Pagecount showserach={false} pd="32px">   
+    <CustContext.Provider value={{}}>
+    <Pagecount showserach={false} pd="0px">   
         
      <Set  projectId={projectId} />
       
