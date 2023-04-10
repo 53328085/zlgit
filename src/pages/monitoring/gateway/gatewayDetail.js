@@ -162,7 +162,7 @@ export default function GatewayDetail(props) {
                         <p>网关详情</p></div>
                     <div className={style.leftImgBox}>
                         <img src={detail?'data:image/png;base64,'+detail.imageBase64:imgurl.category} className={style.leftImg} ></img>
-                        <div className={style.leftImgState}>{detail.state==2?'网关在线':'网关失联'}</div>
+                        <div className={detail.state==2?style.leftImgState:style.leftImgStateOff}>{detail.state==2?'网关在线':'网关失联'}</div>
                     </div>
                     <div className={style.leftBottom}>
                         <p><span className={style.leftBottomSpan}>网关编号：</span><span>{detail.sn}</span></p>
