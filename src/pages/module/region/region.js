@@ -773,7 +773,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             <>
               <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
-                  options={oneLevel}
+                options={[...oneLevel, {name: '全部', id: 0}]}
+                
                   fieldNames={{
                     label: "name",
                     value: "id",
