@@ -36,7 +36,7 @@ export default function GatewayDetail(props) {
     let year = new Date().getFullYear()
     let month = new Date().getMonth() + 1
     let day = new Date().getDate()
-    let date = year + '-' + (month > 10 ? month : '0' + month) + '-' + (day > 10 ? day : '0' + day)
+    let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment();
     const yesterday = date + ' ' + "00:00:00"
     let [dataList, setdataList] = useState([])
@@ -368,7 +368,7 @@ export default function GatewayDetail(props) {
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
                         <img src={detail.imageBase64 ? detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
-                        <div className={style.leftImgState}>{detail.state == 1 ? '设备离线' : detail.state == 2 ? '设备在线' : '设备告警'}</div>
+                        <div className={detail.state == 1 ? style.leftImgStateOff : detail.state == 2 ? style.leftImgState : style.leftImgStateAlarm}>{detail.state == 1 ? '设备离线' : detail.state == 2 ? '设备在线' : '设备告警'}</div>
                     </div>
                     <div className={style.leftBottom}>
                         <p><span className={style.leftBottomSpan}>设备类型：</span><span>{detail.deviceStyle == 1 ? '电表' : detail.deviceStyle == 2 ? '水表' : '燃气表'}</span></p>

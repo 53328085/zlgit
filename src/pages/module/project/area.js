@@ -62,10 +62,10 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
  
  const onNewFiled = async () => {  // 新增字段
    try {
-    let values = ffrom.validateFields().then(res => res).catch(e => {
+    let values = await ffrom.validateFields().then(res => res).catch(e => {
       console.log(e)
     })
-    if(!values) return
+    if(!values) return 
      const params = {...values, projectId, level}
      let {success, errMsg} = await InsertAreaLevelField(params)
      if(!success) return message.warning(errMsg || '数据出错')

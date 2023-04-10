@@ -4,14 +4,18 @@ import {BrowserRouter} from 'react-router-dom'
 
 import Loading from './pages/Loading';
 import EL from './router'
-
+import ErrorBoundary from './ErrorBoundary';
 function App() {
-  return   (<BrowserRouter>
+  return   (
+    <ErrorBoundary>
+  <BrowserRouter>
     <Suspense fallback={<Loading/>}>  
          <EL/>
         
     </Suspense>  
-    </BrowserRouter>) 
+    </BrowserRouter>
+    </ErrorBoundary>
+    ) 
    
 
   }
