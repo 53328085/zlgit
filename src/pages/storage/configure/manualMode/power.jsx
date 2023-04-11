@@ -115,6 +115,7 @@ export default function Manual({projectId,  areaId, CModal}) {
         demandControl: Number(demandControl),
         ...rest,
         id: pid.current, 
+        areaId,
     }
     let {success, errMsg} = await StorageParameterSetupDesigner.Setup({projectId, params}) 
      if (success) {
@@ -241,14 +242,14 @@ export default function Manual({projectId,  areaId, CModal}) {
                         ]}>
                             <InputNumber  step="0.01" min={1} max={100} precision={2} addonAfter="%" style={{width: '168px'}}  /> 
                         </Item> 
-                        <Item label="电网供电功率下限" name="demandLimitCoefficient" rules={[
+                        <Item label="电网供电功率下限" name="supplyPowerPLowerLimit" rules={[
                             {
                                 required: true, 
                             }
                         ]}>
                         <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="kw" style={{width: '168px'}}  /> 
                         </Item>
-                        <Item label="电网供电功率下限误差" name="demandLimitCoefficient"   rules={[
+                        <Item label="电网供电功率下限误差" name="supplyPowerPLowerLimitError"   rules={[
                             {
                                 required: true, 
                             }

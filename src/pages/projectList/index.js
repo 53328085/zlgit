@@ -354,8 +354,6 @@ export default function Index() {
    projectId: id,
   }
 
-  console.log(runMenus)
-  console.log(designerMenus)
   dispatch(getMenus(menus));
   dispatch(configProject(type === 1))
 
@@ -370,12 +368,11 @@ export default function Index() {
  }
 
 
- const enterProject = async ({id, type, publishState, validStageTime}) => {
+ const enterProject = async ({id, type, publishState}) => {
    try {
      dispatch(getpublishState(publishState)) 
      let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id)] 
-     let results = await Promise.allSettled(promises)
-     console.log(results)
+     let results = await Promise.allSettled(promises)   
      let menu;
      results.forEach((res, index) => {
        let {status, value: {success, data}} = res

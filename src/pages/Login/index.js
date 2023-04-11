@@ -324,6 +324,103 @@ function UserLog() {
     process.env.NODE_ENV === "production"
       ? new URL(window.location.href).hostname
       : "10.5.7.60";
+
+  // 进入项目配置/项目 
+
+ const handlermenu = (data,  id) => {
+  const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+  const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+//  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
+  const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+
+  const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
+
+  let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+ 
+  const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+  
+  const siderRunMenus = {}; // 运行功能 选择的子菜单
+ // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+  runMenus.forEach(item => {
+   let {no, key, parentNo} = item 
+   if (!exclude.includes(item.no)) { 
+      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
+      
+   }   
+  }) 
+  const siderDesignerMenus = {};
+  designerMenus.forEach(item => {
+   let {no, key, parentNo} = item 
+   if (!exclude.includes(item.no)) {
+     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+   }   
+  }) 
+  const menus =  {
+   designerMenus, 
+   siderDesignerMenus,
+   runMenus,
+   siderRunMenus, 
+   setMenus,  
+   comSet,      
+   projectId: id,
+  }
+
+  dispatch(getMenus(menus));
+  dispatch(configProject(false))
+  return runMenus?.find(item => item.no == '0104') || runMenus[0] 
+
+ 
+ }
+
+
+ const enterProject = async (id) => {
+   try {    
+     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), ProjectSetting.queryProjectPublishInfo(id)] 
+     let results = await Promise.allSettled(promises)   
+     let menu;
+     console.log(results)
+     results.forEach((res, index) => {
+       let {status, value: {success, data}} = res
+       if (status ==='fulfilled') {
+          if(success) {
+            index == 0 && dispatch(getOnelevel(data || []));
+            index == 1 && dispatch(getshifts(data || []))
+            index == 2 && (menu = handlermenu(data, id))
+            index == 3 && dispatch(getpublishState(data?.state))
+          }else{
+            index== 0 && dispatch(getOnelevel([]));
+            index == 1 && dispatch(getshifts([]))
+          }
+       }
+     })  
+    if(!menu) return message.error({content: '没有设置菜单，请联系管理人员', duration: 0.5})
+     projectRun(menu)
+   } catch (error) {
+     console.log(error)
+   }
+     
+
+        
+
+ }
+
+
+ const onSubmit = async (value) => {
+   const {name, pwd} = value;
+   let { success, errMsg, data} = await dispatch(loginByName({ name, pwd })).unwrap();
+   if(success) {
+      let {projectId, roleType} = data
+      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
+      if (roleType == 3 || roleType == 4) {
+        enterProject(projectId)
+      }
+
+   }else {
+    return message.warning(errMsg || "数据出错,请重试");
+   }
+
+ }
+
   const submit = async (value) => {
     const { name, pwd } = value;
     let { success, errMsg, data: usedata } = await dispatch(loginByName({ name, pwd })).unwrap();
@@ -465,7 +562,7 @@ function UserLog() {
         labelWrap
         form={userform}
         name="login"
-        onFinish={submit}
+        onFinish={onSubmit}
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
