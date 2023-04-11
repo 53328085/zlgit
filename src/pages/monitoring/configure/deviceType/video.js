@@ -286,6 +286,9 @@ export default function video() {
     getDeviceQueryCategoryFull,
     AddModalForm
   }
+  const onCancel=()=>{
+    ModalRef.current?.onCancel()
+  }
   let deviceProps = {
     value: 6,
     name: '新增视频监控类型',
@@ -298,6 +301,7 @@ export default function video() {
     exportExecel,
     title:'配置视频监控类型',
     onSure,
+    onCancel,
     AddModal: <AddModal {...addModalProps}></AddModal>
   };
   let editFormProps = {
@@ -314,12 +318,13 @@ export default function video() {
     onOk: onOkDel,
     DelModalRef
   }
+ 
   const EditModalComp=useMemo(()=>{
     return ( <Modal mold='cust' {...editModalProps} footer={[
       <Button onClick={()=>{EditModalRef.current?.onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEdit}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      onClick={ onSureEditModal}>应用</Button>,
+      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      // onClick={ onSureEditModal}>应用</Button>,
   ]}>
     <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
     <EditModal {...editFormProps}></EditModal>
