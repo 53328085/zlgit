@@ -460,6 +460,7 @@ export default function Electric() {
   </Modal>)
   },[editDefaultTableData])
   return (
+    
     <div>
       <DeviceContent {...deviceProps} >
         <Table 
@@ -473,10 +474,6 @@ export default function Electric() {
         ></Table>
       </DeviceContent>
       {EditComp}
-      {/* <Modal mold='cust' {...editModalProps}>
-        <BlueColumn name='编辑电表类型' styled={{ padding: '24px 0px' }}></BlueColumn>
-        <EditModal {...editFormProps}></EditModal>
-      </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
     </div>
   )
