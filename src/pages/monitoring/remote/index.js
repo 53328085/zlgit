@@ -422,25 +422,48 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                                     if (result.success) {
                                                         snRemoteList = []
                                                         result.data.map((aitem, aindex) => {
-                                                            if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
-                                                                for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                    if (dataSourceRead[i].sn == aitem.sn) {
-                                                                        dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                            if(changeBtnType=='open'){
+                                                                if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
+                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                        if (dataSourceRead[i].sn == aitem.sn) {
+                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                        }
                                                                     }
+                                                                    setResultInfoList[aindex].status = 1
+                                                                } else {
+                                                                    snRemoteList.push(aitem.sn)
+    
                                                                 }
-                                                                setResultInfoList[aindex].status = 1
-                                                            } else {
-                                                                snRemoteList.push(aitem.sn)
-
-                                                            }
-                                                            if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
-                                                                for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                    if (dataSourceRead[i].sn == aitem.sn) {
-                                                                        dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
+                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                        if (dataSourceRead[i].sn == aitem.sn) {
+                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                        }
                                                                     }
+                                                                    setResultInfoList[aindex].status = 2
                                                                 }
-                                                                setResultInfoList[aindex].status = 2
+                                                            }else if(changeBtnType=='close'){
+                                                                if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
+                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                        if (dataSourceRead[i].sn == aitem.sn) {
+                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                        }
+                                                                    }
+                                                                    setResultInfoList[aindex].status = 1
+                                                                } else {
+                                                                    snRemoteList.push(aitem.sn)
+    
+                                                                }
+                                                                if (aitem.status[0] != 'Close' && aitem.status[1] != 'Close' && state.length == 20) {
+                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                        if (dataSourceRead[i].sn == aitem.sn) {
+                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                        }
+                                                                    }
+                                                                    setResultInfoList[aindex].status = 2
+                                                                }
                                                             }
+                                                            
                                                         })
 
                                                         if (state.length == 20 || snRemoteList.length == 0) {

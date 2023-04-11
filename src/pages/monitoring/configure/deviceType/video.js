@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import { useSelector } from 'react-redux'
-import DeviceContent from './deviceContent'
+import DeviceContent from './devicecomp'
 import Table from '@com/useTable'
 import { Monitoring } from '@api/api.js'
 import Camera from '@imgs/camera1.png'
@@ -93,8 +93,32 @@ export default function video() {
       message.success('新增监控设备成功')
       getDeviceQueryCategory()
       getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
     }
     console.log(resp)
+  }
+  //应用新增
+  const onSure=async()=>{
+    const formvalues = AddModalForm.getFieldValue()
+    const upimg = AddModalForm.getFieldsValue()
+    let parmas = {
+      projectId,
+      category: formvalues.category,
+      imageBase64: upimg.ImageUpload ? upimg.ImageUpload : formvalues.imageBase64,
+      control: formvalues.control,
+      calculate: formvalues.calculate,
+      realTimeReading: formvalues.realTimeReading
+    }
+    console.log('ok', AddModalForm.getFieldValue(), parmas)
+    const resp = await AddDeviceCategory(parmas)
+    if (resp.success) {
+      message.success('应用成功')
+      getDeviceQueryCategory()
+      getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
+    }
   }
   //打开编辑
   const editOption = (record) => {
@@ -124,6 +148,24 @@ export default function video() {
     if (resp.success) {
       EditModalRef.current.onCancel()
       message.success('编辑成功')
+      getDeviceQueryCategory()
+      getDeviceQueryNotUsed()
+    } else {
+      message.error(resp.errMsg)
+    }
+  }
+  const onSureEditModal=async()=>{
+    const formvalue = EditForm.getFieldValue()
+    console.log(formvalue)
+    let params = {
+      projectId,
+      category: formvalue.category,
+      imageBase64: formvalue['ImageUpload'] ? `${formvalue['ImageUpload']}` : `data:image/jpeg;base64,${formvalue['imageBase64']}`
+    }
+    // console.log(EditForm.getFieldValue())
+    const resp = await UpdateDeviceCategory(params)
+    if (resp.success) {
+      message.success('应用成功')
       getDeviceQueryCategory()
       getDeviceQueryNotUsed()
     } else {
@@ -198,6 +240,8 @@ export default function video() {
       setSelectOption(arr)
       if (arr.length > 0) {
         getDeviceQueryCategoryFull(arr[0].value)
+      }else{
+        ModalRef.current.onCancel()
       }
 
     }
@@ -253,6 +297,7 @@ export default function video() {
     ModalRef,
     exportExecel,
     title:'配置视频监控类型',
+    onSure,
     AddModal: <AddModal {...addModalProps}></AddModal>
   };
   let editFormProps = {
@@ -269,6 +314,17 @@ export default function video() {
     onOk: onOkDel,
     DelModalRef
   }
+  const EditModalComp=useMemo(()=>{
+    return ( <Modal mold='cust' {...editModalProps} footer={[
+      <Button onClick={()=>{EditModalRef.current?.onCancel()}}>取消</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEdit}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={ onSureEditModal}>应用</Button>,
+  ]}>
+    <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+    <EditModal {...editFormProps}></EditModal>
+  </Modal>)
+  },[])
   return (
     <div>
       <DeviceContent {...deviceProps} >
@@ -282,10 +338,11 @@ export default function video() {
           onChange={onChangePage}
         ></Table>
       </DeviceContent>
-      <Modal mold='cust' {...editModalProps} >
+      {EditModalComp}
+      {/* <Modal mold='cust' {...editModalProps} >
         <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
         <EditModal {...editFormProps}></EditModal>
-      </Modal>
+      </Modal> */}
       <DeleteModal {...delModal}></DeleteModal>
       <MultImport modalImportRef = {modalImportRef} link = '/deviceExcel/camera.xlsx' name='批量导入' uploadprops={uploadprops}></MultImport>
     </div>

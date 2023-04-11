@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
-import DeviceContent from './deviceContent'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
+import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
@@ -9,13 +9,14 @@ import BlueColumn from '@com/bluecolumn'
 import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
 export default function Electric() {
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource,setTableDataSource]=useState([])//主页表格数据
-  const [defaultTableData, setDefaultTableData] = useState(null)//新增时表格默认数据
+  const [defaultTableData, setDefaultTableData] = useState([])//新增时表格默认数据
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
   const [isOpenModal,setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
@@ -145,7 +146,6 @@ let columns =  [
         title:'操作',
         dataIndex: 'options',
         render:(text,record)=>{
-          console.log(text,record)
           return(
             <div>
               <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
@@ -197,8 +197,43 @@ if(publish){
     message.error(resp.errMsg)
   }
 }
+//应用编辑
+  const onSureEditModal=async()=>{
+    const tableforvalues= editFromRef.current.pointSource
 
+  let count =0;
+  tableforvalues.forEach(it=>{
+    it.watchPoint&& count++
+  })
+  if(count===0){
+    message.warning('请至少选择一项标记检测运行点！')
+    return
+  }
   
+  const formvalues = editForm.getFieldsValue()
+  const tableData =  tableforvalues.map(it=>({
+    name:it.dataMark,
+    isSave:it.isSave,
+    isRuningPoint:it.watchPoint,
+    secquence:it.dataOrder
+  }))
+  let params ={
+    projectId,
+    category:formvalues.DeviceType,
+    control:formvalues.Control,
+    calculate:formvalues.IsCount,
+    realTimeReading:formvalues.IsRead,
+    imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
+    points:tableData
+  }
+  const resp = await UpdateDeviceCategory(params)
+  if(resp.success){
+    message.success("应用成功")
+    getTableData()
+  }else{
+    message.error(resp.errMsg)
+  }
+  }
   //新增时获取未使用的电表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
@@ -206,6 +241,7 @@ if(publish){
       deviceStyle: 4
     }
     const r = await DeviceQueryNotUsed(params)
+    console.log(r)
     if (r.success && Array.isArray(r.data)) {
       if(r.data.length > 0){
         setIsOpenModal(true)
@@ -215,6 +251,7 @@ if(publish){
       }else{
         setIsOpenModal(false)
         setIsAdd(true)
+        ModalRef.current.onCancel()
       }
       
     }
@@ -239,12 +276,13 @@ if(publish){
         dataOrder: item.secquence
       }))
       
-      // console.log(foRef, arr)
+      console.log(foRef, arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
-        foRef.current.setSwitched(watchPointArr)
+        foRef.current?.setSwitched(watchPointArr)
         foRef.current.setPointSource(arr)
+        console.log(arr)
       } else {
         setDefaultTableData(arr)
       }
@@ -285,7 +323,6 @@ if(publish){
     message.warning('请至少选择一项标记检测运行点！')
      return
    }
-
     const formValue = addForm.getFieldsValue()
     const tableData =  result.map(it=>({
       name:it.dataMark,
@@ -314,7 +351,41 @@ if(publish){
       message.error(resp.errMsg)
     }
   }
+  //确认新增应用
+  const onSure=async()=>{
+    const result= foRef.current?.choosemes()
+   if(!result){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
 
+    const formValue = addForm.getFieldsValue()
+    const tableData =  result.map(it=>({
+      name:it.dataMark,
+      isSave:it.isSave,
+      isRuningPoint:it.watchPoint,
+      secquence:it.dataOrder
+    }))
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
+    let params ={
+      projectId,
+      category:formValue.DeviceType,
+      control:formValue.Control,
+      calculate:formValue.IsCount,
+      realTimeReading:formValue.IsRead,
+      imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
+      points:tableData
+    }
+    const resp = await AddDeviceCategory(params)
+    console.log(resp)
+    if(resp.success){
+      message.success("应用成功")
+      getTableData()
+      getDeviceQueryNotUsed()
+    }else{
+      message.error(resp.errMsg)
+    }
+  }
   //导出表格
   const exportExecel=()=>{
     tableLoadRef.current.download()
@@ -334,7 +405,7 @@ if(publish){
     addForm,
     dataSource,
     getDeviceQueryCategoryFull,
-    defaultTableData
+    defaultTableData,
   }
   let deviceProps = {
     value: 0,
@@ -348,6 +419,7 @@ if(publish){
     ModalRef,
     onCancel,
     exportExecel,
+    onSure,
     title:'配置传感器类型'
   };
   let editFormProps={
@@ -368,6 +440,19 @@ if(publish){
     name:'删除传感器类型',
     onOk:delOK
   }
+  const EditModalComp=useMemo(()=>{
+    return(
+      <Modal  mold='cust' {...editModalProps} footer={[
+        <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+        onClick={ onSureEditModal}>应用</Button>,
+    ]}>
+      <BlueColumn name='编辑传感器类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <EditModal {...editFormProps}></EditModal>
+      </Modal>
+    )},[editDefaultTableData])
+  
   return (
     <div>
       <DeviceContent {...deviceProps} >
@@ -381,10 +466,11 @@ if(publish){
         onChange={onChangePage}
         ></Table>
       </DeviceContent>
-      <Modal  mold='cust' {...editModalProps}>
+      {EditModalComp}
+      {/* <Modal  mold='cust' {...editModalProps}>
       <BlueColumn name='编辑传感器类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
-      </Modal>
+      </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
     </div>
   )

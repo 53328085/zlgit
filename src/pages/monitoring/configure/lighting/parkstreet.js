@@ -86,8 +86,9 @@ export default function parkstreet({areaList,levelname}) {
   }
   //打开编辑窗口
   const onEdit=(record)=>{
+    console.log(editModalRef)
     editModalRef.current.onOpen()
-    console.log(editform)
+   
     editform.setFieldsValue({...record})
   }
   //确认编辑
@@ -110,6 +111,30 @@ export default function parkstreet({areaList,levelname}) {
    if(res.success){
       message.success('更新成功')
       editModalRef.current.onCancel()
+      getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+   }else{
+    message.error(res.errMsg)
+   }
+  }
+  //确认应用编辑
+  const onSureEditModal=async()=>{
+    const formvalues = editform.getFieldValue()
+    const areaId =compRef.current.selRef.current
+    const alike=compRef.current.inpRef.current
+    let params={
+      id:formvalues.id,
+      projectId,
+      areaId:formvalues.areaId,
+      name:formvalues.name,
+      boxName:formvalues.boxName,
+      sn:formvalues.sn,
+      controlLine:formvalues.controlLine,
+      address:formvalues.address,
+      remark:formvalues.remark
+    }
+   const res = await StreetLightUpdate(params)
+   if(res.success){
+      message.success('应用成功')
       getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
    }else{
     message.error(res.errMsg)
@@ -175,6 +200,30 @@ export default function parkstreet({areaList,levelname}) {
     if(res.success) {
       message.success("新增成功")
       addModalRef.current.onCancel()
+      getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //新增应用
+  const onSure=async ()=>{
+    const formvalue=addform.getFieldValue()
+    const areaId =compRef.current.selRef.current
+    const alike=compRef.current.inpRef.current
+    let params ={
+      id:0,
+      projectId,
+      areaId:formvalue?.areaId,
+      name:formvalue?.name,
+      boxName:formvalue?.boxName,
+      sn:formvalue?.sn,
+      controlLine:formvalue?.controlLine,
+      address:formvalue?.address,
+      remark:formvalue?.remark
+    }
+    const res = await StreetLightAdd(params)
+    if(res.success) {
+      message.success("应用成功")
       getStreetLightAdd({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
     }else{
       message.error(res.errMsg)
@@ -274,7 +323,8 @@ export default function parkstreet({areaList,levelname}) {
     addform,
     title:"新增园区路灯",
     name:"灯杆名称",
-    levelname
+    levelname,
+    onSure
   }
   const editModalProps={
     editModalRef,
@@ -282,7 +332,8 @@ export default function parkstreet({areaList,levelname}) {
     areaList,
     width: 832,
     onOk:onEditOk,
-    levelname
+    levelname,
+    onSureEditModal
   }
   const delModalProps={
     DelModalRef,

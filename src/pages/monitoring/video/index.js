@@ -40,7 +40,7 @@ export default function Index() {
   const [wsType, setwsType] = useState('');
   const [wsUrl, setWsUrl] = useState('');
   const [wsocket, setwebsocket] = useState(null);
-
+  const [recordData, setrecordData] = useState()
   const controlStyle = {
     width: 256,
     height: 256,
@@ -98,6 +98,42 @@ export default function Index() {
       }
     })
   }//云监控回放
+  let StartYsPtzData={
+    cameraSn:recordData?.sn,
+    channelNo:recordData?.channel,
+    direction:'',
+    speed:1
+  }
+  const changeControlYun=val=>{
+    StartYsPtzData.direction=val
+    StopYsPtzData.direction=val
+    startYsPtz()
+  }
+  let StopYsPtzData={
+    cameraSn:recordData?.sn,
+    channelNo:recordData?.channel,
+    direction:'',
+  }
+  const cancelControlYun=()=>{
+    return StopYsPtz(StopYsPtzData).then((res) => {
+      let { success, data } = res
+      if (success && data) {
+        // setrealPlayUrl(data)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const startYsPtz = () => {
+    return StartYsPtz(StartYsPtzData).then((res) => {
+      let { success, data } = res
+      if (success && data) {
+        // setrealPlayUrl(data)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }//云监控云台控制
   const getOverview = () => {
     return Overview(params).then((res) => {
       let { success, data } = res
@@ -252,7 +288,7 @@ export default function Index() {
       }
     });
   }
-  const [recordData, setrecordData] = useState()
+ 
   const showCameraDialog = (record) => {
     setrecordData(record)
     if (record.accessMode == 1) {
@@ -491,7 +527,15 @@ const playBackYun=()=>{
           <div style={{ flex: "1", marginLeft: 32 }}>
             <div >
               <BlueColumn name="云台控制" styled={{ fontSize: 16 }} />
-              <div style={controlStyle}></div>
+              {/* <div style={controlStyle}></div> */}
+              <div className={style.controlBackground} >
+              <div className={style.slotDiv}>
+                <span className={style.leftClick } onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
+                <span className={style.rightClick} onMouseDown={() => changeControlYun(3)} onMouseUp={cancelControlYun}></span>
+                <span className={style.topClick} onMouseDown={() => changeControlYun(0)} onMouseUp={cancelControlYun}></span>
+                <span className={style.bottomClick} onMouseDown={() => changeControlYun(1)} onMouseUp={cancelControlYun}></span>
+              </div>
+            </div>
             </div>
             <div style={{ marginTop: 32 }}>
               <Collapse

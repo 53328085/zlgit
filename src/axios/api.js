@@ -1203,8 +1203,8 @@ export const Monitoring = {
     GetYsRealPlayUrl: (cameraSn,channelNo,protocol,quality) => server.get(`/Monitor/RuntimeCamera/GetYsRealPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&protocol=${protocol}&quality=${quality}`),//
     GetYsHisPlayUrl: (cameraSn,channelNo,quality,startTime,stopTime) => server.get(`/Monitor/RuntimeCamera/GetYsHisPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&quality=${quality}&startTime=${startTime}&stopTime=${stopTime}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
-    StartYsPtz: (data) => server.post(`/Monitor/RuntimeCamera/StartYsPtz`, data),//
-    StopYsPtz: (data) => server.post(`/Monitor/RuntimeCamera/StopYsPtz`, data),//
+    StartYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StartYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}&speed=${data.speed}`),//
+    StopYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StopYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}`),//
   },
   //系统日志
   RuntimeLog:{

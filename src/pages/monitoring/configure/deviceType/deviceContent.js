@@ -1,40 +1,83 @@
-import React,{useState , useRef} from 'react'
+import React,{useState , useRef, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
 import {publishState} from '@redux/systemconfig'
+import {Button,message} from 'antd'
 
 export default function DeviceContent(props,ref) {
   const publish = useSelector(publishState)
-  console.log(publish)
+  const projectId = useSelector(state => state.system.menus.projectId)
   const {
     value,
     name='新增网关类型',
-    AddModal=<></>,
+    AddModal,
     cancelText='返回',
     okText='保存',
     onOk,
-    onCancel,
+    onSure,
+    // onCancel,
     width=520,
     ModalRef,
     exportExecel=()=>{},
     title="",
+    selectOptions,
+    form,
     ...other
   } = props
   
   const {DeviceTypeManager:{QueryNotUsed}}=Monitoring
+  const addformRef=useRef()
   
-  const openAdd =  other.open
+  const openAdd =async ()=>{
 
+      const result = await QueryNotUsed(projectId)
+      const { success, data } = result;
+      if (success && Array.isArray(data)) {
+        if (data.length > 0) {
+          ModalRef.current.onOpen()
+        } else {
+          message.warning('无可用网关新增!')
+          return
+        }
+  
+      }
+  }  
+  const onCancel=()=>{
+    ModalRef.current.onCancel()
+  }
   const modalProps = {
     cancelText,
     okText,
     width,
-    onOk,
-    onCancel
   }
+  const AddModalComp=useMemo(()=>{
+    return ( <Modal ref={ModalRef} mold='cust' {...modalProps} footer={[
+      <Button onClick={onCancel}>取消</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={
+        ()=>{
+          onSure().then(resp=>{
+             addformRef.current.open().then(
+              res=>{
+                
+              }
+             ).catch(err=>{
+              if(!err){
+                ModalRef.current.onCancel()
+              }
+             })
+          });          
+        }
+      }>应用</Button>,
+  ]}>
+      <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
+      <AddModal form={form} ref={addformRef}/>
+  </Modal>)
+  },[])
   return (
     <div >
       <div className={style.optionBtn}>
@@ -44,15 +87,19 @@ export default function DeviceContent(props,ref) {
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>
-        </div>
-        <div style={{display:'flex',height:700}}>
+      </div>
+      <div style={{display:'flex',height:700}}>
           {other.children}
-        </div>
-        
-        <Modal ref={ModalRef} mold='cust' {...modalProps}>
-            <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
-            {AddModal}
-        </Modal>
+      </div>
+        {AddModalComp}
+    {/* <Modal ref={ModalRef} mold='cust' {...modalProps} footer={[
+      <Button onClick={onCancel}>取消</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSure}>应用</Button>,
+  ]}>
+      <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
+      <AddModal form={form} ref={addformRef}/>
+  </Modal> */}
     </div>
   )
 }

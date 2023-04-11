@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
 import Comp from './comp'
@@ -8,9 +8,10 @@ import BlueColumn from '@com/bluecolumn'
 import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
-import {AddModalForm, MyContext, EditModalForm} from './elecomp'
+import { AddModalForm, MyContext, EditModalForm} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
+
 const {
   DeviceManager: {
     QueryByPageElectric,
@@ -31,9 +32,19 @@ export default function gateway({ deviceStyle }) {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
+  const gatewayRef =useRef()
+  gatewayRef.current =gatewaylist
   const [devicelist, setDevicelist] = useState()
+  const deviceRef =useRef()
+  deviceRef.current = devicelist
   const [addopts, setAddOpts] = useState()
+  const addoptsRef = useRef()
+  addoptsRef.current = addopts
   const [alarmopts, setAlarmopts] = useState()
+  const alarmoptsRef = useRef()
+  alarmoptsRef.current = alarmopts
+  const [transitionName,setTransition]=useState(undefined)
+  const [maskTransitionName,setMaskTransitionName]=useState(undefined)
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
@@ -61,8 +72,6 @@ export default function gateway({ deviceStyle }) {
   const levelname =useRef()
   let delid;
   let flies;
-  let tag=false;
-  let edittag=false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -228,16 +237,14 @@ export default function gateway({ deviceStyle }) {
 
       if(resp.success){
         message.success("应用成功")
-        edittag=true 
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       }else{
         message.error(resp.errMsg)
       }
     })
   }
   const onEditCancel=()=>{
-    if(edittag){
-      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+
     EditModalFormRef?.current?.onCancel()
   }
    //打开删除窗口
@@ -296,6 +303,7 @@ export default function gateway({ deviceStyle }) {
       message.warning('请先添加区域名称')
       return
     }
+
     addform.setFieldsValue({
       areaId: '',
       alarmPlanId: '',
@@ -349,6 +357,8 @@ export default function gateway({ deviceStyle }) {
   //新增确认应用
   const onSure=()=>{
     addform.validateFields().then(async () => {
+      setTransition("")
+      setMaskTransitionName("")
       const formvalue = addform.getFieldsValue()
       let params = {
         id: 0,
@@ -371,18 +381,19 @@ export default function gateway({ deviceStyle }) {
      
       if (res.success) {
         message.success('应用成功!')
-        tag=true
+        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
+    }).catch(()=>{
+
     })
   }
   //新增弹窗取消
   const onAddCancel = ()=>{
-    if(tag){
-      getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
     modalFormRef?.current?.onCancel()
+    setTransition(undefined)
+    setMaskTransitionName(undefined)
   }
   //打开批量导入窗口
   const multExport = () => {
@@ -532,12 +543,15 @@ export default function gateway({ deviceStyle }) {
     modalFormRef,
     width: 746,
     name: '新增电表',
-    addopts,
-    gatewaylist,
-    devicelist,
+    // addopts,
+    // gatewaylist,
+    // devicelist:deviceRef.current,
+    transitionName:transitionName,
+    maskTransitionName:maskTransitionName,
     onOk: addOk,
     onSure:onSure,
-    onAddCancel:onAddCancel
+    onAddCancel:onAddCancel,
+  
   }
   const uploadprops = {
     maxCount: 1,
@@ -575,7 +589,14 @@ export default function gateway({ deviceStyle }) {
     ref:errlistRef,
     onOk:()=>{ErrModalRef.current.onCancel()}
   }
-  
+
+  const EditModalComp=useMemo(()=>{
+    return (
+      <MyContext.Provider value={{ addopts, gatewaylist:gatewayRef.current, devicelist:deviceRef.current, alarmopts:alarmoptsRef.current, form: editform, deviceStyle,levelname }}>
+      <EditModalForm {...EditModalFormProps}></EditModalForm>
+    </MyContext.Provider>
+    )
+  },[addopts,gatewayRef.current,deviceRef.current,alarmoptsRef.current])
   return (
     <div>
       <Comp {...ComProps}>
@@ -585,16 +606,22 @@ export default function gateway({ deviceStyle }) {
           }))
           getQueryByPageElectric(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }}></Table>
+
       </Comp>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle,levelname }}>
+    
+      <MyContext.Provider value={{ addopts:addoptsRef.current, gatewaylist:gatewayRef.current, devicelist:deviceRef.current, alarmopts:alarmoptsRef.current, form: addform, deviceStyle,levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
+      
+
+      
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除电表？" onOk={delOk}></DeleteModal>
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+      {EditModalComp}
+      {/* <MyContext.Provider value={{ addopts, gatewaylist:gatewayRef.current, devicelist:deviceRef.current, alarmopts:alarmoptsRef.current, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
-      </MyContext.Provider>
+      </MyContext.Provider> */}
       <SetFactor {...FactorModalProps}></SetFactor>
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
     </div>

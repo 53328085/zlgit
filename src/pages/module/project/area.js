@@ -37,6 +37,10 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
   const nfref = useRef()
   const fref = useRef()
   const [ffrom]= Form.useForm() 
+ const onCancel = () => {
+   ref.current.onCancel()
+ }
+
   const queyFiled = async ( ) => {
      try {
        let {success, data} =  await QueryAreaLevelFields({projectId, level})
@@ -60,25 +64,32 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
   }
  
  
- const onNewFiled = async () => {  // 新增字段
+ const onNewFiled = async (type=false) => {  // 新增字段
    try {
-    let values = ffrom.validateFields().then(res => res).catch(e => {
+    let values = await ffrom.validateFields().then(res => res).catch(e => {
       console.log(e)
     })
-    if(!values) return
+    if(!values) return 
      const params = {...values, projectId, level}
      let {success, errMsg} = await InsertAreaLevelField(params)
      if(!success) return message.warning(errMsg || '数据出错')
-     success && ref.current.onCancel()
-    // QueryAreaLevelFields({projectId, level})
-     queyFiled(level)
+     if (success) {
+       console.log(type)
+       type && onCancel()
+       queyFiled(level)
+     }
+    
    } catch (error) {
      console.log(error)
    }
  
  }
  
- 
+ const CustFooter =  (<Space>
+  <Button onClick={onCancel}>取消</Button>
+     <Button type="primary" onClick={() => onNewFiled(false)}>应用</Button> 
+   <Button type="primary" onClick={() => onNewFiled(true)}>确定</Button>
+   </Space>)
    const columns = [
      {
         dataIndex: "name",
@@ -102,10 +113,33 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
     useEffect(() => {
       queyFiled()
     }, [level])
+    const modal = useMemo(() =>  <CModal title="新增字段" ref={ref}  mold="cust" width={512}  
+    footer={CustFooter}
+ >
+      <Form name="modalform" form={ffrom}  preserve={false}>
+          <Item name="name" label="字段名称" rules={[{
+            required: true
+          }]}>
+              <Input/>
+          </Item>
+          <Item name="type" label="字段用户" rules={[{
+            required: true
+          }]}>
+               <Select>
+                  <Select.Option value={0}>无</Select.Option>
+                  <Select.Option value={1}>经纬度</Select.Option>
+                  <Select.Option value={2}>面积</Select.Option>
+               </Select>
+          </Item>
+      </Form>
+ </CModal>, [])
     return (
         <div style={{height: '350px', overflow: 'auto'}}>
          <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
-         <CModal title="新增字段" ref={ref}  mold="cust" width={512} okText="保存" onOk={onNewFiled}>
+         {modal}
+        {/*  <CModal title="新增字段" ref={ref}  mold="cust" width={512}  
+            footer={CustFooter}
+         >
               <Form name="modalform" form={ffrom}  preserve={false}>
                   <Item name="name" label="字段名称" rules={[{
                     required: true
@@ -122,7 +156,7 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
                        </Select>
                   </Item>
               </Form>
-         </CModal>
+         </CModal> */}
       </div>
     )
  
@@ -145,11 +179,15 @@ const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
 const [curlevel, setCurlevel] = useState({})
 const newlevel = useRef()
- newlevel.current = datas.length
+const editlevel = useRef()
+const editId = useRef()
+editlevel.current = level
+newlevel.current = datas.length
+editId.current = curlevel?.id
  const edit = (d) => {
+       console.log(d)
        let {name, type, level} = d
-       setCurlevel({
-        ...curlevel,
+       setCurlevel({ 
         ...d,
        })
       setLevel(level);
@@ -220,15 +258,16 @@ const queryarealevels = async () => {
   }
 
   const editArea = async () => {
-    
-    let {id, level} = curlevel
+    console.log(curlevel)
+    //let {id, level} = curlevel
+    console.log(editlevel.current)
    try {
       let values = await modalform.validateFields().then(res => res).catch(e => {
         console.log(e)
       })
       if (!values) return
       const {name} = values
-      const params = {...values, level: level, projectId };
+      const params = {...values, level: editlevel.current, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
     
       success && message.success({
@@ -237,7 +276,7 @@ const queryarealevels = async () => {
          onClose: () => { 
          // setLevelid('')
             mref.current.onCancel()
-            queryarealevels().then(() => form.setFieldValue([id.toString()+level], name))
+            queryarealevels().then(() => form.setFieldValue([editId.current.toString()+editlevel.current], name))
          },
       })
       !success && message.warning(errMsg || '数据出错')
@@ -279,9 +318,7 @@ const queryarealevels = async () => {
 const closeArea = () => {
   mref.current.onCancel()
 }
-  const onOk = (type=true) => {    
-       console.log(type)  
-       console.log(handler)
+  const onOk = (type=true) => {  
        handler == 1 && addArea(type);
        handler == 2 && editArea();
    
@@ -307,7 +344,7 @@ const closeArea = () => {
 
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId]) // 数字格式化
 
- const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512} okText="保存" onOk={onOk} onSave={onOk} newlevel={newlevel}  />, [title])
+ const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel}  />, [title, level])
 
   useEffect(() => {
      queryarealevels();

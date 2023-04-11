@@ -56,12 +56,11 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
 //表格组件
   let TableForm = forwardRef(({ defaultTableData }, ref) => {
-    
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
     let checedList=[]
-    defaultTableData.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
+    defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
     
@@ -166,7 +165,8 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     
      useEffect(()=>{
       // choosemes(pointSource)
-     },[])
+      console.log('pointSource',pointSource)
+     },[pointSource])
     useImperativeHandle(ref, () => ({
       setSwitched,
       pointSource,
@@ -179,7 +179,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       <Table
         columns={columns}
         dataSource={pointSource}
-        rowKey={record => record.index}
+        rowKey={record => (record.index +' '+ record.dataMark)}
         pagination={tableParams}
         onChange={
           (page, pageSize) => {
@@ -197,19 +197,16 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
       const tableRef = useRef(null)
-      // const [isControl,setIsControl] = useState()
-      // const [IsCount,setIsCount] = useState()
+      
       const handleChange = async (option) => {
         getDeviceQueryCategoryFull(option)
-
-        // setIsControl(addForm.getFieldsValue().Control)
-        // setIsCount(addForm.getFieldsValue().IsCount)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
   
       useEffect(() => {
         // setIsControl(addForm.getFieldsValue().Control)
         // setIsCount(addForm.getFieldsValue().IsCount)
+      
       },[])
       useEffect(()=>{
       },[])

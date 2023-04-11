@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -25,8 +25,14 @@ const { DeviceManager:
 export default function gateway() {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
+  const selectoptsRef =useRef()
+  selectoptsRef.current = selectopts
   const [addopts, setAddOpts] = useState()
+  const addoptsRef = useRef()
+  addoptsRef.current = addopts
   const [usecategory, setUsecategory] = useState()
+  const usecategoryRef=useRef()
+  usecategoryRef.current=usecategory
   const [dataSource, setDataSource] = useState()
   const [delId, setDelId] = useState()
   const [gatewaySn, setGatewaySn] = useState('')
@@ -65,7 +71,6 @@ export default function gateway() {
   }
   let startsn;
   let flies;
-  let tag = false;
   let edittag = false
   let columns = [
     {
@@ -300,16 +305,13 @@ let errcolumns=[
       const { data, success, errMsg } = await GatewayAdd(params)
       if (success) {
         message.success('应用成功')
-        tag = true;
+        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
       } else {
         message.error(errMsg)
       }
     })
   }
   const cancelOk = () => {
-    if (tag) {
-      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
-    }
     modalFormRef.current.onCancel()
   }
   //确认编辑
@@ -328,7 +330,6 @@ let errcolumns=[
         heartInterval: parseInt(heartInterval),
         remark
       }
-      console.log(params)
       const { data, success, errMsg } = await GatewayUpdate(params)
       if (success) {
         message.success('更新成功')
@@ -355,20 +356,21 @@ let errcolumns=[
         heartInterval: parseInt(heartInterval),
         remark
       }
-      console.log(params)
+
       const { data, success, errMsg } = await GatewayUpdate(params)
       if (success) {
         message.success('更新成功')
-        edittag = true
+        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+        // edittag = true
       } else {
         message.error(errMsg)
       }
     })
   }
   const editCancel = () => {
-    if (edittag) {
-      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
-    }
+    // if (edittag) {
+    //   getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+    // }
     modalEditRef.current.onCancel()
 
   }
@@ -586,10 +588,10 @@ let errcolumns=[
   let ModalFormProps = {
     modalFormRef,
     width: 746,
-    addopts,
-    selectopts,
+    addopts:addoptsRef.current,
+    selectopts:selectoptsRef.current,
     addForm,
-    usecategory,
+    usecategory:usecategoryRef.current,
     onOk: addOk,
     onCancel: cancelOk,
     onSure: addSure,
@@ -626,6 +628,10 @@ let errcolumns=[
     ref: errlistRef,
     onOk: () => { ErrModalRef.current.onCancel() }
   }
+  const AddFormComp = useMemo(()=>{
+    return (<AddModalForm {...ModalFormProps}></AddModalForm>)
+  },[addoptsRef.current,selectoptsRef.current,usecategoryRef.current])
+  const EditFormComp=useMemo(()=><EditModalForm {...EditProps}></EditModalForm>,[ levelname.current])
   useEffect(() => {
     if (oneLevel?.length > 0) {
       getOneLevel()
@@ -653,14 +659,15 @@ let errcolumns=[
               getQueryByPageGateWay(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue)
             }}></Table>
         </Comp>
-        <AddModalForm {...ModalFormProps}></AddModalForm>
+        {/* <AddModalForm {...ModalFormProps}></AddModalForm> */}
+        {AddFormComp}
         <MultImport {...ImportProps}></MultImport>
         <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
         <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
         errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips}></ReStartRes>
         <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
         <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
-        <EditModalForm {...EditProps}></EditModalForm>
+        {EditFormComp}
         <ErrorMessage {...ErrModalProps}></ErrorMessage>
 
       </div>

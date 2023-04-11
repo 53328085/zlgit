@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
-import DeviceContent from './deviceContent'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
+import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
@@ -9,13 +9,14 @@ import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource, setTableDataSource] = useState([])//主页表格数据
-  const [defaultTableData, setDefaultTableData] = useState(null)//新增时表格默认数据
+  const [defaultTableData, setDefaultTableData] = useState([])//新增时表格默认数据
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
   const [isOpenModal, setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
@@ -189,7 +190,6 @@ export default function Electric() {
       imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
       points: tableData
     }
-    console.log(params)
     const resp = await UpdateDeviceCategory(params)
     if (resp.success) {
       EditModalRef.current.onCancel()
@@ -199,7 +199,43 @@ export default function Electric() {
       message.error(resp.errMsg)
     }
   }
+  //确认应用编辑
+  const onSureEditModal = async() => {
+    const tableforvalues = editFromRef.current.pointSource
+    
+    let count =0;
+    tableforvalues.forEach(it=>{
+      it.watchPoint&& count++
+    })
+    if(count===0){
+      message.warning('请至少选择一项标记检测运行点！')
+      return
+    }
 
+    const formvalues = editForm.getFieldsValue()
+    const tableData = tableforvalues.map(it => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder
+    }))
+    let params = {
+      projectId,
+      category: formvalues.DeviceType,
+      control: formvalues.Control,
+      calculate: formvalues.IsCount,
+      realTimeReading: formvalues.IsRead,
+      imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
+      points: tableData
+    }
+    const resp = await UpdateDeviceCategory(params)
+    if (resp.success) {
+      message.success("应用成功")
+      getTableData()
+    } else {
+      message.error(resp.errMsg)
+    }
+  }
 
   //新增时获取未使用的电表名
   const getDeviceQueryNotUsed = async () => {
@@ -217,13 +253,14 @@ export default function Electric() {
       } else {
         setIsOpenModal(false)
         setIsAdd(true)
+        ModalRef.current.onCancel()
       }
 
     }
   }
 
-    //获取默认电表的详细信息
-    const getDeviceQueryCategoryFull = async (category) => {
+  //获取默认电表的详细信息
+  const getDeviceQueryCategoryFull = async (category) => {
       let params = {
         projectId,
         category,
@@ -231,7 +268,7 @@ export default function Electric() {
       const r = await DeviceQueryCategoryFull(params)
       if (r.success) {
         const data = r.data
-        console.log(213,data)
+        console.log(271,data)
         const arr = data.points?.map((item, index) => ({
           index: index + 1,
           dataMark: item.name,
@@ -241,13 +278,14 @@ export default function Electric() {
           watchPoint: item.isRuningPoint,
           dataOrder: item.secquence
         }))
+        console.log(281,arr)
         if (foRef.current) {
           const watchPointArr = arr.filter(it => it.watchPoint)
           console.log(watchPointArr)
           foRef.current.setSwitched(watchPointArr)
-          foRef.current.setPointSource([...arr])
-          foRef.current.setIsControl( data.control)
-          foRef.current.setIsCount(data.calculate)
+          foRef.current.setPointSource(lodash.cloneDeep(arr))
+          // foRef.current.setIsControl( data.control)
+          // foRef.current.setIsCount(data.calculate)
         } else {
           setDefaultTableData(arr)
         }
@@ -319,7 +357,42 @@ export default function Electric() {
       message.error(resp.errMsg)
     }
   }
+  //确认新增应用
+  const onSure=async()=>{
+    const result= foRef.current?.choosemes()
+   if(!result){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
 
+    const formValue = addForm.getFieldsValue()
+
+    const tableData = result.map(it => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder
+    }))
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource,result)
+    let params = {
+      projectId,
+      category: formValue.DeviceType,
+      control: formValue.Control,
+      calculate: formValue.IsCount,
+      realTimeReading: formValue.IsRead,
+      imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
+      points: tableData
+    }
+    const resp = await AddDeviceCategory(params)
+    console.log(resp)
+    if (resp.success) {
+      message.success("应用成功")
+      getTableData()
+      getDeviceQueryNotUsed()
+    } else {
+      message.error(resp.errMsg)
+    }
+  }
   //导出表格
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -353,6 +426,7 @@ export default function Electric() {
     open,
     ModalRef,
     onCancel,
+    onSure,
     exportExecel,
     title:'配置电表类型'
   };
@@ -366,6 +440,7 @@ export default function Electric() {
     width: 1032,
     onOk: onOkEditModal
   }
+  
   let delModalProps = {
     DelModalRef,
     cancelText: '取消',
@@ -374,6 +449,16 @@ export default function Electric() {
     name: '删除电表类型',
     onOk: delOK,
   }
+  const EditComp=useMemo(()=>{
+    return (<Modal mold='cust' {...editModalProps} footer={[
+      <Button onClick={EditModalRef.current?.onCancel}>取消</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSureEditModal}>应用</Button>,
+  ]}>
+    <BlueColumn name='编辑电表类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+    <EditModal {...editFormProps}></EditModal>
+  </Modal>)
+  },[editDefaultTableData])
   return (
     <div>
       <DeviceContent {...deviceProps} >
@@ -387,10 +472,11 @@ export default function Electric() {
         onChange={onChangePage}
         ></Table>
       </DeviceContent>
-      <Modal mold='cust' {...editModalProps}>
+      {EditComp}
+      {/* <Modal mold='cust' {...editModalProps}>
         <BlueColumn name='编辑电表类型' styled={{ padding: '24px 0px' }}></BlueColumn>
         <EditModal {...editFormProps}></EditModal>
-      </Modal>
+      </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
     </div>
   )
