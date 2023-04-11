@@ -314,6 +314,83 @@ export default function Index() {
     })
   }
 
+// 进入项目配置/项目 
+
+ const handlermenu = (data, type) => {
+  const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+  const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+//  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
+  const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+
+  const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
+
+  let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+ 
+  const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+  
+  const siderRunMenus = {}; // 运行功能 选择的子菜单
+ // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+  runMenus.forEach(item => {
+   let {no, key, parentNo} = item 
+   if (!exclude.includes(item.no)) { 
+      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
+      
+   }   
+  }) 
+  const siderDesignerMenus = {};
+  designerMenus.forEach(item => {
+   let {no, key, parentNo} = item 
+   if (!exclude.includes(item.no)) {
+     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+   }   
+  }) 
+  const menus =  {
+   designerMenus, 
+   siderDesignerMenus,
+   runMenus,
+   siderRunMenus, 
+   setMenus,  
+   comSet,      
+   projectId: id,
+  }
+  dispatch(getMenus(menus));
+  dispatch(configProject(type === 1))
+ 
+ }
+
+
+ const enterProject = async ({id, type, publishState, validStageTime}) => {
+   try {
+     dispatch(getpublishState(publishState)) 
+     let promises = [ProjectList.QueryMenus(id), Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id)] 
+     let results = await Promise.allSettled(promises)
+     console.log(results)
+     return
+     results.forEach((res, index) => {
+       let {status, value: {success, data}} = res
+       if (status ==='fulfilled' && success ) {
+
+       }
+
+       if(index == 0 && status) { 
+        if(status === 'fulfilled' && value.success) {
+          handlermenu(value.data, type, id)
+        }
+       }
+
+     })
+   } catch (error) {
+     console.log(error)
+   }
+     
+
+        
+
+ }
+
+
+
+
   const startProject = async ({id, type, publishState, validStageTime}) => {  
 
      try {
