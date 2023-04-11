@@ -5,10 +5,11 @@ import style from './style.module.less'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
 import {publishState} from '@redux/systemconfig'
-import {Button} from 'antd'
+import {Button,message} from 'antd'
 
 export default function DeviceContent(props,ref) {
   const publish = useSelector(publishState)
+  const projectId = useSelector(state => state.system.menus.projectId)
   const {
     value,
     name='新增网关类型',
@@ -29,10 +30,20 @@ export default function DeviceContent(props,ref) {
   
   const {DeviceTypeManager:{QueryNotUsed}}=Monitoring
   const addformRef=useRef()
-  const openAdd =()=>{
-    ModalRef.current.onOpen()
-    // addformRef.current?.open()
-    console.log(addformRef)
+  
+  const openAdd =async ()=>{
+
+      const result = await QueryNotUsed(projectId)
+      const { success, data } = result;
+      if (success && Array.isArray(data)) {
+        if (data.length > 0) {
+          ModalRef.current.onOpen()
+        } else {
+          message.warning('无可用网关新增!')
+          return
+        }
+  
+      }
   }  
   const onCancel=()=>{
     ModalRef.current.onCancel()
@@ -76,10 +87,10 @@ export default function DeviceContent(props,ref) {
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             <div className={style.btn} onClick={exportExecel}>导出</div>
           </div>
-        </div>
-        <div style={{display:'flex',height:700}}>
+      </div>
+      <div style={{display:'flex',height:700}}>
           {other.children}
-        </div>
+      </div>
         {AddModalComp}
     {/* <Modal ref={ModalRef} mold='cust' {...modalProps} footer={[
       <Button onClick={onCancel}>取消</Button>,
