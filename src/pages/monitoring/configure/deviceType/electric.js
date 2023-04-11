@@ -278,12 +278,13 @@ export default function Electric() {
           watchPoint: item.isRuningPoint,
           dataOrder: item.secquence
         }))
-        console.log(281,arr)
+        console.log(281,foRef,arr)
         if (foRef.current) {
           const watchPointArr = arr.filter(it => it.watchPoint)
           console.log(watchPointArr)
           foRef.current.setSwitched(watchPointArr)
           foRef.current.setPointSource(lodash.cloneDeep(arr))
+          foRef.current.setTabledatas(lodash.cloneDeep(arr))
           // foRef.current.setIsControl( data.control)
           // foRef.current.setIsCount(data.calculate)
         } else {
@@ -460,7 +461,7 @@ export default function Electric() {
   </Modal>)
   },[editDefaultTableData])
   return (
-    
+
     <div>
       <DeviceContent {...deviceProps} >
         <Table 

@@ -55,7 +55,8 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
   }
 
 //表格组件
-  let TableForm = forwardRef(({ defaultTableData }, ref) => {
+  let TableForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
+    console.log(59,tabledatas)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
@@ -166,7 +167,11 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
      useEffect(()=>{
       // choosemes(pointSource)
       console.log('pointSource',pointSource)
-     },[pointSource])
+     
+     },[JSON.stringify(pointSource)])
+     useEffect(()=>{
+      console.log('tabledatas',tabledatas)
+     },[JSON.stringify(tabledatas)])
     useImperativeHandle(ref, () => ({
       setSwitched,
       pointSource,
@@ -197,19 +202,16 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
       const tableRef = useRef(null)
-      
+      const [tabledatas,setTabledatas]=useState([...defaultTableData]) 
       const handleChange = async (option) => {
         getDeviceQueryCategoryFull(option)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
   
       useEffect(() => {
-        // setIsControl(addForm.getFieldsValue().Control)
-        // setIsCount(addForm.getFieldsValue().IsCount)
-      
-      },[])
-      useEffect(()=>{
-      },[])
+        console.log(207,tabledatas)
+      },[JSON.stringify(tabledatas)])
+
 
       useImperativeHandle(ref, () => ({
         pointSource: tableRef.current.pointSource,
@@ -218,6 +220,7 @@ export let AddModal = forwardRef(
         choosemes:tableRef.current.choosemes,
         tabledata:tableRef.current.tabledata,
         handleChange,
+        setTabledatas
         // setIsControl,
         // setIsCount
       }))
@@ -286,7 +289,7 @@ export let AddModal = forwardRef(
           <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
           {/* <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index}></Table> */}
           <div className={style.minHt}>
-          <TableForm ref={tableRef} defaultTableData={defaultTableData} ></TableForm>
+          <TableForm ref={tableRef} defaultTableData={defaultTableData} tabledatas={tabledatas}></TableForm>
           </div>
           
         </Form>

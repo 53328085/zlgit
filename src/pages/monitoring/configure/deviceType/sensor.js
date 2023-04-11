@@ -280,7 +280,7 @@ if(publish){
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
-        foRef.current?.setSwitched(watchPointArr)
+        foRef.current.setSwitched(watchPointArr)
         foRef.current.setPointSource(arr)
         console.log(arr)
       } else {
@@ -294,7 +294,6 @@ if(publish){
         IsRead: data.realTimeReading,
         DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
         ImageUpload: '',
-        // Point:arr,
       })
       setIsAdd(true)
     }
