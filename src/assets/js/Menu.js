@@ -12344,3 +12344,266 @@ export const ltdx = [
         }
     }
 ]
+
+export const normal = [
+    {
+        "name": "变压器-两圈压变",
+        "icon": "iconfont icon-bianyaqi-liangquanyabian-",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "变压器",
+        "icon": "iconfont icon-bianyaqi",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "电流互感器",
+        "icon": "iconfont icon-CT",
+        "data": {
+            "rect": {
+                "width": 140,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "低压断路器",
+        "icon": "iconfont icon-diyaduanluqi",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "变压器",
+        "icon": "iconfont icon-bianyaqi2",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "抽屉式断路器",
+        "icon": "iconfont icon-a-choutishiduanluqi-21",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "双绕组变压器Yd",
+        "icon": "iconfont icon-shuangraozubianyaqiYd",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "双绕组变压器（有载调压）",
+        "icon": "iconfont icon-a-shuangraozubianyaqiyouzaitiaoya",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "互感器-电流互感器1",
+        "icon": "iconfont icon-huganqi-dianliuhuganqi-",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "互感器-电流互感器2",
+        "icon": "iconfont icon-huganqi-dianliuhuganqi-1",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "电流互感器",
+        "icon": "iconfont icon-dianliuhuganqi",
+        "data": {
+            "rect": {
+                "width": 180,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "电流互感器2_竖直",
+        "icon": "iconfont icon-dianliuhuganqi2_shuzhi",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "双向二极管",
+        "icon": "iconfont icon-shuangxiangerjiguan",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "热继电器（分）",
+        "icon": "iconfont icon-rejidianqi1",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "热继电器(合)",
+        "icon": "iconfont icon-rejidianqi11",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "热继电器、动断触点",
+        "icon": "iconfont icon-rejidianqidongduanchudian",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "热继电器的驱动器件",
+        "icon": "iconfont icon-rejidianqidequdongqijian",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "热继电器的驱动器件",
+        "icon": "iconfont icon-rejidianqidequdongqijian1",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "熔断器-V",
+        "icon": "iconfont icon-rongduanqi-1",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    },
+    {
+        "name": "熔断器-H",
+        "icon": "iconfont icon-rongduanqi-11",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon": ""
+        }
+    }
+]

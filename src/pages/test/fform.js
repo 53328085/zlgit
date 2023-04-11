@@ -1,27 +1,20 @@
-import React, { useState, useTransition } from 'react';
- 
-export default function Demo() {
-  const [value, setValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState([]);
-  const [loading, startTransition] = useTransition(500000);
- 
-  const handleChange = (e) => {
-    setValue(e.target.value);
-    // 延迟更新
-    startTransition(() => {
-      setSearchQuery(Array(20000).fill(e.target.value));
-    });
-  };
- 
+import React, {useState} from 'react'
+
+export default function fform() {
+  const [count, setCount] = useState({name: 'zl', age: 10});
+  const change = () => {
+    let obj = {name: 'zl'+Math.random(), age: Math.random()}
+    console.log(obj)
+    setCount({...obj})
+  }
+  const log = async () => {
+    console.log(count)
+  }
   return (
-    <div className="App" style={{width: '300px', height: '400px', overflow: 'auto'}}>
-      <input value={value} onChange={handleChange} />
-      {loading ? (
-        <p>loading...</p>
-      ) : (
-        searchQuery.map((item, index) => <p key={index}>{item}</p>)
-      )}
+    <div>
+      <h5>{count.toString()}</h5>
+      <button onClick={change}>count</button>
+      <button onClick={log}>log</button>
     </div>
-  );
+  )
 }
- 

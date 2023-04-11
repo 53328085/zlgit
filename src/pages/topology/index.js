@@ -3,14 +3,18 @@ import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
 import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card } from "antd";
-import { basic, flows, sgcc, ltdx } from "./Menu";
-import { SketchPicker } from "react-color";
+import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 
 import logo from './topologyLogo.png'
 // 左侧工具栏图标
 import '../../assets/css/fonts/font/iconfont.css'
 import '../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
 import '../../assets/css/font_2395018_pl6jy69tbjr/iconfont.css'
+import '../../assets/css/font_4xgdsyqu0mh/iconfont.css'
+import '../../assets/css/font_99x1os11gqi/iconfont.css'
+import '../../assets/css/font_c44gejdj174/iconfont.css'
+import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
+import '../../assets/css/font_ugr1luq01xe/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
 
@@ -35,6 +39,10 @@ export default function index() {
   
   const { Panel } = Collapse;
   const Tools = [
+    {
+      group: '常用元器件',
+      children: normal
+    },
     {
       group: '基本形状',
       children: basic
@@ -99,24 +107,23 @@ export default function index() {
   }
   const[nodeTag, setNodeTag] = useState(false)
   const onMessage = (event, data) => {
-    // console.log(event)
+    console.log(event)
     // console.log(data)
     if(event == 'nodeRightClick'){
-      console.log(data.evs)
+      // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y- 62 + 'px'
+          left: data.evs.x  + 'px',
+          top: data.evs.y + 'px'
         })
+        setNodeTag(true)
       }else if(data.name == 'image'){
         setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y- 62 + 'px'
+          left: data.evs.x  + 'px',
+          top: data.evs.y + 'px'
         })
-      }
-      setTimeout(()=> {
         setNodeTag(true)
-      },1000)
+      }
     }
     if(event == 'line' || event == 'space' || event == 'multi'){
       setNodeTag(false)
@@ -399,14 +406,19 @@ export default function index() {
             <div className={style.title}>节点样式</div>
             <div className={style.settings}>
               <Form form={nodeForm} name='nodeForm' requiredMark={false} labelAlign='left' layout={'vertical'}>
-                <Item label='线条样式' name='dash'>
-                  <Select style={{ width: 229 }} onChange={onChangeDash}>
-                    <Select.Option value={0}>实线</Select.Option>
-                    <Select.Option value={1}>虚线</Select.Option>
-                    <Select.Option value={2}>大虚线</Select.Option>
-                    <Select.Option value={3}>断点虚线</Select.Option>
-                  </Select>
-                </Item>
+                <Space>
+                  <Item label='线条样式' name='dash'>
+                    <Select style={{ width: 222 }} onChange={onChangeDash}>
+                      <Select.Option value={0}>实线</Select.Option>
+                      <Select.Option value={1}>虚线</Select.Option>
+                      <Select.Option value={2}>大虚线</Select.Option>
+                      <Select.Option value={3}>断点虚线</Select.Option>
+                    </Select>
+                  </Item>
+                  {/* <Item label='旋转角度' name='rotate'>
+                    <Input style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
+                  </Item> */}
+                </Space>
                 <Space>
                   <Item label='线条颜色' name='strokeStyle' initialValue={'#222222'}>
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>

@@ -36,7 +36,7 @@ export default function Index() {
     QueryStrategy(projectId, areaId).then(res => {
       let { success, data, errMsg } = res
       if(success){
-        if(data){
+        if(data.length> 0){
           data.map(item => {
             item.strategyTime.map(val => {
               val.startTime = timeToId[val.startTime]

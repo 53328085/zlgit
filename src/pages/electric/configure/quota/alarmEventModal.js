@@ -310,6 +310,7 @@ export default function Index(props) {
             setAlarmCondition(1);
             setCompareValue(2);
             setSoeValue(1);
+          } else {
           }
         }
       });
@@ -566,7 +567,7 @@ export default function Index(props) {
                     >
                       <InputNumber
                         style={{ width: 125 }}
-                        placeholder="且高值≥低值"
+                        placeholder="高值≥低值"
                         className={style.colorRed}
                         // prefix="且高值≥低值"
                       />

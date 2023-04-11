@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "16906231",
+      "name": "熔断器-1",
+      "font_class": "rongduanqi-1",
+      "unicode": "e6f6",
+      "unicode_decimal": 59126
+    },
+    {
+      "icon_id": "16906945",
+      "name": "熔断器-1",
+      "font_class": "rongduanqi-11",
+      "unicode": "e708",
+      "unicode_decimal": 59144
+    }
+  ]
+}

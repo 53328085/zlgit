@@ -56,7 +56,7 @@ export default function Index() {
   const [noDataInForm, setNoDataInForm] = useState();
   const getAlarmData = () => {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         if (res.data) {
           setDataSource(res.data);
           setTotal(res.total);
@@ -151,12 +151,12 @@ export default function Index() {
   //删除确认
   const deleteOk = () => {
     DeletePlanAlarm(projectId, deleteId).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         message.success("告警方案删除成功！");
-        if(dataSource.length == 1 && pageNum > 1){
-          setPageNum(pageNum - 1)
-        }else{
-          getAlarmData()
+        if (dataSource.length == 1 && pageNum > 1) {
+          setPageNum(pageNum - 1);
+        } else {
+          getAlarmData();
         }
       } else {
         message.error(res.errMsg ? res.errMsg : "删除失败,请重试！");
@@ -167,12 +167,16 @@ export default function Index() {
   const handleDelete = () => {
     setDeleteModal(false);
   };
+
+  const [deleteFlag, setDeleteFlag] = useState(false);
   //删除告警类型确认
   const deleteTypeOk = () => {
     DeleteAlarmEvent(projectId, deleteTypeId).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         message.success("告警类型删除成功！");
         setDeleteTypeModal(false);
+        //删除调用清空告警类型table数据
+        setDeleteFlag(true);
         //刷新告警类型数据
         runEdit();
       } else {
@@ -196,10 +200,10 @@ export default function Index() {
   const [editId, setEditId] = useState();
   const [editType, setEditType] = useState(false);
   const edit = (record) => {
-    setEditId(record.id);
     setDataSourceType();
+    setEditId(record.id);
     QueryAlarmEvents(record.id).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
           console.log(JSON.parse(res.data));
@@ -211,17 +215,21 @@ export default function Index() {
         });
       }
     });
-
     setEditType(true);
     setModalTitle("编辑告警方案");
     setaddAlarmModal(true);
     form.setFieldsValue(record);
   };
-  //用于告警类型  新增、修改、删除后调用
+  //用于告警类型  新增、修改、删除、取消后调用
   const alarmTypeTable = () => {
-    setDataSourceType();
+    //删除调用清空告警类型table数据
+    if (deleteFlag === true) {
+      setDataSourceType();
+      setDeleteFlag(false);
+    } else {
+    }
     QueryAlarmEvents(editId).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
           console.log(JSON.parse(res.data));
@@ -302,6 +310,35 @@ export default function Index() {
       key: "Time",
       align: "center",
       width: 100,
+    },
+
+    {
+      title: "告警类型",
+      dataIndex: "AlarmRule",
+      key: "AlarmRule",
+      align: "center",
+      width: 80,
+      render: (text) => {
+        return (
+          <>
+            {text === "Empty " ? (
+              <span>-</span>
+            ) : text === "Overrun" ? (
+              <span>越限告警</span>
+            ) : text === "Interval" ? (
+              <span>区间告警</span>
+            ) : text === "Deflection" ? (
+              <span>变位告警</span>
+            ) : text === "SOE" ? (
+              <span>SOE告警</span>
+            ) : text === "Communication" ? (
+              <span>离线告警</span>
+            ) : (
+              ""
+            )}
+          </>
+        );
+      },
     },
     {
       title: "操作",
@@ -389,7 +426,7 @@ export default function Index() {
       tag: values.tag,
     };
     UpdatePlanAlarm(params).then((res) => {
-      if (res.success===true) {
+      if (res.success === true) {
         message.success("告警方案编辑成功！");
         getAlarmData();
         setaddAlarmModal(false);
@@ -405,6 +442,7 @@ export default function Index() {
   };
   const changeAddAlarmEvent = () => {
     setAddAlarmEvent(false);
+    runEdit();
   };
 
   //新增告警事件《新增告警事件》表单数据
@@ -417,7 +455,7 @@ export default function Index() {
       childFormInfo.planId = editId;
       if (childFormInfo.alarmRule === 1) {
         return AddAlarmEventOverrun(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -427,7 +465,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 2) {
         return AddAlarmEventInterval(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -437,7 +475,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 3) {
         return AddAlarmEventDeflection(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -447,7 +485,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 4) {
         return AddAlarmEventSOE(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -457,7 +495,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 5) {
         return AddAlarmEventCommunication(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             runEdit();
             message.success("新增告警事件成功！");
             setAddAlarmEvent(false);
@@ -471,7 +509,7 @@ export default function Index() {
       childFormInfo.id = editTypeId;
       if (childFormInfo.alarmRule === 1) {
         return UpdateAlarmEventOverrun(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -481,7 +519,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 2) {
         return UpdateAlarmEventInterval(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -491,7 +529,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 3) {
         return UpdateAlarmEventDeflection(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -501,7 +539,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 4) {
         return UpdateAlarmEventSOE(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -511,7 +549,7 @@ export default function Index() {
         });
       } else if (childFormInfo.alarmRule === 5) {
         return UpdateAlarmEventCommunication(childFormInfo).then((res) => {
-          if (res.success===true) {
+          if (res.success === true) {
             setAddAlarmEvent(false);
             runEdit();
             message.success("修改告警事件成功！");
@@ -663,7 +701,7 @@ export default function Index() {
                 >
                   <Input placeholder="请输入告警方案名称" />
                 </Item>
-                <Item name="tag" label="备注信息">
+                <Item name="tag" label="方案备注">
                   <Input />
                 </Item>
               </Form>
