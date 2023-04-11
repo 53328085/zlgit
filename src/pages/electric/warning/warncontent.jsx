@@ -128,9 +128,10 @@ export default function Warncontent({ style,form }) {
         getTableData(1)
     }
     useEffect(()=>{
-        if(form.getFieldValue('area')){
-            getTableData()
-        }
+        getTableData()
+        // if(form.getFieldValue('area')){
+           
+        // }
      
     },[form.getFieldValue('area')])
 
