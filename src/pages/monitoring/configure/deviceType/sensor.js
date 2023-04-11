@@ -9,6 +9,7 @@ import BlueColumn from '@com/bluecolumn'
 import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
 export default function Electric() {
   const publish = useSelector(publishState)
@@ -275,12 +276,13 @@ if(publish){
         dataOrder: item.secquence
       }))
       
-      // console.log(foRef, arr)
+      console.log(foRef, arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
-        foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource([...arr])
+        foRef.current?.setSwitched(watchPointArr)
+        foRef.current.setPointSource(arr)
+        console.log(arr)
       } else {
         setDefaultTableData(arr)
       }
@@ -321,7 +323,6 @@ if(publish){
     message.warning('请至少选择一项标记检测运行点！')
      return
    }
-   getDeviceQueryNotUsed()
     const formValue = addForm.getFieldsValue()
     const tableData =  result.map(it=>({
       name:it.dataMark,
@@ -378,7 +379,7 @@ if(publish){
     const resp = await AddDeviceCategory(params)
     console.log(resp)
     if(resp.success){
-      message.success("新增成功")
+      message.success("应用成功")
       getTableData()
       getDeviceQueryNotUsed()
     }else{

@@ -9,6 +9,7 @@ import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
   const publish = useSelector(publishState)
@@ -267,7 +268,7 @@ export default function Electric() {
       const r = await DeviceQueryCategoryFull(params)
       if (r.success) {
         const data = r.data
-        console.log(213,data)
+        console.log(271,data)
         const arr = data.points?.map((item, index) => ({
           index: index + 1,
           dataMark: item.name,
@@ -277,12 +278,12 @@ export default function Electric() {
           watchPoint: item.isRuningPoint,
           dataOrder: item.secquence
         }))
+        console.log(281,arr)
         if (foRef.current) {
           const watchPointArr = arr.filter(it => it.watchPoint)
           console.log(watchPointArr)
           foRef.current.setSwitched(watchPointArr)
-          foRef.current.setPointSource([...arr])
-          console.log(arr)
+          foRef.current.setPointSource(lodash.cloneDeep(arr))
           // foRef.current.setIsControl( data.control)
           // foRef.current.setIsCount(data.calculate)
         } else {
@@ -439,6 +440,7 @@ export default function Electric() {
     width: 1032,
     onOk: onOkEditModal
   }
+  
   let delModalProps = {
     DelModalRef,
     cancelText: '取消',

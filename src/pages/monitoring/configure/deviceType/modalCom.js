@@ -166,7 +166,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
      useEffect(()=>{
       // choosemes(pointSource)
       console.log('pointSource',pointSource)
-     },[])
+     },[pointSource])
     useImperativeHandle(ref, () => ({
       setSwitched,
       pointSource,
@@ -179,7 +179,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       <Table
         columns={columns}
         dataSource={pointSource}
-        rowKey={record => record.index}
+        rowKey={record => (record.index +' '+ record.dataMark)}
         pagination={tableParams}
         onChange={
           (page, pageSize) => {
@@ -206,6 +206,7 @@ export let AddModal = forwardRef(
       useEffect(() => {
         // setIsControl(addForm.getFieldsValue().Control)
         // setIsCount(addForm.getFieldsValue().IsCount)
+      
       },[])
       useEffect(()=>{
       },[])

@@ -9,6 +9,7 @@ import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
   const publish = useSelector(publishState)
@@ -282,7 +283,7 @@ export default function Electric() {
         const watchPointArr = arr.filter(it => it.watchPoint)
         console.log(watchPointArr)
         foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource([...arr])
+        foRef.current.setPointSource(lodash.cloneDeep(arr))
       } else {
         setDefaultTableData(arr?arr:[])
       }

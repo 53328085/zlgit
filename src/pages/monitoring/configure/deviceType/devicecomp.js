@@ -17,7 +17,7 @@ export default function DeviceContent(props,ref) {
     okText='保存',
     onOk,
     onSure,
-    // onCancel,
+    onCancel,
     width=520,
     ModalRef,
     exportExecel=()=>{},
@@ -31,9 +31,9 @@ export default function DeviceContent(props,ref) {
   const {DeviceTypeManager:{QueryNotUsed}}=Monitoring
   const addformRef=useRef()
   const openAdd =other.open
-  const onCancel=()=>{
-    ModalRef.current.onCancel()
-  }
+  // const onCancel=()=>{
+  //   ModalRef.current.onCancel()
+  // }
   const modalProps = {
     cancelText,
     okText,
@@ -52,26 +52,15 @@ export default function DeviceContent(props,ref) {
         <div style={{display:'flex',height:700}}>
           {other.children}
         </div>
-        <Modal ref={ModalRef} mold='cust' {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
-      <Button onClick={onCancel}>取消</Button>,
+        <Modal ref={ModalRef} mold='cust' onCancel={()=>{onCancel()}} {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
+      <Button onClick={()=>{onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       onClick={
         ()=>{
           onSure()
-        //   .then(resp=>{
-            setTransition("")
-            setMaskTransitionName("")
-            //  addformRef.current.open().then(
-            //   res=>{
-              
-            //   }
-            //  ).catch(err=>{
-            //   if(!err){
-            //     ModalRef.current.onCancel()
-            //   }
-            //  })
-        //   });          
+          setTransition("")
+          setMaskTransitionName("")      
         }
       }>应用</Button>,
   ]}>
