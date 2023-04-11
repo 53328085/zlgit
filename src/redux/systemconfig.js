@@ -17,7 +17,7 @@ const initialState = {
     themeColor: "#509ff1",
     updateTime: "0001-01-01 00:00:00",
     url: "",
-    configState: false, // 项目是否处于配置状态   
+    configState: false, // 项目是否处于设计状态   
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     menus: {
         projectId: 0, // 项目ID
@@ -44,7 +44,7 @@ const system = createSlice({
     name: 'system',
     initialState,
     reducers: {
-        configProject(state, actions) { // 项目是否处于配置状态           
+        configProject(state, actions) { // 项目是否处于设计状态           
             return Object.assign({}, state, {configState: actions.payload})
         },
         getMenus(state, actions) {
