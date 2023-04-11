@@ -185,6 +185,7 @@ editlevel.current = level
 newlevel.current = datas.length
 editId.current = curlevel?.id
  const edit = (d) => {
+       console.log(d)
        let {name, type, level} = d
        setCurlevel({ 
         ...d,
@@ -257,7 +258,7 @@ const queryarealevels = async () => {
   }
 
   const editArea = async () => {
-    
+    console.log(curlevel)
     //let {id, level} = curlevel
     console.log(editlevel.current)
    try {
@@ -317,9 +318,7 @@ const queryarealevels = async () => {
 const closeArea = () => {
   mref.current.onCancel()
 }
-  const onOk = (type=true) => {    
-       console.log(type)  
-       console.log(handler)
+  const onOk = (type=true) => {  
        handler == 1 && addArea(type);
        handler == 2 && editArea();
    
@@ -345,7 +344,7 @@ const closeArea = () => {
 
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId]) // 数字格式化
 
- const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel}  />, [title])
+ const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel}  />, [title, level])
 
   useEffect(() => {
      queryarealevels();

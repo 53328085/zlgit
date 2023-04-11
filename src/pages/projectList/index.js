@@ -316,7 +316,7 @@ export default function Index() {
 
 // 进入项目配置/项目 
 
- const handlermenu = (data, type) => {
+ const handlermenu = (data, type, id) => {
   const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
   const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
 //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
@@ -353,8 +353,19 @@ export default function Index() {
    comSet,      
    projectId: id,
   }
+
+  console.log(runMenus)
+  console.log(designerMenus)
   dispatch(getMenus(menus));
   dispatch(configProject(type === 1))
+
+
+  if (type == 2) {
+    return runMenus?.find(item => item.no == '0104') || runMenus[0] 
+  }else if(type == 1) {
+    return designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
+  }
+
  
  }
 
@@ -362,23 +373,28 @@ export default function Index() {
  const enterProject = async ({id, type, publishState, validStageTime}) => {
    try {
      dispatch(getpublishState(publishState)) 
-     let promises = [ProjectList.QueryMenus(id), Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id)] 
+     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id)] 
      let results = await Promise.allSettled(promises)
      console.log(results)
-     return
+     let menu;
      results.forEach((res, index) => {
        let {status, value: {success, data}} = res
-       if (status ==='fulfilled' && success ) {
-
+       if (status ==='fulfilled') {
+          if(success) {
+            index == 0 && dispatch(getOnelevel(data || []));
+            index == 1 && dispatch(getshifts(data || []))
+            index == 2 && (menu = handlermenu(data, type, id))
+          }else{
+            index== 0 && dispatch(getOnelevel([]));
+            index == 1 && dispatch(getshifts([]))
+          }
        }
-
-       if(index == 0 && status) { 
-        if(status === 'fulfilled' && value.success) {
-          handlermenu(value.data, type, id)
-        }
-       }
-
      })
+   
+    if(!menu) return message.error({content: '没有设置菜单，请联系管理人员', duration: 0.5})
+    type == 2  && projectRun(menu)
+    type == 1 && projectDesigner(menu)
+
    } catch (error) {
      console.log(error)
    }
@@ -540,14 +556,14 @@ export default function Index() {
       align: "center",
       render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => startProject({id: record.id, type: 1, publishState: record.publishState
+          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
 })}>
             项目配置
           </CustBtn>
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
-              startProject({id: record.id, type: 2, publishState: record.publishState
+              enterProject({id: record.id, type: 2, publishState: record.publishState
               })
             }
           >
