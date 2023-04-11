@@ -179,7 +179,11 @@ const [handler,setHandler ] = useState(0);
 const [level, setLevel] = useState()
 const [curlevel, setCurlevel] = useState({})
 const newlevel = useRef()
- newlevel.current = datas.length
+const editlevel = useRef()
+const editId = useRef()
+editlevel.current = level
+newlevel.current = datas.length
+editId.current = curlevel?.id
  const edit = (d) => {
        let {name, type, level} = d
        setCurlevel({ 
@@ -254,14 +258,15 @@ const queryarealevels = async () => {
 
   const editArea = async () => {
     
-    let {id, level} = curlevel
+    //let {id, level} = curlevel
+    console.log(editlevel.current)
    try {
       let values = await modalform.validateFields().then(res => res).catch(e => {
         console.log(e)
       })
       if (!values) return
       const {name} = values
-      const params = {...values, level: level, projectId };
+      const params = {...values, level: editlevel.current, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
     
       success && message.success({
@@ -270,7 +275,7 @@ const queryarealevels = async () => {
          onClose: () => { 
          // setLevelid('')
             mref.current.onCancel()
-            queryarealevels().then(() => form.setFieldValue([id.toString()+level], name))
+            queryarealevels().then(() => form.setFieldValue([editId.current.toString()+editlevel.current], name))
          },
       })
       !success && message.warning(errMsg || '数据出错')
@@ -340,7 +345,7 @@ const closeArea = () => {
 
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId]) // 数字格式化
 
- const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512} okText="保存" onOk={onOk} onSave={onOk} newlevel={newlevel}  />, [title])
+ const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel}  />, [title])
 
   useEffect(() => {
      queryarealevels();
