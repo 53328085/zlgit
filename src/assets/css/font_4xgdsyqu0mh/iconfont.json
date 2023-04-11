@@ -1,0 +1,44 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "12814062",
+      "name": "互感器-电流互感器1",
+      "font_class": "huganqi-dianliuhuganqi-",
+      "unicode": "e703",
+      "unicode_decimal": 59139
+    },
+    {
+      "icon_id": "12814063",
+      "name": "互感器-电流互感器2",
+      "font_class": "huganqi-dianliuhuganqi-1",
+      "unicode": "e704",
+      "unicode_decimal": 59140
+    },
+    {
+      "icon_id": "19689419",
+      "name": "电流互感器",
+      "font_class": "dianliuhuganqi",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "26508773",
+      "name": "电流互感器2_竖直",
+      "font_class": "dianliuhuganqi2_shuzhi",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "28546881",
+      "name": "双向二极管",
+      "font_class": "shuangxiangerjiguan",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
+    }
+  ]
+}
