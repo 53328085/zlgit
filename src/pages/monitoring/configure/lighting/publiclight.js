@@ -115,6 +115,30 @@ export default function parkstreet({areaList,levelname}) {
     message.error(res.errMsg)
    }
   }
+  //应用编辑
+  const onSureEditModal=async ()=>{
+    const formvalues = editform.getFieldValue()
+    const areaId =compRef.current.selRef.current
+    const alike=compRef.current.inpRef.current
+    let params={
+      id:formvalues.id,
+      projectId,
+      areaId:formvalues.areaId,
+      name:formvalues.name,
+      boxName:formvalues.boxName,
+      sn:formvalues.sn,
+      controlLine:formvalues.controlLine,
+      address:formvalues.address,
+      remark:formvalues.remark
+    }
+   const res = await PublicLightUpdate(params)
+   if(res.success){
+      message.success('更新成功')
+      getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+   }else{
+    message.error(res.errMsg)
+   }
+  }
   //打开删除窗口
   const onDelete=(record)=>{
     DelModalRef.current.onOpen()
@@ -175,6 +199,30 @@ export default function parkstreet({areaList,levelname}) {
     if(res.success) {
       message.success("新增成功")
       addModalRef.current.onCancel()
+      getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //应用新增
+  const onSure=async()=>{
+    const formvalue=addform.getFieldValue()
+    const areaId =compRef.current.selRef.current
+    const alike=compRef.current.inpRef.current
+    let params ={
+      id:0,
+      projectId,
+      areaId:formvalue?.areaId,
+      name:formvalue?.name,
+      boxName:formvalue?.boxName,
+      sn:formvalue?.sn,
+      controlLine:formvalue?.controlLine,
+      address:formvalue?.address,
+      remark:formvalue?.remark
+    }
+    const res = await PublicLightAdd(params)
+    if(res.success) {
+      message.success("应用成功")
       getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
     }else{
       message.error(res.errMsg)
@@ -272,7 +320,8 @@ export default function parkstreet({areaList,levelname}) {
     addform,
     name:'公共照明名称',
     title:"新增公共照明",
-    levelname
+    levelname,
+    onSure
   }
   const editModalProps={
     editModalRef,
@@ -280,7 +329,8 @@ export default function parkstreet({areaList,levelname}) {
     areaList,
     width: 832,
     onOk:onEditOk,
-    levelname
+    levelname,
+    onSureEditModal
   }
   const delModalProps={
     DelModalRef,

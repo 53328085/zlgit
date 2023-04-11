@@ -39,31 +39,6 @@ export default function DeviceContent(props,ref) {
     okText,
     width,
   }
-//   const AddModalComp=useMemo(()=>{
-//     return ( <Modal ref={ModalRef} mold='cust' {...modalProps} footer={[
-//       <Button onClick={onCancel}>取消</Button>,
-//       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-//       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-//       onClick={
-//         ()=>{
-//           onSure().then(resp=>{
-//              addformRef.current.open().then(
-//               res=>{
-                
-//               }
-//              ).catch(err=>{
-//               if(!err){
-//                 ModalRef.current.onCancel()
-//               }
-//              })
-//           });          
-//         }
-//       }>应用</Button>,
-//   ]}>
-//       <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
-//       {AddModal}
-//   </Modal>)
-//   },[])
   return (
     <div >
       <div className={style.optionBtn}>

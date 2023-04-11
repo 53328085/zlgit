@@ -56,7 +56,6 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
 //表格组件
   let TableForm = forwardRef(({ defaultTableData }, ref) => {
-    console.log(defaultTableData)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
@@ -166,6 +165,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     
      useEffect(()=>{
       // choosemes(pointSource)
+      console.log('pointSource',pointSource)
      },[])
     useImperativeHandle(ref, () => ({
       setSwitched,

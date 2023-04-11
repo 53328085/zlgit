@@ -280,7 +280,7 @@ if(publish){
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
         foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource(arr)
+        foRef.current.setPointSource([...arr])
       } else {
         setDefaultTableData(arr)
       }

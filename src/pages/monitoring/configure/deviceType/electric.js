@@ -282,6 +282,7 @@ export default function Electric() {
           console.log(watchPointArr)
           foRef.current.setSwitched(watchPointArr)
           foRef.current.setPointSource([...arr])
+          console.log(arr)
           // foRef.current.setIsControl( data.control)
           // foRef.current.setIsCount(data.calculate)
         } else {
