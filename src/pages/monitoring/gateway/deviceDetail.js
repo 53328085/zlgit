@@ -60,9 +60,9 @@ export default function GatewayDetail(props) {
             getHistoryTable()
         }
     }//切换tab
-    const disabledDate = (current) => {
-        return current && current > dayjs().endOf('day');
-    };
+    // const disabledDate = (current) => {
+    //     return current && current > dayjs().endOf('day');
+    // };
     const getData = () => {//设备详情
         return Current(projectId, search.sn).then(res => {
             let { success, data } = res
@@ -166,7 +166,7 @@ export default function GatewayDetail(props) {
                 let y2 = []
                 let y3 = []
                 let y4 = []
-                data.Data.map((item,index)=>{
+                data.Data.map((item, index) => {
                     x.push(item.Time)
                     y.push(item.E)
                     y1.push(item.E1)
@@ -174,29 +174,29 @@ export default function GatewayDetail(props) {
                     y3.push(item.E3)
                     y4.push(item.E4)
                 })
-                let objList=[{data:y,type:'line',name:'用电量-总(kWh)'},
-                {data:y1,type:'line',name:'用电量-尖(kWh)'},
-                {data:y2,type:'line',name:'用电量-峰(kWh)'},
-                {data:y3,type:'line',name:'用电量-平(kWh)'},
-                {data:y4,type:'line',name:'用电量-谷(kWh)'}]
-                tdrawEcharts(energyref.current, option(objList,x,100))
+                let objList = [{ data: y, type: 'line', name: '用电量-总(kWh)' },
+                { data: y1, type: 'line', name: '用电量-尖(kWh)' },
+                { data: y2, type: 'line', name: '用电量-峰(kWh)' },
+                { data: y3, type: 'line', name: '用电量-平(kWh)' },
+                { data: y4, type: 'line', name: '用电量-谷(kWh)' }]
+                tdrawEcharts(energyref.current, option(objList, x, 0))
             } else {
                 message.error(res.errMsg)
             }
         })
     }
     const drawTrendCharts = () => {
-             tdrawEcharts(vlref.current, option(objList2,xAxisTrendList[1],5))
-             tdrawEcharts(alref.current, option(objList1,xAxisTrendList[0],5))
-             tdrawEcharts(elref.current, option(objList3,xAxisTrendList[2],5))
+        tdrawEcharts(vlref.current, option(objList2, xAxisTrendList[1], 90))
+        tdrawEcharts(alref.current, option(objList1, xAxisTrendList[0], 90))
+        tdrawEcharts(elref.current, option(objList3, xAxisTrendList[2], 90))
     }
     let objList1 = []
     let objList2 = []
     let objList3 = []
-    let xAxisTrendList=[]
+    let xAxisTrendList = []
     const dealData = () => {
         if (historyTrend) {
-            historyTrend.map((item,index) => {
+            historyTrend.map((item, index) => {
                 if (item.data && item.data.length != 0) {
                     for (let i = 0; i < item.data.length; i++) {
                         let xAxisTrend = []
@@ -207,25 +207,25 @@ export default function GatewayDetail(props) {
                             yAxis.push(item.data[i].data[j].value)
                             obj.name = item.data[i].point
                         }
-                        obj.data=yAxis
-                        obj.type='line'
+                        obj.data = yAxis
+                        obj.type = 'line'
                         console.log(obj)
                         xAxisTrendList.push(xAxisTrend)
-                        if(index==0){
+                        if (index == 0) {
                             objList1.push(obj)
-                        }else if(index==1){
+                        } else if (index == 1) {
                             objList2.push(obj)
-                        }else if(index==2){
+                        } else if (index == 2) {
                             objList3.push(obj)
                         }
                     }
                 }
             })
         }
-         drawTrendCharts()
+        drawTrendCharts()
     }
 
-    const option = (objList,xAxisTrend,end) => ({
+    const option = (objList, xAxisTrend, start) => ({
         xAxis: {
             data: xAxisTrend ? xAxisTrend : [],
         },
@@ -248,9 +248,9 @@ export default function GatewayDetail(props) {
         },
         dataZoom: {
             type: 'inside',
-           start: 0,
-           end: end,
-       }
+            start: start,
+            end: 100,
+        }
     });
 
     const tdrawEcharts = (c, option) => {
@@ -259,7 +259,26 @@ export default function GatewayDetail(props) {
     const onTimeOk = (date, dataString) => {
         setstartTime(dataString[0])
         setendTime(dataString[1])
+        setValue(date)
     }//监控趋势选择时间
+    const [dates, setDates] = useState([moment(yesterday), moment(today)]);
+    const [value, setValue] = useState(null);
+    const disabledDate = (current) => {
+        if (!dates) {
+            return false;
+        }
+        const tooLate = dates[0] && current.diff(dates[0], 'months') >= 3;
+        const tooEarly = dates[1] && dates[1].diff(current, 'months') >= 3;
+        const date=current&&current > dayjs().endOf('day')
+        return !!tooEarly || !!tooLate||!!date;
+    };
+    const onOpenChange = (open) => {
+        if (open) {
+            setDates([null, null]);
+        } else {
+            setDates(null);
+        }
+    };
     const onTimeOkAlarm = (date, dataString) => {
         setstartTimeAlarm(dataString[0])
         setendTimeAlarm(dataString[1])
@@ -368,7 +387,7 @@ export default function GatewayDetail(props) {
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
                         <img src={detail.imageBase64 ? detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
-                        <div className={detail.state == 1 ? style.leftImgStateOff : detail.state == 2 ? style.leftImgState : style.leftImgStateAlarm}>{detail.state == 1 ? '设备离线' : detail.state == 2 ? '设备在线' : '设备告警'}</div>
+                        <div className={detail.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
                     </div>
                     <div className={style.leftBottom}>
                         <p><span className={style.leftBottomSpan}>设备类型：</span><span>{detail.deviceStyle == 1 ? '电表' : detail.deviceStyle == 2 ? '水表' : '燃气表'}</span></p>
@@ -395,7 +414,18 @@ export default function GatewayDetail(props) {
                     </div>
                         <img src={imgurl.line} className={style.timeline} ></img></div> : state == 2 ? <div className={style.newTime}>
                             <span style={{ marginRight: 16 }}>请选择日期范围</span>
-                            <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} />
+                            <RangePicker
+                                value={dates || value}
+                                disabledDate={disabledDate}
+                                onCalendarChange={(val) => setDates(val)}
+                                onChange={onTimeOk}
+                                onOpenChange={onOpenChange}
+                                defaultValue={[moment(yesterday), moment(today)]}
+                                format='YYYY-MM-DD HH:mm:ss'
+                                showTime
+                            />
+                            {/* <RangePicker
+                                format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
                         </div> : state == 3 ? <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
