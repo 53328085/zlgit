@@ -80,7 +80,9 @@ export default function Index() {
       setselectTableList(selectTableListCheckbox)
     } else if (val == 1) {
       setSelectionType("radio")
-      setselectTableList(selectTableListRadio)
+      let list = []
+      list.push(selectTableListCheckbox[0])
+      setselectTableList(selectTableListCheckbox ? list : [])
     }
   }
   const [selectionType, setSelectionType] = useState("radio");
@@ -274,7 +276,7 @@ export default function Index() {
                     let { success, data } = res
                     if (success) {
                       resData = []
-                      data.map((item,index) => {
+                      data.map((item, index) => {
                         if (item.isOk == true && item.errorCode == 0) {
                           resData.push(item)
                           setResultInfoList[index].status = 1
@@ -323,8 +325,8 @@ export default function Index() {
       <div className={style.main}>
         <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
         <div className={style.header}>
-          <Button className={state == 1 ? style.tabon : style.taboff} onClick={() => { changeTab(1) }}>单表控制</Button>
-          <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量控制</Button>
+          <Button className={state == 1 ? style.tabon : style.taboff} onClick={() => { changeTab(1) }}>单表抄读</Button>
+          <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量抄读</Button>
         </div>
         <div className={style.body}>
           <div className={style.mainBox}>
