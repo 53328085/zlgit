@@ -377,8 +377,7 @@ function UserLog() {
    try {    
      let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), ProjectSetting.queryProjectPublishInfo(id)] 
      let results = await Promise.allSettled(promises)   
-     let menu;
-     console.log(results)
+     let menu;   
      results.forEach((res, index) => {
        let {status, value: {success, data}} = res
        if (status ==='fulfilled') {

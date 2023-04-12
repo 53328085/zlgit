@@ -731,7 +731,7 @@ const AlarmRank = ({ bref, areaId }) => {
       grid: {
         top: '30px',
         bottom: "30px",
-        right: '0px',
+        right: '30px',
         left: '0px',
         containLabel: true,
       },
