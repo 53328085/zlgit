@@ -88,7 +88,9 @@ export default function Index() {
             setselectTableList(selectTableListCheckbox)
         } else if (val == 1) {
             setSelectionType("radio")
-            setselectTableList(selectTableListRadio)
+            let list = []
+            list.push(selectTableListCheckbox[0])
+            setselectTableList(selectTableListCheckbox ? list : [])
         }
     }
     const [selectionType, setSelectionType] = useState("radio");
@@ -167,9 +169,9 @@ export default function Index() {
         },
     }
     const handleCancel = type => {
-        if(type=='open'){
+        if (type == 'open') {
             setbrake(false)
-        }else if(type=='close'){
+        } else if (type == 'close') {
             setbrakeC(false)
         }
         getData()
@@ -194,6 +196,7 @@ export default function Index() {
         setisComplate(false)
     }
     const changesetbrake = (type) => {
+        console.log(selectTableList)
         if (selectTableList.length > 0) {
             setsnList([])
             let List = []
@@ -266,8 +269,8 @@ export default function Index() {
                             <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
                         </div>
                         <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                     </div>
                     <img src={imgurl.line} className={style.timeline} ></img>
                     {selectionType == 'radio' ? <div>
@@ -382,10 +385,15 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                 dataSourceRead[i].state = item.description ? item.description : '操作失败'
                             }
                         }
+                        if (snRemoteList.length == 0 && index == res.data.length - 1) {
+                            changeDisabled()
+                            resolve(dataSourceRead)
+                            Remote.SetResult(setResultInfoList).then((res) => { })
+                        }
                     }
                 })
                 if (snRemoteList.length > 0) {
-                    let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                    let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                     let newsnList = []
                     let state = []
                     let status = true
@@ -417,65 +425,68 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                                     }
                                                 }
                                             })
-                                            if (newsnList.length > 0) {
-                                                Remote.BatchValveStatus(newsnList).then(result => {
-                                                    if (result.success) {
-                                                        snRemoteList = []
-                                                        result.data.map((aitem, aindex) => {
-                                                            if(changeBtnType=='open'){
-                                                                if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
-                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                        if (dataSourceRead[i].sn == aitem.sn) {
-                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                            setTimeout(() => {
+                                                if (newsnList.length > 0) {
+                                                    Remote.BatchValveStatus(newsnList).then(result => {
+                                                        if (result.success) {
+                                                            snRemoteList = []
+                                                            result.data.map((aitem, aindex) => {
+                                                                if (changeBtnType == 'open') {
+                                                                    if (aitem.status[0] == 'Open' || aitem.status[1] == 'Open') {
+                                                                        for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                            if (dataSourceRead[i].sn == aitem.sn) {
+                                                                                dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                            }
                                                                         }
+                                                                        resolve(dataSourceRead)
+                                                                        setResultInfoList[aindex].status = 1
+                                                                    } else {
+                                                                        snRemoteList.push(aitem.sn)
+
                                                                     }
-                                                                    setResultInfoList[aindex].status = 1
-                                                                } else {
-                                                                    snRemoteList.push(aitem.sn)
-    
-                                                                }
-                                                                if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 20) {
-                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                        if (dataSourceRead[i].sn == aitem.sn) {
-                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                    if (aitem.status[0] != 'Open' && aitem.status[1] != 'Open' && state.length == 10) {
+                                                                        for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                            if (dataSourceRead[i].sn == aitem.sn) {
+                                                                                dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                            }
                                                                         }
+                                                                        setResultInfoList[aindex].status = 2
                                                                     }
-                                                                    setResultInfoList[aindex].status = 2
-                                                                }
-                                                            }else if(changeBtnType=='close'){
-                                                                if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
-                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                        if (dataSourceRead[i].sn == aitem.sn) {
-                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                } else if (changeBtnType == 'close') {
+                                                                    if (aitem.status[0] == 'Close' || aitem.status[1] == 'Close') {
+                                                                        for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                            if (dataSourceRead[i].sn == aitem.sn) {
+                                                                                dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
+                                                                            }
                                                                         }
+                                                                        setResultInfoList[aindex].status = 1
+                                                                    } else {
+                                                                        snRemoteList.push(aitem.sn)
+
                                                                     }
-                                                                    setResultInfoList[aindex].status = 1
-                                                                } else {
-                                                                    snRemoteList.push(aitem.sn)
-    
-                                                                }
-                                                                if (aitem.status[0] != 'Close' && aitem.status[1] != 'Close' && state.length == 20) {
-                                                                    for (let i = 0; i < dataSourceRead.length; i++) {
-                                                                        if (dataSourceRead[i].sn == aitem.sn) {
-                                                                            dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                    if (aitem.status[0] != 'Close' && aitem.status[1] != 'Close' && state.length == 10) {
+                                                                        for (let i = 0; i < dataSourceRead.length; i++) {
+                                                                            if (dataSourceRead[i].sn == aitem.sn) {
+                                                                                dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作失败'
+                                                                            }
                                                                         }
+                                                                        setResultInfoList[aindex].status = 2
                                                                     }
-                                                                    setResultInfoList[aindex].status = 2
                                                                 }
+
+                                                            })
+
+                                                            if (state.length == 10 || snRemoteList.length == 0) {
+                                                                status = false
+                                                                changeDisabled()
+                                                                resolve(dataSourceRead)
+                                                                Remote.SetResult(setResultInfoList).then((res) => { })
                                                             }
-                                                            
-                                                        })
 
-                                                        if (state.length == 20 || snRemoteList.length == 0) {
-                                                            status = false
-                                                            changeDisabled()
-                                                            resolve(dataSourceRead)
-                                                            Remote.SetResult(setResultInfoList).then((res) => { })
                                                         }
-
-                                                    }
-                                                })
-                                            }
+                                                    })
+                                                }
+                                            }, 0)
                                         } else {
                                             message.error(res.errMsg)
 
@@ -485,7 +496,7 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                 }
 
                             }
-                        }, 2000 * index)
+                        }, 7000 * index)
                     })
 
                 }
