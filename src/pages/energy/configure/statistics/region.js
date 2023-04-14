@@ -493,7 +493,7 @@ const getSelected = async ({areaId, type=devietype}) => {
       getTableData()
     }else if (level > 1) {
       form.setFieldsValue({
-        topAreaId,
+        topAreaId: 0,
       });
       getTableData()
     }
@@ -519,7 +519,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             <>
               <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
-                  options={oneLevel}
+                  options={[...oneLevel, {name: '全部', id: 0}]}
                   fieldNames={{
                     label: "name",
                     value: "id",

@@ -489,9 +489,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     
     let value = form.getFieldsValue()
     //setTopAreaId(value.topAreaId)
-    params = {...params, ...value }
-    console.log(pagination)
-    console.log(params)
+    params = {...params, ...value } 
      Area.QueryByPage(params)
       .then((res) => {
         let { success, data, total } = res;
@@ -747,7 +745,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       getTableData()
     }else if (level > 1) {
       form.setFieldsValue({
-        topAreaId,
+        topAreaId: 0,
       });
       getTableData()
     }

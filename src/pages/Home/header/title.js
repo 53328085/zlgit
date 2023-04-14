@@ -24,7 +24,8 @@ export default function  Title (){
    return (
     <Divlog>
         <Image rootClassName={style.custlog} preview={false} width={112} src={logoImageBase64 ? 'data:image/png;base64,' + logoImageBase64 : logo}></Image>
-        <span >{titleCn || '正泰智慧能源服务平台'}</span>
+       {/*  <span >{titleCn || '正泰智慧能源服务平台'}</span> */}
+        <span>正泰综合能源服务平台</span>
     </Divlog>
    )
   }

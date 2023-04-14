@@ -8,7 +8,6 @@ import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle} fro
 import {
   Map,
   Marker,
-  Label,
   Circle,
   NavigationControl,
   InfoWindow,
@@ -21,29 +20,25 @@ import {
 
  function Index(props, ref) {
   
-    const { setAaddress=()=>{}, lngLat, value, onChange, icon, text} = props
+    const { setAaddress=()=>{}, lngLat, value, onChange} = props
     const defaultpoint = lngLat || value 
   
     const [lng, lat] = defaultpoint?.split(',') || []
      
-    let position = lng&&lat ?new BMapGL.Point(lng, lat) :  new BMapGL.Point(120.22830511467954, 30.21229461177818)
-
-    const markeropt = {
-      position,
-      icon: icon || 'loc_blue',
-      enableDragging: true,
-      autoViewport: true
-    }
- 
-
+    
+    const [position, setPosition] = useState({
+       point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
+       icon: 'loc_blue'
+     }
+    )
+  
     const mapref = useRef(null)
   
-    const mapOption = {
+    const option = {
       zoom: 16,
       enableScrollWheelZoom: true, // 鼠标滚轮缩放
       // tilt: 20,
       enableDragging: true,
-      center: position,
       // enableRotate: false
     };
     
@@ -105,11 +100,13 @@ import {
  const mapstyle = {
    height: '100%',
    width: '100%',
+   minHeight: '370px',
+   minWidth: '410px'
  }
   return (
-    <Map style={mapstyle} {...mapOption} onClick={getPosition} ref={mapref} >
+    <Map style={mapstyle} {...option} onClick={getPosition} ref={mapref} center={position.point} >
      
-      <Marker  {...markeropt} />
+      <Marker position={position.point} enableDragging icon={position.icon} />
       <NavigationControl />
       <CityListControl anchor={BMAP_ANCHOR_TOP_LEFT} />
       <MapTypeControl />

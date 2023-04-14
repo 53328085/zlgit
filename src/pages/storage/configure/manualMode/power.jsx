@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, message, InputNumber, Select, Switch} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, message, InputNumber, Select, Switch, Alert} from 'antd'
 import {CheckCircleFilled } from '@ant-design/icons'
 import {useRequest} from 'ahooks'
 import {StorageParameterSetupDesigner} from '@api/api'
@@ -17,9 +17,9 @@ const Mainbox = styled.div`
        border-top: 1px dotted #d7d7d7;
        padding: 16px 0 16px 0;
        display: grid;
-       grid-template-rows: 122px 36px;
+       grid-template-rows: 404px 36px;
        row-gap: 16px;
-       grid-template-columns: 800px;
+      grid-template-columns: 896px;
        }
 `
 const Formbox = styled(Form)`
@@ -281,6 +281,7 @@ export default function Manual({projectId,  areaId, CModal}) {
 
                     </div>
                 </Formbox> 
+                <Alert message="请先读取数据" type="info" />
             </Mainbox>
        
        

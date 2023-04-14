@@ -109,7 +109,7 @@ export default function GatewayDetail(props) {
       let params={
         projectId:projectId,
         pageNum:page,
-        pageSize:12,
+        pageSize:1300,
         sn:search.sn
       }
       const getChildrenData = () => {//网关子设备详情
@@ -154,7 +154,7 @@ export default function GatewayDetail(props) {
         <div className={style.main}>
             <div className={style.head}>
                 <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>智慧能源服务管理平台</p>
+                <p>正泰综合能源服务平台</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>
