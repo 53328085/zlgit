@@ -10,6 +10,7 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
+import Energy from './energy'
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -51,7 +52,12 @@ export default function Index() {
     <Fire />,
     <Sensor />,
     <Transform />,
-    <Video/>
+    <Video/>,
+    '',
+    '',
+    '',
+    '',
+    <Energy/>
   ]
   useEffect(() => {
     getAllDeviceStyle()

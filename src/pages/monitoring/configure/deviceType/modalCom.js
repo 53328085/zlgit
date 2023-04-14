@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import WarningPng from '@imgs/warning.png'
 import Modal from '@com/useModal'
@@ -7,7 +7,7 @@ import BlueColumn from '@com/bluecolumn'
 import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
-import { current } from '@reduxjs/toolkit';
+import cusContext from '@com/content'
 const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal=({DelModalRef,name='',content='',...other})=>{
@@ -56,7 +56,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
 //表格组件
   let TableForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
-    console.log(59,tabledatas)
+    const {updateTable} =useContext(cusContext)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
@@ -66,7 +66,6 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
     
     const choosemes =()=>{
-      console.log(pointSource)
       let count =0;
       tableDataRef.current?.forEach(it=>{
         it.watchPoint&& count++
@@ -77,7 +76,10 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       }
       return  tableDataRef.current
     }
-   
+  //  useEffect(()=>{
+  //   console.log(updateTable)
+  //   setPointSource(JSON.parse(JSON.stringify(updateTable)))
+  //  },[JSON.stringify(updateTable)])
     const columns = [
       {
         title: '序号',
@@ -200,7 +202,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
   //新增设备类型
 export let AddModal = forwardRef(
-    ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData }, ref) => {
+    ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData,  isShow=true }, ref) => {
       const tableRef = useRef(null)
       const [tabledatas,setTabledatas]=useState([...defaultTableData]) 
       const handleChange = async (option) => {
@@ -248,7 +250,7 @@ export let AddModal = forwardRef(
                     <Count></Count>
                   </Form.Item>
                 </Col> */}
-                <Col className={style.ColGap}>
+                 {isShow? <><Col className={style.ColGap}>
                   <Form.Item label="远程控制" name="Control" valuePropName="checked">
                     <Switch 
                     checkedChildren="是" unCheckedChildren="否" 
@@ -271,7 +273,8 @@ export let AddModal = forwardRef(
                   <Form.Item label="是否抄读" name="IsRead" valuePropName='checked'>
                     <Switch checkedChildren="是" unCheckedChildren="否" />
                   </Form.Item>
-                </Col>
+                </Col></> :null}
+              
               </Row>
             </Col>
             <Col span={8} align="bottom">
@@ -299,7 +302,7 @@ export let AddModal = forwardRef(
 
  //编辑设备类型
  export let EditModal =forwardRef(
-  ({ editForm, getDeviceQueryCategoryFull,editDefaultTableData }, ref) => {
+  ({ editForm, getDeviceQueryCategoryFull,editDefaultTableData,isShow=true }, ref) => {
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
@@ -332,7 +335,8 @@ export let AddModal = forwardRef(
                   <Count></Count>
                 </Form.Item>
               </Col> */}
-              <Col className={style.ColGap}>
+              {isShow?<>
+                <Col className={style.ColGap}>
                 <Form.Item label="远程控制" name="Control" valuePropName="checked">
                   <Switch checkedChildren="是" unCheckedChildren="否" 
                   //disabled={!isControl} 
@@ -352,6 +356,8 @@ export let AddModal = forwardRef(
                   <Switch checkedChildren="是" unCheckedChildren="否" />
                 </Form.Item>
               </Col>
+              </>:null}
+            
             </Row>
           </Col>
           <Col span={8} align="bottom">
