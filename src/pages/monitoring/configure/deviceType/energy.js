@@ -21,7 +21,6 @@ export default function Electric() {
   const [isOpenModal,setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
   const [loading, setLoading] = useState(false);
-  const [updateTable,setUpdataTable] = useState([])
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 10,
@@ -47,14 +46,15 @@ export default function Electric() {
     setLoading(true)
     let params = {
       projectId,
-      pageNum:tableParams.current ,
+      pageNum: tableParams.current,
       pageSize: tableParams.pageSize,
-      deviceStyle:4
+      deviceStyle:11
     }
     const result = await DeviceCategory(params)
     const { data, errMsg, success,pageNum,pageSize,total } = result;
     setLoading(false)
     if (success && Array.isArray(data)) {
+      console.log('getTable',data)
       setTableDataSource(data)
       setTableParams({
         ...tableParams,
@@ -121,6 +121,9 @@ const editOption=(record)=>{
     dataOrder: item.secquence
   }))
   setEditDefaultTableData(arr)
+  // const watchPointArr = arr.filter(it=>it.watchPoint)
+  // console.log(watchPointArr)
+  // editFromRef.current.setSwitched(watchPointArr)
 }
 let columns =  [
     {
@@ -159,6 +162,7 @@ let columns =  [
 if(publish){
   columns.pop()
 }
+
 //保存编辑
   const onOkEditModal=async ()=>{
   console.log(editFromRef.current.pointSource,editForm.getFieldsValue())
@@ -172,7 +176,8 @@ if(publish){
     message.warning('请至少选择一项标记检测运行点！')
     return
   }
-  
+
+
   const formvalues = editForm.getFieldsValue()
   const tableData =  tableforvalues.map(it=>({
     name:it.dataMark,
@@ -198,9 +203,9 @@ if(publish){
     message.error(resp.errMsg)
   }
 }
-//应用编辑
-  const onSureEditModal=async()=>{
-    const tableforvalues= editFromRef.current.pointSource
+//确认编辑应用
+const onSureEditModal=async()=>{
+  const tableforvalues= editFromRef.current.pointSource
 
   let count =0;
   tableforvalues.forEach(it=>{
@@ -210,7 +215,6 @@ if(publish){
     message.warning('请至少选择一项标记检测运行点！')
     return
   }
-  
   const formvalues = editForm.getFieldsValue()
   const tableData =  tableforvalues.map(it=>({
     name:it.dataMark,
@@ -234,21 +238,22 @@ if(publish){
   }else{
     message.error(resp.errMsg)
   }
-  }
-  //新增时获取未使用的电表名
+}
+  
+  //新增时获取未使用的燃气表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
-      deviceStyle: 4
+      deviceStyle: parseInt(content.value)
     }
     const r = await DeviceQueryNotUsed(params)
-    console.log(r)
     if (r.success && Array.isArray(r.data)) {
       if(r.data.length > 0){
-        setIsOpenModal(true)
+        
         const arr = r.data.map((item, index) => ({ label: item, value: item }))
         setDataSource(arr)
         getDeviceQueryCategoryFull(r.data[0])
+        setIsOpenModal(true)
       }else{
         setIsOpenModal(false)
         setIsAdd(true)
@@ -258,7 +263,7 @@ if(publish){
     }
   }
 
-  //获取默传感器的详细信息
+  //获取默认燃气表的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -277,14 +282,12 @@ if(publish){
         dataOrder: item.secquence
       }))
       
-      console.log(foRef, arr,lodash.cloneDeep(arr)===arr)
-      setUpdataTable(lodash.cloneDeep(arr))
+      // console.log(foRef, arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
         foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource(arr)
-        console.log(arr)
+        foRef.current.setPointSource(lodash.cloneDeep(arr))
       } else {
         setDefaultTableData(arr)
       }
@@ -296,13 +299,14 @@ if(publish){
         IsRead: data.realTimeReading,
         DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
         ImageUpload: '',
+        // Point:arr,
       })
       setIsAdd(true)
     }
 
   }
   //打开新增modal
-  const open = () => {
+  const open = async() => {
     if(!isAdd)return
     if(isOpenModal){
       ModalRef.current.onOpen()
@@ -352,14 +356,13 @@ if(publish){
       message.error(resp.errMsg)
     }
   }
-  //确认新增应用
-  const onSure=async()=>{
+  //新增应用确认
+  const onSure=async ()=>{
     const result= foRef.current?.choosemes()
    if(!result){
     message.warning('请至少选择一项标记检测运行点！')
      return
    }
-
     const formValue = addForm.getFieldsValue()
     const tableData =  result.map(it=>({
       name:it.dataMark,
@@ -391,9 +394,8 @@ if(publish){
   const exportExecel=()=>{
     tableLoadRef.current.download()
   }
- 
-   //分页
-   const onChangePage = (page, pageSize) => {
+  //分页
+  const onChangePage = (page, pageSize) => {
     setTableParams({
       ...page
     })
@@ -407,26 +409,29 @@ if(publish){
     dataSource,
     getDeviceQueryCategoryFull,
     defaultTableData,
+    isShow:false
   }
   let deviceProps = {
     value: 0,
-    name: '新增传感器类型',
+    name: '新增燃气表类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
     onOk,
     width: 1032,
     open,
+    onSure,
     ModalRef,
     onCancel,
     exportExecel,
-    onSure,
-    title:'配置传感器类型',
+    title:'配置燃气表类型',
+  
   };
   let editFormProps={
     editForm,
     ref:editFromRef,
-    editDefaultTableData
+    editDefaultTableData,
+    isShow:false
   }
   let editModalProps={
    ref:EditModalRef,
@@ -437,26 +442,23 @@ if(publish){
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除传感器类型?',
-    name:'删除传感器类型',
+    content:'是否确认删除燃气表类型?',
+    name:'删除燃气表类型',
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return(
-      <Modal  mold='cust' {...editModalProps} footer={[
-        <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-        // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-        // onClick={ onSureEditModal}>应用</Button>,
-    ]}>
-      <BlueColumn name='编辑传感器类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
-      <EditModal {...editFormProps}></EditModal>
-      </Modal>
-    )},[editDefaultTableData])
-  
+    return (<Modal  mold='cust' {...editModalProps} footer={[
+      <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
+      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      // onClick={ onSureEditModal}>应用</Button>,
+  ]}>
+    <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+    <EditModal {...editFormProps}></EditModal>
+    </Modal>)
+  },[editDefaultTableData])
   return (
     <div>
-      <cusContext.Provider value={{updateTable}}>
       <DeviceContent {...deviceProps} >
         <Table 
         columns={columns} 
@@ -470,12 +472,10 @@ if(publish){
       </DeviceContent>
       {EditModalComp}
       {/* <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑传感器类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
-      </cusContext.Provider>
-    
     </div>
   )
 }
