@@ -68,6 +68,20 @@
             background-color: #fff;
             border-radius: 4px;
             border: 1px solid #d7d7d7;
+            position: relative;
+            .currTip{
+                position: absolute;
+                right: 8px;
+                top: 8px;
+                width: 240px;
+                height: 36px;
+                background-color: #ffdf25;
+                box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+                padding-left: 12px;
+                color: #515151;
+                font-size: 14px;
+                line-height: 36px;
+            }
             
             .cardChart{
                 width: 448px;
@@ -189,6 +203,18 @@
             width: 880px;
             height: 800px;
         }
+        .middletitle{
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            height: 32px;
+            border-left: 4px solid #237ae4;
+            line-height: 32px;
+            background-color: #003;
+            color: #fff;
+            font-size: 14px;
+            padding-left: 16px;
+        }
         .clickDiv{
             width: 194px;
             height: 363px;
@@ -233,76 +259,7 @@
             }
             
         }
-        .newWarning{
-            width: 288px;
-            min-height: 280px;
-            margin-top: 16px;
-            background-color: #fff;
-            border: 1px solid #d7d7d7;
-            border-radius: 4px;
-            padding: 16px;
-            position: relative;
-            .toWarning{
-                position: absolute;
-                right: 16px;
-                top: 18px;
-                color: #237ae4;
-                text-decoration: underline;
-                cursor: pointer;
-                font-size: 14px;
-            }
-            .dashed{
-                // width: 100%;
-                height: 0;
-                border-top: 1px dashed #d7d7d7;
-            }
-            .warningDetails{
-                height: 216px;
-                overflow-y: auto;
-                .warningItem{
-                    display: flex;
-                    align-items:flex-start;
-                    margin-top: 16px;
-                    .leftImg{
-                        margin-top: 4px;
-                        margin-right: 16px;
-                        border: 1px solid #f00;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        .warningPoint{
-                            width: 10px;
-                            height: 10px;
-                            margin: 2px;
-                        }
-                    }
-                    .warningData{
-                        width: 300px;
-                        padding-right: 4px;
-                        .warningtop{
-                            font-size: 14px;
-                            color: #1e1e1e;
-                            height: 20px;
-                            line-height: 20px;
-                            display: flex;
-                            justify-content: space-between;
-                            .description{
-                                margin-left: 16px;
-                            }
-                        }
-                        .warningbottom{
-                            // margin-top: 6px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            color: #6b6b6b;
-                            font-size: 12px;
-                        }
-                    }
-                }
-            }
-        }
+        
         .environment{
             width: 288px;
             height: 369px;
@@ -374,166 +331,133 @@
         }
     }
 }
-
+.newWarning{
+    width: 288px;
+    min-height: 271px;
+    margin-top: 16px;
+    background-color: #fff;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    padding: 16px;
+    position: relative;
+    .toWarning{
+        position: absolute;
+        right: 16px;
+        top: 18px;
+        color: #237ae4;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .dashed{
+        // width: 100%;
+        height: 0;
+        border-top: 1px dashed #d7d7d7;
+    }
+    .warningDetails{
+        height: 207px;
+        overflow-y: auto;
+        .warningItem{
+            display: flex;
+            align-items:flex-start;
+            margin-top: 16px;
+            .leftImg{
+                margin-top: 4px;
+                margin-right: 16px;
+                border: 1px solid #f00;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .warningPoint{
+                    width: 10px;
+                    height: 10px;
+                    margin: 2px;
+                }
+            }
+            .warningData{
+                width: 300px;
+                padding-right: 4px;
+                .warningtop{
+                    font-size: 14px;
+                    color: #1e1e1e;
+                    height: 20px;
+                    line-height: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    .description{
+                        margin-left: 16px;
+                    }
+                }
+                .warningbottom{
+                    // margin-top: 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    color: #6b6b6b;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
 .batteryContent{
     margin: 16px 0;
     display: flex;
-    .left{
-        width: 448px;
-        height: 800px;
-        background-color: #fff;
-        border: 1px solid #d7d7d7;
-        border-radius: 4px;
-        padding: 16px;
-        .line{
-            width: 100%;
-            margin: 16px 0;
-            height: 0;
-            border-top: 1px dashed #d7d7d7;
-        }
-        .time{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #515151;
-            .reload{
-                color: #237ae3;
-                text-decoration: underline;
-                cursor: pointer;
-                .renovate{
-                    width: 16px;
-                    height: 16px;
-                }
-            }
-        }
-        .items{
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            .singleItem{
-                margin-top: 16px;
-                width: 200px;
-                background-color: #003;
-                .singleTitle{
-                    text-align: center;
-                    height: 36px;
-                    line-height: 36px;
-                    color: #fff;
-                    font-size: 12px;
-                }
-                .singleValue{
-                    text-align: center;
-                    height: 36px;
-                    line-height: 36px;
-                    color: #3f0;
-                    font-size: 16px;
-                }
-            }
-            .doubleItem{
-                margin-top: 16px;
-                width: 200px;
-                background-color: #003;
-                display: flex;
-                .firstItem{
-                    width: 99px;
-                    height: 64px;
-                    border-right: 1px solid #d7d7d7;
-                }
-                .secondItem{
-                    width: 99px;
-                    height: 64px;
-                }
-                .DoubleTitle{
-                    text-align: center;
-                    height: 32px;
-                    line-height: 32px;
-                    color: #fff;
-                    font-size: 12px;
-                }
-                .DoubleValue{
-                    text-align: center;
-                    height: 32px;
-                    line-height: 32px;
-                    color: #3f0;
-                    font-size: 16px;
-                }
-            }
-            .complexItem{
-                margin-bottom: 16px;
-                width: 200px;
-                background-color: #003;
-                .complexTitle{
-                    text-align: center;
-                    height: 32px;
-                    line-height: 32px;
-                    color: #fff;
-                    font-size: 12px;
-                }
-                .complexValue{
-                    text-align: center;
-                    height: 32px;
-                    line-height: 32px;
-                    color: #3f0;
-                    font-size: 16px;
-                    span{
-                        display: inline-block;
-                        width: 99px;
-                        text-align: center;
-                    }
-                }
-            }
-        }
-    }
-    .diagramPic{
-        margin-left: 16px;
-        width: 416px;
-        height: 800px;
-        border-radius: 4px;
-        position: relative;
-        .zhanwei{
-            width: 416px;
-            height: 800px;
-        }
-    }
     .singleMonitor{
-        width: 468px;
+        width: 1376px;
         height: 800px;
-        background-color: #000;
+        background-color: #003;
         border-radius: 4px;
         border: 1px solid #d7d7d7;
-        margin-left: 16px;
-        padding: 16px;
-        .line{
-            height: 0;
-            border: 1px dashed #555;
-            margin: 16px 0;
+        // padding: 16px;
+        font-size: 14px;
+        .batteryName{
+            margin-top: 36px;
+            color: #fff;
+            text-align: center;
+            line-height: 24px;
+            margin-bottom: 12px;
+        }
+        .verticalLine{
+            height: 40px;
+            width: 0;
+            margin-left: 50%;
+            border-left: 3px solid #41a4b9;
+        }
+        .normalLine{
+            height: 0px;
+            width: 1300px;
+            margin-left: 36px;
+            border-top: 4px solid #41a4b9;
         }
         .monitorList{
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            margin-left: 36px;
+            // justify-content: space-between;
             flex-wrap: wrap;
             .monitorItem{
-                margin-bottom: 16px;
+                margin-top: 32px;
+                margin-right: 25px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
                 .monitorHeader{
-                    width: 28px;
-                    height: 5px;
-                    background-color: #fff;
+                    width: 24px;
+                    height: 6px;
+                    // background-color: #fff;
                     border: 1px solid #d7d7d7;
                 }
                 .pack{
-                    width: 76px;
+                    width: 85px;
                     height: 146px;
                     background-color: #fff;
                     border: 1px solid #d7d7d7;
                     margin-top: -1px;
                     .packName{
-                        width: 72px;
+                        width: 81px;
                         height: 24px;
                         background-color: #e4e4e4;
                         border: 1px solid #000;
@@ -545,20 +469,21 @@
                         margin-bottom: 0;
                     }
                     .packData{
-                        width: 72px;
+                        width: 81px;
                         margin-left: 1px;
                         border: 1px solid #000;
                     }
                     .packItem{
-                        width: 70.5px;
+                        width: 81px;
                         height: 58px;
                         padding: 2px 0;
                         display: flex;
                         align-items: center;
                         flex-direction: column;
+                        justify-content: center;
                         background-color: #06f;
                         color: #fff;
-                        font-size: 12px;
+                        font-size: 16px;
                         span{
                             display: inline-block;
                             height: 18px;
@@ -619,8 +544,8 @@
         }
     }
     .warningDetails{
-        margin-top: 16px;
-        height: 450px;
+        // margin-top: 16px;
+        // height: 450px;
         overflow-y: auto;
         .warningItem{
             display: flex;
@@ -702,6 +627,27 @@
             z-index: 0;
             max-height: 124px;
         }
+    }
+}
+.deviceImg{
+    position: absolute;
+    width: 148px;
+    height: 160px;
+    left: 258px;
+    top: 77px;
+    background-color: #003;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    .deviceName{
+        padding:0 12px;
+        background-color: #237ae4;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #fff;
     }
 }
 .bmsData{

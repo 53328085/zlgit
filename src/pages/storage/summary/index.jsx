@@ -1,21 +1,54 @@
-import React,{Fragment, useState}from 'react'
+import React,{Fragment, useState, useEffect}from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
-import UseHeader from '@com/useHeader'
-import { SiteSummaryRuntime, StorageAlarmRuntime } from '@api/api.js'
-import { message } from 'antd'
+import {useSelector} from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
+import { message, Form, Select } from 'antd'
 import { range } from 'lodash'
 import BarChart from './barChart'
 import imgurl from './imgs'
 import warningPoint from '@imgs/warningPoint.png'
 
 export default function Index() {
+  const [form] = Form.useForm()
+  const Item = Form.Item
   const { querySiteInfo, 
     queryStorageIncome, 
     queryStorageWarning, 
     queryTopologyDiagramInfo, 
     queryRealtimeData } = SiteSummaryRuntime
-  const { alarmStatistic } = StorageAlarmRuntime
+  const { FindSiteList } = SiteManagerDesigner
+
+  const projectId = useSelector(selectProjectId)
+  const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
+
+  //siteList
+  const [siteList, setSiteList] = useState([])
+  const querySite = () => {
+    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          setSiteList(res.data)
+          form.setFieldValue('siteId', res.data[0].id)
+          getFromHeader()
+        }else{
+          setSiteList([])
+          setPcsList([])
+          form.setFieldValue('siteId', '')
+          form.setFieldValue('PCSId', '')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSite = val => {
+    getFromHeader()
+  }
+
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
   const [barData, setBarData] = useState({}) //收益统计
@@ -25,10 +58,19 @@ export default function Index() {
     lineInfo:{},
     solarPointBaseInfo:{},
   }) //接线图数据
-  const getFromHeader = values => {
-    if(!values.areaId) return;
-    let { projectId, areaId } = values
-    querySiteInfo(projectId, areaId).then(res => {
+  useEffect(()=>{
+    if(areaList.length == 0|| !areaList){
+      message.error('当前项目尚未创建园区!')
+    }else{
+      form.setFieldValue('areaId', areaList[0].id)
+      querySite()
+    }
+  },[])
+  const changeArea = val => {
+    querySite()
+  }
+  const getFromHeader = () => {
+    querySiteInfo(projectId, form.getFieldValue('areaId')).then(res => {
       if(res.success){
         setCardData(res.data)
       }else{
@@ -36,7 +78,7 @@ export default function Index() {
       }
     })
 
-    queryStorageIncome(projectId, areaId).then(res => {
+    queryStorageIncome(projectId, form.getFieldValue('areaId')).then(res => {
       let {success, data} = res
       if(success) {
         if(data){
@@ -49,7 +91,7 @@ export default function Index() {
       }
     })
 
-    queryStorageWarning(projectId, areaId).then(res => {
+    queryStorageWarning(projectId, form.getFieldValue('areaId')).then(res => {
       let {success, data} = res
       if(success) {
         if(data){
@@ -62,7 +104,7 @@ export default function Index() {
       }
     })
 
-    queryTopologyDiagramInfo(projectId, areaId).then(res => {
+    queryTopologyDiagramInfo(projectId, form.getFieldValue('areaId')).then(res => {
       if(res.success){
         if(res.data){
           setTopologyData(res.data)
@@ -74,7 +116,7 @@ export default function Index() {
       }
     })
 
-    queryRealtimeData(projectId, areaId).then(res => {
+    queryRealtimeData(projectId, form.getFieldValue('areaId')).then(res => {
       let {success, data} = res
       if(success) {
         if(data){
@@ -169,7 +211,35 @@ export default function Index() {
 
   return (
     <div>
-      <UseHeader getValues={getFromHeader} ></UseHeader>
+      <div className={style.header}>
+        <Form form={form} layout='inline'>
+          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeArea}
+            >
+              {areaList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='siteId' label='' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择站点"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeSite}
+            >
+              {siteList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+        </Form>
+      </div>
       <div className={style.content}>
         <div className={style.left}>
           <CardItem title='站点信息' height='226px'>

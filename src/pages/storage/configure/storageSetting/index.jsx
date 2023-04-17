@@ -29,30 +29,7 @@ export default function Index() {
   const oneLevel = useSelector((state) => state.system.onelevel);
   //表格展示数据
   // const [dataSource, setDataSource] = useState([]);
-  const dataSource = [
-    {
-      id: 1,
-      station: "测试园区",
-      name: "站点名称1",
-      address: "1号楼B2 储能室",
-      type: "分布式储能",
-      capacity: "200 kWh",
-      // time: "2023-03-13",
-      nature: "业主自投",
-      tag: "备注1",
-    },
-    {
-      id: 2,
-      station: "园区3",
-      name: "站点名称2",
-      address: "3号楼B2 储能室",
-      type: "分布式储能",
-      capacity: "250 kWh",
-      // time: "2023-01-11",
-      nature: "运营商投资",
-      tag: "备注2",
-    },
-  ];
+  const dataSource = [];
   //分页
   const [pageNum, setPageNum] = useState(1);
   const pageSize = 10;
@@ -268,9 +245,10 @@ export default function Index() {
     setDeleteTypeModal(false);
   };
   //新增 确认
-  const addOk = () => {
+  const addOk = async() => {
     if (modalTitle === "新增站点") {
-      const values = form.validateFields();
+      const values = await form.validateFields();
+      console.log(values.image)
     } else if (modalTitle === "编辑站点") {
       setAddModal(false);
     }
@@ -354,7 +332,7 @@ export default function Index() {
           closable={false}
           maskClosable={false}
           okText={"确认"}
-          okType={"primary"}
+          okType={"danger primary"}
         >
           <div className={style.deleteHeader}>删除提示</div>
           <div className={style.deleteBody}>
@@ -367,7 +345,7 @@ export default function Index() {
           open={addModal}
           onOk={addOk}
           onCancel={addCancel}
-          width={550}
+          width={640}
           cancelText={"取消"}
           centered={true}
           closable={false}
@@ -383,21 +361,19 @@ export default function Index() {
             requiredMark={false}
             autoComplete="off"
             labelAlign="left"
+            colon={false}
             labelCol={{ flex: "90px" }}
           >
             <Item
-              name="station"
+              name="areaId"
               label={
-                oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+                oneLevel[0]?.levelName ? '所属' + oneLevel[0].levelName : "所属园区"
               }
               rules={[
                 { required: true, message: `请选择${oneLevel[0].levelName}` },
               ]}
             >
               <Select
-                key={defaultArea}
-                defaultValue={defaultArea}
-                onChange={changeArea}
                 placeholder={
                   oneLevel[0]?.levelName
                     ? `请选择${oneLevel[0].levelName}`
@@ -415,41 +391,28 @@ export default function Index() {
             </Item>
             <Item
               name="name"
-              label="所属站点"
-              rules={[{ required: true, message: "请选择所属站点" }]}
+              label="站点名称"
+              rules={[{ required: true, message: "请输入站点名称" }]}
             >
-              <Select
-                key={defaultsection}
-                defaultValue={defaultsection}
-                onChange={changeSection}
-                placeholder="请选择所属站点"
-              >
-                {sectionList.map((item) => {
-                  return (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input placeholder="请输入站点名称"></Input>
             </Item>
             <Item
-              name="address"
-              label="安装地址"
-              rules={[{ required: true, message: "请输入安装地址" }]}
+              name="no"
+              label="站点编号"
+              rules={[{ required: true, message: "请输入站点编号" }]}
             >
-              <Input placeholder="请输入安装地址" />
+              <Input placeholder="请输入站点编号" />
             </Item>
             <Item
               name="capacity"
-              label="容量(kWh)"
+              label="储能容量"
               rules={[{ required: true, message: "请输入储能容量" }]}
             >
               <Input placeholder="请输入储能容量" />
             </Item>
             <Item
               label="投运时间"
-              name="time"
+              name="deliveryTime"
               rules={[
                 {
                   required: true,
@@ -464,14 +427,11 @@ export default function Index() {
               />
             </Item>
             <Item
-              name="nature"
+              name="investmentNature"
               label="投资性质"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
-                key={defaultNature}
-                defaultValue={defaultNature}
-                onChange={changeNature}
                 placeholder="请选择投资性质"
               >
                 {natureList.map((item) => {
@@ -483,10 +443,10 @@ export default function Index() {
                 })}
               </Select>
             </Item>
-            <Item name="tag" label="备注">
-              <Input placeholder="请输入备注" />
+            <Item name="remark" label="备注信息">
+              <Input placeholder="请输入备注信息" />
             </Item>
-            <Item name="upload" label="站点图片" getValueFromEvent={normFile}>
+            <Item name="image" label="站点图片" getValueFromEvent={normFile}>
               <Upload
                 listType="picture-card"
                 className={style.uploader}
