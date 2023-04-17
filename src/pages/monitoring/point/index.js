@@ -91,7 +91,7 @@ export default function Index(props) {
   let [dataSource, setdataSource] = useState([])
 
   const getData = () => {                   // 表计状态
-     Statistics({ projectId, areaId, deviceStyle: params.deviceStyle }).then(res => {
+     Statistics({ projectId: params.projectId, areaId: params.areaId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
         setStatistics(data || [])
