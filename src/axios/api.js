@@ -1656,6 +1656,10 @@ export class StorageStrategyDesigner {
 //站点管理
 export class SiteManagerDesigner {
   static FindSiteList = (projectId, areaId) => server.get(`/Storage/SiteManagerDesigner/FindSiteList?projectId=${projectId}&areaId=${areaId}`);
+  static GetSites = (projectId, PageNum, PageSize) => server.get(`/Storage/SiteManagerDesigner/GetSites?projectId=${projectId}&PageNum=${PageNum}&PageSize=${PageSize}`);
+  static AddSite = (projectId, data) => server.post(`/Storage/SiteManagerDesigner/AddSite?projectId=${projectId}`, data);
+  static UpdateSite = (projectId, data) => server.post(`/Storage/SiteManagerDesigner/UpdateSite?projectId=${projectId}`, data);
+  static DeleteSite = (projectId, id) => server.delete(`/Storage/SiteManagerDesigner/DeleteSite?projectId=${projectId}&id=${id}`);
 }
 
 //电池管理
