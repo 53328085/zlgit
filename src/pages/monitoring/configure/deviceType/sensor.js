@@ -21,7 +21,7 @@ export default function Electric() {
   const [isOpenModal,setIsOpenModal] = useState(true)
   const [isAdd,setIsAdd]=useState(false)
   const [loading, setLoading] = useState(false);
-  const [updateTable,setUpdataTable] = useState([])
+ 
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 10,
@@ -33,6 +33,7 @@ export default function Electric() {
   const editFromRef = useRef(null)
   const DelModalRef =useRef()
   const tableLoadRef =useRef()
+  const updateTableRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -278,7 +279,7 @@ if(publish){
       }))
       
       console.log(foRef, arr,lodash.cloneDeep(arr)===arr)
-      setUpdataTable(lodash.cloneDeep(arr))
+      updateTableRef.current = lodash.cloneDeep(arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
@@ -456,7 +457,7 @@ if(publish){
   
   return (
     <div>
-      <cusContext.Provider value={{updateTable}}>
+      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
       <DeviceContent {...deviceProps} >
         <Table 
         columns={columns} 

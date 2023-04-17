@@ -56,7 +56,8 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
 //表格组件
   let TableForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
-    const {updateTable} =useContext(cusContext)
+    const {updateTableRef} =useContext(cusContext)
+    console.log(updateTableRef)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
@@ -78,9 +79,9 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     }
   
    useEffect(()=>{
-    console.log(updateTable)
-    setPointSource(JSON.parse(JSON.stringify(updateTable)))
-   },[JSON.stringify(updateTable)])
+    console.log(updateTableRef)
+    setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
+   },[JSON.stringify(updateTableRef)])
     const columns = [
       {
         title: '序号',
@@ -167,11 +168,6 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       },
     ]
     
-     useEffect(()=>{
-      // choosemes(pointSource)
-      console.log('pointSource',pointSource)
-     
-     },[JSON.stringify(pointSource)])
      useEffect(()=>{
       console.log('tabledatas',tabledatas)
      },[JSON.stringify(tabledatas)])
