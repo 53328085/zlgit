@@ -76,10 +76,11 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       }
       return  tableDataRef.current
     }
-  //  useEffect(()=>{
-  //   console.log(updateTable)
-  //   setPointSource(JSON.parse(JSON.stringify(updateTable)))
-  //  },[JSON.stringify(updateTable)])
+  
+   useEffect(()=>{
+    console.log(updateTable)
+    setPointSource(JSON.parse(JSON.stringify(updateTable)))
+   },[JSON.stringify(updateTable)])
     const columns = [
       {
         title: '序号',

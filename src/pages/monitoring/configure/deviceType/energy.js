@@ -240,7 +240,7 @@ const onSureEditModal=async()=>{
   }
 }
   
-  //新增时获取未使用的燃气表名
+  //新增时获取未使用的储能表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
@@ -263,7 +263,7 @@ const onSureEditModal=async()=>{
     }
   }
 
-  //获取默认燃气表的详细信息
+  //获取默认储能的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -413,7 +413,7 @@ const onSureEditModal=async()=>{
   }
   let deviceProps = {
     value: 0,
-    name: '新增燃气表类型',
+    name: '新增储能类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
@@ -424,7 +424,7 @@ const onSureEditModal=async()=>{
     ModalRef,
     onCancel,
     exportExecel,
-    title:'配置燃气表类型',
+    title:'配置储能类型',
   
   };
   let editFormProps={
@@ -442,8 +442,8 @@ const onSureEditModal=async()=>{
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除燃气表类型?',
-    name:'删除燃气表类型',
+    content:'是否确认删除储能类型?',
+    name:'删除储能类型',
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
@@ -453,7 +453,7 @@ const onSureEditModal=async()=>{
       // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       // onClick={ onSureEditModal}>应用</Button>,
   ]}>
-    <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+    <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])
@@ -472,7 +472,7 @@ const onSureEditModal=async()=>{
       </DeviceContent>
       {EditModalComp}
       {/* <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
