@@ -32,6 +32,7 @@ export default function Electric() {
   const editFromRef = useRef(null)
   const DelModalRef =useRef()
   const tableLoadRef =useRef()
+  const updateTableRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -282,7 +283,7 @@ const onSureEditModal=async()=>{
         dataOrder: item.secquence
       }))
       
-      // console.log(foRef, arr)
+      updateTableRef.current = lodash.cloneDeep(arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
@@ -450,8 +451,8 @@ const onSureEditModal=async()=>{
     return (<Modal  mold='cust' {...editModalProps} footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      // onClick={ onSureEditModal}>应用</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={ onSureEditModal}>应用</Button>,
   ]}>
     <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
     <EditModal {...editFormProps}></EditModal>
@@ -459,6 +460,7 @@ const onSureEditModal=async()=>{
   },[editDefaultTableData])
   return (
     <div>
+      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
       <DeviceContent {...deviceProps} >
         <Table 
         columns={columns} 
@@ -476,6 +478,7 @@ const onSureEditModal=async()=>{
       <EditModal {...editFormProps}></EditModal>
       </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
+      </cusContext.Provider>
     </div>
   )
 }

@@ -54,11 +54,12 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     )
   }
 
-//表格组件
+//表格组件（新增）
   let TableForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
     const {updateTableRef} =useContext(cusContext)
-    console.log(updateTableRef)
+ 
     const [pointSource, setPointSource] = useState([...defaultTableData])
+    console.log(updateTableRef,pointSource)
     const tableDataRef =useRef()
     tableDataRef.current=[...pointSource]
     let checedList=[]
@@ -168,9 +169,6 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       },
     ]
     
-     useEffect(()=>{
-      console.log('tabledatas',tabledatas)
-     },[JSON.stringify(tabledatas)])
     useImperativeHandle(ref, () => ({
       setSwitched,
       pointSource,
@@ -207,9 +205,7 @@ export let AddModal = forwardRef(
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
   
-      useEffect(() => {
-        console.log(207,tabledatas)
-      },[JSON.stringify(tabledatas)])
+
 
 
       useImperativeHandle(ref, () => ({
@@ -296,10 +292,140 @@ export let AddModal = forwardRef(
       )
     }
   ) 
-
+  //编辑表格（编辑）
+  let TableEditForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
+    const [pointSource, setPointSource] = useState([...defaultTableData])
+    const tableDataRef =useRef()
+    tableDataRef.current=[...pointSource]
+    let checedList=[]
+    defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
+    const [siwtched, setSwitched] = useState([...checedList])
+    const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
+    
+    const choosemes =()=>{
+      let count =0;
+      tableDataRef.current?.forEach(it=>{
+        it.watchPoint&& count++
+      })
+      if(count===0){
+       // message.warning('请至少选择一项标记检测运行点！')
+        return false
+      }
+      return  tableDataRef.current
+    }
+    const columns = [
+      {
+        title: '序号',
+        key: 'index',
+        dataIndex: 'index'
+      },
+      {
+        title: '数据标识',
+        key: 'dataMark',
+        dataIndex: 'dataMark'
+      },
+      {
+        title: '数据名称',
+        key: 'dataName',
+        dataIndex: 'dataName'
+      },
+      {
+        title: '数据单位',
+        key: 'dataUnit',
+        dataIndex: 'dataUnit'
+      },
+      {
+        title: '是否存储',
+        key: 'isSave',
+        dataIndex: 'isSave',
+        width:118,
+        // shouldCellUpdate:()=>true,
+        render: (_, v, index) => {
+          return (
+            <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
+              onChange={(o) => {
+                let arr =[...pointSource]
+                arr.forEach((it, index) => {
+                  if (it.index === v.index) {
+                    it.isSave = o
+                  }
+                })
+              setPointSource(arr)
+              }} />
+  
+          )
+        }
+  
+      },
+      {
+        title: '标记运行监测点',
+        key: 'watchPoint',
+        dataIndex: 'watchPoint',
+        width: 160,
+        shouldCellUpdate: (r, o) => { },
+        render: (t, record, index) => {
+          return (
+            <Switch
+              checkedChildren="标记"
+              unCheckedChildren="不标记"
+              defaultChecked={t}
+              disabled={siwtched.length>3&&!siwtched.includes(record.index)}
+              onChange={(o) => {
+                pointSource.forEach((it, i) => {
+                  if (it.index === record.index) {
+                    it.watchPoint = o
+                  }
+                })
+                setPointSource([...pointSource])
+                if (o&&siwtched.length <= 3) {
+                    setSwitched([...siwtched,record.index])
+                }else{
+                  let arr= siwtched.filter(it=>it!==record.index)
+                  setSwitched([...arr])
+                }
+              }}
+            />
+          )
+        }
+  
+      },
+      {
+        title: '数据显示顺序',
+        key: 'dataOrder',
+        dataIndex: 'dataOrder',
+        render: (text, record, i) => {
+          return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource}></Count>
+        }
+      },
+    ]
+    
+    useImperativeHandle(ref, () => ({
+      setSwitched,
+      pointSource,
+      setPointSource,
+      setTableParams,
+      choosemes,
+      tabledata:tableDataRef.current
+    }))
+    return (
+      <Table
+        columns={columns}
+        dataSource={pointSource}
+        rowKey={record => (record.index +' '+ record.dataMark)}
+        pagination={tableParams}
+        onChange={
+          (page, pageSize) => {
+            setTableParams({ ...page })
+          }
+        }
+      ></Table>
+    )
+    
+    
+  })
  //编辑设备类型
  export let EditModal =forwardRef(
-  ({ editForm, getDeviceQueryCategoryFull,editDefaultTableData,isShow=true }, ref) => {
+  ({ editForm, getDeviceQueryCategoryFull,editDefaultTableData=[],isShow=true }, ref) => {
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
@@ -309,7 +435,7 @@ export let AddModal = forwardRef(
     },[])
     useImperativeHandle(ref, () => ({
       pointSource: tableRef.current.pointSource,
-      // setPointSource: tableRef.current.setPointSource,
+      setPointSource: tableRef.current.setPointSource,
       setSwitched:tableRef.current.setSwitched
 
 
@@ -371,7 +497,7 @@ export let AddModal = forwardRef(
         <Divider dashed />
         <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
         <div className={style.minHt}>
-        <TableForm  ref={tableRef} defaultTableData={editDefaultTableData}  ></TableForm>
+        <TableEditForm  ref={tableRef} defaultTableData={editDefaultTableData}  ></TableEditForm>
         </div>
        
       </Form>

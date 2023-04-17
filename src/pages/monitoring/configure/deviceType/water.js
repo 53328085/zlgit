@@ -32,6 +32,7 @@ export default function Electric() {
   const editFromRef = useRef(null)
   const DelModalRef = useRef()
   const tableLoadRef = useRef()
+  const updateTableRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -236,7 +237,7 @@ export default function Electric() {
   }
 
 
-  //新增时获取未使用的电表名
+  //新增时获取未使用的表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
@@ -278,7 +279,7 @@ export default function Electric() {
         dataOrder: item.secquence
       }))
 
-      console.log(foRef, arr)
+      updateTableRef.current = lodash.cloneDeep(arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it => it.watchPoint)
         console.log(watchPointArr)
@@ -444,8 +445,8 @@ export default function Electric() {
     return (<Modal mold='cust' {...editModalProps} footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      // onClick={ onSureEditModal}>应用</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={ onSureEditModal}>应用</Button>,
   ]}>
     <BlueColumn name='编辑水表类型' styled={{ padding: '24px 0px' }}></BlueColumn>
     <EditModal {...editFormProps}></EditModal>
@@ -453,6 +454,7 @@ export default function Electric() {
   },[editDefaultTableData])
   return (
     <div>
+      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
       <DeviceContent {...deviceProps} >
         <Table
           columns={columns}
@@ -466,6 +468,7 @@ export default function Electric() {
       </DeviceContent>
       {EditModalComp}
       <DeleteModal {...delModalProps}></DeleteModal>
+      </cusContext.Provider>
     </div>
   )
 }
