@@ -10,9 +10,9 @@ import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
-import { SemanticClassificationFormat } from 'typescript';
+
 import Table from '@com/useTable'
-import { area } from '@antv/g2plot';
+
 
 
 export default function Index(props) {
