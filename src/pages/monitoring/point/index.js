@@ -4,15 +4,15 @@ import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useRequest, useAntdTable} from "ahooks";
+import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
-
+import { SemanticClassificationFormat } from 'typescript';
 import Table from '@com/useTable'
-
+import { area } from '@antv/g2plot';
 
 
 export default function Index(props) {
@@ -29,8 +29,8 @@ export default function Index(props) {
 
   const defaultLabel = useSelector(levelDefaultLabel)
 
-  //const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  let [areaId, setAreaId] = useState(LevelDefaultId)
+  const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
+  let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
@@ -113,11 +113,12 @@ export default function Index(props) {
     return Overview(params).then(res => {
       let { success, data, total, pageNum } = res
       if (success) {
-        setoverView(data)
+       
+        setoverView(data || [])
         setTotal(total)
         setPageNum(pageNum)
         let overViewList=[]
-        data.details.map(item=>{
+        data?.details.map(item=>{
           let description=''
           item.fields.map(items=>{
              description+=items.name+' '+items.value+' '
@@ -131,59 +132,6 @@ export default function Index(props) {
       }
     })
   }
-
-/* alike
-: 
-""
-areaId
-: 
-1
-category
-: 
-""
-deviceStyle
-: 
-1
-gatewayId
-: 
-0
-pageNum
-: 
-1
-pageSize
-: 
-12
-projectId
-: 
-45
-state
-: 
-0 */
-
-  let defaultparams = {
-    projectId,
-    areaId: areaId,
-    gatewayId: 0,
-    deviceStyle: deviceStyle,
-    category: '',
-    alike: '',
-    state: 0,
-  }
-  const {tableProps, search} = useAntdTable(getOverviewData, {
-  //  form,
-    defaultParams: [
-     {current: 1, pageSize: 15},
-     defaultparams,
-    ],
-    refreshDeps: [areaId, deviceStyle]
-    
-  })
- const {submit} = search
-
-
-
-
-
 
   // let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
@@ -279,8 +227,8 @@ state
         <Select
           placeholder="请选择园区"
           size="middle"
-          key={LevelDefaultId}
-          defaultValue={LevelDefaultId}
+          key={defaultArea}
+          defaultValue={defaultArea}
           style={{ width: "200px" }}
           onChange={changeArea}
         >
@@ -405,9 +353,13 @@ state
               </p>
             ),
             rowExpandable: (record) => record.description,
-          }}></Table>
+          }}
+          pagination={{
+            total
+          }}
+          ></Table>
         </div>}
-        <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
+       {/*  <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} /> */}
       </div>
 
     </div >

@@ -352,7 +352,10 @@ export default function Index(props) {
               </p>
             ),
             rowExpandable: (record) => record.description,
-          }}></Table>
+          }}
+          pa
+          
+          ></Table>
         </div>}
         <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
       </div>
