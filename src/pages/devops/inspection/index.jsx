@@ -26,7 +26,7 @@ export default function Index() {
             </Form.Item>
           </Form>
         </div>
-       <InspectionManage style={style}></InspectionManage>
+       <InspectionManage style={style} areavalue={areavalue}></InspectionManage>
     </div>
   )
 }

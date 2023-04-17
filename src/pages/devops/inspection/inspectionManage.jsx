@@ -61,7 +61,7 @@ export default function Warncontent({ style ,areavalue}) {
             end:rangerTime[1].format('YYYY-MM-DD'),
             areaId:areavalue,
         }
-        const res = await operation.InspectionStatistics(params)
+        const res = await operation.InspectionStatisticsTime(params)
         const data =res.data
         if(res.success){
             setStateopts([
@@ -115,11 +115,11 @@ export default function Warncontent({ style ,areavalue}) {
         getInspectionStatistics()
         }
         
-    },[areavalue])
-    useEffect(()=>{
+    },[areavalue, status])
+  /*   useEffect(()=>{
         oneLevel.length>0&&getInspectionPage()
         
-    },[status])
+    },[status]) */
     return (
         <div className={style.OrderContent}>
             <div className={style.SearchContent}>
