@@ -1590,7 +1590,7 @@ export class StorageAlarmRuntime {
 
 //pcsMonitor
 export class PCSMonitorRuntime {
-  static queryPCSList = (projectId, areaId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}`)
+  static queryPCSList = (projectId, areaId, siteId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
   static queryPCSInfo = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSInfo?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryPowerTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static querySocTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QuerySocTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
@@ -1651,4 +1651,28 @@ export class StorageStrategyDesigner {
   static AddStrategy = (projectId, areaId, name) => server.post(`/Storage/StorageStrategyDesigner/AddStrategy?projectId=${projectId}&areaId=${areaId}&name=${name}`);
   static UpdateStrategy = (projectId, data) => server.post(`/Storage/StorageStrategyDesigner/UpdateStrategy?projectId=${projectId}`, data);
   static DeleteStrategy = (projectId, strategyId) => server.delete(`/Storage/StorageStrategyDesigner/DeleteStrategy?projectId=${projectId}&strategyId=${strategyId}`);
+}
+
+//站点管理
+export class SiteManagerDesigner {
+  static FindSiteList = (projectId, areaId) => server.get(`/Storage/SiteManagerDesigner/FindSiteList?projectId=${projectId}&areaId=${areaId}`);
+  static GetSites = (projectId, PageNum, PageSize) => server.get(`/Storage/SiteManagerDesigner/GetSites?projectId=${projectId}&PageNum=${PageNum}&PageSize=${PageSize}`);
+  static AddSite = (projectId, data) => server.post(`/Storage/SiteManagerDesigner/AddSite?projectId=${projectId}`, data);
+  static UpdateSite = (projectId, data) => server.post(`/Storage/SiteManagerDesigner/UpdateSite?projectId=${projectId}`, data);
+  static DeleteSite = (projectId, id) => server.delete(`/Storage/SiteManagerDesigner/DeleteSite?projectId=${projectId}&id=${id}`);
+}
+
+//电池管理
+export class StorageMonitorRuntime {
+  static QueryBatteryStackList = (projectId, areaId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`);
+  static queryVTrends = (projectId,  siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryVTrends?projectId=${projectId}&siteId=${siteId}`);
+  static queryITrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryITrends?projectId=${projectId}&siteId=${siteId}`);
+  static querySOCTrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QuerySOCTrends?projectId=${projectId}&siteId=${siteId}`);
+  static querySOCTrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QuerySOCTrends?projectId=${projectId}&siteId=${siteId}`);
+  static queryBatteryStackInfo = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackInfo?projectId=${projectId}&siteId=${siteId}`);
+  static queryBatteryStackAlarms = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackAlarms?projectId=${projectId}&siteId=${siteId}`);
+  static queryBatteryStackStatus = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackStatus?projectId=${projectId}&siteId=${siteId}`);
+  static queryBatteryClusterInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryClusterInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
+  static queryBatteryPackInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryPackInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
+  static queryBatteryClusterWarning = (projectId, batteryClusterId) => server.post(`/Storage/StorageMonitorRuntime/QueryBatteryClusterWarning?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
 }

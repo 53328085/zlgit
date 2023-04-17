@@ -55,6 +55,6 @@ export default function Index(props){
       ]
     }, true)
   },[props.lineData])
-  return <div style={{width:1068, height: 184, marginLeft: 16}}  id={lineId} ref={lineRef}></div>
+  return <div style={{width:1068, height: 240, marginLeft: 16}}  id={lineId} ref={lineRef}></div>
     
 }

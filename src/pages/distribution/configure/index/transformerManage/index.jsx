@@ -352,7 +352,7 @@ export default function Index() {
         <div className={style.contentTitle}>
             <span>配电房变压器</span>
             <div>
-            <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
+            <Button type="primary" onClick={()=> settingClick()} style={{ width: 96}}>
                 选择设备
             </Button>
             <Button type="primary" style={{marginLeft:'16px', width: 96}} onClick={()=>exportData()}>

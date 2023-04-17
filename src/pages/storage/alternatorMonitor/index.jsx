@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
-import {PCSMonitorRuntime } from '@api/api.js'
+import {PCSMonitorRuntime, SiteManagerDesigner } from '@api/api.js'
 import { useRequest } from 'ahooks'
 
 import pcs from './imgs/pcs.png'
@@ -23,20 +23,49 @@ export default function Index() {
     querySocTrends, 
     queryAcTable, 
     queryPileTable } = PCSMonitorRuntime
+  const { FindSiteList } = SiteManagerDesigner
   const [form] = Form.useForm()
   const {Item}  = Form
+  //siteList
+  const [siteList, setSiteList] = useState([])
+  const querySite = () => {
+    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          setSiteList(res.data)
+          form.setFieldValue('siteId', res.data[0].id)
+          queryPCS()
+        }else{
+          setSiteList([])
+          setPcsList([])
+          form.setFieldValue('siteId', '')
+          form.setFieldValue('PCSId', '')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSite = val => {
+    queryPCS()
+  }
+
   //PCS list
   const [pcsList, setPcsList] = useState([])
+  const [selectPcs, setSelectPcs] = useState('')
   const getPCSList = () => {
-    return queryPCSList (projectId, form.getFieldValue('areaId')).then(res => {
+    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId')).then(res => {
       if(res.success){
-        if(res.data){
+        if(res.data && res.data.length> 0){
           setPcsList(res.data)
+          setSelectPcs(res.data[0].name)
           form.setFieldValue('PCSId', res.data[0].id)
           getContent()
         }else{
           setPcsList([])
-          message.warning('当前'+ areaList[0]?.levelName + '不存在PCS!')
+          form.setFieldValue('PCSId', '')
+          message.warning('当前站点不存在PCS!')
         }
       }else{
         message.error(res.errMsg)
@@ -55,7 +84,7 @@ export default function Index() {
   }
   const StateItem = props => {
     let { state } = props
-    state = state == 0 ? 'offline' : state == 1 ? 'normal' : 'error'
+    state = state == 0 ? 'normal' : state == 1 ? 'error' : ''
     return <div className={style.stateItem} style={props.styles}>
       <span>{props.name}</span>
       <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
@@ -134,6 +163,16 @@ export default function Index() {
       key:'name',
       align:'center'
     },{
+      title:'电压 (V)',
+      dataIndex:'voltage',
+      key:'voltage',
+      align:'center'
+    },{
+      title:'电流 (A)',
+      dataIndex:'current',
+      key:'current',
+      align:'center'
+    },{
       title:'有功功率(kW)',
       dataIndex:'activePower',
       key:'activePower',
@@ -152,16 +191,6 @@ export default function Index() {
       title:'功率因数',
       dataIndex:'powerFactor',
       key:'powerFactor',
-      align:'center'
-    },{
-      title:'电压 (V)',
-      dataIndex:'voltage',
-      key:'voltage',
-      align:'center'
-    },{
-      title:'电流 (A)',
-      dataIndex:'current',
-      key:'current',
       align:'center'
     },
   ]
@@ -197,81 +226,16 @@ export default function Index() {
       current: 0
     },
   ]
-  const pileClomns = [
-    {
-      title:'电堆',
-      dataIndex:'name',
-      key:'name',
-      align:'center'
-    },{
-      title:'工作状态',
-      dataIndex:'state',
-      key:'state',
-      align:'center'
-    },{
-      title:'SOC (kVA)',
-      dataIndex:'soc',
-      key:'soc',
-      align:'center'
-    },{
-      title:'总电压(V)',
-      dataIndex:'totalVoltage',
-      key:'totalVlotage',
-      align:'center'
-    },{
-      title:'总电流 (A)',
-      dataIndex:'totalCurrent',
-      key:'totalCurrent',
-      align:'center'
-    },{
-      title:'最高电压 (V)',
-      dataIndex:'maxVoltage',
-      key:'maxVoltage',
-      align:'center'
-    },{
-      title:'最低电压 (V)',
-      dataIndex:'minVoltage',
-      key:'minVoltage',
-      align:'center'
-    },
-  ]
-  const pileData = [
-    {
-      id:1,
-      name:'1#',
-      state:'充电',
-      soc: 0,
-      totalVoltage: 0,
-      totalCurrent: 1,
-      maxVoltage: 224.22,
-      minVoltage: 214.78
-    },
-    {
-      id:2,
-      name:'2#',
-      state:'充电',
-      soc: 0,
-      totalVoltage: 0,
-      totalCurrent: 1,
-      maxVoltage: 224.22,
-      minVoltage: 214.78
-    },
-    {
-      id:3,
-      name:'3#',
-      state:'充电',
-      soc: 0,
-      totalVoltage: 0,
-      totalCurrent: 1,
-      maxVoltage: 224.22,
-      minVoltage: 214.78
-    },
-  ]
 
   const changeArea = val => {
-    queryPCS()
+    querySite()
   }
   const changePCS = val => {
+    pcsList.map(item=> {
+      if(item.id == val){
+        setSelectPcs(item.name)
+      }
+    })
     getContent()
   }
   useEffect(()=>{
@@ -279,7 +243,7 @@ export default function Index() {
       message.error('当前项目尚未创建园区!')
     }else{
       form.setFieldValue('areaId', areaList[0].id)
-      queryPCS()
+      querySite()
     }
   },[])
   return (
@@ -294,6 +258,19 @@ export default function Index() {
               onChange={changeArea}
             >
               {areaList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='siteId' label='' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择站点"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeSite}
+            >
+              {siteList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
@@ -317,42 +294,58 @@ export default function Index() {
         <div className={style.left}>
           <div className={style.title}>
             <span>储能交流器</span>
-            <span className={style.pcsName}>2125522_PCS1</span>
+            <span className={style.pcsName}>{selectPcs}</span>
           </div>
-          <div className={style.pcsImgs}>
-            <span className={style.imgTitle}>储能交流器</span>
-            <img className={style.pcsImg} src={pcs}></img>
+          <div className={style.firstValue}>
+            <div className={style.stateList}>
+              <div className={style.stateItem}>
+                <img src={online} className={style.circle}></img>
+                <span style={{color:'#0f0'}}>无故障</span>
+              </div>
+              <div className={style.stateItem}>
+              <img src={error} className={style.circle}></img>
+                <span style={{color:'#f00'}}>告警</span>
+              </div>
+            </div>
+            <div className={style.pcsImgs}>
+              <span className={style.imgTitle}>储能交流器</span>
+              <img className={style.pcsImg} src={pcs}></img>
+            </div>
+            <div className={style.pcsStatus}>
+              <span>{leftValues?.offOnGrid == 0 ?'离网状态' : leftValues?.offOnGrid == 1 ?'并网状态' : ''}</span>
+              <span>{leftValues?.dcStatus == 1? 'DC 充电中...': leftValues?.dcStatus == 2?'DC 放电中...' :''}</span>
+            </div>
           </div>
           <div className={style.dataCard}>
-            <Card title='总有功功率' unit='kWh' values={leftValues?.p || '0.00'}></Card>
-            <Card title='视在功率' unit='kVA' values={leftValues?.ps || '0.00'}></Card>
+            <Card title='直流电流' unit='A' values={leftValues?.dci || '0.00'}></Card>
+            <Card title='直流电压' unit='V' values={leftValues?.dcv || '0.00'}></Card>
+            <Card title='直流功率' unit='kW' values={leftValues?.dcp || '0.00'}></Card>
+          </div>
+          <div className={style.line}></div>
+          <div className={style.dataCard}>
+            <Card title='SOC' unit='%' values={leftValues?.soc || '0.00'}></Card>
+            <Card title='SOH' unit='kWh' values={leftValues?.soh || '0.00'}></Card>
+            <Card title='总功率因数' unit='/' values={leftValues?.pf || '0.00'}></Card>
+          </div>
+          <div className={style.line}></div>
+          <div className={style.dataCard}>
+            <Card title='总有功率功率' unit='kW' values={leftValues?.p || '0.00'}></Card>
+            <Card title='总视在功率' unit='kVA' values={leftValues?.ps || '0.00'}></Card>
             <Card title='总无功功率' unit='kVar' values={leftValues?.q || '0.00'}></Card>
           </div>
-          <div className={style.line}></div>
-          <div className={style.dataCard}>
-            <Card title='BMS SOC' unit='%' values={leftValues?.soc || '0.00'}></Card>
-            <Card title='BMS 可充电量' unit='kWh' values={leftValues?.chargeCapacity || '0.00'}></Card>
-            <Card title='BMS 可放电量' unit='kWh' values={leftValues?.disChargeCapacity || '0.00'}></Card>
-          </div>
-          <div className={style.line}></div>
-          <div className={style.dataCard}>
-            <Card title='DCAC 温度' unit='℃' values={leftValues?.dcacTemp || '0.00'}></Card>
-            <Card title='DCDC 温度' unit='℃' values={leftValues?.dcdcTemp || '0.00'}></Card>
-            <Card title='电芯最高/最低温度' unit='℃' values={(leftValues?.electricCoreMaxTemp || '0.00') + ' / ' +(leftValues?.electricCoreMinTemp || '0.00')}></Card>
-          </div>
           <div className={style.status}>
-            <StateItem name='交流调度' state={leftValues.acDispatching}></StateItem>
-            <StateItem name='直流调度' state={leftValues.dcDispatching}></StateItem>
-            <StateItem name='并网' state={leftValues.gridConnection}></StateItem>
-            <StateItem name='离网' state={leftValues.offGrid} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='PCS通讯' state={leftValues.pcsCommunication}></StateItem>
-            <StateItem name='BMS通讯' state={leftValues.bmsCommunication}></StateItem>
-            <StateItem name='远程控制' state={leftValues.remoteControl}></StateItem>
-            <StateItem name='PCS系统故障' state={leftValues.pcsHitch} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='PCS系统告警' state={leftValues.pcsAlarm} styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS一级告警' state={leftValues.bmsAlarmLevel1}styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS二级告警' state={leftValues.bmsAlarmLevel2}styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='BMS三级告警' state={leftValues.bmsAlarmLevel3} styles={{borderRight:'none', borderBottom:'none'}}></StateItem>
+            <StateItem name='逆变器故障' state={leftValues?.invHitch}></StateItem>
+            <StateItem name='逆变器不同步' state={leftValues?.invOutSync}></StateItem>
+            <StateItem name='过温' state={leftValues?.overTemperature}></StateItem>
+            <StateItem name='输出过载' state={leftValues?.overLoad} styles={{borderRight:'none'}}></StateItem>
+            <StateItem name='输出电压异常' state={leftValues?.outputVUnusual}></StateItem>
+            <StateItem name='直流母线过压' state={leftValues?.dcBusOverV}></StateItem>
+            <StateItem name='SDP程序错误' state={leftValues?.sdpProgramError}></StateItem>
+            <StateItem name='EOD' state={leftValues?.eod} styles={{borderRight:'none'}}></StateItem>
+            <StateItem name='载波同步异常' state={leftValues?.cwSyncException } styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='工频同步异常' state={leftValues?.ffSyncException }styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='SCR故障' state={leftValues?.scrHitch }styles={{borderBottom:'none'}}></StateItem>
+            <StateItem name='输出过载超时' state={leftValues?.outputOverLoadTimeout } styles={{borderRight:'none', borderBottom:'none'}}></StateItem>
           </div>
         </div>
         <div className={style.right}>
@@ -366,9 +359,6 @@ export default function Index() {
           </div>
           <div className={style.tableList}>
             <Table size='small' bordered dataSource={ACData} columns={AcClomns} rowKey='id' pagination={false} />
-          </div>
-          <div className={style.tableList}>
-            <Table size='small' bordered dataSource={pileData} columns={pileClomns} rowKey='id' pagination={false} />
           </div>
         </div>
       </div>

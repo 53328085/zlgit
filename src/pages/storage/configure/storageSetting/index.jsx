@@ -20,42 +20,41 @@ import {
   selectProjectId,
   publishState,
   selectOneLevel,
+  levelDefaultLabel
 } from "@redux/systemconfig.js";
+import { SiteManagerDesigner } from '@api/api.js'
+import { cloneDeep } from "lodash";
+
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
   const Item = Form.Item;
+  const projectId = useSelector(selectProjectId);
   const ispublish = useSelector(publishState);
   const oneLevel = useSelector((state) => state.system.onelevel);
+  const areaFirstName = useSelector(levelDefaultLabel) || '园区'
+
+  const { GetSites, AddSite, UpdateSite, DeleteSite } = SiteManagerDesigner
   //表格展示数据
-  // const [dataSource, setDataSource] = useState([]);
-  const dataSource = [
-    {
-      id: 1,
-      station: "测试园区",
-      name: "站点名称1",
-      address: "1号楼B2 储能室",
-      type: "分布式储能",
-      capacity: "200 kWh",
-      // time: "2023-03-13",
-      nature: "业主自投",
-      tag: "备注1",
-    },
-    {
-      id: 2,
-      station: "园区3",
-      name: "站点名称2",
-      address: "3号楼B2 储能室",
-      type: "分布式储能",
-      capacity: "250 kWh",
-      // time: "2023-01-11",
-      nature: "运营商投资",
-      tag: "备注2",
-    },
-  ];
+  const [dataSource, setDataSource] = useState([]);
+  const getTableData = () => {
+    GetSites(projectId, pageNum, pageSize).then(res => {
+      let {success, data} = res
+      if(success){
+        if(data && data.length > 0){
+          setDataSource(data)
+          setTotal(res.total)
+        }else{
+          setDataSource([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
   //分页
   const [pageNum, setPageNum] = useState(1);
-  const pageSize = 10;
+  const pageSize = 15;
   const [total, setTotal] = useState(0);
   const paginationProps = {
     current: pageNum, //当前页码
@@ -64,10 +63,14 @@ export default function Index() {
     onChange: (page) => handlePageChange(page), //改变页码的函数
     hideOnSinglePage: false,
     showSizeChanger: false,
+    showTotal: (total) => `共${total}条记录`,
   };
   const handlePageChange = (page) => {
     setPageNum(page);
   };
+  useEffect(()=> {
+    getTableData()
+  }, [pageNum])
   const natureList = [
     {
       id: 1,
@@ -89,156 +92,135 @@ export default function Index() {
   const [modalTitle, setModalTitle] = useState("");
   //&所属园区
   const areaList = useSelector(selectOneLevel);
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined);
-  const changeArea = (value) => {
-    setDefaultArea(value);
-  };
-  // 所属站点
-  const sectionList = [
-    {
-      id: 1,
-      name: "正泰物联杭州园区",
-    },
-    {
-      id: 2,
-      name: "正泰物联温州园区",
-    },
-  ];
-  const [defaultsection, setDefaultSection] = useState(
-    sectionList[0]?.id || undefined
-  );
-  const changeSection = (value) => {
-    setDefaultSection(value);
-  };
-  const [defaultNature, setDefaultNature] = useState(natureList[0].id);
-  const changeNature = (value) => {
-    setDefaultNature(value);
-  };
-  const ChangeTime = (value) => {
-    console.log(value);
-  };
+
   const columns = ispublish
     ? [
-        {
-          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
-          dataIndex: "station",
-          key: "station",
-          align: "center",
-        },
-        {
-          align: "center",
-          title: "站点名称",
-          dataIndex: "name",
-          key: "name",
-        },
-        {
-          title: "安装地址",
-          dataIndex: "address",
-          key: "address",
-          align: "center",
-        },
-        {
-          title: "站点类型",
-          dataIndex: "type",
-          key: "type",
-          align: "center",
-        },
-        {
-          title: "站点容量 (kWh)",
-          dataIndex: "capacity",
-          key: "capacity",
-          align: "center",
-        },
-        {
-          title: "投运时间",
-          dataIndex: "time",
-          key: "time",
-          align: "center",
-        },
-        {
-          title: "投资性质",
-          dataIndex: "nature",
-          key: "nature",
-          align: "center",
-        },
-        {
-          title: "备注",
-          dataIndex: "tag",
-          key: "tag",
-          align: "center",
-        },
-      ]
+      {
+        align: "center",
+        title: areaFirstName + "名称",
+        dataIndex: "areaName",
+        key: "areaName",
+      },
+      {
+        align: "center",
+        title: "站点编号",
+        dataIndex: "no",
+        key: "no",
+      },
+      {
+        align: "center",
+        title: "站点名称",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "站点地址",
+        dataIndex: "address",
+        key: "address",
+        align: "center",
+      },
+      {
+        title: "站点容量 (kVA)",
+        dataIndex: "capacity",
+        key: "capacity",
+        align: "center",
+      },
+      {
+        title: "投运时间",
+        dataIndex: "deliveryTime",
+        key: "deliveryTime",
+        align: "center",
+      },
+      {
+        title: "投资性质",
+        dataIndex: "investmentNature",
+        key: "investmentNature",
+        align: "center",
+        render: (_, record) => (
+          <span>{record.investmentNature == 1? '业主自投': record.investmentNature == 2 ? '运营商投资' : record.investmentNature == 3 ?'建设投资':'/' }</span>
+        )
+      },
+      {
+        title: "备注",
+        dataIndex: "remark",
+        key: "remark",
+        align: "center",
+      },
+    ]
     : [
-        {
-          title: oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称",
-          dataIndex: "station",
-          key: "station",
-          align: "center",
-        },
-        {
-          align: "center",
-          title: "站点名称",
-          dataIndex: "name",
-          key: "name",
-        },
-        {
-          title: "安装地址",
-          dataIndex: "address",
-          key: "address",
-          align: "center",
-        },
-        {
-          title: "站点类型",
-          dataIndex: "type",
-          key: "type",
-          align: "center",
-        },
-        {
-          title: "站点容量 (kWh)",
-          dataIndex: "capacity",
-          key: "capacity",
-          align: "center",
-        },
-        {
-          title: "投运时间",
-          dataIndex: "time",
-          key: "time",
-          align: "center",
-        },
-        {
-          title: "投资性质",
-          dataIndex: "nature",
-          key: "nature",
-          align: "center",
-        },
-        {
-          title: "备注",
-          dataIndex: "tag",
-          key: "tag",
-          align: "center",
-        },
-        {
-          title: "操作",
-          key: "action",
-          align: "center",
-          render: (_, record) => (
-            <Space size="middle">
-              <span
-                className={style.editText}
-                onClick={() => editRecord(record)}
-              >
-                编辑
-              </span>
-              <span
-                className={style.deleteText}
-                onClick={() => deleteRecord(record)}
-              >
-                删除
-              </span>
-            </Space>
-          ),
-        },
-      ];
+      {
+        align: "center",
+        title: areaFirstName + "名称",
+        dataIndex: "areaName",
+        key: "areaName",
+      },
+      {
+        align: "center",
+        title: "站点编号",
+        dataIndex: "no",
+        key: "no",
+      },
+      {
+        align: "center",
+        title: "站点名称",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "站点地址",
+        dataIndex: "address",
+        key: "address",
+        align: "center",
+      },
+      {
+        title: "站点容量 (kVA)",
+        dataIndex: "capacity",
+        key: "capacity",
+        align: "center",
+      },
+      {
+        title: "投运时间",
+        dataIndex: "deliveryTime",
+        key: "deliveryTime",
+        align: "center",
+      },
+      {
+        title: "投资性质",
+        dataIndex: "investmentNature",
+        key: "investmentNature",
+        align: "center",
+        render: (_, record) => (
+          <span>{record.investmentNature == 1? '业主自投': record.investmentNature == 2 ? '运营商投资' : record.investmentNature == 3 ?'建设投资':'/' }</span>
+        )
+      },
+      {
+        title: "备注",
+        dataIndex: "remark",
+        key: "remark",
+        align: "center",
+      },
+      {
+        title: "操作",
+        key: "action",
+        align: "center",
+        render: (_, record) => (
+          <Space size="middle">
+            <span
+              className={style.editText}
+              onClick={() => editRecord(record)}
+            >
+              编辑
+            </span>
+            <span
+              className={style.deleteText}
+              onClick={() => deleteRecord(record)}
+            >
+              删除
+            </span>
+          </Space>
+        ),
+      },
+    ];
 
   //点击新增 打开弹框
   const showAdd = () => {
@@ -248,19 +230,34 @@ export default function Index() {
     setAddModal(true);
   };
   //编辑
+  const [selectId, setSelectId] = useState(0)
   const editRecord = (record) => {
     console.log(record);
+    record.deliveryTime = moment(record.deliveryTime)
+    form.setFieldsValue(record)
+    setSelectId(record.id)
+    setImageUrl(record.image)
     setModalTitle("编辑站点");
     setAddModal(true);
-    form.setFieldsValue({ time: moment("2010-01-01", "YYYY-MM-DD") });
-    form.setFieldsValue(record);
   };
   //删除
   const deleteRecord = (record) => {
+    setSelectId(record.id)
     setDeleteTypeModal(true);
   };
   //删除站点确认
-  const deleteOk = () => {
+  const deleteOk = async () => {
+    let res = await DeleteSite(projectId, selectId)
+    if(res.success){
+      message.success('站点删除成功!')
+      if(pageNum > 1 && dataSource.length  == 1){
+        setPageNum(pageNum - 1)
+      }else{
+        getTableData()
+      }
+    }else{
+      message.error(res.errMsg)
+    }
     setDeleteTypeModal(false);
   };
   //删除站点取消
@@ -268,11 +265,39 @@ export default function Index() {
     setDeleteTypeModal(false);
   };
   //新增 确认
-  const addOk = () => {
+  const addOk = async () => {
+    const values = await form.validateFields();
+    let params = {
+      areaId: values.areaId,
+      name: values.name,
+      no: values.no,
+      capacity: values.capacity,
+      deliveryTime: moment(values.deliveryTime).format('YYYY-MM-DD'),
+      investmentNature: values.investmentNature,
+      remark: values.remark,
+      image: imageUrl
+    }
     if (modalTitle === "新增站点") {
-      const values = form.validateFields();
+      AddSite(projectId, params).then(res => {
+        if(res.success){
+          setAddModal(false);
+          message.success('新增站点成功!')
+          getTableData();
+        }else{
+          message.error(res.errMsg)
+        }
+      })
     } else if (modalTitle === "编辑站点") {
-      setAddModal(false);
+      params.id = selectId
+      UpdateSite(projectId, params).then(res => {
+        if(res.success){
+          setAddModal(false);
+          message.success('站点信息修改成功!')
+          getTableData();
+        }else{
+          message.error(res.errMsg)
+        }
+      })
     }
   };
   //新增 取消
@@ -284,8 +309,8 @@ export default function Index() {
   const [imageUrl, setImageUrl] = useState(""); //上传的图片
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
-  const normFile = async (e) => {
-    return await getBase64(e.file);
+  const normFile =  (e) => {
+    return  getBase64(e.file);
   };
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -318,6 +343,11 @@ export default function Index() {
   const handleCancel = () => {
     setPreviewOpen(false);
   };
+
+  useEffect(()=>{
+    getTableData()
+  },[])
+
   return (
     <div className={style.box}>
       <div className={style.content}>
@@ -354,7 +384,7 @@ export default function Index() {
           closable={false}
           maskClosable={false}
           okText={"确认"}
-          okType={"primary"}
+          okType={"danger primary"}
         >
           <div className={style.deleteHeader}>删除提示</div>
           <div className={style.deleteBody}>
@@ -367,7 +397,7 @@ export default function Index() {
           open={addModal}
           onOk={addOk}
           onCancel={addCancel}
-          width={550}
+          width={640}
           cancelText={"取消"}
           centered={true}
           closable={false}
@@ -383,21 +413,19 @@ export default function Index() {
             requiredMark={false}
             autoComplete="off"
             labelAlign="left"
-            labelCol={{ flex: "90px" }}
+            colon={false}
+            labelCol={{ flex: "110px" }}
           >
             <Item
-              name="station"
+              name="areaId"
               label={
-                oneLevel[0]?.levelName ? oneLevel[0].levelName : "园区名称"
+                oneLevel[0]?.levelName ? '所属' + oneLevel[0].levelName : "所属园区"
               }
               rules={[
                 { required: true, message: `请选择${oneLevel[0].levelName}` },
               ]}
             >
               <Select
-                key={defaultArea}
-                defaultValue={defaultArea}
-                onChange={changeArea}
                 placeholder={
                   oneLevel[0]?.levelName
                     ? `请选择${oneLevel[0].levelName}`
@@ -414,42 +442,36 @@ export default function Index() {
               </Select>
             </Item>
             <Item
-              name="name"
-              label="所属站点"
-              rules={[{ required: true, message: "请选择所属站点" }]}
+              name="no"
+              label="站点编号"
+              rules={[{ required: true, message: "请输入站点编号" }]}
             >
-              <Select
-                key={defaultsection}
-                defaultValue={defaultsection}
-                onChange={changeSection}
-                placeholder="请选择所属站点"
-              >
-                {sectionList.map((item) => {
-                  return (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input placeholder="请输入站点编号" />
+            </Item>
+            <Item
+              name="name"
+              label="站点名称"
+              rules={[{ required: true, message: "请输入站点名称" }]}
+            >
+              <Input placeholder="请输入站点名称"></Input>
             </Item>
             <Item
               name="address"
-              label="安装地址"
-              rules={[{ required: true, message: "请输入安装地址" }]}
+              label="站点地址"
+              rules={[{ required: true, message: "请输入站点地址" }]}
             >
-              <Input placeholder="请输入安装地址" />
+              <Input placeholder="请输入站点地址" />
             </Item>
             <Item
               name="capacity"
-              label="容量(kWh)"
-              rules={[{ required: true, message: "请输入储能容量" }]}
+              label="站点容量 (KVA)"
+              rules={[{ required: true, message: "请输入站点容量" }]}
             >
-              <Input placeholder="请输入储能容量" />
+              <Input placeholder="请输入站点容量" />
             </Item>
             <Item
               label="投运时间"
-              name="time"
+              name="deliveryTime"
               rules={[
                 {
                   required: true,
@@ -460,18 +482,14 @@ export default function Index() {
               <DatePicker
                 format="YYYY-MM-DD"
                 style={{ width: "100%" }}
-                onChange={ChangeTime}
               />
             </Item>
             <Item
-              name="nature"
+              name="investmentNature"
               label="投资性质"
               rules={[{ required: true, message: "请选择所属站点" }]}
             >
               <Select
-                key={defaultNature}
-                defaultValue={defaultNature}
-                onChange={changeNature}
                 placeholder="请选择投资性质"
               >
                 {natureList.map((item) => {
@@ -483,10 +501,10 @@ export default function Index() {
                 })}
               </Select>
             </Item>
-            <Item name="tag" label="备注">
-              <Input placeholder="请输入备注" />
+            <Item name="remark" label="备注信息">
+              <Input placeholder="请输入备注信息" />
             </Item>
-            <Item name="upload" label="站点图片" getValueFromEvent={normFile}>
+            <Item name="image" label="站点图片" getValueFromEvent={normFile}>
               <Upload
                 listType="picture-card"
                 className={style.uploader}

@@ -6,24 +6,51 @@ import {useSelector} from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
-import {BMSRuntime} from '@api/api.js'
+import {StorageMonitorRuntime, SiteManagerDesigner} from '@api/api.js'
 
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
-  const { queryBatterClusterList } = BMSRuntime
+  const { QueryBatteryStackList } = StorageMonitorRuntime
+  const { FindSiteList } = SiteManagerDesigner
   const [form] = Form.useForm()
   const {Item}  = Form
+
+  //siteList
+  const [siteList, setSiteList] = useState([])
+  const querySite = () => {
+    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          setSiteList(res.data)
+          form.setFieldValue('siteId', res.data[0].id)
+          runQuery()
+        }else{
+          setSiteList([])
+          setBmsList([])
+          form.setFieldValue('siteId', '')
+          form.setFieldValue('stackId', '')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSite = val => {
+    runQuery()
+  }
+
   //PCS list
   const  [bmsList, setBmsList] = useState([])
   const [headerValues, setHeaderValues] = useState()
   const [bmsName, setBmsName] = useState('')
   const getbmsList = () => {
-    return queryBatterClusterList(projectId, form.getFieldValue('areaId')).then(res=>{
+    return QueryBatteryStackList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res=>{
       if(res.success && res.data){
         setBmsList(res.data)
-        form.setFieldValue('bcId', res.data[0].id)
+        form.setFieldValue('stackId', res.data[0].id)
         setBmsName(res.data[0].name)
         setHeaderValues({
           bmsName: res.data[0].name,
@@ -37,7 +64,7 @@ export default function Index() {
   const {run: runQuery } = useRequest(getbmsList, {manual: true})
 
   const changeArea = val => {
-    runQuery()
+    querySite()
   }
 
   const changeBMS = val => {
@@ -56,13 +83,15 @@ export default function Index() {
   const [showPage, setShowPage] = useState('mainPage')
   const [batteryData, setBatteryData] = useState({})
   const getFromChild = val => {
-    let { pageName, batteryPackId, batteryPackName } = val
+    let { pageName, batteryClusterId, batteryPackName , clusterList, count} = val
     setShowPage(pageName)
     setBatteryData({
-      batteryPackId,
+      batteryClusterId,
       batteryPackName,
       projectId,
-      areaId:form.getFieldValue('areaId'),
+      clusterList,
+      count,
+      areaId:form.getFieldValue('areaId'), 
     })
   }
 
@@ -75,7 +104,7 @@ export default function Index() {
       message.error('当前项目尚未创建园区!')
     }else{
       form.setFieldValue('areaId', areaList[0].id)
-      runQuery()
+      querySite()
     }
   },[])
   return (
@@ -96,7 +125,20 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='bcId' label='电池簇选择' style={{marginLeft:16}}>
+          <Item name='siteId' label='' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择站点"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeSite}
+            >
+              {siteList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='stackId' label='电池堆选择' style={{marginLeft:16}}>
             <Select
               placeholder="请选择"
               size="middle"
@@ -114,16 +156,16 @@ export default function Index() {
           showPage == 'batteryPage' ?
           <div>
             <div className={style.border}>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>{bmsName}</span>
+              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池堆</span>
               <span className={style.breadcrumb}> { '>' }</span>
-              <span>{batteryData.batteryPackName}</span>
+              <span>电池簇</span>
             </div>
           </div>: null
         }
         { (showPage == 'subPage') ? 
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回BMS</Button> : null }
         { showPage == 'batteryPage' ? 
-        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回</Button> : null }
+        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} type="primary" onClick={()=> backBMS()}>返回</Button> : null }
       </div>
       { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild} headerValues={headerValues}></MainPage> : null }
       { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData}></BatteryPage> : null }

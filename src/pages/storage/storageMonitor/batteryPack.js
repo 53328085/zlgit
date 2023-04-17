@@ -65,9 +65,16 @@ export default function index (props) {
     }
     return (
         <div style={bgStyle}>
-            <span style={packName}>{data.batteryPackName}</span>
+            <span style={packName}>{data.batteryClusterName}</span>
             <div style={battery} onClick={()=>toBatteryData()}>
-                <NormalValue title={['可充电', '可放电']} value={[parseInt(data.canChargingE) +'(kWh)', parseInt(data.canDisChargingE) + '(kWh)']}></NormalValue>
+                <div style={{width: 127, border:'1px solid #d7d7d7', borderRadius: 2, marginBottom: 12}}>
+                    <div style={{width: '100%', height: 24, lineHeight:'24px', backgroundColor:'#237ae4',borderBottom:'1px solid #d7d7d7', textAlign:'center'}}>
+                        <span style={{display:"inline-block", width: 62}}>充放电状态</span>
+                    </div>
+                    <div style={{width: '100%', height: 24, lineHeight:'24px', textAlign:'center'}}>
+                        <span style={{display:"inline-block", width: 62, }}>{data.chargeState == 1 ? '充电中...': data.chargeState == 2 ? '放电中': ''}</span>
+                    </div>
+                </div>
                 <Progress title={'SOC'} value={data.soc +'%'} color={'#060'}></Progress>
                 <Progress title={'SOH'} value={data.soh + '%'} color={'#06f'}></Progress>
                 <div style={{ height: 0, border:'1px dashed #666', margin:'16px 0'}}></div>
