@@ -298,9 +298,9 @@ export class EnergyComprehensive {
 
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
-    static QueryIncomeTrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
-    static QueryDisChargeETrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
+    static QueryIncome = (projectId, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome/?projectId=${projectId}&stationName=${stationName}`); // 日 月 年 收入
+    static QueryIncomeTrends = (projectId,  type, date, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends/?projectId=${projectId}&type=${type}&date=${date}&stationName=${stationName}`); // 收益趋势
+    static QueryDisChargeETrends = (projectId,type, date, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends/?projectId=${projectId}&type=${type}&date=${date}&stationName=${stationName}`); // 充放电趋势
   }
 
 // 储能管理--报表统计

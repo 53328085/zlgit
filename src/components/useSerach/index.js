@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux'
 import {levelDefaultLabel, selectOneLevelDefaultId, selectOneLevel} from '@redux/systemconfig.js'
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
+
 import CustContext from "../content";
 import {PrintButton,
    SaveButton, 
@@ -103,6 +104,7 @@ export default function useSerach(props) {
          
         </Select>
       </Item>
+
         {
            custview
         }

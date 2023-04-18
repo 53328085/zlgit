@@ -13,9 +13,6 @@ import photovoltaicRoutes from "./photovoltaic"; // 光伏
 import moduleRoutes from "./designer/common";
 import carbonRoutes from "./carbon" // 碳排管理
 import storageRoutes from './storage' // 储能管理
-
-
-import {StorageParameterSetupDesigner} from '@api/api'
 const Login = lazy(() => import("@pages/Login"))
 
 const Projectlist = lazy(() => import("@pages/projectList"))
@@ -26,22 +23,22 @@ const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
 //const Module = lazy(() => import("../pages/module/index"))
 
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
+const Monitoring = lazy(() => import("../pages/monitoring/index/index"))
 
-const Electric = lazy(() => import("../pages/electric/index"))
+const Electric = lazy(() => import("../pages/electric/index/index"))
 
-const Distribution = lazy(() => import("../pages/distribution/index"))
+const Distribution = lazy(() => import("../pages/distribution/index/index"))
 
 
-const Energy = lazy(() => import("../pages/energy/index"))
+const Energy = lazy(() => import("../pages/energy/index/index"))
 
-const Devops = lazy(() => import("../pages/devops/index"))
+const Devops = lazy(() => import("../pages/devops/index/index"))
 
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
-const Carbon = lazy(() => import("../pages/carbon/index"))
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
+const Prepayment = lazy(() => import("../pages/prepayment/index/index"))
+const Carbon = lazy(() => import("../pages/carbon/index/index"))
+const Photovoltaic = lazy(() => import("../pages/photovoltaic/index/index"))
 
-const Storage = lazy(() => import("../pages/storage/index"))
+const Storage = lazy(() => import("../pages/storage/index/index"))
 
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
@@ -53,7 +50,6 @@ const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedet
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
-const Rtest = lazy(() => import("../pages/test/rttest"))
 const Notfound = lazy(() => import("./notfound"))
 import {designerComponents, designerChildrenRoute} from "./designer";
 
@@ -149,13 +145,12 @@ const childrenRoute = {
    },   
    {
      path: '/zltest',
-     element: <Fform/>, 
-     action: () => {name: 'zl'}
+     element: <Fform/>,
+     loader: async ({ params }) => {
+       // console.log(params)
+     },
+
    },
-   {
-    path: '/rrtest',
-    element: <Rtest/>, 
-  },
    {
     path: '*',
     element: <Notfound />

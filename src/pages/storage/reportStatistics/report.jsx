@@ -294,14 +294,14 @@ const columns = [
    
   }
   useEffect(() => {
-    QueryReports()
+   // QueryReports()
   }, [])
   useEffect(() => {
-    QueryReports()
+   // QueryReports()
   }, [dates])
   useEffect(() => {
-    getPrice()
-    QueryReports()
+  //  getPrice()
+   // QueryReports()
   }, [areaId])
  
   return (
