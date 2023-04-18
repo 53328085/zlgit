@@ -35,9 +35,7 @@ export default function Index() {
           getFromHeader()
         }else{
           setSiteList([])
-          setPcsList([])
-          form.setFieldValue('siteId', '')
-          form.setFieldValue('PCSId', '')
+          return;
           message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
         }
       }else{
@@ -67,6 +65,7 @@ export default function Index() {
     }
   },[])
   const changeArea = val => {
+    form.setFieldValue('siteId', null)
     querySite()
   }
   const getFromHeader = () => {

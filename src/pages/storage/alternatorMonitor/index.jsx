@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import style from './style.module.less'
 import { Select, Form, Table, message } from 'antd'
 import {useSelector} from 'react-redux'
@@ -6,7 +6,7 @@ import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/system
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner } from '@api/api.js'
-import { useRequest } from 'ahooks'
+import { useReactive, useRequest } from 'ahooks'
 
 import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
@@ -18,11 +18,11 @@ export default function Index() {
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
   const { queryPCSList, 
-    queryPCSInfo, 
+    queryPCSInfo,
+    queryPCSWarningInfo, 
     queryPowerTrends, 
     querySocTrends, 
-    queryAcTable, 
-    queryPileTable } = PCSMonitorRuntime
+    queryAcTable } = PCSMonitorRuntime
   const { FindSiteList } = SiteManagerDesigner
   const [form] = Form.useForm()
   const {Item}  = Form
@@ -38,9 +38,8 @@ export default function Index() {
         }else{
           setSiteList([])
           setPcsList([])
-          form.setFieldValue('siteId', '')
-          form.setFieldValue('PCSId', '')
           message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          return;
         }
       }else{
         message.error(res.errMsg)
@@ -48,6 +47,7 @@ export default function Index() {
     })
   }
   const changeSite = val => {
+    form.setFieldValue('PCSId', null)
     queryPCS()
   }
 
@@ -64,8 +64,8 @@ export default function Index() {
           getContent()
         }else{
           setPcsList([])
-          form.setFieldValue('PCSId', '')
           message.warning('当前站点不存在PCS!')
+          return;
         }
       }else{
         message.error(res.errMsg)
@@ -84,7 +84,7 @@ export default function Index() {
   }
   const StateItem = props => {
     let { state } = props
-    state = state == 0 ? 'normal' : state == 1 ? 'error' : ''
+    state = state == 0 ? 'normal' : state == 1 ? 'error' : 'offline'
     return <div className={style.stateItem} style={props.styles}>
       <span>{props.name}</span>
       <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
@@ -92,17 +92,42 @@ export default function Index() {
   }
 
   //页面参数
-  const [leftValues, setLeftValues] = useState({})
+  const [leftValues, setLeftValues] = useState([])
   const [powerData, setPowerData] = useState({})
   const [socData, setSocData] = useState({})
+  const state = useReactive({
+    gridState:'',
+    chargeState:'',
+    warningInfo:[],
+    ACData:[]
+  })
   const getContent = () => {
     //左侧数据
     queryPCSInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
       if(res.success){
         if(res.data){
-          setLeftValues(res.data)
+          state.gridState = res.data[0].name,
+          state.chargeState = res.data[1].name
+          let arr = []
+          res.data.map((item, index) => {
+            if(index > 1){
+              arr.push(item)
+            }
+          })
+          setLeftValues(arr)
         }else{
-          setLeftValues({})
+          setLeftValues([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    queryPCSWarningInfo(projectId, form.getFieldValue('PCSId')).then(res => {
+      if(res.success){
+        if(res.data){
+          state.warningInfo = res.data
+        }else{
+          state.warningInfo = []
         }
       }else{
         message.error(res.errMsg)
@@ -151,9 +176,20 @@ export default function Index() {
       }
     })
     //ac Table
-    queryAcTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {})
-    //pile Table
-    queryPileTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {})
+    queryAcTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {
+      if(res.success){
+        if(res.data && res.data.length > 0){
+          res.data[0].name = 'A'
+          res.data[1].name = 'B'
+          res.data[2].name = 'C'
+          state.ACData = res.data
+        }else{
+          state.ACData = []
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
 
   const AcClomns = [
@@ -164,70 +200,40 @@ export default function Index() {
       align:'center'
     },{
       title:'电压 (V)',
-      dataIndex:'voltage',
-      key:'voltage',
+      dataIndex:'v',
+      key:'v',
       align:'center'
     },{
       title:'电流 (A)',
-      dataIndex:'current',
-      key:'current',
+      dataIndex:'i',
+      key:'i',
       align:'center'
     },{
       title:'有功功率(kW)',
-      dataIndex:'activePower',
-      key:'activePower',
+      dataIndex:'p',
+      key:'p',
       align:'center'
     },{
       title:'视在功率 (kVA)',
-      dataIndex:'apparentPower',
-      key:'apparentPower',
+      dataIndex:'ps',
+      key:'ps',
       align:'center'
     },{
       title:'无功功率 (kVar)',
-      dataIndex:'reactivePower',
-      key:'reactivePower',
+      dataIndex:'q',
+      key:'q',
       align:'center'
     },{
       title:'功率因数',
-      dataIndex:'powerFactor',
-      key:'powerFactor',
+      dataIndex:'pf',
+      key:'pf',
       align:'center'
-    },
-  ]
-  const ACData = [
-    {
-      id:1,
-      name:'A',
-      activePower:0,
-      apparentPower: 0,
-      reactivePower: 0,
-      powerFactor: 1,
-      voltage: 224.22,
-      current: 0
-    },
-    { 
-      id: 2,
-      name:'B',
-      activePower:0,
-      apparentPower: 0,
-      reactivePower: 0,
-      powerFactor: 1,
-      voltage: 224.14,
-      current: 0
-    },
-    {
-      id:3,
-      name:'A',
-      activePower:0,
-      apparentPower: 0,
-      reactivePower: 0,
-      powerFactor: 1,
-      voltage: 224.84,
-      current: 0
     },
   ]
 
   const changeArea = val => {
+    form.setFieldValue('siteId', null)
+    form.setFieldValue('PCSId', null)
     querySite()
   }
   const changePCS = val => {
@@ -246,6 +252,14 @@ export default function Index() {
       querySite()
     }
   },[])
+
+  const rightStyle={
+    borderRight: 'none'
+  }
+  const bottomStyle = {
+    borderBottom:'none'
+  }
+
   return (
     <div>
       <div className={style.header}>
@@ -312,40 +326,27 @@ export default function Index() {
               <img className={style.pcsImg} src={pcs}></img>
             </div>
             <div className={style.pcsStatus}>
-              <span>{leftValues?.offOnGrid == 0 ?'离网状态' : leftValues?.offOnGrid == 1 ?'并网状态' : ''}</span>
-              <span>{leftValues?.dcStatus == 1? 'DC 充电中...': leftValues?.dcStatus == 2?'DC 放电中...' :''}</span>
+              <span>{state.gridState}</span>
+              <span>{state.chargeState}</span>
             </div>
           </div>
           <div className={style.dataCard}>
-            <Card title='直流电流' unit='A' values={leftValues?.dci || '0.00'}></Card>
-            <Card title='直流电压' unit='V' values={leftValues?.dcv || '0.00'}></Card>
-            <Card title='直流功率' unit='kW' values={leftValues?.dcp || '0.00'}></Card>
+            {
+              leftValues.map((item, index) => {
+                return <Fragment key={index}>
+                  <Card  title={item.name} unit={item.unit} values={item.value}></Card>
+                  {((index + 1) % 3 == 0 && (index + 1) < leftValues.length ) ? <div className={style.line}></div> : null}
+                </Fragment>
+              })
+            }
           </div>
-          <div className={style.line}></div>
-          <div className={style.dataCard}>
-            <Card title='SOC' unit='%' values={leftValues?.soc || '0.00'}></Card>
-            <Card title='SOH' unit='kWh' values={leftValues?.soh || '0.00'}></Card>
-            <Card title='总功率因数' unit='/' values={leftValues?.pf || '0.00'}></Card>
-          </div>
-          <div className={style.line}></div>
-          <div className={style.dataCard}>
-            <Card title='总有功率功率' unit='kW' values={leftValues?.p || '0.00'}></Card>
-            <Card title='总视在功率' unit='kVA' values={leftValues?.ps || '0.00'}></Card>
-            <Card title='总无功功率' unit='kVar' values={leftValues?.q || '0.00'}></Card>
-          </div>
+          {/* ((index == state.warningInfo.length - 4) || (index == state.warningInfo.length - 3) || (index == state.warningInfo.length - 2) || (index == state.warningInfo.length - 1)) ? bottomStyle : null */}
           <div className={style.status}>
-            <StateItem name='逆变器故障' state={leftValues?.invHitch}></StateItem>
-            <StateItem name='逆变器不同步' state={leftValues?.invOutSync}></StateItem>
-            <StateItem name='过温' state={leftValues?.overTemperature}></StateItem>
-            <StateItem name='输出过载' state={leftValues?.overLoad} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='输出电压异常' state={leftValues?.outputVUnusual}></StateItem>
-            <StateItem name='直流母线过压' state={leftValues?.dcBusOverV}></StateItem>
-            <StateItem name='SDP程序错误' state={leftValues?.sdpProgramError}></StateItem>
-            <StateItem name='EOD' state={leftValues?.eod} styles={{borderRight:'none'}}></StateItem>
-            <StateItem name='载波同步异常' state={leftValues?.cwSyncException } styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='工频同步异常' state={leftValues?.ffSyncException }styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='SCR故障' state={leftValues?.scrHitch }styles={{borderBottom:'none'}}></StateItem>
-            <StateItem name='输出过载超时' state={leftValues?.outputOverLoadTimeout } styles={{borderRight:'none', borderBottom:'none'}}></StateItem>
+            {
+              state.warningInfo.map((item, index) => {
+                return <StateItem key={index} name={item.name} state={item.value} styles={((index + 1) % 4) == 0 ? rightStyle : null}></StateItem>
+              })
+            }
           </div>
         </div>
         <div className={style.right}>
@@ -358,7 +359,7 @@ export default function Index() {
             <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
           </div>
           <div className={style.tableList}>
-            <Table size='small' bordered dataSource={ACData} columns={AcClomns} rowKey='id' pagination={false} />
+            <Table size='small' bordered dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} />
           </div>
         </div>
       </div>

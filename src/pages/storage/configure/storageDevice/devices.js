@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
+import {useSelector} from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import UseTransfer from '@com/useTransfer'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
+import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 
 export default function Index(props) {
   const [form] = Form.useForm()
@@ -17,13 +20,87 @@ export default function Index(props) {
   const errRef = useRef()
   const editRef = useRef()
 
-  const changeSite = val => { }
-  const onSearch = val => { }
+  const { FindSiteList } = SiteManagerDesigner
+  const { QueryConfigInfo,
+    GetDeviceInfo,
+    Config,
+    Delete,
+    BatchConfig } = StorageEquipmentDesigner
+
+  const projectId = useSelector(selectProjectId)
+  const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
+  
+  const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
+  useEffect(()=>{
+    if(areaList.length == 0|| !areaList){
+      message.error('当前项目尚未创建园区!')
+    }else{
+      form.setFieldValue('areaId', areaList[0].id)
+      querySite()
+    }
+  },[])
+  const changeArea = val => {
+    areaList.map(item => {
+      if(item.id == val){
+        setSelectAreaName(item.name)
+      }
+    })
+    querySite()
+  }
+
+  //siteList
+  const [siteList, setSiteList] = useState([])
+  const querySite = () => {
+    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          setSiteList(res.data)
+          form.setFieldValue('siteId', res.data[0].id)
+          form.setFieldValue('alike', '')
+          getFromHeader()
+        }else{
+          setSiteList([])
+          form.setFieldValue('siteId', '')
+          form.setFieldValue('alike', '')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSite = val => {
+    getFromHeader()
+  }
+
+  const getFromHeader = () => {
+    let params = form.getFieldsValue(true)
+    QueryConfigInfo(projectId, params.areaId, params.siteId, params.alike).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          let arr = [...res.data]
+          arr.map(item => {
+            item.areaName = selectAreaName
+          })
+          setTableData(arr)
+        }else{
+          setTableData([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+
+  const onSearch = val => { 
+    getFromHeader()
+  }
   const columns = [
     {
-      title: '园区名称',
-      dataIndex: 'siteName',
-      key: 'siteName',
+      title: areaName + '名称',
+      dataIndex: 'areaName',
+      key: 'areaName',
       align: 'center',
       width: '240px'
     }, {
@@ -34,14 +111,14 @@ export default function Index(props) {
       width: '336px'
     }, {
       title: '电表编号',
-      dataIndex: 'deviceNumber',
-      key: 'deviceNumber',
+      dataIndex: 'sn',
+      key: 'sn',
       align: 'center',
       width: '160px'
     }, {
       title: '电表型号',
-      dataIndex: 'deviceCategory',
-      key: 'deviceCategory',
+      dataIndex: 'category',
+      key: 'category',
       align: 'center',
       width: '160px'
     }, {
@@ -52,8 +129,8 @@ export default function Index(props) {
       width: '160px'
     }, {
       title: '所属网关',
-      dataIndex: 'gateway',
-      key: 'gateway',
+      dataIndex: 'gatewaySn',
+      key: 'gatewaySn',
       align: 'center',
       width: '172px'
     }, {
@@ -77,16 +154,7 @@ export default function Index(props) {
   ]
 
   const tableRef = useRef()
-  const [tableData, setTableData] = useState([
-    {
-      id: 1,
-      siteName: '正泰物联杭州园区',
-      address: '1号楼储能',
-      deviceNumber: '220210000001',
-      deviceCategory: 'DDSU666-A',
-      gateway: '20210113323'
-    }
-  ])
+  const [tableData, setTableData] = useState([])
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 15,
@@ -114,6 +182,19 @@ export default function Index(props) {
   //穿梭框
   const [transTag, setTransTag] = useState('')
   const settingClick = () => {
+    GetDeviceInfo(projectId, form.getFieldValue('siteId'), '').then(res => {
+      if(res.success){
+        if(res.data){
+          setSubTable(res.data.configed)
+          setUnknownTable(res.data.noConfiged)
+        }else{
+          setSubTable([])
+          setUnknownTable([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
     setTransTag('open');
   }
 
@@ -129,8 +210,8 @@ export default function Index(props) {
     }, {
       align: 'center',
       title: '设备名称',
-      dataIndex: 'name',
-      key: 'name'
+      dataIndex: 'deviceName',
+      key: 'deviceName'
     }, {
       align: 'center',
       title: '安装地址',
@@ -143,9 +224,18 @@ export default function Index(props) {
     let group = []
     if (params.subData.length > 0) {
       params.subData.map(item => {
-        group.push(item.id)
+        group.push(item.sn)
       })
     }
+    Config(projectId, form.getFieldValue('siteId'),group).then(res => {
+      if(res.success){
+        message.success('新增设备成功!')
+        setTransTag('close')
+        getFromHeader()
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
 
   const getCloseValue = params => {
@@ -153,10 +243,20 @@ export default function Index(props) {
   }
 
   //删除
-  const clickDel = () => {
+  const [selectSn, setSelectSn] = useState(0)
+  const clickDel = (record) => {
+    setSelectSn(record.sn)
     dref.current.onOpen()
   }
   const onDelete = () => {
+    Delete(projectId, selectSn).then(res => {
+      if(res.success){
+        message.success('电表删除成功!')
+        getFromHeader()
+      }else{
+        message.error(res.errMsg)
+      }
+    })
     dref.current.onCancel()
   }
 
@@ -183,35 +283,26 @@ export default function Index(props) {
   };
   const onUpload = () => {
     let formData = new FormData()
-    // formData.append('projectId', projectId)
-    // formData.append('type',type)
-    // formData.append('file',fileList[0])
-    // insertEnergyClassifys(formData).then(res => {
-    //     if(res.success){
-    //         let {success, data} = res.data
-    //         if(success){
-    //             messageApi.open({
-    //                 type:'success',
-    //                 content:'批量导入成功!'
-    //             })
-    //             setAddModal(false)
-    //         }else{
-    //             messageApi.open({
-    //                 type:'error',
-    //                 content: res.data.errMsg
-    //             })
-    //             setErrorData(data);
-    //             setAddModal(false)
-    //             errRef.current.onOpen()
-    //         }
-    //     }else{
-    //         messageApi.open({
-    //             type:"error",
-    //             content:res.errMsg
-    //         })
-    //         setAddModal(false)
-    //     }
-    // })
+    formData.append('projectId', projectId)
+    formData.append('file',fileList[0])
+    BatchConfig(formData).then(res => {
+        if(res.success){
+            let {success, data} = res.data
+            if(success){
+                message.success('批量导入成功!')
+                setAddModal(false)
+                getFromHeader()
+            }else{
+                message.error(res.data.errMsg)
+                setErrorData(data);
+                setAddModal(false)
+                errRef.current.onOpen()
+            }
+        }else{
+          message.error(res.errMsg)
+            setAddModal(false)
+        }
+    })
   }
   const [errorData, setErrorData] = useState();
   const errColumns = [{
@@ -238,19 +329,24 @@ export default function Index(props) {
     editRef.current.onCancel()
   }
 
-  useEffect(() => {
-    if (props.siteList.length == 0) {
-      message.error('当前项目没有站点!')
-      return;
-    } else {
-      form.setFieldValue('siteId', props.siteList[0].id)
-    }
-  }, [])
   return (
     <div className={style.mainContainer}>
       {transTag == 'open' ? <div className={style.mask}></div> : null}
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
+          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeArea}
+            >
+              {areaList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
@@ -258,13 +354,13 @@ export default function Index(props) {
               style={{ width: '264px' }}
               onChange={changeSite}
             >
-              {props.siteList.map(item => {
+              {siteList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='searchInput' label='设备查询'>
+          <Item name='alike' label='设备查询'>
             <Search
               enterButton="查询"
               style={{ width: 400 }}
@@ -278,11 +374,11 @@ export default function Index(props) {
         </Space>
       </div>
       <Divider />
-      <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='电表.xlsx' />
+      <Usetable ref={tableRef} scroll={{ y: 720 }} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
       <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} >
         <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
       </div>
-      <Custmodl title='删除能耗分类' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()}>
+      <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <img style={{ marginLeft: 64, marginRight: 32 }} src={warning}></img>
           <span> 是否确认删除电表？ </span>
@@ -298,7 +394,7 @@ export default function Index(props) {
                 <p style={{ marginTop: 24, marginBottom: 24 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }}>点击上传</span></p>
               </div>
             </Dragger>
-            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/energyTemplate.xlsx' download>下载模板</a>
+            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/储能电表.xlsx' download>下载模板</a>
           </div>
         </div>
       </Modal>
