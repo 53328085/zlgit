@@ -32,6 +32,7 @@ export default function Electric() {
   const editFromRef = useRef(null)
   const DelModalRef =useRef()
   const tableLoadRef =useRef()
+  const updateTableRef =useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -240,7 +241,7 @@ const onSureEditModal=async()=>{
   }
 }
   
-  //新增时获取未使用的燃气表名
+  //新增时获取未使用的储能表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
@@ -263,7 +264,7 @@ const onSureEditModal=async()=>{
     }
   }
 
-  //获取默认燃气表的详细信息
+  //获取默认储能的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
@@ -282,7 +283,7 @@ const onSureEditModal=async()=>{
         dataOrder: item.secquence
       }))
       
-      // console.log(foRef, arr)
+      updateTableRef.current = lodash.cloneDeep(arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
         console.log(watchPointArr)
@@ -413,7 +414,7 @@ const onSureEditModal=async()=>{
   }
   let deviceProps = {
     value: 0,
-    name: '新增燃气表类型',
+    name: '新增储能类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
     cancelText: '取消',
     okText: '确认',
@@ -424,7 +425,7 @@ const onSureEditModal=async()=>{
     ModalRef,
     onCancel,
     exportExecel,
-    title:'配置燃气表类型',
+    title:'配置储能类型',
   
   };
   let editFormProps={
@@ -442,23 +443,24 @@ const onSureEditModal=async()=>{
     DelModalRef,
     cancelText: '取消',
     okText: '确认',
-    content:'是否确认删除燃气表类型?',
-    name:'删除燃气表类型',
+    content:'是否确认删除储能类型?',
+    name:'删除储能类型',
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
     return (<Modal  mold='cust' {...editModalProps} footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      // onClick={ onSureEditModal}>应用</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={ onSureEditModal}>应用</Button>,
   ]}>
-    <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+    <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])
   return (
     <div>
+      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
       <DeviceContent {...deviceProps} >
         <Table 
         columns={columns} 
@@ -472,10 +474,11 @@ const onSureEditModal=async()=>{
       </DeviceContent>
       {EditModalComp}
       {/* <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+      <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal> */}
       <DeleteModal {...delModalProps}></DeleteModal>
+      </cusContext.Provider>
     </div>
   )
 }

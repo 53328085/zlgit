@@ -4,7 +4,7 @@ import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useRequest, useAntdTable} from "ahooks";
+import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
@@ -14,7 +14,7 @@ import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultL
 import Table from '@com/useTable'
 
 
-
+let inputValue = ''
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
@@ -29,27 +29,28 @@ export default function Index(props) {
 
   const defaultLabel = useSelector(levelDefaultLabel)
 
-  //const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  let [areaId, setAreaId] = useState(LevelDefaultId)
+  const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
+  let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
-  const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
-  let inputValue = ''
-  const [page, setpage] = useState(1)
+  const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false 
   let [total, setTotal] = useState(0)
   let [imageList, setimageList] = useState([])
-  let [pageNum, setPageNum] = useState(1)
-  let params = {
+
+  let initparams = {
     projectId: projectId,
     areaId: areaId,
     gatewayId: 0,
-    deviceStyle: deviceStyle,
+    deviceStyle: 1,
     category: '',
     alike: '',
     state: 0,
-    pageNum: page,
+    pageNum: 1,
     pageSize: 12,
   }
+
+  const [params, setParams] = useState(initparams)
+
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
     {
@@ -89,35 +90,36 @@ export default function Index(props) {
   ];
   let [dataSource, setdataSource] = useState([])
 
-  const getData = () => {//设备统计
-    return Statistics({ projectId, areaId, deviceStyle }).then(res => {
+  const getData = () => {                   // 表计状态
+     Statistics({ projectId: params.projectId, areaId: params.areaId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
-        setStatistics(data)
+        setStatistics(data || [])
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  const getGatewayUsed = () => {//使用的网关
-    return QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: deviceStyle }).then(res => {
+  const getGatewayUsed = () => {            // 表计型号
+     QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
-        setoptionsGateway(data)
+        setoptionsGateway(data || [])
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  const getOverviewData = () => {//设备统计
-    return Overview(params).then(res => {
+  const getOverviewData = () => {        //   表计数据
+    Overview(params).then(res => {
       let { success, data, total, pageNum } = res
       if (success) {
-        setoverView(data)
+       
+        setoverView(data || [])
         setTotal(total)
-        setPageNum(pageNum)
+       // setPageNum(pageNum)
         let overViewList=[]
-        data.details.map(item=>{
+        data?.details?.map(item=>{
           let description=''
           item.fields.map(items=>{
              description+=items.name+' '+items.value+' '
@@ -132,54 +134,22 @@ export default function Index(props) {
     })
   }
 
-/* alike
-: 
-""
-areaId
-: 
-1
-category
-: 
-""
-deviceStyle
-: 
-1
-gatewayId
-: 
-0
-pageNum
-: 
-1
-pageSize
-: 
-12
-projectId
-: 
-45
-state
-: 
-0 */
-
-  let defaultparams = {
-    projectId,
-    areaId: areaId,
-    gatewayId: 0,
-    deviceStyle: deviceStyle,
-    category: '',
-    alike: '',
-    state: 0,
-  }
-  const {tableProps, search} = useAntdTable(getOverviewData, {
-  //  form,
-    defaultParams: [
-     {current: 1, pageSize: 15},
-     defaultparams,
-    ],
-    refreshDeps: [areaId, deviceStyle]
-    
-  })
- const {submit} = search
-
+  const paginationProps = {
+    current: params.pageNum, //当前页码
+    pageSize: params.pageSize, // 每页数据条数
+    total, // 总条数
+    onChange: (page) => handlePageChange(page), //改变页码的函数
+    hideOnSinglePage: false,
+    showSizeChanger: false,
+    showTotal: (total) => `共${total}条记录`,
+  };
+  const handlePageChange = (page) => {
+     //setPageNum(page);
+     setParams({
+      ...params,
+      pageNum: page
+     })
+  };
 
 
 
@@ -187,12 +157,12 @@ state
 
   // let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
-    return CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
+    CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
       let { success, data } = res
       if (success) {
         if (data != []) {
           let imgList = []
-          overView.details.map((item, index) => {
+          overView?.details?.map((item, index) => {
             data.map((items, indexs) => {
               if (data[indexs].category == item.category) {
                 imgList.push(data[indexs].imageBase64)
@@ -207,37 +177,55 @@ state
       }
     })
   }
-  const { run: queryData } = useRequest(getGatewayUsed, {
-    refreshDeps: [changeTag],
-    manual: true,
-  })
+
 
   const changeArea = (value) => {
-    setAreaId(value);
+    setParams({
+      ...initparams,
+      areaId: value,
+      pageNum: 1,
+    })
   };
-  const handleChangeDevice = (value) => {
-    console.log(value)
-    setdeviceStyle(value)
+  const handleChangeDevice = (value) => { 
+   setParams({
+    ...initparams,
+    deviceStyle: value,
+    pageNum: 1,
+   })
   }
   const onChangeValue = e => {
-    inputValue = e.target.value
+     setParams({
+      ...params,
+      alike: e.target.value
+     })
   }//输入框改变值
-  const onSearchList = () => {
-    params.alike = inputValue
-    getOverviewData()
-  }//点击查询按钮
+   
   const handleChange = e => {
-    params.category = e
-    getOverviewData()
+   
+   // getOverviewData()
+   setParams({
+    ...params,
+    category: e,
+    pageNum: 1,
+   })
   }//网关型号选择
   const handleChangeState = e => {
-    params.state = e
-    getOverviewData()
+    setParams({
+      ...params,
+      state: e,
+      pageNum: 1,
+     })
+   // params.state = e
+   // getOverviewData()
+
   }//网关状态选择
   const changeTab = val => {
     setisCard(val.target.value == 'card' ? true : false)
-    setpage(1)
-    getOverviewData()
+   // setPageNum(1)
+    setParams({ 
+      ...initparams
+    })
+  //  getOverviewData()
   }//切换卡片列表模式
 
   const exportExecel = () => {
@@ -253,15 +241,14 @@ state
   useEffect(() => {
     if (areaId) {
       getData()
-      queryData()
+      getGatewayUsed()
     }
-  }, [areaId, changeTag, deviceStyle])
+  }, [params.areaId, changeTag, params.deviceStyle])
   useEffect(() => {
     if (areaId) {
-      getOverviewData()
-      console.log('getOverviewData')
+      getOverviewData() 
     }
-  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page, params.deviceStyle])
+  }, [params])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()
@@ -269,18 +256,23 @@ state
     }
   }, [overView.categories])
   const onChangePage = (page, pageSize) => {
-    setpage(page)
+    // setPageNum(page)
+
+    setParams({
+      ...params,
+      pageNum: page
+    })
   }
   return (
-    <div>
+    <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
       {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
       <div className={style.header}>
         <span style={{ marginLeft: "16px", marginRight: 16 }}>{defaultLabel || '园区'}选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
-          key={LevelDefaultId}
-          defaultValue={LevelDefaultId}
+          key={defaultArea}
+          defaultValue={defaultArea}
           style={{ width: "200px" }}
           onChange={changeArea}
         >
@@ -295,7 +287,7 @@ state
         <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
         <span style={{ marginRight: 16 }}>表计类型</span>
         <Select
-          defaultValue={1}
+          value={params.deviceStyle}
           style={{
             width: 200, marginLeft: 16
           }}
@@ -324,14 +316,14 @@ state
           ]}
         />
       </div>
-      <div className={style.bottom}>
+      <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
         <div className={style.bottomTab}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={() => { onSearchList() }}>查询</Button>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getOverviewData}>查询</Button>
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
           <span>表计型号</span>
           <Select
-            defaultValue=''
+            value={params.category}
             style={{
               width: 200, marginLeft: 16
             }}
@@ -348,7 +340,7 @@ state
           </Select>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>表计状态</span>
             <Select
-              defaultValue={0}
+              value={params.state}
               style={{
                 width: 200, marginLeft: 16
               }}
@@ -405,9 +397,11 @@ state
               </p>
             ),
             rowExpandable: (record) => record.description,
-          }}></Table>
+          }}
+          pagination={paginationProps}
+          ></Table>
         </div>}
-        <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />
+     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />  }
       </div>
 
     </div >

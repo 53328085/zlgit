@@ -17,11 +17,12 @@ export default function UploadImg({ value, onChange }) {
         const isJpg = file.type === 'image/jpeg' || file.type === 'image/png'
         if (!isJpg) {
             message.error('请上传JPG/PNG文件')
+            return
         }
-        const isLt2M = file.size / 1024 / 1024 < 2
-        if (!isLt2M) {
-            message.error('请上传小于2M的图片')
-        }
+        // const isLt2M = file.size / 1024 / 1024 < 2
+        // if (!isLt2M) {
+        //     message.error('请上传小于2M的图片')
+        // }
         const r = await getBase64(file)
         setImageUrl(r)
         onChange(r)

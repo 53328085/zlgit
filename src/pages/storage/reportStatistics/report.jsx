@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react'
 import styled from 'styled-components'
-import {Typography, Form, Space, Button, DatePicker,Tag, Divider } from 'antd'
+import { Space, Button, DatePicker,Tag, Divider, Form } from 'antd'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Usetable from '@com/useTable'
 import {StorageRevenueRuntime} from '@api/api'
-
-const {Text, Link, Title, Paragraph} = Typography
-const {Item} = Form
+import {useAntdTable} from 'ahooks'
 const { RangePicker } = DatePicker;
+
 const HeaderTitle = styled.div`
   padding-left: 16px;
   height: 32px;
@@ -222,108 +221,90 @@ const columns = [
     }
    ]
  
- function Main({projectId, areaId }) {
+ function Main({projectId, areaId, stationName }) {
    const tableRef = useRef()
    const [price ,setPrice] = useState({})
-   const [tableData, setTableData] = useState([])
-   const startime = new Date().toLocaleDateString()
-   const endtime = new Date().toLocaleDateString()
-   const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
-   const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-    total: 0
-  })
+   const {Item} = Form
+   const [form] = Form.useForm()
   const getPrice = async() => {
     try {
         let {success, data} = await StorageRevenueRuntime.QueryPrice(projectId, areaId)
-        success && setPrice({...price, ...data})
+        success && setPrice({...data})
         !success && setPrice({})
     } catch (error) {
         console.log(error)
     }
    
-  } 
- const timechange = (data, dateStrings) => { 
-     setDates([...data])
- }
-  const params = {
-    start: '',
-    end: '',
-    projectId,
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  }
- 
-  const QueryReports = async() => {   
-    try {
-        let [start, end] = dates;
-        if(end == '' || ! end) return;
-        if ( start instanceof moment) {
-            
-            params.start = start.format('YYYY-MM-DD')
-        }
-        if (end instanceof moment) {
-            params.end = end.format('YYYY-MM-DD')
-        }
-        let {success, data, total} = await StorageRevenueRuntime.QueryRevenueReports(params, areaId)
-        if (success && Array.isArray(data) && data.length >0) {
-           
-           setTableData([...data])   
-           setPagination({...pagination, total: total})
-        } else {
-            setTableData([])
-            setPagination({...pagination, total: 0})
-        }
-    } catch (error) {
-        console.log(error)
+  }   
+  const QueryReports = ({current, pageSize}, form) => {
+    if(!stationName) return
+    let {date} = form
+    let params = {
+      start: date[0].format('YYYY-MM-DD'),
+      end: date[1].format('YYYY-MM-DD'),
+      projectId,
+      pageNum: current,
+      pageSize,
     }
-   
+    return StorageRevenueRuntime.QueryRevenueReports(stationName, params).then(res => {
+        let {success, data, total} = res
+        if(success && Array.isArray(data)) {
+          return {
+            list: data,
+            total,
+          }
+        }else {
+          return {
+            list: [],
+            total: 0
+          }
+        }
+    })
   }
-
+ let {tableProps, search} = useAntdTable(QueryReports, {
+  form,
+  defaultPageSize: 14,
+  defaultParams: {
+    start: moment().format('YYYY-MM-DD'),
+    end: moment().add(7, 'day').format('YYYY-MM-DD')
+  },
+  refreshDeps: [projectId, stationName]
+ })
+ const {submit} = search
   const exportData = () => {
     tableRef.current.download()
   };
 
-  const tableOnchange = (e) => { 
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
+ 
+  useEffect(() => {
+   if(projectId && areaId) {
+     getPrice()
+   }
+  }, [projectId, areaId])
    
-  }
-  useEffect(() => {
-    QueryReports()
-  }, [])
-  useEffect(() => {
-    QueryReports()
-  }, [dates])
-  useEffect(() => {
-    getPrice()
-    QueryReports()
-  }, [areaId])
  
   return (
     <Fragment>
       <HeaderTitle>收益统计</HeaderTitle>
       <Mainbox>
-          <div className='top'>
+          <Form form={form} className='top' initialValues={{date: [moment(), moment().add(7, 'day')]}}>
             <Space size={16}>
-              <RangePicker value={dates} onCalendarChange={timechange} format="YYYY-MM-DD" style={{width: '320px'}}/>
+              <Item label="统计时间" name="date">
+                 <RangePicker   onCalendarChange={submit} format="YYYY-MM-DD" style={{width: '320px'}}/>
+              </Item>
             </Space>
             <Space>
-              <CustomTag>尖电价： {price.item1}</CustomTag>
-              <CustomTag>峰电价： {price.item2}</CustomTag>
-              <CustomTag>平电价： {price.item3}</CustomTag>
-              <CustomTag>谷电价： {price.item4}</CustomTag>
+              <CustomTag>尖电价： {price.price1}</CustomTag>
+              <CustomTag>峰电价： {price.price2}</CustomTag>
+              <CustomTag>平电价： {price.price3}</CustomTag>
+              <CustomTag>谷电价： {price.price4}</CustomTag>
               <Divider style={{height: 32}} dashed type={'vertical'}/>
               <Button type='primary' style={{width: 96}} onClick={()=>exportData()}>导出</Button>
             </Space>
             
-          </div>
+          </Form>
           <Divider style={{margin: '0px'}}/>
-          <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} sheetName='收益统计.xlsx'/>
+          <Usetable ref={tableRef} columns={columns}   rowKey={nanoid()}  {...tableProps} sheetName='收益统计.xlsx'/>
       </Mainbox>
     </Fragment>
   )

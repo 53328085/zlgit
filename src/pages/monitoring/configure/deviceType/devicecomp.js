@@ -55,14 +55,14 @@ export default function DeviceContent(props,ref) {
         <Modal ref={ModalRef} mold='cust' onCancel={()=>{onCancel()}} {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
       <Button onClick={()=>{onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-      // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      // onClick={
-      //   ()=>{
-      //     onSure()
-      //     setTransition("")
-      //     setMaskTransitionName("")      
-      //   }
-      // }>应用</Button>,
+      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      onClick={
+        ()=>{
+          onSure()
+          setTransition("")
+          setMaskTransitionName("")      
+        }
+      }>应用</Button>,
   ]}>
       <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
       {AddModal}

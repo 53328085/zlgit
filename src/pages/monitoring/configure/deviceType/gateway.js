@@ -315,7 +315,7 @@ export default function gateway() {
       <Modal mold='cust' ref={EditModalRef} {...editModal} footer={[
         <Button onClick={()=>{ EditModalRef.current.onCancel()}}>取消</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={editOk}>保存</Button>,
-        // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,
     ]}>
       <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editModalProps}></EditModal>
