@@ -1639,8 +1639,8 @@ export class StorageEnvironmentRuntime {
 
 //储能--收益统计
 export class StorageRevenueRuntime {
-  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
-  static QueryRevenueReports = (params={}, areaId) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?areaId=${areaId}`, params);
+  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice/?projectId=${projectId}&areaId=${areaId}`);
+  static QueryRevenueReports = (stationName, params) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?stationName=${stationName}`, params);
 }
 //储能设计-电价管理
 export class StoragePriceDesigner {

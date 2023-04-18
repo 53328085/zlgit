@@ -89,9 +89,9 @@ const Mainbox = styled.div`
        }
 ` 
  
- function Maincom({projectId,  Statistical, stationName}) {
+ function Maincom({projectId,  Statistical, stationName, Formlayout}) {
   
-  const [picker, setPicker] = useState(1)
+ 
   const [income, setIncome] = useState({})
   const [dataset, setDataset] = useState({
    dimensions: ['name', '收益(元)'],
@@ -202,31 +202,7 @@ const Mainbox = styled.div`
   }, [projectId, stationName])
 
 
-  const Formlayout = ({form, handler}) => {
-   
-    return (
-      <Form layout='inline' form={form} initialValues={{
-        type: 2,
-        date: moment(new Date(), 'YYYY-MM-DD')
-      }}>
-        <Space size={16}>
-          <Item noStyle name="type">
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={handler}
-           ></Select>
-        </Item>
 
-        <Item nostyle name="date" >
-          <DatePicker placeholder="请选择日期"  format="YYYY-MM-DD" picker={picker} onChange={handler} style={{width: '160px'}} />
-        </Item>
-        </Space>
-      </Form>
-    )
-  }
   const eparams = {
     smooth: true, 
      lineStyle: {
@@ -376,9 +352,40 @@ const Statistical = ({data}) => {
   )
 }
 
+const Formlayout = ({form, handler}) => {
+   
+  return (
+    <Form layout='inline' form={form} initialValues={{
+      type: 2,
+      date: moment()
+    }}>
+      <Space size={16}>
+        <Item noStyle name="type">
+         <Select style={{width: '80px'}}   options={[
+          {value: 1, label: '日'},
+          {value: 2, label: '月'},
+          {value: 3, label: '年'},
+         ]}
+         onChange={handler}
+         ></Select>
+      </Item>
 
+      <Item noStyle  shouldUpdate >
+       { ({getFieldValue}) => {  
+           let type = getFieldValue('type')  
+          let picker = ['', 'day', 'month', 'year'][type]
+           return <Item name="date"><DatePicker placeholder="请选择日期" picker={picker}   onChange={handler} style={{width: '160px'}} /></Item> 
+  
+        }
+      }
+       
+      </Item>
+      </Space>
+    </Form>
+  )
+}
 export default function Index(props) {
     return (
-        <Maincom {...props}   Statistical={Statistical}   />
+        <Maincom {...props}   Statistical={Statistical} Formlayout={Formlayout}  />
     )
 }
