@@ -24,6 +24,8 @@ import TotalDischarge from '@com/defaultHome/totalDischarge'
 import ChargeCost from '@com/defaultHome/chargeCost'
 import DischargeCost from '@com/defaultHome/disChargeCost'
 import TotalIncome from '@com/defaultHome/totalIncome'
+import MonthIncome from '@com/defaultHome/monthIncome'
+import DayIncome from '@com/defaultHome/dayIncome'
 import StorageStatistics from '@com/defaultHome/storageStatistics'
 import StorageTrend from '@com/defaultHome/storageTrend'
 import SocData from '@com/defaultHome/socData'
@@ -128,6 +130,8 @@ export default function Index() {
     {img:cost, itemName:'总充电金额', draggable:true },
     {img:dischargeCost, itemName:'总放电金额', draggable:true },
     {img:income, itemName:'储能总收益', draggable:true },
+    {img:income, itemName:'储能月收益', draggable:true },
+    {img:income, itemName:'储能日收益', draggable:true },
     {img:storageStatistics, itemName:'储能收益统计', draggable:true },
     {img:storageTrend, itemName:'充放电量趋势', draggable:true },
     {img:soc, itemName:'站点soc', draggable:true },
@@ -270,6 +274,8 @@ export default function Index() {
         { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
         { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
         { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
+        { i.indexOf('储能月收益') != -1 ? <MonthIncome></MonthIncome> : null }
+        { i.indexOf('储能日收益') != -1 ? <DayIncome></DayIncome> : null }
         { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
         { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
@@ -283,7 +289,6 @@ export default function Index() {
   const onAddlayout = (xValue, yValue) => {
     let newlayout ;
     let time = new Date()
-    console.log(classOfName)
     if(classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
     classOfName == '充放电量趋势' || classOfName == '站点soc'){
       newlayout = layoutItem.concat({
@@ -309,7 +314,7 @@ export default function Index() {
       setlayoutItem (newlayout)
       setNewCounter(newCounter + 1);
     }else if(classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
-    classOfName == '储能总收益' ){
+    classOfName == '储能总收益' || classOfName == '储能日收益' || classOfName == '储能月收益' ){
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x:xValue,

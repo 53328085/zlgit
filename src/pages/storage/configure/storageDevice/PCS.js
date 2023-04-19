@@ -109,13 +109,19 @@ export default function Index(props) {
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
-      width: '240px'
+      width: '200px'
+    }, {
+      title: '站点名称',
+      dataIndex: 'siteName',
+      key: 'siteName',
+      align: 'center',
+      width: '200px'
     }, {
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       align: 'center',
-      width: '336px'
+      // width: '336px'
     }, {
       title: '设备编号',
       dataIndex: 'sn',
@@ -473,6 +479,17 @@ export default function Index(props) {
                 </Item>
                 <Item  name='name' label='PCS名称' rules={[{required: true, message:'请输入PCS名称'}]}>
                   <Input style={{width: 200}} placeholder='请输入PCS名称' ></Input>
+                </Item>
+                <Item  name='alarmPlanId' label='告警方案' rules={[{required: true, message:'选择告警方案'}]}>
+                  <Select
+                    placeholder="选择告警方案"
+                    size="middle"
+                    style={{width: '200px'}}
+                  >
+                    {props.alarmPlanList.map(item => {
+                      return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                    })}
+                  </Select>
                 </Item>
                 <Item  name='address' label='安装地址' rules={[{required: true, message:'请输入安装地址'}]}>
                   <Input style={{width: 200}} placeholder='请输入安装地址'></Input>

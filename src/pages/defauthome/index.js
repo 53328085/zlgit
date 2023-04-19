@@ -23,6 +23,8 @@ import TotalDischarge from '@com/defaultHome/totalDischarge'
 import ChargeCost from '@com/defaultHome/chargeCost'
 import DischargeCost from '@com/defaultHome/disChargeCost'
 import TotalIncome from '@com/defaultHome/totalIncome'
+import MonthIncome from '@com/defaultHome/monthIncome'
+import DayIncome from '@com/defaultHome/dayIncome'
 import StorageStatistics from '@com/defaultHome/storageStatistics'
 import StorageTrend from '@com/defaultHome/storageTrend'
 import SocData from '@com/defaultHome/socData'
@@ -106,6 +108,8 @@ export default function Index() {
         { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
         { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
         { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
+        { i.indexOf('储能月收益') != -1 ? <MonthIncome></MonthIncome> : null }
+        { i.indexOf('储能日收益') != -1 ? <DayIncome></DayIncome> : null }
         { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
         { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
