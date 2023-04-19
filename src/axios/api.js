@@ -298,9 +298,9 @@ export class EnergyComprehensive {
 
  // 储能管理-- 能耗统计
   export class ConsumeStatisticsRuntime {
-    static QueryIncome = (projectId, areaId) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome?projectId=${projectId}&areaId=${areaId}`);
-    static QueryIncomeTrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
-    static QueryDisChargeETrends = (projectId, areaId, date, type) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends?projectId=${projectId}&areaId=${areaId}&date=${date}&type=${type}`);
+    static QueryIncome = (projectId, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncome/?projectId=${projectId}&stationName=${stationName}`); // 日 月 年 收入
+    static QueryIncomeTrends = (projectId,  type, date, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryIncomeTrends/?projectId=${projectId}&type=${type}&date=${date}&stationName=${stationName}`); // 收益趋势
+    static QueryDisChargeETrends = (projectId,type, date, stationName) => server.get(`/Storage/ConsumeStatisticsRuntime/QueryDisChargeETrends/?projectId=${projectId}&type=${type}&date=${date}&stationName=${stationName}`); // 充放电趋势
   }
 
 // 储能管理--报表统计
@@ -1221,7 +1221,8 @@ export class operation {
  static  AlarmCurrent = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmCurrent`,{params:data})//获取当前告警
  static  AlarmMonth = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmMonth`,{params:data})//获取本月告警
  static  MonthOrderStatistics =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderStatistics`,{params:data})//获取本月订单
- static  InspectionStatistics = (data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics`,{params:data})//巡检任务
+ //static  InspectionStatistics = (data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics`,{params:data})//巡检任务
+ static  InspectionStatisticsTime = (params)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionStatisticsTime`, params)//巡检任务
  static  MonthOrderTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderTrend`,{params:data})//本月派单
  static  MonthAlarmTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthAlarmTrend`,{params:data})//本月告警事件
  static  AlarmPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmPage`,data)//告警信息
@@ -1592,6 +1593,7 @@ export class StorageAlarmRuntime {
 export class PCSMonitorRuntime {
   static queryPCSList = (projectId, areaId, siteId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
   static queryPCSInfo = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPCSInfo?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
+  static queryPCSWarningInfo = (projectId, pcsId) => server.get(`Storage/PCSMonitorRuntime/queryPCSWarningInfo?projectId=${projectId}&pcsId=${pcsId}`)
   static queryPowerTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static querySocTrends = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QuerySocTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
   static queryAcTable = (projectId, areaId, pcsId) => server.get(`Storage/PCSMonitorRuntime/QueryAcTable?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`)
@@ -1638,8 +1640,8 @@ export class StorageEnvironmentRuntime {
 
 //储能--收益统计
 export class StorageRevenueRuntime {
-  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice?projectId=${projectId}&areaId=${areaId}`);
-  static QueryRevenueReports = (params={}, areaId) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?areaId=${areaId}`, params);
+  static QueryPrice = (projectId, areaId) => server.get(`/Storage/StorageRevenueRuntime/QueryPrice/?projectId=${projectId}&areaId=${areaId}`);
+  static QueryRevenueReports = (stationName, params) => server.post(`/Storage/StorageRevenueRuntime/QueryRevenueReports?stationName=${stationName}`, params);
 }
 //储能设计-电价管理
 export class StoragePriceDesigner {
@@ -1664,15 +1666,41 @@ export class SiteManagerDesigner {
 
 //电池管理
 export class StorageMonitorRuntime {
-  static QueryBatteryStackList = (projectId, areaId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`);
-  static queryVTrends = (projectId,  siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryVTrends?projectId=${projectId}&siteId=${siteId}`);
-  static queryITrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryITrends?projectId=${projectId}&siteId=${siteId}`);
-  static querySOCTrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QuerySOCTrends?projectId=${projectId}&siteId=${siteId}`);
-  static querySOCTrends = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QuerySOCTrends?projectId=${projectId}&siteId=${siteId}`);
-  static queryBatteryStackInfo = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackInfo?projectId=${projectId}&siteId=${siteId}`);
-  static queryBatteryStackAlarms = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackAlarms?projectId=${projectId}&siteId=${siteId}`);
-  static queryBatteryStackStatus = (projectId, siteId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackStatus?projectId=${projectId}&siteId=${siteId}`);
+  static QueryBatteryStackList = (projectId, areaId, siteId, pcsId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&pcsId=${pcsId}`);
+  static queryVTrends = (projectId,  stackId) => server.get(`/Storage/StorageMonitorRuntime/QueryVTrends?projectId=${projectId}&stackId=${stackId}`);
+  static queryITrends = (projectId, stackId) => server.get(`/Storage/StorageMonitorRuntime/QueryITrends?projectId=${projectId}&stackId=${stackId}`);
+  static querySOCTrends = (projectId, stackId) => server.get(`/Storage/StorageMonitorRuntime/QuerySOCTrends?projectId=${projectId}&stackId=${stackId}`);
+  static queryBatteryStackInfo = (projectId, stackId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackInfo?projectId=${projectId}&stackId=${stackId}`);
+  static queryBatteryStackAlarms = (projectId, stackId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackAlarms?projectId=${projectId}&stackId=${stackId}`);
+  static queryBatteryStackStatus = (projectId, stackId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryStackStatus?projectId=${projectId}&stackId=${stackId}`);
   static queryBatteryClusterInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryClusterInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
   static queryBatteryPackInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryPackInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
   static queryBatteryClusterWarning = (projectId, batteryClusterId) => server.post(`/Storage/StorageMonitorRuntime/QueryBatteryClusterWarning?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
+}
+//储能设备管理
+export class StorageEquipmentDesigner {
+  static QueryConfigInfo = (projectId, areaId, siteId, alike) => server.get(`/Storage/StorageEquipmentDesigner/QueryConfigInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}`)
+  static GetDeviceInfo = (projectId, siteId, alike) => server.get(`/Storage/StorageEquipmentDesigner/GetDeviceInfo?projectId=${projectId}&siteId=${siteId}&alike=${alike}`)
+  static Config = (projectId, siteId, data) => server.post(`/Storage/StorageEquipmentDesigner/Config?projectId=${projectId}&siteId=${siteId}`,data)
+  static Delete = (projectId, sn) => server.delete(`/Storage/StorageEquipmentDesigner/Delete?projectId=${projectId}&sn=${sn}`)
+  static BatchConfig = (data) => server.post(`/Storage/StorageEquipmentDesigner/BatchConfig`, data)
+  static QueryPcsByPage = (projectId, areaId, siteId, alike, pageNum, pageSize) => server.get(`/Storage/StorageEquipmentDesigner/QueryPcsByPage?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static AddPcs = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/AddPcs?projectId=${projectId}`, data)
+  static UpdatePcs = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/UpdatePcs?projectId=${projectId}`, data)
+  static DeleteEquipment = (projectId, id, type) => server.delete(`/Storage/StorageEquipmentDesigner/DeleteEquipment?projectId=${projectId}&id=${id}&type=${type}`)
+  static BatchImportPcs = (data) => server.post(`/Storage/StorageEquipmentDesigner/BatchImportPcs`, data)
+  static QueryBatteryStackByPage = (projectId, areaId, siteId, alike, pageNum, pageSize) => server.get(`/Storage/StorageEquipmentDesigner/QueryBatteryStackByPage?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static AddBatteryStack = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/AddBatteryStack?projectId=${projectId}`, data)
+  static UpdateBatteryStack = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/UpdateBatteryStack?projectId=${projectId}`, data)
+  static QueryBatteryClusterByPage = (projectId, areaId, siteId, alike, pageNum, pageSize) => server.get(`/Storage/StorageEquipmentDesigner/QueryBatteryClusterByPage?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static AddBatteryCluster = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/AddBatteryCluster?projectId=${projectId}`, data)
+  static UpdateBatteryCluster = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/UpdateBatteryCluster?projectId=${projectId}`, data)
+  static QueryBatteryPackByPage = (projectId, areaId, siteId, alike, pageNum, pageSize) => server.get(`/Storage/StorageEquipmentDesigner/QueryBatteryPackByPage?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static AddBatteryPack = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/AddBatteryPack?projectId=${projectId}`, data)
+  static UpdateBatteryPack = (projectId, data) => server.post(`/Storage/StorageEquipmentDesigner/UpdateBatteryPack?projectId=${projectId}`, data)
+  static QueryCategoryUsed = (projectId, style) => server.get(`/Storage/StorageEquipmentDesigner/QueryCategoryUsed?projectId=${projectId}&style=${style}`)
+  static QueryClusterList = (projectId, areaId, siteId, stackId) => server.get(`/Storage/StorageEquipmentDesigner/QueryClusterList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&stackId=${stackId}`)
+  static BatchImportBatteryStack = (data) => server.post(`/Storage/StorageEquipmentDesigner/BatchImportBatteryStack`, data)
+  static BatchImportBatteryCluster = (data) => server.post(`/Storage/StorageEquipmentDesigner/BatchImportBatteryCluster`, data)
+  static BatchImportBatteryPack = (data) => server.post(`/Storage/StorageEquipmentDesigner/BatchImportBatteryPack`, data)
 }

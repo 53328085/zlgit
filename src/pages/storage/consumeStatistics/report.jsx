@@ -89,13 +89,15 @@ const Mainbox = styled.div`
        }
 ` 
  
- function Maincom({projectId,  Statistical, areaId}) {
+ function Maincom({projectId,  Statistical, stationName, Formlayout}) {
   
-  const [picker, setPicker] = useState(1)
+ 
   const [income, setIncome] = useState({})
   const [dataset, setDataset] = useState({
-    dimensions: ['name', '收益(元)'],
-    source: [],
+   dimensions: ['name', '收益(元)'],
+   source: [],
+     
+
   })
   const [tdataset, setTdataset] = useState({
     dimensions: ["date", "充电量(kWh)", "放电量(kWh)"],
@@ -107,7 +109,7 @@ const Mainbox = styled.div`
   const [sform] = Form.useForm()
   
   const getIncome = async () => {
-     let  {success, data} =  await  ConsumeStatisticsRuntime.QueryIncome(projectId, areaId)
+     let  {success, data} =  await  ConsumeStatisticsRuntime.QueryIncome(projectId, stationName)
      if (success && data) {
        
        setIncome({...income, ...data})
@@ -118,8 +120,11 @@ const Mainbox = styled.div`
   }
  
   useEffect(() => {
-    getIncome()
-  }, [areaId])
+    if (projectId && stationName) {
+      getIncome()
+    }
+    
+  }, [projectId, stationName])
 
   const getchartData = async () => {
     try {
@@ -134,19 +139,18 @@ const Mainbox = styled.div`
          time = date.format('YYYY')+ '-01-01'
       }
       
-      let {success, data} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId, areaId, time, type)
-      if(success && Array.isArray(data) && data.length > 0) {
-         let source = data.map(d => ({name: d.name, '收益(元)': d.value, }))
-         console.log(source)
-         setDataset({
-            ...dataset,
-            source,
-         })
+      let {success, data} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId,type, time, stationName)
+      let {x, y} = data || {}
+      if(success && Array.isArray(x) && Array.isArray(y)) {
+          x.unshift('日期')
+          y.unshift('收益（元）')
+         let source = [x, y]
+         setDataset({source})
       }else {
         setDataset({
-          ...dataset,
+          dimensions: ['name', '收益(元)'],
           source: [],
-       })
+         })
       }
     } catch (error) {
       console.log(error)
@@ -169,77 +173,43 @@ const Mainbox = styled.div`
        time = date.format('YYYY')+ '-01-01'
     }
     
-    let {success, data} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId, areaId, time, type)
-    if(success && Array.isArray(data) && data.length > 0) {
-      let source = data.map(d => ({date: d.date, '充电量(kWh)': d.chargeE, '放电量(kWh)': d.disChargeE}))
-      console.log(source)
+    let {success, data} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId,type, time, stationName)
+     let {x, y, y1} = data || {}
+    if(success && Array.isArray(x) && Array.isArray(y) && Array.isArray(y1)) {
+       x.unshift('日期')
+       y.unshift('充电量(kwh)')
+       y1.unshift('放电量(kwh)')
+       setTdataset({
+        source: [x, y, y1]
+       })
+    }else {
       setTdataset({
-         ...tdataset,
-         source,
+        dimensions: ["date", "充电量(kWh)", "放电量(kWh)"],
+        source: [],
       })
-      }else {
-        setTdataset({
-          ...tdataset,
-          source: [],
-        })
-      }
+    }
+   
     } catch (error) {
       console.log(error)
     }
   }
   useEffect(() => {
-    getchartData()
-    queryDisChargeETrends()
-  }, [areaId])
+    if(projectId && stationName) {
+      getchartData()
+      queryDisChargeETrends()
+    }
+    
+  }, [projectId, stationName])
 
-/*   const tdataset = {
-    dimensions: ["time", "充电量", "放电量"],
-    source: [
-      { time: "1月", "充电量": 5600, "放电量": 5120,},
-      { time: "2月", "充电量": 4600, "放电量": 5400, },
-      { time: "3月", "充电量": 3600, "放电量": 7600, },
-      { time: "4月", "充电量": 5600, "放电量": 9600,  },
-      { time: "5月", "充电量": 5600, "放电量": 8600,  },
-      { time: "6月", "充电量": 4600, "放电量": 7600,  },
-      { time: "7月", "充电量": -3600, "放电量": 6600, },
-      { time: "8月", "充电量": 5000, "放电量": 5600,  },
-      { time: "9月", "充电量": 6600, "放电量": 4600,  },
-      { time: "10月", "充电量": 5800, "放电量": 3600,  },
-      { time: "11月", "充电量": 4600, "放电量": 2600,  },
-      { time: "12月", "充电量": 1800, "放电量": 1600,  },
-    ],
-  }; */
-  const Formlayout = ({form, handler}) => {
-   
-    return (
-      <Form layout='inline' form={form} initialValues={{
-        type: 1,
-        date: moment(new Date(), 'YYYY-MM-DD')
-      }}>
-        <Space size={16}>
-          <Item noStyle name="type">
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={handler}
-           ></Select>
-        </Item>
 
-        <Item nostyle name="date" >
-          <DatePicker placeholder="请选择日期"  format="YYYY-MM-DD" picker={picker} onChange={handler} style={{width: '160px'}} />
-        </Item>
-        </Space>
-      </Form>
-    )
-  }
+
   const eparams = {
     smooth: true, 
      lineStyle: {
       width: 0
      },
-    showSymbol: false
+    showSymbol: false,
+    seriesLayoutBy: 'row'
   }
   useEffect(() => {
     drawEcharts(
@@ -382,9 +352,40 @@ const Statistical = ({data}) => {
   )
 }
 
+const Formlayout = ({form, handler}) => {
+   
+  return (
+    <Form layout='inline' form={form} initialValues={{
+      type: 2,
+      date: moment()
+    }}>
+      <Space size={16}>
+        <Item noStyle name="type">
+         <Select style={{width: '80px'}}   options={[
+          {value: 1, label: '日'},
+          {value: 2, label: '月'},
+          {value: 3, label: '年'},
+         ]}
+         onChange={handler}
+         ></Select>
+      </Item>
 
+      <Item noStyle  shouldUpdate >
+       { ({getFieldValue}) => {  
+           let type = getFieldValue('type')  
+          let picker = ['', 'day', 'month', 'year'][type]
+           return <Item name="date"><DatePicker placeholder="请选择日期" picker={picker}   onChange={handler} style={{width: '160px'}} /></Item> 
+  
+        }
+      }
+       
+      </Item>
+      </Space>
+    </Form>
+  )
+}
 export default function Index(props) {
     return (
-        <Maincom {...props}   Statistical={Statistical}   />
+        <Maincom {...props}   Statistical={Statistical} Formlayout={Formlayout}  />
     )
 }

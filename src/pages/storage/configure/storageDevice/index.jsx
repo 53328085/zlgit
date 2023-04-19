@@ -32,24 +32,11 @@ export default function Index() {
     batteryCluster: BatteryCluster,
     batteryPack: BatteryPack,
    }
-   const siteList = [
-    {
-      id: 1,
-      name: '1号站点'
-    },{
-      id: 2,
-      name: '2号站点'
-    },{
-      id: 3,
-      name: '3号站点'
-    },
-   ]
-
    let Com = ProjectCom[value]
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount showserach={false} pd="16px">   
-      { <Com projectId={projectId} siteList={siteList}/>}
+      { <Com projectId={projectId}/>}
       </Pagecount>
     </CustContext.Provider>
   )

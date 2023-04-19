@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
-import {StorageMonitorRuntime, SiteManagerDesigner} from '@api/api.js'
+import {StorageMonitorRuntime, SiteManagerDesigner, PCSMonitorRuntime} from '@api/api.js'
 
 export default function Index() {
   const projectId = useSelector(selectProjectId)
@@ -14,6 +14,7 @@ export default function Index() {
   const areaName = useSelector(levelDefaultLabel) || '园区'
   const { QueryBatteryStackList } = StorageMonitorRuntime
   const { FindSiteList } = SiteManagerDesigner
+  const { queryPCSList } = PCSMonitorRuntime
   const [form] = Form.useForm()
   const {Item}  = Form
 
@@ -25,7 +26,7 @@ export default function Index() {
         if(res.data && res.data.length> 0){
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
-          runQuery()
+          queryPCS()
         }else{
           setSiteList([])
           setBmsList([])
@@ -39,23 +40,59 @@ export default function Index() {
     })
   }
   const changeSite = val => {
-    runQuery()
+    form.setFieldValue('pcsId', null)
+    form.setFieldValue('stackId', null)
+    queryPCS()
   }
 
   //PCS list
+  const [pcsList, setPcsList] = useState([])
+  const [selectPcs, setSelectPcs] = useState('')
+  const getPCSList = () => {
+    return queryPCSList (projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          setPcsList(res.data)
+          setSelectPcs(res.data[0].name)
+          form.setFieldValue('pcsId', res.data[0].id)
+          runQuery()
+        }else{
+          setPcsList([])
+          form.setFieldValue('PCSId', null)
+          message.warning('当前站点不存在PCS!')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const {run: queryPCS} = useRequest(getPCSList, {manual: true})
+
+  const changePcs = val => {
+    form.setFieldValue('stackId', null)
+    runQuery()
+  }
+
+  //BS list
   const  [bmsList, setBmsList] = useState([])
   const [headerValues, setHeaderValues] = useState()
   const [bmsName, setBmsName] = useState('')
   const getbmsList = () => {
-    return QueryBatteryStackList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res=>{
-      if(res.success && res.data){
-        setBmsList(res.data)
-        form.setFieldValue('stackId', res.data[0].id)
-        setBmsName(res.data[0].name)
-        setHeaderValues({
-          bmsName: res.data[0].name,
-          ...form.getFieldsValue(true)
-        })
+    return QueryBatteryStackList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId'), form.getFieldValue('pcsId')).then(res=>{
+      if(res.success){
+        if(res.data && res.data.length > 0){
+          setBmsList(res.data)
+          form.setFieldValue('stackId', res.data[0].id)
+          setBmsName(res.data[0].name)
+          setHeaderValues({
+            bmsName: res.data[0].name,
+            ...form.getFieldsValue(true)
+          })
+        }else{
+          setBmsList([])
+          message.warning('当前PCS不存在电池堆!')
+          return;
+        }
       }else{
         message.error(res.errMsg)
       }
@@ -64,6 +101,9 @@ export default function Index() {
   const {run: runQuery } = useRequest(getbmsList, {manual: true})
 
   const changeArea = val => {
+    form.setFieldValue('siteId', null)
+    form.setFieldValue('pcsId', null)
+    form.setFieldValue('stackId', null)
     querySite()
   }
 
@@ -125,7 +165,7 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='siteId' label='' style={{marginLeft:16}}>
+          <Item name='siteId' label='站点选择' style={{marginLeft:16}}>
             <Select
               placeholder="请选择站点"
               size="middle"
@@ -133,6 +173,19 @@ export default function Index() {
               onChange={changeSite}
             >
               {siteList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='pcsId' label='PCS选择' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择PCS"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changePcs}
+            >
+              {pcsList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>

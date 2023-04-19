@@ -225,7 +225,8 @@ export default function Index() {
   //点击新增 打开弹框
   const showAdd = () => {
     form.resetFields(); //当新增时重置
-    setFileList();
+    setFileList([]);
+    setImageUrl();
     setModalTitle("新增站点");
     setAddModal(true);
   };
@@ -236,7 +237,13 @@ export default function Index() {
     record.deliveryTime = moment(record.deliveryTime)
     form.setFieldsValue(record)
     setSelectId(record.id)
-    setImageUrl(record.image)
+    if(record.image){
+      setImageUrl(record.image)
+    setFileList([{url: record.image}])
+    }else{
+      setImageUrl('')
+    setFileList([])
+    }
     setModalTitle("编辑站点");
     setAddModal(true);
   };
@@ -275,7 +282,8 @@ export default function Index() {
       deliveryTime: moment(values.deliveryTime).format('YYYY-MM-DD'),
       investmentNature: values.investmentNature,
       remark: values.remark,
-      image: imageUrl
+      image: imageUrl,
+      address: values.address
     }
     if (modalTitle === "新增站点") {
       AddSite(projectId, params).then(res => {
@@ -512,8 +520,11 @@ export default function Index() {
                 onChange={handleChange}
                 onPreview={handlePreview}
                 beforeUpload={beforeUpload}
+                maxCount={1}
               >
-                {imageUrl ? null : (
+                {/* <img src={imageUrl} style={{width: 104, height: 104}}></img> */}
+                {imageUrl ? 
+                 null : (
                   <div>
                     <PlusOutlined />
                     <div

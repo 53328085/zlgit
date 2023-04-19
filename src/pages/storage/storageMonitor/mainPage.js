@@ -159,7 +159,6 @@ export default function Index(props) {
 
   const [stateData, setStateData] = useState({})
   const [warningData, setWarningData] = useState([])//告警信息
-  const [environmentData, setEnvironmentData] = useState({})
   const [bmsInfo, setBmsInfo] = useState({
     batteryPackInfos:[]
   })

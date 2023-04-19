@@ -4,9 +4,11 @@ import { Form, Select, Button, Dropdown, Space, Divider,} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
 import {useSelector} from 'react-redux'
-import {levelDefaultLabel, selectOneLevelDefaultId, selectOneLevel} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel} from '@redux/systemconfig.js'
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
+import {SiteManagerDesigner} from '@api/api'
+
 import CustContext from "../content";
 import {PrintButton,
    SaveButton, 
@@ -47,21 +49,45 @@ const Cform = styled(Form)`
     }
    } 
 `
+
+ 
+
+const { Item } = Form;
+
 export default function useSerach(props) {
-  const {handler, form: forms, search, custview, initialValue, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
+  const {handler, sitehandler, form: forms, search, isSite=false, custview, initialValue, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
   console.log(initialValue)
   const [form] =forms ? [forms] : Form.useForm()
+  const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel) 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+  let [AreaID, setAreaid] = useState(oneLevelDefaultId)
   const levelone = useSelector(selectOneLevel)
   const allData = useRef();
+  const [options, setOptions] = useState([])
+
   const onChange = (e) => {
-     console.log(e)
-     if (typeof handler == 'function') {       
-        handler(e)
-     }
-  }
+    setAreaid(e)
+    if (typeof handler == 'function') {       
+       handler(e)
+    }
+ }
+ const sitechange = (e) => {
+    console.log(e)
+    if (typeof sitehandler == 'function') {
+      sitehandler(e)
+    }
+     
+ }
+  const site = <Space size={32}>
+  <Divider style={{margin: '0px', marginLeft: '32px', height: '32px'}} type="vertical" />
+  <Item name="stationName" noStyle >
+       <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} onChange={sitechange}></Select>  
+  </Item>
+</Space>
+
+ 
   const btns = [
     {
       key: 1,
@@ -91,8 +117,34 @@ export default function useSerach(props) {
      }
      handlePrint();
   }
-  const { Item } = Form;
 
+  const getopti = async() => {
+    try {
+     let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
+     if(success&& Array.isArray(data) && data.length > 0) {
+       setOptions([...data])     
+       form.setFieldsValue({
+        stationName: data[0].name
+       })
+       sitehandler(data[0].name)
+     }else {
+      setOptions([])    
+      form.setFieldsValue({
+        stationName: ''
+       })
+       sitehandler('')
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+  useEffect(() => {
+      if(projectId && AreaID) {
+        getopti()
+      }    
+  
+  }, [projectId, AreaID])
  
   return (  
   
@@ -103,6 +155,8 @@ export default function useSerach(props) {
          
         </Select>
       </Item>
+      {isSite && site}
+
         {
            custview
         }

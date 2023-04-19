@@ -1,19 +1,19 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
-import CModal from '@com/useModal'
+import {Form, Select, Space, Divider} from 'antd' 
 import {useSelector} from 'react-redux'
+import {SiteManagerDesigner} from '@api/api'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import Report from './report'
+
 export default function Index() {  
   const projectId = useSelector(selectProjectId)
-  const areaId = useSelector(selectOneLevelDefaultId)
-  let [AreaID, setAreaid] = useState(areaId)
-  
+  const [initname, setInitname] = useState('')
   return (
-    <CustContext.Provider value={{handler: setAreaid}}>
+    <CustContext.Provider value={{sitehandler: setInitname,  isSite: true }}>
     <Pagecount showserach={true} bgcolor="transparent" pd="0px">   
-        <Report projectId={projectId} areaId={AreaID}/>
+        <Report projectId={projectId}  stationName={initname}/>
     </Pagecount>
     </CustContext.Provider>
   )
