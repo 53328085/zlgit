@@ -236,20 +236,22 @@ export default function Index() {
       }
     },
   }
-  const changeReadout = () => {
+
+   const changeReadout = () => {
     snList = []
     if (selectTableList.length > 0) {
       selectTableList.map((item, index) => {
         snList.push(item.sn)
       })
     }
-    console.log(snList)
+   
     if (selectTableList.length > 0) {
       setLoading(true)
       Remote.StartCalling(snList).then(res => {
         let { success, data } = res
         if (success) {
           let isOkList = []
+          let isresetOk = []
           let setResultInfo = {}
           let setResultInfoList = []
           data.map((item, index) => {
@@ -269,6 +271,7 @@ export default function Index() {
             let resData = []
             let status = true
             count.map((item, index) => {
+             
               setTimeout(() => {
                 if (status) {
                   Remote.CallingResponse(isOkList).then(res => {
@@ -276,12 +279,13 @@ export default function Index() {
                     let { success, data } = res
                     if (success) {
                       resData = []
+                      isOkList = []
                       data.map((item, index) => {
-                        if (item.isOk == true && item.errorCode == 0) {
+                        if (item.isOk  && item.errorCode == 0) {
                           resData.push(item)
                           setResultInfoList[index].status = 1
                         } else {
-                          isOkList = []
+                          
                           isOkList.push({ sn: item.sn, taskNo: item.taskNo })
                         }
                         console.log(arr, resData)
@@ -319,7 +323,7 @@ export default function Index() {
     } else {
       message.error('请先选择设备！')
     }
-  }
+  }  
   return (
     <Spin tip="正在抄读，请稍候……" size="large" spinning={loading}>
       <div className={style.main}>
