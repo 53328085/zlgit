@@ -49,7 +49,7 @@ export default function Index() {
         seteleConsumes(data?data.eleConsumes:[])
         setwaterConsumes(data?data.waterConsumes:[])
         setgasConsumes(data?data.gasConsumes:[])
-        charts()
+        
       } else {
         message.error(res.errMsg)
       }
@@ -136,6 +136,9 @@ const charts=()=>{
     }
   })
 }
+useEffect(() => {
+  charts()
+}, [eleConsumes, waterConsumes, gasConsumes])
   const headerProps = {
     isEnergy: false,//能耗类型
     isDate: false,//日期
