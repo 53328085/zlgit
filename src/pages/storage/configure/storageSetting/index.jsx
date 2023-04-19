@@ -237,8 +237,13 @@ export default function Index() {
     record.deliveryTime = moment(record.deliveryTime)
     form.setFieldsValue(record)
     setSelectId(record.id)
-    setImageUrl(record.image)
+    if(record.image){
+      setImageUrl(record.image)
     setFileList([{url: record.image}])
+    }else{
+      setImageUrl('')
+    setFileList([])
+    }
     setModalTitle("编辑站点");
     setAddModal(true);
   };
