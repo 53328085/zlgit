@@ -64,11 +64,14 @@ export default function Index() {
         }
       }
       const tabs = data.map(it=>{return {key:it.deviceStyle.toString(),label:it.name}})
+      console.log(tabs)
+      tabs.pop()
       setTabs([{key: '0',label: '网关'},
       ...tabs
     ])
+
       setComs([...arr])
-      console.log(arr)
+     
     }
   }
   useEffect(()=>{
