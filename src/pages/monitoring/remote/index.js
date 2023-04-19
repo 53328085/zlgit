@@ -3,7 +3,7 @@ import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 import { useRequest, useToggle, useAntdTable } from 'ahooks'
 import { GetLogOperation, Remote, Monitoring } from '@api/api.js'
-import { Form, DatePicker, Input, Button, Table, Pagination, Select, message, Modal, Spin } from 'antd'
+import { Form, DatePicker, Input, Button, Table, Pagination, Select, message, Modal, Spin, Divider, Space } from 'antd'
 import Bluecolumn from '@com/bluecolumn'
 import { flushSync } from 'react-dom'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
@@ -22,10 +22,7 @@ const { RangePicker } = DatePicker;
 
 export default function Index() {
     const projectId = useSelector(selectProjectId)
-    let [areaId, setAreaId] = useState(1)
-    let [pageNum, setpageNum] = useState(1)
-    let [totalalarm, settotalalarm] = useState(1)
-    let [dataSourceLog, setdataSourceLog] = useState([])
+    let [areaId, setAreaId] = useState(1)   
     const [DataSourceReadR, setDataSourceReadR] = useState()
     const [tabledata, setTabledata] = useState()
     const tabledataRef = useRef()
@@ -34,8 +31,7 @@ export default function Index() {
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
-    let [alike, setalike] = useState('')
-    let [deviceStyle, setdeviceStyle] = useState(0)
+  
     const [brake, setbrake] = useState(false)
     const [brakeC, setbrakeC] = useState(false)
     const [brakeResult, setbrakeResult] = useState(false)
@@ -43,7 +39,7 @@ export default function Index() {
     const [selectTableListRadio, setselectTableListRadio] = useState([])
     const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
 
-    let params = {
+    /* let params = {
         pageNum: pageNum,
         pageSize: 15,
         projectId: projectId,
@@ -69,20 +65,49 @@ export default function Index() {
         if (areaId) {
             getData()
         }
-    }, [projectId, pageNum, areaId, deviceStyle, alike])
+    }, [projectId, pageNum, areaId, deviceStyle, alike]) */
+    const [form] = Form.useForm()
+    const {Item} = Form
+    const getData = ({current, pageSize}, form) => {
+       let {alike, deviceStyle} = form
+       let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
+       return Remote.AllMeter(params).then(res => {
+        let {success, data, total} = res
+        if(success && Array.isArray(data) && data.length > 0) {
+           return {
+            list: data,
+            total,
+           }
+        }else {
+            return {
+                list: [],
+                total: 0,
+               }
+        }
+       }).catch(e => {
+        console.log(e)
+       })
+
+    }
+   const {tableProps, search} = useAntdTable(getData, {
+    form,
+    defaultPageSize: 18,
+    refreshDeps: [areaId]
+   })
+   const {submit} = search
+
     const changeArea = (value) => {
         setAreaId(value);
     };
-    const submit = e => {
+  /*   const submit = e => {
         setalike(e.target.value)
-    }
-    const changeType = () => {
+    } */
+/*     const changeType = () => {
         getData()
-    }
+    } */
     let [state, setstate] = useState(1)
     const changeTab = val => {
-        setstate(val)
-        setpageNum(1)
+        setstate(val)     
         if (val == 2) {
             setSelectionType("checkbox")
             setselectTableList(selectTableListCheckbox)
@@ -235,14 +260,16 @@ export default function Index() {
                 <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量控制</Button>
             </div>
             <div className={style.body}>
-                <div className={style.mainBox}>
-                    <div className={style.bodyHeader}>
+                <div className={style.mainBox} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+                    <Form form={form} className={style.bodyHeader} layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
+                        <Space size={32}>
+                        <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
                         <Select
-                            defaultValue={0}
+                            
                             style={{
                                 width: 128,
                             }}
-                            onChange={handleChangeDevice}
+                            onChange={submit}
                             options={[
                                 {
                                     value: 0,
@@ -262,29 +289,32 @@ export default function Index() {
                                 },
                             ]}
                         />
-                        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                        <div className={style.contentTitle}>
-                            <span>设备查询</span>
-                            <Input placeholder='请输入设备编号/安装地址' style={{ width: 291, marginLeft: 16 }} size='middle' onChange={submit}></Input>
-                            <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)', borderLeft: 'none' }} onClick={() => { changeType() }}>查询</Button>
-                        </div>
-                        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', marginRight: 16, color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
+                        </Item>
+                        <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
+                        <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
+                            <Input.Search placeholder='请输入设备编号/安装地址' allowClear style={{ width: '370px' }} size='middle' enterButton="查询" onSearch={submit} /> 
+                             
+                        </Item>
+                        <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
+                        <Space size={16}>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
                         <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
-                    </div>
+                        </Space>
+                        </Space>
+                    </Form>
                     <img src={imgurl.line} className={style.timeline} ></img>
-                    {selectionType == 'radio' ? <div>
-                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                    {selectionType == 'radio' ? <div style={{display: 'flex', flex: 1}}>
+                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
                             type: 'radio',
                             ...rowSelectionRadio,
-                        }} bordered></Table>
-                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
-                    </div> : <div>
-                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
+                        }} bordered></UserTable>
+                      {/*   <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} /> */}
+                    </div> : <div style={{display: 'flex', flex: 1}}>
+                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
                             type: 'checkbox',
                             ...rowSelectionCheckbox,
-                        }} bordered></Table>
-                        <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+                        }} bordered></UserTable>
+                       {/*  <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} /> */}
                     </div>}
                 </div>
             </div>
