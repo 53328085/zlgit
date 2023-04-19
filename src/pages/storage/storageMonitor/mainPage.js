@@ -189,7 +189,7 @@ export default function Index(props) {
         if(res.data){
           config( socRef.current, '#1ba41b','SOC (%)', res.data)
         }else{
-          config( socRef.current, '#1ba41b','SOC (%)', SOCData)
+          config( socRef.current, '#1ba41b','SOC (%)', {x:[],y:[]})
         }
       }else{
         message.error(res.errMsg)
@@ -201,7 +201,7 @@ export default function Index(props) {
         if(res.data){
           config(volRef.current, '#237ae4','总电压 (V)', res.data)
         }else{
-          config(volRef.current, '#237ae4','总电压 (V)', voltageData)
+          config(volRef.current, '#237ae4','总电压 (V)', {x:[],y:[]})
         }
       }else{
         message.error(res.errMsg)
@@ -213,7 +213,7 @@ export default function Index(props) {
         if(res.data){
           config(currRef.current, '#ff6701','总电流 (A)', res.data)
         }else{
-          config(currRef.current, '#ff6701','总电流 (A)', currentData)
+          config(currRef.current, '#ff6701','总电流 (A)', {x:[],y:[]})
         }
       }else{
         message.error(res.errMsg)

@@ -105,9 +105,9 @@ export default function Index() {
     //左侧数据
     queryPCSInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
       if(res.success){
-        if(res.data){
-          state.gridState = res.data[0].name,
-          state.chargeState = res.data[1].name
+        if(res.data ){
+          state.gridState = res.data[0]?.name || ''
+          state.chargeState = res.data[1]?.name || ''
           let arr = []
           res.data.map((item, index) => {
             if(index > 1){
@@ -116,6 +116,8 @@ export default function Index() {
           })
           setLeftValues(arr)
         }else{
+          state.gridState = []
+          state.chargeState = []
           setLeftValues([])
         }
       }else{

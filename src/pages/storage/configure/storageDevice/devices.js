@@ -374,7 +374,7 @@ export default function Index(props) {
         </Space>
       </div>
       <Divider />
-      <Usetable ref={tableRef} scroll={{ y: 720 }} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
+      <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 }:null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
       <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} >
         <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
       </div>
