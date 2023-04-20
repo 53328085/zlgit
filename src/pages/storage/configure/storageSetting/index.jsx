@@ -434,6 +434,7 @@ export default function Index() {
               ]}
             >
               <Select
+                disabled={modalTitle === "编辑站点"}
                 placeholder={
                   oneLevel[0]?.levelName
                     ? `请选择${oneLevel[0].levelName}`
