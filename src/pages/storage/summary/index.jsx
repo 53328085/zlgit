@@ -35,8 +35,8 @@ export default function Index() {
           getFromHeader()
         }else{
           setSiteList([])
-          return;
           message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          return;
         }
       }else{
         message.error(res.errMsg)

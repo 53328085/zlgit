@@ -150,7 +150,16 @@ const childrenRoute = {
    {
      path: '/zltest',
      element: <Fform/>, 
-     action: () => {name: 'zl'}
+     children: [
+       {
+        path: 'z',
+        element: <Rtest/>
+       },
+       {
+        path: ':useId',
+        element: <Rtest/>
+       }
+     ]
    },
    {
     path: '/rrtest',

@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
+import BatteryPackPage from './batteryPackPage'
 import {StorageMonitorRuntime, SiteManagerDesigner, PCSMonitorRuntime} from '@api/api.js'
 
 export default function Index() {
@@ -123,20 +124,31 @@ export default function Index() {
   const [showPage, setShowPage] = useState('mainPage')
   const [batteryData, setBatteryData] = useState({})
   const getFromChild = val => {
-    let { pageName, batteryClusterId, batteryPackName , clusterList, count} = val
+    let { pageName, batteryCluster} = val
     setShowPage(pageName)
     setBatteryData({
-      batteryClusterId,
-      batteryPackName,
+      batteryCluster,
       projectId,
-      clusterList,
-      count,
+      areaId:form.getFieldValue('areaId'), 
+    })
+  }
+
+  const [batteryPackData, setBatteryPackData] = useState({})
+  const getFromCluster = val => {
+    let { pageName, batteryItem} = val
+    setShowPage(pageName)
+    setBatteryPackData({
+      batteryItem,
+      projectId,
       areaId:form.getFieldValue('areaId'), 
     })
   }
 
   const backBMS = () => {
     setShowPage('mainPage')
+  }
+  const backBatteryCluster = () => {
+    setShowPage('batteryPage')
   }
 
   useEffect(()=>{
@@ -215,13 +227,26 @@ export default function Index() {
             </div>
           </div>: null
         }
-        { (showPage == 'subPage') ? 
-        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} onClick={()=> backBMS()}>返回BMS</Button> : null }
+        {
+          showPage == 'batteryPackPage' ?
+          <div>
+            <div className={style.border}>
+              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池堆</span>
+              <span className={style.breadcrumb}> { '>' }</span>
+              <span>电池簇</span>
+              <span className={style.breadcrumb}> { '>' }</span>
+              <span>电池组</span>
+            </div>
+          </div>: null
+        }
+        { (showPage == 'batteryPackPage') ? 
+        <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} type="primary" onClick={()=> backBatteryCluster()}>返回</Button> : null }
         { showPage == 'batteryPage' ? 
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} type="primary" onClick={()=> backBMS()}>返回</Button> : null }
       </div>
       { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild} headerValues={headerValues}></MainPage> : null }
-      { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData}></BatteryPage> : null }
+      { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData} getshowPack={getFromCluster}></BatteryPage> : null }
+      { showPage == 'batteryPackPage' ? <BatteryPackPage batteryPackData={batteryPackData}></BatteryPackPage> : null }
     </div>
   )
 }

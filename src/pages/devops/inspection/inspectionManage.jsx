@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo,useRef } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message  } from 'antd';
+import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message, Form, Space  } from 'antd';
 import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons'
 import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeicon'
 import UserTable from '@com/useTable'
@@ -10,20 +10,20 @@ import { useAntdTable, usePagination } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
+import { useForm } from 'antd/lib/form/Form';
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
+const {Item} = Form
 export default function Warncontent({ style ,areavalue}) {
     const tableRef = useRef()
     const openModal = useRef()
+    const [form] = useForm()
     // order = useRef()
     // order.current=false
     const [order,setOrder]=useState(false)
-    const [orderdetail,setOrderdetail]=useState()
-    const [tableParams,setTableParams] = useState({pageNum:1,pageSize:10})
-    const [rangerTime,setRangerTime] = useState([moment(),moment()])
-    const [status,setStatus] = useState(0)
-    const [tableData,setTableData] = useState()
+    const [orderdetail,setOrderdetail]=useState() 
+    const [rangerTime,setRangerTime] = useState([moment(),moment()])   
     const [stateopts,setStateopts] = useState([{
         label:'全部',
         value:0,
@@ -36,8 +36,10 @@ export default function Warncontent({ style ,areavalue}) {
         orderSn.current=_
         getInspectionDetail(record.id)
     }}>{_}</a>)
+
+
     //工单分页查询
-    const getInspectionPage = async ()=>{
+/*     const getInspectionPage = async ()=>{
         let parmas={
             projectId,
             ...tableParams,
@@ -52,7 +54,39 @@ export default function Warncontent({ style ,areavalue}) {
       }else{
         message.error(res.errMsg)
       }
-    }
+    } */
+
+   const getInspectionPage = ({current, pageSize}, form) => {
+      let {state, date} = form
+     
+      let start = date[0].format('YYYY-MM-DD')
+      let end = date[1].format('YYYY-MM-DD')
+      let params = {pageSize, pageNum: current, state, start, end, areaId:areavalue, projectId}
+      return operation.InspectionPage(params).then(res => {
+        let {success, data, total} = res
+        if (success && Array.isArray(data) && data.length > 0) {
+           return {
+            list: data,
+            total,
+           }
+        } else {
+            return {
+                list: [],
+                total: 0,
+               }
+
+        }
+      })
+
+   }
+  const {tableProps, search} = useAntdTable(getInspectionPage, {
+    form,
+    defaultPageSize: 14,
+    refreshDeps: [areavalue, projectId] 
+  })
+
+ const {submit} = search
+
     //工单状态查询
     const getInspectionStatistics=async()=>{
         let params={
@@ -86,59 +120,63 @@ export default function Warncontent({ style ,areavalue}) {
             message.error(res.errMsg)
         }
     }
-    //日期范围变化
-    const changeRange=(dates)=>{
-        setRangerTime([dates[0],dates[1]])
-    }
-    //查询
-    const search =()=>{
-        getInspectionPage()
-        getInspectionStatistics()
-    }
-    //工单详情
+ 
+ 
     const getInspectionDetail= async(inspectionId)=>{
-        let param ={
-            projectId,
-            inspectionId
-        }
-        const res = await operation.InspectionDetail(param)
-        if(res.success){
-            setOrderdetail(res.data)
-        }else{
-            message.error(res.errMsg)
+        try {
+            let param ={
+                projectId,
+                inspectionId
+            }
+            const res = await operation.InspectionDetail(param)
+            if(res.success){
+                setOrderdetail(res.data || [])
+            }else{
+                message.error(res.errMsg)
+            }
+        } catch (error) {
+            console.log(error)
         }
        
     }
     useEffect(()=>{
         if(oneLevel.length>0){
-        getInspectionPage()
-        getInspectionStatistics()
+      //  getInspectionPage()
+          getInspectionStatistics()
         }
         
-    },[areavalue, status])
+    },[areavalue, rangerTime, projectId])
   /*   useEffect(()=>{
         oneLevel.length>0&&getInspectionPage()
         
     },[status]) */
     return (
         <div className={style.OrderContent}>
-            <div className={style.SearchContent}>
-                <div>
-                    <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} defaultValue={rangerTime} onChange={changeRange}/>
-                    <Button size='default' style={{ width: 96, marginLeft: 16 }} icon={<SearchOutlined />} type="primary" onClick={search}>查询</Button>
-                </div>
-                <div style={{marginLeft:'auto'}}>
-                    <span style={{paddingRight:16}}>工单状态</span>
-                    <Select style={{width:128}} defaultValue={status} options={stateopts} onChange={(v)=>{setStatus(v)}}></Select>
-                </div>
-                <Divider type='vertical' style={{height:32,borderColor:'#d7d7d7',margin:'0 32px'}} dashed/>
-                <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button>
-            </div>
+            <Form form={form} layout='inline' className={style.SearchContent}  initialValues={{
+                date: [moment(), moment().add(7, 'day')],
+                state: 0,
+            }}>
+                <Item name="date" style={{marginRight: '0px'}}>
+                    <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} format="YYYY-MM-DD"  onChange={(e) => {
+                         setRangerTime([...e])
+                        submit(e)
+                        }}/>
+                  {/*   <Button size='default' style={{ width: 96, marginLeft: 16 }} icon={<SearchOutlined />} type="primary" onClick={search}>查询</Button> */}
+                </Item>
+                <Space style={{marginLeft:'auto'}} size={32}>
+                    <Item name="state" label="巡检状态" style={{marginRight: '0px'}}>
+                       <Select style={{width:128}}  options={stateopts} onChange={submit}></Select>
+                    </Item>
+                    <Divider type='vertical' style={{height:32,borderColor:'#d7d7d7'}} dashed/>
+                    <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button>
+                </Space>
+               
+               
+            </Form>
             <div style={{ marginTop: 16,display:'flex',height:700 }}>
                 <UserTable 
                 columns={columns} 
-                dataSource={tableData} 
-                pagination={tableParams} 
+                {...tableProps}
                 rowKey="sn" 
                 ref={tableRef}
                

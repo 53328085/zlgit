@@ -115,11 +115,11 @@ export default function Index(props) {
       align: 'center',
       width: '240px'
     }, {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '站点名称',
+      dataIndex: 'siteName',
+      key: 'siteName',
       align: 'center',
-      width: '336px'
+      width: '200px'
     }, {
       title: '设备编号',
       dataIndex: 'sn',
@@ -586,10 +586,26 @@ export default function Index(props) {
                     })}
                   </Select>
                 </Item>
-                <Item  name='sn' label='电池组编号' rules={[{required: true, message:'请输入电池组编号'}]}>
+                <Item  name='alarmPlanId' label='告警方案' rules={[{required: true, message:'选择告警方案'}]}>
+                  <Select
+                    placeholder="选择告警方案"
+                    size="middle"
+                    style={{width: '200px'}}
+                  >
+                    {props.alarmPlanList.map(item => {
+                      return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                    })}
+                  </Select>
+                </Item>
+                <Item  name='remark' label='备注'>
+                  <TextArea style={{width: '200px', maxWidth: 200}} rows={4}></TextArea>
+                </Item>
+              </div>
+              <div style={{marginLeft: 32, width:340}} >
+                <Item  name='sn' label='电池组编号' labelCol={{span:10}} rules={[{required: true, message:'请输入电池组编号'}]}>
                   <Input style={{width: 200}} placeholder='请输入电池组编号' disabled={modalTitle=='新增电池组'? false: true}></Input>
                 </Item>
-                <Item  name='category' label='电池组型号' rules={[{required: true, message:'请选择电池组型号'}]}>
+                <Item  name='category' label='电池组型号' labelCol={{span:10}} rules={[{required: true, message:'请选择电池组型号'}]}>
                   <Select
                   placeholder="请选择电池组型号"
                   size="middle"
@@ -600,17 +616,9 @@ export default function Index(props) {
                   })}
                 </Select>
                 </Item>
-                <Item  name='name' label='电池组名称' rules={[{required: true, message:'请输入电池组名称'}]}>
+                <Item  name='name' label='电池组名称' labelCol={{span:10}} rules={[{required: true, message:'请输入电池组名称'}]}>
                   <Input style={{width: 200}} placeholder='请输入电池组名称' ></Input>
                 </Item>
-                <Item  name='address' label='安装地址' rules={[{required: true, message:'请输入安装地址'}]}>
-                  <Input style={{width: 200}} placeholder='请输入安装地址'></Input>
-                </Item>
-                <Item  name='remark' label='备注'>
-                  <TextArea style={{width: '200px', maxWidth: 200}} rows={4}></TextArea>
-                </Item>
-              </div>
-              <div style={{marginLeft: 32, width:340}} >
                 <Item  name='cellCapacity' label='电芯容量 (Ah)' labelCol={{span:10}} rules={[{required: true, message:'请输入电芯容量'}]}>
                   <Input style={{width: 200}} placeholder='请输入电芯容量'></Input>
                 </Item>

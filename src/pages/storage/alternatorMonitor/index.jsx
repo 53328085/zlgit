@@ -84,7 +84,7 @@ export default function Index() {
   }
   const StateItem = props => {
     let { state } = props
-    state = state == 0 ? 'normal' : state == 1 ? 'error' : 'offline'
+    state = state === 0 ? 'normal' : state === 1 ? 'error' : 'offline'
     return <div className={style.stateItem} style={props.styles}>
       <span>{props.name}</span>
       <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
@@ -105,9 +105,9 @@ export default function Index() {
     //左侧数据
     queryPCSInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
       if(res.success){
-        if(res.data){
-          state.gridState = res.data[0].name,
-          state.chargeState = res.data[1].name
+        if(res.data ){
+          state.gridState = res.data[0]?.name || ''
+          state.chargeState = res.data[1]?.name || ''
           let arr = []
           res.data.map((item, index) => {
             if(index > 1){
@@ -116,6 +116,8 @@ export default function Index() {
           })
           setLeftValues(arr)
         }else{
+          state.gridState = []
+          state.chargeState = []
           setLeftValues([])
         }
       }else{

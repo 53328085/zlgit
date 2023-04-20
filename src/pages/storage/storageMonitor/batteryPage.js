@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import style from './style.module.less'
 import styled from "styled-components";
 import { message } from "antd";
@@ -6,7 +6,10 @@ import warningPoint from '@imgs/warningPoint.png'
 import { StorageMonitorRuntime } from '@api/api.js'
 import envirTitle from './imgs/envirTitle.png'
 import envirValue from './imgs/envirValue.png'
-import { CaretLeftOutlined, CaretRightOutlined  } from '@ant-design/icons'
+import packHover from './imgs/packHover.png'
+import packNormal from './imgs/packNormal.png'
+import { range } from "lodash";
+import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons'
 export default function Index(props) {
     const TitleBox = styled.div`
         width: 156px;
@@ -70,10 +73,10 @@ export default function Index(props) {
     `
 
     const LeftButton = styled(CaretLeftOutlined)`
-    font-size: 84px;
+    font-size: 64px;
     position: absolute;
-    left: 18px;
-    top: 120px;
+    left: 12px;
+    top: 520px;
     color: #3c3c62;
     cursor: pointer;
     &:hover{
@@ -81,19 +84,68 @@ export default function Index(props) {
     }
     `
     const RightButton = styled(CaretRightOutlined)`
-    font-size: 84px;
+    font-size: 64px;
     position: absolute;
-    right: 18px;
-    top: 120px;
+    right: 12px;
+    top: 520px;
     color: #3c3c62;
     cursor: pointer;
     &:hover{
         color: #f2f2f2;
     }
     `
-    let { projectId, clusterList, count } = props.batteryData
-    const [selectCount, setSelectCount] = useState(count)
-    const {  queryBatteryClusterInfo, queryBatteryPackInfo, queryBatteryClusterWarning} = StorageMonitorRuntime
+
+    const PackItem = styled.div`
+        width: 132px;
+        height: 504px;
+        background-image: url(${packNormal});
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        margin-right: 21px;
+        color: #a1a1a1;
+        cursor: pointer;
+        &:hover{
+            background-image: url(${packHover});
+            color: #3f0;
+        }
+        .dataItem{
+            width: 132px;
+            height: 348px;
+            margin-top: 156px;
+            padding: 12px 3px;
+            .dataName{
+                text-align: center;
+                width: 126px;
+                font-size: 14px;
+                margin-bottom: 20px;
+                word-wrap: break-word;
+                line-height: 14px;
+                height: 28px;
+            }
+            .dataTitle{
+                width: 126px;
+                height: 24px;
+                line-height: 24px;
+                font-size: 12px;
+                color: #fff;
+                text-align: center;
+                background-color: #135abd;
+            }
+            .dataValue{
+                width: 126px;
+                height: 24px;
+                line-height: 24px;
+                font-size: 12px;
+                color: #fff;
+                text-align: center;
+                background-color: #006;
+                margin-bottom: 8px;
+            }
+        }
+    `
+
+    let { projectId, batteryCluster } = props.batteryData
+    const { queryBatteryClusterInfo, queryBatteryPackInfo, queryBatteryClusterWarning } = StorageMonitorRuntime
     const TitleImg = props => {
         return <TitleBox>
             <div className="littleSquare"></div>
@@ -109,12 +161,12 @@ export default function Index(props) {
             <div className={style.pack}>
                 <div className={style.packName}>{props.batteryPackNo}</div>
                 <div className={style.packData}>
-                    <div className={style.packItem} style={{ backgroundColor: props.voltage > '3.3' ? '#c00' :'#06f'}}>
+                    <div className={style.packItem} style={{ backgroundColor: props.voltage > '3.3' ? '#c00' : '#06f' }}>
                         {/* <span>电压</span> */}
                         <span>{props.v}</span>
                         <span>(V)</span>
                     </div>
-                    <div className={style.packItem} style={{ backgroundColor: props.temperature < '20' ? '#c00' :'#06f'}}>
+                    <div className={style.packItem} style={{ backgroundColor: props.temperature < '20' ? '#c00' : '#06f' }}>
                         {/* <span>温度</span> */}
                         <span>{props.temp}</span>
                         <span>(℃)</span>
@@ -124,41 +176,64 @@ export default function Index(props) {
         </div>
     }
 
-    
+    const BatteryPackItem = props => {
+        return <PackItem onClick={() => showBatteryPackPage(props.data)}>
+            <div className="dataItem">
+                <div className="dataName">{props.data.batteryPackNo}</div>
+                <div className="dataTitle">极柱正极温度</div>
+                <div className="dataValue">{props.data.negativeTemp + ' (℃)'}</div>
+                <div className="dataTitle">极柱负极温度</div>
+                <div className="dataValue">{props.data.negativeTemp + ' (℃)'}</div>
+            </div>
+        </PackItem>
+    }
+
+    const showBatteryPackPage = (item) => {
+        props.getshowPack({
+            pageName: 'batteryPackPage',
+            batteryItem: item,
+        })
+    }
+
+    const toWarning = () => {
+        navigate('/index/runtimeStorage/alarmMessage', {
+            state: { type: 'index', primary: 'runtimeStorage', title: '告警信息', nested: 'alarmMessage' }
+        })
+    }
     const WarningCard = props => {
         return <div className={style.warningItem}>
-          <div className={style.leftImg}>
-            <img src={warningPoint} className={style.warningPoint}></img>
-          </div>
-          <div className={style.warningData}>
-            <div className={style.warningtop}>
-              <span className={style.time}>{props.data.warningTime}</span>
-              {/* <span className={style.sn}>{props.data.sn}</span> */}
+            <div className={style.leftImg}>
+                <img src={warningPoint} className={style.warningPoint}></img>
             </div>
-            <div className={style.warningbottom}>
-              <span className={style.description}>{props.data.content}</span>
-              <span className={style.level} style={{color:'#c00'}}>{props.data.level }</span>
+            <div className={style.warningData}>
+                <div className={style.warningtop}>
+                    <span className={style.time}>{props.data.warningTime}</span>
+                    {/* <span className={style.sn}>{props.data.sn}</span> */}
+                </div>
+                <div className={style.warningbottom}>
+                    <span className={style.description}>{props.data.content}</span>
+                    <span className={style.level} style={{ color: '#c00' }}>{props.data.level}</span>
+                </div>
             </div>
-          </div>
         </div>
-      }
-    
+    }
+
     //电池列表数据
     const [singleList, setSingleList] = useState([])
     const [nameState, setNameState] = useState({})
     const getBatteryList = (batteryCluster) => {
         setNameState({
-            name:batteryCluster.batteryClusterName,
+            name: batteryCluster.batteryClusterName,
             chargeState: batteryCluster.chargeState
         })
         queryBatteryPackInfo(projectId, batteryCluster.id).then(res => {
-            if(res.success){
-                if(res.data){
+            if (res.success) {
+                if (res.data) {
                     setSingleList(res.data)
-                }else{
+                } else {
                     setSingleList([])
                 }
-            }else{
+            } else {
                 message.error(res.errMsg)
             }
         })
@@ -167,79 +242,83 @@ export default function Index(props) {
     //电池簇状态
     const [batteryStatus, setBatterStatus] = useState({})
     const getBatterStatus = (batteryCluster) => {
-        queryBatteryClusterInfo(projectId, batteryCluster.id).then(res=> {
-            let {success, data} = res
-            if(success){
-                if(data){
+        queryBatteryClusterInfo(projectId, batteryCluster.id).then(res => {
+            let { success, data } = res
+            if (success) {
+                if (data) {
                     setBatterStatus(data)
-                }else{
+                } else {
                     setBatterStatus({})
                 }
-            }else{
+            } else {
                 message.error(res.errMsg)
             }
         })
     }
 
     //告警信息
-    const [warningData, setWarningData] = useState({batteryWarnings:[]})
+    const [warningData, setWarningData] = useState({ batteryWarnings: [] })
     const getwarningData = (batteryCluster) => {
         queryBatteryClusterWarning(projectId, batteryCluster.id).then(res => {
-            if(res.success){
-                if(res.data){
+            if (res.success) {
+                if (res.data) {
                     setWarningData(res.data)
-                }else{
-                    setWarningData({batteryWarnings:[]})
+                } else {
+                    setWarningData({ batteryWarnings: [] })
                 }
-            }else{
+            } else {
                 message.error(res.errMsg)
             }
         })
     }
 
-    //切换电池簇
+    //切换电池组
+    const [count, setCount] = useState(0)
     const preData = () => {
-        if(selectCount == 0){
-            message.warning('已经是第一个电池簇了!')
-            return
-        } 
-        setSelectCount(selectCount - 1)
+        if ((count) <= 0) return;
+        setCount(count - 1)
     }
     const nextData = () => {
-        if(selectCount == clusterList.length - 1){
-            message.warning('已经是最后一个电池簇了!')
-            return
-        } 
-        setSelectCount(selectCount + 1)
+        if ((count + 8) >= singleList.length) return;
+        setCount(count + 1)
     }
 
-    useEffect(()=>{
-        getBatteryList(clusterList[selectCount])
-        getwarningData(clusterList[selectCount])
-        getBatterStatus(clusterList[selectCount])
-    },[selectCount])
+    useEffect(() => {
+        getBatteryList(batteryCluster)
+        getwarningData(batteryCluster)
+        getBatterStatus(batteryCluster)
+    }, [])
 
 
     return (
         <div className={style.batteryContent}>
-            <div className={style.singleMonitor} style={{position:'relative'}}>
-                <div className={style.cardTitle} style={{color:'#fff', margin: 16}}>
+            <div className={style.singleMonitor} style={{ position: 'relative' }}>
+                <div className={style.cardTitle} style={{ color: '#fff', margin: 16 }}>
                     <span>电池簇</span>
                 </div>
                 <div className={style.batteryName}>{nameState.name}</div>
-                <TitleImg state={nameState.chargeState == 1? '充电中...': nameState.chargeState == 2?'放电中...' :''}></TitleImg>
-                <LeftButton onClick={()=>preData()}></LeftButton>
-                <RightButton onClick={()=>nextData()}></RightButton>
+                <TitleImg state={nameState.chargeState}></TitleImg>
+                <LeftButton onClick={() => preData()}></LeftButton>
+                <RightButton onClick={() => nextData()}></RightButton>
                 <div className={style.verticalLine}></div>
                 <div className={style.normalLine}></div>
-                <div className={style.monitorList}>
+                <div className={style.transformList}>
+                    <div className={style.transformItem} style={{ width: (parseInt(singleList.length / 8) + 1) * 100 + '%', left: (-(count * 153)) }}>
+                        {
+                            singleList.map((item, index) => {
+                                return <BatteryPackItem data={item} key={index}></BatteryPackItem>
+                            })
+                        }
+                    </div>
+                </div>
+                {/* <div className={style.monitorList}>
                     {singleList.map((item, index) => {
                         return <MonitorItem {...item} key={index}></MonitorItem>
                     })}
-                </div>
+                </div> */}
             </div>
             <div className={style.singleWarning}>
-                <div style={{height: 512, backgroundColor:'#fff', borderRadius: 4, width: 288, padding: 16}}>
+                <div style={{ height: 512, backgroundColor: '#fff', borderRadius: 4, width: 288, padding: 16 }}>
                     <div className={style.cardTitle}>电池簇</div>
                     <EnvirBox>
                         <div className='titleBox'>总电压 (V)</div><div className='valueBox'>{batteryStatus.v}</div>
@@ -258,16 +337,16 @@ export default function Index(props) {
                 </div>
                 <div className={style.newWarning}>
                     <div className={style.cardTitle}>告警信息</div>
-                        <span className={style.toWarning} onClick={()=>toWarning()}>查看详情</span>
-                        <div className={style.warningDetails}>
+                    <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
+                    <div className={style.warningDetails}>
                         {warningData.batteryWarnings.map((item, index) => {
                             return <Fragment key={index}>
-                            <WarningCard data={item} ></WarningCard>
+                                <WarningCard data={item} ></WarningCard>
                             </Fragment>
-                        } )}
-                        </div>
+                        })}
                     </div>
-            </div>           
+                </div>
+            </div>
         </div>
     )
 }
