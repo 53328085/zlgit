@@ -78,6 +78,7 @@ export default function video() {
   const onOk = async () => {
     const formvalues = AddModalForm.getFieldValue()
     const upimg = AddModalForm.getFieldsValue()
+    console.log(' upimg.ImageUpload', upimg.ImageUpload,'formvalues.imageBase64',formvalues.imageBase64)
     let parmas = {
       projectId,
       category: formvalues.category,
@@ -185,8 +186,9 @@ export default function video() {
       title: '视频监控缩略图',
       dataIndex: 'imageBase64',
       render: (text) => {
+        
         return (<div >
-          <img src={text.includes(`data:image/jpeg;base64,`) ? `${text}` : `data:image/jpeg;base64,${text}`} style={{ width: 64, height: 53 }}></img>
+          <img src={text.includes(`data:image/`) ? `${text}` : `data:image/jpeg;base64,${text}`} style={{ width: 64, height: 53 }}></img>
         </div>)
       }
     },
@@ -358,7 +360,7 @@ export default function video() {
 
 let ImageUpload = ({ value = '', onChange }) => {
   return (
-    <img src={value.includes('data:image/jpeg;base64,') ? `${value}` : `data:image/jpeg;base64,${value}`} style={{ width: 120, height: 96, marginRight: 16 }}></img>
+    <img src={value.includes('data:image/') ? `${value}` : `data:image/jpeg;base64,${value}`} style={{ width: 120, height: 96, marginRight: 16 }}></img>
   )
 }
 //新增监控modal组件
