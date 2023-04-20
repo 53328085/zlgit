@@ -2,12 +2,12 @@ import React, {useState, useEffect, useRef} from 'react'
 import * as echarts from "echarts";
 
 export default function Index(props){
-  const barRef = useRef()
+  const lineRef = useRef()
   useEffect(()=>{
     // let barChart = echarts.init(document.getElementById('barChart'));
-    echarts.dispose(barRef.current)
-    let barChart = echarts.init(barRef.current)
-    barChart.setOption({
+    echarts.dispose(lineRef.current)
+    let lineChart = echarts.init(lineRef.current)
+    lineChart.setOption({
       color:['#5fba5c', '#4d77ff', '#9951fe'],
       tooltip: {
         trigger: 'axis',
@@ -50,26 +50,21 @@ export default function Index(props){
       ],
       series: [
         {
-          name:'充电金额(元)',
+          name:'充电电量(kWh)',
           data: props.data.chargingIncome,
-          type: 'bar'
-        },
-        {
-          name:'放电金额(元)',
-          data: props.data.disChargingIncome,
-          type: 'bar',
-          barGap:'0',
-        },
-        {
-          name:'收益(元)',
-          yAxisIndex: 1,
-          data: props.data.storageIncome,
           type: 'line',
-          symbol:'circle', 
-          smooth: false,
+          symbol:'none', 
+          areaStyle: {},
+        },
+        {
+          name:'放电电量(kwh)',
+          data: props.data.disChargingIncome,
+          type: 'line',
+          symbol:'none', 
+          areaStyle: {}
         },
       ]
     })
   },[props.barData])
-  return <div style={{width:504,height:272}} id='barChart' ref ={barRef}></div>
+  return <div style={{width:504,height:272}} id='lineChart' ref ={lineRef}></div>
 }
