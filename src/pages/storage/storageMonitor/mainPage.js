@@ -54,18 +54,7 @@ export default function Index(props) {
     queryBatteryStackStatus } = StorageMonitorRuntime
   const projectId = useSelector(selectProjectId)
   const navigate = useNavigate()
-  const voltageData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[732.25, 758.32, 721.39, 701.54, 723.45, 720.15, 718.96, 728.36, 714.32, 701.36, 704.96, 724.36, 718.32 ]
-  }
-  const currentData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[9.84, 9.15, 9.98, 10.25, 10.01, 10, 9.87, 9.98, 9.99, 9.84, 9.15, 9.98, 10.25]
-  }
-  const SOCData = {
-    x:["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", ],
-    y:[25, 32, 39, 54, 45, 15, 66, 36, 32, 36, 43, 36, 32 ]
-  }
+
   const config = (lineId, color, Unit, lineData)=> {
     let chart = echarts.init(lineId);
     chart.setOption({
@@ -290,10 +279,10 @@ export default function Index(props) {
         <div className={style.middle}>
           <img src={topology} className={style.zhanwei}></img>
           <div className={style.middletitle}>电池堆状态</div>
-          <div style={{position:'absolute', left: 140, top: 102}}>
+          <div style={{position:'absolute', left: 255, top: 91}}>
             <CustomBattery name={'SOC'} value={ bmsInfo.soc ? bmsInfo.soc  + '%' :'0.00%' } color="#0c6"></CustomBattery>
           </div> 
-          <div style={{position:'absolute', left: 196, top: 102}}>
+          <div style={{position:'absolute', left: 311, top: 91}}>
             <CustomBattery name={'SOH'} value={bmsInfo.soh ? bmsInfo.soh  + '%' :'0.00%'} color="#06c"></CustomBattery>
           </div>
           <div className={style.deviceImg}>
@@ -304,14 +293,15 @@ export default function Index(props) {
             <div className={style.bmsStatus}>{bmsInfo.status}</div>
             <div className={style.bmsStatus}>{bmsInfo.chargeStatus }</div>
           </div>
-          <div className={style.batteryPack}>
-            <div className={style.rightButton} onClick={()=>translateLeft()}>
+          <div className={style.rightButton} onClick={()=>translateLeft()}>
               <CaretRightOutlined />
             </div>
             <div className={style.leftButton} onClick={()=>translateRight()}>
               <CaretLeftOutlined />
             </div>
-            <div className={style.transLate} style={{ left: (-(count * 296) + 24)}}>
+          <div className={style.batteryPack}>
+            
+            <div className={style.transLate} style={{ width: (parseInt(bmsInfo.batteryPackInfos.length / 3) + 1) * 100 + '%', left: (-(count * 277) + 55)}}>
               {bmsInfo.batteryPackInfos.map((item, index) => {
                 return <BatteryPack data={item} key={index} toBattery={()=>toBattery(item)}></BatteryPack>
               })}

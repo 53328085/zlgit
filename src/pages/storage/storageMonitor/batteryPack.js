@@ -1,38 +1,34 @@
 import React from "react";
+import styled from "styled-components";
 import batteryPack from './imgs/batteryPack.png'
+import clusterNormal from './imgs/clusterNormal.png'
+import clusterHover from './imgs/clusterHover.png'
 export default function index (props) {
     let {data} = props
-    const bgStyle = {
-        width: 160,
-        height: 455,
-        marginTop: -1,
-        backgroundImage: `url(${batteryPack})`,
-        backgroundSize: '100% 100%',
-        marginRight: 136,
-        position:'relative'
-    }
-    const packName ={
-        position:'absolute',
-        display:'inline-block',
-        height:20,
-        lineHeight:'20px',
-        right: -12,
-        top: 122,
-        backgroundColor: '#237ae4',
-        color:'#fff',
-        fontSize: 12
-    }
+    const BgStyle = styled.div`
+        width: 160px;
+        height: 505px;
+        margin-top: -1px;
+        background-image: url(${clusterNormal});
+        background-size: 100% 100%;
+        margin-right: 107px;
+        position:relative;
+        cursor: pointer;
+        &:hover{
+            background-image: url(${clusterHover});
+        }
+    `
     const battery ={
         position:'absolute',
         display:'inline-block',
-        height:299,
+        height:340,
         width: 160,
         lineHeight:'20px',
         left: 0,
         bottom: 0,
         padding:16,
-        backgroundColor: '#000',
-        border: '1px solid rgb(35, 122, 228)',
+        // backgroundColor: '#000',
+        // border: '1px solid rgb(35, 122, 228)',
         borderRadius: 2,
         color:'#fff',
         fontSize: 12,
@@ -64,9 +60,9 @@ export default function index (props) {
         props.toBattery()
     }
     return (
-        <div style={bgStyle}>
-            <span style={packName}>{data.batteryClusterName}</span>
+        <BgStyle>
             <div style={battery} onClick={()=>toBatteryData()}>
+                <div style={{fontSize: 14, lineHeight: '14px', marginBottom: 12,color:'#a1a1a1', textAlign:'center', wordWrap:'break-word', }}>{data.batteryClusterName}</div>
                 <div style={{width: 127, border:'1px solid #d7d7d7', borderRadius: 2, marginBottom: 12}}>
                     <div style={{width: '100%', height: 24, lineHeight:'24px', backgroundColor:'#237ae4',borderBottom:'1px solid #d7d7d7', textAlign:'center'}}>
                         <span style={{display:"inline-block", width: 62}}>充放电状态</span>
@@ -81,6 +77,6 @@ export default function index (props) {
                 <NormalValue title={['电压高值', '电压低值']} value={[data.maxV + '(V)', data.minV + '(V)']}></NormalValue>
                 <NormalValue title={['温度高值', '温度低值']} value={[data.maxTemp + '(℃)', data.minTemp + '(℃)']}></NormalValue>
             </div>
-        </div>
+        </BgStyle>
     )
 }
