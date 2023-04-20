@@ -72,7 +72,7 @@ export default function index (props) {
                         <span style={{display:"inline-block", width: 62}}>充放电状态</span>
                     </div>
                     <div style={{width: '100%', height: 24, lineHeight:'24px', textAlign:'center'}}>
-                        <span style={{display:"inline-block", width: 62, }}>{data.chargeState == 1 ? '充电中...': data.chargeState == 2 ? '放电中': ''}</span>
+                        <span style={{display:"inline-block", width: 62, }}>{data.chargeState}</span>
                     </div>
                 </div>
                 <Progress title={'SOC'} value={data.soc +'%'} color={'#060'}></Progress>

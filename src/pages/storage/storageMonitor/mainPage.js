@@ -147,13 +147,10 @@ export default function Index(props) {
       state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
     })
   }
-  const toBattery =(item, clusterList ,count) => {
+  const toBattery =(item) => {
     props.getshowTab({
       pageName:'batteryPage',
-      batteryClusterId:item.id,
-      clusterList,
-      count,
-      batteryPackName: item.batteryClusterName
+      batteryCluster:item,
     })
   }
 
@@ -304,24 +301,8 @@ export default function Index(props) {
             <img src={device} style={{width: 148, height: 148}}></img>
           </div>
           <div className={style.bmsData}>
-            <div className={style.bmsName}>{bmsInfo.status == 1 ? '正常': bmsInfo.status == 2? '故障' :''}</div>
-            <div className={style.bmsStatus}>{bmsInfo.chargeStatus == 1? '充电中...': bmsInfo.chargeStatus == 2?'放电中...' :''}</div>
-            <div className={style.bmsTitle}>
-              <span>日充电量(kWh)</span>
-              <span>日放电量(kWh)</span>
-            </div>
-            <div className={style.bmsTitle}>
-              <span style={{backgroundColor:'#039'}}>{bmsInfo.chargingE}</span>
-              <span style={{backgroundColor:'#039'}}>{ bmsInfo.disChargingE }</span>
-            </div>
-            <div className={style.bmsTitle}>
-              <span>累计充电量(kWh)</span>
-              <span>累计放电量(kWh)</span>
-            </div>
-            <div className={style.bmsTitle}>
-              <span style={{backgroundColor:'#039'}}>{bmsInfo.accumulateChargingE}</span>
-              <span style={{backgroundColor:'#039'}}>{ bmsInfo.accumulateDisChargingE }</span>
-            </div>
+            <div className={style.bmsStatus}>{bmsInfo.status}</div>
+            <div className={style.bmsStatus}>{bmsInfo.chargeStatus }</div>
           </div>
           <div className={style.batteryPack}>
             <div className={style.rightButton} onClick={()=>translateLeft()}>
@@ -332,7 +313,7 @@ export default function Index(props) {
             </div>
             <div className={style.transLate} style={{ left: (-(count * 296) + 24)}}>
               {bmsInfo.batteryPackInfos.map((item, index) => {
-                return <BatteryPack data={item} key={index} toBattery={()=>toBattery(item, bmsInfo.batteryPackInfos, index)}></BatteryPack>
+                return <BatteryPack data={item} key={index} toBattery={()=>toBattery(item)}></BatteryPack>
               })}
             </div>
           </div>   
