@@ -13,13 +13,17 @@ const initialState = {
     functions: [],
     projects: [],   
 }
-export const loginByName = createAsyncThunk(
+export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手机号
     'user/loginByName',
-    async (params) => {
-      const response =  await Login.LoginByName(params)
+    async (params) => { 
+      let {type, ...param} = params     
+      let handler = ['LoginByName', 'LoginByPhone'][type] 
+      console.log(handler)
+      const response =  await Login[handler](param)
       return response
     }
 )
+ 
 const user = createSlice({
     name: 'user',
     initialState,

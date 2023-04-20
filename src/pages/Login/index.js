@@ -404,9 +404,10 @@ function UserLog() {
  }
 
 
- const onSubmit = async (value) => {
-   const {name, pwd} = value;
-   let { success, errMsg, data} = await dispatch(loginByName({ name, pwd })).unwrap();
+ const onSubmit = async (value, type=0) => {
+ //  const {name, pwd} = value;
+   value.type = type;
+   let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
    if(success) {
       let {projectId, roleType} = data
       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
@@ -419,7 +420,7 @@ function UserLog() {
    }
 
  }
-
+  
   const submit = async (value) => {
     const { name, pwd } = value;
     let { success, errMsg, data: usedata } = await dispatch(loginByName({ name, pwd })).unwrap();
@@ -691,7 +692,7 @@ function UserLog() {
         labelWrap
         form={phoneform}
         name="phonelogin"
-        onFinish={submit}
+        onFinish={(e) => onSubmit(e, 1)}
         onFinishFailed={onFinishFailed}
         initialValues={{
           mobile: initMobile,
