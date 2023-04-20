@@ -1676,6 +1676,7 @@ export class StorageMonitorRuntime {
   static queryBatteryClusterInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryClusterInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
   static queryBatteryPackInfo = (projectId, batteryClusterId) => server.get(`/Storage/StorageMonitorRuntime/QueryBatteryPackInfo?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
   static queryBatteryClusterWarning = (projectId, batteryClusterId) => server.post(`/Storage/StorageMonitorRuntime/QueryBatteryClusterWarning?projectId=${projectId}&batteryClusterId=${batteryClusterId}`);
+  static queryBatteryWarning = (projectId, batteryId) => server.post(`/Storage/StorageMonitorRuntime/QueryBatteryWarning?projectId=${projectId}&batteryId=${batteryId}`)
 }
 //储能设备管理
 export class StorageEquipmentDesigner {
