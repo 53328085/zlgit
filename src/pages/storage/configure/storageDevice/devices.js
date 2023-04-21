@@ -188,17 +188,6 @@ export default function Index(props) {
       if (res.success) {
         if (res.data) {
           // setSubTable(res.data.configed)
-          res.data.configed.map((item) => {
-            if(item.type == 1){
-              state.mainTable = item
-            }
-            if(item.type == 2){
-              state.loadTable = item
-            }
-            if(item.type == 3){
-              state.gridTable = item
-            }
-          })
           setUnknownTable(res.data.noConfiged)
         } else {
           // setSubTable([])
@@ -206,6 +195,18 @@ export default function Index(props) {
         }
       } else {
         message.error(res.errMsg)
+      }
+    })
+    tableData.map(item => {
+      
+      if(item.type == 1){
+        state.mainTable = [item]
+      }
+      if(item.type == 2){
+        state.loadTable = [item]
+      }
+      if(item.type == 3){
+        state.gridTable = [item]
       }
     })
     setTransTag('open');
