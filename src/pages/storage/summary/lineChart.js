@@ -8,7 +8,7 @@ export default function Index(props){
     echarts.dispose(lineRef.current)
     let lineChart = echarts.init(lineRef.current)
     lineChart.setOption({
-      color:['#5fba5c', '#4d77ff', '#9951fe'],
+      color:['#d0ddf7', '#d0efe3'],
       tooltip: {
         trigger: 'axis',
         axisPointer: {

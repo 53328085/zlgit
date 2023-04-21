@@ -70,7 +70,7 @@ export default function Index() {
     querySite()
   }
   const getFromHeader = () => {
-    querySiteInfo(projectId, form.getFieldValue('areaId')).then(res => {
+    querySiteInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
       if (res.success) {
         setCardData(res.data)
       } else {
@@ -226,7 +226,7 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='siteId' label='' style={{ marginLeft: 16 }}>
+          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
             <Select
               placeholder="请选择站点"
               size="middle"
@@ -262,13 +262,13 @@ export default function Index() {
               </div>
             </div>
           </CardItem>
-          <CardItem title='充放电统计' height='136px'>
+          {/* <CardItem title='充放电统计' height='136px'>
             <div className={style.stateItems}>
               <StateCard width={'156px'} title={'储能总充电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
               <StateCard width={'156px'} title={'储能总放电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
             </div>
-          </CardItem>
-          <CardItem title='最新告警' height='396px'>
+          </CardItem> */}
+          <CardItem title='最新告警' height='548px'>
             <span className={style.toWarning} onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</span>
             <div className={style.warningDetails}>
               {warningData.map((item, index) => {
@@ -291,7 +291,7 @@ export default function Index() {
           <div className={style.bottom}>
             <div className={style.topology}>
               <img src={imgurl.zhanwei} className={style.zhanwei}></img>
-              {/* 储能电表 */}
+              {/* 储能总表 */}
               <div className={style.storageMeter}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
@@ -309,18 +309,25 @@ export default function Index() {
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
-              {/*交流器*/}
+              {/*并网总表器*/}
               <div className={style.transformer}>
-                <div className={style.transItem}>
-                  <img src={imgurl.error} className={style.transImg}></img>
-                  <span>{topologyData?.pcsType}</span>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电压:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v}</span>
+                  <span className={style.dataUnit}>(V)</span>
                 </div>
-                <div className={style.transItem}>
-                  <img src={imgurl.normal} className={style.transImg}></img>
-                  <span>{topologyData?.status + ' . . .'}</span>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电流:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i}</span>
+                  <span className={style.dataUnit}>(A)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>功率:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
-              {/*电池簇*/}
+              {/*负载总表*/}
               <div className={style.batterys}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
@@ -333,9 +340,9 @@ export default function Index() {
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
-                  <span className={style.dataName}>SOC:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.soc}</span>
-                  <span className={style.dataUnit}>(%)</span>
+                  <span className={style.dataName}>功率:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
               <div className={style.transPlaceholder} onClick={() => toPage('PCSMonitor', 'PCS监控')}></div>
