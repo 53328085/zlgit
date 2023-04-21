@@ -502,7 +502,7 @@ export default function Index() {
         </div>
         <div className={style.priceContent}>
         <div className={style.headerTitle}>
-          <span>计费管理</span>
+          <span>电价设置</span>
           <Button type='primary' style={{ width: 96 }} onClick={()=>onSave()}>保存</Button>
         </div>
         <CustomPrice title='尖' formName={pointedForm} imgs={imgurl.jian} disChange={[disPoint2, disPoint3]}></CustomPrice>
