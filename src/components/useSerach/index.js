@@ -3,8 +3,8 @@ import React, {useState, useContext, useMemo, useEffect, useRef} from "react";
 import { Form, Select, Button, Dropdown, Space, Divider,} from "antd";
 import styled from "styled-components";
 import style from "./style.module.less";
-import {useSelector} from 'react-redux'
-import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel} from '@redux/systemconfig.js'
+import {useSelector, useDispatch} from 'react-redux'
+import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel} from '@redux/systemconfig.js'
 import {onAreaParams, onDisplay, formInstance, selectSerach} from '@redux/params'
 import {useReactToPrint} from 'react-to-print'
 import {SiteManagerDesigner} from '@api/api'
@@ -57,7 +57,7 @@ const { Item } = Form;
 export default function useSerach(props) {
   const {handler, sitehandler, form: forms, search, isSite=false, custview, initialValue, setDisplay, display, data, print, printOption={}, printContent, PrintAllContent, onDownload,} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
-  console.log(initialValue)
+  const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel) 
@@ -67,7 +67,8 @@ export default function useSerach(props) {
   const allData = useRef();
   const [options, setOptions] = useState([])
 
-  const onChange = (e) => {
+  const onChange = (e, option) => {
+    dispatch(setCurrentlevel(option))
     setAreaid(e)
     if (typeof handler == 'function') {       
        handler(e)

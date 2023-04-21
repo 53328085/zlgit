@@ -389,7 +389,7 @@ const getvalidate = (start, end, type, choosedate) => {
   const [strategyDetail, setStrategyDetail] = useState([])
   const pref = useRef()
   const [isadd, setIsadd] = useState(false)
-  let disabled = curplan.enable == 1
+  let disabled =  Number(curplan.enable) == 1
  
   const showpalans = useMemo(() => {
     let len = plans.length;  // 7 0，5 1，6 2，7
@@ -440,10 +440,10 @@ const getvalidate = (start, end, type, choosedate) => {
   const addplan = () => {
     setIsview(false)
     setIsadd(true)
-    setCurplan({
+  /*   setCurplan({
         id: 0,
         enable: 0
-    })
+    }) */
     form.resetFields()
      pref.current.onOpen()
 
@@ -495,9 +495,9 @@ const getvalidate = (start, end, type, choosedate) => {
        let endDate = date[1]?.format('YYYY-MM-DD'); 
 
        let handler = isadd ? 'AddRuntimePlan' : 'UpdateRuntimePlan'
-      // let id = isadd ? 0 : pid
-      // let enable= isadd ? 0 : 1 // 9条数据时 2-9/    5 12条数据
-      let {id, enable} = curplan
+       let id = isadd ? 0 : pid
+       let enable= isadd ? 0 : 1 // 9条数据时 2-9/    5 12条数据
+     // let {id, enable} = curplan
        try {
           let {success, errMsg} = await StorageAutoModeDesigner[handler](projectId, {...params, startDate, endDate, areaId, id, enable})
           if(success) {
@@ -617,8 +617,11 @@ const getvalidate = (start, end, type, choosedate) => {
   }
 
  const onCancel = () => {
-    setIsadd(false)
+    setIsadd(false)    
+    console.log(curplan)
+    onPlan(curplan)
     pref.current.onCancel()
+    
  }
 
   const changeview = () => {
@@ -658,7 +661,7 @@ const getvalidate = (start, end, type, choosedate) => {
                 <div className='toprightdown'>
                     <Space size={16}>
                         <Normalbt type="primary" onClick={changeview} ghost={isView}>策略设置</Normalbt>
-                        <Normalbt type="primary" disabled={ !curplan?.id} ghost={!isView} onClick={changeview}>策略预览</Normalbt>
+                        <Normalbt type="primary" disabled={ isadd || !curplan?.id} ghost={!isView} onClick={changeview}>策略预览</Normalbt>
                     </Space>
                     <Space size={16}>
                         <Normalbt  danger onClick={showDel} disabled={disabled}>删除</Normalbt>
