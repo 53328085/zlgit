@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -48,7 +48,6 @@ const List = styled.div`
       z-index: 2;
       position: absolute;
       min-width: 744px;
-      left: 20px;
     }
     position: relative;
     height: 90px;
@@ -278,6 +277,8 @@ const Logtitle = () => {
   );
 };
 const Loglist = () => {
+  const dispatch = useDispatch();
+  const configInfo = useSelector(systemConfigInfo)
   let items = [
     "运行监控",
     "电气安全",
@@ -287,13 +288,24 @@ const Loglist = () => {
     "碳排管理",
     "运维管理",
   ];
+  const hostname =
+    process.env.NODE_ENV === "production"
+      ? new URL(window.location.href).hostname
+      : "10.5.7.60";
+   useEffect(() => {
+    dispatch(systemConfig(hostname)).then(res => {
+      console.log(res)
+      document.title = configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'
+    });
+  }, [hostname]);  
+ 
   return (
     <List>
       <div className="chtitle">
-        <p className="text">NIS6000 正泰综合能源服务平台</p>
+        <p className="text">{configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
         <p className="block"></p>
       </div>
-      <p className="entitle">Integrated Energy Service Platform</p>
+      <p className="entitle">{configInfo.englishTitle}</p>
       <div className="itemlist">
         {items.map((i, index) => (
           <div className="item" key={index}>
@@ -320,11 +332,11 @@ function UserLog() {
       state: { type: "index", primary: key, index: true, title: label },
     });
   };
-  const hostname =
+/*   const hostname =
     process.env.NODE_ENV === "production"
       ? new URL(window.location.href).hostname
       : "10.5.7.60";
-
+ */
   // 进入项目配置/项目 
 
  const handlermenu = (data,  id) => {
@@ -420,108 +432,19 @@ function UserLog() {
    }
 
  }
-  
-  const submit = async (value) => {
-    const { name, pwd } = value;
-    let { success, errMsg, data: usedata } = await dispatch(loginByName({ name, pwd })).unwrap();
-    if (success) {
-        let {projectId, roleType} = usedata
-      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {
-       try {
-        let {success, data} = await ProjectSetting.queryProjectPublishInfo(projectId)
-        success && dispatch(getpublishState(data?.state))
-       } catch (error) {
-        console.log(error)
-       }
 
-       let {data ,success,errMsg,} = await ProjectList.QueryMenus(usedata.projectId);
-       try {
-          if (success && Array.isArray(data)) { 
-              
-               const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
-               const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
-             //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
-               const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
-               let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
-               const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
-               const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
-      
-               const siderRunMenus = {}; // 运行功能 选择的子菜单
-              // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
-               runMenus.forEach(item => {
-                let {no, key, parentNo} = item 
-                if (!exclude.includes(item.no)) { 
-                   siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
-                   
-                }   
-               }) 
-            /*    allRunMenus.forEach(item => {
-                let {no, key, parentNo} = item 
-                if (!exclude.includes(item.no)) {
-                   allsinderRunMenus[key] = sidermenu?.filter(m => m.parentNo == no) 
-                }   
-               })  */
-               const siderDesignerMenus = {};
-               designerMenus.forEach(item => {
-                let {no, key, parentNo} = item 
-                if (!exclude.includes(item.no)) {
-                  siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
-                }   
-               }) 
-               const menus =  {
-                designerMenus, 
-                siderDesignerMenus,
-                runMenus,
-                siderRunMenus, 
-                setMenus,  
-                comSet,      
-                projectId: usedata.projectId,
-               }
-               dispatch(getMenus(menus));
-               dispatch(configProject(type === 2))
-               try {
-                let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: usedata.projectId,level: 1,parentId: 0})  
-                lsuccess && dispatch(getOnelevel(levelData || []));
-                !lsuccess && dispatch(getOnelevel([]));
-              } catch (error) {
-                 console.log(error)
-              }
-              try {
-                let {success: sces, data: shitfsData} = await eneryShift.queryShifts(usedata.projectId)
-                sces && dispatch(getshifts(shitfsData || []));
-                !sces && dispatch(getshifts([]));
-              } catch (error) {
-                console.log(error)
-              }
-              let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
-              projectRun(runitem)
-          }
-              
-           
-           else {
-            return message.warning(errMsg || "数据出错,请重试");
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    } else {
-      message.warning(errMsg || "系统繁忙,请稍后再试");
-    }
-  };
   const onFinishFailed = (error) => {
     console.log(error);
   };
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
   }, []);
-  useEffect(() => {
+/*   useEffect(() => {
     document.title = "NIS6000 正泰综合能源服务平台";
-  }, []);
-  useEffect(() => {
+  }, []); */
+/*   useEffect(() => {
     dispatch(systemConfig(hostname));
-  }, [hostname]);
+  }, [hostname]); */
 
   const [userform] = Form.useForm();
 

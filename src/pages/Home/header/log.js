@@ -12,7 +12,7 @@ import {Login} from '@api/api'
 import { constant } from "lodash";
 const Cdiv = styled.div`
   display: flex;
-  height: 64px;
+  height: 62px;
   overflow: hidden;
 `;
 const Ldiv = styled.div`

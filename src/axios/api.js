@@ -345,8 +345,12 @@ export class StorageAutoModeDesigner {
   static UpdateEnable = (projectId, areaId, planId, status) => server.get(`/Storage/StorageAutoModeDesigner/UpdateEnable?projectId=${projectId}&areaId=${areaId}&planId=${planId}&status=${status}`);
   
 }
+// 储能管理设置--储能柜管理
 
-//
+export class StorageContainerDesigner {
+  static GetContainers = ({projectId, areaId=0, siteId=0, pageNum, pageSize}={}) => server.get(`/Storage/StorageContainerDesigner/GetContainers?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&pageNum=${pageNum}&pageSize=${pageSize}`);
+}
+ 
 // zl api end
 // 主页
 export class Home {
