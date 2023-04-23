@@ -302,10 +302,10 @@ const Loglist = () => {
   return (
     <List>
       <div className="chtitle">
-        <p className="text">{configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
+        <p className="text">{configInfo?.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
         <p className="block"></p>
       </div>
-      <p className="entitle">{configInfo.englishTitle}</p>
+      <p className="entitle">{configInfo?.englishTitle}</p>
       <div className="itemlist">
         {items.map((i, index) => (
           <div className="item" key={index}>
