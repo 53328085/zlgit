@@ -222,10 +222,10 @@ export default function Index(props) {
   const changeTab = val => {
     setisCard(val.target.value == 'card' ? true : false)
    // setPageNum(1)
-    setParams({ 
-      ...initparams
-    })
-  //  getOverviewData()
+    // setParams({ 
+    //   ...initparams
+    // })
+    //getOverviewData()
   }//切换卡片列表模式
 
   const exportExecel = () => {
