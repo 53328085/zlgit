@@ -345,8 +345,12 @@ export class StorageAutoModeDesigner {
   static UpdateEnable = (projectId, areaId, planId, status) => server.get(`/Storage/StorageAutoModeDesigner/UpdateEnable?projectId=${projectId}&areaId=${areaId}&planId=${planId}&status=${status}`);
   
 }
+// 储能管理设置--储能柜管理
 
-//
+export class StorageContainerDesigner {
+  static GetContainers = ({projectId, areaId=0, siteId=0, pageNum, pageSize}={}) => server.get(`/Storage/StorageContainerDesigner/GetContainers?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&pageNum=${pageNum}&pageSize=${pageSize}`);
+}
+ 
 // zl api end
 // 主页
 export class Home {
@@ -1578,7 +1582,7 @@ export class EnergyPublicRuntime {
 }
 //储能概述
 export class SiteSummaryRuntime {
-  static querySiteInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QuerySiteInfo?projectId=${projectId}&areaId=${areaId}`)
+  static querySiteInfo = (projectId, areaId, siteId) => server.get(`Storage/SiteSummaryRuntime/QuerySiteInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
   static queryStorageIncome = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageIncome?projectId=${projectId}&areaId=${areaId}`)
   static queryStorageWarning = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryStorageWarning?projectId=${projectId}&areaId=${areaId}`)
   static queryTopologyDiagramInfo = (projectId, areaId) => server.get(`Storage/SiteSummaryRuntime/QueryTopologyDiagramInfo?projectId=${projectId}&areaId=${areaId}`)

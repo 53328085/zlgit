@@ -1,15 +1,7 @@
 import axios from 'axios'
 import { message } from 'antd'
 import store from '../redux/store'
-//const token = store.getState().user.token
-//console.log(token)
-import { useNavigate } from "react-router-dom"
 
-const login = () => {  
-   let navigatge = useNavigate()
-   navigatge('/')
-   return null
-}
 const server = axios.create({
     baseURL: process.env.NODE_ENV === "production" ? '/V1' :  '/api/V1',
     timeout: 50000,
@@ -46,7 +38,8 @@ server.interceptors.response.use(
         if (state == 401)  {
           return  message.warning({          
             content: '登录状态发生改变,请重新登录',
-            onClose: () => window.location.href="/"
+            onClose: () => window.location.href="/",
+            duration: 0.5,
            
         })
         }

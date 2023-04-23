@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
-import UseTransfer from '@com/useTransfer'
+import UseTransfer from './transfer'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
+import { useReactive } from 'ahooks'
 
 export default function Index(props) {
   const [form] = Form.useForm()
@@ -30,19 +31,19 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
-  
+
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
-  useEffect(()=>{
-    if(areaList.length == 0|| !areaList){
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
-    }else{
+    } else {
       form.setFieldValue('areaId', areaList[0].id)
       querySite()
     }
-  },[])
+  }, [])
   const changeArea = val => {
     areaList.map(item => {
-      if(item.id == val){
+      if (item.id == val) {
         setSelectAreaName(item.name)
       }
     })
@@ -53,19 +54,19 @@ export default function Index(props) {
   const [siteList, setSiteList] = useState([])
   const querySite = () => {
     FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
           form.setFieldValue('alike', '')
           getFromHeader()
-        }else{
+        } else {
           setSiteList([])
           form.setFieldValue('siteId', '')
           form.setFieldValue('alike', '')
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -77,23 +78,23 @@ export default function Index(props) {
   const getFromHeader = () => {
     let params = form.getFieldsValue(true)
     QueryConfigInfo(projectId, params.areaId, params.siteId, params.alike).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           let arr = [...res.data]
           arr.map(item => {
             item.areaName = selectAreaName
           })
           setTableData(arr)
-        }else{
+        } else {
           setTableData([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
 
-  const onSearch = val => { 
+  const onSearch = val => {
     getFromHeader()
   }
   const columns = [
@@ -146,7 +147,7 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span>
+          {/* <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span> */}
           <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
         </Space>
       ),
@@ -174,8 +175,9 @@ export default function Index(props) {
   };
 
   const transferTitle = {
-    mainTitle: '',
-    subTitle: '储能电表',
+    mainTitle: '储能总表',
+    loadTitle: '负载总表',
+    gridTitle: '并网总表',
     unknownTitle: '未选中的设备'
   }
 
@@ -183,23 +185,38 @@ export default function Index(props) {
   const [transTag, setTransTag] = useState('')
   const settingClick = () => {
     GetDeviceInfo(projectId, form.getFieldValue('siteId'), '').then(res => {
-      if(res.success){
-        if(res.data){
-          setSubTable(res.data.configed)
+      if (res.success) {
+        if (res.data) {
+          // setSubTable(res.data.configed)
           setUnknownTable(res.data.noConfiged)
-        }else{
-          setSubTable([])
+        } else {
+          // setSubTable([])
           setUnknownTable([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
+      }
+    })
+    tableData.map(item => {
+      
+      if(item.type == 1){
+        state.mainTable = [item]
+      }
+      if(item.type == 2){
+        state.loadTable = [item]
+      }
+      if(item.type == 3){
+        state.gridTable = [item]
       }
     })
     setTransTag('open');
   }
 
-  const mainTable = []
-  const [subTable, setSubTable] = useState([])
+  const state = useReactive({
+    mainTable: [],
+    loadTable: [],
+    gridTable: [],
+  })
   const [unknownTable, setUnknownTable] = useState([])
   const transferColumns = [
     {
@@ -222,17 +239,30 @@ export default function Index(props) {
 
   const getSaveValue = params => {
     let group = []
-    if (params.subData.length > 0) {
-      params.subData.map(item => {
-        group.push(item.sn)
+    if (params.mainData.length > 0) {
+      group.push({
+        sn: params.mainData[0].sn,
+        type:1
       })
     }
-    Config(projectId, form.getFieldValue('siteId'),group).then(res => {
-      if(res.success){
+    if (params.loadData.length > 0) {
+      group.push({
+        sn: params.loadData[0].sn,
+        type:2
+      })
+    }
+    if (params.gridData.length > 0) {
+      group.push({
+        sn: params.gridData[0].sn,
+        type:3
+      })
+    }
+    Config(projectId, form.getFieldValue('siteId'), group).then(res => {
+      if (res.success) {
         message.success('新增设备成功!')
         setTransTag('close')
         getFromHeader()
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -250,10 +280,10 @@ export default function Index(props) {
   }
   const onDelete = () => {
     Delete(projectId, selectSn).then(res => {
-      if(res.success){
+      if (res.success) {
         message.success('电表删除成功!')
         getFromHeader()
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -284,24 +314,24 @@ export default function Index(props) {
   const onUpload = () => {
     let formData = new FormData()
     formData.append('projectId', projectId)
-    formData.append('file',fileList[0])
+    formData.append('file', fileList[0])
     BatchConfig(formData).then(res => {
-        if(res.success){
-            let {success, data} = res.data
-            if(success){
-                message.success('批量导入成功!')
-                setAddModal(false)
-                getFromHeader()
-            }else{
-                message.error(res.data.errMsg)
-                setErrorData(data);
-                setAddModal(false)
-                errRef.current.onOpen()
-            }
-        }else{
-          message.error(res.errMsg)
-            setAddModal(false)
+      if (res.success) {
+        let { success, data } = res.data
+        if (success) {
+          message.success('批量导入成功!')
+          setAddModal(false)
+          getFromHeader()
+        } else {
+          message.error(res.data.errMsg)
+          setErrorData(data);
+          setAddModal(false)
+          errRef.current.onOpen()
         }
+      } else {
+        message.error(res.errMsg)
+        setAddModal(false)
+      }
     })
   }
   const [errorData, setErrorData] = useState();
@@ -334,11 +364,11 @@ export default function Index(props) {
       {transTag == 'open' ? <div className={style.mask}></div> : null}
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
             <Select
               placeholder="请选择"
               size="middle"
-              style={{marginLeft: 16, width: '200px'}}
+              style={{ marginLeft: 16, width: '200px' }}
               onChange={changeArea}
             >
               {areaList.map(item => {
@@ -374,9 +404,17 @@ export default function Index(props) {
         </Space>
       </div>
       <Divider />
-      <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 }:null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
+      <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 } : null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
       <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} >
-        <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
+        <UseTransfer
+          transferTitle={transferTitle}
+          saveValue={getSaveValue}
+          columns={transferColumns}
+          mainTable={state.mainTable}
+          loadTable={state.loadTable}
+          gridTable={state.gridTable}
+          unknownTable={unknownTable}
+          closeValue={getCloseValue}></UseTransfer>
       </div>
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -404,29 +442,29 @@ export default function Index(props) {
         </div>
       </Custmodl>
       <Custmodl title='设置倍率' ref={editRef} mold="cust" width={512} onOk={() => saveEdit()}>
-        <div style={{ display: "flex", alignItems: "center"}}>
-          <Form form={multiForm} colon={false} labelCol={{span:5}} labelAlign='left'>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Form form={multiForm} colon={false} labelCol={{ span: 5 }} labelAlign='left'>
             <Item name='deviceType' label='设备类型'>
-              <Input style={{width:320}} disabled></Input>
+              <Input style={{ width: 320 }} disabled></Input>
             </Item>
             <Item name='deviceCategory' label='设备型号'>
-              <Input style={{width:320}} disabled></Input>
+              <Input style={{ width: 320 }} disabled></Input>
             </Item>
             <Item name='deviceNumber' label='设备编号'>
-              <Input style={{width:320}} disabled></Input>
+              <Input style={{ width: 320 }} disabled></Input>
             </Item>
             <Item name='deviceName' label='设备名称'>
-              <Input style={{width:320}} disabled></Input>
+              <Input style={{ width: 320 }} disabled></Input>
             </Item>
             <Item name='multi' label='倍率'>
-              <Input style={{width:320}}></Input>
+              <Input style={{ width: 320 }}></Input>
             </Item>
-            <div style={{marginLeft: 84, color:'#f00',fontSize: 12}}>
-              <span>倍率=PT*CT!</span><br/>
+            <div style={{ marginLeft: 84, color: '#f00', fontSize: 12 }}>
+              <span>倍率=PT*CT!</span><br />
               <span>修改倍率会影响结算金额，请保持平台设置和现场环境一致!</span>
             </div>
           </Form>
-          
+
         </div>
       </Custmodl>
     </div>

@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
-import {Alert, Space, Typography, Button} from 'antd'
-let {Text} = Typography
+import {Button, Empty, Typography, Space} from 'antd'
+ 
+ import imgurl from '@imgs';
+ const {Link, Text, Paragraph} = Typography
+ const style = {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+ }
 export default class ErrorBoundary extends Component {
  constructor(props) {
     super(props);
@@ -19,7 +28,11 @@ export default class ErrorBoundary extends Component {
   
   render() {
     if (this.state.hasError) {    
-      return <Alert message="Error" type="error" description='页面加载失败'> </Alert>;
+      return <Empty image={imgurl.error}
+         imageStyle={{width: '200px', height: '180px'}}
+         style={style}
+         description={<Paragraph><Text strong type="warning">抱歉！页面出错点击</Text><Link  onClick={() => window.location.reload(true)}>刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
+      /> ;
     }
 
     return this.props.children;

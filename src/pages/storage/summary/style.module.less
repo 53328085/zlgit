@@ -46,26 +46,25 @@
             border: 1px solid rgb(215, 215, 215);
             border-radius: 4px;
             .information{
-                margin-top: 26px;
+                margin-top: 16px;
                 display: flex;
                 align-items: center;
                 .siteImg{
-                    width: 136px;
-                    height: 128px;
+                    width: 208px;
+                    height: 156px;
                 }
                 .siteData{
                     margin-left: 19px;
                     font-size: 14px;
                     div{
-                        height: 32px;
-                        line-height: 32px;
+                        margin-bottom: 12px;
+                        line-height: 20px;
                     }
                     .siteTitle{
                         color: #666;
                     }
                     .siteValue{
                         color: #000;
-                        margin-left: 16px;
                     }
 
                 }
@@ -130,8 +129,8 @@
                     justify-content: space-between;
                     flex-direction: column;
                     position: absolute;
-                    left: 255px;
-                    top: 273px;
+                    left: 235px;
+                    top: 270px;
                     padding: 6px 12px;
                     width: 164px;
                     height: 72px;
@@ -168,23 +167,35 @@
                     justify-content: space-between;
                     flex-direction: column;
                     position: absolute;
-                    left: 255px;
-                    top: 400px;
-                    padding: 6px 12px;
+                    right: 130px;
+                    top: 130px;
+                    padding: 4px 12px;
                     width: 164px;
-                    height: 64px;
+                    height: 80px;
                     border: 1px solid #41A4B9;
                     background-color: #003;
-                    .transItem{
-                        width: 100%;
+                    .meterData{
                         display: flex;
                         align-items: center;
-                        font-size: 14px;
-                        color: #fff;
-                        .transImg{
-                            width: 12px;
-                            height: 12px;
-                            margin-right: 12px;
+                        span{
+                            display: inline-block;
+                            text-align: right;
+                            height: 20px;
+                            line-height: 20px;
+                            font-size: 12px;
+                            color: #fff;
+                        }
+                        .dataName{
+                            width: 38px;
+                            text-align: left;
+                        }
+                        .dataValue{
+                            width: 67px;
+                            font-size: 14px;
+                        }
+                        .dataUnit{
+                            width: 32px;
+                            color: #c9c9c9;
                         }
                     }
                 }
@@ -194,8 +205,8 @@
                     justify-content: space-between;
                     flex-direction: column;
                     position: absolute;
-                    left: 255px;
-                    top: 577px;
+                    right: 18px;
+                    top: 270px;
                     padding: 4px 12px;
                     width: 164px;
                     height: 80px;
@@ -335,7 +346,7 @@
 
     .warningDetails {
         margin: 16px;
-        height: 133px;
+        max-height: 465px;
         overflow-y: auto;
 
         .warningItem {
@@ -345,7 +356,7 @@
             .leftImg {
                 margin-top: 4px;
                 margin-right: 16px;
-                width: 16px;
+                width: 24px;
                 height: 16px;
                 border: 1px solid #f00;
                 border-radius: 50%;

@@ -1,22 +1,23 @@
-import React,{Fragment, useState, useEffect}from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
 import { message, Form, Select } from 'antd'
 import { range } from 'lodash'
 import BarChart from './barChart'
+import LineChart from './lineChart'
 import imgurl from './imgs'
 import warningPoint from '@imgs/warningPoint.png'
 
 export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
-  const { querySiteInfo, 
-    queryStorageIncome, 
-    queryStorageWarning, 
-    queryTopologyDiagramInfo, 
+  const { querySiteInfo,
+    queryStorageIncome,
+    queryStorageWarning,
+    queryTopologyDiagramInfo,
     queryRealtimeData } = SiteSummaryRuntime
   const { FindSiteList } = SiteManagerDesigner
 
@@ -28,17 +29,17 @@ export default function Index() {
   const [siteList, setSiteList] = useState([])
   const querySite = () => {
     FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
           getFromHeader()
-        }else{
+        } else {
           setSiteList([])
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
           return;
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -53,92 +54,92 @@ export default function Index() {
   const [realData, setRealData] = useState({})//实时状态
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
-    lineInfo:{},
-    solarPointBaseInfo:{},
+    lineInfo: {},
+    solarPointBaseInfo: {},
   }) //接线图数据
-  useEffect(()=>{
-    if(areaList.length == 0|| !areaList){
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
-    }else{
+    } else {
       form.setFieldValue('areaId', areaList[0].id)
       querySite()
     }
-  },[])
+  }, [])
   const changeArea = val => {
     form.setFieldValue('siteId', null)
     querySite()
   }
   const getFromHeader = () => {
-    querySiteInfo(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
+    querySiteInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+      if (res.success) {
         setCardData(res.data)
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
 
     queryStorageIncome(projectId, form.getFieldValue('areaId')).then(res => {
-      let {success, data} = res
-      if(success) {
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setBarData(data)
-        }else{
+        } else {
           setBarData({})
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
 
     queryStorageWarning(projectId, form.getFieldValue('areaId')).then(res => {
-      let {success, data} = res
-      if(success) {
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setWarningData(data)
-        }else{
+        } else {
           setWarningData([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
 
     queryTopologyDiagramInfo(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data){
+      if (res.success) {
+        if (res.data) {
           setTopologyData(res.data)
-        }else{
+        } else {
           setTopologyData({})
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
 
     queryRealtimeData(projectId, form.getFieldValue('areaId')).then(res => {
-      let {success, data} = res
-      if(success) {
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setRealData(data)
-        }else{
+        } else {
           setRealData({
-            lineInfo:{},
-            solarPointBaseInfo:{},
+            lineInfo: {},
+            solarPointBaseInfo: {},
           })
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
   const CardItem = props => {
-    return <div className={style.leftCard} style={{ height: props.height }} >
+    return <div className={style.leftCard} style={{ height: props.height, position:'relative' }} >
       <div className={style.cardTitle}>{props.title}</div>
       {props.children}
     </div>
   }
   const Tips = props => {
-    return <div className={style.tips} style={{ backgroundColor:props.bgcolor, width: props.width || 240 }}>
+    return <div className={style.tips} style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
       <img src={props.imgUrl} className={style.tipImg}></img>
       <div className={style.tipsData} style={{ marginLeft: props.width ? 42 : 22 }}>
         <div className={style.tipTitle}>{props.title}</div>
@@ -147,40 +148,40 @@ export default function Index() {
     </div>
   }
   const RightItem = props => {
-    return <div className={style.rightCard} style={{height: props.height}}>
+    return <div className={style.rightCard} style={{ height: props.height }}>
       <div className={style.cardTitle}>{props.title}</div>
       {props.children}
     </div>
   }
   const CustomProgress = props => {
-    let {dischargeData, chargeData} = props
-    let total = parseFloat(dischargeData)  + parseFloat(chargeData) 
-    let dischargeCount = parseFloat(dischargeData) == 0 ? 0 : parseInt(((parseFloat(dischargeData) * 100 ) / total) / (100 / 65)) + 1
-    let chargeCount = parseFloat(chargeData) == 0 ? 0 : parseInt(((parseFloat(chargeData) * 100 ) / total) / (100 / 65)) + 1
+    let { dischargeData, chargeData } = props
+    let total = parseFloat(dischargeData) + parseFloat(chargeData)
+    let dischargeCount = parseFloat(dischargeData) == 0 ? 0 : parseInt(((parseFloat(dischargeData) * 100) / total) / (100 / 65)) + 1
+    let chargeCount = parseFloat(chargeData) == 0 ? 0 : parseInt(((parseFloat(chargeData) * 100) / total) / (100 / 65)) + 1
     let chargelist = range(chargeCount)
     let dischargeList = range(dischargeCount)
     const progressStyle = {
-        width: 328,
-        height: 36, 
-        backgroundColor:'#fff', 
-        display:'flex',
-        alignItems:'center',
-        overFlow:'hidden',
-        paddingLeft: 1,
-        border:'1px solid #d7d7d7'
+      width: 328,
+      height: 36,
+      backgroundColor: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      overFlow: 'hidden',
+      paddingLeft: 1,
+      border: '1px solid #d7d7d7'
     }
     return <div style={progressStyle}>
-        {dischargeList.map(item => {
-            return <div style={{width: 4, height: 32, backgroundColor:"#4370ff", marginRight: 1}} key={item}></div>
-        })}
-        {chargelist.map(item => {
-            return <div style={{width: 4, height: 32, backgroundColor:"#f93", marginRight: 1}} key={item}></div>
-        })}
+      {dischargeList.map(item => {
+        return <div style={{ width: 4, height: 32, backgroundColor: "#4370ff", marginRight: 1 }} key={item}></div>
+      })}
+      {chargelist.map(item => {
+        return <div style={{ width: 4, height: 32, backgroundColor: "#f93", marginRight: 1 }} key={item}></div>
+      })}
     </div>
-}
+  }
   const StateCard = props => {
     const customStyle = props.styles ? props.styles : null
-    return <div className={style.stateCard} style={{width:props.width}}>
+    return <div className={style.stateCard} style={{ width: props.width }}>
       <div className={style.stateTitle} style={customStyle}>{props.title}</div>
       <div className={style.stateValue}>{props.value}</div>
     </div>
@@ -194,7 +195,7 @@ export default function Index() {
         <div className={style.warningtop}>
           <span className={style.time}>{props.data.warningTime}</span>
           <span className={style.description}>{props.data.content}</span>
-          <span className={style.level} style={{fontSize: 12, color:'#6b6b6b'}}>{props.data.level}</span>
+          <span className={style.level} style={{ fontSize: 12, color: '#6b6b6b' }}>{props.data.level}</span>
         </div>
         <div className={style.warningbottom}>
           <span className={style.sn}>{props.data.sn}</span>
@@ -202,9 +203,9 @@ export default function Index() {
       </div>
     </div>
   }
-  const toPage = (key ,label) => {
-    navigate(`/index/runtimeStorage/${key}`,{
-      state: { type: 'index', primary: 'runtimeStorage', title: label,  nested: key  } 
+  const toPage = (key, label) => {
+    navigate(`/index/runtimeStorage/${key}`, {
+      state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
     })
   }
 
@@ -212,11 +213,11 @@ export default function Index() {
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
             <Select
               placeholder="请选择"
               size="middle"
-              style={{marginLeft: 16, width: '200px'}}
+              style={{ marginLeft: 16, width: '200px' }}
               onChange={changeArea}
             >
               {areaList.map(item => {
@@ -225,11 +226,11 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='siteId' label='' style={{marginLeft:16}}>
+          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
             <Select
               placeholder="请选择站点"
               size="middle"
-              style={{marginLeft: 16, width: '200px'}}
+              style={{ marginLeft: 16, width: '200px' }}
               onChange={changeSite}
             >
               {siteList.map(item => {
@@ -241,59 +242,41 @@ export default function Index() {
       </div>
       <div className={style.content}>
         <div className={style.left}>
-          <CardItem title='站点信息' height='226px'>
+          <CardItem title='站点信息' height='236px'>
             <div className={style.information}>
               <img src={imgurl.zhandian} className={style.siteImg}></img>
               <div className={style.siteData}>
-                <div>
-                  <span className={style.siteTitle}>设备类型</span>
-                  <span className={style.siteValue}>{ cardData?.meterType }</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span className={style.siteTitle}>站点容量</span>
+                  <span className={style.siteValue}>{cardData?.storageCapacity} &nbsp;kVA</span>
                 </div>
-                <div>
-                  <span className={style.siteTitle}>运行功率</span>
-                  <span className={style.siteValue}> { cardData?.runtimeP }&nbsp;kW</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span className={style.siteTitle}>实时充电功率</span>
+                  <span className={style.siteValue}> {cardData?.runtimeP}&nbsp;kW</span>
                 </div>
-                <div>
-                  <span className={style.siteTitle}>储能容量</span>
-                  <span className={style.siteValue}>{ cardData?.storageCapacity } &nbsp;kWh</span>
-                </div>
-                <div>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span className={style.siteTitle}>投运时间</span>
                   <span className={style.siteValue}>{cardData?.useDate}</span>
                 </div>
               </div>
             </div>
           </CardItem>
-          <CardItem title='实时状态' height='558px'>
+          {/* <CardItem title='充放电统计' height='136px'>
             <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'系统状态'} value={realData?.status} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
-              <StateCard width={'156px'} title={'运行状态'} value={realData?.runtimeStatus} styles={{backgroundColor:'#237ae4', color:'#fff'}}></StateCard>
+              <StateCard width={'156px'} title={'储能总充电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
+              <StateCard width={'156px'} title={'储能总放电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
             </div>
-            <div className={style.division} style={{marginTop:0}}></div>
-            <CustomProgress dischargeData={realData?.canChargingCapacity} chargeData={realData?.canDisChargingCapacity}></CustomProgress>
-            <div className={style.systemData}>
-              <div className={style.leftItem}>
-                <span className={style.diamond} style={{backgroundColor:'#4370ff'}}></span>
-                <span>{'可放电量: '+ realData?.canChargingCapacity + ' kWh'}</span>
-              </div>
-              <div className={style.leftItem}>
-                <span className={style.diamond} style={{backgroundColor:'#f93'}}></span>
-                <span>{'可充电量: '+ realData?.canDisChargingCapacity + ' kWh'}</span>
-              </div>
-            </div>
-            <div className={style.division}></div>
-            <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'储能效率 (%)'} value={realData?.storageEfficiency} ></StateCard>
-              <StateCard width={'156px'} title={'SOC (%)'} value={realData?.soc}></StateCard>
-              <StateCard width={'156px'} title={'放电功率 (kW)'} value={realData?.disChargingP} ></StateCard>
-              <StateCard width={'156px'} title={'充电功率 (kWh)'} value={realData?.chargingP}></StateCard>
-            </div>
-            <div className={style.division} style={{marginTop:0}}></div>
-            <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'交流总有功功率 (kW)'} value={realData?.totalP} ></StateCard>
-              <StateCard width={'156px'} title={'交流总无功功率 (kW)'} value={realData?.totalQ}></StateCard>
-              <StateCard width={'156px'} title={'防逆流总功率 (kW)'} value={realData?.antiRefluxP} ></StateCard>
-              <StateCard width={'156px'} title={'防逆流总电量 (kWh)'} value={realData?.antiRefluxE}></StateCard>
+          </CardItem> */}
+          <CardItem title='最新告警' height='548px'>
+            <span className={style.toWarning} onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</span>
+            <div className={style.warningDetails}>
+              {warningData.map((item, index) => {
+                return <Fragment key={index}>
+                  <WarningCard data={item} ></WarningCard>
+                  {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
+                </Fragment>
+              })}
             </div>
           </CardItem>
         </div>
@@ -308,70 +291,69 @@ export default function Index() {
           <div className={style.bottom}>
             <div className={style.topology}>
               <img src={imgurl.zhanwei} className={style.zhanwei}></img>
-              {/* 储能电表 */}
+              {/* 储能总表 */}
               <div className={style.storageMeter}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.v }</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.v}</span>
                   <span className={style.dataUnit}>(V)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.i }</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.i}</span>
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.p }</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
-              {/*交流器*/}
+              {/*并网总表器*/}
               <div className={style.transformer}>
-                <div className={style.transItem}>
-                  <img src={imgurl.error} className={style.transImg}></img>
-                  <span>{ topologyData?.pcsType }</span>
-                </div>
-                <div className={style.transItem}>
-                  <img src={imgurl.normal} className={style.transImg}></img>
-                  <span>{ topologyData?.status + ' . . .' }</span>
-                </div>
-              </div>
-              {/*电池簇*/}
-              <div className={style.batterys}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v }</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v}</span>
                   <span className={style.dataUnit}>(V)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i }</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i}</span>
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
-                  <span className={style.dataName}>SOC:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.soc }</span>
-                  <span className={style.dataUnit}>(%)</span>
+                  <span className={style.dataName}>功率:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataUnit}>(kW)</span>
+                </div>
+              </div>
+              {/*负载总表*/}
+              <div className={style.batterys}>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电压:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v}</span>
+                  <span className={style.dataUnit}>(V)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>电流:</span>
+                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i}</span>
+                  <span className={style.dataUnit}>(A)</span>
+                </div>
+                <div className={style.meterData}>
+                  <span className={style.dataName}>功率:</span>
+                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
               <div className={style.transPlaceholder} onClick={() => toPage('PCSMonitor', 'PCS监控')}></div>
               <div className={style.batteryPlaceholder} onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
             <div className={style.otherDatas}>
-              <RightItem title='能耗收益统计' height={'473px'}>
+              <RightItem title='能耗收益统计' height={'340px'}>
                 <BarChart data={barData}></BarChart>
               </RightItem>
-              <RightItem title='最新告警' height={'207px'}>
-                <span className={style.toWarning} onClick={()=>toPage('alarmMessage', '告警信息')}>查看详情</span>
-                <div className={style.warningDetails}>
-                  {warningData.map((item, index) => {
-                    return <Fragment key={index}>
-                      <WarningCard data={item} ></WarningCard>
-                      {warningData.length > (index + 1) ? <div className={style.division} style={{margin:'10px 0'}}></div> : null }
-                    </Fragment>
-                  } )}
-                </div>
+              <RightItem title='储能充放电趋势' height={'340px'}>
+                <LineChart data={barData}></LineChart>
               </RightItem>
             </div>
           </div>

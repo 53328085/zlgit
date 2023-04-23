@@ -279,7 +279,7 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
-          <Item name='siteId' label='' style={{marginLeft:16}}>
+          <Item name='siteId' label='站点选择' style={{marginLeft:16}}>
             <Select
               placeholder="请选择站点"
               size="middle"
@@ -358,7 +358,7 @@ export default function Index() {
           </div>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>SOC</div>
-            <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
+            <SocChart lineData={socData} Unit='SOC(‰)' color={'#ff6701'}></SocChart>
           </div>
           <div className={style.tableList}>
             <Table size='small' bordered dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} />

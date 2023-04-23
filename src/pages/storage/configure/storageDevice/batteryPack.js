@@ -358,6 +358,22 @@ export default function Index(props) {
   const closeModal = () =>{
     setEditModal(false)
   }
+  const onApplication = async () => {
+    const values = await addForm.validateFields()
+    AddBatteryPack(projectId, values).then(res => {
+      let {success, data} = res
+      if(success){
+        message.success('新增电池组成功!')
+        if(pagination.current != 1){
+          tableOnchange({current: 1})
+        }else{
+          getFromHeader()
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
   const onAdd = async () => {
     const values = await addForm.validateFields()
     if(modalTitle == '新增电池组'){
@@ -578,7 +594,6 @@ export default function Index(props) {
                     placeholder="请选择电池簇"
                     size="middle"
                     style={{width: '200px'}}
-                    onChange={changeAddBatteryStack}
                     disabled={!addForm.getFieldValue('batteryStackId')? true: false}
                   >
                     {state.addClusterList.map(item => {
@@ -637,6 +652,7 @@ export default function Index(props) {
           <div style={{display:'flex', justifyContent:'flex-end',marginTop:32}}>
             <Button style={{width: 96, marginLeft:'auto', marginRight: 0}} onClick={()=>closeModal()}>取消</Button>
             <Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onAdd()}>确认</Button>
+            { modalTitle == '新增电池组' ?<Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onApplication()}>应用</Button> : null }
           </div>
         </div>
       </Modal>

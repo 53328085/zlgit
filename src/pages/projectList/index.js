@@ -36,7 +36,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -267,9 +267,11 @@ const Opbox = styled.div`
 `
 const { RangePicker } = DatePicker
 export default function Index() {
+ 
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+   
   const [form] = Form.useForm();
 
   const [proform] =  Form.useForm()
@@ -613,9 +615,7 @@ tableProps.pagination.position = ["bottomCenter"] // 底部居中
 tableProps.pagination.size="default" // 页码大小默认
   const { submit } = search;
 
-  const { chineseTitle, englishTitle, systemLogoImage } = useSelector(
-    (state) => state.system
-  );
+  const { chineseTitle, englishTitle, systemLogoImage } = useSelector(systemConfigInfo);
   const { name } = useSelector((state) => state.user);
   
   // 操作记录 start
@@ -776,7 +776,7 @@ const closeModl = () => {
             <div className="name">
               <p className="ch">{chineseTitle || "正泰智慧能源服务平台"}</p>
               <p className="en">
-                {englishTitle || "Chint Smart Energy Service Platform"}
+                {englishTitle || "Integrated Energy Service Platform"}
               </p>
             </div>
           </Space>

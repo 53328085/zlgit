@@ -107,9 +107,9 @@ export default function Index(props) {
     return <div className={style.customBattery}>
       <div className={style.batteryTop}></div>
       <div className={style.batteryBody}>
-        <div className={style.progress} style={{ height: props.value, backgroundColor: props.color}}></div>
+        <div className={style.progress} style={{ height: (props.value / 10) + '%', backgroundColor: props.color}}></div>
         <span>{props.name}</span>
-        <span>{props.value}</span>
+        <span>{props.value + '‰'}</span>
       </div>
     </div>
   }
@@ -173,9 +173,9 @@ export default function Index(props) {
     querySOCTrends(projectId, stackId).then(res => {
       if(res.success){
         if(res.data){
-          config( socRef.current, '#1ba41b','SOC (%)', res.data)
+          config( socRef.current, '#1ba41b','SOC (‰)', res.data)
         }else{
-          config( socRef.current, '#1ba41b','SOC (%)', {x:[],y:[]})
+          config( socRef.current, '#1ba41b','SOC (‰)', {x:[],y:[]})
         }
       }else{
         message.error(res.errMsg)
@@ -263,7 +263,7 @@ export default function Index(props) {
       <div className={style.bmsContent}>
         <div className={style.left}>
           <div className={style.leftCard}>
-            <div className={style.cardTitle}>SOC (%)</div>
+            <div className={style.cardTitle}>SOC (‰)</div>
             <div className={style.cardChart} id='totalSOC' ref={socRef}></div>
           </div>
           <div className={style.leftCard}>
@@ -280,10 +280,10 @@ export default function Index(props) {
           <img src={topology} className={style.zhanwei}></img>
           <div className={style.middletitle}>电池堆状态</div>
           <div style={{position:'absolute', left: 255, top: 91}}>
-            <CustomBattery name={'SOC'} value={ bmsInfo.soc ? bmsInfo.soc  + '%' :'0.00%' } color="#0c6"></CustomBattery>
+            <CustomBattery name={'SOC'} value={ bmsInfo.soc ? bmsInfo.soc  + '' :'0.00' } color="#0c6"></CustomBattery>
           </div> 
           <div style={{position:'absolute', left: 311, top: 91}}>
-            <CustomBattery name={'SOH'} value={bmsInfo.soh ? bmsInfo.soh  + '%' :'0.00%'} color="#06c"></CustomBattery>
+            <CustomBattery name={'SOH'} value={bmsInfo.soh ? bmsInfo.soh  + '' :'0.00'} color="#06c"></CustomBattery>
           </div>
           <div className={style.deviceImg}>
             <div className={style.deviceName}>{bmsInfo.batteryStackName}</div>
