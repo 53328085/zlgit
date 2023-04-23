@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
@@ -28,22 +28,25 @@ export default function Index(props) {
     DeleteEquipment,
     QueryCategoryUsed } = StorageEquipmentDesigner
 
-  const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
+    const dispatch = useDispatch()
+    const projectId = useSelector(selectProjectId)
+    const areaList = useSelector(selectOneLevel)
+    const areaName = useSelector(levelDefaultLabel) || '园区'
+    const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
   useEffect(()=>{
     if(areaList.length == 0|| !areaList){
       message.error('当前项目尚未创建园区!')
     }else{
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   },[])
   const changeArea = val => {
     areaList.map(item => {
       if(item.id == val){
+        dispatch(setCurrentlevel(item))
         setSelectAreaName(item.name)
       }
     })
@@ -411,8 +414,6 @@ export default function Index(props) {
     })
     setModalTitle('编辑电池堆')
     setEditModal(true)
-  }
-  const saveEdit = () => {
   }
 
   return (

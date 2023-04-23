@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
 import { message, Form, Select } from 'antd'
 import { range } from 'lodash'
@@ -21,9 +21,11 @@ export default function Index() {
     queryRealtimeData } = SiteSummaryRuntime
   const { FindSiteList } = SiteManagerDesigner
 
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
 
   //siteList
   const [siteList, setSiteList] = useState([])
@@ -61,11 +63,16 @@ export default function Index() {
     if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
     } else {
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   }, [])
-  const changeArea = val => {
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
     form.setFieldValue('siteId', null)
     querySite()
   }

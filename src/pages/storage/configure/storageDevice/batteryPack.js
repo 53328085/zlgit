@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
@@ -30,22 +30,25 @@ export default function Index(props) {
     QueryCategoryUsed,
     QueryClusterList } = StorageEquipmentDesigner
 
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
-  
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
-  useEffect(()=>{
-    if(areaList.length == 0|| !areaList){
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
-    }else{
-      form.setFieldValue('areaId', areaList[0].id)
+    } else {
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
-  },[])
+  }, [])
   const changeArea = val => {
     areaList.map(item => {
-      if(item.id == val){
+      if (item.id == val) {
+        dispatch(setCurrentlevel(item))
         setSelectAreaName(item.name)
       }
     })
@@ -56,19 +59,19 @@ export default function Index(props) {
   const [siteList, setSiteList] = useState([])
   const querySite = () => {
     FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
           form.setFieldValue('alike', '')
           getFromHeader()
-        }else{
+        } else {
           setSiteList([])
           form.setFieldValue('siteId', '')
           form.setFieldValue('alike', '')
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -80,8 +83,8 @@ export default function Index(props) {
   const getFromHeader = () => {
     let params = form.getFieldsValue(true)
     QueryBatteryPackByPage(projectId, params.areaId, params.siteId, params.alike, pagination.current, pagination.pageSize).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           let arr = [...res.data]
           arr.map(item => {
             item.areaName = selectAreaName
@@ -91,20 +94,20 @@ export default function Index(props) {
             ...pagination,
             total: res.total,
           })
-        }else{
+        } else {
           setTableData([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
 
-  const onSearch = val => { 
-    if(pagination.current == 1){
+  const onSearch = val => {
+    if (pagination.current == 1) {
       getFromHeader()
-    }else{
-      tableOnchange({current:1})
+    } else {
+      tableOnchange({ current: 1 })
     }
   }
   const columns = [
@@ -171,10 +174,10 @@ export default function Index(props) {
       current,
     })
   }
-  useEffect(()=> {
-    if(!form.getFieldValue('siteId')) return;
+  useEffect(() => {
+    if (!form.getFieldValue('siteId')) return;
     getFromHeader()
-  },[pagination.current])
+  }, [pagination.current])
 
   const exportData = () => {
     tableRef.current.download()
@@ -189,14 +192,14 @@ export default function Index(props) {
   }
   const onDelete = () => {
     DeleteEquipment(projectId, selectId, 4).then(res => {
-      if(res.success){
+      if (res.success) {
         message.success('电池组删除成功!')
-        if(tableData.length == 1 && pagination.current > 1){
-          tableOnchange({current: pagination.current - 1})
-        }else{
+        if (tableData.length == 1 && pagination.current > 1) {
+          tableOnchange({ current: pagination.current - 1 })
+        } else {
           getFromHeader()
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -227,21 +230,21 @@ export default function Index(props) {
   const onUpload = () => {
     let formData = new FormData()
     formData.append('projectId', projectId)
-    formData.append('file',fileList[0])
+    formData.append('file', fileList[0])
     BatchImportBatteryPack(formData).then(res => {
-      if(res.success){
-        let {success, data} = res.data
-        if(success){
+      if (res.success) {
+        let { success, data } = res.data
+        if (success) {
           message.success('批量导入成功!')
           setAddModal(false)
           getFromHeader()
-        }else{
+        } else {
           message.error(res.data.errMsg)
           setErrorData(data);
           setAddModal(false)
           errRef.current.onOpen()
         }
-      }else{
+      } else {
         message.error(res.errMsg)
         setAddModal(false)
       }
@@ -266,19 +269,19 @@ export default function Index(props) {
 
   //新增
   const [categoryList, setCategoryList] = useState([])
-  useEffect(()=> {
+  useEffect(() => {
     QueryCategoryUsed(projectId, 4).then(res => {
-      if(res.success){
-        if(res.data && res.data.length > 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setCategoryList(res.data)
-        }else{
+        } else {
           setCategoryList([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
-  },[])
+  }, [])
   const [editModal, setEditModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('新增电池组')
   const addData = () => {
@@ -292,35 +295,35 @@ export default function Index(props) {
     addForm.setFieldValue('pcsId', null)
     addForm.setFieldValue('batteryStackId', null)
     FindSiteList(projectId, addForm.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setAddSiteList(res.data)
-        }else{
+        } else {
           setAddSiteList([])
           addForm.setFieldValue('siteId', '')
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
   const state = useReactive({
-    addPcsList:[],
-    addStackList:[],
-    addClusterList:[]
+    addPcsList: [],
+    addStackList: [],
+    addClusterList: []
   })
   const changeAddSite = val => {
     addForm.setFieldValue('pcsId', null)
     addForm.setFieldValue('batteryStackId', null)
     queryPCSList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addPcsList = res.data
-        }else{
+        } else {
           state.addPcsList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -329,13 +332,13 @@ export default function Index(props) {
   const changeAddPcs = val => {
     addForm.setFieldValue('batteryStackId', null)
     QueryBatteryStackList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), val).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addStackList = res.data
-        }else{
+        } else {
           state.addStackList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -343,65 +346,65 @@ export default function Index(props) {
 
   const changeAddBatteryStack = val => {
     QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), val).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addClusterList = res.data
-        }else{
+        } else {
           state.addClusterList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
 
-  const closeModal = () =>{
+  const closeModal = () => {
     setEditModal(false)
   }
   const onApplication = async () => {
     const values = await addForm.validateFields()
     AddBatteryPack(projectId, values).then(res => {
-      let {success, data} = res
-      if(success){
+      let { success, data } = res
+      if (success) {
         message.success('新增电池组成功!')
-        if(pagination.current != 1){
-          tableOnchange({current: 1})
-        }else{
+        if (pagination.current != 1) {
+          tableOnchange({ current: 1 })
+        } else {
           getFromHeader()
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
   }
   const onAdd = async () => {
     const values = await addForm.validateFields()
-    if(modalTitle == '新增电池组'){
+    if (modalTitle == '新增电池组') {
       AddBatteryPack(projectId, values).then(res => {
-        let {success, data} = res
-        if(success){
+        let { success, data } = res
+        if (success) {
           message.success('新增电池组成功!')
           setEditModal(false)
-          if(pagination.current != 1){
-            tableOnchange({current: 1})
-          }else{
+          if (pagination.current != 1) {
+            tableOnchange({ current: 1 })
+          } else {
             getFromHeader()
           }
-        }else{
+        } else {
           message.error(res.errMsg)
         }
       })
     }
-    if(modalTitle == '编辑电池组'){
+    if (modalTitle == '编辑电池组') {
       let params = values
       params.id = selectId
       UpdateBatteryPack(projectId, params).then(res => {
-        let {success, data} = res
-        if(success){
+        let { success, data } = res
+        if (success) {
           message.success('修改电池组成功!')
           setEditModal(false)
           getFromHeader()
-        }else{
+        } else {
           message.error(res.errMsg)
         }
       })
@@ -412,48 +415,48 @@ export default function Index(props) {
     addForm.setFieldsValue(item)
     setSelectId(item.id)
     FindSiteList(projectId, addForm.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           setAddSiteList(res.data)
-        }else{
+        } else {
           setAddSiteList([])
           addForm.setFieldValue('siteId', '')
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     queryPCSList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addPcsList = res.data
-        }else{
+        } else {
           state.addPcsList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     QueryBatteryStackList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('pcsId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addStackList = res.data
-        }else{
+        } else {
           state.addStackList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('batteryStackId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
           state.addClusterList = res.data
-        }else{
+        } else {
           state.addClusterList = []
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -465,11 +468,11 @@ export default function Index(props) {
     <div className={style.mainContainer}>
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
             <Select
               placeholder="请选择"
               size="middle"
-              style={{marginLeft: 16, width: '200px'}}
+              style={{ marginLeft: 16, width: '200px' }}
               onChange={changeArea}
             >
               {areaList.map(item => {
@@ -499,7 +502,7 @@ export default function Index(props) {
           </Item>
         </Form>
         <Space>
-          <Button type='primary' style={{ width: 96 }}  onClick={() => addData()}>新增</Button>
+          <Button type='primary' style={{ width: 96 }} onClick={() => addData()}>新增</Button>
           <Button type='primary' style={{ width: 96 }} onClick={() => { setAddModal(true) }}>批量导入</Button>
           <Button type='primary' style={{ width: 96 }} onClick={() => exportData()}>导出</Button>
         </Space>
@@ -531,128 +534,128 @@ export default function Index(props) {
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Modal className={style.addModal} open={editModal}  width={782} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
+      <Modal className={style.addModal} open={editModal} width={782} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
         <div className={style.addHeader}>{modalTitle}</div>
         <div className={style.addBody}>
-          <Form form={addForm} colon={false} labelCol={{span:7}} labelAlign='left' requiredMark={false }>
-            <div style={{display:'flex'}}>
-              <div style={{borderRight: '1px dashed #d7d7d7', width: 350,}}>
-                <Item name='areaId' label={ areaName + '选择'} rules={[{required: true, message:'请选择'+ areaName}]}>
+          <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
+            <div style={{ display: 'flex' }}>
+              <div style={{ borderRight: '1px dashed #d7d7d7', width: 350, }}>
+                <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
                   <Select
                     placeholder="请选择"
                     size="middle"
-                    style={{width: '200px'}}
+                    style={{ width: '200px' }}
                     onChange={changeAddArea}
-                    
+
                   >
                     {areaList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item name='siteId' label='所属站点' rules={[{required: true, message:'请选择站点'}]} >
+                <Item name='siteId' label='所属站点' rules={[{ required: true, message: '请选择站点' }]} >
                   <Select
                     placeholder="请选择站点"
                     size="middle"
-                    style={{width: '200px'}}
+                    style={{ width: '200px' }}
                     onChange={changeAddSite}
-                    disabled={!addForm.getFieldValue('areaId') ? true: false}
+                    disabled={!addForm.getFieldValue('areaId') ? true : false}
                   >
                     {addSiteList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item name='pcsId' label='所属PCS' rules={[{required: true, message:'请选择PCS'}]} >
+                <Item name='pcsId' label='所属PCS' rules={[{ required: true, message: '请选择PCS' }]} >
                   <Select
                     placeholder="请选择PCS"
                     size="middle"
-                    style={{width: '200px'}}
+                    style={{ width: '200px' }}
                     onChange={changeAddPcs}
-                    disabled={!addForm.getFieldValue('siteId')? true: false}
+                    disabled={!addForm.getFieldValue('siteId') ? true : false}
                   >
                     {state.addPcsList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item name='batteryStackId' label='所属电池堆' rules={[{required: true, message:'请选择电池堆'}]} shouldUpdate>
+                <Item name='batteryStackId' label='所属电池堆' rules={[{ required: true, message: '请选择电池堆' }]} shouldUpdate>
                   <Select
                     placeholder="请选择电池堆"
                     size="middle"
-                    style={{width: '200px'}}
+                    style={{ width: '200px' }}
                     onChange={changeAddBatteryStack}
-                    disabled={!addForm.getFieldValue('pcsId')? true: false}
+                    disabled={!addForm.getFieldValue('pcsId') ? true : false}
                   >
                     {state.addStackList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item name='batteryClusterId' label='所属电池簇' rules={[{required: true, message:'请选择电池簇'}]} shouldUpdate>
+                <Item name='batteryClusterId' label='所属电池簇' rules={[{ required: true, message: '请选择电池簇' }]} shouldUpdate>
                   <Select
                     placeholder="请选择电池簇"
                     size="middle"
-                    style={{width: '200px'}}
-                    disabled={!addForm.getFieldValue('batteryStackId')? true: false}
+                    style={{ width: '200px' }}
+                    disabled={!addForm.getFieldValue('batteryStackId') ? true : false}
                   >
                     {state.addClusterList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item  name='alarmPlanId' label='告警方案' rules={[{required: true, message:'选择告警方案'}]}>
+                <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '选择告警方案' }]}>
                   <Select
                     placeholder="选择告警方案"
                     size="middle"
-                    style={{width: '200px'}}
+                    style={{ width: '200px' }}
                   >
                     {props.alarmPlanList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
                 </Item>
-                <Item  name='remark' label='备注'>
-                  <TextArea style={{width: '200px', maxWidth: 200}} rows={4}></TextArea>
+                <Item name='remark' label='备注'>
+                  <TextArea style={{ width: '200px', maxWidth: 200 }} rows={4}></TextArea>
                 </Item>
               </div>
-              <div style={{marginLeft: 32, width:340}} >
-                <Item  name='sn' label='电池组编号' labelCol={{span:10}} rules={[{required: true, message:'请输入电池组编号'}]}>
-                  <Input style={{width: 200}} placeholder='请输入电池组编号' disabled={modalTitle=='新增电池组'? false: true}></Input>
+              <div style={{ marginLeft: 32, width: 340 }} >
+                <Item name='sn' label='电池组编号' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电池组编号' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入电池组编号' disabled={modalTitle == '新增电池组' ? false : true}></Input>
                 </Item>
-                <Item  name='category' label='电池组型号' labelCol={{span:10}} rules={[{required: true, message:'请选择电池组型号'}]}>
+                <Item name='category' label='电池组型号' labelCol={{ span: 10 }} rules={[{ required: true, message: '请选择电池组型号' }]}>
                   <Select
-                  placeholder="请选择电池组型号"
-                  size="middle"
-                  style={{width: '200px'}}
-                >
-                  {categoryList.map((item, index) => {
-                    return <Select.Option key={index} value={item}>{item}</Select.Option>
-                  })}
-                </Select>
+                    placeholder="请选择电池组型号"
+                    size="middle"
+                    style={{ width: '200px' }}
+                  >
+                    {categoryList.map((item, index) => {
+                      return <Select.Option key={index} value={item}>{item}</Select.Option>
+                    })}
+                  </Select>
                 </Item>
-                <Item  name='name' label='电池组名称' labelCol={{span:10}} rules={[{required: true, message:'请输入电池组名称'}]}>
-                  <Input style={{width: 200}} placeholder='请输入电池组名称' ></Input>
+                <Item name='name' label='电池组名称' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电池组名称' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入电池组名称' ></Input>
                 </Item>
-                <Item  name='cellCapacity' label='电芯容量 (Ah)' labelCol={{span:10}} rules={[{required: true, message:'请输入电芯容量'}]}>
-                  <Input style={{width: 200}} placeholder='请输入电芯容量'></Input>
+                <Item name='cellCapacity' label='电芯容量 (Ah)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电芯容量' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入电芯容量'></Input>
                 </Item>
-                <Item  name='nominalBatteryCapacity' label='标称电量 (kWh)' labelCol={{span:10}} rules={[{required: true, message:'请输入标称电量'}]}>
-                  <Input style={{width: 200}} placeholder='请输入标称电量'></Input>
+                <Item name='nominalBatteryCapacity' label='标称电量 (kWh)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入标称电量' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入标称电量'></Input>
                 </Item>
-                <Item  name='nominalV' label='标称电压 (V)' labelCol={{span:10}} rules={[{required: true, message:'请输入标称电压'}]}>
-                  <Input style={{width: 200}} placeholder='请输入标称电压'></Input>
+                <Item name='nominalV' label='标称电压 (V)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入标称电压' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入标称电压'></Input>
                 </Item>
-                <Item  name='composingMode' label='成组方式' labelCol={{span:10}} rules={[{required: true, message:'请输入成组方式'}]}>
-                  <Input style={{width: 200}} placeholder='请输入成组方式'></Input>
+                <Item name='composingMode' label='成组方式' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入成组方式' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入成组方式'></Input>
                 </Item>
               </div>
             </div>
           </Form>
-          <div style={{display:'flex', justifyContent:'flex-end',marginTop:32}}>
-            <Button style={{width: 96, marginLeft:'auto', marginRight: 0}} onClick={()=>closeModal()}>取消</Button>
-            <Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onAdd()}>确认</Button>
-            { modalTitle == '新增电池组' ?<Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onApplication()}>应用</Button> : null }
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+            <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
+            <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
+            {modalTitle == '新增电池组' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
           </div>
         </div>
       </Modal>

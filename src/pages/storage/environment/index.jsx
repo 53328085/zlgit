@@ -224,7 +224,6 @@ export default function Index() {
             time.push(item.x)
           })
           time = [...new Set(time)]
-          TempRef.current.onOpen()
           setTimeout(()=>{
             drawLine({
               time,
@@ -246,14 +245,15 @@ export default function Index() {
   }
   const showChart = (id) => {
     setRoomId(id)
+    form.setFieldValue('date', moment(today,'YYYY-MM-DD'))
     getTrends(headerData.projectId, id, today) 
+    TempRef.current.onOpen()
   }
  
   const onOk = () => {
     TempRef.current.onCancel()
   }
   const drawLine = (lineData)=> {
-    form.setFieldValue('date', moment(today,'YYYY-MM-DD'))
     let lineChart = echarts.init(lineRef.current);
     lineChart.clear()
     lineChart.setOption({

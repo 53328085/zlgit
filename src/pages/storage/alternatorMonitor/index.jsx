@@ -1,8 +1,8 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import style from './style.module.less'
 import { Select, Form, Table, message } from 'antd'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner } from '@api/api.js'
@@ -14,9 +14,11 @@ import offline from './imgs/offline.png'
 import error from './imgs/error.png'
 
 export default function Index() {
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   const { queryPCSList, 
     queryPCSInfo,
     queryPCSWarningInfo, 
@@ -233,7 +235,12 @@ export default function Index() {
     },
   ]
 
-  const changeArea = val => {
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
     form.setFieldValue('siteId', null)
     form.setFieldValue('PCSId', null)
     querySite()
@@ -250,7 +257,7 @@ export default function Index() {
     if(areaList.length == 0|| !areaList){
       message.error('当前项目尚未创建园区!')
     }else{
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   },[])

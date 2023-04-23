@@ -2,17 +2,19 @@ import React, {useState, useEffect} from "react";
 import style from './style.module.less'
 import { useRequest } from "ahooks";
 import { Select, Form, Button, message } from 'antd'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
 import BatteryPackPage from './batteryPackPage'
 import {StorageMonitorRuntime, SiteManagerDesigner, PCSMonitorRuntime} from '@api/api.js'
 
 export default function Index() {
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   const { QueryBatteryStackList } = StorageMonitorRuntime
   const { FindSiteList } = SiteManagerDesigner
   const { queryPCSList } = PCSMonitorRuntime
@@ -101,7 +103,12 @@ export default function Index() {
   }
   const {run: runQuery } = useRequest(getbmsList, {manual: true})
 
-  const changeArea = val => {
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
     form.setFieldValue('siteId', null)
     form.setFieldValue('pcsId', null)
     form.setFieldValue('stackId', null)
@@ -155,7 +162,7 @@ export default function Index() {
     if(areaList.length == 0|| !areaList){
       message.error('当前项目尚未创建园区!')
     }else{
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   },[])
