@@ -190,11 +190,11 @@ export default function GatewayDetail(props) {
                         {state ?
                             <div>
                                 <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ></Table>
-                            <Pagination className={style.pageNumD} size="small" current={page} total={total}  defaultPageSize={12} onChange={onChangePage} />
+                            <Pagination className={style.pageNumD} size="small" current={page} total={total}  defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>
                             </div>
                             : <div>
                                 <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} ></Table>
-                                <Pagination className={style.pageNumD} size="small" current={pageLog} total={totalLog}  defaultPageSize={12} onChange={onChangePageLog} />
+                                <Pagination className={style.pageNumD} size="small" current={pageLog} total={totalLog}  defaultPageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                             </div>}
                             
                     </div>

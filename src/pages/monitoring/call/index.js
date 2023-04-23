@@ -375,13 +375,13 @@ export default function Index() {
                 type: 'radio',
                 ...rowSelectionRadio,
               }} bordered></Table>
-              <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+              <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} showSizeChanger={false}/>
             </div> : <div>
               <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} pagination={false} rowSelection={{
                 type: 'checkbox',
                 ...rowSelectionCheckbox,
               }} bordered></Table>
-              <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} />
+              <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} showSizeChanger={false}/>
             </div>}
           </div>
         </div>

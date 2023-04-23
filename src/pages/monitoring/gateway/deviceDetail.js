@@ -372,6 +372,9 @@ export default function GatewayDetail(props) {
         getAlarmPage()
     }, [paramsTrend.sn])
     useEffect(() => {
+        getAlarmPage()
+    }, [pageNum])
+    useEffect(() => {
         getEnergyReport()
         getEnergyTrend()
     }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
@@ -531,7 +534,7 @@ export default function GatewayDetail(props) {
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
-                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={12} onChange={onChangePageLog} />
+                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
                             </div>}
 

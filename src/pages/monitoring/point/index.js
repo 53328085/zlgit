@@ -401,7 +401,7 @@ export default function Index(props) {
           pagination={paginationProps}
           ></Table>
         </div>}
-     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />  }
+     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>  }
       </div>
 
     </div >
