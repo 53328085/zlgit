@@ -274,21 +274,35 @@ export default function Index() {
       const {currentMonth ,lastMonth} =res.data
       let arr=[]
       let arr1=[]
+      let curmonth='本月'
+      let data;
       if(currentMonth.length-lastMonth.length>0){
+        curmonth='本月'
         arr=[...currentMonth]
         arr1=[...lastMonth]
       }else{
+        curmonth='上月'
         arr=[...lastMonth]
         arr1=[...currentMonth]
       }
-
-      let data = arr.map((item,index)=>{
-        return {
-          x:item.x,
-          '本月':item.y,
-          '上月':arr1[index]?.y
-        }
-      })
+      if(curmonth==='本月'){
+        data = arr.map((item,index)=>{
+          return {
+            x:item.x,
+            '本月':item.y,
+            '上月':arr1[index]?.y
+          }
+        })
+      }else{
+        data = arr.map((item,index)=>{
+          return {
+            x:item.x, 
+            '本月':arr1[index]?.y,
+            '上月':item.y,
+          }
+        })
+      }
+      
 
       setDatasetMonthl({dimensions:['x','本月','上月'],source:[...data]})
     }else{

@@ -127,13 +127,13 @@ export default function useSerach(props) {
        form.setFieldsValue({
         stationName: data[0].name
        })
-       sitehandler(data[0].name)
+       sitehandler &&  sitehandler(data[0].name)
      }else {
       setOptions([])    
       form.setFieldsValue({
         stationName: ''
        })
-       sitehandler('')
+       sitehandler && sitehandler('')
      }
     } catch (error) {
       console.log(error)

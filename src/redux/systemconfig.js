@@ -3,20 +3,7 @@ import { CodeSandboxCircleFilled } from '@ant-design/icons'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
-    chineseTitle: "NES6000正泰智慧能源结算收费系统",
-    cmmi: 1,
-    companyName: "正泰物联技术有限公司",
-    createTime: "0001-01-01 00:00:00",
-    creator: "",
-    englishTitle: "NES6000 Chint Smart Energy Accounting And Charging System",
-    id: 0,
-    nationalRecordNo: "33010802011465",
-    recordNo: "浙ICP备12033679号",
-    systemLogoImage: "",
-    systemLogoKey: "",
-    themeColor: "#509ff1",
-    updateTime: "0001-01-01 00:00:00",
-    url: "",
+    systemConfigInfo: {},
     configState: false, // 项目是否处于设计状态   
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     menus: {
@@ -84,9 +71,9 @@ const system = createSlice({
         [systemConfig.fulfilled]: (state, {payload}) => {           
            let {success, errMsg, data} = payload
            if (success) {
-               return Object.assign({}, state, data )
+               return Object.assign({}, state, {systemConfigInfo: data} )
            }else {
-               return Object.assign({}, state)
+               return Object.assign({}, state, {systemConfigInfo: {}})
            }
         }
     }
@@ -113,5 +100,6 @@ export const selectshifts = state => state.system.shifts
 export const publishState = state => {
   return  state.system.publishState == 1
 }
+export const systemConfigInfo = state => state.system.systemConfigInfo
 export const {configProject,getSetMenus,setCurrentlevel, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
 export default system.reducer

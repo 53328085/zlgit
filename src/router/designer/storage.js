@@ -8,6 +8,7 @@ const StorageEnvironment = lazy(() => import("@pages/storage/configure/storageEn
 const StorageSetting = lazy(() => import("@pages/storage/configure/storageSetting")) 
 const AutoMode = lazy(() => import("@pages/storage/configure/autoMode")) 
 const ManualMode = lazy(() => import("@pages/storage/configure/manualMode")) 
+const Container = lazy(() => import("@pages/storage/configure/container")) 
 const menus = [];
 const components = {
     '020901': StoragePrice,
@@ -16,7 +17,8 @@ const components = {
     '020904': ManualMode,
     '020905': StorageDevice,
     '020906': StorageEnvironment,
-    '020907': StorageSetting
+    '020907': StorageSetting,
+    '020908': Container
 }
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['storage'] 
