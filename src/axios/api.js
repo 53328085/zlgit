@@ -349,6 +349,14 @@ export class StorageAutoModeDesigner {
 
 export class StorageContainerDesigner {
   static GetContainers = ({projectId, areaId=0, siteId=0, pageNum, pageSize}={}) => server.get(`/Storage/StorageContainerDesigner/GetContainers?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&pageNum=${pageNum}&pageSize=${pageSize}`);
+
+  static AddContainer = (projectId, params) => server.post(`/Storage/StorageContainerDesigner/AddContainer?projectId=${projectId}`, params);
+
+  static UpdateContainer = (projectId, params) => server.post(`/Storage/StorageContainerDesigner/UpdateContainer?projectId=${projectId}`, params);
+
+  // /StorageContainerDesigner/DeleteContainer?projectId=2&id=2'
+
+  static DeleteContainer = (projectId, id) => server.delete(`/Storage/StorageContainerDesigner/DeleteContainer?projectId=${projectId}&id=${id}`);
 }
  
 // zl api end
