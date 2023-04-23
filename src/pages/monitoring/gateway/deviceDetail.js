@@ -178,7 +178,8 @@ export default function GatewayDetail(props) {
                 { data: y1, type: 'line', name: '用电量-尖(kWh)' },
                 { data: y2, type: 'line', name: '用电量-峰(kWh)' },
                 { data: y3, type: 'line', name: '用电量-平(kWh)' },
-                { data: y4, type: 'line', name: '用电量-谷(kWh)' }]
+                { data: y4, type: 'line', name: '用电量-谷(kWh)' }
+            ]
                 tdrawEcharts(energyref.current, option(objList, x, 0))
             } else {
                 message.error(res.errMsg)
@@ -492,12 +493,12 @@ export default function GatewayDetail(props) {
                                         </div>
                                         <div>
                                             <div className={style.rightImg} ><img src={imgurl.deviceDetail2}></img></div>
-                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.coal}</span> kg</p>
+                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.coal}</span> t</p>
                                             <p>累计转标煤</p>
                                         </div>
                                         <div>
                                             <div className={style.rightImg} ><img src={imgurl.deviceDetail1}></img></div>
-                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.co2}</span> kg</p>
+                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.co2}</span> t</p>
                                             <p>累计转二氧化碳</p>
                                         </div>
                                     </div>
