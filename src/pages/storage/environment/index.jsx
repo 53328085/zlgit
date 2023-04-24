@@ -103,6 +103,11 @@ export default function Index() {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          span{
+            display: inline-block;
+            min-width: 20px;
+            text-align: center;
+          }
         }
       }
     }
@@ -151,14 +156,12 @@ export default function Index() {
               <span>温度</span>
               <div>
                 <span style={{fontSize:20}}>{ data.airTemp }</span>
-                <span style={{fontSize:14, marginLeft: 8}}>℃</span>
               </div>
             </div>
             <div className='tem'>
               <span>湿度</span>
               <div>
                 <span style={{fontSize:20}}>{ data.airHumidity }</span>
-                <span style={{fontSize:14, marginLeft: 8}}>%</span>
               </div>
             </div>
           </div>
@@ -171,14 +174,12 @@ export default function Index() {
               <span>温度</span>
               <div>
                 <span style={{fontSize:20}}>{ data.environmentTemp }</span>
-                <span style={{fontSize:14, marginLeft: 8}}>℃</span>
               </div>
             </div>
             <div className='tem'>
               <span>湿度</span>
               <div>
                 <span style={{fontSize:20}}>{ data.environmentHumidity }</span>
-                <span style={{fontSize:14, marginLeft: 8}}>%</span>
               </div>
             </div>
           </div>
@@ -188,14 +189,14 @@ export default function Index() {
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093', height: 32, lineHeight:'32px'}}>水浸监控</div>
           <div className='monitorData'>
             <span>{ data.waterOutInformTime }</span>
-            <span>{ data.waterOutWarning == '/'? '无告警' : data.waterOutWarning  }</span>
+            <span>{ data.waterOutWarning  }</span>
           </div>
         </div>
         <div className='item'>
           <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093', height: 32, lineHeight:'32px'}}>灭火器监控</div>
           <div className='monitorData'>
             <span>{ data.fireInformTime }</span>
-            <span>{ data.fireWarning == '/'? '无告警' : data.fireWarning }</span>
+            <span>{ data.fireWarning }</span>
           </div>
         </div>
       </div>
@@ -207,6 +208,7 @@ export default function Index() {
   const [headerData, setHeaderData] = useState({})
 
   //siteList
+  const [siteName, setSiteName] = useState('')
   const [siteList, setSiteList] = useState([])
   const querySite = () => {
     FindSiteList(projectId, headForm.getFieldValue('areaId')).then(res => {
@@ -214,9 +216,11 @@ export default function Index() {
         if (res.data && res.data.length > 0) {
           setSiteList(res.data)
           headForm.setFieldValue('siteId', res.data[0].id)
+          setSiteName(res.data[0].name)
           getFromHeader()
         } else {
           setSiteList([])
+          setSiteName('')
           message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
           return;
         }
@@ -226,6 +230,11 @@ export default function Index() {
     })
   }
   const changeSite = val => {
+    siteList.map(item => {
+      if(item.id == val){
+        setSiteName(item.name)
+      }
+    })
     getFromHeader()
   }
 
@@ -402,7 +411,7 @@ export default function Index() {
         </Form>
       </div>
       <div className={style.mainContent}>
-        <div className={style.title}>储能站点</div>
+        <div className={style.title}>{siteName}</div>
         <div className={style.yaxis}></div>
         <div className={style.xaxis}></div>
         <div className={style.dataList}>
