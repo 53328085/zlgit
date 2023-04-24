@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import batteryPack from './imgs/batteryPack.png'
 import clusterNormal from './imgs/clusterNormal.png'
 import clusterHover from './imgs/clusterHover.png'
 export default function index (props) {
@@ -49,10 +48,17 @@ export default function index (props) {
         )
     }
     const Progress = props => {
+        let value = props.value
+        let length = 0
+        if (value == '' || value == '/') {
+            length = 0
+        } else {
+            length = value / 10
+        }
         return (
-            <div style={{ position:'relative',marginBottom: 10, width: 128, height: 24, background:'#2b2b2b', border:"1px solid rgb(153, 153, 153)", borderRadius: 2, display:'flex', alignItems:'center',justifyContent:'center'}}>
-                <div style={{ position:'absolute',zIndex:0, left:-1, top: -1, width: props.value, height: 24, background: props.color, border:"1px solid rgb(228, 228, 228)", borderRadius: 2,borderRight:'none'}}></div>
-                <span style={{zIndex: 1}}>{ props.title + ' ' + props.value }</span>
+            <div style={{ position: 'relative', marginBottom: 16, width: 127, height: 24, background: '#2b2b2b', border: "1px solid rgb(153, 153, 153)", borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', zIndex: 0, left: -1, top: -1, width: length + '%', height: 24, background: props.color, border: "1px solid rgb(228, 228, 228)", borderRadius: 2, borderRight: 'none' }}></div>
+                <span style={{ zIndex: 1, color: '#fff' }}>{props.title + '    ' + props.value + '‰'}</span>
             </div>
         )
     }
@@ -62,7 +68,7 @@ export default function index (props) {
     return (
         <BgStyle>
             <div style={battery} onClick={()=>toBatteryData()}>
-                <div style={{fontSize: 14, lineHeight: '14px', marginBottom: 12,color:'#a1a1a1', textAlign:'center', wordWrap:'break-word', }}>{data.batteryClusterName}</div>
+                <div style={{fontSize: 14, lineHeight: '14px', marginBottom: 12,color:'#a1a1a1', textAlign:'center', wordWrap:'break-word', }}>{data.name}</div>
                 <div style={{width: 127, border:'1px solid #d7d7d7', borderRadius: 2, marginBottom: 12}}>
                     <div style={{width: '100%', height: 24, lineHeight:'24px', backgroundColor:'#237ae4',borderBottom:'1px solid #d7d7d7', textAlign:'center'}}>
                         <span style={{display:"inline-block", width: 62}}>充放电状态</span>
@@ -71,8 +77,8 @@ export default function index (props) {
                         <span style={{display:"inline-block", width: 62, }}>{data.chargeState}</span>
                     </div>
                 </div>
-                <Progress title={'SOC'} value={data.soc +'%'} color={'#060'}></Progress>
-                <Progress title={'SOH'} value={data.soh + '%'} color={'#06f'}></Progress>
+                <Progress title={'SOC'} value={data.soc} color={'#060'}></Progress>
+                <Progress title={'SOH'} value={data.soh} color={'#06f'}></Progress>
                 <div style={{ height: 0, border:'1px dashed #666', margin:'16px 0'}}></div>
                 <NormalValue title={['电压高值', '电压低值']} value={[data.maxV + '(V)', data.minV + '(V)']}></NormalValue>
                 <NormalValue title={['温度高值', '温度低值']} value={[data.maxTemp + '(℃)', data.minTemp + '(℃)']}></NormalValue>

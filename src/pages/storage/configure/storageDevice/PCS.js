@@ -7,7 +7,7 @@ import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
-import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
+import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner } from '@api/api.js'
 
 export default function Index(props) {
   const [form] = Form.useForm()
@@ -19,6 +19,7 @@ export default function Index(props) {
   const errRef = useRef()
 
   const { FindSiteList } = SiteManagerDesigner
+  const { FindContainerList } = StorageContainerDesigner
   const { QueryPcsByPage,
     AddPcs,
     UpdatePcs,
@@ -77,8 +78,14 @@ export default function Index(props) {
   }
 
   const getFromHeader = () => {
-    let params = form.getFieldsValue(true)
-    QueryPcsByPage(projectId, params.areaId, params.siteId, params.alike, pagination.current, pagination.pageSize).then(res => {
+    let params = {
+      projectId,
+      ...form.getFieldsValue(true),
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+    }
+    
+    QueryPcsByPage(params).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           let arr = [...res.data]
@@ -307,6 +314,24 @@ export default function Index(props) {
       }
     })
   }
+
+  const [addContainerList, setAddContainerList] = useState([])
+  const changeAddSite = val => {
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
+          setAddContainerList(res.data)
+        } else {
+          setAddContainerList([])
+          addForm.setFieldValue('containerId', null)
+          message.warning('当前站点不存在储能柜!')
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+
   const closeModal = () => {
     setEditModal(false)
   }
@@ -373,6 +398,19 @@ export default function Index(props) {
           setAddSiteList([])
           addForm.setFieldValue('siteId', '')
           message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
+          setAddContainerList(res.data)
+        } else {
+          setAddContainerList([])
+          addForm.setFieldValue('containerId', null)
+          message.warning('当前站点不存在储能柜!')
         }
       } else {
         message.error(res.errMsg)
@@ -478,8 +516,20 @@ export default function Index(props) {
                     placeholder="请选择站点"
                     size="middle"
                     style={{ width: '200px' }}
+                    onChange={changeAddSite}
                   >
                     {addSiteList.map(item => {
+                      return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                    })}
+                  </Select>
+                </Item>
+                <Item name='containerId' label='所属储能柜' rules={[{ required: true, message: '请选择储能柜' }]} >
+                  <Select
+                    placeholder="请选择储能柜"
+                    size="middle"
+                    style={{ width: '200px' }}
+                  >
+                    {addContainerList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
@@ -516,7 +566,7 @@ export default function Index(props) {
                   <Input style={{ width: 200 }} placeholder='请输入安装地址'></Input>
                 </Item>
                 <Item name='remark' label='备注'>
-                  <TextArea style={{ width: '200px', maxWidth: 200 }} rows={4}></TextArea>
+                  <TextArea style={{ width: '200px', maxWidth: 200 }} rows={2}></TextArea>
                 </Item>
               </div>
               {/* width: 390, labelCol={{span:16}} */}
@@ -553,7 +603,7 @@ export default function Index(props) {
               </div>
             </Space>
           </Form>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 48 }}>
             <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
             <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
             {modalTitle == '新增PCS' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}

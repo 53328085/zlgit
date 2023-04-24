@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
-import {PCSMonitorRuntime, SiteManagerDesigner } from '@api/api.js'
+import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
 
 import pcs from './imgs/pcs.png'
@@ -26,6 +26,7 @@ export default function Index() {
     querySocTrends, 
     queryAcTable } = PCSMonitorRuntime
   const { FindSiteList } = SiteManagerDesigner
+  const { FindContainerList } = StorageContainerDesigner
   const [form] = Form.useForm()
   const {Item}  = Form
   //siteList
@@ -36,9 +37,10 @@ export default function Index() {
         if(res.data && res.data.length> 0){
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
-          queryPCS()
+          queryContainer()
         }else{
           setSiteList([])
+          setContainerList([])
           setPcsList([])
           message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
           return;
@@ -49,6 +51,31 @@ export default function Index() {
     })
   }
   const changeSite = val => {
+    form.setFieldValue('containerId', null)
+    form.setFieldValue('PCSId', null)
+    queryContainer()
+  }
+
+  //containerList
+  const [containerList, setContainerList] = useState([])
+  const queryContainer = () => {
+    FindContainerList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
+          setContainerList(res.data)
+          form.setFieldValue('containerId', res.data[0].id)
+          queryPCS()
+        } else {
+          setContainerList([])
+          setPcsList([])
+          message.warning('当前站点不存在储能柜!')
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeContainer = val => {
     form.setFieldValue('PCSId', null)
     queryPCS()
   }
@@ -57,7 +84,7 @@ export default function Index() {
   const [pcsList, setPcsList] = useState([])
   const [selectPcs, setSelectPcs] = useState('')
   const getPCSList = () => {
-    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId')).then(res => {
+    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId'), form.getFieldValue('containerId')).then(res => {
       if(res.success){
         if(res.data && res.data.length> 0){
           setPcsList(res.data)
@@ -294,6 +321,19 @@ export default function Index() {
               onChange={changeSite}
             >
               {siteList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='containerId' label='储能柜选择' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择储能柜"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeContainer}
+            >
+              {containerList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
