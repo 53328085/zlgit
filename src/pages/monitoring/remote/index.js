@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
-import { useRequest, useToggle, useAntdTable } from 'ahooks'
+import { useRequest, useToggle, useAntdTable,useReactive  } from 'ahooks'
 import { GetLogOperation, Remote, Monitoring } from '@api/api.js'
 import { Form, DatePicker, Input, Button, Table, Pagination, Select, message, Modal, Spin, Divider, Space } from 'antd'
 import Bluecolumn from '@com/bluecolumn'
@@ -35,9 +35,13 @@ export default function Index() {
     const [brake, setbrake] = useState(false)
     const [brakeC, setbrakeC] = useState(false)
     const [brakeResult, setbrakeResult] = useState(false)
-    const [selectTableList, setselectTableList] = useState([])
-    const [selectTableListRadio, setselectTableListRadio] = useState([])
-    const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
+    // const [selectTableList, setselectTableList] = useState([])
+    // const [selectTableListRadio, setselectTableListRadio] = useState()
+    const tableRefs= useRef()
+   
+    // const selectTableListRadio = useReactive([])
+     
+    // const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
 
     /* let params = {
         pageNum: pageNum,
@@ -110,12 +114,14 @@ export default function Index() {
         setstate(val)     
         if (val == 2) {
             setSelectionType("checkbox")
-            setselectTableList(selectTableListCheckbox)
+            // setselectTableList(selectTableListCheckbox)
+            // tableRefs.current=selectTableListCheckbox
         } else if (val == 1) {
             setSelectionType("radio")
-            let list = []
-            list.push(selectTableListCheckbox[0])
-            setselectTableList(selectTableListCheckbox ? list : [])
+            // let list = []
+            // list.push(tableRefs.current[0])
+            // setselectTableList(selectTableListCheckbox ? list : [])
+            // tableRefs.current=tableRefs.current ? list : []
         }
     }
     const [selectionType, setSelectionType] = useState("radio");
@@ -178,19 +184,23 @@ export default function Index() {
         setdeviceStyle(value)
     }
     const rowSelectionRadio = {
-        selectTableListRadio,
+        tableRefs,
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setselectTableListRadio(selectedRows)
-            setselectTableList(selectedRows)
+            tableRefs.current = selectedRows
+            // setselectTableListRadio(selectedRows)
+            //setselectTableList(selectedRows)
         },
     }
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const rowSelectionCheckbox = {
-        selectTableListCheckbox,
+        tableRefs,
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setselectTableListCheckbox(selectedRows)
-            setselectTableList(selectedRows)
+            // setselectTableListCheckbox(selectedRows)
+            // setselectTableList(selectedRows)
+            // setSelectedRowKeys(selectedRowKeys);
+            tableRefs.current = selectedRows
         },
     }
     const handleCancel = type => {
@@ -199,7 +209,8 @@ export default function Index() {
         } else if (type == 'close') {
             setbrakeC(false)
         }
-        getData()
+        tableRefs.current=[]
+        //getData()
     }
     const [isComplate, setisComplate] = useState(false)
     const [snList, setsnList] = useState()
@@ -221,12 +232,12 @@ export default function Index() {
         setisComplate(false)
     }
     const changesetbrake = (type) => {
-        console.log(selectTableList)
-        if (selectTableList.length > 0) {
+        console.log(tableRefs.current)
+        if (tableRefs.current.length > 0) {
             setsnList([])
             let List = []
-            if (selectTableList.length > 0) {
-                selectTableList.map((item, index) => {
+            if (tableRefs.current.length > 0) {
+                tableRefs.current.map((item, index) => {
                     List.push(item.sn)
                     dataSourceReadR.push({ sn: item.sn, state: '操作中，请稍候……' })
 
@@ -305,8 +316,9 @@ export default function Index() {
                     <img src={imgurl.line} className={style.timeline} ></img>
                     {selectionType == 'radio' ? <div style={{display: 'flex', flex: 1}}>
                         <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
-                            type: 'radio',
+                            type: 'radio',  
                             ...rowSelectionRadio,
+                          
                         }} bordered></UserTable>
                       {/*   <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} /> */}
                     </div> : <div style={{display: 'flex', flex: 1}}>

@@ -222,10 +222,10 @@ export default function Index(props) {
   const changeTab = val => {
     setisCard(val.target.value == 'card' ? true : false)
    // setPageNum(1)
-    setParams({ 
-      ...initparams
-    })
-  //  getOverviewData()
+    // setParams({ 
+    //   ...initparams
+    // })
+    //getOverviewData()
   }//切换卡片列表模式
 
   const exportExecel = () => {
@@ -401,7 +401,7 @@ export default function Index(props) {
           pagination={paginationProps}
           ></Table>
         </div>}
-     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} />  }
+     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>  }
       </div>
 
     </div >
