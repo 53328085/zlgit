@@ -321,6 +321,13 @@ export class StorageOrderRuntime {
   static QueryStorageOrders = (areaId,status,type, params) => server.post(`/Storage/StorageOrderRuntime/QueryStorageOrders?areaId=${areaId}&runtimeStatus=${status}&type=${type}`, params);
 }
 
+// 储能管理--运行报告
+
+export class StorageRunReport {
+  static QueryRuntimeStatus = (projectId, type, date) => server.get(`/Storage/StorageRunReport/QueryRunReport/?projectId=${projectId}&type=${type}&date=${date}`);
+ 
+}
+
 // 储能管理设置--参数设置
 export class StorageParameterSetupDesigner {
   static QuerySetup = (projectId, areaId) => server.get(`/Storage/StorageParameterSetupDesigner/QuerySetup?projectId=${projectId}&areaId=${areaId}`);

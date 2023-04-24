@@ -11,23 +11,40 @@ const ManualMode = lazy(() => import("@pages/storage/configure/manualMode"))
 const Container = lazy(() => import("@pages/storage/configure/container")) 
 const menus = [];
 const components = {
-    '020901': StoragePrice,
+    '020901': StoragePrice,   
+    '020908': Container,
     '020902': Strategy,
     '020903': AutoMode,
     '020904': ManualMode,
     '020905': StorageDevice,
     '020906': StorageEnvironment,
     '020907': StorageSetting,
-    '020908': Container
+    
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus?.siderDesignerMenus?.['storage'] 
-    if (Array.isArray(runmen) && runmen.length > 0) {        
-       runmen.forEach(r => {
+    try {
+        let runmen= store.getState().system.menus?.siderDesignerMenus?.['storage'] 
+        let runary = Array.isArray(runmen) ? [...runmen] : []  
+        let index = runary?.findIndex(item => item.no =='020908' )
+      
+       
+        if (Array.isArray(runary) && runary.length> 0 && index > -1) { 
+        let item = runary.splice(index, 1) 
+         if(Array.isArray(item) && item.length > 0) runary.splice(1, 0, item[0])
+        } 
+   
+    if (Array.isArray(runary) && runary.length > 0) {        
+       runary.forEach(r => {
         let {no, key} = r;
         let Com = components[no];
         if (Com) menus.push({path: key, element: <Com />}) 
        })
+    } 
+
+    } catch (error) {
+        console.log(error)
     }
+     
 })
+
 export default  menus
