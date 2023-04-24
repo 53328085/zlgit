@@ -738,14 +738,13 @@
 
 .deviceImg {
     position: absolute;
-    width: 148px;
-    height: 160px;
-    left: 360px;
+    width: 100%;
+    min-height: 160px;
+    left: 0px;
     top: 67px;
     background-color: #003;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
 
     .deviceName {
@@ -756,6 +755,46 @@
         text-align: center;
         font-size: 12px;
         color: #fff;
+    }
+    .deviceData{
+        margin-top: 6px;
+        width: 155px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        .leftUp{
+            margin-left: 24px;
+            width: 24px;
+            height: 10px;
+            border: 1px solid rgb(65, 164, 185);
+            border-radius: 2px 2px 0 0;
+            border-bottom: none;
+        }
+        .rightUp{
+            margin-left: 58px;
+            width: 24px;
+            height: 10px;
+            border: 1px solid rgb(65, 164, 185);
+            border-radius: 2px 2px 0 0;
+            border-bottom: none;
+        }
+        .bottomItem{
+            width: 154px;
+            height: 145px;
+            border: 1px solid rgb(65, 164, 185);
+            border-radius: 4px;
+            padding: 12px 8px;
+            .stackStatus{
+                width: 138px;
+                height: 24px;
+                background-color: rgb(0, 5, 153);
+                color: #3f0;
+                text-align: center;
+                line-height: 24px;
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+        }
     }
 }
 
@@ -819,8 +858,9 @@
         top: 0;
     }
 
-    
+
 }
+
 .leftButton {
     position: absolute;
     width: 48px;
@@ -855,4 +895,94 @@
     &:hover {
         color: #f2f2f2;
     }
+}
+
+
+.main_box {
+    margin-top: 16px;
+    width: 1680px;
+    height: 800px;
+    background-color: #003;
+    border-radius: 4px;
+    padding: 16px;
+
+    :global {
+        .headerTitle {
+            height: 32px;
+            line-height: 32px;
+            padding-left: 16px;
+            font-size: 14px;
+            color: #fff;
+            border-left: 4px solid #237ae4;
+        }
+
+        .containerList {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-left: 16px;
+            margin-top: 16px;
+            width: 1616px;
+
+            .containerItem {
+                width: 148px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+                opacity: 0.5;
+
+                .itemName {
+                    display: inline-block;
+                    padding: 0 6px;
+                    height: 20px;
+                    line-height: 20px;
+                    color: #fff;
+                    font-size: 12px;
+                    background-color: rgba(35, 122, 227, 1);
+                }
+
+                .itemImg {
+                    width: 148px;
+                    height: 148px;
+                }
+
+                .shortLine {
+                    width: 50px;
+                    height: 6px;
+                    margin-top: 25px;
+                    transform: rotate(-90deg);
+                }
+            }
+
+            .activeItem {
+                opacity: 1;
+            }
+        }
+
+        .largeLine {
+            width: 1616px;
+            margin-left: 16px;
+            margin-top: 16px;
+            height: 0;
+            border-top: 3px solid #41a4b9;
+        }
+    }
+}
+
+.batterStack {
+    width: 1616px;
+    height: 520px;
+    margin-left: 16px;
+    overflow: hidden;
+    position: relative;
+
+        .transLate {
+            display: flex;
+            transition: all 1s ease;
+            position: absolute;
+            left: 118px;
+            top: 0;
+    
+        }
 }

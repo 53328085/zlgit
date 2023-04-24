@@ -1,22 +1,33 @@
 import React, {useState, useEffect, useRef} from 'react'
-import UseHeader from '@com/useHeader'
 import styled from 'styled-components'
 import style from './style.module.less'
-import { Button, DatePicker, message, Form } from 'antd'
+import { Button, DatePicker, message, Form, Select } from 'antd'
 import moment from 'moment'
 import { CaretLeftOutlined, CaretRightOutlined, SearchOutlined  } from '@ant-design/icons'
 import CustModal from '@com/useModal'
 import * as echarts from 'echarts'
 import bgImg from './imgs/background.png'
-import { StorageEnvironmentRuntime } from '@api/api'
+import { StorageEnvironmentRuntime, SiteManagerDesigner } from '@api/api'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 
 export default function Index() {
+
   const TempRef = useRef()
   const lineRef = useRef()
   const { queryEnvironmentInfo, queryTrends } =  StorageEnvironmentRuntime
   const today = new Date().toLocaleDateString().replace(/\//g, '-')
   const [form] = Form.useForm()
+  const [headForm] = Form.useForm()
   const Item = Form.Item
+
+  const { FindSiteList } = SiteManagerDesigner
+
+  const dispatch = useDispatch()
+  const projectId = useSelector(selectProjectId)
+  const areaList = useSelector(selectOneLevel)
+  const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
 
   //页面组件
   const CustomCss = styled.div`
@@ -30,7 +41,7 @@ export default function Index() {
       position: absolute;
       padding: 0 4px;
       top: 30px;
-      left: 126px;
+      right: 20px;
       height: 20px;
       line-height: 20px;
       color: #fff;
@@ -85,7 +96,7 @@ export default function Index() {
           text-align: center;
         }
         .monitorData{
-          height: 40px;
+          height: 48px;
           padding: 0 10px;
           font-size: 14px;
           color: #000;
@@ -129,57 +140,62 @@ export default function Index() {
   }
   const CustomData = props => {
     let {data} = props
-    let infos = data.environmentInfo
     return <CustomCss>
-      <div className='name'>{data.storageRoomName}</div>
+      <div className='name'>{data.name}</div>
       <div className='itemTitle'>环境监控</div>
       <div className='itemData'>
-        <div className='item' style={{cursor:'pointer'}} onClick={()=>showChart(data.storageRoomId)}>
+        <div className='item' style={{cursor:'pointer'}} onClick={()=>showChart(data.id)}>
           <div className='monitorTitle' style={{backgroundColor:'#237ae4', border: '1px solid #237ae4'}}>空调监控</div>
           <div className='temData'>
             <div className='tem'>
               <span>温度</span>
               <div>
-                <span style={{fontSize:20}}>{ infos.temp }</span>
+                <span style={{fontSize:20}}>{ data.airTemp }</span>
                 <span style={{fontSize:14, marginLeft: 8}}>℃</span>
               </div>
             </div>
             <div className='tem'>
               <span>湿度</span>
               <div>
-                <span style={{fontSize:20}}>{ infos.humidity }</span>
+                <span style={{fontSize:20}}>{ data.airHumidity }</span>
                 <span style={{fontSize:14, marginLeft: 8}}>%</span>
               </div>
             </div>
           </div>
-          <div className='tempTime'> {infos.airInformTime}</div>
+          <div className='tempTime'> {data.airInformTime}</div>
+        </div>
+        <div className='item' style={{cursor:'pointer'}}>
+          <div className='monitorTitle' style={{backgroundColor:'#237ae4', border: '1px solid #237ae4'}}>环境温湿度</div>
+          <div className='temData'>
+            <div className='tem'>
+              <span>温度</span>
+              <div>
+                <span style={{fontSize:20}}>{ data.environmentTemp }</span>
+                <span style={{fontSize:14, marginLeft: 8}}>℃</span>
+              </div>
+            </div>
+            <div className='tem'>
+              <span>湿度</span>
+              <div>
+                <span style={{fontSize:20}}>{ data.environmentHumidity }</span>
+                <span style={{fontSize:14, marginLeft: 8}}>%</span>
+              </div>
+            </div>
+          </div>
+          <div className='tempTime'> {data.environmentInformTime}</div>
         </div>
         <div className='item'>
-          <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>烟感监控</div>
+          <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093', height: 32, lineHeight:'32px'}}>水浸监控</div>
           <div className='monitorData'>
-            <span>{ infos.somkeInformTime }</span>
-            <span>{ infos.smokeDetectorWarning }</span>
+            <span>{ data.waterOutInformTime }</span>
+            <span>{ data.waterOutWarning == '/'? '无告警' : data.waterOutWarning  }</span>
           </div>
         </div>
         <div className='item'>
-          <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>水浸监控</div>
+          <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093', height: 32, lineHeight:'32px'}}>灭火器监控</div>
           <div className='monitorData'>
-            <span>{ infos.waterOutInformTime }</span>
-            <span>{ infos.waterOutWarning }</span>
-          </div>
-        </div>
-        <div className='item'>
-          <div className='monitorTitle' style={{backgroundColor:'#093', border: '1px solid #093'}}>灭火器监控</div>
-          <div className='monitorData'>
-            <span>{ infos.fireInformTime }</span>
-            <span>{ infos.fireWarning }</span>
-          </div>
-        </div>
-        <div className='item'>
-          <div className='monitorTitle' style={{backgroundColor:'#f33', border: '1px solid #f33'}}>门禁监控</div>
-          <div className='monitorData' style={{color:'#f33'}}>
-            <span>{ infos.doorInformTime }</span>
-            <span>{ infos.doorStatus }</span>
+            <span>{ data.fireInformTime }</span>
+            <span>{ data.fireWarning == '/'? '无告警' : data.fireWarning }</span>
           </div>
         </div>
       </div>
@@ -189,10 +205,50 @@ export default function Index() {
   //页面数据
   const [storageData, setStorageData] = useState([])
   const [headerData, setHeaderData] = useState({})
-  const getFromChild = val => {
-    if(!val.areaId) return;
-    setHeaderData(val)
-    queryEnvironmentInfo(val.projectId, val.areaId).then(res => {
+
+  //siteList
+  const [siteList, setSiteList] = useState([])
+  const querySite = () => {
+    FindSiteList(projectId, headForm.getFieldValue('areaId')).then(res => {
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
+          setSiteList(res.data)
+          headForm.setFieldValue('siteId', res.data[0].id)
+          getFromHeader()
+        } else {
+          setSiteList([])
+          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
+          return;
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSite = val => {
+    getFromHeader()
+  }
+
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
+      message.error('当前项目尚未创建园区!')
+    } else {
+      headForm.setFieldValue('areaId', oneLevelDefaultId)
+      querySite()
+    }
+  }, [])
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
+    headForm.setFieldValue('siteId', null)
+    querySite()
+  }
+
+  const getFromHeader = () => {
+    queryEnvironmentInfo(projectId, headForm.getFieldValue('areaId'), headForm.getFieldValue('siteId')).then(res => {
       if(res.success){
         if(res.data){
           setStorageData(res.data)
@@ -246,7 +302,7 @@ export default function Index() {
   const showChart = (id) => {
     setRoomId(id)
     form.setFieldValue('date', moment(today,'YYYY-MM-DD'))
-    getTrends(headerData.projectId, id, today) 
+    getTrends(projectId, id, today) 
     TempRef.current.onOpen()
   }
  
@@ -310,13 +366,41 @@ export default function Index() {
   }
   const onSearch = () => {
     const date = form.getFieldValue('date').format('YYYY-MM-DD')
-    getTrends(headerData.projectId, roomId, date) 
+    getTrends(projectId, roomId, date) 
   }
 
   //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
     <div>
-      <UseHeader getValues={getFromChild}></UseHeader>
+      <div className={style.header}>
+        <Form form={headForm} layout='inline'>
+          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
+            <Select
+              placeholder="请选择"
+              size="middle"
+              style={{ marginLeft: 16, width: '200px' }}
+              onChange={changeArea}
+            >
+              {areaList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
+          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
+            <Select
+              placeholder="请选择站点"
+              size="middle"
+              style={{ marginLeft: 16, width: '200px' }}
+              onChange={changeSite}
+            >
+              {siteList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+        </Form>
+      </div>
       <div className={style.mainContent}>
         <div className={style.title}>储能站点</div>
         <div className={style.yaxis}></div>

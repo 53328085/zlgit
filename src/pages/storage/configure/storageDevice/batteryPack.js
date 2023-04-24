@@ -7,7 +7,7 @@ import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
-import { SiteManagerDesigner, StorageEquipmentDesigner, PCSMonitorRuntime, StorageMonitorRuntime } from '@api/api.js'
+import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks'
 
 export default function Index(props) {
@@ -20,7 +20,7 @@ export default function Index(props) {
   const errRef = useRef()
 
   const { FindSiteList } = SiteManagerDesigner
-  const { queryPCSList } = PCSMonitorRuntime
+  const { FindContainerList } = StorageContainerDesigner
   const { QueryBatteryStackList } = StorageMonitorRuntime
   const { QueryBatteryPackByPage,
     AddBatteryPack,
@@ -81,8 +81,13 @@ export default function Index(props) {
   }
 
   const getFromHeader = () => {
-    let params = form.getFieldsValue(true)
-    QueryBatteryPackByPage(projectId, params.areaId, params.siteId, params.alike, pagination.current, pagination.pageSize).then(res => {
+    let params = {
+      projectId,
+      ...form.getFieldsValue(true),
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+    }
+    QueryBatteryPackByPage(params).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           let arr = [...res.data]
@@ -287,6 +292,10 @@ export default function Index(props) {
   const addData = () => {
     setModalTitle('新增电池组')
     addForm.resetFields()
+    setAddSiteList([])
+    state.addContainerList = []
+    state.addStackList = []
+    state.addClusterList = []
     setEditModal(true)
   }
   const [addSiteList, setAddSiteList] = useState([])
@@ -309,19 +318,20 @@ export default function Index(props) {
     })
   }
   const state = useReactive({
-    addPcsList: [],
+    addContainerList: [],
     addStackList: [],
     addClusterList: []
   })
   const changeAddSite = val => {
     addForm.setFieldValue('pcsId', null)
     addForm.setFieldValue('batteryStackId', null)
-    queryPCSList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
-          state.addPcsList = res.data
+          state.addContainerList = res.data
         } else {
-          state.addPcsList = []
+          state.addContainerList = []
+          message.warning('当前站点不存在储能柜')
         }
       } else {
         message.error(res.errMsg)
@@ -329,7 +339,7 @@ export default function Index(props) {
     })
   }
 
-  const changeAddPcs = val => {
+  const changeAddContainer = val => {
     addForm.setFieldValue('batteryStackId', null)
     QueryBatteryStackList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), val).then(res => {
       if (res.success) {
@@ -337,6 +347,7 @@ export default function Index(props) {
           state.addStackList = res.data
         } else {
           state.addStackList = []
+          message.warning('当前储能柜不存在电池堆')
         }
       } else {
         message.error(res.errMsg)
@@ -345,12 +356,13 @@ export default function Index(props) {
   }
 
   const changeAddBatteryStack = val => {
-    QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), val).then(res => {
+    QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('containerId'), val).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           state.addClusterList = res.data
         } else {
           state.addClusterList = []
+          message.warning('当前电池堆不存在电池簇')
         }
       } else {
         message.error(res.errMsg)
@@ -427,18 +439,18 @@ export default function Index(props) {
         message.error(res.errMsg)
       }
     })
-    queryPCSList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
-          state.addPcsList = res.data
+          state.addContainerList = res.data
         } else {
-          state.addPcsList = []
+          state.addContainerList = []
         }
       } else {
         message.error(res.errMsg)
       }
     })
-    QueryBatteryStackList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('pcsId')).then(res => {
+    QueryBatteryStackList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('containerId')).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           state.addStackList = res.data
@@ -449,7 +461,7 @@ export default function Index(props) {
         message.error(res.errMsg)
       }
     })
-    QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('batteryStackId')).then(res => {
+    QueryClusterList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('containerId'), addForm.getFieldValue('batteryStackId')).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           state.addClusterList = res.data
@@ -525,7 +537,7 @@ export default function Index(props) {
                 <p style={{ marginTop: 24, marginBottom: 24 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }}>点击上传</span></p>
               </div>
             </Dragger>
-            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/电池包.xlsx' download>下载模板</a>
+            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryPack.xlsx' download>下载模板</a>
           </div>
         </div>
       </Modal>
@@ -566,15 +578,15 @@ export default function Index(props) {
                     })}
                   </Select>
                 </Item>
-                <Item name='pcsId' label='所属PCS' rules={[{ required: true, message: '请选择PCS' }]} >
+                <Item name='containerId' label='所属储能柜' rules={[{ required: true, message: '请选择储能柜' }]} >
                   <Select
-                    placeholder="请选择PCS"
+                    placeholder="请选择储能柜"
                     size="middle"
                     style={{ width: '200px' }}
-                    onChange={changeAddPcs}
-                    disabled={!addForm.getFieldValue('siteId') ? true : false}
+                    onChange={changeAddContainer}
+                    disabled={state.addContainerList.length==0? true: false}
                   >
-                    {state.addPcsList.map(item => {
+                    {state.addContainerList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>

@@ -1,12 +1,12 @@
-import React, {useEffect, useState, Fragment, useRef} from 'react'
+import React, { useEffect, useState, Fragment, useRef } from 'react'
 import style from './style.module.less'
 import styled from 'styled-components'
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons'
 import { message } from 'antd'
 import * as echarts from 'echarts'
 import { useNavigate } from 'react-router-dom'
-import {StorageMonitorRuntime} from '@api/api.js'
-import {useSelector} from 'react-redux'
+import { StorageMonitorRuntime } from '@api/api.js'
+import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import BatteryPack from './batteryPack'
 import topology from './imgs/topology_zhanwei.png'
@@ -46,19 +46,19 @@ export default function Index(props) {
   const socRef = useRef()
   const volRef = useRef()
   const currRef = useRef()
-  const { querySOCTrends, 
-    queryVTrends, 
-    queryITrends, 
-    queryBatteryStackInfo, 
+  const { querySOCTrends,
+    queryVTrends,
+    queryITrends,
+    queryBatteryStackInfo,
     queryBatteryStackAlarms,
     queryBatteryStackStatus } = StorageMonitorRuntime
   const projectId = useSelector(selectProjectId)
   const navigate = useNavigate()
 
-  const config = (lineId, color, Unit, lineData)=> {
+  const config = (lineId, color, Unit, lineData) => {
     let chart = echarts.init(lineId);
     chart.setOption({
-      color:[color],
+      color: [color],
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -79,8 +79,8 @@ export default function Index(props) {
       xAxis: {
         type: 'category',
         boundaryGap: true,
-        axisTick:{
-          alignWithLabel:true
+        axisTick: {
+          alignWithLabel: true
         },
         data: lineData.x
       },
@@ -94,7 +94,7 @@ export default function Index(props) {
           name: Unit,
           data: lineData.y,
           type: 'line',
-          symbol:'none', 
+          symbol: 'none',
           smooth: true,
           areaStyle: {}
         }
@@ -107,11 +107,27 @@ export default function Index(props) {
     return <div className={style.customBattery}>
       <div className={style.batteryTop}></div>
       <div className={style.batteryBody}>
-        <div className={style.progress} style={{ height: (props.value / 10) + '%', backgroundColor: props.color}}></div>
+        <div className={style.progress} style={{ height: (props.value / 10) + '%', backgroundColor: props.color }}></div>
         <span>{props.name}</span>
         <span>{props.value + '‰'}</span>
       </div>
     </div>
+  }
+
+  const Progress = props => {
+    let value = props.value
+    let length = 0
+    if (value == '' || value == '/') {
+      length = 0
+    } else {
+      length = value / 10
+    }
+    return (
+      <div style={{ position: 'relative', marginBottom: 8, width: 138, height: 24, background: '#2b2b2b', border: "1px solid rgb(153, 153, 153)", borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'absolute', zIndex: 0, left: -1, top: -1, width: length + '%', height: 24, background: props.color, border: "1px solid rgb(228, 228, 228)", borderRadius: 2, borderRight: 'none' }}></div>
+        <span style={{ zIndex: 1, color: '#fff' }}>{props.title + '    ' + props.value + '‰'}</span>
+      </div>
+    )
   }
 
   const WarningCard = props => {
@@ -126,43 +142,43 @@ export default function Index(props) {
         </div>
         <div className={style.warningbottom}>
           <span className={style.description}>{props.data.content}</span>
-          <span className={style.level} style={{color:'#c00'}}>{props.data.level }</span>
+          <span className={style.level} style={{ color: '#c00' }}>{props.data.level}</span>
         </div>
       </div>
     </div>
   }
   const toWarning = () => {
-    navigate('/index/runtimeStorage/alarmMessage',{
-      state: { type: 'index', primary: 'runtimeStorage', title: '告警信息',  nested: 'alarmMessage' } 
+    navigate('/index/runtimeStorage/alarmMessage', {
+      state: { type: 'index', primary: 'runtimeStorage', title: '告警信息', nested: 'alarmMessage' }
     })
   }
-  const toBattery =(item) => {
+  const toBattery = (item) => {
     props.getshowTab({
-      pageName:'batteryPage',
-      batteryCluster:item,
+      pageName: 'batteryPage',
+      batteryCluster: item,
     })
   }
 
   const [stateData, setStateData] = useState({})
   const [warningData, setWarningData] = useState([])//告警信息
   const [bmsInfo, setBmsInfo] = useState({
-    batteryPackInfos:[]
+    batteryClusterInfos: []
   })
   const getTopology = () => {
     console.log(props)
     let { areaId, stackId } = props.headerValues
     //电池堆信息
     queryBatteryStackInfo(projectId, stackId).then(res => {
-      let {success, data} = res
-      if(success){
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setStateData({
             ...data
           })
-        }else{
+        } else {
           setStateData({})
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -171,68 +187,68 @@ export default function Index(props) {
     let { areaId, stackId } = props.headerValues
     //soc
     querySOCTrends(projectId, stackId).then(res => {
-      if(res.success){
-        if(res.data){
-          config( socRef.current, '#1ba41b','SOC (‰)', res.data)
-        }else{
-          config( socRef.current, '#1ba41b','SOC (‰)', {x:[],y:[]})
+      if (res.success) {
+        if (res.data) {
+          config(socRef.current, '#1ba41b', 'SOC (‰)', res.data)
+        } else {
+          config(socRef.current, '#1ba41b', 'SOC (‰)', { x: [], y: [] })
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     //电压趋势
     queryVTrends(projectId, stackId).then(res => {
-      if(res.success){
-        if(res.data){
-          config(volRef.current, '#237ae4','总电压 (V)', res.data)
-        }else{
-          config(volRef.current, '#237ae4','总电压 (V)', {x:[],y:[]})
+      if (res.success) {
+        if (res.data) {
+          config(volRef.current, '#237ae4', '总电压 (V)', res.data)
+        } else {
+          config(volRef.current, '#237ae4', '总电压 (V)', { x: [], y: [] })
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     //电流趋势
     queryITrends(projectId, stackId).then(res => {
-      if(res.success){
-        if(res.data){
-          config(currRef.current, '#ff6701','总电流 (A)', res.data)
-        }else{
-          config(currRef.current, '#ff6701','总电流 (A)', {x:[],y:[]})
+      if (res.success) {
+        if (res.data) {
+          config(currRef.current, '#ff6701', '总电流 (A)', res.data)
+        } else {
+          config(currRef.current, '#ff6701', '总电流 (A)', { x: [], y: [] })
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     //电池堆
     queryBatteryStackStatus(projectId, stackId).then(res => {
-      let {success, data} = res 
-      if(success){
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setBmsInfo({
             name: props.headerValues.bmsName,
             ...data
           })
-        }else{
+        } else {
           setBmsInfo({
-            batteryPackInfos:[]
+            batteryPackInfos: []
           })
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
     //告警信息
     queryBatteryStackAlarms(projectId, stackId).then(res => {
-      let {success, data} = res 
-      if(success){
-        if(data){
+      let { success, data } = res
+      if (success) {
+        if (data) {
           setWarningData(data)
-        }else{
+        } else {
           setWarningData([])
         }
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
@@ -240,24 +256,20 @@ export default function Index(props) {
 
   const [count, setCount] = useState(0)
   const translateRight = () => {
-    if((count)<= 0) return;
+    if ((count) <= 0) return;
     setCount(count - 1)
   }
   const translateLeft = () => {
-    if((count + 3)>= bmsInfo.batteryPackInfos.length) return;
+    if ((count + 3) >= bmsInfo.batteryPackInfos.length) return;
     setCount(count + 1)
   }
 
-  useEffect(()=>{
-    if(props.headerValues){
+  useEffect(() => {
+    if (props.headerValues) {
       getContent()
       getTopology()
-      // const timer = setInterval(()=> {
-      //   getTopology()
-      // }, 60000);
-      // return ()=> clearInterval(timer)
     }
-  },[props.headerValues])
+  }, [props.headerValues])
   return (
     <div>
       <div className={style.bmsContent}>
@@ -279,62 +291,61 @@ export default function Index(props) {
         <div className={style.middle}>
           <img src={topology} className={style.zhanwei}></img>
           <div className={style.middletitle}>电池堆状态</div>
-          <div style={{position:'absolute', left: 255, top: 91}}>
-            <CustomBattery name={'SOC'} value={ bmsInfo.soc ? bmsInfo.soc  + '' :'0.00' } color="#0c6"></CustomBattery>
-          </div> 
-          <div style={{position:'absolute', left: 311, top: 91}}>
-            <CustomBattery name={'SOH'} value={bmsInfo.soh ? bmsInfo.soh  + '' :'0.00'} color="#06c"></CustomBattery>
-          </div>
           <div className={style.deviceImg}>
             <div className={style.deviceName}>{bmsInfo.batteryStackName}</div>
-            <img src={device} style={{width: 148, height: 148}}></img>
-          </div>
-          <div className={style.bmsData}>
-            <div className={style.bmsStatus}>{bmsInfo.status}</div>
-            <div className={style.bmsStatus}>{bmsInfo.chargeStatus }</div>
-          </div>
-          <div className={style.rightButton} onClick={()=>translateLeft()}>
-              <CaretRightOutlined />
+            <div className={style.deviceData}>
+              <div className={style.leftUp}></div>
+              <div className={style.rightUp}></div>
+              <div className={style.bottomItem}>
+                <div className={style.stackStatus}>{bmsInfo.status}</div>
+                <div className={style.stackStatus}>{bmsInfo.chargeStatus}</div>
+                <Progress title={'SOC'} value={bmsInfo.soc} color={'#060'}></Progress>
+                <Progress title={'SOH'} value={bmsInfo.soh} color={'#06f'}></Progress>
+              </div>
             </div>
-            <div className={style.leftButton} onClick={()=>translateRight()}>
-              <CaretLeftOutlined />
-            </div>
+          </div>
+          <div className={style.rightButton} onClick={() => translateLeft()}>
+            <CaretRightOutlined />
+          </div>
+          <div className={style.leftButton} onClick={() => translateRight()}>
+            <CaretLeftOutlined />
+          </div>
           <div className={style.batteryPack}>
-            
-            <div className={style.transLate} style={{ width: (parseInt(bmsInfo.batteryPackInfos.length / 3) + 1) * 100 + '%', left: (-(count * 277) + 55)}}>
-              {bmsInfo.batteryPackInfos.map((item, index) => {
-                return <BatteryPack data={item} key={index} toBattery={()=>toBattery(item)}></BatteryPack>
+
+            <div className={style.transLate} style={{ width: (parseInt(bmsInfo.batteryClusterInfos.length / 3) + 1) * 100 + '%', left: (-(count * 277) + 55) }}>
+              {bmsInfo.batteryClusterInfos.map((item, index) => {
+                return <BatteryPack data={item} key={index} toBattery={() => toBattery(item)}></BatteryPack>
               })}
             </div>
-          </div>   
+          </div>
         </div>
         <div className={style.right}>
-          <div className={style.environment} style={{height: 512}}>
-                <div className={style.cardTitle}>电池堆</div>
-                <EnvirBox>
-                  <div className='titleBox'>总电压 (V)</div><div className='valueBox'>{stateData.v}</div>
-                  <div className='titleBox'>总电流 (A)</div><div className='valueBox'>{stateData.i}</div>
-                  <div className='titleBox'>绝缘值 (KΩ)</div><div className='valueBox'>{stateData.insulationValue}</div>
-                  <div className='titleBox'>可充电量 (kWh)</div><div className='valueBox'>{stateData.canChargingE}</div>
-                  <div className='titleBox'>可放电量 (kWh)</div><div className='valueBox'>{stateData.canDisChargingE}</div>
-                  <div className='titleBox'>剩余电量 (kWh)</div><div className='valueBox'>{stateData.surplusE}</div>
-                  <div className='titleBox'>最高电池电压 (V)</div><div className='valueBox'>{stateData.maxBatteryV}</div>
-                  <div className='titleBox'>最低电池电压 (V)</div><div className='valueBox'>{stateData.minBatteryV}</div>
-                  <div className='titleBox'>平均电压 (V)</div><div className='valueBox'>{stateData.avgV}</div>
-                  <div className='titleBox'>最高电池温度 (℃)</div><div className='valueBox'>{stateData.maxBatteryTemp}</div>
-                  <div className='titleBox'>最低电池温度 (℃)</div><div className='valueBox'>{stateData.minBatteryTemp}</div>
-                  <div className='titleBox'>平均温度 (℃)</div><div className='valueBox'>{stateData.avgBatteryTemp}</div>
-                </EnvirBox>
-            </div>
+          <div className={style.environment} style={{ height: 512 }}>
+            <div className={style.cardTitle}>电池堆</div>
+            <EnvirBox>
+              <div className='titleBox'>总电压 (V)</div><div className='valueBox'>{stateData.v}</div>
+              <div className='titleBox'>总电流 (A)</div><div className='valueBox'>{stateData.i}</div>
+              <div className='titleBox'>绝缘值 (KΩ)</div><div className='valueBox'>{stateData.insulationValue}</div>
+              <div className='titleBox'>可充电量 (kWh)</div><div className='valueBox'>{stateData.canChargingE}</div>
+              <div className='titleBox'>可放电量 (kWh)</div><div className='valueBox'>{stateData.canDisChargingE}</div>
+              <div className='titleBox'>剩余电量 (kWh)</div><div className='valueBox'>{stateData.surplusE}</div>
+              <div className='titleBox'>最高电池电压 (V)</div><div className='valueBox'>{stateData.maxBatteryV}</div>
+              <div className='titleBox'>最低电池电压 (V)</div><div className='valueBox'>{stateData.minBatteryV}</div>
+              <div className='titleBox'>平均电压 (V)</div><div className='valueBox'>{stateData.avgV}</div>
+              <div className='titleBox'>最高电池温度 (℃)</div><div className='valueBox'>{stateData.maxBatteryTemp}</div>
+              <div className='titleBox'>最低电池温度 (℃)</div><div className='valueBox'>{stateData.minBatteryTemp}</div>
+              <div className='titleBox'>平均温度 (℃)</div><div className='valueBox'>{stateData.avgBatteryTemp}</div>
+            </EnvirBox>
+          </div>
           <div className={style.newWarning}>
-          <div className={style.cardTitle}>告警信息</div>
-            <span className={style.toWarning} onClick={()=>toWarning()}>查看详情</span>
+            <div className={style.cardTitle}>告警信息</div>
+            <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
             <div className={style.warningDetails}>
               {warningData.map((item, index) => {
                 return <Fragment key={index}>
                   <WarningCard data={item} ></WarningCard>
                 </Fragment>
-              } )}
+              })}
             </div>
           </div>
         </div>
