@@ -369,6 +369,10 @@ export default function Index() {
               <img src={error} className={style.circle}></img>
                 <span style={{color:'#f00'}}>告警</span>
               </div>
+              <div className={style.stateItem}>
+              <img src={offline} className={style.circle}></img>
+                <span style={{color:'#595959'}}>未知</span>
+              </div>
             </div>
             <div className={style.pcsImgs}>
               <span className={style.imgTitle}>储能交流器</span>
