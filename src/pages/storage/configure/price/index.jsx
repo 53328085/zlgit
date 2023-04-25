@@ -309,7 +309,7 @@ export default function Index() {
     let param2 = cloneDeep(peakForm.getFieldsValue(true))
     let param3 = cloneDeep(flatForm.getFieldsValue(true))
     let param4 =cloneDeep(valleyForm.getFieldsValue(true))
-    if(!param1.price || !param2.price || !param3.price || !param4.price){
+    if(param1.price === '' || param2.price=== '' || param3.price=== '' || param4.price===''){
       message.error('请输入尖峰平谷价格！')
       return;
     }

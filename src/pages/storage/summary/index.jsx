@@ -207,7 +207,7 @@ export default function Index() {
           <span className={style.level} style={{ fontSize: 12, color: '#6b6b6b' }}>{props.data.level}</span>
         </div>
         <div className={style.warningbottom}>
-          <span className={style.sn}>{props.data.sn}</span>
+          <span className={style.sn}>{props.data.name}</span>
         </div>
       </div>
     </div>
