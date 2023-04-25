@@ -107,7 +107,7 @@ export default function Index(props) {
             <div className={style.warningData}>
                 <div className={style.warningtop}>
                     <span className={style.time}>{props.data.warningTime}</span>
-                    <span className={style.description}>{props.data.sn}</span>
+                    <span className={style.description}>{props.data.name}</span>
                 </div>
                 <div className={style.warningbottom}>
                     <span className={style.description}>{props.data.content}</span>

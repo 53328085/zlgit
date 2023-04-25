@@ -46,7 +46,7 @@ import {
       center: position,
       // enableRotate: false
     };
-    
+    console.log(mapOption)
   
  
   const getPosition = (e) => {

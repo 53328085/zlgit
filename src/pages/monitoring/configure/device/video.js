@@ -815,6 +815,7 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="设备型号" name="category" rules={rules}>
             <Select
+            disabled
             showSearch
               options={devicelist}
             ></Select>
@@ -835,7 +836,7 @@ export const EditFormComp = (props) => {
             ></Select>
           </Form.Item>
           <Form.Item label="设备编号" name="sn" rules={rules}>
-            <Input />
+            <Input disabled/>
           </Form.Item>
           <Form.Item label="设备名称" name="name" rules={rules}>
             <Input />

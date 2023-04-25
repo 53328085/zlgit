@@ -866,7 +866,7 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
               ></Select>
             </Form.Item>
             <Form.Item label="网关编号" name="sn" rules={[rules]}>
-              <Input />
+              <Input disabled/>
             </Form.Item>
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
               <Input />

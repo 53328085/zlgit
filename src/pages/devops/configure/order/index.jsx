@@ -11,6 +11,8 @@ import {SetPosition} from './position'
 import Modal from '@com/useModal'
 import WarningPng from '@imgs/warning.png'
 import {publishState} from '@redux/systemconfig'
+import CustContext from '@com/content.js'
+import { useLatest } from 'ahooks';
 export default function Index() {
   const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
@@ -66,14 +68,15 @@ export default function Index() {
   let delId;
   let inpval =useRef();
   inpval.current=alike
+  const lng = useLatest('0,0')
   const columns = [
     {title:onelevel[0]?.levelName,dataIndex:'area'},
+    {title:'设备名称',dataIndex:'name'},
     {title:'安装地址',dataIndex:'address'},
-    {title:'电表编号',dataIndex:'sn'},
-    {title:'电表型号',dataIndex:'category'},
-    {title:'电表名称',dataIndex:'name'},
+    {title:'设备编号',dataIndex:'sn'},
+    {title:'设备型号',dataIndex:'category'},
     {title:'所属网关',dataIndex:'gateway',render(text){return text?text:'/'}},
-    {title:'用能类型',dataIndex:'customerType',render(text){return text===1?'客户':text===2?'公共':'/'}},
+    // {title:'用能类型',dataIndex:'customerType',render(text){return text===1?'客户':text===2?'公共':'/'}},
     {title:'备注',dataIndex:'remark',render(text){return text?text:'/'}},
     {title:'操作',dataIndex:'',width:180,render:(text)=>{
     return(
@@ -125,6 +128,7 @@ export default function Index() {
   //打开编辑
   const editPosition=(text)=>{
     editRowData=text
+    lng.current = text?.lngLat
     console.log(text)
     editRef.current.onOpen()
   }
@@ -212,7 +216,10 @@ export default function Index() {
       </div>
       
       <SetLine addDevice={addDevice} ref={setlineRef} areaId={areaId} getQueryPageDevice={getQueryPageDevice}/>
-      <SetPosition positionRef={editRef} savePosition={saveEditPosition}/>
+      <CustContext.Provider value={{lngLat:lng}}>
+      <SetPosition positionRef={editRef} savePosition={saveEditPosition} />
+      </CustContext.Provider>
+      
       <DeleteModal delModalRef={delModalRef} name="删除提示" content="是否确认删除设备?" onOk={delOk}/>
     </ContainerDiv>
   )

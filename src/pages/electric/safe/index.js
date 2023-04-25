@@ -435,7 +435,7 @@ export default function Index() {
                       </div>}>
                       <div>
                         <p className='title'>{it.warningTime}  {it.alarmEvent}</p>
-                        <p className='content'>{it.address}    SN {it.sn}</p>
+                        <p className='content'>{it.name}  {it.address}    </p>
                       </div>
                     </Timeline.Item>
                   )
@@ -450,7 +450,7 @@ export default function Index() {
                   </div>}>
                   <div>
                     <p className='title'>{warnlist[0]?.warningTime}  {warnlist[0]?.alarmEvent}</p>
-                    <p className='content'>{warnlist[0]?.address}    SN {warnlist[0]?.sn}</p>
+                    <p className='content'> {warnlist[0]?.name} {warnlist[0]?.address}   </p>
                   </div>
                 </Timeline.Item>,
                 <Timeline.Item dot={<div 
@@ -463,7 +463,7 @@ export default function Index() {
                     </div>}>
                     <div>
                       <p className='title'>{warnlist[1]?.warningTime}  {warnlist[1]?.alarmEvent}</p>
-                      <p className='content'>{warnlist[1]?.address}    SN {warnlist[1]?.sn}</p>
+                      <p className='content'>{warnlist[1]?.name} {warnlist[1]?.address}    </p>
                     </div>
                   </Timeline.Item>,<Timeline.Item dot={<div 
                 style={{
@@ -475,7 +475,7 @@ export default function Index() {
                   </div>}>
                   <div>
                     <p className='title'>{warnlist[2]?.warningTime}  {warnlist[2]?.alarmEvent}</p>
-                    <p className='content'>{warnlist[2]?.address}    SN {warnlist[2]?.sn}</p>
+                    <p className='content'>{warnlist[2]?.name} {warnlist[2]?.address}    </p>
                   </div>
                 </Timeline.Item>,
                 <Timeline.Item dot={<div 
@@ -488,7 +488,7 @@ export default function Index() {
                     </div>}>
                     <div>
                       <p className='title'>{warnlist[3]?.warningTime}  {warnlist[3]?.alarmEvent}</p>
-                      <p className='content'>{warnlist[3]?.address}    SN {warnlist[3]?.sn}</p>
+                      <p className='content'>{warnlist[3]?.name}   {warnlist[3]?.address} </p>
                     </div>
                   </Timeline.Item>]:null
              }

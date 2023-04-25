@@ -25,7 +25,7 @@ export default function MapComp({ points }) {
         <Map
             style={{ height: '100%' }}
             center={new BMapGL.Point(Number(centerPointer[0]?centerPointer[0]:120), Number(centerPointer[1]?centerPointer[1]:30))}
-            zoom={15}
+            zoom={18}
             tilt={40}
             enableScrollWheelZoom
            
@@ -128,7 +128,7 @@ export class EmptyMap extends React.Component {
         <Map
           style={{ height: '100%' }}
           center={new BMapGL.Point(120.22830511467954,30.21229461177818)}
-          zoom={20}
+          zoom={18}
           heading={0}
           tilt={40}
           onClick={e => console.log(e)}

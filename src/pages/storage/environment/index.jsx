@@ -16,7 +16,14 @@ export default function Index() {
   const TempRef = useRef()
   const lineRef = useRef()
   const { queryEnvironmentInfo, queryTrends } =  StorageEnvironmentRuntime
-  const today = new Date().toLocaleDateString().replace(/\//g, '-')
+  let time = new Date()
+  let year = time.getFullYear()
+  let month = time.getMonth() + 1
+  month = month < 10 ? '0' + month : month
+  let day = time.getDate()
+  day = day < 10 ? '0' + day : day 
+
+  const today = year + '-' + month + '-' + day
   const [form] = Form.useForm()
   const [headForm] = Form.useForm()
   const Item = Form.Item
@@ -205,7 +212,6 @@ export default function Index() {
 
   //页面数据
   const [storageData, setStorageData] = useState([])
-  const [headerData, setHeaderData] = useState({})
 
   //siteList
   const [siteName, setSiteName] = useState('')
@@ -280,15 +286,9 @@ export default function Index() {
           let tempTrends = []
           let humidityTrends = []
           let time = []
-          data.tempTrends.map(item => {
-            tempTrends.push([item.x, item.y]),
-            time.push(item.x)
-          })
-          data.humidityTrends.map(item => {
-            humidityTrends.push([item.x, item.y])
-            time.push(item.x)
-          })
-          time = [...new Set(time)]
+          time = data.x
+          tempTrends = data.y
+          humidityTrends = data.y1
           setTimeout(()=>{
             drawLine({
               time,
