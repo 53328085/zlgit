@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Divider, Tag, Radio, message } from 'antd'
+import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, message } from 'antd'
  import moment from 'moment'
+ import {useReactToPrint} from 'react-to-print'
 import Titlelayout from '@com/titlelayout'
 import {useSelector} from 'react-redux'
 import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
@@ -148,7 +149,7 @@ const Ccontent = styled.div`
   .ant-descriptions-item-label {
     height: 30px;
     padding: 0 16px;
-    background-color: #237ae4;
+    background-color:${({bgColor}) => bgColor || '#237ae4' };
     color:#fff;
     text-align: center;
   }
@@ -165,17 +166,20 @@ const Ccontent = styled.div`
  }
  `
  
- function Maincom({projectId,  Statistical, CModal}) {
+ function Maincom({projectId}) {
    const [form] = Form.useForm()
    const [type, setType] = useState(1)
    const levelone = useSelector(selectOneLevel)
    const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)  
    const [reportData, setReprotData] = useState({})
    const datetype = ['', 'month', 'year'][type]
+   const [loading, setLoading] = useState(false)
    const lref = useRef()
    const eref = useRef()
    const bref = useRef()
    const wref = useRef()
+   const aref = useRef()
+   const warnref = useRef() // 告警
    const [ldataset, setLdataset] = useState({
     source: [],
   })
@@ -190,10 +194,32 @@ const Ccontent = styled.div`
   const [wdataset, setWdataset] = useState({
     source: [],
   })
+  const [adataset, setAdataset] = useState({ // 空调运行时长
+      dimensions: ["date", "空调运行时长(h)"],
+      source: [],
+  })
+
+  const [wadataset, setWadataset] = useState({ // 告警趋势统计
+    dimensions: ["date", "告警次数(次)"],
+    source: [],
+})
+
+
+// 打印
+const printRef = useRef()
+const handlePrint = useReactToPrint({
+  content: () =>   printRef.current,
+  onAfterPrint: () => printRef.current = null,
+ 
+})
+const onPrint = () => {
+  if(!loading) return message.warning({contnet: '请先生成报告', duration: 0.3})
+  handlePrint()
+}
   const getReport = async () => {
      try {
       
-    
+     
      let {type, date} = form.getFieldsValue(true)
      let time;
      if(type == 1) {
@@ -206,7 +232,7 @@ const Ccontent = styled.div`
     if(success) {
          const datas = data || {}
          setReprotData(datas)
-         let {profitDetail: {x=[], y=[], y1=[], y2=[]}, chargeDetail={}, chargeDurationDetail={}, temperatureHumidityDetail={}} = datas          
+         let {profitDetail: {x=[], y=[], y1=[], y2=[]}, chargeDetail={}, chargeDurationDetail={}, temperatureHumidityDetail=[], airConditionDurationDetail={}, alarmDetail={}} = datas          
              x.unshift('日期')
              y.unshift('充电金额（元）')
              y1.unshift('放电（元）')
@@ -226,30 +252,73 @@ const Ccontent = styled.div`
              })
              setBdataset(() => {
                let {x=[], y=[], y1=[]} = chargeDurationDetail
-               x.unshift('日期')
-               y.unshift('充电时长(h)')
-               y1.unshift('放电时长(h)')
-               return {
-                source: [x, y, y1]
+               if (x.length > 0) {
+                x.unshift('日期')
+                y.unshift('充电时长(h)')
+                y1.unshift('放电时长(h)')
+                return {
+                 source: [x, y, y1]
+                }
+               } else {
+                return  {  
+                  dimensions: ["日期", '充电时长(h)', '放电时长(h)'],
+                  source: [],
+                }
+               }
+              
+             })
+             setAdataset(() => {
+              let {x=[], y=[]} = airConditionDurationDetail
+              if (x.length > 0 ) {
+                x.unshift('日期')
+                y.unshift('空调运行时长(h)')
+                return {
+                  source: [x, y]
+                }
+              }else {
+                return {  
+                  dimensions: ["日期", "空调运行时长(h)"],
+                  source: [],
               }
+              }
+             
              })
 
-             setWdataset(() => {
-              let {x=[], y=[], y1=[]} = temperatureHumidityDetail
+             setWadataset(() => {
+              let {x=[], y=[]} = alarmDetail
+              if (x.length > 0 ) {
+                x.unshift('日期')
+                y.unshift('告警次数(h)')
+                return {
+                  source: [x, y]
+                }
+              }else {
+                return {  
+                  dimensions: ["日期", "告警次数(h)"],
+                  source: [],
+              }
+              }
+             })
+             setLoading(true)
+            /*  setWdataset(() => {
+              if(temperatureHumidityDetail.length < 1) return {source: []}
+              let {x=[], y=[], y1=[]} = temperatureHumidityDetail[0]
               x.unshift('日期')
               y.unshift('温度')
               y1.unshift('湿度')
               return {
                source: [x, y, y1]
              }
-            })
+            }) 暂时不显示 */
  
     }else {
       setReprotData({})
+      setLoading(false)
       message.error({content: errMsg || '数据出错', duration: 0.3})
     }
   } catch (error) {
       console.log(error)
+      setLoading(false)
   }
 
   }
@@ -291,14 +360,14 @@ const Ccontent = styled.div`
 
   useEffect(() => {
     drawEcharts(
-      eref.current, {
-        dataset: edataset,
+      bref.current, {
+        dataset: bdataset,
         grid,
         color: ['#5c90f8', '#62daab'],
        series: [{ type: "line", seriesLayoutBy: 'row', }, { type: "line", seriesLayoutBy: 'row', }]
      }
    )
-  }, [edataset])
+  }, [bdataset])
   useEffect(() => {
     drawEcharts(
       bref.current, {
@@ -322,7 +391,51 @@ const Ccontent = styled.div`
    )
   }, [bdataset])
 
+
   useEffect(() => {
+    drawEcharts(
+      aref.current, {
+        dataset: adataset,
+        grid: {
+          ...grid,
+          top: '64px'
+        },
+        legend: {
+          top: '32px'
+        },
+        title:{
+          text:  '5. 空调运行时长统计',
+          ...etitle,
+          
+        },
+        color: ['#5c90f8'],
+       series: [{ type: "bar", seriesLayoutBy: 'row', }]
+     }
+   )
+  }, [adataset])
+
+  useEffect(() => {
+    drawEcharts(
+      warnref.current, {
+        dataset: wadataset,
+        grid: {
+          ...grid,
+          top: '64px'
+        },
+        legend: {
+          top: '32px'
+        },
+        title:{
+          text:  '7. 告警趋势统计',
+          ...etitle,
+          
+        },
+        color: ['#5c90f8'],
+       series: [{ type: "bar", seriesLayoutBy: 'row', }]
+     }
+   )
+  }, [wadataset])
+  /* useEffect(() => {
     drawEcharts(
       wref.current, {
         dataset: wdataset,
@@ -342,7 +455,7 @@ const Ccontent = styled.div`
        series: [{ type: "line", seriesLayoutBy: 'row', }, { type: "line", seriesLayoutBy: 'row', }]
      }
    )
-  }, [wdataset])
+  }, [wdataset])  暂时不显示*/
   return (
    
     <Mainbox>
@@ -381,14 +494,14 @@ const Ccontent = styled.div`
              </Form>
              <div className='btns'>
                     <CustButton wh="192px" src="createrpt" onClick={getReport}>生成报告</CustButton>
-                    <CustButton wh="192px" src="print">打印报告</CustButton>
+                    <CustButton wh="192px" src="print" onClick={onPrint}>打印报告</CustButton>
                     <CustButton wh="192px" src="export">导出报告</CustButton>
              </div>
                
               
           </Titlelayout>      
           </div>
-          <div className='right'>
+          <div className='right' ref={handlePrint}>
                <div className='front' style={{backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundSize: '614px 260px',
           backgroundRepeat: 'no-repeat',
     backgroundPosition: '0 550px'}}>
@@ -407,6 +520,8 @@ const Ccontent = styled.div`
                    </div>
                    </div>
                </div>
+               {
+               loading && <>
                <Ccontent count={2}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -453,106 +568,40 @@ const Ccontent = styled.div`
                    <div ref={bref} >
                       
                    </div>
-                   <div ref={wref} ></div>
+                   <div ref={aref}></div>
+                  {/*  <div ref={wref} ></div> 暂时不显示*/}
                  </div>
                   
                </Ccontent>
+               <Ccontent count={1}>
+                 <div className='header'>
+                   <span>储能系统分析报告</span>
+                   <span>本期报告分析周期为： {moment(reportData.reportDate).format('YYYY-MM')+'月'}</span>
+                 </div>
+                 <div className='main'>
+                   <DesItem title="6. 告警信息" bordered size='small' layout='vertical' bgColor="#f60">
+                      <DesItem.Item label="PCS告警">{reportData.pcsAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="电池告警">{reportData.batteryAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="温度告警">{reportData.temperatureAlarmCount}</DesItem.Item>
+
+                      <DesItem.Item label="烟雾告警">{reportData.smokeAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="火灾告警">{reportData.fireAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="SOC低">{reportData.socLowAlarmCount}</DesItem.Item>
+                   </DesItem>
+                   <div  ref={warnref} ></div>
+                 </div>
+                  
+               </Ccontent>
+               </>
+               }
           </div>
           </Mainbox>
     
   )
 }
 
-const Statistical = ({data}) => {
-  const contentStyle = {
-    width: '172px',
-    height: '40px',
-    backgroundColor: 'rgba(0, 51, 204, 1)',
-    fontsize: '14px',
-    color: '#FFFFFF',
-    alignItems: 'center',
-    justifyCcontent: 'center',
-    paddingBottom: '0px'
-  }
-  const labelStyle = {
-    width: '172px',
-    height: '40px',
-    backgroundColor: 'rgba(0, 51, 102, 1)',
-    fontsize: '12px',
-    color: '#FFFFFF',
-    alignItems: 'center',
-    justifyCcontent: 'center',
-    paddingBottom: '0px'
-  }
-  return (
-     <div className='list'>
-      <div style={{display: 'flex', border: '2px solid #fff'}}>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        </div>
-        <div style={{display: 'flex', border: '2px solid #fff'}}>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        </div>
-        <div style={{display: 'flex', border: '2px solid #fff'}}>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        <div   className='listitem'>
-            <div className='up' >
-                  当日放电量(kwh)
-              </div>
-              <div className='downinfo'>200</div> 
-        </div>
-        </div>
-     </div>
-  )
-}
-
-
 export default function Index(props) {
     return (
-        <Maincom {...props}   Statistical={Statistical}   />
+        <Maincom {...props}     />
     )
 }
