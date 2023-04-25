@@ -302,8 +302,8 @@ export default function gateway({ deviceStyle }) {
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
         ratedFrequency:formvalue.ratedFrequency,
-        commPort: formvalue.commPort,
-        commAddress: formvalue.commAddress,
+        commPort: formvalue.commPort?formvalue.commPort:0,
+        commAddress: formvalue.commAddress?formvalue.commAddress:0,
         commProtocol: 0,
       }
       const res = await AddTransformer(params)
@@ -338,8 +338,8 @@ export default function gateway({ deviceStyle }) {
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
         ratedFrequency:formvalue.ratedFrequency,
-        commPort: formvalue.commPort,
-        commAddress: formvalue.commAddress,
+        commPort: formvalue.commPort?formvalue.commPort:0,
+        commAddress: formvalue.commAddress?formvalue.commAddress:0,
         commProtocol: 0,
       }
       const res = await AddTransformer(params)
@@ -915,12 +915,13 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
         <Form.Item label="变压器型号" name="category" rules={rules}>
             <Select
+            disabled
             showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
           <Form.Item label="变压器编号" name="sn" rules={rules}>
-            <Input />
+            <Input disabled/>
           </Form.Item>
           <Form.Item label="变压器名称" name="name" rules={rules}>
             <Input />

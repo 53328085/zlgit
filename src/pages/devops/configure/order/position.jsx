@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
+import React, { useEffect, useState,useContext, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import UseMap from '@com/useMap'
-
-
+import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()
     return (
-        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}}>
+        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}} destroyOnClose={true}>
             <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/>
             <LoaclForm  ref={loaclRef}/>
         </Modal>
@@ -20,6 +19,8 @@ let LoaclForm =forwardRef((props,ref)=>{
     // const inpvalueRef = useRef()
     const [local,setLoacl] = useState()
     const mapRef = useRef()
+    const context =useContext(CustContext)
+    console.log(context)
     const search=(text)=>{
         mapRef.current.serachMap.search(inpvalue)
     }
@@ -37,6 +38,9 @@ let LoaclForm =forwardRef((props,ref)=>{
         inpvalue,
         local
     }))
+    useEffect(()=>{
+        setLoacl(context?.lngLat?.current)
+    },[context?.lngLat?.current])
     return (
         <>
          <div>
@@ -57,7 +61,7 @@ let LoaclForm =forwardRef((props,ref)=>{
             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
         </div>
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
-        <UseMap setAaddress={setAaddress} ref={mapRef}/>
+        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat?.current}/>
         </div>
         
         </>

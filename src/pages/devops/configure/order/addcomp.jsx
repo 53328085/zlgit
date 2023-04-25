@@ -34,6 +34,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         {label:'燃气表',value:3},
         {label:'传感器',value:4},
         {label:'变压器',value:5},
+        {label:'储能设备',value:11}
     ]
     const columns = [
         { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
@@ -90,6 +91,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     }
     //未选择线路check
     const onSelectChange = (newSelectedRowKeys, selectedRows, info) => {
+        console.log(newSelectedRowKeys)
         setSelectedRowKeys(newSelectedRowKeys)
         setSelectedRows(selectedRows)
     }
@@ -109,8 +111,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
             message.warning('请至少选择一项!')
             return
         }
-        const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
-        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
+        const arr = dataSource.filter(it => !selectedRowKeys.includes(it.sn))
+        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.sn))
         console.log(489, selectedRows)
         setSubMeter([...selectedRows, ...subMeter])
         setSubMeterRowKeys([])
@@ -125,7 +127,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
             message.warning('请至少选择一项!')
             return
         }
-        const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
+        const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.sn))
         console.log(arr, selectedRowKeys, selectedRows)
         setDataSource([...subSelectedRows, ...dataSource])
         setCopydataSource([...subSelectedRows, ...copydataSource])
@@ -189,7 +191,6 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     }
     //搜索
     const onSearch = async (value, event) => {
-        console.log(devicetype)
         setSelectedRowKeys([])
         setSelectedRows([])
         let filterarr;
@@ -218,7 +219,6 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         
         }
         setDataSource([...filterarr])
-        console.log(filterarr)
     }
     //设备类型改变
     const changeType=(v)=>{
@@ -252,6 +252,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
           
             // setDataSource([...copydataSource])
         }
+        console.log(filterarr)
         setDataSource([...filterarr])
     }
     //设置坐标
@@ -278,7 +279,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
             console.log(updatearr,subMeter)
            for(let i=0;i<subMeter.length;i++){
              for(let j=0;j<arr.length;j++){
-                if (subMeter[i].id === arr[j].id){
+
+                if (subMeter[i].sn === arr[j].sn){
                     updatearr[i]=arr[j]
                 }
              }
@@ -321,7 +323,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
                         scroll={{ y: 560 }}
                         size={'small'}
                         dataSource={subMeter}
-                        rowKey={record => record.id}
+                        rowKey={record => record.sn}
                     ></Table>
                 </div>
 
@@ -371,7 +373,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
                         dataSource={dataSource}
                         scroll={{ y: 500 }}
                         size={'small'}
-                        rowKey={record => record.id}
+                        rowKey={record => record.sn}
                     ></Table>
                 </div>
             </div>

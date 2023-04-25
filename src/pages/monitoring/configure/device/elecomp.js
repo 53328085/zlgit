@@ -454,6 +454,7 @@ export const EditFormComp = (props) => {
                     </Form.Item>
                     <Form.Item label="设备型号" name="category" rules={rules}>
                         <Select
+                            disabled
                             showSearch
                             options={devicelist}
                         ></Select>
@@ -473,7 +474,7 @@ export const EditFormComp = (props) => {
                             }
                         }
                     }]}>
-                        <Input placeholder='设备编号长度12为' />
+                        <Input placeholder='设备编号长度12为' disabled/>
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
