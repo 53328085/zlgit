@@ -68,7 +68,7 @@ export default function Index() {
     const getData = ({current, pageSize}, form) => {
        let {alike, deviceStyle} = form
        let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
-       return Remote.AllMeter(params).then(res => {
+       return Remote.AllCallMeter(params).then(res => {
         let {success, data, total} = res
         if(success && Array.isArray(data) && data.length > 0) {
            return {
