@@ -223,7 +223,7 @@ export default function Index(props) {
     const [nameState, setNameState] = useState({})
     const getBatteryList = (batteryCluster) => {
         setNameState({
-            name: batteryCluster.batteryClusterName,
+            name: batteryCluster.name,
             chargeState: batteryCluster.chargeState
         })
         queryBatteryPackInfo(projectId, batteryCluster.id).then(res => {

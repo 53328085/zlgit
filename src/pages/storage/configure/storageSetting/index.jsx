@@ -455,7 +455,7 @@ export default function Index() {
               label="站点编号"
               rules={[{ required: true, message: "请输入站点编号" }]}
             >
-              <Input placeholder="请输入站点编号" />
+              <Input placeholder="请输入站点编号" disabled={modalTitle === "编辑站点"} />
             </Item>
             <Item
               name="name"

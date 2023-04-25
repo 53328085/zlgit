@@ -16,7 +16,7 @@ import Table from '@com/useTable'
 import Item from "antd/lib/list/Item";
 import moment from "moment";
 import { index } from "@antv/x6/lib/util/dom/elem";
-
+import deviceDetail3 from './images/deviceDetail3.jpg'
 export default function GatewayDetail(props) {
     let location = useLocation()
     let qs = require('query-string')
@@ -178,7 +178,8 @@ export default function GatewayDetail(props) {
                 { data: y1, type: 'line', name: '用电量-尖(kWh)' },
                 { data: y2, type: 'line', name: '用电量-峰(kWh)' },
                 { data: y3, type: 'line', name: '用电量-平(kWh)' },
-                { data: y4, type: 'line', name: '用电量-谷(kWh)' }]
+                { data: y4, type: 'line', name: '用电量-谷(kWh)' }
+            ]
                 tdrawEcharts(energyref.current, option(objList, x, 0))
             } else {
                 message.error(res.errMsg)
@@ -372,6 +373,9 @@ export default function GatewayDetail(props) {
         getAlarmPage()
     }, [paramsTrend.sn])
     useEffect(() => {
+        getAlarmPage()
+    }, [pageNum])
+    useEffect(() => {
         getEnergyReport()
         getEnergyTrend()
     }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
@@ -461,40 +465,40 @@ export default function GatewayDetail(props) {
                             </div> : state == 3 ? <div>
                                 <div className={style.energyHead}>
                                     <div className={style.dateData}>
-                                        <p><span>今日用电量 (kWh)</span><span>日环比{actuary.e_DayRatio > 0 ? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_DayRatio < 0 ? <CaretDownOutlined
+                                        <p><span>今日用电量 (kWh)</span><span>日环比{actuary.e_DayRatio.slice(0,1) !='-' ? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_DayRatio.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_DayRatio}</span></p>
                                         <div>{actuary.e_DayUsage}</div>
                                         <p>日均用电量 : {actuary.e_DayAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本月用电量 (kWh)</span><span>月环比{actuary.e_MonthRatio > 0 ? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_MonthRatio < 0 ? <CaretDownOutlined
+                                        <p><span>本月用电量 (kWh)</span><span>月环比{actuary.e_MonthRatio.slice(0,1) !='-'? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_MonthRatio.slice(0,1) =='-'? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_MonthRatio}</span></p>
                                         <div>{actuary.e_MonthUsage}</div>
                                         <p>月均用电量 : {actuary.e_MonthAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本年用电量 (kWh)</span><span>年环比{actuary.e_YearRatio > 0 ? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_YearRatio < 0 ? <CaretDownOutlined
+                                        <p><span>本年用电量 (kWh)</span><span>年环比{actuary.e_YearRatio.slice(0,1) !='-' ? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_YearRatio.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_YearRatio}</span></p>
                                         <div>{actuary.e_YearUsage}</div>
                                         <p>年均用电量 : {actuary.e_YearAvg}</p>
                                     </div>
                                     <div className={style.dateDataLast}>
                                         <div>
-                                            <div className={style.rightImg} ><img src={imgurl.deviceDetail2}></img></div>
+                                            <div className={style.rightImg} ><img width={68} height={68} src={deviceDetail3}></img></div>
                                             <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.e_All}</span> kWh</p>
                                             <p>累计用电量</p>
                                         </div>
                                         <div>
                                             <div className={style.rightImg} ><img src={imgurl.deviceDetail2}></img></div>
-                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.coal}</span> kg</p>
+                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.coal}</span> t</p>
                                             <p>累计转标煤</p>
                                         </div>
                                         <div>
                                             <div className={style.rightImg} ><img src={imgurl.deviceDetail1}></img></div>
-                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.co2}</span> kg</p>
+                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.co2}</span> t</p>
                                             <p>累计转二氧化碳</p>
                                         </div>
                                     </div>
@@ -531,7 +535,7 @@ export default function GatewayDetail(props) {
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
-                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={12} onChange={onChangePageLog} />
+                                    <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
                             </div>}
 

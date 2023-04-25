@@ -1,11 +1,11 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import style from './style.module.less'
 import { Select, Form, Table, message } from 'antd'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
-import {PCSMonitorRuntime, SiteManagerDesigner } from '@api/api.js'
+import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
 
 import pcs from './imgs/pcs.png'
@@ -14,9 +14,11 @@ import offline from './imgs/offline.png'
 import error from './imgs/error.png'
 
 export default function Index() {
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   const { queryPCSList, 
     queryPCSInfo,
     queryPCSWarningInfo, 
@@ -24,6 +26,7 @@ export default function Index() {
     querySocTrends, 
     queryAcTable } = PCSMonitorRuntime
   const { FindSiteList } = SiteManagerDesigner
+  const { FindContainerList } = StorageContainerDesigner
   const [form] = Form.useForm()
   const {Item}  = Form
   //siteList
@@ -34,9 +37,10 @@ export default function Index() {
         if(res.data && res.data.length> 0){
           setSiteList(res.data)
           form.setFieldValue('siteId', res.data[0].id)
-          queryPCS()
+          queryContainer()
         }else{
           setSiteList([])
+          setContainerList([])
           setPcsList([])
           message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
           return;
@@ -47,6 +51,31 @@ export default function Index() {
     })
   }
   const changeSite = val => {
+    form.setFieldValue('containerId', null)
+    form.setFieldValue('PCSId', null)
+    queryContainer()
+  }
+
+  //containerList
+  const [containerList, setContainerList] = useState([])
+  const queryContainer = () => {
+    FindContainerList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+      if (res.success) {
+        if (res.data && res.data.length > 0) {
+          setContainerList(res.data)
+          form.setFieldValue('containerId', res.data[0].id)
+          queryPCS()
+        } else {
+          setContainerList([])
+          setPcsList([])
+          message.warning('当前站点不存在储能柜!')
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeContainer = val => {
     form.setFieldValue('PCSId', null)
     queryPCS()
   }
@@ -55,7 +84,7 @@ export default function Index() {
   const [pcsList, setPcsList] = useState([])
   const [selectPcs, setSelectPcs] = useState('')
   const getPCSList = () => {
-    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId')).then(res => {
+    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId'), form.getFieldValue('containerId')).then(res => {
       if(res.success){
         if(res.data && res.data.length> 0){
           setPcsList(res.data)
@@ -233,7 +262,12 @@ export default function Index() {
     },
   ]
 
-  const changeArea = val => {
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
     form.setFieldValue('siteId', null)
     form.setFieldValue('PCSId', null)
     querySite()
@@ -250,7 +284,7 @@ export default function Index() {
     if(areaList.length == 0|| !areaList){
       message.error('当前项目尚未创建园区!')
     }else{
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   },[])
@@ -292,6 +326,19 @@ export default function Index() {
             </Select>
           </Item>
           <div className={style.line}></div>
+          <Item name='containerId' label='储能柜选择' style={{marginLeft:16}}>
+            <Select
+              placeholder="请选择储能柜"
+              size="middle"
+              style={{marginLeft: 16, width: '200px'}}
+              onChange={changeContainer}
+            >
+              {containerList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.line}></div>
           <Item name='PCSId' label='PCS选择' style={{marginLeft:16}}>
             <Select
               placeholder="请选择PCS"
@@ -321,6 +368,10 @@ export default function Index() {
               <div className={style.stateItem}>
               <img src={error} className={style.circle}></img>
                 <span style={{color:'#f00'}}>告警</span>
+              </div>
+              <div className={style.stateItem}>
+              <img src={offline} className={style.circle}></img>
+                <span style={{color:'#595959'}}>未知</span>
               </div>
             </div>
             <div className={style.pcsImgs}>

@@ -34,7 +34,7 @@ export default function Index(props){
         axisTick:{
           alignWithLabel:true
         },
-        data: props.data.date
+        data: props.data.x
       },
       yAxis: [
         {
@@ -51,14 +51,14 @@ export default function Index(props){
       series: [
         {
           name:'充电电量(kWh)',
-          data: props.data.chargingIncome,
+          data: props.data.y,
           type: 'line',
           symbol:'none', 
           areaStyle: {},
         },
         {
           name:'放电电量(kwh)',
-          data: props.data.disChargingIncome,
+          data: props.data.y1,
           type: 'line',
           symbol:'none', 
           areaStyle: {}

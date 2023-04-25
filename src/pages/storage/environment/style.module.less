@@ -1,3 +1,23 @@
+.header{
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    .line{
+        width: 0;
+        height: 33px;
+        margin: 0 24px;
+        border-left: 1px dashed #d7d7d7;
+    }
+    :global{
+        .ant-form-item-label > label::after{
+            display: none;
+        }
+    }
+}
 .mainContent {
     width: 1680px;
     height: 800px;

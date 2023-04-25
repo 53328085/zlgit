@@ -3,8 +3,8 @@ import { useRequest } from 'ahooks';
 import style from './style.module.less';
 import { Select,DatePicker,Button, message, Radio } from 'antd';
 import dayjs from 'dayjs'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, selectshifts, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import { eneryShift } from '@api/api.js'
 //dayjs bug
 import weekday from "dayjs/plugin/weekday";
@@ -21,14 +21,22 @@ export default function Index(props) {
       content,
     });
   };
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   const { queryShifts } = eneryShift
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
+  const [defaultArea, setDefaultArea] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
+  const [areaId,setAreaId] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
   const changeArea = (value) => {
+    areaList.map(item => {
+      if(item.id == value){
+        dispatch(setCurrentlevel(item))
+      }
+    })
+    
     setAreaId(value);
   };
   

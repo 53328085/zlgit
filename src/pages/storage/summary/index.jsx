@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
 import { message, Form, Select } from 'antd'
 import { range } from 'lodash'
@@ -18,12 +18,14 @@ export default function Index() {
     queryStorageIncome,
     queryStorageWarning,
     queryTopologyDiagramInfo,
-    queryRealtimeData } = SiteSummaryRuntime
+    queryChargeETrends } = SiteSummaryRuntime
   const { FindSiteList } = SiteManagerDesigner
 
+  const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
 
   //siteList
   const [siteList, setSiteList] = useState([])
@@ -51,21 +53,27 @@ export default function Index() {
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
   const [barData, setBarData] = useState({}) //收益统计
-  const [realData, setRealData] = useState({})//实时状态
+  const [lineData, setLineData] = useState({})//充放电趋势
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
-    lineInfo: {},
-    solarPointBaseInfo: {},
+    loadDevice: {},
+    onGridDevice: {},
+    storageDevice:{}
   }) //接线图数据
   useEffect(() => {
     if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
     } else {
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   }, [])
-  const changeArea = val => {
+  const changeArea = (val) => {
+    areaList.map(item => {
+      if(item.id == val){
+        dispatch(setCurrentlevel(item))
+      }
+    })
     form.setFieldValue('siteId', null)
     querySite()
   }
@@ -78,7 +86,7 @@ export default function Index() {
       }
     })
 
-    queryStorageIncome(projectId, form.getFieldValue('areaId')).then(res => {
+    queryStorageIncome(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -91,7 +99,7 @@ export default function Index() {
       }
     })
 
-    queryStorageWarning(projectId, form.getFieldValue('areaId')).then(res => {
+    queryStorageWarning(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -104,28 +112,29 @@ export default function Index() {
       }
     })
 
-    queryTopologyDiagramInfo(projectId, form.getFieldValue('areaId')).then(res => {
+    queryTopologyDiagramInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
         } else {
-          setTopologyData({})
+          setTopologyData({
+            loadDevice: {},
+    onGridDevice: {},
+    storageDevice:{}
+          })
         }
       } else {
         message.error(res.errMsg)
       }
     })
 
-    queryRealtimeData(projectId, form.getFieldValue('areaId')).then(res => {
-      let { success, data } = res
-      if (success) {
-        if (data) {
-          setRealData(data)
+
+    queryChargeETrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+      if (res.success) {
+        if (res.data) {
+          setLineData(res.data)
         } else {
-          setRealData({
-            lineInfo: {},
-            solarPointBaseInfo: {},
-          })
+          setLineData({})
         }
       } else {
         message.error(res.errMsg)
@@ -198,7 +207,7 @@ export default function Index() {
           <span className={style.level} style={{ fontSize: 12, color: '#6b6b6b' }}>{props.data.level}</span>
         </div>
         <div className={style.warningbottom}>
-          <span className={style.sn}>{props.data.sn}</span>
+          <span className={style.sn}>{props.data.name}</span>
         </div>
       </div>
     </div>
@@ -244,7 +253,9 @@ export default function Index() {
         <div className={style.left}>
           <CardItem title='站点信息' height='236px'>
             <div className={style.information}>
-              <img src={imgurl.zhandian} className={style.siteImg}></img>
+              {
+                cardData.image ? <img src={cardData.image} className={style.siteImg}></img> : <img src={imgurl.zhandian} className={style.siteImg}></img>
+              }
               <div className={style.siteData}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span className={style.siteTitle}>站点容量</span>
@@ -252,7 +263,7 @@ export default function Index() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span className={style.siteTitle}>实时充电功率</span>
-                  <span className={style.siteValue}> {cardData?.runtimeP}&nbsp;kW</span>
+                  <span className={style.siteValue}> {cardData?.runtimeChargeP}&nbsp;kW</span>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -295,17 +306,17 @@ export default function Index() {
               <div className={style.storageMeter}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.v}</span>
+                  <span className={style.dataValue}>{topologyData?.storageDevice.v}</span>
                   <span className={style.dataUnit}>(V)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.i}</span>
+                  <span className={style.dataValue}>{topologyData?.storageDevice.i}</span>
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataValue}>{topologyData?.storageDevice.p}</span>
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
@@ -313,17 +324,17 @@ export default function Index() {
               <div className={style.transformer}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v}</span>
+                  <span className={style.dataValue}>{topologyData?.onGridDevice.v}</span>
                   <span className={style.dataUnit}>(V)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i}</span>
+                  <span className={style.dataValue}>{topologyData?.onGridDevice.i}</span>
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataValue}>{topologyData?.onGridDevice.p}</span>
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
@@ -331,17 +342,17 @@ export default function Index() {
               <div className={style.batterys}>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.v}</span>
+                  <span className={style.dataValue}>{topologyData?.loadDevice.v}</span>
                   <span className={style.dataUnit}>(V)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.solarPointBaseInfo.i}</span>
+                  <span className={style.dataValue}>{topologyData?.loadDevice.i}</span>
                   <span className={style.dataUnit}>(A)</span>
                 </div>
                 <div className={style.meterData}>
                   <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.lineInfo.p}</span>
+                  <span className={style.dataValue}>{topologyData?.loadDevice.p}</span>
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
@@ -353,7 +364,7 @@ export default function Index() {
                 <BarChart data={barData}></BarChart>
               </RightItem>
               <RightItem title='储能充放电趋势' height={'340px'}>
-                <LineChart data={barData}></LineChart>
+                <LineChart data={lineData}></LineChart>
               </RightItem>
             </div>
           </div>

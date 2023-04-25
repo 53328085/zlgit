@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import styled from 'styled-components'
 import UseTable from '@com/useTable'
-import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner } from '@api/api.js'
+import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner  } from '@api/api.js'
 import { useReactive } from 'ahooks'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
@@ -34,19 +34,19 @@ export default function Index(props) {
   const { FindSiteList } = SiteManagerDesigner
   const { FindContainerList } = StorageContainerDesigner
   const { QueryCategoryUsed,
-    QueryAirByPage,
-    AddAir,
-    UpdateAir,
-    BatchImportAir,
+    QueryTHByPage,
+    AddTH,
+    UpdateTH,
+    BatchImportTH,
     Delete } = StorageMonitorDesigner
 
   const state = useReactive({
     siteList: [], //站点列表
     editModal: false, //新增编辑modal
-    modalTitle: '新增空调',
-    addSiteList: [], //新增modal 站点列表,
+    modalTitle: '新增传感器',
+    addSiteList:[], //新增modal 站点列表,
     containerList: [],//新增modal 储能柜列表,
-    AddcategoryList: [], //空调型号，
+    AddcategoryList:[], //传感器型号，
     selectId: 0, // 编辑 || 删除的id
   })
 
@@ -93,10 +93,10 @@ export default function Index(props) {
   }
 
   const onSearch = val => {
-    if (pagination.current == 1) {
+    if(pagination.current == 1){
       getFromHeader()
-    } else {
-      tableOnchange({ current: 1 })
+    }else{
+      tableOnchange({current:1})
     }
   }
 
@@ -107,18 +107,18 @@ export default function Index(props) {
       pageSize: pagination.pageSize,
       containerId: 0,
     }
-    QueryAirByPage(projectId, params).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
+    QueryTHByPage(projectId, params).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
           setTableData(res.data)
           setPagination({
             ...pagination,
             total: res.total,
           })
-        } else {
+        }else{
           setTableData([])
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
@@ -188,10 +188,10 @@ export default function Index(props) {
       current,
     })
   }
-  useEffect(() => {
-    if (!form.getFieldValue('siteId')) return;
+  useEffect(()=> {
+    if(!form.getFieldValue('siteId')) return;
     getFromHeader()
-  }, [pagination.current])
+  },[pagination.current])
 
   const exportData = () => {
     tableRef.current.download()
@@ -199,21 +199,21 @@ export default function Index(props) {
 
   //新增
   const addData = () => {
-    state.modalTitle = '新增空调'
+    state.modalTitle = '新增传感器'
     addForm.resetFields()
     state.editModal = true
   }
   const changeAddArea = val => {
     addForm.setFieldValue('siteId', null)
     FindSiteList(props.projectId, addForm.getFieldValue('areaId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
+      if(res.success){
+        if(res.data && res.data.length> 0){
           state.addSiteList = res.data
-        } else {
+        }else{
           state.addSiteList = []
-          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
@@ -221,14 +221,14 @@ export default function Index(props) {
   const changeAddSite = val => {
     addForm.setFieldValue('containerId', null)
     FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
+      if(res.success){
+        if(res.data && res.data.length> 0){
           state.containerList = res.data
-        } else {
+        }else{
           state.containerList = []
           message.warning('当前站点不存在储能柜！')
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
@@ -236,51 +236,51 @@ export default function Index(props) {
 
   const onApplication = async () => {
     const values = await addForm.validateFields()
-    AddAir(projectId, values).then(res => {
-      let { success, data } = res
-      if (success) {
-        message.success('新增空调成功!')
-        if (pagination.current != 1) {
-          tableOnchange({ current: 1 })
-        } else {
+    AddTH(projectId, values).then(res => {
+      let {success, data} = res
+      if(success){
+        message.success('新增传感器成功!')
+        if(pagination.current != 1){
+          tableOnchange({current: 1})
+        }else{
           getFromHeader()
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
   }
-  const closeModal = () => {
+  const closeModal =  () => {
     state.editModal = false
   }
   const onAdd = async () => {
     const values = await addForm.validateFields()
-    if (state.modalTitle == '新增空调') {
-      AddAir(projectId, values).then(res => {
-        let { success, data } = res
-        if (success) {
-          message.success('新增空调成功!')
+    if(state.modalTitle == '新增传感器'){
+      AddTH(projectId, values).then(res => {
+        let {success, data} = res
+        if(success){
+          message.success('新增传感器成功!')
           state.editModal = false
-          if (pagination.current != 1) {
-            tableOnchange({ current: 1 })
-          } else {
+          if(pagination.current != 1){
+            tableOnchange({current: 1})
+          }else{
             getFromHeader()
           }
-        } else {
+        }else{
           message.error(res.errMsg)
         }
       })
     }
-    if (state.modalTitle == '编辑空调') {
+    if(state.modalTitle == '编辑传感器'){
       let params = values
       params.id = state.selectId
-      UpdateAir(projectId, params).then(res => {
-        let { success, data } = res
-        if (success) {
-          message.success('修改空调成功!')
+      UpdateTH(projectId, params).then(res => {
+        let {success, data} = res
+        if(success){
+          message.success('修改传感器成功!')
           state.editModal = false
           getFromHeader()
-        } else {
+        }else{
           message.error(res.errMsg)
         }
       })
@@ -292,33 +292,33 @@ export default function Index(props) {
     addForm.setFieldsValue(item)
     state.selectId = item.id
     FindSiteList(projectId, addForm.getFieldValue('areaId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
+      if(res.success){
+        if(res.data && res.data.length> 0){
           state.addSiteList = res.data
-        } else {
+        }else{
           state.addSiteList = []
           addForm.setFieldValue('siteId', null)
-          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
+          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
 
     FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
+      if(res.success){
+        if(res.data && res.data.length> 0){
           state.containerList = res.data
-        } else {
+        }else{
           state.containerList = []
           message.warning('当前站点不存在储能柜！')
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
 
-    state.modalTitle = '编辑空调'
+    state.modalTitle = '编辑传感器'
     state.editModal = true
   }
 
@@ -329,14 +329,14 @@ export default function Index(props) {
   }
   const onDelete = () => {
     Delete(projectId, state.selectId, 1).then(res => {
-      if (res.success) {
-        message.success('空调删除成功!')
-        if (tableData.length == 1 && pagination.current > 1) {
-          tableOnchange({ current: pagination.current - 1 })
-        } else {
+      if(res.success){
+        message.success('传感器删除成功!')
+        if(tableData.length == 1 && pagination.current > 1){
+          tableOnchange({current: pagination.current - 1})
+        }else{
           getFromHeader()
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
@@ -367,21 +367,21 @@ export default function Index(props) {
   const onUpload = () => {
     let formData = new FormData()
     formData.append('projectId', projectId)
-    formData.append('file', fileList[0])
-    BatchImportAir(formData).then(res => {
-      if (res.success) {
-        let { success, data } = res.data
-        if (success) {
+    formData.append('file',fileList[0])
+    BatchImportTH(formData).then(res => {
+      if(res.success){
+        let {success, data} = res.data
+        if(success){
           message.success('批量导入成功!')
           setAddModal(false)
           getFromHeader()
-        } else {
+        }else{
           message.error(res.data.errMsg)
           setErrorData(data);
           setAddModal(false)
           errRef.current.onOpen()
         }
-      } else {
+      }else{
         message.error(res.errMsg)
         setAddModal(false)
       }
@@ -405,20 +405,20 @@ export default function Index(props) {
   }
 
   //设备类型
-  useEffect(() => {
-    QueryCategoryUsed(projectId, 5).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
-          state.AddcategoryList = res.data
-        } else {
-          state.AddcategoryList = []
-          message.warning('当前项目不存在空调类型!')
+  useEffect(()=> {
+    QueryCategoryUsed(projectId, 6).then(res => {
+      if(res.success){
+        if(res.data && res.data.length > 0){
+          state.AddcategoryList=res.data
+        }else{
+          state.AddcategoryList=[]
+          message.warning('当前项目不存在传感器类型!')
         }
-      } else {
+      }else{
         message.error(res.errMsg)
       }
     })
-  }, [])
+  },[])
 
   return (
     <div className={style.contents}>
@@ -465,11 +465,11 @@ export default function Index(props) {
         </div>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
-      <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜空调.xlsx'></UseTable>
+      <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜传感器.xlsx'></UseTable>
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <img style={{ marginLeft: 64, marginRight: 32 }} src={warning}></img>
-          <span> 是否确认删除空调？ </span>
+          <span> 是否确认删除传感器？ </span>
         </div>
       </Custmodl>
       <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
@@ -513,9 +513,9 @@ export default function Index(props) {
                 size="middle"
                 style={{ width: '320px' }}
                 onChange={changeAddSite}
-                disabled={state.addSiteList.length == 0 ? true : false}
+                disabled={state.addSiteList.length==0? true: false}
               >
-                {state.addSiteList.map(item => {
+                { state.addSiteList.map(item => {
                   return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                 })}
               </Select>
@@ -525,29 +525,29 @@ export default function Index(props) {
                 placeholder="请选择储能柜"
                 size="middle"
                 style={{ width: '320px' }}
-                disabled={state.containerList.length == 0 ? true : false}
+                disabled={state.containerList.length==0? true: false}
               >
-                {state.containerList.map(item => {
+                { state.containerList.map(item => {
                   return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                 })}
               </Select>
             </Item>
-            <Item name='sn' label='空调编号' rules={[{ required: true, message: '请输入空调编号' }]} >
-              <Input style={{ width: '320px' }} placeholder='请输入空调编号' disabled={state.modalTitle == '新增空调' ? false : true}></Input>
+            <Item name='sn' label='传感器编号' rules={[{ required: true, message: '请输入传感器编号' }]} >
+              <Input style={{ width: '320px' }} placeholder='请输入传感器编号'  disabled ={ state.modalTitle == '新增传感器' ? false : true }></Input>
             </Item>
-            <Item name='category' label='空调型号' rules={[{ required: true, message: '请选择空调型号' }]} >
+            <Item name='category' label='传感器型号' rules={[{ required: true, message: '请选择传感器型号' }]} >
               <Select
-                placeholder="请选择空调型号"
+                placeholder="请选择传感器型号"
                 size="middle"
                 style={{ width: '320px' }}
               >
-                {state.AddcategoryList.map((item, index) => {
+                { state.AddcategoryList.map((item, index) => {
                   return <Select.Option key={index} value={item}>{item}</Select.Option>
                 })}
               </Select>
             </Item>
-            <Item name='name' label='空调名称' rules={[{ required: true, message: '请输入空调名称' }]} >
-              <Input style={{ width: '320px' }} placeholder='请输入空调名称'></Input>
+            <Item name='name' label='传感器名称' rules={[{ required: true, message: '请输入传感器名称' }]} >
+              <Input style={{ width: '320px' }} placeholder='请输入传感器名称'></Input>
             </Item>
             <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '请选择告警方案' }]} initialValue={0}>
               <Select
@@ -567,7 +567,7 @@ export default function Index(props) {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
             <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
             <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
-            {state.modalTitle == '新增空调' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
+            {state.modalTitle == '新增传感器' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
           </div>
         </div>
       </Modal>

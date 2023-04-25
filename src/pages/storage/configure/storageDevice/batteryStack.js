@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
-import {useSelector} from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
-import { SiteManagerDesigner, StorageEquipmentDesigner, PCSMonitorRuntime } from '@api/api.js'
+import { SiteManagerDesigner, StorageEquipmentDesigner, PCSMonitorRuntime, StorageContainerDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
 
 export default function Index(props) {
@@ -21,6 +21,7 @@ export default function Index(props) {
 
   const { FindSiteList } = SiteManagerDesigner
   const { queryPCSList } = PCSMonitorRuntime
+  const { FindContainerList } = StorageContainerDesigner
   const { QueryBatteryStackByPage,
     AddBatteryStack,
     UpdateBatteryStack,
@@ -28,22 +29,25 @@ export default function Index(props) {
     DeleteEquipment,
     QueryCategoryUsed } = StorageEquipmentDesigner
 
-  const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
+    const dispatch = useDispatch()
+    const projectId = useSelector(selectProjectId)
+    const areaList = useSelector(selectOneLevel)
+    const areaName = useSelector(levelDefaultLabel) || '园区'
+    const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
   useEffect(()=>{
     if(areaList.length == 0|| !areaList){
       message.error('当前项目尚未创建园区!')
     }else{
-      form.setFieldValue('areaId', areaList[0].id)
+      form.setFieldValue('areaId', oneLevelDefaultId)
       querySite()
     }
   },[])
   const changeArea = val => {
     areaList.map(item => {
       if(item.id == val){
+        dispatch(setCurrentlevel(item))
         setSelectAreaName(item.name)
       }
     })
@@ -76,8 +80,13 @@ export default function Index(props) {
   }
 
   const getFromHeader = () => {
-    let params = form.getFieldsValue(true)
-    QueryBatteryStackByPage(projectId, params.areaId, params.siteId, params.alike, pagination.current, pagination.pageSize).then(res => {
+    let params = {
+      projectId,
+      ...form.getFieldsValue(true),
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+    }
+    QueryBatteryStackByPage(params).then(res => {
       if(res.success){
         if(res.data && res.data.length> 0){
           let arr = [...res.data]
@@ -289,12 +298,14 @@ export default function Index(props) {
     setModalTitle('新增电池堆')
     addForm.resetFields()
     setAddSiteList([])
+    state.addContainerList = []
     state.addPcsList = []
     setEditModal(true)
   }
   const [addSiteList, setAddSiteList] = useState([])
   const changeAddArea = val => {
     addForm.setFieldValue('siteId', null)
+    addForm.setFieldValue('containerId', null)
     addForm.setFieldValue('pcsId', null)
     FindSiteList(projectId, addForm.getFieldValue('areaId')).then(res => {
       if(res.success){
@@ -311,22 +322,43 @@ export default function Index(props) {
     })
   }
   const state = useReactive({
+    addContainerList:[],
     addPcsList:[]
   })
   const changeAddSite = val => {
+    addForm.setFieldValue('containerId', null)
     addForm.setFieldValue('pcsId', null)
-    queryPCSList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
       if(res.success){
         if(res.data && res.data.length> 0){
-          state.addPcsList = res.data
+          state.addContainerList = res.data
         }else{
-          state.addPcsList = []
+          state.addContainerList = []
+          message.warning('当前站点不存在储能柜')
         }
       }else{
         message.error(res.errMsg)
       }
     })
   }
+
+  const changeAddContainer = val => {
+    addForm.setFieldValue('pcsId', null)
+    queryPCSList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), val).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          state.addPcsList = res.data
+        }else{
+          state.addPcsList = []
+          message.warning('当前储能柜不存在PCS')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  
+
   const closeModal = () =>{
     setEditModal(false)
   }
@@ -398,7 +430,19 @@ export default function Index(props) {
         message.error(res.errMsg)
       }
     })
-    queryPCSList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
+    FindContainerList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId')).then(res => {
+      if(res.success){
+        if(res.data && res.data.length> 0){
+          state.addContainerList = res.data
+        }else{
+          state.addContainerList = []
+          message.warning('当前站点不存在储能柜')
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+    queryPCSList(projectId, addForm.getFieldValue('areaId'), addForm.getFieldValue('siteId'), addForm.getFieldValue('containerId')).then(res => {
       if(res.success){
         if(res.data && res.data.length> 0){
           state.addPcsList = res.data
@@ -411,8 +455,6 @@ export default function Index(props) {
     })
     setModalTitle('编辑电池堆')
     setEditModal(true)
-  }
-  const saveEdit = () => {
   }
 
   return (
@@ -476,7 +518,7 @@ export default function Index(props) {
                 <p style={{ marginTop: 24, marginBottom: 24 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }}>点击上传</span></p>
               </div>
             </Dragger>
-            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/电池堆.xlsx' download>下载模板</a>
+            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryStack.xlsx' download>下载模板</a>
           </div>
         </div>
       </Modal>
@@ -513,6 +555,19 @@ export default function Index(props) {
                     disabled={addSiteList.length==0? true: false}
                   >
                     {addSiteList.map(item => {
+                      return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                    })}
+                  </Select>
+                </Item>
+                <Item name='containerId' label='所属储能柜' rules={[{ required: true, message: '请选择储能柜' }]} >
+                  <Select
+                    placeholder="请选择储能柜"
+                    size="middle"
+                    style={{ width: '200px' }}
+                    onChange={changeAddContainer}
+                    disabled={state.addContainerList.length==0? true: false}
+                  >
+                    {state.addContainerList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
                     })}
                   </Select>
