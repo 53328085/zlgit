@@ -103,7 +103,7 @@ export default function Index() {
       if (success) {
         let {runtimeMode, systemStatus} = data;
         setMode(runtimeMode)
-        setInfoData({...infoData, ...data})
+        setInfoData({ ...data})
       } else {
         setInfoData({})
       }
@@ -114,7 +114,7 @@ export default function Index() {
 
   const CustItem = () => {
     const [options, setOption] = useState([])
-    const QueryPcsList = async() => {
+   /*  const QueryPcsList = async() => {
       try {
         let {success,data} = await StorageControlRuntime.QueryPcsList(projectId, areaId)
         if(success && Array.isArray(data)) {
@@ -126,13 +126,13 @@ export default function Index() {
         console.log(error)
       }
 
-    } 
+    }  */
     const onChange = (e) => {
       setPcsId(e)
     }
-    useEffect(() => {
+  /*   useEffect(() => {
       QueryPcsList()
-    }, [projectId, areaId])
+    }, [projectId, areaId]) */
     return (
        <Space size={32}>
         <Divider type='vertical' style={{margin: "0 0 0 32px", height: '32px'}} /> 
