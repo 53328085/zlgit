@@ -308,8 +308,8 @@ export default function Index() {
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
                         <Space size={16}>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff' }} onClick={() => { changesetbrake(1) }}>分闸</Button>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff' }} onClick={() => { changesetbrake(2) }}>合闸</Button>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
+                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                         </Space>
                         </Space>
                     </Form>

@@ -15,7 +15,6 @@ import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import { drawEcharts } from "@com/useEcharts";
  import log from './log.png'
  import bg from './bg.png'
- 
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -50,7 +49,7 @@ const Mainbox = styled.div`
           justify-items: center;
          }
        }
-       .right {       
+       .right {
         background-color: #f2f2f2;
         padding: 16px 32px;
         border: 1px solid #ccc;
@@ -59,27 +58,25 @@ const Mainbox = styled.div`
         display: grid;
         grid-auto-rows: 806px;
         row-gap: 32px;
-      
-       }
-       .ant-form-inline.ant-form-item {
-          margin-right: 0px
-        } 
-       }
-`
-const Front = styled.div`
-   &&{
-              background-color: #fff;
-          page-break-after: always;
+        .front {
+          background-color: #fff;
+        
           height: 806px;
           display: flex;
           flex-direction: column;
           position: relative;
-          .frontcont {
+          .title{ 
             display: flex;
-             flex: 1; 
-             align-content: center;
-             justify-content: center;
-             .head {
+            align-items: center; 
+            padding: 16px;
+            span {
+              color: #999;
+              font-size: 16px;
+              padding-left: 16px;
+            }
+           
+          }
+          .head {
               width: 432px;
               display: flex;
               flex-direction: column;
@@ -108,29 +105,21 @@ const Front = styled.div`
                 }
               }
             }
-          }
-          .title{ 
-            display: flex;
-            align-items: center; 
-            padding: 16px;
-            span {
-              color: #999;
-              font-size: 16px;
-              padding-left: 16px;
-            }
-           
-          }
-          
            
         }
+       }
+       .ant-form-inline.ant-form-item {
+          margin-right: 0px
+        } 
+       }
 `
+
 const Ccontent = styled.div`
               height: 806px;
               display: grid;
               grid-template-rows: 36px 1fr;
               row-gap: 32px;
               background-color: #fff;
-              page-break-after: always;
               .header {
                 display: flex;
                 align-items: center;
@@ -253,19 +242,13 @@ const reactToPrintContent = useCallback(() => {
 
 const handlePrint = useReactToPrint({
   content: reactToPrintContent,
-  
- // copyStyles: false,
- // pageStyle: () => '.title {color: "#ff7313"}',
- // removeAfterPrint: false,
+  //pageStye:`@page {padding-top:10px}`,
  // copyStyles: false,
  // bodyClass: "right, header, main",
  // copyStyles: false,
  // onAfterPrint: () => printRef.current = null,
   
 })
-/* const getPageMargins = () => {
-  return `@page { margin: 20px !important; }`;
-}; */
 const onPrint = () => {
   console.log(loading)
   try {
@@ -562,15 +545,13 @@ const onPrint = () => {
               
           </Titlelayout>      
           </div>
-          <div>
-          <div className='right' ref={printRef}>
-                         
-               <Front>
+          <div className='right' ref={printRef} id="printRef">
+               <div className='front'>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>
                     <span className='name'>正泰综合能源服务平台</span>
                    </div>
-                   <div className="frontcont">
+                   <div style={{display: 'flex', flex:1, alignContent: 'center', justifyContent: 'center'}}>
                    <div className='head'>
                       <h1>储能系统分析报告</h1>
                       <div className='box'>
@@ -581,11 +562,9 @@ const onPrint = () => {
                    </div>
                    </div>
                    <Image src={bg} preview={false} ></Image>
-               </Front>
-              
+               </div>
                {
                loading && <>
-                <div className="page-break" />
                <Ccontent count={2}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -609,7 +588,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent count={1}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -624,7 +602,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent rows='1fr 1fr'>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -639,7 +616,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent count={1}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -661,7 +637,6 @@ const onPrint = () => {
                </Ccontent>
                </>
                }
-          </div>
           </div>
           </Mainbox>
     

@@ -402,7 +402,7 @@ export default function Index() {
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
                         <Space size={16}>
-                        <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff' }} onClick={() => { changeReadout() }}>实时抄读</Button>
+                        <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff',borderRadius:2 }} onClick={() => { changeReadout() }}>实时抄读</Button>
                         </Space>
                         </Space>
                     </Form>
