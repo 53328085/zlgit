@@ -103,12 +103,6 @@ export default function Index() {
       },
       {
         align: "center",
-        title: "站点编号",
-        dataIndex: "no",
-        key: "no",
-      },
-      {
-        align: "center",
         title: "站点名称",
         dataIndex: "name",
         key: "name",
@@ -118,6 +112,12 @@ export default function Index() {
         dataIndex: "address",
         key: "address",
         align: "center",
+      },
+      {
+        align: "center",
+        title: "站点编号",
+        dataIndex: "no",
+        key: "no",
       },
       {
         title: "站点容量 (kVA)",
@@ -156,12 +156,6 @@ export default function Index() {
       },
       {
         align: "center",
-        title: "站点编号",
-        dataIndex: "no",
-        key: "no",
-      },
-      {
-        align: "center",
         title: "站点名称",
         dataIndex: "name",
         key: "name",
@@ -172,6 +166,13 @@ export default function Index() {
         key: "address",
         align: "center",
       },
+      {
+        align: "center",
+        title: "站点编号",
+        dataIndex: "no",
+        key: "no",
+      },
+      
       {
         title: "站点容量 (kVA)",
         dataIndex: "capacity",
