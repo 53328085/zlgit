@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
-import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
+import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {StorageAlarmruntime} from '@api/api'
+import {StorageAlarmRuntime} from '@api/api'
 import imgurl from './icon'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
@@ -14,40 +14,36 @@ const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
     && {
       display: grid;
-      grid-template-rows: 96px 688px;
+      grid-template-rows: 64px 1fr;
       row-gap: 16px;
+      flex: 1;
       .items {
-         display: flex;
-         justify-content: space-between;
-         align-items: center;
+         display: grid;
+         grid-template-columns: repeat(4, 320px);
+         grid-template-rows: 64px;
+         column-gap: 16px;
         .item {
-          width: 200px;
-          height: 96px;
+          width: 320px;
+          height: 64px;
           background-color: rgba(255, 255, 255, 1); 
           border: 1px solid rgba(215, 215, 215, 1); 
           border-radius: 4px; 
           box-shadow: none;
-          padding: 16px 8px;
+          padding:  8px 12px;
           display: grid;
           grid-template-columns: 48px 1fr;
           align-items: center;
           justify-items: center;
-          .info {
-            width: 114px;
-            height: 64px;
+          column-gap: 22px;
+          .info { 
+            width: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
+            font-size: 16px;;
           } 
         }
-        .item.small {
-          width: 138px;
-          .info {
-            width: 58px;
-          }
-         
-        }
+        
       }
       .content {
         display: grid;
@@ -76,12 +72,14 @@ const P = styled(Paragraph)`
 && {
   margin-bottom: 0px;
   line-height: 1;
+  font-size: 18px;
+  color:#666;
 }
  
 `
 const columns = [
     {
-        title: '最新告警时间',
+        title: '告警时间',
         dataIndex: 'warningTime',
         key: 'warningTime',
         align: 'center'
@@ -93,140 +91,151 @@ const columns = [
         align: 'center'
     },
     {
+      title: '告警等级',
+      dataIndex: 'level',
+      key: 'level',
+      align: 'center'
+     },
+     {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center'
+     },
+    {
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       align: 'center'
   },
   {
-    title: '告警等级',
-    dataIndex: 'level',
-    key: 'level',
-    align: 'center'
-   },
-   {
-    title: '设备类型',
-    dataIndex: 'meterType',
-    key: 'meterType',
-    align: 'center'
-   },
-   {
-    title: '设备名称',
+    title: '设备编号',
     dataIndex: 'sn',
     key: 'sn',
     align: 'center'
+},
+ 
+   {
+    title: '设备型号',
+    dataIndex: 'category',
+    key: 'category',
+    align: 'center'
    },
+  
    ]
-const titles = ['告警总数', '今日新增告警', '一级告警', '二级告警', '三级告警', 'PCS告警', 'BMS告警', '消防告警', '环境告警']
- function Main({projectId, areaId }) {
+ 
+ function Main({projectId, areaId, siteId }) {
    const [form] = Form.useForm()
-   const [statistics ,setStatistics] = useState([])
-   const [tableData, setTableData] = useState([])
-   const startime = '2023-03-20'
-   const endtime = '2024-03-20'
-   const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
-   const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-    total: 0
-  })
+   const [statistics ,setStatistics] = useState({})
   const getData = async() => {
+   
     try {
-        let {success, data} = await StorageAlarmruntime.AlarmStatistics(projectId, areaId)
-        console.log(Object.keys(data))
-        console.log(Object.values(data))
-        success && setStatistics([...Object.values(data)])
-        !success && setStatistics([])
+        let {success, data} = await StorageAlarmRuntime.alarmStatistic(projectId, areaId, siteId)        
+        success && setStatistics({...data})
+        !success && setStatistics({})
     } catch (error) {
         console.log(error)
     }
    
   } 
- const timechange = (data, dateStrings) => { 
-     setDates([...data])
- }
-  let params = {
-    start: '2023-03-20',
-    end: '2024-03-20',
-    projectId,
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-    content : "",
-    deviceType: 0,
-    level: 0
-  }
  
-  const QueryReports = async() => {   
-    try {
-        let {success, data, total} = await StorageAlarmruntime.QueryStorageAlarmByPage(params)
-        if (success && Array.isArray(data) && data.length >0) {
-           
-           setTableData([...data])   
-           setPagination({...pagination, total: total})
-        } else {
-            setTableData([])
-            setPagination({...pagination, total: 0})
-        }
-    } catch (error) {
-        console.log(error)
+ 
+  const QueryReports =  ({current, pageSize}, form) => {   
+    let {time, ...rest} = form
+    let start = time[0].format('YYYY-MM-DD')
+    let end = time[1].format('YYYY-MM-DD')
+    let params = {
+      pageNum: current,
+      pageSize,
+      start,
+      end,
+      projectId,
+      areaId,
+      siteId,
+      ...rest
     }
+    return StorageAlarmRuntime.QueryStorageAlarmByPage(params).then(res => {
+      let {success, data, total} = res
+      if (success && Array.isArray(data) && data.length >0) {
+          return {
+            list: data,
+            total
+          }  
+     } else {
+      return {
+        list: [],
+        total: 0
+      }  
+     }
+    })
    
   }
-  const onQuery = () => {
-    try {
-      let {time, ...other} = form.getFieldsValue()
-      
-      if(Array.isArray(time) && time.length >1) {
-        params.start = time[0].format('YYYY-MM-DD') || ''
-        params.end = time[1].format('YYYY-MM-DD') || ''
-      }
-     
-      params = {...params, ...other};
-      QueryReports()
-    } catch (error) {
-      console.log(error)
-    }
-    
-  }
-  const rest = () => { 
-    form.resetFields()
-    onQuery()
+  const {tableProps, search} = useAntdTable(QueryReports, {
+    form,
+    defaultParams: [{pageSize: 14, pageNum: 1}, {
+      start: moment().format('YYYY-MM-DD'),
+      end:  moment().add(7, 'day').format('YYYY-MM-DD'),
+      projectId, 
+      areaId,
+      siteId,
+      content : "",
+      deviceType: 0,
+      level: 0
 
-  }
-  const tableOnchange = (e) => { 
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
-   
-  }
+    }],
+    refreshDeps: [projectId, areaId, siteId]
+  })
+  
+  const {submit} = search
   const tbref = useRef()
   const onExport = () => {
     tbref.current.download()
   }
+ 
   useEffect(() => {
-    QueryReports()
-  }, [])
-  useEffect(() => {
-    getData()
-    QueryReports()
-  }, [areaId])
+    console.log(projectId, areaId, siteId)
+    if(areaId && projectId && siteId) {
+      getData() 
+    }
+  
+  }, [areaId, projectId, siteId])
+ 
  
   return (
     <Mainbox>
       <div className='items'>
-           {
-            statistics.map((s, index) => {
-              console.log(s)
-              return <div className={index > 4 ? 'item small' : 'item'}>
-              <Image src={imgurl.gas} preview={false} height={48} width={48}></Image>
+           <div className='item'>
+              <Image src={imgurl.allCn} preview={false} height={48} width={48}></Image>
               <div className='info'>
-                 <P ellipsis={{tooltip: titles[index]}} style={{fontSize: '16px'}}>{titles[index]}</P>
-                 <P ellipsis={{tooltip: s}} strong style={{fontSize: '28px'}}>{s}</P>
+                 <P style={{fontSize: '18px'}}>告警总数</P>
+                 <P ellipsis={{tooltip: statistics.allCn}} style={{fontSize: '18px'}} >{statistics.allCnt}</P>
               </div>
-            </div>})
-           }
+            </div>
+            <div className='item'>
+              <Image src={imgurl.levelOneCnt} preview={false} height={48} width={48}></Image>
+              <div className='info'>
+                 <P   style={{fontSize: '16px'}}>一级告警</P>
+                 <P ellipsis={{tooltip: statistics.levelOneCnt}}    >{statistics.levelOneCnt}</P>
+                 <P ellipsis={{tooltip: statistics.levelOneRate}} style={{fontSize: '14px'}} >{statistics.levelOneRate}%</P>
+              </div>
+            </div>
+            <div className='item'>
+              <Image src={imgurl.levelTwoCnt} preview={false} height={48} width={48}></Image>
+              <div className='info'>
+                 <P   style={{fontSize: '16px'}}>二级告警</P>
+                 <P ellipsis={{tooltip: statistics.levelTwoCnt}}  >{statistics.levelTwoCnt}</P>
+                 <P ellipsis={{tooltip: statistics.levelTwoRate}}  style={{fontSize: '14px'}} >{statistics.levelTwoRate}%</P>
+              </div>
+            </div>
+            <div className='item'>
+              <Image src={imgurl.levelThreeCnt} preview={false} height={48} width={48}></Image>
+              <div className='info'>
+                 <P   style={{fontSize: '16px'}}>三级告警</P>
+                 <P ellipsis={{tooltip: statistics.levelThreeCnt}}  >{statistics.levelThreeCnt}</P>
+                 <P ellipsis={{tooltip: statistics.levelThreeRate}} style={{fontSize: '14px'}} >{statistics.levelThreeRate}%</P>
+              </div>
+            </div>
+          
       </div>
     <Titlelayout title="最新告警" layout="flex" >
     <div className='content'>
@@ -234,7 +243,7 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
           content: '',
           deviceType:0,
           level: 0,
-          time: dates
+          time: [moment( ), moment().add(7, 'day')]
         }}>
           <Space size={16}>
              <Item label="告警查询" name="content">
@@ -245,9 +254,15 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
               <Select options={[
                 {label: '全部', value: 0},
                 {label: 'PCS', value: 1},
-                {label: '电堆', value: 2}
+                {label: '电堆', value: 2},
+                {label: '电池簇', value: 3},
+                {label: '电池组', value: 4},
+                {label: '储能柜空调', value: 5},
+                {label: '环境温度传感器', value: 6},
+                {label: '水浸传感器', value: 7},
               ]}
               style={{width: '112px'}}
+              onChange={submit}
               ></Select>
              </Item>
              <Divider style={{margin: '0', height: '32px'}} type="vertical" />
@@ -259,17 +274,12 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
                 {label: '三级告警', value: 4},
               ]}
               style={{width: '112px'}}
+              onChange={submit}
               ></Select>
              </Item>
              <Divider style={{margin: '0', height: '32px'}} type="vertical" />
              <Item label="告警时间" name="time" >
-               <RangePicker  onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/>
-            </Item>
-            <Item noStyle>
-              <Space>
-                <Button onClick={onQuery}>查询</Button>
-                <Button onClick={rest}>重置</Button>
-                </Space>
+               <RangePicker  onChange={submit}  format="YYYY-MM-DD" style={{width: '320px'}}/>
             </Item>
            </Space>
            <Item noStyle>
@@ -278,7 +288,7 @@ const titles = ['告警总数', '今日新增告警', '一级告警', '二级告
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref}  dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} sheetName="告警信息" />
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="告警信息" />
       
     </div>
     </Titlelayout>

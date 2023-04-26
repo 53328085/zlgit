@@ -6,7 +6,7 @@ import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {StorageAlarmruntime} from '@api/api'
+import {StorageAlarmRuntime} from '@api/api'
  
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
@@ -75,7 +75,7 @@ const columns = [
   })
   const getData = async() => {
     try {
-        let {success, data} = await StorageAlarmruntime.AlarmStatistics(projectId, areaId)
+        let {success, data} = await StorageAlarmRuntime.AlarmStatistics(projectId, areaId)
         console.log(Object.keys(data))
         console.log(Object.values(data))
         success && setStatistics([...Object.values(data)])
@@ -101,7 +101,7 @@ const columns = [
  
   const QueryReports = async() => {   
     try {
-        let {success, data, total} = await StorageAlarmruntime.QueryStorageAlarmByPage(params)
+        let {success, data, total} = await StorageAlarmRuntime.QueryStorageAlarmByPage(params)
         if (success && Array.isArray(data) && data.length >0) {
            
            setTableData([...data])   

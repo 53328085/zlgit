@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -61,6 +61,7 @@ const List = styled.div`
     position: absolute;
     top: 59px;
     transform: skewX(-20deg);
+    box-shadow: rgb(0 0 0 / 30%) 12px 12px;
   }
   .entitle {
     font-size: 28px;
@@ -87,8 +88,9 @@ const List = styled.div`
       display: inline-block;
       width: 16px;
       height: 16px;
-      background-color: #1f83fe;
+      background-color:#0033ff ;
       transform: rotate(45deg);
+      border: 1px solid #0099ff;
       margin-right: 16px;
     }
     .item + .item {
@@ -96,6 +98,7 @@ const List = styled.div`
     }
   }
 `;
+ 
 const Logbox = styled.div`
   width: 402px;
   color: #fff;
@@ -270,17 +273,18 @@ const Title = styled.div`
   align-items: flex-end;
 `;
 
-const Logtitle = () => {
+const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
-      <Image src={imgurl.logo} preview={false} />
-      <Image src={imgurl.credentials} preview={false} />
+      <Image src={log ?  `data:image/png;base64,${log}` : imgurl.logo} preview={false} fallback={imgurl.logo} />
+      <Image src={imgurl.credentials} preview={false} width={200} />
     </Title>
   );
 };
-const Loglist = () => {
-  const dispatch = useDispatch();
-  const configInfo = useSelector(systemConfigInfo)
+const Loglist = ({logtitle, englishTitle, literal}) => {
+ 
+  
+ 
   let items = [
     "运行监控",
     "电气安全",
@@ -290,25 +294,16 @@ const Loglist = () => {
     "碳排管理",
     "运维管理",
   ];
-  const hostname =
-    process.env.NODE_ENV === "production"
-      ? new URL(window.location.href).hostname
-      : "10.5.7.60";
-   useEffect(() => {
-    dispatch(systemConfig(hostname)).then(res => {
-      console.log(res)
-      document.title = configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'
-    });
-  }, [hostname]);  
+ 
  
   return (
     <List>
       <div className="chtitle">
-        <p className="text">{configInfo?.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
+        <p className="text">{logtitle}</p>
         <p className="block"></p>
       </div>
-      <p className="entitle">{configInfo?.englishTitle}</p>
-      <div className="itemlist">
+      <p className="entitle">{englishTitle}</p>
+      <div className="itemlist" style={{display: literal== 1 ? 'flex' : 'none'}}>
         {items.map((i, index) => (
           <div className="item" key={index}>
             <span className="icon"></span>
@@ -728,10 +723,23 @@ function UserLog() {
   );
 }
 export default function Login() {
+
+  const dispatch = useDispatch();
+  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo)
+  const enchtitle = useSelector(mixtitle)
+ 
+  const hostname = process.env.NODE_ENV === "production"
+    ? new URL(window.location.href).hostname
+    : "10.5.7.60";
+ useEffect(() => {
+  dispatch(systemConfig(hostname)).then(res => {    
+    document.title = enchtitle
+  });
+}, [hostname]);  
   return (
-    <LoginLayout login={true} header={<Logtitle />} bgImg={bgImg}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
-        <Loglist></Loglist>
+        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
         <UserLog />
       </Logmain>
     </LoginLayout>

@@ -174,11 +174,12 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     //保存线路编辑
     const saveConfig = async () => {
         setSearchValue("")
-        const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat}) )
+        const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat,lngLatAddress:it.lngLatAddress}) )
+        console.log(subMeter)
         let params = {
             projectId,
             group:subsn,
-            areaId
+            areaId,
         }
         const resp = await operationDesigin.ConfigureDevice(params)
         if (resp.success) {
@@ -271,12 +272,12 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
             return
         }
         if(Array.isArray(subSelectedRows)&&subSelectedRows.length>0){
-            const arr =subSelectedRows.map(it=>{return {...it,lngLat:local.local}})
+            const arr =subSelectedRows.map(it=>{return {...it,lngLat:local.local,lngLatAddress:local.inpvalue}})
             let updatearr=[...subMeter]
             // for(let i=0;i<subMeter.length;i++){
             //     updatearr.push(false)
             // }  
-            console.log(updatearr,subMeter)
+           
            for(let i=0;i<subMeter.length;i++){
              for(let j=0;j<arr.length;j++){
 
@@ -285,6 +286,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
                 }
              }
            }
+           console.log(updatearr,subMeter)
          setSubMeter(()=>[...updatearr])
          positionRef.current.onCancel()
              

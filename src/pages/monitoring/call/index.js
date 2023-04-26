@@ -271,13 +271,13 @@ export default function Index() {
 
    const changeReadout = () => {
     snList = []
-    if (tableRefs.current.length > 0) {
+    if (tableRefs.current&&tableRefs.current.length > 0) {
       tableRefs.current.map((item, index) => {
         snList.push(item.sn)
       })
     }
    
-    if (tableRefs.current.length > 0) {
+    if (tableRefs.current&&tableRefs.current.length > 0) {
       setLoading(true)
       Remote.StartCalling(snList).then(res => {
         let { success, data } = res
