@@ -113,7 +113,7 @@ export default function Index() {
   }
   const StateItem = props => {
     let { state } = props
-    state = state === 0 ? 'normal' : state === 1 ? 'error' : 'offline'
+    state = state === '0' ? 'normal' : state === '1' ? 'error' : 'offline'
     return <div className={style.stateItem} style={props.styles}>
       <span>{props.name}</span>
       <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
@@ -380,7 +380,7 @@ export default function Index() {
             </div>
             <div className={style.pcsStatus}>
               <span>{state.gridState}</span>
-              <span>{state.chargeState}</span>
+              <span>{state.chargeState + ' . . .'}</span>
             </div>
           </div>
           <div className={style.dataCard}>
@@ -409,7 +409,7 @@ export default function Index() {
           </div>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>SOC</div>
-            <SocChart lineData={socData} Unit='SOC(‰)' color={'#ff6701'}></SocChart>
+            <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
           </div>
           <div className={style.tableList}>
             <Table size='small' bordered dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} />

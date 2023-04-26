@@ -15,7 +15,6 @@ import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import { drawEcharts } from "@com/useEcharts";
  import log from './log.png'
  import bg from './bg.png'
- 
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -50,7 +49,7 @@ const Mainbox = styled.div`
           justify-items: center;
          }
        }
-       .right {       
+       .right {
         background-color: #f2f2f2;
         padding: 16px 32px;
         border: 1px solid #ccc;
@@ -59,27 +58,25 @@ const Mainbox = styled.div`
         display: grid;
         grid-auto-rows: 806px;
         row-gap: 32px;
-      
-       }
-       .ant-form-inline.ant-form-item {
-          margin-right: 0px
-        } 
-       }
-`
-const Front = styled.div`
-   &&{
-              background-color: #fff;
-          page-break-after: always;
+        .front {
+          background-color: #fff;
+        
           height: 806px;
           display: flex;
           flex-direction: column;
           position: relative;
-          .frontcont {
+          .title{ 
             display: flex;
-             flex: 1; 
-             align-content: center;
-             justify-content: center;
-             .head {
+            align-items: center; 
+            padding: 16px;
+            span {
+              color: #999;
+              font-size: 16px;
+              padding-left: 16px;
+            }
+           
+          }
+          .head {
               width: 432px;
               display: flex;
               flex-direction: column;
@@ -108,29 +105,21 @@ const Front = styled.div`
                 }
               }
             }
-          }
-          .title{ 
-            display: flex;
-            align-items: center; 
-            padding: 16px;
-            span {
-              color: #999;
-              font-size: 16px;
-              padding-left: 16px;
-            }
-           
-          }
-          
            
         }
+       }
+       .ant-form-inline.ant-form-item {
+          margin-right: 0px
+        } 
+       }
 `
+
 const Ccontent = styled.div`
               height: 806px;
               display: grid;
               grid-template-rows: 36px 1fr;
               row-gap: 32px;
               background-color: #fff;
-              page-break-after: always;
               .header {
                 display: flex;
                 align-items: center;
@@ -216,80 +205,61 @@ const Ccontent = styled.div`
     source: [],
 })
 
-// 导出
-const downloadReport = () => {
-  //先生成图片再导出
-  html2canvas(document.getElementById('printRef'), {
-    // 导出pdf清晰度
-    allowTaint: true,
-    taintTest: false,
-    scale: '1',//设置放大倍数
-    height: document.getElementById('printRef').scrollHeight,
-    windowHeight: document.getElementById('printRef').scrollHeight,
-    // dpi: '192',
-    background: '#fff',
-    // 开启跨域配置
-    useCORS: true,//支持图片跨域
-  }).then((canvas) => {
-    let contentWidth = canvas.width;
-    let contentHeight = canvas.height;
-    // 一页pdf显示html页面生成的canvas高度;
-    let pageHeight = contentWidth / 592.28 * 841.89;
-    // 未生成pdf的html页面高度
-    let leftHeight = contentHeight;
-    // pdf页面偏移
-    let position = -8;
-    // html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
-    let imgWidth = 595.28;
-    let imgHeight = 592.28 / contentWidth * contentHeight;
 
-    let pageData = canvas.toDataURL('image/jpeg', 1);
-    let pdf = new jsPDF('', 'pt', 'a4');
-
-    // 有两个高度需要区分，一个是html页面的实际高度leftHeight，和生成pdf的页面高度(841.89)pageHeight
-    // 当内容未超过pdf一页显示的范围，无需分页
-    if (leftHeight < pageHeight) {
-      pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-    } else {
-      while (leftHeight > 0) {
-        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-        leftHeight -= (pageHeight + 20);
-        //原来高度是841.89，因为页面之间有20的padding,还有多余的7是因为页面比A4的高多了一点
-        position -= 869.89;
-        // 避免添加空白页
-        if (leftHeight > 841.89) {
-          pdf.addPage();
-        }
-      }
-    }
-    pdf.save('运行报告.pdf');
-  });
-}
-
-
-
-// 打印 start
+// 打印
 
 const printRef = useRef()
+
+  //打印报告
+  const reportPrint = () => {
+    let printDom = document.getElementById("printRef");
+    console.log(printRef.current.scrollHeight)
+    html2canvas(printDom, {
+      height: printDom.scrollHeight,
+      windowHeight: printDom.scrollHeight,
+      allowTaint: true,
+      
+      scale: "1", //设置放大倍数
+      // dpi: "192",
+      background: "#fff",
+      // 开启跨域配置
+      useCORS: true, //支持图片跨域
+    }).then((canvas) => {
+      let pageData = canvas.toDataURL("image/jpeg", 1.0);
+      printJS({
+        printable: pageData,
+        type: "image",
+        style: `@media print { @page {size: auto; margin: 0; } body{margin:0 5px}}`// 去除页眉页脚
+      });
+    });
+  };
+
+
+
 const reactToPrintContent = useCallback(() => {
   return printRef.current;
 }, [printRef.current])
 
 const handlePrint = useReactToPrint({
   content: reactToPrintContent,
+  //pageStye:`@page {padding-top:10px}`,
+ // copyStyles: false,
+ // bodyClass: "right, header, main",
+ // copyStyles: false,
+ // onAfterPrint: () => printRef.current = null,
+  
 })
- 
-const onPrint = () => {  
+const onPrint = () => {
+  console.log(loading)
   try {
-    if(!loading) return message.warning('请先生成报告', 0.3)  
+    if(!loading) return message.warning('请先生成报告', 0.3)
+    //reportPrint()
     handlePrint()
   } catch (error) {
     console.log(error)
   }
 
 }
-
-// 打印 end
   const getReport = async () => {
      try {
       
@@ -569,21 +539,19 @@ const onPrint = () => {
              <div className='btns'>
                     <CustButton wh="192px" src="createrpt" onClick={getReport}>生成报告</CustButton>
                     <CustButton wh="192px" src="print" onClick={onPrint}>打印报告</CustButton>
-                    <CustButton wh="192px" src="export" onClick={downloadReport}>导出报告</CustButton>
+                    <CustButton wh="192px" src="export">导出报告</CustButton>
              </div>
                
               
           </Titlelayout>      
           </div>
-          <div>
           <div className='right' ref={printRef} id="printRef">
-                         
-               <Front>
+               <div className='front'>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>
                     <span className='name'>正泰综合能源服务平台</span>
                    </div>
-                   <div className="frontcont">
+                   <div style={{display: 'flex', flex:1, alignContent: 'center', justifyContent: 'center'}}>
                    <div className='head'>
                       <h1>储能系统分析报告</h1>
                       <div className='box'>
@@ -594,11 +562,9 @@ const onPrint = () => {
                    </div>
                    </div>
                    <Image src={bg} preview={false} ></Image>
-               </Front>
-              
+               </div>
                {
                loading && <>
-                <div className="page-break" />
                <Ccontent count={2}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -622,7 +588,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent count={1}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -637,7 +602,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent rows='1fr 1fr'>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -652,7 +616,6 @@ const onPrint = () => {
                  </div>
                   
                </Ccontent>
-               <div className="page-break" />
                <Ccontent count={1}>
                  <div className='header'>
                    <span>储能系统分析报告</span>
@@ -674,7 +637,6 @@ const onPrint = () => {
                </Ccontent>
                </>
                }
-          </div>
           </div>
           </Mainbox>
     

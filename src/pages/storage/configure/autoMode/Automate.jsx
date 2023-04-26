@@ -246,7 +246,7 @@ const Viewbox = styled.div`
 const Itembox = styled.div`
       width: 4px;
       height: 36px;
-      background-color: ${props => props.type == '1' ? '#4370ff' : props.type=='2' ? '#ff9933' : '#0dc6d1' };
+      background-color: ${props => props.type == '1' ? '#4370ff' : props.type=='2' ? '#ff9933' : props.type=='3' ?  '#0dc6d1' : '#333'};
       border: none;
       border-radius: 0px;
 `
@@ -425,6 +425,7 @@ const getvalidate = (start, end, type, choosedate) => {
  }
 
   const onPlan = async (p) => {
+   
     initform(p)
     let {strategyId} = p
      setCurplan({
@@ -457,9 +458,10 @@ const getvalidate = (start, end, type, choosedate) => {
   const oref = useRef()
   const onPlanClose = () => {
     oref.current.onCancel()
-    getPlans()
+    
     setIsadd(false)
     setIsview(false)
+    getPlans()
   }
   const onSave = async () => {
     try {
@@ -493,11 +495,11 @@ const getvalidate = (start, end, type, choosedate) => {
 
        let startDate = date[0]?.format('YYYY-MM-DD');
        let endDate = date[1]?.format('YYYY-MM-DD'); 
-
+       
        let handler = isadd ? 'AddRuntimePlan' : 'UpdateRuntimePlan'
-       let id = isadd ? 0 : pid
-       let enable= isadd ? 0 : 1 // 9条数据时 2-9/    5 12条数据
-     // let {id, enable} = curplan
+       let id = isadd ? 0 : curplan.id
+       let enable= isadd ? 0 : curplan.enable // 9条数据时 2-9/    5 12条数据
+     // 
        try {
           let {success, errMsg} = await StorageAutoModeDesigner[handler](projectId, {...params, startDate, endDate, areaId, id, enable})
           if(success) {
@@ -590,7 +592,7 @@ const getvalidate = (start, end, type, choosedate) => {
         let {success, data} = await StorageAutoModeDesigner.QueryRuntimePlan(projectId, areaId)
 
         if(success && Array.isArray(data) && data.length > 0) {
-            
+            console.log(count)
             setCurplan(data[count])
             setPlan([...data])
             initform(data[count])
@@ -720,7 +722,7 @@ const getvalidate = (start, end, type, choosedate) => {
 }
 
 
-const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机
+const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机 4. 停机
     console.log(data)
     let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
@@ -794,7 +796,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                         <Space size={32} style={{marginLeft: '-16px'}}>
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff'   />充电</div>
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#ff9933' />放电</div> 
-                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff' />待机</div> 
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#0dc6d1' />待机</div> 
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#333' />停机</div> 
                         </Space>
                        </div>
@@ -810,8 +812,8 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
 }
 const Strategy = ({data,   form, disabled, executionCycle}) => {
    
-  
-   const [show, setShow] = useState(executionCycle)
+  console.log('executionCycle', executionCycle)
+   const [show, setShow] = useState(1)
   const [options, setOptions] = useState(week)   
  
    const onChange = (e) => {
@@ -823,6 +825,9 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
     
     return current && current < moment().subtract(1, 'day').endOf('day');
     };
+   useEffect(() => {
+      setShow(executionCycle)
+    }, [executionCycle])
    return (
       <Titlelayout title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={

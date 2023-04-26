@@ -61,7 +61,7 @@ export default function index (props) {
             let arr2 = [];
             for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
+                    if(arr[i].sn == selectedRowKeys[j]){
                         arr2.push(arr[i])
                         arr.splice(i,1)
                     }
@@ -98,7 +98,7 @@ export default function index (props) {
             let arr2 = [];
             for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
+                    if(arr[i].sn == selectedRowKeys[j]){
                         arr2.push(arr[i])
                         arr.splice(i,1)
                     }
@@ -135,7 +135,7 @@ export default function index (props) {
             let arr2 = [];
             for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
+                    if(arr[i].sn == selectedRowKeys[j]){
                         arr2.push(arr[i])
                         arr.splice(i,1)
                     }
@@ -256,19 +256,19 @@ export default function index (props) {
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} ></Table>
+                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={mainSelection} ></Table>
                     </div>
                 </div>
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.loadTitle}</div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={state.loadData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={loadSelection} ></Table>
+                        <Table bordered dataSource={state.loadData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={loadSelection} ></Table>
                     </div>
                 </div>
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.gridTitle}</div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={state.gridData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={gridSelection} ></Table>
+                        <Table bordered dataSource={state.gridData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={gridSelection} ></Table>
                     </div>
                 </div>
             </div>
@@ -309,7 +309,7 @@ export default function index (props) {
                     <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
                 </div>
                 <div className={style.mainContent}>
-                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
+                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='sn' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
                 </div>
             </div>
         </div>

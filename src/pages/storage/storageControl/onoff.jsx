@@ -144,24 +144,26 @@ const Pinfo = styled.p`
 `
 export default function Manual({projectId,   areaId, systemStatus,  pcsId, getinfo, CModal}) {
   
-  const [onoff, setOnoff] = useState()  // 系统状态 1 开机 2 关机
+  const [onoff, setOnoff] = useState(systemStatus)  // 系统状态 1 开机 2 关机
  
   let title = ['', '系统开机', '系统关机'][onoff]
   let msg = ['','当前系统为停机状态，是否要进行开机操作？', '当前系统为开机状态，是否要进行停机操作？'][onoff]
   const rref = useRef()
+  const refpcsId = useRef
   // UpdateSiteOnOffGrid
   const updatestate = async (type) => { // 系统开机， 系统关机
      
     if (type === onoff) return
+    refpcsId.current = type;
      setOnoff(type)
      rref.current.onOpen() 
   }
-  useEffect(()=> {
+   useEffect(()=> {
     setOnoff(systemStatus)
-  }, [systemStatus])
+  }, [systemStatus])  
   const onOk = async() => {
       try {
-        let {success, errMsg} = await StorageControlRuntime.UpdateSystemStatus(projectId, areaId, onoff)    
+        let {success, errMsg} = await StorageControlRuntime.UpdateSystemStatus(projectId, pcsId, 1)    
         let msg = ['', '系统开机','系统关机'][onoff]
         if (success) { 
             rref.current.onCancel()
@@ -192,7 +194,7 @@ export default function Manual({projectId,   areaId, systemStatus,  pcsId, getin
                         <Text>{onoff == 1 ? '系统已开机' : onoff==2 ? '系统开机' : null}</Text>
                         </Space>
                     </div>
-                    <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => updatestate(2)}>
+                    <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => updatestate(1)}>
                     <Space size={32}>
                        <Image src={onoff == 2 ? imgurl.close: imgurl.closed} height={42} width={42} preview={false} />
                         <Text>{onoff == 1 ? '系统停机' : onoff==2 ? '系统已停机' : null}</Text>

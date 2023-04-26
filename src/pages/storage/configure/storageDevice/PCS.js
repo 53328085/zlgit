@@ -303,10 +303,9 @@ export default function Index(props) {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           setAddSiteList(res.data)
-          addForm.setFieldValue('siteId', res.data[0].id)
         } else {
           setAddSiteList([])
-          addForm.setFieldValue('siteId', '')
+          addForm.setFieldValue('siteId', null)
           message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
       } else {

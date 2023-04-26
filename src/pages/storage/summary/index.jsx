@@ -356,7 +356,6 @@ export default function Index() {
                   <span className={style.dataUnit}>(kW)</span>
                 </div>
               </div>
-              <div className={style.transPlaceholder} onClick={() => toPage('PCSMonitor', 'PCS监控')}></div>
               <div className={style.batteryPlaceholder} onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
             <div className={style.otherDatas}>

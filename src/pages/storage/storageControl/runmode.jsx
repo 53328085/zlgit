@@ -5,6 +5,7 @@ import {ExclamationCircleFilled} from '@ant-design/icons'
 import {StorageControlRuntime} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import imgurl from './icon'
+import { duration } from 'moment'
 const {Text, Link, Title} = Typography
 const {Item} = Form
 const Mainbox = styled.div`
@@ -164,11 +165,11 @@ export default function Manual({projectId, mode, areaId, pcsId,  getinfo, CModal
           let msg = ['', '运行手动模式成功','运行自动模式成功'][onoff]
           if (success) { 
               rref.current.onCancel()
-             message.success(msg) 
+             message.success(msg, 0.3) 
              getinfo()
           }  else {
               setOnoff(onoff== 1 ? 2 : 1) // 出错恢复
-              message.error(errMsg || '数据出错')
+              message.error(errMsg || '数据出错', 0.3)
           }
           
     
@@ -184,17 +185,17 @@ export default function Manual({projectId, mode, areaId, pcsId,  getinfo, CModal
                   <div className='item'>
                       <Text>手动切换站点各个子系统的启动停止</Text> 
                   </div>
-                  <div className='item'>
-                      <div className={onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => updatestate(1)}>
-                          <Space size={32}>
-                          <Image src={onoff==1 ? imgurl.manualon : imgurl.manual} height={42} width={42} preview={false} />
-                          <Text>手动模式</Text>
+                  <div className='item'>                    
+                      <div className={mode== 2 && onoff == 2 ? 'cotrl on active' : 'cotrl on' } onClick={() => updatestate(2)}>
+                      <Space size={32}>
+                         <Image src={mode == 2 && onoff == 2 ? imgurl.auton: imgurl.autoa} height={42} width={42} preview={false} />
+                          <Text>自动模式</Text>
                           </Space>
                       </div>
-                      <div className={onoff == 2 ? 'cotrl off active' : 'cotrl off' } onClick={() => updatestate(2)}>
-                      <Space size={32}>
-                         <Image src={onoff == 2 ? imgurl.close: imgurl.closed} height={42} width={42} preview={false} />
-                          <Text>自动模式</Text>
+                      <div className={mode == 1 && onoff== 1 ? 'cotrl on active' : 'cotrl on' } onClick={() => updatestate(1)}>
+                          <Space size={32}>
+                          <Image src={mode == 1 && onoff==1 ? imgurl.manuala : imgurl.manualn} height={42} width={42} preview={false} />
+                          <Text>手动模式</Text>
                           </Space>
                       </div>
                   </div>
