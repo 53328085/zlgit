@@ -38,6 +38,16 @@ export default function Warncontent({ style,areavalue }) {
             key: 'content',
           },
           {
+            title: '设备名称',
+            dataIndex: 'name',
+            key: 'name',
+          },
+          {
+            title: '设备地址',
+            dataIndex: 'address',
+            key: 'address',
+          },
+          {
             title: '设备编号',
             dataIndex: 'sn',
             key: 'sn',
@@ -47,16 +57,7 @@ export default function Warncontent({ style,areavalue }) {
             dataIndex: 'category',
             key: 'category',
           },
-          {
-            title: '设备名称',
-            dataIndex: 'name',
-            key: 'name',
-          },
-          {
-            title: '安装地址',
-            dataIndex: 'address',
-            key: 'address',
-          },
+         
           {
             title: '操作',
             key: 'option',

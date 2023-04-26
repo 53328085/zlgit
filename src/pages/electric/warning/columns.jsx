@@ -43,34 +43,48 @@ export const  columns = [
         align:'center',
       },
       {
+        title: '设备名称',
+        dataIndex: 'name',
+        key: 'name',
+        align:'center',
+      },
+      {
+        title: '设备地址',
+        dataIndex: 'address',
+        key: 'address',
+        align:'center',
+      },
+      {
         title: '设备编号',
         dataIndex: 'sn',
         key: 'sn',
         align:'center',
       },
       {
-        title: '设备类型',
-        dataIndex: 'meterType',
-        key: 'meterType',
+        title: '设备型号',
+        dataIndex: 'category',
+        key: 'category',
         align:'center',
       },
-      {
-        title: '安装地址',
-        dataIndex: 'address',
-        key: 'address',
-        align:'center',
-      },
+     
  
       {
         title: '设备信息',
         key: 'option',
         align:'center',
-        render:(_,val)=>(
-            <a style={{textDecoration:'underline'}}
-             href={`/devicedetail?sn=${val.sn}`} target="blank" 
-            //  onClick={()=>{navigate("/devicedetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}
-             >设备信息</a>
-        ),
+        render:(_,val)=>{
+          return (
+            <>
+               {
+              val.deviceStyle!==11?(<a style={{textDecoration:'underline'}}
+            href={`/devicedetail?sn=${val.sn}`} target="blank" 
+           //  onClick={()=>{navigate("/devicedetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}
+            >设备信息</a>):<span>/</span>}
+              </>
+           
+          )
+        }    
+        
       },
 
 ]
