@@ -215,22 +215,29 @@ const Ccontent = styled.div`
     dimensions: ["date", "告警次数(次)"],
     source: [],
 })
+const printRef = useRef()
+const reactToPrintContent = useCallback(() => {
+  return printRef.current;
+}, [printRef.current])
 
 // 导出
 const downloadReport = () => {
+ 
   //先生成图片再导出
-  html2canvas(document.getElementById('printRef'), {
+  html2canvas(reactToPrintContent(), {
     // 导出pdf清晰度
     allowTaint: true,
     taintTest: false,
     scale: '1',//设置放大倍数
-    height: document.getElementById('printRef').scrollHeight,
-    windowHeight: document.getElementById('printRef').scrollHeight,
+    height: reactToPrintContent().scrollHeight,
+    windowHeight: reactToPrintContent().scrollHeight,
     // dpi: '192',
     background: '#fff',
     // 开启跨域配置
     useCORS: true,//支持图片跨域
   }).then((canvas) => {
+   
+
     let contentWidth = canvas.width;
     let contentHeight = canvas.height;
     // 一页pdf显示html页面生成的canvas高度;
@@ -245,23 +252,9 @@ const downloadReport = () => {
 
     let pageData = canvas.toDataURL('image/jpeg', 1);
     let pdf = new jsPDF('', 'pt', 'a4');
-
-    // 有两个高度需要区分，一个是html页面的实际高度leftHeight，和生成pdf的页面高度(841.89)pageHeight
-    // 当内容未超过pdf一页显示的范围，无需分页
-    if (leftHeight < pageHeight) {
-      pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-    } else {
-      while (leftHeight > 0) {
-        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-        leftHeight -= (pageHeight + 20);
-        //原来高度是841.89，因为页面之间有20的padding,还有多余的7是因为页面比A4的高多了一点
-        position -= 869.89;
-        // 避免添加空白页
-        if (leftHeight > 841.89) {
-          pdf.addPage();
-        }
-      }
-    }
+    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+    
+    
     pdf.save('运行报告.pdf');
   });
 }
@@ -270,10 +263,8 @@ const downloadReport = () => {
 
 // 打印 start
 
-const printRef = useRef()
-const reactToPrintContent = useCallback(() => {
-  return printRef.current;
-}, [printRef.current])
+
+
 
 const handlePrint = useReactToPrint({
   content: reactToPrintContent,

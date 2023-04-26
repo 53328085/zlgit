@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -136,6 +136,7 @@ const Logipt = styled(Input)`
   font-size: 14px;
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
+  border-radius: 4px;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
@@ -174,6 +175,7 @@ const Logpsd = styled(Input.Password)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
   font-size: 14px;
+  border-radius: 4px;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
@@ -268,17 +270,18 @@ const Title = styled.div`
   align-items: flex-end;
 `;
 
-const Logtitle = () => {
+const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
-      <Image src={imgurl.logo} preview={false} />
+      <Image src={log ?  `data:image/png;base64,${log}` : imgurl.logo} preview={false} fallback={imgurl.logo} />
       <Image src={imgurl.credentials} preview={false} />
     </Title>
   );
 };
-const Loglist = () => {
-  const dispatch = useDispatch();
-  const configInfo = useSelector(systemConfigInfo)
+const Loglist = ({logtitle, englishTitle}) => {
+ 
+  
+ 
   let items = [
     "运行监控",
     "电气安全",
@@ -288,24 +291,15 @@ const Loglist = () => {
     "碳排管理",
     "运维管理",
   ];
-  const hostname =
-    process.env.NODE_ENV === "production"
-      ? new URL(window.location.href).hostname
-      : "10.5.7.60";
-   useEffect(() => {
-    dispatch(systemConfig(hostname)).then(res => {
-      console.log(res)
-      document.title = configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'
-    });
-  }, [hostname]);  
+ 
  
   return (
     <List>
       <div className="chtitle">
-        <p className="text">{configInfo?.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
+        <p className="text">{logtitle}</p>
         <p className="block"></p>
       </div>
-      <p className="entitle">{configInfo?.englishTitle}</p>
+      <p className="entitle">{englishTitle}</p>
       <div className="itemlist">
         {items.map((i, index) => (
           <div className="item" key={index}>
@@ -423,7 +417,7 @@ function UserLog() {
    if(success) {
       let {projectId, roleType} = data
       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {
+      if (roleType == 3 || roleType == 4) {      
         enterProject(projectId)
       }
 
@@ -598,7 +592,7 @@ function UserLog() {
     const Countdown = () => {
       return (
         <Logbtn
-          style={{ height: "48px", width: "112px", fontSize: "16px" }}
+          style={{ height: "42px", width: "112px", fontSize: "16px" }}
           onClick={() => getCode()}
           disabled={countdown !== 0}
         >
@@ -726,10 +720,23 @@ function UserLog() {
   );
 }
 export default function Login() {
+
+  const dispatch = useDispatch();
+  const { systemLogoImage, systemBackImage, englishTitle } = useSelector(systemConfigInfo)
+  const enchtitle = useSelector(mixtitle)
+ 
+  const hostname = process.env.NODE_ENV === "production"
+    ? new URL(window.location.href).hostname
+    : "10.5.7.60";
+ useEffect(() => {
+  dispatch(systemConfig(hostname)).then(res => {    
+    document.title = enchtitle
+  });
+}, [hostname]);  
   return (
-    <LoginLayout login={true} header={<Logtitle />} bgImg={bgImg}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
-        <Loglist></Loglist>
+        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} ></Loglist>
         <UserLog />
       </Logmain>
     </LoginLayout>
