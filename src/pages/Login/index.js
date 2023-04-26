@@ -273,7 +273,7 @@ const Title = styled.div`
 const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
-      <Image src={log || imgurl.logo} preview={false} fallback={imgurl.logo} />
+      <Image src={log ?  `data:image/png;base64,${log}` : imgurl.logo} preview={false} fallback={imgurl.logo} />
       <Image src={imgurl.credentials} preview={false} />
     </Title>
   );
@@ -734,7 +734,7 @@ export default function Login() {
   });
 }, [hostname]);  
   return (
-    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage || bgImg}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
         <Loglist  logtitle={enchtitle} englishTitle={englishTitle} ></Loglist>
         <UserLog />
