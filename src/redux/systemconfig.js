@@ -101,5 +101,6 @@ export const publishState = state => {
   return  state.system.publishState == 1
 }
 export const systemConfigInfo = state => state.system.systemConfigInfo
+export const mixtitle = state =>  (state.system?.systemConfigInfo.title || 'NIS6000') + ' '+ (state.system?.systemConfigInfo.chineseTitle ||'正泰综合能源服务平台')
 export const {configProject,getSetMenus,setCurrentlevel, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
 export default system.reducer

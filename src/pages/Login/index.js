@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -270,17 +270,18 @@ const Title = styled.div`
   align-items: flex-end;
 `;
 
-const Logtitle = () => {
+const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
-      <Image src={imgurl.logo} preview={false} />
+      <Image src={log || imgurl.logo} preview={false} fallback={imgurl.logo} />
       <Image src={imgurl.credentials} preview={false} />
     </Title>
   );
 };
-const Loglist = () => {
-  const dispatch = useDispatch();
-  const configInfo = useSelector(systemConfigInfo)
+const Loglist = ({logtitle, englishTitle}) => {
+ 
+  
+ 
   let items = [
     "运行监控",
     "电气安全",
@@ -290,24 +291,15 @@ const Loglist = () => {
     "碳排管理",
     "运维管理",
   ];
-  const hostname =
-    process.env.NODE_ENV === "production"
-      ? new URL(window.location.href).hostname
-      : "10.5.7.60";
-   useEffect(() => {
-    dispatch(systemConfig(hostname)).then(res => {
-      console.log(res)
-      document.title = configInfo.chineseTitle || 'NIS6000 正泰综合能源服务平台'
-    });
-  }, [hostname]);  
+ 
  
   return (
     <List>
       <div className="chtitle">
-        <p className="text">{configInfo?.chineseTitle || 'NIS6000 正泰综合能源服务平台'}</p>
+        <p className="text">{logtitle}</p>
         <p className="block"></p>
       </div>
-      <p className="entitle">{configInfo?.englishTitle}</p>
+      <p className="entitle">{englishTitle}</p>
       <div className="itemlist">
         {items.map((i, index) => (
           <div className="item" key={index}>
@@ -728,10 +720,23 @@ function UserLog() {
   );
 }
 export default function Login() {
+
+  const dispatch = useDispatch();
+  const {chineseTitle, systemLogoImage, systemBackImage, englishTitle } = useSelector(systemConfigInfo)
+  const enchtitle = useSelector(mixtitle)
+ 
+  const hostname = process.env.NODE_ENV === "production"
+    ? new URL(window.location.href).hostname
+    : "10.5.7.60";
+ useEffect(() => {
+  dispatch(systemConfig(hostname)).then(res => {    
+    document.title = enchtitle
+  });
+}, [hostname]);  
   return (
-    <LoginLayout login={true} header={<Logtitle />} bgImg={bgImg}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage || bgImg}>
       <Logmain>
-        <Loglist></Loglist>
+        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} ></Loglist>
         <UserLog />
       </Logmain>
     </LoginLayout>
