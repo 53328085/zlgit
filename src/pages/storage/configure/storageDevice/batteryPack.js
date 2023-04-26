@@ -117,17 +117,28 @@ export default function Index(props) {
   }
   const columns = [
     {
-      title: areaName + '名称',
+      title: '所属' + areaName ,
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
-      width: '240px'
+      width: '200px'
     }, {
-      title: '站点名称',
+      title: '所属站点',
       dataIndex: 'siteName',
       key: 'siteName',
       align: 'center',
       width: '200px'
+    }, {
+      title: '所属储能柜',
+      dataIndex: 'containerName',
+      key: 'containerName',
+      align: 'center',
+      width: '200px'
+    }, {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center',
     }, {
       title: '设备编号',
       dataIndex: 'sn',
@@ -138,11 +149,6 @@ export default function Index(props) {
       title: '设备型号',
       dataIndex: 'category',
       key: 'category',
-      align: 'center',
-    }, {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'name',
       align: 'center',
     }, {
       title: '备注',
@@ -507,6 +513,7 @@ export default function Index(props) {
           <Item name='alike' label='设备查询'>
             <Search
               enterButton="查询"
+              placeholder='请输入设备名称/设备编号/安装地址'
               style={{ width: 400 }}
               onSearch={onSearch}></Search>
           </Item>
@@ -535,7 +542,7 @@ export default function Index(props) {
                 <p style={{ marginTop: 24, marginBottom: 24 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }}>点击上传</span></p>
               </div>
             </Dragger>
-            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryPack.xlsx' download>下载模板</a>
+            <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryPacks.xlsx' download>下载模板</a>
           </div>
         </div>
       </Modal>
@@ -614,7 +621,7 @@ export default function Index(props) {
                     })}
                   </Select>
                 </Item>
-                <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '选择告警方案' }]}>
+                <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '选择告警方案' }]} initialValue={0}>
                   <Select
                     placeholder="选择告警方案"
                     size="middle"
@@ -647,8 +654,8 @@ export default function Index(props) {
                 <Item name='name' label='电池组名称' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电池组名称' }]}>
                   <Input style={{ width: 200 }} placeholder='请输入电池组名称' ></Input>
                 </Item>
-                <Item name='cellCapacity' label='电芯容量 (Ah)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电芯容量' }]}>
-                  <Input style={{ width: 200 }} placeholder='请输入电芯容量'></Input>
+                <Item name='cellCapacity' label='电包容量 (Ah)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入电芯容量' }]}>
+                  <Input style={{ width: 200 }} placeholder='请输入电包容量'></Input>
                 </Item>
                 <Item name='nominalBatteryCapacity' label='标称电量 (kWh)' labelCol={{ span: 10 }} rules={[{ required: true, message: '请输入标称电量' }]}>
                   <Input style={{ width: 200 }} placeholder='请输入标称电量'></Input>

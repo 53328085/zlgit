@@ -91,28 +91,28 @@ export default function Index() {
     const i = el.i;
     return (
       <div key = {i} data-grid={el}>
-        { i.indexOf('公司信息') != -1 ? <CompanyMessage></CompanyMessage> : null  }
-        { i.indexOf('今日告警') != -1 ? <TodayWarning></TodayWarning> : null  }
-        { i.indexOf('今日工单') != -1 ? <OrderDetail></OrderDetail> : null  }
-        { i.indexOf('告警信息') != -1 ? <WarningMessage></WarningMessage> : null  }
-        { i.indexOf('用电量') != -1 ? <ElectricValue></ElectricValue> : null }
-        { i.indexOf('用水量') != -1 ? <WaterValue></WaterValue> : null }
-        { i.indexOf('用燃气量') != -1 ? <GasValue></GasValue> : null }
-        { i.indexOf('碳排放量') != -1 ? <CarbonValue></CarbonValue> : null }
-        { i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null }
-        { i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null }
-        { i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null }
-        { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null }
-        { i.indexOf('总充电量') != -1 ? <TotalCharge></TotalCharge> : null }
-        { i.indexOf('总放电量') != -1 ? <TotalDischarge></TotalDischarge> : null }
-        { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
-        { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
-        { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
-        { i.indexOf('储能月收益') != -1 ? <MonthIncome></MonthIncome> : null }
-        { i.indexOf('储能日收益') != -1 ? <DayIncome></DayIncome> : null }
-        { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
-        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
-        { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
+        { i.indexOf('公司信息') != -1 ? <CompanyMessage type={'runtTime'}></CompanyMessage> : null  }
+        { i.indexOf('今日告警') != -1 ? <TodayWarning type={'runtTime'}></TodayWarning> : null  }
+        { i.indexOf('今日工单') != -1 ? <OrderDetail type={'runtTime'}></OrderDetail> : null  }
+        { i.indexOf('告警信息') != -1 ? <WarningMessage type={'runtTime'}></WarningMessage> : null  }
+        { i.indexOf('用电量') != -1 ? <ElectricValue type={'runtTime'}></ElectricValue> : null }
+        { i.indexOf('用水量') != -1 ? <WaterValue type={'runtTime'}></WaterValue> : null }
+        { i.indexOf('用燃气量') != -1 ? <GasValue type={'runtTime'}></GasValue> : null }
+        { i.indexOf('碳排放量') != -1 ? <CarbonValue type={'runtTime'}></CarbonValue> : null }
+        { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
+        { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
+        { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }
+        { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis type={'runtTime'}></ElectricAnalysis> : null }
+        { i.indexOf('总充电量') != -1 ? <TotalCharge type={'runtTime'}></TotalCharge> : null }
+        { i.indexOf('总放电量') != -1 ? <TotalDischarge type={'runtTime'}></TotalDischarge> : null }
+        { i.indexOf('总充电金额') != -1 ? <ChargeCost type={'runtTime'}></ChargeCost> : null }
+        { i.indexOf('总放电金额') != -1 ? <DischargeCost type={'runtTime'}></DischargeCost> : null }
+        { i.indexOf('储能总收益') != -1 ? <TotalIncome type={'runtTime'}></TotalIncome> : null }
+        { i.indexOf('储能月收益') != -1 ? <MonthIncome type={'runtTime'}></MonthIncome> : null }
+        { i.indexOf('储能日收益') != -1 ? <DayIncome type={'runtTime'}></DayIncome> : null }
+        { i.indexOf('储能收益统计') != -1 ? <StorageStatistics type={'runtTime'}></StorageStatistics> : null }
+        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
+        { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
       </div>
     )
   }

@@ -16,7 +16,8 @@ const Boxdiv = styled(Card)`
     align-items: center;
     border-bottom: none;
     min-height: ${(props) =>  props.hv || '32px'};
-    height: ${(props) =>  props.hv || '32px'};
+    /* height: ${(props) =>  props.hv || '32px'}; */
+    height: 32px;
     padding-right: 0px;
     .ant-card-head-wrapper {
       flex:1;

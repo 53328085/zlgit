@@ -1,8 +1,11 @@
-import React, {useRef, useEffect} from 'react'
-import {useSelector} from 'react-redux'
-import {selectCurProject} from '@redux/user.js'
+import React, { useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import companyImg from './company.png'
+import { useReactive } from 'ahooks';
+import { HomeRuntime } from '@api/api.js'
+import { message } from 'antd';
 
 const MainBox = styled.div`
 width: 460px;
@@ -39,41 +42,74 @@ align-items: center;
       margin-right: 16px;
     }
     .items{
-      width: 143px;
+      width: 150px;
       line-height: 16px;
     }
   }
 }
 `
 
+export default function DefaultHome(props) {
+  const projectId = useSelector(selectProjectId)
 
-export default function DefaultHome(){
-  const curProject = useSelector(selectCurProject)
-  
+  const { GetProjectInfo } = HomeRuntime
+
+  const state = useReactive({
+    projectName: '诚办企业服务有限公司',
+    deviceNum: 0,
+    gatewayNum: 0,
+    projectManager: '张三',
+    mobile: '13588566548',
+    address: '浙江省杭州市滨江区月明路560号',
+    projectImage:'',
+  })
+
+  useEffect(() => {
+    if (props.type == 'runtTime') {
+      GetProjectInfo(projectId).then(res => {
+        let {success, data} = res
+          if(success){
+            if(data){
+              state.projectName = data.projectName
+              state.deviceNum = data.deviceNum
+              state.gatewayNum = data.gatewayNum
+              state.projectManager = data.projectManager
+              state.mobile = data.mobile
+              state.address = data.address
+              state.projectImage = data.projectImage
+            }
+          }else{
+            message.error(res.errMsg)
+          }
+      })
+    } else if (props.type == 'configure') {
+      return;
+    }
+  }, [])
   return (
     <MainBox>
       <div className='company'>
-        <div className='headerTitle'>诚办企业服务有限公司</div>
+        <div className='headerTitle'>{state.projectName}</div>
         <div className='dataItem'>
-          <div className='square' style={{backgroundColor:'#237ae4'}}></div>
-          <div className='items'>测点数量： 2563</div>
+          <div className='square' style={{ backgroundColor: '#237ae4' }}></div>
+          <div className='items'>测点数量： {state.deviceNum}</div>
         </div>
         <div className='dataItem'>
-          <div className='square' style={{backgroundColor:'#237ae4'}}></div>
-          <div className='items'>网关数量： 2563</div>
+          <div className='square' style={{ backgroundColor: '#237ae4' }}></div>
+          <div className='items'>网关数量： {state.gatewayNum}</div>
         </div>
         <div className='dataItem'>
-          <div className='square' style={{backgroundColor:'#008000'}}></div>
-          <div className='items'>张三 / 13588566548</div>
+          <div className='square' style={{ backgroundColor: '#008000' }}></div>
+          <div className='items'>{state.projectManager} / {state.mobile}</div>
         </div>
         <div className='dataItem'>
-          <div className='square' style={{backgroundColor:'#333'}}></div>
-          <div className='items'>浙江省杭州市滨江区月明路560号</div>
+          <div className='square' style={{ backgroundColor: '#333' }}></div>
+          <div className='items'>{state.address}</div>
         </div>
       </div>
-      <img src={companyImg} style={{width: 240, height: 168 }}></img>
+      <img src={ state.projectImage ? state.projectImage : companyImg} style={{ width: 240, height: 168 }}></img>
     </MainBox>
 
-    
+
   )
 }

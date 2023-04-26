@@ -1,8 +1,11 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
-import {selectCurProject} from '@redux/user.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import imgUrl from '@imgs'
+import { useReactive } from 'ahooks';
+import { HomeRuntime } from '@api/api.js'
+import { message } from 'antd';
 
 const Mainbox = styled.div`
   width: 222px;
@@ -43,16 +46,38 @@ const fs = {
   fc: '#333'
 }
 
-export default function DefaultHome(){
-  const curProject = useSelector(selectCurProject)
+export default function DefaultHome(props){
+  const projectId = useSelector(selectProjectId)
+
+  const { GetStorageTotalProfit } = HomeRuntime
+
+  const state = useReactive({
+    totalIncome: 70.50
+  })
   
+  useEffect(() => {
+    if (props.type == 'runtTime') {
+      GetStorageTotalProfit(projectId).then(res => {
+        let {success, data} = res
+          if(success){
+            if(data){
+              state.totalIncome = data
+            }
+          }else{
+            message.error(res.errMsg)
+          }
+      })
+    } else if (props.type == 'configure') {
+      return;
+    }
+  }, [])
   
   return (
          <Mainbox>
             <div className='headerTitle'>储能总收益(元)</div>
             <div className='mainData'>
                 <img src={imgUrl.totalIncome} className='centerImg'></img>
-                <span className='data'>2154.36</span>
+                <span className='data'>{ state.totalIncome }</span>
             </div>
          </Mainbox>
            

@@ -115,23 +115,33 @@ export default function Index(props) {
   }
   const columns = [
     {
-      title: areaName + '名称',
+      title: '所属' + areaName ,
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
       width: '200px'
     }, {
-      title: '站点名称',
+      title: '所属站点',
       dataIndex: 'siteName',
       key: 'siteName',
       align: 'center',
       width: '200px'
     }, {
+      title: '所属储能柜',
+      dataIndex: 'containerName',
+      key: 'containerName',
+      align: 'center',
+      width: '200px'
+    }, {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center',
+    }, {
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       align: 'center',
-      // width: '336px'
     }, {
       title: '设备编号',
       dataIndex: 'sn',
@@ -142,11 +152,6 @@ export default function Index(props) {
       title: '设备型号',
       dataIndex: 'category',
       key: 'category',
-      align: 'center',
-    }, {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'name',
       align: 'center',
     }, {
       title: '备注',
@@ -455,6 +460,7 @@ export default function Index(props) {
             <Search
               enterButton="查询"
               style={{ width: 400 }}
+              placeholder='请输入设备名称/设备编号/安装地址'
               onSearch={onSearch}></Search>
           </Item>
         </Form>
@@ -550,7 +556,7 @@ export default function Index(props) {
                 <Item name='name' label='PCS名称' rules={[{ required: true, message: '请输入PCS名称' }]}>
                   <Input style={{ width: 200 }} placeholder='请输入PCS名称' ></Input>
                 </Item>
-                <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '选择告警方案' }]}>
+                <Item name='alarmPlanId' label='告警方案' rules={[{ required: true, message: '选择告警方案' }]} initialValue={0}>
                   <Select
                     placeholder="选择告警方案"
                     size="middle"

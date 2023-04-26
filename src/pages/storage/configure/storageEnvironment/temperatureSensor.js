@@ -142,6 +142,11 @@ export default function Index(props) {
       key: 'containerName',
       align: 'center'
     }, {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center'
+    }, {
       title: '设备编号',
       dataIndex: 'sn',
       key: 'sn',
@@ -150,11 +155,6 @@ export default function Index(props) {
       title: '设备型号',
       dataIndex: 'category',
       key: 'category',
-      align: 'center'
-    }, {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'name',
       align: 'center'
     }, {
       title: '备注',
@@ -450,7 +450,7 @@ export default function Index(props) {
           <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
           <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
             <Search
-              placeholder="输入编号/安装地址"
+              placeholder="请输入设备名称/设备编号/安装地址"
               allowClear
               style={{ width: '400px' }}
               onSearch={onSearch}

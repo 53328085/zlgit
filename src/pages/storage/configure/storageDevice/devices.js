@@ -106,29 +106,35 @@ export default function Index(props) {
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
-      width: '240px'
+      width: '200px'
+    }, {
+      title: '站点名称',
+      dataIndex: 'siteName',
+      key: 'siteName',
+      align: 'center',
+      width: '200px'
+    }, {
+      title: '设备名称',
+      dataIndex: 'deviceName',
+      key: 'deviceName',
+      align: 'center',
+      width: '200px'
     }, {
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       align: 'center',
-      width: '336px'
+      width: '266px'
     }, {
-      title: '电表编号',
+      title: '设备编号',
       dataIndex: 'sn',
       key: 'sn',
       align: 'center',
       width: '160px'
     }, {
-      title: '电表型号',
+      title: '设备型号',
       dataIndex: 'category',
       key: 'category',
-      align: 'center',
-      width: '160px'
-    }, {
-      title: '电表名称',
-      dataIndex: 'deviceName',
-      key: 'deviceName',
       align: 'center',
       width: '160px'
     }, {
@@ -395,6 +401,7 @@ export default function Index(props) {
           <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
             <Search
+              placeholder='请输入设备名称/设备编号/安装地址'
               enterButton="查询"
               style={{ width: 400 }}
               onSearch={onSearch}></Search>

@@ -1745,3 +1745,20 @@ export class StorageMonitorDesigner {
   static BatchImportW = (data) => server.post(`/Storage/StorageMonitorDesigner/BatchImportW`, data)
   static Delete = (projectId, id, type) => server.delete(`/Storage/StorageMonitorDesigner/Delete?projectId=${projectId}&id=${id}&type=${type}`)
 }
+
+//首页概述
+export class HomeRuntime {
+  static GetProjectInfo = (projectId) => server.get(`/Home/HomeRuntime/GetProjectInfo?projectId=${projectId}`)//项目信息
+  static GetChargeEByGrid = (projectId) => server.get(`/Home/HomeRuntime/GetChargeEByGrid?projectId=${projectId}`) //总充电量
+  static GetCnFdUncharge = (projectId) => server.get(`/Home/HomeRuntime/GetCnFdUncharge?projectId=${projectId}`)//总放电量
+  static GetChargeFee = (projectId) => server.get(`/Home/HomeRuntime/GetChargeFee?projectId=${projectId}`)//总充电金额
+  static GetDayUnChargeIncome = (projectId) => server.get(`/Home/HomeRuntime/GetDayUnChargeIncome?projectId=${projectId}`)//储能日收益
+  static GetCFETrends = (projectId) => server.get(`/Home/HomeRuntime/GetCFETrends?projectId=${projectId}`)//充放电趋势
+  static GetUseETrends = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends?projectId=${projectId}`)//用电量
+  static GetStorageTotalProfit = (projectId) => server.get(`/Home/HomeRuntime/GetStorageTotalProfit?projectId=${projectId}`)//储能总收益
+  static GetStorageMonthProfit = (projectId) => server.get(`/Home/HomeRuntime/GetStorageMonthProfit?projectId=${projectId}`)//储能月收益
+  static GetOrderInfo = (projectId) => server.get(`/Home/HomeRuntime/GetOrderInfo?projectId=${projectId}`)//工单信息
+  static GetStorageProfitTrends = (projectId) => server.get(`/Home/HomeRuntime/GetStorageProfitTrends?projectId=${projectId}`)//储能收益统计
+  static GetWarningDistribute = (projectId) => server.get(`/Home/HomeRuntime/GetWarningDistribute?projectId=${projectId}`)//告警分布
+  static GetSiteSoc = (projectId) => server.get(`/Home/HomeRuntime/GetSiteSoc?projectId=${projectId}`)//站点Soc
+}

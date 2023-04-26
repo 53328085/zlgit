@@ -1,8 +1,11 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
-import {selectCurProject} from '@redux/user.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
 import {Liquid} from "@ant-design/charts"
+import { useReactive } from 'ahooks';
+import { HomeRuntime } from '@api/api.js'
+import { message } from 'antd';
 
 const fs = {
   hv: '24px',
@@ -11,11 +14,14 @@ const fs = {
 
 
 
-export default function DefaultHome(){
-  const curProject = useSelector(selectCurProject)
-  const DemoLiquid = () => {
+export default function DefaultHome(props){
+  const projectId = useSelector(selectProjectId)
+
+  const { GetSiteSoc } = HomeRuntime
+
+  const DemoLiquid = (props) => {
     const config = {
-      percent: 0.56,
+      percent: props.data,
       outline: {
         border: 2,
         distance: 2,
@@ -40,7 +46,7 @@ export default function DefaultHome(){
               color: '#515151'
             },
             customHtml: () => {
-              return <span>56.00%</span>
+              return <span>{ (props.data * 100).toFixed(2)}%</span>
             }
           }
         }
@@ -49,11 +55,32 @@ export default function DefaultHome(){
     return <Liquid {...config} />;
   };
 
+  const state = useReactive({
+    socData: 0.56
+  })
+
+  useEffect(()=>{
+    if (props.type == 'runtTime') {
+      GetSiteSoc(projectId).then(res => {
+        let {success, data} = res
+          if(success){
+            if(data){
+              state.socData = data
+            }
+          }else{
+            message.error(res.errMsg)
+          }
+      })
+    } else {
+
+    }
+  },[])
+
   
   return (
     <Titlelayout title='站点SOC' {...fs}>
         <div style={{width: '424px', height: '338px', marginTop: 20}}>
-              <DemoLiquid></DemoLiquid>
+              <DemoLiquid data={Number(state.socData)}></DemoLiquid>
               
           </div>
     </Titlelayout>

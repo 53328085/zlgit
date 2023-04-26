@@ -1,8 +1,11 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
-import {selectCurProject} from '@redux/user.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import imgUrl from '@imgs'
+import { useReactive } from 'ahooks';
+import { HomeRuntime } from '@api/api.js'
+import { message } from 'antd';
 
 const Mainbox = styled.div`
   width: 222px;
@@ -43,8 +46,31 @@ const fs = {
   fc: '#333'
 }
 
-export default function DefaultHome(){
-  const curProject = useSelector(selectCurProject)
+export default function DefaultHome(props){
+  const projectId = useSelector(selectProjectId)
+
+  const { GetDayUnChargeIncome } = HomeRuntime
+
+  const state = useReactive({
+    dayIncome: 70.50
+  })
+  
+  useEffect(() => {
+    if (props.type == 'runtTime') {
+      GetDayUnChargeIncome(projectId).then(res => {
+        let {success, data} = res
+          if(success){
+            if(data){
+              state.dayIncome = data
+            }
+          }else{
+            message.error(res.errMsg)
+          }
+      })
+    } else if (props.type == 'configure') {
+      return;
+    }
+  }, [])
   
   
   return (
@@ -52,7 +78,7 @@ export default function DefaultHome(){
             <div className='headerTitle'>储能日收益(元)</div>
             <div className='mainData'>
                 <img src={imgUrl.dayIncome} className='centerImg'></img>
-                <span className='data'>70.50</span>
+                <span className='data'>{state.dayIncome}</span>
             </div>
          </Mainbox>
            
