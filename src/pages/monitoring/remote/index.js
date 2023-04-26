@@ -21,6 +21,8 @@ import { deepClone } from '@topology/core'
 const { RangePicker } = DatePicker;
 
 export default function Index() {
+    const [form] = Form.useForm()
+    const {Item} = Form
     const projectId = useSelector(selectProjectId)
     let [areaId, setAreaId] = useState(1)   
     const [DataSourceReadR, setDataSourceReadR] = useState()
@@ -70,14 +72,17 @@ export default function Index() {
             getData()
         }
     }, [projectId, pageNum, areaId, deviceStyle, alike]) */
-    const [form] = Form.useForm()
-    const {Item} = Form
-    const getData = ({current, pageSize}, form) => {
+    
+    const getData = ({current, pageSize}, form={}) => {
        let {alike, deviceStyle} = form
+       console.log(form)
        let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
        return Remote.AllMeter(params).then(res => {
         let {success, data, total} = res
+        console.log(data)
+        console.log(success)
         if(success && Array.isArray(data) && data.length > 0) {
+            console.log('suceess')
            return {
             list: data,
             total,
@@ -96,8 +101,10 @@ export default function Index() {
    const {tableProps, search} = useAntdTable(getData, {
     form,
     defaultPageSize: 18,
+    defaultParams:[{current: 1, pageSize: 14}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 0}],
     refreshDeps: [areaId]
    })
+   console.log(tableProps)
    const {submit} = search
 
     const changeArea = (value) => {
@@ -314,20 +321,22 @@ export default function Index() {
                         </Space>
                     </Form>
                     <img src={imgurl.line} className={style.timeline} ></img>
-                    {selectionType == 'radio' ? <div style={{display: 'flex', flex: 1}}>
+
+                    
+             {selectionType == 'radio' ? <div style={{display: 'flex', flex: 1}}>
                         <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
                             type: 'radio',  
                             ...rowSelectionRadio,
                           
                         }} bordered></UserTable>
-                      {/*   <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} /> */}
+                   
                     </div> : <div style={{display: 'flex', flex: 1}}>
                         <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
                             type: 'checkbox',
                             ...rowSelectionCheckbox,
                         }} bordered></UserTable>
-                       {/*  <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} defaultPageSize={18} onChange={onChangePageLog} /> */}
-                    </div>}
+                    
+                    </div>}  
                 </div>
             </div>
             <Modal

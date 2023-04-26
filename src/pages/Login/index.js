@@ -136,6 +136,7 @@ const Logipt = styled(Input)`
   font-size: 14px;
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
+  border-radius: 4px;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
@@ -174,6 +175,7 @@ const Logpsd = styled(Input.Password)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
   font-size: 14px;
+  border-radius: 4px;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
@@ -423,7 +425,7 @@ function UserLog() {
    if(success) {
       let {projectId, roleType} = data
       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {
+      if (roleType == 3 || roleType == 4) {      
         enterProject(projectId)
       }
 
@@ -598,7 +600,7 @@ function UserLog() {
     const Countdown = () => {
       return (
         <Logbtn
-          style={{ height: "48px", width: "112px", fontSize: "16px" }}
+          style={{ height: "42px", width: "112px", fontSize: "16px" }}
           onClick={() => getCode()}
           disabled={countdown !== 0}
         >
