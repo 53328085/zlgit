@@ -127,7 +127,7 @@ export default function useSerach(props) {
        form.setFieldsValue({
         stationName: data[0].name
        })
-       sitehandler &&  sitehandler(data[0].name)
+       sitehandler &&  sitehandler(data[0])
      }else {
       setOptions([])    
       form.setFieldsValue({
@@ -141,11 +141,11 @@ export default function useSerach(props) {
    
   }
   useEffect(() => {
-      if(projectId && AreaID) {
+      if(projectId && AreaID && isSite) {
         getopti()
       }    
   
-  }, [projectId, AreaID])
+  }, [projectId, AreaID, isSite])
  
   return (  
   
