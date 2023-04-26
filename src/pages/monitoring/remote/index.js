@@ -233,14 +233,14 @@ export default function Index() {
     }
     const handleCancelResult = () => {
         setbrakeResult(false)
-        getData()
+        getData(1,18)
     }
     const changeDisabled = () => {
         setisComplate(false)
     }
     const changesetbrake = (type) => {
         console.log(tableRefs.current)
-        if (tableRefs.current.length > 0) {
+        if (tableRefs.current&&tableRefs.current.length > 0) {
             setsnList([])
             let List = []
             if (tableRefs.current.length > 0) {
@@ -489,7 +489,7 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                                                                 dataSourceRead[i].state = aitem.errorMessage ? aitem.errorMessage : '操作成功'
                                                                             }
                                                                         }
-                                                                        resolve(dataSourceRead)
+                                                                        //resolve(dataSourceRead)
                                                                         setResultInfoList[aindex].status = 1
                                                                     } else {
                                                                         snRemoteList.push(aitem.sn)
