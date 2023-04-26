@@ -309,10 +309,10 @@ export class StorageReportRuntime {
   static QueryReports = (params={}, areaId) => server.post(`/Storage/StorageReportRuntime/QueryReports?areaId=${areaId}`, params);
 }
 // 储能管理--告警信息
-export class StorageAlarmruntime {
-  static AlarmStatistics = (projectId, areaId) => server.get(`/Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`);
+/* export class StorageAlarmruntime {
+ static AlarmStatistics = (projectId, areaId) => server.get(`/Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`);
   static QueryStorageAlarmByPage = (params={}) => server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
-}
+} */
  
 // 储能管理--充放订单
 export class StorageOrderRuntime {
@@ -1607,7 +1607,8 @@ export class SiteSummaryRuntime {
 }
 //储能告警信息
 export class StorageAlarmRuntime {
-  static alarmStatistic = (projectId, areaId) => server.get(`Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}`)
+  static alarmStatistic = (projectId, areaId, siteId) => server.get(`Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
+  static QueryStorageAlarmByPage = (params={}) => server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
 }
  
 //pcsMonitor

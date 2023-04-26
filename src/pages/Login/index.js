@@ -61,6 +61,7 @@ const List = styled.div`
     position: absolute;
     top: 59px;
     transform: skewX(-20deg);
+    box-shadow: rgb(0 0 0 / 30%) 12px 12px;
   }
   .entitle {
     font-size: 28px;
@@ -87,8 +88,9 @@ const List = styled.div`
       display: inline-block;
       width: 16px;
       height: 16px;
-      background-color: #1f83fe;
+      background-color:#0033ff ;
       transform: rotate(45deg);
+      border: 1px solid #0099ff;
       margin-right: 16px;
     }
     .item + .item {
@@ -96,6 +98,7 @@ const List = styled.div`
     }
   }
 `;
+ 
 const Logbox = styled.div`
   width: 402px;
   color: #fff;
@@ -274,11 +277,11 @@ const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
       <Image src={log ?  `data:image/png;base64,${log}` : imgurl.logo} preview={false} fallback={imgurl.logo} />
-      <Image src={imgurl.credentials} preview={false} />
+      <Image src={imgurl.credentials} preview={false} width={200} />
     </Title>
   );
 };
-const Loglist = ({logtitle, englishTitle}) => {
+const Loglist = ({logtitle, englishTitle, literal}) => {
  
   
  
@@ -300,7 +303,7 @@ const Loglist = ({logtitle, englishTitle}) => {
         <p className="block"></p>
       </div>
       <p className="entitle">{englishTitle}</p>
-      <div className="itemlist">
+      <div className="itemlist" style={{display: literal== 1 ? 'flex' : 'none'}}>
         {items.map((i, index) => (
           <div className="item" key={index}>
             <span className="icon"></span>
@@ -722,7 +725,7 @@ function UserLog() {
 export default function Login() {
 
   const dispatch = useDispatch();
-  const { systemLogoImage, systemBackImage, englishTitle } = useSelector(systemConfigInfo)
+  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo)
   const enchtitle = useSelector(mixtitle)
  
   const hostname = process.env.NODE_ENV === "production"
@@ -736,7 +739,7 @@ export default function Login() {
   return (
     <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
-        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} ></Loglist>
+        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
         <UserLog />
       </Logmain>
     </LoginLayout>
