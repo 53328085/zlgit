@@ -409,7 +409,7 @@ export default function Index() {
           </div>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>SOC</div>
-            <SocChart lineData={socData} Unit='SOC(‰)' color={'#ff6701'}></SocChart>
+            <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
           </div>
           <div className={style.tableList}>
             <Table size='small' bordered dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} />

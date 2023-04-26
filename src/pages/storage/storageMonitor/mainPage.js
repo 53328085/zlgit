@@ -120,12 +120,12 @@ export default function Index(props) {
     if (value == '' || value == '/') {
       length = 0
     } else {
-      length = value / 10
+      length = value 
     }
     return (
       <div style={{ position: 'relative', marginBottom: 8, width: 138, height: 24, background: '#2b2b2b', border: "1px solid rgb(153, 153, 153)", borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ position: 'absolute', zIndex: 0, left: -1, top: -1, width: length + '%', height: 24, background: props.color, border: "1px solid rgb(228, 228, 228)", borderRadius: 2, borderRight: 'none' }}></div>
-        <span style={{ zIndex: 1, color: '#fff' }}>{props.title + '    ' + props.value + '‰'}</span>
+        <span style={{ zIndex: 1, color: '#fff' }}>{props.title + '    ' + props.value + '%'}</span>
       </div>
     )
   }
@@ -189,9 +189,9 @@ export default function Index(props) {
     querySOCTrends(projectId, stackId).then(res => {
       if (res.success) {
         if (res.data) {
-          config(socRef.current, '#1ba41b', 'SOC (‰)', res.data)
+          config(socRef.current, '#1ba41b', 'SOC (%)', res.data)
         } else {
-          config(socRef.current, '#1ba41b', 'SOC (‰)', { x: [], y: [] })
+          config(socRef.current, '#1ba41b', 'SOC (%)', { x: [], y: [] })
         }
       } else {
         message.error(res.errMsg)
@@ -275,7 +275,7 @@ export default function Index(props) {
       <div className={style.bmsContent}>
         <div className={style.left}>
           <div className={style.leftCard}>
-            <div className={style.cardTitle}>SOC (‰)</div>
+            <div className={style.cardTitle}>SOC (%)</div>
             <div className={style.cardChart} id='totalSOC' ref={socRef}></div>
           </div>
           <div className={style.leftCard}>
