@@ -213,7 +213,7 @@ const columns = [
         ]
     },
     {
-        title: <div><p>实际收益（元）</p><p>放电成本+充电成本</p></div>,
+        title: <div><p>实际收益（元）</p><p>放电成本-充电成本</p></div>,
         dataIndex: 'income',
         key: 'income',
         align: 'center'

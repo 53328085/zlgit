@@ -81,6 +81,30 @@ const Triangle = styled.div`
      border-style: solid;
      border-color: transparent #135abd transparent transparent;
 `;
+
+const CDropdown = styled(Dropdown)`
+  && {
+    padding: 0px;
+    .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child {
+      line-height: 40px;
+      height: 40px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      transition: all 0.1s;
+      padding: 0 16px 0 58px;
+      background-image: url(${imgurl.login});
+      background-repeat: no-repeat;
+      background-size: 20px auto;
+      background-position: 16px center;
+      &&:hover {
+        background-color: #237ae4 !important;
+        background-image: url(${imgurl.login_a});
+        color: #ffffff;
+      } 
+    }
+  }
+`
 const Citem = styled(Menu.Item)`
   && {
     line-height: 40px;
@@ -154,6 +178,19 @@ export default function Log() {
       <Uitem key="exit" onClick={onExit}>退出系统</Uitem>
     </Menu>
   )
+
+  const items = [
+    {label: '账户管理', key:"mg"},
+    {label: '退出系统', key:"exit"},
+  ]
+  const onClick = ({key}) => {
+      if(key == 'mg') {
+        account()
+      }else if(key == 'exit') {
+        onExit()
+      }
+  
+  }
   const onOk = () => {
     form.validateFields().then(() => {
       let {mobile, pwd, oldPwd} = form.getFieldsValue()
@@ -225,6 +262,13 @@ export default function Log() {
         </Idiv2>):null}
         </>
         }
+       {/*   <CDropdown menu={{items, onClick}}  placement="bottom" trigger={['click']}>
+        <Idiv3>
+          
+            <span>{name}</span>
+          
+        </Idiv3>
+        </CDropdown> */}
         <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
         <Idiv3>
           
