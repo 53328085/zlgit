@@ -301,7 +301,6 @@ export default function Index(props) {
   const [addSiteList, setAddSiteList] = useState([])
   const changeAddArea = val => {
     addForm.setFieldValue('siteId', null)
-    addForm.setFieldValue('pcsId', null)
     addForm.setFieldValue('batteryStackId', null)
     FindSiteList(projectId, addForm.getFieldValue('areaId')).then(res => {
       if (res.success) {
@@ -323,7 +322,6 @@ export default function Index(props) {
     addClusterList: []
   })
   const changeAddSite = val => {
-    addForm.setFieldValue('pcsId', null)
     addForm.setFieldValue('batteryStackId', null)
     FindContainerList(projectId, addForm.getFieldValue('areaId'), val).then(res => {
       if (res.success) {
@@ -597,7 +595,7 @@ export default function Index(props) {
                     size="middle"
                     style={{ width: '200px' }}
                     onChange={changeAddBatteryStack}
-                    disabled={!addForm.getFieldValue('pcsId') ? true : false}
+                    disabled={!addForm.getFieldValue('containerId') ? true : false}
                   >
                     {state.addStackList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
