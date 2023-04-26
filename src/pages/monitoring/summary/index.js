@@ -86,6 +86,8 @@ export default function Index() {
       getMonthUsage(1)
     }
   }, [areaId,eleConsumes.length,projectId])
+  let date=new Date()
+  let days=date.getDate()
 const charts=()=>{
   drawEcharts(elref.current, {
     dataset: datasetMonth,
@@ -99,8 +101,8 @@ const charts=()=>{
     },
     dataZoom:{
       type: 'inside',
-      start: 0,
-      end: 50,
+      start: days>15?'50':'0',
+      end: days>15?'100':'50',
     }
   })
   drawEcharts(wlref.current, {
@@ -115,8 +117,8 @@ const charts=()=>{
     },
     dataZoom:{
       type: 'inside',
-      start: 0,
-      end: 50,
+      start: days>15?'50':'0',
+      end: days>15?'100':'50',
     }
   })
   drawEcharts(glref.current, {
@@ -131,8 +133,8 @@ const charts=()=>{
     },
     dataZoom:{
       type: 'inside',
-      start: 0,
-      end: 50,
+      start: days>15?'50':'0',
+      end: days>15?'100':'50',
     }
   })
 }
