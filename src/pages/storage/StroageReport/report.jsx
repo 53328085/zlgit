@@ -652,12 +652,13 @@ const onPrint = () => {
                  <div className='main'>
                    <DesItem title="6. 告警信息" bordered size='small' layout='vertical' bgColor="#f60">
                       <DesItem.Item label="PCS告警">{reportData.pcsAlarmCount}</DesItem.Item>
-                      <DesItem.Item label="电池告警">{reportData.batteryAlarmCount}</DesItem.Item>
-                      <DesItem.Item label="温度告警">{reportData.temperatureAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="电池堆告警">{reportData.batteryStackAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="电池簇告警">{reportData.batteryClusterAlarmCount}</DesItem.Item>
 
-                      <DesItem.Item label="烟雾告警">{reportData.smokeAlarmCount}</DesItem.Item>
-                      <DesItem.Item label="火灾告警">{reportData.fireAlarmCount}</DesItem.Item>
-                      <DesItem.Item label="SOC低">{reportData.socLowAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="电池组告警">{reportData.batteryPackAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="空调告警">{reportData.airAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="温湿度">{reportData.tmpHumAlarmCount}</DesItem.Item>
+                      <DesItem.Item label="水浸告警">{reportData.tmpHumAlarmCount}</DesItem.Item>
                    </DesItem>
                    <div  ref={warnref} ></div>
                  </div>

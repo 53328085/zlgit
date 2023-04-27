@@ -134,9 +134,7 @@ export default function Index(props) {
             if(res.data){
                 state.alarmData = res.data
             }else{
-                state.alarmData = {
-                    batteryWarnings:[]
-                }
+                state.alarmData = []
             }
         }else{
             message.error(res.errMsg)
@@ -179,7 +177,7 @@ export default function Index(props) {
                     <div className={style.cardTitle}>告警信息</div>
                     <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
                     <div className={style.warningDetails} style={{height: 500}}>
-                        {state.alarmData.batteryWarnings.map((item, index) => {
+                        {state.alarmData?.map((item, index) => {
                             return <Fragment key={index}>
                                 <WarningCard data={item} ></WarningCard>
                             </Fragment>

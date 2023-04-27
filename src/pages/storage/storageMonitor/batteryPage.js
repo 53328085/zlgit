@@ -257,14 +257,14 @@ export default function Index(props) {
     }
 
     //告警信息
-    const [warningData, setWarningData] = useState({ batteryWarnings: [] })
+    const [warningData, setWarningData] = useState([])
     const getwarningData = (batteryCluster) => {
         queryBatteryClusterWarning(projectId, batteryCluster.id).then(res => {
             if (res.success) {
                 if (res.data) {
                     setWarningData(res.data)
                 } else {
-                    setWarningData({ batteryWarnings: [] })
+                    setWarningData([])
                 }
             } else {
                 message.error(res.errMsg)
@@ -339,7 +339,7 @@ export default function Index(props) {
                     <div className={style.cardTitle}>告警信息</div>
                     <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
                     <div className={style.warningDetails}>
-                        {warningData.batteryWarnings.map((item, index) => {
+                        {warningData?.map((item, index) => {
                             return <Fragment key={index}>
                                 <WarningCard data={item} ></WarningCard>
                             </Fragment>
