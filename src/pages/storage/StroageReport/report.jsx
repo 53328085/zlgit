@@ -567,7 +567,7 @@ const onPrint = () => {
           </Titlelayout>      
           </div>
           <div>
-          <div className='right' ref={printRef} id="printRef">
+          <div className='right printContet' ref={printRef} id="printRef">
                          
                <Front>
                    <div className='title'>

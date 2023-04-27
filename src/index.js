@@ -12,6 +12,7 @@ import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 import ConfigProvider  from './antdconfig';
 import './assets/css/index.less'
+import './assets/css/print.css'
 import App from './App'
 import {detectZoom} from './hooks/detectZoom'
 let persistor = persistStore(store)

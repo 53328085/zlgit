@@ -1,29 +1,34 @@
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {testthunk, zltest, asyncthunk, setzl, status, sysinfo, error } from "@redux/reduxTest.js";
-export default function Index() {
-
-  const dispatch = useDispatch()
-  const data = useSelector(zltest)
-  const statuse = useSelector(status)
-  const sysinfoe = useSelector(sysinfo)
-  const errore = useSelector(error)
-  const requst = () => {
-    dispatch(asyncthunk()).then(res => {
-      console.dir(res)
-    }).catch(e => {
-      console.log(e)
-    })
+import styled from 'styled-components'
+const Printbox = styled.div`
+  height: 400px;
+ 
+  h1 {
+    color: #69c0ff;
   }
+  .pagebreak {
+    page-break-after: always;
+  }
+`
+export default function Index() {
   return (
     <div>
-      <h3>{data}</h3>
-      <h3>{statuse}</h3>
-      <h3>{JSON.stringify(sysinfoe, 3)}</h3>
-      <h3>{errore}</h3>
-      <button onClick={() => dispatch(testthunk(new Date().getTime()))}>thunk</button>
-      <button onClick={requst}>asyncthunk</button>
-      <button onClick={() => dispatch(setzl(new Date().getTime()))}>asyncthunk</button>
+      
+          <nav>
+            <h1>你好</h1>
+            <h2>哈喽</h2>
+          </nav>
+          <h1>第一页</h1>
+          <p >
+            <a href='http://www.sina.com.cn'>新浪</a>
+          </p>
+          <hr className='pagebreak' /> 
+          <h1>第二页</h1>
+         
+          <hr className='pagebreak' /> 
+          <h1>第三页</h1>
+         <button onClick={() => window.print()}>print</button>
+       
     </div>
   )
 }

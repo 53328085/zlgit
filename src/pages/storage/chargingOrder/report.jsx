@@ -68,8 +68,8 @@ const Mainbox = styled.div`
    const [toption, setToption] = useState([])
    
    const [form] = Form.useForm();
-   const end = moment().add(7, 'day')
-   const star = moment()
+   const end = moment();
+   const star = moment().subtract(7, 'day')
    const [dates, setDates] = useState([moment(star, 'YYYY-MM-DD'), moment(end, 'YYYY-MM-DD')])
  
   const getStatus = async() => {
@@ -227,7 +227,7 @@ const [charData, setCharData] = useState({})
    form,
    defaultParams: [
     {current: 1, pageSize: 15},
-    {state: 1, type:1, date: [moment(), moment().add(7, 'day')]}
+    {state: 1, type:1, date: [moment().subtract(7, 'day'), moment()]}
    ]
    
  })
