@@ -312,8 +312,8 @@ export default function Index(props) {
           </div>
           <div className={style.batteryPack}>
 
-            <div className={style.transLate} style={{ width: (parseInt(bmsInfo.batteryClusterInfos.length / 3) + 1) * 100 + '%', left: (-(count * 277) + 55) }}>
-              {bmsInfo.batteryClusterInfos.map((item, index) => {
+            <div className={style.transLate} style={{ width: (parseInt(bmsInfo.batteryClusterInfos?.length / 3) + 1) * 100 + '%', left: (-(count * 277) + 55) }}>
+              {bmsInfo.batteryClusterInfos?.map((item, index) => {
                 return <BatteryPack data={item} key={index} toBattery={() => toBattery(item)}></BatteryPack>
               })}
             </div>

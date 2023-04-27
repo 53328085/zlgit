@@ -436,12 +436,7 @@ function UserLog() {
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
   }, []);
-/*   useEffect(() => {
-    document.title = "NIS6000 正泰综合能源服务平台";
-  }, []); */
-/*   useEffect(() => {
-    dispatch(systemConfig(hostname));
-  }, [hostname]); */
+ 
 
   const [userform] = Form.useForm();
 
@@ -486,7 +481,7 @@ function UserLog() {
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
-          pwd: "chint@123456",
+          pwd: "",
         }}
       >
         <Itembox
