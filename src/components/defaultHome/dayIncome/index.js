@@ -52,7 +52,7 @@ export default function DefaultHome(props){
   const { GetDayUnChargeIncome } = HomeRuntime
 
   const state = useReactive({
-    dayIncome: 70.50
+    dayIncome: 79
   })
   
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function DefaultHome(props){
       GetDayUnChargeIncome(projectId).then(res => {
         let {success, data} = res
           if(success){
-            if(data){
+            if(!isNaN(data)){
               state.dayIncome = data
             }
           }else{

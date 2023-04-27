@@ -60,7 +60,7 @@ export default function DefaultHome(props){
       GetChargeEByGrid(projectId).then(res => {
         let {success, data} = res
           if(success){
-            if(data){
+            if(!isNaN(data)){
               state.totalCharge = data
             }
           }else{

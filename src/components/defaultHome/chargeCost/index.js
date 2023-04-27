@@ -60,7 +60,7 @@ export default function DefaultHome(props){
       GetChargeFee(projectId).then(res => {
         let {success, data} = res
           if(success){
-            if(data){
+            if(!isNaN(data)){
               state.chargeCost = data
             }
           }else{
