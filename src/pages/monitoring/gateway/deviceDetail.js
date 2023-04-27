@@ -21,6 +21,10 @@ export default function GatewayDetail(props) {
     let location = useLocation()
     let qs = require('query-string')
     let search = qs.parse(location.search)
+    useEffect(() => {
+        document.title = `NIS6000 正泰储能 设备详情`
+        return () => document.title= 'NIS6000 正泰储能 设备详情'
+      },[location]) 
     const projectId = useSelector(selectProjectId)
     const { RangePicker } = DatePicker;
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
@@ -383,7 +387,7 @@ export default function GatewayDetail(props) {
         <div className={style.main}>
             <div className={style.head}>
                 <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>智慧能源服务管理平台</p>
+                <p>正泰储能</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>
