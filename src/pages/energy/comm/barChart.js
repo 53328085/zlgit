@@ -43,24 +43,21 @@ export default function Index(props) {
           type: "bar",
         },
       ],
-      dataZoom: [
-        {
-          // 滚动条以及缩放
-          type: "slider",
-          height: 20,
-          bottom: 10,
-          moveHandleSize: 0,
-          height: 20,
-          borderRadius: 5,
-          show: true,
-        },
-      ],
+      // dataZoom: [
+      //   {
+      //     // 滚动条以及缩放
+      //     type: "inside",
+      //     start: 0,
+      //     end: 20,
+      //     show: true,
+      //     showDetail: true,   
+      //   },
+      //   {
+      //     start: 0,
+      //     end: 20,
+      //   },
+      // ],
     });
   }, [barData]);
-  return (
-    <div
-      style={{ height: 700, margin: 12 }}
-      id="barChartInfo"
-    ></div>
-  );
+  return <div style={{ height: 700, margin: 12 }} id="barChartInfo"></div>;
 }
