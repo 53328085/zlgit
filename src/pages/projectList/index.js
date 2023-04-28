@@ -36,7 +36,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump } from "@redux/systemconfig";
 import {Area} from '@api/api.js'
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -358,7 +358,7 @@ export default function Index() {
 
   dispatch(getMenus(menus));
   dispatch(configProject(type === 1))
-
+ 
 
   if (type == 2) {
     return runMenus?.find(item => item.no == '0104') || runMenus[0] 
@@ -494,12 +494,14 @@ export default function Index() {
   }
   // 数据需要动态获取
   const projectRun = ({key, label}) => { 
+    dispatch(getJump(true))
     navigate(`/index/${key}`, {
       state: { type: 'index',  primary: key,  index: true, title: label }
     })
   };
 
  const projectDesigner = ({key, label}) => { 
+      dispatch(getJump(false))
       navigate(`/config/${key}/base`, {
         state: { type: 'config', primary: key,  title: label, nested: 'base'  } 
       }) 

@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -376,6 +376,7 @@ function UserLog() {
 
   dispatch(getMenus(menus));
   dispatch(configProject(false))
+  dispatch(getJump(false))
   return runMenus?.find(item => item.no == '0104') || runMenus[0] 
 
  

@@ -5,12 +5,14 @@ import { ProjectLayout } from '../../components/layout'
 import Header from './header'
 import Sider from './sider'
 import {Outlet, useLocation} from 'react-router-dom'
-import {  mixtitle } from "@redux/systemconfig";
+import {  mixtitle,jump } from "@redux/systemconfig";
 import Loading from '@pages/Loading';
 
 export default function Index(props) {
   let location = useLocation()
   const enchtitle = useSelector(mixtitle)
+  const desin = useSelector(jump)
+  console.log('desin', desin)
   useEffect(() => {
     document.title = enchtitle+ ' ' + location.state?.title
     return () => document.title = enchtitle
@@ -32,5 +34,5 @@ export default function Index(props) {
         </Suspense>
     </ProjectLayout>
   )
-  return  <>{index ? Defaultlayout : Projectlayout}</>
+  return  <>{desin ? Defaultlayout : Projectlayout}</>
 }
