@@ -325,6 +325,7 @@ function UserLog() {
     setLoading(store.getState()?.user?.loading);
   });
   const projectRun = ({ key, label }) => {
+    dispatch(getJump(true))
     navigate(`/index/${key}`, {
       state: { type: "index", primary: key, index: true, title: label },
     });
@@ -376,7 +377,7 @@ function UserLog() {
 
   dispatch(getMenus(menus));
   dispatch(configProject(false))
-  dispatch(getJump(false))
+ // dispatch(getJump(false))
   return runMenus?.find(item => item.no == '0104') || runMenus[0] 
 
  

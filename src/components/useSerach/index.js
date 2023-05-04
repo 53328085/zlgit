@@ -74,10 +74,10 @@ export default function useSerach(props) {
        handler(e)
     }
  }
- const sitechange = (e) => {
-    console.log(e)
+ const sitechange = (e,options) => {
+   
     if (typeof sitehandler == 'function') {
-      sitehandler(e)
+      sitehandler(options)
     }
      
  }
@@ -133,7 +133,7 @@ export default function useSerach(props) {
       form.setFieldsValue({
         stationName: ''
        })
-       sitehandler && sitehandler('')
+       sitehandler && sitehandler({})
      }
     } catch (error) {
       console.log(error)

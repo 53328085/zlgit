@@ -1,18 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
-import {CaretRightOutlined, CaretUpFilled, CaretDownFilled}  from '@ant-design/icons'
+import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {StorageAlarmRuntime} from '@api/api'
- 
+import {OperationLogRuntime} from '@api/api'
+
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
-    && { 
+    && {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      .content {
         display: grid;
         grid-template-rows: 32px 4px 1fr;
         row-gap: 16px; 
@@ -30,176 +34,150 @@ const Mainbox = styled.div`
               background-color: #f0f9ff;
             }
         }
-      } 
+        .ant-form-inline {
+          .ant-form-item {
+            margin-right: 0;
+          }
+        }
+      }
+       
+       }
 
 `
+const P = styled(Paragraph)`
+&& {
+  margin-bottom: 0px;
+  line-height: 1;
+  font-size: 18px;
+  color:#666;
+}
  
+`
 const columns = [
     {
         title: '操作时间',
-        dataIndex: 'warningTime',
-        key: 'warningTime',
+        dataIndex: 'date',
+        key: 'date',
         align: 'center'
     },
     {
-        title: '时间类型',
-        dataIndex: 'alarmEvent',
-        key: 'alarmEvent',
+        title: '事件类型',
+        dataIndex: 'eventType',
+        key: 'eventType',
         align: 'center'
     },
     {
       title: '事件描述',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'content',
+      key: 'content',
       align: 'center'
-  },
-  {
-    title: '状态',
-    dataIndex: 'level',
-    key: 'level',
-    align: 'center'
-   },
+     },
+     {
+      title: '状态',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
    ]
  
- function Main({projectId, areaId }) {
+ function Main({projectId, areaId, siteId }) {
    const [form] = Form.useForm()
-   const [statistics ,setStatistics] = useState([])
-   const [tableData, setTableData] = useState([])
-   const startime = '2023-03-20'
-   const endtime = '2024-03-20'
-   const [dates, setDates] = useState([moment(startime, 'YYYY-MM-DD'), moment(endtime, 'YYYY-MM-DD')])
-   const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-    total: 0
-  })
-  const getData = async() => {
-    try {
-        let {success, data} = await StorageAlarmRuntime.AlarmStatistics(projectId, areaId)
-        console.log(Object.keys(data))
-        console.log(Object.values(data))
-        success && setStatistics([...Object.values(data)])
-        !success && setStatistics([])
-    } catch (error) {
-        console.log(error)
-    }
-   
-  } 
- const timechange = (data, dateStrings) => { 
-     setDates([...data])
- }
-  let params = {
-    start: '2023-03-20',
-    end: '2024-03-20',
-    projectId,
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-    content : "",
-    deviceType: 0,
-    level: 0
-  }
  
-  const QueryReports = async() => {   
-    try {
-        let {success, data, total} = await StorageAlarmRuntime.QueryStorageAlarmByPage(params)
-        if (success && Array.isArray(data) && data.length >0) {
-           
-           setTableData([...data])   
-           setPagination({...pagination, total: total})
-        } else {
-            setTableData([])
-            setPagination({...pagination, total: 0})
-        }
-    } catch (error) {
-        console.log(error)
+ 
+ 
+  const QueryReports =  ({current, pageSize}, form) => {   
+    let {time, ...rest} = form
+    let start = time[0].format('YYYY-MM-DD')
+    let end = time[1].format('YYYY-MM-DD')
+    let params = {
+      pageNum: current,
+      pageSize,
+      start,
+      end,
+      projectId,
+   //  areaId,
+      siteId,
+      ...rest
     }
+    return OperationLogRuntime.QueryLogsByPage(params).then(res => {
+      let {success, data, total} = res
+      if (success && Array.isArray(data) && data.length >0) {
+          return {
+            list: data,
+            total
+          }  
+     } else {
+      return {
+        list: [],
+        total: 0
+      }  
+     }
+    })
    
   }
-  const onQuery = () => {
-    try {
-      let {time, ...other} = form.getFieldsValue()
-      
-      if(Array.isArray(time) && time.length >1) {
-        params.start = time[0].format('YYYY-MM-DD') || ''
-        params.end = time[1].format('YYYY-MM-DD') || ''
-      }
-     
-      params = {...params, ...other};
-      QueryReports()
-    } catch (error) {
-      console.log(error)
-    }
-    
-  }
-  const rest = () => { 
-    form.resetFields()
-    onQuery()
+  const {tableProps, search} = useAntdTable(QueryReports, {
+    form,
+    defaultParams: [{pageSize: 14, pageNum: 1}, {
+      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: moment().format('YYYY-MM-DD'),
+      projectId, 
+      siteId,
+      content : "",
+      type: 0,
+      status: 0
 
-  }
-  const tableOnchange = (e) => { 
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
-   
-  }
+    }],
+    refreshDeps: [projectId,  siteId]
+  })
+  
+  const {submit} = search
   const tbref = useRef()
   const onExport = () => {
     tbref.current.download()
   }
-  useEffect(() => {
-    QueryReports()
-  }, [])
-  useEffect(() => {
-    getData()
-    QueryReports()
-  }, [areaId])
  
-  return (   
+ 
+ 
+ 
+  return (
+    <Mainbox>    
     <Titlelayout title="操作日志" layout="flex" >
-        <Mainbox>
-    
+    <div className='content'>
         <Form form={form} className='top' layout='inline' initialValues={{
           content: '',
           deviceType:0,
           level: 0,
-          time: dates
+          time: [moment().subtract(7, 'day'), moment()]
         }}>
-          <Space size={16}>
+          <Space size={32}>
              <Item label="日志查询" name="content">
               <Input placeholder='操作内容' style={{width: '320px'}} />
              </Item>
              <Divider style={{margin: '0', height: '32px'}}  type="vertical" />
-             <Item label="设备类型" name="deviceType">
+             <Item label="设备类型" name="type">
               <Select options={[
                 {label: '全部', value: 0},
                 {label: 'PCS', value: 1},
-                {label: '电堆', value: 2}
+                {label: '电堆', value: 2},
               ]}
               style={{width: '112px'}}
+              onChange={submit}
               ></Select>
-             </Item>
+             </Item>  
              <Divider style={{margin: '0', height: '32px'}} type="vertical" />
-             <Item label="告警等级" name="level">
+             <Item label="状态" name="status">
               <Select options={[
-                {label: '全部告警', value: 0},
-                {label: '一级告警', value: 2},
-                {label: '二级告警', value: 3},
-                {label: '三级告警', value: 4},
+                {label: '全部', value: 0},
+                {label: '成功', value: 1},
+                {label: '失败', value: 2},
               ]}
               style={{width: '112px'}}
+              onChange={submit}
               ></Select>
-             </Item>
+             </Item>  
              <Divider style={{margin: '0', height: '32px'}} type="vertical" />
-             <Item label="告警时间" name="time" >
-               <RangePicker  onChange={timechange}  format="YYYY-MM-DD" style={{width: '320px'}}/>
-            </Item>
-            <Item noStyle>
-              <Space>
-                <Button onClick={onQuery}>查询</Button>
-                <Button onClick={rest}>重置</Button>
-                </Space>
+             <Item label="操作时间" name="time" >
+               <RangePicker  onChange={submit}  format="YYYY-MM-DD" style={{width: '320px'}}/>
             </Item>
            </Space>
            <Item noStyle>
@@ -208,10 +186,11 @@ const columns = [
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} dataSource={tableData} rowKey={nanoid()} pagination={pagination} onChange={tableOnchange} sheetName="操作日志" ref={tbref} />
-    </Mainbox>
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" />
+      
+    </div>
     </Titlelayout>
-  
+    </Mainbox>
   )
 }
 export default function Index(props) {
