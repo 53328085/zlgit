@@ -13,7 +13,7 @@ import photovoltaicRoutes from "./photovoltaic"; // 光伏
 import moduleRoutes from "./designer/common";
 import carbonRoutes from "./carbon" // 碳排管理
 import storageRoutes from './storage' // 储能管理
-
+import ErrorBoundary from '../ErrorBoundary.jsx'
 
 import {StorageParameterSetupDesigner} from '@api/api'
 const Login = lazy(() => import("@pages/Login"))
@@ -55,6 +55,7 @@ const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDeta
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const Rtest = lazy(() => import("../pages/test/rttest"))
 const Notfound = lazy(() => import("./notfound"))
+
 import {designerComponents, designerChildrenRoute} from "./designer";
 
 const loginrouter =  [{
