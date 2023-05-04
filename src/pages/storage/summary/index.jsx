@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
@@ -10,8 +10,51 @@ import BarChart from './barChart'
 import LineChart from './lineChart'
 import imgurl from './imgs'
 import warningPoint from '@imgs/warningPoint.png'
+import styled from 'styled-components'
+
 
 export default function Index() {
+  const TransDiv = styled.div`
+  padding-top: 18px;
+  animation: movetop ${props => {return props.speed}}s infinite linear;
+  &:hover{
+    animation-play-state: paused;
+  }
+
+  @keyframes movetop{
+    from{
+        transform: translateY(0);
+    }
+    to{
+        transform: translateY(-${props =>{
+          console.log(props.dmheight)
+          if(!props.dmheight || props.dmheight<445)return 0
+          if(props.dmheight){
+            return props.dmheight
+          }
+         } }px );
+          /* return (props.children[0].length-4)*116} }px ); */
+    }
+}
+`
+
+  const CircleDiv = styled.div`
+        margin-top: 4px;
+        margin-right: 16px;
+        width: 16px;
+        height: 16px;
+        border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .warningPoint {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+          }
+  `
   const [form] = Form.useForm()
   const Item = Form.Item
   const { querySiteInfo,
@@ -58,7 +101,7 @@ export default function Index() {
   const [topologyData, setTopologyData] = useState({
     loadDevice: {},
     onGridDevice: {},
-    storageDevice:{}
+    storageDevice: {}
   }) //接线图数据
   useEffect(() => {
     if (areaList.length == 0 || !areaList) {
@@ -70,7 +113,7 @@ export default function Index() {
   }, [])
   const changeArea = (val) => {
     areaList.map(item => {
-      if(item.id == val){
+      if (item.id == val) {
         dispatch(setCurrentlevel(item))
       }
     })
@@ -119,8 +162,8 @@ export default function Index() {
         } else {
           setTopologyData({
             loadDevice: {},
-    onGridDevice: {},
-    storageDevice:{}
+            onGridDevice: {},
+            storageDevice: {}
           })
         }
       } else {
@@ -142,7 +185,7 @@ export default function Index() {
     })
   }
   const CardItem = props => {
-    return <div className={style.leftCard} style={{ height: props.height, position:'relative' }} >
+    return <div className={style.leftCard} style={{ height: props.height, position: 'relative' }} >
       <div className={style.cardTitle}>{props.title}</div>
       {props.children}
     </div>
@@ -196,19 +239,28 @@ export default function Index() {
     </div>
   }
   const WarningCard = props => {
+    const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
     return <div className={style.warningItem}>
-      <div className={style.leftImg}>
+      {/* <div className={style.leftImg}>
         <img src={warningPoint} className={style.warningPoint}></img>
-      </div>
+      </div> */}
+      <CircleDiv level={props.data?.level}>
+        <div className='warningPoint'></div>
+      </CircleDiv>
       <div className={style.warningData}>
         <div className={style.warningtop}>
-          <span className={style.time}>{props.data.warningTime}</span>
-          <span className={style.description}>{props.data.content}</span>
-          <span className={style.level} style={{ fontSize: 12, color: '#6b6b6b' }}>{props.data.level}</span>
+     
+            <span className={style.time}>{props.data.warningTime}</span>
+            <span className={style.level} style={{ color:mapobj.get(props.data.level).color,fontSize:12 }}>{
+                     mapobj.get(props.data.level).text
+                    } </span>
+        
         </div>
+        <div style={{ fontSize: 12, color: '#6b6b6b', marginTop: 6,wordBreak: 'break-all' }} >{props.data.alarmEvent}</div>
         <div className={style.warningbottom}>
           <span className={style.sn}>{props.data.name}</span>
         </div>
+        <div style={{ fontSize: 12, color: '#6b6b6b', marginTop: 6 }}>{props.data.address}</div>
       </div>
     </div>
   }
@@ -217,7 +269,15 @@ export default function Index() {
       state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
     })
   }
-
+  const [domheight,setDomHeight] =useState(0)
+  const [speed,setSpeed]=useState(0)
+  useEffect(()=>{
+    if(document.getElementById('warn')&&warningData.length>0){
+      const warndom = document.getElementById('warn')
+      setDomHeight(warndom.getBoundingClientRect().height)
+      setSpeed(warndom.getBoundingClientRect().height/60)
+    }
+  },[warningData.length])
   return (
     <div>
       <div className={style.header}>
@@ -281,13 +341,29 @@ export default function Index() {
           </CardItem> */}
           <CardItem title='最新告警' height='548px'>
             <span className={style.toWarning} onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</span>
-            <div className={style.warningDetails}>
-              {warningData.map((item, index) => {
-                return <Fragment key={index}>
-                  <WarningCard data={item} ></WarningCard>
-                  {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
-                </Fragment>
-              })}
+            <div className={style.warningDetails}  >
+
+              <TransDiv   dmheight={domheight} speed={speed}>
+                  <div id='warn'>
+                    {warningData.map((item, index) => {
+                    return <Fragment key={index}>
+                      <WarningCard data={item} ></WarningCard>
+                      {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
+                    </Fragment>
+                     })
+                  }
+                  </div>
+                 
+                  {
+                    warningData.length>4?warningData.slice(0, 4).map((item, index) => {
+                      return <Fragment key={index}>
+                        <WarningCard data={item} ></WarningCard>
+                        {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
+                      </Fragment>
+                    }):null
+                  }
+                
+              </TransDiv>
             </div>
           </CardItem>
         </div>

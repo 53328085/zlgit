@@ -343,12 +343,15 @@
         cursor: pointer;
         font-size: 14px;
     }
-
+   
     .warningDetails {
         margin: 16px;
-        max-height: 465px;
-        overflow-y: auto;
-
+        // max-height: 465px;
+        // overflow-y: auto;
+        height: 445px;
+        overflow: hidden;
+        position: relative;
+      
         .warningItem {
             display: flex;
             align-items: flex-start;
@@ -356,7 +359,8 @@
             .leftImg {
                 margin-top: 4px;
                 margin-right: 16px;
-                width: 24px;
+                // width: 24px;
+                width: 16px;
                 height: 16px;
                 border: 1px solid #f00;
                 border-radius: 50%;
@@ -370,7 +374,8 @@
                 }
             }
             .warningData {
-                width: 400px;
+                // width: 400px;
+                width: 260px;
                 .warningtop {
                     display: flex;
                     justify-content: space-between;
@@ -384,7 +389,7 @@
                 }
 
                 .warningbottom {
-                    margin-top: 16px;
+                    margin-top: 6px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;

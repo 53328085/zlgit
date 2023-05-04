@@ -127,42 +127,7 @@ justify-items: center;
  }
  
 }`
-const Timelinebox = styled(Timeline)`
-  height: 280px;
-  overflow: hidden;
-  margin-top: 28px;
-  background-color: #fff;
-  padding-left: 5px;
-  padding-top: 15px;
-  & .transformcss{
-    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 0s linear infinite
-  }
-  .transformcss:hover{
-    animation-play-state: paused;
-  }
- &::-webkit-scrollbar{
-    width:0px
-  }
- .ant-timeline-item {
-   padding-bottom: 24px;
-   padding-top:5px
- }
- .title {
-   color:#1e1e1e;
- }
- .content {
-   font-size: 12px;
-   color:#6b6b6b;
- }
- @keyframes transY{
-   0%{
-      transform:translateY(0)
-   }
-   100%{
-      transform:translateY(${props=>{ if(-(props.children.props.children?.length)*69.84){return -(props.children.props.children?.length)*69.84+280} }}px)
-   }
- }
-`
+
 const DemoLiquid = ({ warnData }) => {
   const config = {
     percent: 0.4,
@@ -207,6 +172,47 @@ const headercss = {
   padding: '8px 16px'
 }
 export default function Index() {
+  const Timelinebox = styled(Timeline)`
+  height: 280px;
+  overflow: hidden;
+  margin-top: 28px;
+  background-color: #fff;
+  padding-left: 5px;
+  padding-top: 15px;
+  & .transformcss{
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 0s linear infinite
+  }
+  .transformcss:hover{
+    animation-play-state: paused;
+  }
+ &::-webkit-scrollbar{
+    width:0px
+  }
+ .ant-timeline-item {
+   padding-bottom: 24px;
+   padding-top:5px
+ }
+ .title {
+   color:#1e1e1e;
+   margin-top:-4px;
+   display: flex;
+   justify-content: space-between;
+ }
+ .content {
+   font-size: 12px;
+   color:#6b6b6b;
+ }
+ @keyframes transY{
+   0%{
+      transform:translateY(0)
+   }
+   100%{
+    
+    transform:translateY(-${props=>props.dmheight}px)
+      /* transform:translateY(${props=>{ if(-(props.children.props.children?.length)*91.84){return -(props.children.props.children?.length)*91.84+280} }}px) */
+   }
+ }
+`
   const [form] = Form.useForm()
   const bref = useRef(null)
   const pref = useRef(null)
@@ -355,7 +361,17 @@ export default function Index() {
     hv: '24px',
     fc: '#333'
   }
-
+  const [domheight,setDomHeight] =useState(0)
+  const [speed,setSpeed]=useState(0)
+  const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
+  useEffect(()=>{
+    if(document.getElementById('warn')&&warnlist.length>0){
+      const warndom = document.getElementById('warn')
+      console.log(warndom.getBoundingClientRect())
+      setDomHeight(warndom.getBoundingClientRect().height-326)
+      setSpeed(warndom.getBoundingClientRect().height/60)
+    }
+  },[warnlist.length])
 
 
   return (
@@ -418,8 +434,9 @@ export default function Index() {
        
           {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
           <Titlelayout title={'最新告警'} extra={<NavLink to={{ pathname: "/index/runtimeSafe/alarmDetail" }} state={{ title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe' }}>查看详情</NavLink>} {...fs}>
-            <Timelinebox>
-              <div className='transformcss' pageTotalRef={pageTotalRef}>
+            <Timelinebox dmheight={domheight} speed={speed}>
+              <div className='transformcss' pageTotalRef={pageTotalRef} id='warn'>
+               
               {
              warnlist&&warnlist.length>0?
               [...warnlist.map(
@@ -434,63 +451,57 @@ export default function Index() {
                       </div >
                       </div>}>
                       <div>
-                        <p className='title'>{it.warningTime}  {it.alarmEvent}</p>
+                        <p className='title'>
+                          <span>{it.warningTime}</span>  
+                          <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
+                        </p>
+                        <p>{it.alarmEvent}</p>
                         <p className='content'>{it.name}  {it.address}    </p>
                       </div>
                     </Timeline.Item>
                   )
                 }
-              ),<Timeline.Item dot={<div 
-                style={{
-                  borderRadius:'50%', width:16,height:16,border:'1px solid',
-                  display:'flex',justifyContent: 'center',alignItems: 'center',
-                  borderColor: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                  <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                  </div >
-                  </div>}>
-                  <div>
-                    <p className='title'>{warnlist[0]?.warningTime}  {warnlist[0]?.alarmEvent}</p>
-                    <p className='content'> {warnlist[0]?.name} {warnlist[0]?.address}   </p>
-                  </div>
-                </Timeline.Item>,
-                <Timeline.Item dot={<div 
-                  style={{
-                    borderRadius:'50%', width:16,height:16,border:'1px solid',
-                    display:'flex',justifyContent: 'center',alignItems: 'center',
-                    borderColor: warnlist[1]?.level===1?'rgb(255,112,112)':warnlist[1]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                    <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[1]?.level===1?'rgb(255,112,112)':warnlist[1]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                    </div >
-                    </div>}>
-                    <div>
-                      <p className='title'>{warnlist[1]?.warningTime}  {warnlist[1]?.alarmEvent}</p>
-                      <p className='content'>{warnlist[1]?.name} {warnlist[1]?.address}    </p>
-                    </div>
-                  </Timeline.Item>,<Timeline.Item dot={<div 
-                style={{
-                  borderRadius:'50%', width:16,height:16,border:'1px solid',
-                  display:'flex',justifyContent: 'center',alignItems: 'center',
-                  borderColor: warnlist[2]?.level===1?'rgb(255,112,112)':warnlist[2]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                  <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[2]?.level===1?'rgb(255,112,112)':warnlist[2]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                  </div >
-                  </div>}>
-                  <div>
-                    <p className='title'>{warnlist[2]?.warningTime}  {warnlist[2]?.alarmEvent}</p>
-                    <p className='content'>{warnlist[2]?.name} {warnlist[2]?.address}    </p>
-                  </div>
-                </Timeline.Item>,
-                <Timeline.Item dot={<div 
-                  style={{
-                    borderRadius:'50%', width:16,height:16,border:'1px solid',
-                    display:'flex',justifyContent: 'center',alignItems: 'center',
-                    borderColor: warnlist[3]?.level===1?'rgb(255,112,112)':warnlist[3]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                    <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[3]?.level===1?'rgb(255,112,112)':warnlist[3]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                    </div >
-                    </div>}>
-                    <div>
-                      <p className='title'>{warnlist[3]?.warningTime}  {warnlist[3]?.alarmEvent}</p>
-                      <p className='content'>{warnlist[3]?.name}   {warnlist[3]?.address} </p>
-                    </div>
-                  </Timeline.Item>]:null
+              ),
+              <div style={{height:326,overflow:'hidden'}}>
+                {warnlist.map(
+                it => {
+                  return (
+                    <Timeline.Item dot={<div 
+                    style={{
+                      borderRadius:'50%', width:16,height:16,border:'1px solid',
+                      display:'flex',justifyContent: 'center',alignItems: 'center',
+                      borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                      <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                      </div >
+                      </div>}>
+                      <div>
+                        <p className='title'>
+                        <span>{it.warningTime}</span>  
+                        <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
+                        </p>
+                        <p>{it.alarmEvent}</p>
+                        <p className='content'>{it.name}  {it.address}    </p>
+                      </div>
+                    </Timeline.Item>
+                  )
+                }
+              )}
+              </div>
+              // <Timeline.Item dot={<div 
+              //   style={{
+              //     borderRadius:'50%', width:16,height:16,border:'1px solid',
+              //     display:'flex',justifyContent: 'center',alignItems: 'center',
+              //     borderColor: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+              //     <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+              //     </div >
+              //     </div>}>
+              //     <div>
+              //       <p className='title'>{warnlist[0]?.warningTime}  </p>
+              //       <p>{warnlist[0]?.alarmEvent}</p>
+              //       <p className='content'> {warnlist[0]?.name} {warnlist[0]?.address}   </p>
+              //     </div>
+              //   </Timeline.Item>,
+                  ]:null
              }
               </div>
            
@@ -540,7 +551,7 @@ const Alarm = ({ pref, opref, areaId }) => {
 
       if (res.data.levelGroup && Array.isArray(res.data.levelGroup)) {
         if(res.data.levelGroup.length > 0) {
-          setOpieData([...res.data.levelGroup])
+          setOpieData([...res.data.levelGroup.reverse()])
         }else{
           setOpieData(null)
         }

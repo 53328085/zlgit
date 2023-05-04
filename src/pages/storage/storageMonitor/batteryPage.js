@@ -71,7 +71,46 @@ export default function Index(props) {
         padding-left: 12px;
         }
     `
-
+    const TransDiv = styled.div`
+    animation: movetop ${props => {return props.speed}}s infinite linear;
+   
+    &:hover{
+      animation-play-state: paused;
+    }
+  
+    @keyframes movetop{
+      from{
+          transform: translateY(0);
+      }
+      to{
+          transform: translateY(-${props =>{
+            console.log(props.dmheight)
+            if(!props.dmheight || props.dmheight<210)return 0
+            if(props.dmheight){
+              return props.dmheight+16
+            }
+           } }px );
+      }
+  }
+  `
+    const CircleDiv = styled.div`
+    margin-top: 4px;
+    margin-right: 16px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    .warningPoint {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+      }
+    `
     const LeftButton = styled(CaretLeftOutlined)`
     font-size: 64px;
     position: absolute;
@@ -201,19 +240,34 @@ export default function Index(props) {
         })
     }
     const WarningCard = props => {
+        const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
         return <div className={style.warningItem}>
-            <div className={style.leftImg}>
+            {/* <div className={style.leftImg}>
                 <img src={warningPoint} className={style.warningPoint}></img>
-            </div>
+            </div> */}
+             <CircleDiv level={props.data?.level}>
+                <div className='warningPoint'></div>
+            </CircleDiv>
             <div className={style.warningData}>
                 <div className={style.warningtop}>
                     <span className={style.time}>{props.data.warningTime}</span>
+                    <span className={style.level} style={{ color:mapobj.get(props.data.level).color,fontSize:12 }}>{
+                     mapobj.get(props.data.level).text
+                    }
+                </span>
                     {/* <span className={style.sn}>{props.data.sn}</span> */}
                 </div>
-                <div className={style.warningbottom}>
-                    <span className={style.description}>{props.data.content}</span>
-                    <span className={style.level} style={{ color: '#c00' }}>{props.data.level}</span>
+                <div>
+                    <div style={{fontSize:12,color:'#6b6b6b'}} >
+                    {props.data.address}
+                     </div>
+                    <div className={style.warningbottom}>
+                        <span className={style.description} style={{wordBreak: 'break-all',fontSize:12,}}>{props.data.alarmEvent}</span>
+                        {/* <span className={style.description}>{props.data.alarmEvent}</span>
+                        <span className={style.level} style={{ color: '#c00' }}>{props.data.level}</span> */}
+                    </div>
                 </div>
+                
             </div>
         </div>
     }
@@ -262,7 +316,7 @@ export default function Index(props) {
         queryBatteryClusterWarning(projectId, batteryCluster.id).then(res => {
             if (res.success) {
                 if (res.data) {
-                    setWarningData(res.data)
+                    setWarningData({batteryWarnings:res.data})
                 } else {
                     setWarningData({ batteryWarnings: [] })
                 }
@@ -288,7 +342,16 @@ export default function Index(props) {
         getwarningData(batteryCluster)
         getBatterStatus(batteryCluster)
     }, [])
-
+    const [domheight,setDomHeight] =useState(0)
+    const [speed,setSpeed]=useState(0)
+    useEffect(()=>{
+        if(document.getElementById('warn')&&warningData.batteryWarnings.length>0){
+          const warndom = document.getElementById('warn')
+          console.log(warndom.getBoundingClientRect())
+          setDomHeight(warndom.getBoundingClientRect().height)
+          setSpeed(warndom.getBoundingClientRect().height/60)
+        }
+      },[warningData.batteryWarnings.length])
 
     return (
         <div className={style.batteryContent}>
@@ -318,7 +381,7 @@ export default function Index(props) {
                 </div> */}
             </div>
             <div className={style.singleWarning}>
-                <div style={{ height: 512, backgroundColor: '#fff', borderRadius: 4, width: 288, padding: 16 }}>
+                <div style={{ height: 543, backgroundColor: '#fff', borderRadius: 4, width: 288, padding: 16 }}>
                     <div className={style.cardTitle}>电池簇</div>
                     <EnvirBox>
                         <div className='titleBox'>总电压 (V)</div><div className='valueBox'>{batteryStatus.v}</div>
@@ -326,6 +389,7 @@ export default function Index(props) {
                         <div className='titleBox'>SOC (‰)</div><div className='valueBox'>{batteryStatus.soc}</div>
                         <div className='titleBox'>SOH (‰)</div><div className='valueBox'>{batteryStatus.soh}</div>
                         <div className='titleBox'>绝缘值 (KΩ)</div><div className='valueBox'>{batteryStatus.insulationValue}</div>
+                        <div className='titleBox'>正极绝缘值 (KΩ)</div><div className='valueBox'>{batteryStatus.positiveInsulationValue}</div>
                         <div className='titleBox'>负极绝缘值 (KΩ)</div><div className='valueBox'>{batteryStatus.negativeInsulationValue}</div>
                         <div className='titleBox'>最高电池电压 (V)</div><div className='valueBox'>{batteryStatus.maxBatteryV}</div>
                         <div className='titleBox'>最低电池电压 (V)</div><div className='valueBox'>{batteryStatus.minBatteryV}</div>
@@ -338,12 +402,27 @@ export default function Index(props) {
                 <div className={style.newWarning}>
                     <div className={style.cardTitle}>告警信息</div>
                     <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
-                    <div className={style.warningDetails}>
-                        {warningData.batteryWarnings.map((item, index) => {
-                            return <Fragment key={index}>
-                                <WarningCard data={item} ></WarningCard>
-                            </Fragment>
-                        })}
+                    <div className={style.warningDetails} style={{ height: 175,overflow: domheight<210?'auto':'hidden' }}>
+                        <TransDiv dmheight={domheight} speed={speed} >
+                            <div id='warn'>
+                                {warningData.batteryWarnings?.map((item, index) => {
+                                    return <Fragment key={index}>
+                                        <WarningCard data={item} ></WarningCard>
+                                    </Fragment>
+                                })}
+                            </div>
+                            {
+                                domheight > 210 ? (<div style={{ height: 175, overflow: 'hidden', }}>
+                                    {warningData.batteryWarnings.map((item, index) => {
+                                        return <Fragment key={index}>
+                                            <WarningCard data={item} ></WarningCard>
+                                        </Fragment>
+                                    })}
+                                </div>) : null
+
+                            }
+
+                        </TransDiv>
                     </div>
                 </div>
             </div>
