@@ -226,6 +226,14 @@ export class Area {
     server.post(`/General/Area/RemoveSubDevice?projectId=${projectId}&areaId=${areaId}`, params); // 移除区域分表  
   ///V1/General/Area/QueryUnusedMeter
 }
+
+// 公共模块---数据大屏
+
+  export class BigScreen {
+    static QueryBigScreen = (projectId) => server.get(`/General/BigScreen/Query?projectId=${projectId}`) 
+    static SetBigScreen = (projectId, params={}) => server.post(`/General/BigScreen/Set?projectId=${projectId}`, params)
+  }
+
 // 能源管理--能源概述
 export class EnergyOverView {
   static EnergyOverViewRuntime = (projectId, params) =>
