@@ -10,11 +10,10 @@ import down from "@imgs/down.png";
 
 export default function Index(props) {
   const { energySubGive, energyTotalGive } = props;
-  console.log(energySubGive, "公共能耗同比");
   return (
-    <div className={style.rightBottom}>
-      <span className={style.title}>公共能耗同比</span>
-
+    // <div className={style.rightBottom}>
+     <div>
+      {/* <span className={style.title}>公共能耗同比</span> */}
       <div className={style.items}>
         <div className={style.itemIcon}>
           <img className={style.itemImg} src={totalPublic}></img>

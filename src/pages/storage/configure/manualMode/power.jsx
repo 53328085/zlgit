@@ -17,7 +17,7 @@ const Mainbox = styled.div`
        border-top: 1px dotted #d7d7d7;
        padding: 16px 0 16px 0;
        display: grid;
-       grid-template-rows: 404px 36px;
+       grid-template-rows: 404px;
        row-gap: 16px;
       grid-template-columns: 896px;
        }
@@ -72,8 +72,7 @@ export default function Manual({projectId,  areaId, CModal}) {
   }
 
   const pid = useRef()
- const {loading, run} = useRequest(queryruntimesetting, {
-    manual: true,
+ const {loading, run} = useRequest(queryruntimesetting, {    
     onSuccess: (data) => {
         let {id, antiReflux, demandControl, ...init} = data
         pid.current = id
@@ -148,7 +147,7 @@ export default function Manual({projectId,  areaId, CModal}) {
   }
  
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>参数设置</span><Space size={16}><CustButton  type='primary' onClick={run} loading={loading}>读取</CustButton><CustButton onClick={Updatedata} type='primary' loading={sLoading}>设置</CustButton></Space></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>参数设置</span><Space size={16}><CustButton  type='primary' onClick={run} loading={loading}>刷新</CustButton><CustButton onClick={Updatedata} type='primary' loading={sLoading}>设置</CustButton></Space></div>}>
         <Mainbox>
              
             <Formbox layout="inline" form={form} validateMessages={{required: "'${label}' 数据是必须的",}} colon={false} >
@@ -281,7 +280,7 @@ export default function Manual({projectId,  areaId, CModal}) {
 
                     </div>
                 </Formbox> 
-                <Alert message="请先读取数据" type="info" />
+                
             </Mainbox>
        
        

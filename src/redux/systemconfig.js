@@ -5,6 +5,7 @@ import {Login} from '../axios/api'
 const initialState = {
     systemConfigInfo: {},
     configState: false, // 项目是否处于设计状态   
+    jump: false, // 页面跳转
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     menus: {
         projectId: 0, // 项目ID
@@ -34,6 +35,9 @@ const system = createSlice({
     reducers: {
         configProject(state, actions) { // 项目是否处于设计状态           
             return Object.assign({}, state, {configState: actions.payload})
+        },
+        getJump(state, actions) { // 页面跳转到设计态，还是运行态          
+            return Object.assign({}, state, {jump: actions.payload})
         },
         getMenus(state, actions) {
             return Object.assign({}, state, {menus: actions.payload})
@@ -101,6 +105,20 @@ export const publishState = state => {
   return  state.system.publishState == 1
 }
 export const systemConfigInfo = state => state.system.systemConfigInfo
-export const mixtitle = state =>  (state.system?.systemConfigInfo.title || 'NIS6000') + ' '+ (state.system?.systemConfigInfo.chineseTitle ||'正泰综合能源服务平台')
-export const {configProject,getSetMenus,setCurrentlevel, getRunMenus, getDesignerMenus, getSiderRunMenus, getSiderDesignerMenus, getMenus, getOnelevel, getshifts, getpublishState} = actions
+export const jump = state => state.system.jump
+export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+state.system?.systemConfigInfo.chineseTitle
+export const {
+    configProject,
+    getSetMenus,
+    setCurrentlevel, 
+    getRunMenus,
+    getDesignerMenus,
+    getSiderRunMenus,
+    getSiderDesignerMenus, 
+    getMenus, 
+    getOnelevel, 
+    getshifts, 
+    getpublishState,
+    getJump,
+} = actions
 export default system.reducer

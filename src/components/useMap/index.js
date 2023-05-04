@@ -39,11 +39,12 @@ import {
     const mapref = useRef(null)
   
     const mapOption = {
-      zoom: 16,
+      zoom: 18,
       enableScrollWheelZoom: true, // 鼠标滚轮缩放
       // tilt: 20,
       enableDragging: true,
       center: position,
+      tilt:40,
       // enableRotate: false
     };
     console.log(mapOption)

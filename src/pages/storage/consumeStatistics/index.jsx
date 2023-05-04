@@ -13,7 +13,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={{sitehandler: setInitname,  isSite: true }}>
     <Pagecount showserach={true} bgcolor="transparent" pd="0px">   
-        <Report projectId={projectId}  stationName={initname}/>
+        <Report projectId={projectId}  stationName={initname?.name}/>
     </Pagecount>
     </CustContext.Provider>
   )

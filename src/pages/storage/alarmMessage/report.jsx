@@ -173,8 +173,8 @@ const columns = [
   const {tableProps, search} = useAntdTable(QueryReports, {
     form,
     defaultParams: [{pageSize: 14, pageNum: 1}, {
-      start: moment().format('YYYY-MM-DD'),
-      end:  moment().add(7, 'day').format('YYYY-MM-DD'),
+      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: moment().format('YYYY-MM-DD'),
       projectId, 
       areaId,
       siteId,
@@ -243,7 +243,7 @@ const columns = [
           content: '',
           deviceType:0,
           level: 0,
-          time: [moment( ), moment().add(7, 'day')]
+          time: [moment().subtract(7, 'day'), moment()]
         }}>
           <Space size={16}>
              <Item label="告警查询" name="content">

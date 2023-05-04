@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate} from "react-router-dom"
 import { clearToken, selectUser} from "@redux/user";
-import { configProject, comSetFirst} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -209,6 +209,7 @@ export default function Log() {
   }
   const back = () => {
      dispatch(configProject(false));
+     dispatch(getJump(true))
      navgite("/index/runtimeProject", {
       // state: { type: 'index',  primary: key,  index: true, title: label }
       state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
@@ -216,7 +217,7 @@ export default function Log() {
   }
 
   const onConfigure = () => {   // 
-     console.log(comurl)
+     dispatch(getJump(false))
      let {key, label} = comurl || {}
     if (!!comurl && comurl.key) {
       dispatch(configProject(true));

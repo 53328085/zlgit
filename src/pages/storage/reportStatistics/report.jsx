@@ -265,8 +265,8 @@ const columns = [
   form,
   defaultPageSize: 14,
   defaultParams: {
-    start: moment().format('YYYY-MM-DD'),
-    end: moment().add(7, 'day').format('YYYY-MM-DD')
+    start:moment().subtract(7, 'day').format('YYYY-MM-DD'), 
+    end: moment().format('YYYY-MM-DD'),
   },
   refreshDeps: [projectId, stationName]
  })
@@ -287,7 +287,7 @@ const columns = [
     <Fragment>
       <HeaderTitle>收益统计</HeaderTitle>
       <Mainbox>
-          <Form form={form} className='top' initialValues={{date: [moment(), moment().add(7, 'day')]}}>
+          <Form form={form} className='top' initialValues={{date: [moment().subtract(7, 'day'), moment()]}}>
             <Space size={16}>
               <Item label="统计时间" name="date">
                  <RangePicker   onCalendarChange={submit} format="YYYY-MM-DD" style={{width: '320px'}}/>

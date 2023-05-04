@@ -13,6 +13,10 @@ export default function GatewayDetail(props) {
     let location = useLocation()
     let qs=require('query-string')
     let search=qs.parse(location.search)
+    useEffect(() => {
+      document.title = `NIS6000 正泰储能 网关详情`
+      return () => document.title= 'NIS6000 正泰储能 网关详情'
+    },[location]) 
     console.log(search)
     const projectId = useSelector(selectProjectId)
 //   const [messageApi, contextHolder] = message.useMessage();
@@ -154,7 +158,7 @@ export default function GatewayDetail(props) {
         <div className={style.main}>
             <div className={style.head}>
                 <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>正泰综合能源服务平台</p>
+                <p>正泰储能</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>

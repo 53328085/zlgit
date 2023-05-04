@@ -328,6 +328,13 @@ export class StorageRunReport {
  
 }
  
+// 储能管理--操作日志
+ 
+export class OperationLogRuntime {
+  static QueryLogsByPage = (params) => server.post(`/Solar/OperationLogRuntime/QueryLogsByPage`, params);
+ 
+}
+
 // 储能管理设置--参数设置
 export class StorageParameterSetupDesigner {
   static QuerySetup = (projectId, areaId) => server.get(`/Storage/StorageParameterSetupDesigner/QuerySetup?projectId=${projectId}&areaId=${areaId}`);
@@ -368,6 +375,7 @@ export class StorageContainerDesigner {
   static DeleteContainer = (projectId, id) => server.delete(`/Storage/StorageContainerDesigner/DeleteContainer?projectId=${projectId}&id=${id}`);
 }
  
+
 // zl api end
 // 主页
 export class Home {

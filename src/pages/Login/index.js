@@ -11,7 +11,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -325,6 +325,7 @@ function UserLog() {
     setLoading(store.getState()?.user?.loading);
   });
   const projectRun = ({ key, label }) => {
+    dispatch(getJump(true))
     navigate(`/index/${key}`, {
       state: { type: "index", primary: key, index: true, title: label },
     });
@@ -376,6 +377,7 @@ function UserLog() {
 
   dispatch(getMenus(menus));
   dispatch(configProject(false))
+ // dispatch(getJump(false))
   return runMenus?.find(item => item.no == '0104') || runMenus[0] 
 
  
@@ -436,12 +438,7 @@ function UserLog() {
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
   }, []);
-/*   useEffect(() => {
-    document.title = "NIS6000 正泰综合能源服务平台";
-  }, []); */
-/*   useEffect(() => {
-    dispatch(systemConfig(hostname));
-  }, [hostname]); */
+ 
 
   const [userform] = Form.useForm();
 
@@ -486,7 +483,7 @@ function UserLog() {
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
-          pwd: "chint@123456",
+          pwd: "",
         }}
       >
         <Itembox

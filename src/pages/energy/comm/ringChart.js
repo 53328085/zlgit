@@ -6,9 +6,9 @@ import { cloneDeep } from "lodash";
 export default function Index(props) {
   // console.log(props,"环状图");
   const ringData = cloneDeep(props.proportionGive);
-  ringData.map(item => {
-    item.value = parseFloat(item.value)
-  })
+  ringData.map((item) => {
+    item.value = parseFloat(item.value);
+  });
   console.log(ringData);
 
   const config = {
@@ -21,6 +21,7 @@ export default function Index(props) {
     legend: {
       layout: "horizontal",
       position: "bottom",
+      itemHeight:14,  //图例标记的图形高度
     },
     label: {
       type: "outer",

@@ -340,13 +340,16 @@ export default function Index(props) {
               {proportion.length !== 0 ? (
                 <Ringchart proportionGive={proportion}></Ringchart>
               ) : null}
-            </div>
-            {energySub.length !== 0 && energyTotal !== {} ? (
-              <Percent
-                energySubGive={energySub}
-                energyTotalGive={energyTotal}
-              ></Percent>
-            ) : null}
+            </div>{" "}
+            <div className={style.rightBottom}>
+              <span className={style.title}>公共能耗同比</span>
+              {energySub.length !== 0 && energyTotal !== {} ? (
+                <Percent
+                  energySubGive={energySub}
+                  energyTotalGive={energyTotal}
+                ></Percent>
+              ) : null}
+            </div>{" "}
           </div>
         ) : null}
       </div>

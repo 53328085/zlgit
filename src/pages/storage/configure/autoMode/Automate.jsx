@@ -441,10 +441,10 @@ const getvalidate = (start, end, type, choosedate) => {
   const addplan = () => {
     setIsview(false)
     setIsadd(true)
-  /*   setCurplan({
+ setCurplan({
         id: 0,
         enable: 0
-    }) */
+    }) 
     form.resetFields()
      pref.current.onOpen()
 
@@ -812,21 +812,27 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
 }
 const Strategy = ({data,   form, disabled, executionCycle}) => {
    
-  console.log('executionCycle', executionCycle)
-   const [show, setShow] = useState(1)
+
+   const [show, setShow] = useState(executionCycle)
   const [options, setOptions] = useState(week)   
  
    const onChange = (e) => {
       let opt = ['', '', week, days][e]
       setShow(e)
-      setOptions(opt)
+      if(e > 1) setOptions(opt);
    }
    const disabledDate = (current) => {
     
     return current && current < moment().subtract(1, 'day').endOf('day');
     };
    useEffect(() => {
+     console.log('executionCycle', executionCycle)
+    // console.log('options', options)
       setShow(executionCycle)
+     return () => {
+         setOptions(week)
+        console.log('options', options)
+      }
     }, [executionCycle])
    return (
       <Titlelayout title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">

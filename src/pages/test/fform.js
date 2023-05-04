@@ -1,29 +1,33 @@
-import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {testthunk, zltest, asyncthunk, setzl, status, sysinfo, error } from "@redux/reduxTest.js";
-export default function Index() {
+import React, {useEffect, useState} from 'react'
+import styled from 'styled-components';
+const Ccanvas = styled.canvas`
+ && {
+  border: 1px solid #dedede;
 
-  const dispatch = useDispatch()
-  const data = useSelector(zltest)
-  const statuse = useSelector(status)
-  const sysinfoe = useSelector(sysinfo)
-  const errore = useSelector(error)
-  const requst = () => {
-    dispatch(asyncthunk()).then(res => {
-      console.dir(res)
-    }).catch(e => {
-      console.log(e)
-    })
+ }
+`
+export default function Index() {
+  const [info, setInfo] = useState('')
+  const draw = (ctx) => {
+        ctx.fillStyle = "rgb(200,0,0)";
+        ctx.fillRect (10, 10, 55, 50);
+
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect (30, 30, 55, 50);
   }
+  useEffect(() => {
+    var canvas = document.querySelector("#canvas")
+    var ctx = canvas.getContext('2d');
+    if(canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+      draw(ctx);
+    }else {
+       setInfo('浏览器不支持canvas,请安装新版浏览器')
+    }
+  })
   return (
     <div>
-      <h3>{data}</h3>
-      <h3>{statuse}</h3>
-      <h3>{JSON.stringify(sysinfoe, 3)}</h3>
-      <h3>{errore}</h3>
-      <button onClick={() => dispatch(testthunk(new Date().getTime()))}>thunk</button>
-      <button onClick={requst}>asyncthunk</button>
-      <button onClick={() => dispatch(setzl(new Date().getTime()))}>asyncthunk</button>
+       <Ccanvas id="canvas" width="150" height="150">{info}</Ccanvas>
     </div>
   )
 }

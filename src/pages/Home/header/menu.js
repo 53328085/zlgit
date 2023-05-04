@@ -1,9 +1,9 @@
 import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation} from 'react-router-dom'
-import { useStore } from "react-redux";
+import { useStore, useDispatch } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
-//import {getrunMenus, designerMenus, siderRunMenus, siderDesignerMenus} from '@redux/systemconfig'
+import {getJump} from '@redux/systemconfig'
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
@@ -11,6 +11,7 @@ const Ciocn = (props) => {
 }
 export default function Hmenu() {
   const store = useStore();
+  const dispath = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
   const [current, SetCurrent] = useState('index')  
@@ -66,7 +67,11 @@ useEffect(() => {
      let item = menus.find(item => item?.key === key);
       if (!item) return;
       const {nested, label, no} = item || {};  
-     
+      if(key === 'designerProject' || key == 'runtimeProject' ) {
+        dispath(getJump(true))
+      }else {
+        dispath(getJump(false))
+      }
       SetCurrent(key)  
       let url, state;
       if(config) {

@@ -124,23 +124,22 @@ export default function Index(props) {
   }
 
   const state = useReactive({
-    alarmData:{
-        batteryWarnings:[]
-    }
+    alarmData: []
   })
   const getAlarmData = () => {
     queryBatteryWarning(props.batteryPackData.projectId, batteryItem.id).then(res => {
         if(res.success){
             if(res.data){
                 state.alarmData = res.data
+                console.log(state.alarmData)
             }else{
-                state.alarmData = {
-                    batteryWarnings:[]
-                }
+                state.alarmData = []
             }
         }else{
             message.error(res.errMsg)
         }
+    }).catch(e => {
+        console.log(e)
     })
   }
 
@@ -179,7 +178,7 @@ export default function Index(props) {
                     <div className={style.cardTitle}>告警信息</div>
                     <span className={style.toWarning} onClick={() => toWarning()}>查看详情</span>
                     <div className={style.warningDetails} style={{height: 500}}>
-                        {state.alarmData.batteryWarnings.map((item, index) => {
+                        {state?.alarmData?.map((item, index) => {
                             return <Fragment key={index}>
                                 <WarningCard data={item} ></WarningCard>
                             </Fragment>
