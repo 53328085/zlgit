@@ -1,59 +1,65 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, message, InputNumber, Select, Switch, Alert} from 'antd'
-import {CheckCircleFilled } from '@ant-design/icons'
+import {Typography, Image, Form,   message,  } from 'antd'
+ 
 import {useRequest} from 'ahooks'
-import {StorageParameterSetupDesigner} from '@api/api'
+import {BigScreen} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/useButton'
-const {Text, Link, Title} = Typography
+import Citem from './Citem'
+
 const {Item} = Form
 const Mainbox = styled.div`
     && {
-       flex: 1;
-       color:#515151;
-       margin-top: 16px;
-       border-top: 1px dotted #d7d7d7;
-       padding: 16px 0 16px 0;
-       display: grid;
-       grid-template-rows: 404px;
-       row-gap: 16px;
-      grid-template-columns: 896px;
+       flex: 1; 
+       display: flex;
        }
 `
 const Formbox = styled(Form)`
     && {
+        flex:1;
         display: grid;
-     
+        margin-top: 16px;
         grid-template-rows: 36px;
-        row-gap: 16px;
-        
+        row-gap: 32px;
+        padding: 32px 0px;
+        border-top: 1px dotted #d7d7d7;
+        grid-template-columns: 1200px;
          .ant-form-item {
             margin-right: 0;
-            .ant-form-item-control {
-                align-items: flex-end;
-            }
-            .ant-form-item-control-input-content {
-                width: 168px;
-            }
+           
+        }
+         .ant-form-item-with-help {
+            margin-bottom: 0px;
         }
         .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
             display: none;
         }
     }
 `
-const Pinfo = styled.p`
-display: flex;
-align-items: center;
-font-size: 16px;
-justify-content: center;
-`
-export default function Manual({projectId,  areaId, CModal}) {
- 
+
+
+
+
+const screens = [
+    {label: "项目综合大屏", name1: 'bigScreenEnabled', name2: 'bigScreenUrl'},
+    {label: "运行监控", name1: 'monitorBigScreenEnabled', name2: 'monitorBigScreenUrl'},
+    {label: "电气安全", name1: 'safeBigScreenEnabled', name2: 'safeBigScreenUrl'},
+    {label: "配电管理", name1: 'distributionEnabled', name2: 'distributionScreenUrl'},
+    {label: "结算收费", name1: 'prepayEnabled', name2: 'prepayScreenUrl'},
+    {label: "能源管理", name1: 'energyEnabled', name2: 'energyScreenUrl'},
+    {label: "光伏发电", name1: 'solarEnabled', name2: 'solarScreenUrl'},
+    {label: "储能管理", name1: 'storageEnabled', name2: 'storageScreenUrl'},
+    {label: "碳排管理", name1: 'carbonEnabled', name2: 'carbonScreenUrl'},
+    {label: "运维管理", name1: 'maintenanceEnabled', name2: 'maintenanceScreenUrl'},
+
+]
+export default function Main({projectId}) {
+    const [form] = Form.useForm()
   // UpdateSiteOnOffGrid
-  const queryruntimesetting = () => {
-    return StorageParameterSetupDesigner.QuerySetup(projectId, areaId).then(res => {
+  const QueryBigScreen = () => {
+    return BigScreen.QueryBigScreen(projectId).then(res => {
          let {success, data} = res
          if (success && data) {
             return data
@@ -65,183 +71,53 @@ export default function Manual({projectId,  areaId, CModal}) {
     })
   }
 
-  const pid = useRef()
- const {loading, run} = useRequest(queryruntimesetting, {    
-    onSuccess: (data) => {
-        let {id, antiReflux, demandControl, ...init} = data
-        pid.current = id
-        console.log(data)
+
+ const {run} = useRequest(QueryBigScreen, {    
+    onSuccess: (data) => {        
         form.setFieldsValue({
-            antiReflux: antiReflux == 1,
-            demandControl: demandControl == 1,
-             ...init
+            ...data
          })  
     },
     onError: (e) => {
         console.log(e)
+    },
+    refreshDeps: [projectId]
+ })
+
+  const onSet = async () => {
+    let params = await form.validateFields().then(res => res).catch(() => null)      
+   if(!params) return Promise.reject('参数出错')
+    return BigScreen.SetBigScreen(projectId, params).then(res => {
+       let {success } = res
+        return success
+    })
+  }
+ 
+ const {loading, run: onSave} = useRequest(onSet, {
+    manual: true,
+    onSuccess: (s) => {
+       if(s)  {
+        message.success({content: '保存成功', duration: 0.3})
+        run()
+       }
+       
+    },
+    onError: (e) => {
+        message.error({content: e.message || '数据出错',duration: 0.3})
+        console.log(e)
     }
  })
 
-
-  const [form] = Form.useForm()
-  const rref = useRef()
- 
-  const onClose = () => {
-    rref.current.onCancel();
-    run() 
-  } 
-  const [sLoading, setSloading] = useState(false)
-  const  Updatedata =  async () => {
-    setSloading(true)
-    let values
-    try {
-       values = await form.validateFields().then(res => res).catch(e => {
-            console.log(e)
-        })
-       
-   
-    console.log(values)
-    if(!values) return setSloading(false)
-    let {antiReflux, demandControl, ...rest} = values   
-    let params = {
-        antiReflux: Number(antiReflux), 
-        demandControl: Number(demandControl),
-        ...rest,
-        id: pid.current, 
-        areaId,
-    }
-    let {success, errMsg} = await StorageParameterSetupDesigner.Setup({projectId, params}) 
-     if (success) {
-        setSloading(false)
-        rref.current.onOpen()
-     }else {
-        setSloading(false)
-        custMsg({success: false, content: errMsg || '数据出错'})
-     }
-
-    }catch(e){
-        setSloading(false)
-        custMsg({success: false, content: '请求出错'})
-        console.log(e)
-    }
-  
-  /*  if (success) {
-    rref.current.onOpen()
-    
-      
-      
-   }else {
-    custMsg({content: '设置失败', success: false})
-   }
-   } catch (error) {
-    console.log(error)
-   } */
- 
-     
-  }
- 
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>数据大屏设置</span><CustButton  type='primary' onClick={run} loading={loading}>保存</CustButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>数据大屏设置</span><CustButton  type='primary' loading={loading} onClick={onSave} >保存</CustButton></div>}>
         <Mainbox>
              
-            <Formbox layout="inline" form={form} validateMessages={{required: "'${label}' 数据是必须的",}} colon={false} labelCol={{width: '124px'}} >
-                        <Item noStyle>
-                            <Space size={16}>
-                                <Item label="项目综合大屏" name="capacity" rules={[
-                                    {
-                                        required: true, 
-                                    }
-                                ]}>  
-                                    <Input placeholder='请输入大屏网址'  allowClear  /> 
-                                </Item>
-                                <Item name='antiReflux' label="防逆流" valuePropName='checked' >
-                                    <Switch
-                                        checkedChildren="启用"
-                                        unCheckedChildren="停用"
-                                        style={{
-                                            width: "64px",
-                                        }} />
-                                    </Item>
-                            </Space>
-                        </Item>
-                        <Item label="温度上限" name="tempUpperLimit"   rules={[
-                            {
-                                required: true, 
-                            }
-                        ]}>
-                          <InputNumber  step="0.01" min={0.01} precision={2} addonAfter="℃" style={{width: '168px'}}  /> 
-                        </Item> 
-                        <Item label="SOC上限" name="socUpperLimit" rules={[
-                            {
-                                required: true, 
-                            }
-                        ]}>
-                           <InputNumber min={1} max={100}  step="0.01"  precision={2} addonAfter="%" style={{width: '168px'}}  /> 
-                        </Item>
-                        <Item label="SOC下限" name="socLowerLimit"   rules={[
-                            {
-                                required: true, 
-                            }
-                        ]}>
-                        <InputNumber  step="0.01" min={1} max={100} precision={2} addonAfter="%" style={{width: '168px'}}  /> 
-                        </Item>
-                        <Item name='chargeMode' label="充电模式" rules={[
-                            {
-                                required: true, 
-                            }
-                        ]}>
-                            <Select options={[
-                                {
-                                  label: '固定模式',
-                                  value: 1,
-                                },
-                                {
-                                    label: '计划模式',
-                                    value: 2,
-                                  }
-                            ]}></Select>
-                        </Item>
-                        <Item name='disChargeMode' label="放电模式" rules={[
-                            {
-                                required: true, 
-                            }
-                        ]}>
-                            <Select  options={[
-                                {
-                                  label: '固定模式',
-                                  value: 1,
-                                },
-                                {
-                                    label: '计划模式',
-                                    value: 2,
-                                  },
-                                  {
-                                    label: '负荷跟踪',
-                                    value: 3,
-                                  }
-                            ]}></Select>
-                        </Item>
-                        <Item name='antiReflux' label="防逆流" valuePropName='checked' >
-                        <Switch
-                            checkedChildren="是"
-                            unCheckedChildren="否"
-                            style={{
-                                width: "64px",
-                            }} />
-                        </Item>
-                   
-                   
-                </Formbox> 
+            <Formbox layout="inline" form={form}  colon={false} labelCol={{ span: 3 }} labelAlign='left'>
+            {screens.map(s => <Citem label={s.label} name1={s.name1} name2={s.name2} key={s.name2} /> )}
+           </Formbox> 
                 
             </Mainbox>
-       
-       
-       
-         
-          <CModal width={592} title="操作提示" ref={rref}   mold='cust' footer={<Button type='primary' onClick={onClose}>关闭</Button>}>
-          <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><CheckCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '48px'}}/> 运行功率设置成功！</Pinfo>
-         
-     </CModal>  
+          
     </Titlelayout>
   )
 }
