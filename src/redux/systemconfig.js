@@ -21,6 +21,7 @@ const initialState = {
    onelevel: [], // 一级
    currlevel: {}, // 当前选择的一级区域
    shifts: [], // 班次
+   datascreen: {} // 大屏配置
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -68,6 +69,9 @@ const system = createSlice({
         },
         getpublishState(state, actions) {           
             return Object.assign({}, state, {publishState: actions.payload })
+        },
+        getdataScreen(state, actions) {           
+            return Object.assign({}, state, {datascreen: actions.payload })
         }
     },
 
@@ -107,6 +111,7 @@ export const publishState = state => {
 export const systemConfigInfo = state => state.system.systemConfigInfo
 export const jump = state => state.system.jump
 export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+state.system?.systemConfigInfo.chineseTitle
+export const datascreen = state => state.system.datascreen ?? {}
 export const {
     configProject,
     getSetMenus,
@@ -120,5 +125,6 @@ export const {
     getshifts, 
     getpublishState,
     getJump,
+    getdataScreen,
 } = actions
 export default system.reducer

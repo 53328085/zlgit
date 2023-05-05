@@ -27,7 +27,7 @@ import {
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
  
-import { ProjectList, eneryShift } from "@api/api.js";
+import { ProjectList, eneryShift, BigScreen, Area } from "@api/api.js";
 import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"
@@ -36,8 +36,8 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
 import {custMsg} from '@com/usehandler'
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump } from "@redux/systemconfig";
-import {Area} from '@api/api.js'
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen } from "@redux/systemconfig";
+ 
 import UseTabel from '@com/useTable'
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
@@ -373,7 +373,7 @@ export default function Index() {
  const enterProject = async ({id, type, publishState}) => {
    try {
      dispatch(getpublishState(publishState)) 
-     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id)] 
+     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), BigScreen.QueryBigScreen(id)] 
      let results = await Promise.allSettled(promises)   
      let menu;
      results.forEach((res, index) => {
@@ -382,10 +382,12 @@ export default function Index() {
           if(success) {
             index == 0 && dispatch(getOnelevel(data || []));
             index == 1 && dispatch(getshifts(data || []))
-            index == 2 && (menu = handlermenu(data, type, id))
+            index == 2 && (menu = handlermenu(data, type, id))           
+            index == 3 && dispatch(getdataScreen(data))
           }else{
             index== 0 && dispatch(getOnelevel([]));
-            index == 1 && dispatch(getshifts([]))
+            index == 1 && dispatch(getshifts([]));
+            index == 3 && dispatch(getdataScreen({}));
           }
        }
      })

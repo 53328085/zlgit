@@ -35,23 +35,3 @@ Object.keys(screenes).forEach(name => {
   
  export default screenes
 
-/*   
-  "bigScreenUrl":0,
-  
-  "monitorBigScreenUrl": 0,
- 
-  "safeBigScreenUrl": 0,
- 
-  "distributionScreenUrl": 0,
- 
-  "prepayScreenUrl": 0,
-  
-  "energyScreenUrl": 0,
- 
-  "solarScreenUrl": 0,
-  
-  "storageScreenUrl": 0,
-  
-  "carbonScreenUrl": 0,
-  
-  "maintenanceScreenUrl":0 */
