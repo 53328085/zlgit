@@ -183,7 +183,7 @@ export default function Manual({projectId, mode, areaId, pcsId,  getinfo, CModal
               <div className='topleft'>
               <div className='topleftitem'>
                   <div className='item'>
-                      <Text>手动切换站点各个子系统的启动停止</Text> 
+                      <Text>切换子系统的运行模式</Text> 
                   </div>
                   <div className='item'>                    
                       <div className={mode== 2 && onoff == 2 ? 'cotrl on active' : 'cotrl on' } onClick={() => updatestate(2)}>
@@ -201,7 +201,7 @@ export default function Manual({projectId, mode, areaId, pcsId,  getinfo, CModal
                   </div>
                   <div className='item'>
                       <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '22px'}}/>} {onoff== 1 ? 
-                      '当前系统运行在手动模式' : onoff == 2  ?  '当当前系统运行在自动模式' : null
+                      '当前系统运行在手动模式' : onoff == 2  ?  '当前系统运行在自动模式' : null
                   }</Text> 
                   </div>
               </div>
