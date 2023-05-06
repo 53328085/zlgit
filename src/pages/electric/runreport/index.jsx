@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useRef, useState,useCallback } from 'react'
+import { Provider, useSelector } from 'react-redux'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, DatePicker, message, Table } from 'antd'
+import { Select, Divider, DatePicker, message } from 'antd'
 import UseTable from '@com/useTable'
 import logo from '@imgs/chintlog.png'
 import PageComp from './pagecomp.jsx'
@@ -12,8 +12,114 @@ import { PieCharts, LineCharts } from './charts'
 import anaylse from './imgs/anaylse.svg'
 import {exportPDF} from './topdf.js'
 import imgurl from '@imgs/index'
-import ReactToPrint from 'react-to-print';
+import ReactToPrint,{useReactToPrint} from 'react-to-print';
 import './index.less'
+import CusContext from '@com/content'
+import styled from 'styled-components'
+import backimg  from '@imgs/backimg.png'
+import { systemConfigInfo} from '@redux/systemconfig.js'
+const ContainerDiv = styled.div`
+
+.container{
+    display: grid;
+    grid-template-columns: 384px 678px;
+    grid-template-rows: 864px;
+    column-gap:32px ;
+    .page-break {
+      margin-top: 1rem;
+      display: block;
+      page-break-after: always;
+    }
+    .leftcss{
+       background-color: #fff;
+       border: 1px solid #ccc;
+       border-radius: 2px;
+       padding: 32px;
+       .active{
+        background-color: #237ae4;
+        color: #fff;
+        }
+        .btnscsss{
+            width: 192px;
+            height: 36px;
+            background-color: #237ae4;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            border-radius: 2px;
+            cursor: pointer;
+            &:hover{
+                opacity: .7;
+            }
+        }   
+    }
+    .rightcss {
+        background-color: #f2f2f2;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        overflow-y: auto;
+        padding: 20px;
+        .report {
+            width: 562px;
+            height: 806px;
+            background-color: #fff;
+            margin: auto;
+            border: 1px solid #ccc;
+            display: grid;
+            grid-template-rows: 90px 1fr 244px;
+  
+            .bgimage {
+                height: 244px;
+                
+            }
+        }
+       
+
+    }
+}
+`
+const RightDiv =styled.div`
+            width: 562px;
+            height: 806px;
+            background-color: #fff;
+            margin: auto;
+            border: 1px solid #ccc;
+            display: grid;
+            grid-template-rows: 90px 1fr 244px;
+  
+            .bgimage {
+                height: 244px;
+                
+            }
+`
+const GridDiv =styled.div`
+      display: grid;
+      grid-template-rows: repeat(4,32px);
+      grid-template-columns: repeat(3,172px);  
+      .titlecolor{
+        background: #ff6600;
+        color: #fff;
+      }
+      .divcss{
+        border: 1px solid #ccc; 
+        text-align: center;   
+        line-height: 32px;
+        &:nth-child(3n+1){
+          margin-bottom: -1px;
+          margin-right: -1px;
+        }
+        &:nth-child(3n+2){
+          margin-bottom: -1px;
+          margin-right: -1px;
+        }
+        &:nth-child(3n){
+          margin-bottom: -1px;
+          margin-right: -1px;
+        }
+      }
+`
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   // const arealist = useSelector(state => state.system.onelevel)
@@ -23,7 +129,8 @@ export default function Index() {
   const [report, setReport] = useState()
   const [projectMes, setProjectMes] = useState([{ name: '项目名称', message: '', }, { name: '项目地址', message: '' }])  //项目情况
   const [elec, setElec] = useState([{ name: '最大电流发生时间', message: '', }, { name: '最大电流发生位置', message: '', }, { name: '最大电流值', message: '', }])  //电流监控  
-  const printRef =useRef()
+ 
+  const {chineseTitle} = useSelector(systemConfigInfo)
   const [voltage, setVoltage] = useState([{
     name: '最大电压发生时间',
     message: '',
@@ -62,7 +169,6 @@ export default function Index() {
     name: '最高温度值',
     message: '',
   },])
-
   const columns1 = [
     { title: '', dataIndex: 'name', width: 100, align: 'center' },
     { title: '', dataIndex: 'message', align: 'center' }
@@ -72,7 +178,13 @@ export default function Index() {
     { title: '', dataIndex: 'message', },
 
   ]
-
+  const printRef =useRef()
+  const reactToPrintContent = useCallback(() => {
+    return printRef.current;
+  }, [printRef.current])
+  const handlePrint = useReactToPrint({
+    content: reactToPrintContent,
+  })
   //修改日期类型
   const changeDate = (v) => {
     setDatevalue(v)
@@ -188,12 +300,18 @@ export default function Index() {
       getYearReport(datevalue)
     }
   }
+  const disabledDate= (current) => {
+    const type =  active === 1 ? 'month' : 'year'
+    return current && current > moment().endOf(type);
+  };
   useEffect(() => {
     console.log(printRef)
   }, [])
   return (
-    <div className={style.container}>
-      <div className={style.leftcss}>
+    <CusContext.Provider value={{active,datevalue}}>
+      <ContainerDiv>
+      <div className='container'>
+      <div className='leftcss'>
         {/* <BlueColumn name={arealist[0]?.levelName} />
         <Select
           options={arealist}
@@ -211,44 +329,44 @@ export default function Index() {
         }}>
           <div
             onClick={() => { setActive(1); setIsshow(false);setReport(null)}}
-            className={active === 1 ? style.active : ''}
+            className={active === 1 ? 'active' : ''}
             style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', height: 40, lineHeight: '40px' }}
           >月份报告
           </div>
           <div
             onClick={() => { setActive(2);setIsshow(false);setReport(null) }}
-            className={active === 2 ? style.active : ''}
+            className={active === 2 ? 'active' : ''}
             style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', marginLeft: -1, height: 40, lineHeight: '40px' }}>
             年度报告
           </div>
         </div>
-        <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate} />
+        <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate} disabledDate={disabledDate}/>
         <Divider dashed style={{ borderColor: '#d7d7d7', margin: '48px 0' }} />
-        <div className={style.btnscsss} onClick={makeReport}>
+        <div className='btnscsss' onClick={makeReport}>
          <img src={imgurl.searchFile} alt="" style={{marginRight:8}}/> 生成报告
         </div>
-        <ReactToPrint
-        trigger={()=>{return(<div className={style.btnscsss} >
+        {/* <ReactToPrint
+        trigger={()=>{return(<div className='btnscsss' >
           <img src={imgurl.print} alt="" style={{marginRight:8}}/> 打印报告
           </div>) }}
         content={()=>printRef.current}>
 
-        </ReactToPrint>
-        {/* <div className={style.btnscsss} >
-        <img src={imgurl.print} alt="" style={{marginRight:8}}/> 打印报告
-        </div> */}
-        <div className={style.btnscsss} onClick={()=>{exportPDF('pdf','pdfid')}}>
+        </ReactToPrint> */}
+        <div className='btnscsss' onClick={handlePrint}>
+        <img src={imgurl.print} alt="" style={{marginRight:8}} /> 打印报告
+        </div>
+        <div className='btnscsss' onClick={()=>{exportPDF('pdf','pdfid')}}>
         <img src={imgurl.export} alt="" style={{marginRight:8}}/> 导出报告
         </div>
       </div>
-      <div className={style.rightcss} >
-        <div id='pdfid' ref={printRef}>
-        <div className={style.report} style={{ marginBottom: isshow ? 24 : 0 }}>
-          <div style={{ padding: 16 }}>
+      <div className='rightcss' >
+        <div id='pdfid' ref={printRef} className='printContet'>
+        <RightDiv>
+        <div style={{ padding: 16 }}>
             <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
-            <span style={{ fontSize: 20 }}>正泰综合能源服务平台</span>
+            <span style={{ fontSize: 20 }}>{chineseTitle}</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',height:470 }}>
             <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>电气安全运行分析报告</p>
             <div style={{
               width: 431,
@@ -265,10 +383,13 @@ export default function Index() {
               <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report?moment().format('YYYY-MM-DD'):''}</span></p>
             </div>
           </div>
-          <div className={style.bgimage}></div>
-        </div>
+          <div className='bgimage'>
+            <img src={backimg} alt="" style={{width:559}}/>
+          </div>
+        </RightDiv>
+        <div className="page-break" />
         {isshow ? <>
-          <PageComp>
+          <PageComp >
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>1.项目情况</p>
               <UseTable columns={columns1} dataSource={projectMes} showHeader={false} />
@@ -276,27 +397,27 @@ export default function Index() {
             </div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>2.电气安全详情</p>
-              <div className={style.gridcss}>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>总报警次数</div>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最大电流</div>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最大电压</div>
-                <div>{report?.alarmCnt ? report.alarmCnt : '/'}</div>
-                <div>{report?.iMaxContent ? report?.iMaxContent : '/'}</div>
-                <div>{report?.uMaxContent ? report.uMaxContent : '/'}</div>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>剩余电流</div>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>最高温度</div>
-                <div style={{ backgroundColor: '#ff6600', color: '#fff' }}>烟雾报警</div>
-                <div>{report?.irMaxContent ? report.irMaxContent : '/'}</div>
-                <div>{report?.tMaxContent? report?.tMaxContent: '/'}</div>
-                <div>{report?.smokeAlarmCnt ? report?.smokeAlarmCnt : '/'}</div>
-              </div>
+              <GridDiv>
+                  <div className='titlecolor divcss' >总报警次数</div>
+                <div className='titlecolor divcss' >最大电流</div>
+                <div className='titlecolor divcss' >最大电压</div>
+                <div className='divcss'>{report?.alarmCnt ? report.alarmCnt : '/'}</div>
+                <div className='divcss'>{report?.iMaxContent ? report?.iMaxContent : '/'}</div>
+                <div className='divcss'>{report?.uMaxContent ? report.uMaxContent : '/'}</div>
+                <div className='titlecolor divcss' >剩余电流</div>
+                <div className='titlecolor divcss' >最高温度</div>
+                <div className='titlecolor divcss' >烟雾报警</div>
+                <div className='divcss'>{report?.irMaxContent ? report.irMaxContent : '/'}</div>
+                <div className='divcss'>{report?.tMaxContent? report?.tMaxContent: '/'}</div>
+                <div className='divcss'>{report?.smokeAlarmCnt ? report?.smokeAlarmCnt : '/'}</div>
+              </GridDiv>
             </div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>2.1告警类型分布</p>
               <PieCharts data={report?.alarmTypeGroup} />
             </div>
           </PageComp>
-
+          <div className="page-break" />
           <PageComp>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>3.电流监控</p>
@@ -315,7 +436,7 @@ export default function Index() {
               <UseTable columns={columns2} dataSource={temperature} showHeader={false} />
             </div>
           </PageComp>
-
+          <div className="page-break" />
           <PageComp>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>7.用电量趋势</p>
@@ -331,6 +452,7 @@ export default function Index() {
 
             </div>
           </PageComp>
+          <div className="page-break" />
           <PageComp >
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 68 }}>8.本周期用电安全监测综合分析</p>
@@ -354,8 +476,11 @@ export default function Index() {
        
 
       </div>
-
-    </div>
+      </div>
+      </ContainerDiv>
+    
+    </CusContext.Provider>
+    
   )
 }
 

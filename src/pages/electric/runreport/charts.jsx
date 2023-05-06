@@ -19,8 +19,11 @@ export let PieCharts = forwardRef(
                 },
                 legend: {
                   position: 'bottom',
-                  flipPage: false,
-                  itemSpacing: 15
+                  flipPage: true,
+                  itemSpacing: 15,
+                  maxRow:3,
+                  itemHeight:16,
+                  
                 },
                 interactions: [
                   {
@@ -90,14 +93,14 @@ export let LineCharts=({data,type})=>{
         position: 'top',
         itemSpacing:2
       },
-    //   point: {
-    //     size: 3,
-    //     shape: 'cycle',
-    //     style: {
-    //       fill: '#5B8FF9',
-    //       borderColor: '#fff'
-    //     },
-    //   },
+      // point: {
+      //   size: 3,
+      //   shape: 'cycle',
+      //   style: {
+      //     fill: '#5B8FF9',
+      //     borderColor: '#fff'
+      //   },
+      // },
       xAxis: {
         // type: 'timeCat',
         tickCount: 5,
