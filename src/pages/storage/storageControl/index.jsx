@@ -85,7 +85,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
-  const [pcsId, setPcsId] = useState(1)
+  const [pcsId, setPcsId] = useState(null)
   const [infoData, setInfoData] = useState({})
   const [mode, setMode] = useState(1) // 运行模式
   const [tab, setTab] = useState(1)
@@ -98,7 +98,7 @@ export default function Index() {
   ]
   const getinfo = async () => {
     try {
-      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId)
+      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId?.id)
 
       if (success) {
         let {runtimeMode, systemStatus} = data;
@@ -112,38 +112,7 @@ export default function Index() {
     }
   }
 
-  const CustItem = () => {
-    const [options, setOption] = useState([])
-   /*  const QueryPcsList = async() => {
-      try {
-        let {success,data} = await StorageControlRuntime.QueryPcsList(projectId, areaId)
-        if(success && Array.isArray(data)) {
-          setOption(data)
-        }else {
-          setOption([])
-        }
-      } catch (error) {
-        console.log(error)
-      }
-
-    }  */
-    const onChange = (e) => {
-      setPcsId(e)
-    }
-  /*   useEffect(() => {
-      QueryPcsList()
-    }, [projectId, areaId]) */
-    return (
-       <Space size={32}>
-        <Divider type='vertical' style={{margin: "0 0 0 32px", height: '32px'}} /> 
-       <Item label="PCS选择" name="pcsId" >
-          <Select options={options} fieldNames={{label: 'name', value: 'id'}} style={{width: '200px'}} onChange={onChange}></Select>
-       </Item>
-       </Space>
-    )
-     
-
-  }
+ 
   const propsData ={
   /*   tabs: [
       {label: '自动模式', key: 'Automate'},
@@ -151,12 +120,11 @@ export default function Index() {
     ], */
    /*  value,
     setvalue, */
+    isSite: true,
+    isPcs: true,
     handler: setAreaid,
+    pcshandler: setPcsId,
     form,
-    custview: <CustItem />,
-    initialValue: {
-      pcsId,
-    }
     
   }
    const tabChange = (e) => {
@@ -164,7 +132,10 @@ export default function Index() {
    }
   
   useEffect(() => {
-    getinfo()
+    if(areaId && projectId && pcsId) {
+      getinfo()
+    }
+    
   }, [areaId, projectId, pcsId])
   const ProjectCom = [Onoff, Onoff, Runmode][tab]
   return (
