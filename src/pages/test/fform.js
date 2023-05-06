@@ -1,127 +1,153 @@
-import { Button, Form, Input, Select } from 'antd';
-import React from 'react';
-const { Option } = Select;
-const layout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
-const App = () => {
-  const formRef = React.useRef(null);
-  const onGenderChange = (value) => {
-    switch (value) {
-      case 'male':
-        formRef.current?.setFieldsValue({
-          note: 'Hi, man!',
-        });
-        break;
-      case 'female':
-        formRef.current?.setFieldsValue({
-          note: 'Hi, lady!',
-        });
-        break;
-      case 'other':
-        formRef.current?.setFieldsValue({
-          note: 'Hi there!',
-        });
-        break;
-      default:
-        break;
+import React, {useState, useContext,  useEffect} from "react";
+
+import { Form, Select,  Space, Divider,} from "antd";
+import styled from "styled-components";
+ 
+import {useSelector, useDispatch} from 'react-redux'
+import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel} from '@redux/systemconfig.js'
+
+
+import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
+
+import CustContext from "@com/content";
+
+const Cform = styled(Form)`
+    background: #fff;
+    padding: 7px 16px;
+    border-top: 1px solid #dedede;
+    border-bottom: 1px solid #dedede;
+    height: max-content;
+    display: flex;
+   &&{
+    .ant-form-item {
+        margin: 0px;
     }
-  };
-  const onFinish = (values) => {
-    console.log(values);
-  };
-  const onReset = () => {
-    formRef.current?.resetFields();
-  };
-  const onFill = () => {
-    formRef.current?.setFieldsValue({
-      note: 'Hello world!',
-      gender: 'male',
-    });
-  };
-  return (
-    <Form
-      {...layout}
-      ref={formRef}
-      name="control-ref"
-      onFinish={onFinish}
-      style={{
-        maxWidth: 600,
-      }}
-    >
-      <Form.Item
-        name="note"
-        label="Note"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="gender"
-        label="Gender"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Select
-          placeholder="Select a option and change input text above"
-          onChange={onGenderChange}
-          allowClear
-        >
-          <Option value="male">male</Option>
-          <Option value="female">female</Option>
-          <Option value="other">other</Option>
+   } 
+`
+
+ 
+
+const { Item } = Form;
+
+export default function useSerach(props) {
+  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, initialValue} = useContext(CustContext) || {}
+  //const {printArea, setPrintArea} = useState()
+  const dispatch = useDispatch()
+  const [form] =forms ? [forms] : Form.useForm()
+  const projectId = useSelector(selectProjectId)
+  const varlabel = useSelector(levelDefaultLabel) 
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+  let [AreaID, setAreaid] = useState(oneLevelDefaultId)
+  const levelone = useSelector(selectOneLevel)
+ 
+  const [options, setOptions] = useState([])
+  const [pcsoptions, setPcsoptions] = useState([])
+
+  const onChange = (e, option) => {
+    dispatch(setCurrentlevel(option))
+    setAreaid(e)
+    if (typeof handler == 'function') {       
+       handler(e)
+    }
+ }
+ const sitechange = (e,options) => {
+   
+    if (typeof sitehandler == 'function') {
+      sitehandler(options)
+    }
+     
+ }
+ const pcschange = (e,options) => {
+   
+  if (typeof pcshandler == 'function') {
+    pcshandler(options)
+  }
+   
+}
+  const site = (<Item name="stationName" noStyle >
+              <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} onChange={sitechange}></Select>  
+             </Item>)
+  const pcs = (<Item name="pcsId" noStyle >
+              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} onChange={pcschange}></Select>  
+             </Item>)
+  const getpcs = async () => {
+    try {
+      let containerId = 0
+      let siteId = options[0]?.id
+     let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, siteId, containerId) 
+     if(success && Array.isArray(data)) {
+       setPcsoptions(data)
+       form.setFieldsValue({
+        pcsId: data[0].id
+       })
+       pcshandler &&  pcshandler(data[0])
+     }else {
+       setPcsoptions([])
+       form.setFieldsValue({
+        pcsId: ''
+       })
+       sitehandler && sitehandler({})
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+ 
+ useEffect(() => {
+    if(options?.length > 0 && AreaID && projectId) {
+      getpcs()
+    }
+ }, [options, AreaID, projectId])  
+
+
+  const getopti = async() => {
+    try {
+     let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
+     if(success&& Array.isArray(data) && data.length > 0) {
+       setOptions([...data])     
+       form.setFieldsValue({
+        stationName: data[0].name
+       })
+       sitehandler &&  sitehandler(data[0])
+     }else {
+      setOptions([])    
+      form.setFieldsValue({
+        stationName: ''
+       })
+       sitehandler && sitehandler({})
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+  useEffect(() => {
+      if(projectId && AreaID && isSite) {
+        getopti()
+      }    
+  
+  }, [projectId, AreaID, isSite])
+ 
+  return (  
+  
+    <Cform layout="inline"   form={form} initialValues={{area: oneLevelDefaultId, ...initialValue}} >
+      <Space size={64} split={ <Divider style={{margin: '0px',  height: '32px'}} type="vertical" />}>
+      <Item label={varlabel} name='area'>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+         
         </Select>
-      </Form.Item>
-      <Form.Item
-        noStyle
-        shouldUpdate={(prevValues, currentValues) => prevValues.gender !== currentValues.gender}
-      >
-        {({ getFieldValue }) =>
-          getFieldValue('gender') === 'other' ? (
-            <Form.Item
-              name="customizeGender"
-              label="Customize Gender"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          ) : null
+      </Item>
+        {isSite && site}
+        {isPcs && pcs}
+      </Space>
+
+        {
+           custview
         }
-      </Form.Item>
-      <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-        <Button htmlType="button" onClick={onReset}>
-          Reset
-        </Button>
-        <Button type="link" htmlType="button" onClick={onFill}>
-          Fill form
-        </Button>
-      </Form.Item>
-    </Form>
+   
+    </Cform>
+  
+    
   );
-};
-export default App;
+}

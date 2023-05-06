@@ -9,7 +9,7 @@ import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLev
 
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 
-import CustContext from "../content";
+import CustContext from "@com/content";
 
 const Cform = styled(Form)`
     background: #fff;
