@@ -3,9 +3,11 @@ import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import {Select,Divider,DatePicker} from 'antd'
 import { useSelector } from 'react-redux'
+import { systemConfigInfo} from '@redux/systemconfig.js'
 import logo from '@imgs/chintlog.png'
 
 export default function Index() {
+  const {chineseTitle} = useSelector(systemConfigInfo)
   const arealist = useSelector(state => state.system.onelevel)
   const [active,setActive]=useState(1)
   return (
@@ -45,7 +47,7 @@ export default function Index() {
             <div className={style.report}>
               <div style={{padding:16}}>
                 <img src={logo} alt="" style={{width:77,height:58,marginRight:16}}/>
-                <span style={{fontSize:20}}>正泰综合能源服务平台</span>
+                <span style={{fontSize:20}}>{chineseTitle}</span>
               </div>
               <div style={{display:'flex',flexDirection:'column',justifyContent: 'center',alignItems: 'center',}}>
                 <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>运维管理分析报告</p>

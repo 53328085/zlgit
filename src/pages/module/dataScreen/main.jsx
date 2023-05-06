@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form,   message,  } from 'antd'
- 
+import {Form,message,} from 'antd' 
 import {useRequest} from 'ahooks'
+import { useDispatch } from "react-redux";
 import {BigScreen} from '@api/api'
-import {custMsg}  from '@com/usehandler'
+
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/useButton'
+ 
+import {  getdataScreen } from "@redux/systemconfig";
 import Citem from './Citem'
 
-const {Item} = Form
 const Mainbox = styled.div`
     && {
        flex: 1; 
@@ -56,6 +57,7 @@ const screens = [
 
 ]
 export default function Main({projectId}) {
+    const dispath = useDispatch()
     const [form] = Form.useForm()
   // UpdateSiteOnOffGrid
   const QueryBigScreen = () => {
@@ -72,11 +74,12 @@ export default function Main({projectId}) {
   }
 
 
- const {run} = useRequest(QueryBigScreen, {    
-    onSuccess: (data) => {        
+ const {run } = useRequest(QueryBigScreen, {    
+    onSuccess: (res) => {     
+        dispath(getdataScreen(res))
         form.setFieldsValue({
-            ...data
-         })  
+            ...res
+         })
     },
     onError: (e) => {
         console.log(e)
@@ -96,7 +99,7 @@ export default function Main({projectId}) {
  const {loading, run: onSave} = useRequest(onSet, {
     manual: true,
     onSuccess: (s) => {
-       if(s)  {
+       if(s)  {      
         message.success({content: '保存成功', duration: 0.3})
         run()
        }
@@ -113,7 +116,7 @@ export default function Main({projectId}) {
         <Mainbox>
              
             <Formbox layout="inline" form={form}  colon={false} labelCol={{ span: 3 }} labelAlign='left'>
-            {screens.map(s => <Citem label={s.label} name1={s.name1} name2={s.name2} key={s.name2} /> )}
+            {screens.map(s => <Citem label={s.label} name1={s.name1} name2={s.name2} key={s.name2} form={form} /> )}
            </Formbox> 
                 
             </Mainbox>

@@ -8,14 +8,13 @@ import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, 
  import {exportPDF} from './topdf'
 import Titlelayout from '@com/titlelayout'
 import {useSelector} from 'react-redux'
-import {selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import { systemConfigInfo} from '@redux/systemconfig.js'
  import {CustButton} from '@com/useButton'
  import {StorageRunReport} from '@api/api'
  import { drawEcharts } from "@com/useEcharts";
  import log from './log.png'
  import bg from './bg.png'
  
-const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -65,96 +64,7 @@ const Mainbox = styled.div`
         } 
        }
 `
-const Printcont = styled.div`
-      &&{ background-color: #f2f2f2;
-        padding: 16px 32px;
-        border: 1px solid #ccc;
-        height: 840px;
-        overflow-y: auto;
-        display: grid;
-        grid-auto-rows: 806px;
-        row-gap: 32px;
-        .front {
-          background-color: #fff;
-          page-break-after: always;
-          height: 806px;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          .frontcont {
-            display: flex;
-             flex: 1; 
-             align-content: center;
-             justify-content: center;
-             .head {
-              width: 432px;
-              display: flex;
-              flex-direction: column;
-              justify-self: center;
-              align-self: center;
 
-              h1 {
-                color: #ccc;
-                font-size: 32px;
-                text-align: center;
-                margin-bottom: 32px;
-
-              }
-              .box {
-                width: 432px;
-                height: 136px;                
-                background-color: rgba(242, 242, 242, 1);                
-                border: 1px solid rgba(204, 204, 204, 1);
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                padding: 16px;
-                p {
-                  color: #ccc;
-                  font-size: 18px;
-                }
-              }
-            }
-          }
-          .title{ 
-            display: flex;
-            align-items: center; 
-            padding: 16px;
-            span {
-              color: #999;
-              font-size: 16px;
-              padding-left: 16px;
-            }
-           
-          }
-          
-        }
-        .ccontent {
-              height: 806px;
-              display: grid;
-              grid-template-rows: 36px 1fr;
-              row-gap: 32px;
-              background-color: #fff;
-              page-break-after: always;
-              .header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background-color: #237ae4;
-                color: #fff;
-                font-size: 14px;
-                padding: 0 16px;
-              }
-              .main {
-                padding: 0 16px 16px 16px;
-                display: grid;
-                grid-template-rows: ${({count, rows}) => count ? `repeat(${count}, auto) 1fr` : rows };
-                row-gap: 32px;
-              }
-
-        }
-      }
-`
 const Front = styled.div`
    &&{
               background-color: #fff;
@@ -192,7 +102,7 @@ const Front = styled.div`
                 justify-content: space-between;
                 padding: 16px;
                 p {
-                  color: #ccc;
+                  color: #515151;
                   font-size: 18px;
                 }
               }
@@ -269,9 +179,8 @@ const Ccontent = styled.div`
  
  function Maincom({projectId}) {
    const [form] = Form.useForm()
-   const [type, setType] = useState(1)
-   const levelone = useSelector(selectOneLevel)
-   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)  
+   const [type, setType] = useState(1)  
+   const {chineseTitle} = useSelector(systemConfigInfo)
    const [reportData, setReprotData] = useState({})
    const datetype = ['', 'month', 'year'][type]
    const [loading, setLoading] = useState(false)
@@ -627,11 +536,11 @@ const onPrint = () => {
                <Front>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>
-                    <span className='name'>正泰综合能源服务平台</span>
+                    <span className='name' style={{fontSize: '20px', color:"#666"}}>{chineseTitle}</span>
                    </div>
                    <div className="frontcont">
                    <div className='head'>
-                      <h1>储能系统分析报告</h1>
+                      <h1 style={{fontSize: "32px", color:"#515151"}}>储能系统分析报告</h1>
                       <div className='box'>
                           <p>项目名称：{reportData.projectName}</p>
                           <p>项目地址：{reportData.projectAddress}</p>
