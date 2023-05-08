@@ -59,14 +59,14 @@ export default function DefaultHome(props){
             if(data){
               state.x = data.x
               state.y = data.y
-              tdrawEcharts(eref.current, option('用电量', ["#5e92f9"]))
+              tdrawEcharts(eref.current, option('用电量(kWh)', ["#5e92f9"]))
             }
           }else{
             message.error(res.errMsg)
           }
       })
     }else{
-      tdrawEcharts(eref.current, option('用电量', ["#5e92f9"]))
+      tdrawEcharts(eref.current, option('用电量(kWh)', ["#5e92f9"]))
     }
   }, [])
   
