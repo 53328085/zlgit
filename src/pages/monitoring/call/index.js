@@ -65,7 +65,7 @@ export default function Index() {
   // }, [projectId, pageNum, areaId, deviceStyle, alike])
   const [form] = Form.useForm()
     const {Item} = Form
-    const getData = ({current, pageSize}, form) => {
+    const getData = ({current, pageSize}, form={}) => {
        let {alike, deviceStyle} = form
        let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
        return Remote.AllCallMeter(params).then(res => {
@@ -483,7 +483,7 @@ export default function Index() {
           className={style.readoutBule}
           footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
         >
-          <UserTable className={style.readTable} columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.LastSampleTime} ></UserTable>
+          <UserTable className={style.readTable} columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
 
         </Modal>
       </div>
