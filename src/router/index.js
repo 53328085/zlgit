@@ -57,6 +57,11 @@ const Rtest = lazy(() => import("../pages/test/rttest"))
 const Notfound = lazy(() => import("./notfound"))
 
 import {designerComponents, designerChildrenRoute} from "./designer";
+ 
+const lazyLoad = (moduleName) => {
+  const Module = lazy(() => import(`@pages/screen/${moduleName}`)); 
+  return <Module />;
+}
 
 const loginrouter =  [{
   path: "/login",
@@ -173,6 +178,7 @@ const childrenRoute = {
   
 ];
  
+
 store.subscribe(() => {
   try {
    RunRoute = [{
@@ -222,6 +228,16 @@ store.subscribe(() => {
     
     routes[2].children = RunRoute ;  
     routes[3].children = DesignerRoute; 
+
+    const {type, key, primary} = store.getState().system.currentscreen  
+    if (type == 1 && key) {
+        let path = primary + key
+        let nav = {
+         path: `${path}`,
+         element: lazyLoad(path)
+        }       
+        routes.push(nav)
+    }
   } catch (error) {
     console.log(error);
   }
@@ -229,6 +245,7 @@ store.subscribe(() => {
 
  })
  
+
 const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫

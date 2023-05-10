@@ -4,6 +4,7 @@ import { useStore, useDispatch } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
 import {getJump} from '@redux/systemconfig'
+import useJump from "./useJump";
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
@@ -14,7 +15,8 @@ export default function Hmenu() {
   const dispath = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const [current, SetCurrent] = useState('index')  
+  const [current, SetCurrent] = useState('index')
+  useJump(current)
   const isconfig = store.getState()?.system.configState
   const Menus   = store.getState()?.system.menus;
 
@@ -61,9 +63,10 @@ useEffect(() => {
   }
 }, [config, runmenus, siderrunmenus, current])
 
-
+  
   
   const onSelect = ({key}) => {
+     console.log(key)
      let item = menus.find(item => item?.key === key);
       if (!item) return;
       const {nested, label, no} = item || {};  
