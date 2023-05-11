@@ -8,7 +8,7 @@ const Base = lazy(() => import("@pages/module/base"))
 // const Energy = lazy(() => import("@pages/module/energy"))
 // const Pricing= lazy(() => import("@pages/module/pricing"))
 const Cockpit= lazy(() => import("@pages/module/cockpit"))
-
+const DataScreen = lazy(() => import("@pages/module/dataScreen"))
 const menus = [];
 const components = {
     '020101': Base,
@@ -16,6 +16,7 @@ const components = {
     '020103': User,
     '020104': Region,
     '020105': Cockpit,
+    '020106': DataScreen,
 }
 store.subscribe(() => {
     try {

@@ -3,17 +3,20 @@ import ReactDOM from "react-dom"; //这个是react的虚拟dom
 import style from "./style.module.less";
 import { useState, useEffect, Fragment } from "react";
 import {} from "antd";
+import {useSelector} from 'react-redux'
+import { systemConfigInfo} from '@redux/systemconfig.js'
 import Linechartmonth from "./lineChartMonth";
 import Linechartyear from "./lineChartYear";
 import chintLogo from "@imgs/chintlog.png";
 export default function Index(props) {
+  const {chineseTitle} = useSelector(systemConfigInfo)
   const { getReportInfo, getElectricityDate, dataInfoAll } = props;
   console.log(dataInfoAll);
   return (
     <div className={style.contentRight} id="rightInfo">
       <div className={style.showInfo}>
         <img src={chintLogo} className={style.chintLogo}></img>
-        <span className={style.chinName}>正泰综合能源服务平台</span>
+        <span className={style.chinName}>{chineseTitle}</span>
         <div className={style.info}>
           <p className={style.title}>能源管理分析报告</p>
           <div className={style.content}>

@@ -259,7 +259,7 @@ export default function ProjectSet({projectId}) {
     name: "",
     address: "",
     lngLat: '', // 经纬度 
-    bigScreenUrl: "",
+   // bigScreenUrl: "",
     remark: "", //备注
     imgLogo: '',
     imgProject: '',
@@ -418,7 +418,7 @@ useEffect(() => {
              {energyType.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
       </Item>
-      <Item label="数据大屏启用">
+     {/*  <Item label="数据大屏启用">
         <Switch
           checkedChildren="是"
           unCheckedChildren="否"
@@ -427,10 +427,10 @@ useEffect(() => {
             width: "64px",
           }}
         />
-      </Item>
-      <Item label="数据大屏url" name="bigScreenUrl"  >
+      </Item> */}
+    {/*   <Item label="数据大屏url" name="bigScreenUrl"  >
         <Input placeholder="请输入数据大屏地址" disabled={!isbigurl}/>
-      </Item>
+      </Item> */}
       <Item label="数据驾驶舱启用" valuePropName="checked" name="dataCockpitEnabled" >
         <Switch
           checkedChildren="是"

@@ -151,7 +151,7 @@ const columns = [
         }}>
           <Space size={32}>
              <Item label="日志查询" name="content">
-              <Input placeholder='操作内容' style={{width: '320px'}} />
+              <Input placeholder='操作内容' style={{width: '320px'}} allowClear onChange={submit} />
              </Item>
              <Divider style={{margin: '0', height: '32px'}}  type="vertical" />
              <Item label="设备类型" name="type">
@@ -186,8 +186,8 @@ const columns = [
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" />
-      
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" />   
+           
     </div>
     </Titlelayout>
     </Mainbox>

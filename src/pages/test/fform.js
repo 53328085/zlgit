@@ -1,33 +1,127 @@
-import React, {useEffect, useState} from 'react'
-import styled from 'styled-components';
-const Ccanvas = styled.canvas`
- && {
-  border: 1px solid #dedede;
-
- }
-`
-export default function Index() {
-  const [info, setInfo] = useState('')
-  const draw = (ctx) => {
-        ctx.fillStyle = "rgb(200,0,0)";
-        ctx.fillRect (10, 10, 55, 50);
-
-        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
-        ctx.fillRect (30, 30, 55, 50);
-  }
-  useEffect(() => {
-    var canvas = document.querySelector("#canvas")
-    var ctx = canvas.getContext('2d');
-    if(canvas.getContext) {
-      var ctx = canvas.getContext('2d');
-      draw(ctx);
-    }else {
-       setInfo('浏览器不支持canvas,请安装新版浏览器')
+import { Button, Form, Input, Select } from 'antd';
+import React from 'react';
+const { Option } = Select;
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+};
+const tailLayout = {
+  wrapperCol: {
+    offset: 8,
+    span: 16,
+  },
+};
+const App = () => {
+  const formRef = React.useRef(null);
+  const onGenderChange = (value) => {
+    switch (value) {
+      case 'male':
+        formRef.current?.setFieldsValue({
+          note: 'Hi, man!',
+        });
+        break;
+      case 'female':
+        formRef.current?.setFieldsValue({
+          note: 'Hi, lady!',
+        });
+        break;
+      case 'other':
+        formRef.current?.setFieldsValue({
+          note: 'Hi there!',
+        });
+        break;
+      default:
+        break;
     }
-  })
+  };
+  const onFinish = (values) => {
+    console.log(values);
+  };
+  const onReset = () => {
+    formRef.current?.resetFields();
+  };
+  const onFill = () => {
+    formRef.current?.setFieldsValue({
+      note: 'Hello world!',
+      gender: 'male',
+    });
+  };
   return (
-    <div>
-       <Ccanvas id="canvas" width="150" height="150">{info}</Ccanvas>
-    </div>
-  )
-}
+    <Form
+      {...layout}
+      ref={formRef}
+      name="control-ref"
+      onFinish={onFinish}
+      style={{
+        maxWidth: 600,
+      }}
+    >
+      <Form.Item
+        name="note"
+        label="Note"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="gender"
+        label="Gender"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
+      >
+        <Select
+          placeholder="Select a option and change input text above"
+          onChange={onGenderChange}
+          allowClear
+        >
+          <Option value="male">male</Option>
+          <Option value="female">female</Option>
+          <Option value="other">other</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        noStyle
+        shouldUpdate={(prevValues, currentValues) => prevValues.gender !== currentValues.gender}
+      >
+        {({ getFieldValue }) =>
+          getFieldValue('gender') === 'other' ? (
+            <Form.Item
+              name="customizeGender"
+              label="Customize Gender"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          ) : null
+        }
+      </Form.Item>
+      <Form.Item {...tailLayout}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+        <Button htmlType="button" onClick={onReset}>
+          Reset
+        </Button>
+        <Button type="link" htmlType="button" onClick={onFill}>
+          Fill form
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+export default App;

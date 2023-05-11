@@ -11,14 +11,14 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
 import { pwdValidator, phoneValidator, codeValidator } from "../rule";
-import { Login as Logapi, ProjectSetting } from "@api/api";
+import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
 import {
@@ -386,7 +386,7 @@ function UserLog() {
 
  const enterProject = async (id) => {
    try {    
-     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), ProjectSetting.queryProjectPublishInfo(id)] 
+     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), ProjectSetting.queryProjectPublishInfo(id), BigScreen.QueryBigScreen(id)] 
      let results = await Promise.allSettled(promises)   
      let menu;   
      results.forEach((res, index) => {
@@ -397,9 +397,11 @@ function UserLog() {
             index == 1 && dispatch(getshifts(data || []))
             index == 2 && (menu = handlermenu(data, id))
             index == 3 && dispatch(getpublishState(data?.state))
+            index == 4 && dispatch(getdataScreen(data))
           }else{
             index== 0 && dispatch(getOnelevel([]));
-            index == 1 && dispatch(getshifts([]))
+            index == 1 && dispatch(getshifts([]));
+            index == 4 && dispatch(getdataScreen({}))
           }
        }
      })  
