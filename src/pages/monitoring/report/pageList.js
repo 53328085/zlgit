@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect } from "react";
 import style from './style.module.less'
+import {useSelector} from 'react-redux'
+import {systemConfigInfo} from '@redux/systemconfig.js'
 import { drawEcharts } from '@com/useEcharts'
 import { Table } from "antd";
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 
 export default function PageList(props) {
-    console.log(props.query)
+    const {chineseTitle} =useSelector(systemConfigInfo)
     const Header = () => {
         return (
             <div className={style.pageHeader}>
@@ -235,7 +237,7 @@ export default function PageList(props) {
                 <div className={style.firstPage} >
                     <div className={style.header}>
                         <img src={logo} className={style.logo}></img>
-                        <span>正泰综合能源服务平台</span>
+                        <span>{chineseTitle}</span>
                     </div>
                     <div className={style.mainTitle}>运行监控报告</div>
                     <div className={style.mainDetail} >

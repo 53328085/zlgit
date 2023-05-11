@@ -72,7 +72,7 @@ export default function Index() {
             getData()
         }
     }, [projectId, pageNum, areaId, deviceStyle, alike]) */
-    
+    // let [dataSourceLog,setdataSourceLog]=useState()
     const getData = ({current, pageSize}, form={}) => {
        let {alike, deviceStyle} = form
        console.log(form)
@@ -101,8 +101,8 @@ export default function Index() {
    const {tableProps, search} = useAntdTable(getData, {
     form,
     defaultPageSize: 18,
-    defaultParams:[{current: 1, pageSize: 14}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 0}],
-    refreshDeps: [areaId]
+    defaultParams:[{current: 1, pageSize: 18}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 0}],
+    refreshDeps: [areaId,brakeResult]
    })
    console.log(tableProps)
    const {submit} = search
@@ -233,7 +233,7 @@ export default function Index() {
     }
     const handleCancelResult = () => {
         setbrakeResult(false)
-        getData(1,18)
+        // getData(1,18)
     }
     const changeDisabled = () => {
         setisComplate(false)

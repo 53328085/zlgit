@@ -301,19 +301,6 @@ const queryProjectInfo = async () => {
 }
 
 const onInput = (e) =>   map.current?.serachMap.search(e.target.value)
-/* const changeAddress = (v) => {
-  try {
-    let address = v?.split(',').join('').trim();
-
-     address?.replace("市辖区", "")
-    console.log(address)
-    map.current?.serachMap.search(address)
-    form.setFieldValue('address',address);
-  } catch (error) {
-    console.log(error);
-  }
-  
-} */
 const config = {
   rules: [
     {

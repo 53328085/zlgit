@@ -19,7 +19,7 @@ const {Item} = Form
     }
     console.log(moudles)
     return (
-    <Select defaultValue={value} options={moudles} style={{width: "130px"}} onChange={opchange}></Select>
+    <Select defaultValue={value} options={moudles} style={{width: "240px"}} onChange={opchange}></Select>
     )
   }
 export default function Citem({label, name1, name2, form}) { 

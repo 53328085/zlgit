@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser} from "@redux/user";
-import { configProject, comSetFirst, getJump, datascreen} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -149,12 +149,13 @@ const Ciptpd = styled(Input.Password)`
 `
 export default function Log() {
   // const [user, setUser] = useState('')
-  const [urlval, setUrlval] = useState('')
+ 
   const store = useStore();
   const user = useRef()
   const navgite = useNavigate()
-  const {primary} = useLocation()?.state || {}
  
+  const  screenadr = useSelector(currentscreen)
+  const showscreen = useMemo(() => screenadr.type==1 || screenadr.type==2, [screenadr])
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
  
@@ -175,76 +176,19 @@ export default function Log() {
   const account = () => {
     user.current.onOpen()
   }
-  const {
-    bigScreenEnabled,
-   bigScreenUrl,
-  monitorBigScreenEnabled,
-  monitorBigScreenUrl,
-  safeBigScreenEnabled,
-  safeBigScreenUrl,
- distributionEnabled,
- distributionScreenUrl,
- prepayEnabled,
- prepayScreenUrl,
- energyEnabled,
- energyScreenUrl,
- solarEnabled,
- solarScreenUrl,
- storageEnabled,
- storageScreenUrl,
- carbonEnabled,
- carbonScreenUrl,
-maintenanceEnabled,
- maintenanceScreenUrl
-  } = useSelector(datascreen);
-
-const showscreen = useMemo(() => {
-   switch (primary) {
-     case  'runtimeProject':
-      setUrlval(bigScreenUrl);
-      return bigScreenEnabled;
-    case  'runtimeMonitor':
-      setUrlval(monitorBigScreenUrl);
-      return monitorBigScreenEnabled; 
-    case  'runtimeSafe':
-        setUrlval(safeBigScreenUrl);
-        return safeBigScreenEnabled; 
-    case  'runtimeDistribution':
-        setUrlval(distributionScreenUrl);
-        return distributionEnabled;   
-    case  'runtimePrepay':
-        setUrlval(prepayScreenUrl);
-        return prepayEnabled;   
-    case  'runtimeEnergy':
-        setUrlval(energyScreenUrl);
-        return energyEnabled;   
-    case  'runtimeSolar':
-        setUrlval(solarScreenUrl);
-        return solarEnabled;  
-    case  'runtimeStorage':
-       setUrlval(storageScreenUrl);
-        return storageEnabled;   
-    case  'runtimeCarbon':
-        setUrlval(carbonScreenUrl);
-        return carbonEnabled;  
-    case  'runtimeMaintenance':
-       setUrlval(maintenanceScreenUrl);
-       return maintenanceEnabled;   
-                                
-   }
-}, [primary])
 const onJump = useCallback(() => {
-   let type = Number(showscreen)
+   let {type, key, primary} = screenadr   
    if(type == 0) return ;
-   if(!urlval.trim() && type > 0) {
+   if(!key.trim() && type > 0) {
     return  message.warn({content: '请配置大屏地址', duration: 0.5})
     
    }else {
-  //  let url =  type == 2 ? ''
-    window.open(urlval, '_blank')
+    let url =  type == 1 ?  '\\'+ primary+key : type == 2 ? key : '';  
+    if (!url) return;
+    window.open(url, '_blank')
    }
   
-}, [urlval, showscreen])
+}, [screenadr])
   const menu = (
     <Menu style={{padding: '0px', width: "144px"}}>
       <Citem key="mg" onClick={account}>账户管理</Citem>
@@ -322,7 +266,7 @@ const onJump = useCallback(() => {
           </Idiv5>)
           :
         <>
-      { showscreen!='0' &&  <Idiv1 onClick={onJump}>
+      { showscreen  &&  <Idiv1 onClick={onJump}>
           <span> 数据大屏</span>
         </Idiv1>
         }
