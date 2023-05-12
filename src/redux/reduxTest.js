@@ -38,6 +38,7 @@ const zlsilce = createSlice({
             return Object.assign({}, state, action.payload)
         },
         setzl: (state, action) => {
+             console.log(action)
              state.zltest = action.payload
         }
     },

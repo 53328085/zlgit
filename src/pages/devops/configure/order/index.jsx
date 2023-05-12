@@ -13,43 +13,43 @@ import WarningPng from '@imgs/warning.png'
 import {publishState} from '@redux/systemconfig'
 import CustContext from '@com/content.js'
 import { useLatest } from 'ahooks';
+const ContainerDiv = styled.div`
+border: 1px solid #d7d7d7;
+background-color: #fff;
+height: 100%;
+padding: 16px;
+position: relative;
+overflow: hidden;
+.pdtop8{
+  padding-top: 8px;
+}
+.pdbottom12{
+  padding-bottom: 12px;
+}
+.searchbtn:hover,.searchbtn:focus{
+  border-color: #d9d9d9 !important;
+  color: #000;
+}
+.flexcss{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btncss{
+   width: 96px;
+   height: 32px;
+   background-color: #237ae4;
+   border-radius: 2px;
+   color: #fff;
+   text-align: center;
+   line-height: 32px;
+   cursor: pointer;
+   &:hover{
+    opacity: .7;
+   }
+}
+`
 export default function Index() {
-  const ContainerDiv = styled.div`
-      border: 1px solid #d7d7d7;
-      background-color: #fff;
-      height: 100%;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      .pdtop8{
-        padding-top: 8px;
-      }
-      .pdbottom12{
-        padding-bottom: 12px;
-      }
-      .searchbtn:hover,.searchbtn:focus{
-        border-color: #d9d9d9 !important;
-        color: #000;
-      }
-      .flexcss{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .btncss{
-         width: 96px;
-         height: 32px;
-         background-color: #237ae4;
-         border-radius: 2px;
-         color: #fff;
-         text-align: center;
-         line-height: 32px;
-         cursor: pointer;
-         &:hover{
-          opacity: .7;
-         }
-      }
-  `
   const [tableParams,setTableParams]=useState({
     current:1,
     pageSize:10

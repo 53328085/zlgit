@@ -1,67 +1,33 @@
 import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation} from 'react-router-dom'
-import { useDispatch, useSelector } from "react-redux";
+import { useStore, useDispatch } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
-import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState} from '@redux/systemconfig'
+import {getJump} from '@redux/systemconfig'
 import useJump from "./useJump";
 import imgurl from './icon/index.js'
 const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
   return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
 }
-export default function Hmenu() { 
+export default function Hmenu() {
+  const store = useStore();
   const dispath = useDispatch()
   const navigate = useNavigate()
-  const {state} = useLocation()
-  console.log(state)
- // const [current, SetCurrent] = useState(state.primary)
+  const location = useLocation()
+  const [current, SetCurrent] = useState('index')
+  useJump(current)
+  const isconfig = store.getState()?.system.configState
+  const Menus   = store.getState()?.system.menus;
 
-  const current = useMemo(() => state?.primary, [state])
-  
-  const isconfig = useSelector(configState)
-  
-  const  runmenus = useSelector(runMenus)
-  const siderrunmenus = useSelector(siderRunMenus)
-  const designermenus = useSelector(designerMenus)
-  const siderdesignermenus = useSelector(siderDesignerMenus)
-  //const [menus, setMenus] = useState([]) 
-  useJump(current, isconfig)
-  const run = runmenus?.map(item => ({
-    no: item.no,
-    label: item.label,
-    key: item.key,
-    icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
-    className: 'custsubmenu',
-    danger: true,
-    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
-  }))
-  const designer = designermenus?.map(item => ({
-   no: item.no,
-   label: item.label,
-   key: item.key,
-   icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
-   className: 'custsubmenu',
-   danger: true,
-   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
-  }))
-
-  const menus = isconfig ? designer : run
-//
-  //const Menus   = store.getState()?.system.menus;
- 
-
-  //const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = Menus; 
-
-
-
- /*  let [config , SetConfig] = useState(isconfig)
+  const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = Menus;
+  let [config , SetConfig] = useState(isconfig)
   let [runmenus, setRunMenus] = useState(runMenus)
   let [siderrunmenus, setSiderRunMenus] = useState(siderRunMenus)
   let [designermenus, setDesignerMenus] = useState(designerMenus)
   let [siderdesignermenus, setSiderDesignerMenus] = useState(siderDesignerMenus)
-  let [menus, setMenus] = useState([]); */
-/*   const unsubscribe =  store.subscribe(() => {
+  let [menus, setMenus] = useState([]);
+  const unsubscribe =  store.subscribe(() => {
     SetConfig(store.getState()?.system.configState)
     const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = store.getState()?.system.menus;   
      setRunMenus(runMenus)
@@ -71,8 +37,8 @@ export default function Hmenu() {
 
 
      
-  }) */
-/* useEffect(() => {
+  })
+useEffect(() => {
   const run = runmenus?.map(item => ({
     no: item.no,
     label: item.label,
@@ -91,10 +57,11 @@ export default function Hmenu() {
    danger: true,
    nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
   }))
-  
-  setMenus(isconfig ? designer : run);
-  
-}, [isconfig, runmenus, siderrunmenus, current]) */
+  setMenus(config ? designer : run);
+  return () => {
+    unsubscribe();
+  }
+}, [config, runmenus, siderrunmenus, current])
 
   
   
@@ -108,9 +75,9 @@ export default function Hmenu() {
       }else {
         dispath(getJump(false))
       }
-   //   SetCurrent(key)  
+      SetCurrent(key)  
       let url, state;
-      if(isconfig) {
+      if(config) {
          url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
          state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
       } else {
@@ -121,9 +88,9 @@ export default function Hmenu() {
       navigate(url, {state}) 
      
   }
-/*   useEffect(() => {    
+  useEffect(() => {    
       SetCurrent(location.state?.primary)       
-   },[location.pathname]) */
+   },[location.pathname])
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 

@@ -1283,7 +1283,8 @@ export class operationDesigin{
   static ConfigureOneDevice=(data)=>server.post(`/Maintenance/MaintenanceDesigner/ConfigureOneDevice`,data)//编辑设备
   static RemoveOne=(data)=>server.delete(`/Maintenance/MaintenanceDesigner/RemoveOne`,{params:data})//移除已添加设备
   static QueryProjectMaintenanceArea=(data)=>server.get(`/General/User/QueryProjectMaintenanceArea`,{params:data})//查询巡检人
- 
+  static AddInspectionContent=(data)=>server.post(`/Maintenance/InspectionDesigner/AddInspectionContent`,data)//新增检查项
+  static QueryPageInspectionContent=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryPageInspectionContent`,data)//查询检查项
 }
 //电气安全(运行态)
 export class safeElectric {

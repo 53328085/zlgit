@@ -64,10 +64,10 @@ export default function useSerach(props) {
   }
    
 }
-  const site = (<Item name="stationName" noStyle >
+  const site = (<Item name="stationName" label="站点选择" >
               <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} onChange={sitechange}></Select>  
              </Item>)
-  const pcs = (<Item name="pcsId" noStyle >
+  const pcs = (<Item name="pcsId" label="PCS选择" >
               <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} onChange={pcschange}></Select>  
              </Item>)
   const getpcs = async () => {

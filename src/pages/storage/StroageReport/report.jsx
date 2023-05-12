@@ -225,6 +225,9 @@ const downloadReport = (id) => {
 
 
 
+
+
+
 // 打印 start
 
 
@@ -464,27 +467,7 @@ const onPrint = () => {
      }
    )
   }, [wadataset])
-  /* useEffect(() => {
-    drawEcharts(
-      wref.current, {
-        dataset: wdataset,
-        grid: {
-          ...grid,
-          top: '64px'
-        },
-        legend: {
-          top: '32px'
-        },
-        title:{
-          text:  '54. 环境温湿度监控',
-          ...etitle,
-          
-        },
-        color: ['#5c90f8', '#62daab'],
-       series: [{ type: "line", seriesLayoutBy: 'row', }, { type: "line", seriesLayoutBy: 'row', }]
-     }
-   )
-  }, [wdataset])  暂时不显示*/
+ 
   return (
    
     <Mainbox>

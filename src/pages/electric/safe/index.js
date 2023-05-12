@@ -180,7 +180,7 @@ export default function Index() {
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 0s linear infinite
+    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 1s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;
@@ -551,7 +551,18 @@ const Alarm = ({ pref, opref, areaId }) => {
 
       if (res.data.levelGroup && Array.isArray(res.data.levelGroup)) {
         if(res.data.levelGroup.length > 0) {
-          setOpieData([...res.data.levelGroup.reverse()])
+          const arr=[]
+          for(let val of res.data.levelGroup) {
+            if(val.name === '1级告警'){
+              arr[0]=val
+            }else if(val.name === '2级告警'){
+              arr[1]=val
+            }else{
+              arr[2]=val
+            }
+            
+          }
+          setOpieData(arr)
         }else{
           setOpieData(null)
         }
@@ -599,7 +610,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   useEffect(()=>{
     drawEcharts(pref.current, {
       pieData: { data: pieData, radius: '65%' }, type: 3, legend: {
-  
+       
         top: 'auto',
         bottom: 0,
   
@@ -737,6 +748,18 @@ const AlarmRank = ({ bref, areaId }) => {
           }
         }
       },
+    //   dataZoom: [
+    //     {
+    //         id: 'dataZoomY',
+    //         type: 'slider',
+    //         zoomLock:true,
+    //         yAxisIndex: [0],
+    //         filterMode: 'empty',
+    //         start: 100,
+    //         end: 40,
+    //         brushSelect:false
+    //     }
+    // ],
       dataset: datasetStack,
       series: [{ type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }, { type: "bar", stack: 'total' }],
       grid: {
@@ -752,7 +775,7 @@ const AlarmRank = ({ bref, areaId }) => {
         icon: 'rect',
         itemHeight: 8,
         itemWidth: 8,
-        itemGap: 20
+        itemGap: 20,
       },
       color:['rgb(255,112,112)','rgb(255,183,38)','rgb(176,126,249)']
     })

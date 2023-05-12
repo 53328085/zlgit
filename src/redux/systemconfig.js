@@ -21,7 +21,12 @@ const initialState = {
    onelevel: [], // 一级
    currlevel: {}, // 当前选择的一级区域
    shifts: [], // 班次
-   datascreen: {} // 大屏配置
+   datascreen: {}, // 大屏配置
+   currentscreen: { // 当前大屏信息
+    type: 0,
+    url: '',
+     primary:'',
+   },
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -72,6 +77,9 @@ const system = createSlice({
         },
         getdataScreen(state, actions) {           
             return Object.assign({}, state, {datascreen: actions.payload })
+        },
+        getCurrentScreen(state, actions) {  // 当前大屏
+           return Object.assign({}, state, {currentscreen: actions.payload})
         }
     },
 
@@ -112,6 +120,8 @@ export const systemConfigInfo = state => state.system.systemConfigInfo
 export const jump = state => state.system.jump
 export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+state.system?.systemConfigInfo.chineseTitle
 export const datascreen = state => state.system.datascreen ?? {}
+export const configState = state => state.system.configState;
+export const currentscreen = state => state.system.currentscreen
 export const {
     configProject,
     getSetMenus,
@@ -126,5 +136,6 @@ export const {
     getpublishState,
     getJump,
     getdataScreen,
+    getCurrentScreen,
 } = actions
 export default system.reducer

@@ -1,0 +1,257 @@
+import React, { useEffect, useMemo, useState,useRef } from 'react'
+import { useReactive  } from 'ahooks';
+import styled from 'styled-components'
+import BlueColumn from '@com/bluecolumn'
+import { Select, Divider, Input, Button, message,Form } from 'antd'
+import Table from '@com/useTable'
+import { useSelector } from 'react-redux'
+import {publishState} from '@redux/systemconfig'
+import Modal from '@com/useModal'
+import style from './style.module.less'
+import WarningPng from '@imgs/warning.png'
+import { operationDesigin } from '@api/api'
+const ContainerDiv = styled.div`
+      border: 1px solid #d7d7d7;
+      background-color: #fff;
+      height: 100%;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      .pdtop8{
+        padding-top: 8px;
+      }
+      .pdbottom12{
+        padding-bottom: 12px;
+      }
+      .searchbtn:hover,.searchbtn:focus{
+        border-color: #d9d9d9 !important;
+        color: #000;
+      }
+      .flexcss{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .btncss{
+         width: 96px;
+         height: 32px;
+         background-color: #237ae4;
+         border-radius: 2px;
+         color: #fff;
+         text-align: center;
+         line-height: 32px;
+         cursor: pointer;
+         &:hover{
+          opacity: .7;
+         }
+      }
+  `
+const {TextArea}=Input
+export default function Index() {
+  const publish =useSelector(publishState)
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const onelevel = useSelector(state => state.system.onelevel);
+  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName+'(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
+  const addoptions = [{
+    label:'常规',
+    value:1
+  },{
+    label:'配电',
+    value:2
+  },{
+    label:'光伏',
+    value:3
+  },{
+    label:'储能',
+    value:4
+  },]
+  const maparr= new Map([[1,'常规'],[2,'配电'],[3,'光伏'],[4,'储能']])
+  const typeoptions = [{
+    label:'全部',
+    value:0
+  },...addoptions]
+
+
+  const columns=[
+  { title: '检查项名称', dataIndex: 'name', align: "center",  },
+  { title: '详细内容', dataIndex: 'remark', align: "center", },
+  { title: '检查项类别', dataIndex: 'type', align: "center",render:(v)=>{
+    return <span>{maparr.get(v)}</span>
+  } },
+  { title: '操作', dataIndex: 'options', align: "center",width:180 ,render:(v,text)=>{
+    return (
+      <div style={{display:'flex',justifyContent:'space-around'}}>
+       <span style={{textDecoration:'underline',color:'#237ae4',cursor:'pointer'}} onClick={()=>{editfrom.setFieldsValue(text) ;editRef.current.onOpen()}}>编辑</span>
+       <span style={{textDecoration:'underline',color:'#ff0000',cursor:'pointer'}} onClick={()=>{}}>删除</span>
+      </div>
+    )
+  }}]
+
+  const addRef = useRef()
+  const editRef = useRef()
+  const delRef = useRef()
+  const [form] =Form.useForm()
+  const [editfrom]=Form.useForm()
+  const changInp=(e)=>{
+    console.log(e.target.value)
+  }
+  const search = () => {
+    
+  }
+  const addDevice=()=>{
+    addRef.current.onOpen()
+  }
+  const pageinfo=useReactive ({
+    pageNum:1,
+    pageSize:10,
+  })
+  let tabledata =useReactive({
+      tablesource:[]
+  })
+  const getPage=async()=>{
+    const info =form.getFieldsValue()
+    let params={
+      projectId,
+      ...pageinfo,
+      alike:info.alike,
+      type:info.typeical
+    }
+    const res = await operationDesigin.QueryPageInspectionContent(params)
+    if(res.success){
+      tabledata.tablesource = res.data
+      console.log(tabledata)
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  useEffect(()=>{getPage()},[])
+  return (
+    <ContainerDiv>
+      <BlueColumn name="检查项管理" />
+      <Form 
+      layout="inline"
+      form={form}
+      style={{
+        display: 'flex',
+        justifyContent:'space-between',
+        alignItems: 'center',
+      }}
+      initialValues={{
+        typeical:0,
+        alike:''
+      }}
+      >
+         <Form.Item  >
+            <div > 
+              <span style={{ paddingRight: 16, }} >检查项</span>
+            <Form.Item noStyle={true} name="alike">
+              <Input
+                style={{
+                  width: 290,
+                  margin: '16px 0'
+                }}
+                placeholder="输入设备编号/安装地址"
+                onChange={changInp}
+              // onBlur={(v)=>{setAlike(v.target.value)}}
+              />
+            </Form.Item>  
+              <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
+            </div>
+        </Form.Item>
+       
+        <Divider style={{ margin: '0 32px', borderColor: '#999999',height:32 }} dashed type="vertical"></Divider>
+        <Form.Item  style={{marginRight:'auto'}}  labelAlign="left">
+        <span style={{ paddingRight: 16, }} >类别</span>
+          <Form.Item name="typeical" noStyle={true}>
+            <Select
+              options={typeoptions}
+              // fieldNames={{ label: 'name', value: 'id' }}
+              style={{ width: 166 }}
+              className="pdtop8 pdbottom12"
+            ></Select>
+          </Form.Item>
+        </Form.Item>
+        <Form.Item>
+          {publish ? null : <div className='btncss' onClick={addDevice}>
+              新增
+            </div>}
+        </Form.Item>
+ 
+      </Form>
+      <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7'}} dashed ></Divider>
+      <Table columns={columns} dataSource={tabledata.tablesource}></Table>
+      <AddItem addRef={addRef} addoptions={addoptions}/>
+      <EditItem editRef={editRef} editfrom={editfrom}/>
+      <DeleteModal delRef={delRef}/>
+    </ContainerDiv>
+  )
+}
+//新增
+const  AddItem=({addRef,addoptions})=>{
+  return (
+    <Modal mold='cust'   ref={addRef}>
+    <BlueColumn name="新增检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
+    <Form
+    labelCol={{span:5}}
+    colon={false}
+    labelAlign="left"
+    initialValues={{type:1}}
+    >
+      <Form.Item label="检查项类别" name="type">
+          <Select 
+          style={{width:160}}
+          options={addoptions}
+          ></Select>
+      </Form.Item>
+      <Form.Item label="检查项名称">
+        <Input></Input>
+      </Form.Item>
+      <Form.Item label="详细内容">
+        <TextArea  allowClear  />
+      </Form.Item>
+    </Form>
+</Modal>
+  )
+ 
+}
+//编辑
+const EditItem=({editRef,editfrom})=>{
+  return (
+    <Modal mold='cust'   ref={editRef}>
+    <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
+    <Form
+    form={editfrom}
+    labelCol={{span:5}}
+    colon={false}
+    labelAlign="left"
+    >
+      <Form.Item label="检查项类别" name="type">
+          <Select style={{width:160}}></Select>
+      </Form.Item>
+      <Form.Item label="检查项名称" name="name">
+        <Input></Input>
+      </Form.Item>
+      <Form.Item label="详细内容" name="remark">
+        <TextArea  allowClear  />
+      </Form.Item>
+    </Form>
+</Modal>
+  )
+}
+
+//删除组件
+let DeleteModal = ({ delRef, name = '', content = '', ...other }) => {
+  return (
+    <Modal mold='cust' ref={delRef} {...other} className={style.DelModal}>
+      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      <div>
+        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
+        <span>{content}</span>
+      </div>
+    </Modal>
+
+
+  )
+}
+
+

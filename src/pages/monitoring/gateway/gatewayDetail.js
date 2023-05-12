@@ -37,9 +37,7 @@ export default function GatewayDetail(props) {
             title: '设备编号',
             dataIndex: 'sn',
             key: 'sn',
-            render: (sn) => <Link to={{
-                pathname: "/deviceDetail?sn="+sn,
-            }} target="_blank"> {sn} </Link>,
+            render: (sn) => <Link to={`/deviceDetail?sn=${sn}`} target="_blank"> {sn} </Link>,
             id: 'id'
         },
         {

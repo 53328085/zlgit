@@ -24,8 +24,7 @@ const components = {
     //'010508': Oplog,
 }
 store.subscribe(() => {
-    const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor'] 
-    console.log(runmen)
+    const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor']    
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
         let {no, key} = r;
