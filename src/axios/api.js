@@ -1285,6 +1285,11 @@ export class operationDesigin{
   static QueryProjectMaintenanceArea=(data)=>server.get(`/General/User/QueryProjectMaintenanceArea`,{params:data})//查询巡检人
   static AddInspectionContent=(data)=>server.post(`/Maintenance/InspectionDesigner/AddInspectionContent`,data)//新增检查项
   static QueryPageInspectionContent=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryPageInspectionContent`,data)//查询检查项
+  static UpdateInspectionContent=(data)=>server.post(`/Maintenance/InspectionDesigner/UpdateInspectionContent`,data)//更新检查项
+  static DeleteInspectionContent=(data)=>server.delete(`/Maintenance/InspectionDesigner/DeleteInspectionContent`,{params:data})//删除检查项
+  static QueryInspectionAddressPage=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryInspectionAddressPage`,data)//查询巡检点
+  static InspectionQueryDeviceList=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryDeviceList`,data)//巡检设备
+  static QueryContentList=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryContentList`,data)//巡检项
 }
 //电气安全(运行态)
 export class safeElectric {
