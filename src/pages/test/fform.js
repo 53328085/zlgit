@@ -46,6 +46,7 @@ export default function Index() {
   })
   return (
     <div>
+    
        <canvas id="canvas" width="550" height="550" style={{border: '1px solid #d7d7d7'}}>{info}</canvas>
     </div>
   )
