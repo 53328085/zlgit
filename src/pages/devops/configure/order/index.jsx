@@ -143,6 +143,7 @@ export default function Index() {
     if(res.success){
       message.success('编辑成功')
       getQueryPageDevice()
+      editRef.current.onCancel()
     }else{
       message.error(res.errMsg)
     }

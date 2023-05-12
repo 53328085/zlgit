@@ -71,7 +71,7 @@ export default function Index() {
     value:0
   },...addoptions]
 
-
+ let delid;
   const columns=[
   { title: '检查项名称', dataIndex: 'name', align: "center",  },
   { title: '详细内容', dataIndex: 'remark', align: "center", },
@@ -81,8 +81,8 @@ export default function Index() {
   { title: '操作', dataIndex: 'options', align: "center",width:180 ,render:(v,text)=>{
     return (
       <div style={{display:'flex',justifyContent:'space-around'}}>
-       <span style={{textDecoration:'underline',color:'#237ae4',cursor:'pointer'}} onClick={()=>{editfrom.setFieldsValue(text) ;editRef.current.onOpen()}}>编辑</span>
-       <span style={{textDecoration:'underline',color:'#ff0000',cursor:'pointer'}} onClick={()=>{}}>删除</span>
+       <span style={{textDecoration:'underline',color:'#237ae4',cursor:'pointer'}} onClick={()=>{editform.setFieldsValue(text) ;editRef.current.onOpen()}}>编辑</span>
+       <span style={{textDecoration:'underline',color:'#ff0000',cursor:'pointer'}} onClick={()=>{delid = text.id; delRef.current.onOpen()}}>删除</span>
       </div>
     )
   }}]
@@ -91,38 +91,110 @@ export default function Index() {
   const editRef = useRef()
   const delRef = useRef()
   const [form] =Form.useForm()
-  const [editfrom]=Form.useForm()
-  const changInp=(e)=>{
-    console.log(e.target.value)
-  }
+  const [addform] = Form.useForm()
+  const [editform]=Form.useForm()
+ //input查询
   const search = () => {
-    
+    pageinfo.pageNum=1
+    getPage()
+  }
+  const changeSelect=()=>{
+    pageinfo.pageNum=1
+    getPage()
   }
   const addDevice=()=>{
     addRef.current.onOpen()
   }
   const pageinfo=useReactive ({
     pageNum:1,
-    pageSize:10,
+    pageSize:2,
+    total:0
   })
   let tabledata =useReactive({
       tablesource:[]
   })
+  //新增检查项
+  const addItems=async ()=>{
+    const add = addform.getFieldsValue()
+    let params={
+      projectId,
+      type:add.type,
+      name:add.name,
+      remark:add.remark
+    }
+    const res = await operationDesigin.AddInspectionContent(params)
+    if(res.success){
+      message.success('新增成功!')
+      pageinfo.pageNum=1
+      getPage()
+      addRef.current.onCancel()
+    }else{
+      message.error(res.errMsg)
+    }
+    console.log(add,params)
+    
+  }
+  //更新检查项
+  const updateItems=async ()=>{
+    const edit = editform.getFieldValue()
+    let params={
+      projectId,
+      id:edit.id,
+      type:edit.type,
+      name:edit.name,
+      remark:edit.remark
+    }
+    const res = await operationDesigin.UpdateInspectionContent(params)
+    if(res.success){
+      message.success('编辑成功!')
+      editRef.current.onCancel()
+      getPage()
+    }else{
+      message.error(res.errMsg)
+    }
+   
+  } 
+  //删除检查项
+  const delItems = async ()=>{
+    const res = await operationDesigin.DeleteInspectionContent({
+      projectId,
+      id:delid
+    })
+   
+    if(res.success){
+      message.success('删除成功!')
+      pageinfo.pageNum=1
+      getPage()
+      delRef.current.onCancel()
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //获取检查项数据
   const getPage=async()=>{
     const info =form.getFieldsValue()
     let params={
       projectId,
-      ...pageinfo,
+      pageNum:pageinfo.pageNum,
+      pageSize:pageinfo.pageSize,
       alike:info.alike,
       type:info.typeical
     }
     const res = await operationDesigin.QueryPageInspectionContent(params)
     if(res.success){
       tabledata.tablesource = res.data
+      pageinfo.total = res.total
       console.log(tabledata)
     }else{
       message.error(res.errMsg)
     }
+  }
+  //分页查询
+  const changePage=(page)=>{
+  
+    pageinfo.pageNum = page.current
+    pageinfo.pageSize = page.pageSize
+    getPage()
   }
   useEffect(()=>{getPage()},[])
   return (
@@ -151,8 +223,6 @@ export default function Index() {
                   margin: '16px 0'
                 }}
                 placeholder="输入设备编号/安装地址"
-                onChange={changInp}
-              // onBlur={(v)=>{setAlike(v.target.value)}}
               />
             </Form.Item>  
               <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
@@ -168,6 +238,7 @@ export default function Index() {
               // fieldNames={{ label: 'name', value: 'id' }}
               style={{ width: 166 }}
               className="pdtop8 pdbottom12"
+              onChange={changeSelect}
             ></Select>
           </Form.Item>
         </Form.Item>
@@ -179,35 +250,40 @@ export default function Index() {
  
       </Form>
       <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7'}} dashed ></Divider>
-      <Table columns={columns} dataSource={tabledata.tablesource}></Table>
-      <AddItem addRef={addRef} addoptions={addoptions}/>
-      <EditItem editRef={editRef} editfrom={editfrom}/>
-      <DeleteModal delRef={delRef}/>
+      <Table columns={columns} dataSource={tabledata.tablesource} 
+      pagination={{current:pageinfo.pageNum,pageSize:pageinfo.pageSize,total:pageinfo.total}}
+      onChange={changePage}
+      ></Table>
+      <AddItem addRef={addRef} addform={addform} addoptions={addoptions} addItems={addItems}/>
+      <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems}/>
+      <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems}/>
     </ContainerDiv>
   )
 }
 //新增
-const  AddItem=({addRef,addoptions})=>{
+const  AddItem=({addRef,addoptions,addItems,addform})=>{
   return (
-    <Modal mold='cust'   ref={addRef}>
+    <Modal mold='cust'   ref={addRef} onOk={addItems}>
     <BlueColumn name="新增检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
     <Form
+    form={addform}
     labelCol={{span:5}}
     colon={false}
     labelAlign="left"
     initialValues={{type:1}}
     >
-      <Form.Item label="检查项类别" name="type">
+      <Form.Item label="检查项类别" name="type" rules={[{required:true}]}>
           <Select 
           style={{width:160}}
           options={addoptions}
+          
           ></Select>
       </Form.Item>
-      <Form.Item label="检查项名称">
-        <Input></Input>
+      <Form.Item label="检查项名称" name="name" rules={[{ required: true}]}>
+        <Input ></Input>
       </Form.Item>
-      <Form.Item label="详细内容">
-        <TextArea  allowClear  />
+      <Form.Item label="详细内容" name="remark" rules={[{required:true}]}>
+        <TextArea  allowClear   />
       </Form.Item>
     </Form>
 </Modal>
@@ -215,23 +291,23 @@ const  AddItem=({addRef,addoptions})=>{
  
 }
 //编辑
-const EditItem=({editRef,editfrom})=>{
+const EditItem=({editRef,editform,addoptions,updateItems})=>{
   return (
-    <Modal mold='cust'   ref={editRef}>
+    <Modal mold='cust'   ref={editRef} onOk={updateItems}>
     <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
     <Form
-    form={editfrom}
+    form={editform}
     labelCol={{span:5}}
     colon={false}
     labelAlign="left"
     >
-      <Form.Item label="检查项类别" name="type">
-          <Select style={{width:160}}></Select>
+      <Form.Item label="检查项类别" name="type" rules={[{required:true}]}>
+          <Select style={{width:160}} options={addoptions}></Select>
       </Form.Item>
-      <Form.Item label="检查项名称" name="name">
+      <Form.Item label="检查项名称" name="name" rules={[{required:true}]}>
         <Input></Input>
       </Form.Item>
-      <Form.Item label="详细内容" name="remark">
+      <Form.Item label="详细内容" name="remark" rules={[{required:true}]}>
         <TextArea  allowClear  />
       </Form.Item>
     </Form>
