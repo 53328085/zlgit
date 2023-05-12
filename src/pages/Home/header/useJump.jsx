@@ -1,8 +1,8 @@
-import React, {useMemo} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import { useSelector, useDispatch  } from "react-redux";
  
 import { datascreen, getCurrentScreen, configState} from "@redux/systemconfig";
-export default function useJump(primary) {
+export default function useJump(primary, isconfig) {
     const dispatch = useDispatch();
     const {
         bigScreenEnabled,
@@ -26,8 +26,8 @@ export default function useJump(primary) {
     maintenanceEnabled,
      maintenanceScreenUrl
       } = useSelector(datascreen);
-      const isconfig = useSelector(configState)     
-      useMemo(() => {
+      
+      const onChoose = () => {
         if(isconfig) return;   
         switch (primary) {
           case  'runtimeProject':        
@@ -65,7 +65,8 @@ export default function useJump(primary) {
          default:
             dispatch(getCurrentScreen({type: 0, key: '', primary: ''}));                              
         }
-     }, [primary])
-
-     return null
+     }
+    useEffect(() => {
+      onChoose();
+    }, [primary, isconfig])
 }

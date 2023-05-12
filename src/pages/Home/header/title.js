@@ -21,7 +21,7 @@ const Divlog = styled.div`
 `
 export default function  Title (){
     const project = useSelector(selectCurProject)  
-    const {titleEn, titleCn, logoImageBase64, ThemeColor} = project 
+    const { logoImageBase64} = project 
     const {chineseTitle} = useSelector(systemConfigInfo)
    return (
     <Divlog>
