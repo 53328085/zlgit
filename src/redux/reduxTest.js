@@ -1,6 +1,7 @@
-import { createSlice, nanoid, createAsyncThunk} from '@reduxjs/toolkit'
-import {Login} from '../axios/api'
+import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import {Login, ProjectList} from '../axios/api'
 import zhCN from 'antd/es/locale/zh_CN'
+ 
  
 const initialState = {
   
@@ -9,7 +10,10 @@ const initialState = {
   zltest: 'zjxszl',
   sysinfo: {},
   status: '加载中',
-  error: 'error'
+  error: 'error',
+  names: [],
+  menus: []
+
 }
 export const testthunk = (arg) => { // 同步 thunk
    return (dispatch, getState) => {
@@ -21,15 +25,38 @@ export const testthunk = (arg) => { // 同步 thunk
 
 }
 export const asyncthunk = createAsyncThunk('zltest/systeminfo', async (params) => { // 异步 thunk
-    try {
-      let {success, data}  = await Login.SystemConfig()  
-       
-      return data
-    } catch (error) {
-      return error
-    }
+    
+   
+      let  response  = await Login.SystemConfig()  
+      return response.data
    
 })
+
+export const getpropject = createAsyncThunk('zltest/menus', async (projectId=1, {rejectWithValue}) => { // 异步 thunk
+  
+     try {
+      let  response  = await ProjectList.QueryMenus(projectId)  
+      return response.data
+     } catch (error) {
+        
+      return  rejectWithValue(error.response.data)
+     }
+ },
+
+ {
+  condition: (projectId, { getState, extra }) => {
+       const {zltest} = getState()
+       console.dir(zltest)
+   /*  const fetchStatus = users.requests[userId]
+    if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
+      
+      return false
+    } */
+  }
+}
+
+
+)
 const zlsilce = createSlice({
     name: 'zltest',
     initialState,
@@ -40,10 +67,34 @@ const zlsilce = createSlice({
         setzl: (state, action) => {
              console.log(action)
              state.zltest = action.payload
+        },
+        addname: {
+          reducer(state, action) {
+            console.log(state.names)
+             state.push({...action.payload, completed: false})
+          },
+          prepare(text) {
+            console.log(text)
+            return {payload: {name: text, id: nanoid()} }
+          }
         }
     },
-    extraReducers(builder) {
-       console.log(builder)
+    extraReducers: {
+      [asyncthunk.fulfilled]: (state, actions) => {
+       
+      },
+
+      [getpropject.fulfilled]: (state, actions) => {
+      
+        state.menus = actions.payload
+     },
+     [getpropject.rejected]: (state, actions) => {
+       state.menus = actions.payload
+        console.log(actions)
+   }
+
+
+      /*  console.log(builder)
        builder
        .addCase(asyncthunk.pending, (state,actions) => {
         state.status='loading'
@@ -57,14 +108,16 @@ const zlsilce = createSlice({
         state.status='failed'
         console.log(actions)
         state.sysinfo = actions.payload?.message
-       })
+       }) */
     }
 
 })
+
 const {actions, reducer} = zlsilce
 export const zltest = state => state.zltest.zltest
 export const status = state => state.zltest.status
 export const error = state => state.zltest.error
 export const sysinfo = state => state.zltest.sysinfo
-export const {setSys, setzl } =  actions
+export const names = state => state.zltest.names
+export const {setSys, setz, addname } =  actions
 export default reducer

@@ -157,11 +157,15 @@ export default function Index(props) {
                     </div>
                     <div className="shortLine"></div>
                     <div className="largeLine"></div>
-                    <div className={style.monitorList}>
+                    {
+                        batteryItem.packs ? 
+                        <div className={style.monitorList}>
                         {batteryItem.packs.map((item, index) => {
-                            return <MonitorItem {...item} key={index}></MonitorItem>
-                        })}
-                    </div>
+                                return <MonitorItem {...item} key={index}></MonitorItem>
+                            })}
+                        </div> : <div className={style.monitorList}></div>
+
+                    }
                 </BatteryTopo>
                 
                 

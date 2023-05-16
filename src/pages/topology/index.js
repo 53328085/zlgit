@@ -36,7 +36,7 @@ export default function index() {
     canvas.render()
     setNewCanvas(canvas)
   }, [])
-  
+
   const { Panel } = Collapse;
   const Tools = [
     {
@@ -68,7 +68,7 @@ export default function index() {
     expand: false,
     locked: false
   })
-  let [contextmenu, setContextMenu] = useState({
+  const [contextmenu, setContextMenu] = useState({
     left: null,
     top: null,
     bottom: null
@@ -91,41 +91,40 @@ export default function index() {
   const onContextMenu = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    // if(event.button == 2){
-    //   if (event.clientY + 360 < document.body.clientHeight) {
-    //     setContextMenu({
-    //       left: event.clientX - 210 + 'px',
-    //       top: event.clientY- 62 + 'px'
-    //     })
-    //   } else {
-    //     setContextMenu({
-    //       left: event.clientX + 'px',
-    //       bottom: document.body.clientHeight - event.clientY + 'px'
-    //     })
-    //   }
-    // }  
+    console.log(event)
+    // if (event.clientY + 360 < document.body.clientHeight) {
+    //   setContextMenu({
+    //     left: event.clientX - 210 + 'px',
+    //     top: event.clientY - 62 + 'px'
+    //   })
+    // } else {
+    //   setContextMenu({
+    //     left: event.clientX -210 + 'px',
+    //     bottom: document.body.clientHeight - event.clientY + 'px'
+    //   })
+    // }
   }
-  const[nodeTag, setNodeTag] = useState(false)
+  const [nodeTag, setNodeTag] = useState(false)
   const onMessage = (event, data) => {
     console.log(event)
     // console.log(data)
-    if(event == 'nodeRightClick'){
+    if (event == 'nodeRightClick') {
       // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
-          left: data.evs.x  + 'px',
-          top: data.evs.y + 'px'
+          left: data.evs.x - 210  + 'px',
+          top: data.evs.y - 62 + 'px'
         })
         setNodeTag(true)
-      }else if(data.name == 'image'){
+      } else if (data.name == 'image') {
         setContextMenu({
-          left: data.evs.x  + 'px',
-          top: data.evs.y + 'px'
+          left: data.evs.x - 210 + 'px',
+          top: data.evs.y - 62 + 'px'
         })
         setNodeTag(true)
       }
     }
-    if(event == 'line' || event == 'space' || event == 'multi'){
+    if (event == 'line' || event == 'space' || event == 'multi') {
       setNodeTag(false)
     }
     // 右侧输入框编辑状态时点击编辑区域其他元素，onMessage执行后才执行onUpdateProps方法，通过setTimeout让onUpdateProps先执行
@@ -349,12 +348,12 @@ export default function index() {
             })}
           </Collapse>
         </div>
-        <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{position:'relative'}}>
-        {( nodeTag )? <Card style={{width: 200, position:'absolute', ...contextmenu}} >
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
-        </Card>: null}
+        <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{ position: 'relative' }}>
+          {(nodeTag) ? <Card style={{ width: 200, position: 'absolute', ...contextmenu }} >
+            <p>Card content</p>
+            <p>Card content</p>
+            <p>Card content</p>
+          </Card> : null}
         </div>
         <div className={style.props}>
           {/* 选中画布 */}

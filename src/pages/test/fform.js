@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import styled from 'styled-components';
+import {useDispatch, useSelector} from 'react-redux'
+import {addname, names, asyncthunk, getpropject} from '@redux/reduxTest'
 import log from './log.png'
 const Ccanvas = styled.canvas`
  && {
@@ -9,7 +11,8 @@ const Ccanvas = styled.canvas`
 `
 export default function Index() {
   const [info, setInfo] = useState('')
-   
+  const getNames = useSelector(names);
+  const dispatch = useDispatch()
   useEffect(() => {
     var canvas = document.querySelector("#canvas")
     if(canvas.getContext) {
@@ -44,9 +47,29 @@ export default function Index() {
        setInfo('浏览器不支持canvas,请安装新版浏览器')
     }
   })
+  const handler = () => {
+     dispatch(asyncthunk()).then(res => {
+      console.log(res)
+     }).catch(e => {
+       console.log(e)
+     })
+  }
+
+  const handler2 = () => {
+    dispatch(getpropject()).then(res => {
+     console.log(res)
+    }).catch(e => {
+      console.log(e)
+    })
+ }
   return (
     <div>
-    
+       <p>{JSON.stringify(getNames, 2)}</p>
+       <button onClick={() => dispatch(addname(Math.random().toString().slice(3)))}>addname</button>
+       <div>
+        <button onClick={handler}>asyncthunk</button>
+        <button onClick={handler2}>getpropject</button>
+       </div>
        <canvas id="canvas" width="550" height="550" style={{border: '1px solid #d7d7d7'}}>{info}</canvas>
     </div>
   )
