@@ -107,7 +107,7 @@ export default function Index() {
   }
   const pageinfo=useReactive ({
     pageNum:1,
-    pageSize:2,
+    pageSize:10,
     total:0
   })
   let tabledata =useReactive({
