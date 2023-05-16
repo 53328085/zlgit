@@ -1276,6 +1276,7 @@ export class operationDesigin{
   static QueryPageDevice = (data) => server.post(`/Maintenance/MaintenanceDesigner/QueryPageDevice`,data)//设备管理
   static InspectionPlanPage = (data) => server.post(`/Maintenance/MaintenanceDesigner/InspectionPlanPage`,data)//巡检计划
   static InsertInspectionPlan =(data) => server.post(`/Maintenance/MaintenanceDesigner/InsertInspectionPlan`,data)//新建巡检计划
+  static QueryInspectionPlanAddress = (data) => server.post(`/Maintenance/MaintenanceDesigner/QueryInspectionPlanAddress`,data)//巡检点
   static QueryProjectMaintenance=(projectId) =>server.get(`/General/User/QueryProjectMaintenance?projectId=${projectId}`)//查询运维人员
   static DeleteInspectionPlan=(data)=>server.delete(`/Maintenance/MaintenanceDesigner/DeleteInspectionPlan`,{params:data})//删除巡检计划
   static QueryDeviceList=(data)=>server.get(`/Maintenance/MaintenanceDesigner/QueryDeviceList`,{params:data})//获取未选，已选设备
@@ -1290,6 +1291,10 @@ export class operationDesigin{
   static QueryInspectionAddressPage=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryInspectionAddressPage`,data)//查询巡检点
   static InspectionQueryDeviceList=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryDeviceList`,data)//巡检设备
   static QueryContentList=(data)=>server.post(`/Maintenance/InspectionDesigner/QueryContentList`,data)//巡检项
+  static AddInspectionAddress=(data)=>server.post(`/Maintenance/InspectionDesigner/AddInspectionAddress`,data)//新增巡检项
+  static DeleteInspectionAddress=(data)=>server.delete(`/Maintenance/InspectionDesigner/DeleteInspectionAddress`,{params:data})//删除巡检项
+  static UpdateInspectionAddress=(data)=>server.post(`/Maintenance/InspectionDesigner/UpdateInspectionAddress`,data)//更新巡检点
+  static InspectionAddressDetail=(data)=>server.get(`/Maintenance/InspectionDesigner/InspectionAddressDetail`,{params:data})//获取二维码
 }
 //电气安全(运行态)
 export class safeElectric {

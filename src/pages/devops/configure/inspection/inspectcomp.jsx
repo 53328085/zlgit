@@ -7,7 +7,7 @@ import BlueColumn from '@com/bluecolumn'
 import commonstyle from './commonstyle.module.less'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
-import {SetPosition} from './position'
+
 
 //配置线路
 export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
@@ -26,19 +26,19 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
     const [searchValue, setSearchValue] = useState(""); //搜索值
     const [devicetype,setDeviceType] = useState(0);//设备类型
     const projectId = useSelector(state => state.system.menus.projectId)
-    const deviceoptions=[
-        {label:'全部',value:0},
-        {label:'电表',value:1},
-        {label:'水表',value:2},
-        {label:'燃气表',value:3},
-        {label:'传感器',value:4},
-        {label:'变压器',value:5},
-        {label:'储能设备',value:11}
-    ]
+    // const deviceoptions=[
+    //     {label:'全部',value:0},
+    //     {label:'电表',value:1},
+    //     {label:'水表',value:2},
+    //     {label:'燃气表',value:3},
+    //     {label:'传感器',value:4},
+    //     {label:'变压器',value:5},
+    //     {label:'储能设备',value:11}
+    // ]
     const columns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
-        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
-        { title: '安装地址', dataIndex: 'address', align: "center", },
+        { title: '巡检点名称', dataIndex: 'name', align: "center", },
+        { title: '具体位置', dataIndex: 'position', align: "center", },
+        // { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
     const btncss = {
@@ -111,8 +111,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
             message.warning('请至少选择一项!')
             return
         }
-        const arr = dataSource.filter(it => !selectedRowKeys.includes(it.sn))
-        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.sn))
+        const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
+        const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
         setSubMeter([...selectedRows, ...subMeter])
         setSubMeterRowKeys([])
         setDataSource([...arr])
@@ -126,7 +126,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
             message.warning('请至少选择一项!')
             return
         }
-        const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.sn))
+        const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
         console.log(arr, selectedRowKeys, selectedRows)
         setDataSource([...subSelectedRows, ...dataSource])
         setCopydataSource([...subSelectedRows, ...copydataSource])
@@ -139,24 +139,24 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
 
 
     //保存线路编辑
-    const saveConfig = async () => {
-        setSearchValue("")
-        const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat,lngLatAddress:it.lngLatAddress}) )
-        console.log(subMeter)
-        let params = {
-            projectId,
-            group:subsn,
-            areaId,
-        }
-        const resp = await operationDesigin.ConfigureDevice(params)
-        if (resp.success) {
-            message.success('线路配置成功')
-            setOpen(false)
-            getQueryPageDevice()
-        } else {
-            message.error(resp.errMsg)
-        }
-    }
+    // const saveConfig = async () => {
+    //     setSearchValue("")
+    //     const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat,lngLatAddress:it.lngLatAddress}) )
+    //     console.log(subMeter)
+    //     let params = {
+    //         projectId,
+    //         group:subsn,
+    //         areaId,
+    //     }
+    //     const resp = await operationDesigin.ConfigureDevice(params)
+    //     if (resp.success) {
+    //         message.success('线路配置成功')
+    //         setOpen(false)
+    //         getQueryPageDevice()
+    //     } else {
+    //         message.error(resp.errMsg)
+    //     }
+    // }
     //搜索
     const onSearch = async (value, event) => {
         setSelectedRowKeys([])
@@ -168,7 +168,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
                 return
             }else{
                 filterarr = copydataSource.filter(it => {
-                    return (it.sn.includes(value) || it.address.includes(value))
+                    return (it.name.includes(value) || it.position.includes(value))
                 }) 
             }
           
@@ -181,7 +181,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
                 return
             }else{
                 filterarr = copydataSource.filter(it => {
-                    return (it.sn.includes(value) || it.address.includes(value))&&it.deviceStyle === devicetype
+                    return (it.name.includes(value) || it.position.includes(value))&&it.deviceStyle === devicetype
                 })
             }
         
@@ -189,40 +189,40 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
         setDataSource([...filterarr])
     }
     //设备类型改变
-    const changeType=(v)=>{
-        setDeviceType(v)
-        setSelectedRowKeys([])
-        setSelectedRows([])
-        let filterarr;
-        if(!searchValue){
-            if(v===0){
-                setDataSource([...copydataSource])
-                return
-            }else{
-                filterarr  =  copydataSource.filter(it=>{
-                    return  it.deviceStyle === v
-                })
-            }
+    // const changeType=(v)=>{
+    //     setDeviceType(v)
+    //     setSelectedRowKeys([])
+    //     setSelectedRows([])
+    //     let filterarr;
+    //     if(!searchValue){
+    //         if(v===0){
+    //             setDataSource([...copydataSource])
+    //             return
+    //         }else{
+    //             filterarr  =  copydataSource.filter(it=>{
+    //                 return  it.deviceStyle === v
+    //             })
+    //         }
            
-        }else{
+    //     }else{
 
-            if(v===0){
-             filterarr= copydataSource.filter(it=>{
-                    return it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1
-                })
-                // setDataSource([...filterarr])
-                // return
-            } else{
-                filterarr= copydataSource.filter(it=>{
-                    return (it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1)&&it.deviceStyle === v
-                })
-            }
+    //         if(v===0){
+    //          filterarr= copydataSource.filter(it=>{
+    //                 return it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1
+    //             })
+    //             // setDataSource([...filterarr])
+    //             // return
+    //         } else{
+    //             filterarr= copydataSource.filter(it=>{
+    //                 return (it.sn.indexOf(searchValue)!==-1||it.address.indexOf(searchValue)!==-1)&&it.deviceStyle === v
+    //             })
+    //         }
           
-            // setDataSource([...copydataSource])
-        }
-        console.log(filterarr)
-        setDataSource([...filterarr])
-    }
+    //         // setDataSource([...copydataSource])
+    //     }
+    //     console.log(filterarr)
+    //     setDataSource([...filterarr])
+    // }
  
     useImperativeHandle(ref, () => ({
         setDataSource,
@@ -256,7 +256,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
                         scroll={{ y: 560 }}
                         size={'small'}
                         dataSource={subMeter}
-                        rowKey={record => record.sn}
+                        rowKey={record => record.id}
                     ></Table>
                 </div>
 
@@ -281,20 +281,20 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
 
                 <div>
                     {/* {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>} */}
-                    <div style={{ ...btnstyle, marginTop: 200,color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>关闭</div>
+                    <div style={{ ...btnstyle, marginTop: 200,color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>保存</div>
                 </div>
             </div>
             <div style={{ position: 'relative', width: 714 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
                     <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <div>
+                    {/* <div>
                     <span>设备类型</span>
                     <Select style={{width:128, marginLeft: 16 }} options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
-                    </div>    
+                    </div>     */}
                     <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
-                        <span>设备搜索</span>
-                        <Search style={{ width: 304, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
+                        {/* <span>设备搜索</span> */}
+                        <Search style={{ width: '100%', borderRadius: 16, marginLeft: 16 }} placeholder="请输入巡检点关键字查询" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
                     </div>
                     </div>
                     
@@ -306,7 +306,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
                         dataSource={dataSource}
                         scroll={{ y: 500 }}
                         size={'small'}
-                        rowKey={record => record.sn}
+                        rowKey={record => record.id}
                     ></Table>
                 </div>
             </div>

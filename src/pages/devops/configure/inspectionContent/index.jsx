@@ -250,10 +250,12 @@ export default function Index() {
  
       </Form>
       <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7'}} dashed ></Divider>
+      <div style={{ height: 710, display: 'flex' }}>
       <Table columns={columns} dataSource={tabledata.tablesource} 
       pagination={{current:pageinfo.pageNum,pageSize:pageinfo.pageSize,total:pageinfo.total}}
       onChange={changePage}
       ></Table>
+      </div>
       <AddItem addRef={addRef} addform={addform} addoptions={addoptions} addItems={addItems}/>
       <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems}/>
       <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems}/>

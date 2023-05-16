@@ -244,7 +244,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
         // getQueryDeviceList()
     },[areaId])
     return (
-        <div style={{ position: 'absolute', width: 1686, height: 770,zIndex:10, top: -13, left: open ? -483 : 2000, background: "#003366", transition: 'all .5s linear', padding: 32, display: 'flex' }}>
+        <div style={{ position: 'absolute', width: 1686, height: 770,zIndex:10, top: -13, left: open ? -483 : 3000, background: "#003366", transition: 'all .75s linear', padding: 32, display: 'flex' }}>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: 698 }}>
                     <div style={{display:'flex',justifyContent:'space-between'}}>

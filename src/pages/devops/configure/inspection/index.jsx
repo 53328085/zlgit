@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message, Form, Switch, DatePicker } from 'antd'
+import { Select, Divider, Input, Button, message, Form, Switch, DatePicker,TimePicker  } from 'antd'
 import Modal from '@com/useModal'
 import { useSelector } from 'react-redux'
 import Table from '@com/useTable'
@@ -10,8 +10,8 @@ import moment from 'moment'
 import WarningPng from '@imgs/warning.png'
 import style from './style.module.less'
 import {publishState} from '@redux/systemconfig'
-export default function Index() {
-  const ContainerDiv = styled.div`
+import {SetLine} from './inspectcomp.jsx'
+const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
       background-color: #fff;
       height: 100%;
@@ -43,19 +43,25 @@ export default function Index() {
       }
       
   `
+const { RangePicker } = DatePicker;
+export default function Index() {
+  
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 10
   })
-
+  const onelevel = useSelector(state => state.system.onelevel);
+  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
   const [tableData, setTableData] = useState()
   const addmodalRef = useRef() //modal的ref
   const addformRef = useRef() //addform的ref
   const delModalRef = useRef() //del
   const tableRef = useRef() //table
   const publish =useSelector(publishState)
-  const onelevel = useSelector(state => state.system.onelevel);
+  const [planAddress,setPlanAddress]=useState([])
   const projectId = useSelector(state => state.system.menus.projectId)
+  const [form] = Form.useForm()
+  const PlanAddresRef=useRef()
   const columns = [
     { title: onelevel[0]?.levelName, dataIndex: 'area' },
     { title: '巡检计划名称', dataIndex: 'name' },
@@ -68,7 +74,12 @@ export default function Index() {
     { title: '巡检人', dataIndex: 'operator' },
     {
       title: '操作', dataIndex: '', render(text) {
-        return <span style={{ color: '#ff0000', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => openDel(text)}>删除</span>
+        return (
+          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async ()=>{await QueryInspectionPlanAddress(text.id); PlanAddresRef.current.onOpen();}}>查看巡检点</span>
+          <span style={{ color: '#ff0000', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => openDel(text)}>删除</span>
+          </div>
+        )
       }
     }
   ]
@@ -77,20 +88,40 @@ export default function Index() {
     columns.pop()
   }
   let planId;
+
+  //获取巡检点
+  const QueryInspectionPlanAddress=async (id)=>{
+    const { areaId} = form.getFieldsValue()
+    const res = await operationDesigin.QueryInspectionPlanAddress({
+      projectId,
+      areaId,
+      alike:'',
+      id
+    })
+    if(res.success){
+      setPlanAddress(res.data.used)
+    }else{
+      message.error(res.errMsg)
+    }
+  }
   //获取设备
   const getInspectionPlanPage = async (pageNum) => {
+    const {areaId,alike}=form.getFieldsValue()
     let params = {
       projectId,
       pageNum: pageNum ? pageNum : tableParams.current,
-      pageSize: tableParams.pageSize
+      pageSize: tableParams.pageSize,
+      areaId,
+      alike,
     }
     const res = await operationDesigin.InspectionPlanPage(params)
     if (res.success) {
-      setTableData([...res.data])
+     
+      setTableData(res.data)
       setTableParams({
         current: res.pageNum,
         pageSize: res.pageSize,
-        total: res.total
+        total: res.total,
       })
     } else {
       message.error(res.errMsg)
@@ -151,17 +182,66 @@ export default function Index() {
   const changePage = (page) => {
     getInspectionPlanPage(page.current)
   }
-  const search = () => { }
+  const search = (e) => {
+  
+    getInspectionPlanPage(1)
+   }
+  const changeSelect=(v)=>{
+    getInspectionPlanPage(1)
+  }
+
+
+
+ 
   useEffect(() => {
     getInspectionPlanPage()
   }, [])
 
   return (
     <ContainerDiv>
-
+      <BlueColumn name="设备管理" />
       <div className='flexcss'>
-        <BlueColumn name="设备管理" />
-        <div className='btnflex'>
+      <Form
+        layout="inline"
+        form={form}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+        initialValues={{
+          areaId: 0,
+          alike: ''
+        }}
+      >
+        <Form.Item name="areaId" noStyle={true} labelAlign="left">
+          <Select
+            options={options}
+            style={{ width: 264 }}
+            fieldNames={{ label: 'name', value: 'id' }}
+            className="pdtop8 pdbottom12"
+            onChange={changeSelect}
+          ></Select>
+        </Form.Item>
+        <Divider style={{ margin: '0 32px', borderColor: '#999999', height: 32 }} dashed type="vertical"></Divider>
+        <Form.Item style={{ marginRight: 'auto' }} >
+          <div >
+            <Form.Item noStyle={true} name="alike">
+              <Input
+                style={{
+                  width: 290,
+                  margin: '16px 0'
+                }}
+                placeholder="巡检点名称/具体位置"
+              />
+            </Form.Item>
+            <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
+          </div>
+        </Form.Item>
+    
+
+      </Form>
+      <div className='btnflex'>
           {publish?null:<div className='btncss' onClick={openAdd}>
             新增
           </div>}
@@ -171,13 +251,15 @@ export default function Index() {
           </div>
         </div>
       </div>
-      <div style={{ height: 770, display: 'flex' }}>
+      
+      <div style={{ height: 727, display: 'flex' }}>
         <Table columns={columns} dataSource={tableData} pagination={tableParams} ref={tableRef} onChange={changePage}></Table>
       </div>
       <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd}>
         <BlueColumn name="新建巡检计划" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
         <AddPlan projectId={projectId} ref={addformRef}  getQueryProjectMaintenance={getQueryProjectMaintenance}/>
       </Modal>
+      <PlanAddres PlanAddresRef={PlanAddresRef} planAddress={planAddress}/>
       <DeleteModal delModalRef={delModalRef} name="删除巡检计划" content="确认是否要删除巡检计划？" onOk={delOk} />
     </ContainerDiv>
   )
@@ -247,10 +329,27 @@ let AddPlan = forwardRef(
       }
       return current &&(current<moment().subtract(1,'days') || current <= form.getFieldValue('starttime'));
     }
+    //获取巡检点
+    const QueryInspectionPlanAddress=async ()=>{
+      const { areaId} = form.getFieldsValue()
+      const res = await operationDesigin.QueryInspectionPlanAddress({
+        projectId,
+        areaId,
+        alike:''
+      })
+      if(res.success){
+        inspectRef.current.setDataSource(res.data.unused)
+        inspectRef.current.setCopydataSource(res.data.unused)
+        inspectRef.current.setSubMeter(res.data.used)
+      }else{
+        message.error(res.errMsg)
+      }
+    }
     //新增巡检计划
     const getInsertInspectionPlan = () => {
       return new Promise(async (resolve, reject) => {
-        const { areaId, userId, name, content, cycle, date, starttime, endtime } = form.getFieldsValue()
+        const { areaId, userId, name, content, cycle, time,triggerTime,span, timeRange} = form.getFieldsValue()
+        const group = inspectRef.current.subMeter.map(it=>it.id)
         let params = {
           projectId,
           areaId,
@@ -258,9 +357,12 @@ let AddPlan = forwardRef(
           name,
           content,
           cycle,
-          time: date,
-          startTime: moment(starttime).format('YYYY-MM-DD'),
-          endTime: moment(endtime).format('YYYY-MM-DD'),
+          time,
+          triggerTime,
+          span,
+          group,
+          startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
+          endTime: moment(timeRange[1]).format('YYYY-MM-DD'),
         }
         const res = await operationDesigin.InsertInspectionPlan(params)
         if (res.success) {
@@ -277,21 +379,32 @@ let AddPlan = forwardRef(
       form.setFieldValue('date', null)
       setDataCycle(v)
     }
+    const format = 'HH:mm';
+    const houropts=[{label:'2小时',value:2},{label:'4小时',value:4},
+    {label:'8小时',value:8},{label:'12小时',value:12},
+    {label:'24小时',value:24}, {label:'48小时',value:48},{label:'72小时',value:72},]
     useImperativeHandle(ref, () => ({
       getInsertInspectionPlan,
       form
     }))
+    const inspectRef = useRef()
+    const chooseAddress=()=>{
+      inspectRef.current.setOpen(true)
+       QueryInspectionPlanAddress()
+    }
     useEffect(() => {
-
+      getQueryProjectMaintenance(arealist[0].id,setUserList)
     }, [])
 
     return (
-      <Form
+      <>
+       <Form
         form={form}
         colon={false}
         labelAlign='left'
         labelCol={{ span: 4 }}
         initialValues={{
+          areaId:arealist[0].id,
           cycle: 1
         }}
       >
@@ -307,32 +420,72 @@ let AddPlan = forwardRef(
         <Form.Item label="计划名称" name="name" rules={[rule]}>
           <Input></Input>
         </Form.Item>
-        <Form.Item label="计划内容" name="content" rules={[rule]}>
+        <Form.Item label="计划有效期" name="timeRange">
+           <RangePicker style={{width:'100%'}}/>
+        </Form.Item>
+        <Form.Item label="巡检内容" name="content" rules={[rule]}>
           <Input></Input>
+        </Form.Item>
+        <Form.Item label="添加巡检点" name="group">
+            <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
+        </Form.Item>
+        <Form.Item label="巡检人员" name="userId" rules={[rule]}>
+          <Select options={mapuserlist} fieldNames={{ value: 'id' }}></Select>
         </Form.Item>
         <Form.Item label="巡检周期" name="cycle" rules={[rule]}>
           <Select
+            style={{width:128}}
             options={dateopts}
             onChange={changeCycle}
           ></Select>
         </Form.Item>
-        <Form.Item label="巡检时间" name="date" rules={[rule]}>
-          <Select options={dateCycle == 1 ? time : dateCycle == 2 ? weekCycle : dateCycle == 3 ? monthCycle : []} ></Select>
+        {
+          dateCycle!==1?( <Form.Item label="巡检日期" name="time" rules={[rule]}>
+          <Select 
+          style={{width:128}}
+          options={dateCycle == 2 ? weekCycle : dateCycle == 3 ? monthCycle : []} ></Select>
+        </Form.Item>):null
+        }
+       
+        <Form.Item label="开始时间" name="triggerTime">
+          <TimePicker  format={format} style={{width:128}}/>
         </Form.Item>
-        <Form.Item label="开始周期" name="starttime" rules={[rule]}>
+        <Form.Item label="有效期时长" name="span">
+            <Select options={houropts} style={{width:128}}>
+              
+            </Select>
+        </Form.Item>
+        {/* <Form.Item label="开始周期" name="starttime" rules={[rule]}>
           <DatePicker style={{ width: '100%' }} disabledDate={disabledStartDate}></DatePicker>
         </Form.Item>
         <Form.Item label="结束周期" name="endtime" rules={[rule]}>
           <DatePicker style={{ width: '100%' }} disabledDate={disabledEndDate}></DatePicker>
-        </Form.Item>
-        <Form.Item label="巡检人" name="userId" rules={[rule]}>
-          <Select options={mapuserlist} fieldNames={{ value: 'id' }}></Select>
-        </Form.Item>
+        </Form.Item> */}
+        
       </Form>
+      <SetLine ref={inspectRef}/>
+      </>
+     
 
     )
   }
 )
+//查看巡检点
+let PlanAddres=({PlanAddresRef,planAddress},ref)=>{
+  const columns = [
+    { title: '巡检点名称', dataIndex: 'name', align: "center", },
+    { title: '具体位置', dataIndex: 'position', align: "center", },
+]
+  return (
+    <Modal mold='cust' ref={PlanAddresRef}>
+    <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
+    <Table columns={columns} dataSource={planAddress}  scroll={{
+      y: 240,
+    }}></Table>
+</Modal>
+  )
+ 
+}
 //删除组件
 let DeleteModal = ({ delModalRef, name = '', content = '', ...other }) => {
   return (
