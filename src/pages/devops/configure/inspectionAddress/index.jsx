@@ -359,7 +359,7 @@ export default function Index() {
         :null
       } */}
       <PrintAll ref={printallref}>
-            {tabledata.tablesource.map((it,index)=><Print print={it} index={index}></Print>)}
+            {tabledata.tablesource?.map((it,index)=><Print print={it} index={index}></Print>)}
           </PrintAll>
     </ContainerDiv>
   )
