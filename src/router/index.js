@@ -178,8 +178,13 @@ const childrenRoute = {
   
 ];
  
-
+let menus;
 store.subscribe(() => {
+  let previousLouter = menus
+  menus = store.getState().system.menus;
+  if(previousLouter === menus) return;
+  console.log(previousLouter);
+  console.log(menus)
   try {
    RunRoute = [{
     path: '',
@@ -189,7 +194,7 @@ store.subscribe(() => {
     path: '',
     element: <Notfound />
    }];
-   const menus  = store.getState().system.menus;
+  
    
    const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
    
