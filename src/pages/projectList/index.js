@@ -335,7 +335,7 @@ export default function Index() {
   runMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) { 
-      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
+      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1).sort((a, b) => a.index - b.index)
       
    }   
   }) 
@@ -343,7 +343,7 @@ export default function Index() {
   designerMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) {
-     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no).sort((a, b) => a.index - b.index)
    }   
   }) 
   const menus =  {
@@ -406,94 +406,6 @@ export default function Index() {
  }
 
 
-
-
-  const startProject = async ({id, type, publishState, validStageTime}) => {  
-
-     try {
-       
-       dispatch(getpublishState(publishState)) 
-      let {data, success, errMsg} = await ProjectList.QueryMenus(id)
-
-      if (success && Array.isArray(data)) {    
-         try {
-         const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
-         const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
-       //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
-         const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
-
-         const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
-
-         let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
-        
-         const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
-         
-         const siderRunMenus = {}; // 运行功能 选择的子菜单
-        // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
-         runMenus.forEach(item => {
-          let {no, key, parentNo} = item 
-          if (!exclude.includes(item.no)) { 
-             siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
-             
-          }   
-         }) 
-      /*    allRunMenus.forEach(item => {
-          let {no, key, parentNo} = item 
-          if (!exclude.includes(item.no)) {
-             allsinderRunMenus[key] = sidermenu?.filter(m => m.parentNo == no) 
-          }   
-         })  */
-         const siderDesignerMenus = {};
-         designerMenus.forEach(item => {
-          let {no, key, parentNo} = item 
-          if (!exclude.includes(item.no)) {
-            siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
-          }   
-         }) 
-         const menus =  {
-          designerMenus, 
-          siderDesignerMenus,
-          runMenus,
-          siderRunMenus, 
-          setMenus,  
-          comSet,      
-          projectId: id,
-         }
-         dispatch(getMenus(menus));
-         dispatch(configProject(type === 1))
-
-        
-          try {
-            let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId: id,level: 1,parentId: 0})  
-            lsuccess && dispatch(getOnelevel(levelData || []));
-            !lsuccess && dispatch(getOnelevel([]));
-          } catch (error) {
-             console.log(error)
-          }
-          try {
-            let {success: sces, data: shitfsData} = await eneryShift.queryShifts(id)
-            sces && dispatch(getshifts(shitfsData || []));
-            !sces && dispatch(getshifts([]));
-          } catch (error) {
-            console.log(error)
-          }
-          if (type == 2) {
-            let runitem = runMenus?.find(item => item.no == '0104')|| runMenus[0] //此处还需要增加404页面路径
-            projectRun(runitem)
-          }else if(type == 1) {
-            let desitem = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
-            projectDesigner(desitem)
-          }
-        } catch (error) {
-          console.log(error);
-        }   
-      } else {
-        return message.warning(errMsg || '数据出错,请重试', 1)
-      }
-     } catch (error) {
-       console.log(error);
-     }
-  }
   // 数据需要动态获取
   const projectRun = ({key, label}) => { 
     dispatch(getJump(true))

@@ -9,10 +9,10 @@ const initialState = {
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     menus: {
         projectId: 0, // 项目ID
-        runMenus: [], // 项目top菜单栏 左边 选择的
-        designerMenus: [], // 设置top菜单栏
-        siderRunMenus: [], // 项目 sider
-        siderDesignerMenus: [], // 设置 sider
+        runMenus: [], // 运行 top菜单栏 左边 选择的
+        designerMenus: [], // 设计 top菜单栏
+        siderRunMenus: [], // 运行 sider
+        siderDesignerMenus: [], // 设计 sider
         setMenus: [], // 项目top菜单栏 右边
         comSet: [], //公共设置
       //  allRunMenus: [],
@@ -84,7 +84,7 @@ const system = createSlice({
     },
 
     extraReducers: {      
-        [systemConfig.fulfilled]: (state, {payload}) => {           
+        [systemConfig.fulfilled]: (state, {payload}) => { 
            let {success, errMsg, data} = payload
            if (success) {
                return Object.assign({}, state, {systemConfigInfo: data} )

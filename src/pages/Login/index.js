@@ -354,15 +354,17 @@ function UserLog() {
   runMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) { 
-      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1)
-      
+      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1).sort((a, b) => a.index - b.index)
+     
    }   
   }) 
   const siderDesignerMenus = {};
   designerMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) {
-     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)
+     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)?.sort((a, b) => a.index - b.index)
+
+     console.log(siderDesignerMenus[key])
    }   
   }) 
   const menus =  {
