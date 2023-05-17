@@ -284,7 +284,7 @@ export default function Index() {
   useEffect(() => { getPage() }, [])
   return (
     <ContainerDiv>
-      <BlueColumn name="检查项管理" />
+      <BlueColumn name="巡检点管理" />
       <Form
         layout="inline"
         form={form}

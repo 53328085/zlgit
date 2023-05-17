@@ -199,7 +199,7 @@ export default function Index() {
 
   return (
     <ContainerDiv>
-      <BlueColumn name="设备管理" />
+      <BlueColumn name="巡检计划管理" />
       <div className='flexcss'>
       <Form
         layout="inline"

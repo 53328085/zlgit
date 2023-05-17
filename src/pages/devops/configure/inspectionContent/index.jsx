@@ -222,7 +222,7 @@ export default function Index() {
                   width: 290,
                   margin: '16px 0'
                 }}
-                placeholder="输入设备编号/安装地址"
+                placeholder="检查项关键字查询"
               />
             </Form.Item>  
               <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
