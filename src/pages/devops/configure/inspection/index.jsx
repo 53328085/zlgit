@@ -99,7 +99,7 @@ export default function Index() {
       id
     })
     if(res.success){
-      setPlanAddress(res.data.used)
+      setPlanAddress(JSON.parse(JSON.stringify(res.data.used)))
     }else{
       message.error(res.errMsg)
     }
@@ -364,14 +364,14 @@ let AddPlan = forwardRef(
           startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
           endTime: moment(timeRange[1]).format('YYYY-MM-DD'),
         }
-        // const res = await operationDesigin.InsertInspectionPlan(params)
-        // if (res.success) {
-        //   message.success('新增巡检计划成功')
-        //   resolve(true)
-        // } else {
-        //   message.error(res.errMsg)
-        //   reject(false)
-        // }
+        const res = await operationDesigin.InsertInspectionPlan(params)
+        if (res.success) {
+          message.success('新增巡检计划成功')
+          resolve(true)
+        } else {
+          message.error(res.errMsg)
+          reject(false)
+        }
       })
 
     }
@@ -476,12 +476,15 @@ let PlanAddres=({PlanAddresRef,planAddress},ref)=>{
     { title: '巡检点名称', dataIndex: 'name', align: "center", },
     { title: '具体位置', dataIndex: 'position', align: "center", },
 ]
+  console.log(planAddress)
   return (
     <Modal mold='cust' ref={PlanAddresRef}>
     <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
-    <Table columns={columns} dataSource={planAddress}  scroll={{
+    <Table columns={columns} dataSource={planAddress}  
+    scroll={{
       y: 240,
-    }}></Table>
+    }}
+    ></Table>
 </Modal>
   )
  

@@ -128,16 +128,21 @@ export default function Index() {
   //打开编辑
   const editPosition=(text)=>{
     editRowData=text
-    lng.current = text?.lngLat
+    lng.current = {
+      lngLat:text?.lngLat,
+      lngLatAddress:text?.lngLatAddress
+    }
     console.log(text)
     editRef.current.onOpen()
   }
   //保存编辑
   const saveEditPosition =async (local)=>{
+    console.log(local)
     let param={
       projectId,
       sn:editRowData.sn,
-      lngLat:local.local
+      lngLat:local.local,
+      lngLatAddress:local.inpvalue
     }
     const res = await operationDesigin.ConfigureOneDevice(param)
     if(res.success){
