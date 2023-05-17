@@ -182,36 +182,40 @@ export default function Index() {
   return (
     <ContainerDiv>
       <BlueColumn name="设备管理" />
-      <Select
-        options={options}
-        fieldNames={{ label: 'name', value: 'id' }}
-        style={{ width: 264 }}
-        className="pdtop8 pdbottom12"
-        defaultValue={onelevel.length > 0 ? 0 : null}
-        onChange={(v)=>{setAreaId(v);console.log(inpval.current); setAlike( inpval.current)}}
-        value={areaId}
-      ></Select>
-      <Divider style={{ margin: 0, borderColor: '#d7d7d7' }} dashed></Divider>
       <div className='flexcss'>
-        <div>
-          <span style={{ paddingRight: 16, }} >设备查询</span>
-          <Input
-            style={{
-              width: 290,
-              margin: '16px 0'
-            }}
-            placeholder="输入设备编号/安装地址"
-            onChange={changInp}
-            // onBlur={(v)=>{setAlike(v.target.value)}}
-            defaultValue={alike}
-          />
-          <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
+        <div className='flexcss'>
+          <Select
+            options={options}
+            fieldNames={{ label: 'name', value: 'id' }}
+            style={{ width: 264 }}
+            className="pdtop8 pdbottom12"
+            defaultValue={onelevel.length > 0 ? 0 : null}
+            onChange={(v) => { setAreaId(v); console.log(inpval.current); setAlike(inpval.current) }}
+            value={areaId}
+          ></Select>
+          <Divider style={{ margin: '0 24px', borderColor: '#d7d7d7',height:32 }} dashed type="vertical"></Divider>
+          <div>
+            <span style={{ paddingRight: 16, }} >设备查询</span>
+            <Input
+              style={{
+                width: 290,
+                margin: '16px 0'
+              }}
+              placeholder="输入设备编号/安装地址"
+              onChange={changInp}
+              // onBlur={(v)=>{setAlike(v.target.value)}}
+              defaultValue={alike}
+            />
+            <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
+          </div>
+
+
         </div>
-        {publish?null:<div className='btncss' onClick={addDevice}>
+        {publish ? null : <div className='btncss' onClick={addDevice}>
           新增
         </div>}
-        
       </div>
+      <Divider style={{ margin: 0, borderColor: '#d7d7d7' }} dashed></Divider>
       <div style={{height:673,display:'flex'}}> 
       <Table columns={columns} dataSource={tableData} pagination={tableParams} onChange={(page)=>{getQueryPageDevice(page.current)}}></Table>
       </div>
