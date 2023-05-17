@@ -215,7 +215,7 @@ export default function Index() {
           新增
         </div>}
       </div>
-      <Divider style={{ margin: 0, borderColor: '#d7d7d7' }} dashed></Divider>
+      <Divider style={{ margin: '12px 0 24px 0',borderColor: '#d7d7d7' }} dashed></Divider>
       <div style={{height:673,display:'flex'}}> 
       <Table columns={columns} dataSource={tableData} pagination={tableParams} onChange={(page)=>{getQueryPageDevice(page.current)}}></Table>
       </div>

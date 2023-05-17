@@ -358,20 +358,20 @@ let AddPlan = forwardRef(
           content,
           cycle,
           time,
-          triggerTime,
+          triggerTime:moment(triggerTime).format('HH:mm'),
           span,
           group,
           startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
           endTime: moment(timeRange[1]).format('YYYY-MM-DD'),
         }
-        const res = await operationDesigin.InsertInspectionPlan(params)
-        if (res.success) {
-          message.success('新增巡检计划成功')
-          resolve(true)
-        } else {
-          message.error(res.errMsg)
-          reject(false)
-        }
+        // const res = await operationDesigin.InsertInspectionPlan(params)
+        // if (res.success) {
+        //   message.success('新增巡检计划成功')
+        //   resolve(true)
+        // } else {
+        //   message.error(res.errMsg)
+        //   reject(false)
+        // }
       })
 
     }
@@ -402,7 +402,7 @@ let AddPlan = forwardRef(
         form={form}
         colon={false}
         labelAlign='left'
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 5 }}
         initialValues={{
           areaId:arealist[0].id,
           cycle: 1
@@ -420,13 +420,13 @@ let AddPlan = forwardRef(
         <Form.Item label="计划名称" name="name" rules={[rule]}>
           <Input></Input>
         </Form.Item>
-        <Form.Item label="计划有效期" name="timeRange">
+        <Form.Item label="计划有效期" name="timeRange" rules={[rule]}>
            <RangePicker style={{width:'100%'}}/>
         </Form.Item>
         <Form.Item label="巡检内容" name="content" rules={[rule]}>
           <Input></Input>
         </Form.Item>
-        <Form.Item label="添加巡检点" name="group">
+        <Form.Item label="添加巡检点" name="group"  >
             <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
         </Form.Item>
         <Form.Item label="巡检人员" name="userId" rules={[rule]}>
@@ -447,10 +447,10 @@ let AddPlan = forwardRef(
         </Form.Item>):null
         }
        
-        <Form.Item label="开始时间" name="triggerTime">
+        <Form.Item label="开始时间" name="triggerTime" rules={[rule]}>
           <TimePicker  format={format} style={{width:128}}/>
         </Form.Item>
-        <Form.Item label="有效期时长" name="span">
+        <Form.Item label="有效期时长" name="span" rules={[rule]}>
             <Select options={houropts} style={{width:128}}>
               
             </Select>
