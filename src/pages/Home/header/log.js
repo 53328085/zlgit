@@ -155,7 +155,7 @@ export default function Log() {
   const navgite = useNavigate()
  
   const  screenadr = useSelector(currentscreen)
-  const showscreen = useMemo(() => screenadr.type==1 || screenadr.type==2, [screenadr])
+  const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
  

@@ -88,7 +88,7 @@ export default function Sider() {
    return () => {
     unsubscribe();
    }
-  },[location.pathname, config])
+  },[location, config])
 
   const onSelect = ({key}) => {       
      let label = menus?.find(item => item.key == key)?.label
