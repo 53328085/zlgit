@@ -177,6 +177,10 @@ export default function Index() {
   } 
   //新增检查项
   const addItems = async (position,device,content) => {
+    if(!position.local){
+      message.error('请添加坐标点')
+      return
+    }
     const add = addform.getFieldsValue()
     const deviceGroup =device.current.subMeter.map(it=>it.sn)
     const contentGroup = content.current.subMeter.map(it=>it.id)
@@ -216,7 +220,7 @@ export default function Index() {
       areaId: edit.areaId,
       id: edit.id,
       name: edit.name,
-      lngLat:position.inpValue?position.inpValue:edit.lngLat,
+      lngLat:position.local?position.local:edit.lngLat,
       address:edit.address,
       position:edit.position,
       remark: edit.remark,

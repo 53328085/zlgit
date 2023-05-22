@@ -99,7 +99,7 @@ export default function Index() {
       id
     })
     if(res.success){
-      setPlanAddress(res.data.used)
+      setPlanAddress(JSON.parse(JSON.stringify(res.data.used)))
     }else{
       message.error(res.errMsg)
     }
@@ -358,7 +358,7 @@ let AddPlan = forwardRef(
           content,
           cycle,
           time,
-          triggerTime,
+          triggerTime:moment(triggerTime).format('HH:mm'),
           span,
           group,
           startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
@@ -402,7 +402,7 @@ let AddPlan = forwardRef(
         form={form}
         colon={false}
         labelAlign='left'
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 5 }}
         initialValues={{
           areaId:arealist[0].id,
           cycle: 1
@@ -420,13 +420,13 @@ let AddPlan = forwardRef(
         <Form.Item label="计划名称" name="name" rules={[rule]}>
           <Input></Input>
         </Form.Item>
-        <Form.Item label="计划有效期" name="timeRange">
+        <Form.Item label="计划有效期" name="timeRange" rules={[rule]}>
            <RangePicker style={{width:'100%'}}/>
         </Form.Item>
         <Form.Item label="巡检内容" name="content" rules={[rule]}>
           <Input></Input>
         </Form.Item>
-        <Form.Item label="添加巡检点" name="group">
+        <Form.Item label="添加巡检点" name="group"  >
             <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
         </Form.Item>
         <Form.Item label="巡检人员" name="userId" rules={[rule]}>
@@ -447,10 +447,10 @@ let AddPlan = forwardRef(
         </Form.Item>):null
         }
        
-        <Form.Item label="开始时间" name="triggerTime">
+        <Form.Item label="开始时间" name="triggerTime" rules={[rule]}>
           <TimePicker  format={format} style={{width:128}}/>
         </Form.Item>
-        <Form.Item label="有效期时长" name="span">
+        <Form.Item label="有效期时长" name="span" rules={[rule]}>
             <Select options={houropts} style={{width:128}}>
               
             </Select>
@@ -476,12 +476,15 @@ let PlanAddres=({PlanAddresRef,planAddress},ref)=>{
     { title: '巡检点名称', dataIndex: 'name', align: "center", },
     { title: '具体位置', dataIndex: 'position', align: "center", },
 ]
+  console.log(planAddress)
   return (
     <Modal mold='cust' ref={PlanAddresRef}>
     <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
-    <Table columns={columns} dataSource={planAddress}  scroll={{
+    <Table columns={columns} dataSource={planAddress}  
+    scroll={{
       y: 240,
-    }}></Table>
+    }}
+    ></Table>
 </Modal>
   )
  

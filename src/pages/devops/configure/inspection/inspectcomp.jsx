@@ -84,11 +84,16 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
         setOpen(false)
         setSearchValue("")
         setDeviceType(0)
-        let str=''
-        subMeter.forEach(it=>{
-            str+=it.name+';'
-        })
-        addform.setFieldValue('deviceGroup',str)
+        // let str=''
+        // console.log(subMeter)
+        // if(Array.isArray(subMeter)&&subMeter.length>0){
+        //     subMeter.forEach(it=>{
+        //         str+=it.name+';'
+        //     })
+        //     console.log(str)
+        //     addform.setFieldValue('deviceGroup',str)
+        // }
+        
         // setSelectedRowKeys([])
         // setSubMeterRowKeys([])
        

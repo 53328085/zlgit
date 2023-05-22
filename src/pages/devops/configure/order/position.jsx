@@ -39,7 +39,8 @@ let LoaclForm =forwardRef((props,ref)=>{
         local
     }))
     useEffect(()=>{
-        setLoacl(context?.lngLat?.current)
+        setLoacl(context?.lngLat?.current.lngLat)
+        setInpvalue(context?.lngLat?.current.lngLatAddress)
     },[context?.lngLat?.current])
     return (
         <>
@@ -61,7 +62,7 @@ let LoaclForm =forwardRef((props,ref)=>{
             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
         </div>
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
-        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat?.current}/>
+        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat?.current.lngLatAddress}/>
         </div>
         
         </>
