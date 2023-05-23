@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState, useRef,useCallback } from 'react'
+import React, { useEffect, useMemo, useState, useRef,useCallback, } from 'react'
 import { useReactive } from 'ahooks';
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message, Form } from 'antd'
+import { Select, Divider, Input, Button, message, Form ,Space} from 'antd'
 import Table from '@com/useTable'
 import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
@@ -191,6 +191,7 @@ export default function Index() {
       name: add.name,
       lngLat: position.local,
       address:add.address,
+      addressSpan:add.addressSpan,
       position:add.position,
       deviceGroup,
       contentGroup,
@@ -440,6 +441,14 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true,message:'请点击获取巡检点地址' }]}>
           <Input ></Input>
+        </Form.Item>
+        <Form.Item label="定位误差">
+          <Space>
+          <Form.Item rules={[{required: true,pattern:/^(0|[1-9]\d{0,2}|1000)$/,message:'数值在0-1000之间'}]} name="addressSpan">
+            <Input style={{width:96}}></Input>
+          </Form.Item>
+          <span>米</span>
+          </Space>
         </Form.Item>
         <Form.Item label="具体位置" name="position" rules={[{ required: true }]}>
           <Input ></Input>

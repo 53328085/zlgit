@@ -76,7 +76,9 @@ export default function Index() {
       title: '操作', dataIndex: '', render(text) {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async ()=>{await QueryInspectionPlanAddress(text.id); PlanAddresRef.current.onOpen();}}>查看巡检点</span>
+          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async ()=>{
+            setPlanAddress(text.usedAddress)
+            PlanAddresRef.current.onOpen();}}>查看巡检点</span>
           <span style={{ color: '#ff0000', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => openDel(text)}>删除</span>
           </div>
         )
@@ -89,21 +91,7 @@ export default function Index() {
   }
   let planId;
 
-  //获取巡检点
-  const QueryInspectionPlanAddress=async (id)=>{
-    const { areaId} = form.getFieldsValue()
-    const res = await operationDesigin.QueryInspectionPlanAddress({
-      projectId,
-      areaId,
-      alike:'',
-      id
-    })
-    if(res.success){
-      setPlanAddress(JSON.parse(JSON.stringify(res.data.used)))
-    }else{
-      message.error(res.errMsg)
-    }
-  }
+
   //获取设备
   const getInspectionPlanPage = async (pageNum) => {
     const {areaId,alike}=form.getFieldsValue()
