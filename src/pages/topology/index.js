@@ -332,6 +332,7 @@ export default function index() {
         <img className={style.logo} src={logo}></img>
         <span className={style.headerTitle}>智慧能源服务平台</span>
       </div>
+      <div className={style.titleMenu}></div>
       <div className={style.topology}>
         <div className={style.tools}>
           <Collapse defaultActiveKey={[1]} expandIconPosition={'end'}>
