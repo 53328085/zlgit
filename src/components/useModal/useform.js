@@ -1,10 +1,16 @@
 import React, {useImperativeHandle, forwardRef, useRef} from 'react'
 import {Form, Select, Input, Switch, DatePicker} from 'antd'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
+import moment from 'moment'
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
   const {roletype, enable, password=true, ...rest} = props
+
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
   const getValue = () => {
    return  new Promise((resolve, reject) => {
     form.validateFields().then(res => {
@@ -82,7 +88,7 @@ import {pwdValidator, phoneValidator} from '@pages/rule.js'
                     message: '请选择有效期！',
                   }]}
                   >
-                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
+                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} disabledDate={disabledDate} />
    </Item>
     {
       password &&

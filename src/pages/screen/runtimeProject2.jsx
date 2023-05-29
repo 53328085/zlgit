@@ -12,10 +12,7 @@ export default function BigScreenUrl2({lat, lng}) {
     maxZoom: 20,
   }
   const mapClick = (e) =>  {   
-    let {lnglat} = e
-    
-     console.log(lnglat.getLng()) 
-     console.log(lnglat.getLat())
+    let {lnglat} = e 
   }
   useEffect(() => {
      const map = new T.Map(ref.current, MapOptions) 
