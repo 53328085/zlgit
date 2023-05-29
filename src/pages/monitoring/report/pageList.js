@@ -12,7 +12,7 @@ export default function PageList(props) {
     const Header = () => {
         return (
             <div className={style.pageHeader}>
-                <span>智慧能源服务平台</span>
+                <span>{chineseTitle}</span>
                 <span className={style.subTitle}>用户分析报告</span>
             </div>
         )
@@ -331,7 +331,7 @@ export default function PageList(props) {
             </div>:<div className={style.report}><div className={style.firstPage} >
                     <div className={style.header}>
                         <img src={logo} className={style.logo}></img>
-                        <span>正泰综合能源服务平台</span>
+                        <span>{chineseTitle}</span>
                     </div>
                     <div className={style.mainTitle}>运行监控报告</div>
                     <div className={style.mainDetail} >

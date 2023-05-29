@@ -115,7 +115,7 @@ const Info = styled.span`
   
   const params = {
     name: "",
-    validStageTime: moment(), //项目有效期
+    validStageTime: '', //项目有效期
      imgLogo: projectlog,
      imgProject: projectimg,
     address: "",
