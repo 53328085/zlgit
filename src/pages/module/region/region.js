@@ -53,6 +53,7 @@ const Formbox = styled(Form)`
   .map {
     grid-column: 2;
     grid-row: 2 /-1;
+    display: flex;
   }
 `;
 const Drawerbox = styled(Drawer)`
