@@ -24,6 +24,28 @@
   align-items: center;
   background-color: #f8f8f8;
   border-bottom: 1px solid #d9d9d9;
+  padding: 0 16px;
+  .menu{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    color: #595959;
+    font-size: 14px;
+    padding: 0 16px;
+    &:hover{
+      color: #1890ff;
+    }
+    .icon+div{
+      font-size: 12px;
+    }
+    .icon{
+      height: 24px;
+      line-height: 24px;
+    }
+  }
 }
 
 .topology {

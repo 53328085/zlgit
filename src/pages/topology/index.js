@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
+import CustModal from '@com/useModal'
 
 import logo from './topologyLogo.png'
 // 左侧工具栏图标
@@ -17,12 +18,19 @@ import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
+import '../../assets/css/font_g4v09lxfde/iconfont.css'
+import '../../assets/css/font_bz4csze2alg/iconfont.css'
+
+import FileSaver from 'file-saver'
 
 export default function index() {
   const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
   const [lineForm] = Form.useForm()
+  const [nameForm] = Form.useForm()
+
+  const nameRef = useRef()
   const Item = Form.Item
   let canvas
   const [newCanvas, setNewCanvas] = useState()
@@ -112,7 +120,7 @@ export default function index() {
       // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
-          left: data.evs.x - 210  + 'px',
+          left: data.evs.x - 210 + 'px',
           top: data.evs.y - 62 + 'px'
         })
         setNodeTag(true)
@@ -132,7 +140,7 @@ export default function index() {
       switch (event) {
         case 'node':
         case 'addNode':
-          // nodeForm.resetFields()
+          nodeForm.resetFields()
           setProps({
             node: data,
             line: null,
@@ -300,6 +308,8 @@ export default function index() {
   const onChangeDash = val => {
     // props.node.dash = nodeForm.getFieldValue('dash')
     let obj = nodeForm.getFieldsValue(true)
+    console.log(obj)
+    console.log(props.node)
     for (const key in obj) {
       if (Array.isArray(obj[key])) { } else if (typeof obj[key] === 'object') {
         for (const k in obj[key]) {
@@ -326,13 +336,91 @@ export default function index() {
     onUpdateProps(props.line)
   }
 
+  const menuItems = [
+    {
+      key: '1',
+      label: (
+        <div onClick={() => importJson()}>导入json文件</div>
+      )
+    }, {
+      key: '2',
+      label: (
+        <div onClick={() => exportJson()}>导出json文件</div>
+      )
+    }
+  ]
+
+  const importJson = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.onchange = event => {
+      const elem = event.srcElement || event.target;
+      if (elem.files && elem.files[0]) {
+        const reader = new FileReader()
+        reader.readAsText(elem.files[0])
+        reader.onload = e => {
+          const text = e.target.result + ''
+          try {
+            const data = JSON.parse(text)
+            console.log(data)
+            newCanvas.data.grid = data.grid
+            newCanvas.data.gridColor = data.gridColor
+            newCanvas.data.bkColor = data.bkColor
+            newCanvas.data.locked = data.locked == 1 ? true : false
+            form.setFieldsValue(newCanvas.data)
+            newCanvas.open(data)
+            setTimeout(() => { newCanvas.render() }, 0)
+          } catch (e) { }
+        }
+      }
+    }
+    input.click();
+  }
+
+  const exportJson = () => {
+    let fileName = (newCanvas.data.name || '未命名配电图') + '.json'
+    FileSaver.saveAs(
+      new Blob([JSON.stringify(newCanvas.data)], { type: 'text/plain;charset=utf-8' }),
+        fileName
+    )
+  }
+
+  const saveCanvas = e => {
+    e.preventDefault()
+    nameForm.resetFields()
+    nameRef.current.onOpen()
+    nameForm.setFieldValue('name', newCanvas.data.name)
+  }
+
+  const onOk = () => {
+    newCanvas.data.name = nameForm.getFieldValue('name')
+    nameRef.current.onCancel()
+  }
+
+
   return (
     <>
       <div className={style.header}>
         <img className={style.logo} src={logo}></img>
         <span className={style.headerTitle}>智慧能源服务平台</span>
       </div>
-      <div className={style.titleMenu}></div>
+      <div className={style.titleMenu}>
+        <Dropdown menu={{ items: menuItems }} overlayStyle={{ width: 120 }}>
+          <a onClick={e => e.preventDefault()} className={style.menu}>
+            <div className={style.icon}>
+              <i className="icon-wenjian iconfont"></i>
+              <i className="icon-xiajiantou iconfont" style={{ position: 'absolute' }}></i>
+            </div>
+            <div>文件</div>
+          </a>
+        </Dropdown>
+        <a onClick={e => saveCanvas(e)} className={style.menu}>
+          <div className={style.icon}>
+            <i className="icon-baocun iconfont"></i>
+          </div>
+          <div>保存</div>
+        </a>
+      </div>
       <div className={style.topology}>
         <div className={style.tools}>
           <Collapse defaultActiveKey={[1]} expandIconPosition={'end'}>
@@ -424,7 +512,7 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
                   </Item>
                   <Item label='线条宽度(px)' name='lineWidth'>
-                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -438,7 +526,7 @@ export default function index() {
                 <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
                 <Space>
                   <Item label='大小' name='fontSize'>
-                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
                   </Item>
                   <Item label='加粗' name='fontWeight'>
                     <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
@@ -507,7 +595,7 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='线条宽度(px)' name='lineWidth'>
-                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -543,7 +631,7 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='起点箭头大小(px)' name='fromArrowSize'>
-                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -551,13 +639,13 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='终点箭头大小(px)' name='toArrowSize'>
-                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
                 <Space>
                   <Item label='大小' name='fontSize'>
-                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                   <Item label='加粗' name='fontWeight'>
                     <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
@@ -601,6 +689,15 @@ export default function index() {
           </div> : null}
         </div>
       </div>
+      <CustModal title='配电图文件名' ref={nameRef} mold="cust" width={520} onOk={() => onOk()}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
+          <Form name='addForm' form={nameForm}>
+            <Item name='name' label='配电图文件名' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }}>
+              <Input style={{width: 240}}></Input>
+            </Item>
+          </Form>
+        </div>
+      </CustModal>
     </>
   )
 }

@@ -1,125 +1,98 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRequest } from 'ahooks';
-import { Select, Button, Table, Space, Modal, message } from 'antd';
+import { Select, Button, Table, Space, Modal, message, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
-import {useSelector} from 'react-redux'
-import {utils, writeFile} from 'xlsx'
-import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
+import { selectProjectId, selectOneLevel, publishState, levelDefaultLabel, selectOneLevelDefaultId } from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
+import firstwarn from '@imgs/warning.png'
+import Usetable from '@com/useTable'
 
 export default function Index() {
   const isPublish = useSelector(publishState)
   const projectId = useSelector(selectProjectId);
   const levelName = useSelector(levelDefaultLabel) || '园区'
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+
+  const [form] = Form.useForm()
+  const Item = Form.Item
   //园区选择
   const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const handleChange = (values) => {
-    setPageNum(1)
-    setAreaId(values)
+  const changeArea = (values) => {
+    form.setFieldValue('roomId', null)
+    getRoomData()
   }
   //配电房下拉框
-  const { queryPageRoom } = distributionRoom
+  const { queryPageRoom, queryPageChart } = distributionRoom
   const [roomList, setRoomList] = useState([])
-  const [defaultRoom, setDefaultRoom] = useState()
-  const [roomId, setRoomId] = useState()
   const getRoomData = () => {
-    return queryPageRoom( projectId, areaId, 0, 0).then(res => {
-      if(res.success){
+    queryPageRoom(projectId, form.getFieldValue('areaId'), 0, 0).then(res => {
+      if (res.success) {
         setRoomList(res.data)
-        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
-        setRoomId(res.data.length > 0  ? res.data[0].id : null)
-        if(res.data.length == 0){
-          messageApi.open({
+        form.setFieldValue('roomId', null)
+        if (res.data.length == 0) {
+          message.open({
             type: 'warning',
-            content:"当前园区没有配电房"
+            content: "当前" + levelName + "没有配电房"
           })
+        } else {
+          form.setFieldValue('roomId', res.data[0].id)
+          getTableData()
         }
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
+      } else {
+        message.open({
+          type: 'error',
+          content: res.errMsg
         })
       }
     })
   }
-  const { run : queryRoom } = useRequest(getRoomData,{
-    manual: true,
-  })
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未配置园区!')
       return;
-    }else{
-      if(areaId == 0 || !areaId){
-        return
-      }else{
-        queryRoom()
-      }
+    } else {
+      form.setFieldValue('areaId', oneLevelDefaultId)
+      getRoomData()
     }
-  },[areaId])
+  }, [])
   const ChangeRoom = values => {
-    setPageNum(1)
-    setDefaultRoom(values)
-    setRoomId(values)
+    getTableData()
   }
 
   const columns = isPublish ? [
     {
-      align:'center',
-      title: '园区名称',
-      dataIndex: 'regionName',
-      key: 'regionName',
-    },
-    { 
-      align:'center',
-      title: '配电房名称',
-      dataIndex: 'distributionName',
+      align: 'center',
+      title: '配电系统图名称',
+      dataIndex: 'chartName',
       key: 'distributionName',
-    },
-    {
-      title: '配电房地址',
-      dataIndex: 'distributionAddress',
-      key: 'distributionAddress',
-      align:'center',
-    },{
+    }, {
       title: '备注',
       dataIndex: 'tag',
       key: 'tag',
-      align:'center',
+      width: 680,
+      align: 'center',
     },
-  ]:[
+  ] : [
     {
-      align:'center',
-      title: '园区名称',
-      dataIndex: 'regionName',
-      key: 'regionName',
-    },
-    { 
-      align:'center',
-      title: '配电房名称',
-      dataIndex: 'distributionName',
+      align: 'center',
+      title: '配电系统图名称',
+      dataIndex: 'chartName',
       key: 'distributionName',
-    },
-    {
-      title: '配电房地址',
-      dataIndex: 'distributionAddress',
-      key: 'distributionAddress',
-      align:'center',
-    },{
+    }, {
       title: '备注',
       dataIndex: 'tag',
       key: 'tag',
-      align:'center',
+      align: 'center',
+      width: 680,
     },
     isPublish ? null : {
       title: '操作',
       key: 'action',
-      align:'center',
+      align: 'center',
+      width: 280,
       render: (_, record) => (
         <Space size="middle">
           <span className={style.editText} onClick={() => edit(record)}>编辑</span>
@@ -129,15 +102,53 @@ export default function Index() {
     },
   ];
 
-  const data = []
+  const tableRef = useRef()
+  const [tableData, setTableData] = useState([])
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 15,
+    total: 0
+  })
+  const tableOnchange = (e) => {
+    let { current } = e
+    setPagination({
+      ...pagination,
+      current,
+    })
+  }
+  useEffect(() => {
+    getTableData()
+  }, [pagination.current])
 
+  const getTableData = () => {
+    queryPageChart(projectId, form.getFieldValue('areaId'), form.getFieldValue('roomId'), pagination.current, pagination.pageSize).then(res => {
+      if(res.success){
+        if(res.data){
+          setTableData(res.data)
+          setPagination({
+            ...pagination,
+            total: res.total,
+          })
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
 
-  const showAdd = () => {
-    if(areaId == 0 || !areaId){
+  const showAdd = (key, label) => {
+    if (areaId == 0 || !areaId) {
       message.warning('请先选择园区!')
       return;
     }
-    window.open(`/topology`, '_blank')
+    if (areaId == 0 || !areaId) {
+      message.warning('请先选择园区!')
+      return;
+    }
+    window.open(`/topology?id=${key}&type=${label}`, '_blank')
+    // navigate(`/topology?id=${key}&type=${label}`, {
+    //   state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
+    // })
   }
 
   const edit = (record) => {
@@ -160,48 +171,48 @@ export default function Index() {
   return (
     <div>
       <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={handleChange}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-        <div className={style.division}></div>
-        <Select
-          placeholder="请选择配电房"
-          size="middle"
-          // key={defaultRoom}
-          // defaultValue={defaultRoom}
-          value={defaultRoom}
-          style={{width: '200px'}}
-          onChange={ChangeRoom}
-        >
-          {roomList.map((item) => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
+        <Form form={form} layout='inline'>
+          <Item name='areaId' label={levelName + '选择'} style={{ marginLeft: 16 }}>
+            <Select
+              placeholder="请选择"
+              size="middle"
+              style={{ marginLeft: 16, width: '200px' }}
+              onChange={changeArea}
+            >
+              {areaList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+          <div className={style.division}></div>
+          <Item name='roomId' label='' style={{ marginLeft: 16 }}>
+            <Select
+              placeholder="请选择配电房"
+              size="middle"
+              style={{ width: '200px' }}
+              onChange={ChangeRoom}
+            >
+              {roomList.map(item => {
+                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              })}
+            </Select>
+          </Item>
+        </Form>
       </div>
       <div className={style.mainContent}>
         <div className={style.contentTitle}>配电系统图</div>
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        { isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button>}
-      <Table style={{marginTop:'16px'}} columns={columns} bordered dataSource={data} rowKey='id'></Table>
-      <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
-        <div className={style.deleteHeader}>删除提示</div>
-        <div className={style.deleteBody}>
-          <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认删除配电系统图？</span>
-        </div>
-      </Modal>
+        {isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={() => showAdd(1, 'add')}>新增</Button>}
+        <Usetable style={{marginTop: 16}} ref={tableRef} columns={columns} dataSource={tableData} rowKey='id' pagination={pagination} onChange={tableOnchange} />
+        <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{ danger: true }}>
+          <div className={style.deleteHeader}>删除提示</div>
+          <div className={style.deleteBody}>
+            <img className={style.warnIcon} src={firstwarn}></img>
+            <span>是否确认删除配电系统图？</span>
+          </div>
+        </Modal>
       </div>
     </div>
   )
