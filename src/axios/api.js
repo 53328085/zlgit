@@ -6,6 +6,12 @@ export class Test {
 }
 // zl api start
 // 登录
+
+export class Tadi {
+   static Getaddress = (lng, lat) => {
+    server.get(`http://api.tianditu.gov.cn/geocoder?postStr={lon:${lng},lat:${lat},ver:1}&type=geocode&tk=e53537f2edbb1ac1a834c25a79fe5822`)
+   }
+}
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);

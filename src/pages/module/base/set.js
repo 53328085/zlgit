@@ -301,7 +301,7 @@ const queryProjectInfo = async () => {
   
 }
 
-//const onInput = (e) =>   map.current?.serachMap.search(e.target.value)
+const onInput = (e) =>   map.current?.serachMap(e.target.value)
 const config = {
   rules: [
     {
@@ -333,7 +333,7 @@ const setAaddress = (value) => {
    lng && lat && form.setFieldValue('lngLat', `${lng},${lat}`)
   
   address && form.setFieldValue('address', address);
-  //province && setAddressDtl([province, city, district])
+ //province && setAddressDtl([province, city, district])
 } catch (error) {
     console.log(error)
 }
@@ -486,9 +486,9 @@ useEffect(() => {
                 message: '请输入详细地址',
               },
             ]}
-            tooltip="请自行输入地址"
+            tooltip="请在地图上点击获取"
             > 
-          <Input placeholder="请输入详细地址"   />         
+          <Input placeholder="请输入详细地址" onChange={onInput}  />         
       </Item>
       <Item label="经纬度" className="lat" name="lngLat" required>
        
