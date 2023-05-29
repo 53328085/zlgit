@@ -1,9 +1,16 @@
 import React, {useImperativeHandle, forwardRef, useRef} from 'react'
 import {Form, Select, Input, Switch, DatePicker} from 'antd'
+import {pwdValidator, phoneValidator} from '@pages/rule.js'
+import moment from 'moment'
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
   const {roletype, enable, password=true, ...rest} = props
+
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
   const getValue = () => {
    return  new Promise((resolve, reject) => {
     form.validateFields().then(res => {
@@ -81,20 +88,52 @@ import {Form, Select, Input, Switch, DatePicker} from 'antd'
                     message: '请选择有效期！',
                   }]}
                   >
-                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
+                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} disabledDate={disabledDate} />
    </Item>
     {
       password &&
       <>
-    <Item label="密码" name="pwd" required>
+    <Item label="密码" name="pwd" rules={[
+                  {
+                    required: true,
+                    message: '请输入密码',
+                  },
+                  {
+                    validator: pwdValidator
+                   }, 
+                  
+                  ]}>
       <Input.Password />
     </Item>
-    <Item label="确认密码" name="repwd" required>
+    <Item label="确认密码" name="repwd" rules={[
+                  {
+                    required: true,
+                    message: '请确认密码',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('pwd') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('两次输入的新密码不匹配'));
+                    },
+                  }),
+                  
+                  ]}>
       <Input.Password />
     </Item>
     </>
     }
-    <Item label="手机号码" name="mobile" required>
+    <Item label="手机号码" name="mobile" rules={[
+                  {
+                    required: true,
+                    message: '请输入手机号码',
+                  },
+                  {
+                    validator: phoneValidator
+                   }, 
+                  
+                  ]}>
       <Input />
     </Item>
     {enable && (
