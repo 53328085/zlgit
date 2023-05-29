@@ -15,7 +15,7 @@ import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
-import Map,{EmptyMap} from './mapcomp'
+// import Map,{EmptyMap} from './mapcomp'
 
 const Mainbox = styled.div`
   display: grid;
@@ -394,7 +394,7 @@ export default function Index() {
             </div>
 
             {/* <Mapcom></Mapcom> */}
-           {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>} 
+           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
           </div>
 
           <div className='rigth'>
