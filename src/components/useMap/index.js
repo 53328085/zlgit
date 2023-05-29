@@ -1,122 +1,62 @@
-/**
- * @author zhenglin zhu
- * @description: // 120.228177,30.212296 正泰大厦经纬度
- * @date 2022-09-21 09:49
- */
  
+// 天地图
+
+
 import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle} from "react";
-import {
-  Map,
-  Marker,
-  Label,
-  Circle,
-  NavigationControl,
-  InfoWindow,
-  CityListControl,
-  MapTypeControl,
-  ScaleControl,
-  ZoomControl,
-  AutoComplete
-} from "react-bmapgl";
+import {useSelector} from 'react-redux'
+import {systemConfigInfo} from '@redux/systemconfig'
 
- function Index(props, ref) {
-  
-    const { setAaddress=()=>{}, lngLat, value, onChange, icon, text} = props
-    const defaultpoint = lngLat || value 
-  
-    const [lng, lat] = defaultpoint?.split(',') || []
-     
-    let position = lng&&lat ?new BMapGL.Point(lng, lat) :  new BMapGL.Point(120.22830511467954, 30.21229461177818)
-
-    const markeropt = {
-      position,
-      icon: icon || 'loc_blue',
-      enableDragging: true,
-      autoViewport: true
-    }
+  function Index(props, ref) {
+  const {lngLat, value,setAaddress, onChange} = props
  
-
-    const mapref = useRef(null)
+  const defaultpoint = lngLat || value 
   
-    const mapOption = {
-      zoom: 16,
-      enableScrollWheelZoom: true, // 鼠标滚轮缩放
-      // tilt: 20,
-      enableDragging: true,
-      center: position,
-      tilt:40,
-      // enableRotate: false
-    };
-    console.log(mapOption)
-  
- 
-  const getPosition = (e) => {
-    try {
-   
-    let geoc = null
-    if(window.BMapGL)  {   
-        geoc = new window.BMapGL.Geocoder()
-    }
-    const pt = e.latlng    
-    geoc.getLocation(pt, function (rs) { 
-        console.log(rs)
-        try {    
-        let { addressComponents, address, point  } = rs;    
-        let { city, district, province, street, streetNumber } = addressComponents;    
-        let {lng, lat} = point || {}   
-        setAaddress({lng, lat, address, province, city, district, street, streetNumber})
-         } catch (error) {
-          console.dir(error)
-        }     
-      });
-         
-    } catch (error) {
-        console.log(error)
-    }  
+  const [lng, lat] = defaultpoint?.split(',') || []
+  console.log(lng)
+  let {companyName} = useSelector(systemConfigInfo)
+  const [zoom] = useState(18)
+  const mapref = useRef()
+  const MapOptions = {
+    projection: 'EPSG:900913',
+    minZoom: 2,
+    maxZoom: 20,
   }
-  
-  const serachcomplete = (res) => {
-    console.log(serachMap.getStatus())
-    if (serachMap.getStatus() == BMAP_STATUS_SUCCESS) {
-      let len = res.getCurrentNumPois();
-      if (len > 0) {
-        console.dir(res.getPoi(0));
-        let  geography = res.getPoi(0) || {};
-        setAaddress(geography)
-      }
-    }
+  const mapClick = (e, map) =>  {   
+    let {lnglat} = e
+    setAaddress && setAaddress(lnglat)
   }
-  
-  const serachMap = new BMapGL.LocalSearch(mapref?.current?.map, { 
-        renderOptions: { map: mapref?.current?.map },
-        onSearchComplete: serachcomplete 
-    }); 
-  /* useEffect(() => {
-   setPosition(
-     {
-       ...position,
-       point: new BMapGL.Point(lng || 120.22830511467954, lat || 30.21229461177818),
-     }
-  
-    ) 
-  }, [value]) */
   useImperativeHandle(ref, () => ({
-    serachMap
+   // serachMap
   }))
- const mapstyle = {
-   height: '100%',
-   width: '100%',
- }
+  useEffect(() => {
+     const map = new T.Map(mapref.current, MapOptions) 
+     let latlng = lng&&lat ?new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
+
+    
+    
+
+     map.centerAndZoom(latlng, zoom); // 初始化
+     let label = new T.Label({
+        text:companyName,
+        position: latlng,
+        offset: new T.Point(-9, 0)
+
+     })
+     let marker = new T.Marker(latlng)
+     map.addOverLay(label)
+     map.addOverLay(marker)
+     marker.disableDragging(); 
+     map.enableDrag();
+     map.addEventListener("click", (e)=> mapClick(e, map));
+
+     return () => {
+      map.removeEventListener("click",mapClick)
+     }
+  }, [])
   return (
-    <Map style={mapstyle} {...mapOption} onClick={getPosition} ref={mapref} >
-     
-      <Marker  {...markeropt} />
-      <NavigationControl />
-      <CityListControl anchor={BMAP_ANCHOR_TOP_LEFT} />
-      <MapTypeControl />
-      <ScaleControl />
-      <ZoomControl />
-    </Map>
-  );
+    <div style={{flex: 1}} ref={mapref} id="mapBox" >
+
+    </div>
+  )
 }
 export default forwardRef(Index)

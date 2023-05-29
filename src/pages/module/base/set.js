@@ -94,6 +94,7 @@ import {publishState} from '@redux/systemconfig' // 布尔值 发布状态
   .map {
     grid-column: 2;
     grid-row: 7 / 15;
+    display: flex;
   }
   .save {
     grid-column: 2;
@@ -300,7 +301,7 @@ const queryProjectInfo = async () => {
   
 }
 
-const onInput = (e) =>   map.current?.serachMap.search(e.target.value)
+//const onInput = (e) =>   map.current?.serachMap.search(e.target.value)
 const config = {
   rules: [
     {
@@ -326,14 +327,13 @@ const checkProject = (_, value) => {
 }
 const setAaddress = (value) => {
   if (ispublish) return;
-  try {
-   console.log(value)
-  let {lng, lat, address, province, city, district, street, streetNumber} = value
+  try {   
+  let {lng, lat, address} = value
   
    lng && lat && form.setFieldValue('lngLat', `${lng},${lat}`)
   
   address && form.setFieldValue('address', address);
-  province && setAddressDtl([province, city, district])
+  //province && setAddressDtl([province, city, district])
 } catch (error) {
     console.log(error)
 }
@@ -357,9 +357,7 @@ const onFinish = async (values) => {
     
 }
 useEffect(() => {
-  queryProjectInfo();
-  console.dir(map.current.serachMap.search
-    )
+  queryProjectInfo(); 
 }, [projectId])
 
   return (
@@ -472,7 +470,7 @@ useEffect(() => {
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
-      <Item label="项目地址" name="address"  className='address' rules={[
+      {/* <Item label="项目地址" name="address"  className='address' rules={[
               {
                 required: true,
                 message: '请输入详细地址',
@@ -481,6 +479,16 @@ useEffect(() => {
             tooltip="请在地图上刷选或点击获取"
             > 
           <Input placeholder="请在地图上刷选或点击获取"  onChange={onInput} />         
+      </Item> */}
+      <Item label="项目地址" name="address"  className='address' rules={[
+              {
+                required: true,
+                message: '请输入详细地址',
+              },
+            ]}
+            tooltip="请自行输入地址"
+            > 
+          <Input placeholder="请输入详细地址"   />         
       </Item>
       <Item label="经纬度" className="lat" name="lngLat" required>
        
@@ -501,7 +509,9 @@ useEffect(() => {
       </Item>
       <div className='map'  >
           
-          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
+         {/*  <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} /> */}
+
+         <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
          
       </div>
       <Item label="项目备注"  className='remark' name="remark">
