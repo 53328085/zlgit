@@ -8,7 +8,7 @@ import { Form, Image, message, Progress, Select } from 'antd'
 //import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
 import { drawEcharts } from "@com/useEcharts";
 import { useSelector } from 'react-redux'
-// import Mapcom from '@com/useMap'
+import Mapcom from '@com/useMap'
 import BlueColumn from '@com/bluecolumn'
 import first from './imgs/first.png'
 import second from './imgs/second.png'
@@ -393,7 +393,7 @@ export default function Index() {
               </div>
             </div>
 
-            {/* <Mapcom></Mapcom> */}
+            <Mapcom></Mapcom>
            {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
           </div>
 
