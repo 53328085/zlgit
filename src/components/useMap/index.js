@@ -87,7 +87,7 @@ import {Tadi} from '@api/api'
      }
   }, [mapref])
   return (
-    <div style={{flex: 1}} ref={(node) => setMapref(node)} id="mapBox" >
+    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox" >
 
     </div>
   )
