@@ -22,17 +22,19 @@ import {Tadi} from '@api/api'
   const MapOptions = {
     projection: 'EPSG:900913',
     minZoom: 2,
-    maxZoom: 20,
+    maxZoom: 18,
   }
   const map = mapref ? new T.Map(mapref, MapOptions) : null
 
 
   const searchResult = (result) =>{
 		if(result.getStatus() == 0){
+      map.clearOverLays();
 			map.panTo(result.getLocationPoint(), 16);
 			//创建标注对象
 	        var marker = new T.Marker(result.getLocationPoint());
 	        //向地图上添加标注
+
 	        map.addOverLay(marker);
 		}else{
 			message.error({count: result.getMsg()});
@@ -40,7 +42,7 @@ import {Tadi} from '@api/api'
 		
 	}
   const serachMap = (value) => {
-    map.clearOverLays();
+   
 		geocoder.getPoint(value, searchResult)
   }
   const mapClick = (result) =>  {  
@@ -67,7 +69,7 @@ import {Tadi} from '@api/api'
      let latlng = lng&&lat ?new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
      map.centerAndZoom(latlng, zoom); // 初始化
      let label = new T.Label({
-        text:companyName,
+        text: lng&&lat ? '' : companyName,
         position: latlng,
         offset: new T.Point(-9, 0)
 
