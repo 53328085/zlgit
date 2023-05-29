@@ -1,10 +1,10 @@
 import React, {useState, useRef} from 'react'
 import {useAntdTable} from 'ahooks'
 import {flushSync} from 'react-dom'
-import {Typography, Space, Form, Input, Divider} from 'antd'
+import {Typography, Space, Form, Input, Divider, message} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
-import moment from 'moment';
+import moment, { duration } from 'moment';
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
@@ -184,7 +184,7 @@ const showModl = () => {
         refresh()
       }})
     } 
-    !success && custMsg({success, content: errMsg, type: 'warning'} )
+    !success &&   message.error({content: errMsg || '数据出错', duration: 1})
 
   
    
