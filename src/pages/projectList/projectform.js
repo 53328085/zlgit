@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef} from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef} from "react";
 import moment from 'moment';
 import {
   Form,
@@ -126,7 +126,7 @@ const Info = styled.span`
     remark: "", //备注
   };
   const [initialValues] = useState(params);
- 
+  
  
   const [imgLogo, setImgLogo] = useState(projectlog)
   const [imgProject, setImgProject] = useState(projectimg)
@@ -173,6 +173,12 @@ const Info = styled.span`
    
    return params; */
   }  
+  const map = useRef()
+  const onInput = (e) =>   map.current?.serachMap(e.target.value)
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
 
   useImperativeHandle(ref, () => ({
     onSubmint
@@ -202,7 +208,7 @@ const Info = styled.span`
           required: true 
         }
       ]}>
-        <CdatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" />
+        <CdatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" disabledDate={disabledDate} />
       </Item>
       {/*  imgLogo: "",
     imgProject: '', */}
@@ -261,7 +267,7 @@ const Info = styled.span`
             }}
           />
         </Item> */} 
-          <Comipt placeholder="请输入项目的详细地址" /> 
+          <Comipt placeholder="请输入项目的详细地址" onChange={onInput} /> 
       </Item>
       <Item label="经纬度"  className="lnglat" tooltip="请从地图上点击获取">
         <Row gutter={16}>
@@ -288,7 +294,7 @@ const Info = styled.span`
         </Row>
       </Item>
       <div className="map">
-        <Mapcom setAaddress={setAaddress} initialValues={initialValues} />
+        <Mapcom setAaddress={setAaddress} initialValues={initialValues} ref={map} />
       </div>
     </Formbox>
   );

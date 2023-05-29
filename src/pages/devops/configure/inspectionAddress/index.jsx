@@ -299,7 +299,7 @@ export default function Index() {
           alignItems: 'center',
         }}
         initialValues={{
-          areaId: 0,
+          areaId: onelevel.length>0?0:null,
           alike: ''
         }}
       >

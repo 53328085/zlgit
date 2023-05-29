@@ -8,14 +8,14 @@ import { Form, Image, message, Progress, Select } from 'antd'
 //import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
 import { drawEcharts } from "@com/useEcharts";
 import { useSelector } from 'react-redux'
-// import Mapcom from '@com/useMap'
+import Mapcom from '@com/useMap'
 import BlueColumn from '@com/bluecolumn'
 import first from './imgs/first.png'
 import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
-import Map,{EmptyMap} from './mapcomp'
+// import Map,{EmptyMap} from './mapcomp'
 
 const Mainbox = styled.div`
   display: grid;
@@ -393,8 +393,8 @@ export default function Index() {
               </div>
             </div>
 
-            {/* <Mapcom></Mapcom> */}
-           {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>} 
+            <Mapcom></Mapcom>
+           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
           </div>
 
           <div className='rigth'>

@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react'
+import {flushSync} from 'react-dom'
 import {useRequest, useAntdTable} from 'ahooks'
 import {Typography, Space, Form, Input, Select, Switch, message, DatePicker} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
@@ -30,6 +31,22 @@ export default function Account({projectId, CModal}) {
  const {roleType} = useSelector(selectUser) || {};
  const showview = roleType == 1 || roleType == 2
  const title = isAdd ? '新增账号' : '编辑账号';
+
+
+ const [initform, setInitialValues] = useState({
+  password: true,
+  enable: true,
+  initialValues: {
+    enabled: true,
+    RoleType: '1'
+  },
+  roletype: [
+    {
+      id: '1',
+      name: '运营管理员',
+    },
+  ]
+ })
 const showModl = () => { 
    setIsAdd(true)
    mref.current.onOpen()
@@ -76,7 +93,7 @@ const showModl = () => {
    }
  
  }
- const edit = (record) => {
+/*  const edit = (record) => {
     setRecord({...Record, ...record});
      
     setIsAdd(false)
@@ -91,6 +108,23 @@ const showModl = () => {
     mref.current.onOpen()
 
  }
+ */
+
+ const edit = (item) => {
+  setRecord({...item});
+   
+  setIsAdd(false)
+  item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
+ item.enabled = item.enabled  == 1
+ flushSync(() => {
+  setInitialValues({
+    ...initform, 
+    password: false,
+    initialValues: {...item, RoleType: '1'}})
+}) 
+  mref.current.onOpen()
+
+}
  const columns = [  
         {
           dataIndex: "name",
@@ -166,8 +200,10 @@ const showModl = () => {
  const {submit} = search;
  const onOk = async () => {
   try {
-    let data = await mform.validateFields();
+    let data = await mref.current.onGetvalue();
+    console.log(data)
     delete data.rpwd
+    delete data.RoleType
     let handler = isAdd ? AddOperationManager : Update;
     let content = isAdd ? '新增成功' : '编辑成功';
     let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0, validStageTime: data.validStageTime.format('YYYY-MM-DD')} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id, validStageTime: data.validStageTime.format('YYYY-MM-DD')};
@@ -177,7 +213,7 @@ const showModl = () => {
       mref.current.onCancel();
       refresh()
     }})
-    !success && custMsg({success, content: errMsg, type: 'warning'} )
+    !success && message.error({content: errMsg || '数据出错', duration: 1} )
 
   
    
@@ -199,7 +235,11 @@ const showModl = () => {
             </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
-     <CModal width={554} title={title} ref={mref} mold='cust' onOk={onOk}>
+
+     <CModal width={554} title={title} ref={mref} mold='default' onOk={onOk}   fromprops={initform} > 
+
+    </CModal>
+    {/*  <CModal width={554} title={title} ref={mref} mold='cust' onOk={onOk}>
          <Form 
          form={mform}   
          size="middle"  
@@ -290,7 +330,7 @@ const showModl = () => {
                     }} />
              </Item> 
          </Form>
-     </CModal>
+     </CModal> */}
      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
          <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
