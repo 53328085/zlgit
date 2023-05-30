@@ -98,7 +98,7 @@ const Formbox = styled(Form)`
 `;
 const Info = styled.span`
   font-size: 12px;
-  color: rgba(0,0,0,0.85);
+  color: #fff;
 `
  function Set(props, ref) {
   const [form] = Form.useForm();
