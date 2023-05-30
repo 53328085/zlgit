@@ -2,9 +2,8 @@
 // 天地图
 
 
-import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle} from "react";
-import {useSelector} from 'react-redux'
-import {systemConfigInfo} from '@redux/systemconfig'
+import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from "react";
+
 import {message} from 'antd'
  
   function Index(props, ref) {
@@ -14,7 +13,6 @@ import {message} from 'antd'
   
   const [lng, lat] = defaultpoint?.split(',') || []
  
-  let {companyName} = useSelector(systemConfigInfo)
   const [zoom] = useState(18)
 
 
@@ -25,8 +23,8 @@ import {message} from 'antd'
     maxZoom: 18,
   }
  
-  let mapref = useRef()
-  let map = mapref.current? new T.Map(mapref.current, MapOptions) : null
+  let [mapref, setMapref] = useState()
+  let map = mapref ? new T.Map(mapref, MapOptions) : null
 
   const addmarker = (latlng, text='') => {
      map.clearOverLays()
@@ -38,7 +36,6 @@ import {message} from 'antd'
      })
      map.addOverLay(marker);
      map.addOverLay(label)
-
   }
 
 
@@ -80,8 +77,8 @@ import {message} from 'antd'
     serachMap
   }))
   useEffect(() => {
-     if(!mapref.current || !map) return
-    
+     if(!mapref) return
+     
      let latlng = lng&&lat ?new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
      map.centerAndZoom(latlng, zoom); // 初始化
     
@@ -97,9 +94,9 @@ import {message} from 'antd'
      });
    
   
-  }, [mapref.current, map])
+  }, [mapref])
   return (
-    <div style={{flex: 1}} ref={mapref} id="mapBox" >
+    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox" >
 
     </div>
   )
