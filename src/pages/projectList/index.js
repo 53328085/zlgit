@@ -490,7 +490,6 @@ export default function Index() {
   ];
 
   const getTableData = ({ current, pageSize }, formData) => {
-    console.log(formData)
     //setFormParams((formParams) => ({ ...formParams, ...formData }));
 
    const params = Object.assign(
@@ -585,8 +584,7 @@ tableProps.pagination.size="default" // 页码大小默认
       align: "center",
     },
   ]
-  const getRecord = ({current, pageSize}, formData) => {    
-    console.log(formData) 
+  const getRecord = ({current, pageSize}, formData) => {        
     try {
      let {date} = formData
      let start='0001-01-01', end ='0001-01-01';
