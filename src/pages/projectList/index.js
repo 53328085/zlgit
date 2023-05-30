@@ -1,6 +1,6 @@
 import React, { useState,  useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { nanoid } from "@reduxjs/toolkit";
+import { current, nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import moment from "moment";
@@ -545,31 +545,7 @@ tableProps.pagination.size="default" // 页码大小默认
  const OprecordCom = () => {
 
   const [opform] = Form.useForm()
-  const [opdata, setOpdata] = useState([])
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 12,
-    total: 0
-  })
-
-  let params = {
-    //查询
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-    start:  '',
-    end: ''
-  };
-  const tableOnchange = (e) => {
-    console.log(e)
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
-   
-  }
-
-
+ 
   const opcolumns = [ 
     {
       dataIndex: "projectId",
@@ -609,39 +585,47 @@ tableProps.pagination.size="default" // 页码大小默认
       align: "center",
     },
   ]
-  const getRecord = async () => {
-     let start = '0001-01-01'
-     let end = '0001-01-01'
-     try {
-      let {date} = opform.getFieldsValue()
-       if (Array.isArray(date) && date.length > 1) {
+  const getRecord = ({current, pageSize}, formData) => {    
+    console.log(formData) 
+    try {
+     let {date} = formData
+     let start='0001-01-01', end ='0001-01-01';
+      if (Array.isArray(date) && date.length > 1) {
         start = date[0].format('YYYY-MM-DD')
-         end = date[1].format('YYYY-MM-DD')+" 23:59:59"
-       }
-      params = {...params, start, end} 
-    let {success, data, total} =  await  ProjectList.QueryProjectLog(params) 
-     if (success) {
-      setOpdata([...data])
-      setPagination({
-        ...pagination,
-        total,
-      })
-     }else {
-      setOpdata([])
-      setPagination({
-        ...pagination,
-        total: 0,
-      })
+        end = date[1].format('YYYY-MM-DD')+" 23:59:59"
+      } 
+    let params = {pageNum: current, pageSize, start, end} 
+     return ProjectList.QueryProjectLog(params).then(res => {
+       let {success, data, total} = res
+       if (success) {
+         return {
+            list: data,
+            total,
+         }
+      
+       }else {
+        return {
+          list: [],
+          total: 0
+        }
      }     
-   
-     } catch (error) {
-       console.log(error)
-     }
-     
-  }
- useEffect(() => {
-  getRecord()
- }, [pagination.current])
+   }).catch(e => {
+     console.log(e)
+   })
+    
+  
+    } catch (error) {
+      console.log(error)
+    }
+    
+ }
+  const {tableProps, search} = useAntdTable(getRecord, {
+  
+    defaultParams: [{current: 1, pageSize: 12}, {start: '0001-01-01', end: '0001-01-01'}],
+    form: opform,
+  })
+ let {submit} = search
+ 
  return  <Opbox>
          
   <Form
@@ -649,15 +633,13 @@ tableProps.pagination.size="default" // 页码大小默认
   >
     
       <Item label="操作时间" name="date">
-         <RangePicker style={{width: '408px'}} onChange={getRecord} />
+         <RangePicker style={{width: '408px'}} onChange={submit} />
       </Item>
   </Form>
 <UseTabel
     columns={opcolumns}
-    dataSource={opdata}
-    pagination={pagination} 
-    onChange={tableOnchange}
-    
+   {...tableProps}
+    scroll={{y: '695px'}}
     rowKey="id"
   />  
 </Opbox>
