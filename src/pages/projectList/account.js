@@ -48,9 +48,9 @@ const showModl = () => {
   try {
     let {success, errMsg} =  await DeleteAccount(id)
 
-   success && custMsg({ content: '删除成功',  onClose: () => {
-      refresh()
+   success && custMsg({ content: '删除成功',  onClose: () => {     
       dref.current.onCancel()
+      refresh()
     }})
    !success &&  custMsg({content: errMsg, type: 'warning'} )
    
@@ -67,7 +67,7 @@ const showModl = () => {
    try {
     const {id} = Record
     const {success, errMsg} =  await ResetPassword({id, pwd: newpwd.current})
-    console.log(success)
+  
     success && custMsg({success, content: '密码重置成功',  onClose: () => {
      
       rref.current.onCancel()
