@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
+import { selectProjectId } from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
 
 import logo from './topologyLogo.png'
 // 左侧工具栏图标
@@ -23,26 +25,80 @@ import '../../assets/css/font_bz4csze2alg/iconfont.css'
 
 import FileSaver from 'file-saver'
 
+import { distributionRoom } from '@api/api.js'
+import { useReactive } from "ahooks";
+
 export default function index() {
   const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
   const [lineForm] = Form.useForm()
   const [nameForm] = Form.useForm()
+  const [bindForm] = Form.useForm()
+  const Item = Form.Item
+  const projectId = useSelector(selectProjectId);
+
+  const { addChart, queryChart, updateChart } = distributionRoom
 
   const nameRef = useRef()
-  const Item = Form.Item
+  const bindRef = useRef()
   let canvas
   const [newCanvas, setNewCanvas] = useState()
   const canvasOptions = {}
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
+
+  const getUrlParams = url => {
+    let urlStr = url.split('?')[1]
+    // 创建空对象存储参数
+    let obj = {};
+    // 再通过 & 将每一个参数单独分割出来
+    let paramsArr = urlStr.split('&')
+    for (let i = 0, len = paramsArr.length; i < len; i++) {
+      // 再通过 = 将每一个参数分割为 key:value 的形式
+      let arr = paramsArr[i].split('=')
+      obj[arr[0]] = arr[1];
+    }
+    return obj
+  }
+
+  const getData = getUrlParams(window.location.href)
+
+  const state = useReactive({
+    title: '',
+    chartData: {}
+  })
+
   useEffect(() => {
     registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
+    if (getData.type == 'edit') {
+      queryChart(projectId, getData.id).then(res => {
+        if (res.success) {
+          let data = {
+            id: res.data.id,
+            name: res.data.name,
+            roomId: res.data.roomId,
+            remark: res.data.remark
+          }
+          state.chartData = data
+          let dateGroup = JSON.parse(res.data.dataGroup)
+
+          canvas.data.grid = dateGroup.grid
+          canvas.data.gridColor = dateGroup.gridColor ? dateGroup.gridColor : null
+          canvas.data.bkColor = dateGroup.bkColor ? dateGroup.bkColor : null
+          canvas.data.locked = dateGroup.locked == 1 ? true : false
+          console.log(canvas.data)
+          form.setFieldsValue(canvas.data)
+          canvas.open(dateGroup)
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    }
   }, [])
 
   const { Panel } = Collapse;
@@ -113,6 +169,8 @@ export default function index() {
     // }
   }
   const [nodeTag, setNodeTag] = useState(false)
+  const [nodeType, setNodeType] = useState('设备绑定')
+  const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
     console.log(event)
     // console.log(data)
@@ -121,15 +179,19 @@ export default function index() {
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
           left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 62 + 'px'
+          top: data.evs.y - 110 + 'px'
         })
         setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('数据绑定')
       } else if (data.name == 'image') {
         setContextMenu({
           left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 62 + 'px'
+          top: data.evs.y - 110 + 'px'
         })
         setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('设备绑定')
       }
     }
     if (event == 'line' || event == 'space' || event == 'multi') {
@@ -362,7 +424,6 @@ export default function index() {
           const text = e.target.result + ''
           try {
             const data = JSON.parse(text)
-            console.log(data)
             newCanvas.data.grid = data.grid
             newCanvas.data.gridColor = data.gridColor
             newCanvas.data.bkColor = data.bkColor
@@ -381,22 +442,83 @@ export default function index() {
     let fileName = (newCanvas.data.name || '未命名配电图') + '.json'
     FileSaver.saveAs(
       new Blob([JSON.stringify(newCanvas.data)], { type: 'text/plain;charset=utf-8' }),
-        fileName
+      fileName
     )
   }
 
+
   const saveCanvas = e => {
     e.preventDefault()
-    nameForm.resetFields()
+    if (getData.type == 'add') {
+      state.title = '新增配电图'
+      nameForm.resetFields()
+    } else {
+      state.title = '编辑配电图'
+      nameForm.setFieldValue('name', state.chartData.name)
+      nameForm.setFieldValue('remark', state.chartData.remark)
+    }
     nameRef.current.onOpen()
-    nameForm.setFieldValue('name', newCanvas.data.name)
   }
 
-  const onOk = () => {
+  const onOk = async () => {
+    const values = await nameForm.validateFields()
     newCanvas.data.name = nameForm.getFieldValue('name')
-    nameRef.current.onCancel()
+    newCanvas.data = {
+      ...newCanvas.data,
+      ...form.getFieldsValue(true)
+    }
+    if (getData.type == 'add') {
+      let param = {
+        projectId,
+        roomId: getData.roomId,
+        name: values.name,
+        remark: values.remark,
+        dataGroup: JSON.stringify(newCanvas.data)
+      }
+      addChart(param).then(res => {
+        if (res.success) {
+          nameRef.current.onCancel()
+          message.success('配电图保存成功!')
+          getData.type = 'edit'
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    } else {
+      let param = {
+        id: state.chartData.id,
+        projectId,
+        roomId: state.chartData.roomId,
+        name: values.name,
+        remark: values.remark,
+        dataGroup: JSON.stringify(newCanvas.data)
+      }
+      updateChart(param).then(res => {
+        if (res.success) {
+          nameRef.current.onCancel()
+          message.success('配电图编辑成功!')
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    }
+
   }
 
+  const bindData = () => {
+    setNodeTag(false)
+    bindRef.current.onOpen()
+  }
+
+  const deviceList = []
+  const pointList = []
+  const changeDevice = val => {
+
+  }
+
+  const onbindOk = async () => {
+    const values = await bindForm.validateFields()
+  }
 
   return (
     <>
@@ -438,10 +560,8 @@ export default function index() {
           </Collapse>
         </div>
         <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{ position: 'relative' }}>
-          {(nodeTag) ? <Card style={{ width: 200, position: 'absolute', ...contextmenu }} >
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
+          {(nodeTag) ? <Card style={{ width: 120, height: 46, position: 'absolute', ...contextmenu }} >
+            <div className="bindMenu" onClick={() => bindData()}>{nodeType}</div>
           </Card> : null}
         </div>
         <div className={style.props}>
@@ -503,9 +623,23 @@ export default function index() {
                       <Select.Option value={3}>断点虚线</Select.Option>
                     </Select>
                   </Item>
-                  {/* <Item label='旋转角度' name='rotate'>
-                    <Input style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
-                  </Item> */}
+
+                </Space>
+                {/* <Space>
+                  <Item label='宽' name='width' >
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                  <Item label='高' name='height'>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                </Space> */}
+                <Space>
+                  <Item label='旋转角度' name='rotate' initialValue={0}>
+                    <InputNumber min={0} max={360} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                  <Item label='圆角' name='borderRadius' initialValue={0}>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
                 </Space>
                 <Space>
                   <Item label='线条颜色' name='strokeStyle' initialValue={'#222222'}>
@@ -689,12 +823,46 @@ export default function index() {
           </div> : null}
         </div>
       </div>
-      <CustModal title='配电图文件名' ref={nameRef} mold="cust" width={520} onOk={() => onOk()}>
+      <CustModal title={state.title} ref={nameRef} mold="cust" width={520} onOk={() => onOk()}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
-          <Form name='addForm' form={nameForm}>
-            <Item name='name' label='配电图文件名' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }}>
-              <Input style={{width: 240}}></Input>
+          <Form name='nameForm' form={nameForm}>
+            <Item name='name' label='配电图名称' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }} rules={[{ required: true, message: '请输入配电图文件名' }]}>
+              <Input style={{ width: 240 }}></Input>
             </Item>
+            <Item name='remark' label='备注' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }}>
+              <Input style={{ width: 240 }}></Input>
+            </Item>
+          </Form>
+        </div>
+      </CustModal>
+      <CustModal title={nodeType} ref={bindRef} mold="cust" width={480} onOk={() => onbindOk()}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
+          <Form name='bindForm' form={bindForm} requiredMark={false}>
+            <Item name='deviceId' label='设备名称'  labelAlign='left' rules={[{ required: true, message: '请选择绑定设备' }]}>
+              <Select
+                placeholder="请选择"
+                size="middle"
+                style={{ marginLeft: 16, width: '280px' }}
+                onChange={changeDevice}
+              >
+                {deviceList.map(item => {
+                  return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                })}
+              </Select>
+            </Item>
+            {nodeType == '设备绑定' ? null :
+              <Item name='pointId' label='测点名称' labelAlign='left' rules={[{ required: true, message: '请选择绑定测点' }]}>
+                <Select
+                  placeholder="请选择"
+                  size="middle"
+                  style={{ marginLeft: 16, width: '280px' }}
+                  disabled={!bindForm.getFieldValue('deviceId') ? true : false}
+                >
+                  {pointList.map(item => {
+                    return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                  })}
+                </Select>
+              </Item>}
           </Form>
         </div>
       </CustModal>

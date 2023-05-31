@@ -7,8 +7,9 @@ import { selectProjectId, selectOneLevel, publishState, levelDefaultLabel, selec
 import { distributionRoom } from '@api/api.js'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png'
+import warning from '@imgs/warning.png'
 import Usetable from '@com/useTable'
+import CustModal from '@com/useModal'
 
 export default function Index() {
   const isPublish = useSelector(publishState)
@@ -18,6 +19,8 @@ export default function Index() {
 
   const [form] = Form.useForm()
   const Item = Form.Item
+
+  const dref = useRef()
   //园区选择
   const areaList = useSelector(selectOneLevel)
   const changeArea = (values) => {
@@ -25,7 +28,7 @@ export default function Index() {
     getRoomData()
   }
   //配电房下拉框
-  const { queryPageRoom, queryPageChart } = distributionRoom
+  const { queryPageRoom, queryPageChart, deleteChart } = distributionRoom
   const [roomList, setRoomList] = useState([])
   const getRoomData = () => {
     queryPageRoom(projectId, form.getFieldValue('areaId'), 0, 0).then(res => {
@@ -66,12 +69,12 @@ export default function Index() {
     {
       align: 'center',
       title: '配电系统图名称',
-      dataIndex: 'chartName',
-      key: 'distributionName',
+      dataIndex: 'name',
+      key: 'name',
     }, {
       title: '备注',
-      dataIndex: 'tag',
-      key: 'tag',
+      dataIndex: 'remark',
+      key: 'remark',
       width: 680,
       align: 'center',
     },
@@ -79,12 +82,12 @@ export default function Index() {
     {
       align: 'center',
       title: '配电系统图名称',
-      dataIndex: 'chartName',
-      key: 'distributionName',
+      dataIndex: 'name',
+      key: 'name',
     }, {
       title: '备注',
-      dataIndex: 'tag',
-      key: 'tag',
+      dataIndex: 'remark',
+      key: 'remark',
       align: 'center',
       width: 680,
     },
@@ -136,36 +139,39 @@ export default function Index() {
     })
   }
 
-  const showAdd = (key, label) => {
-    if (areaId == 0 || !areaId) {
-      message.warning('请先选择园区!')
-      return;
-    }
-    if (areaId == 0 || !areaId) {
-      message.warning('请先选择园区!')
-      return;
-    }
-    window.open(`/topology?id=${key}&type=${label}`, '_blank')
+  const showAdd = (areaId, roomId, type) => {
+    window.open(`/topology?roomId=${roomId}&type=${type}`, '_blank')
     // navigate(`/topology?id=${key}&type=${label}`, {
     //   state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
     // })
   }
 
   const edit = (record) => {
-    console.log(record)
-    sessionStorage.setItem('chartData', JSON.stringify(record))
-    window.open(`/topology`, '_blank')
+    let { id } = record
+    let type = 'edit'
+    window.open(`/topology?id=${id}&type=${type}`, '_blank')
   }
 
-  const [deleteModal, setDeleteModal] = useState(false)
-  const deleteOk = () => {
-    setDeleteModal(false)
-  }
-  const handleDelete = () => {
-    setDeleteModal(false)
-  }
+  const [deleteId, setDeleteId] = useState(null)
   const deleteRecord = (record) => {
-    setDeleteModal(true)
+    setDeleteId(record.id)
+    dref.current.onOpen()
+  }
+
+  const onDelete = () => {
+    deleteChart(projectId, deleteId).then(res => {
+      if(res.success){
+        message.success('配电图删除成功!')
+        dref.current.onCancel()
+        if (tableData.length == 1 && pagination.current > 1) {
+          tableOnchange({ current: pagination.current - 1 })
+        } else {
+          getTableData()
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
 
   return (
@@ -204,15 +210,14 @@ export default function Index() {
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
         </div>
-        {isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={() => showAdd(1, 'add')}>新增</Button>}
+        {isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={() => showAdd(form.getFieldValue('areaId'), form.getFieldValue('roomId'), 'add')}>新增</Button>}
         <Usetable style={{marginTop: 16}} ref={tableRef} columns={columns} dataSource={tableData} rowKey='id' pagination={pagination} onChange={tableOnchange} />
-        <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{ danger: true }}>
-          <div className={style.deleteHeader}>删除提示</div>
-          <div className={style.deleteBody}>
-            <img className={style.warnIcon} src={firstwarn}></img>
-            <span>是否确认删除配电系统图？</span>
-          </div>
-        </Modal>
+        <CustModal title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img style={{ marginLeft: 64, marginRight: 32 }} src={warning}></img>
+          <span> 是否确认删除配电系统图？ </span>
+        </div>
+      </CustModal>
       </div>
     </div>
   )
