@@ -488,7 +488,7 @@ useEffect(() => {
             ]}
             tooltip="请在地图上点击获取"
             > 
-          <Input placeholder="请输入详细地址" onChange={onInput}  />         
+          <Input placeholder="请输入详细地址"   onChange={onInput}  />         
       </Item>
       <Item label="经纬度" className="lat" name="lngLat" required>
        
