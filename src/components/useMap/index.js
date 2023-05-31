@@ -1,17 +1,21 @@
  
 // 天地图
 
+/**
+ * @author zhenglin zhu
+ * @description: //lngLat：坐标值可以为以，号分隔的字符串  或者 对象数组 对象包括坐标点和marke 文本 默认lnglat 物联公司： 120.22830511467954, 30.21229461177818
+ * @date 2023-05-31 08:48 
+ */
 
 import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from "react";
 
 import {message} from 'antd'
  
   function Index(props, ref) {
-  const {lngLat, value,setAaddress, onChange} = props
- 
-  const defaultpoint = lngLat || value 
+  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
-  const [lng, lat] = defaultpoint?.split(',') || []
+  const defaultpoint = lngLat || value 
+ 
  
   const [zoom] = useState(18)
 
@@ -26,8 +30,15 @@ import {message} from 'antd'
   let [mapref, setMapref] = useState()
   let map = mapref ? new T.Map(mapref, MapOptions) : null
 
+  const getlnglat = (str) => {
+    const [lng, lat] =  str?.split(',') || []
+
+     return lng&&lat ? new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
+
+  }
+
   const addmarker = (latlng, text='') => {
-     map.clearOverLays()
+      map.clearOverLays()
      let marker = new  T.Marker(latlng);
      let label = new T.Label({
       text,
@@ -37,8 +48,23 @@ import {message} from 'antd'
      map.addOverLay(marker);
      map.addOverLay(label)
   }
+ 
+  const addInfo = (str, text='') => {
+     let latlng = getlnglat(str);
+     console.log(latlng)
+     let marker = new  T.Marker(latlng);
+     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,-30), ...infoconfig});
+   //  infoWin.setLngLat(latlng);     
+    
+     map.addOverLay(marker);
+    // map.addOverLay(infoWin)
+    marker.addEventListener("mouseover", function() {
+     
+      marker.openInfoWindow(infoWin);
+     } )
 
-
+  }
+ 
   const searchResult = (result) =>{   
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
@@ -76,19 +102,36 @@ import {message} from 'antd'
   useImperativeHandle(ref, () => ({
     serachMap
   }))
+
   useEffect(() => {
      if(!mapref) return
-     
-     let latlng = lng&&lat ?new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
-     map.centerAndZoom(latlng, zoom); // 初始化
+     let geocode = new T.Geocoder();
+     let latlng
+     if (!Array.isArray(defaultpoint)) {
+      latlng = getlnglat(defaultpoint) 
+      map.centerAndZoom(latlng, zoom); // 初始化   
+      geocode.getLocation(latlng,mapClick)
+     }else if(Array.isArray(defaultpoint)) {
+       
+        map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
+        defaultpoint.forEach(item => {
+          console.log(item)
+          let {lnglat, text} = item
+          addInfo(lnglat, text)
+        })
+       
+
+     }
+    
+   
     
      
-     let geocode = new T.Geocoder();
+          
+    
 
 
-     geocode.getLocation(latlng,mapClick)
      map.addEventListener("click", (e) => {   
-     
+       if(isck) return;
      
       geocode.getLocation(e.lnglat,mapClick)
      });
