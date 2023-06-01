@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
+import CustModal from '@com/useModal'
+import { selectProjectId } from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
 
 import logo from './topologyLogo.png'
 // 左侧工具栏图标
@@ -17,24 +20,85 @@ import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
+import '../../assets/css/font_g4v09lxfde/iconfont.css'
+import '../../assets/css/font_bz4csze2alg/iconfont.css'
+
+import FileSaver from 'file-saver'
+
+import { distributionRoom } from '@api/api.js'
+import { useReactive } from "ahooks";
 
 export default function index() {
   const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
   const [lineForm] = Form.useForm()
+  const [nameForm] = Form.useForm()
+  const [bindForm] = Form.useForm()
   const Item = Form.Item
+  const projectId = useSelector(selectProjectId);
+
+  const { addChart, queryChart, updateChart } = distributionRoom
+
+  const nameRef = useRef()
+  const bindRef = useRef()
   let canvas
   const [newCanvas, setNewCanvas] = useState()
   const canvasOptions = {}
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
+
+  const getUrlParams = url => {
+    let urlStr = url.split('?')[1]
+    // 创建空对象存储参数
+    let obj = {};
+    // 再通过 & 将每一个参数单独分割出来
+    let paramsArr = urlStr.split('&')
+    for (let i = 0, len = paramsArr.length; i < len; i++) {
+      // 再通过 = 将每一个参数分割为 key:value 的形式
+      let arr = paramsArr[i].split('=')
+      obj[arr[0]] = arr[1];
+    }
+    return obj
+  }
+
+  const getData = getUrlParams(window.location.href)
+
+  const state = useReactive({
+    title: '',
+    chartData: {}
+  })
+
   useEffect(() => {
     registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
+    if (getData.type == 'edit') {
+      queryChart(projectId, getData.id).then(res => {
+        if (res.success) {
+          let data = {
+            id: res.data.id,
+            name: res.data.name,
+            roomId: res.data.roomId,
+            remark: res.data.remark
+          }
+          state.chartData = data
+          let dateGroup = JSON.parse(res.data.dataGroup)
+
+          canvas.data.grid = dateGroup.grid
+          canvas.data.gridColor = dateGroup.gridColor ? dateGroup.gridColor : null
+          canvas.data.bkColor = dateGroup.bkColor ? dateGroup.bkColor : null
+          canvas.data.locked = dateGroup.locked == 1 ? true : false
+          console.log(canvas.data)
+          form.setFieldsValue(canvas.data)
+          canvas.open(dateGroup)
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    }
   }, [])
 
   const { Panel } = Collapse;
@@ -105,6 +169,8 @@ export default function index() {
     // }
   }
   const [nodeTag, setNodeTag] = useState(false)
+  const [nodeType, setNodeType] = useState('设备绑定')
+  const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
     console.log(event)
     // console.log(data)
@@ -112,16 +178,20 @@ export default function index() {
       // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
-          left: data.evs.x - 210  + 'px',
-          top: data.evs.y - 62 + 'px'
+          left: data.evs.x - 210 + 'px',
+          top: data.evs.y - 110 + 'px'
         })
         setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('数据绑定')
       } else if (data.name == 'image') {
         setContextMenu({
           left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 62 + 'px'
+          top: data.evs.y - 110 + 'px'
         })
         setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('设备绑定')
       }
     }
     if (event == 'line' || event == 'space' || event == 'multi') {
@@ -132,7 +202,7 @@ export default function index() {
       switch (event) {
         case 'node':
         case 'addNode':
-          // nodeForm.resetFields()
+          nodeForm.resetFields()
           setProps({
             node: data,
             line: null,
@@ -300,6 +370,8 @@ export default function index() {
   const onChangeDash = val => {
     // props.node.dash = nodeForm.getFieldValue('dash')
     let obj = nodeForm.getFieldsValue(true)
+    console.log(obj)
+    console.log(props.node)
     for (const key in obj) {
       if (Array.isArray(obj[key])) { } else if (typeof obj[key] === 'object') {
         for (const k in obj[key]) {
@@ -326,13 +398,151 @@ export default function index() {
     onUpdateProps(props.line)
   }
 
+  const menuItems = [
+    {
+      key: '1',
+      label: (
+        <div onClick={() => importJson()}>导入json文件</div>
+      )
+    }, {
+      key: '2',
+      label: (
+        <div onClick={() => exportJson()}>导出json文件</div>
+      )
+    }
+  ]
+
+  const importJson = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.onchange = event => {
+      const elem = event.srcElement || event.target;
+      if (elem.files && elem.files[0]) {
+        const reader = new FileReader()
+        reader.readAsText(elem.files[0])
+        reader.onload = e => {
+          const text = e.target.result + ''
+          try {
+            const data = JSON.parse(text)
+            newCanvas.data.grid = data.grid
+            newCanvas.data.gridColor = data.gridColor
+            newCanvas.data.bkColor = data.bkColor
+            newCanvas.data.locked = data.locked == 1 ? true : false
+            form.setFieldsValue(newCanvas.data)
+            newCanvas.open(data)
+            setTimeout(() => { newCanvas.render() }, 0)
+          } catch (e) { }
+        }
+      }
+    }
+    input.click();
+  }
+
+  const exportJson = () => {
+    let fileName = (newCanvas.data.name || '未命名配电图') + '.json'
+    FileSaver.saveAs(
+      new Blob([JSON.stringify(newCanvas.data)], { type: 'text/plain;charset=utf-8' }),
+      fileName
+    )
+  }
+
+
+  const saveCanvas = e => {
+    e.preventDefault()
+    if (getData.type == 'add') {
+      state.title = '新增配电图'
+      nameForm.resetFields()
+    } else {
+      state.title = '编辑配电图'
+      nameForm.setFieldValue('name', state.chartData.name)
+      nameForm.setFieldValue('remark', state.chartData.remark)
+    }
+    nameRef.current.onOpen()
+  }
+
+  const onOk = async () => {
+    const values = await nameForm.validateFields()
+    newCanvas.data.name = nameForm.getFieldValue('name')
+    newCanvas.data = {
+      ...newCanvas.data,
+      ...form.getFieldsValue(true)
+    }
+    if (getData.type == 'add') {
+      let param = {
+        projectId,
+        roomId: getData.roomId,
+        name: values.name,
+        remark: values.remark,
+        dataGroup: JSON.stringify(newCanvas.data)
+      }
+      addChart(param).then(res => {
+        if (res.success) {
+          nameRef.current.onCancel()
+          message.success('配电图保存成功!')
+          getData.type = 'edit'
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    } else {
+      let param = {
+        id: state.chartData.id,
+        projectId,
+        roomId: state.chartData.roomId,
+        name: values.name,
+        remark: values.remark,
+        dataGroup: JSON.stringify(newCanvas.data)
+      }
+      updateChart(param).then(res => {
+        if (res.success) {
+          nameRef.current.onCancel()
+          message.success('配电图编辑成功!')
+        } else {
+          message.error(res.errMsg)
+        }
+      })
+    }
+
+  }
+
+  const bindData = () => {
+    setNodeTag(false)
+    bindRef.current.onOpen()
+  }
+
+  const deviceList = []
+  const pointList = []
+  const changeDevice = val => {
+
+  }
+
+  const onbindOk = async () => {
+    const values = await bindForm.validateFields()
+  }
+
   return (
     <>
       <div className={style.header}>
         <img className={style.logo} src={logo}></img>
         <span className={style.headerTitle}>智慧能源服务平台</span>
       </div>
-      <div className={style.titleMenu}></div>
+      <div className={style.titleMenu}>
+        <Dropdown menu={{ items: menuItems }} overlayStyle={{ width: 120 }}>
+          <a onClick={e => e.preventDefault()} className={style.menu}>
+            <div className={style.icon}>
+              <i className="icon-wenjian iconfont"></i>
+              <i className="icon-xiajiantou iconfont" style={{ position: 'absolute' }}></i>
+            </div>
+            <div>文件</div>
+          </a>
+        </Dropdown>
+        <a onClick={e => saveCanvas(e)} className={style.menu}>
+          <div className={style.icon}>
+            <i className="icon-baocun iconfont"></i>
+          </div>
+          <div>保存</div>
+        </a>
+      </div>
       <div className={style.topology}>
         <div className={style.tools}>
           <Collapse defaultActiveKey={[1]} expandIconPosition={'end'}>
@@ -350,10 +560,8 @@ export default function index() {
           </Collapse>
         </div>
         <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{ position: 'relative' }}>
-          {(nodeTag) ? <Card style={{ width: 200, position: 'absolute', ...contextmenu }} >
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
+          {(nodeTag) ? <Card style={{ width: 120, height: 46, position: 'absolute', ...contextmenu }} >
+            <div className="bindMenu" onClick={() => bindData()}>{nodeType}</div>
           </Card> : null}
         </div>
         <div className={style.props}>
@@ -415,16 +623,30 @@ export default function index() {
                       <Select.Option value={3}>断点虚线</Select.Option>
                     </Select>
                   </Item>
-                  {/* <Item label='旋转角度' name='rotate'>
-                    <Input style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
-                  </Item> */}
+
+                </Space>
+                {/* <Space>
+                  <Item label='宽' name='width' >
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                  <Item label='高' name='height'>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                </Space> */}
+                <Space>
+                  <Item label='旋转角度' name='rotate' initialValue={0}>
+                    <InputNumber min={0} max={360} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
+                  <Item label='圆角' name='borderRadius' initialValue={0}>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                  </Item>
                 </Space>
                 <Space>
                   <Item label='线条颜色' name='strokeStyle' initialValue={'#222222'}>
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></Input>
                   </Item>
                   <Item label='线条宽度(px)' name='lineWidth'>
-                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -438,7 +660,7 @@ export default function index() {
                 <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
                 <Space>
                   <Item label='大小' name='fontSize'>
-                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeDash}></InputNumber>
                   </Item>
                   <Item label='加粗' name='fontWeight'>
                     <Select style={{ width: 106, height: 32 }} onChange={onChangeDash}>
@@ -507,7 +729,7 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='线条宽度(px)' name='lineWidth'>
-                    <InputNumber min={1} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -543,7 +765,7 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='起点箭头大小(px)' name='fromArrowSize'>
-                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <Space>
@@ -551,13 +773,13 @@ export default function index() {
                     <Input type='color' style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></Input>
                   </Item>
                   <Item label='终点箭头大小(px)' name='toArrowSize'>
-                    <InputNumber min={5} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber min={0} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                 </Space>
                 <div className={style.title} style={{ width: 260, marginLeft: -15 }}>文字样式</div>
                 <Space>
                   <Item label='大小' name='fontSize'>
-                    <InputNumber min={12} style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
+                    <InputNumber style={{ width: 106, height: 32, padding: 0 }} onChange={onChangeLine}></InputNumber>
                   </Item>
                   <Item label='加粗' name='fontWeight'>
                     <Select style={{ width: 106, height: 32 }} onChange={onChangeLine}>
@@ -601,6 +823,49 @@ export default function index() {
           </div> : null}
         </div>
       </div>
+      <CustModal title={state.title} ref={nameRef} mold="cust" width={520} onOk={() => onOk()}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
+          <Form name='nameForm' form={nameForm}>
+            <Item name='name' label='配电图名称' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }} rules={[{ required: true, message: '请输入配电图文件名' }]}>
+              <Input style={{ width: 240 }}></Input>
+            </Item>
+            <Item name='remark' label='备注' requiredMark={false} labelAlign='left' labelCol={{ span: 8 }}>
+              <Input style={{ width: 240 }}></Input>
+            </Item>
+          </Form>
+        </div>
+      </CustModal>
+      <CustModal title={nodeType} ref={bindRef} mold="cust" width={480} onOk={() => onbindOk()}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
+          <Form name='bindForm' form={bindForm} requiredMark={false}>
+            <Item name='deviceId' label='设备名称'  labelAlign='left' rules={[{ required: true, message: '请选择绑定设备' }]}>
+              <Select
+                placeholder="请选择"
+                size="middle"
+                style={{ marginLeft: 16, width: '280px' }}
+                onChange={changeDevice}
+              >
+                {deviceList.map(item => {
+                  return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                })}
+              </Select>
+            </Item>
+            {nodeType == '设备绑定' ? null :
+              <Item name='pointId' label='测点名称' labelAlign='left' rules={[{ required: true, message: '请选择绑定测点' }]}>
+                <Select
+                  placeholder="请选择"
+                  size="middle"
+                  style={{ marginLeft: 16, width: '280px' }}
+                  disabled={!bindForm.getFieldValue('deviceId') ? true : false}
+                >
+                  {pointList.map(item => {
+                    return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                  })}
+                </Select>
+              </Item>}
+          </Form>
+        </div>
+      </CustModal>
     </>
   )
 }

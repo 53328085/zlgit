@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1305399",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "2678643",
+      "name": "文件",
+      "font_class": "wenjian",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    }
+  ]
+}

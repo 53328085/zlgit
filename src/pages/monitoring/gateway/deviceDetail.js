@@ -233,6 +233,17 @@ export default function GatewayDetail(props) {
     const option = (objList, xAxisTrend, start) => ({
         xAxis: {
             data: xAxisTrend ? xAxisTrend : [],
+            type: "category",
+            boundaryGap: true,
+            axisTick: {
+              alignWithLabel: true,
+            },
+            axisLabel: {
+                formatter: (value) => {       
+                   return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")        
+                  //return  type.value == 1 ? Utlis.chintDate(value, 3) : value;
+                },
+              },
         },
         series: objList ? objList : [],
         grid: {
@@ -253,8 +264,9 @@ export default function GatewayDetail(props) {
         },
         dataZoom: {
             type: 'inside',
-            start: start,
-            end: 100,
+          //  start: start,
+           // end: 100,
+          
         }
     });
 

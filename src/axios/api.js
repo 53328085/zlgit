@@ -1483,6 +1483,11 @@ export class distributionRoom {
     );
   static configLineMeter = (data) =>
     server.post(`Distribution/DistributionRoom/ConfigureLineMeter`, data);
+  static queryPageChart = (projectId, areaId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionRoom/QueryPageChart?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+  static addChart = (data) => server.post(`Distribution/DistributionRoom/AddChart`, data)  
+  static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/QueryChart?projectId=${projectId}&id= ${id}`)  
+  static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
+  static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
 }
  
 //配电房设备

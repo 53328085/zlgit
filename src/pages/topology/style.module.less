@@ -24,6 +24,28 @@
   align-items: center;
   background-color: #f8f8f8;
   border-bottom: 1px solid #d9d9d9;
+  padding: 0 16px;
+  .menu{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    color: #595959;
+    font-size: 14px;
+    padding: 0 16px;
+    &:hover{
+      color: #1890ff;
+    }
+    .icon+div{
+      font-size: 12px;
+    }
+    .icon{
+      height: 24px;
+      line-height: 24px;
+    }
+  }
 }
 
 .topology {
@@ -94,6 +116,23 @@
       position: relative;
       overflow: auto;
       background: #fff;
+      .ant-card-body{
+        padding: 0;
+      }
+      .bindMenu{
+        width: 110px;
+        height: 30px;
+        margin:  8px 5px;
+        line-height: 30px;
+        font-size: 14px;
+        color: #333;
+        text-align: center;
+        cursor: pointer;
+        &:hover{
+          background-color: #1890ff;
+          color: #fff;
+        }
+      }
     }
   }
 
