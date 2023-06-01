@@ -388,6 +388,9 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
+  const MapMemo = useMemo(()=>{
+      return <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>
+  },[alarmPosition])
   useEffect(() => {
     if(oneLevel.length>0){
       getAlarmCurrent()
@@ -471,8 +474,8 @@ export default function Index() {
                 <span style={{ fontWeight: 'bold' }}>{warn?.three}</span>
               </div>
             </div>
-            {/* <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom> */}
-            {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:null}
+            {MapMemo}
+            {/* {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:<Mapcom></Mapcom>} */}
            {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
           </div>
 

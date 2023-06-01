@@ -16,7 +16,7 @@ import {message} from 'antd'
   
   const defaultpoint = lngLat || value 
 
-  console.log(defaultpoint)
+
   const [zoom] = useState(18)
 
 
@@ -105,12 +105,12 @@ import {message} from 'antd'
   useImperativeHandle(ref, () => ({
     serachMap
   }))
-
+  console.log(mapref,defaultpoint)
   useEffect(() => {
      if(!mapref) return
-     console.log(defaultpoint)
      let geocode = new T.Geocoder();
      let latlng
+  
      if (!Array.isArray(defaultpoint)) {
       latlng = getlnglat(defaultpoint) 
       map.centerAndZoom(latlng, zoom); // 初始化   
@@ -119,7 +119,6 @@ import {message} from 'antd'
        
         map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
         defaultpoint.forEach(item => {
-          console.log(item)
           let {lnglat, text} = item
           addInfo(lnglat, text)
         })
@@ -134,6 +133,7 @@ import {message} from 'antd'
     
 
      map.addEventListener("click", (e) => {   
+      console.log(e,isck)
        if(isck) return;
      
       geocode.getLocation(e.lnglat,mapClick)
