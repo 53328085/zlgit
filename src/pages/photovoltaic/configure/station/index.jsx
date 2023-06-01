@@ -1,7 +1,9 @@
 import React from 'react'
-
-export default function Index() {
+import Building from '@com/building'
+export default function Index({pagename}) {
   return (
-    <div>站点管理</div>
+    <div style={{flex: 1, display:"flex", justifyContent: 'center', alignContent: 'center'}}>
+      <Building pagename={pagename} />
+    </div>
   )
 }
