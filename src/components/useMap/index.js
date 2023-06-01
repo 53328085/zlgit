@@ -15,8 +15,8 @@ import {message} from 'antd'
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
   const defaultpoint = lngLat || value 
- 
- 
+
+  console.log(defaultpoint)
   const [zoom] = useState(18)
 
 
@@ -53,7 +53,7 @@ import {message} from 'antd'
      let latlng = getlnglat(str);
      console.log(latlng)
      let marker = new  T.Marker(latlng);
-     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,-30), ...infoconfig});
+     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
    //  infoWin.setLngLat(latlng);     
     
      map.addOverLay(marker);
@@ -62,7 +62,10 @@ import {message} from 'antd'
      
       marker.openInfoWindow(infoWin);
      } )
-
+     marker.addEventListener("mouseout",function() {
+      marker.closeInfoWindow(infoWin)
+     }) 
+     
   }
  
   const searchResult = (result) =>{   
@@ -105,6 +108,7 @@ import {message} from 'antd'
 
   useEffect(() => {
      if(!mapref) return
+     console.log(defaultpoint)
      let geocode = new T.Geocoder();
      let latlng
      if (!Array.isArray(defaultpoint)) {
@@ -128,7 +132,6 @@ import {message} from 'antd'
      
           
     
-
 
      map.addEventListener("click", (e) => {   
        if(isck) return;
