@@ -473,7 +473,7 @@ export default function Index() {
             </div>
             {/* <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom> */}
             {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:null}
-           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}null
+           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
           </div>
 
           <div className='rigth'>
