@@ -133,7 +133,7 @@ export default function Index() {
   const [task,setTask]=useState()//巡检任务
   const [datasetMonth,setDatasetMonth] =useState() //派单
   const [datasetMonthl,setDatasetMonthl]=useState()//告警事件
-  const [alarmPosition,setAlarmPosition] =useState()
+  const [alarmPosition,setAlarmPosition] =useState(null)
   let params = {
     projectId,
     areaId: areavalue
@@ -200,7 +200,86 @@ export default function Index() {
       const { data: { all, one, two, three, alarmPosition }, errMsg, success } = await operation.AlarmCurrent(params)
       if (success) {
         setWarn({ all, one, two, three })
-        setAlarmPosition(alarmPosition)
+      const alarmlist =  alarmPosition.map(message=>{
+          return {
+            ...message,
+            lnglat:message.lngLat,
+            text:`<div style="
+            border-radius:2px;
+            padding:12px;
+            display:grid;
+            grid-template-rows:repeat(5,1fr);
+            ">
+            <p style="
+              display:flex;
+              justify-content:space-between;
+              font-size:12px;
+              white-space:nowrap;
+              margin:0px;
+              margin-bottom:12px;
+            ">
+            <span>告警坐标</span>
+            <span style="marginLeft:24px">${message?.lngLat}</span>
+        </p>
+        <p style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        white-space:nowrap;
+        margin:0px;
+        margin-bottom:12px;
+      ">
+            <span>设备编号</span>
+            <span style="marginLeft:24px">${message?.sn}</span>
+        </p>
+        <p style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        white-space:nowrap;
+        margin:0px;
+        margin-bottom:12px;
+      ">
+            <span>设备类型</span>
+            <span style="marginLeft:24px">${message?.category}</span>
+        </p>
+        <p style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        white-space:nowrap;
+        margin:0px;
+        margin-bottom:12px;
+      ">
+            <span>告警等级</span>
+            <span style="marginLeft:24px">${message?.level}级</span>
+        </p>
+        <p style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        white-space:nowrap;
+        margin:0px;
+        margin-bottom:12px;
+      ">
+            <span>告警详情</span>
+            <span style="marginLeft:24px">${message?.content}</span>
+        </p>
+        <p style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        white-space:nowrap;
+        margin:0px;
+        margin-bottom:12px;
+      ">
+            <span>告警地址</span>
+            <span style="marginLeft:24px">${message.address}</span>
+        </p>
+            </div>`
+          }
+        })
+        setAlarmPosition(alarmlist)
       } else {
         message.error(errMsg)
       }
@@ -392,9 +471,9 @@ export default function Index() {
                 <span style={{ fontWeight: 'bold' }}>{warn?.three}</span>
               </div>
             </div>
-
-            <Mapcom></Mapcom>
-           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
+            {/* <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom> */}
+            {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:null}
+           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}null
           </div>
 
           <div className='rigth'>

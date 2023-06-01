@@ -22,7 +22,8 @@ let LoaclForm =forwardRef((props,ref)=>{
     const context =useContext(CustContext)
     console.log(context)
     const search=(text)=>{
-        mapRef.current.serachMap.search(inpvalue)
+        // mapRef.current.serachMap.search(inpvalue)
+        mapRef.current.serachMap(inpvalue)
     }
     const setAaddress=(mes)=>{
         console.log(mes)
