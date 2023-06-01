@@ -17,9 +17,9 @@ store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeCarbon']
     if (Array.isArray(runmen) && runmen.length > 0) {        
        runmen.forEach(r => {
-        let {no, key} = r;
+        let {no, key, label} = r;
         let Com = components[no];
-        if (Com) menus.push({path: key, element: <Com />}) 
+        if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
        })
     }
 })
