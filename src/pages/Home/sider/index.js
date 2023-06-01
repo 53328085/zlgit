@@ -19,13 +19,22 @@ const Imgbox = styled.div`
    height: 158px
 `
 
-const Sdiv = styled.div`
+/* const Sdiv = styled.div`
    display: flex;
    flex-direction: column;
    padding-top:16px;
+` */
+
+const Sdiv = styled.div`
+    display: grid;
+    grid-template-rows: 65px 158px 1fr;
+    height: inherit;
 `
 const Cmenu = styled(Menu)`
    background: none;
+   &&:hover {
+    overflow-y: auto;
+   }
    .ant-menu-item {
      padding-left: 32px;
      display: flex;
