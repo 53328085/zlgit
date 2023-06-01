@@ -15,7 +15,7 @@ import {message} from 'antd'
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
   const defaultpoint = lngLat || value 
- 
+
  
   const [zoom] = useState(18)
 
