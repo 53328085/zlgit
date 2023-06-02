@@ -6,9 +6,7 @@ import {
   DatePicker,
   Button,
   Switch, 
-  Cascader,
-  Row,
-  Col,
+  Divider,
   Checkbox,
   message
 } from "antd";
@@ -23,18 +21,28 @@ import {useSelector} from "react-redux";
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
 import {publishState} from '@redux/systemconfig' // 布尔值 发布状态 
  
-
+import {CustButton} from "@com/useButton"
 
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 578px 720px;
-  grid-template-rows: repeat(16, 32px);
-  gap: 16px 128px;
-  grid-auto-flow: column;
+  column-gap: 128px ;
+  //grid-template-rows: repeat(16, 32px);
+  //gap: 16px 128px;
+ // grid-auto-flow: column;
   justify-content: space-between;
-  padding-top: 32px;
+  align-items: start;
+  padding: 32px 0px;
     margin-top: 16px;
     border-top: 1px dotted #d7d7d7;
+
+    .divider {
+      margin: 0px;
+      border-color: #d7d7d7;
+    }
+    .ant-form-item-explain-error {
+      line-height: 1;
+    }
   .ant-form-item {
     margin-bottom: 0px;
   }
@@ -42,60 +50,57 @@ import {publishState} from '@redux/systemconfig' // 布尔值 发布状态
     flex-basis: 146px;
     padding-right: 10px;
   }
-  .optional {
-    grid-row-start: 5;
-    grid-row-end: 7;
-  }
-  .type {
-    grid-row: 7 / 9;
-  }
-  .remark {
-    grid-column: 2;
-    grid-row: -2 / -3; 
 
-  }
-  .upload {
-    grid-column: 2;
-    grid-row: 1 / 5;
-    display: grid;
-    grid-template-columns: 296px 296px;
-   justify-content: space-between;
-    .ant-form-item-row {
-       height: 140px;
-      }
-    .ant-form-item-control-input-content {
-        display: grid;
-        grid-template-rows: 116px 1fr;
-        row-gap: 8px;
-        width: 200px;
-        height: 140px;
-        .img {
-          border: 1px dotted #dedede;
-          display: flex;
-        }
-      }
-    
-    }
+  .leftlayout{
+   //grid-template-rows: repeat(16, 32px);
+    grid-auto-rows: auto;
+   row-gap: 16px;
+   display: grid;
+   .row {
+    display:  grid;
+    grid-template-rows: repeat(3, 32px);
+    row-gap: 16px;
+   }
  
-  .address {
-    grid-column: 2;
-   // grid-row: 5 / 7;
-  }
-  .lat {
-    grid-column: 2;
-   // grid-row: 7;
-  }
-  .upload, .address, .lat, .remark {
-    .ant-form-item-label {
+}
+ .rightlayout {
+   grid-template-rows: 164px 1px repeat(2, 32px) 370px 1px 32px;
+   row-gap: 16px;
+   display: grid;
+  .ant-form-item-label {
     flex-basis: 96px;
    
   }
+  .upload {
+  
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 32px;
+   .ant-form-item-control-input-content {
+    height: 164px;
+    display: grid;
+    grid-template-rows: 116px 22px;
+    row-gap: 16px;
+   }
+   
+    .img {
+          border: 1px dotted #dedede;
+          display: flex;
+          height: 116px;
+          width: 200px;
+        }
+    
+    }
+ 
+  
+   
   }
-  .map {
-    grid-column: 2;
-    grid-row: 7 / 15;
+  .map { 
     display: flex;
+    height: 370px;
+    padding-left: 96px;
   }
+}
   .save {
     grid-column: 2;
     grid-row: -2;
@@ -200,7 +205,7 @@ export default function ProjectSet({projectId}) {
   const ismaintenance = useSelector(maintenance)
   const ispublish = useSelector(publishState)
 
-
+  
 
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
@@ -300,6 +305,10 @@ const queryProjectInfo = async () => {
    }
   
 }
+const disabledDate = (current) => {
+  // Can not select days before today and today
+  return current && current < moment().endOf('day');
+}
 
 const onInput = (e) =>   map.current?.serachMap(e.target.value)
 const config = {
@@ -356,12 +365,15 @@ const onFinish = async (values) => {
   }
     
 }
+const onSave = () => {
+  form.submit()
+}
 useEffect(() => {
   queryProjectInfo(); 
 }, [projectId])
 
   return (
-    <Titlelayout title="基础设置">
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}><span>基础设置</span>  <CustButton onClick={onSave}>保存</CustButton></div>}>
     <Formbox
       form={form}   
       labelAlign="left"
@@ -373,7 +385,8 @@ useEffect(() => {
        { required: "缺少'${label}' 数据"}
       }
     >
-     
+      <div className="leftlayout">
+        <div className="row">
       <Item label="项目ID" name="id">
         <Input placeholder="系统自增项目ID" disabled />
       </Item>
@@ -383,8 +396,10 @@ useEffect(() => {
         <Input placeholder="请输入项目名称" />
       </Item>
       <Item label="项目有效期" required name="validStageTime" {...config}>
-        <DatePicker   format="YYYY-MM-DD" />
+        <DatePicker   format="YYYY-MM-DD" disabledDate={disabledDate} />
       </Item>
+      </div>
+      <Divider dashed  className="divider" />
       <Item label="默认模块">
           <Dcheckbox>
             <Checkbox checked disabled>项目概述</Checkbox>
@@ -392,17 +407,19 @@ useEffect(() => {
           </Dcheckbox>
          {/*  <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled /> */}
       </Item>
-      <Item label="可选模块" className='optional'> 
+      <Item label="可选模块" > {/* className='optional' */}
            <Dcheckbox>
              {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
      
       </Item>
-      <Item label="能源种类" className="type" >
+      <Divider dashed  className="divider" />
+      <Item label="能源种类"  > {/* className="type" */}
           <Dcheckbox>
              {energyType.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
       </Item>
+      <Divider dashed  className="divider" />
      {/*  <Item label="数据大屏启用">
         <Switch
           checkedChildren="是"
@@ -425,6 +442,7 @@ useEffect(() => {
           }}
         />
       </Item>
+      <Divider dashed  className="divider" />
       <Item label="App 功能启用" valuePropName="checked" name="appEnabled">
         <Switch
           checkedChildren="是"
@@ -434,6 +452,7 @@ useEffect(() => {
           }}
         />
       </Item>
+      <Divider dashed  className="divider" />
       <Item label="班次管理启用" valuePropName="checked" name="shiftEnabled">
         <Switch
           checkedChildren="是"
@@ -443,8 +462,9 @@ useEffect(() => {
           }}
         />
       </Item>
-       
-      <div className='upload'>
+      </div>
+      <div className="rightlayout">
+      <div className='upload'> 
          <Item label="项目logo" className="left" required>
            <div className="img">
             <Item noStyle name="imgLogo" rules={[
@@ -470,17 +490,8 @@ useEffect(() => {
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
          </Item>
       </div>
-      {/* <Item label="项目地址" name="address"  className='address' rules={[
-              {
-                required: true,
-                message: '请输入详细地址',
-              },
-            ]}
-            tooltip="请在地图上刷选或点击获取"
-            > 
-          <Input placeholder="请在地图上刷选或点击获取"  onChange={onInput} />         
-      </Item> */}
-      <Item label="项目地址" name="address"  className='address' rules={[
+      <Divider dashed  className="divider" style={{width: '624px',minWidth: '624px', marginLeft: '96px'}} />    
+      <Item label="项目地址" name="address"  rules={[  
               {
                 required: true,
                 message: '请输入详细地址',
@@ -490,35 +501,24 @@ useEffect(() => {
             > 
           <Input placeholder="请输入详细地址"   onChange={onInput}  />         
       </Item>
-      <Item label="经纬度" className="lat" name="lngLat" required>
-       
+      <Item label="经纬度"  name="lngLat" rules={[  
+              {
+                required: true,
+                message: '请从地图上获取经纬度',
+              },
+            ]}> 
               <Input placeholder="经纬度" /> 
-          
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <Item name="lng" required>
-              <Input placeholder="经度" /> 
-            </Item>
-          </Col>
-          <Col span={12}>
-            <Item name="lat">
-              <Input placeholder="纬度" /> 
-            </Item>
-          </Col>
-        </Row> */}
       </Item>
-      <div className='map'  >
-          
-         {/*  <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} /> */}
-
-         <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />
-         
+      <div className='map'> 
+         <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />         
       </div>
-      <Item label="项目备注"  className='remark' name="remark">
+      <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
+      <Item label="项目备注"   name="remark"> 
         <TextArea placeholder="项目详细地址" maxLength={99} style={{height: '32px'}} />
       </Item> 
-      <div className="save">
+      {/* <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>
+      </div> */}
       </div>
     </Formbox>
     </Titlelayout>
