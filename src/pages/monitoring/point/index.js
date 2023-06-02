@@ -57,7 +57,8 @@ export default function Index(props) {
       title: '设备编号',
       dataIndex: 'sn',
       render: (sn) => <Link to={{
-        pathname: "/deviceDetail?sn=" + sn,
+        pathname: "/deviceDetail",
+        search: `?sn=${sn}`
       }} target="_blank"> {sn} </Link>,
       key: 'sn',
       id: 'id'
@@ -220,6 +221,7 @@ export default function Index(props) {
 
   }//网关状态选择
   const changeTab = val => {
+    console.log(val)
     setisCard(val.target.value == 'card' ? true : false)
    // setPageNum(1)
     // setParams({ 
@@ -229,6 +231,7 @@ export default function Index(props) {
   }//切换卡片列表模式
 
   const exportExecel = () => {
+   
     tableLoadRef.current.download()
   }//数据导出
 
@@ -369,7 +372,7 @@ export default function Index(props) {
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
             </Radio.Group>
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" onClick={() => { exportExecel() }}>导出</Button>
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button>
           </div>
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>

@@ -14,9 +14,12 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
+  console.log('lngLat')
+  console.log(lngLat)
+
   const defaultpoint = lngLat || value 
- 
- 
+
+
   const [zoom] = useState(18)
 
 
@@ -53,7 +56,7 @@ import {message} from 'antd'
      let latlng = getlnglat(str);
      console.log(latlng)
      let marker = new  T.Marker(latlng);
-     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,-30), ...infoconfig});
+     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
    //  infoWin.setLngLat(latlng);     
     
      map.addOverLay(marker);
@@ -62,7 +65,10 @@ import {message} from 'antd'
      
       marker.openInfoWindow(infoWin);
      } )
-
+     marker.addEventListener("mouseout",function() {
+      marker.closeInfoWindow(infoWin)
+     }) 
+     
   }
  
   const searchResult = (result) =>{   
@@ -102,40 +108,53 @@ import {message} from 'antd'
   useImperativeHandle(ref, () => ({
     serachMap
   }))
-
+ 
   useEffect(() => {
      if(!mapref) return
      let geocode = new T.Geocoder();
      let latlng
-     if (!Array.isArray(defaultpoint)) {
+    
+    console.log(mapref.classList.contains('tdt-container'))
+
+     try {
+      latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+      map.centerAndZoom(latlng, zoom)
+        
+     if (Array.isArray(defaultpoint)) {
+      defaultpoint.forEach(item => {
+        let {lnglat, text} = item
+        addInfo(lnglat, text)
+      })
+     }else {
+      geocode.getLocation(latlng,mapClick)
+     }
+     } catch (error) {
+       console.log(error)
+     }
+     
+
+    /*  if (!Array.isArray(defaultpoint)) {
       latlng = getlnglat(defaultpoint) 
       map.centerAndZoom(latlng, zoom); // 初始化   
       geocode.getLocation(latlng,mapClick)
      }else if(Array.isArray(defaultpoint)) {
        
-        map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
+          map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
+       
         defaultpoint.forEach(item => {
-          console.log(item)
           let {lnglat, text} = item
           addInfo(lnglat, text)
         })
        
 
-     }
-    
-   
-    
-     
-          
-    
-
-
+     } */
      map.addEventListener("click", (e) => {   
+      console.log(e,isck)
        if(isck) return;
      
       geocode.getLocation(e.lnglat,mapClick)
      });
-   
+    
   
   }, [mapref])
   return (

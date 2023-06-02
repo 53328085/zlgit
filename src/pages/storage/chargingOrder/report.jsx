@@ -236,7 +236,8 @@ const {submit} = search
 const tbref = useRef()
  
 const onExport = () => {
-   tbref.current.downloadByData()
+  
+   tbref.current.download()
 }
 
  
@@ -316,7 +317,7 @@ const onExport = () => {
                </div>
               <ExportButton style={{marginLeft: 'auto'}} onClick={onExport} />
          </div>
-        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="收益统计" />
+        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单" />
         <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
         <Descriptions  column={1} bordered labelStyle={labelStyle} contentStyle={contentStyle}>
     <Descriptions.Item label="运行单号">{Record.orderNo}</Descriptions.Item>

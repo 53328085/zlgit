@@ -6,6 +6,8 @@ import {utils, writeFile} from 'xlsx'
   const {pagination, sheetName="sheet.xlsx", ...otherprops} =props  
   const tableref = useRef()
   const domExprot = ()=> { // 通过table DOM 导出  
+
+    console.log(1111111)
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿   
     let table = tableref.current  
@@ -15,8 +17,9 @@ import {utils, writeFile} from 'xlsx'
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file =  sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
-    writeFile(workbook, sheetName, { bookType: file }); // 下载
+    let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
+    let fileName = sheetName.split(".")[0]
+    writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
   const dataExport = ({header, data, sheetName='sheet1', option={}} ={}) => {
     const workbook = utils.book_new(); // 新建工作簿
