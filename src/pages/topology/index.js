@@ -462,11 +462,17 @@ export default function index() {
 
   const onOk = async () => {
     const values = await nameForm.validateFields()
+    console.log(form.getFieldsValue(true))
     newCanvas.data.name = nameForm.getFieldValue('name')
-    newCanvas.data = {
-      ...newCanvas.data,
-      ...form.getFieldsValue(true)
-    }
+    newCanvas.data.grid = form.getFieldValue('grid')
+    newCanvas.data.gridColor = form.getFieldValue('gridColor')
+    newCanvas.data.bkColor = form.getFieldValue('bkColor')
+    newCanvas.data.locked = form.getFieldValue('locked')  == true ? 1 : 0
+    // newCanvas.data = {
+    //   ...newCanvas.data,
+    //   ...form.getFieldsValue(true)
+    // }
+    console.log(newCanvas.data)
     if (getData.type == 'add') {
       let param = {
         projectId,
