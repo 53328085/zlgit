@@ -354,12 +354,16 @@ const onFinish = async (values) => {
     }
     values['validStageTime'] = values['validStageTime'].format('YYYY-MM-DD HH:mm:ss')
    let params = {...initial, ...values};
+   console.log(params)
    let {success, errMsg} = await SaveProjectInfo(params)
-   success && message.success({
-    content: '保存成功',
-    onClose: queryProjectInfo,
-   }) 
-   !success && message.error(errMsg || '数据错误')
+   
+   if(success) {
+    queryProjectInfo()
+    message.success('保存成功')
+   }else {
+    message.error(errMsg || '数据错误')
+   }
+ 
   } catch (error) {
     
   }

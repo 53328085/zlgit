@@ -16,6 +16,7 @@ import Upload from '@com/useUpload'
 import {Comipt, Comtext, CdatePicker} from "@com/comstyled"
 import projectimg from './projectimg.png'
 import projectlog from './projectlog.png'
+ 
 const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -100,6 +101,32 @@ const Info = styled.span`
   font-size: 12px;
   color: #fff;
 `
+
+const imgToBase = (url) => {
+ return new Promise((resolve, reject) => {
+    let img = document.createElement("img")
+    img.src = url
+    img.setAttribute("crossOrigin",'Anonymous')
+    let canvas = document.createElement("canvas");
+    img.onload =() => {
+       if(img.complete) {
+         canvas.width = img.width;
+         canvas.height = img.height;
+         let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        resolve(canvas.toDataURL());
+       }
+   
+    }
+   img.onerror = () => {
+     reject(null)
+   }
+
+  })
+ 
+   
+ 
+}
  function Set(props, ref) {
   const [form] = Form.useForm();
   const { Item } = Form;
@@ -116,8 +143,8 @@ const Info = styled.span`
   const params = {
     name: "",
     validStageTime: '', //项目有效期
-     imgLogo: projectlog,
-     imgProject: projectimg,
+     imgLogo: '',
+     imgProject: '',
     address: "",
    // LineAnalysisEnabled: 0,
     //lng: "",
@@ -128,8 +155,11 @@ const Info = styled.span`
   const [initialValues] = useState(params);
   
  
-  const [imgLogo, setImgLogo] = useState(projectlog)
-  const [imgProject, setImgProject] = useState(projectimg)
+ 
+  const [imgLogo, setImgLogo] = useState()
+
+ 
+  const [imgProject, setImgProject] = useState()
   const setAaddress = ({
     lng = "",
     lat = "",
@@ -142,7 +172,25 @@ const Info = styled.span`
     });
   };
  
-  
+  useEffect(() => {
+    imgToBase(projectimg).then(res => {
+      setImgProject(res)
+      form.setFieldsValue({
+        imgProject: res
+      })
+    }).catch(e => {
+      console.log(e)
+    })
+
+    imgToBase(projectlog).then(res => {
+      setImgLogo(res)
+      form.setFieldsValue({
+        imgLogo: res
+      })
+    }).catch(e => {
+      console.log(e)
+    })
+  }, [projectlog, projectimg])
  
   const onSubmint =async () => {
    return  new Promise((resolve, reject) => {
