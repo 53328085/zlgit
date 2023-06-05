@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+
+import {createPortal} from 'react-dom'
 import styled from 'styled-components';
 import {useDispatch, useSelector} from 'react-redux'
 import {addname, names, asyncthunk, getpropject} from '@redux/reduxTest'
@@ -9,10 +11,24 @@ const Ccanvas = styled.canvas`
 
  }
 `
+const Dome = ({dom}) => {
+ if(!dom) return
+ return createPortal(
+   <div>
+      <h1>在组件之外</h1>
+   </div>,
+  dom
+ )
+}
+ 
 export default function Index() {
   const [info, setInfo] = useState('')
+
+  const [cur, setCur] = useState()
   const getNames = useSelector(names);
   const dispatch = useDispatch()
+
+  const por = useRef()
   useEffect(() => {
     var canvas = document.querySelector("#canvas")
     if(canvas.getContext) {
@@ -63,7 +79,8 @@ export default function Index() {
     })
  }
   return (
-    <div>
+    <div className='zzl'>
+       <Dome dom={cur} />
        <p>{JSON.stringify(getNames, 2)}</p>
        <button onClick={() => dispatch(addname(Math.random().toString().slice(3)))}>addname</button>
        <div>
@@ -71,6 +88,8 @@ export default function Index() {
         <button onClick={handler2}>getpropject</button>
        </div>
        <canvas id="canvas" width="550" height="550" style={{border: '1px solid #d7d7d7'}}>{info}</canvas>
+
+       <div ref={node => setCur(node)} className='zhuzl'></div>
     </div>
   )
 }

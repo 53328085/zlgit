@@ -1,4 +1,5 @@
 import React, { useState,   useEffect, useRef } from 'react'
+import {flushSync} from 'react-dom'
 import styled from 'styled-components'
 import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  Divider} from 'antd'
  import {useAntdTable} from 'ahooks'
@@ -7,7 +8,7 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {StorageOrderRuntime} from '@api/api'
-import {ExportButton} from '@com/useButton'
+import {  ExportExcel} from '@com/useButton'
 import CModal from '@com/useModal'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
@@ -190,7 +191,10 @@ const columns = [
 
  
 const [charData, setCharData] = useState({})
- const getTableData = ({current, pageSize}, formData) => {
+const [total, setTotal] = useState(0)
+const [keycode, setKeycode] = useState(0)
+let getTableData = ({current, pageSize}, formData) => {
+ 
   let {state, type, date} = formData
   let start = date[0].format('YYYY-MM-DD')
   let end = date[0].format('YYYY-MM-DD')
@@ -202,8 +206,10 @@ const [charData, setCharData] = useState({})
     end
 
   }
+
    return StorageOrderRuntime.QueryStorageOrders(areaId, state, type, params).then(res => {
-     let {success, data, total} = res
+     let {success, data, total} = res    
+     setTotal(total) 
      if (success && data) {
        let {orderDetails, ...values} = data 
       setCharData({...values})
@@ -223,27 +229,52 @@ const [charData, setCharData] = useState({})
      
 
  }
- const {tableProps, search} = useAntdTable(getTableData, {
+ const {tableProps, search,  runAsync} = useAntdTable(getTableData, {
    form,
    defaultParams: [
     {current: 1, pageSize: 15},
     {state: 1, type:1, date: [moment().subtract(7, 'day'), moment()]}
-   ]
-   
+   ],
+   manual: false,  
+   onError: (error) => {
+    console.log(error)
+   }
  })
 const {submit} = search
 
 const tbref = useRef()
- 
+const [lists, setList] = useState([])
 const onExport = () => {
+      let formData = form.getFieldsValue()
+    runAsync({current: 1, pageSize: total }, formData).then(data => {
+      let {list} = data
+      flushSync(() => {
+        setList(list)
+      })
+      
+     
+      tbref.current.downloadAll()
+    }).catch(e => {
+      console.log(e)
+    })
   
-   tbref.current.download()
+  //  tbref.current.download()
+
 }
 
  
 /*   useEffect(() => {
     QueryReports()
   }, []) */
+
+  useEffect(() => {
+    if (keycode < 1) return;
+    if (keycode == 1)  {
+      tbref.current.download()
+    }else if(keycode == 2) {
+      onExport()
+    }
+  },[keycode])
   useEffect(() => {
     getStatus()
     QueryType()
@@ -315,26 +346,27 @@ const onExport = () => {
                  收益
                 <Text ellipsis={{tooltip: charData.storageIncome}}>{charData.storageIncome} &nbsp;元</Text>
                </div>
-              <ExportButton style={{marginLeft: 'auto'}} onClick={onExport} />
+             {/*  <ExportButton style={{marginLeft: 'auto'}} onClick={onExport} /> */}
+            <ExportExcel style={{marginLeft: 'auto'}} setKey={setKeycode} />
          </div>
-        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单" />
+        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单" lists={lists} />
         <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
         <Descriptions  column={1} bordered labelStyle={labelStyle} contentStyle={contentStyle}>
-    <Descriptions.Item label="运行单号">{Record.orderNo}</Descriptions.Item>
-    <Descriptions.Item label="运行单状态">{Record.status}</Descriptions.Item>
-    <Descriptions.Item label="创建时间">{Record.createTime}</Descriptions.Item>
-    <Descriptions.Item label="更新时间">{Record.updateTime}</Descriptions.Item>
-    <Descriptions.Item label="运行单类型">{Record.type== 1 ? '充电' : '放电'}</Descriptions.Item>
-    <Descriptions.Item label="运行单电量">{Record.e}</Descriptions.Item>
-    <Descriptions.Item label="总金额">{Record.income}</Descriptions.Item>
-    <Descriptions.Item label="尖时段电量">{Record.e1}</Descriptions.Item>
-    <Descriptions.Item label="峰时段电量">{Record.e2}</Descriptions.Item>
-    <Descriptions.Item label="平时段电量">{Record.e3}</Descriptions.Item>
-    <Descriptions.Item label="谷时段电量">{Record.e4}</Descriptions.Item>
-    <Descriptions.Item label="开始SOC">{Record.startSoc}</Descriptions.Item>
-    <Descriptions.Item label="结束SOC">{Record.endSoc}</Descriptions.Item>
-    <Descriptions.Item label="开始时间">{Record.startTime}</Descriptions.Item>
-    <Descriptions.Item label="充电时长">{Record.duration}</Descriptions.Item>
+    <Descriptions.Item label="运行单号" key={nanoid()}>{Record.orderNo}</Descriptions.Item>
+    <Descriptions.Item label="运行单状态" key={nanoid()}>{Record.status}</Descriptions.Item>
+    <Descriptions.Item label="创建时间" key={nanoid()}>{Record.createTime}</Descriptions.Item>
+    <Descriptions.Item label="更新时间" key={nanoid()}>{Record.updateTime}</Descriptions.Item>
+    <Descriptions.Item label="运行单类型" key={nanoid()}>{Record.type== 1 ? '充电' : '放电'}</Descriptions.Item>
+    <Descriptions.Item label="运行单电量" key={nanoid()}>{Record.e}</Descriptions.Item>
+    <Descriptions.Item label="总金额" key={nanoid()}>{Record.income}</Descriptions.Item>
+    <Descriptions.Item label="尖时段电量" key={nanoid()}>{Record.e1}</Descriptions.Item>
+    <Descriptions.Item label="峰时段电量" key={nanoid()}>{Record.e2}</Descriptions.Item>
+    <Descriptions.Item label="平时段电量" key={nanoid()}>{Record.e3}</Descriptions.Item>
+    <Descriptions.Item label="谷时段电量" key={nanoid()}>{Record.e4}</Descriptions.Item>
+    <Descriptions.Item label="开始SOC" key={nanoid()}>{Record.startSoc}</Descriptions.Item>
+    <Descriptions.Item label="结束SOC" key={nanoid()}>{Record.endSoc}</Descriptions.Item>
+    <Descriptions.Item label="开始时间" key={nanoid()}>{Record.startTime}</Descriptions.Item>
+    <Descriptions.Item label="充电时长" key={nanoid()}>{Record.duration}</Descriptions.Item>
   </Descriptions> 
          
         </CModal>
