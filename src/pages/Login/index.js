@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import  CryptoJS from 'crypto-js'
+import padZeropadding from 'crypto-js/pad-zeropadding'
 import {
   loginByName,
   selectLoading,
@@ -417,10 +419,25 @@ function UserLog() {
         
 
  }
-
+ const asekey = "1234567890ABCDEF";
+ const aseIv = "FEDCBA0987654321";
+ const cipher = (data) => {
+  
+   let text = CryptoJS.enc.Utf8.parse(data)
+   let key = CryptoJS.enc.Utf8.parse(asekey)
+   let iv = CryptoJS.enc.Utf8.parse(aseIv)
+   let ciphertext = CryptoJS.AES.encrypt(text, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: padZeropadding
+   })
+   return CryptoJS.enc.Base64.stringify(ciphertext.ciphertext)
+ }
 
  const onSubmit = async (value, type=0) => {
  //  const {name, pwd} = value;
+  
+   value.pwd = cipher(value.pwd)
    value.type = type;
    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
    if(success) {
