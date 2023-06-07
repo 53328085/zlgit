@@ -7,15 +7,6 @@ import {Image, message} from 'antd'
  * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB
  * @date 2022-11-11 09:38
  */
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel}) {
-const Preview = styled.div`
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: ${ ({border}) => border ? "1px dashed #999" : "none"};
-    overflow: hidden;
-  `
 
 const Imgbox = styled.div`
   && {
@@ -75,6 +66,18 @@ const Ifile = styled.input.attrs(props => ({
     cursor: pointer;
   }
 `
+
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel}) {
+const Preview = styled.div`
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: ${ ({border}) => border ? "1px dashed #999" : "none"};
+    overflow: hidden;
+  `
+
+
 
  // img.src = `data:image/png;base64,${src}`
   const [url, setUrl] = useState()

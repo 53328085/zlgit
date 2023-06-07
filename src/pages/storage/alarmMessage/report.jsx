@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
+import {flushSync} from 'react-dom'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
@@ -8,6 +9,7 @@ import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {StorageAlarmRuntime} from '@api/api'
 import imgurl from './icon'
+import {  ExportExcel} from '@com/useButton'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -127,6 +129,7 @@ const columns = [
  function Main({projectId, areaId, siteId }) {
    const [form] = Form.useForm()
    const [statistics ,setStatistics] = useState({})
+   const [total, setTotal] = useState(0)
   const getData = async() => {
    
     try {
@@ -156,6 +159,7 @@ const columns = [
     }
     return StorageAlarmRuntime.QueryStorageAlarmByPage(params).then(res => {
       let {success, data, total} = res
+      setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
           return {
             list: data,
@@ -170,7 +174,7 @@ const columns = [
     })
    
   }
-  const {tableProps, search} = useAntdTable(QueryReports, {
+  const {tableProps, search, runAsync} = useAntdTable(QueryReports, {
     form,
     defaultParams: [{pageSize: 14, pageNum: 1}, {
       start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
@@ -183,14 +187,26 @@ const columns = [
       level: 0
 
     }],
-    refreshDeps: [projectId, areaId, siteId]
+    refreshDeps: [projectId, areaId, siteId],
+    manual: false,
   })
   
   const {submit} = search
   const tbref = useRef()
+  const [lists, setList] = useState([])
   const onExport = () => {
-    console.log(111111)
-    tbref.current.download()
+    let formData = form.getFieldsValue()
+    runAsync({current: 1, pageSize: total }, formData).then(data => {
+      let {list} = data
+      flushSync(() => {
+        setList(list)
+      })
+      
+     
+      tbref.current.downloadAll()
+    }).catch(e => {
+      console.log(e)
+    })
   }
  
   useEffect(() => {
@@ -201,7 +217,17 @@ const columns = [
   
   }, [areaId, projectId, siteId])
  
- 
+  const [keycode, setKeycode] = useState(0)
+
+  useEffect(() => {
+    console.log(keycode)
+    if (keycode < 1) return;
+    if (keycode == 1)  {
+      tbref.current.download()
+    }else if(keycode == 2) {
+      onExport()
+    }
+  },[keycode])
   return (
     <Mainbox>
       <div className='items'>
@@ -284,12 +310,14 @@ const columns = [
             </Item>
            </Space>
            <Item noStyle>
-              <Button onClick={onExport} type="primary">导出</Button>
+             {/*  <Button onClick={onExport} type="primary">导出</Button> */}
+
+              <ExportExcel setKey={setKeycode} />
            </Item>
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="告警信息" />
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="告警信息" lists={lists} />
       
     </div>
     </Titlelayout>
