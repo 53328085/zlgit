@@ -172,7 +172,7 @@ export default function index() {
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
-    console.log(event)
+    // console.log(event)
     // console.log(data)
     if (event == 'nodeRightClick') {
       // console.log(data.evs)
@@ -203,6 +203,7 @@ export default function index() {
         case 'node':
         case 'addNode':
           nodeForm.resetFields()
+          // console.log(data)
           setProps({
             node: data,
             line: null,
@@ -212,6 +213,9 @@ export default function index() {
             locked: TopologyData.locked
           })
           nodeForm.setFieldsValue(data)
+          if(data.fontColor && data.fontColor.length > 0){
+            nodeForm.setFieldValue('fontColor', data.fontColor.slice(0, 7))
+          }
           // newCanvas.setValue({ id: data.id, text: 'new text' });//赋值
           break
         case 'line':
