@@ -1,4 +1,4 @@
-import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback} from 'react'
+import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo} from 'react'
 import {createPortal,flushSync} from 'react-dom'
 import {Table} from 'antd'
 import styled from 'styled-components'
@@ -24,36 +24,43 @@ flex-direction: column;
 }
 `
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx", lists=[], ...otherprops} =props  
+  const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, ...otherprops} =props  
   const tableref = useRef()
   const allref = useRef()
- 
-  /* const Dome = ({dom}) => {
- if(!dom) return
- return createPortal(
-   <div>
-      <h1>在组件之外</h1>
-   </div>,
-  dom
- )
-} */
+  const [lists, setLists] =useState([])
+  const [total, setTotal] = useState(0)
 
-const Allupdate = () => {
+
+const Allupdate =memo(({lists, total}) => {
   console.log(lists)
   return createPortal(
-     <Tablecom  bordered  size="small"  dataSource={lists} pagination={pagination} columns={otherprops.columns} rowKey={otherprops.rowKey}  ref={allref}   style={{position: "absolute", left: "-50000px"}}   />,
+     <Tablecom  bordered  size="small"  dataSource={lists} pagination={{current: 1, pageSize: total}} columns={otherprops.columns} rowKey={otherprops.rowKey}  ref={allref}   style={{position: "absolute", left: "-50000px"}}   />,
      document.getElementById("root")
   )
 
-}
+})
  const tabledown = (table) => {
 
  }
- const downloadAll =useCallback(() => {
+ const downloadAll = () => {
+
+  
+   onExport().then(res => {
+      let {list, total} = res
+      flushSync(() => {
+        setLists(list)
+        setTotal(total)
+      })
+      download()
+   })
+
+ }
+
+const download = useCallback(() => {
   console.log(allref.current)
   const params = { raw: true };
   const workbook = utils.book_new(); // 新建工作簿      
-  let table =   allref.current  ;
+  let table = allref.current  ;
   const ws =  utils.table_to_sheet(
     // 新建工作表
     table,
@@ -64,7 +71,7 @@ const Allupdate = () => {
   let fileName = sheetName.split(".")[0]
   writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
     
- }, [lists])
+ }, [lists, total])
 
   const domExprot = ()=> { // 通过table DOM 导出  
 
@@ -114,7 +121,7 @@ const Allupdate = () => {
   return (
     <Divbox>
         <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} { ...otherprops}   />
-      {lists.length > 0 &&  <Allupdate/>}
+      {lists.length > 0 &&  <Allupdate lists={lists} total={total}/>}
     </Divbox>
   )
 }

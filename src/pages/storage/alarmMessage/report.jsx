@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import {flushSync} from 'react-dom'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
@@ -171,10 +171,12 @@ const columns = [
         total: 0
       }  
      }
+    }).catch(e => {
+      console.log(e)
     })
    
   }
-  const {tableProps, search, runAsync} = useAntdTable(QueryReports, {
+  const {tableProps, search, runAsync, params} = useAntdTable(QueryReports, {
     form,
     defaultParams: [{pageSize: 14, pageNum: 1}, {
       start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
@@ -193,21 +195,11 @@ const columns = [
   
   const {submit} = search
   const tbref = useRef()
-  const [lists, setList] = useState([])
-  const onExport = () => {
-    let formData = form.getFieldsValue()
-    runAsync({current: 1, pageSize: total }, formData).then(data => {
-      let {list} = data
-      flushSync(() => {
-        setList(list)
-      })
-      
-     
-      tbref.current.downloadAll()
-    }).catch(e => {
-      console.log(e)
-    })
-  }
+   
+  const onExport =useCallback(() => {   
+     let formData = form.getFieldsValue()
+     return  QueryReports({current: 1, pageSize: total}, formData)
+  }, [total])
  
   useEffect(() => {
     console.log(projectId, areaId, siteId)
@@ -225,7 +217,7 @@ const columns = [
     if (keycode == 1)  {
       tbref.current.download()
     }else if(keycode == 2) {
-      onExport()
+      tbref.current.downloadAll()
     }
   },[keycode])
   return (
@@ -317,7 +309,7 @@ const columns = [
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="告警信息" lists={lists} />
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="告警信息" onExport={onExport} />
       
     </div>
     </Titlelayout>

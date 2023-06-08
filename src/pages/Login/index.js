@@ -429,7 +429,7 @@ function UserLog() {
    let ciphertext = CryptoJS.AES.encrypt(text, key, {
     iv: iv,
     mode: CryptoJS.mode.CBC,
-    padding: padZeropadding
+    padding: CryptoJS.pad.ZeroPadding //padZeropadding
    })
    return CryptoJS.enc.Base64.stringify(ciphertext.ciphertext)
  }
