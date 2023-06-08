@@ -122,20 +122,22 @@ let Info = ({message,Mouseover,Mouseleave}) => {
     )
 }
 
-export class EmptyMap extends React.Component {
-    render() {
+export let EmptyMap =  ()=> {
+    let map;
+    let zoom = 12;
+    useEffect(()=>{
+        map = new T.Map('mapDiv', {
+            projection: 'EPSG:4326',
+            minZoom: 2,
+            maxZoom: 18,
+        });
+        map.centerAndZoom(new T.LngLat(120.22830511467954, 30.21229461177818), zoom);
+    },[])
+
       return (
-        <Map
-          style={{ height: '100%' }}
-          center={new BMapGL.Point(120.22830511467954,30.21229461177818)}
-          zoom={18}
-          heading={0}
-          tilt={40}
-          onClick={e => console.log(e)}
-          enableScrollWheelZoom
-        />
+       <div id="mapDiv"></div>
       )
-    }
+    
   }
 
 

@@ -51,7 +51,6 @@ import {message} from 'antd'
  
   const addInfo = (str, text='') => {
      let latlng = getlnglat(str);
-     console.log(latlng)
      let marker = new  T.Marker(latlng);
      let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
    //  infoWin.setLngLat(latlng);     
@@ -87,7 +86,7 @@ import {message} from 'antd'
 		
   }
   const mapClick = (result) =>  {  
-     
+     console.log(result.getStatus())
     if(result.getStatus() == 0) {
     
       let {addressComponent,  location: {lon, lat}} = result
@@ -110,13 +109,13 @@ import {message} from 'antd'
      if(!mapref) return
      let geocode = new T.Geocoder();
      let latlng
-  
+
      if (!Array.isArray(defaultpoint)) {
       latlng = getlnglat(defaultpoint) 
+      console.log(defaultpoint)
       map.centerAndZoom(latlng, zoom); // 初始化   
       geocode.getLocation(latlng,mapClick)
      }else if(Array.isArray(defaultpoint)) {
-       
         map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
         defaultpoint.forEach(item => {
           let {lnglat, text} = item
@@ -133,7 +132,6 @@ import {message} from 'antd'
     
 
      map.addEventListener("click", (e) => {   
-      console.log(e,isck)
        if(isck) return;
      
       geocode.getLocation(e.lnglat,mapClick)

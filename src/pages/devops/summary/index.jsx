@@ -15,7 +15,7 @@ import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
-// import Map,{EmptyMap} from './mapcomp'
+import {EmptyMap} from './mapcomp'
 
 const Mainbox = styled.div`
   display: grid;
@@ -167,23 +167,7 @@ export default function Index() {
   //     { time: "12", "派单数": 1877, "完成": 2645 },
   //   ],
   // };
-  // const datasetMonthl = {
-  //   dimensions: ["time", "本月", "上月"],
-  //   source: [
-  //     { time: "1", "本月": 5600, "上月": 9600 },
-  //     { time: "2", "本月": 4600, "上月": 3644 },
-  //     { time: "3", "本月": 3600, "上月": 4644 },
-  //     { time: "4", "本月": 5611, "上月": 9655 },
-  //     { time: "5", "本月": 5644, "上月": 3677 },
-  //     { time: "6", "本月": 4677, "上月": 3633 },
-  //     { time: "7", "本月": 3688, "上月": 4655 },
-  //     { time: "8", "本月": 5088, "上月": 2644 },
-  //     { time: "9", "本月": 6677, "上月": 2641 },
-  //     { time: "10", "本月": 5866, "上月": 5641 },
-  //     { time: "11", "本月": 4677, "上月": 7645 },
-  //     { time: "12", "本月": 1877, "上月": 2645 },
-  //   ],
-  // };
+
   // const pieData = [
   //   { value: 30.4, name: "已完成" },
   //   { value: 25.7, name: "未分派" },
@@ -199,7 +183,7 @@ export default function Index() {
     try {
       const { data: { all, one, two, three, alarmPosition }, errMsg, success } = await operation.AlarmCurrent(params)
       if (success) {
-        setWarn({ all, one, two, three })
+      setWarn({ all, one, two, three })
       const alarmlist =  alarmPosition.map(message=>{
           return {
             ...message,
@@ -388,9 +372,9 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
-  const MapMemo = useMemo(()=>{
-      return <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>
-  },[alarmPosition])
+  // const MapMemo = useMemo(()=>{
+  //     return <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>
+  // },[alarmPosition])
   useEffect(() => {
     if(oneLevel.length>0){
       getAlarmCurrent()
@@ -474,9 +458,10 @@ export default function Index() {
                 <span style={{ fontWeight: 'bold' }}>{warn?.three}</span>
               </div>
             </div>
-            {MapMemo}
-            {/* {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:<Mapcom></Mapcom>} */}
-           {/* {alarmPosition&&alarmPosition.length>0?<Map points={alarmPosition}></Map>:<EmptyMap/>}  */}
+            {/* {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:<EmptyMap></EmptyMap>} */}
+           {alarmPosition&&alarmPosition.length>0?
+            <Mapcom lngLat = {alarmPosition} isck={true} key={1}></Mapcom>
+            :<Mapcom key={2} />} 
           </div>
 
           <div className='rigth'>
