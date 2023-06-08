@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Menu, Upload } from "antd";
+import { Button, Dropdown, Menu, Upload, Typography } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
+const {Link} = Typography
 const Custbtn = styled(Button)`
   && {
     width: ${props => props.wh || '96px'};
@@ -244,6 +245,33 @@ export function PrintButton(props) {
     </Dropdown> 
   );
 }
+
+export function ExportExcel({setKey}) {
+  const onClick = ({key}) => {
+     setKey(key)
+  }
+  const items = [
+    {
+      key: '1',
+      label:   <Link> 导出当前页</Link>
+        
+         
+    },
+    {
+      key: '2',
+      label: <Link> 导出全部</Link>
+    },
+  ]
+  return (
+    <Dropdown menu={{items, onClick}}>
+        <Custbtn >
+      <img src={icon.export}  />
+      导出
+    </Custbtn>
+    </Dropdown> 
+  );
+}
+
 export function AccountButton() {
   return (
     <Custbtn>

@@ -303,14 +303,14 @@ export default function Index() {
     if(!params) return
     ProjectList.createProject(params).then(res => {
        let {success, errMsg} = res
-       success && custMsg({content: '新增成功', onClose: () => {
+
+       if(success) {
         formmodal.current.onCancel()
         refresh()
-       /*  navigate(`/config/designerCommon/base`, {
-          state: { type: 'config', primary: 'designerCommon',  title: '基础设置', nested: 'base'  } 
-        }) */ // 还需要设置菜单栏
-       }})
-       !success && custMsg({content: errMsg || '数据出错', type: 'warning'})
+        message.success('新增成功')
+       } else {
+        message.error(errMsg || '数据出错')
+       }
     }).catch(e => {
       console.log(e);
     })

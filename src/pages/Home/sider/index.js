@@ -12,20 +12,38 @@ const Micon = () => {
    return <span className="custicon">&#9673;</span>
 }
 const Imgbox = styled.div`
-   padding: 20px 0 16px 0;
-   border-bottom: 1px dotted #ffff;
-   margin: 0 8px 20px 8px;
-   width: 184px;
-   height: 158px
+    height: 158px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .ant-image {
+      padding-bottom: 16px;
+      border-bottom: 1px dotted #fff;
+      .ant-image-img {
+        height: 114px;
+      }
+    }
 `
 
-const Sdiv = styled.div`
+/* const Sdiv = styled.div`
    display: flex;
    flex-direction: column;
    padding-top:16px;
+` */
+
+const Sdiv = styled.div`
+    display: grid;
+    grid-template-rows: 65px 158px 1fr;
+    height: inherit;
 `
 const Cmenu = styled(Menu)`
    background: none;
+   && {
+    border-right: none;
+   }
+   &&:hover {
+    overflow-y: auto;
+   }
    .ant-menu-item {
      padding-left: 32px;
      display: flex;
@@ -67,7 +85,7 @@ export default function Sider() {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
     return (
-      <Imgbox>  <Image  width={184} height={114} src={imgsrc} preview={false} style={{border: '1px solid #fff'}} fallback={imgurl.config} /></Imgbox>
+      <Imgbox>  <Image  width={184}   src={imgsrc} preview={false} style={{outline: '1px solid #fff'}} fallback={imgurl.config} /></Imgbox>
      )
   }
 

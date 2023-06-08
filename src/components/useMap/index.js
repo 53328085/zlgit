@@ -14,6 +14,9 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
+  console.log('lngLat')
+  console.log(lngLat)
+
   const defaultpoint = lngLat || value 
 
 
@@ -104,39 +107,53 @@ import {message} from 'antd'
   useImperativeHandle(ref, () => ({
     serachMap
   }))
-  console.log(mapref,defaultpoint)
+ 
   useEffect(() => {
      if(!mapref) return
      let geocode = new T.Geocoder();
      let latlng
+    
+    console.log(mapref.classList.contains('tdt-container'))
 
-     if (!Array.isArray(defaultpoint)) {
+     try {
+      latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+      map.centerAndZoom(latlng, zoom)
+        
+     if (Array.isArray(defaultpoint)) {
+      defaultpoint.forEach(item => {
+        let {lnglat, text} = item
+        addInfo(lnglat, text)
+      })
+     }else {
+      geocode.getLocation(latlng,mapClick)
+     }
+     } catch (error) {
+       console.log(error)
+     }
+     
+
+    /*  if (!Array.isArray(defaultpoint)) {
       latlng = getlnglat(defaultpoint) 
       console.log(defaultpoint)
       map.centerAndZoom(latlng, zoom); // 初始化   
       geocode.getLocation(latlng,mapClick)
      }else if(Array.isArray(defaultpoint)) {
-        map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
+       
+          map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
+       
         defaultpoint.forEach(item => {
           let {lnglat, text} = item
           addInfo(lnglat, text)
         })
        
 
-     }
-    
-   
-    
-     
-          
-    
-
+     } */
      map.addEventListener("click", (e) => {   
        if(isck) return;
      
       geocode.getLocation(e.lnglat,mapClick)
      });
-   
+    
   
   }, [mapref])
   return (

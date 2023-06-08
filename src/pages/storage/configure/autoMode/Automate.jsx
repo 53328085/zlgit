@@ -236,10 +236,18 @@ const Viewbox = styled.div`
         padding: 1px;
        }
        .dsitme {
-        display: flex;
+      /*   display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: center; */
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         line-height: 2;
+        span:nth-of-type(2){
+           justify-self: center;
+        }
+        span:last-child{
+          justify-self: end;
+        }
        }
     }
 `
