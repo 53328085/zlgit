@@ -8158,6 +8158,11 @@
   "resolved" "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.1.tgz"
   "version" "2.2.1"
 
+"js-md5@^0.7.3":
+  "integrity" "sha512-ZC41vPSTLKGwIRjqDh8DfXoCrdQIyBgspJVPXHBGu4nZlAEvG3nf+jO9avM9RmLiGakg7vz974ms99nEV0tmTQ=="
+  "resolved" "https://registry.npmmirror.com/js-md5/-/js-md5-0.7.3.tgz"
+  "version" "0.7.3"
+
 "js-sdsl@4.3.0":
   "integrity" "sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ=="
   "resolved" "https://registry.npmmirror.com/js-sdsl/-/js-sdsl-4.3.0.tgz"
