@@ -1,11 +1,12 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react'
+import React, { useState, useRef, useEffect, Fragment, useCallback } from 'react'
 import styled from 'styled-components'
-import { Space, Button, DatePicker,Tag, Divider, Form } from 'antd'
+import { Space,  DatePicker,Tag, Divider, Form,  } from 'antd'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Usetable from '@com/useTable'
 import {StorageRevenueRuntime} from '@api/api'
 import {useAntdTable} from 'ahooks'
+import {  ExportExcel} from '@com/useButton'
 const { RangePicker } = DatePicker;
 
 const HeaderTitle = styled.div`
@@ -226,6 +227,8 @@ const columns = [
    const [price ,setPrice] = useState({})
    const {Item} = Form
    const [form] = Form.useForm()
+   const [keycode, setKeycode] = useState(0)
+   const [total, setTotal] = useState(0)
   const getPrice = async() => {
     try {
         let {success, data} = await StorageRevenueRuntime.QueryPrice(projectId, areaId)
@@ -248,6 +251,7 @@ const columns = [
     }
     return StorageRevenueRuntime.QueryRevenueReports(stationName, params).then(res => {
         let {success, data, total} = res
+        setTotal(total)
         if(success && Array.isArray(data)) {
           return {
             list: data,
@@ -281,8 +285,23 @@ const columns = [
      getPrice()
    }
   }, [projectId, areaId])
+
+  
    
- 
+
+const onExport = useCallback(() => {
+    let formData = form.getFieldsValue()
+    return  QueryReports({current: 1, pageSize: total}, formData)
+}, [total])
+useEffect(() => {
+  if (keycode < 1) return;
+  if (keycode == 1)  {
+    tableRef.current.download()
+  }else if(keycode == 2) {
+    tableRef.current.downloadAll()
+  }
+},[keycode])
+
   return (
     <Fragment>
       <HeaderTitle>收益统计</HeaderTitle>
@@ -299,12 +318,13 @@ const columns = [
               <CustomTag>平电价： {price.price3}</CustomTag>
               <CustomTag>谷电价： {price.price4}</CustomTag>
               <Divider style={{height: 32}} dashed type={'vertical'}/>
-              <Button type='primary' style={{width: 96}} onClick={()=>exportData()}>导出</Button>
+           {/*    <Button type='primary' style={{width: 96}} onClick={()=>exportData()}>导出</Button> */}
+              <ExportExcel style={{marginLeft: 'auto'}} setKey={setKeycode} />
             </Space>
             
           </Form>
           <Divider style={{margin: '0px'}}/>
-          <Usetable ref={tableRef} columns={columns}   rowKey={nanoid()}  {...tableProps} sheetName='收益统计.xlsx'/>
+          <Usetable ref={tableRef} columns={columns}   rowKey={nanoid()}  {...tableProps} onExport={onExport} sheetName='收益统计.xlsx'/>
       </Mainbox>
     </Fragment>
   )

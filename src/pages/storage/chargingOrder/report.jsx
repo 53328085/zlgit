@@ -1,5 +1,5 @@
 import React, { useState,   useEffect, useRef, useCallback } from 'react'
-import {flushSync} from 'react-dom'
+
 import styled from 'styled-components'
 import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  Divider} from 'antd'
  import {useAntdTable} from 'ahooks'
@@ -10,7 +10,7 @@ import Usetable from '@com/useTable'
 import {StorageOrderRuntime} from '@api/api'
 import {  ExportExcel} from '@com/useButton'
 import CModal from '@com/useModal'
-const {Text, Link, Title, Paragraph} = Typography
+const {Text, Link,} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -244,7 +244,7 @@ let getTableData = ({current, pageSize}, formData) => {
 const {submit} = search
 
 const tbref = useRef()
-const [lists, setList] = useState([])
+
 const onExport = useCallback(() => {
       let formData = form.getFieldsValue()
       return  getTableData({current: 1, pageSize: total}, formData)
