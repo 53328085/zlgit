@@ -99,6 +99,7 @@ const CutSerachBt = styled(CustBtn)`
   font-size: 16px;
   color:#fff !important;
   border:none;
+  background-color: #0030ca;
 /*   &:hover, &:focus {
     background-color: #0033ff;
     border-color: none;
@@ -120,7 +121,7 @@ const Mainbox = styled.div`
     justify-content: space-between;
     align-items: center;
     padding-bottom: 32px;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid #476297;
     .name {
       display: flex;
       flex-direction: column;
@@ -178,6 +179,9 @@ const Mainbox = styled.div`
       .ant-space-item:last-of-type {
         margin-left: auto;
       }
+      .ant-form-item-control-input-content {
+      height: 40px;
+    }
     }
     .ant-table-wrapper {
       height: 100%;
@@ -276,9 +280,7 @@ export default function Index() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
-  const [form] = Form.useForm();
-
-  const [proform] =  Form.useForm()
+  const [form] = Form.useForm(); 
   const [count, setCount] = useState(0); 
   const modal = useRef()
   const formmodal = useRef()
@@ -696,7 +698,11 @@ const closeModl = () => {
             className="serach"
             form={form}
           >
-            <Space size={32} >
+            <Space size={64} split={ <Divider
+                  dashed
+                  style={{ borderColor: "#999", height: "32px", margin: "0px" }}
+                  type="vertical"
+                />} >
               
               <Item name="name">
               <Iptserach
@@ -717,18 +723,11 @@ const closeModl = () => {
                 >
                 </Iptserach>       
               </Item>
-              <Item>
-                <Divider
-                  dashed
-                  style={{ borderColor: "#fff", height: "36px", margin: "0px" }}
-                  type="vertical"
-                />
-              </Item>
               <Item name="state">
                 <Cselect
                   placeholder="项目状态"
                   w="200px"
-                  h="40px"
+                  h="42px"
                   onChange={submit}
                   size="large"
                 >
@@ -739,14 +738,6 @@ const closeModl = () => {
                   ))}
                 </Cselect>
               </Item>
-             
-             {/*  <Item>
-                <Space>
-                <span style={{ color: "#ccc", fontSize: "16px" }}>
-                  当前账户共有{count}个项目
-                </span> 
-                </Space>
-              </Item> */}
             </Space>
             <Space size={32}>
             <Item noStyle>

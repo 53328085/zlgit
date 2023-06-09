@@ -1,23 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import {useWindowListener} from './useWindowListener.js';
-import {StorageAlarmRuntime} from '@api/api'
-export default function App() {
-    let [count, setCount] = useState(0);
-     
-   useEffect(() => {
-      console.log('count:一次')
-      let timer = setInterval(() => {
-        console.log('count:' +count)
-        setCount(c => c +1)
-      }, 1000)
-      return () => {
-        clearInterval(timer)
-      }
-   }, [])
+import { useState } from 'react';
+import { createTodos } from './utils.js';
+import TodoList from './TodoList.js';
 
+const todos = createTodos();
+
+export default function App() {
+  const [tab, setTab] = useState('all');
+  const [isDark, setIsDark] = useState(false);
   return (
-      <div>
-         {count}
-      </div>
+    <>
+      <button onClick={() => setTab('all')}>
+        All
+      </button>
+      <button onClick={() => setTab('active')}>
+        Active
+      </button>
+      <button onClick={() => setTab('completed')}>
+        Completed
+      </button>
+      <br />
+      <label>
+        <input
+          type="checkbox"
+          checked={isDark}
+          onChange={e => setIsDark(e.target.checked)}
+        />
+        Dark mode
+      </label>
+      <hr />
+      <TodoList
+        todos={todos}
+        tab={tab}
+        theme={isDark ? 'dark' : 'light'}
+      />
+    </>
   );
 }
