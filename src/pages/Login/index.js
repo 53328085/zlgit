@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import  CryptoJS from 'crypto-js'
+ 
+ 
 import md5 from 'js-md5';
 import {
   loginByName,
@@ -19,7 +20,7 @@ import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
-import { pwdValidator, phoneValidator, codeValidator } from "../rule";
+import { pwdValidator, phoneValidator, codeValidator } from "@pages/rule";
 import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
@@ -531,9 +532,9 @@ function UserLog() {
               required: true,
               message: "请输入密码",
             },
-            /*  {
+             {
             validator: pwdValidator
-        }, */
+            },  
           ]}
         >
           <Logpsd
