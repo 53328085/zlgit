@@ -1,9 +1,9 @@
-import React, { useState,  useRef, useEffect } from "react";
+import React, { useState,  useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { current, nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import moment from "moment";
+
 import {
   Space,
   Image,
@@ -34,21 +34,27 @@ import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
-import {custMsg} from '@com/usehandler'
+ 
 import Projectform from './projectform'
 import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
-const { Content } = Layout;
-const Ccontent = styled(Content)`
-  height: inherit;
-  overflow-y: auto;
-  display: flex;
-`;
+ 
+ 
 const CustTable = styled(Table)`
   && {
+    .ant-table-container {
+      border-color: #2b4576;
+      
+       
+    }
+    .ant-table-content {
+      table {
+        border-top-color: #2b4576 !important;
+      }
+    }
     .ant-pagination-item-active {
       background-color: #0033ff;
       border-color:  #0033ff;
@@ -63,6 +69,7 @@ const CustTable = styled(Table)`
       color: #fff;
       border-color: #5e5e5e;
     }
+   
   }
   
 ` 
@@ -189,14 +196,14 @@ const Mainbox = styled.div`
 
       color: #fff;
       font-size: 16px;
+      
       .ant-table-tbody > tr.rowclass > td {
-        border-color: #2b4475;
+        border-color: #2b4576;
         padding-top: 0px;
         padding-bottom: 0px;
         height: 56px;
-        &:first-of-type {
-          border-left: 1px solid #2b4475;
-        }
+        border-color: #2b4576;
+       
         //border-right-color: #2b4475;
       }
       .ant-table-cell {
@@ -208,16 +215,13 @@ const Mainbox = styled.div`
       }
       .ant-table-thead > tr > th {
         background-color: #476299;
-        font-size: 20px;
+        font-size: 18px;
         color: #fff;
         text-align: center;
-        border-color: #2b4475;
-        height: 48px;
+        border-color: #2b4576 !important;
+        height: 40px;
         padding: 0px;
-        &:first-of-type,
-        &:last-of-type {
-          border-left: 1px solid #2b4475;
-        }
+       
       }
     }
   }
@@ -429,7 +433,7 @@ export default function Index() {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: 80,
+      width: 60,
       render: (text, record, index) => `${index + 1}`,
     },
     {
