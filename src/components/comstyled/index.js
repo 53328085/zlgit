@@ -72,16 +72,21 @@ export const CdatePicker = styled(DatePicker)`
 }
 `
 export const Iptserach = styled(Search)`
+&& {
+  border-radius: 4px;
+    overflow: hidden;
+}
  .ant-input-affix-wrapper {
     background-color: transparent !important;
     border: none;
     height: 40px;
+   
  }
  .ant-input-group-addon {
     background-color: transparent;
  }
  background-color: transparent !important;
- border: 1px solid #9c9ea4;
+ border: 1px solid #8091b2;
   &:focus:not(.ant-input-disabled), &:hover:not(.ant-input-disabled) {    
     border-color: #1f83fe !important;
     .ant-input {
@@ -116,6 +121,11 @@ export const Cselect = styled(Select)`
   && {
     color: #999;   
     width: ${props => props.w || 'auto'} ;
+   
+
+    border-radius: 4px;
+    overflow: hidden;
+    
   }
 
  &:hover,&:focus {
@@ -130,7 +140,10 @@ export const Cselect = styled(Select)`
 
  &:not(.ant-select-customize-input) .ant-select-selector {
     background-color: transparent;
-    border: 1px solid #9c9ea4;
+    border: 1px solid #8091b2;
+    border-radius: 4px;
+    overflow: hidden;
+    height: ${props => props.h || 'auto'} !important ;
     &:focus, &:hover {    
     border-color: #1f83fe !important;
     

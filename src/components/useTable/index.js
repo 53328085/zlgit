@@ -25,6 +25,7 @@ flex-direction: column;
 `
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, ...otherprops} =props  
+  const ecolumns = otherprops.columns.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
   const [lists, setLists] =useState([])
@@ -32,27 +33,28 @@ flex-direction: column;
 
 
 const Allupdate =memo(({lists, total}) => {
-  console.log(lists)
+  
   return createPortal(
-     <Tablecom  bordered  size="small"  dataSource={lists} pagination={{current: 1, pageSize: total}} columns={otherprops.columns} rowKey={otherprops.rowKey}  ref={allref}   style={{position: "absolute", left: "-50000px"}}   />,
+     <Tablecom  bordered  size="small"  dataSource={lists} pagination={{current: 1, pageSize: total}} columns={ecolumns} rowKey={otherprops.rowKey}  ref={allref}   style={{position: "absolute", left: "-50000px"}}   />,
      document.getElementById("root")
   )
 
 })
- const tabledown = (table) => {
 
- }
- const downloadAll = () => {
-
-  
-   onExport().then(res => {
-      let {list, total} = res
+ const downloadAll = async () => {
+    console.log(onExport)
+    try { 
+      let {list, total} = await onExport()
       flushSync(() => {
         setLists(list)
         setTotal(total)
       })
+     
       download()
-   })
+    } catch (error) {
+      console.log(error)
+    }
+  
 
  }
 

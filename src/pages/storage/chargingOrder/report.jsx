@@ -1,5 +1,5 @@
-import React, { useState,   useEffect, useRef } from 'react'
-import {flushSync} from 'react-dom'
+import React, { useState,   useEffect, useRef, useCallback } from 'react'
+
 import styled from 'styled-components'
 import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  Divider} from 'antd'
  import {useAntdTable} from 'ahooks'
@@ -10,7 +10,7 @@ import Usetable from '@com/useTable'
 import {StorageOrderRuntime} from '@api/api'
 import {  ExportExcel} from '@com/useButton'
 import CModal from '@com/useModal'
-const {Text, Link, Title, Paragraph} = Typography
+const {Text, Link,} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -183,6 +183,7 @@ const columns = [
     title: '操作',
     key: 'op',
     align: 'center',
+    export: false,
     render: (_,record) => <Space size={16}>
        <Link underline onClick={onView.bind(null, record)}>订单详情</Link>
   </Space>
@@ -243,24 +244,14 @@ let getTableData = ({current, pageSize}, formData) => {
 const {submit} = search
 
 const tbref = useRef()
-const [lists, setList] = useState([])
-const onExport = () => {
+
+const onExport = useCallback(() => {
       let formData = form.getFieldsValue()
-    runAsync({current: 1, pageSize: total }, formData).then(data => {
-      let {list} = data
-      flushSync(() => {
-        setList(list)
-      })
-      
-     
-      tbref.current.downloadAll()
-    }).catch(e => {
-      console.log(e)
-    })
+      return  getTableData({current: 1, pageSize: total}, formData)
   
   //  tbref.current.download()
 
-}
+}, [total])
 
  
 /*   useEffect(() => {
@@ -272,7 +263,7 @@ const onExport = () => {
     if (keycode == 1)  {
       tbref.current.download()
     }else if(keycode == 2) {
-      onExport()
+      tbref.current.downloadAll()
     }
   },[keycode])
   useEffect(() => {
@@ -349,7 +340,7 @@ const onExport = () => {
              {/*  <ExportButton style={{marginLeft: 'auto'}} onClick={onExport} /> */}
             <ExportExcel style={{marginLeft: 'auto'}} setKey={setKeycode} />
          </div>
-        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单" lists={lists} />
+        <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单"  onExport={onExport} />
         <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
         <Descriptions  column={1} bordered labelStyle={labelStyle} contentStyle={contentStyle}>
     <Descriptions.Item label="运行单号" key={nanoid()}>{Record.orderNo}</Descriptions.Item>

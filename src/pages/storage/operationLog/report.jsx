@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
 import {useAntdTable} from 'ahooks'
@@ -7,8 +7,8 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
-
-const {Text, Link, Title, Paragraph} = Typography
+import {  ExportExcel} from '@com/useButton'
+const {Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -83,7 +83,8 @@ const columns = [
  function Main({projectId, areaId, siteId }) {
    const [form] = Form.useForm()
  
- 
+   const [keycode, setKeycode] = useState(0)
+   const [total, setTotal] = useState(0)
  
   const QueryReports =  ({current, pageSize}, form) => {   
     let {time, ...rest} = form
@@ -101,6 +102,7 @@ const columns = [
     }
     return OperationLogRuntime.QueryLogsByPage(params).then(res => {
       let {success, data, total} = res
+      setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
           return {
             list: data,
@@ -132,12 +134,21 @@ const columns = [
   
   const {submit} = search
   const tbref = useRef()
-  const onExport = () => {
+
+ 
+ 
+  const onExport = useCallback(() => {
+    let formData = form.getFieldsValue()
+    return  QueryReports({current: 1, pageSize: total}, formData)
+}, [total])
+useEffect(() => {
+  if (keycode < 1) return;
+  if (keycode == 1)  {
     tbref.current.download()
+  }else if(keycode == 2) {
+    tbref.current.downloadAll()
   }
- 
- 
- 
+},[keycode])
  
   return (
     <Mainbox>    
@@ -181,12 +192,12 @@ const columns = [
             </Item>
            </Space>
            <Item noStyle>
-              <Button onClick={onExport} type="primary">导出</Button>
+              <ExportExcel  setKey={setKeycode} />
            </Item>
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" />   
+        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" onExport={onExport} />   
            
     </div>
     </Titlelayout>

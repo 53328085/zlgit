@@ -1,9 +1,9 @@
-import React, { useState,  useRef, useEffect } from "react";
+import React, { useState,  useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { current, nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import moment from "moment";
+
 import {
   Space,
   Image,
@@ -34,21 +34,27 @@ import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
-import {custMsg} from '@com/usehandler'
+ 
 import Projectform from './projectform'
 import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
-const { Content } = Layout;
-const Ccontent = styled(Content)`
-  height: inherit;
-  overflow-y: auto;
-  display: flex;
-`;
+ 
+ 
 const CustTable = styled(Table)`
   && {
+    .ant-table-container {
+      border-color: #2b4576;
+      
+       
+    }
+    .ant-table-content {
+      table {
+        border-top-color: #2b4576 !important;
+      }
+    }
     .ant-pagination-item-active {
       background-color: #0033ff;
       border-color:  #0033ff;
@@ -63,6 +69,7 @@ const CustTable = styled(Table)`
       color: #fff;
       border-color: #5e5e5e;
     }
+   
   }
   
 ` 
@@ -92,6 +99,7 @@ const CutSerachBt = styled(CustBtn)`
   font-size: 16px;
   color:#fff !important;
   border:none;
+  background-color: #0030ca;
 /*   &:hover, &:focus {
     background-color: #0033ff;
     border-color: none;
@@ -113,7 +121,7 @@ const Mainbox = styled.div`
     justify-content: space-between;
     align-items: center;
     padding-bottom: 32px;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid #476297;
     .name {
       display: flex;
       flex-direction: column;
@@ -171,6 +179,9 @@ const Mainbox = styled.div`
       .ant-space-item:last-of-type {
         margin-left: auto;
       }
+      .ant-form-item-control-input-content {
+      height: 40px;
+    }
     }
     .ant-table-wrapper {
       height: 100%;
@@ -189,14 +200,14 @@ const Mainbox = styled.div`
 
       color: #fff;
       font-size: 16px;
+      
       .ant-table-tbody > tr.rowclass > td {
-        border-color: #2b4475;
+        border-color: #2b4576;
         padding-top: 0px;
         padding-bottom: 0px;
         height: 56px;
-        &:first-of-type {
-          border-left: 1px solid #2b4475;
-        }
+        border-color: #2b4576;
+       
         //border-right-color: #2b4475;
       }
       .ant-table-cell {
@@ -208,16 +219,13 @@ const Mainbox = styled.div`
       }
       .ant-table-thead > tr > th {
         background-color: #476299;
-        font-size: 20px;
+        font-size: 18px;
         color: #fff;
         text-align: center;
-        border-color: #2b4475;
-        height: 48px;
+        border-color: #2b4576 !important;
+        height: 40px;
         padding: 0px;
-        &:first-of-type,
-        &:last-of-type {
-          border-left: 1px solid #2b4475;
-        }
+       
       }
     }
   }
@@ -272,9 +280,7 @@ export default function Index() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
-  const [form] = Form.useForm();
-
-  const [proform] =  Form.useForm()
+  const [form] = Form.useForm(); 
   const [count, setCount] = useState(0); 
   const modal = useRef()
   const formmodal = useRef()
@@ -429,7 +435,7 @@ export default function Index() {
       dataIndex: "index",
       key: "index",
       align: "center",
-      width: 80,
+      width: 60,
       render: (text, record, index) => `${index + 1}`,
     },
     {
@@ -692,7 +698,11 @@ const closeModl = () => {
             className="serach"
             form={form}
           >
-            <Space size={32} >
+            <Space size={64} split={ <Divider
+                  dashed
+                  style={{ borderColor: "#999", height: "32px", margin: "0px" }}
+                  type="vertical"
+                />} >
               
               <Item name="name">
               <Iptserach
@@ -713,18 +723,11 @@ const closeModl = () => {
                 >
                 </Iptserach>       
               </Item>
-              <Item>
-                <Divider
-                  dashed
-                  style={{ borderColor: "#fff", height: "36px", margin: "0px" }}
-                  type="vertical"
-                />
-              </Item>
               <Item name="state">
                 <Cselect
                   placeholder="项目状态"
                   w="200px"
-                  h="40px"
+                  h="42px"
                   onChange={submit}
                   size="large"
                 >
@@ -735,14 +738,6 @@ const closeModl = () => {
                   ))}
                 </Cselect>
               </Item>
-             
-             {/*  <Item>
-                <Space>
-                <span style={{ color: "#ccc", fontSize: "16px" }}>
-                  当前账户共有{count}个项目
-                </span> 
-                </Space>
-              </Item> */}
             </Space>
             <Space size={32}>
             <Item noStyle>

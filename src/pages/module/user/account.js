@@ -73,7 +73,7 @@ const showModl = () => {
  }
  const reset = (record) => {
   setRecord({...Record, ...record});
-  newpwd.current = Math.random().toString().slice(2,8)
+  newpwd.current = `wuLian@${Math.random().toString().slice(2,8)}`
   rref.current.onOpen();
  }
  const restOk = async () => {

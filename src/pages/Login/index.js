@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import  CryptoJS from 'crypto-js'
-import padZeropadding from 'crypto-js/pad-zeropadding'
+ 
+ 
+import md5 from 'js-md5';
 import {
   loginByName,
   selectLoading,
@@ -19,7 +20,7 @@ import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
-import { pwdValidator, phoneValidator, codeValidator } from "../rule";
+import { pwdValidator, phoneValidator, codeValidator } from "@pages/rule";
 import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
@@ -419,25 +420,16 @@ function UserLog() {
         
 
  }
- const asekey = "1234567890ABCDEF";
- const aseIv = "FEDCBA0987654321";
- const cipher = (data) => {
-  
-   let text = CryptoJS.enc.Utf8.parse(data)
-   let key = CryptoJS.enc.Utf8.parse(asekey)
-   let iv = CryptoJS.enc.Utf8.parse(aseIv)
-   let ciphertext = CryptoJS.AES.encrypt(text, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.ZeroPadding //padZeropadding
-   })
-   return CryptoJS.enc.Base64.stringify(ciphertext.ciphertext)
+ 
+ const cipher = (name, pwd) => {
+   
+   return md5(`chint_${name}_${pwd}_wulian`)
+    
  }
 
  const onSubmit = async (value, type=0) => {
- //  const {name, pwd} = value;
-  
-   value.pwd = cipher(value.pwd)
+   const {name, pwd} = value;  
+   value.pwd = cipher(name, pwd)
    value.type = type;
    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
    if(success) {
@@ -540,9 +532,9 @@ function UserLog() {
               required: true,
               message: "请输入密码",
             },
-            /*  {
+             {
             validator: pwdValidator
-        }, */
+            },  
           ]}
         >
           <Logpsd
