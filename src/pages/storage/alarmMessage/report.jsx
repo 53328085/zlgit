@@ -209,17 +209,7 @@ const columns = [
   
   }, [areaId, projectId, siteId])
  
-  const [keycode, setKeycode] = useState(0)
-
-  useEffect(() => {
-    console.log(keycode)
-    if (keycode < 1) return;
-    if (keycode == 1)  {
-      tbref.current.download()
-    }else if(keycode == 2) {
-      tbref.current.downloadAll()
-    }
-  },[keycode])
+ 
   return (
     <Mainbox>
       <div className='items'>
