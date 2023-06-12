@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Menu, Upload, Typography } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
@@ -246,20 +246,27 @@ export function PrintButton(props) {
   );
 }
 
-export function ExportExcel({setKey}) {
-  const onClick = ({key}) => {
-     setKey(key)
-  }
+export function ExportExcel({tb}) {
+  
+ const onClick =useCallback(({key}) => {
+     
+     if (key == '1') {
+      tb.current.download()
+     }else if(key == '2') {
+      tb.current.downloadAll()
+     }
+  }, [tb])
   const items = [
     {
       key: '1',
-      label:   <Link> 导出当前页</Link>
-        
+      label:   <Link> 导出当前页</Link>,
+      
          
     },
     {
       key: '2',
-      label: <Link> 导出全部</Link>
+      label: <Link> 导出全部</Link>,
+    
     },
   ]
   return (

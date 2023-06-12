@@ -133,22 +133,15 @@ const columns = [
   })
   
   const {submit} = search
-  const tbref = useRef()
+  
 
- 
- 
+  const tableref = useRef()
+  //const getref = () => tableref.current
   const onExport = useCallback(() => {
     let formData = form.getFieldsValue()
     return  QueryReports({current: 1, pageSize: total}, formData)
 }, [total])
-useEffect(() => {
-  if (keycode < 1) return;
-  if (keycode == 1)  {
-    tbref.current.download()
-  }else if(keycode == 2) {
-    tbref.current.downloadAll()
-  }
-},[keycode])
+ 
  
   return (
     <Mainbox>    
@@ -192,12 +185,12 @@ useEffect(() => {
             </Item>
            </Space>
            <Item noStyle>
-              <ExportExcel  setKey={setKeycode} />
+              <ExportExcel  tb={tableref} />
            </Item>
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" onExport={onExport} />   
+        <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" onExport={onExport} />   
            
     </div>
     </Titlelayout>

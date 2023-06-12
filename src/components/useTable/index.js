@@ -41,8 +41,7 @@ const Allupdate =memo(({lists, total}) => {
 
 })
 
- const downloadAll = async () => {
-    console.log(onExport)
+ const downloadAll = async () => {     
     try { 
       let {list, total} = await onExport()
       flushSync(() => {
@@ -58,8 +57,7 @@ const Allupdate =memo(({lists, total}) => {
 
  }
 
-const download = useCallback(() => {
-  console.log(allref.current)
+const download = useCallback(() => { 
   const params = { raw: true };
   const workbook = utils.book_new(); // 新建工作簿      
   let table = allref.current  ;

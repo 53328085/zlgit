@@ -1,14 +1,11 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react'
-import {ExclamationCircleOutlined} from "@ant-design/icons"
+import React, {useState, useRef, useEffect} from 'react'
+import {PlusOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
-import style from './style.module.less'
-import {Image, message, Modal} from 'antd'
+import {Image, message} from 'antd'
 /**
  * @author zhenglin zhu
- * @description: //
- * wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB。
- * 图片尺寸、格式、大小超出设定值，自动按比例进行压缩， （修改时间：2023-06-12 09:38开始 )
- * @date 2022-11-11 09:38 
+ * @description: //wpx, hpx, 图片限制尺寸。 swpx, shpx 图片显示尺寸。 maxinum 图片限制大小。 getfile 外部组件获取file值的函数, maximum图片大小单位KB
+ * @date 2022-11-11 09:38
  */
 
 const Imgbox = styled.div`
@@ -70,10 +67,7 @@ const Ifile = styled.input.attrs(props => ({
   }
 `
 
-
-
 export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel}) {
-
 const Preview = styled.div`
     flex: 1;
     display: flex;
@@ -82,17 +76,11 @@ const Preview = styled.div`
     border: ${ ({border}) => border ? "1px dashed #999" : "none"};
     overflow: hidden;
   `
-const [canvas, setCanvas] = useState()
-const cref = useRef()
+
 
 
  // img.src = `data:image/png;base64,${src}`
   const [url, setUrl] = useState()
-
-  const getnode = useCallback((node) =>{
-     console.log(node)
-     setCanvas(node)
-    }, [url])
   const file = useRef()
   const imgsize = (src) => {
     const msg = () => {
@@ -110,37 +98,11 @@ const cref = useRef()
      }
    
   }
-  let extref = useRef('')
   let src = null // 图片地址
   let fileData = null // 图片数据
-  let clearfile = () => {
+  const clearfile = () => {
     file.current.value = '' // 浏览器的安全机制不允许直接用js修改file的value为空字符串以外的值.否则报错
-    extref.current = ''
   }
-
-  const zipImg = (img) => {
-    if(!window.createImageBitmap) return message.warning('请使用新版chrome浏览器')
-    console.log(cref.current)
-
-    createImageBitmap(img, {resizeHeight: hpx, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
-
-      console.log(img.width)
-      let canvas = document.createElement('canvas')
-      canvas.width = wpx;
-      canvas.height = hpx;
-      let ctx =canvas.getContext('2d')
-      ctx.drawImage(res, 0,0)
-      let dataUrl =  canvas.toDataURL()
-      
-      setUrl(dataUrl)
-      getfile(dataUrl)
-      onChange?.(dataUrl)
-      extref.current = ''
-    }).catch(e => {
-      console.log(e)
-    })
-  }
-
   const onreader = (file) => {
     let reader = new FileReader()
     reader.readAsDataURL(file)
@@ -155,32 +117,24 @@ const cref = useRef()
         return message.warning(reader.error || '图片加载出错' )
     }
    };
-   /* 1.图片格式， 2.图片尺寸3.图片大小 */
  
-  
-  let img;
   const upload = (e) => {  // 1.判断图片大小 2. 判断图片格式 3. 判断图片尺寸
     fileData = e.target.files[0];    
     let { name, size } = fileData;
     let limit = Math.ceil(size / 1024);
     let ext = name.split(".")[1];
-   // let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < maximum;
+    let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < maximum;
     if (ext && !["png", "jpg", "jpeg"].includes(ext.toLowerCase())) {   
-       // clearfile()   
-        extref.current = `图片的格式为${ext},将被转成png格式。`
-      // return message.warning("只能选择png/jpg/jpeg格式图片", 1);
+        clearfile()   
+      return message.warning("只能选择png/jpg/jpeg格式图片", 1);
     }
     if (ext && limit > maximum) {
-        //clearfile() 
-        extref.current=extref.current + `图片大小为${limit}kb,将被裁剪为${maximum}kb`
-      // return  message.warning(`请选择${maximum}k以内的图片！`, 1);
+        clearfile() 
+       return  message.warning(`请选择${maximum}k以内的图片！`, 1);
     }  
-
-    console.log(extref.current)
-    if (fileData ) { 
-       console.log(extref.current)
+    if (fileData && enable) { 
         src = URL.createObjectURL(fileData)
-        img = document.createElement('img')  
+        let img = document.createElement('img')  
         let ws = false, hs = false   
      // img.src = `data:image/png;base64,${src}`
          img.src = src
@@ -193,29 +147,15 @@ const cref = useRef()
             hs = img.height <= hpx
         }
       }
-    
       if (ws || hs) {
-        let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪` : ''
-        let htext = hs ? `高度大于${hpx}将被按图片比例裁剪` : ''
+        let text = ws ? '宽' : hs ? '高' : ''
         let size = ws || hs
-        // clearfile() 
-        //return message.warning(`图片${text}度大于${size}像素`);
-        extref.current= extref.current + wtext + htext;
+        clearfile() 
+        return message.warning(`图片${text}度大于${size}像素`);
       }
-      
       //
-      Modal.confirm({
-        title: '图片压缩',
-        icon: <ExclamationCircleOutlined />,
-        content: extref.current,
-        onOk() {
-          zipImg(img)
-        },
-        onCancel() {
-          clearfile() 
-        },
-      })
-     // onreader(fileData);
+
+      onreader(fileData);
       //let reader = new FileReader();
      // console.log(reader.readAsDataURL(fileData))
      // getfile(reader.readAsDataURL(fileData));
@@ -236,27 +176,27 @@ const cref = useRef()
 
 
 
-    /*  <Image src={url} preview={true} width={swpx} height={shpx}   />  */
+  
   return (
      <Preview>
-     {
-      url ? 
-      (<Imgbox>
-           <Image src={url} preview={true} width={swpx} height={shpx}   />
-           <Luspan onClick={delImg} className="iconfont iconicon_shanchu"></Luspan>
-      </Imgbox>)
-      : 
-      <>
-      <Ciocn>   
-        <Uspan className='iconfont'>
-        &#xe62d;
-          <Ifile onChange={upload} ref={file} />
-        </Uspan>    
-    
-      </Ciocn>
-      </>
+      {
+        url ? 
+        (<Imgbox>
+            <Image src={url} preview={true} width={swpx} height={shpx}   /> 
+            <Luspan onClick={delImg} className="iconfont iconicon_shanchu"></Luspan>
+        </Imgbox>)
+        : 
+        <>
+        <Ciocn>   
+          <Uspan className='iconfont'>
+          &#xe62d;
+            <Ifile onChange={upload} ref={file} />
+          </Uspan>    
+      
+        </Ciocn>
+        </>
 
-    } 
+      } 
      </Preview>
   )
 }
