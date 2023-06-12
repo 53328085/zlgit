@@ -185,7 +185,6 @@ export default function Warncontent({ style,form }) {
                 <UserTable 
                 columns={columns} 
                 dataSource ={tabledata}   
-                rowKey="sn"  
                 pagination={tableParams} 
                 onChange={changePage}
                 className={style.tbheight}

@@ -11,6 +11,7 @@ import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeic
 import { operation } from '@api/api'
 import style from './style.module.less'
 import zhanwei from '@imgs/zhanwei.png'
+import {  ExportExcel} from '@com/useButton'
 const { Search,TextArea } = Input;
 export default function Warncontent({ style,areavalue }) {
     const tableRef =useRef()
@@ -19,13 +20,15 @@ export default function Warncontent({ style,areavalue }) {
     const oneLevel = useSelector(state => state.system.onelevel)
     const [tableParam,setTableParam] = useState({
         current:1,
-        pageSize:10,  
+        pageSize:10, 
+        total:0 
     })
     const [inpvalue,setInpValue] = useState()
-    const [tableData,setTableData] = useState()
+    const [tableData,setTableData] = useState([])
     const [open,setOpen] =useState(false)
     const [order,setOrder]=useState()
     const [orderdetail,setOrderDetail] = useState()
+    const [key,setKey] = useState()
     const  columns = [
         {
             title: '最新告警时间',
@@ -62,6 +65,7 @@ export default function Warncontent({ style,areavalue }) {
             title: '操作',
             key: 'option',
             align:'center',
+            export:false,
             render:(_,val)=>(
                 <span 
                 style={{color:_.orderId==0?'red':'#237ae4',textDecoration:'underline',cursor:'pointer'}} 
@@ -80,6 +84,7 @@ export default function Warncontent({ style,areavalue }) {
             title: '设备详情',
             key: 'deteail',
             align:'center',
+            export:false,
             render: (_, record) => (
                 <a  style={{textDecoration:'underline'}} href={`/deviceDetail?sn=${record.sn}`} target='blank'>详情</a>
               
@@ -89,15 +94,12 @@ export default function Warncontent({ style,areavalue }) {
     let dispatchId;
     //分页
     const changePage=(page)=>{
+        console.log(page)
         const {current,pageSize}=page
-        setTableParam({...page})
+        // setTableParam({...page})
         getAlarmPage(current,pageSize)
     }
     const search=()=>{
-        setTableParam({ 
-            current:1,
-            pageSize:10,  
-        })
         getAlarmPage(1,10)
     }
     //获取告警信息
@@ -111,7 +113,14 @@ export default function Warncontent({ style,areavalue }) {
         }
         const res =  await operation.AlarmPage(param)
         if(res.success){
-            setTableData(res.data)
+
+            setTableData([...res.data])
+            setTableParam({
+              ...tableParam,
+              current:res.pageNum,
+              pageSize:res.pageSize,
+              total:res.total
+            })
         }else{
             message.error(res.errMsg)
         }
@@ -149,11 +158,38 @@ export default function Warncontent({ style,areavalue }) {
           message.error(res.errMsg)
       }
      
-  }
+    }
+    const onExport =()=>{
+      return new Promise(async (resolve, reject)=>{
+        let param = {
+          projectId,
+          pageNum:key==1?tableParam.current:1,
+          pageSize:key==1?tableParam.pageSize:tableParam.total,
+          alike:inpvalue?inpvalue:'',
+          areaId:areavalue
+      }
+        const resp =  await operation.AlarmPage(param)
+        if(resp.success){
+          resolve({
+            total:resp.total,
+            list:resp.data
+          })
+        }else{
+          reject(resp.errMsg)
+        }
+          
+      })
+    }
     useEffect(()=>{
       oneLevel.length>0&&getAlarmPage()
     },[areavalue])
-
+    useEffect(()=>{
+      if(key==1){
+        tableRef.current.download()
+      }else if(key==2){
+        tableRef.current.downloadAll()
+      }
+    },[key])
     return (
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
@@ -177,16 +213,17 @@ export default function Warncontent({ style,areavalue }) {
                 <Button style={{width:80,borderLeft:'none',background:'#f5f7fa'}}  className={style.searchbtn} onClick={ search }>查询</Button>
                 </div>
                
-                <Button size='default' style={{ width: 96 }} onClick={tableRef?.current?.download}>导出</Button>
+                {/* <Button size='default' style={{ width: 96 }} onClick={tableRef?.current?.download}>导出</Button> */}
+                <ExportExcel setKey={setKey} ></ExportExcel>
             </div>
             <div style={{ marginTop: 16 ,minHeight:700,display:'flex',justifyContent:'column'}} >
                 <UserTable 
                 columns={columns} 
                 dataSource={tableData} 
                 pagination={tableParam}  
-                rowKey="sn" 
                 ref ={tableRef}
                 onChange={changePage}
+                onExport={onExport}
                 ></UserTable>
             </div>
             <UseModal 

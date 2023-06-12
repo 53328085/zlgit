@@ -342,7 +342,7 @@ export default function Index() {
 
       </Form>
       <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
-      <div style={{ height: 710, display: 'flex' }}>
+      <div style={{ height: 673, display: 'flex' }}>
       <Table   columns={columns} dataSource={tabledata.tablesource}
         pagination={{ current: pageinfo.pageNum, pageSize: pageinfo.pageSize, total: pageinfo.total }}
         onChange={changePage}

@@ -10,6 +10,7 @@ import { useAntdTable, usePagination } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
+import {  ExportExcel} from '@com/useButton'
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -20,10 +21,11 @@ export default function Warncontent({ style ,areavalue}) {
     // order.current=false
     const [order,setOrder]=useState(false)
     const [orderdetail,setOrderdetail]=useState()
-    const [tableParams,setTableParams] = useState({pageNum:1,pageSize:10})
+    const [tableParams,setTableParams] = useState({current:1,pageSize:10})
     const [rangerTime,setRangerTime] = useState([moment(),moment()])
     const [status,setStatus] = useState(0)
     const [tableData,setTableData] = useState()
+    const [key,setKey] = useState()
     const [stateopts,setStateopts] = useState([{
         label:'全部',
         value:0,
@@ -37,10 +39,11 @@ export default function Warncontent({ style ,areavalue}) {
         getOrderDetail(record.id)
     }}>{_}</a>)
     //工单分页查询
-    const getOrderPage = async ()=>{
+    const getOrderPage = async (pageNum=1,pageSize=10)=>{
         let parmas={
             projectId,
-            ...tableParams,
+            pageSize,
+            pageNum,
             start:rangerTime[0].format('YYYY-MM-DD'),
             end:rangerTime[1].format('YYYY-MM-DD'),
             areaId:areavalue,
@@ -49,6 +52,11 @@ export default function Warncontent({ style ,areavalue}) {
       const res =  await operation.OrderPage(parmas)   
       if(res.success){
         setTableData(res.data)
+        setTableParams({
+            current:res.pageNum,
+            pageSize:res.pageSize,
+            total:res.total
+        })
       }else{
         message.error(res.errMsg)
       }
@@ -85,6 +93,13 @@ export default function Warncontent({ style ,areavalue}) {
         }else{
             message.error(res.errMsg)
         }
+    } 
+    //分页
+    const changePage=(page)=>{
+        console.log(page)
+        const {current,pageSize}=page
+        // setTableParam({...page})
+        getOrderPage(current,pageSize)
     }
     //日期范围变化
     const changeRange=(dates)=>{
@@ -109,10 +124,34 @@ export default function Warncontent({ style ,areavalue}) {
         }
        
     }
+    const onExport=()=>{
+        return new Promise(async (resolve, reject) => {
+            let parmas={
+                projectId,
+                pageSize:key==1?tableParams.pageSize:tableParams.total,
+                pageNum:tableParams.current,
+                start:rangerTime[0].format('YYYY-MM-DD'),
+                end:rangerTime[1].format('YYYY-MM-DD'),
+                areaId:areavalue,
+                state:status
+            }
+            const res = await operation.OrderPage(parmas)
+            if(res.success){
+                if(res.success){
+                    resolve({
+                      total:res.total,
+                      list:res.data
+                    })
+                  }else{
+                    reject(res.errMsg)
+                  }
+            }
+        })
+    }
     useEffect(()=>{
         if(oneLevel.length>0){
             getOrderPage()
-        getOrderStatistics()
+            getOrderStatistics()
         }
         
     },[areavalue])
@@ -120,6 +159,9 @@ export default function Warncontent({ style ,areavalue}) {
         oneLevel.length>0&&getOrderPage()
         
     },[status])
+    useEffect(()=>{
+        tableRef.current.downloadAll()
+    },[key])
     return (
         <div className={style.OrderContent}>
             <div className={style.SearchContent}>
@@ -132,16 +174,17 @@ export default function Warncontent({ style ,areavalue}) {
                     <Select style={{width:128}} defaultValue={status} options={stateopts} onChange={(v)=>{setStatus(v)}}></Select>
                 </div>
                 <Divider type='vertical' style={{height:32,borderColor:'#d7d7d7',margin:'0 32px'}} dashed/>
-                <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button>
+                {/* <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button> */}
+                <ExportExcel setKey={setKey} ></ExportExcel>
             </div>
             <div style={{ marginTop: 16,display:'flex',height:700 }}>
                 <UserTable 
                 columns={columns} 
                 dataSource={tableData} 
                 pagination={tableParams} 
-                rowKey="sn" 
                 ref={tableRef}
-               
+                onChange={changePage}
+                onExport={onExport}
                 ></UserTable>
             </div>
             <Modal
