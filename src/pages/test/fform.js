@@ -1,38 +1,21 @@
-import { useState } from 'react';
-import { createTodos } from './utils.js';
-import TodoList from './TodoList.js';
+import { useRef } from 'react';
+import MyInput from './MyInput.js';
 
-const todos = createTodos();
+export default function Form() {
+  const ref = useRef(null);
 
-export default function App() {
-  const [tab, setTab] = useState('all');
-  const [isDark, setIsDark] = useState(false);
+  function handleClick() {
+    ref.current.focus();
+    // 下方代码不起作用，因为 DOM 节点并未被暴露出来：
+    // ref.current.style.opacity = 0.5;
+  }
+
   return (
-    <>
-      <button onClick={() => setTab('all')}>
-        All
+    <form>
+      <MyInput label="Enter your name:" ref={ref} />
+      <button type="button" onClick={handleClick}>
+        Edit
       </button>
-      <button onClick={() => setTab('active')}>
-        Active
-      </button>
-      <button onClick={() => setTab('completed')}>
-        Completed
-      </button>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          checked={isDark}
-          onChange={e => setIsDark(e.target.checked)}
-        />
-        Dark mode
-      </label>
-      <hr />
-      <TodoList
-        todos={todos}
-        tab={tab}
-        theme={isDark ? 'dark' : 'light'}
-      />
-    </>
+    </form>
   );
 }

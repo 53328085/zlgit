@@ -304,7 +304,7 @@ const columns = [
            <Item noStyle>
              {/*  <Button onClick={onExport} type="primary">导出</Button> */}
 
-              <ExportExcel setKey={setKeycode} />
+              <ExportExcel tb={tbref} />
            </Item>
         </Form>
         
