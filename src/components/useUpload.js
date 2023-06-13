@@ -58,7 +58,8 @@ const Luspan = styled(Uspan)`
 `
 const Ifile = styled.input.attrs(props => ({
   type: "file",
-  title: ''
+  title: '',
+  accept: "image/*"
 }))`
   height: 40px;
   width: 40px;
@@ -82,17 +83,13 @@ const Preview = styled.div`
     border: ${ ({border}) => border ? "1px dashed #999" : "none"};
     overflow: hidden;
   `
-const [canvas, setCanvas] = useState()
+
 const cref = useRef()
 
-
+ console.log('value', value)
  // img.src = `data:image/png;base64,${src}`
   const [url, setUrl] = useState()
 
-  const getnode = useCallback((node) =>{
-     console.log(node)
-     setCanvas(node)
-    }, [url])
   const file = useRef()
   const imgsize = (src) => {
     const msg = () => {
@@ -120,14 +117,18 @@ const cref = useRef()
 
   const zipImg = (img) => {
     if(!window.createImageBitmap) return message.warning('请使用新版chrome浏览器')
-    console.log(cref.current)
+     let {width, height} = img
+     let zoom = Math.min(wpx/width, hpx/height);
+     zoom = zoom > 1 ? 1 : zoom;
+     console.log(zoom)
+     let rheight = Math.ceil(height*zoom)
+     console.log(rheight)
+    createImageBitmap(img, {resizeHeight: rheight, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
 
-    createImageBitmap(img, {resizeHeight: hpx, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
-
-      console.log(img.width)
+     
       let canvas = document.createElement('canvas')
       canvas.width = wpx;
-      canvas.height = hpx;
+      canvas.height = rheight;
       let ctx =canvas.getContext('2d')
       ctx.drawImage(res, 0,0)
       let dataUrl =  canvas.toDataURL()
@@ -161,9 +162,11 @@ const cref = useRef()
   let img;
   const upload = (e) => {  // 1.判断图片大小 2. 判断图片格式 3. 判断图片尺寸
     fileData = e.target.files[0];    
+    if(!fileData) return message.warning("请选择图片")
     let { name, size } = fileData;
     let limit = Math.ceil(size / 1024);
     let ext = name.split(".")[1];
+    console.log(limit)
    // let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < maximum;
     if (ext && !["png", "jpg", "jpeg"].includes(ext.toLowerCase())) {   
        // clearfile()   
@@ -176,45 +179,47 @@ const cref = useRef()
       // return  message.warning(`请选择${maximum}k以内的图片！`, 1);
     }  
 
-    console.log(extref.current)
-    if (fileData ) { 
-       console.log(extref.current)
+  
+    if (fileData ) {       
         src = URL.createObjectURL(fileData)
         img = document.createElement('img')  
         let ws = false, hs = false   
      // img.src = `data:image/png;base64,${src}`
          img.src = src
-      if(img.complete) {
-          ws = img.width <= wpx
-          hs = img.height <= hpx
-      } else {
-        img.onload = ()=> {
-            ws = img.width <= wpx
-            hs = img.height <= hpx
+     
+         img.onload = ()=> {
+            if (img.complete) {
+              ws = img.width > wpx
+              hs = img.height > hpx
+
+              let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪` : ''
+              let htext = hs ? `高度大于${hpx}将被按图片比例裁剪` : ''
+              extref.current= extref.current + wtext + htext;
+              console.log(extref.current)
+              if(extref.current.trim()) {
+                Modal.confirm({
+                  title: '图片压缩',
+                  icon: <ExclamationCircleOutlined />,
+                  content: extref.current,
+                  onOk() {
+                    zipImg(img)
+                  },
+                  onCancel() {
+                    clearfile() 
+                  },
+                })
+              } else {
+                onreader(fileData)
+              }
+            }
+           
         }
-      }
+      
     
-      if (ws || hs) {
-        let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪` : ''
-        let htext = hs ? `高度大于${hpx}将被按图片比例裁剪` : ''
-        let size = ws || hs
-        // clearfile() 
-        //return message.warning(`图片${text}度大于${size}像素`);
-        extref.current= extref.current + wtext + htext;
-      }
+       
       
       //
-      Modal.confirm({
-        title: '图片压缩',
-        icon: <ExclamationCircleOutlined />,
-        content: extref.current,
-        onOk() {
-          zipImg(img)
-        },
-        onCancel() {
-          clearfile() 
-        },
-      })
+     
      // onreader(fileData);
       //let reader = new FileReader();
      // console.log(reader.readAsDataURL(fileData))

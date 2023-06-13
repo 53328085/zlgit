@@ -13,10 +13,10 @@ export default function GatewayDetail(props) {
     let location = useLocation()
     let qs=require('query-string')
     let search=qs.parse(location.search)
-    useEffect(() => {
+    /* useEffect(() => {
       document.title = `NIS6000 正泰储能 网关详情`
       return () => document.title= 'NIS6000 正泰储能 网关详情'
-    },[location]) 
+    },[location])  */
     console.log(search)
     const projectId = useSelector(selectProjectId)
 //   const [messageApi, contextHolder] = message.useMessage();

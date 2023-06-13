@@ -226,8 +226,7 @@ const columns = [
    const tableRef = useRef()
    const [price ,setPrice] = useState({})
    const {Item} = Form
-   const [form] = Form.useForm()
-   const [keycode, setKeycode] = useState(0)
+   const [form] = Form.useForm()  
    const [total, setTotal] = useState(0)
   const getPrice = async() => {
     try {
@@ -293,14 +292,7 @@ const onExport = useCallback(() => {
     let formData = form.getFieldsValue()
     return  QueryReports({current: 1, pageSize: total}, formData)
 }, [total])
-useEffect(() => {
-  if (keycode < 1) return;
-  if (keycode == 1)  {
-    tableRef.current.download()
-  }else if(keycode == 2) {
-    tableRef.current.downloadAll()
-  }
-},[keycode])
+
 
   return (
     <Fragment>
@@ -319,7 +311,7 @@ useEffect(() => {
               <CustomTag>谷电价： {price.price4}</CustomTag>
               <Divider style={{height: 32}} dashed type={'vertical'}/>
            {/*    <Button type='primary' style={{width: 96}} onClick={()=>exportData()}>导出</Button> */}
-              <ExportExcel style={{marginLeft: 'auto'}} setKey={setKeycode} />
+              <ExportExcel style={{marginLeft: 'auto'}} tb={tableRef} />
             </Space>
             
           </Form>

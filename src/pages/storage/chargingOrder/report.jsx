@@ -193,7 +193,7 @@ const columns = [
  
 const [charData, setCharData] = useState({})
 const [total, setTotal] = useState(0)
-const [keycode, setKeycode] = useState(0)
+
 let getTableData = ({current, pageSize}, formData) => {
  
   let {state, type, date} = formData
@@ -258,14 +258,7 @@ const onExport = useCallback(() => {
     QueryReports()
   }, []) */
 
-  useEffect(() => {
-    if (keycode < 1) return;
-    if (keycode == 1)  {
-      tbref.current.download()
-    }else if(keycode == 2) {
-      tbref.current.downloadAll()
-    }
-  },[keycode])
+
   useEffect(() => {
     getStatus()
     QueryType()
@@ -338,7 +331,7 @@ const onExport = useCallback(() => {
                 <Text ellipsis={{tooltip: charData.storageIncome}}>{charData.storageIncome} &nbsp;元</Text>
                </div>
              {/*  <ExportButton style={{marginLeft: 'auto'}} onClick={onExport} /> */}
-            <ExportExcel style={{marginLeft: 'auto'}} setKey={setKeycode} />
+            <ExportExcel style={{marginLeft: 'auto'}} tb={tbref} />
          </div>
         <Usetable columns={columns} ref={tbref}  rowKey={nanoid()}  {...tableProps} sheetName="充放订单"  onExport={onExport} />
         <CModal width={664} title="运行单详情" ref={rref}   mold='cust' footer={<Space><Button onClick={onclose}>取消</Button><Button type="primary" onClick={onclose}>确定</Button></Space>}>
