@@ -8,7 +8,11 @@ import {
   Switch, 
   Divider,
   Checkbox,
-  message
+  message,
+  Select,
+  Space,
+  Slider,
+  InputNumber
 } from "antd";
 import styled from "styled-components";
 import moment from 'moment';
@@ -68,14 +72,14 @@ import {CustButton} from "@com/useButton"
    row-gap: 16px;
    display: grid;
   .ant-form-item-label {
-    flex-basis: 96px;
+    flex-basis: 106px;
    
   }
   .upload {
   
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 32px;
+   column-gap: 16px;
    .ant-form-item-control-input-content {
     height: 164px;
     display: grid;
@@ -90,7 +94,7 @@ import {CustButton} from "@com/useButton"
           width: 200px;
         }
     
-   // }
+    }
  
   
    
@@ -100,7 +104,7 @@ import {CustButton} from "@com/useButton"
     height: 370px;
     padding-left: 96px;
   }
-}
+ 
   .save {
     grid-column: 2;
     grid-row: -2;
@@ -116,7 +120,7 @@ import {CustButton} from "@com/useButton"
     padding: 0;
     font-size: 14px;
   }
-`; 
+`
 const Info = styled.span`
   font-size: 12px;
   color: rgba(0,0,0,0.85);
@@ -385,6 +389,7 @@ useEffect(() => {
       scrollToFirstError={true}
       disabled={ispublish}
       onFinish={onFinish}
+      labelWrap
       validateMessages={
        { required: "缺少'${label}' 数据"}
       }
@@ -469,19 +474,20 @@ useEffect(() => {
       </div>
       <div className="rightlayout">
       <div className='upload'> 
-         <Item label="项目logo" className="left" required>
+        <Item label="图片转换" required>  
            <div className="img">
-            <Item noStyle name="imgLogo" rules={[
+            <Item noStyle name="imgProject" rules={[
               {
-                validator: checkLog,
+                validator: checkProject,
               },
             ]}>
-              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+            <Cupload wpx={248} hpx={168} swpx={200} shpx={114} isDel={ispublish} /> 
             </Item>
            </div>
-           <Info>（图片大小为: 212*32 png 格式)</Info>
+           <Info>批量转换图片并直接保存到本地</Info>
          </Item>
-         <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
+        
+         {/* <Item label="项目图片" required>  
            <div className="img">
             <Item noStyle name="imgProject" rules={[
               {
@@ -492,27 +498,42 @@ useEffect(() => {
             </Item>
            </div>
            <Info>（图片大小为: 248*168像素 png 格式)</Info>
-         </Item>
+         </Item> */}
       </div>
       <Divider dashed  className="divider" style={{width: '624px',minWidth: '624px', marginLeft: '96px'}} />    
-      <Item label="项目地址" name="address"  rules={[  
-              {
-                required: true,
-                message: '请输入详细地址',
-              },
-            ]}
-            tooltip="请在地图上点击获取"
-            > 
-          <Input placeholder="请输入详细地址"   onChange={onInput}  />         
+      <Item label="上传图片尺寸"  name="size" > 
+          <Space>
+            <InputNumber placeholder="宽度" addonAfter="px" /> 
+            <InputNumber placeholder="高度" addonAfter="px" />
+          </Space>   
       </Item>
-      <Item label="经纬度"  name="lngLat" rules={[  
+      <Item label="上传图片格式及质量"  name="ext" > 
+         <Space>
+         <Select  options={[
               {
-                required: true,
-                message: '请从地图上获取经纬度',
-              },
-            ]}> 
-              <Input placeholder="经纬度" /> 
+              label: 'png',
+              value: "1",
+               },
+               {
+                label: 'jpeg',
+                value: "2",
+                },
+                {
+                  label: 'wbeg',
+                  value: "3",
+                  }
+            ]} style={{width: '200px'}} />  
+            <Slider
+            min={0.1}
+            max={1}
+            step={0.05}
+            range={false}
+            style={{width: '300px'}}
+          />
+           </Space>
+
       </Item>
+      
       <div className='map'> 
          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />         
       </div>
