@@ -159,9 +159,9 @@ export default function Warncontent({ style ,areavalue}) {
         oneLevel.length>0&&getOrderPage()
         
     },[status])
-    useEffect(()=>{
-        tableRef.current.downloadAll()
-    },[key])
+    // useEffect(()=>{
+    //     tableRef.current.downloadAll()
+    // },[key])
     return (
         <div className={style.OrderContent}>
             <div className={style.SearchContent}>
@@ -175,7 +175,7 @@ export default function Warncontent({ style ,areavalue}) {
                 </div>
                 <Divider type='vertical' style={{height:32,borderColor:'#d7d7d7',margin:'0 32px'}} dashed/>
                 {/* <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button> */}
-                <ExportExcel setKey={setKey} ></ExportExcel>
+                <ExportExcel setKey={setKey} tb={tableRef}></ExportExcel>
             </div>
             <div style={{ marginTop: 16,display:'flex',height:700 }}>
                 <UserTable 

@@ -199,6 +199,7 @@ export default function video() {
     {
       title: '操作',
       dataIndex: 'options',
+      export:false,
       render: (text, record) => {
         return (
           <div>
@@ -265,6 +266,23 @@ export default function video() {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize: tableParams.total,
+        deviceStyle: 6
+      }
+      const result = await DeviceCategory(params)
+      const { data, errMsg, success,total} = result;
+      if(success){
+        resolve({list:data,total})
+      }else{
+        reject(errMsg)
+      }
+    })
+  }
   //分页
   const onChangePage = (page, pageSize) => {
     setTableParams({
@@ -304,7 +322,8 @@ export default function video() {
     title:'配置视频监控类型',
     onSure,
     onCancel,
-    AddModal: <AddModal {...addModalProps}></AddModal>
+    AddModal: <AddModal {...addModalProps}></AddModal>,
+    tb:tableLoadRef
   };
   let editFormProps = {
     EditForm
@@ -343,6 +362,7 @@ export default function video() {
           ref={tableLoadRef}
           pagination={tableParams}
           onChange={onChangePage}
+          onExport={onExport}
         ></Table>
       </DeviceContent>
       {EditModalComp}

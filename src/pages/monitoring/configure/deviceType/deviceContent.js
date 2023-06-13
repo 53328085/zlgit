@@ -6,7 +6,7 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
 import {publishState} from '@redux/systemconfig'
 import {Button,message} from 'antd'
-
+import {  ExportExcel} from '@com/useButton'
 export default function DeviceContent(props,ref) {
   const publish = useSelector(publishState)
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -30,7 +30,6 @@ export default function DeviceContent(props,ref) {
   
   const {DeviceTypeManager:{QueryNotUsed}}=Monitoring
   const addformRef=useRef()
-  
   const openAdd =async ()=>{
 
       const result = await QueryNotUsed(projectId)
@@ -85,7 +84,9 @@ export default function DeviceContent(props,ref) {
           <div className={style.btns}>
           {publish?null:(<div className={style.btn} onClick={openAdd}>+新增</div>)}  
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
-            <div className={style.btn} onClick={exportExecel}>导出</div>
+            {/* <div className={style.btn} onClick={exportExecel}>导出</div> */}
+            {other.onExport?<ExportExcel tb={other.tb} onExport={other.onExport}/>:null}
+
           </div>
       </div>
       <div style={{display:'flex',height:700}}>

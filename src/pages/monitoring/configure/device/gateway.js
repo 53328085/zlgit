@@ -76,12 +76,12 @@ export default function gateway() {
     {
       title: oneLevel[0]?.levelName ? oneLevel[0].levelName : '园区名称',
       dataIndex: 'areaName',
-      key: 'sn'
+      key: 'areaName'
     },
     {
       title: '安装地址',
       dataIndex: 'address',
-      key: 'sn'
+      key: 'address'
     },
     {
       title: '网关编号',
@@ -91,26 +91,26 @@ export default function gateway() {
     {
       title: '网关型号',
       dataIndex: 'category',
-      key: 'sn'
+      key: 'category'
     },
     {
       title: '网关名称',
       dataIndex: 'name',
-      key: 'sn'
+      key: 'name'
     },
     {
       title: 'IMEI',
       dataIndex: 'imei',
-      key: 'sn'
+      key: 'imei'
     },
     {
       title: '备注',
       dataIndex: 'remark',
-      key: 'sn'
+      key: 'remark'
     },
     {
       title: '操作',
-      dataIndex: '8',
+      dataIndex: 'option',
       width: 304,
       render: (text, record, index) => {
         return (
@@ -545,6 +545,24 @@ let errcolumns=[
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize:page.total,
+        areaId:  compRef.current.selvalue?compRef.current.selvalue:0,
+        alike: compRef.current.inpvalue
+      }
+      const resp = await QueryByPageGateWay(params)
+      if(resp.success){
+        resolve({list:resp.data,total:resp.total})
+      }else{
+        reject(resp.errMsg)
+      }
+    })
+  }
+
   //批量上传
   const onImportOk = async () => {
     const formData = new FormData()
@@ -584,6 +602,7 @@ let errcolumns=[
     levelname,
     placeholder: '输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
+    tb:tableLoadRef
   }
   let ModalFormProps = {
     modalFormRef,
@@ -652,6 +671,7 @@ let errcolumns=[
             loading={loading}
             ref={tableLoadRef}
             rowKey={columns => columns.sn}
+            onExport={onExport}
             onChange={(page, pageSize) => {
               setPage(() => ({
                 ...page

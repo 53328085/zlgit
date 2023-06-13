@@ -17,21 +17,9 @@ export default function Index() {
 
   const [Coms,setComs]=useState([
     <GateWay/>,
-    // <Electric />,
-    // <Water/>,
-    // <Fire />,
-    // <Sensor />,
-    // <Transform />,
-    // <Video/>
   ])
   const [tabs,setTabs] =useState([
     {key: '0',label: '网关'},
-    // {key: '1',label: '电表'},
-    // {key: '2',label: '水表'},
-    // {key: '3',label: '燃气表'},
-    // {key: '4',label: '传感器'},
-    // {key: '5',label: '变压器'},
-    // {key: '6',label: '视频监控'},
   ])
   let dataProps={
     value,
@@ -54,7 +42,7 @@ export default function Index() {
           arr[2]=<Water deviceStyle={k.deviceStyle}/>
         }
         else if(k.name==='燃气表'){
-          arr[3]=<Fire deviceStyle={k.deviceStyle}/>
+          arr[3]=<Fire deviceStyle={k.deviceStyle}/> 
         }else if(k.name==='传感器'){
           arr[4]=<Sensor deviceStyle={k.deviceStyle}/>
         }else if(k.name==='变压器'){

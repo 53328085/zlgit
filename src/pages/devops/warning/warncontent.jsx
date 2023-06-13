@@ -183,13 +183,13 @@ export default function Warncontent({ style,areavalue }) {
     useEffect(()=>{
       oneLevel.length>0&&getAlarmPage()
     },[areavalue])
-    useEffect(()=>{
-      if(key==1){
-        tableRef.current.download()
-      }else if(key==2){
-        tableRef.current.downloadAll()
-      }
-    },[key])
+    // useEffect(()=>{
+    //   if(key==1){
+    //     tableRef.current.download()
+    //   }else if(key==2){
+    //     tableRef.current.downloadAll()
+    //   }
+    // },[key])
     return (
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
@@ -214,7 +214,7 @@ export default function Warncontent({ style,areavalue }) {
                 </div>
                
                 {/* <Button size='default' style={{ width: 96 }} onClick={tableRef?.current?.download}>导出</Button> */}
-                <ExportExcel setKey={setKey} ></ExportExcel>
+                <ExportExcel setKey={setKey} tb={tableRef}></ExportExcel>
             </div>
             <div style={{ marginTop: 16 ,minHeight:700,display:'flex',justifyContent:'column'}} >
                 <UserTable 

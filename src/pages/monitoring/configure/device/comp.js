@@ -4,7 +4,7 @@ import { Input, Select, Button, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import { publishState } from '@redux/systemconfig'
-
+import {  ExportExcel} from '@com/useButton'
 const { DeviceManager: { OneLevel } } = Monitoring
 
 export default forwardRef(function Comp(props, ref) {
@@ -18,7 +18,8 @@ export default forwardRef(function Comp(props, ref) {
         setPage,
         exportExecel,
         levelname,
-        page
+        page,
+        tb
     } = props
     const publish = useSelector(publishState)
     const projectId = useSelector(state => state.system.menus.projectId)
@@ -129,7 +130,8 @@ export default forwardRef(function Comp(props, ref) {
                         <div className={style.divmgr16} onClick={multExport}>批量导入</div>
                     </>}
 
-                    <div className={style.divmgr16} onClick={exportExecel}>导出</div>
+                    {/* <div className={style.divmgr16} onClick={exportExecel}>导出</div> */}
+                    <ExportExcel tb={tb}/>
                 </Row>
             </Row>
             <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />

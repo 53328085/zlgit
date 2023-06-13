@@ -147,6 +147,7 @@ let columns =  [
     {
         title:'操作',
         dataIndex: 'options',
+        export:false,
         render:(text,record)=>{
           return(
             <div>
@@ -392,7 +393,23 @@ if(publish){
   const exportExecel=()=>{
     tableLoadRef.current.download()
   }
- 
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize: tableParams.total,
+        deviceStyle: 4
+      }
+      const result = await DeviceCategory(params)
+      const { data, errMsg, success,total} = result;
+      if(success){
+        resolve({list:data,total})
+      }else{
+        reject(errMsg)
+      }
+    })
+  }
    //分页
    const onChangePage = (page, pageSize) => {
     setTableParams({
@@ -423,6 +440,7 @@ if(publish){
     exportExecel,
     onSure,
     title:'配置传感器类型',
+    tb:tableLoadRef
   };
   let editFormProps={
     editForm,
@@ -467,6 +485,7 @@ if(publish){
         loading={ loading}
         pagination={tableParams}
         onChange={onChangePage}
+        onExport={onExport}
         ></Table>
       </DeviceContent>
       {EditModalComp}

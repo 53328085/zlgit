@@ -45,6 +45,7 @@ export default function Index() {
     }catch(e){console.log(e)}
   
   }
+  const emptyarr = new Array(4).fill(<></>)
   let Coms = [
     <GateWay />,
     <Electric />,
@@ -53,10 +54,7 @@ export default function Index() {
     <Sensor />,
     <Transform />,
     <Video/>,
-    '',
-    '',
-    '',
-    '',
+    ...emptyarr,
     <Energy/>
   ]
   useEffect(() => {

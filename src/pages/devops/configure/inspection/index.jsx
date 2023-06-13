@@ -79,7 +79,7 @@ export default function Index() {
     { title: '创建日期', dataIndex: 'createTime' },
     { title: '巡检人', dataIndex: 'operator' },
     {
-      title: '操作', dataIndex: '', render(text) {
+      title: '操作', dataIndex: '',export:false, render(text) {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
             <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async () => {
@@ -212,14 +212,14 @@ export default function Index() {
   useEffect(() => {
     getInspectionPlanPage()
   }, [])
-  useEffect(() => {
-    if (key == 1) {
-      tableRef.current.download()
-    } else if (key == 2) {
-      tableRef.current.downloadAll()
-    }
+  // useEffect(() => {
+  //   if (key == 1) {
+  //     tableRef.current.download()
+  //   } else if (key == 2) {
+  //     tableRef.current.downloadAll()
+  //   }
 
-  }, [key])
+  // }, [key])
   return (
     <ContainerDiv>
       <BlueColumn name="巡检计划管理" />
@@ -272,7 +272,7 @@ export default function Index() {
           {/* <div className='btncss' onClick={() => { tableRef.current.download() }}>
             导出
           </div> */}
-          <ExportExcel setKey={setKey} />
+          <ExportExcel setKey={setKey} tb={tableRef}/>
         </div>
       </div>
       <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7' }} dashed ></Divider>

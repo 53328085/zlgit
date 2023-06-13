@@ -153,13 +153,13 @@ export default function Warncontent({ style, areavalue }) {
         }
 
     }, [areavalue, rangerTime, projectId])
-    useEffect(() => {
-        if (key == 1) {
-            tableRef.current.download()
-        } else if (key == 2) {
-            tableRef.current.downloadAll()
-        }
-    }, [key])
+    // useEffect(() => {
+    //     if (key == 1) {
+    //         tableRef.current.download()
+    //     } else if (key == 2) {
+    //         tableRef.current.downloadAll()
+    //     }
+    // }, [key])
     return (
         <div className={style.OrderContent}>
             <Form form={form} layout='inline' className={style.SearchContent} initialValues={{
@@ -179,7 +179,7 @@ export default function Warncontent({ style, areavalue }) {
                     </Item>
                     <Divider type='vertical' style={{ height: 32, borderColor: '#d7d7d7' }} dashed />
                     {/* <Button size='default' style={{ width: 96 }} onClick={(()=>{tableRef.current.download()})}>导出</Button> */}
-                    <ExportExcel setKey={setKey} />
+                    <ExportExcel setKey={setKey} tb={tableRef}/>
                 </Space>
 
 

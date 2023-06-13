@@ -151,6 +151,7 @@ export default function Electric() {
     {
       title: '操作',
       dataIndex: 'options',
+      export:false,
       render: (text, record) => {
         return (
           <div style={{display:'flex'}}>
@@ -407,6 +408,23 @@ export default function Electric() {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize: tableParams.total,
+        deviceStyle: 1
+      }
+      const result = await DeviceCategory(params)
+      const { data, errMsg, success,total} = result;
+      if(success){
+        resolve({list:data,total})
+      }else{
+        reject(errMsg)
+      }
+    })
+  }
   //分页
   const onChangePage = (page, pageSize) => {
     setTableParams({
@@ -438,7 +456,8 @@ export default function Electric() {
     onCancel,
     onSure,
     exportExecel,
-    title:'配置电表类型'
+    title:'配置电表类型',
+    tb:tableLoadRef
   };
   let editFormProps = {
     editForm,
@@ -482,6 +501,7 @@ export default function Electric() {
         loading={loading}
         pagination={tableParams}
         onChange={onChangePage}
+        onExport={onExport}
         ></Table>
       </DeviceContent>
       {EditComp}

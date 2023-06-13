@@ -55,6 +55,7 @@ export default function gateway() {
         title: '操作',
         dataIndex: 'options',
         key:'options',
+        export:false
       },
 ] 
   if(publish){
@@ -260,6 +261,24 @@ export default function gateway() {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  const onExport = ()=>{
+    return new Promise(async (resolve, reject) =>{
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize: tableParams.total,
+      }
+      const res = await GatewayCategory(params)
+      if(res.success){
+        resolve({
+            list:res.data,
+            total:res.total
+        })
+      }else{
+        reject(res.errMsg)
+      }
+    })
+  }
   //分页
   const onChangePage = (page, pageSize) => {
     setTableParams({
@@ -288,7 +307,9 @@ export default function gateway() {
     exportExecel,
     title:'配置网关类型',
     form,
-    selectOptions:''
+    selectOptions:'',
+    tb:tableLoadRef,
+    onExport,
     // selectOptionsRef.current,
   };
 
@@ -333,6 +354,7 @@ export default function gateway() {
           pagination={tableParams}
           loading={loading}
           onChange={onChangePage}
+          onExport={onExport}
         ></Table>
        
       </DeviceContent>

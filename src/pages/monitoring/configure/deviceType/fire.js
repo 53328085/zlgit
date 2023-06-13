@@ -149,6 +149,7 @@ let columns =  [
     },
     {
         title:'操作',
+        export:false,
         dataIndex: 'options',
         render:(text,record)=>{
           return(
@@ -395,6 +396,23 @@ const onSureEditModal=async()=>{
   const exportExecel=()=>{
     tableLoadRef.current.download()
   }
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize: tableParams.total,
+        deviceStyle: 3
+      }
+      const result = await DeviceCategory(params)
+      const { data, errMsg, success,total} = result;
+      if(success){
+        resolve({list:data,total})
+      }else{
+        reject(errMsg)
+      }
+    })
+  }
   //分页
   const onChangePage = (page, pageSize) => {
     setTableParams({
@@ -424,7 +442,8 @@ const onSureEditModal=async()=>{
     ModalRef,
     onCancel,
     exportExecel,
-    title:'配置燃气表类型'
+    title:'配置燃气表类型',
+    tb:tableLoadRef
   };
   let editFormProps={
     editForm,
@@ -467,6 +486,7 @@ const onSureEditModal=async()=>{
         loading={ loading}
         pagination={tableParams}
         onChange={onChangePage}
+        onExport={onExport}
         ></Table>
       </DeviceContent>
       {EditModalComp}
