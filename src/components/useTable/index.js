@@ -121,7 +121,7 @@ const download = useCallback(() => {
   return (
     <Divbox>
         <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} { ...otherprops}   />
-      {lists.length > 0 &&  <Allupdate lists={lists} total={total}/>}
+      {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
     </Divbox>
   )
 }
