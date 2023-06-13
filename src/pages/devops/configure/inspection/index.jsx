@@ -198,7 +198,7 @@ export default function Index() {
       if (res.success) {
         resolve({
           total: res.total,
-          list: res.data
+          list: res.data?res.data:[]
         })
       } else {
         reject(res.errMsg)

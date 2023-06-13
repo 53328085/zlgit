@@ -509,7 +509,7 @@ export default function gateway({ deviceStyle }) {
      
       const resp = await QueryByPageElectric(params)
       if(resp.success){
-        resolve({list:resp.data,total:resp.total})
+        resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{
         reject(resp.errMsg)
       }

@@ -277,7 +277,7 @@ export default function video() {
       const result = await DeviceCategory(params)
       const { data, errMsg, success,total} = result;
       if(success){
-        resolve({list:data,total})
+        resolve({list:data?data:[],total})
       }else{
         reject(errMsg)
       }

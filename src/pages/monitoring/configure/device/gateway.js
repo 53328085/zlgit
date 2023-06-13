@@ -556,7 +556,7 @@ let errcolumns=[
       }
       const resp = await QueryByPageGateWay(params)
       if(resp.success){
-        resolve({list:resp.data,total:resp.total})
+        resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{
         reject(resp.errMsg)
       }

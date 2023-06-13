@@ -71,6 +71,7 @@ export default function parkstreet({areaList,levelname}) {
   {
     title:'操作',
     dataIndex:'options',
+    export:false,
     render:(text,record,index)=>{
       return (
         <p style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -237,6 +238,29 @@ export default function parkstreet({areaList,levelname}) {
     console.log(tableRef)
     tableRef.current.download()
   }
+  const onExport=()=>{
+    return new Promise(async(resolve, reject)=>{
+      const areaId =compRef.current.selRef.current?compRef.current.selRef.current:0
+      const alike=compRef.current.inpRef.current
+      let params={
+        projectId,
+        pageNum:1,
+        pageSize:tableParams.total,
+        areaId,
+        alike
+      }
+   
+     const res = await PublicLightQueryByPage(params)
+     if(res.success){
+        resolve({
+          list:res.data?res.data:[],
+          total:res.total
+        })
+     }else{
+        reject(res.errMsg)
+     }
+    })
+  }
     //批量上传
     const onImportOk=async ()=>{
       const areaId =compRef.current.selRef.current
@@ -310,7 +334,8 @@ export default function parkstreet({areaList,levelname}) {
     setTableParams,
     modalImport,
     exportTable,
-    getList:getPublicLightQueryByPage
+    getList:getPublicLightQueryByPage,
+    tb:tableRef
   }
   const addModalProps = {
     addModalRef,
@@ -372,6 +397,7 @@ export default function parkstreet({areaList,levelname}) {
       onChange={changePage}
       loading={loading}
       ref ={tableRef}
+      onExport={onExport}
       ></Table>
      </Comp>
      <Addmodal {...addModalProps}></Addmodal>

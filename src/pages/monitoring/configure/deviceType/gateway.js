@@ -271,7 +271,7 @@ export default function gateway() {
       const res = await GatewayCategory(params)
       if(res.success){
         resolve({
-            list:res.data,
+            list:res.data?res.data:[],
             total:res.total
         })
       }else{

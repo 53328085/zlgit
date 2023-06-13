@@ -470,6 +470,25 @@ export default function gateway({ deviceStyle }) {
   const exportExecel = () => {
     tableLoadRef.current.download()
   }
+  const onExport = () => {
+    return new Promise(async (resolve, reject) => {
+      let params = {
+        projectId,
+        pageNum: 1,
+        pageSize:page.total,
+        areaId:  compRef.current.selvalue?compRef.current.selvalue:0,
+        alike: compRef.current.inpvalue,
+
+      }
+     
+      const resp = await QueryByPageCamera(params)
+      if(resp.success){
+        resolve({list:resp.data?resp.data:[],total:resp.total})
+      }else{
+        reject(resp.errMsg)
+      }
+    })
+  }
   //批量上传
   const onImportOk = async () => {
     const formData = new FormData()
@@ -514,7 +533,8 @@ export default function gateway({ deviceStyle }) {
     setPage,
     page,
     exportExecel,
-    getList: getQueryByPageCamera
+    getList: getQueryByPageCamera,
+    tb:tableLoadRef
   }
   const ModalFormProps = {
     modalFormRef,
@@ -575,7 +595,7 @@ export default function gateway({ deviceStyle }) {
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage } ref={tableLoadRef}></Table>
+        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage } ref={tableLoadRef} onExport={onExport}></Table>
       </Comp>
       {AddModalComp}
       {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>

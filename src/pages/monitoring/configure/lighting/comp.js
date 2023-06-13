@@ -5,6 +5,7 @@ import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
+import {  ExportExcel} from '@com/useButton'
 function Comp(props, ref) {
     const publish = useSelector(publishState)
     const context = useContext(CustContext)
@@ -28,6 +29,7 @@ function Comp(props, ref) {
         exportTable,
         tableParamsRef,
         levelname,
+        tb,
         getList = () => { }
     } = props
 
@@ -114,7 +116,8 @@ function Comp(props, ref) {
                         <div className={style.divmgr16} onClick={modalImport}>批量导入</div>
                     </>}
 
-                    <div className={style.divmgr16} onClick={exportTable}>导出</div>
+                    {/* <div className={style.divmgr16} onClick={exportTable}>导出</div> */}
+                    <ExportExcel tb={tb}/>
                 </Row>
             </Row>
             <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />

@@ -140,7 +140,7 @@ export default function Warncontent({ style ,areavalue}) {
                 if(res.success){
                     resolve({
                       total:res.total,
-                      list:res.data
+                      list:res.data?res.data:[]
                     })
                   }else{
                     reject(res.errMsg)
