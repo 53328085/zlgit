@@ -397,7 +397,7 @@ export default function Index(props) {
             {/* <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button> */}
           </Space>
         </div>
-        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
+        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151", }} ></div>
         {isCard ? <div className={style.cardBox}>
           {overView.details != null ? overView.details.map((item, index) => {
             return <div key={index}>
@@ -409,7 +409,7 @@ export default function Index(props) {
               </Link>
             </div>
           }) : ''}
-        </div> : <div className={style.tableHead}>
+        </div> : <div className={style.tableHead} style={{flex: 1, display: 'flex'}}>
           <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} onExport={onExport} expandable={{
             expandedRowRender: (record) => (
               <p
