@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
+import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
@@ -9,6 +9,7 @@ import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
+import {  ExportExcel} from '@com/useButton'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
@@ -230,11 +231,31 @@ export default function Index(props) {
     //getOverviewData()
   }//切换卡片列表模式
 
-  const exportExecel = () => {
-   
-    tableLoadRef.current.download()
-  }//数据导出
-
+ 
+ const onExport = useCallback( () => {        //   表计数据
+ let posts = {...params, pageNum: 1, pageSize: total}
+ return Overview(posts).then(res => {
+    let { success, data, total, pageNum } = res
+    if (success) {
+     // setPageNum(pageNum)
+      let overViewList=[]
+      data?.details?.map(item=>{
+        let description=''
+        item.fields.map(items=>{
+           description+=items.name+' '+items.value+' '
+        })
+        overViewList.push({...item,description:description})
+      })
+      return {
+        list:overViewList,
+        total,
+      } 
+       
+    } else {
+      message.error(res.errMsg)
+    }
+  })
+}, [params])
   useEffect(() => {
     if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
@@ -367,13 +388,14 @@ export default function Index(props) {
                 },
               ]}
             /></div>
-          <div className={style.radioBox}>
+          <Space size={16} style={{marginLeft: 'auto'}}>
             <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
             </Radio.Group>
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button>
-          </div>
+            <ExportExcel disabled={isCard} tb={tableLoadRef} />
+            {/* <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button> */}
+          </Space>
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         {isCard ? <div className={style.cardBox}>
@@ -388,7 +410,7 @@ export default function Index(props) {
             </div>
           }) : ''}
         </div> : <div className={style.tableHead}>
-          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} expandable={{
+          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} onExport={onExport} expandable={{
             expandedRowRender: (record) => (
               <p
                 style={{

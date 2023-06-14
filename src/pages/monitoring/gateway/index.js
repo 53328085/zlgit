@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message } from 'antd'
+import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
@@ -10,7 +10,7 @@ import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
 import { selectProjectId } from '@redux/systemconfig.js'
-import { SemanticClassificationFormat } from 'typescript';
+import {  ExportExcel} from '@com/useButton'
 import Table from '@com/useTable'
 
 
@@ -134,6 +134,23 @@ export default function Index(props) {
       }
     })
   }
+const onExport = useCallback(() => {
+   params.pageNum = 1
+   params.pageSize = total
+  return Overview(params).then(res => {
+    let { success, data, total, pageNum } = res
+    if (success) {
+      return {
+        list: data.details || [],
+        total,
+      }
+      
+    } else {
+      message.error(res.errMsg)
+    }
+  })
+}, [total, areaId, projectId])
+
 
   let [imgUrl, setimgUrl] = useState()
   const getGatewayImages = () => {//网关图片
@@ -264,13 +281,15 @@ export default function Index(props) {
                 },
               ]}
             /></div> : ''}
-          <div className={style.radioBox}>
+          <Space size={16} style={{marginLeft: 'auto'}}>
             <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
             </Radio.Group>
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>数据导出</Button>
-          </div>
+           {/*  <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>数据导出</Button> */}
+           <ExportExcel disabled={isCard} tb={tableLoadRef} />
+        
+          </Space>
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         {isCard ? <div className={style.cardBox}>
@@ -285,7 +304,7 @@ export default function Index(props) {
             </div>
           }) : ''}
         </div> : <div className={style.tableHead}>
-          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef}></Table>
+          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} onExport={onExport}></Table>
         </div>}
         <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>
       </div>
