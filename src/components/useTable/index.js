@@ -1,6 +1,6 @@
 import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo} from 'react'
 import {createPortal,flushSync} from 'react-dom'
-import {Table} from 'antd'
+import {Table, message} from 'antd'
 import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
 
@@ -28,7 +28,7 @@ flex-direction: column;
   const ecolumns = otherprops.columns.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
-  const [lists, setLists] =useState([])
+  const [lists, setLists] =useState()
   const [total, setTotal] = useState(0)
 
 
@@ -51,6 +51,7 @@ const Allupdate =memo(({lists, total}) => {
      
       download()
     } catch (error) {
+      message.warning('导出出错！')
       console.log(error)
     }
   

@@ -175,7 +175,7 @@ const cref = useRef()
     }
     if (ext && limit > maximum) {
         //clearfile() 
-        extref.current=extref.current + `图片大小为${limit}kb,将被裁剪为${maximum}kb`
+        extref.current=extref.current + `图片大小为${limit}kb,将被裁剪为${maximum}kb。`
       // return  message.warning(`请选择${maximum}k以内的图片！`, 1);
     }  
 
@@ -192,8 +192,8 @@ const cref = useRef()
               ws = img.width > wpx
               hs = img.height > hpx
 
-              let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪` : ''
-              let htext = hs ? `高度大于${hpx}将被按图片比例裁剪` : ''
+              let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪。` : ''
+              let htext = hs ? `高度大于${hpx}将被按图片比例裁剪。` : ''
               extref.current= extref.current + wtext + htext;
               console.log(extref.current)
               if(extref.current.trim()) {

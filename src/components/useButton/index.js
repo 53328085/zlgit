@@ -246,10 +246,10 @@ export function PrintButton(props) {
   );
 }
 
-export function ExportExcel({tb}) {
+export function ExportExcel({tb, ...other}) {
   
  const onClick =useCallback(({key}) => {
-     
+      
      if (key == '1') {
       tb.current.download()
      }else if(key == '2') {
@@ -270,7 +270,7 @@ export function ExportExcel({tb}) {
     },
   ]
   return (
-    <Dropdown menu={{items, onClick}}>
+    <Dropdown menu={{items, onClick}} {...other}>
         <Custbtn >
       <img src={icon.export}  />
       导出
