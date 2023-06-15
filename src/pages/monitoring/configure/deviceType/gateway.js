@@ -136,8 +136,6 @@ export default function gateway() {
     if (success) {
       message.success('应用成功')
       // open()
-
-
       getTableData()
     } else {
       message.error(errMsg)
@@ -392,10 +390,10 @@ export let AddModal =forwardRef((props, ref) => {
 
    const open =  () => {
     return new Promise(async(resolve, reject) =>{
-      const result = await QueryNotUsed(projectId)
+    const result = await QueryNotUsed(projectId)
     const { success, data } = result;
     form.setFieldValue('Upload', '')
-   
+    setImageUrl("")
     if (success && Array.isArray(data)) {
    
       if (data.length > 0) {

@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import imgurl from './imgs/index.js'
 import cutContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
+import { useRequest,useLatest  } from 'ahooks';
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -25,14 +26,14 @@ const { DeviceManager:
 export default function gateway() {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
-  const selectoptsRef =useRef()
+  const selectoptsRef = useRef()
   selectoptsRef.current = selectopts
   const [addopts, setAddOpts] = useState()
   const addoptsRef = useRef()
   addoptsRef.current = addopts
   const [usecategory, setUsecategory] = useState()
-  const usecategoryRef=useRef()
-  usecategoryRef.current=usecategory
+  const usecategoryRef = useRef()
+  usecategoryRef.current = usecategory
   const [dataSource, setDataSource] = useState()
   const [delId, setDelId] = useState()
   const [gatewaySn, setGatewaySn] = useState('')
@@ -129,19 +130,19 @@ export default function gateway() {
   if (publish) {
     columns.pop()
   }
-let errcolumns=[
-  {
-    title: '序号',
-    dataIndex: 'index',
-    render:(text)=>{return(<span>1</span>)},
-    key: 'erros'
-  },
-  {
-    title: '错误内容',
-    dataIndex: 'erros',
-    key: 'erros'
-  },
-]
+  let errcolumns = [
+    {
+      title: '序号',
+      dataIndex: 'index',
+      render: (text) => { return (<span>1</span>) },
+      key: 'erros'
+    },
+    {
+      title: '错误内容',
+      dataIndex: 'erros',
+      key: 'erros'
+    },
+  ]
   //打开参数下发弹窗
   const onKeyParam = (record) => {
     setGatewaySn(record.sn)
@@ -153,6 +154,7 @@ let errcolumns=[
     console.log(record)
     modalReStartRef?.current?.onOpen()
     startsn = record.sn
+    startsnref.current = record.sn
   }
   //打开编辑网关窗口
   const onEdit = (record) => {
@@ -401,8 +403,67 @@ let errcolumns=[
   }
   const [isSuccess, setisSuccess] = useState(true)
   const [gatewayRes, setgatewayRes] = useState('')//操作结果成功失败
+
   //确认重启
+  let [rebootNum, setrebootNum] = useState(0)
+  const latest = useLatest(rebootNum)
+  const startsnref = useRef()
+  const polloption = useRequest(
+    () => {
+      return State(startsnref.current)
+    }, {
+    manual: true,
+    pollingInterval: 2000,
+    onError: (error) => {
+      message.error(error.message);
+    },
+    onSuccess(result,params){
+      if(result.data.code===1){
+        polloption.cancel();
+        if(result.data.message){
+          setisSuccess(false)
+          setSpinShow(false)
+          modalReStartResRef?.current?.onOpen()
+          setgatewayRes(result.data.message)
+        }else{
+          setisSuccess(true)
+          modalReStartResRef?.current?.onOpen()
+          setgatewayRes("重启网关成功!")
+          setSpinShow(false)
+        }
+      }
+      if (latest.current == 15) {
+        polloption.cancel();
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes('任务超时，请重试！')
+        setisSuccess(false)
+        setSpinShow(false)
+      }
+      setrebootNum(latest.current+1)
+      console.log(result,params)
+    }
+  })
   const startOk = async () => {
+    modalReStartRef?.current?.onCancel()
+    setspinLoading('正在重启网关……')
+    setSpinShow(true)
+    const { data, success, errMsg } = await StartReboot(startsn)
+    if (success) {
+      if(data.code===1){
+        setSpinShow(false)
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes(data.message)
+        setisSuccess(false)
+      }else{
+        polloption.run()
+      }
+      
+    } else {
+      message.error(errMsg)
+    }
+  }
+  //原确认重启(废弃)
+  const startOk1 = async () => {
     modalReStartRef?.current?.onCancel()
     setspinLoading('正在重启网关……')
     setSpinShow(true)
@@ -445,7 +506,7 @@ let errcolumns=[
             }
           }, 3000 * i)
         }
-      }else{
+      } else {
         setSpinShow(false)
         modalReStartResRef?.current?.onOpen()
         setgatewayRes(data.message)
@@ -462,22 +523,81 @@ let errcolumns=[
   const [gatewayResTips, setgatewayResTips] = useState('')//操作结果成功失败
   const [errorList, seterrorList] = useState([])
   //参数下发
+  let [countnum, setCountNum] = useState(0)
+  const poll = () => {
+    let time = countnum === 0 ? 0 : 3000
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        DownloadTaskState(gatewaySn).then(res => {
+          if (res.data.code === 1) {
+            if (res.data.message) {
+              setisSuccess(false)
+              modalReStartResRef?.current?.onOpen()
+              seterrorList(res.data.message)
+              setSpinShow(false)
+              resolve('break')
+            } else {
+              setisSuccess(true)
+              modalReStartResRef?.current?.onOpen()
+              setgatewayRes('网关参数下发成功！')
+              setgatewayResTips('注意：重启网关后参数才生效')
+              setSpinShow(false)
+              resolve('break')
+            }
+          } else {
+
+            setCountNum(countnum++)
+            resolve(countnum)
+            // poll()
+          }
+        }).catch(err => { console.log(err) })
+      }, time)
+    })
+
+  }
   const downloadOk = () => {
+    keyParamRef?.current?.onCancel()
+    setspinLoading("网关参数正在下发，请稍候")
+    setSpinShow(true)
+    StartDownloadTask(projectId, gatewaySn).then(async result => {
+      if (result.success) {
+        while (countnum < 15) {
+          const resp = await poll()
+          if (resp == 'break') break;
+          if (resp === 15) {
+            setisSuccess(false)
+            modalReStartResRef?.current?.onOpen()
+            setgatewayRes('网关参数下发失败！')
+            setSpinShow(false)
+          }
+        }
+
+      } else {
+        setisSuccess(false)
+        setspinLoading('')
+        setSpinShow(false)
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes(res.errMsg)
+      }
+    })
+  }
+  //原参数下发(废弃)
+  const downloadOk1 = () => {
     keyParamRef?.current?.onCancel()
     let rebootNum = parseInt(gatewayCnt % 5 == 0 ? gatewayCnt / 5 : gatewayCnt / 5 < 1 ? 1 : gatewayCnt / 5 + 1)
     let rebootTime = rebootNum < 2 ? 10 : rebootNum * 5
     setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
     setSpinShow(true)
     for (let a = 0; a < (rebootNum < 2 ? 10 : rebootNum * 5); a++) {
-        setTimeout(() => {
-          if (rebootTime > 0) {
+      setTimeout(() => {
+        if (rebootTime > 0) {
           rebootTime--;
           setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
           console.log(rebootTime)
-        }else{
+        } else {
           setSpinShow(false)
         }
-        }, 1000 * a)
+      }, 1000 * a)
     }
     StartDownloadTask(projectId, gatewaySn).then(res => {
       if (res.success) {
@@ -486,14 +606,14 @@ let errcolumns=[
         for (let i = 0; i < (rebootNum < 2 ? 2 : rebootNum); i++) {
           setTimeout(() => {
             if (state) {
-              DownloadTaskState(projectId, gatewaySn).then(result => {
+              DownloadTaskState(gatewaySn).then(result => {
 
                 if (result.success) {
                   let data = JSON.parse(result.data)
                   if (data.code == 1) {
                     if (data.erros.length == 0) {
                       state = false
-                      rebootTime=0
+                      rebootTime = 0
                       setisSuccess(true)
                       modalReStartResRef?.current?.onOpen()
                       setgatewayRes('网关参数下发成功！')
@@ -502,7 +622,7 @@ let errcolumns=[
 
                     } else {
                       state = false
-                      rebootTime=0
+                      rebootTime = 0
                       setisSuccess(false)
                       modalReStartResRef?.current?.onOpen()
                       seterrorList(data.errors)
@@ -512,7 +632,7 @@ let errcolumns=[
                     list.push(i)
                     if (list.length == (rebootNum < 2 ? 2 : rebootNum)) {
                       state = false
-                      rebootTime=0
+                      rebootTime = 0
                       setisSuccess(false)
                       modalReStartResRef?.current?.onOpen()
                       setgatewayRes('网关参数下发失败！')
@@ -521,7 +641,7 @@ let errcolumns=[
                   }
                 } else {
                   state = false
-                  rebootTime=0
+                  rebootTime = 0
                   setisSuccess(false)
                   modalReStartResRef?.current?.onOpen()
                   setgatewayRes(JSON.parse(result.data).message)
@@ -532,7 +652,7 @@ let errcolumns=[
           }, 5000 * i)
         }
       } else {
-        rebootTime=0
+        rebootTime = 0
         setspinLoading('')
         setSpinShow(false)
         setisSuccess(false)
@@ -550,14 +670,14 @@ let errcolumns=[
       let params = {
         projectId,
         pageNum: 1,
-        pageSize:page.total,
-        areaId:  compRef.current.selvalue?compRef.current.selvalue:0,
+        pageSize: page.total,
+        areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
         alike: compRef.current.inpvalue
       }
       const resp = await QueryByPageGateWay(params)
-      if(resp.success){
-        resolve({list:resp.data?resp.data:[],total:resp.total})
-      }else{
+      if (resp.success) {
+        resolve({ list: resp.data ? resp.data : [], total: resp.total })
+      } else {
         reject(resp.errMsg)
       }
     })
@@ -602,15 +722,15 @@ let errcolumns=[
     levelname,
     placeholder: '输入网关编号/安装地址',
     getList: getQueryByPageGateWay,
-    tb:tableLoadRef
+    tb: tableLoadRef
   }
   let ModalFormProps = {
     modalFormRef,
     width: 746,
-    addopts:addoptsRef.current,
-    selectopts:selectoptsRef.current,
+    addopts: addoptsRef.current,
+    selectopts: selectoptsRef.current,
     addForm,
-    usecategory:usecategoryRef.current,
+    usecategory: usecategoryRef.current,
     onOk: addOk,
     onCancel: cancelOk,
     onSure: addSure,
@@ -647,10 +767,10 @@ let errcolumns=[
     ref: errlistRef,
     onOk: () => { ErrModalRef.current.onCancel() }
   }
-  const AddFormComp = useMemo(()=>{
+  const AddFormComp = useMemo(() => {
     return (<AddModalForm {...ModalFormProps}></AddModalForm>)
-  },[addoptsRef.current,selectoptsRef.current,usecategoryRef.current])
-  const EditFormComp=useMemo(()=><EditModalForm {...EditProps}></EditModalForm>,[ levelname.current])
+  }, [addoptsRef.current, selectoptsRef.current, usecategoryRef.current])
+  const EditFormComp = useMemo(() => <EditModalForm {...EditProps}></EditModalForm>, [levelname.current])
   useEffect(() => {
     if (oneLevel?.length > 0) {
       getOneLevel()
@@ -684,7 +804,7 @@ let errcolumns=[
         <MultImport {...ImportProps}></MultImport>
         <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
         <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
-        errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips}></ReStartRes>
+          errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips}></ReStartRes>
         <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
         <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
         {EditFormComp}
@@ -718,12 +838,12 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
             <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 showSearch
-                filterOption={(val,opts)=>{
-                    if(opts.name.includes(val)){
-                        return true
-                    }else{
-                        return false
-                    }        
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
                 }}
                 fieldNames={{
                   label: 'name',
@@ -747,7 +867,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
           <Col flex={1}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
-              showSearch
+                showSearch
                 options={usecategory}
               ></Select>
             </Form.Item>
@@ -757,7 +877,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
+            <Form.Item label="网关名称" name="name" rules={[rules, { max: 12, message: '网关名称最大长度12位' }]}>
               <Input />
             </Form.Item>
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
@@ -813,15 +933,15 @@ let ReStart = ({ modalReStartRef, startOk }) => {
   )
 }
 //重启结果
-let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess ,errorList,columns,gatewayResTips}) => {
+let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
   return (
     <Modal mold='cust' ref={modalReStartResRef} footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
       <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
-      {errorList?<div style={{ margin: '16px 32px 0' }}>
+      {errorList ? <div style={{ margin: '16px 32px 0' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>{gatewayRes}</span>
-        <p style={{color:'red',width:343,textAlign:'center'}}>{gatewayResTips}</p>
-      </div>:<Table bordered columns={columns} dataSource={errorList} rowKey='erros' size='small' pagination={false} />}
+        <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
+      </div> : <Table bordered columns={columns} dataSource={errorList} rowKey='erros' size='small' pagination={false} />}
 
     </Modal>
   )
@@ -886,12 +1006,12 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
               ></Select>
             </Form.Item>
             <Form.Item label="网关编号" name="sn" rules={[rules]}>
-              <Input disabled/>
+              <Input disabled />
             </Form.Item>
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
               <Input />
             </Form.Item>
-            <Form.Item label="网关名称" name="name" rules={[rules,{max:12,message:'网关名称最大长度12位'}]}>
+            <Form.Item label="网关名称" name="name" rules={[rules, { max: 12, message: '网关名称最大长度12位' }]}>
               <Input />
             </Form.Item>
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>

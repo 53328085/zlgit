@@ -115,6 +115,7 @@ export default function video() {
     const resp = await AddDeviceCategory(parmas)
     if (resp.success) {
       message.success('应用成功')
+      AddModalForm.setFieldValue('ImageUpload',"")
       getDeviceQueryCategory()
       getDeviceQueryNotUsed()
     }else{

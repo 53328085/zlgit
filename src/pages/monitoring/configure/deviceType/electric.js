@@ -370,7 +370,7 @@ export default function Electric() {
   }
   //确认新增应用
   const onSure=async()=>{
-    const result= foRef.current?.choosemes()
+  const result= foRef.current?.choosemes()
    if(!result){
     message.warning('请至少选择一项标记检测运行点！')
      return

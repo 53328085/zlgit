@@ -14,7 +14,7 @@ const PrintDom = styled.div`
   position: absolute;
   z-index: -1;
   left: 50%;
-  top: ${props=>{console.log(props); return props.index*220}}px;
+  top: ${props=>{ return props.index*220}}px;
   transform: translateX(-50%);
   .bgcss{
     width: 547px;
@@ -35,7 +35,6 @@ const PrintDom = styled.div`
   }
 ` 
 export default function Print({print,index='index'}) {
-  console.log('print',print)
   const printRef =useRef()
   const reactToPrintContent = useCallback(() => {
     return printRef.current;

@@ -22,8 +22,7 @@ export let DeleteModal=({DelModalRef,name='',content='',...other})=>{
     )
   }
 //计数器组件
-let Count = ({ value, record, pointSource,setPointSource }) => {
-    console.log(value,record)
+let Count = ({ value, record, pointSource,setPointSource }) => { 
     let arr=[...pointSource]
     let [number,setNumber]=useState(0)
     const reduce = () => {

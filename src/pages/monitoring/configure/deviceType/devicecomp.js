@@ -60,6 +60,7 @@ export default function DeviceContent(props,ref) {
       onClick={
         ()=>{
           onSure()
+         
           setTransition("")
           setMaskTransitionName("")      
         }

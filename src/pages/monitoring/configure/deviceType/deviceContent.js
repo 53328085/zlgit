@@ -71,7 +71,8 @@ export default function DeviceContent(props,ref) {
              })
           });          
         }
-      }>应用</Button>,
+      }
+      >应用</Button>,
   ]}>
       <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
       <AddModal form={form} ref={addformRef}/>
