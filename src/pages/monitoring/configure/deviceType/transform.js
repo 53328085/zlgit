@@ -357,7 +357,7 @@ const onSureEditModal=async()=>{
     const result= foRef.current?.choosemes()
     if(!result){
      message.warning('请至少选择一项标记检测运行点！')
-      return
+      return false
     }
     const formValue = addForm.getFieldsValue()
     const tableData = result.map(it => ({

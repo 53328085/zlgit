@@ -58,11 +58,13 @@ export default function DeviceContent(props,ref) {
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       onClick={
-        ()=>{
-          onSure()
-         
-          setTransition("")
-          setMaskTransitionName("")      
+        async ()=>{
+          const flag = await onSure()
+          if(flag !== false){
+            setTransition("")
+            setMaskTransitionName("")
+          }
+                
         }
       }>应用</Button>,
   ]}>
