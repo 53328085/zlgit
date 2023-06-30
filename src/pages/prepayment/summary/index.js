@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 
-import {nanoid} from '@reduxjs/toolkit'
+import {useSelector} from 'react-redux'
+import {selectUser} from '@redux/user'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
@@ -106,6 +107,9 @@ export default function Index() {
   const l2ref = useRef(null)
   const l3ref = useRef(null)
   const { Option } = Select
+  const {name, password}  = useSelector(selectUser)
+  console.log(name)
+  console.log(password)
   const grid = {
     // 图表 grid
     left: "0px",
@@ -318,6 +322,13 @@ export default function Index() {
   const handleChange=(e)=>{
     console.log(e)//value值
   }
+  const jump = () => {
+
+   /*  const hostname = process.env.NODE_ENV === "production"
+    ? new URL(window.location.href).hostname
+    : "10.5.7.60"; */
+    window.open(`http://localhost:8080?name=${name}&password=${password}`)
+  }
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
@@ -349,7 +360,7 @@ export default function Index() {
       </div>
             <div className='upper'>
            {/* <Titlelayout> */}
-               <div className='item'>
+               <div className='item' onClick={jump}>
                 <div className='imgBox'><Image src={imgurl.home5} preview={false} width={64} height={64} ></Image></div>
                 <div className='descBox'> <span>账户余额总计</span>
                  <Text strong ellipsis>125896.30</Text></div>

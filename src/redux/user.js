@@ -5,6 +5,7 @@ const initialState = {
     memoPhone: false, // 是否记住手机号码
     loading: false,
     name: "",
+    password: '',
     mobile: "",  
     roleType: '',
     token: "",
@@ -13,9 +14,11 @@ const initialState = {
     functions: [],
     projects: [],   
 }
+let password = ''
 export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手机号
     'user/loginByName',
     async (params) => { 
+       password = params.pwd
       let {type, ...param} = params     
       let handler = ['LoginByName', 'LoginByPhone'][type] 
       console.log(handler)
@@ -45,13 +48,13 @@ const user = createSlice({
         [loginByName.fulfilled]: (state, {payload}) => {           
            let {success, errMsg, data} = payload
            if (success) {
-               return Object.assign({}, state, data, {loading: false} )
+               return Object.assign({}, state, data, {loading: false, password},   )
            }else {
-               return Object.assign({}, state, {errMsg, loading: false})
+               return Object.assign({}, state, {errMsg, loading: false, password: ''})
            }
         },
         [loginByName.rejected]: (state) => {           
-            return {...state, loading: false}
+            return {...state, loading: false, password: ''}
          }
     }
 
@@ -62,8 +65,8 @@ export const selectCurProject = state => (Array.isArray(state?.user.projects) &&
 
 export const selectLoading = state => state.user.loading
 export const selectUser =  (state) => {    
-    let {name,mobile, roleType,token,userId} = state.user 
-    return {name,mobile,roleType,token,userId}
+    let {name,mobile, roleType,token,userId, password} = state.user 
+    return {name,mobile,roleType,token,userId, password}
  }
 export const manager = state => state.user?.roleType == 3 // 是否是项目管理员
 export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员

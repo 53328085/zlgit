@@ -120,9 +120,9 @@ const cref = useRef()
      let {width, height} = img
      let zoom = Math.min(wpx/width, hpx/height);
      zoom = zoom > 1 ? 1 : zoom;
-     console.log(zoom)
+  
      let rheight = Math.ceil(height*zoom)
-     console.log(rheight)
+    
     createImageBitmap(img, {resizeHeight: rheight, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
 
      
