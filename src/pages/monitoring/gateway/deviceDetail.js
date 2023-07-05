@@ -1,31 +1,48 @@
 import { React, useState, useEffect, useRef } from "react";
+import mqtt from 'mqtt'
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
 import { Pagination, message, DatePicker, Button, Radio } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { useLocation } from 'react-router';
-import { Monitoring } from '@api/api.js'
-import { Link, useNavigate } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { Monitoring, RuntimeHMI } from '@api/api.js'
+ 
 import { drawEcharts } from '@com/useEcharts'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
+
+import { selectUser } from '@redux/user.js'
+
 import Table from '@com/useTable'
-import Item from "antd/lib/list/Item";
+ 
 import moment from "moment";
-import { index } from "@antv/x6/lib/util/dom/elem";
+ 
 import deviceDetail3 from './images/deviceDetail3.jpg'
 export default function GatewayDetail(props) {
     let location = useLocation()
+    let [searchParams, setSearchParams] = useSearchParams()
+    const sn = searchParams.get('sn')
+    
     let qs = require('query-string')
     let search = qs.parse(location.search)
-    useEffect(() => {
+  /*   useEffect(() => {
         document.title = `NIS6000 正泰储能 设备详情`
         return () => document.title= 'NIS6000 正泰储能 设备详情'
-      },[location]) 
+      },[location])  */
     const projectId = useSelector(selectProjectId)
+    const enchtitle = useSelector(mixtitle)
+    const {hostServer} = useSelector(selectUser)
+    const channel="HMI_" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+
+    var options = {
+        
+        clientId: channel ,
+      }
+    const mqtClient =mqtt.connect(hostServer, options)
+    const {chineseTitle} = useSelector(systemConfigInfo)
     const { RangePicker } = DatePicker;
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
@@ -214,7 +231,6 @@ export default function GatewayDetail(props) {
                         }
                         obj.data = yAxis
                         obj.type = 'line'
-                        console.log(obj)
                         xAxisTrendList.push(xAxisTrend)
                         if (index == 0) {
                             objList1.push(obj)
@@ -375,6 +391,66 @@ export default function GatewayDetail(props) {
             id: 'E'
         }
     ];
+   
+    const  onHerart = () => {
+        let params = {
+            projectId,
+            channel,
+            points: [],
+            sn,
+        }
+        RuntimeHMI.onHerart(params).then(res => {
+
+        }).catch(e => {
+            console.log(e)
+        })
+    } 
+    useEffect(() => {
+        let timer ;
+        timer = window.setInterval(() => {
+            onHerart();
+           }, 10*1000*60) // 十分钟请求一次
+         onHerart();
+         mqtClient.on("connect", (e) => {
+           console.log("连接成功:");
+           mqtClient.subscribe(
+            "HMI/202305220008",
+            (error) => {
+              if (!error) {
+               console.log("订阅成功");
+              } else {
+                console.log("订阅失败");
+              }
+            }
+          );
+         })
+         mqtClient.on("message", (topic, message, packet) => {
+            console.log('message')
+            let mqttData = JSON.parse(message.toString()).Points;
+            console.log(mqttData)
+           // setdataList(mqttData)
+           
+         })
+
+         // 断开发起重连
+         mqtClient.on("reconnect", (error) => {
+           console.log("正在重连:", error);
+         });
+      // 链接异常处理
+         mqtClient.on("error", (error) => {
+        console.log("连接失败:", error);
+         });
+        return () => {
+            timer = null
+            mqtClient.end()
+            RuntimeHMI.onStop(channel)
+        }
+
+    }, [location])
+    useEffect(() => {
+        document.title = enchtitle+ ' ' + (location.state?.title || '')
+        return () => document.title = enchtitle
+      },[location])
     useEffect(() => {
         dealData()
     }, [historyTable, historyTrend])
@@ -399,7 +475,7 @@ export default function GatewayDetail(props) {
         <div className={style.main}>
             <div className={style.head}>
                 <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>正泰储能</p>
+                <p>{chineseTitle}</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>

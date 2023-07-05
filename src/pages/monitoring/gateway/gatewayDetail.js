@@ -6,7 +6,8 @@ import {  Pagination,message} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
 import {Link, useNavigate } from 'react-router-dom'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
+ 
 import Table from '@com/useTable'
 
 export default function GatewayDetail(props) {
@@ -17,8 +18,10 @@ export default function GatewayDetail(props) {
       document.title = `NIS6000 正泰储能 网关详情`
       return () => document.title= 'NIS6000 正泰储能 网关详情'
     },[location])  */
-    console.log(search)
+    
     const projectId = useSelector(selectProjectId)
+    const enchtitle = useSelector(mixtitle)
+    const {chineseTitle} = useSelector(systemConfigInfo)
 //   const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeGateway: { RuntimeGatewayDetail, Children, Log,CategoryImages } } = Monitoring
     let [state, setstate] = useState(true)
@@ -143,6 +146,10 @@ export default function GatewayDetail(props) {
         })
       }
       useEffect(() => {
+        document.title = enchtitle+ ' ' + (location.state?.title || '')
+        return () => document.title = enchtitle
+      },[location])
+      useEffect(() => {
         getData()
         
       }, [search.sn,projectId])
@@ -156,7 +163,7 @@ export default function GatewayDetail(props) {
         <div className={style.main}>
             <div className={style.head}>
                 <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>正泰储能</p>
+                <p>{chineseTitle}</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>

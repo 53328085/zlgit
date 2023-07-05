@@ -13,6 +13,7 @@ const initialState = {
     errMsg: '',
     functions: [],
     projects: [],   
+    hostServer: '', // ws
 }
 let password = ''
 export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手机号
@@ -65,8 +66,8 @@ export const selectCurProject = state => (Array.isArray(state?.user.projects) &&
 
 export const selectLoading = state => state.user.loading
 export const selectUser =  (state) => {    
-    let {name,mobile, roleType,token,userId, password} = state.user 
-    return {name,mobile,roleType,token,userId, password}
+    let {name,mobile, roleType,token,userId, password, hostServer} = state.user 
+    return {name,mobile,roleType,token,userId, password,hostServer }
  }
 export const manager = state => state.user?.roleType == 3 // 是否是项目管理员
 export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员
