@@ -41,7 +41,7 @@ export default function GatewayDetail(props) {
         
         clientId: channel ,
       }
-    const mqtClient =mqtt.connect(hostServer, options)
+    //const mqtClient =mqtt.connect(hostServer, options)
     const {chineseTitle} = useSelector(systemConfigInfo)
     const { RangePicker } = DatePicker;
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
@@ -405,11 +405,11 @@ export default function GatewayDetail(props) {
             console.log(e)
         })
     } 
-    useEffect(() => {
+  /*   useEffect(() => {
         let timer ;
         timer = window.setInterval(() => {
             onHerart();
-           }, 10*1000*60) // 十分钟请求一次
+           }, 10*1000*60) 
          onHerart();
          mqtClient.on("connect", (e) => {
            console.log("连接成功:");
@@ -446,7 +446,7 @@ export default function GatewayDetail(props) {
             RuntimeHMI.onStop(channel)
         }
 
-    }, [location])
+    }, [location]) */
     useEffect(() => {
         document.title = enchtitle+ ' ' + (location.state?.title || '')
         return () => document.title = enchtitle
