@@ -14,7 +14,7 @@ export default function Hmenu() {
   const dispath = useDispatch()
   const navigate = useNavigate()
   const {state} = useLocation()
-  console.log(state)
+   
  // const [current, SetCurrent] = useState(state.primary)
 
   const current = useMemo(() => state?.primary, [state])
@@ -103,11 +103,11 @@ export default function Hmenu() {
      let item = menus.find(item => item?.key === key);
       if (!item) return;
       const {nested, label, no} = item || {};  
-      if(key === 'designerProject' || key == 'runtimeProject' ) {
+     /*  if(key === 'designerProject' || key == 'runtimeProject' ) {
         dispath(getJump(true))
       }else {
         dispath(getJump(false))
-      }
+      } */
    //   SetCurrent(key)  
       let url, state;
       if(isconfig) {
@@ -121,9 +121,12 @@ export default function Hmenu() {
       navigate(url, {state}) 
      
   }
-/*   useEffect(() => {    
-      SetCurrent(location.state?.primary)       
-   },[location.pathname]) */
+ useEffect(() => {    
+    if(state) {
+      let {primary} = state
+      dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
+    }   
+   },[state]) 
  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 
