@@ -348,7 +348,8 @@ export default function Index() {
                     {warningData.map((item, index) => {
                     return <Fragment key={index}>
                       <WarningCard data={item} ></WarningCard>
-                      {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
+                      <div className={style.division} style={{ margin: '10px 0' }}></div>
+                      {/* {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null} */}
                     </Fragment>
                      })
                   }
@@ -358,7 +359,8 @@ export default function Index() {
                     warningData.length>4?warningData.slice(0, 4).map((item, index) => {
                       return <Fragment key={index}>
                         <WarningCard data={item} ></WarningCard>
-                        {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null}
+                        <div className={style.division} style={{ margin: '10px 0' }}></div>
+                        {/* {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null} */}
                       </Fragment>
                     }):null
                   }
