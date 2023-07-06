@@ -8,6 +8,7 @@ export class Test {
 // 登录
 
 
+
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
@@ -385,7 +386,11 @@ export class StorageContainerDesigner {
   static DeleteContainer = (projectId, id) => server.delete(`/Storage/StorageContainerDesigner/DeleteContainer?projectId=${projectId}&id=${id}`);
 }
  
+export class RuntimeHMI {
+   static onHerart = (params) => server.post(`/Monitor/RuntimeHMI/OnHeart`, params); //  定时请求
 
+   static onStop = (channel) => server.get(`/Monitor/RuntimeHMI/OnStop?channel=${channel}`); //  定时请求
+}
 // zl api end
 // 主页
 export class Home {

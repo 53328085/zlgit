@@ -8883,7 +8883,7 @@
     "debug" "^4.1.1"
     "process-nextick-args" "^2.0.1"
 
-"mqtt@^4.2.6":
+"mqtt@^4.2.6", "mqtt@^4.3.7":
   "integrity" "sha512-ew3qwG/TJRorTz47eW46vZ5oBw5MEYbQZVaEji44j5lAUSQSqIEoul7Kua/BatBW0H0kKQcC9kwUHa1qzaWHSw=="
   "resolved" "https://registry.npmmirror.com/mqtt/-/mqtt-4.3.7.tgz"
   "version" "4.3.7"

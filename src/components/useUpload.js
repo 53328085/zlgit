@@ -73,7 +73,7 @@ const Ifile = styled.input.attrs(props => ({
 
 
 
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel}) {
+export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel, text="正泰物联", textStyle={}}) {
 
 const Preview = styled.div`
     flex: 1;
@@ -86,7 +86,7 @@ const Preview = styled.div`
 
 const cref = useRef()
 
- console.log('value', value)
+
  // img.src = `data:image/png;base64,${src}`
   const [url, setUrl] = useState()
 
@@ -114,15 +114,23 @@ const cref = useRef()
     file.current.value = '' // 浏览器的安全机制不允许直接用js修改file的value为空字符串以外的值.否则报错
     extref.current = ''
   }
-
+  const drawtext = (ctx, wpx, rheight ) => {
+    ctx.save()
+    ctx.rotate((Math.PI / 180) * 30);
+     ctx.font = "16px serif";
+     ctx.fillStyle="#666";
+     ctx.textAlign="center"
+     ctx.fillText("正泰物联",wpx/2,  rheight / 3)
+     ctx.restore()
+  }
   const zipImg = (img) => {
     if(!window.createImageBitmap) return message.warning('请使用新版chrome浏览器')
      let {width, height} = img
      let zoom = Math.min(wpx/width, hpx/height);
      zoom = zoom > 1 ? 1 : zoom;
-     console.log(zoom)
+  
      let rheight = Math.ceil(height*zoom)
-     console.log(rheight)
+    
     createImageBitmap(img, {resizeHeight: rheight, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
 
      
@@ -131,8 +139,9 @@ const cref = useRef()
       canvas.height = rheight;
       let ctx =canvas.getContext('2d')
       ctx.drawImage(res, 0,0)
+     // drawtext(ctx, wpx, rheight)  // 添加水印
       let dataUrl =  canvas.toDataURL()
-      
+    
       setUrl(dataUrl)
       getfile(dataUrl)
       onChange?.(dataUrl)

@@ -27,6 +27,7 @@ const initialState = {
     url: '',
      primary:'',
    },
+  asider: true,
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -122,6 +123,8 @@ export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+stat
 export const datascreen = state => state.system.datascreen ?? {}
 export const configState = state => state.system.configState;
 export const currentscreen = state => state.system.currentscreen
+
+
 export const {
     configProject,
     getSetMenus,
@@ -136,6 +139,6 @@ export const {
     getpublishState,
     getJump,
     getdataScreen,
-    getCurrentScreen,
+    getCurrentScreen,   
 } = actions
 export default system.reducer

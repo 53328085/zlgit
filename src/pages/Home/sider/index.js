@@ -2,10 +2,11 @@ import React, {useState, useEffect} from 'react'
 import { useStore } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
+import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import style from './style.module.less'
 import Title from '../header/title'
-import energyicon from '@imgs/energy.png'
+import {  configState, siderDesignerMenus, siderRunMenus} from "@redux/systemconfig";
 import imgurl from './icon';
  
 const Micon = () => {
@@ -67,20 +68,22 @@ const Cmenu = styled(Menu)`
 `
 /*   siderRunMenus: null, // 项目 sider
         siderDesignerMenus: null, // 设置 sider */
+
+
+        
 export default function Sider() {
-  const store = useStore();
   const navigate = useNavigate()
   const location = useLocation()
-  const isconfig = store.getState()?.system.configState
-  const {siderRunMenus, siderDesignerMenus } =  store.getState()?.system.menus
-  let [config , SetConfig] = useState(isconfig)
+  const config = useSelector(configState)
+  const siderRunMenu = useSelector(siderRunMenus)
+  const siderDesignerMenu = useSelector(siderDesignerMenus)
+ 
+  
   const [key, Setkey] = useState('')
   const [menus, setMenus] = useState()
 
   const [path, setPath] = useState('')
-  const unsubscribe = store.subscribe(() => {    
-    SetConfig(store.getState()?.system.configState)
-  })
+
   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
@@ -91,21 +94,19 @@ export default function Sider() {
 
   useEffect(() => {  
     try {
-      SetConfig(store.getState()?.system.configState)
+    
       let state = location.state || {}    
       let {nested, primary } = state;
       
       setPath(primary)
-      let sidermenu = config ? siderDesignerMenus[primary] : siderRunMenus[primary];
+      let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
       let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];     
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
       console.log(error);
     }
-   return () => {
-    unsubscribe();
-   }
+  
   },[location, config])
 
   const onSelect = ({key}) => {       
