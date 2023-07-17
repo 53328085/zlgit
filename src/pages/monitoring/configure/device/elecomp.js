@@ -205,11 +205,15 @@ export const FormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={[...rules, {
+
+                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                        <Input />
+                    </Form.Item>
+                    {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
                         validator: (_, value) => {
                             if (!value) {
                                 return Promise.resolve()
-                            } /* else {
+                            } else {
                                 let val = value.trim()
 
                                 if (val.split(" ").join("").length !== 12) {
@@ -217,11 +221,11 @@ export const FormComp = (props) => {
                                 } else {
                                     return Promise.resolve()
                                 }
-                            } */
+                            } 
                         }
                     }]}>
                         <Input />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>

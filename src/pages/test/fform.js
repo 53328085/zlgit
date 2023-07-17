@@ -12,7 +12,7 @@ import {
   TimePicker,
   Transfer,
 } from 'antd';
-import enUS from 'antd/es/locale/en_US';
+import enUS from 'antd/es/locale/ar_EG';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';

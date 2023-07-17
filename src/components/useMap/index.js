@@ -13,9 +13,6 @@ import {message} from 'antd'
  
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
-  
-  console.log('lngLat')
-  console.log(lngLat)
 
   const defaultpoint = lngLat || value 
 
@@ -118,9 +115,7 @@ import {message} from 'antd'
      try {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
      
-      map.centerAndZoom(latlng, zoom)
-      console.log('defaultpoint')   
-      console.log(defaultpoint) 
+      map.centerAndZoom(latlng, zoom)     
      if (Array.isArray(defaultpoint)) {
       defaultpoint.forEach(item => {
         let {lnglat, text} = item
