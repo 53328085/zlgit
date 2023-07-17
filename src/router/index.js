@@ -183,8 +183,7 @@ store.subscribe(() => {
   let previousLouter = menus
   menus = store.getState().system.menus;
   if(previousLouter === menus) return;
-  console.log(previousLouter);
-  console.log(menus)
+  
   try {
    RunRoute = [{
     path: '',

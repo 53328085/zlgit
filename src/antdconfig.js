@@ -4,7 +4,7 @@ import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 import {ConfigProvider} from 'antd'
 const deftheme = {
-   primaryColor: '#237AE4',
+    primaryColor: '#237AE4',
     errorColor: '#ff4d4f',
     warningColor: '#faad14',
     successColor: '#52c41a',

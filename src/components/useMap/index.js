@@ -71,9 +71,11 @@ import {message} from 'antd'
   }
  
   const searchResult = (result) =>{   
+    let {lon, lat, keyWord} = result.location || {}
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
-      addmarker(result.getLocationPoint(), result.location?.keyWord)
+      addmarker(result.getLocationPoint(), keyWord)
+      setAaddress && setAaddress({lng: lon, lat})
 		}else{
 			message.error({count: result.getMsg()});
 		}
