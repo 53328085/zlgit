@@ -122,6 +122,10 @@ export default function Index() {
  
    //打开新增
   const addDevice=()=>{
+    if(onelevel.length == 0){
+      message.warning('请新增园区!')
+      return 
+    }
     setlineRef.current.setOpen(true)
     setlineRef.current.getQueryDeviceList()
   }

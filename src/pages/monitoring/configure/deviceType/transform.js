@@ -151,7 +151,7 @@ export default function Electric() {
         return (
           <div>
             <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
-            <span style={{ ...optionStyle, paddingLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</span>
+            <span style={{ ...optionStyle, marginLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</span>
           </div>
         )
       }

@@ -26,20 +26,20 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     let arr=[...pointSource]
     let [number,setNumber]=useState(0)
     const reduce = () => {
-      if (value <=0) return
-      arr[record.index-1]['dataOrder'] = value - 1
+      if (Number(value) <=0) return
+      arr[record.index-1]['dataOrder'] = String(Number(value)  - 1)
       setPointSource(arr)
       // setNumber(number-1)
     }
   
     const add = () => {
-      arr[record.index-1]['dataOrder']  = value + 1
+      arr[record.index-1]['dataOrder']  = String(Number(value)  + 1)
       console.log(arr)
       setPointSource(arr)
       // setNumber(number+1)
     }
     const inpBlur=(e)=>{
-      console.log(typeof e.target.value)
+      console.log(e.target.value,arr[record.index-1]['dataOrder'])
       if(isNaN(Number(e.target.value)) ){
         return message.warning('请输入正确的内容')
       }
@@ -50,7 +50,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     return (
       <div className={style.countNum}>
         <div onClick={reduce} className={style.opts} style={{borderRight:'none'}}>-</div>
-        <Input  className={style.numbers} defaultValue={value} value={record.dataOrder.toString()} onChange={inpBlur} />
+        <Input  className={style.numbers} defaultValue={value}  onChange={inpBlur} value={record.dataOrder.toString()}/>
         <div onClick={add} className={style.opts} style={{borderLeft:'none'}}>+</div>
       </div>
     )

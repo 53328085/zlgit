@@ -31,6 +31,7 @@ export default function Common({ type }) {
     const [selform] = Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
     const publish = useSelector(publishState)
+    const oneLevel = useSelector(state=>state.system.onelevel)
     const addmianRef = useRef()
     const setforwardRef = useRef()
     const titlelinecss = {
@@ -103,6 +104,10 @@ export default function Common({ type }) {
     }
     //打开新增主线窗口
     const addMainLine = () => {
+        if(oneLevel.length == 0){
+            message.warning('请新增园区!')
+            return 
+          }
         addmianRef.current.onOpen()
     }
     //打开配置抽屉

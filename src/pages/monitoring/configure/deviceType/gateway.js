@@ -64,7 +64,7 @@ export default function gateway() {
     AllColumns[3].render = (t, v) => {
       return (
         <div>
-          <span style={{ paddingRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
+          <span style={{ marginRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
           <span style={{ color: 'rgb(244,67,54)', cursor: 'pointer' }} onClick={() => { openDelModal(v) }}>删除</span>
         </div>
       )

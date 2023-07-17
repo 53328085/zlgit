@@ -130,6 +130,10 @@ export default function Index() {
     getPage()
   }
   const addDevice = () => {
+    if(onelevel.length == 0){
+      message.warning('请新增园区!')
+      return 
+    }
     addRef.current.onOpen()
     addform.setFieldsValue({
       address:'',

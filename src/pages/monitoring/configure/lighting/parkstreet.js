@@ -72,6 +72,7 @@ export default function parkstreet({areaList,levelname}) {
     title:'操作',
     dataIndex:'options',
     export:false,
+    width:180,
     render:(text,record,index)=>{
       return (
         <p style={{ display: 'flex', justifyContent: 'space-around' }}>

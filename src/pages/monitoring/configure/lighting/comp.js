@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, forwardRef, useImperativeHandle, useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Input, Select, Button, Divider, Row, Col } from 'antd'
+import { Input, Select, Button, Divider, Row, Col,message } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
@@ -112,7 +112,13 @@ function Comp(props, ref) {
                 </Row>
                 <Row>
                     {publish ? null : <>
-                        <div className={style.divmgr16} onClick={addopen}>+新增</div>
+                        <div className={style.divmgr16} onClick={()=>{
+                            if(oneLevel.length == 0){
+                                message.warning('请新增园区!')
+                                return 
+                              }
+                              addopen()
+                        }}>+新增</div>
                         <div className={style.divmgr16} onClick={modalImport}>批量导入</div>
                     </>}
 

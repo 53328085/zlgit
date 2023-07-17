@@ -138,7 +138,11 @@ export default function Index() {
   }
   //打开新增
   const openAdd = async () => {
-    addmodalRef.current.onOpen()
+    if(onelevel.length == 0){
+      message.warning('请新增园区!')
+      return 
+    }
+    addmodalRef?.current.onOpen()
 
   }
   //确认新增
@@ -399,6 +403,7 @@ let AddPlan = forwardRef(
     }
     const changeCycle = (v) => {
       form.setFieldValue('date', null)
+      form.setFieldValue('time', null)
       setDataCycle(v)
     }
     const format = 'HH:mm';
@@ -415,7 +420,7 @@ let AddPlan = forwardRef(
       QueryInspectionPlanAddress()
     }
     useEffect(() => {
-      getQueryProjectMaintenance(arealist[0].id, setUserList)
+      getQueryProjectMaintenance(arealist[0]?.id, setUserList)
     }, [])
 
     return (
@@ -426,7 +431,7 @@ let AddPlan = forwardRef(
           labelAlign='left'
           labelCol={{ span: 5 }}
           initialValues={{
-            areaId: arealist[0].id,
+            areaId: arealist[0]?.id,
             cycle: 1
           }}
         >

@@ -895,7 +895,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ..
 //计数器组件
 let Count = ({ value, onChange }) => {
   console.log(value)
-  const [number, setNumber] = useState(value ? value : 30)
+  const [number, setNumber] = useState(value ? Number(value) : 30)
 
   const reduce = () => {
     number > 0 && setNumber(number - 1)
