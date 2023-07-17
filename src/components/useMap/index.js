@@ -75,7 +75,7 @@ import {message} from 'antd'
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
       addmarker(result.getLocationPoint(), keyWord)
-      setAaddress && setAaddress({lng: lon, lat})
+      setAaddress && setAaddress({lng: lon, lat, address: keyWord})
 		}else{
 			message.error({count: result.getMsg()});
 		}
@@ -111,16 +111,16 @@ import {message} from 'antd'
   }))
  
   useEffect(() => {
-     if(!mapref) return
+     if(!mapref || !defaultpoint) return
      let geocode = new T.Geocoder();
-     let latlng
-    
-    console.log(mapref.classList.contains('tdt-container'))
+     let latlng 
 
      try {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+     
       map.centerAndZoom(latlng, zoom)
-        
+      console.log('defaultpoint')   
+      console.log(defaultpoint) 
      if (Array.isArray(defaultpoint)) {
       defaultpoint.forEach(item => {
         let {lnglat, text} = item
@@ -157,7 +157,7 @@ import {message} from 'antd'
      });
     
   
-  }, [mapref])
+  }, [mapref, defaultpoint])
   return (
     <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox" >
 

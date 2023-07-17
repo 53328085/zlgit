@@ -209,7 +209,7 @@ export const FormComp = (props) => {
                         validator: (_, value) => {
                             if (!value) {
                                 return Promise.resolve()
-                            } else {
+                            } /* else {
                                 let val = value.trim()
 
                                 if (val.split(" ").join("").length !== 12) {
@@ -217,7 +217,7 @@ export const FormComp = (props) => {
                                 } else {
                                     return Promise.resolve()
                                 }
-                            }
+                            } */
                         }
                     }]}>
                         <Input />
