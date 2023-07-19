@@ -22,11 +22,16 @@ const components = {
     '010505': Remote,
     '010506': Call,
     '010507': Report,
+    '010508': Control
     //'010508': Oplog,
 }
+ 
+
 store.subscribe(() => {
-    const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor']    
-    if (Array.isArray(runmen) && runmen.length > 0) {        
+    let runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor']    
+    
+    if (Array.isArray(runmen) && runmen.length > 0) { 
+       // runmen?.push({no: '010508', label: '自动控制', key: 'control', parentNo: '0106', index: 7,select:  1})       
        runmen.forEach(r => {
         let {no, key} = r;
         let Com = components[no];

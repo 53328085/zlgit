@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
+import {Typography, Image, Form, Space, Button, Input,   DatePicker,  Divider, Drawer } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
-import {  ExportExcel} from '@com/useButton'
+ 
 const {Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -55,34 +55,79 @@ const P = styled(Paragraph)`
 `
 const columns = [
     {
-        title: '操作时间',
+        title: '策略名称',
         dataIndex: 'date',
         key: 'date',
         align: 'center'
     },
     {
-        title: '事件类型',
+        title: '周期',
         dataIndex: 'eventType',
         key: 'eventType',
         align: 'center'
     },
     {
-      title: '事件描述',
+      title: '分闸执行时间',
       dataIndex: 'content',
       key: 'content',
       align: 'center'
      },
      {
-      title: '状态',
+      title: '合闸执行时间',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '策略说明',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '被控设备',
       dataIndex: 'content',
       key: 'content',
       align: 'center'
      },
    ]
  
- function Main({projectId, areaId, siteId }) {
-   const [form] = Form.useForm()
+const controlcolumns = [
+    {
+        title: '序号',
+        dataIndex: 'date',
+        key: 'date',
+        align: 'center'
+    },
+    {
+        title: '设备编号',
+        dataIndex: 'eventType',
+        key: 'eventType',
+        align: 'center'
+    },
+    {
+      title: '设备名称',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '设备型号',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '安装地址',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+     },
+   ]
  
+ function Main({projectId, areaId}) {
+   const [form] = Form.useForm()
+   const [open, setOpen] = useState(false)
    const [keycode, setKeycode] = useState(0)
    const [total, setTotal] = useState(0)
  
@@ -97,7 +142,7 @@ const columns = [
       end,
       projectId,
    //  areaId,
-      siteId,
+     
       ...rest
     }
     return OperationLogRuntime.QueryLogsByPage(params).then(res => {
@@ -123,29 +168,25 @@ const columns = [
       start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
       projectId, 
-      siteId,
+      
       content : "",
       type: 0,
       status: 0
 
     }],
-    refreshDeps: [projectId,  siteId]
+    refreshDeps: [projectId]
   })
   
   const {submit} = search
   
 
   const tableref = useRef()
-  //const getref = () => tableref.current
-  const onExport = useCallback(() => {
-    let formData = form.getFieldsValue()
-    return  QueryReports({current: 1, pageSize: total}, formData)
-}, [total])
+  
  
  
   return (
     <Mainbox>    
-    <Titlelayout title="操作日志" layout="flex" >
+    <Titlelayout title="自动控制" layout="flex" >
     <div className='content'>
         <Form form={form} className='top' layout='inline' initialValues={{
           content: '',
@@ -154,44 +195,37 @@ const columns = [
           time: [moment().subtract(7, 'day'), moment()]
         }}>
           <Space size={32}>
-             <Item label="日志查询" name="content">
-              <Input placeholder='操作内容' style={{width: '320px'}} allowClear onChange={submit} />
+             <Item   name="content">
+              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onChange={submit} enterButton="查询" />
              </Item>
-             <Divider style={{margin: '0', height: '32px'}}  type="vertical" />
-             <Item label="设备类型" name="type">
-              <Select options={[
-                {label: '全部', value: 0},
-                {label: 'PCS', value: 1},
-                {label: '电堆', value: 2},
-              ]}
-              style={{width: '112px'}}
-              onChange={submit}
-              ></Select>
-             </Item>  
-             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
-             <Item label="状态" name="status">
-              <Select options={[
-                {label: '全部', value: 0},
-                {label: '成功', value: 1},
-                {label: '失败', value: 2},
-              ]}
-              style={{width: '112px'}}
-              onChange={submit}
-              ></Select>
-             </Item>  
-             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
-             <Item label="操作时间" name="time" >
-               <RangePicker  onChange={submit}  format="YYYY-MM-DD" style={{width: '320px'}}/>
-            </Item>
+             <Item>
+              <Button onClick={() => setOpen(true)}>被控设备</Button>
+             </Item>
            </Space>
-           <Item noStyle>
-              <ExportExcel  tb={tableref} />
-           </Item>
+          
         </Form>
         
          <Divider style={{margin: '0px'}}/>
-        <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}   sheetName="操作日志" onExport={onExport} />   
-           
+        <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
+       <Drawer
+        title="被控设备"
+        width={928}
+        open= {open}
+        bodyStyle={{
+          backgroundColor: '#f2f2f2',
+          padding: '32px'
+        }}
+        headerStyle={{
+          backgroundColor: '#f2f2f2',
+          padding: '0 32px'
+        }}
+        closable={false}
+
+        extra={<Button type="primary" onClick={() => setOpen(false)}>关闭</Button>}
+       >    
+       <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
+       <Usetable columns={controlcolumns}  {...tableProps}   rowKey={nanoid()}    />  
+       </Drawer>
     </div>
     </Titlelayout>
     </Mainbox>
