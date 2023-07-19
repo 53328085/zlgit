@@ -18,6 +18,14 @@ const components = {
     '020105': Cockpit,
     '020106': DataScreen,
 }
+export let designerCommon = {
+    '020101': Base,
+    '020102': Project,
+    '020103': User,
+    '020104': Region,
+    '020105': Cockpit,
+    '020106': DataScreen,
+}
 store.subscribe(() => {
     try {
         const runmen= store.getState().system?.menus.siderDesignerMenus?.['designerCommon']

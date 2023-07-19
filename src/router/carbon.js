@@ -13,6 +13,12 @@ const components = {
     '011203': Direction, 
     '011204': Report, 
 }
+export let runtimeCarbon = {
+    '011201': Summary, 
+    '011202': Details, 
+    '011203': Direction, 
+    '011204': Report, 
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeCarbon']
     if (Array.isArray(runmen) && runmen.length > 0) {        

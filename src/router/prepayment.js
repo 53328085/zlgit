@@ -69,6 +69,17 @@ const components = {
     '010808': Recharge,
     '010809': Run
 }
+export let runtimePrepay = {
+  '010801': Summary,
+  '010802': Customer,
+  '010803': Charge,
+  '010804': Property,
+  '010805': Bill,
+  '010806': Data,
+  '010807': Reading,
+  '010808': Recharge,
+  '010809': Run
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimePrepay'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

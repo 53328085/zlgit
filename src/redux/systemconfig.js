@@ -100,7 +100,7 @@ const system = createSlice({
 
 const {actions} = system
 export const recordNo = state => state.system.recordNo
-
+export const menus  = state => state.system.menus
 export const runMenus  = state => state.system.menus?.runMenus 
 export const designerMenus  = state => state.system.menus?.designerMenus 
 export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMenus

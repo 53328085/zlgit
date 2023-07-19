@@ -7,10 +7,9 @@
  * @date 2023-05-31 08:48 
  */
 
-import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from "react";
+import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from "react";
 
 import {message} from 'antd'
-import { useMap } from "ahooks";
  
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
@@ -32,8 +31,8 @@ import { useMap } from "ahooks";
   }
  
   let [mapref, setMapref] = useState()
-   let map = mapref ? new T.Map(mapref, MapOptions) : null
-  
+  let map = mapref ? new T.Map(mapref, MapOptions) : null
+
  
 
   const getlnglat = (str) => {
@@ -117,9 +116,9 @@ import { useMap } from "ahooks";
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
-   
+     console.log(defaultpoint)
      if(!mapref || !defaultpoint) return
-   
+     console.log(defaultpoint)
     // let dom = document.getElementById("mapBox")
      try {
       let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
@@ -147,7 +146,7 @@ import { useMap } from "ahooks";
       console.log("地图加载")
      })
     
-  }, [mapref, lngLat, value])
+  }, [mapref, defaultpoint])
   return (
     <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
 

@@ -10,6 +10,11 @@ const components = {
     '010602': Warning,
     '010603': Runreport
 }
+export let runtimeSafe = {
+    '010601': Safe,
+    '010602': Warning,
+    '010603': Runreport
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeSafe'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

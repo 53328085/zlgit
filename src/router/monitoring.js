@@ -22,11 +22,20 @@ const components = {
     '010505': Remote,
     '010506': Call,
     '010507': Report,
-    '010508': Control
+   // '010508': Control
     //'010508': Oplog,
 }
  
-
+ export let runtimeMonitor = {
+    '010501': Summary,
+    '010502': Gateway,
+    '010503': Point,
+    '010504': Video,
+    '010505': Remote,
+    '010506': Call,
+    '010507': Report,
+   // '010508': Control
+ }
 store.subscribe(() => {
     let runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor']    
     

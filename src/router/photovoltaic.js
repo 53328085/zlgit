@@ -22,6 +22,18 @@ const components = {
     '011008': Alarm, 
     '011009': Report, 
 }
+
+export let runtimeSolar = {
+    '011001': Summary, 
+    '011002': Chart, 
+    '011003': Station, 
+    '011004': Device, 
+    '011005': Data, 
+    '011006': Propare, 
+    '011007': Aerograph, 
+    '011008': Alarm, 
+    '011009': Report, 
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderRunMenus?.['runtimeSolar']
     if (Array.isArray(runmen) && runmen.length > 0) {        

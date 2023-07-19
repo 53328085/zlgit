@@ -38,6 +38,24 @@ const components = {
     '010913': LightingC, //照明控制
     '010914': Runreport, // 运行报告
 }
+export let runtimeEnergy = {
+    '010901': Summary, // 概述
+    '010902': Synthetical, // 园区能耗
+    '010903': Assorting, // 分类能耗
+    '010904': Ranking , // 能耗排名 
+    '010905': Timesharing,  // 分时能耗
+    
+    '010906': Report,  // 数据报表
+    '010907': Direction,  // 能源流向
+    '010908': Analysis, // 损耗分析
+    '010909': Quota, //定额能耗
+    '010910': Comm, // 公共能耗
+
+    '010911': Air, // 空调控制
+    '010912': Streetlight, // 路灯控制
+    '010913': LightingC, //照明控制
+    '010914': Runreport, // 运行报告
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeEnergy'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

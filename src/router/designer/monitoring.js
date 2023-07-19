@@ -14,6 +14,13 @@ const components = {
     '020304': Line,
     '020305': Warning,
 }
+export let designerMonitor = {
+    '020301': DeviceType,
+    '020302': Device,
+    '020303': Lighting,
+    '020304': Line,
+    '020305': Warning,
+}
 store.subscribe(() => {
     try {
         const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerMonitor']

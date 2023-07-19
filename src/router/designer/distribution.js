@@ -17,6 +17,14 @@ const components = {
     '020505': MonitorManage,
     '020506': SensorManage,
 }
+let designerDistribution = {
+    '020501': Room,
+    '020502': Topology,
+    '020503': LineManage,
+    '020504': TransformerManage,
+    '020505': MonitorManage,
+    '020506': SensorManage,
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerDistribution'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

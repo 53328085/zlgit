@@ -3,38 +3,19 @@ import { Navigate, useRoutes, useNavigate } from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 import store from '@redux/store'
-
- 
- 
-import {menus as Menus} from "@redux/systemconfig";
-
-import monitoringRoutes, {runtimeMonitor} from "./monitoring"; // 运行监控
-import energyRoutes, {runtimeEnergy} from "./energy"; // 能源管理
-import devopsRoutes, {runtimeMaintenance} from './devops'; // 运维管理
-import electricRoutes, {runtimeSafe} from "./electric"; // 电气安全
-import distributionRoutes, {runtimeDistribution} from "./distribution"; // 配电管理
-import prepaymentRoutes, {runtimePrepay} from "./prepayment"; // 结算收费
-import photovoltaicRoutes, {runtimeSolar} from "./photovoltaic"; // 光伏
-import moduleRoutes, {designerCommon} from "./designer/common";
-import carbonRoutes, {runtimeCarbon} from "./carbon" // 碳排管理
-import storageRoutes, {runtimeStorage} from './storage' // 储能管理
+import monitoringRoutes from "./monitoring"; // 运行监控
+import energyRoutes from "./energy"; // 能源管理
+import devopsRoutes from './devops'; // 运维管理
+import electricRoutes from "./electric"; // 电气安全
+import distributionRoutes from "./distribution"; // 配电管理
+import prepaymentRoutes from "./prepayment"; // 结算收费
+import photovoltaicRoutes from "./photovoltaic"; // 光伏
+import moduleRoutes from "./designer/common";
+import carbonRoutes from "./carbon" // 碳排管理
+import storageRoutes from './storage' // 储能管理
 import ErrorBoundary from '../ErrorBoundary.jsx'
 
- let runRoutes = {
-  runtimeMonitor,
-  runtimeEnergy,
-  runtimeMaintenance,
-  runtimeSafe,
-  runtimeDistribution,
-  runtimePrepay,
-  runtimeSolar,
-  designerCommon,
-  runtimeCarbon,
-  runtimeStorage,
- }
-
-
-
+import {StorageParameterSetupDesigner} from '@api/api'
 const Login = lazy(() => import("@pages/Login"))
 
 const Projectlist = lazy(() => import("@pages/projectList"))
@@ -45,22 +26,22 @@ const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
 //const Module = lazy(() => import("../pages/module/index"))
 
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
+const Monitoring = lazy(() => import("../pages/monitoring/index/index"))
 
-const Electric = lazy(() => import("../pages/electric/index"))
+const Electric = lazy(() => import("../pages/electric/index/index"))
 
-const Distribution = lazy(() => import("../pages/distribution/index"))
+const Distribution = lazy(() => import("../pages/distribution/index/index"))
 
 
-const Energy = lazy(() => import("../pages/energy/index"))
+const Energy = lazy(() => import("../pages/energy/index/index"))
 
-const Devops = lazy(() => import("../pages/devops/index"))
+const Devops = lazy(() => import("../pages/devops/index/index"))
 
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
-const Carbon = lazy(() => import("../pages/carbon/index"))
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
+const Prepayment = lazy(() => import("../pages/prepayment/index/index"))
+const Carbon = lazy(() => import("../pages/carbon/index/index"))
+const Photovoltaic = lazy(() => import("../pages/photovoltaic/index/index"))
 
-const Storage = lazy(() => import("../pages/storage/index"))
+const Storage = lazy(() => import("../pages/storage/index/index"))
 
 const Antdconfig = lazy(() => import("../pages/Antcutom"))
 
@@ -76,7 +57,6 @@ const Rtest = lazy(() => import("../pages/test/rttest"))
 const Notfound = lazy(() => import("./notfound"))
 
 import {designerComponents, designerChildrenRoute} from "./designer";
- 
  
 const lazyLoad = (moduleName) => {
   const Module = lazy(() => import(`@pages/screen/${moduleName}`)); 
@@ -198,53 +178,6 @@ const childrenRoute = {
   
 ];
  
-const getNestRout = (sider,routes) => {  
-  let menus = []
-  if (Array.isArray(sider) && sider.length > 0) {        
-    sider.forEach(r => {
-      let {no, key, label} = r;
-      let Com = routes[no];
-      console.log(Com)
-      if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
-     })
-  } 
-  return menus
-}
-function useRoute() { // 重写路由
-  RunRoute = [{
-    path: '',
-    element: <Notfound />
-   }];
-   DesignerRoute = [{
-    path: '',
-    element: <Notfound />
-   }]; 
-  const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus)
-  
-   
-  runMenus?.forEach(r => {
-    let {no, key} = r;
-    let Com = components[no];
-    let nestroute = runRoutes[key]
-    let sider = siderRunMenus[key]
-    if (Com) {
-      no == '0104' ? RunRoute.push({
-        path: key,
-        index: true,
-        element: <Defauthome/>, // 项目概述
-        state: {index: true}
-      }) : RunRoute.push( {
-        path: key, 
-        element: <Com><Navigate to={siderRunMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
-        children: getNestRout(sider, nestroute)
-      })
-    }
-   
-  })
-
-  
-}
-
 let menus;
 store.subscribe(() => {
   let previousLouter = menus
@@ -317,9 +250,6 @@ store.subscribe(() => {
  })
  
 
-const EL = () => {
-  useRoute()
- return useRoutes(routes)
-}
+const EL = () => useRoutes(routes)
 export default EL
 // 路由导航守卫

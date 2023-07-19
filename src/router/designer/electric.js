@@ -9,6 +9,13 @@ const components = {
     
     
 }
+
+export let designerSafe = {
+    '020401': Quota,
+    
+    
+}
+
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['designerSafe'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

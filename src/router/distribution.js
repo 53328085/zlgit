@@ -20,6 +20,17 @@ const components = {
     '010707': Warning,
     '010708': Report
 }
+
+export let runtimeDistribution = {
+    '010701': Summary,
+    '010702': Map,
+    '010703': Transformer,
+    '010704': Loop,
+    '010705': Surroundings,
+    '010706': Video,
+    '010707': Warning,
+    '010708': Report
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeDistribution'] 
     if (Array.isArray(runmen) && runmen.length > 0) {        

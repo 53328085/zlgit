@@ -21,17 +21,17 @@ const Solar = lazy(() => import("@pages/photovoltaic/configure/index")) //光伏
 
 const Storage = lazy(() => import("@pages/storage/configure/index"))
 
-import commonRoutes from './common'
-import monitorRoutes from './monitoring'
-import electricRoutes from './electric'
-import distributionRoutes from './distribution'
+import commonRoutes, {designerCommon} from './common'
+import monitorRoutes, {designerMonitor} from './monitoring'
+import electricRoutes, {designerSafe} from './electric'
+import distributionRoutes, {designerDistribution} from './distribution'
 import prepayRoutes from './prepayment'
 import energyRoutes from './energy'
 import solarRoutes from './photovoltaic'
 import storageRoutes from './storage'
-import carbonRoutes from './carbon'
+import carbonRoutes, {carbon} from './carbon'
 import devopRoutes from './devops'
- export const designerComponents = {
+ export const designerComponents = { 
   '0201': Common,
   '0202': Project,
   '0203': Monitoring,

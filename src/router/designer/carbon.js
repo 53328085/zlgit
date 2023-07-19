@@ -7,6 +7,10 @@ const menus = [];
 const components = {
     '021001': Quota, 
 }
+
+export let carbon = {
+    '021001': Quota, 
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus?.siderDesignerMenus?.['carbon']
     if (Array.isArray(runmen) && runmen.length > 0) {        
@@ -17,5 +21,5 @@ store.subscribe(() => {
        })
     }
 })
-
+ 
 export default  menus

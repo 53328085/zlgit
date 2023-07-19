@@ -15,6 +15,13 @@ const components = {
     '011304': Inspection,
     '011305': Runing,
 }
+export let runtimeMaintenance = {
+    '011301': Summary, 
+    '011302': Warning,
+    '011303': Order,
+    '011304': Inspection,
+    '011305': Runing,
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeMaintenance']
     if (Array.isArray(runmen) && runmen.length > 0) {        

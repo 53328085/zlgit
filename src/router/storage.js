@@ -28,6 +28,19 @@ const components = {
     '011110': OperationLog, 
     '011111': StroageReport, 
 }
+export let runtimeStorage = {
+    '011101': Summary,  //储能概述
+    '011102': AlternatorMonitor, // 
+    '011103': StorageMonitor, 
+    '011104': StorageControl, 
+    '011105': ConsumeStatistics, 
+    '011106': ReportStatistics, 
+    '011107': ChargingOrder, 
+    '011108': Environment, 
+    '011109': AlarmMessage, 
+    '011110': OperationLog, 
+    '011111': StroageReport, 
+}
 store.subscribe(() => {
     const runmen= store.getState().system.menus.siderRunMenus?.['runtimeStorage']
     if (Array.isArray(runmen) && runmen.length > 0) {        
