@@ -155,18 +155,24 @@ export default function Account({ projectId, CModal }) {
   };
 
   const queryOperationManager = async () => {
-    let {
-      success,
-      data: { data },
-    } = await QueryOperationManager({
-      // 获取运营管理员(选择框)
-      alike: "",
-      pageNum: 1,
-      pageSize: 150,
-    });
-    console.log("data");
-    console.log(data);
-    success && Array.isArray(data) && setOperate([...data]);
+    try {
+      let {
+        success,
+        data,
+      } = await QueryOperationManager({
+        // 获取运营管理员(选择框)
+        alike: "",
+        pageNum: 1,
+        pageSize: 150,
+      });
+      if (data && data.data) {
+        success && Array.isArray(data.data) && setOperate([...data.data]);
+      }
+     
+    } catch (error) {
+      console.log(error)
+    }
+   
   };
 
   const queryOperationManagers = async () => {
@@ -237,10 +243,13 @@ export default function Account({ projectId, CModal }) {
       let hander = ["AddProjectManager", "InsertProjectMaintenance"][person];
       let update = [queryProjectManager, queryProjectMaintenance][person];
       let { success, errMsg } = await User[hander](params);
-      if (!success) return message.error(errMsg || "数据出错");
+      console.log(success)
+      console.log(errMsg)
       if (success) {
         fmodal.current.onCancel();
         await update();
+      }else {
+        message.error(errMsg || "数据出错");
       }
     } catch (error) {
       console.log(error);
@@ -351,10 +360,12 @@ export default function Account({ projectId, CModal }) {
       params.validStageTime = params.validStageTime.format("YYYY-MM-DD");
       params.enabled = Number(params.enabled);
 
-      let { success } = await User.Update({ ...params, id });
+      let { success, errMsg} = await User.Update({ ...params, id });
       success && editref.current.onCancel();
       if (success) {
         updateData();
+      }else {
+        message.error(errMsg || '数据出错', 1)
       }
     } catch (error) {
       console.log(error);

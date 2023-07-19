@@ -2,6 +2,15 @@
 //     width:160px;
 //     margin-bottom: 12px;
 // }
+
+@keyframes flicker{
+    from {
+        opacity: 0.6;
+    }
+    to {
+        opacity: 1;
+    }
+}
 .header{
     background-color: #fff;
     height: 48px;
@@ -48,7 +57,28 @@
     background-size: 100% 100%;
     position: relative;
     overflow: hidden;
-
+    .warning {
+        width: 14px;
+        height: 14px;
+        background-color: #08bf00;
+        border: 1px solid rgba(0,0,0,0.4);
+        border-radius: 50%;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        animation: flicker 600ms  infinite linear;
+    }
+    .warningred {
+        width: 14px;
+        height: 14px;
+        background-color: #f13c3c;
+        border: 1px solid rgba(0,0,0,0.4);
+        border-radius: 50%;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        animation: flicker 600ms  infinite linear;
+    }
     .cardImgBox {
         width: 128px;
         height: 128px;

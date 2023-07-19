@@ -14,13 +14,16 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
 
-  const defaultpoint = lngLat || value 
+  let defaultpoint = lngLat || value 
+
+  console.log('lngLat',lngLat)
+  const zoom = 18;
 
 
-  const [zoom] = useState(18)
+  let geocoder = new T.Geocoder();
+  
 
 
-  const geocoder = new T.Geocoder();
   const MapOptions = {
     projection: 'EPSG:900913',
     minZoom: 2,
@@ -30,12 +33,16 @@ import {message} from 'antd'
   let [mapref, setMapref] = useState()
   let map = mapref ? new T.Map(mapref, MapOptions) : null
 
-  const getlnglat = (str) => {
-    const [lng, lat] =  str?.split(',') || []
+ 
 
-     return lng&&lat ? new T.LngLat(lng, lat) :  new T.LngLat(120.22830511467954, 30.21229461177818)
+  const getlnglat = (str) => {
+     const [lng, lat] =  str?.split(',') || []
+     
+     return lng&&lat ? new T.LngLat(Number.parseFloat(lng), Number.parseFloat(lat)) :  new T.LngLat(120.22830511467954, 30.21229461177818)
 
   }
+
+  
 
   const addmarker = (latlng, text='') => {
       map.clearOverLays()
@@ -106,55 +113,42 @@ import {message} from 'antd'
   useImperativeHandle(ref, () => ({
     serachMap
   }))
- 
+  //const [mapkey, setMapkey] = useState(Math.random().toString())
+  //const mapkey = Math.random().toString()
   useEffect(() => {
+     console.log(defaultpoint)
      if(!mapref || !defaultpoint) return
-     let geocode = new T.Geocoder();
-     let latlng 
-
+     console.log(defaultpoint)
+    // let dom = document.getElementById("mapBox")
      try {
-      latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
-     
-      map.centerAndZoom(latlng, zoom)     
-     if (Array.isArray(defaultpoint)) {
-      defaultpoint.forEach(item => {
-        let {lnglat, text} = item
-        addInfo(lnglat, text)
-      })
-     }else {
-      geocode.getLocation(latlng,mapClick)
-     }
-     } catch (error) {
-       console.log(error)
-     }
-     
-
-    /*  if (!Array.isArray(defaultpoint)) {
-      latlng = getlnglat(defaultpoint) 
-      console.log(defaultpoint)
-      map.centerAndZoom(latlng, zoom); // 初始化   
-      geocode.getLocation(latlng,mapClick)
-     }else if(Array.isArray(defaultpoint)) {
-       
-          map.centerAndZoom(getlnglat(defaultpoint[0]?.lnglat), zoom); // 初始化
-       
-        defaultpoint.forEach(item => {
-          let {lnglat, text} = item
-          addInfo(lnglat, text)
-        })
-       
-
-     } */
+      let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+      // setMapkey(Math.random().toString())
+       map.centerAndZoom(latlng, zoom)     
+      if (Array.isArray(defaultpoint)) {
+       defaultpoint.forEach(item => {
+         let {lnglat, text} = item
+         addInfo(lnglat, text)
+       })
+      }else {
+        geocoder.getLocation(latlng,mapClick)
+      }
+      } catch (error) {
+        console.log(error)
+      }
+    
      map.addEventListener("click", (e) => {   
        if(isck) return;
      
-      geocode.getLocation(e.lnglat,mapClick)
+       geocoder.getLocation(e.lnglat,mapClick)
      });
     
-  
+     map.addEventListener('drag', (e)=> {
+      console.log(e)
+     })
+    
   }, [mapref, defaultpoint])
   return (
-    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox" >
+    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
 
     </div>
   )

@@ -337,6 +337,10 @@ export default function Index(props) {
               value: 5,
               label: '变压器',
             },
+            {
+              value: 6,
+              label: '断路器',
+            },
           ]}
         />
       </div>

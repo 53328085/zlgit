@@ -12,6 +12,7 @@ const Warning = lazy(() => import("../pages/monitoring/warning"))
 const Remote = lazy(() => import("../pages/monitoring/remote"))
 const Oplog = lazy(() => import("../pages/monitoring/oplog"))
 const Call = lazy(() => import("../pages/monitoring/call"))
+const Control= lazy(() => import("../pages/monitoring/control"))
 const menus = [];
 const components = {
     '010501': Summary,
