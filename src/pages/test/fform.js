@@ -123,15 +123,14 @@ const App = () => {
           style={{
             marginRight: 16,
           }}
-        >
-          Change locale of components:{' '}
+        > Change locale of components:{' '}
         </span>
         <Radio.Group value={locale} onChange={changeLocale}>
           <Radio.Button key="en" value={enUS}>
             English
           </Radio.Button>
           <Radio.Button key="cn" value={zhCN}>
-            中文
+            中文简体
           </Radio.Button>
         </Radio.Group>
       </div>

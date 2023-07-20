@@ -21,16 +21,16 @@ const Solar = lazy(() => import("@pages/photovoltaic/configure/index")) //光伏
 
 const Storage = lazy(() => import("@pages/storage/configure/index"))
 
-import commonRoutes, {designerCommon} from './common'
-import monitorRoutes, {designerMonitor} from './monitoring'
-import electricRoutes, {designerSafe} from './electric'
-import distributionRoutes, {designerDistribution} from './distribution'
-import prepayRoutes from './prepayment'
-import energyRoutes from './energy'
-import solarRoutes from './photovoltaic'
-import storageRoutes from './storage'
-import carbonRoutes, {carbon} from './carbon'
-import devopRoutes from './devops'
+import  {designerCommon} from './common'
+import  {designerMonitor} from './monitoring'
+import  {designerSafe} from './electric'
+import  {designerDistribution} from './distribution'
+import  {designerPrepay} from './prepayment'
+import {designerEnergy} from './energy'
+import  {designerSolar} from './photovoltaic'
+import  {storage} from './storage'
+import {carbon} from './carbon'
+import  {maintenance} from './devops'
  export const designerComponents = { 
   '0201': Common,
   '0202': Project,
@@ -44,18 +44,19 @@ import devopRoutes from './devops'
   '0210': Carbon,
   '0211': Devops,
 } 
-export const designerChildrenRoute = {
-  '0201': commonRoutes,
-  '0203': monitorRoutes,
-  '0204': electricRoutes,
-  '0205': distributionRoutes,
-  '0206': prepayRoutes,
-  '0207': energyRoutes,
-  '0208': solarRoutes,
-  '0209': storageRoutes,
-  '0210': carbonRoutes,
-  '0211': devopRoutes
+export const designerRoutes = {
+  designerCommon,
+  designerMonitor,
+  designerSafe,
+  designerDistribution,
+  designerPrepay,
+  designerEnergy,
+  designerSolar,
+  storage,
+  carbon,
+  maintenance,
 }
+
 
  
 

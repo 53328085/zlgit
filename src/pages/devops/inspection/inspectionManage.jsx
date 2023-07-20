@@ -86,10 +86,8 @@ export default function Warncontent({ style, areavalue }) {
         defaultPageSize: 14,
         refreshDeps: [areavalue, projectId]
     })
-    console.log(tableProps, search)
-    const { submit } = search
-
-    //工单状态查询
+     const { submit } = search
+    // 工单状态查询
     const getInspectionStatistics = async () => {
         let params = {
             projectId,

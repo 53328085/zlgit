@@ -1,24 +1,24 @@
-import { lazy, Suspense } from "react";
-import { Navigate, useRoutes, useNavigate } from "react-router-dom";
+import { lazy } from "react";
+import { Navigate, useRoutes} from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
-import store from '@redux/store'
+
 
  
  
-import {menus as Menus} from "@redux/systemconfig";
+import {menus as Menus, currentscreen} from "@redux/systemconfig";
 
-import monitoringRoutes, {runtimeMonitor} from "./monitoring"; // 运行监控
-import energyRoutes, {runtimeEnergy} from "./energy"; // 能源管理
-import devopsRoutes, {runtimeMaintenance} from './devops'; // 运维管理
-import electricRoutes, {runtimeSafe} from "./electric"; // 电气安全
-import distributionRoutes, {runtimeDistribution} from "./distribution"; // 配电管理
-import prepaymentRoutes, {runtimePrepay} from "./prepayment"; // 结算收费
-import photovoltaicRoutes, {runtimeSolar} from "./photovoltaic"; // 光伏
-import moduleRoutes, {designerCommon} from "./designer/common";
-import carbonRoutes, {runtimeCarbon} from "./carbon" // 碳排管理
-import storageRoutes, {runtimeStorage} from './storage' // 储能管理
-import ErrorBoundary from '../ErrorBoundary.jsx'
+import {runtimeMonitor} from "./monitoring"; // 运行监控
+import {runtimeEnergy} from "./energy"; // 能源管理
+import  {runtimeMaintenance} from './devops'; // 运维管理
+import  {runtimeSafe} from "./electric"; // 电气安全
+import  {runtimeDistribution} from "./distribution"; // 配电管理
+import  {runtimePrepay} from "./prepayment"; // 结算收费
+import  {runtimeSolar} from "./photovoltaic"; // 光伏
+import  {designerCommon} from "./designer/common";
+import  {runtimeCarbon} from "./carbon" // 碳排管理
+import  {runtimeStorage} from './storage' // 储能管理
+ 
 
  let runRoutes = {
   runtimeMonitor,
@@ -75,7 +75,7 @@ const Fform = lazy(() => import("../pages/test/fform.js"))
 const Rtest = lazy(() => import("../pages/test/rttest"))
 const Notfound = lazy(() => import("./notfound"))
 
-import {designerComponents, designerChildrenRoute} from "./designer";
+import {designerComponents,  designerRoutes} from "./designer";
  
  
 const lazyLoad = (moduleName) => {
@@ -105,18 +105,7 @@ const loginrouter =  [{
   '0112': Carbon,
   '0113': Devops,
 } 
-const childrenRoute = {
-  '0105': monitoringRoutes,
-  '0106': electricRoutes,
-  '0107': distributionRoutes,
-  '0108': prepaymentRoutes,
-  '0109': energyRoutes,
-  '0110': photovoltaicRoutes,
-  '0111': storageRoutes,
-  '0112': carbonRoutes,
-  '0113': devopsRoutes,
-}
-//console.log(runMenus)
+
  let RunRoute = [];
  let DesignerRoute = [];
  let routes =  [
@@ -128,9 +117,6 @@ const childrenRoute = {
      path: "/projectList",
      element: <Redirect />
    },
-  
- 
-
    // 进入项目
 
    {
@@ -203,8 +189,7 @@ const getNestRout = (sider,routes) => {
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {
       let {no, key, label} = r;
-      let Com = routes[no];
-      console.log(Com)
+      let Com = routes[no];     
       if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
      })
   } 
@@ -219,8 +204,8 @@ function useRoute() { // 重写路由
     path: '',
     element: <Notfound />
    }]; 
-  const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus)
-  
+  const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus)  
+  const bigScreen = useSelector(currentscreen)
    
   runMenus?.forEach(r => {
     let {no, key} = r;
@@ -241,84 +226,42 @@ function useRoute() { // 重写路由
     }
    
   })
-
   
+  designerMenus?.forEach(r => {
+    let {no, key} = r;
+    let Com = designerComponents[no];
+    let nestroute = designerRoutes[key]
+    let sider = siderDesignerMenus[key]
+    if (Com) {
+     no == '0202' ?  DesignerRoute.push( {
+      path: key, 
+      element: <Project />, // 项目概述
+    }) : DesignerRoute.push( {
+        path: key, 
+        element: <Com><Navigate to={siderDesignerMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
+        children: getNestRout(sider, nestroute)
+      })
+    }
+   
+  }) 
+  
+
+  routes[2].children = RunRoute ;  
+  routes[3].children = DesignerRoute; 
+  const {type, key, primary} = bigScreen  
+  if (type == 1 && key) {
+      let path = primary + key
+      let nav = {
+       path: `${path}`,
+       element: lazyLoad(path)
+      }       
+      routes.push(nav)
+  }
 }
 
-let menus;
-store.subscribe(() => {
-  let previousLouter = menus
-  menus = store.getState().system.menus;
-  if(previousLouter === menus) return;
-  
-  try {
-   RunRoute = [{
-    path: '',
-    element: <Notfound />
-   }];
-   DesignerRoute = [{
-    path: '',
-    element: <Notfound />
-   }];
-  
-   
-   const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = menus;
-   
-   runMenus?.forEach(r => {
-      let {no, key} = r;
-      let Com = components[no];
-      if (Com) {
-        no == '0104' ? RunRoute.push({
-          path: key,
-          index: true,
-          element: <Defauthome/>, // 项目概述
-          state: {index: true}
-        }) : RunRoute.push( {
-          path: key, 
-          element: <Com><Navigate to={siderRunMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
-          children: childrenRoute[no]
-        })
-      }
-     
-    })
-    designerMenus?.forEach(r => {
-      let {no, key} = r;
-      let Com = designerComponents[no];
-      if (Com) {
-       no == '0202' ?  DesignerRoute.push( {
-        path: key, 
-        element: <Project />, // 项目概述
-      }) : DesignerRoute.push( {
-          path: key, 
-          element: <Com><Navigate to={siderDesignerMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
-          children: designerChildrenRoute[no]
-        })
-      }
-     
-    }) 
-    
-    routes[2].children = RunRoute ;  
-    routes[3].children = DesignerRoute; 
-
-    const {type, key, primary} = store.getState().system.currentscreen  
-    if (type == 1 && key) {
-        let path = primary + key
-        let nav = {
-         path: `${path}`,
-         element: lazyLoad(path)
-        }       
-        routes.push(nav)
-    }
-  } catch (error) {
-    console.log(error);
-  }
- 
-
- })
- 
 
 const EL = () => {
-  useRoute()
+ useRoute()
  return useRoutes(routes)
 }
 export default EL

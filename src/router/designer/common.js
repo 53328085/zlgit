@@ -9,15 +9,7 @@ const Base = lazy(() => import("@pages/module/base"))
 // const Pricing= lazy(() => import("@pages/module/pricing"))
 const Cockpit= lazy(() => import("@pages/module/cockpit"))
 const DataScreen = lazy(() => import("@pages/module/dataScreen"))
-const menus = [];
-const components = {
-    '020101': Base,
-    '020102': Project,
-    '020103': User,
-    '020104': Region,
-    '020105': Cockpit,
-    '020106': DataScreen,
-}
+
 export let designerCommon = {
     '020101': Base,
     '020102': Project,
@@ -26,20 +18,3 @@ export let designerCommon = {
     '020105': Cockpit,
     '020106': DataScreen,
 }
-store.subscribe(() => {
-    try {
-        const runmen= store.getState().system?.menus.siderDesignerMenus?.['designerCommon']
-        if (Array.isArray(runmen) && runmen.length > 0) {        
-           runmen.forEach(r => {
-            let {no, key} = r;
-            let Com = components[no];
-            if (Com) menus.push({path: key, element: <Com />}) 
-           })
-        }
-    } catch (error) {
-        
-    }
-   
-})
-
-export default  menus

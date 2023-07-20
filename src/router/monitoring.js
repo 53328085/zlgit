@@ -1,6 +1,5 @@
 /*  运行监控 run*/
 import {lazy} from 'react'
-import store from '@redux/store'
 const Electrical = lazy(() => import("../pages/monitoring/electrical"))
 const Gateway = lazy(() => import("../pages/monitoring/gateway"))
 const Loss= lazy(() => import("../pages/monitoring/loss"))
@@ -13,18 +12,7 @@ const Remote = lazy(() => import("../pages/monitoring/remote"))
 const Oplog = lazy(() => import("../pages/monitoring/oplog"))
 const Call = lazy(() => import("../pages/monitoring/call"))
 const Control= lazy(() => import("../pages/monitoring/control"))
-const menus = [];
-const components = {
-    '010501': Summary,
-    '010502': Gateway,
-    '010503': Point,
-    '010504': Video,
-    '010505': Remote,
-    '010506': Call,
-    '010507': Report,
-   // '010508': Control
-    //'010508': Oplog,
-}
+
  
  export let runtimeMonitor = {
     '010501': Summary,
@@ -36,16 +24,3 @@ const components = {
     '010507': Report,
    // '010508': Control
  }
-store.subscribe(() => {
-    let runmen= store.getState().system.menus?.siderRunMenus?.['runtimeMonitor']    
-    
-    if (Array.isArray(runmen) && runmen.length > 0) { 
-       // runmen?.push({no: '010508', label: '自动控制', key: 'control', parentNo: '0106', index: 7,select:  1})       
-       runmen.forEach(r => {
-        let {no, key} = r;
-        let Com = components[no];
-        if (Com) menus.push({path: key, element: <Com />}) 
-       })
-    }
-})
-export default  menus
