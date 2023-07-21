@@ -14,7 +14,7 @@ import {message} from 'antd'
 import { useMap } from "ahooks";
  
   function Index(props, ref) {
-  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
+  const {lngLat="120.22830511467954, 30.21229461177818", value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
 
   let defaultpoint = lngLat || value 
 
