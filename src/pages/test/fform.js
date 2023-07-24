@@ -1,145 +1,151 @@
-import {
-  Button,
-  Calendar,
-  ConfigProvider,
-  DatePicker,
-  Modal,
-  Pagination,
-  Popconfirm,
-  Radio,
-  Select,
-  Table,
-  TimePicker,
-  Transfer,
-} from 'antd';
-import enUS from 'antd/es/locale/ar_EG';
-import zhCN from 'antd/es/locale/zh_CN';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-import React, { useState } from 'react';
-moment.locale('en');
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    filters: [
-      {
-        text: 'filter1',
-        value: 'filter1',
+import React, {useRef, useEffect, useState} from 'react'
+import * as echarts from "echarts";
+import china from "./china.json";
+import geochina from './geochina.json'
+// import Svgchina from './china.svg'
+import zhejiang from './zhejiang.json'
+import hangzhou from './hangzhou.json'
+import log from  '../../assets/image/chintlog.png'
+import mapbg from './map.PNG'
+var ROOT_PATH = 'https://echarts.apache.org/examples'
+export default function Index() {
+  let img = document.createElement('img')
+  img.src=mapbg
+  const [datas, setDatas] = useState(china)
+  const [Name, setName] = useState('china')
+ 
+ //echarts.registerMap(Name, datas)
+
+ echarts.registerMap('china', geochina)
+  let option = {
+     title: {
+      text: "中华人民共和国",
+      textStyle: {
+        color: "#bce2e8",
+        fontStyle: 24,
       },
-    ],
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-  },
-];
-const Page = () => {
-  const [open, setOpen] = useState(false);
-  const showModal = () => {
-    setOpen(true);
-  };
-  const hideModal = () => {
-    setOpen(false);
-  };
-  const info = () => {
-    Modal.info({
-      title: 'some info',
-      content: 'some info',
-    });
-  };
-  const confirm = () => {
-    Modal.confirm({
-      title: 'some info',
-      content: 'some info',
-    });
-  };
-  return (
-    <div className="locale-components">
-      <div className="example">
-        <Pagination defaultCurrent={1} total={50} showSizeChanger />
-      </div>
-      <div className="example">
-        <Select
-          showSearch
-          style={{
-            width: 200,
-          }}
-        >
-          <Option value="jack">jack</Option>
-          <Option value="lucy">lucy</Option>
-        </Select>
-        <DatePicker />
-        <TimePicker />
-        <RangePicker
-          style={{
-            width: 200,
-          }}
-        />
-      </div>
-      <div className="example">
-        <Button type="primary" onClick={showModal}>
-          Show Modal
-        </Button>
-        <Button onClick={info}>Show info</Button>
-        <Button onClick={confirm}>Show confirm</Button>
-        <Popconfirm title="Question?">
-          <a href="#">Click to confirm</a>
-        </Popconfirm>
-      </div>
-      <div className="example">
-        <Transfer dataSource={[]} showSearch targetKeys={[]} />
-      </div>
-      <div className="site-config-provider-calendar-wrapper">
-        <Calendar fullscreen={false} value={moment()} />
-      </div>
-      <div className="example">
-        <Table dataSource={[]} columns={columns} />
-      </div>
-      <Modal title="Locale Modal" open={open} onCancel={hideModal}>
-        <p>Locale Modal</p>
-      </Modal>
-    </div>
-  );
-};
-const App = () => {
-  const [locale, setLocal] = useState(enUS);
-  const changeLocale = (e) => {
-    console.log(e)
-    const localeValue = e.target.value;
-    setLocal(localeValue);
-    if (!localeValue) {
-      moment.locale('en');
-    } else {
-      moment.locale('zh-cn');
+      top: 60,
+      left: "center"
+     },
+     geo: {
+        map: "china", // 必须设置
+        zoom: 1.25,
+        roam: true,
+        label: {
+           normal: {
+             show: true,
+             textStyle: {
+              color: "#333"
+             }
+           },
+           emphasis: {
+              textStyle: {
+                color: "#fff"
+              }
+           }
+        },
+        itemStyle: { // 地图区域的多边形 图形样式          
+          normal: {
+              borderColor: "rgba(147, 235, 248, .5)", //设置地图区域边框的颜色
+              borderWidth: 1, //设置地图区域边框的宽度
+              areaColor: {    //设置地图区域的填充色 -> 渐变色
+                  type: "radial",
+                  x: 0.5,
+                  y: 0.5,
+                  r: 0.8,
+                  colorStops: [
+                      {
+                          offset: 0,
+                          color: "rgba(147, 235, 248, 0)", // 0% 处的颜色
+                      },
+                      {
+                          offset: 1,
+                          color: "rgba(147, 235, 248, .2)", // 100% 处的颜色
+                      },
+                  ],
+                  globalCoord: false, // 缺省为 false
+              },
+          },
+          // 鼠标放上去高亮的样式（在鼠标悬停状态下）
+          emphasis: {
+              areaColor: "#389BB7",
+              borderWidth: 0,
+          },
+      },
+ 
+     }
+    
+       
+   
+      
+    
+  }
+  const mapref = useRef()
+  const init = (map) => {
+    let mapJson = echarts.getMap(Name)
+    if(mapJson) {
+      mapJson = mapJson.geoJSON
+      echarts.registerMap(Name, mapJson)
+    }else {
+      echarts.registerMap(Name, datas)
     }
-  };
+    map.setOption(option)
+  }
+ 
+  useEffect(() => {
+    try {
+     
+      let map = echarts.init(mapref.current)
+      init(map)
+     /*  map.setOption({
+        geo: [
+          {
+            id: "geoChina",
+            show: true,
+            map: 'topo',
+            roam: true,
+            layoutCenter: ['50%', '50%'],
+            layoutSize: '95%',
+            label: {
+               show: true
+            },
+            regions: [{
+              name: '广东省',
+              itemStyle: {
+                  areaColor: 'red',
+                  color: 'red'
+              }
+            }],
+            series: {
+               
+            },
+            nameProperty: "NAME",
+            data: [
+              {name: "广东省", value: 1000}
+            ]
+          }
+        ]
+      }) */
+    //  init(map)
+     /*  map.on("click", ({name}) => {
+         console.log(name)
+         if(name == '浙江省') {
+          setName('zhejiang')
+          setDatas(zhejiang)
+         }else if(name == '杭州市') {
+          setName('hangzhou')
+          setDatas(hangzhou)
+         }
+      }) */
+    } catch (error) {
+      console.log(error)
+    }
+     
+  }, [Name,mapref.current])
   return (
-    <div>
-      <div className="change-locale">
-        <span
-          style={{
-            marginRight: 16,
-          }}
-        > Change locale of components:{' '}
-        </span>
-        <Radio.Group value={locale} onChange={changeLocale}>
-          <Radio.Button key="en" value={enUS}>
-            English
-          </Radio.Button>
-          <Radio.Button key="cn" value={zhCN}>
-            中文简体
-          </Radio.Button>
-        </Radio.Group>
-      </div>
-      <ConfigProvider locale={locale}>
-        <Page
-          key={locale ? locale.locale : 'en' /* Have to refresh for production environment */}
-        />
-      </ConfigProvider>
+    <div style={{flex: 1, display: 'flex', padding: "32px", alignItems: "center",justifyContent: "center"}}>
+     
+       <div ref={mapref} style={{width: "1000px", height: "800px", border: "1px solid #dedede"}}></div>
     </div>
-  );
-};
-export default App;
+  )
+}
