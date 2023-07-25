@@ -28,6 +28,7 @@ const initialState = {
      primary:'',
    },
   asider: true,
+  isGranary: false, // 演示国家粮仓用
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
@@ -81,7 +82,10 @@ const system = createSlice({
         },
         getCurrentScreen(state, actions) {  // 当前大屏
            return Object.assign({}, state, {currentscreen: actions.payload})
-        }
+        },
+        getIsGranary(state, actions) {  // 是否国家粮仓
+            return Object.assign({}, state, {isGranary: actions.payload})
+         }
     },
 
     extraReducers: {      
@@ -123,7 +127,7 @@ export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+stat
 export const datascreen = state => state.system.datascreen ?? {}
 export const configState = state => state.system.configState;
 export const currentscreen = state => state.system.currentscreen
-
+export const isGranary = state => state.system.isGranary
 
 export const {
     configProject,
@@ -139,6 +143,7 @@ export const {
     getpublishState,
     getJump,
     getdataScreen,
-    getCurrentScreen,   
+    getCurrentScreen,
+    getIsGranary   
 } = actions
 export default system.reducer

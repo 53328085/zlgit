@@ -14,7 +14,7 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -33,14 +33,15 @@ import {
 } from "@redux/systemconfig";
 const Logmain = styled.div`
   && {
-    padding: 64px 45px 0 64px;
+    padding: 142px 45px 0 100px;
     display: flex;
-    height: calc(100vh - 24px);
+    height: calc(100vh - 138px - 24px);
     overflow-y: auto;
   }
 `;
 
 const List = styled.div`
+  width: 660px;
   display: flex;
   flex-direction: column;
   .chtitle {
@@ -48,22 +49,22 @@ const List = styled.div`
       color: #fff;
       font-style: italic;
       font-size: 52px;
-      line-height: 104px;
       z-index: 2;
-      text-indent: 32px ;
-      position: relative;
+      position: absolute;
+      min-width: 744px;
     }
     position: relative;
-  
-    text-align: left;
+    height: 90px;
+    text-align: center;
   }
   .block {
     display: block;
     width: 775px;
     height: 35px;
-    background-color: #bf490f;  
-    transform: skewX(-20deg) translateY(-40px);
-   
+    background-color: #012bd2;
+    position: absolute;
+    top: 59px;
+    transform: skewX(-20deg);
     box-shadow: rgb(0 0 0 / 30%) 12px 12px;
   }
   .entitle {
@@ -103,15 +104,10 @@ const List = styled.div`
 `;
  
 const Logbox = styled.div`
-  min-width: 466px;
+  width: 402px;
   color: #fff;
-  background: #fff;
+  background: transparent;
   margin-left: auto;
-  margin-top: 104px;
-  align-self: self-start;
-  padding: 48px 30px 8px 30px;
-  border-radius: 8px;
-  box-shadow: 5px 5px 5px rgb(0 0 0 / 35%);
 `;
 const Logtype = styled.div`
   display: flex;
@@ -148,18 +144,17 @@ const Logipt = styled(Input)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
   border-radius: 4px;
-  box-shadow: none;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
   &:focus,
   &:hover {
-    border-color: #dd9d7e !important;
+    border-color: #1f83fe !important;
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #dd9d7e;
+      color: #1f83fe;
     }
   }
   && {
@@ -188,21 +183,20 @@ const Logpsd = styled(Input.Password)`
   border: 1px solid #9c9ea4;
   font-size: 14px;
   border-radius: 4px;
-  box-shadow: none;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
   &:focus,
   &:hover {
-    border-color: #dd9d7e !important;
+    border-color: #1f83fe !important;
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #dd9d7e;
+      color: #1f83fe;
     }
     .ant-input-password-icon.anticon {
-      color: #dd9d7e !important;
+      color: #1f83fe !important;
     }
   }
   && {
@@ -228,9 +222,8 @@ const Logck = styled(Checkbox)`
   display: flex;
   align-items: center;
   &:hover {
-    
-    .ant-checkbox,.ant-checkbox:hover {
-      border-color: #DD9D7E;
+    .ant-checkbox:hover {
+      border-color: #9c9ea4;
     }
   }
   .ant-checkbox + span {
@@ -241,10 +234,6 @@ const Logck = styled(Checkbox)`
   }
   .ant-checkbox-checked .ant-checkbox-inner:after {
     transform: rotate(45deg) scale(2) translate(-25%, -50%);
-    border-color: #DD9D7E;
-  }
-  .ant-checkbox-checked::after {
-    border-color: #DD9D7E;
   }
   .ant-checkbox {
     width: 32px;
@@ -258,23 +247,23 @@ const Logck = styled(Checkbox)`
       background-color: transparent;
     }
     .ant-checkbox-inner {
-      border-color: #DD9D7E;
+      border-color: #9c9ea4;
       background-color: transparent;
       &:hover {
-        border-color: #DD9D7E;
+        border-color: #9c9ea4;
       }
     }
   }
 `;
 
 const Logbtn = styled(Button)`
-  border-color: #bf490f;
-  background-color: #bf490f;
+  border-color: #0e2db3;
+  background-color: #0e2db3;
   font-size: 18px;
   color: #fff;
   &:hover {
-    border-color: rgba(255,0,0,1);
-    background-color:  rgba(255,0,0,1);
+    border-color: #0728ae;
+    background-color: #0728ae;
     color: #fff;
   }
 `;
@@ -296,13 +285,35 @@ const Logtitle = ({log, logtitle}) => {
     </Title>
   );
 };
-const Loglist = () => {
+const Loglist = ({logtitle, englishTitle, literal}) => {
+ 
+  
+ 
+  let items = [
+    "运行监控",
+    "电气安全",
+    "配电管理",
+    "结算收费",
+    "光伏发电",
+    "碳排管理",
+    "运维管理",
+  ];
+ 
  
   return (
     <List>
       <div className="chtitle">
-        <p className="text">国家粮仓</p>
+        <p className="text">{logtitle}</p>
         <p className="block"></p>
+      </div>
+      <p className="entitle">{englishTitle}</p>
+      <div className="itemlist" style={{display: literal== 1 ? 'flex' : 'none'}}>
+        {items.map((i, index) => (
+          <div className="item" key={index}>
+            <span className="icon"></span>
+            <span className="text">{i}</span>
+          </div>
+        ))}
       </div>
     </List>
   );
@@ -440,6 +451,7 @@ function UserLog() {
   };
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
+    dispatch(getIsGranary(false))
   }, []);
  
 
@@ -449,8 +461,8 @@ function UserLog() {
 
   const stylefn = (state) => {
     return state
-      ? { fontSize: "28px", color: "#BF490F" }
-      : { fontSize: "22px", color: "#dd9d7e" };
+      ? { fontSize: "28px", color: "#fff" }
+      : { fontSize: "26px", color: "#515151" };
   };
 
   const iconsty = {
@@ -507,8 +519,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.usera1}
-            aurl={imgurl.usera2}
+            url={imgurl.user}
+            aurl={imgurl.usera}
             placeholder="请输入用户名"
             allowClear
             autoComplete={auto}
@@ -529,8 +541,8 @@ function UserLog() {
         >
           <Logpsd
             prefix={<Ipticon />}
-            url={imgurl.pwda1}
-            aurl={imgurl.pwda2}
+            url={imgurl.pwd}
+            aurl={imgurl.pwda}
             placeholder="请输入密码"
           />
         </Itembox>
@@ -634,8 +646,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.phonea1}
-            aurl={imgurl.phonea2}
+            url={imgurl.phone}
+            aurl={imgurl.phonea}
             placeholder="请输入手机号"
             autoComplete={auto}
           />
@@ -658,8 +670,8 @@ function UserLog() {
             >
               <Logipt
                 prefix={<Ipticon />}
-                url={imgurl.codea1}
-                aurl={imgurl.codea2}
+                url={imgurl.code}
+                aurl={imgurl.codea}
                 placeholder="请输入验证码"
                 style={{ width: "275px" }}
               />
@@ -715,7 +727,7 @@ function UserLog() {
           }}
           style={stylefn(!state)}
         >
-          手机号登录
+          手机登录
         </span>
       </Logtype>
       {state ? <Userlog /> : <Phonelog />}
@@ -737,7 +749,7 @@ export default function Login() {
   });
 }, [hostname]);  
   return (
-    <LoginLayout login={true}  bgImg={bgImgf} preview={true}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
         <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
         <UserLog />

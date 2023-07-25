@@ -156,25 +156,20 @@ const controlcolumns = [
  const vdata = [
   {date: "自动控制策略01", eventType: "每日", "time": "07:00：00", info: "学生寝室定时通断电策略", device: ''}
  ]
-  const QueryReports =  ({current, pageSize}, form) => { 
-    try {
-      let {time, ...rest} = form
-      let start = time[0].format('YYYY-MM-DD')
-      let end = time[1].format('YYYY-MM-DD')
-      let params = {
-        pageNum: current,
-        pageSize,
-        start,
-        end,
-        projectId,
-     //  areaId,
-       
-        ...rest
-      }
-    } catch (error) {
-      console.log(error)
-    }  
-   
+  const QueryReports =  ({current, pageSize}, form) => {   
+    let {time, ...rest} = form
+    let start = time[0].format('YYYY-MM-DD')
+    let end = time[1].format('YYYY-MM-DD')
+    let params = {
+      pageNum: current,
+      pageSize,
+      start,
+      end,
+      projectId,
+   //  areaId,
+     
+      ...rest
+    }
     return OperationLogRuntime.QueryLogsByPage(params).then(res => {
       let {success, data, total} = res
       setTotal(total)
@@ -189,8 +184,6 @@ const controlcolumns = [
         total: 0
       }  
      }
-    }).catch(e => {
-      console.log(e)
     })
    
   }

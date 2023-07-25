@@ -22,5 +22,5 @@ const Control= lazy(() => import("../pages/monitoring/control"))
     '010505': Remote,
     '010506': Call,
     '010507': Report,
-   // '010508': Control
+     '010508': Control
  }

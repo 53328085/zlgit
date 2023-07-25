@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary} from "@redux/systemconfig";
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -155,6 +155,7 @@ export default function Log() {
   const navgite = useNavigate()
  
   const  screenadr = useSelector(currentscreen)
+  const  isgranary = useSelector(isGranary)
   const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType} = useSelector(selectUser) || {};
@@ -178,6 +179,7 @@ export default function Log() {
   }
 const onJump = useCallback(() => {
    let {type, key, primary} = screenadr   
+ 
    if(type == 0) return ;
    if(!key.trim() && type > 0) {
     return  message.warn({content: '请配置大屏地址', duration: 0.5})
@@ -188,7 +190,8 @@ const onJump = useCallback(() => {
     window.open(url, '_blank')
    }
   
-}, [screenadr])
+  
+}, [screenadr, isgranary])
   const menu = (
     <Menu style={{padding: '0px', width: "144px"}}>
       <Citem key="mg" onClick={account}>账户管理</Citem>
@@ -266,7 +269,9 @@ const onJump = useCallback(() => {
           </Idiv5>)
           :
         <>
-      { showscreen  &&  <Idiv1 onClick={onJump}>
+      { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4156/ses', '_blank')}>
+          <span> 数据大屏</span>
+        </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
           <span> 数据大屏</span>
         </Idiv1>
         }
