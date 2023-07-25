@@ -228,8 +228,9 @@ const Logck = styled(Checkbox)`
   display: flex;
   align-items: center;
   &:hover {
-    .ant-checkbox:hover {
-      border-color: #9c9ea4;
+    
+    .ant-checkbox,.ant-checkbox:hover {
+      border-color: #DD9D7E;
     }
   }
   .ant-checkbox + span {
@@ -240,6 +241,10 @@ const Logck = styled(Checkbox)`
   }
   .ant-checkbox-checked .ant-checkbox-inner:after {
     transform: rotate(45deg) scale(2) translate(-25%, -50%);
+    border-color: #DD9D7E;
+  }
+  .ant-checkbox-checked::after {
+    border-color: #DD9D7E;
   }
   .ant-checkbox {
     width: 32px;
@@ -253,10 +258,10 @@ const Logck = styled(Checkbox)`
       background-color: transparent;
     }
     .ant-checkbox-inner {
-      border-color: #9c9ea4;
+      border-color: #DD9D7E;
       background-color: transparent;
       &:hover {
-        border-color: #9c9ea4;
+        border-color: #DD9D7E;
       }
     }
   }
@@ -502,8 +507,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.user}
-            aurl={imgurl.usera}
+            url={imgurl.usera1}
+            aurl={imgurl.usera2}
             placeholder="请输入用户名"
             allowClear
             autoComplete={auto}
@@ -524,8 +529,8 @@ function UserLog() {
         >
           <Logpsd
             prefix={<Ipticon />}
-            url={imgurl.pwd}
-            aurl={imgurl.pwda}
+            url={imgurl.pwda1}
+            aurl={imgurl.pwda2}
             placeholder="请输入密码"
           />
         </Itembox>
@@ -629,8 +634,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.phone}
-            aurl={imgurl.phonea}
+            url={imgurl.phonea1}
+            aurl={imgurl.phonea2}
             placeholder="请输入手机号"
             autoComplete={auto}
           />
@@ -653,8 +658,8 @@ function UserLog() {
             >
               <Logipt
                 prefix={<Ipticon />}
-                url={imgurl.code}
-                aurl={imgurl.codea}
+                url={imgurl.codea1}
+                aurl={imgurl.codea2}
                 placeholder="请输入验证码"
                 style={{ width: "275px" }}
               />
@@ -732,7 +737,7 @@ export default function Login() {
   });
 }, [hostname]);  
   return (
-    <LoginLayout login={true}  bgImg={bgImgf}>
+    <LoginLayout login={true}  bgImg={bgImgf} preview={true}>
       <Logmain>
         <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
         <UserLog />

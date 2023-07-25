@@ -27,6 +27,28 @@ export default function Index() {
       top: 60,
       left: "center"
      },
+     visualMap: {
+      type: "piecewise",
+      left: 20,
+      bottom: "10",
+      min: 10,
+      max: 10000,
+      inRange: {
+        color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de']
+      },
+      show: true,
+      seriesIndex: 0,
+      pieces: [
+        {gt: 9000, lte: 10000},
+        {gt: 10, lte: 1000},
+        {gt: 1100, lte: 2000},
+        {gt: 2100, lte: 3000},
+        {gt: 3100, lte: 4000},
+        {gt: 4100, lte: 5000},
+        {gt: 5100, lte: 6000},
+      ]
+     },
+
      geo: {
         map: "china", // 必须设置
         zoom: 1.25,
@@ -71,10 +93,59 @@ export default function Index() {
               areaColor: "#389BB7",
               borderWidth: 0,
           },
+         
       },
- 
-     }
     
+     },
+    
+     series: [
+      {
+      type: "map",
+     
+      data: [
+        {name: "浙江省", value: 500},
+        {name: "安徽省", value: 1500},
+        {name: "江苏省", value: 4500},
+        {name: "上海市", value: 3245}
+      ]       
+     },
+     {
+      type: "scatter", //类型：散点
+      symbol: "rect",
+      coordinateSystem: "geo", //使用地理坐标系
+      itemStyle: {
+        color: {
+          type: "radial", // 径向渐变，前三个参数分别是圆心 x, y 和半径
+          x: 0.5,
+          y: 0.5,
+          r: 0.5,
+          colorStops: [
+            {
+              offset: 0.5,
+              color: "#fff", // 50% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "rgb(0 0 0 / 0%)", // 100% 处的颜色
+            },
+          ],
+          global: false, // 缺省为 false
+        },
+        borderColor: "#fff", //边框白色
+        borderWidth: 1,      //边框宽度
+      },
+      symbolSize: 10,    //散点大小
+      data: [
+        { name: "浙江省", value: [119.5035076, 29.703459] },
+        { name: "安徽省", value: [121.579792, 29.468388] },
+        { name: "江苏省", value: [120.452111, 27.700575] },
+        { name: "上海市", value: [120.770865, 30.500653] },
+        { name: "江西省", value: [119.882398, 30.607198] },
+       
+      ],
+      zlevel: 1,
+      },
+    ],
        
    
       
@@ -95,8 +166,8 @@ export default function Index() {
   useEffect(() => {
     try {
      
-      let map = echarts.init(mapref.current)
-      init(map)
+      let map = echarts.init(mapref.current, "dark")
+      map.setOption(option)
      /*  map.setOption({
         geo: [
           {
@@ -141,7 +212,7 @@ export default function Index() {
       console.log(error)
     }
      
-  }, [Name,mapref.current])
+  }, [mapref.current])
   return (
     <div style={{flex: 1, display: 'flex', padding: "32px", alignItems: "center",justifyContent: "center"}}>
      

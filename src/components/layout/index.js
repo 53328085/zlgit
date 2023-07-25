@@ -34,7 +34,7 @@ export function LoginLayout(props) { // 登录页
     <Content>
       {props.children}
     </Content>  
-    <Footer className={style.footer}>
+    <Footer className={[style.footer, props.preview ? style.test : '']}>
         <Copyright />
     </Footer>
    </Layout>
