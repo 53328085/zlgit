@@ -248,7 +248,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: 698 }}>
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <BlueColumn name="选择设备" styled={{ marginBottom: 16 }}></BlueColumn>
+                    <BlueColumn name="已选中的巡检项" styled={{ marginBottom: 16 }}></BlueColumn>
                     {/* <div className={commonstyle.divBtn} onClick={setlocal}>设置坐标</div> */}
                     </div>
                     
@@ -275,7 +275,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
                         </div>
                     </div> */}
                     <div style={{ marginTop: 150 }}>
-                        <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
+                        <div style={{ color: '#fff', marginBottom: 16 }}>选择巡检项</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
                             <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
@@ -290,7 +290,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
             </div>
             <div style={{ position: 'relative', width: 714 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
-                    <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
+                    <BlueColumn name="未选中的巡检项" styled={{ marginBottom: 16 }}></BlueColumn>
                     <div style={{display:'flex',justifyContent:'space-between'}}>
                     <div>
                     <span>设备类型</span>

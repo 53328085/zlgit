@@ -96,7 +96,7 @@ export default function Index() {
   const [printshow,setPrintshow]=useState(false)
   const [printshowall,setPrintshowall]=useState(false)
   const columns = [
-    { title: '园区名称', dataIndex: 'areaName', align: "center", },
+    { title: options[0].name?options[0].name:'园区名称', dataIndex: 'areaName', align: "center", },
     { title: '巡检点编号', dataIndex: 'id', align: "center", },
     { title: '巡检点名称', dataIndex: 'name', align: "center" },
     { title: '具体位置', dataIndex: 'position', align: "center" },
@@ -125,7 +125,9 @@ export default function Index() {
     pageinfo.pageNum = 1
     getPage()
   }
-  const changeSelect = () => {
+  console.log(options[0].name)
+ 
+  const changeSelect = (v) => {
     pageinfo.pageNum = 1
     getPage()
   }
@@ -355,7 +357,7 @@ export default function Index() {
       <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn}/>
       
       <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn}/>
-      <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
+      <DeleteModal delRef={delRef} name='删除巡检点' content="是否确认删除巡检点" onOk={delItems} />
       {
         printshow?<Print print={printmess} ></Print>:null
       }
@@ -471,7 +473,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input ></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
-        <Form.Item label="详细内容" name="remark" rules={[{required:true}]}>
+        <Form.Item label="备注" name="remark" rules={[{required:true}]}>
         <TextArea  allowClear   />
       </Form.Item>
         </AddDiv>
@@ -534,7 +536,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
   return (
     <Modal mold='cust' width={587} ref={editRef} onOk={()=>{updateItems(position,devicelistref,checklistref)}} >
      
-        <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
+        <BlueColumn name="编辑巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
         <AddDiv
         form={editform}
         labelCol={{ span: 5 }}
@@ -574,7 +576,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
-        <Form.Item label="详细内容" name="remark" rules={[{required:true}]}>
+        <Form.Item label="详细内容" name="remark" >
         <TextArea  allowClear   />
       </Form.Item>
         </AddDiv>
