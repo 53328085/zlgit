@@ -10,14 +10,21 @@ const deftheme = {
     successColor: '#52c41a',
     infoColor: '#1890ff',
   }
-const config = {
+let config = {
     componentSize: 'middle',
     nonce: 'YourNonceCode',
    
     theme: {
-      primaryColor:'#237AE4',
+       ...deftheme
     },
     locale: zhCN,
 }
-ConfigProvider.config(config)
+ConfigProvider.config({
+   theme: {
+     primaryColor: '#237AE4',
+   },
+   locale: zhCN
+})
+
 export default ConfigProvider
+ 
