@@ -9,7 +9,7 @@ import 'antd/dist/antd.css'
 import zhCN from 'antd/es/locale/zh_CN'
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-moment.locale('zh-cn');
+moment.locale('zh-cn'); 
 import ConfigProvider  from './antdconfig';
 import './assets/css/index.less'
 import './assets/css/print.css'
@@ -25,7 +25,7 @@ window.addEventListener('resize', () => {
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <ConfigProvider>
+    <ConfigProvider locale={zhCN}>
       <App />
     </ConfigProvider>
     </PersistGate>

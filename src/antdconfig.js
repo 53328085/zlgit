@@ -23,7 +23,7 @@ ConfigProvider.config({
    theme: {
      primaryColor: '#237AE4',
    },
-   locale: zhCN
+ //  locale: zhCN
 })
 
 export default ConfigProvider

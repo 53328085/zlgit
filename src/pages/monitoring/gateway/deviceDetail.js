@@ -138,7 +138,7 @@ export default function GatewayDetail(props) {
         return EnergyActuary(projectId, search.sn).then(res => {
             let { success, data } = res
             if (success) {
-                setactuary(data)
+                setactuary(data || {})
             } else {
                 message.error(res.errMsg)
             }
@@ -559,22 +559,22 @@ export default function GatewayDetail(props) {
                             </div> : state == 3 ? <div>
                                 <div className={style.energyHead}>
                                     <div className={style.dateData}>
-                                        <p><span>今日用电量 (kWh)</span><span>日环比{actuary.e_DayRatio.slice(0,1) !='-' ? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_DayRatio.slice(0,1) =='-' ? <CaretDownOutlined
+                                        <p><span>今日用电量 (kWh)</span><span>日环比{actuary?.e_DayRatio?.slice(0,1) !='-' ? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_DayRatio?.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_DayRatio}</span></p>
                                         <div>{actuary.e_DayUsage}</div>
                                         <p>日均用电量 : {actuary.e_DayAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本月用电量 (kWh)</span><span>月环比{actuary.e_MonthRatio.slice(0,1) !='-'? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_MonthRatio.slice(0,1) =='-'? <CaretDownOutlined
+                                        <p><span>本月用电量 (kWh)</span><span>月环比{actuary.e_MonthRatio?.slice(0,1) !='-'? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_MonthRatio?.slice(0,1) =='-'? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_MonthRatio}</span></p>
                                         <div>{actuary.e_MonthUsage}</div>
                                         <p>月均用电量 : {actuary.e_MonthAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本年用电量 (kWh)</span><span>年环比{actuary.e_YearRatio.slice(0,1) !='-' ? <CaretUpOutlined
-                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary.e_YearRatio.slice(0,1) =='-' ? <CaretDownOutlined
+                                        <p><span>本年用电量 (kWh)</span><span>年环比{actuary?.e_YearRatio?.slice(0,1) !='-' ? <CaretUpOutlined
+                                            style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_YearRatio?.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_YearRatio}</span></p>
                                         <div>{actuary.e_YearUsage}</div>
                                         <p>年均用电量 : {actuary.e_YearAvg}</p>
