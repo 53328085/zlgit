@@ -187,7 +187,7 @@ export default function GatewayDetail(props) {
                 let y2 = []
                 let y3 = []
                 let y4 = []
-                data.Data.map((item, index) => {
+                const chartsData = data.Data.map((item, index) => {
                     x.push(item.Time)
                     y.push(item.E)
                     y1.push(item.E1)
@@ -195,6 +195,7 @@ export default function GatewayDetail(props) {
                     y3.push(item.E3)
                     y4.push(item.E4)
                 })
+                console.log(x)
                 let objList = [{ data: y, type: 'line', name: '用电量-总(kWh)' },
                 { data: y1, type: 'line', name: '用电量-尖(kWh)' },
                 { data: y2, type: 'line', name: '用电量-峰(kWh)' },
@@ -202,6 +203,7 @@ export default function GatewayDetail(props) {
                 { data: y4, type: 'line', name: '用电量-谷(kWh)' }
             ]
                 tdrawEcharts(energyref.current, option(objList, x, 0))
+                
             } else {
                 message.error(res.errMsg)
             }
@@ -255,10 +257,10 @@ export default function GatewayDetail(props) {
               alignWithLabel: true,
             },
             axisLabel: {
-                formatter: (value) => {       
-                   return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")        
-                  //return  type.value == 1 ? Utlis.chintDate(value, 3) : value;
-                },
+            //     formatter: (value) => {       
+            //        return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")        
+            //       //return  type.value == 1 ? Utlis.chintDate(value, 3) : value;
+            //     },
               },
         },
         series: objList ? objList : [],
@@ -331,12 +333,12 @@ export default function GatewayDetail(props) {
     }//切换日月年
 
     const onChangeDate = (date, dateString) => {
-        console.log(dateString);
+        console.log(date,dateString);
         if (reportTypeTime == 1) {
-            setdateValue(dateString)
+            setdateValue(moment(dateString))
             console.log(dateString);
         } else if (reportTypeTime == 2) {
-            setdateValue(dateString + '-01')
+            setdateValue(moment(dateString + '-01'))
             console.log(dateString + '-01');
         } else {
             setdateValue(dateString + '-01-01')

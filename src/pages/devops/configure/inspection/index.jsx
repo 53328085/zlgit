@@ -374,8 +374,9 @@ let AddPlan = forwardRef(
     //新增巡检计划
     const getInsertInspectionPlan = () => {
       return new Promise(async (resolve, reject) => {
-        const { areaId, userId, name, content, cycle, time, triggerTime, span, timeRange } = form.getFieldsValue()
-        const group = inspectRef.current.subMeter.map(it => it.id)
+        const { areaId, userId, name, content, cycle, time, triggerTime, span, timeRange ,group} = form.getFieldsValue()
+
+        const groups = group.map(it => it.id)
         let params = {
           projectId,
           areaId,
@@ -386,7 +387,7 @@ let AddPlan = forwardRef(
           time,
           triggerTime: moment(triggerTime).format('HH:mm'),
           span,
-          group,
+          group:groups,
           startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
           endTime: moment(timeRange[1]).format('YYYY-MM-DD'),
         }
@@ -453,7 +454,7 @@ let AddPlan = forwardRef(
           <Form.Item label="巡检内容" name="content" rules={[rule]}>
             <Input></Input>
           </Form.Item>
-          <Form.Item label="添加巡检点" name="group"  >
+          <Form.Item label="添加巡检点" name="group"  rules={[rule]}>
             <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
           </Form.Item>
           <Form.Item label="巡检人员" name="userId" rules={[rule]}>
@@ -490,7 +491,7 @@ let AddPlan = forwardRef(
         </Form.Item> */}
 
         </Form>
-        <SetLine ref={inspectRef} />
+        <SetLine ref={inspectRef} form={form}/>
       </>
 
 
