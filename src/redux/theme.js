@@ -2,14 +2,16 @@ import { createSlice} from '@reduxjs/toolkit'
 import zhCN from 'antd/es/locale/zh_CN'
 const initialState = {
   theme: {
-    primaryColor: '#1890ff',
+    primaryColor: '#237AE4',
     errorColor: '#ff4d4f',
     warningColor: '#faad14',
     successColor: '#52c41a',
     infoColor: '#1890ff',
   },
   componentSize: 'large',
-  locale: zhCN
+  locale: zhCN,
+  componentSize: 'middle',
+  nonce: 'YourNonceCode',
 }
 
 const theme = createSlice({
@@ -23,4 +25,5 @@ const theme = createSlice({
 })
 const {actions, reducer} = theme
 export const {setThem} =  actions
+ 
 export default reducer

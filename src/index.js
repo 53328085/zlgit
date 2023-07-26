@@ -25,7 +25,7 @@ window.addEventListener('resize', () => {
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider>
       <App />
     </ConfigProvider>
     </PersistGate>
