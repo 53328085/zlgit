@@ -335,10 +335,10 @@ export default function GatewayDetail(props) {
     const onChangeDate = (date, dateString) => {
         console.log(date,dateString);
         if (reportTypeTime == 1) {
-            setdateValue(moment(dateString))
+            setdateValue(dateString)
             console.log(dateString);
         } else if (reportTypeTime == 2) {
-            setdateValue(moment(dateString + '-01'))
+            setdateValue(dateString + '-01')
             console.log(dateString + '-01');
         } else {
             setdateValue(dateString + '-01-01')
