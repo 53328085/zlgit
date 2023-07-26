@@ -36,7 +36,7 @@ import  {runtimeStorage} from './storage' // 储能管理
 
 
 const Login = lazy(() => import("@pages/Login"))
-
+const Granary = lazy(() => import("@pages/Login/granary.js"))
 const Projectlist = lazy(() => import("@pages/projectList"))
 
 const Index = lazy(() => import("@pages/Home"))
@@ -176,7 +176,11 @@ const loginrouter =  [{
    {
     path: '/rrtest',
     element: <Rtest/>, 
-  },
+   },
+   {
+    path: "/granary",
+    element: <Granary />,   
+    },
    {
     path: '*',
     element: <Notfound />

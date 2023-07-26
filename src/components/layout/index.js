@@ -27,13 +27,14 @@ export function LoginLayout(props) { // 登录页
  //const bgImg = useMemo(() => Logbg, []);
   return( 
   <Layout className={style.pagelayout} style={{backgroundImage: `url(${props.bgImg})`, backgroundSize: 'cover'}}>  
-    <Logheaer>
+ { props.header &&  <Logheaer>
       {props.header}
     </Logheaer>
+    }
     <Content>
       {props.children}
     </Content>  
-    <Footer className={style.footer}>
+    <Footer className={[style.footer, props.preview ? style.test : '']}>
         <Copyright />
     </Footer>
    </Layout>
