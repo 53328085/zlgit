@@ -407,7 +407,7 @@ export default function Index(props) {
             return <div key={index}>
               <Link to={`/deviceDetail?sn=${item.sn}`} target="_blank">
                 <Icard img={imageList[index] ? imageList[index] : imgurl.category} title={item.name}
-
+                 
                   value={item.address} state={item.state} fields={item.fields}
                   lastSampleTime={item.lastSampleTime} category={item.sn} />
               </Link>

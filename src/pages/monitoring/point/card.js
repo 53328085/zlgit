@@ -27,7 +27,7 @@ export default function Icard(props){
                 </div>
             </div>
             {props.state==2?<div className={style.state}>正常</div>:props.state==1?<div className={style.stateOff}>失联</div>:<div className={style.stateAlarm}>告警</div>}
-            {props.state==6 && <><div className={style.warning}></div>  
+            {props.state==1 && <><div className={style.warning}></div>  
              <div className={style.warningred}></div></> }
         </div>
     )

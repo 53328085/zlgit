@@ -20,7 +20,7 @@ import styled from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { useAntdTable } from "ahooks";
+import { useAntdTable, useLatest } from "ahooks";
 import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
@@ -639,11 +639,21 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       console.log(error);
     }
   };
-
+  const [lngLat, setLnglat] = useState()
+  const curlnglat = useLatest(lngLat)
   const edit = (record) => {
     console.log(record)
     let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
-    
+    if(Array.isArray(lngLat) && lngLat.length > 0) {
+       for(let name of lngLat) {
+          if(record[name]) {
+            setLnglat(record[name])
+            break
+          }else {
+
+          }
+       }
+    }
     setIsAdd(false);
     setRecord({ ...Record, ...record });
     let { 名称, 备注, areaId, ...keys } = record;
@@ -667,7 +677,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
    let {lngLat} = nform.getFieldsValue();
    //console.log(lngLat)
    //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
-   
+   console.log(lngLat)
    for(let key in lngLat) {   
     console.log(lngLat[key]) 
      if(!lngLat[key]){
@@ -1012,7 +1022,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
                 />
               </Item>
               <div className="map">
-                <Mapcom setAaddress={setAaddress} ref={mapref} />
+                <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
               </div>
             </>
           )}
