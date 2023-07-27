@@ -1,4 +1,5 @@
-import React, { useEffect,useRef,useCallback } from 'react'
+import React, { useEffect,useRef,useCallback,forwardRef, useImperativeHandle } from 'react'
+import { useSelector } from 'react-redux'
 import QRCode,{QRCodeCanvas}  from 'qrcode.react';
 import styled from 'styled-components'
 import ReactToPrint,{useReactToPrint} from 'react-to-print';
@@ -34,7 +35,8 @@ const PrintDom = styled.div`
     padding-left: 50px;
   }
 ` 
-export default function Print({print,index='index'}) {
+export default forwardRef(function Print({print,index='index'}) {
+  const onelevel = useSelector(state => state.system.onelevel);
   const printRef =useRef()
   const reactToPrintContent = useCallback(() => {
     return printRef.current;
@@ -42,12 +44,14 @@ export default function Print({print,index='index'}) {
   const handlePrint = useReactToPrint({
     content: reactToPrintContent,
   })
+
   useEffect(()=>{
     if(isNaN(index) ){
       handlePrint()
     }
 
-  },[print.id])
+  },[print])
+
   return (
         <>
          <PrintDom id='printddom' ref={printRef} className='printcss' index={index}>
@@ -58,7 +62,7 @@ export default function Print({print,index='index'}) {
                     <span className='pdlf'>{print.id}</span>
                 </p>
                 <p>
-                    <span>园区名称</span>
+                    <span>{onelevel[0]?.levelName}</span>
                     <span className='pdlf'>{print.areaName}</span>
                 </p>
                 <p>
@@ -76,3 +80,4 @@ export default function Print({print,index='index'}) {
     
   )
 }
+)

@@ -96,7 +96,7 @@ export default function Index() {
   const [printshow,setPrintshow]=useState(false)
   const [printshowall,setPrintshowall]=useState(false)
   const columns = [
-    { title: options[0].name?options[0].name:'园区名称', dataIndex: 'areaName', align: "center", },
+    { title: onelevel[0]?.levelName ?onelevel[0]?.levelName :'园区名称', dataIndex: 'areaName', align: "center", },
     { title: '巡检点编号', dataIndex: 'id', align: "center", },
     { title: '巡检点名称', dataIndex: 'name', align: "center" },
     { title: '具体位置', dataIndex: 'position', align: "center" },
@@ -164,6 +164,8 @@ export default function Index() {
     if(resp.success){
       setPrintmess({areaName:text.areaName,...resp.data})
       setPrintshow(true)
+    
+  
     }else{
       message.error(resp.errMsg)
     }
@@ -378,6 +380,7 @@ export default function Index() {
 //新增
 const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const onelevel = useSelector(state => state.system.onelevel);
   let  position= useReactive({})
   const positionRef = useRef()
   const savePosition =(local)=>{
@@ -433,7 +436,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
         labelAlign="left"
         initialValues={{  }}
         >
-        <Form.Item label="园区选择" name="areaId" rules={[{ required: true }]}>
+        <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}
@@ -487,6 +490,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
 //编辑
 const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const onelevel = useSelector(state => state.system.onelevel);
   const positionRef = useRef()
   const devicelistref=useRef()
   let  position= useReactive({})
@@ -544,7 +548,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
         labelAlign="left"
         // initialValues={{  }}
         >
-        <Form.Item label="园区选择" name="areaId" rules={[{ required: true }]}>
+        <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}

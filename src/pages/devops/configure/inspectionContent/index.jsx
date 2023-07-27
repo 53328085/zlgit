@@ -10,6 +10,11 @@ import Modal from '@com/useModal'
 import style from './style.module.less'
 import WarningPng from '@imgs/warning.png'
 import { operationDesigin } from '@api/api'
+const DropstartDiv =styled.div`
+ .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
+        display: none;
+      }
+`
 const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
       background-color: #fff;
@@ -267,6 +272,7 @@ const  AddItem=({addRef,addoptions,addItems,addform})=>{
   return (
     <Modal mold='cust'   ref={addRef} onOk={addItems}>
     <BlueColumn name="新增检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
+    <DropstartDiv>
     <Form
     form={addform}
     labelCol={{span:5}}
@@ -288,6 +294,7 @@ const  AddItem=({addRef,addoptions,addItems,addform})=>{
         <TextArea  allowClear   />
       </Form.Item>
     </Form>
+    </DropstartDiv>
 </Modal>
   )
  
@@ -297,6 +304,7 @@ const EditItem=({editRef,editform,addoptions,updateItems})=>{
   return (
     <Modal mold='cust'   ref={editRef} onOk={updateItems}>
     <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px',color:'#237ae4' }} ></BlueColumn>
+    <DropstartDiv>
     <Form
     form={editform}
     labelCol={{span:5}}
@@ -313,6 +321,7 @@ const EditItem=({editRef,editform,addoptions,updateItems})=>{
         <TextArea  allowClear  />
       </Form.Item>
     </Form>
+    </DropstartDiv>
 </Modal>
   )
 }
