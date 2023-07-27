@@ -269,7 +269,7 @@ const onJump = useCallback(() => {
           </Idiv5>)
           :
         <>
-      { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4156/ses', '_blank')}>
+      { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
           <span> 数据大屏</span>
         </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
           <span> 数据大屏</span>
