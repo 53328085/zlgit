@@ -203,7 +203,7 @@ export default function Index() {
               margin-bottom:12px;
             ">
             <span>告警坐标</span>
-            <span style="marginLeft:24px">${message?.lngLat}</span>
+            <span style="margin-left:24px">${message?.lngLat}</span>
         </p>
         <p style="
         display:flex;
@@ -214,7 +214,7 @@ export default function Index() {
         margin-bottom:12px;
       ">
             <span>设备编号</span>
-            <span style="marginLeft:24px">${message?.sn}</span>
+            <span style="margin-left:24px">${message?.sn}</span>
         </p>
         <p style="
         display:flex;
@@ -225,7 +225,7 @@ export default function Index() {
         margin-bottom:12px;
       ">
             <span>设备类型</span>
-            <span style="marginLeft:24px">${message?.category}</span>
+            <span style="margin-left:24px">${message?.category}</span>
         </p>
         <p style="
         display:flex;
@@ -236,7 +236,7 @@ export default function Index() {
         margin-bottom:12px;
       ">
             <span>告警等级</span>
-            <span style="marginLeft:24px">${message?.level}级</span>
+            <span style="margin-left:24px">${message?.level}级</span>
         </p>
         <p style="
         display:flex;
@@ -247,7 +247,7 @@ export default function Index() {
         margin-bottom:12px;
       ">
             <span>告警详情</span>
-            <span style="marginLeft:24px">${message?.content}</span>
+            <span style="margin-left:24px">${message?.content}</span>
         </p>
         <p style="
         display:flex;
@@ -258,7 +258,7 @@ export default function Index() {
         margin-bottom:12px;
       ">
             <span>告警地址</span>
-            <span style="marginLeft:24px">${message.address}</span>
+            <span style="margin-left:24px">${message.address}</span>
         </p>
             </div>`
           }

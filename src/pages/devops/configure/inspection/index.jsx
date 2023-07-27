@@ -12,6 +12,12 @@ import style from './style.module.less'
 import { publishState } from '@redux/systemconfig'
 import { SetLine } from './inspectcomp.jsx'
 import { ExportExcel } from '@com/useButton'
+const DropstartDiv =styled.div`
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
+  display: none;
+}
+
+`
 const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
       background-color: #fff;
@@ -425,7 +431,7 @@ let AddPlan = forwardRef(
     }, [])
 
     return (
-      <>
+      <DropstartDiv>
         <Form
           form={form}
           colon={false}
@@ -492,7 +498,7 @@ let AddPlan = forwardRef(
 
         </Form>
         <SetLine ref={inspectRef} form={form}/>
-      </>
+      </DropstartDiv>
 
 
     )
@@ -506,7 +512,7 @@ let PlanAddres = ({ PlanAddresRef, planAddress }, ref) => {
   ]
   console.log(planAddress)
   return (
-    <Modal mold='cust' ref={PlanAddresRef}>
+    <Modal mold='cust' ref={PlanAddresRef} onOk={()=>{PlanAddresRef.current.onCancel()}}>
       <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
       <Table columns={columns} dataSource={planAddress}
         scroll={{
