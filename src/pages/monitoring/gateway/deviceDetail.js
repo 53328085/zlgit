@@ -8,7 +8,7 @@ import { Pagination, message, DatePicker, Button, Radio, Form, Input, Divider } 
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Monitoring, RuntimeHMI} from '@api/api.js'
- 
+import Custmodal from '@com/useModal'
 import { drawEcharts } from '@com/useEcharts'
 
 import dayjs from 'dayjs';
@@ -518,7 +518,7 @@ export default function GatewayDetail(props) {
                         <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
                         <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
                         <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>
-                   {/*      {status && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} */}
+                        {status && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
                     </div>
                     {state == 1 ? <div><div className={style.newTime}>
                         <img src={imgurl.time} className={style.time} ></img>
@@ -646,12 +646,12 @@ export default function GatewayDetail(props) {
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
-                            </div> : <Control sn={sn} status={status} detail={detail}/>
+                            </div> : <Control Custmodal={Custmodal} sn={sn} status={status} state={state} detail={detail}/>
                           
                            
                             
                         }
-                           {/* <Control sn={sn} status={status} detail={detail}/> */}
+                          
                     </div>
                 </div>
             </div>
