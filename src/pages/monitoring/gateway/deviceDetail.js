@@ -29,10 +29,8 @@ export default function GatewayDetail(props) {
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
     const sn = searchParams.get('sn')
-    const status = searchParams.get('status')
-    
-    
-  //   console.log('status' + status)
+
+ 
     let qs = require('query-string')
     let search = qs.parse(location.search)
   /*   useEffect(() => {
@@ -486,6 +484,14 @@ export default function GatewayDetail(props) {
         getEnergyReport()
         getEnergyTrend()
     }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
+
+
+    const Test = () => {
+        console.log(1)
+        return (
+            <div>test</div>
+        )
+    }
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -518,7 +524,7 @@ export default function GatewayDetail(props) {
                         <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
                         <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
                         <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>
-                        {status && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
+                        {detail.status && detail.status['1']  && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
                     </div>
                     {state == 1 ? <div><div className={style.newTime}>
                         <img src={imgurl.time} className={style.time} ></img>
@@ -646,7 +652,7 @@ export default function GatewayDetail(props) {
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
-                            </div> : <Control Custmodal={Custmodal} sn={sn} status={status} state={state} detail={detail}/>
+                            </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} Test={Test}/>
                           
                            
                             

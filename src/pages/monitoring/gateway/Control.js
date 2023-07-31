@@ -1,11 +1,24 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, memo, forwardRef, useImperativeHandle } from "react"
 import styled from "styled-components";
 import {Form, Input, message, Button, Divider, Descriptions} from 'antd'
-import {  useSearchParams } from 'react-router-dom';
+ 
 import {Remote } from '@api/api.js'
 import redwarn from '@imgs/redwarn.png'
 import {CustButton} from '@com/useButton'
  
+const Qbutton = styled(Button)`
+  && {
+    width: 96px;
+  height: 32px;
+  background-color: #2828a4 !important;
+  margin-left: auto;
+  &:hover {
+    background-color: #0033ff !important;
+  }
+  } 
+ 
+`
+
 const StatusFrom = styled.div`
   && {
     padding: 32px;
@@ -33,67 +46,74 @@ const StatusFrom = styled.div`
 
 `
 
-export default function Control({sn,detail, state, Custmodal}) { // status 状态 Close, Open
+export default function Control({sn,detail, state,  Custmodal}) { // status 状态 Close, Open
     
+
+  
     const [form] = Form.useForm()
-    let [searchParams, setSearchParams] = useSearchParams()
-    
-    const [status, setStatus] =useState(searchParams.get("status"))
+    const [status, setStatus] =useState(detail?.status['1'])
+ 
     const [optype, setOptype] = useState(1)
-    const [result, setResult] = useState(false)
-    const [pending, setPenging] = useState('')
-    let [open, setOpen] = useState(false)
+
+    const control = useRef();
+    const info = useRef()
+    const pending = useRef()
     let title = ['合闸提示', '分闸提示'][optype]
    
     const onCtrol = (type) => {
         setOptype(type)
-        setOpen(true)
+        control.current.onOpen()
+        //setOpen(true)
     }
   let  setResultInfo = useRef({})
   let step = 0 ; // 执行次数
   let timer =null
-  const onBatch = async (param) => {
-      
+  const onBatch = async (param) => { // 第三步
+     
       step++
       try {
-        let {success, data, errMsg, sn} = await Remote.BatchValveStatus(param)
+        let {success, data, errMsg} = await Remote.BatchValveStatus(param)
          console.log('step:'+step)
+         console.log('status:'+status)
         if(success && Array.isArray(data) && data.length >0) {          
            let item = data[0]
-           if(status == 'Open') {
+           if(status == 'Open') { // 合闸
             console.log('Open')
-             if (item['status'][0]=='Open' || item['status'][1] == 'Open') {
+             if (item['status'][0]=='Close' || item['status'][1] == 'Close') {
               
                 setResultInfo.current.status = 1;
-                setStatus('Open')
-                setPenging('操作成功')
                 
-             }else if(item['status'][0]!=='Open' && item['status'][1] !== 'Open' ) {
+                setStatus('Close')
+                pending.current.setPenging('操作成功')
+                
+             }else if(item['status'][0]!=='Close' && item['status'][1] !== 'Close' ) {
               
                 if(step<10) {
                    timer = setTimeout(() => {
-                        onBatch()
+                    onStart([sn])
                     }, 7000*step) 
                    }else {
-                    setPenging('操作失败')
+                    pending.current.setPenging('操作失败')
                     clearTimeout(timer)
                     setResultInfo.current.status = 2
                    }
                
              }
-           }else if(status == "Close") {
-            if (item['status'][0]=='Close' || item['status'][1] == 'Close') {
-                console.log('Close')
-                setStatus('Close')
-                setPenging('操作成功')
+           }else if(status == "Close") { // 分闸
+            if (item['status'][0]=='Open' || item['status'][1] == 'Open') {
+                console.log('分闸')
+              
+                setStatus('Open')
+                pending.current.setPenging('操作成功')
                 setResultInfo.current.status = 1
-             }else if(item['status'][0]!=='Close' && item['status'][1] !== 'Close' && step == 10 ) {
+             }else if(item['status'][0]!=='Open' && item['status'][1] !== 'Open' ) {
+               console.log('Open')
                 if(step<10) {
                    timer = setTimeout(() => {
-                        onBatch()
+                    onStart([sn])
                     }, 7000*step) 
                    }else {
-                    setPenging('操作失败')
+                    pending.current.setPenging('操作失败')
                     clearTimeout(timer)
                     setResultInfo.current.status = 2
                    }
@@ -115,10 +135,10 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
  
  
  
-  const onStart = async (sn) => { // 第二步
-    
+  const onStart = async (params) => { // 第二步
+   
     try {
-      let {success, data, errMsg} = await  Remote.StartBatchValveTask(sn) 
+      let {success, data, errMsg} = await  Remote.StartBatchValveTask(params) 
       if(success && Array.isArray(data) && data.length > 0) {
 
         let {errorCode, isOk, sn} = data[0]
@@ -139,9 +159,12 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
   }
 
    const onOk = async () => {  //第一步
-    setPenging('操作中……')
-    setOpen(false)
-    setResult(true)
+    //setPenging('操作中请稍后……')
+    control.current.onCancel()
+    info.current.onOpen()
+  //  pending.current.setPenging('操作中请稍后……')
+   // setOpen(false)
+   // setResult(true)
     try {
         let res = {};
         if(optype == 0) {
@@ -160,7 +183,7 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
                }else {
                 setResultInfo.current.status = 2
                 Remote.SetResult([setResultInfo.current]).then().catch()
-                setPenging('操作失败')
+                pending.current.setPenging('操作失败')
                }
 
             }else {
@@ -178,25 +201,31 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
       
 
    }
+  
    const onResult = () => {
       
-     setResult(false)
+     info.current.onCancel()
      setResultInfo.current ={};
-     setPenging('')
    }
    useEffect(() => {
-    if(state == 5) {
-       console.log(detail)
+    if(state == 5) {      
        form.setFieldsValue({...detail})
     }
    }, [detail, state])
-   const Pending = () => {
+   
+   const Pending =memo(forwardRef((props, ref) => {
+        const [text, setPenging] = useState('操作中请稍后……');
+        useImperativeHandle(ref, () => ({
+          setPenging
+        }))
         return  (<Descriptions   layout="vertical" bordered>
         <Descriptions.Item label="设备编号">{sn}</Descriptions.Item>
-        <Descriptions.Item label="状态">{pending}</Descriptions.Item>
+        <Descriptions.Item label="状态">{text}</Descriptions.Item>
          
        </Descriptions>)
    }
+   ))
+ 
    const btstyle = {
     width: '200px', 
     height: '68px', 
@@ -235,11 +264,11 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
         <Form.Item label="当前状态">
          
           {status == "Close" ? (
-            <CustButton type="primary" >合闸</CustButton>
+            <CustButton type="primary" key="close">合闸</CustButton>
           ) : status == "Open" ? (
-            <ButtCustButtonon type="primary" danger>
+            <CustButton type="primary" style={{backgroundColor: "#ff5757", border: "none"}} key="open" >
               分闸
-            </ButtCustButtonon>
+            </CustButton>
           ) : null}
         </Form.Item>
       </Form>
@@ -262,10 +291,11 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
             }}>远程分闸</CustButton>
       </div>
       <Custmodal
+        key="control"
         mold="cust"
         type="warn"
         width={592}
-        open={open}
+        ref={control}
         title={title}
         okText={title?.slice(0, 2)}
         onOk={onOk}
@@ -282,28 +312,25 @@ export default function Control({sn,detail, state, Custmodal}) { // status 状�
           </p>
         </div>
       </Custmodal>
-     
       <Custmodal
-        title="远程控制"
-        width={592}
-        open={result}
-        mold="cust"
-        footer={[
-          <Button 
-            onClick={onResult}
-            style={{
-              backgroundColor: "#237AE4",
-              color: "#fff",
-              width: 96,
-              height: 32,
-            }}
-          >
-            确定
-          </Button>,
-        ]}
+      key="info"
+      ref={info}
+    title="远程控制"
+    width={592}
+    mold="cust"
+    footer={[
+      <Qbutton 
+       type="primary" 
+        onClick={onResult}
       >
-         <Pending />
-      </Custmodal>
+        确定
+      </Qbutton>,
+    ]}
+  >
+     <Pending ref ={pending} />
+  </Custmodal>
+    
+     
     </StatusFrom>
   );
 }

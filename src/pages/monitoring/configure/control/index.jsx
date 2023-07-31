@@ -13,7 +13,7 @@ export default function Index() {
   let [site, setSiteId] = useState({})
   return (
     <CustContext.Provider value={{handler: setAreaid}}>
-    <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
+    <Pagecount showserach={false} pd="0px" bgcolor="transparent">   
       <Report projectId={projectId}  areaId={AreaID} siteId={site.id} /> 
     </Pagecount>
     </CustContext.Provider>

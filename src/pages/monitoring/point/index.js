@@ -406,7 +406,7 @@ export default function Index(props) {
           {overView.details != null ? overView.details.map((item, index) => {
             let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
             return <div key={index}>
-              <Link to={`/deviceDetail?sn=${item.sn}&status=${status}`} target="_blank">
+              <Link to={`/deviceDetail?sn=${item.sn}`}  target="_blank">
                 <Icard img={imageList[index] ? imageList[index] : imgurl.category} title={item.name}
                  deviceStyle={params.deviceStyle}
                   value={item.address} state={item.state} fields={item.fields}

@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input,   DatePicker,  Divider, Drawer } from 'antd'
+import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer  } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/titlelayout'
+import {CustButton, ExportExcel} from '@com/useButton'
+import UseSerach from '@com/useSerach'
 import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
- 
-const {Paragraph} = Typography
+import Custmodal from '@com/useModal'
+import redwarn from '@imgs/redwarn.png'
+const {Paragraph, Link} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const CDrawer = styled(Drawer)`
@@ -38,7 +40,7 @@ const Mainbox = styled.div`
       flex-direction: column;
       .content {
         display: grid;
-        grid-template-rows: 32px 4px 1fr;
+        grid-template-rows: 50px 1fr;
         row-gap: 16px; 
         flex: 1;
         color:#515151;
@@ -112,6 +114,14 @@ const controlcolumns = [
    const [open, setOpen] = useState(false)
    const [keycode, setKeycode] = useState(0)
    const [total, setTotal] = useState(0)
+   const modal = useRef()
+   const delmo = useRef()
+   const edit = () => {
+    modal.current.onOpen()
+   }
+   const del = () => {
+    delmo.current.onOpen()
+   }
    const columns = [
     {
         title: '策略名称',
@@ -152,21 +162,33 @@ const controlcolumns = [
         return <Link onClick={() => setOpen(true)}>查看详细</Link>
       }
      },
+     {
+      title: '操作',
+      dataIndex: 'op',
+      key: 'op',
+      align: 'center',
+      render: (text) => {
+        return <Space size={32}>
+          <Link underline onClick={() => edit(true)}>编辑</Link>
+          <Link underline type="danger" onClick={() => del(true)}>删除</Link>
+          </Space>
+      }
+     },
    ]
  const vdata = [
   {date: "自动控制策略01", eventType: "每日", "time": "07:00：00", info: "学生寝室定时通断电策略", device: ''}
  ]
-  const QueryReports =  ({current, pageSize}, form) => {   
+ const QueryReports =  ({current, pageSize}, form) => {   
     let {time, ...rest} = form
-    let start = time[0].format('YYYY-MM-DD')
-    let end = time[1].format('YYYY-MM-DD')
+   // let start = time[0].format('YYYY-MM-DD')
+   // let end = time[1].format('YYYY-MM-DD')
     let params = {
       pageNum: current,
       pageSize,
-      start,
-      end,
+    //  start,
+    //  end,
       projectId,
-   //  areaId,
+    
      
       ...rest
     }
@@ -213,21 +235,16 @@ const controlcolumns = [
     <Mainbox>    
     <Titlelayout title="自动控制" layout="flex" >
     <div className='content'>
-        <Form form={form} className='top' layout='inline' initialValues={{
-          content: '',
-          deviceType:0,
-          level: 0,
-          time: [moment().subtract(7, 'day'), moment()]
-        }}>
-          <Space size={32}>
-             <Item   name="content">
-              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onChange={submit} enterButton="查询" />
-             </Item>
-           </Space>
-          
-        </Form>
+        <UseSerach 
+        style={{padding: '0 0 16px 0', borderTop: "none"}}
+        custview={ <Space size={16} style={{marginLeft: 'auto'}} >
+              <CustButton key="add">新增</CustButton>
+              <CustButton key="export">批量导入</CustButton>
+             <ExportExcel tb={tableref} />
+          </Space>}  />
+       
         
-         <Divider style={{margin: '0px'}}/>
+       
         <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
        <CDrawer
         title="被控设备"
@@ -250,6 +267,60 @@ const controlcolumns = [
        </CDrawer>
     </div>
     </Titlelayout>
+    <Custmodal
+     title="自动控制策略"
+     ref={modal}
+     mold="cust"
+     >
+       <Form
+         form={form}
+        layout="horizontal"
+      
+      >
+        <Form.Item label="选择园区" name="area">
+          <Select></Select>
+        </Form.Item>
+        <Form.Item label="策略名称" name="name">
+           <Input />
+        </Form.Item>
+        <Form.Item label="执行周期" name="life">
+           <Select options={[
+            {value: "day", label: "每日"},
+            {value: "week", label: "每周"},
+            {value: "month", label: "每月"}
+           ]}></Select>
+        </Form.Item>
+        <Form.Item label="执行分闸" name="life">
+          <TimePicker   format='HH:mm' />
+        </Form.Item>
+        <Form.Item label="执行合闸" name="life">
+          <TimePicker   format='HH:mm' />
+        </Form.Item>
+        <Form.Item label="备注">
+          <Input />
+        </Form.Item>
+      </Form>
+     </Custmodal>
+
+     <Custmodal
+        key="warning"
+        mold="cust"
+        type="warn"
+        width={592}
+        ref={delmo}
+        title="删除"
+       
+       
+      >
+        <div
+          style={{ display: "flex", alignItems: "center", padding: "0 32px" }}
+        >
+          <img src={redwarn} style={{ width: "48px" }}></img>
+          <p style={{ fontSize: "16px", paddingLeft: "16px" }}>
+             是否确认删除该自动控制策略?
+          </p>
+        </div>
+      </Custmodal>
     </Mainbox>
   )
 }
