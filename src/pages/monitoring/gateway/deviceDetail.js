@@ -652,7 +652,7 @@ export default function GatewayDetail(props) {
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
-                            </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} Test={Test}/>
+                            </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>
                           
                            
                             

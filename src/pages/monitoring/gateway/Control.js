@@ -6,6 +6,33 @@ import {Remote } from '@api/api.js'
 import redwarn from '@imgs/redwarn.png'
 import {CustButton} from '@com/useButton'
  
+const Cdescriptions = styled(Descriptions)`
+  && {
+    .ant-descriptions-row .ant-descriptions-item-label{
+      background-color: #2a2f55;
+      padding: 2px 16px;
+      height: 32px;
+      span {
+        color: #fff;
+      } 
+    }
+    .ant-descriptions-row .ant-descriptions-item-content{
+      padding: 2px 16px;
+      height: 32px;
+      &:first-of-type{
+        span {
+          color: #515151;
+        }
+      }
+      &:last-of-type {
+        span {
+          color: #237ae4;
+        }
+      }
+    }
+  }
+`
+
 const Qbutton = styled(Button)`
   && {
     width: 96px;
@@ -45,13 +72,27 @@ const StatusFrom = styled.div`
   }
 
 `
-
-export default function Control({sn,detail, state,  Custmodal}) { // status 状态 Close, Open
+const Pending =forwardRef((props, ref) => {
+  const [text, setPenging] = useState('操作中请稍后……');
+  useImperativeHandle(ref, () => ({
+    setPenging(info) {
+      console.log(info)
+      setPenging(info)
+    }
+  }))
+  return  (<Cdescriptions   layout="vertical" bordered >
+  <Cdescriptions.Item label="设备编号">{props.sn}</Cdescriptions.Item>
+  <Cdescriptions.Item label="状态">{text}</Cdescriptions.Item>
+   
+ </Cdescriptions>)
+}
+)
+export default function Control({sn,detail, state,  Custmodal, getDetailData}) { // status 状态 Close, Open
     
 
   
     const [form] = Form.useForm()
-    const [status, setStatus] =useState(detail?.status['1'])
+    const status =detail?.status['1']
  
     const [optype, setOptype] = useState(1)
 
@@ -70,7 +111,7 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
   let timer =null
   const onBatch = async (param) => { // 第三步
      
-      step++
+     
       try {
         let {success, data, errMsg} = await Remote.BatchValveStatus(param)
          console.log('step:'+step)
@@ -83,10 +124,10 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
               
                 setResultInfo.current.status = 1;
                 
-                setStatus('Close')
+              // setStatus('Close')
                 pending.current.setPenging('操作成功')
                 
-             }else if(item['status'][0]!=='Close' && item['status'][1] !== 'Close' ) {
+             }else if(item['status'][0]!=='Close' || item['status'][1] !== 'Close' ) {
               
                 if(step<10) {
                    timer = setTimeout(() => {
@@ -103,10 +144,10 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
             if (item['status'][0]=='Open' || item['status'][1] == 'Open') {
                 console.log('分闸')
               
-                setStatus('Open')
+               // setStatus('Open')
                 pending.current.setPenging('操作成功')
                 setResultInfo.current.status = 1
-             }else if(item['status'][0]!=='Open' && item['status'][1] !== 'Open' ) {
+             }else if(item['status'][0]!=='Open' || item['status'][1] !== 'Open' ) {
                console.log('Open')
                 if(step<10) {
                    timer = setTimeout(() => {
@@ -128,15 +169,15 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
            message.error(errMsg || '数据没有返回')
         }
       } catch (error) {
-        
+        console.log(error)
       }
 
   }
  
- 
+  
  
   const onStart = async (params) => { // 第二步
-   
+    step++
     try {
       let {success, data, errMsg} = await  Remote.StartBatchValveTask(params) 
       if(success && Array.isArray(data) && data.length > 0) {
@@ -147,7 +188,7 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
         }else {
             setResultInfo.current.status = 2
             Remote.SetResult([setResultInfo.current]).then().catch()
-            setPenging('操作失败')
+            pending.current.setPenging('操作失败')
         }
       }else {
         message.error(errMsg || '数据没有返回')
@@ -206,6 +247,7 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
       
      info.current.onCancel()
      setResultInfo.current ={};
+     getDetailData()
    }
    useEffect(() => {
     if(state == 5) {      
@@ -213,18 +255,7 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
     }
    }, [detail, state])
    
-   const Pending =memo(forwardRef((props, ref) => {
-        const [text, setPenging] = useState('操作中请稍后……');
-        useImperativeHandle(ref, () => ({
-          setPenging
-        }))
-        return  (<Descriptions   layout="vertical" bordered>
-        <Descriptions.Item label="设备编号">{sn}</Descriptions.Item>
-        <Descriptions.Item label="状态">{text}</Descriptions.Item>
-         
-       </Descriptions>)
-   }
-   ))
+
  
    const btstyle = {
     width: '200px', 
@@ -327,7 +358,7 @@ export default function Control({sn,detail, state,  Custmodal}) { // status 状�
       </Qbutton>,
     ]}
   >
-     <Pending ref ={pending} />
+     <Pending ref ={pending} sn={sn} />
   </Custmodal>
     
      
