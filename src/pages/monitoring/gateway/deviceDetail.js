@@ -24,6 +24,21 @@ import moment from "moment";
  
 import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
+/// 1  电表
+/// 2  冷水表
+/// 3  燃气表
+/// 4  传感器
+/// 5  变压器
+/// 7  热水表
+/// 8  蒸汽表
+/// 9  煤炭表
+/// 10 燃油表
+/// 11 储能设备
+
+const deviceStyle = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备']
+
+
+
 export default function GatewayDetail(props) {
    
     let location = useLocation()
@@ -52,6 +67,7 @@ export default function GatewayDetail(props) {
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
+    let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
@@ -507,7 +523,7 @@ export default function GatewayDetail(props) {
                         <div className={detail.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
                     </div>
                     <div className={style.leftBottom}>
-                        <p><span className={style.leftBottomSpan}>设备类型：</span><span>{detail.deviceStyle == 1 ? '电表' : detail.deviceStyle == 2 ? '水表' : '燃气表'}</span></p>
+                        <p><span className={style.leftBottomSpan}>设备类型：</span><span>{deviceStyle[detail.deviceStyle] || ''}</span></p>
                         <p><span className={style.leftBottomSpan}>设备编号：</span><span>{detail.sn}</span></p>
                         <p><span className={style.leftBottomSpan}>设备型号：</span><span>{detail.category}</span></p>
                         <p><span className={style.leftBottomSpan}>设备名称：</span><span>{detail.name}</span></p>
@@ -521,9 +537,14 @@ export default function GatewayDetail(props) {
                 <div className={style.right}>
                     <div className={style.rightHead}>
                         <div className={state == 1 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(1) }}>实时数据</div>
-                        <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
-                        <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
+                      {showtab && 
+                         <> 
+                         <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
+                         <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
+                        </>
+                        }
                         <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>
+                      
                         {detail.status && detail.status['1']  && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
                     </div>
                     {state == 1 ? <div><div className={style.newTime}>
