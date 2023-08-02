@@ -11,6 +11,7 @@ import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
 import Custmodal from '@com/useModal'
 import redwarn from '@imgs/redwarn.png'
+import successIcon from '@imgs/success.png'
 import Drag from './Drag'
 const {Paragraph, Link} = Typography
 const {Item} = Form
@@ -129,7 +130,7 @@ const controlcolumns = [
       align: 'center'
      },
    ]
-   const stepcolumns = [
+const stepcolumns = [
    
     {
         title: '设备编号',
@@ -156,6 +157,20 @@ const controlcolumns = [
       align: 'center'
      },
    ]
+ const errColumns = [
+    {
+        title: '错误行号',
+        dataIndex: 'date',
+        key: 'date',
+        align: 'center'
+    },
+    {
+        title: '错误原因',
+        dataIndex: 'eventType',
+        key: 'eventType',
+        align: 'center'
+    },
+  ]
   const Stepcom = () => {
     const onSearch = () => {}
     const [form] = Form.useForm()
@@ -322,7 +337,16 @@ const controlcolumns = [
     stepmodl.current.onCancel()
     modal.current.onOpen()
   }
- 
+  const successRef = useRef()
+  const errorRef = useRef()
+  const onResult = () => { // 导入需后端接口
+     let result = 'success'
+     if(result == 'success' ) {
+        // successRef.current.onOpen();
+
+        errorRef.current.onOpen()
+     }
+  }
   return (
     <Mainbox>    
     <Titlelayout title="自动控制" layout="flex" >
@@ -366,10 +390,37 @@ const controlcolumns = [
         width={560}
         ref={exportref}
         title="批量导入"
-       
+        onOk={onResult}
        
       >
          <Drag />
+      </Custmodal>
+{/* 导入成功 */}
+      <Custmodal
+        key="success"
+        mold="cust"
+        width={560}
+        ref={successRef}
+        title="批量导入"
+        okText="关闭"
+       
+      >
+        <div style={{display: "flex",alignItems: "center", fontSize: "18px", color: "#1e1e1e",padding: "0 32px"}}>  <Image src={successIcon} preview={false} style={{marginRight: "32px"}} width={48}   />
+            <span style={{marginLeft: "32px"}}>批量导入成功</span>
+         </div>
+      </Custmodal>
+
+      <Custmodal
+        key="error"
+        mold="cust"
+        width={560}
+        type="warn"
+        ref={errorRef}
+        title="参数下发失败"
+        okText="确认"
+       
+      >
+         <Usetable columns={errColumns} ></Usetable>
       </Custmodal>
     <Custmodal
      title={title}

@@ -14,7 +14,7 @@ export default function Drag({link='/deviceExcel/gateway.xlsx'}) {
           }
      }
   return (
-     <Dragger {...uploadprops}>
+     <Dragger {...uploadprops} style={{padding: "32px 0"}}>
           <img src={upCloud}></img>
           <p style={{ margin: '32px 0', fontSize: '16px' }}>将文件拖到此处，或<Link style={{ color: '#237ae4'}} underline>点击上传</Link></p>
           <Link style={{ color: '#237ae4', fontSize: '16px'}} underline onClick={(e) => e.stopPropagation()}  href={link}>下载模板</Link>
