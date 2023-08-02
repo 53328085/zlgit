@@ -29,6 +29,16 @@ const Cform = styled(Form)`
 
 const { Item } = Form;
 
+export const AreaSelect = ({value, onChange, ...otherProps}) => {
+  const levelone = useSelector(selectOneLevel)
+   return (
+    <Select  {...otherProps} defaultValue={value} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+         
+    </Select>
+   )
+
+}
+
 export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, initialValue} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()

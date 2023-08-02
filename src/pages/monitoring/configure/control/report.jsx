@@ -1,19 +1,21 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer  } from 'antd'
+import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer} from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import {CustButton, ExportExcel} from '@com/useButton'
-import UseSerach from '@com/useSerach'
+import UseSerach, {AreaSelect} from '@com/useSerach'
 import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
 import Custmodal from '@com/useModal'
 import redwarn from '@imgs/redwarn.png'
+import Drag from './Drag'
 const {Paragraph, Link} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
+
 const CDrawer = styled(Drawer)`
 && {
   .ant-drawer-title {
@@ -33,6 +35,25 @@ const CDrawer = styled(Drawer)`
      
   }
 }`
+const Stepconent = styled.div`
+  border-top: 1px dotted #2a2f55;
+  padding-top: 16px;
+  display: grid;
+  grid-template-rows: 32px 1fr;
+  row-gap: 32px;
+ && {
+  .ant-table-container .ant-table-content .ant-table-thead {
+    
+    tr>th{
+       background-color: #2a2f55;
+       color: #fff;
+       height: 32px;
+       padding: 0;
+     }
+    
+ }
+ } 
+`
 const Mainbox = styled.div`
     && {
       flex: 1;
@@ -108,19 +129,86 @@ const controlcolumns = [
       align: 'center'
      },
    ]
-
+   const stepcolumns = [
+   
+    {
+        title: '设备编号',
+        dataIndex: 'bh',
+        key: 'eventType',
+        align: 'center'
+    },
+    {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '设备型号',
+      dataIndex: 'caty',
+      key: 'content',
+      align: 'center'
+     },
+     {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'content',
+      align: 'center'
+     },
+   ]
+  const Stepcom = () => {
+    const onSearch = () => {}
+    const [form] = Form.useForm()
+    const tableProps = {}
+    return (
+      <Stepconent>
+      <Form
+       form={form}  
+      layout="inline"
+      colon={false}
+      labelAlign='left'
+      style={{justifyContent: "space-between"}}
+    >
+      
+      <Form.Item label="设备查询" name="name">
+         <Input.Search placeholder='输入设备编号/安装地址' allowClear style={{width: "320px"}} onSearch={onSearch} enterButton="查询"  />
+      </Form.Item>
+      <Form.Item label="设备型号" name="life">
+         <Select style={{width: "200px"}} options={[
+          {value: "0", label: "全部型号"},
+          {value: "1", label: "断路器1"},
+          {value: "2", label: "断路器2"}
+         ]}></Select>
+      </Form.Item>
+    </Form>
+    <Usetable columns={stepcolumns}  {...tableProps}   rowKey={nanoid()} rowSelection={{ columnWidth: "112px"}}   />
+    </Stepconent>
+    )
+  }
  function Main({projectId, areaId}) {
    const [form] = Form.useForm()
+  
    const [open, setOpen] = useState(false)
    const [keycode, setKeycode] = useState(0)
    const [total, setTotal] = useState(0)
    const modal = useRef()
+   const stepmodl = useRef()
    const delmo = useRef()
+   const exportref = useRef()
+   const [title, setTitle] = useState('')
    const edit = () => {
+    setTitle('自动策略控制')
     modal.current.onOpen()
    }
    const del = () => {
     delmo.current.onOpen()
+   }
+   const add = () => {
+    setTitle('新增自动策略控制')
+    modal.current.onOpen()
+   }
+   const onExport = () => {
+    exportref.current.onOpen()
    }
    const columns = [
     {
@@ -175,9 +263,7 @@ const controlcolumns = [
       }
      },
    ]
- const vdata = [
-  {date: "自动控制策略01", eventType: "每日", "time": "07:00：00", info: "学生寝室定时通断电策略", device: ''}
- ]
+
  const QueryReports =  ({current, pageSize}, form) => {   
     let {time, ...rest} = form
    // let start = time[0].format('YYYY-MM-DD')
@@ -228,8 +314,14 @@ const controlcolumns = [
   
 
   const tableref = useRef()
-  
- 
+  const onStep = () => {
+    modal.current.onCancel()
+    stepmodl.current.onOpen()
+  }
+  const onBack =() => {
+    stepmodl.current.onCancel()
+    modal.current.onOpen()
+  }
  
   return (
     <Mainbox>    
@@ -238,8 +330,8 @@ const controlcolumns = [
         <UseSerach 
         style={{padding: '0 0 16px 0', borderTop: "none"}}
         custview={ <Space size={16} style={{marginLeft: 'auto'}} >
-              <CustButton key="add">新增</CustButton>
-              <CustButton key="export">批量导入</CustButton>
+              <CustButton key="add" onClick={add}>新增</CustButton>
+              <CustButton key="export" onClick={onExport}>批量导入</CustButton>
              <ExportExcel tb={tableref} />
           </Space>}  />
        
@@ -267,18 +359,36 @@ const controlcolumns = [
        </CDrawer>
     </div>
     </Titlelayout>
+
     <Custmodal
-     title="自动控制策略"
+        key="export"
+        mold="cust"
+        width={560}
+        ref={exportref}
+        title="批量导入"
+       
+       
+      >
+         <Drag />
+      </Custmodal>
+    <Custmodal
+     title={title}
      ref={modal}
      mold="cust"
+     width="820px"
+     okText="下一步"
+     onOk={onStep}
      >
        <Form
          form={form}
         layout="horizontal"
-      
+        labelCol={{span: 5}}
+        colon={false}
+        labelAlign='left'
+        style={{width: "496px"}}
       >
         <Form.Item label="选择园区" name="area">
-          <Select></Select>
+           <AreaSelect />
         </Form.Item>
         <Form.Item label="策略名称" name="name">
            <Input />
@@ -291,16 +401,31 @@ const controlcolumns = [
            ]}></Select>
         </Form.Item>
         <Form.Item label="执行分闸" name="life">
-          <TimePicker   format='HH:mm' />
+          <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行分闸时间' />
         </Form.Item>
         <Form.Item label="执行合闸" name="life">
-          <TimePicker   format='HH:mm' />
+          <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行合闸时间' />
         </Form.Item>
         <Form.Item label="备注">
           <Input />
         </Form.Item>
       </Form>
      </Custmodal>
+     
+
+     <Custmodal
+     title="选择执行设备"
+     ref={stepmodl}
+     mold="cust"
+     width="820px"
+     okText="完成"
+     cancelText="上一步"
+     onOk={onStep}
+     onCancel={onBack}
+     >
+      <Stepcom />
+     </Custmodal>
+
 
      <Custmodal
         key="warning"

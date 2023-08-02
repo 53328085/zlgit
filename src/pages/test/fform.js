@@ -1,96 +1,36 @@
-import { repeat } from 'lodash';
-import { memo, useState, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
-
- 
-const createTodos = () => {
-  const todos = [];
-  for (let i = 0; i < 50; i++) {
-    todos.push({
-      id: i,
-      text: "Todo " + (i + 1),
-      completed: Math.random() > 0.5
-    });
-  }
-  return todos;
-}
-
- function filterTodos(todos, tab) {
-  return todos.filter(todo => {
-    if (tab === 'all') {
-      return true;
-    } else if (tab === 'active') {
-      return !todo.completed;
-    } else if (tab === 'completed') {
-      return todo.completed;
+import { InboxOutlined } from '@ant-design/icons';
+import { message, Upload } from 'antd';
+import React from 'react';
+const { Dragger } = Upload;
+const props = {
+  name: 'file',
+  multiple: true,
+  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  onChange(info) {
+    const { status } = info.file;
+    if (status !== 'uploading') {
+      console.log(info.file, info.fileList);
     }
-  });
-}
-
-const todos = createTodos();
-
-export default function App() {
-  const [tab, setTab] = useState('all');
-  const [isDark, setIsDark] = useState(false);
-  const onhandler =useMemo(() => {
-    return  () => console.log(tab)
-  }, [])
-  return (
-    <>
-    <div style={{display: "grid", gridTemplateColumns: 'repeat(8, 1fr)', columnGap: "16px"}}>
-      <button onClick={() => setTab('all')}>
-        All
-      </button>
-      <button onClick={() => setTab('active')}>
-        Active
-      </button>
-      <button onClick={() => setTab('completed')}>
-        Completed
-      </button>
-    
-      <label>
-        <input
-          type="checkbox"
-          checked={isDark}
-          onChange={e => setIsDark(e.target.checked)}
-        />
-        Dark mode
-      </label>
-      </div>
-      <hr />
-      <TodoList
-        
-        tab={tab}
-        theme={isDark}
-        Aist={List}
-      />
-    </>
-  );
-}
- 
-const TodoList =memo(({tab, theme, Aist }) => {
-   console.log('todolist')
-
-  return (
-    <div>
-      <h4>{tab}</h4>
-      <h5>{theme}</h5>
-      <Aist/>
-    </div>
-  );
-})
-
-
-const List = function List() {
-  console.log('List')
-
-  return (
-     <div>
-      <h2>List</h2>
-     </div>
-  );
+    if (status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  onDrop(e) {
+    console.log('Dropped files', e.dataTransfer.files);
+  },
 };
-
-
-
-
-// 1. 多个组件间转发 ref 2. 暴露方法
+const App = () => (
+  <Dragger {...props}>
+    <p className="ant-upload-drag-icon">
+      <InboxOutlined />
+    </p>
+    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+    <p className="ant-upload-hint">
+      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+      band files
+    </p>
+  </Dragger>
+);
+export default App;
