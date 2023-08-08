@@ -404,8 +404,9 @@ export default function Index(props) {
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151", }} ></div>
         {isCard ? <div className={style.cardBox}>
           {overView.details != null ? overView.details.map((item, index) => {
+            let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
             return <div key={index}>
-              <Link to={`/deviceDetail?sn=${item.sn}`} target="_blank">
+              <Link to={`/deviceDetail?sn=${item.sn}`}  target="_blank">
                 <Icard img={imageList[index] ? imageList[index] : imgurl.category} title={item.name}
                  deviceStyle={params.deviceStyle}
                   value={item.address} state={item.state} fields={item.fields}

@@ -29,7 +29,17 @@ const Cform = styled(Form)`
 
 const { Item } = Form;
 
-export default function useSerach(props) {
+export const AreaSelect = ({value, onChange, ...otherProps}) => {
+  const levelone = useSelector(selectOneLevel)
+   return (
+    <Select  {...otherProps} defaultValue={value} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+         
+    </Select>
+   )
+
+}
+
+export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, initialValue} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
   const dispatch = useDispatch()
@@ -131,7 +141,7 @@ export default function useSerach(props) {
  
   return (  
   
-    <Cform layout="inline"   form={form} initialValues={{area: oneLevelDefaultId, ...initialValue}} >
+    <Cform layout="inline"   form={form} initialValues={{area: oneLevelDefaultId, ...initialValue}} {...props}>
       <Space size={64} split={ <Divider style={{margin: '0px',  height: '32px'}} type="vertical" />}>
       <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
@@ -143,7 +153,7 @@ export default function useSerach(props) {
       </Space>
 
         {
-           custview
+           props.custview? props.custview : custview
         }
    
     </Cform>

@@ -34,7 +34,7 @@ const Custbtn = styled(Button)`
     border-color: #C8C9CC;
   }
   img {
-    height: 16px;
+    height: ${props => props.imgh || '16px'}; 
     margin-right: 8px;
   }
 `;
@@ -156,7 +156,7 @@ export function CustButton(props) { // 通用方式
   let {src, ...other} = props
   return (
     <Custbtn {...other}>
-     {src ? <img src={icon[src]} /> : null}
+     {src ? <img src={icon[src]} width={props.width} /> : null}
       {props.children}
     </Custbtn>
   )

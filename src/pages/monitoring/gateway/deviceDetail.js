@@ -1,14 +1,16 @@
 import { React, useState, useEffect, useRef } from "react";
 import mqtt from 'mqtt'
+import styled from "styled-components";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import { Pagination, message, DatePicker, Button, Radio } from 'antd'
+import { Pagination, message, DatePicker, Button, Radio, Form, Input, Divider } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Monitoring, RuntimeHMI } from '@api/api.js'
- 
+import { Monitoring, RuntimeHMI} from '@api/api.js'
+import Custmodal from '@com/useModal'
 import { drawEcharts } from '@com/useEcharts'
+
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
@@ -21,11 +23,29 @@ import Table from '@com/useTable'
 import moment from "moment";
  
 import deviceDetail3 from './images/deviceDetail3.jpg'
+import Control from './Control'
+/// 1  电表
+/// 2  冷水表
+/// 3  燃气表
+/// 4  传感器
+/// 5  变压器
+/// 7  热水表
+/// 8  蒸汽表
+/// 9  煤炭表
+/// 10 燃油表
+/// 11 储能设备
+
+const deviceStyle = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备']
+
+
+
 export default function GatewayDetail(props) {
+   
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
     const sn = searchParams.get('sn')
-    
+
+ 
     let qs = require('query-string')
     let search = qs.parse(location.search)
   /*   useEffect(() => {
@@ -47,6 +67,7 @@ export default function GatewayDetail(props) {
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
+    let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
@@ -71,6 +92,7 @@ export default function GatewayDetail(props) {
     let [endTime, setendTime] = useState(dataToday)
     let [startTimeAlarm, setstartTimeAlarm] = useState(dataToday)
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
+ 
     const onchangeTab = val => {
         setstate(val)
         if (val == 3) {
@@ -84,6 +106,7 @@ export default function GatewayDetail(props) {
     // const disabledDate = (current) => {
     //     return current && current > dayjs().endOf('day');
     // };
+   
     const getData = () => {//设备详情
         return Current(projectId, search.sn).then(res => {
             let { success, data } = res
@@ -100,12 +123,15 @@ export default function GatewayDetail(props) {
             let { success, data } = res
             if (success) {
                 setDetail(data)
+               
             } else {
                 message.error(res.errMsg)
             }
-        })
+        }).catch(e => {
+            console.log(e)
+        }) 
     }
-
+   
     let paramsTrend = {
         sn: search.sn,
         start: startTime,
@@ -456,6 +482,7 @@ export default function GatewayDetail(props) {
     useEffect(() => {
         dealData()
     }, [historyTable, historyTrend])
+   
     useEffect(() => {
         getData()
         getDetailData()
@@ -473,6 +500,14 @@ export default function GatewayDetail(props) {
         getEnergyReport()
         getEnergyTrend()
     }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
+
+
+    const Test = () => {
+        console.log(1)
+        return (
+            <div>test</div>
+        )
+    }
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -488,7 +523,7 @@ export default function GatewayDetail(props) {
                         <div className={detail.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
                     </div>
                     <div className={style.leftBottom}>
-                        <p><span className={style.leftBottomSpan}>设备类型：</span><span>{detail.deviceStyle == 1 ? '电表' : detail.deviceStyle == 2 ? '水表' : '燃气表'}</span></p>
+                        <p><span className={style.leftBottomSpan}>设备类型：</span><span>{deviceStyle[detail.deviceStyle] || ''}</span></p>
                         <p><span className={style.leftBottomSpan}>设备编号：</span><span>{detail.sn}</span></p>
                         <p><span className={style.leftBottomSpan}>设备型号：</span><span>{detail.category}</span></p>
                         <p><span className={style.leftBottomSpan}>设备名称：</span><span>{detail.name}</span></p>
@@ -502,9 +537,15 @@ export default function GatewayDetail(props) {
                 <div className={style.right}>
                     <div className={style.rightHead}>
                         <div className={state == 1 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(1) }}>实时数据</div>
-                        <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
-                        <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
+                      {showtab && 
+                         <> 
+                         <div className={state == 2 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(2) }}>监控趋势</div>
+                         <div className={state == 3 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(3) }}>能耗趋势</div>
+                        </>
+                        }
                         <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>
+                      
+                        {detail.status && detail.status['1']  && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
                     </div>
                     {state == 1 ? <div><div className={style.newTime}>
                         <img src={imgurl.time} className={style.time} ></img>
@@ -525,16 +566,17 @@ export default function GatewayDetail(props) {
                             {/* <RangePicker
                                 format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
-                        </div> : state == 3 ? <div><div className={style.newTime}>
+                        </div> : state == 3 ?  <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
-                        </div> </div> : <div className={style.newTime}>
+                        </div> </div> : state == 4 ? <div className={style.newTime}>
                         <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate} onChange={onTimeOkAlarm} defaultValue={[moment(today), moment(today)]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
+                        
+                    </div> : null
+                    }
 
-                    </div>}
-
-                    <div className={style.tableBox}>
+                    <div className={state !==5 ? style.tableBox : ''}>
                         {state == 1 ?
                             <div>
                                 <div className={style.dataHeader}>
@@ -625,14 +667,18 @@ export default function GatewayDetail(props) {
                                     <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
                                         rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
                                 </div> : ''}
-                            </div> : <div>
+                            </div> : state== 4 ? <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
-                            </div>}
-
+                            </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>
+                          
+                           
+                            
+                        }
+                          
                     </div>
                 </div>
             </div>
