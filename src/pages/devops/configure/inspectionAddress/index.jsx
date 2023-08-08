@@ -125,7 +125,7 @@ export default function Index() {
     pageinfo.pageNum = 1
     getPage()
   }
-  console.log(options[0].name)
+
  
   const changeSelect = (v) => {
     pageinfo.pageNum = 1

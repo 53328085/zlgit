@@ -18,7 +18,7 @@ import {message} from 'antd'
 
   let defaultpoint =  value || lngLat || "120.22830511467954,30.21229461177818"
 
-  console.log('lngLat',lngLat)
+  console.log('lngLat',lngLat,'infoconfig',infoconfig)
   const zoom = 18;
 
 
