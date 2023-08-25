@@ -100,13 +100,13 @@ export default function Index() {
           <div className={style.lineChart} id='lineChart'></div>
         </div>
         <div className={style.bottomContent}>
-          <ItemCard title={'环境温度'} desc={'正常'} value={'28.5℃'}></ItemCard>
-          <ItemCard title={'环境湿度'} desc={'正常'} value={'56.2%'}></ItemCard>
-          <ItemCard title={'水浸监测'} desc={'无水'} value={''}></ItemCard>
-          <ItemCard title={'烟感监测'} desc={'无烟'} value={''}></ItemCard>
-          <ItemCard title={'噪音监测'} desc={'正常'} value={'56/72 bB'}></ItemCard>
-          <ItemCard title={'明火监测'} desc={'无明火'} value={''}></ItemCard>
-          <ItemCard title={'门禁监控'} desc={'门关闭'} value={'2022-09-23 14:45:25'}></ItemCard>
+          <ItemCard title={'环境温度'} desc={'正常'} value={'28.5℃'} img="temperature"></ItemCard>
+          <ItemCard title={'环境湿度'} desc={'正常'} value={'56.2%'} img="humidness"></ItemCard>
+          <ItemCard title={'水浸监测'} desc={'无水'} value={''} img="water"></ItemCard>
+          <ItemCard title={'烟感监测'} desc={'无烟'} value={''} img="smook"></ItemCard>
+          <ItemCard title={'噪音监测'} desc={'正常'} value={'56/72 bB'} img="nosie"></ItemCard>
+          <ItemCard title={'明火监测'} desc={'无明火'} value={''} img="fire"></ItemCard>
+          <ItemCard title={'门禁监控'} desc={'门关闭'} value={'2022-09-23 14:45:25'} img="door"></ItemCard>
         </div>
       </div>
     </div>
