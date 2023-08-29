@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useEffectEvent} from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 
  
   function sendMessage(message) {

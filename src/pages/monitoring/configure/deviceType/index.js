@@ -11,6 +11,7 @@ import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
 import Energy from './energy'
+import Circuit from './circuit'
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -31,11 +32,18 @@ export default function Index() {
       const { data, errMsg, success } = result;
       if (success) {
         if(Array.isArray(data)){
+          let item =  data.filter(item => item.deviceStyle == 12) // 
+          
+          if(item?.length < 1) {
+            data.push({name: "断路器", deviceStyle: 12});
+          }
+          console.log(data)
           let arr= data.map(item => ({
             key: `${item.deviceStyle}`,
             label: `${item.name}类型`
           }))
           arr.unshift({ key: '0', label: '网关类型' })
+         
           setTabs(arr)
           dataProps = {...dataProps,  tabs } 
         }
@@ -55,7 +63,8 @@ export default function Index() {
     <Transform />,
     <Video/>,
     ...emptyarr,
-    <Energy/>
+    <Energy/>,
+    <Circuit/>
   ]
   useEffect(() => {
     getAllDeviceStyle()
