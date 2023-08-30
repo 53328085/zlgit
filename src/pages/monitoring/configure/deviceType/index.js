@@ -11,7 +11,11 @@ import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
 import Energy from './energy'
-import Circuit from './circuit'
+import Circuit from './circuit' // 断路器
+import Hotwate from './hotWate' // 热水
+import Steam from './steam' // 蒸汽
+import Coal from './coal' // 煤炭
+import Fuel from './fuel' // 燃油
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -32,12 +36,6 @@ export default function Index() {
       const { data, errMsg, success } = result;
       if (success) {
         if(Array.isArray(data)){
-          let item =  data.filter(item => item.deviceStyle == 12) // 
-          
-          if(item?.length < 1) {
-            data.push({name: "断路器", deviceStyle: 12});
-          }
-          console.log(data)
           let arr= data.map(item => ({
             key: `${item.deviceStyle}`,
             label: `${item.name}类型`
@@ -53,7 +51,7 @@ export default function Index() {
     }catch(e){console.log(e)}
   
   }
-  const emptyarr = new Array(4).fill(<></>)
+ // const emptyarr = new Array(4).fill(<></>)
   let Coms = [
     <GateWay />,
     <Electric />,
@@ -62,7 +60,10 @@ export default function Index() {
     <Sensor />,
     <Transform />,
     <Video/>,
-    ...emptyarr,
+    <Hotwate/>,
+    <Steam/>,
+    <Coal/>,
+    <Fuel/>,
     <Energy/>,
     <Circuit/>
   ]
