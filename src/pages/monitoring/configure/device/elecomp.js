@@ -239,7 +239,7 @@ export const FormComp = (props) => {
                                 value: 2
                             }]}></Select>
                     </Form.Item>
-                    {deviceStyle === 1 ? <Com form={form} coms={coms}></Com> : null}
+                    {(deviceStyle === 1 || deviceStyle == 12)  ? <Com form={form} coms={coms}></Com> : null}
                 </Col>
             </Row>
         </Form>

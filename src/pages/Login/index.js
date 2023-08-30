@@ -737,7 +737,7 @@ function UserLog() {
 export default function Login() {
 
   const dispatch = useDispatch();
-  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo)
+  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo) || {}
   const enchtitle = useSelector(mixtitle)
  
   const hostname = process.env.NODE_ENV === "production"

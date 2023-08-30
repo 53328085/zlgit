@@ -89,7 +89,7 @@ const loginrouter =  [{
   }]
  export const LoginRouter = () => useRoutes(loginrouter)
  function Redirect() { // 路由守卫
-  const {token} = useSelector(selectUser); 
+  const {token} = useSelector(selectUser) || {}; 
   return token ? (<Projectlist/>) : (<Navigate to="/" />)  
  }
 
@@ -112,6 +112,7 @@ const loginrouter =  [{
   {
    path: "/",
    element: <Login />,   
+   loader: async () => ({name: 'zl'})
    },
    {
      path: "/projectList",
@@ -208,8 +209,8 @@ function useRoute() { // 重写路由
     path: '',
     element: <Notfound />
    }]; 
-  const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus)  
-  const bigScreen = useSelector(currentscreen)
+  const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus) || {} // 登录页面时会报错
+  const bigScreen = useSelector(currentscreen) || {}
    
   runMenus?.forEach(r => {
     let {no, key} = r;
@@ -252,7 +253,7 @@ function useRoute() { // 重写路由
 
   routes[2].children = RunRoute ;  
   routes[3].children = DesignerRoute; 
-  const {type, key, primary} = bigScreen  
+  const {type, key, primary} = bigScreen
   if (type == 1 && key) {
       let path = primary + key
       let nav = {

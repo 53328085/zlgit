@@ -123,7 +123,7 @@ export const publishState = state => {
 }
 export const systemConfigInfo = state => state.system.systemConfigInfo
 export const jump = state => state.system.jump
-export const mixtitle = state =>  state.system?.systemConfigInfo.title+ ' '+state.system?.systemConfigInfo.chineseTitle
+export const mixtitle = state =>  state.system?.systemConfigInfo?.title+ ' '+state.system?.systemConfigInfo?.chineseTitle
 export const datascreen = state => state.system.datascreen ?? {}
 export const configState = state => state.system.configState;
 export const currentscreen = state => state.system.currentscreen
