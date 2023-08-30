@@ -11,7 +11,7 @@ const Tabsbox = styled(Tabs)`
     .ant-tabs-tab {
         border-radius: 4px 4px 0 0;
         height: 41px;
-        width: 145px;
+        width: ${props => props.tabwidth || '145px'} ;
         justify-content: center;
         font-size: 14px;
         background-color: #fff;  
@@ -69,7 +69,7 @@ export default function Maincontent(props) {
  
  const location = useLocation()
  const navigate = useNavigate()
- const {tabs, value, setvalue} = useContext(CustContext) || {}
+ const {tabs, value, setvalue, tabwidth, tabgap} = useContext(CustContext) || {}
  const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
  console.log(beTabs)
  //const {tabs, value, setvalue} = props
@@ -105,7 +105,9 @@ useEffect(() => {
         onChange={onChange} 
         defaultActiveKey={defaultTab} 
         animated 
-        tabBarGutter={16} 
+        tabBarGutter={tabgap || 16} 
+        tabwidth={tabwidth} 
+        tabgap ={tabgap}
         type="card"
          items={tabs}
         >
@@ -115,7 +117,7 @@ useEffect(() => {
  } 
   return (
     <Pagecontentbox beTabs={beTabs}>
-        <TabsEl></TabsEl>
+        <TabsEl ></TabsEl>
       
        {/*  <div className='page--content--main'>{props.children}</div> */}
         <PageContentMain pd={props.pd} bgcolor={props.bgcolor} beTabs={beTabs} showserach={props.showserach}>

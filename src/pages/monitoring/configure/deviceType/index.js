@@ -27,7 +27,9 @@ export default function Index() {
   let dataProps = {
     value,
     setvalue,
-    tabs
+    tabs,
+    tabwidth: "120px",
+    tabgap: 8,
   };
  
   const getAllDeviceStyle = async () => {
