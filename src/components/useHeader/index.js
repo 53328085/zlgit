@@ -137,8 +137,8 @@ export default function Index(props) {
         <Select
           placeholder="请选择园区"
           size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
+          key={oneLevelDefaultId}
+          defaultValue={oneLevelDefaultId}
           style={{ width: "200px" }}
           onChange={changeArea}
         >

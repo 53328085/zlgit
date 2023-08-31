@@ -19,7 +19,7 @@ import moment from 'moment'
 import { cloneDeep } from 'lodash'
 import { deepClone } from '@topology/core'
 const { RangePicker } = DatePicker;
-
+const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 export default function Index() {
     const [form] = Form.useForm()
     const {Item} = Form
@@ -40,7 +40,23 @@ export default function Index() {
     // const [selectTableList, setselectTableList] = useState([])
     // const [selectTableListRadio, setselectTableListRadio] = useState()
     const tableRefs= useRef()
-   
+    const [devices, setDevies] = useState([])
+    const getType = async () => { // 获取设备类型
+        
+        try {
+          let {success, data} = await AllDeviceStyle();
+          if(success && Array.isArray(data)) {
+             setDevies(data);
+          }else {
+            setDevies([]);
+          }
+        } catch (error) {
+          setDevies([]);
+        }
+  }
+  useEffect(() => {
+    getType()
+  }, [])
     // const selectTableListRadio = useReactive([])
      
     // const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
@@ -101,7 +117,7 @@ export default function Index() {
    const {tableProps, search} = useAntdTable(getData, {
     form,
     defaultPageSize: 18,
-    defaultParams:[{current: 1, pageSize: 18}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 0}],
+    defaultParams:[{current: 1, pageSize: 18}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 1}],
     refreshDeps: [areaId,brakeResult]
    })
    console.log(tableProps)
@@ -282,30 +298,12 @@ export default function Index() {
                     <Form form={form} className={style.bodyHeader} layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
                         <Space size={32}>
                         <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
+
                         <Select
-                            
-                            style={{
-                                width: 128,
-                            }}
+                           style={{width: "128px"}}
+                            fieldNames={{label: "name", value: "deviceStyle"}}
                             onChange={submit}
-                            options={[
-                                {
-                                    value: 0,
-                                    label: '全部',
-                                },
-                                {
-                                    value: 1,
-                                    label: '电表',
-                                },
-                                {
-                                    value: 2,
-                                    label: '水表',
-                                },
-                                {
-                                    value: 3,
-                                    label: '燃气表',
-                                },
-                            ]}
+                            options={devices}
                         />
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
