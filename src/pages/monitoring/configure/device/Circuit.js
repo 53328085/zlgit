@@ -15,6 +15,7 @@ import {publishState} from '@redux/systemconfig'
 const {
   DeviceManager: {
     QueryByPageElectric,
+    QueryByPage,
     AeraQueryAll,
     QueryListGateWay,
     QueryUsedDeviceCategory,
@@ -467,6 +468,7 @@ export default function gateway({ deviceStyle, name }) {
   const getQueryByPageElectric = async (curpage=0,pageSize=0,id, like,customerType) => {
     setLoading(true)
     let params = {
+      deviceStyle,
       projectId,
       // pageNum: page.current,
       // pageSize: page.pageSize,
@@ -476,7 +478,7 @@ export default function gateway({ deviceStyle, name }) {
       alike: like ? like : '',
       customerType:customerType?customerType:0
     }
-    const resp = await QueryByPageElectric(params)
+    const resp = await QueryByPage(params)
     setLoading(false)
     setPage({
       ...page,
@@ -507,7 +509,7 @@ export default function gateway({ deviceStyle, name }) {
         customerType:compRef.current.energyVal?compRef.current.energyVal:0
       }
      
-      const resp = await QueryByPageElectric(params)
+      const resp = await QueryByPage(params)
       if(resp.success){
         resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{

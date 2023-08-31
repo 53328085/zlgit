@@ -1142,10 +1142,12 @@ export const Monitoring = {
     DeleteDeviceCategory: (data) => server.delete(`/Monitor/DeviceCategory/Delete?projectId=${data.projectId}&category=${data.category}&deviceStyle=${data.deviceStyle}`),//删除设备
   },
   //设备管理
+
   DeviceManager: {
     AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域
     OneLevel: (projectId) => server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`),//获取1级区域名
     QueryByPageElectric: (data) => server.post(`/Monitor/Device/QueryByPageElectric`, data),//获取电表
+    QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
     QueryByPageGateWay: (data) => server.post(`/Monitor/Gateway/QueryByPage`, data),//获取网关
     QueryListGateWay: (projectId) => server.get(`/Monitor/Gateway/QueryList?projectId=${projectId}`),//网关列表
     QueryUsedGateway: (projectId) => server.get(`/Monitor/GatewayCategory/QueryUsed?projectId=${projectId}`),//获取使用的网关

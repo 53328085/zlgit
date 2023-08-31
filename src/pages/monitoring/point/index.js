@@ -20,7 +20,7 @@ export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
-  const { RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
+  const {DeviceTypeManager: {AllDeviceStyle}, RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
@@ -91,7 +91,21 @@ export default function Index(props) {
     },
   ];
   let [dataSource, setdataSource] = useState([])
+  let [devices, setDevies] = useState([])
 
+  const getType = async () => { // 表计类型
+        
+        try {
+          let {success, data} = await AllDeviceStyle();
+          if(success && Array.isArray(data)) {
+             setDevies(data);
+          }else {
+            setDevies([]);
+          }
+        } catch (error) {
+          setDevies([]);
+        }
+  }
   const getData = () => {                   // 表计状态
      Statistics({ projectId: params.projectId, areaId: params.areaId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
@@ -189,6 +203,7 @@ export default function Index(props) {
     })
   };
   const handleChangeDevice = (value) => { 
+   console.log(value);
    setParams({
     ...initparams,
     deviceStyle: value,
@@ -257,6 +272,7 @@ export default function Index(props) {
   })
 }, [params])
   useEffect(() => {
+    getType();
     if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
       return;
@@ -315,33 +331,9 @@ export default function Index(props) {
           style={{
             width: 200, marginLeft: 16
           }}
+          fieldNames={{label: "name", value: "deviceStyle"}}
           onChange={handleChangeDevice}
-          options={[
-            {
-              value: 1,
-              label: '电表',
-            },
-            {
-              value: 2,
-              label: '水表',
-            },
-            {
-              value: 3,
-              label: '燃气表',
-            },
-            {
-              value: 4,
-              label: '传感器',
-            },
-            {
-              value: 5,
-              label: '变压器',
-            },
-            {
-              value: 6,
-              label: '断路器',
-            },
-          ]}
+          options={devices}
         />
       </div>
       <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
