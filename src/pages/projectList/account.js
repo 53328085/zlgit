@@ -28,16 +28,21 @@ export default function Account() {
  const [Record, setRecord] = useState({})
  const [isAdd, setIsAdd] = useState(true) 
  const title = isAdd ? '新增运营管理员账号' : '编辑运营管理员账号';
- const [initform, setInitialValues] = useState({
+ let initvalue ={
   password: true,
   enable: true,
   initialValues: {
     enabled: true
   }
- })
+ }
+ const [initform, setInitialValues] = useState(initvalue)
 const showModl = () => { 
    setIsAdd(true)
+   setInitialValues({
+    ...initvalue
+   })
    mref.current.onOpen()
+   
 }
  const del = async (record) => {
   setRecord({...Record, ...record})
@@ -171,7 +176,7 @@ const showModl = () => {
  const onOk = async () => {
   try {
      let data = await mref.current.onGetvalue();
-    
+     console.log(data)
     delete data.repwd
     let handler = isAdd ? AddOperationManager : Update;
     let content = isAdd ? '新增成功' : '编辑成功';

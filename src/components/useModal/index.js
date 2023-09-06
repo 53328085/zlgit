@@ -90,21 +90,23 @@ import Useform from "./useform";
     });
   };
   const {onCancel: close, ...rest} = props
-  const form = useRef()
+  const formref = useRef()
   const onCancel = () => {
     setOpen(false)
   }
   const onOpen = () => {
     setOpen(true)
   }
-  const onResetform = () => form.current.resetfrom
+ // const onResetform = () => formref.current.resetfrom()
 
-  const onGetvalue = () => form.current.getValue()
+  const onGetvalue = () => formref.current.getValue()
   
   useImperativeHandle(ref, ()=> ({
     onCancel,
     onOpen,
-    onResetform,
+    onResetform() {
+      formref.current.resetfrom()
+    },
     onGetvalue
   }))
   
@@ -118,7 +120,7 @@ import Useform from "./useform";
       centered  
       {...rest}      
     >
-      {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={form} /> : ''}
+      {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )
 

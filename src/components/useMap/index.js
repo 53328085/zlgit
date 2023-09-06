@@ -124,18 +124,10 @@ import style from './style.module.less'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
-    const imageUrl = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer?"
-      +
-      "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=World_Imagery&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles"
-      +
-      "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=e53537f2edbb1ac1a834c25a79fe5822";
-
-    //创建自定义图层对象
-  //  const lay = new window.T.TileLayer(imageUrl, MapOptions);
-   // const config = {layers: [lay]};
+    if(!defaultpoint) return
      map = new T.Map("map");
    
-     if(!defaultpoint) return
+   
    
     // let dom = document.getElementById("mapBox")
      try {

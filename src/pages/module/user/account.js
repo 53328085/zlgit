@@ -31,9 +31,7 @@ export default function Account({projectId, CModal}) {
  const {roleType} = useSelector(selectUser) || {};
  const showview = roleType == 1 || roleType == 2
  const title = isAdd ? '新增账号' : '编辑账号';
-
-
- const [initform, setInitialValues] = useState({
+ let initvalue = {
   password: true,
   enable: true,
   initialValues: {
@@ -46,9 +44,12 @@ export default function Account({projectId, CModal}) {
       name: '运营管理员',
     },
   ]
- })
+ }
+
+ const [initform, setInitialValues] = useState(initvalue)
 const showModl = () => { 
    setIsAdd(true)
+   setInitialValues({...initvalue})
    mref.current.onOpen()
 }
  const del = async (record) => {
