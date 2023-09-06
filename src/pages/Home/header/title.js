@@ -1,9 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import {Image} from 'antd'
+import {Image, Typography} from 'antd'
 import {useSelector} from 'react-redux'
-import {selectCurProject} from '@redux/user'
-import {systemConfigInfo} from '@redux/systemconfig'
+
+const {Text} = Typography
+//import {selectCurProject} from '@redux/user'
+import {systemConfigInfo, currProject} from '@redux/systemconfig'
 import logo from '@imgs/logo.png'
 import style from '../index.module.less'
 const Divlog = styled.div` 
@@ -20,14 +22,19 @@ const Divlog = styled.div`
 
 `
 export default function  Title (){
-    const project = useSelector(selectCurProject)  
-    const { logoImageBase64} = project 
-    const {chineseTitle} = useSelector(systemConfigInfo)
+   // const project = useSelector(selectCurProject)  
+  //  const { logoImageBase64} = project 
+   // const {chineseTitle} = useSelector(systemConfigInfo)
+    const currproject = useSelector(currProject) || {}
+    let projectLog = currproject.logoImage || currproject.imgLogo;
+    let projectName = currproject.projectName || currproject.name
+ 
+ 
    return (
     <Divlog>
-        <Image rootClassName={style.custlog} preview={false} width={112} src={logoImageBase64 ? 'data:image/png;base64,' + logoImageBase64 : logo}></Image>
+        <Image rootClassName={style.custlog} preview={false}  width={120} src={projectLog || logo}></Image>
        {/*  <span >{titleCn || '正泰智慧能源服务平台'}</span> */}
-        <span>{chineseTitle || '正泰综合能源服务平台'}</span>
+        <Text ellipsis={{tooltip: projectName}} style={{maxWidth: "200px", fontSize: "16px", color: "#fff"}}>{projectName || '正泰综合能源服务平台'}</Text>
     </Divlog>
    )
   }

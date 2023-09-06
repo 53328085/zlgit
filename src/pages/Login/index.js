@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLoaderData } from "react-router-dom";
  
  
 import md5 from 'js-md5';
@@ -14,7 +14,10 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary, configProject,
+  getMenus,
+  getshifts,
+  getOnelevel, } from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -24,13 +27,8 @@ import { pwdValidator, phoneValidator, codeValidator } from "@pages/rule";
 import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
-import bgImgf from './logBgf.png'
-import {
-  configProject,
-  getMenus,
-  getshifts,
-  getOnelevel,
-} from "@redux/systemconfig";
+
+ 
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
@@ -574,9 +572,9 @@ function UserLog() {
     const ckchange = (e) => {
       dispatch(memorizePhone(e.target.checked));
     };
-    store.subscribe(() => {
+   /*  store.subscribe(() => {
       initPhone = store.getState()?.memoPhone;
-    });
+    }); */
     const [targetDate, setTargetDate] = useState(0);
     const [countdown] = useCountDown({
       targetDate,
@@ -735,19 +733,21 @@ function UserLog() {
   );
 }
 export default function Login() {
-
+ // const routeData = useLoaderData();
+ // console.log(routeData)
   const dispatch = useDispatch();
   const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo) || {}
   const enchtitle = useSelector(mixtitle)
- 
-  const hostname = process.env.NODE_ENV === "production"
+  document.title = enchtitle
+ const hostname = process.env.NODE_ENV === "production"
     ? new URL(window.location.href).hostname
     : "10.5.7.60";
  useEffect(() => {
-  dispatch(systemConfig(hostname)).then(res => {    
+  dispatch(systemConfig(hostname)).then(res => {   
+    
     document.title = enchtitle
   });
-}, [hostname]);  
+}, [hostname]); 
   return (
     <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>

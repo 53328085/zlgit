@@ -15,11 +15,12 @@ import moment from 'moment';
 
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
+import useMap from "@com/useMap/useInitMap"
 import Cupload from "@com/useUpload.js" 
 import Titlelayout from '@com/titlelayout'
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {CustButton} from "@com/useButton"
 
@@ -200,7 +201,7 @@ const Ccheckbox = styled(Checkbox.Group)`
  }
 `
 export default function ProjectSet({projectId}) {
-
+  const dispatch = useDispatch();
   const ismanager = useSelector(manager)
   const ismaintenance = useSelector(maintenance)
   const ispublish = useSelector(publishState)
@@ -259,6 +260,7 @@ export default function ProjectSet({projectId}) {
 
  const [lngLat, setLngLat] = useState()
 
+
   const params = {   
     id: '',
     validStageTime: "", //项目有效期
@@ -284,7 +286,8 @@ let initial = {} // 获取的接口项目信息
 const queryProjectInfo = async () => {
    try {
     let {data, success, errMsg} = await QueryProjectInfo(projectId)
-    if(!success) return ;  
+    if(!success)  return dispatch(getCurrProjectInfo({})) ;  
+      dispatch(getCurrProjectInfo(data || {}))
      initial = data;
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
@@ -301,7 +304,7 @@ const queryProjectInfo = async () => {
     }
     form.setFieldsValue({...params, ...bool})
    } catch (error) {
-    
+    dispatch(getCurrProjectInfo({}))
    }
   
 }
@@ -310,7 +313,7 @@ const disabledDate = (current) => {
   return current && current < moment().endOf('day');
 }
 
-const onInput = (e) =>   map.current?.serachMap(e.target.value)
+
 const config = {
   rules: [
     {
@@ -335,6 +338,7 @@ const checkProject = (_, value) => {
  
 }
 const setAaddress = (value) => {
+  console.log(value)
   if (ispublish) return;
   try {   
   let {lng, lat, address} = value
@@ -347,6 +351,11 @@ const setAaddress = (value) => {
     console.log(error)
 }
 }
+
+const serachMap =  useMap({id: "map", lngLat, setAaddress})
+
+console.log(serachMap)
+const onInput = (e) =>  serachMap && serachMap(e.target.value)
 const onFinish = async (values) => {
   try {
     for(let b of module) {
@@ -513,9 +522,11 @@ useEffect(() => {
             ]}> 
               <Input placeholder="经纬度" /> 
       </Item>
-      <div className='map'> 
+       <div id="map"></div>
+    
+     {/*  <div className='map'> 
          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />         
-      </div>
+      </div> */}
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
       <Item label="项目备注"   name="remark"> 
         <TextArea placeholder="项目详细地址" maxLength={99} style={{height: '32px'}} />

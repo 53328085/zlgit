@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, getCurrProjectInfo } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import companyImg from './company.png'
 import { useReactive } from 'ahooks';
@@ -51,7 +51,7 @@ align-items: center;
 
 export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)
-
+  const dispatch = useDispatch()
   const { GetProjectInfo } = HomeRuntime
 
   const state = useReactive({
@@ -70,6 +70,7 @@ export default function DefaultHome(props) {
         let {success, data} = res
           if(success){
             if(data){
+              dispatch(getCurrProjectInfo(data))
               state.projectName = data.projectName
               state.deviceNum = data.deviceNum
               state.gatewayNum = data.gatewayNum
@@ -79,8 +80,11 @@ export default function DefaultHome(props) {
               state.projectImage = data.projectImage
             }
           }else{
+            dispatch(getCurrProjectInfo({}))
             message.error(res.errMsg)
           }
+      }).catch(e => {
+           dispatch(getCurrProjectInfo({}))
       })
     } else if (props.type == 'configure') {
       return;

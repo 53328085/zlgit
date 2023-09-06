@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
     systemConfigInfo: {},
+    currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
     jump: false, // 页面跳转
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
@@ -32,59 +33,88 @@ const initialState = {
 }
 export const systemConfig = createAsyncThunk(
     'system/getConfig',
-    async (params) => {
-      const response =  await Login.SystemConfig(params)
-      return response
+    async (params, {rejectWithValue}) => {
+      try {
+        const response =  await Login.SystemConfig(params)
+        return response
+      } catch (err) {
+         let error = err
+         if(!error.response) {
+            throw err;
+         }
+
+         return rejectWithValue(err.response.data)
+      }
+   
     }
 )
 const system = createSlice({
     name: 'system',
     initialState,
     reducers: {
-        configProject(state, actions) { // 项目是否处于设计状态           
-            return Object.assign({}, state, {configState: actions.payload})
+        getCurrProjectInfo(state, {payload}) { // 当前项目信息
+            state.currProject = payload   
         },
-        getJump(state, actions) { // 页面跳转到设计态，还是运行态          
-            return Object.assign({}, state, {jump: actions.payload})
+        configProject(state, {payload}) { // 项目是否处于设计状态     
+            state.configState = payload    
+            //return Object.assign({}, state, {configState: actions.payload})
         },
-        getMenus(state, actions) {
-            return Object.assign({}, state, {menus: actions.payload})
+        getJump(state, {payload}) { // 页面跳转到设计态，还是运行态    
+            state.jump = payload     
+           // return Object.assign({}, state, {jump: actions.payload})
         },
-        getRunMenus(state, actions) {
-            return Object.assign({}, state, {runMenus: actions.payload })
+        getMenus(state, {payload}) { 
+            state.menus = payload
+            //return Object.assign({}, state, {menus: actions.payload})
         },
-        getDesignerMenus(state, actions) {
-           return Object.assign({}, state, {designerMenus: actions.payload })
+        getRunMenus(state, {payload}) {
+            state.runMenus = payload
+           // return Object.assign({}, state, {runMenus: actions.payload })
         },
-        getSiderRunMenus(state, actions) {
-            return Object.assign({}, state, {siderRunMenus: actions.payload })
+        getDesignerMenus(state, {payload}) {
+           state.designerMenus = payload
+          // return Object.assign({}, state, {designerMenus: actions.payload })
         },
-        getSiderDesignerMenus(state, actions) {
-            return Object.assign({}, state, {siderDesignerMenus: actions.payload })
+        getSiderRunMenus(state, {payload}) {
+            state.siderRunMenus = payload
+            //return Object.assign({}, state, {siderRunMenus: actions.payload })
+        },
+        getSiderDesignerMenus(state, {payload}) {
+            state.siderDesignerMenus = payload
+            // return Object.assign({}, state, {siderDesignerMenus: actions.payload })
          },
-        getSetMenus(state, actions) {
-            return Object.assign({}, state, {setMenus: actions.payload })
+        getSetMenus(state, {payload}) {
+            state.setMenus = payload
+           // return Object.assign({}, state, {setMenus: actions.payload })
         },
-        getOnelevel(state, actions) {          
-            return Object.assign({}, state, {onelevel: actions.payload })
+        getOnelevel(state, {payload}) {  
+            state.onelevel = payload        
+           // return Object.assign({}, state, {onelevel: actions.payload })
         },
-        setCurrentlevel(state, actions) {
-            return Object.assign({}, state, {currlevel: actions.payload })
+        setCurrentlevel(state, {payload}) {
+            state.currlevel = payload
+
+           // return Object.assign({}, state, {currlevel: actions.payload })
         },
-        getshifts(state, actions) {           
-            return Object.assign({}, state, {shifts: actions.payload })
+        getshifts(state, {payload}) {    
+            state.shifts = payload  
+          // return Object.assign({}, state, {shifts: actions.payload })
         },
-        getpublishState(state, actions) {           
-            return Object.assign({}, state, {publishState: actions.payload })
+        getpublishState(state, {payload}) {  
+            state.publishState = payload         
+           // return Object.assign({}, state, {publishState: actions.payload })
         },
-        getdataScreen(state, actions) {           
-            return Object.assign({}, state, {datascreen: actions.payload })
+        getdataScreen(state, {payload}) {   
+            state.datascreen = payload        
+           // return Object.assign({}, state, {datascreen: actions.payload })
         },
-        getCurrentScreen(state, actions) {  // 当前大屏
-           return Object.assign({}, state, {currentscreen: actions.payload})
+        getCurrentScreen(state, {payload}) {  // 当前大屏
+            state.currentscreen = payload
+           // return Object.assign({}, state, {currentscreen: actions.payload})
         },
-        getIsGranary(state, actions) {  // 是否国家粮仓
-            return Object.assign({}, state, {isGranary: actions.payload})
+        getIsGranary(state, {payload}) {  // 是否国家粮仓
+            state.isGranary = payload
+           // return Object.assign({}, state, {isGranary: actions.payload})
          }
     },
 
@@ -92,11 +122,17 @@ const system = createSlice({
         [systemConfig.fulfilled]: (state, {payload}) => { 
            let {success, errMsg, data} = payload
            if (success) {
-               return Object.assign({}, state, {systemConfigInfo: data} )
+              // state.systemConfigInfo = data
+              return Object.assign({}, state, {systemConfigInfo: data} )
            }else {
-               return Object.assign({}, state, {systemConfigInfo: {}})
+             // state.systemConfigInfo = {}
+              return Object.assign({}, state, {systemConfigInfo: {}})
            }
-        }
+        },
+        [systemConfig.rejected]: (state, {payload}) => { 
+            state.systemConfigInfo = {}
+         }
+
     }
 
 })
@@ -129,6 +165,7 @@ export const configState = state => state.system.configState;
 export const currentscreen = state => state.system.currentscreen
 export const isGranary = state => state.system.isGranary
 
+export const currProject  = state => state.system.currProject
 export const {
     configProject,
     getSetMenus,
@@ -144,6 +181,7 @@ export const {
     getJump,
     getdataScreen,
     getCurrentScreen,
-    getIsGranary   
+    getIsGranary,
+    getCurrProjectInfo   
 } = actions
 export default system.reducer

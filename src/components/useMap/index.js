@@ -11,12 +11,12 @@
 import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from "react";
 
 import {message} from 'antd'
-
+import style from './style.module.less'
  
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
-
-  let defaultpoint =  value || lngLat || "120.22830511467954,30.21229461177818"
+  
+ let defaultpoint =  value || lngLat
 
   console.log('lngLat',lngLat)
   const zoom = 18;
@@ -26,14 +26,15 @@ import {message} from 'antd'
   
 
 
-  const MapOptions = {
+  let MapOptions = {
     projection: 'EPSG:900913',
     minZoom: 2,
     maxZoom: 18,
   }
  
-  let [mapref, setMapref] = useState()
-   let map = mapref ? new T.Map(mapref, MapOptions) : null
+  // let [mapref, setMapref] = useState()
+   let mapref = useRef()
+   let map = null;
   
  
 
@@ -97,13 +98,18 @@ import {message} from 'antd'
 		
   }
   const mapClick = (result) =>  {  
-     console.log(result.getStatus())
+     
     if(result.getStatus() == 0) {
-    
-      let {addressComponent,  location: {lon, lat}} = result
-      let {city, province, county, address, address_distance} = addressComponent
-      setAaddress && setAaddress({lng: lon, lat, address: result.getAddress(), province, city, district: county, street: address, streetNumber:address_distance})
-      addmarker(new T.LngLat(lon, lat), result.getAddress())
+      
+      let {addressComponent,  location: {lon, lat},} = result
+      
+      let {city, province, county, address, address_distance,road='', poi=''} = addressComponent
+      
+      let custaddress = city + county + road + poi;
+      console.log(custaddress);
+      setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
+      //addmarker(new T.LngLat(lon, lat), result.getAddress())
+      addmarker(new T.LngLat(lon, lat), custaddress)
     }else {
 
       setAaddress && setAaddress({})
@@ -118,14 +124,25 @@ import {message} from 'antd'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
+    const imageUrl = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer?"
+      +
+      "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=World_Imagery&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles"
+      +
+      "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=e53537f2edbb1ac1a834c25a79fe5822";
+
+    //创建自定义图层对象
+  //  const lay = new window.T.TileLayer(imageUrl, MapOptions);
+   // const config = {layers: [lay]};
+     map = new T.Map("map");
    
-     if(!mapref || !defaultpoint) return
+     if(!defaultpoint) return
    
     // let dom = document.getElementById("mapBox")
      try {
       let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
       // setMapkey(Math.random().toString())
-       map.centerAndZoom(latlng, zoom)     
+       map.centerAndZoom(latlng, 18)    
+       map.enableDrag();
       if (Array.isArray(defaultpoint)) {
        defaultpoint.forEach(item => {
          let {lnglat, text} = item
@@ -143,16 +160,22 @@ import {message} from 'antd'
      
        geocoder.getLocation(e.lnglat,mapClick)
      });
+     map.addEventListener("drag", (e) => {
+       console.log(e)
+     })
     
      map.addEventListener('load', (e)=> {
       console.log("地图加载")
      })
     
-  }, [mapref, lngLat, value])
+  }, [defaultpoint])
   return (
-    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
+    <div style={{width: "100%", height: '100%', touchAction: "none"}}    id="map"  >
 
     </div>
+  /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
+
+    </div> */
   )
 }
 export default forwardRef(Index)

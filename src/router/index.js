@@ -106,8 +106,20 @@ const loginrouter =  [{
   '0113': Devops,
 } 
 
+function getconfig({request}) {
+  console.log(request);
+  const hostname = process.env.NODE_ENV === "production"
+  ? new URL(window.location.href).hostname  : "10.5.7.60";
+   Api.SystemConfig(hostname)
+  return null
+}
+
  let RunRoute = [];
  let DesignerRoute = [];
+
+
+
+
  let routes =  [
   {
    path: "/",
