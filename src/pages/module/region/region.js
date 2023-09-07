@@ -281,7 +281,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
      console.log(value)
      console.log(selectedOptions)
    }
-  
+   
+    console.log(leveloptions)
     return (
       <Item label="父节点" name="parentId" rules={[
         {
@@ -551,10 +552,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           });
           return row;
         });
-        console.log(formart);
+       
         if (success && data) {
-          setTableData([...formart])
-          console.log(tabelData);
+          setTableData([...formart])         
           setPagination({
             ...pagination,
             total: total,
@@ -588,11 +588,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 
     try {
       let values = await nform.validateFields();
-      let { remark, name, parentId = Record.parentId, lngLat={} } = values; // 编辑时 parentId=Record.parentId
       console.log(values)
-      console.log(lngLat)
-      console.log(fields)
-      let parent_id = isAdd && level > 1 ?   parentId.pop() : parentId;
+      let { remark, name, parentId, lngLat={} } = values; // 编辑时 parentId=Record.parentId
+       
+      let id = Array.isArray(parentId) ? parentId.pop() : parentId;
+     
+      let parent_id = isAdd && level > 1 ?  id : Record.parentId;
       let other = [];
       for (let key of fields) {
         let obj = {}
@@ -656,7 +657,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     }
     setIsAdd(false);
     setRecord({ ...Record, ...record });
-    let { 名称, 备注, areaId, ...keys } = record;
+    let { 名称, 备注, areaId, parentId,...keys } = record;
      
     nform.setFieldsValue({
       name: record["名称"],

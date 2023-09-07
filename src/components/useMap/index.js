@@ -3,40 +3,26 @@
 
 /**
  * @author zhenglin zhu
- * @description: //lngLat：坐标值可以为以，号分隔的字符串  或者 对象数组 对象包括坐标点和marke 文本 默认lnglat 物联公司： 120.22830511467954, 30.21229461177818
+ * @description: //lngLat：坐标值可以为以,号分隔的字符串  或者 对象数组 对象包括坐标点和marke 文本 默认lnglat 物联公司： 120.22830511467954, 30.21229461177818
  * @date 2023-05-31 08:48 
  * 天地图无法重复初始化
  */
 
-import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from "react";
+import React, {useEffect, useRef, forwardRef, useImperativeHandle} from "react";
+import {useSelector} from 'react-redux'
 
+import {currProject} from '@redux/systemconfig'
 import {message} from 'antd'
-
  
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
-
-  let defaultpoint =  value || lngLat || "120.22830511467954,30.21229461177818"
-
-  console.log('lngLat',lngLat,'infoconfig',infoconfig)
-  const zoom = 18;
-
+  
+ let defaultpoint =  value || lngLat;
+ let {lngLat: projectLnglat} = useSelector(currProject);
 
   let geocoder = new T.Geocoder();
+   let map = null;
   
-
-
-  const MapOptions = {
-    projection: 'EPSG:900913',
-    minZoom: 2,
-    maxZoom: 18,
-  }
- 
-  let [mapref, setMapref] = useState()
-   let map = mapref ? new T.Map(mapref, MapOptions) : null
-  
- 
-
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []
      
@@ -97,13 +83,23 @@ import {message} from 'antd'
 		
   }
   const mapClick = (result) =>  {  
-     console.log(result.getStatus())
+     
     if(result.getStatus() == 0) {
-    
-      let {addressComponent,  location: {lon, lat}} = result
-      let {city, province, county, address, address_distance} = addressComponent
-      setAaddress && setAaddress({lng: lon, lat, address: result.getAddress(), province, city, district: county, street: address, streetNumber:address_distance})
-      addmarker(new T.LngLat(lon, lat), result.getAddress())
+      
+      let {addressComponent,  location: {lon, lat},} = result
+      console.log(result)
+      let {city, province, county, address, address_distance,road='', poi='', poi_position='',poi_distance='',} = addressComponent
+      
+      let custaddress = city + county + road + poi
+      console.log(custaddress);
+      try {
+        console.log(result.getAddress())
+      } catch (error) {
+        console.log(error);
+      }
+      setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
+     
+      addmarker(new T.LngLat(lon, lat), custaddress)
     }else {
 
       setAaddress && setAaddress({})
@@ -118,14 +114,25 @@ import {message} from 'antd'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
+    let latlng
+    if(defaultpoint) {
+      latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+    }else {
+      latlng = getlnglat(projectLnglat); 
+    }
+      
+    if(!latlng) return;
+
+     map = new T.Map("map");
    
-     if(!mapref || !defaultpoint) return
+   
    
     // let dom = document.getElementById("mapBox")
      try {
-      let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+     
       // setMapkey(Math.random().toString())
-       map.centerAndZoom(latlng, zoom)     
+       map.centerAndZoom(latlng, 18)    
+       map.enableDrag();
       if (Array.isArray(defaultpoint)) {
        defaultpoint.forEach(item => {
          let {lnglat, text} = item
@@ -143,16 +150,16 @@ import {message} from 'antd'
      
        geocoder.getLocation(e.lnglat,mapClick)
      });
+ 
     
-     map.addEventListener('load', (e)=> {
-      console.log("地图加载")
-     })
-    
-  }, [mapref, lngLat, value])
+  }, [defaultpoint])
   return (
-    <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
+    <div style={{width: "100%", height: '100%', touchAction: "none"}}    id="map"  >
 
     </div>
+  /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
+
+    </div> */
   )
 }
 export default forwardRef(Index)

@@ -15,6 +15,7 @@ const Imgbox = styled.div`
   && {
     position: relative;    
     overflow: hidden;
+    background: #e4e4e4;
   }
 `
 const Ciocn = styled.div`
@@ -26,6 +27,7 @@ const Ciocn = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #e4e4e4;
   }
  
 `

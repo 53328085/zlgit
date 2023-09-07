@@ -11,6 +11,11 @@ import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
 import Energy from './energy'
+import Circuit from './circuit' // 断路器
+import Hotwate from './hotWate' // 热水
+import Steam from './steam' // 蒸汽
+import Coal from './coal' // 煤炭
+import Fuel from './fuel' // 燃油
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -22,7 +27,9 @@ export default function Index() {
   let dataProps = {
     value,
     setvalue,
-    tabs
+    tabs,
+    tabwidth: "120px",
+    tabgap: 8,
   };
  
   const getAllDeviceStyle = async () => {
@@ -36,6 +43,7 @@ export default function Index() {
             label: `${item.name}类型`
           }))
           arr.unshift({ key: '0', label: '网关类型' })
+         
           setTabs(arr)
           dataProps = {...dataProps,  tabs } 
         }
@@ -45,7 +53,7 @@ export default function Index() {
     }catch(e){console.log(e)}
   
   }
-  const emptyarr = new Array(4).fill(<></>)
+ // const emptyarr = new Array(4).fill(<></>)
   let Coms = [
     <GateWay />,
     <Electric />,
@@ -54,8 +62,12 @@ export default function Index() {
     <Sensor />,
     <Transform />,
     <Video/>,
-    ...emptyarr,
-    <Energy/>
+    <Hotwate/>,
+    <Steam/>,
+    <Coal/>,
+    <Fuel/>,
+    <Energy/>,
+    <Circuit/>
   ]
   useEffect(() => {
     getAllDeviceStyle()

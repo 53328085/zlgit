@@ -16,7 +16,7 @@ import UseHeader from '@com/useHeader'
 import style from './style.module.less'
 import moment from 'moment'
 const { RangePicker } = DatePicker;
-
+const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   let [areaId, setAreaId] = useState(1)
@@ -34,6 +34,23 @@ export default function Index() {
   // const [selectTableList, setselectTableList] = useState([])
   const [loading, setLoading] = useState(false);
   const tableRefs= useRef()
+  const [devices, setDevies] = useState([])
+  const getType = async () => { // 获取设备类型
+      
+      try {
+        let {success, data} = await AllDeviceStyle();
+        if(success && Array.isArray(data)) {
+           setDevies(data);
+        }else {
+          setDevies([]);
+        }
+      } catch (error) {
+        setDevies([]);
+      }
+}
+useEffect(() => {
+  getType()
+}, [])
   // const [selectTableListRadio, setselectTableListRadio] = useState([])
   // const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
   // let params = {
@@ -366,33 +383,14 @@ export default function Index() {
         </div>
         <div className={style.body}>
         <div className={style.mainBox} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <Form form={form} className={style.bodyHeader} layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
+                    <Form form={form} className={style.bodyHeader} layout='inline' initialValues={{deviceStyle: 1, alike: ''}}>
                         <Space size={32}>
                         <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
                         <Select
-                            
-                            style={{
-                                width: 128,
-                            }}
+                           style={{width: "128px"}}
+                            fieldNames={{label: "name", value: "deviceStyle"}}
                             onChange={submit}
-                            options={[
-                                {
-                                    value: 0,
-                                    label: '全部',
-                                },
-                                {
-                                    value: 1,
-                                    label: '电表',
-                                },
-                                {
-                                    value: 2,
-                                    label: '水表',
-                                },
-                                {
-                                    value: 3,
-                                    label: '燃气表',
-                                },
-                            ]}
+                            options={devices}
                         />
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />

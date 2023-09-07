@@ -8,6 +8,8 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
+import Generic from './Generic' // 新增加的设备类型通用
+import  Circuit from './Circuit'
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
 const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monitoring
@@ -25,7 +27,8 @@ export default function Index() {
     value,
     setvalue,
     tabs,
-
+    tabwidth: "120px",
+    tabgap: 8,
   }
 
  
@@ -49,11 +52,15 @@ export default function Index() {
           arr[5]=<Transform deviceStyle={k.deviceStyle}/>
         }else if(k.name==='视频监控'){
           arr[6]=<Video deviceStyle={k.deviceStyle}/>
-        }
+        }else if(k.deviceStyle >6) {
+          let i = Number(k.deviceStyle)
+          i ==12 ? arr[i] = <Circuit deviceStyle={k.deviceStyle} name={k.name} /> :  arr[i] = <Generic deviceStyle={k.deviceStyle} name={k.name} key={k.deviceStyle} />
+        } 
       }
+       console.log(arr)
       const tabs = data.map(it=>{return {key:it.deviceStyle.toString(),label:it.name}})
-      console.log(tabs)
-      tabs.pop()
+   //   console.log(tabs)
+     // tabs.pop()
       setTabs([{key: '0',label: '网关'},
       ...tabs
     ])

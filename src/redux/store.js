@@ -24,8 +24,11 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, reducers);
 export default configureStore({
   reducer: persistedReducer,
+ 
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: [thunk]
+  middleware: [thunk],
+ 
+  
 })
 
 /* export default configureStore({

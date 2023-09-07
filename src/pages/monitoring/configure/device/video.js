@@ -96,7 +96,7 @@ export default function gateway({ deviceStyle }) {
     },
     {
       title: '监控设备IP',
-      dataIndex: 'serverAddress'
+      dataIndex: 'ip'
     },
     {
       title: '通道号',
@@ -127,6 +127,7 @@ export default function gateway({ deviceStyle }) {
   }
   //打开编辑窗口
   const onEdit = (record) => {
+    console.log(record);
     EditModalFormRef?.current?.onOpen()
     editform.setFieldsValue({ ...record, port: record.port ? record.port : '' })
   }
@@ -825,7 +826,7 @@ export const EditFormComp = (props) => {
           <Form.Item label="安装地址" name="address" rules={rules}>
             <Input />
           </Form.Item>
-          <Form.Item label="备注" name="remark" rules={rules}>
+          <Form.Item label="备注" name="remark" >
             <TextArea />
           </Form.Item>
         </Col>
