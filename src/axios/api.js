@@ -30,6 +30,8 @@ export class Login {
   static LoginOut = () => server.post("User/Logout");
   static GetUseMenus = (projectId, userId) =>
     server.get(`/User/GetUseMenus?projectId=${projectId}&userId=${userId}`);
+  static GetCode = () =>
+    server.get(`/General/User/CreateCode`);
 }
  
 // 项目列表

@@ -123,7 +123,7 @@ const Logtype = styled.div`
 const { Item } = Form;
 const Itembox = styled(Item)`
   &:not(:last-child) {
-    margin-bottom: 64px;
+    margin-bottom: ${props => props.btm || "64px"};
   }
   .ant-input-affix-wrapper-lg {
     height: 48px;
@@ -471,19 +471,29 @@ function UserLog() {
   const Userlog = () => {
     let initmemorize = useSelector(selectMemorize);
     let { name } = useSelector(selectUser);
+    let [code, setCode] = useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
-    store.subscribe(() => {
+    const getCode = async () => {
+       try {
+         let data = await  Logapi.GetCode()
+       } catch (error) {
+        
+       }
+         
+    }
+  /*   store.subscribe(() => {
       initmemorize = store.getState()?.memorize;
-    });
+    }); */
     useEffect(() => {
+      getCode();
       return () => {
         setLoading(false);
       };
-    });
+    }, []);
     return (
       <Form
         layout="horizontal"
@@ -497,11 +507,13 @@ function UserLog() {
         initialValues={{
           name: userName,
           pwd: "",
+          code: '',
         }}
       >
         <Itembox
           name="name"
           hasFeedback
+          btm="32px"
           rules={[
             {
               required: true,
@@ -527,6 +539,7 @@ function UserLog() {
         <Itembox
           name="pwd"
           hasFeedback
+          btm="32px"
           rules={[
             {
               required: true,
@@ -543,6 +556,33 @@ function UserLog() {
             aurl={imgurl.pwda}
             placeholder="请输入密码"
           />
+        </Itembox>
+        <Itembox
+         
+          hasFeedback
+          btm="32px"
+          rules={[
+            {
+              required: true,
+              message: "请输入验证码",
+            },
+             {
+            validator: pwdValidator
+            },  
+          ]}
+        >
+          <Input.Group compact>
+          <Item  name="code" noStyle>
+          <Logpsd
+            style={{width: "264px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
+            prefix={<Ipticon />}
+            url={imgurl.pwd}
+            aurl={imgurl.pwda}
+            placeholder="请输入验证码"
+          />
+          </Item>
+           <Image src={code} style={{height: "42px", width: "136px"}} preview={false} /> 
+           </Input.Group>
         </Itembox>
         <Itembox valuePropName="checked">
           <Logck onChange={ckChange} defaultChecked={initmemorize}>

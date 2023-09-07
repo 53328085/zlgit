@@ -33,7 +33,11 @@ server.interceptors.response.use(
         let msg = error?.response?.statusText
         let state = error?.response?.status       
         if (state >= 400 && state < 500 && state != 401 )  {
-            console.info(msg)
+            return  message.warning({          
+                content: '请求参数出错',
+                duration: 2,
+               
+            })
         }
         if (state == 401)  {
           return  message.warning({          

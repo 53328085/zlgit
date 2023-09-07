@@ -62,7 +62,7 @@ export default  function useMap(props={}) {
    
      map = new T.Map(id)
     let latlng = getlnglat(lngLat);
-    map.centerAndZoom(latlng, 18);
+    map.centerAndZoom(latlng, 16);
 
  
     const addInfo = (str, text='') => {
