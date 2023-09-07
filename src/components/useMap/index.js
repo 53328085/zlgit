@@ -8,36 +8,21 @@
  * 天地图无法重复初始化
  */
 
-import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from "react";
+import React, {useEffect, useRef, forwardRef, useImperativeHandle} from "react";
+import {useSelector} from 'react-redux'
 
+import {currProject} from '@redux/systemconfig'
 import {message} from 'antd'
-import style from './style.module.less'
  
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
- let defaultpoint =  value || lngLat
-
-  console.log('lngLat',lngLat)
-  const zoom = 18;
-
+ let defaultpoint =  value || lngLat;
+ let {lngLat: projectLnglat} = useSelector(currProject);
 
   let geocoder = new T.Geocoder();
-  
-
-
-  let MapOptions = {
-    projection: 'EPSG:900913',
-    minZoom: 2,
-    maxZoom: 18,
-  }
- 
-  // let [mapref, setMapref] = useState()
-   let mapref = useRef()
    let map = null;
   
- 
-
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []
      
@@ -102,13 +87,18 @@ import style from './style.module.less'
     if(result.getStatus() == 0) {
       
       let {addressComponent,  location: {lon, lat},} = result
+      console.log(result)
+      let {city, province, county, address, address_distance,road='', poi='', poi_position='',poi_distance='',} = addressComponent
       
-      let {city, province, county, address, address_distance,road='', poi=''} = addressComponent
-      
-      let custaddress = city + county + road + poi;
+      let custaddress = city + county + road + poi
       console.log(custaddress);
+      try {
+        console.log(result.getAddress())
+      } catch (error) {
+        console.log(error);
+      }
       setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
-      //addmarker(new T.LngLat(lon, lat), result.getAddress())
+     
       addmarker(new T.LngLat(lon, lat), custaddress)
     }else {
 
@@ -124,14 +114,22 @@ import style from './style.module.less'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
-    if(!defaultpoint) return
+    let latlng
+    if(defaultpoint) {
+      latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+    }else {
+      latlng = getlnglat(projectLnglat); 
+    }
+      
+    if(!latlng) return;
+
      map = new T.Map("map");
    
    
    
     // let dom = document.getElementById("mapBox")
      try {
-      let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
+     
       // setMapkey(Math.random().toString())
        map.centerAndZoom(latlng, 18)    
        map.enableDrag();
@@ -152,13 +150,7 @@ import style from './style.module.less'
      
        geocoder.getLocation(e.lnglat,mapClick)
      });
-     map.addEventListener("drag", (e) => {
-       console.log(e)
-     })
-    
-     map.addEventListener('load', (e)=> {
-      console.log("地图加载")
-     })
+ 
     
   }, [defaultpoint])
   return (

@@ -117,6 +117,10 @@ export default function Index() {
       title: '监控类型',
       dataIndex: 'accessMode',
       key: 'accessMode',
+      render:(_, record) => {
+        let {accessMode} = record || {};
+        return  accessMode == 1 ? "云视频监控" : accessMode == 2 ? "本地视频监控" : '';
+      }
     },
     {
       title: '监控设备SN',
