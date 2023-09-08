@@ -20,7 +20,7 @@ import Cupload from "@com/useUpload.js"
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {CustButton} from "@com/useButton"
 
@@ -206,7 +206,7 @@ export default function ProjectSet({projectId}) {
   const ismaintenance = useSelector(maintenance)
   const ispublish = useSelector(publishState)
 
-  
+  const CurrProject = useSelector(currProject)
 
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
@@ -287,7 +287,7 @@ const queryProjectInfo = async () => {
    try {
     let {data, success, errMsg} = await QueryProjectInfo(projectId)
     if(!success)  return dispatch(getCurrProjectInfo({})) ;  
-      dispatch(getCurrProjectInfo(data || {}))
+      dispatch(getCurrProjectInfo({...CurrProject, ...data} || {}))
      initial = data;
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {

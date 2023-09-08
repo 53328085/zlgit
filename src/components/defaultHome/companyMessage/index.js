@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, getCurrProjectInfo } from '@redux/systemconfig.js'
+import { selectProjectId, getCurrProjectInfo, currProject } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import companyImg from './company.png'
 import { useReactive } from 'ahooks';
@@ -51,6 +51,7 @@ align-items: center;
 
 export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)
+  const CurrProject = useSelector(currProject);
   const dispatch = useDispatch()
   const { GetProjectInfo } = HomeRuntime
 
@@ -70,7 +71,7 @@ export default function DefaultHome(props) {
         let {success, data} = res
           if(success){
             if(data){
-              dispatch(getCurrProjectInfo(data))
+              dispatch(getCurrProjectInfo({...CurrProject,...data}))
               state.projectName = data.projectName
               state.deviceNum = data.deviceNum
               state.gatewayNum = data.gatewayNum

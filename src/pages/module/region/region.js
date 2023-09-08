@@ -576,11 +576,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       });
   };
 
-
+  const [lngLat, setLnglat] = useState()
+  const curlnglat = useLatest(lngLat)
   const add = () => {
     address.current = "";
+    setLnglat(null);
     setIsAdd(true);
     nref.current.onOpen();
+    
   };
 
   const onOk = async () => {
@@ -634,16 +637,15 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           },
         });
       } else {
-        custMsg({ success: false, content: errMsg || "数据出错" });
+        custMsg({ success: false, content: errMsg || "数据出错", duration: 2 });
       }
     } catch (error) {
       console.log(error);
     }
   };
-  const [lngLat, setLnglat] = useState()
-  const curlnglat = useLatest(lngLat)
+  
   const edit = (record) => {
-    console.log(record)
+     
     let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
     if(Array.isArray(lngLat) && lngLat.length > 0) {
        for(let name of lngLat) {
@@ -678,14 +680,17 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
    let {lngLat} = nform.getFieldsValue();
    //console.log(lngLat)
    //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
-   console.log(lngLat)
+   let keys = Object.keys(lngLat)
+   
    for(let key in lngLat) {   
-    console.log(lngLat[key]) 
-     if(!lngLat[key]){
+    
+     if(!lngLat[key] && keys.length > 1){
         nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
         break
+     }else {
+        nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
      }
-
+     
    }
     nform.setFieldsValue({
      // 'lngLat.经纬度': `${adr.lng},${adr.lat}`,
@@ -702,15 +707,17 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         );
       case 1:
         return (
-          <Item label={f} name={['lngLat', f]} tooltip="为保证精度点击地图获取,清空后再重新获取" rules={[{
+          <Item label={f} name={['lngLat', f]} tooltip="有多个坐标点,先清空后再重新获取" rules={[{
             required: true,
           }]} >
-            <Input allowClear />
+            <Input allowClear placeholder="坐标点请从地图上点击获取" />
           </Item>
         );
       case 2:
         return (
-          <Item label={f} name={f} tooltip="面积类数据保留两位小数" key={f}>
+          <Item label={f} name={f} tooltip="面积类数据保留两位小数" key={f} rules={[{
+            required: true,
+          }]}>
             <InputNumber
               step="0.01"
               precision={2}

@@ -26,7 +26,7 @@ import {message} from 'antd'
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []
      
-     return lng&&lat ? new T.LngLat(Number.parseFloat(lng), Number.parseFloat(lat)) :  new T.LngLat(120.22830511467954, 30.21229461177818)
+     return  new T.LngLat(Number.parseFloat(lng), Number.parseFloat(lat))
 
   }
 
@@ -131,7 +131,7 @@ import {message} from 'antd'
      try {
      
       // setMapkey(Math.random().toString())
-       map.centerAndZoom(latlng, 18)    
+       map.centerAndZoom(latlng, 16)    
        map.enableDrag();
       if (Array.isArray(defaultpoint)) {
        defaultpoint.forEach(item => {
