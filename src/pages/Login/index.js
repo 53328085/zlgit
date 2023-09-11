@@ -489,7 +489,7 @@ function UserLog() {
       initmemorize = store.getState()?.memorize;
     }); */
     useEffect(() => {
-      getCode();
+      // getCode();
       return () => {
         setLoading(false);
       };
