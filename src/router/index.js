@@ -62,7 +62,7 @@ const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
 
 const Storage = lazy(() => import("../pages/storage/index"))
 
-const Antdconfig = lazy(() => import("../pages/Antcutom"))
+
 
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
@@ -167,11 +167,6 @@ function getconfig({request}) {
     path: '/gatewayDetail',
     element: <GatewayDetail />
   },
-
-   {
-     path: '/antdconfig',
-     element: <Antdconfig/>
-   },   
    {
      path: '/zltest',
      element: <Fform/>, 

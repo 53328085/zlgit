@@ -17,7 +17,7 @@ import {
 import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary, configProject,
   getMenus,
   getshifts,
-  getOnelevel, } from "@redux/systemconfig";
+  getOnelevel, getThemeColor} from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -489,7 +489,7 @@ function UserLog() {
       initmemorize = store.getState()?.memorize;
     }); */
     useEffect(() => {
-      getCode();
+     // getCode();
       return () => {
         setLoading(false);
       };
@@ -776,17 +776,22 @@ export default function Login() {
  // const routeData = useLoaderData();
  // console.log(routeData)
   const dispatch = useDispatch();
-  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo) || {}
+  const { systemLogoImage, systemBackImage, englishTitle="Integrated Energy Service Platform", literal } = useSelector(systemConfigInfo) || {}
   const enchtitle = useSelector(mixtitle)
   document.title = enchtitle
  const hostname = process.env.NODE_ENV === "production"
     ? new URL(window.location.href).hostname
     : "10.5.7.60";
+  
  useEffect(() => {
-  dispatch(systemConfig(hostname)).then(res => {   
-    
-    document.title = enchtitle
-  });
+  dispatch(systemConfig(hostname)).then(res => {
+    console.log(res)
+    let {success, data} = res.payload
+    console.log(data)
+    if(success) dispatch(getThemeColor(data.themeColor));
+  }).catch(e => {
+    console.log(e)
+  })
 }, [hostname]); 
   return (
     <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
