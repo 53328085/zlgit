@@ -6,13 +6,13 @@ import storage from 'redux-persist/lib/storage' // redux 持久化
 import {composeWithDevTools} from 'redux-devtools-extension'
 import user from './user' 
 import system from './systemconfig' //根据IP或域名获取系统配置
-import theme from './theme' // 配置 antd 
+// import theme from './theme' // 配置 antd 
 // import params from './params' // 查询参数， 表格、列表显示模式等
 import zltest from './reduxTest' // 测试用
 const reducers = combineReducers({
   user,
   system,
-  theme,
+ // theme,
  // params,
   zltest
 })

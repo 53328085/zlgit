@@ -167,6 +167,16 @@ module.exports = function (webpackEnv) {
         },
       },
     ].filter(Boolean);
+
+    let custoption =  preProcessor == "less-loader" ? {
+      sourceMap: true,
+      lessOptions: {
+        javascriptEnabled: true,
+      }
+      
+    } : {
+      sourceMap: true,
+    };
     if (preProcessor) {
       loaders.push(
         {
@@ -178,9 +188,7 @@ module.exports = function (webpackEnv) {
         },
         {
           loader: require.resolve(preProcessor),
-          options: {
-            sourceMap: true,
-          },
+          options: custoption,
         }
       );
     }

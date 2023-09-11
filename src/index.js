@@ -4,13 +4,8 @@ import { Provider } from 'react-redux'
 import {PersistGate} from 'redux-persist/integration/react'
 import {persistStore} from 'redux-persist'
 import store from './redux/store' 
-import 'antd/dist/antd.css'
-// import 'antd/dist/antd.min.css'
-import zhCN from 'antd/es/locale/zh_CN'
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-moment.locale('zh-cn'); 
-import ConfigProvider  from './antdconfig';
+// import './assets/css/theme.less' // 静态定制主题
+import 'antd/dist/antd.variable.min.css' //通过ConfigProvider 动态定制主体
 import './assets/css/index.less'
 import './assets/css/print.css'
 import App from './App'
@@ -25,9 +20,7 @@ window.addEventListener('resize', () => {
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <ConfigProvider locale={zhCN}>
       <App />
-    </ConfigProvider>
     </PersistGate>
   </Provider>
 

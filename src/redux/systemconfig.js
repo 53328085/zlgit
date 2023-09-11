@@ -1,8 +1,13 @@
 /* 获取系统配置 */
-import { CodeSandboxCircleFilled } from '@ant-design/icons'
+ 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
+import antdconfig from './theme' ; //   antd配置
+ 
+ 
 const initialState = {
+    siteConfig: antdconfig,
+    themeColor: '#237AE4',
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -115,14 +120,23 @@ const system = createSlice({
         getIsGranary(state, {payload}) {  // 是否国家粮仓
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
-         }
+         },
+        getThemeColor(state, {payload}) {
+            console.log(payload)
+           state.themeColor = payload || "#237AE4";
+          
+        }
     },
 
     extraReducers: {      
         [systemConfig.fulfilled]: (state, {payload}) => { 
-           let {success, errMsg, data} = payload
+           let {success, errMsg, data={}} = payload || {}
            if (success) {
+             
+            
               // state.systemConfigInfo = data
+           //  Object.assign({}, state, {siteconfig})
+            //  state.siteconfig.theme.primaryColor = data.themeColor || "#237AE4" // 主题色
               return Object.assign({}, state, {systemConfigInfo: data} )
            }else {
              // state.systemConfigInfo = {}
@@ -159,13 +173,16 @@ export const publishState = state => {
 }
 export const systemConfigInfo = state => state.system.systemConfigInfo
 export const jump = state => state.system.jump
-export const mixtitle = state =>  state.system?.systemConfigInfo?.title+ ' '+state.system?.systemConfigInfo?.chineseTitle
+export const mixtitle = state =>  (state.system?.systemConfigInfo?.title || "NIS6000")+ ' '+(state.system?.systemConfigInfo?.chineseTitle || "正泰综合能源服务平台");
 export const datascreen = state => state.system.datascreen ?? {}
 export const configState = state => state.system.configState;
 export const currentscreen = state => state.system.currentscreen
 export const isGranary = state => state.system.isGranary
 
 export const currProject  = state => state.system.currProject
+export const custconfig = state => state.system.siteConfig
+
+export const themeColor = state => state.system.themeColor
 export const {
     configProject,
     getSetMenus,
@@ -182,6 +199,7 @@ export const {
     getdataScreen,
     getCurrentScreen,
     getIsGranary,
-    getCurrProjectInfo   
+    getCurrProjectInfo,
+    getThemeColor
 } = actions
 export default system.reducer
