@@ -299,7 +299,7 @@ export default function Index () {
             <span className={style.actionItem}>操作</span>
           </div>
           <div className={style.treeContent}>
-          { treeData.length>0 ? <Tree defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
+          { treeData.length>0 ? <Tree rootStyle={{overflowY: "auto"}} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
           </div>
         </div>
         {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
