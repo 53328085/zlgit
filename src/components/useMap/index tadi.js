@@ -14,7 +14,7 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
 
-  let defaultpoint = lngLat || value 
+  let defaultpoint = lngLat || value || '120.22830511467954,30.21229461177818'
 
   console.log('lngLat',lngLat)
   const zoom = 18;
