@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import UserTable from '@com/useTable'
 import { useReactive } from 'ahooks';
+import { ExportExcel } from '@com/useButton'
 const MainBox = styled.div`
   background-color: #fff;
   padding:16px;
@@ -74,6 +75,8 @@ const MainBox = styled.div`
 `
 export default function Index() {
   const [form] = Form.useForm()
+  const tableRef =useRef()
+  const [key, setKey] = useState()
   const oneLevel = useSelector(state => state.system.onelevel)
   const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const changeArea = () => {
@@ -136,7 +139,10 @@ export default function Index() {
         },
         render(){
             return (
-                  <Checkbox.Group options={planName} className='checkGroup'></Checkbox.Group>  
+                  <>
+                    <Checkbox.Group options={planName} className='checkGroup'></Checkbox.Group>
+                  </>
+                   
             )
         }
       })
@@ -161,12 +167,17 @@ export default function Index() {
         <MainBox>
           <div className='title'>
             <BlueColumn name="排班信息"></BlueColumn>
-            <div className='wd96'>
-              <Button type="primary" block>导出</Button>
-            </div>
+            {/* <div onClick={()=>{ tableRef.current.downloadByData({data:[
+  ['姓名', '年龄', '性别'],
+  ['王二', 35, '男'],
+  ['张三', 25, '男'],
+  ['李四', 30, '女'],
+  ['赵五', 40, '女'],
+]})}}>1111</div> */}
+            <ExportExcel  tb={tableRef} />
           </div>
           <div className='mgt16'>
-            <UserTable columns={columns} dataSource={tabledata}></UserTable>
+            <UserTable columns={columns} dataSource={tabledata} ref={tableRef}></UserTable>
           </div>
         </MainBox>
       </Pagecount>

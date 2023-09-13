@@ -444,6 +444,7 @@ let AddPlan = forwardRef(
         >
           <Form.Item label={onelevel.length > 0 ? onelevel[0].levelName : '园区名称'} name="areaId" rules={[rule]}>
             <Select
+              placeholder="请选择园区"
               options={arealist}
               fieldNames={{ label: 'name', value: 'id' }}
               onChange={(v) => {
@@ -452,19 +453,19 @@ let AddPlan = forwardRef(
             ></Select>
           </Form.Item>
           <Form.Item label="计划名称" name="name" rules={[rule]}>
-            <Input></Input>
+            <Input placeholder="请输入计划名称"></Input>
           </Form.Item>
           <Form.Item label="计划有效期" name="timeRange" rules={[rule]}>
             <RangePicker style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item label="巡检内容" name="content" rules={[rule]}>
-            <Input></Input>
+            <Input placeholder="请输入巡检内容"></Input>
           </Form.Item>
           <Form.Item label="添加巡检点" name="group"  rules={[rule]}>
             <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
           </Form.Item>
           <Form.Item label="巡检人员" name="userId" rules={[rule]}>
-            <Select options={mapuserlist} fieldNames={{ value: 'id' }}></Select>
+            <Select options={mapuserlist} fieldNames={{ value: 'id' }} placeholder="请选择巡检人员"></Select>
           </Form.Item>
           <Form.Item label="巡检周期" name="cycle" rules={[rule]}>
             <Select
@@ -476,6 +477,7 @@ let AddPlan = forwardRef(
           {
             dateCycle !== 1 ? (<Form.Item label="巡检日期" name="time" rules={[rule]}>
               <Select
+                placeholder="请选择巡检日期"
                 style={{ width: 128 }}
                 options={dateCycle == 2 ? weekCycle : dateCycle == 3 ? monthCycle : []} ></Select>
             </Form.Item>) : null
@@ -485,7 +487,7 @@ let AddPlan = forwardRef(
             <TimePicker format={format} style={{ width: 128 }} />
           </Form.Item>
           <Form.Item label="有效期时长" name="span" rules={[rule]}>
-            <Select options={houropts} style={{ width: 128 }}>
+            <Select placeholder="请选择有效时长" options={houropts} style={{ width: 128 }}>
 
             </Select>
           </Form.Item>

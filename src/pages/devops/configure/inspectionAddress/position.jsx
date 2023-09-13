@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import UseMap from '@com/useMap/index tadi.js'
+import UseMap from '@com/useMap/double_modal.js'
 import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()
@@ -28,6 +28,7 @@ let LoaclForm =forwardRef((props,ref)=>{
     const setAaddress=(mes)=>{
         console.log(mes)
         setInpvalue(mes.address)
+        // setInpvalue(mes.formatted_address)
         if(mes.point){
             setLoacl(`${mes.point.lng},${mes.point.lat}`) 
         }else{
@@ -35,6 +36,7 @@ let LoaclForm =forwardRef((props,ref)=>{
         }
        
     }
+  
     useImperativeHandle(ref,()=>({
         inpvalue,
         local
@@ -68,7 +70,7 @@ let LoaclForm =forwardRef((props,ref)=>{
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
        
         <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={local}/>
-        {/* <UseMap></UseMap> */}
+       
         </div>
         
         </>

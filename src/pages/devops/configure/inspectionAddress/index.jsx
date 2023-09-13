@@ -139,7 +139,7 @@ export default function Index() {
     addRef.current.onOpen()
     addform.setFieldsValue({
       address:'',
-      areaId:'',
+      areaId:undefined,
       name:'',
       position:'',
       remark:'',
@@ -434,33 +434,36 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
         labelCol={{ span: 5 }}
         colon={false}
         labelAlign="left"
-        initialValues={{  }}
+        // initialValues={{ 
+        //   areaId:undefined
+        //  }}
         >
         <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
+            placeholder="请选择园区"
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}
           ></Select>
         </Form.Item>
         <Form.Item label="巡检点名称" name="name" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="请输入巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
           <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true,message:'请点击获取巡检点地址' }]}>
-          <Input ></Input>
+          <Input disabled placeholder="请点击获取"></Input>
         </Form.Item>
         <Form.Item label="定位误差">
           <Space>
           <Form.Item rules={[{required: true,pattern:/^(0|[1-9]\d{0,2}|1000)$/,message:'数值在0-1000之间'}]} name="addressSpan">
-            <Input style={{width:96}}></Input>
+            <Input style={{width:96}} placeholder="请输入定位误差"></Input>
           </Form.Item>
           <span>米</span>
           </Space>
         </Form.Item>
-        <Form.Item label="具体位置" name="position" rules={[{ required: true }]}>
-          <Input ></Input>
+        <Form.Item label="具体位置" name="position" rules={[{ required: true }]} placeholder="请输入具体位置">
+          <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
           <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
@@ -476,8 +479,8 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input ></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
-        <Form.Item label="备注" name="remark" rules={[{required:true}]}>
-        <TextArea  allowClear   />
+        <Form.Item label="详细内容" name="remark" >
+        <TextArea  allowClear  placeholder="请输入详细内容" />
       </Form.Item>
         </AddDiv>
       <SetPosition positionRef={positionRef} savePosition={savePosition}/>
@@ -550,12 +553,13 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
         >
         <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
+            placeholder="请选择园区"
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}
           ></Select>
         </Form.Item>
         <Form.Item label="巡检点名称" name="name" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
           <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
