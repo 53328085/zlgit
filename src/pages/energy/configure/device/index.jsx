@@ -290,12 +290,12 @@ export default function Index () {
       </div>
       <div className={style.mainContent}>
         <div className={style.title}>
-          <span>能源结构</span>
+          <span>重点设备</span>
           <Button type='primary' style={{width: 96}} onClick={() => addMain()}>新增主节点</Button>
         </div>
         <div className={style.lineTree}>
           <div className={style.treeTitle}>
-            <span className={style.treeItem}>线路图</span>
+            <span className={style.treeItem}>重点设备名称</span>
             <span className={style.actionItem}>操作</span>
           </div>
           <div className={style.treeContent}>
