@@ -29,15 +29,12 @@ const Laybox = styled.div`
  
  
 `;
-const Custspan = styled.span`
+const CustTitle = styled.div`
   font-size: 14px;
   color: #515151;
   display: flex;
   justify-content: ${(props) => (props.jc ? "flex-start" : "space-between")};
-  span {
-    color: #999;
-    padding-left: 1em;
-  }
+
 `;
 
 const Divbox = styled.div`
@@ -159,19 +156,9 @@ const UDbox = styled.div`
   }
 `;
 
-const Echartbox = styled.div`
-   height: 100%;
-   width: 100%;
-   background-color: #fff;
-   padding: 16px;
-   border: 1px solid #d7d7d7;
-`
-const ElectricRight = styled.div`
-   display: grid;
-   grid-template-rows: ${props => props.type == 2 ? '200px 440px 128px' : '656px 128px'} ;
-   row-gap: 16px;
-   
-`
+
+  
+
 const Radiogroup = styled(Radio.Group)`
   && {
     .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
@@ -188,11 +175,10 @@ const Radiogroup = styled(Radio.Group)`
 
 
 `
+ 
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  let shifts = useSelector(selectshifts) // ?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
-  
-  const [allshifts] = useState( [...shifts, {id: 0, name: "全部", startTime: "", endTime: ""}]) 
+ 
   const [form] = Form.useForm();
   const {Item} = Form
   const [value, setvalue] = useState("1");
@@ -204,289 +190,6 @@ export default function Index() {
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
   
   let type = ['', '日', '月', '年'][timetype]
-  const Chartbox = ({data}) => {
-    const ref = useRef()
-    const charw = () => {
-     try {
-      let {x =[], y=[], y1=[]} = data || {}
-
-      let cost = ['',
-      ["time", `本${type}(万元)`, `昨${type}(万元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-    ]
-      let energy = ['',
-      ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`],
-      ["time", `本${type}(kWh)`, `昨${type}(kWh)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(吨)`, `昨${type}(吨)`],
-      ["time", `今${type}(吨)`, `昨${type}(吨)`],
-    ]
-      let dimensions = ['', energy, cost ][op][tabvalue]      
-      let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
-      drawEcharts(ref.current, {
-        dataset: {dimensions, source},
-        series: [{ type: "bar" }, { type: "bar" }],
-      })
-     } catch (error) {
-       console.log(error)
-     }
-   
-  }
-    useEffect(() => {
-      charw()
-    }, [timetype, tabvalue])
-    return (
-      <Echartbox ref={ref}>
- 
-      </Echartbox>
-    )
-}
-
-const EngItem = ({icon, data, sub, ...otherprop}) => {
-  return (
-   <Titlelayout
-   {...otherprop}
-   title={<Title title={data.name} subtitle={sub} />}
-   key={nanoid()}
- >
-   <UDbox>
-     <Image
-       src={imgurl[icon]}
-       preview={false}
-       width={64}
-       height={64}
-     />
-     <div className="list">
-       <div className="item">
-         <span>本{type}</span>
-         <span>{data.periodValue}</span>
-       </div>
-       <div className="item">
-         <span>上{type}</span>
-         <span>{data.lastMonthPeriodValue}</span>
-       </div>
-       <div className="item">
-         <span>环比</span>
-         <span>
-           +{data.mom}{" "}
-           <Arrow num={data.mom}/>
-         </span>
-       </div>
-       <div className="item">
-         <span>同比</span>
-         <span>
-           +{data.yoy}{" "}
-           <Arrow num={data.yoy}/>
-         </span>
-       </div>
-     </div>
-   </UDbox>
- </Titlelayout>
-  )
-  }
-const Energyitem = () => {
-   const getsub = (type) => {
-     switch(type) {
-       case 'electric':
-       return '(kWh)'
-       case 'waterCold':
-       case 'waterHot':
-       case 'steam':
-       case 'gas':
-       return '(m³)'
-       case 'oil':
-        return '(吨)'
-       default:
-        return '(/)'
-     }
-
-
-   }
-   let items = []
-   for(let [key, value] of Object.entries(energyitem)) {
-      let obj = {
-         icon: key,
-         data: value,
-         sub: getsub(key)
-      }
-      items.push(obj)
-   }
-  
-
-   return (
-    <>
-      {
-        items.map(item => <EngItem  {...item} key={nanoid()}/>)
-      }
-    </>
-  
-
-   )
-}
-const Electric = ({data, des}) => {
-  const pieref = useRef()
-  useEffect(() => {
-    drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
-      type: 3,
-      legend: {
-        bottom: 0,
-        top: 'auto',
-        itemGap: 5
-      },
-      grid: {
-        bottom: 20
-      }
-    });
-  }, [])
-  return (
-    <ElectricRight type={tabvalue}>
-      <Titlelayout title={<Title title={data?.name} />}>
-      <Engbox type={tabvalue}>
-        <Image
-          src={imgurl.z08}
-          preview={false}
-          width={64}
-          height={64}
-        />
-      <div className="list">
-        <div className="item">
-          <span>本{type}：</span>
-          <span>{data.periodValue}</span>
-          <span>同比</span>
-          <span>
-          {data.yoy}
-            <ArrowDownOutlined style={{ color: "#f00" }} />
-          </span>
-        </div>
-        <div className="item">
-          <span>昨{type}：</span>
-          <span>{data.lastMonthPeriodValue}</span>
-          <span>环比</span>
-          <span>
-            {data.mom}
-            <ArrowUpOutlined style={{ color: "#f00" }} />
-          </span>
-        </div>
-      </div>
-     </Engbox>
-    </Titlelayout>
-    { tabvalue == 2 && <Titlelayout
-      type="inner"
-      title={<Title title={`本${type}能耗占比`} />}
-    >
-      <div
-        style={{ width: "368px", height: "356px" }}
-        ref={pieref}
-      ></div>
-    </Titlelayout>
-   }
-      <Titlelayout title="能耗分析">
-        <div style={{flex: 1, display:'flex', alignItems: 'center', height: '100%'}}>
-         <Space size={8}><span style={{color: "#0c6", fontSize: '18px'}}>&#9673;</span><span style={{color: '#515151'}}>{des}</span></Space>
-        </div>
-      </Titlelayout>
-    </ElectricRight>
-  )
-
-
-}
-const CoalStandard =({data={}}) => {
-  const pieref = useRef()
-  useEffect(() => {
-    drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
-      type: 3,
-      legend: {
-        bottom: 0,
-        top: 'auto',
-        itemGap: 5
-      },
-      grid: {
-        bottom: 20
-      }
-    });
-  }, [])
-  return (
-    <Titlelayout title={<Title title={data?.name} />}>
-    <Divbox>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center",
-        }}
-      >
-        <Image
-          src={imgurl['coalStandard']}
-          preview={false}
-          width={64}
-          height={64}
-        />
-        <span style={{ color: "#999", marginTop: "10px" }}>
-         {op ==1 ? <>（吨标煤）</> : <>（万）</>}
-        </span>
-      </div>
-
-      <div className="list">
-        <div className="item">
-          <span>本{type}能耗：</span>
-          <span>{data.periodValue}</span>
-        </div>
-        <div className="item">
-          <span>昨{type}能耗：</span>
-          <span>{data.lastMonthPeriodValue}</span>
-        </div>
-        <div className="item">
-          <span>同比</span>
-          <span>
-          {data.yoy}
-            <ArrowDownOutlined style={{ color: "#f00" }} />
-          </span>
-        </div>
-        <div className="item">
-          <span>环比</span>
-          <span>
-            {data.mom}
-            <ArrowUpOutlined style={{ color: "#f00" }} />
-          </span>
-        </div>
-      </div>
-    </Divbox>
-    <Titlelayout
-      type="inner"
-      title={<Title title="能耗占比" />}
-      style={{ padding: "0px", border: "none" }}
-    >
-      <div
-        style={{ width: "368px", height: "284px" }}
-        ref={pieref}
-      ></div>
-    </Titlelayout>
-  </Titlelayout>
-  )
-}
-
-  const tabs = [
-    { label: "综合能耗", key: 1, },
-    { label: "电", key: 2,  },
-    { label: "冷水", key: 3 },
-    { label: "热水", key: 4 },
-    { label: "蒸汽", key: 5 },
-    { label: "燃气", key: 6 },
-    { label: "煤炭", key: 7 },
-    { label: "燃油", key: 8 },
-  ];
 
 
   const getData = async () => {
@@ -528,23 +231,73 @@ const CoalStandard =({data={}}) => {
   }
   useEffect(() => {
    
-    getData()
+    //getData()
   }, [tabvalue])
+ const [mode, setMode] = useState(1)
+ const chart = useRef()
+ const [tdataset, setTdataset] = useState({  // 图表数据
+ // dimensions: ["日期", "用电量(kwh)"],
+  source: [
+    ["日期", 1,2,3,4,5,6,7,8,9,10]
+   // ["区域名称", "塔楼区", "交易区", "干杂区", "水产市场", "工业设备机房", "库房", "叉车充电间"],
+    ["塔楼区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["交易区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["干杂区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["水产市场", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["工业设备机房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["库房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+    ["叉车充电间", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
+  ],
+})
+const eparams = {
+  smooth: true, 
+   lineStyle: {
+    width: 0
+   },
+  showSymbol: false,
+  seriesLayoutBy: 'row'
+}
+useEffect(() => {
+  drawEcharts(
+     chart.current, {
+      dataset: tdataset,
+      series: [{ type: "type", stack: "hao",    ...eparams }]
+    }
+  )
+}, [tdataset])
+
+ const onChange = (e) => {
+  setMode(e.target.value)
+ }
 
 
-  const Title = ({ title, subtitle, jc }) => {
-    return (
-      <Custspan className="t" jc={jc}>
-        {title}
-        <span>{subtitle}</span>
-      </Custspan>
+
+ useEffect(() => {
+
+ }, []) 
+ const Title =  (
+      <CustTitle className="t">
+        区域能耗趋势
+        <Radiogroup options={[
+          {
+          label: "图表模式",
+          value: 1
+          },
+          {
+            label: "列表模式",
+            value: 2
+            }
+        ]}
+        optionType="button"
+        buttonStyle="solid"
+        onChange={onChange}
+        value={mode}
+        ></Radiogroup>
+      </CustTitle>
     );
-  };
  
-  const Arrow = ({num}) => {
-    if (Number.isNaN(num)) return
-    return num > 0  ? ( <ArrowUpOutlined style={{ color: "#f00" }} />) :  (<ArrowDownOutlined style={{ color: "#06f" }} />)
-  }
+ 
+
 
   const timechange = (e) => {
      setTimetype(e);
@@ -601,6 +354,8 @@ const CoalStandard =({data={}}) => {
       </div>
     )
   }
+
+
   return (
     <CustContext.Provider
       value={{
@@ -616,7 +371,14 @@ const CoalStandard =({data={}}) => {
       <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
       <UserSearch></UserSearch>
       <Laybox  >
-        <Titlelayout ></Titlelayout>
+        <Titlelayout title={Title}>
+           <div style={{paddingTop: "32px", height: "100%", display: "flex"}}>
+             {
+              mode == 1 && <div style={{flex: 1}} ref={chart}></div>
+             }  
+
+           </div>
+        </Titlelayout>
         <div className="right">
            <Titlelayout title="今日能耗占比"></Titlelayout>
            <Titlelayout title="区域能耗排名"></Titlelayout>
