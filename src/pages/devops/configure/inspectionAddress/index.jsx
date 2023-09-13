@@ -564,7 +564,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input disabled></Input>
         </Form.Item>
         <Form.Item label="具体位置" name="position" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
           <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
@@ -581,7 +581,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="详细内容" name="remark" >
-        <TextArea  allowClear   />
+        <TextArea  allowClear   placeholder='请输入详细内容'/>
       </Form.Item>
         </AddDiv>
         <CustContext.Provider value={{lngLat:editform.getFieldValue().lngLat,address:editform.getFieldValue().address}}>
