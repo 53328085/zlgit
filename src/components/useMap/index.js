@@ -17,9 +17,9 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
- let defaultpoint =  value || lngLat;
- let {lngLat: projectLnglat} = useSelector(currProject);
 
+ let {lngLat: projectLnglat} = useSelector(currProject);
+ let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
    let map = null;
   
@@ -118,7 +118,7 @@ import {message} from 'antd'
     if(defaultpoint) {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
     }else {
-      latlng = getlnglat(projectLnglat); 
+      latlng = getlnglat( "120.22830511467954,30.21229461177818")
     }
       
     if(!latlng) return;
