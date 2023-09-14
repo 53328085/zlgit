@@ -4,32 +4,22 @@ export default function fform() {
   const ref = useRef();
  const  set = {
     // 提供一份数据。
-   
+    dimensions: ['score', 'amount'],
     source: [
-      ['score', 'amount', 'product'],
-      [89.3, 58212, 'Matcha Latte'],
-      [57.1, 78254, 'Milk Tea'],
-      [74.4, 41032, 'Cheese Cocoa'],
-      [50.1, 12755, 'Cheese Brownie'],
-      [89.7, 20145, 'Matcha Cocoa'],
-      [68.1, 79146, 'Tea'],
-      [19.6, 91852, 'Orange Juice'],
-      [10.6, 101852, 'Lemon Juice'],
-      [32.7, 20112, 'Walnut Brownie']
+      [89.3, 3371],
+      [92.1, 8123],
+      [94.4, 1954],
+      [85.4, 829],
     ]
   }
   useEffect(() => {
-    drawEcharts(ref.current, { dataset: set,xAxis: {type: "value"}, yAxis: {type: 'category'}, series: [
-      {
-        type: 'bar',
-        encode: {
-          // 将 "amount" 列映射到 X 轴。
-          x: 'amount',
-          // 将 "product" 列映射到 Y 轴。
-          y: 'product'
-        }
-      }
-    ] } )
+    drawEcharts(ref.current, { 
+      dataset: set,
+       series: {
+         type: "bar",
+         
+       }
+       } )
      
   }, [])
   return (

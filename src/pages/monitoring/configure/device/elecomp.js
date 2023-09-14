@@ -6,7 +6,9 @@ import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
-let Com = ({ form, coms }) => {
+let coms = 0
+let Com = ({ form  }) => {
+    console.log('coms', coms)
     const [isaddress, setIsaddress] = useState(true)
     let options = []
     const rules = [{
@@ -98,9 +100,9 @@ let Com = ({ form, coms }) => {
 export const FormComp = (props) => {
     const { TextArea } = Input
     const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
-    console.log( addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname)
+ //   console.log( addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname)
     const [area, setArea] = useState([])
-    const [coms, setComs] = useState(0)
+    //const [coms, setComs] = useState(0)
     const rules = [{
         required: true
     }]
@@ -109,7 +111,7 @@ export const FormComp = (props) => {
         if (v) {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
-            setComs(option.com)
+            coms = (option.com)
             form.setFieldsValue({ areaId: arr[0].id, commPort: '' })
         } else {
             setArea([])
@@ -239,7 +241,7 @@ export const FormComp = (props) => {
                                 value: 2
                             }]}></Select>
                     </Form.Item>
-                    {(deviceStyle === 1 || deviceStyle == 12)  ? <Com form={form} coms={coms}></Com> : null}
+                    {(deviceStyle === 1 || deviceStyle == 12)  ? <Com form={form}  ></Com> : null}
                 </Col>
             </Row>
         </Form>
