@@ -282,12 +282,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
      console.log(selectedOptions)
    }
    
-    console.log(leveloptions)
+    const labelName = (Array.isArray(leveloptions) && leveloptions.length > 0) ? leveloptions[0].levelName : '';
     return (
-      <Item label="父节点" name="parentId" rules={[
+      <Item label={labelName}  name="parentId" rules={[
         {
           required: true,
-          message: '请选择父节点'
+          message: `请选择${labelName}`
         }
       ]}>
          <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne}   />

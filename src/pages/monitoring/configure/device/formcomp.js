@@ -6,7 +6,8 @@ import style from './style.module.less'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [], levelname: { current: '' } })
 
 //新增com
-let Com = ({ form, coms }) => {
+let coms = 0
+let Com = ({ form}) => {
     const { type = 1 } = useContext(MyContext)
     console.log(type)
     let options = []
@@ -58,7 +59,7 @@ export const FormComp = (props) => {
     const { TextArea } = Input
     const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
-    const [coms, setComs] = useState(0)
+  //  const [coms, setComs] = useState(0)
     const rules = [{
         required: true
     }]
@@ -66,7 +67,8 @@ export const FormComp = (props) => {
         if (v) {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
-            setComs(option.com)
+           // setComs(option.com)
+           coms = option.com
             form.setFieldsValue({ areaId: arr[0].id, commPort: '', commProtocol: 0 })
         } else {
             setArea([])
@@ -177,7 +179,7 @@ export const FormComp = (props) => {
                                 value: 2
                             }]}></Select>
                     </Form.Item>
-                    <Com form={form} coms={coms}></Com>
+                    <Com form={form} ></Com>
                 </Col>
             </Row>
         </Form>

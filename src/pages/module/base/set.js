@@ -529,7 +529,7 @@ useEffect(() => {
       </div> */}
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
       <Item label="项目备注"   name="remark"> 
-        <TextArea placeholder="项目详细地址" maxLength={99} style={{height: '32px'}} />
+        <TextArea placeholder="项目详细信息" maxLength={99} style={{height: '32px'}} />
       </Item> 
       {/* <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>

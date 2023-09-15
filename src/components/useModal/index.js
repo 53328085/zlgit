@@ -118,6 +118,7 @@ import Useform from "./useform";
       onCancel={close || onCancel}
       closable={false}    
       centered  
+      maskClosable={false}
       {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}

@@ -527,14 +527,14 @@ export const drawEcharts = (
       },
     },
   };
-  const baseoption = {
+  const baseoption = { //系列方式
     ...comm,
     yAxis: {
       type: "value",   
     },
     series,
   };
-  const option = {
+  const option = {  // 数据集
     ...comm,
 
     yAxis: [

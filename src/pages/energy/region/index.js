@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs} from "antd";
+import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography} from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+ 
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
 import moment from 'moment';
 import imgurl from "./icon";
-
+import UseTable from "@com/useTable"
  
-
+const {Text, Paragraph} = Typography
 const Laybox = styled.div`
   display: grid;
   flex: 1;
@@ -37,124 +37,9 @@ const CustTitle = styled.div`
 
 `;
 
-const Divbox = styled.div`
-  display: grid;
-  grid-template-columns: 40% 1fr;
-  column-gap: 16px;
-  margin: 8px 0 8px 0;
-  align-items: center;
-  .list {
-    display: grid;
-    grid-auto-rows: 30px;
-    align-items: flex-end;
-    .item {
-      display: flex;
-      justify-content: space-between;
-      span:first-child {
-        color: #999;
-        font-size: 14px;
-      }
-      span:last-child {
-        color: #515151;
-        font-size: 16px;
-      }
-    }
-  }
-`;
-const Engbox = styled.div`
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  column-gap: 32px;
-  height: 100%;
-  align-items: ${props => props.type == 2 ? 'center' : 'start'};
-  padding-top:${props => props.type == 2 ? '0px' : '35px'}; ;
-  .list {
-    display: grid;
-    grid-auto-rows: 30px;
-    align-items: flex-end;
-    .item {
-      display: flex;
-      justify-content: space-between;
-      span:first-child {
-        color: #999;
-        font-size: 14px;
-      }
-      span:last-child {
-        color: #515151;
-        font-size: 16px;
-      }
-    }
-  }
-`;
-const Tabsbox = styled(Tabs)`
- && {
-  .ant-tabs-nav {
-    margin-bottom: 0px;
-   .ant-tabs-nav-list {
-    .ant-tabs-tab {
-        border-radius: 4px 4px 0 0;
-        height: 41px;
-        width: 114px;
-        justify-content: center;
-        font-size: 14px;
-        background-color: #fff;  
-        transition: none;
-        &:hover {
-            background-color: var(--ant-primary-color);
-            color: #fff;
-            transition: all 0.3s;
-        }
-        .ant-tabs-tab-btn{
-            transition: none;
-        }
-        .ant-tabs-tab-btn:active {
-            color:#fff
-        }
-    }
-    .ant-tabs-tab + .ant-tabs-tab {
-      margin: 0 0 0 16px;
-    }
-    .ant-tabs-tab.ant-tabs-tab-active {
-        background-color: var(--ant-primary-color);
-       
-        .ant-tabs-tab-btn {
-            color:#fff;
-            transition: none;
-        }
-    }
-   }  
-   .ant-tabs-content-holder {
-    display: none;
-   }
-  }
-}
-`
-const UDbox = styled.div`
-  display: grid;
-  grid-template-rows: 64px 1fr;
-  row-gap: 8px;
-  margin-top: 8px;
-  justify-items: center;
-  .list {
-    display: grid;
-    grid-auto-rows: 30px;
-    justify-self: stretch;
-    align-content: flex-end;
-    .item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      span:first-child {
-        color: #999;
-        font-size: 14px;
-      }
-      span:last-child {
-        color: #515151;
-        font-size: 16px;
-      }
-    }
-  }
-`;
+ 
+ 
+ 
 
 
   
@@ -173,9 +58,53 @@ const Radiogroup = styled(Radio.Group)`
     }
   }
 
-
 `
- 
+const Sdiv = styled.div` 
+  && {
+    height: 100%;
+    padding-top: 16px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 16px;
+    .down {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+    }
+    .sort {
+      background-color: #f4f8ff;
+      padding: 8px 16px;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      column-gap: 16px;
+      align-items: center;
+      .data {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+      }
+    }
+  }
+`
+ const headers = ["塔楼区", "交易区", "干杂区", "水产市场", "工业设备机房", "库房", "叉车充电间"]
+const tableData = headers.map(n => (
+  {
+    area: n,
+    use: 10000*Math.random().toFixed(2),
+    qqq:  10*Math.random().toFixed(2)+"%",
+    yyy: 10*Math.random().toFixed(2)+"%",
+  }
+))
+const piedata = [
+  { value: 1048, name: '塔楼区' },
+  { value: 735, name: '交易区' },
+  { value: 580, name: '干杂区' },
+  { value: 484, name: '水产市场' },
+  { value: 300, name: '工业设备机房' },
+  { value: 700, name: '库房' },
+  { value: 130, name: '叉车充电间' },
+]
+const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
  
@@ -190,7 +119,27 @@ export default function Index() {
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
   
   let type = ['', '日', '月', '年'][timetype]
+  const columns = [
+    {
+      dataIndex: "area",
+      title: "区域名称",
+    },
+    {
+      dataIndex: "use",
+      title: "用电量（kwh）",
+    },
+    {
+        dataIndex: "qqq",
+        title: "环比",
+        render: (text) =>  <span><span style={{color: "#3c3"}}>&#9650; &nbsp;</span>{text}</span>,
+    },
+    {
+      dataIndex: "yyy",
+      title: "同比",
+      render: (text) =>  <span><span style={{color: "#f00"}}>&#9660; &nbsp;</span>{text}</span>
+  }
 
+  ]
 
   const getData = async () => {
     const {area, date, type, shiftNo, view=1} = form.getFieldsValue() || {}
@@ -233,12 +182,12 @@ export default function Index() {
    
     //getData()
   }, [tabvalue])
- const [mode, setMode] = useState(1)
+ const [mode, setMode] = useState(2)
  const chart = useRef()
  const [tdataset, setTdataset] = useState({  // 图表数据
  // dimensions: ["日期", "用电量(kwh)"],
   source: [
-    ["日期", 1,2,3,4,5,6,7,8,9,10]
+    ["日期", 1,2,3,4,5,6,7]
    // ["区域名称", "塔楼区", "交易区", "干杂区", "水产市场", "工业设备机房", "库房", "叉车充电间"],
     ["塔楼区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["交易区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
@@ -354,6 +303,23 @@ useEffect(() => {
       </div>
     )
   }
+  const pieref = useRef()
+  useEffect(() => {
+    drawEcharts(pieref.current, {
+      pieData: { data: piedata, total: 100 },
+      type: 3,
+      legend: {
+        type: "scroll",
+      //  orient: 'vertical',
+        bottom: 0,
+        top: 'auto',
+        itemGap: 5
+      },
+      grid: {
+        bottom: 20
+      }
+    });
+  }, [])
 
 
   return (
@@ -372,16 +338,46 @@ useEffect(() => {
       <UserSearch></UserSearch>
       <Laybox  >
         <Titlelayout title={Title}>
-           <div style={{paddingTop: "32px", height: "100%", display: "flex"}}>
+           <div style={{paddingTop: "16px", height: "100%", display: "flex"}}>
              {
               mode == 1 && <div style={{flex: 1}} ref={chart}></div>
              }  
-
+             {
+              mode == 2 && <UseTable dataSource={tableData} columns={columns} />
+             }
            </div>
         </Titlelayout>
         <div className="right">
-           <Titlelayout title="今日能耗占比"></Titlelayout>
-           <Titlelayout title="区域能耗排名"></Titlelayout>
+           <Titlelayout title="今日能耗占比">
+              <div ref={pieref} style={{width: "392px", height: "432px"}}></div>
+           </Titlelayout>
+           <Titlelayout title="区域能耗排名">
+              <Sdiv>
+                 <div className="sort">
+                     <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
+                     <div className="data">
+                        <Text  ellipsis >交易区</Text>
+                        <p> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span></p>
+                     </div>
+                 </div>
+                 <div className="down">
+                    <div className="sort">
+                    <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
+                     <div className="data">
+                        <Text ellipsis>塔楼</Text>
+                        <p><Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span> </p>
+                     </div>
+                    </div>
+                    <div className="sort">
+                      <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
+                     <div className="data">
+                        <Text ellipsis>库房</Text>
+                       <p> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span> </p>
+                     </div>
+                    </div>
+                 </div>
+              </Sdiv>
+           </Titlelayout>
         </div>
      
       </Laybox>

@@ -307,7 +307,7 @@ export default function gateway({ deviceStyle }) {
 
     addform.setFieldsValue({
       areaId: '',
-      alarmPlanId: '',
+      alarmPlanId: 0,
       address: '',
       remark: '',
       gatewayId: '',
@@ -414,6 +414,7 @@ export default function gateway({ deviceStyle }) {
   const getAeraQueryAll = async (name) => {
     try {
       const resp = await AeraQueryAll(projectId)
+      console.log(resp)
       if (resp.success && Array.isArray(resp.data)) {
         const data = [{ name, id: 0 }, ...resp.data]
         setSelectopts(() => [...data])

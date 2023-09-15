@@ -307,7 +307,7 @@ export default function gateway({ deviceStyle, name }) {
 
     addform.setFieldsValue({
       areaId: '',
-      alarmPlanId: '',
+      alarmPlanId: 0,
       address: '',
       remark: '',
       gatewayId: '',
