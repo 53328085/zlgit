@@ -24,7 +24,7 @@ import { useAntdTable, useLatest } from "ahooks";
 import warningImg from "@imgs/warning.png";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
-import Mapcom from "@com/useMap";
+import Mapcom from "@com/useMap/indexset";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 
@@ -1026,6 +1026,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
                 <Input
                   placeholder="请从地图获取地址"
                   allowClear
+                  onChange={(e) => mapref.current.serachMap(e.target.value)}
                   value={address.current}
                 />
               </Item>

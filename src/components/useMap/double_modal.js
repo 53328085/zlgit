@@ -109,7 +109,7 @@ import {message} from 'antd'
   }
   useImperativeHandle(ref, () => ({
     serachMap
-  }))
+  }), [map])
  
   useEffect(() => {
      if(!mapref) return

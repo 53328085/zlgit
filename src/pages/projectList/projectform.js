@@ -10,7 +10,7 @@ import {
   Image
 } from "antd";
 import styled from "styled-components";
-import Mapcom from "@com/useMap";
+import Mapcom from "@com/useMap/indexset";
 import imgurl from "@imgs"
 import Upload from '@com/useUpload'
 import {Comipt, Comtext, CdatePicker} from "@com/comstyled"

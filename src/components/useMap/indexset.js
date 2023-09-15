@@ -8,7 +8,7 @@
  * 天地图无法重复初始化
  */
 
-import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from "react";
+import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useState} from "react";
 import {useSelector} from 'react-redux'
 
 import {currProject} from '@redux/systemconfig'
@@ -21,8 +21,9 @@ import {message} from 'antd'
  let {lngLat: projectLnglat} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
-   let map = null;
-  
+   
+  const [isFish, setFish] = useState(false)
+  let map = null
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []
      
@@ -73,19 +74,11 @@ import {message} from 'antd'
 		}
 		
 	}
- /*  const serachMap = (value, map) => {   
+  const serachMap = (value) => {   
+     console.log(value)
+     console.log(map)
     try {
-      map.clearOverLays();
-      geocoder.getPoint(value, searchResult)
-    } catch (error) {
-      console.log(error)
-    }
-		
-  } */
-  const serachMap = (value, map) => {   
-    console.log(map)
-    try {
-      map.clearOverLays();
+      map &&  map.clearOverLays();
       geocoder.getPoint(value, searchResult)
     } catch (error) {
       console.log(error)
@@ -119,7 +112,7 @@ import {message} from 'antd'
    
   }
   useImperativeHandle(ref, () => ({
-    serachMap:serachMap
+    serachMap: serachMap 
   }), [map])
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
@@ -133,9 +126,9 @@ import {message} from 'antd'
       
     if(!latlng) return;
 
-     map = new T.Map("map");
+    map = new T.Map("map");
    
-   
+    setFish(true);
    
     // let dom = document.getElementById("mapBox")
      try {
