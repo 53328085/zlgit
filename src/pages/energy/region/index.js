@@ -182,38 +182,48 @@ export default function Index() {
    
     //getData()
   }, [tabvalue])
- const [mode, setMode] = useState(2)
- const chart = useRef()
- const [tdataset, setTdataset] = useState({  // 图表数据
+ const [mode, setMode] = useState(1)
+ const stack = useRef()
+ const  tdataset = {  // 图表数据
  // dimensions: ["日期", "用电量(kwh)"],
   source: [
-    ["日期", 1,2,3,4,5,6,7]
-   // ["区域名称", "塔楼区", "交易区", "干杂区", "水产市场", "工业设备机房", "库房", "叉车充电间"],
+    ["日期", '0','1','2','3','4','5','6'],
     ["塔楼区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["交易区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["干杂区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["水产市场", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["工业设备机房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
     ["库房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["叉车充电间", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-  ],
-})
-const eparams = {
-  smooth: true, 
-   lineStyle: {
-    width: 0
-   },
-  showSymbol: false,
-  seriesLayoutBy: 'row'
+    ["叉车充电间", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],]
 }
+ 
 useEffect(() => {
+  const barconfig = {
+    type: "bar",
+    stack: "count",
+    seriesLayoutBy: 'row',
+   
+    barWidth: 30, 
+    barCategoryGap: "5%"
+  // barGap: "30%", 
+  // barCategoryGap: "10%"
+  }
   drawEcharts(
-     chart.current, {
+     stack.current, {
       dataset: tdataset,
-      series: [{ type: "type", stack: "hao",    ...eparams }]
+     
+      series: [
+        barconfig, 
+        barconfig,
+        barconfig,
+        barconfig, 
+        barconfig,
+        barconfig, 
+        barconfig, 
+      ]
     }
   )
-}, [tdataset])
+})
 
  const onChange = (e) => {
   setMode(e.target.value)
@@ -340,11 +350,9 @@ useEffect(() => {
         <Titlelayout title={Title}>
            <div style={{paddingTop: "16px", height: "100%", display: "flex"}}>
              {
-              mode == 1 && <div style={{flex: 1}} ref={chart}></div>
+              mode == 1 ? <div style={{flex: 1}} ref={stack} key="echart"></div> : <UseTable dataSource={tableData} columns={columns} key="table" />
              }  
-             {
-              mode == 2 && <UseTable dataSource={tableData} columns={columns} />
-             }
+           
            </div>
         </Titlelayout>
         <div className="right">

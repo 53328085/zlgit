@@ -93,7 +93,7 @@ const system = createSlice({
            // return Object.assign({}, state, {setMenus: actions.payload })
         },
         getOnelevel(state, {payload}) {  
-            state.onelevel = payload        
+            state.onelevel =Array.isArray(payload) ? payload : []       
            // return Object.assign({}, state, {onelevel: actions.payload })
         },
         setCurrentlevel(state, {payload}) {
