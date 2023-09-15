@@ -27,8 +27,9 @@ let LoaclForm =forwardRef((props,ref)=>{
     }
     const setAaddress=(mes)=>{
         console.log(mes)
-        setInpvalue(mes.address)
-        // setInpvalue(mes.formatted_address)
+        if(mes.address){
+            setInpvalue(mes.address)
+        }
         if(mes.point){
             setLoacl(`${mes.point.lng},${mes.point.lat}`) 
         }else{

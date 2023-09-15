@@ -81,7 +81,7 @@ export default function Index() {
     { title: '计划开始日期', dataIndex: 'startTime' },
     { title: '计划结束日期', dataIndex: 'endTime' },
     { title: '巡检周期', dataIndex: 'cycle', render(text) { return (text === 1 ? '每日' : text === 2 ? '每周' : text === 3 ? '每月' : '/') } },
-    { title: '巡检日期', dataIndex: 'timeS' },
+    { title: '巡检时间', dataIndex: 'timeS' },
     { title: '创建日期', dataIndex: 'createTime' },
     { title: '巡检人', dataIndex: 'operator' },
     {
@@ -475,7 +475,7 @@ let AddPlan = forwardRef(
             ></Select>
           </Form.Item>
           {
-            dateCycle !== 1 ? (<Form.Item label="巡检日期" name="time" rules={[rule]}>
+            dateCycle !== 1 ? (<Form.Item label="巡检时间" name="time" rules={[rule]}>
               <Select
                 placeholder="请选择巡检日期"
                 style={{ width: 128 }}

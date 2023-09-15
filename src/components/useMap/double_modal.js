@@ -13,8 +13,7 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
-  console.log('lngLat')
-  console.log(lngLat)
+
  
   const defaultpoint = lngLat || value 
  
@@ -41,7 +40,7 @@ import {message} from 'antd'
  
   const addmarker = (latlng, text='') => {
       map.clearOverLays()
-     let marker = new  T.Marker(latlng);
+     let marker = new  T.Marker(latlng,{draggable:false});
      let label = new T.Label({
       text,
       position: latlng,
@@ -69,10 +68,16 @@ import {message} from 'antd'
      
   }
  
-  const searchResult = (result) =>{   
+  const searchResult = (result) =>{
         if(result.getStatus() == 0){    
-            map.panTo(result.getLocationPoint(), 16);    
-      addmarker(result.getLocationPoint(), result.location?.keyWord)
+            const position = result.getLocationPoint()
+            map.panTo(new T.LngLat(position.lng,position.lat), 16); 
+            addmarker(result.getLocationPoint(), result.location?.keyWord)    
+            console.log(position) 
+            setAaddress({lng:position.lng,lat:position.lat})
+            
+           
+           
         }else{
             message.error({count: result.getMsg()});
         }
@@ -88,7 +93,6 @@ import {message} from 'antd'
         
   }
   const mapClick = (result) =>  {  
-     console.log(result.getStatus())
     if(result.getStatus() == 0) {
     
       let {addressComponent,  location: {lon, lat}} = result
