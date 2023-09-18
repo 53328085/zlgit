@@ -16,6 +16,7 @@ import TransLine from './contentcomp'
 import CustContext from '@com/content.js'
 import Print from './print.jsx'
 import ReactToPrint,{useReactToPrint} from 'react-to-print';
+// import UseMap from '@com/useMap/custom.js'
 const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
       background-color: #fff;
@@ -117,6 +118,7 @@ export default function Index() {
   const editRef = useRef()
   const delRef = useRef()
 
+  
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
@@ -357,7 +359,7 @@ export default function Index() {
       ></Table>
       </div>
       <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn}/>
-      
+
       <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn}/>
       <DeleteModal delRef={delRef} name='删除巡检点' content="是否确认删除巡检点" onOk={delItems} />
       {
@@ -373,7 +375,8 @@ export default function Index() {
       } */}
       <PrintAll ref={printallref}>
             {tabledata.tablesource?.map((it,index)=><Print print={it} index={index}></Print>)}
-          </PrintAll>
+      </PrintAll>
+        
     </ContainerDiv>
   )
 }
@@ -424,9 +427,10 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
     }
   }
   useEffect(()=>{
-
-  },[])
+  console.log(222)
+  },[ positionRef])
   return (
+    <>
     <Modal mold='cust' width={587} ref={addRef} onOk={()=>{addItems(position,devicelistref,checklistref)}} >
       <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
         <AddDiv
@@ -483,10 +487,12 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
         <TextArea  allowClear  placeholder="请输入详细内容" />
       </Form.Item>
         </AddDiv>
-      <SetPosition positionRef={positionRef} savePosition={savePosition}/>
+      <SetPosition positionRef={positionRef} savePosition={savePosition}/>  
       <SetLine ref={devicelistref} addform={addform}/>
       <TransLine ref={checklistref} addform={addform}/>
     </Modal>
+   
+    </>
   )
 
 }

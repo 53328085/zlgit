@@ -70,7 +70,7 @@ let LoaclForm =forwardRef((props,ref)=>{
         </div>
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
        
-        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={local}/>
+        <UseMap setAaddress={setAaddress} ref={mapRef} />
        
         </div>
         
