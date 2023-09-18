@@ -41,6 +41,7 @@ export default  function useMap(props={}) {
     let {lon, lat, keyWord} = result.location || {}
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
+     
       addmarker(result.getLocationPoint(), keyWord)
       setAaddress && setAaddress({lng: lon, lat, address: keyWord})
 		}else{

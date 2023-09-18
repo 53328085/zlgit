@@ -495,16 +495,16 @@ export const drawEcharts = (
       axisTick: {
         alignWithLabel: true,
         lineStyle: {
-          color: '#ccc'
+         // color: '#ccc'
         }
       },   
       axisLine: {
         lineStyle: {
-          color:"#ccc"
+         // color:"#ccc"
         }
       },
       axisLabel: {
-        color:"#545454",
+       // color:"#545454",
         interval:0, // 显示所有x轴的label
       },
       

@@ -465,7 +465,10 @@ export const EditFormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={[...rules, {
+                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                        <Input disabled/>
+                    </Form.Item>
+                    {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
                         validator: (_, value) => {
                             if (!value) {
                                 return Promise.resolve()
@@ -480,8 +483,8 @@ export const EditFormComp = (props) => {
                             }
                         }
                     }]}>
-                        <Input placeholder='设备编号长度12为' disabled/>
-                    </Form.Item>
+                        <Input   disabled/>
+                    </Form.Item> */}
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>

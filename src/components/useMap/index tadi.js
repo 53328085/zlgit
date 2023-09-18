@@ -112,7 +112,7 @@ import {message} from 'antd'
   }
   useImperativeHandle(ref, () => ({
     serachMap
-  }))
+  }), [mapref])
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
