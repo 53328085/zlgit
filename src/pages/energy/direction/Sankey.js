@@ -47,7 +47,6 @@ export default function Sankey() {
             color: 'gradient',
             curveness: 0.5
           },
-       
 
         }
       ]
