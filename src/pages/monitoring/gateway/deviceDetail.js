@@ -135,7 +135,8 @@ export default function GatewayDetail(props) {
     let paramsTrend = {
         sn: search.sn,
         start: startTime,
-        end: endTime
+        end: endTime,
+        projectId
     }
     const [historyTrend, sethistoryTrend] = useState()
 
@@ -148,6 +149,8 @@ export default function GatewayDetail(props) {
             } else {
                 message.error(res.errMsg)
             }
+        }).catch(e => {
+          //  console.log(e)
         })
     }
     const getHistoryTable = () => {//
@@ -158,6 +161,8 @@ export default function GatewayDetail(props) {
             } else {
                 message.error(res.errMsg)
             }
+        }).catch(e => {
+           // console.log(e)
         })
     }
     const getEnergyTrend = () => {//
