@@ -558,8 +558,11 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {}; 
-  if(rest.option) {
-    chart.setOption({...option}, true, chartoption); //桑基图
+      console.log(rest)
+  if(rest.custoption) {
+    chart.setOption({...rest.custoption, grid: {
+        containLabel: true,
+    }}, true, chartoption); //桑基图
   }else {
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    

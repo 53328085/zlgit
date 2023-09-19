@@ -28,11 +28,9 @@ export default function Sankey() {
         {"source": "工业设备机房", "target": "2号机房",  "value": 20},
         {"source": "工业设备机房", "target": "3号机房",  "value": 12},
     ],
-    label: {
-        position: "top",
-    }
+    
   }) 
-  const option = {
+  const custoption = {
     tooltip: {
         trigger: 'item',
         triggerOn: 'mousemove'
@@ -55,8 +53,7 @@ export default function Sankey() {
      drawEcharts(
         chart.current,
         {
-          type: 2,
-           ...option,
+           custoption,
         }
      )
   })
