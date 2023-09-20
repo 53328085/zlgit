@@ -263,6 +263,7 @@ export default function Index() {
             </div>`
           }
         })
+ 
         setAlarmPosition(alarmlist)
       } else {
         message.error(errMsg)
@@ -460,7 +461,7 @@ export default function Index() {
             </div>
             {/* {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:<EmptyMap></EmptyMap>} */}
            {alarmPosition&&alarmPosition.length>0?
-            <Mapcom lngLat = {alarmPosition} isck={true} key={1}></Mapcom>
+            <Mapcom lngLat = {alarmPosition} isck={true} key={1} infoconfig={{minWidth:350,}}></Mapcom>
             :<Mapcom key={2} />} 
           </div>
 

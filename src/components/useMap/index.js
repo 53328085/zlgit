@@ -8,7 +8,7 @@
  * 天地图无法重复初始化
  */
 
-import React, {useEffect, useRef, forwardRef, useImperativeHandle} from "react";
+import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from "react";
 import {useSelector} from 'react-redux'
 
 import {currProject} from '@redux/systemconfig'
@@ -17,9 +17,9 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
- let defaultpoint =  value || lngLat;
- let {lngLat: projectLnglat} = useSelector(currProject);
 
+ let {lngLat: projectLnglat} = useSelector(currProject);
+ let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
    let map = null;
   
@@ -73,7 +73,17 @@ import {message} from 'antd'
 		}
 		
 	}
-  const serachMap = (value) => {   
+ /*  const serachMap = (value, map) => {   
+    try {
+      map.clearOverLays();
+      geocoder.getPoint(value, searchResult)
+    } catch (error) {
+      console.log(error)
+    }
+		
+  } */
+  const serachMap = (value, map) => {   
+    console.log(map)
     try {
       map.clearOverLays();
       geocoder.getPoint(value, searchResult)
@@ -109,8 +119,8 @@ import {message} from 'antd'
    
   }
   useImperativeHandle(ref, () => ({
-    serachMap
-  }))
+    serachMap:serachMap
+  }), [map])
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
@@ -118,7 +128,7 @@ import {message} from 'antd'
     if(defaultpoint) {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
     }else {
-      latlng = getlnglat(projectLnglat); 
+      latlng = getlnglat( "120.22830511467954,30.21229461177818")
     }
       
     if(!latlng) return;

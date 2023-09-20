@@ -14,7 +14,7 @@ import {message} from 'antd'
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
 
-  let defaultpoint = lngLat || value 
+  let defaultpoint = lngLat || value || '120.22830511467954,30.21229461177818'
 
   console.log('lngLat',lngLat)
   const zoom = 18;
@@ -97,9 +97,9 @@ import {message} from 'antd'
   const mapClick = (result) =>  {  
      console.log(result.getStatus())
     if(result.getStatus() == 0) {
-    
       let {addressComponent,  location: {lon, lat}} = result
       let {city, province, county, address, address_distance} = addressComponent
+      console.log(result,result.getAddress(),addressComponent)
       setAaddress && setAaddress({lng: lon, lat, address: result.getAddress(), province, city, district: county, street: address, streetNumber:address_distance})
       addmarker(new T.LngLat(lon, lat), result.getAddress())
     }else {
@@ -112,13 +112,13 @@ import {message} from 'antd'
   }
   useImperativeHandle(ref, () => ({
     serachMap
-  }))
+  }), [mapref])
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
      console.log(defaultpoint)
      if(!mapref || !defaultpoint) return
-     console.log(defaultpoint)
+     console.log(mapref,defaultpoint)
     // let dom = document.getElementById("mapBox")
      try {
       let latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
@@ -146,7 +146,7 @@ import {message} from 'antd'
       console.log("地图加载")
      })
     
-  }, [mapref, defaultpoint])
+  }, [ mapref,defaultpoint])
   return (
     <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
 

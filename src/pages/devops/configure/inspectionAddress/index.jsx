@@ -16,6 +16,7 @@ import TransLine from './contentcomp'
 import CustContext from '@com/content.js'
 import Print from './print.jsx'
 import ReactToPrint,{useReactToPrint} from 'react-to-print';
+// import UseMap from '@com/useMap/custom.js'
 const ContainerDiv = styled.div`
       border: 1px solid #d7d7d7;
       background-color: #fff;
@@ -117,6 +118,7 @@ export default function Index() {
   const editRef = useRef()
   const delRef = useRef()
 
+  
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
@@ -125,7 +127,7 @@ export default function Index() {
     pageinfo.pageNum = 1
     getPage()
   }
-  console.log(options[0].name)
+
  
   const changeSelect = (v) => {
     pageinfo.pageNum = 1
@@ -139,7 +141,7 @@ export default function Index() {
     addRef.current.onOpen()
     addform.setFieldsValue({
       address:'',
-      areaId:'',
+      areaId:undefined,
       name:'',
       position:'',
       remark:'',
@@ -357,7 +359,7 @@ export default function Index() {
       ></Table>
       </div>
       <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn}/>
-      
+
       <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn}/>
       <DeleteModal delRef={delRef} name='删除巡检点' content="是否确认删除巡检点" onOk={delItems} />
       {
@@ -373,7 +375,8 @@ export default function Index() {
       } */}
       <PrintAll ref={printallref}>
             {tabledata.tablesource?.map((it,index)=><Print print={it} index={index}></Print>)}
-          </PrintAll>
+      </PrintAll>
+        
     </ContainerDiv>
   )
 }
@@ -424,9 +427,10 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
     }
   }
   useEffect(()=>{
-
-  },[])
+  console.log(222)
+  },[ positionRef])
   return (
+    <>
     <Modal mold='cust' width={587} ref={addRef} onOk={()=>{addItems(position,devicelistref,checklistref)}} >
       <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
         <AddDiv
@@ -434,33 +438,36 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
         labelCol={{ span: 5 }}
         colon={false}
         labelAlign="left"
-        initialValues={{  }}
+        // initialValues={{ 
+        //   areaId:undefined
+        //  }}
         >
         <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
+            placeholder="请选择园区"
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}
           ></Select>
         </Form.Item>
         <Form.Item label="巡检点名称" name="name" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="请输入巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
           <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true,message:'请点击获取巡检点地址' }]}>
-          <Input ></Input>
+          <Input disabled placeholder="请点击获取"></Input>
         </Form.Item>
         <Form.Item label="定位误差">
           <Space>
           <Form.Item rules={[{required: true,pattern:/^(0|[1-9]\d{0,2}|1000)$/,message:'数值在0-1000之间'}]} name="addressSpan">
-            <Input style={{width:96}}></Input>
+            <Input style={{width:96}} placeholder="请输入定位误差"></Input>
           </Form.Item>
           <span>米</span>
           </Space>
         </Form.Item>
-        <Form.Item label="具体位置" name="position" rules={[{ required: true }]}>
-          <Input ></Input>
+        <Form.Item label="具体位置" name="position" rules={[{ required: true }]} placeholder="请输入具体位置">
+          <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
           <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
@@ -476,14 +483,16 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input ></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
-        <Form.Item label="备注" name="remark" rules={[{required:true}]}>
-        <TextArea  allowClear   />
+        <Form.Item label="详细内容" name="remark" >
+        <TextArea  allowClear  placeholder="请输入详细内容" />
       </Form.Item>
         </AddDiv>
-      <SetPosition positionRef={positionRef} savePosition={savePosition}/>
+      <SetPosition positionRef={positionRef} savePosition={savePosition}/>  
       <SetLine ref={devicelistref} addform={addform}/>
       <TransLine ref={checklistref} addform={addform}/>
     </Modal>
+   
+    </>
   )
 
 }
@@ -550,12 +559,13 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
         >
         <Form.Item label={onelevel[0]?.levelName?onelevel[0]?.levelName :'园区选择' } name="areaId" rules={[{ required: true }]}>
           <Select
+            placeholder="请选择园区"
             options={addoptiosn}
             fieldNames={{ label: 'name', value: 'id' }}
           ></Select>
         </Form.Item>
         <Form.Item label="巡检点名称" name="name" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
           <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
@@ -564,7 +574,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input disabled></Input>
         </Form.Item>
         <Form.Item label="具体位置" name="position" rules={[{ required: true }]}>
-          <Input ></Input>
+          <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
           <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
@@ -581,7 +591,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="详细内容" name="remark" >
-        <TextArea  allowClear   />
+        <TextArea  allowClear   placeholder='请输入详细内容'/>
       </Form.Item>
         </AddDiv>
         <CustContext.Provider value={{lngLat:editform.getFieldValue().lngLat,address:editform.getFieldValue().address}}>

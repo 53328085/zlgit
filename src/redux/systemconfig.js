@@ -93,7 +93,7 @@ const system = createSlice({
            // return Object.assign({}, state, {setMenus: actions.payload })
         },
         getOnelevel(state, {payload}) {  
-            state.onelevel = payload        
+            state.onelevel =Array.isArray(payload) ? payload : []       
            // return Object.assign({}, state, {onelevel: actions.payload })
         },
         setCurrentlevel(state, {payload}) {
@@ -165,7 +165,8 @@ export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state => state.system.onelevel
-export const selectOneLevelDefaultId = state => state.system.onelevel[0]?.id || state.system.currlevel?.id
+export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || null
+
 export const levelDefaultLabel = state =>  state.system.onelevel[0]?.levelName || state.system.currlevel?.levelName
 export const selectshifts = state => state.system.shifts
 export const publishState = state => {

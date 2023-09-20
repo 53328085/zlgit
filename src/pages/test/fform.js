@@ -1,20 +1,30 @@
-import React, {useEffect} from 'react'
-import {Button, DatePicker, ConfigProvider} from 'antd'
-import {useSelector} from 'react-redux'
-import {themeColor } from "@redux/systemconfig";
- 
-export default function Index() {
-   const config = useSelector(themeColor)
-   console.log(config)
+import React, {useEffect, useRef} from 'react'
+import { drawEcharts } from "@com/useEcharts";
+export default function fform() {
+  const ref = useRef();
+ const  set = {
+    // 提供一份数据。
+    dimensions: ['score', 'amount'],
+    source: [
+      [89.3, 3371],
+      [92.1, 8123],
+      [94.4, 1954],
+      [85.4, 829],
+    ]
+  }
+  useEffect(() => {
+    drawEcharts(ref.current, { 
+      dataset: set,
+       series: {
+         type: "bar",
+         
+       }
+       } )
+     
+  }, [])
   return (
-    
-    <div style={{width: "600px", height: "600px"}} id="map">
-       <Button type="primary">样式配置</Button>
-       <Button type="dashed">dashed</Button>
-       <Button type="text" success>danger</Button>
-       <DatePicker />
+    <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
+       <div ref={ref} style={{width: "100%", height: "600px", border: "1px solid #dedede"}}></div>
     </div>
-    
-    
   )
 }

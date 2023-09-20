@@ -1,6 +1,6 @@
 import React, {useState, useContext,  useEffect} from "react";
 
-import { Form, Select,  Space, Divider,} from "antd";
+import { Form, Select,  Space, Divider, message} from "antd";
 import styled from "styled-components";
  
 import {useSelector, useDispatch} from 'react-redux'
@@ -46,10 +46,10 @@ export default function UseSerach(props) {
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel) 
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-  let [AreaID, setAreaid] = useState(oneLevelDefaultId)
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
+  let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)
- 
+  
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
 
@@ -85,7 +85,7 @@ export default function UseSerach(props) {
       let containerId = 0
       let siteId = options[0]?.id
      let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, siteId, containerId) 
-     if(success && Array.isArray(data)) {
+     if(success && Array.isArray(data) && data.length > 0) {
        setPcsoptions(data)
        form.setFieldsValue({
         pcsId: data[0].id
@@ -94,7 +94,7 @@ export default function UseSerach(props) {
      }else {
        setPcsoptions([])
        form.setFieldsValue({
-        pcsId: ''
+        pcsId: null
        })
        sitehandler && sitehandler({})
      }
@@ -103,6 +103,9 @@ export default function UseSerach(props) {
     }
    
   }
+  useEffect(() => {
+    if(levelone.length < 1) message.error('当前项目尚未创建园区!')
+  }, [])
  
  useEffect(() => {
     if(options?.length > 0 && AreaID && projectId) {
@@ -138,10 +141,19 @@ export default function UseSerach(props) {
       }    
   
   }, [projectId, AreaID, isSite])
- 
+  console.log(levelone)
+  
+  console.log(oneLevelDefaultId)
+
+  useEffect(() => {
+   form.setFieldsValue({
+    area: oneLevelDefaultId,
+    ...initialValue,
+   })
+  }, [initialValue, oneLevelDefaultId])
   return (  
   
-    <Cform layout="inline"   form={form} initialValues={{area: oneLevelDefaultId, ...initialValue}} {...props}>
+    <Cform layout="inline"   form={form}   {...props}>
       <Space size={64} split={ <Divider style={{margin: '0px',  height: '32px'}} type="vertical" />}>
       <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>

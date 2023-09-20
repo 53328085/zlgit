@@ -299,7 +299,7 @@ export default function Index () {
             <span className={style.actionItem}>操作</span>
           </div>
           <div className={style.treeContent}>
-          { treeData.length>0 ? <Tree defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
+          { treeData.length>0 ? <Tree  height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
           </div>
         </div>
         {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
@@ -308,7 +308,7 @@ export default function Index () {
       </div>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+          <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
             <Item label={formLabel} name='name' rules={[{required:true, message:'节点名称不能为空'}]}>
               <Input style={{width:'315px'}} placeholder={'请输入节点名称'}></Input>
             </Item>

@@ -81,7 +81,7 @@ export default function Index() {
     { title: '计划开始日期', dataIndex: 'startTime' },
     { title: '计划结束日期', dataIndex: 'endTime' },
     { title: '巡检周期', dataIndex: 'cycle', render(text) { return (text === 1 ? '每日' : text === 2 ? '每周' : text === 3 ? '每月' : '/') } },
-    { title: '巡检日期', dataIndex: 'timeS' },
+    { title: '巡检时间', dataIndex: 'timeS' },
     { title: '创建日期', dataIndex: 'createTime' },
     { title: '巡检人', dataIndex: 'operator' },
     {
@@ -444,6 +444,7 @@ let AddPlan = forwardRef(
         >
           <Form.Item label={onelevel.length > 0 ? onelevel[0].levelName : '园区名称'} name="areaId" rules={[rule]}>
             <Select
+              placeholder="请选择园区"
               options={arealist}
               fieldNames={{ label: 'name', value: 'id' }}
               onChange={(v) => {
@@ -452,19 +453,19 @@ let AddPlan = forwardRef(
             ></Select>
           </Form.Item>
           <Form.Item label="计划名称" name="name" rules={[rule]}>
-            <Input></Input>
+            <Input placeholder="请输入计划名称"></Input>
           </Form.Item>
           <Form.Item label="计划有效期" name="timeRange" rules={[rule]}>
             <RangePicker style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item label="巡检内容" name="content" rules={[rule]}>
-            <Input></Input>
+            <Input placeholder="请输入巡检内容"></Input>
           </Form.Item>
           <Form.Item label="添加巡检点" name="group"  rules={[rule]}>
             <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
           </Form.Item>
           <Form.Item label="巡检人员" name="userId" rules={[rule]}>
-            <Select options={mapuserlist} fieldNames={{ value: 'id' }}></Select>
+            <Select options={mapuserlist} fieldNames={{ value: 'id' }} placeholder="请选择巡检人员"></Select>
           </Form.Item>
           <Form.Item label="巡检周期" name="cycle" rules={[rule]}>
             <Select
@@ -474,8 +475,9 @@ let AddPlan = forwardRef(
             ></Select>
           </Form.Item>
           {
-            dateCycle !== 1 ? (<Form.Item label="巡检日期" name="time" rules={[rule]}>
+            dateCycle !== 1 ? (<Form.Item label="巡检时间" name="time" rules={[rule]}>
               <Select
+                placeholder="请选择巡检日期"
                 style={{ width: 128 }}
                 options={dateCycle == 2 ? weekCycle : dateCycle == 3 ? monthCycle : []} ></Select>
             </Form.Item>) : null
@@ -485,7 +487,7 @@ let AddPlan = forwardRef(
             <TimePicker format={format} style={{ width: 128 }} />
           </Form.Item>
           <Form.Item label="有效期时长" name="span" rules={[rule]}>
-            <Select options={houropts} style={{ width: 128 }}>
+            <Select placeholder="请选择有效时长" options={houropts} style={{ width: 128 }}>
 
             </Select>
           </Form.Item>

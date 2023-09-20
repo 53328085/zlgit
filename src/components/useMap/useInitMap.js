@@ -16,7 +16,7 @@ import {message} from 'antd'
 export default  function useMap(props={}) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}, id="map"} = props   // isck 是否允许点击
   
- let defaultpoint =  value || lngLat
+ let defaultpoint =  value || lngLat || '120.22830511467954,30.21229461177818'
 
  
   let map;
@@ -41,6 +41,7 @@ export default  function useMap(props={}) {
     let {lon, lat, keyWord} = result.location || {}
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
+     
       addmarker(result.getLocationPoint(), keyWord)
       setAaddress && setAaddress({lng: lon, lat, address: keyWord})
 		}else{

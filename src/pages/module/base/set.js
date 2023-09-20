@@ -14,8 +14,9 @@ import styled from "styled-components";
 import moment from 'moment';
 
 import {ProjectSetting} from '@api/api.js'
-import Mapcom from "@com/useMap";
-import useMap from "@com/useMap/useInitMap"
+import Mapcom from "@com/useMap/indexset";
+//import useMap from "@com/useMap/useInitMap"
+//import useMap from "@com/useMap/indexset"
 import Cupload from "@com/useUpload.js" 
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
@@ -352,10 +353,10 @@ const setAaddress = (value) => {
 }
 }
 
-const serachMap =  useMap({id: "map", lngLat, setAaddress})
+// const serachMap =  useMap({id: "map", lngLat, setAaddress})
 
-console.log(serachMap)
-const onInput = (e) =>  serachMap && serachMap(e.target.value)
+// console.log(serachMap)
+  const onInput = (e) =>  map.current.serachMap(e.target.value)
 const onFinish = async (values) => {
   try {
     for(let b of module) {
@@ -522,14 +523,14 @@ useEffect(() => {
             ]}> 
               <Input placeholder="经纬度" /> 
       </Item>
-       <div id="map"></div>
+  {/*   <div id="map"></div> */}
     
-     {/*  <div className='map'> 
+   <div className='map'> 
          <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />         
-      </div> */}
+      </div> 
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
       <Item label="项目备注"   name="remark"> 
-        <TextArea placeholder="项目详细地址" maxLength={99} style={{height: '32px'}} />
+        <TextArea placeholder="项目详细信息" maxLength={99} style={{height: '32px'}} />
       </Item> 
       {/* <div className="save">
          <Button type="primary" htmlType="submit">保存</Button>
