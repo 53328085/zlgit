@@ -122,10 +122,13 @@ const system = createSlice({
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
         getThemeColor(state, {payload}) {
-            console.log(payload)
            state.themeColor = payload || "#237AE4";
           
-        }
+        },
+        systemConfigRest(state, actions) {
+          console.log(initialState)
+          return state = initialState;
+      }
     },
 
     extraReducers: {      
@@ -201,6 +204,7 @@ export const {
     getCurrentScreen,
     getIsGranary,
     getCurrProjectInfo,
-    getThemeColor
+    getThemeColor,
+    systemConfigRest,
 } = actions
 export default system.reducer

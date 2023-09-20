@@ -4,9 +4,9 @@ import { useRequest, useCountDown } from 'ahooks';
 import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} from 'antd'
 import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
- import {selectUser} from '@redux/user.js'
+ import {selectUser, userRest} from '@redux/user.js'
 import {manager } from '@redux/user'  
-import { getpublishState, publishState } from '@redux/systemconfig.js'  
+import { getpublishState, publishState, systemConfigRest} from '@redux/systemconfig.js'  
 import log from './log.png'
  
  
@@ -191,6 +191,8 @@ const delProject = async () => {
     if (success) {
       delmodal.current.onCancel()
       message.success('删除成功')
+     await dispatch(userRest())
+     await dispatch(systemConfigRest())
       window.location.href="/"
     }else {
      return message.warning(errMsg || '数据出错')
