@@ -13,6 +13,7 @@ export default function fform() {
     ]
   }
   useEffect(() => {
+    
     drawEcharts(ref.current, { 
       dataset: set,
        series: {

@@ -193,8 +193,7 @@ export default function Index() {
     console.log(e)
     setTabvalue(e)
   }
-  useEffect(() => {
-   
+  useEffect(() => {    
     //getData()
   }, [tabvalue])
  const [mode, setMode] = useState(1)
