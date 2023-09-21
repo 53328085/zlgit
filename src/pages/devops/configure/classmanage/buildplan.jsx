@@ -77,9 +77,9 @@ export default function Buildplan() {
   }
   const changePlan = (v) => {
     let arr = []
-   
+
     for (let i = 1; i <= v; i++) {
-      form.resetFields([`name${i}`,`time${i}`])
+      form.resetFields([`name${i}`, `time${i}`])
       arr.push(<FlexDiv>
         <Form.Item label={`班次${i}名称`} name={`name${i}`}>
           <Input placeholder="请输入班次"></Input>
@@ -234,7 +234,7 @@ export default function Buildplan() {
           label="班次选择&nbsp;&nbsp; "
           name="plan"
         >
-          <Select options={planSelect} style={{ width: 183 }} onChange={changePlan}></Select>
+          <Select options={planSelect} style={{ width: 183 }} onChange={changePlan} ></Select>
         </Form.Item>
         {planList}
       </Form>
@@ -257,7 +257,7 @@ export function EditUser({ editUser }) {
       form={form}
     >
       <Form.Item name="user">
-        <Select>
+        <Select >
 
         </Select>
       </Form.Item>

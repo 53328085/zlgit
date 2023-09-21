@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-import UseMap from '@com/useMap'
+// import UseMap from '@com/useMap'
+import UseMap from '@com/useMap/index tadi.js'
 import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()

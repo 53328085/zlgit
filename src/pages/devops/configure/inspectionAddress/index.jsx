@@ -145,6 +145,7 @@ export default function Index() {
       name:'',
       position:'',
       remark:'',
+      addressSpan:""
     })
   }
   const pageinfo = useReactive({
