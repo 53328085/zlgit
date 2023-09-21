@@ -40,6 +40,12 @@ const user = createSlice({
         },
         memorizePhone(state, actions) {           
             return Object.assign({}, state, {memoPhone: actions.payload})
+        },
+        userRest(state, actions) {  
+            let name = state.memorize ? state.name : '';
+            let mobile = state.memoPhone ? state.mobile : '';
+            state = {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
+            return state
         }
     },
     extraReducers: {
@@ -73,7 +79,7 @@ export const manager = state => state.user?.roleType == 3 // 是否是项目管�
 export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员
 export const selectMemorize = state => state.user.memorize
 export const selectMemoPhone = state => state.user.memoPhone
-export const {clearToken, memorizeName, memorizePhone} = actions
+export const {clearToken, memorizeName, memorizePhone, userRest} = actions
 
 
 

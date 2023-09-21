@@ -478,6 +478,7 @@ export const drawEcharts = (
     ...rest
   } = {}
 ) => {  
+
   if (!dom) return
   const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
@@ -556,8 +557,16 @@ export const drawEcharts = (
       ? baseoption
       : type == 3
       ? pieOption({...pieData, grid, legend})
-      : {};   
-  chart.setOption({...setoption, ...rest}, true, chartoption);
+      : {}; 
+      console.log(rest)
+  if(rest.custoption) {
+    chart.setOption({...rest.custoption, grid: {
+        containLabel: true,
+    }}, true, chartoption); //桑基图
+  }else {
+    chart.setOption({...setoption, ...rest}, true, chartoption);
+  }    
+
   chart.resize();
 };
 

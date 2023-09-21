@@ -3,8 +3,10 @@ import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
-import { clearToken, selectUser} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary} from "@redux/systemconfig";
+import { clearToken, selectUser, userRest} from "@redux/user";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, systemConfigRest} from "@redux/systemconfig";
+// import restStore from "@redux/rest";
+ 
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -161,18 +163,24 @@ export default function Log() {
   const {name, roleType} = useSelector(selectUser) || {};
  
   const comurl = useSelector(comSetFirst) 
-  const isconfig = store.getState()?.system.configState
+  const config = useSelector(configState)
+/*   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
  
-  })
+  }) */
   const Item = Form.Item
   const [form] = Form.useForm()
   const onExit = async () => {
-     await dispatch(clearToken()) 
-     return navgite('/')
+      try {
+      await dispatch(userRest());
+       await dispatch(systemConfigRest())
+        return navgite('/')
+      } catch (error) {
+        return navgite('/')
+      }
   }
   const account = () => {
     user.current.onOpen()
@@ -253,11 +261,11 @@ const onJump = useCallback(() => {
   const projectcfg =() => {
     navgite("/projectList")
   }
-  useEffect(() => {
+/*   useEffect(() => {
     return () => {
       unsubscribe()
     }
-  })
+  }) */
   return (
     <Cdiv>
       <Triangle />

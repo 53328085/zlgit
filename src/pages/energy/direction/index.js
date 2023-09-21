@@ -1,150 +1,148 @@
-import React, {useState, useEffect} from 'react'
-import { useRequest } from 'ahooks';
-import style from './style.module.less';
-import { message, Empty  } from 'antd';
-import { Sankey } from '@ant-design/plots';
-import UseHeader from '@com/useHeader'
+import React, { useState, useRef, useEffect, } from "react";
+import { nanoid } from "@reduxjs/toolkit";
+import { Form, Space, DatePicker, Select} from "antd";
+ 
+import Pagecount from '@com/pagecontent'
+ 
+import CustContext from "@com/content.js";
+import { drawEcharts } from "@com/useEcharts";
+
+import Titlelayout from "@com/titlelayout";
+
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import { EnergyFlowRuntime } from '@api/api.js'
-import kong from '@imgs/empty.png'
+import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
+import moment from 'moment';
+import Sankey from "./Sankey";
+import Topology from "./Topology";
+ 
 
-export default function Index() {
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
-      type,
-      content,
-    })
-  }
+ 
+ 
+
+ 
+ 
+ 
+ 
+export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  const { queryComprehensive, queryElectric, queryWater, queryGas } = EnergyFlowRuntime
+  const [form] = Form.useForm();
+  const {Item} = Form
+  
+  
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
+   
+  const [op, setOp] = useState(1)  
+  const picker= ['', 'date', 'month', 'year'][timetype];
+  
+  
+  let type = ['', '日', '月', '年'][timetype]
 
-  const headerProps = {
-    isEnergy:false,//能耗类型
-    comprehensive: true, //包含综合能耗类型
-    isDate: true,//日期 
-  }
-  const [headerData, setHeaderData] = useState({})
-  const getFromChild = data => {
-    if(!data.areaId || data.areaId == 0) return;
-    setHeaderData(data)
-  }
 
-  //获取数据
-  //综合能耗
-  const getComprehensive = () => {
-    let {type, date, areaId} = headerData
-    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
-    queryComprehensive(projectId, dateType, date, [areaId]).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data.link)
-        }else{
-          setData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { run:runCompre } = useRequest(getComprehensive, {
-    manual: true
-  })
-  //电
-  const getElectric = () => {
-    let {type, date, areaId} = headerData
-    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
-    queryElectric(projectId, dateType, date, [areaId]).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data.link)
-        }else{
-          setData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { run:runElectric } = useRequest(getElectric, {
-    manual: true
-  })
-  //水
-  const getWater = () => {
-    let {type, date, areaId} = headerData
-    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
-    queryWater(projectId, dateType, date, [areaId]).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data.link)
-        }else{
-          setData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { run:runWater } = useRequest(getWater, {
-    manual: true
-  })
-  //燃气
-  const getGas = () => {
-    let {type, date, areaId} = headerData
-    let dateType = type == 'year'? 3 : type == 'month' ? 2 : 1 
-    queryGas(projectId, dateType, date, [areaId]).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data.link)
-        }else{
-          setData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { run:runGas } = useRequest(getGas, {
-    manual: true
-  })
-  useEffect(()=>{
-    if(headerData.areaId == 0) return;
-    if(headerData.energyType == 0){
-      runCompre()
-    }
-    if(headerData.energyType == 1){
-      runElectric()
-    }
-    if(headerData.energyType == 2){
-      runWater()
-    }
-    if(headerData.energyType == 3){
-      runGas()
-    }
-  },[headerData])
 
-  //图表数据
-  const [data, setData]= useState([])
-  const config = {
-    data: data,
-    sourceField: 'source',
-    targetField: 'target',
-    weightField: 'value',
-    nodeWidthRatio: 0.01,
-    nodePaddingRatio: 0.03,
-  };
+  const [value, setvalue] = useState('Sankey')
+  
+  const tabs = [
+   /*  {label: '项目基础设置', key: 'set'}, */
+    {label: '能源流向', key: 'Sankey'},
+    {label: '能源拓扑图', key: 'Topology'},
+    
+  ]
 
-  return (
-    <div>
-      {contextHolder}
-      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
-      <div className={style.content}>
-        <div className={style.contentRight}>
-          <div className={style.rightTitle}>能源流向</div>
-          {data.length == 0 ? <img src={kong} style={{marginTop: 150, marginLeft: 700}}></img> : <Sankey style={{width:'1400px',height:650,marginLeft:'120px'}} {...config} /> }
-        </div>
+  const getData = async () => {
+   
+  }
+ 
+  useEffect(() => {
+   
+    getData()
+  }, [value])
+
+
+ 
+ 
+ 
+
+  const timechange = (e) => {
+     setTimetype(e);
+     getData()
+  }
+  const opchange = (e) => {   
+     console.log(typeof e.target.value) 
+     setOp(e.target.value)
+   
+     getData()
+  }
+  const CustView = () => {
+   const viewstyle = {
+      display: 'flex',
+       justifyContent: "space-between",
+       flex: 1,
+       'marginLeft': '32px',
+      'paddingLeft': '32px',
+      'borderLeft': '1px dotted #d7d7d7',
+    }
+    return (
+      <div style={viewstyle}>
+       <Item  label="综合能耗"   initialValue={1} name="view">
+        <Select
+        onChange={opchange}   
+        value={op}    
+        options={[
+          {
+            label: '综合能耗',
+            value: 1,
+          },
+          {
+            label: '电',
+            value: 2,
+          },
+          {
+            label: '水',
+            value: 3,
+          }
+        ]}
+       
+         />
+        </Item>
+      <Space size={16}>
+        <Item label="日期选择" name="type" initialValue={1}>
+           <Select style={{width: '80px'}}   options={[
+            {value: 1, label: '日'},
+            {value: 2, label: '月'},
+            {value: 3, label: '年'},
+           ]}
+           onChange={timechange}
+           ></Select>
+        </Item>
+
+        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
+        </Item>
+      </Space>
       </div>
-    </div>
-  )
+    )
+  }
+
+  const propsData = {
+    form,
+    custview: <CustView />,
+    tabs,
+    handler: getData,
+    value,
+    setvalue,
+  }
+  const ProjectCom = {
+    Sankey,
+    Topology,
+   }
+   let Com = ProjectCom[value]
+    return (
+      <CustContext.Provider value={propsData}>
+      <Pagecount showserach={true} pd="32px">   
+          
+       { <Com   projectId={projectId} />}
+        
+      </Pagecount>
+      </CustContext.Provider>
+    )
 }

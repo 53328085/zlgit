@@ -36,7 +36,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -386,6 +386,7 @@ export default function Index() {
        let {status, value: {success, data}} = res
        if (status ==='fulfilled') {
           if(success) {
+            dispatch(setCurrentlevel({}))// 当前项目设置为空对象
             index == 0 && dispatch(getOnelevel(data || []));
             index == 1 && dispatch(getshifts(data || []))
             index == 2 && (menu = handlermenu(data, type, id))           

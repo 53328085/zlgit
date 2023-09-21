@@ -379,7 +379,7 @@ export default function Account({ projectId, CModal }) {
 
   const reset = (record) => {
     setUsername({ ...record });
-    newpwd.current = Math.random().toString().slice(2, 8);
+    newpwd.current = `wuLian@${Math.random().toString().slice(2,8)}`
     rref.current.onOpen();
   };
   const restOk = async () => {

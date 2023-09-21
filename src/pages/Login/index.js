@@ -17,7 +17,7 @@ import {
 import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary, configProject,
   getMenus,
   getshifts,
-  getOnelevel, getThemeColor} from "@redux/systemconfig";
+  getOnelevel, getThemeColor, setCurrentlevel} from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
@@ -397,6 +397,7 @@ function UserLog() {
        let {status, value: {success, data}} = res
        if (status ==='fulfilled') {
           if(success) {
+            dispatch(setCurrentlevel({})) //当前项目设置为空对象
             index == 0 && dispatch(getOnelevel(data || []));
             index == 1 && dispatch(getshifts(data || []))
             index == 2 && (menu = handlermenu(data, id))

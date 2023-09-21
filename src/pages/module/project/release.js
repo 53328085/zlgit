@@ -4,9 +4,9 @@ import { useRequest, useCountDown } from 'ahooks';
 import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} from 'antd'
 import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
- import {selectUser} from '@redux/user.js'
+ import {selectUser, userRest} from '@redux/user.js'
 import {manager } from '@redux/user'  
-import { getpublishState, publishState } from '@redux/systemconfig.js'  
+import { getpublishState, publishState, systemConfigRest} from '@redux/systemconfig.js'  
 import log from './log.png'
  
  
@@ -65,7 +65,7 @@ export default function Release({CModal, projectId}) {
   const projectName = useRef('')
   const {publishProject, queryProjectPublishInfo, DeleteProject} = ProjectSetting 
   const [phone, setPhone] = useState([]);
-  const [title, setTitle] = useState('')
+ 
  // const [moblies, setMoblie] = useState();
  const {mobile: logMobile} = useSelector(selectUser)
  const publish = useSelector(publishState)
@@ -74,13 +74,14 @@ export default function Release({CModal, projectId}) {
  const ismanager = useSelector(manager)
   const code =useRef();
   const stateV = useRef('');
-  const [curProjectId, setCurProject] = useState();
+  
+  const [curProject, setCurProject] = useState({});
   const getData = () => {
     return  queryProjectPublishInfo(projectId).then(res => {
       let {success, data } = res
     
       if (success && data) {  
-       // setMobile(data.mobile)     
+      
         return {
           total: 1,   // 返回的是对象
           list: [data]
@@ -96,28 +97,39 @@ export default function Release({CModal, projectId}) {
     })
   }
   const {data , error, loading, refresh} = useRequest(getData, {
-   // onSuccess: () => message.success('发布成功'),
+   // onSuccess: (data) => {  },
   //  onError: (e) => message.warning(e.message || '数据出错'),
   })
   
-  const onChange = async (f, {id, state, mobile}) => { 
-    stateV.current = state;
-    let text = stateV.current == 1 ? '项目取消发布' : '项目发布'
-    setTitle(text)
-    setCurProject(id)     
-     setMobile(mobile)
-    let phone = mobile?.split('');
-    phone.splice(3, 4, '*', '*', "*", "*" ).join();
+  const onChange = async (f, {id, state, mobile}) => {  
+    console.log(mobile)
+    setCurProject({id, state, mobile})
+  //  stateV.current = state;
+    let title = state == 1 ? '项目取消发布' : '项目发布'
+    setCurProject({id, state, mobile, title})
+    
+    if(state ==0 && mobile?.length < 11) return message.warning("手机号码无效") // 手机号码为管理员的
+   // setTitle(text)
+ //  setCurProject(id)     
+  //   setMobile(mobile)
+    let phone
+    if (mobile) {
+      phone = mobile?.split('');
+      phone.splice(3, 4, '*', '*', "*", "*" ).join();
+    }
     setPhone(phone)
-     modal.current.onOpen() 
+    modal.current.onOpen() 
   };
 
  const Countdown = ({mobile}) => { // 获取验证吗
-  if (!mobile) return message.warning('手机号码不能为空')
+   console.log('mobile', mobile)
+ // if (!mobile) return message.warning('手机号码不能为空, 请先设置项目管理员手机号码')
   const getCode = async () => {
-    const {data, success} = await Login.GetVerification(mobile)
+    const {data, success,errMsg} = await Login.GetVerification(mobile)
     if (success) {
       setTargetDate(Date.now() + 1000*60)
+    }else {
+      message.warning(errMsg || "数据出错")
     }
  }
   const [targetDate, setTargetDate] = useState(0)
@@ -136,28 +148,20 @@ const onCodeChange = (e) => {
    console.log(code.current);
 }
 const onOk =async () => { // 发布 // 取消发布
-
+   
   try {
     if (!code.current) {
       return message.warning('请输入验证吗')
     }
-    let state = parseInt(stateV.current) === 1 ? 0 : 1
-    const {success} = await publishProject({projectId: curProjectId, state, code: code.current, moble: mobile})
+    let state = parseInt(curProject.state) === 1 ? 0 : 1
+    const {success} = await publishProject({projectId: curProject.id, state, code: code.current, moble: curProject.mobile})
    
     if (success) {
       dispatch(getpublishState(state))
       code.current = ''
       modal.current.onCancel();
-      message.success({
-        content: stateV.current === 1 ?   '取消发布成功' : '发布成功',
-        duration: 0.2,
-        onClose: () => {
-          //modal.current.onCancel();
-          // code.current = '';
-          refresh()
-        }
-      })
-     
+      message.success(curProject.state === 1 ?   '取消发布成功' : '发布成功')
+      refresh()
     } 
   } catch (error) {
     console.log(error)
@@ -170,23 +174,25 @@ const projectNameChange = (e) => {
 
 // 删除 start 
 const onDel = (item) => {
-    logMobile
+  //  logMobile
     let phone = logMobile?.split('');
      phone.splice(3, 4, '*', '*', "*", "*" ).join();
      setLoguerphoe(phone)
-     setCurProject(item.id)
+     setCurProject(item)
      delmodal.current.onOpen()
   
    
 }
 const delProject = async () => {
-
+  console.dir(curProject)
   try {
      if (!projectName.current.trim()) return message.warning('请输入短信验证吗')
-    const {success, errMsg}  = await  DeleteProject(curProjectId, logMobile, projectName.current);
+    const {success, errMsg}  = await  DeleteProject(curProject.id, logMobile, projectName.current);
     if (success) {
       delmodal.current.onCancel()
       message.success('删除成功')
+     await dispatch(userRest())
+     await dispatch(systemConfigRest())
       window.location.href="/"
     }else {
      return message.warning(errMsg || '数据出错')
@@ -197,6 +203,26 @@ const delProject = async () => {
   }
  
 }
+ 
+const publishing = (
+  <>
+  {
+  curProject.state == 1 ? 
+    <>
+  <Title level={4}>取消发布项目时 用户需知</Title>
+  <Paragraph>1、项目取消发布后，项目管理中的各项设置将处于可编辑状态</Paragraph>
+  <Paragraph>2、项目取消发布后，设备及网关档案将处于可编辑状态</Paragraph>
+
+  </>
+   :
+   <>
+  <Title level={4}>发布项目时 用户需知</Title>
+  <Paragraph>1、项目发布后，将锁定项目管理中的各项设置</Paragraph>
+  <Paragraph>2、项目发布后，将锁定设备及网关档案</Paragraph>
+  </>
+  }
+   </>
+)
 
   const Item =({item}) =>  (
     <Itembox>
@@ -234,15 +260,16 @@ const delProject = async () => {
   )
   return  <Maibox>
            {data?.list.map(item => <Item item={item} key={item.id} />)} 
-           <CModal ref={modal} title={title} mold='cust' onOk={onOk}>
-               <div>
-                 <Title level={4}>取消发布项目时 用户需知</Title>
-                 <Paragraph>1、项目取消发布后，项目管理中的各项设置将处于可编辑状态</Paragraph>
-                 <Paragraph>2、项目取消发布后，设备及网关档案将处于可编辑状态</Paragraph>
-                 <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}}>{phone}</Button><Countdown mobile={mobile} /></Space></Paragraph>
-                 <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
-                 <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
-               </div>
+           <CModal ref={modal} title={curProject.title} mold='cust' onOk={onOk}>
+           <div>
+               { 
+                publishing
+               }
+              <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}} disabled={!phone}>{phone}</Button><Countdown mobile={curProject.mobile} /></Space></Paragraph>
+              <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
+              <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
+              </div>
+            
            </CModal>
 
            <CModal ref={delmodal} title='删除项目' mold='cust' onOk={delProject} width={640} type="warn">
