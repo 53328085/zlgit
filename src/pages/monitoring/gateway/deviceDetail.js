@@ -80,7 +80,8 @@ export default function GatewayDetail(props) {
     let day = new Date().getDate()
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment();
-    const yesterday = date + ' ' + "00:00:00"
+  // const yesterday = date + ' ' + "00:00:00"
+    const yesterday = moment().startOf('day').format('YYYY-MM-DD HH:mm:ss')
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -579,7 +580,7 @@ export default function GatewayDetail(props) {
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD HH:mm:ss' disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment(today), moment(today)]} />
+                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment(yesterday), moment(today)]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
                         
                     </div> : null
