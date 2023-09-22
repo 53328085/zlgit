@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import styled from 'styled-components'
 import { useRequest, useCountDown } from 'ahooks';
 import {Image, Tag, Switch, Typography, message, Space, Button, Divider, Input} from 'antd'
@@ -65,7 +66,7 @@ export default function Release({CModal, projectId}) {
   const projectName = useRef('')
   const {publishProject, queryProjectPublishInfo, DeleteProject} = ProjectSetting 
   const [phone, setPhone] = useState([]);
- 
+  const navigate = useNavigate()
  // const [moblies, setMoblie] = useState();
  const {mobile: logMobile} = useSelector(selectUser)
  const publish = useSelector(publishState)
@@ -184,16 +185,32 @@ const onDel = (item) => {
    
 }
 const delProject = async () => {
-  console.dir(curProject)
+
+ 
   try {
      if (!projectName.current.trim()) return message.warning('请输入短信验证吗')
     const {success, errMsg}  = await  DeleteProject(curProject.id, logMobile, projectName.current);
     if (success) {
+     
       delmodal.current.onCancel()
-      message.success('删除成功')
-     await dispatch(userRest())
-     await dispatch(systemConfigRest())
-      window.location.href="/"
+      window.location.href = "/"
+    //  dispatch(userRest())
+     // dispatch(systemConfigRest())
+      message.success("删除成功")
+      /* message.success({
+        content: '删除成功',
+        duration: 2,
+        onClose: () => {
+          window.location.href = "/"
+        }
+      }) */
+    
+      
+    
+     
+    
+     //navigate("/login")
+     //window.location.href=new URL(window.location.href).hostname
     }else {
      return message.warning(errMsg || '数据出错')
     }
