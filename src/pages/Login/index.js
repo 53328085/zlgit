@@ -428,25 +428,31 @@ function UserLog() {
  }
 
  let onSubmit = async (value, type=0, codekey) => {
-   console.log(value)
-   const {name, pwd, code} = value;  
-   value.pwd = cipher(name, pwd)
-   value.type = type;
-   if(type == 0){
-    value.code = code
-    value.key = codekey
-   } 
-   let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
-   if(success) {
-      let {projectId, roleType} = data
-      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {      
-        enterProject(projectId)
-      }
-
-   }else {
-    return message.warning(errMsg || "数据出错,请重试");
+   try {
+    const {name, pwd, code, mobile} = value;  
+    value.pwd = cipher(name, pwd)
+    value.type = type;
+    if(type == 0){
+     value.code = code
+     value.key = codekey
+    } else if(type == 1) {
+      value.code = cipher(mobile, code)
+    }
+    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
+    if(success) {
+       let {projectId, roleType} = data
+       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
+       if (roleType == 3 || roleType == 4) {      
+         enterProject(projectId)
+       }
+ 
+    }else {
+     return message.warning(errMsg || "数据出错,请重试");
+    }
+   } catch (error) {
+     console.log(error)
    }
+  
 
  }
 
@@ -518,8 +524,7 @@ function UserLog() {
         labelWrap
         form={userform}
         name="login"
-        onFinish={(value) => {
-          console.log(value)
+        onFinish={(value) => {         
           onSubmit(value, 0, codekey)
         }}
         onFinishFailed={onFinishFailed}

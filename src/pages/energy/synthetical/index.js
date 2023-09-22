@@ -25,6 +25,7 @@ const Laybox = styled.div`
     display: grid;
     grid-template-columns: 1256px 408px;
     column-gap: 16px; 
+    overflow: hidden;
     .upleft {
       display: grid;
       grid-template-rows: 40px 472px ;
