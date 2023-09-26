@@ -38,7 +38,7 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
             >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label={levelname.current} name="areaId" >
+                    <Form.Item label={levelname} name="areaId" >
                         <Select 
                         showSearch
                         filterOption={(val, opts) => {
@@ -90,7 +90,7 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
 }
 //编辑Modal
 export const EditModal=(props)=>{
-    const {editModalRef,editform,areaList,levelname,...other} =props;
+    const {editModalRef,editform,areaList,levelname,onOk,...other} =props;
     const areas = areaList?.filter(it=>it.id!==0)
     let list=[]
     for (let i=0; i<Array(6).length; i++){
@@ -102,7 +102,7 @@ export const EditModal=(props)=>{
     const MemoModal=useMemo(()=>{
       return( <Modal mold="cust" ref={editModalRef} {...other} footer={[
         <Button onClick={()=>{editModalRef.current?.onCancel()}}>取消</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOkEdit}>保存</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
         onClick={ other.onSureEditModal}>应用</Button>,
     ]}>
@@ -116,7 +116,7 @@ export const EditModal=(props)=>{
       >
       <Row className={style.customItem}>
           <Col flex={1}>
-              <Form.Item label={levelname.current} name="areaId" >
+              <Form.Item label={levelname} name="areaId" >
                   <Select 
                   showSearch
                   filterOption={(val, opts) => {
@@ -164,7 +164,7 @@ export const EditModal=(props)=>{
       </Form>
   </Modal>)
      
-    },[levelname.current])
+    },[levelname])
     return (
       <>
        {MemoModal}

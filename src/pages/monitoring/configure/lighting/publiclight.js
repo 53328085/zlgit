@@ -118,6 +118,7 @@ export default function parkstreet({areaList,levelname}) {
   }
   //应用编辑
   const onSureEditModal=async ()=>{
+    console.log('应用')
     const formvalues = editform.getFieldValue()
     const areaId =compRef.current.selRef.current
     const alike=compRef.current.inpRef.current

@@ -22,6 +22,7 @@ import { WarningFilled } from "@ant-design/icons";
 import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
 import { useSelector } from "react-redux";
+import {nanoid} from '@reduxjs/toolkit'
 //levelDefaultLabel
 import { selectUser } from "@redux/user";
 import { levelDefaultLabel } from "@redux/systemconfig";
@@ -418,25 +419,25 @@ export default function Account({ projectId, CModal }) {
       <div
         className="admin"
         style={{ flex: 1, borderBottom: "none" }}
-        key={field.id}
+        key={nanoid()}
       >
         <div className="item">
-          <Item name={[index, "name"]} noStyle>
-            <Input size="middle" defaultValue={field.name} />
+          <Item name={[index, "name"]} noStyle initialValue={field.name} >
+            <Input size="middle"  />
           </Item>
-          <Item name={[index, "nickName"]} noStyle>
-            <Input size="middle" defaultValue={field.nickName} />
+          <Item name={[index, "nickName"]} noStyle initialValue={field.nickName} >
+            <Input size="middle" />
           </Item>
-          <Item name={[index, "mobile"]} noStyle>
-            <Input size="middle" defaultValue={field.mobile} />
+          <Item name={[index, "mobile"]} noStyle initialValue={field.mobile}>
+            <Input size="middle"  />
           </Item>
-          <Item name={[index, "validStageTime"]} noStyle>
-            <Input
-              size="middle"
-              defaultValue={moment(
+          <Item name={[index, "validStageTime"]} noStyle  initialValue={moment(
                 field.validStageTime,
                 "YYYY-MM-DD HH:mm:ss"
-              ).format("YYYY/MM/DD")}
+              ).format("YYYY/MM/DD")}>
+            <Input
+              size="middle"
+             
             />
           </Item>
           <Item noStyle>
@@ -455,7 +456,7 @@ export default function Account({ projectId, CModal }) {
         <Space size={8} wrap>
           <Text>{defaultLabel}权限</Text>{" "}
           {field.areaAuthority?.map((item) => (
-            <Ctag key="item">{item.name}</Ctag>
+            <Ctag key={nanoid()}>{item.name}</Ctag>
           ))}
         </Space>
       </div>
@@ -491,7 +492,7 @@ export default function Account({ projectId, CModal }) {
             <Text>手机号</Text> <Text>有效期</Text>
           </div>
           {oplist?.map((item) => (
-            <div className="item" key={item.id}>
+            <div className="item" key={nanoid()}>
               <Input size="middle" value={item.name} readOnly />
               <Input size="middle" readOnly value={item.nickName} />
               <Input size="middle" readOnly value={item.mobile} />
@@ -574,7 +575,7 @@ export default function Account({ projectId, CModal }) {
               <Space size={8} wrap>
                 <Text>{defaultLabel}权限</Text>{" "}
                 {areas.map((item) => (
-                  <Ctag key="item">{item.name}</Ctag>
+                  <Ctag key={nanoid()}>{item.name}</Ctag>
                 ))}
               </Space>
             </>

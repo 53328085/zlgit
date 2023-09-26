@@ -23,7 +23,7 @@ import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
-import { pwdValidator, phoneValidator, codeValidator } from "@pages/rule";
+import { pwdValidator, phoneValidator, codeValidator, imgcodeValidator } from "@pages/rule";
 import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
 import bgImg from "./logBg.png";
@@ -427,21 +427,32 @@ function UserLog() {
     
  }
 
- const onSubmit = async (value, type=0) => {
-   const {name, pwd} = value;  
-   value.pwd = cipher(name, pwd)
-   value.type = type;
-   let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
-   if(success) {
-      let {projectId, roleType} = data
-      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {      
-        enterProject(projectId)
-      }
-
-   }else {
-    return message.warning(errMsg || "数据出错,请重试");
+ let onSubmit = async (value, type=0, codekey) => {
+   try {
+    const {name, pwd, code, mobile} = value;  
+    value.pwd = cipher(name, pwd)
+    value.type = type;
+    if(type == 0){
+     value.code = code
+     value.key = codekey
+    } else if(type == 1) {
+      value.code = cipher(mobile, code)
+    }
+    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
+    if(success) {
+       let {projectId, roleType} = data
+       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
+       if (roleType == 3 || roleType == 4) {      
+         enterProject(projectId)
+       }
+ 
+    }else {
+     return message.warning(errMsg || "数据出错,请重试");
+    }
+   } catch (error) {
+     console.log(error)
    }
+  
 
  }
 
@@ -469,10 +480,13 @@ function UserLog() {
     color: "#999",
     marginRight: "16px",
   };
+
+ 
   const Userlog = () => {
     let initmemorize = useSelector(selectMemorize);
     let { name } = useSelector(selectUser);
-    let [code, setCode] = useState()
+    let [codekey, setCodeKey] = useState()
+    let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
     const ckChange = (e) => {
@@ -480,17 +494,24 @@ function UserLog() {
     };
     const getCode = async () => {
        try {
-         let data = await  Logapi.GetCode()
+         let {data, success} = await  Logapi.GetCode()
+         if(success) {  
+           let {key, image} = data || {}
+           setCodeKey(key)
+           setCodeUrl(image)
+
+         }
        } catch (error) {
         
        }
          
     }
+    
   /*   store.subscribe(() => {
       initmemorize = store.getState()?.memorize;
     }); */
     useEffect(() => {
-     // getCode();
+      getCode();
       return () => {
         setLoading(false);
       };
@@ -503,7 +524,9 @@ function UserLog() {
         labelWrap
         form={userform}
         name="login"
-        onFinish={onSubmit}
+        onFinish={(value) => {         
+          onSubmit(value, 0, codekey)
+        }}
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
@@ -558,23 +581,24 @@ function UserLog() {
             placeholder="请输入密码"
           />
         </Itembox>
-        <Itembox
-         
-          hasFeedback
-          btm="32px"
-          rules={[
+       
+        
+          <Itembox
+         hasFeedback
+         btm="32px"
+         style={{alignItems: "center"}}
+       >
+        <Input.Group compact>
+          <Item  name="code" noStyle  rules={[
+           {
+             required: true,
+             message: "请输入验证码",
+           },
             {
-              required: true,
-              message: "请输入验证码",
-            },
-             {
-            validator: pwdValidator
-            },  
-          ]}
-        >
-          <Input.Group compact>
-          <Item  name="code" noStyle>
-          <Logpsd
+           validator: imgcodeValidator
+           },  
+         ]}>
+          <Logipt
             style={{width: "264px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
             prefix={<Ipticon />}
             url={imgurl.pwd}
@@ -582,9 +606,11 @@ function UserLog() {
             placeholder="请输入验证码"
           />
           </Item>
-           <Image src={code} style={{height: "42px", width: "136px"}} preview={false} /> 
+           {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> }
            </Input.Group>
-        </Itembox>
+           </Itembox>
+         
+       
         <Itembox valuePropName="checked">
           <Logck onChange={ckChange} defaultChecked={initmemorize}>
             记住用户名
@@ -740,6 +766,7 @@ function UserLog() {
     );
   }
 
+ 
   const Phone = React.memo(Phonelog);
   const params = useParams();
   const type = useMemo(() => {
@@ -769,7 +796,8 @@ function UserLog() {
           手机登录
         </span>
       </Logtype>
-      {state ? <Userlog /> : <Phonelog />}
+     {state ? <Userlog /> : <Phonelog />}
+  
     </Logbox>
   );
 }

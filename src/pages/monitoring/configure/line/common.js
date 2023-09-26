@@ -383,6 +383,7 @@ let AddMianMianModal = forwardRef(({ addmianRef, addmianform, ...other }) => {
             <BlueColumn name="新增主线" styled={{ padding: '24px 0px' }}></BlueColumn>
             <Form
                 form={addmianform}
+                preserve={false}
             >
                 <Form.Item label="主线名称" name="mainname">
                     <Input style={{ width: 435 }} ></Input>

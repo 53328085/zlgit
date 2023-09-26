@@ -322,7 +322,7 @@ export default function Index() {
             <Item label='申报需量(kW)' name='demand' rules={[{required:true, message:'请输入申报需量'}]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
-            <Item label='电压等级(kV)' name='level' rules={[{required:true, message:'请输入电压等级(V)'}]}>
+            <Item label='电压等级(kV)' name='level' rules={[{required:true, message:'请输入电压等级(kV)'}]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
             <Item label='备注' name='remark'>

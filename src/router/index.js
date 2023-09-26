@@ -124,8 +124,9 @@ function getconfig({request}) {
   {
    path: "/",
    element: <Login />,   
-   loader: async () => ({name: 'zl'})
+   
    },
+ 
    {
      path: "/projectList",
      element: <Redirect />

@@ -8,6 +8,8 @@ import {Monitoring} from '@api/api'
 import { publishState } from '@redux/systemconfig'
 const {PubliclightManager:{StreetLightAdd,StreetLightQueryByPage,StreetLightUpdate,StreetLightDelete,StreetLightImport}}=Monitoring
 export default function parkstreet({areaList,levelname}) {
+
+  console.log('levelname'+ levelname)
   const [tableParams,setTableParams]=useState({
     current:1,
     pageSize:10,
@@ -174,7 +176,7 @@ export default function parkstreet({areaList,levelname}) {
   }
   //打开新增窗口
   const addopen=()=>{
-    if(!levelname.current){
+    if(!levelname){
       message.warning('请添加区域')
       return
     }

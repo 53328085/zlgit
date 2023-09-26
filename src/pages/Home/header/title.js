@@ -32,7 +32,7 @@ export default function  Title (){
  
    return (
     <Divlog>
-        <Image rootClassName={style.custlog} preview={false}  width={120} src={projectLog || logo}></Image>
+        <Image  height={32} width={180} preview={false}    src={projectLog || logo}></Image>
        {/*  <span >{titleCn || '正泰智慧能源服务平台'}</span> */}
         <Text ellipsis={{tooltip: projectName}} style={{maxWidth: "200px", fontSize: "16px", color: "#fff"}}>{projectName || '正泰综合能源服务平台'}</Text>
     </Divlog>
