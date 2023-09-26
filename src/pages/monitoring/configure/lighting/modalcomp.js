@@ -38,7 +38,7 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
             >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label={levelname.current} name="areaId" >
+                    <Form.Item label={levelname} name="areaId" >
                         <Select 
                         showSearch
                         filterOption={(val, opts) => {
@@ -116,7 +116,7 @@ export const EditModal=(props)=>{
       >
       <Row className={style.customItem}>
           <Col flex={1}>
-              <Form.Item label={levelname.current} name="areaId" >
+              <Form.Item label={levelname} name="areaId" >
                   <Select 
                   showSearch
                   filterOption={(val, opts) => {
@@ -164,7 +164,7 @@ export const EditModal=(props)=>{
       </Form>
   </Modal>)
      
-    },[levelname.current])
+    },[levelname])
     return (
       <>
        {MemoModal}

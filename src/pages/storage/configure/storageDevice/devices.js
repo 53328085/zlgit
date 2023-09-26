@@ -33,10 +33,10 @@ export default function Index(props) {
     const areaList = useSelector(selectOneLevel)
     const areaName = useSelector(levelDefaultLabel) || '园区'
     const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-
+   
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
-  useEffect(() => {
-    if (areaList.length == 0 || !areaList) {
+  useEffect(() => {    
+    if (areaList.length == 0 || !areaList) {    
       message.error('当前项目尚未创建园区!')
     } else {
       form.setFieldValue('areaId', oneLevelDefaultId)

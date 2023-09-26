@@ -132,7 +132,7 @@ export default function gateway({ deviceStyle }) {
     editform.setFieldsValue({ ...record })
   }
 
-  //确认编辑
+  //确认编辑保存
   const editOk = async () => {
     editform.validateFields().then(async () => {
       const {
@@ -178,7 +178,7 @@ export default function gateway({ deviceStyle }) {
     
   }
   //确认编辑应用
-  const editSure= ()=>{
+  const editSure= (isclose=false)=>{
     editform.validateFields().then(async () => {
       const {
         id,
@@ -220,6 +220,7 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateTransformer(params)
       if (resp.success) {
         message.success("更新成功")
+        isclose &&  EditModalFormRef?.current?.onCancel()
         getQueryByPageTransformer(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
         
       } else {
@@ -553,8 +554,9 @@ export default function gateway({ deviceStyle }) {
     EditModalFormRef,
     width: 746,
     name: '编辑变压器',
-    onOk: editOk,
-    onSure:editSure,
+   // onOk: editOk,
+    onOk: () => editSure(true), // 保存
+    onSure:() =>editSure(false), // 应用
     onCancel: editCancel
   }
   const ErrModalProps = {

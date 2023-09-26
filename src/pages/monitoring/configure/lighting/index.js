@@ -17,8 +17,9 @@ export default function Index() {
 
 
   const areaList = useSelector(selectOneLevel)
-
-  const levelname = useRef("")
+  console.log(areaList)
+  const levelname = areaList?.length > 0 ? areaList[0].levelName : ''
+  console.log(levelname)
   let dataProps={
     value,
     setvalue,

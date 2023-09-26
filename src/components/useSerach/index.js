@@ -103,7 +103,7 @@ export default function UseSerach(props) {
     }
    
   }
-  useEffect(() => {
+  useEffect(() => { 
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [])
  
@@ -141,9 +141,8 @@ export default function UseSerach(props) {
       }    
   
   }, [projectId, AreaID, isSite])
-  console.log(levelone)
-  
-  console.log(oneLevelDefaultId)
+ 
+
 
   useEffect(() => {
    form.setFieldsValue({
