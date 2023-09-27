@@ -112,7 +112,7 @@ const list = (arr, str,sty) => {
 }
 export default function Item(props) {
   let {type, name, sn, address, total,peak,avg,low} = props
-  console.log(type)
+  
   return (
     <Itembox>
        <div className='upper'>

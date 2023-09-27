@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, {  useState, useRef } from 'react'
 
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
+
+import {Button,  message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
-import { AreaSetting, energyStructure, DesElectric} from '@api/api.js'
+import {  DesElectric} from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'

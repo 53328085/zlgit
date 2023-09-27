@@ -157,8 +157,9 @@ export default function Index() {
 
   ]
 
-  const getData =  ({current, pageSize}, form={}) => {
+  const getData =  ({current, pageSize}, form) => {
     console.log(form)
+    if(!form) return;
     let {area, date, type } = form 
    
     const params = {
@@ -197,6 +198,7 @@ export default function Index() {
     manual: false,
   })
   
+  console.log(tableProps)
   const {submit} = search
 
 
@@ -248,12 +250,7 @@ export default function Index() {
      setTimetype(e);
      submit()
   }
-  const opchange = (e) => {   
-     console.log(typeof e.target.value) 
-     setOp(e.target.value)
-    // form.resetFields()
-     getData()
-  }
+
   const CustView = () => {
    const viewstyle = {
       display: 'flex',
@@ -309,7 +306,7 @@ export default function Index() {
         <Laybox  >
             
              {
-              mode == 1 ? items : <UseTable dataSource={tableProps} columns={columns} key="table" />
+              mode == 1 ? items : <UseTable {...tableProps} columns={columns} key="table" />
              }  
            
            

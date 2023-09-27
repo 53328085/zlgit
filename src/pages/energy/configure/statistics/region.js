@@ -27,7 +27,7 @@ import { CustButton } from "@com/useButton";
 import Mapcom from "@com/useMap";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
-
+import Mask from '@com/mask.jsx'
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -502,6 +502,7 @@ const getSelected = async ({areaId, type=devietype}) => {
   
   return (
     <Mainbox ref={boxref}>
+      {open ? Mask() : null }
       <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
