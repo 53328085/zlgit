@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
@@ -9,6 +10,7 @@ import warning from '@imgs/warning.png'
 import { AreaSetting, energyStructure, DesElectric} from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
+import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
 
 
@@ -42,7 +44,7 @@ export default function Index ({projectId, areaId}) {
     })
   }
   const { run: queryRun } = useRequest(getTreeData,{
-    
+    refreshDeps: [areaId]
   })
 
 
@@ -105,14 +107,14 @@ export default function Index ({projectId, areaId}) {
   }
   const addMain = () => {
     
-    setModalTitle('新增主节点')
-    setFormLabel('主节点名称')
+    setModalTitle('新增重点设备')
+    setFormLabel('重点设备名称')
     setParentId(0)
     setModalTag('add')
     aref.current.onOpen()
   }
   const edit = (id, value) => {
-    setModalTitle('编辑重点设备节点')
+    setModalTitle('编辑重点设备')
     setFormLabel('重点设备名称')
     setUpdateId(id)
     setModalTag('edit')
@@ -135,7 +137,7 @@ export default function Index ({projectId, areaId}) {
       if(modalTag == 'add'){
         insertDrive(params).then(res => {
           if(res.success){
-            messageContent('success','新增重点设备节点成功!')
+            messageContent('success','新增重点设备成功!')
           }else{
             messageContent('error', res.errMsg)
           }
@@ -218,32 +220,6 @@ export default function Index ({projectId, areaId}) {
         setDeleteDom(true)
         setTransTag('open')
    })
-
-  return
-    queryDriveConfig({projectId, id, areaId}).then(res => {
-      let {success, data} = res
-      if(success){
-        if(!data){
-          setSubTable([])
-          setUnknownTable([])
-        }else{
-          if(data.relations){
-            setSubTable(data.relations)
-          }else{
-            setSubTable([])
-          }
-          if(data.noRelations){
-            setUnknownTable(data.noRelations)
-          }else{
-            setUnknownTable([])
-          }
-        }
-        setDeleteDom(true)
-        setTransTag('open')
-      }else{
-        messageContent('error',res.errMsg)
-      }
-    })
   }
   const getSaveValue = values => {
     let params = []
@@ -253,7 +229,7 @@ export default function Index ({projectId, areaId}) {
     
     conifgDrive({projectId, id: structureId}, params).then(res => {
       if(res.success){
-        messageContent('success', '重点设备节点配置成功!')
+        messageContent('success', '重点设备配置成功!')
         setTransTag('close')
         setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
@@ -265,17 +241,16 @@ export default function Index ({projectId, areaId}) {
     setTransTag(params)
     setTimeout(()=> {setDeleteDom(false)}, 600)
   }
-
+ 
   return (
-    <div>
+    <div style={{flex: 1, display: 'flex'}}>
       {contextHolder}
-      {transTag == 'open' ? <div className={style.mask}></div> : null}
+      {transTag == 'open' ? Mask() : null}
      
-      <div className={style.mainContent}>
-        <div className={style.title}>
+      <Titlelayout title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
-          <Button type='primary' style={{width: 96}} onClick={() => addMain()}>新增主节点</Button>
-        </div>
+          <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
+        </div>}>
         <div className={style.lineTree}>
           <div className={style.treeTitle}>
             <span className={style.treeItem}>重点设备名称</span>
@@ -288,7 +263,7 @@ export default function Index ({projectId, areaId}) {
         {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
           <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
         </div>  : null}
-      </div>
+      </Titlelayout>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>
           <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
