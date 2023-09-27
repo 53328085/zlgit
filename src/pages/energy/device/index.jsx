@@ -4,12 +4,12 @@ import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, 
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
- 
-import {EnergyComprehensive} from "@api/api.js"
+import {useAntdTable} from 'ahooks'
+import {QueryElectric} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import Citem from './item'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import moment from "moment";
  
 import UseTable from "@com/useTable"
@@ -102,6 +102,7 @@ const datas = headers.map((n, index) => (
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
+  const areaId = useSelector(selectOneLevelDefaultId)
   const [tableData, setTableData] = useState(datas)
   const [form] = Form.useForm();
   const {Item} = Form
@@ -156,39 +157,49 @@ export default function Index() {
 
   ]
 
-  const getData = async () => {
-    const {area, date, type, shiftNo, view=1} = form.getFieldsValue() || {}
-    let time;
-    if (type == 1)  {
-      time = date.format('YYYY-MM-DD')
-    } else if(type == 2) {
-      time = date.format('YYYY-MM') + '-01'
-
-    } else if(type == 3) {
-       time = date.format('YYYY')+ '-01-01'
-    }
-    const querys = {
-      type,
-      shiftNo,
-      projectId,
-      date: time
-   }
-    const param = [area]
-    let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
-    let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
-    let handler = ['', energy, cost][view][tabvalue]
-    try {
-     let {success, data} =  await EnergyComprehensive[handler](querys, param)
+  const getData =  ({current, pageSize}, form={}) => {
+    console.log(form)
+    let {area, date, type } = form 
    
-     if(success) {
-      setOverview({...qverview, ...data})
-     }else {
-       return {}
+    const params = {
+      type,
+      projectId,
+      date: date?.format('YYYY-MM-DD'),
+      areaId:area,
+      pageNum: current,
+      pageSize,
+   }
+   return QueryElectric.query(params).then(res => {
+     let {success, data, total} = res
+     if (success && Array.isArray(data) && data.length >0) {
+      return {
+        list: data,
+        total
+      }  
+     } else {
+      return {
+        list: [],
+        total: 0
+      }  
      }
-    } catch (e) {
-      console.log(e)
-    }
+   }).catch()
+   
   }
+
+  const {tableProps, search, runAsync, params} = useAntdTable(getData, {
+    form,
+    defaultParams: [{current: 1, pageSize: 14}, {
+      date: moment(new Date(), 'YYYY-MM-DD'), 
+      type: 2,
+      area: areaId,
+    }],
+    refreshDeps: [projectId, areaId],
+    manual: false,
+  })
+  
+  const {submit} = search
+
+
   const ontabChange = (e) => {
     console.log(e)
     setTabvalue(e)
@@ -235,7 +246,7 @@ export default function Index() {
 
   const timechange = (e) => {
      setTimetype(e);
-     getData()
+     submit()
   }
   const opchange = (e) => {   
      console.log(typeof e.target.value) 
@@ -267,7 +278,7 @@ export default function Index() {
         </Item>
 
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={submit} style={{width: '160px'}} />
         </Item>       
       </Space>
       </div>
@@ -298,7 +309,7 @@ export default function Index() {
         <Laybox  >
             
              {
-              mode == 1 ? items : <UseTable dataSource={tableData} columns={columns} key="table" />
+              mode == 1 ? items : <UseTable dataSource={tableProps} columns={columns} key="table" />
              }  
            
            
