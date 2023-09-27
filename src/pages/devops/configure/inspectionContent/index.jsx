@@ -112,6 +112,7 @@ export default function Index() {
     getPage()
   }
   const addDevice = () => {
+    addform.resetFields()
     addRef.current.onOpen()
   }
   const pageinfo = useReactive({
@@ -284,7 +285,7 @@ const AddItem = ({ addRef, addoptions, addItems, addform }) => {
           labelCol={{ span: 5 }}
           colon={false}
           labelAlign="left"
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 1,name:'',remark:'' }}
         >
           <Form.Item label="检查项类别" name="type" >
             <Select
