@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo,useLayoutEffect } from 'react'
+import React, { useEffect, useState, useRef, useMemo,useLayoutEffect, Suspense } from 'react'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, message, Input, Select, Button, Checkbox, Divider } from 'antd'
@@ -11,8 +11,8 @@ import MyModal from '@com/useModal'
 import BuildPlan,{EditUser,DeleteModal} from './buildplan'
 import editpng from "./imgs/edit.png"
 import deletepng from "./imgs/delete.png"
-import ExportBtn from "@com/useButton"
 import { operationDesigin } from '@api/api'
+import Loading from '../../../Loading'
 const MainBox = styled.div`
   background-color: #fff;
   padding:16px;
@@ -110,7 +110,7 @@ export default function Index() {
   const [modalTitle,setModalTitle] = useState(null) 
   const [tabledata, setTableData] = useState([])
   const [userList,setUserList] = useState([])
-
+  const [isLoading,setIsLoading] = useState(true)
   const projectId = useSelector(state => state.system.menus.projectId)
   const planRef = useRef() //班次管理
   const palnEditRef = useRef() //班次编辑
@@ -145,13 +145,13 @@ export default function Index() {
       title: "值班人员",
       dataIndex: "userName",
       key: "userName",
+      width:150,
       align: 'center',
       onCell(record, rowIndex) {
         return {
           className: "pd0"
         }
       },
-      width: 100,
       render(text,record){
         if(text=="final"){
           return (
@@ -427,41 +427,49 @@ export default function Index() {
     }
   }
   useEffect( () => {
-    GetDutyUsers()
-    GetOperatorEx()
-    
+    async function func(){
+     await GetDutyUsers()
+     await GetOperatorEx()
+     setIsLoading(false)
+    }
+    func()
   }, [])
   return (
-    <CustContext.Provider >
-      <Pagecount bgcolor="#eeeff3" pd={0}>
-        <MainBox>
-          <BlueColumn name="排班管理"></BlueColumn>
-          <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
-          <div className='mgt16'>
-            <div className='title'>
-              <div className='wd96'>
-                <Button type="primary" block onClick={() => { planRef.current.onOpen() }}>班次管理</Button>
+    <>
+      {
+        isLoading?<Loading/>:(<CustContext.Provider >
+          <Pagecount bgcolor="#eeeff3" pd={0}>
+            <MainBox>
+              <BlueColumn name="排班管理"></BlueColumn>
+              <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
+              <div className='mgt16'>
+                <div className='title'>
+                  <div className='wd96'>
+                    <Button type="primary" block onClick={() => { planRef.current.onOpen() }}>班次管理</Button>
+                  </div>
+                  <div className='wd96'>
+                    <Button type="primary" block onClick={completeEvent}>完成</Button>
+                  </div>
+                </div>
               </div>
-              <div className='wd96'>
-                <Button type="primary" block onClick={completeEvent}>完成</Button>
+              <div className='mgt16'>
+                <UserTable columns={columns} dataSource={tabledata}></UserTable>
               </div>
-            </div>
-          </div>
-          <div className='mgt16'>
-            <UserTable columns={columns} dataSource={tabledata}></UserTable>
-          </div>
-        </MainBox>
-      </Pagecount>
-      <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan}>
-        <BlueColumn name="创建班次" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn>
-        <BuildPlan ref={planListRef} plansObj={reactiveObj}/>
-      </MyModal>
-      <MyModal ref={palnEditRef} mold="cust" width={420} onOk={saveUserPlan}>
-        <BlueColumn name={modalTitle} styled={{ padding: '24px 0px', fontSize: '16px' }} key={2}></BlueColumn>
-        <EditUser editUser={editUser} userList={userList} ref={setUserRef}/>  
-      </MyModal>
-      <DeleteModal delRef={delRef} name="删除值班人员" content="是否确认删除值班人员" onOk={DeleteDutyUser}/>
-    </CustContext.Provider>
-
+            </MainBox>
+          </Pagecount>
+          <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan}>
+            <BlueColumn name="创建班次" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn>
+            <BuildPlan ref={planListRef} plansObj={reactiveObj}/>
+          </MyModal>
+          <MyModal ref={palnEditRef} mold="cust" width={420} onOk={saveUserPlan}>
+            <BlueColumn name={modalTitle} styled={{ padding: '24px 0px', fontSize: '16px' }} key={2}></BlueColumn>
+            <EditUser editUser={editUser} userList={userList} ref={setUserRef}/>  
+          </MyModal>
+          <DeleteModal delRef={delRef} name="删除值班人员" content="是否确认删除值班人员" onOk={DeleteDutyUser}/>
+        </CustContext.Provider>)
+      }
+    </>
+    
+  
   )
 }
