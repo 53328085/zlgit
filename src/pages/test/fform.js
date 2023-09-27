@@ -1,31 +1,28 @@
-import React, {useEffect, useRef} from 'react'
-import { drawEcharts } from "@com/useEcharts";
-export default function fform() {
-  const ref = useRef();
- const  set = {
-    // 提供一份数据。
-    dimensions: ['score', 'amount'],
-    source: [
-      [89.3, 3371],
-      [92.1, 8123],
-      [94.4, 1954],
-      [85.4, 829],
-    ]
-  }
-  useEffect(() => {
-    
-    drawEcharts(ref.current, { 
-      dataset: set,
-       series: {
-         type: "bar",
-         
-       }
-       } )
-     
-  }, [])
+import { Button, message } from 'antd';
+import React from 'react';
+const Context = React.createContext({
+  name: 'Default',
+});
+const App = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const info = () => {
+    messageApi.open({
+      type: 'info',
+      content: <Context.Consumer>{({ name }) => `Hello, ${name}!`}</Context.Consumer>,
+      duration: 1,
+    });
+  };
   return (
-    <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
-       <div ref={ref} style={{width: "100%", height: "600px", border: "1px solid #dedede"}}></div>
-    </div>
-  )
-}
+    <Context.Provider
+      value={{
+        name: 'Ant Design',
+      }}
+    >
+      {contextHolder}
+      <Button type="primary" onClick={info}>
+        Display normal message
+      </Button>
+    </Context.Provider>
+  );
+};
+export default App;

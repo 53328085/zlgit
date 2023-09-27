@@ -239,6 +239,54 @@ export class Area {
     static SetBigScreen = (projectId, params={}) => server.post(`/General/BigScreen/Set?projectId=${projectId}`, params)
   }
 
+// 能源管理--重点设备 -- 运行态
+export class QueryElectric {
+  static query = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+    server.post(
+      `Energy/EnergyImportantRuntime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`
+      
+    );
+}
+
+// 能源管理--重点设备 -- 设计态
+export class DesElectric {
+      
+  static queryDrive = ({projectId,areaId}) => // 查询重点设备列表
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDevices?projectId=${projectId}&areaId=${areaId}` 
+    );
+    static insertDrive = ({projectId,name, areaId}) => // 添加重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}` 
+    );  
+    static updateDrive = ({projectId,name, id}) => // 更新重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}` 
+    );  
+
+    static deleteDrive = ({projectId,id}) => // 删除重点设备
+    server.delete(
+      `Energy/EnergyImportantDesigner/DeleteImportmantDevices?projectId=${projectId}&id=${id}` 
+    ); 
+    static queryDriveConfig = ({projectId,id, areaId}) => // 查询重点设备配置表计
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDeviceConfiged?projectId=${projectId}&importantDeviceId=${id}&areaId=${areaId}` 
+    );  
+
+    static queryDriveUnconfig = ({projectId,id, areaId}) => // 查询重点设备未配置表计
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDeviceNoConfiged?projectId=${projectId}&importantDeviceId=${id}&areaId=${areaId}` 
+    );  
+
+    static conifgDrive = ({projectId,id}, params) => // 配置重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/ConfigImportmantDeviceSns?projectId=${projectId}&importantDeviceId=${id}`, params
+    );  
+
+
+}
+
+
 // 能源管理--能源概述
 export class EnergyOverView {
   static EnergyOverViewRuntime = (projectId, params) =>

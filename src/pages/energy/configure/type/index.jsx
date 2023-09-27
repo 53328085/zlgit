@@ -9,7 +9,7 @@ import warning from '@imgs/warning.png'
 import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
-import { MemoryRouter } from 'react-router-dom';
+import Mask from '@com/mask.jsx'
 
 
 export default function Index () {
@@ -272,7 +272,7 @@ export default function Index () {
   return (
     <div>
       {contextHolder}
-      {transTag == 'open' ? <div className={style.mask}></div> : null}
+      {transTag == 'open' ? Mask() : null}
       <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select

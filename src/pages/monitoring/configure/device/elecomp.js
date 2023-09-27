@@ -285,7 +285,7 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
 }
 //编辑com组件
 let EditCom = ({ form, coms }) => {
-    const [isaddress, setIsaddress] = useState(true)
+    const [isaddress, setIsaddress] = useState(form.getFieldValue('commProtocol') == 1)
     let options = []
     const rules = [{
         required: true,
