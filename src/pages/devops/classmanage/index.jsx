@@ -162,9 +162,11 @@ const Custbtn = styled(Button)`
   const tabledataRef =useRef()
   const GetDutyUsers = async () => {
     const res = await operationDesigin.GetDutyUsers(projectId)
-    if (res.success && res.data) {
-      setTableData([...res.data])
-      tabledataRef.current = [...res.data]
+    if (res.success ) {
+      if(res.data){
+        setTableData([...res.data])
+        tabledataRef.current = [...res.data]
+      }
     } else {
       message.error(res.errMsg)
     }
@@ -173,8 +175,10 @@ const Custbtn = styled(Button)`
    const getDuty =async ()=>{
     const res = await operationDesigin.GetDuty(projectId)
     if(res.success){
-      
-      reactive.plans = res.data
+      if(res.data){
+        reactive.plans = res.data
+       
+      }
       updateTable()
     }else{
       message.error(res.errMsg)
@@ -315,10 +319,10 @@ const Custbtn = styled(Button)`
           </div>
         
           <div className='mgt16'>
-            {reactive.plans.name1?(<span className='pdr'>{reactive.plans.name1} : {reactive.plans.startTime1}~{reactive.plans.endTime1}</span>):null}
-            {reactive.plans.name2?(<span className='pdr'>{reactive.plans.name2} : {reactive.plans.startTime2}~{reactive.plans.endTime2}</span>):null}
-            {reactive.plans.name3?(<span className='pdr'>{reactive.plans.name3} : {reactive.plans.startTime3}~{reactive.plans.endTime3}</span>):null}
-            {reactive.plans.name4?(<span>{reactive.plans.name4} : {reactive.plans.startTime4}~{reactive.plans.endTime4}</span>):null}
+            {reactive.plans?.name1?(<span className='pdr'>{reactive.plans.name1} : {reactive.plans.startTime1}~{reactive.plans.endTime1}</span>):null}
+            {reactive.plans?.name2?(<span className='pdr'>{reactive.plans.name2} : {reactive.plans.startTime2}~{reactive.plans.endTime2}</span>):null}
+            {reactive.plans?.name3?(<span className='pdr'>{reactive.plans.name3} : {reactive.plans.startTime3}~{reactive.plans.endTime3}</span>):null}
+            {reactive.plans?.name4?(<span>{reactive.plans.name4} : {reactive.plans.startTime4}~{reactive.plans.endTime4}</span>):null}
           </div>
         </MainBox>
       </Pagecount>
