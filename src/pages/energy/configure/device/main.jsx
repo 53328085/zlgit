@@ -97,13 +97,7 @@ export default function Index ({projectId, areaId}) {
   const [updateId, setUpdateId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
   const [modalTag, setModalTag] = useState('')
-  const addSon = id => {
-    setModalTitle('新增重点设备节点')
-    setFormLabel('重点设备名称')
-    setParentId(id)
-    setModalTag('add')
-    aref.current.onOpen()
-  }
+ 
   const addMain = () => {
     
     setModalTitle('新增重点设备')
