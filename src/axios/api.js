@@ -1414,6 +1414,10 @@ export class energyShare {
   static QueryShifts = (projectId) => server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
   static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
   static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
+
+  static queryArea = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data)//区域查询
+
+  static queryLine = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data)//线路查询
 }
 //数据报表
 export class energyReport {

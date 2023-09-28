@@ -1,94 +1,87 @@
 import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
 import style from './style.module.less'
+import styled from 'styled-components'
+import CustContext from "@com/content.js";
+import { drawEcharts } from "@com/useEcharts";
 import Timenergy from './timenergy'
 import Bluecolumn from '@com/bluecolumn';
 import Timepercent from './timepercent'
 import { energyShare } from '@api/api'
-import { Form, Select, DatePicker, message,Input,Tree ,Button } from 'antd'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import { Form, Select, DatePicker, message,Input,Tree ,Button, Space } from 'antd'
 import moment from 'moment';
+import UserSearch from "@com/useSerach";
+const { Search } = Input;
+const {Item} = Form
+const {QuerySpaceTrees, queryArea, queryLine} = energyShare
+const Mainbox = styled.div`
+  && {
+    display: grid;
+    grid-template-columns: 296px 952px 1fr;
+    column-gap: 16px;
+  }
 
+`
 export default function Index() {
-
+  const [form] =Form.useForm()
   const [treeData,setTreeData] =useState([])
   const [treeDatas,setTreeDatas]=useState([])
-  const [datetype, setDatetype] = useState(1)
-  const datetypeRef= useRef()
-  datetypeRef.current = datetype
-  const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
-  const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
+ 
+  const onelevel = useSelector(selectOneLevel)
+
 
   const pieRef = useRef()
   const columnRef =useRef()
   const [selectkeys, setSelectkeys] = useState([])
   const selectRef=useRef()
   selectRef.current=selectkeys
-  const [form] =Form.useForm()
-  const { Search } = Input;
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state=>state.system.onelevel)
-  const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName+'(全部)',id:0},...oneLevel]),[oneLevel]):[]
-  const typeoptions = [{
-    label: '日',
-    value: 1
-  }, {
-    label: '月',
-    value: 2
-  }, {
-    label: '年',
-    value: 3
-  }]
-  const energyoptions = [{
-    label: '电',
-    value: 1
-  }]
-
  
-  //获取班次
-  const getQueryShifts = async () => {
-    const res = await energyShare.QueryShifts(projectId)
-    if (res.success) {
-      if (Array.isArray(res.data)) {
-        setPlanlist([{name:'全部班次',id:0},...res.data])
-        form.setFieldValue('plan',0)
-      } else {
-        setPlanlist([])
+  const projectId = useSelector(selectProjectId)
+ 
+ 
+  const getTime = (date, type)=> {
+    let time
+        if(type == 0) {
+          time=date.format('YYYY-MM-DD')
+      }else if(type == 1) {
+          time = data.startOf("month").format('YYYY-MM-DD')
+      }else if(type == 2) {
+          time = data.startOf("year").format('YYYY-MM-DD')
       }
-    } else {
-      message.error(res.errMsg)
-    }
+    return time
   }
-  //获取树
-  const getQuerySpaceTrees=async (areaId,areaName)=>{
-    let params ={
-      projectId,
-      areaId,
-      areaName,
-    }
-    const res = await energyShare.QuerySpaceTrees(params)
-    if(res.success){
-       setTreeData([...res.data])
-       setTreeDatas([...res.data])
-    }else{
-      message.error(res.errMsg)
-    }
-    console.log(res)
-  }
-  //获取日期格式
-  const getdateformat = ()=>{
-    let date= form.getFieldsValue().datevalue
  
-    if(datetypeRef.current===1){
-      date = moment(date).format('YYYY-MM-DD')
-    }else if(datetypeRef.current ===2){
-      date = moment(date).format('YYYY-MM-01')
-    }else if(datetypeRef.current ===3){
-      date = moment(date).format('YYYY-01-01')
+ 
+  //获取树
+  const getQuerySpaceTrees= async (e)=>{
+    try {
+      const {area, date, type} = form.getFieldsValue()
+      console.log(onelevel)
+      const areaName = onelevel.find(l => l.id == area).name
+     
+      let params ={
+        projectId,
+        areaId: area,
+        areaName,
+      }
+      const {success, data} = await QuerySpaceTrees(params)
+   
+      if(success && Array.isArray(data)){
+         setTreeData([...res.data])
+         setTreeDatas([...res.data])
+      }else{
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      
     }
-    return date
+   
+    
   }
+ 
   //分时能耗
-  const getQueryElectric =async ()=>{
+/*   const getQueryElectric =async ()=>{
     const {plan,area,...formvalue} = form.getFieldValue()
     const date = getdateformat()
     let areaId
@@ -113,7 +106,7 @@ export default function Index() {
    }else{
     message.error(res.errMsg)
    }
-  }
+  } */
   //树被选中
   const onCheck=(checkedKeys,e)=>{
     if(Array.isArray(checkedKeys)){
@@ -121,29 +114,9 @@ export default function Index() {
       selectRef.current = [...checkedKeys]
     }
    
-    getQueryElectric()
+  //  getQueryElectric()
   }
-  //园区改变
-  const changeArea=(v,option)=>{
-    setSelectkeys([])
-    selectRef.current=[]
-    getQuerySpaceTrees(v,option.name)
-    getQueryElectric()
-  }
-  //日期类型改变
- const changeDateType = (v) => {
-    setDatetype(v)
-    datetypeRef.current=v
-    getQueryElectric()
-  }
-  //改变日期
-  const changeDatevalue = ()=>{
-    getQueryElectric()
 
-  }
-  const changePlan=()=>{
-    getQueryElectric()
-  }
   //树筛选
    const filterSearchTree = (nodes, predicate, wrapMatchFn = () => false) => {
     // 如果已经没有节点了，结束递归
@@ -189,71 +162,51 @@ export default function Index() {
   setTreeData(()=>{return filterData})
   }
   useEffect(()=>{
-    if(oneLevel.length>0){
-      getQuerySpaceTrees(0,oneLevel[0]?.levelName)
-      getQueryShifts()
-      getQueryElectric() 
-    }
-     
-  },[])
+     if(onelevel?.length <1) return;
+     getQuerySpaceTrees()
+  },[onelevel])
+  const [timetype, setTimetype] = useState(0) // 日、月、年 0,1,2
+ 
   
+  const picker= ['date', 'month', 'year'][timetype];
+  const timechange = (e) => {
+    setTimetype(e);
+   // getData()
+ }
+  const CustView = () => {
+    
+     return (
+        <Space size={16} style={{marginLeft: "auto"}}>
+         <Item  name="type" initialValue={0}>
+            <Select style={{width: '80px'}}   options={[
+             {value: 0, label: '日'},
+             {value: 1, label: '月'},
+             {value: 2, label: '年'},
+            ]}
+            onChange={timechange}
+            ></Select>
+         </Item>
+ 
+         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+           <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} />
+         </Item>       
+       </Space>
+       
+     )
+   }
   return (
-    <div className={style.timesharing}>
-      <Form
-        className={style.mgbt0}
-        form={form}
-        colon={false}
-        initialValues={
-          {
-            energytype: 1,
-            datetype: 1,
-            datevalue: moment(new Date()),
-          }
-        }
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', background: '#fff' }}>
-          <div style={{ display: 'flex', }}>
-            <Form.Item label={oneLevel[0]?.levelName} name="area">
-              <Select
-              defaultValue={oneLevel.length>0?0:null}
-                style={{ width: 200 }} 
-                
-                fieldNames={{
-                  label: "name",
-                  value: "id"
-                }}
-                options={areaOptions}
-                // options={arealist}
-                
-                onChange={changeArea}
-              ></Select>
-            </Form.Item>
-            <Form.Item label="能源类型" style={{ marginLeft: 64 }} name="energytype">
-              <Select style={{ width: 112 }} options={energyoptions} disabled></Select>
-            </Form.Item>
-            <Form.Item name='datetype'>
-              <Select style={{ width: 80,marginLeft: 32 }} options={typeoptions} onChange={changeDateType}></Select>
-            </Form.Item>
-            <Form.Item style={{ marginLeft: 16 }} name="datevalue">
-              <DatePicker picker={datetype==1?'date':datetype==2?'month':'year'} onChange={changeDatevalue}></DatePicker>
-            </Form.Item>
-            <Form.Item style={{ marginLeft: 16 }} name="plan">
-              <Select
-                style={{ width: 102 }}
-                fieldNames={{
-                  label: "name",
-                  value: "id"
-                }}
-                options={
-                  planlist
-                }
-                onChange={changePlan}
-                ></Select>
-            </Form.Item>
-            </div>
-        </div>
-      </Form>
-      <div className={style.sharecontent}>
+    <CustContext.Provider
+    value={{
+      form,
+      custview: <CustView />,
+      handler: getQuerySpaceTrees,
+     
+    }}
+  >
+    <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
+     <UserSearch></UserSearch>
+     
+      <Mainbox>
         <div className={style.radiotree}>
           <Search 
           placeholder='请输入关键字查询' 
@@ -263,9 +216,7 @@ export default function Index() {
           <Tree 
           treeData={treeData} 
           checkable 
-          // onExpand={onExpand}
-          // expandedKeys={expandedKeys}
-          // autoExpandParent={autoExpandParent}
+         
           onCheck={onCheck}
           fieldNames={{title:'name',key:'areaId',children:'nodes'}}
           />
@@ -273,16 +224,16 @@ export default function Index() {
         <div className={style.sharingtime}>
         <Bluecolumn name="分时能耗"/>
         <div style={{height:'16px'}}> </div>
-        
-        <Timenergy ref={columnRef}/>
+      <Timenergy ref={columnRef}/>  
         </div>
         <div>
-        <Timepercent ref={pieRef}/>
+     <Timepercent ref={pieRef}/>  
         </div>
         
-      </div>
+      </Mainbox>
       
     </div>
+    </CustContext.Provider>
   )
 }
 

@@ -96,7 +96,7 @@ const mokData = headers.map(n => (
   }
 ))
 const piedata = [
-  { value: 1048, name: '塔楼区' },
+  {value: 1048, name: '塔楼区' },
   { value: 735, name: '交易区' },
   { value: 580, name: '干杂区' },
   { value: 484, name: '水产市场' },
@@ -342,10 +342,10 @@ useEffect(() => {
            </div>
         </Titlelayout>
         <div className="right">
-           <Titlelayout title="今日能耗占比" key={nanoid()}>
+           <Titlelayout title="今日能耗占比" key='pie'>
               <div ref={pieref} style={{width: "392px", height: "432px"}}></div>
            </Titlelayout>
-           <Titlelayout title="区域能耗排名" key={nanoid()}>
+           <Titlelayout title="区域能耗排名" key='sort'>
               <Sdiv>
                  <div className="sort">
                      <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
