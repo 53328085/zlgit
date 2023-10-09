@@ -558,7 +558,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {}; 
-      console.log(rest)
+     
   if(rest.custoption) {
     chart.setOption({...rest.custoption, grid: {
         containLabel: true,
