@@ -57,7 +57,7 @@ const MainBox = styled.div`
     
     .gridrow3{
       display: grid;
-      grid-template-rows: repeat(3,28px);
+      /* grid-template-rows: repeat(3,28px); */
       grid-template-columns:59px;
       grid-gap: 2px;
       justify-content: center;
@@ -120,12 +120,10 @@ const Custbtn = styled(Button)`
   const [isLoading,setIsLoading] = useState(true)
   const [key, setKey] = useState()
   const [tabledata, setTableData] = useState([])
+  const [areaId,setAreaId]=useState(null)
   const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
-  const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
-  const changeArea = () => {
-
-  }
+  // const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const initdata =[
     {
       title: "值班人员",
@@ -152,6 +150,14 @@ const Custbtn = styled(Button)`
       }
     }
   ]
+  const changeArea = (id) => {
+    setAreaId(id)
+    setTableData([])
+   
+    reactive.plancount = 0
+    tabledataRef.current=[]
+  }
+  
   const [columns,setColumns]=useState(initdata)
   const reactive  = useReactive({
     plans:{},
@@ -161,7 +167,7 @@ const Custbtn = styled(Button)`
   //获取排班表
   const tabledataRef =useRef()
   const GetDutyUsers = async () => {
-    const res = await operationDesigin.GetDutyUsers(projectId)
+    const res = await operationDesigin.GetDutyUsers(projectId,areaId)
     if (res.success ) {
       if(res.data){
         setTableData([...res.data])
@@ -173,7 +179,7 @@ const Custbtn = styled(Button)`
   }
    //获取班次计划
    const getDuty =async ()=>{
-    const res = await operationDesigin.GetDuty(projectId)
+    const res = await operationDesigin.GetDuty(projectId,areaId)
     if(res.success){
       if(res.data){
         reactive.plans = res.data
@@ -239,7 +245,7 @@ const Custbtn = styled(Button)`
         }
       })
     } 
-    setColumns([...columns,...columnmore]) 
+    setColumns([...initdata,...columnmore]) 
   }
   //导出
   const exportEvent = () => {
@@ -273,15 +279,21 @@ const Custbtn = styled(Button)`
     console.log(exporttabledata.current)
     tableRef.current.downloadByData({data:exporttabledata.current})
   }
+  useEffect(()=>{
+    if(oneLevel.length > 0){
+      setAreaId(oneLevel[0]['id'])
+    }
+  
+  },[])
   useEffect(() => {
     async function func(){
       await GetDutyUsers()
       await getDuty()
       setIsLoading(false)
     }
-    func()
+    areaId&&func()
   
-  }, [])
+  }, [areaId])
   return (
     <>
    {
@@ -294,7 +306,7 @@ const Custbtn = styled(Button)`
             colon={false}
           >
             <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? 0 : null}></Select>
+              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? oneLevel[0]['id'] : null}></Select>
             </Form.Item>
           </Form>
         </div>

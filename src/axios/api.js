@@ -1370,14 +1370,14 @@ export class operationDesigin{
   static DeleteInspectionAddress=(data)=>server.delete(`/Maintenance/InspectionDesigner/DeleteInspectionAddress`,{params:data})//删除巡检项
   static UpdateInspectionAddress=(data)=>server.post(`/Maintenance/InspectionDesigner/UpdateInspectionAddress`,data)//更新巡检点
   static InspectionAddressDetail=(data)=>server.get(`/Maintenance/InspectionDesigner/InspectionAddressDetail`,{params:data})//获取二维码
-  static GetDuty=(data)=>server.get(`/Maintenance/DutyDesigner/GetDuty?projectId=${data}`)//获取班次
+  static GetDuty=(data,areaId)=>server.get(`/Maintenance/DutyDesigner/GetDuty?projectId=${data}&areaId=${areaId}`)//获取班次
   static SetDuty=(data,projectId)=>server.post(`/Maintenance/DutyDesigner/SetDuty?projectId=${projectId}`,data)//设置班次
-  static GetOperatorEx=(projectId)=>server.get(`/Maintenance/DutyDesigner/GetOperatorEx?projectId=${projectId}`)//获取排班人员
-  static GetDutyUsers = (projectId)=>server.get(`/Maintenance/DutyDesigner/GetDutyUsers?projectId=${projectId}`)
+  static GetOperatorEx=(projectId,areaId)=>server.get(`/Maintenance/DutyDesigner/GetOperatorEx?projectId=${projectId}&areaId=${areaId}`)//获取排班人员
+  static GetDutyUsers = (projectId,areaId)=>server.get(`/Maintenance/DutyDesigner/GetDutyUsers?projectId=${projectId}&areaId=${areaId}`)
   static EditDutyUser =(data,params)=>server.post(`/Maintenance/DutyDesigner/EditDutyUser`,data,{params})
-  static SetDutyUser =(data,projectId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUser?projectId=${projectId}`,data)//新增人员排班
-  static SetDutyUsers =(data,projectId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUsers?projectId=${projectId}`,data)//保存所有人排班信息
-  static DeleteDutyUser =(projectId,userId)=>server.delete(`/Maintenance/DutyDesigner/DeleteDutyUser?projectId=${projectId}&userId=${userId}`)//删除排班人员
+  static SetDutyUser =(data,projectId,areaId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUser?projectId=${projectId}&areaId=${areaId}`,data)//新增人员排班
+  static SetDutyUsers =(data,projectId,areaId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUsers?projectId=${projectId}&areaId=${areaId}`,data)//保存所有人排班信息
+  static DeleteDutyUser =(projectId,userId,areaId)=>server.delete(`/Maintenance/DutyDesigner/DeleteDutyUser?projectId=${projectId}&userId=${userId}&areaId=${areaId}`)//删除排班人员
 
 }
 //电气安全(运行态)
