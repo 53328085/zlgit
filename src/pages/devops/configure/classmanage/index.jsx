@@ -60,10 +60,14 @@ const MainBox = styled.div`
       grid-gap: 2px;
       justify-content: center;
       align-items: center;
+      padding: 2px;
       .planclass{
       height: 28px;
       color: #fff;
       line-height:28px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       &:nth-of-type(1){
         background-color: #6666ff;
       }
@@ -111,6 +115,7 @@ export default function Index() {
   const [tabledata, setTableData] = useState([])
   const [userList,setUserList] = useState([])
   const [isLoading,setIsLoading] = useState(true)
+  const [areaId,setAreaId] = useState(null)
   const projectId = useSelector(state => state.system.menus.projectId)
   const planRef = useRef() //班次管理
   const palnEditRef = useRef() //班次编辑
@@ -118,6 +123,8 @@ export default function Index() {
 
   const userPlan = useRef()
   const  delId=useRef();
+  const oneLevel = useSelector(state => state.system.onelevel)
+
   const addUserEvent =(text,record)=>{
     userPlan.current =record.nos
     setEditUser("")
@@ -212,7 +219,7 @@ export default function Index() {
   const planListRef =useRef()
   const setUserRef =useRef()
   const GetOperatorEx =async ()=>{
-    const res = await operationDesigin.GetOperatorEx(projectId)
+    const res = await operationDesigin.GetOperatorEx(projectId,areaId)
     if(res.success){
       setUserList(res.data)
     }else{
@@ -222,9 +229,8 @@ export default function Index() {
   //获取排班表
   const tabledataRef =useRef()
   const GetDutyUsers =async ()=>{
-    const res = await operationDesigin.GetDutyUsers(projectId)
+    const res = await operationDesigin.GetDutyUsers(projectId,areaId)
     if(res.success){
-      console.log(res)
       const tdata = [
         {
           userName:"final",
@@ -247,7 +253,7 @@ export default function Index() {
   
   //获取班次计划
   const getDuty =async (table)=>{
-    const res = await operationDesigin.GetDuty(projectId)
+    const res = await operationDesigin.GetDuty(projectId,areaId)
     if(res.success){
       reactiveObj.plans = res.data
       updateTable(res.data,table)
@@ -280,7 +286,7 @@ export default function Index() {
           const res = await operationDesigin.SetDutyUser({
             userId,
             dutyItems:userPlan.current
-          },projectId)
+          },projectId,areaId)
           if(res.success){
             message.success('新增成功')
             palnEditRef.current.onCancel()
@@ -290,7 +296,7 @@ export default function Index() {
             message.error(res.errMsg)
           }
         }else{
-          const res = await operationDesigin.EditDutyUser(userPlan.current,{projectId,preUserId:delId.current,userId})
+          const res = await operationDesigin.EditDutyUser(userPlan.current,{projectId,preUserId:delId.current,userId,areaId})
           if(res.success){
             message.success('编辑成功!')
             palnEditRef.current.onCancel()
@@ -309,10 +315,11 @@ export default function Index() {
     if (tabledata.length > 1) {
       const tcdata = tabledata.toSpliced(tabledata.length-1,1)
       const params = tcdata.map(item => ({ userId: item.userId, dutyItems: item.nos }))
-      const res = await operationDesigin.SetDutyUsers(params, projectId)
+      const res = await operationDesigin.SetDutyUsers(params, projectId,areaId)
       if (res.success) {
         message.success('保存成功')
         GetDutyUsers()
+        GetOperatorEx()
       } else {
         message.error(res.errMsg)
       }
@@ -339,7 +346,7 @@ export default function Index() {
   }
   const lastcountRef=useRef(0)
   //表格视图更新
-  const updateTable=async (plan)=>{
+  const updateTable=async (plan,tabledata)=>{
     let count = 0
     let palnobj=[];
     let columnarr=[];
@@ -416,7 +423,7 @@ export default function Index() {
   }
   //删除用户
   const DeleteDutyUser=async ()=>{
-    const resp = await operationDesigin.DeleteDutyUser(projectId, delId.current)
+    const resp = await operationDesigin.DeleteDutyUser(projectId, delId.current,areaId)
     if(resp.success){
       message.success('删除成功!')
       delRef.current.onCancel()
@@ -426,19 +433,41 @@ export default function Index() {
       message.error(resp.errMsg)
     }
   }
+  //选择园区
+  const changeArea=async (id)=>{
+    console.log(id)
+    setAreaId(id)
+  }
+  useEffect(()=>{
+    if(oneLevel.length > 0){
+      setAreaId(oneLevel[0]['id'])
+    }
+  
+  },[])
   useEffect( () => {
     async function func(){
      await GetDutyUsers()
      await GetOperatorEx()
      setIsLoading(false)
     }
-    func()
-  }, [])
+    areaId&&func()
+    
+  }, [areaId])
   return (
     <>
       {
         isLoading?<Loading/>:(<CustContext.Provider >
           <Pagecount bgcolor="#eeeff3" pd={0}>
+          <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <Form
+            form={form}
+            colon={false}
+          >
+            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? oneLevel[0]['id'] : null}></Select>
+            </Form.Item>
+          </Form>
+        </div>
             <MainBox>
               <BlueColumn name="排班管理"></BlueColumn>
               <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
@@ -459,7 +488,7 @@ export default function Index() {
           </Pagecount>
           <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan}>
             <BlueColumn name="创建班次" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn>
-            <BuildPlan ref={planListRef} plansObj={reactiveObj}/>
+            <BuildPlan ref={planListRef} plansObj={reactiveObj} areaId={areaId}/>
           </MyModal>
           <MyModal ref={palnEditRef} mold="cust" width={420} onOk={saveUserPlan}>
             <BlueColumn name={modalTitle} styled={{ padding: '24px 0px', fontSize: '16px' }} key={2}></BlueColumn>

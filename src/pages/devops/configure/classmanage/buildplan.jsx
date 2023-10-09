@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,forwardRef,useImperativeHandle} from 'react'
+import React, { useEffect, useState ,forwardRef,useImperativeHandle,useRef} from 'react'
 import { useSelector } from 'react-redux'
 import BlueColumn from '@com/bluecolumn'
 import { Form, Input, Select, TimePicker,message  } from 'antd'
@@ -14,7 +14,7 @@ const FlexDiv = styled.div`
   justify-content: space-between;
 `
 
-function Buildplan({plansObj},ref) {
+function Buildplan({plansObj,areaId},ref) {
   console.log(plansObj)
   const [form] = Form.useForm()
   const [planList, setPlanList] = useState([])
@@ -79,8 +79,11 @@ function Buildplan({plansObj},ref) {
     }
 
   }
+
+  let disabledHours=useRef([])
   const changePlan = (v) => {
     let arr = []
+    
     for (let i = 1; i <= v; i++) {
       form.resetFields([`name${i}`, `time${i}`])
       arr.push(<FlexDiv>
@@ -89,29 +92,52 @@ function Buildplan({plansObj},ref) {
         </Form.Item>
         <Form.Item label="班次时段" name={`time${i}`} rules={[{ required: true, message: '请输入班次时段' }]}>
           <TimePicker.RangePicker format={'HH:mm'} onChange={(v) => chooseTime(v, i)} disabledTime={(n, type) => {
+            disabledHours.current = []
             const { time1, time2, time3, time4, plan } = form.getFieldsValue()
-            let hour1end, hour2start, hour2end, hour3start, hour3end, hour4start;
+            let hour1start,hour1end, hour2start, hour2end, hour3start, hour3end, hour4start,hour4end;
             let min1end, min2start, min2end, min3start, min3end, min4start;
+            
             if (time1) {
+              hour1start =time1[0].hour()
               hour1end = time1[1].hour()
               min1end = time1[1].minutes()
+              for(let i =hour1start;i<=hour1end;i++){
+                disabledHours.current = [...disabledHours.current,i]
+              }
             }
             if (time2) {
               hour2start = time2[0].hour()
               hour2end = time2[1].hour()
               min2start = time2[0].minutes()
               min2end = time2[1].minutes()
+              for(let i =hour2start;i<=hour2end;i++){
+                disabledHours.current = [...disabledHours.current,i]
+              }
             }
             if (time3) {
               hour3start = time3[0].hour()
               hour3end = time3[1].hour()
               min3start = time3[0].minutes()
               min3end = time3[1].minutes()
+              for(let i =hour3start;i<=hour3end;i++){
+                disabledHours.current = [...disabledHours.current,i]
+              }
             }
             if (time4) {
               hour4start = time4[0].hour()
+              hour4end = time4[1].hour()
               min4start = time4[0].minutes()
+              for(let i =hour4start;i<=hour4end;i++){
+                disabledHours.current = [...disabledHours.current,i]
+              }
             }
+            // console.log(disabledHours.current)
+            // if(plan>1){
+            //   return {
+            //     disabledHours: () => disabledHours.current,
+            //     disabledMinutes: ()=>{}
+            //   }
+            // }
             if (plan > 1) {
               if (i == 1) {
                 if (hour2start) {
@@ -241,6 +267,7 @@ function Buildplan({plansObj},ref) {
         const time4arr = formatTime(time4)
     
         const params = {
+            areaId,
             no1: 1,
             name1,
             startTime1: time1arr[0],
@@ -276,6 +303,7 @@ function Buildplan({plansObj},ref) {
   }
  const initform=()=>{
   let count =0
+ 
   if(plansObj.plans){
     const {name1,name2,name3,name4,startTime1,startTime2,startTime3,startTime4,endTime1,endTime2,endTime3,endTime4}=plansObj.plans
     for (let i in plansObj.plans){
@@ -283,6 +311,7 @@ function Buildplan({plansObj},ref) {
       count++
      }
     }
+    changePlan(count)
     form.setFieldsValue({
       plan:count,
       name1,
@@ -294,15 +323,17 @@ function Buildplan({plansObj},ref) {
       time3:[moment(startTime3,'HH:mm'),moment(endTime3,'HH:mm')],
       time4:[moment(startTime4,'HH:mm'),moment(endTime4,'HH:mm')],
     })
+    
   }else{
     count=3
-  }
+    form.setFieldsValue({
+      plan:count,
+    })
     changePlan(count)
- 
+  }
  }
   useEffect(() => {
     initform()
-    console.log(111)
   }, [plansObj.plans])
   useImperativeHandle(ref,()=>({
     setDuty
