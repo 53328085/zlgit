@@ -41,9 +41,9 @@ const getTime = (date, type)=> {
       if(type == 0) {
         time=date.format('YYYY-MM-DD')
     }else if(type == 1) {
-        time = data.startOf("month").format('YYYY-MM-DD')
+        time = date.startOf("month").format('YYYY-MM-DD')
     }else if(type == 2) {
-        time = data.startOf("year").format('YYYY-MM-DD')
+        time = date.startOf("year").format('YYYY-MM-DD')
     }
   return time
 }
@@ -51,9 +51,9 @@ const getTime = (date, type)=> {
 const numberformat = (n) => {
    let num = parseFloat(n)
    if(num > 0) {
-    return <span>&#43;{n}</span>
+    return <span><span style={{color: "#f00"}}>&#9650;&nbsp;</span>&#43;{n}</span>
    }else if(num < 0) {
-    return <span>&#45;{n}</span>
+    return <span style={{color: "#090"}}>&#9660;&nbsp;&#45;{n}</span>
    }else {
     return <span>{n}</span>
    }
@@ -78,9 +78,9 @@ export default function Index() {
   const [typeTree, setTypeTree] = useState(1)
   
   const treekey =  typeTree == 1 ? "id" : "areaId"
-  //const [detail, setDetail] = useState([])
-  //const [momYoy, setMomYoy] = useState([])
- // const [proportion, setProportion] = useState([])
+  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
 
    const [datas, setDatas] = useState({})
  
@@ -90,24 +90,30 @@ export default function Index() {
         dataIndex: 'name',
         key: 'name',
         onCell: ()=> ({style: {textAlign: "center" }}),
+        onHeaderCell: ()=> ({style: {textAlign: "center" }}),
     },
     {
       title: '用电量',
       dataIndex: 'value',
       key: 'value',
-     
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
     },
     {
       title: '环比',
       dataIndex: 'mom',
       key: 'mom',
       render: numberformat,
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
     },
     {
       title: '同比',
       dataIndex: 'yoy',
       key: 'yoy',
       render: numberformat,
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
     },
     
   ]
@@ -142,9 +148,12 @@ export default function Index() {
   } 
  // 根据区域查询
  const getDataByLine = async (ids=[]) => {
+     
     try {
       let {type, date} = form.getFieldsValue()
-      let time = getTime(type, date)
+      console.log(date)
+      let time = getTime(date, type)
+      console.log(time)
       let key = typeTree == 1 ? 'selectIds' : 'areaIds'
        let params = {
         projectId,
@@ -156,27 +165,102 @@ export default function Index() {
       let hander = ['', queryLine, queryArea][typeTree]
       let {success, data} = await hander(params)
       if(success && data.constructor === Object) {
-          let {detail = [], momYoy=[], proportion = []} = data
-          setDatas({...data})
-          // setDetail(detail)
-           //setMomYoy(momYoy)
-          // setProportion(proportion)
+          setDatas({...data}) 
       }else {
-        setDatas({})
-          //setDetail([])
-         // setMomYoy([])
-         // setProportion([])
+        setDatas({}) 
       }
     } catch (error) {
-      
+      console.log(error)
     }
    
      
  } 
- 
+ // 树搜索
+ const onExpand = (newExpandedKeys) => {
+  setExpandedKeys(newExpandedKeys);
+  setAutoExpandParent(false);
+};
+
+const getParentKey = (key, tree) => {
+  let parentKey;
+  for (let i = 0; i < tree.length; i++) {
+    const node = tree[i];
+    if (node.children) {
+      if (node.children.some((item) => item.key === key)) {
+        parentKey = node.key;
+      } else if (getParentKey(key, node.children)) {
+        parentKey = getParentKey(key, node.children);
+      }
+    }
+  }
+  return parentKey;
+};
+
+const filterTreeNode = (node, value) => {
+  console.log(node)
+   let f =  node.name.indexOf('dsd') > 0
+   console.log(f)
+   console.log(f)
+}
+
+
+const onSearch = (value) => {
+
+  const newExpandedKeys = treeData
+    .map((item) => {
+      if (item.title.indexOf(value) > -1) {
+        return getParentKey(item.key, defaultData);
+      }
+      return null;
+    })
+    .filter((item, i, self) => item && self.indexOf(item) === i);
+  setExpandedKeys(newExpandedKeys);
+  setSearchValue(value);
+  setAutoExpandParent(true);
+};
+
+
+ const random = (num) =>  Array.from({length: 12}, (v, i) => num ?  parseInt((i+1)*Math.random()*num) : i+1)
 useEffect(() => {
-  let {detail = [], momYoy=[], proportion = []} = datas
-  console.log(proportion)
+  const mok = {
+    x: random(),
+    y: random(100),
+    y1: random(200),
+    y2: random(300),
+    y3: random(400),
+    }
+  let {detail=[], proportion = []} = datas  
+  const {x, y, y1, y2, y3} = mok;
+
+  
+
+
+  drawEcharts(stackRef.current, {
+    dataset: {
+    
+      source: [
+        ['日期',...x],
+        ['尖',...y],
+        ['峰',...y1],
+        ['平',...y2],
+        ['谷', ...y3],
+      ]
+    },
+    series: [
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        },
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        },
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        },
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        }
+    ]
+  })  
   drawEcharts(pieRef.current, {
       pieData: { data: proportion, total: 100 },
       type: 3,
@@ -199,61 +283,9 @@ useEffect(() => {
  
 
 
- 
-  //树被选中
-  const onCheck=(checkedKeys,e)=>{
-    if(Array.isArray(checkedKeys)){
-      setSelectkeys([...checkedKeys])
-      selectRef.current = [...checkedKeys]
-    }
-   
-  //  getQueryElectric()
-  }
+  
 
-  //树筛选
-   const filterSearchTree = (nodes, predicate, wrapMatchFn = () => false) => {
-    // 如果已经没有节点了，结束递归
-    if (!(nodes && nodes.length)) {
-      return []
-    }
-    const newChildren = []
-    for (let i = 0; i < nodes.length; i++) {
-      const node ={...nodes[i]} 
-      // 想要截止匹配的那一层（如果有匹配的则不用递归了，直接取下面所有的子节点）
-      if (wrapMatchFn(node) && predicate(node)) {
-        newChildren.push(node)
-        continue
-      }
-      console.log(node)
-      const subs = filterSearchTree(node.nodes, predicate, wrapMatchFn)
-      console.log(subs)
-      // 以下两个条件任何一个成立，当前节点都应该加入到新子节点集中
-      // 1. 子孙节点中存在符合条件的，即 subs 数组中有值
-      // 2. 自己本身符合条件
-      if ((subs && subs.length) || predicate(node)) {
-        node.nodes = subs || []
-        newChildren.push(node)
-      }
-      console.log('subs')
-    }
-    return newChildren.length ? newChildren : []
-  }
-  //搜索数
-  const onSearch=(v)=>{
-    if(!v){
-      setTreeData(()=>{return treeDatas})
-      return 
-    }
-    console.log(treeDatas)
-    const filterData = filterSearchTree(treeDatas,(node) => {
-      if (node.name.indexOf(v) !== -1) {
-          return true;
-      }
-      return false;
-  })
-  console.log(filterData)
-  setTreeData(()=>{return filterData})
-  }
+  
   useEffect(()=>{
      if(!areaId) return;
      getTreeData()
@@ -264,8 +296,9 @@ useEffect(() => {
   
   const picker= ['date', 'month', 'year'][timetype];
   const timechange = (e) => {
+    console.log(e)
     setTimetype(e);
-   // getData()
+    getDataByLine()
  }
   const CustView = () => {
     
@@ -282,7 +315,7 @@ useEffect(() => {
          </Item>
  
          <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-           <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} />
+           <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} onChange={() => getDataByLine()} />
          </Item>       
        </Space>
        
@@ -313,7 +346,7 @@ useEffect(() => {
      <UserSearch></UserSearch>
      
       <Mainbox>
-        <Titlelayout>
+        <Titlelayout key="line">
         <div className="treebox">
         <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
           <Radio value={1}>按线路</Radio>
@@ -322,25 +355,29 @@ useEffect(() => {
         </Radio.Group>
           <Search 
           placeholder='请输入关键字查询' 
+         
           onSearch={onSearch}
           />
           <Tree 
           treeData={treeData} 
           checkable 
-         
-          onCheck={onCheck}
+          onExpand={onExpand}
+          expandedKeys={expandedKeys}
+          autoExpandParent={autoExpandParent}
+          onCheck={getDataByLine}
+          filterTreeNode={filterTreeNode}
           fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />
         </div>
         </Titlelayout>
-         <Titlelayout title="分时能耗">
+         <Titlelayout title="分时能耗" key="stack">
                <div ref={stackRef} style={boxsty}></div>
          </Titlelayout>
          <div className='rightlayout'>
-           <Titlelayout title="分时占比">
+           <Titlelayout title="分时占比" key="pie">
               <div ref={pieRef} style={boxsty}></div>
            </Titlelayout>
-           <Titlelayout title="分时能耗同环比">
+           <Titlelayout title="分时能耗同环比" key="momyoy">
                <div style={boxsty}>
               <UseTable 
                 columns={columns} 

@@ -145,8 +145,8 @@ export default function UseSerach(props) {
   }, [projectId, AreaID, isSite])
  
   const onValuesChange = (changedValues, allValues) => {
-    console.log(changedValues);
-    console.log(allValues)
+  //  console.log(changedValues);
+   // console.log(allValues)
   }
   
 
@@ -168,9 +168,7 @@ export default function UseSerach(props) {
         {isSite && site}
         {isPcs && pcs}
       </Space>
-         {
-          isEngry && <Enery />
-         } 
+       
         {
            props.custview? props.custview : custview
         }

@@ -486,10 +486,10 @@ useEffect(() => {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+              <Cupload wpx={208} hpx={64} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
-           <Info>（图片大小为: 212*32 png 格式)</Info>
+           <Info>（图片大小为: 208*64 png 格式）</Info>
          </Item>
          <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
            <div className="img">
