@@ -60,7 +60,6 @@ const MainBox = styled.div`
       grid-gap: 2px;
       justify-content: center;
       align-items: center;
-      padding: 2px;
       .planclass{
       height: 28px;
       color: #fff;
@@ -243,7 +242,7 @@ export default function Index() {
         }else{
           setTableData([...tdata])
           tabledataRef.current=[...tdata]
-          getDuty([,...tdata])
+          getDuty([...tdata])
         }
        
     }else{
@@ -253,6 +252,7 @@ export default function Index() {
   
   //获取班次计划
   const getDuty =async (table)=>{
+    console.log('table', table)
     const res = await operationDesigin.GetDuty(projectId,areaId)
     if(res.success){
       reactiveObj.plans = res.data
@@ -269,6 +269,7 @@ export default function Index() {
         planRef.current.onCancel()
         checklist.current = structuredClone(checkGruopArr)
         getDuty()
+        // GetDutyUsers()
      }
     }
   }
@@ -331,7 +332,7 @@ export default function Index() {
   //多选框变更事件
   const checklist= useRef([])
   const changeGroup=(checkValue,record,i,index)=>{
-    console.log(checkValue,record,i,index, tabledataRef.current)
+    //console.log(checkValue,record,i,index, tabledataRef.current,tabledataRef.current[0].nos)
     const nois0 = {no1:0,no2:0,no3:0,no4:0}
     for (const key of  checkValue) {
       if(Object.hasOwnProperty.call(nois0, key)){
@@ -339,17 +340,18 @@ export default function Index() {
       }
     }
     const copytabledatat = structuredClone(tabledataRef.current)
-    copytabledatat[index]['nos'][i-1] = nois0
-    console.log(copytabledatat,copytabledatat[index]['nos'][i-1],nois0)
+    copytabledatat[index]['nos'][i-1] = structuredClone(nois0)
+    // console.log(copytabledatat,copytabledatat[index]['nos'][i-1],nois0)
     tabledataRef.current = structuredClone(copytabledatat)
     setTableData(structuredClone(copytabledatat))
   }
   const lastcountRef=useRef(0)
   //表格视图更新
-  const updateTable=async (plan,tabledata)=>{
+  const updateTable=async (plan)=>{
     let count = 0
     let palnobj=[];
     let columnarr=[];
+   console.log(tabledata)
     const copytable =structuredClone(tabledata)
     for (const key in  plan) {
       if ( key.indexOf('no')!==-1 &&plan[key] ) {
@@ -361,16 +363,19 @@ export default function Index() {
    }
    console.log(count,lastcountRef.current)
    if(count<lastcountRef.current){
-      for(let i=lastcountRef.current;i<=4;i++){
+      for(let i=count+1;i<=lastcountRef.current;i++){
         copytable.forEach(item=>{
           item.nos.forEach(it=>{
             it[`no${i}`] = 0
           })
         })
       }
+      console.log(373,copytable)
+      tabledataRef.current = copytable
       setTableData(copytable)
+      
    }
-   
+ 
    lastcountRef.current = count
  
   
@@ -412,7 +417,7 @@ export default function Index() {
             <Checkbox.Group 
             options={palnobj} 
             className='checkGroup' 
-            key={`${index}-${i}`}
+            key={`${Math.random(index)}-${i}`}
             value={cheeckvalue}
             onChange={(checkValue)=>{changeGroup(checkValue,record,i,index)}}></Checkbox.Group>
           )

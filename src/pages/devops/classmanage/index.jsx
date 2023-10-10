@@ -53,18 +53,21 @@ const MainBox = styled.div`
         line-height: 28px;
       }
       
-    }
-    
+    }    
     .gridrow3{
       display: grid;
-      /* grid-template-rows: repeat(3,28px); */
+      padding: 2px;
       grid-template-columns:59px;
       grid-gap: 2px;
       justify-content: center;
       align-items: center;
       .planclass{
+      height: 28px;
       color: #fff;
       line-height:28px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       &:nth-of-type(1){
         background-color: #6666ff;
       }
@@ -73,6 +76,9 @@ const MainBox = styled.div`
       }
       &:nth-of-type(3){
         background-color: #cc3333;
+      }
+      &:nth-of-type(4){
+        background-color: #f18509;
       }
     }
     }
