@@ -26,13 +26,13 @@ export default function  Title (){
   //  const { logoImageBase64} = project 
    // const {chineseTitle} = useSelector(systemConfigInfo)
     const currproject = useSelector(currProject) || {}
-    let projectLog = currproject.logoImage || currproject.imgLogo;
+    let projectLog = currproject.logoImage;
     let projectName = currproject.projectName || currproject.name
  
  
    return (
     <Divlog>
-        <Image  preview={false}    src={projectLog || logo}></Image>
+        <Image  preview={false} height={65}   src={projectLog || logo}></Image>
        {/*  <span >{titleCn || '正泰智慧能源服务平台'}</span> */}
         {/* <Text ellipsis={{tooltip: projectName}} style={{maxWidth: "200px", fontSize: "16px", color: "#fff"}}>{projectName || '正泰综合能源服务平台'}</Text> */}
     </Divlog>

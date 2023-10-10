@@ -293,9 +293,11 @@ const getSelected = async ({areaId, type=devietype}) => {
      
    
       let { areaId } = record;
-      let  topareaid = form.getFieldValue('topAreaId');
-      let topid = level == 1 ? areaId : topareaid
-      await getUNselect({ areaId: topid });
+     // let  topareaid = form.getFieldValue('topAreaId');
+     // let topid = level == 1 ? areaId : topareaid
+    //  await getUNselect({ areaId: topid });
+
+      await getUNselect({ areaId});
       await getSelected({ areaId })
       
     } catch (error) {
@@ -303,6 +305,7 @@ const getSelected = async ({areaId, type=devietype}) => {
     }
   };
   const config = async (record) => {
+    console.log(record)
     try {
       setRecord({ ...record });
       deviceData(record).then(() => {
@@ -444,10 +447,10 @@ const getSelected = async ({areaId, type=devietype}) => {
           });
           return row;
         });
-        console.log(formart);
+      //  console.log(formart);
         if (success && data) {
           setTableData([...formart])
-          console.log(tabelData);
+         // console.log(tabelData);
           setPagination({
             ...pagination,
             total: total,

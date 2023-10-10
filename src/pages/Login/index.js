@@ -813,10 +813,8 @@ export default function Login() {
     : "10.5.7.60";
   
  useEffect(() => {
-  dispatch(systemConfig(hostname)).then(res => {
-    console.log(res)
-    let {success, data} = res.payload
-    console.log(data)
+  dispatch(systemConfig(hostname)).then(res => {   
+    let {success, data} = res.payload   
     if(success) dispatch(getThemeColor(data.themeColor));
   }).catch(e => {
     console.log(e)
