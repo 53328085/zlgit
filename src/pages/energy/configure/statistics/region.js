@@ -570,6 +570,9 @@ const getSelected = async ({areaId, type=devietype}) => {
               rowSelection={rowSelection}
               dataSource={deviceSummary}
               rowKey="id"
+              scroll={{
+                y: 336
+              }}
             />
           </div>
           <div className="sub">
@@ -587,7 +590,11 @@ const getSelected = async ({areaId, type=devietype}) => {
               columns={deviceColumns}
               rowSelection={rowSelection}
               dataSource={deviceSub}
+              scroll={{
+                y: 248
+              }}
               rowKey="id"
+
             />
           </div>
         </div>
@@ -686,6 +693,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             columns={deviceColumns}
             rowSelection={rowSelection}
             dataSource={Unselected}
+            scroll={{y: 616}}
             rowKey="id"
           />
         </div>
