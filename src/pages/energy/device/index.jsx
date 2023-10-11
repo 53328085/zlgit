@@ -69,33 +69,27 @@ const Radiogroup = styled(Radio.Group)`
  
  
  const headers = ["1#压缩机", "21#压缩机", "3#压缩机", "4#压缩机", "5#压缩机", "6#压缩机", "7#压缩机"]
-const datas = headers.map((n, index) => (
+
+// 总尖峰平谷对应E,E1,E2,E3,E4
+
+ const datas = headers.map((n, index) => (
   {
     name: n,
-    sn: Math.random().toString().slice(2,12),
+    sns: [Math.random().toString().slice(2,12)].join(),
     address:   `成都市青江路145号银丽经济贸易区${index + 1}号楼${index+1}层`,
     type: index % 2,
-    total: {
-      value: 312.35,
-      qqq:  0.15,
-      yyy: -6.9,
-    },
-    peak: {
-      value: 422.35,
-      qqq:  0.92,
-      yyy: -6.9,
-    },
-    avg: {
-      value: 932.35,
-      qqq:  0.37,
-      yyy: 8.9,
-    },
-    low: {
-      value: 242.35,
-      qqq:  -0.48,
-      yyy: 1.9,
-    }
-
+    e: 100,
+    e2: 20,
+    e3: 40,
+    e4: 40,
+    mome: "100%",
+    yoye: "100%",
+    mome2: "100%",
+    yoye2: "100%",
+    mome3: "100%",
+    yoye3: "80%",
+    mome4: "-60%",
+    yoye4: "70%",
   }
 ))
  
@@ -126,8 +120,9 @@ export default function Index() {
       title: "设备名称",
     },
     {
-      dataIndex: "sn",
+      dataIndex: "sns",
       title: "设备编号",
+      render: (text) =>  <span>{text}</span>
     },
     {
         dataIndex: "address",
@@ -135,22 +130,22 @@ export default function Index() {
          
     },
     {
-      dataIndex: "value",
+      dataIndex: "e",
       title: "总能耗(kwh)",
       onHeaderCell: () => ({style:  headsty("#000")})
     },
     {
-      dataIndex: "yyy",
+      dataIndex: "e2",
       title: "峰(kwh)",
       onHeaderCell: () => ({style:  headsty("#f33")})
     },
     {
-      dataIndex: "avg",
+      dataIndex: "e3",
       title: "平(kwh)",
       onHeaderCell: () => ({style:  headsty("#f90")})
     },
     {
-      dataIndex: "lower",
+      dataIndex: "e4",
       title: "谷(kwh)",
       onHeaderCell: () => ({style:  headsty("#093")})
     }
@@ -179,8 +174,10 @@ export default function Index() {
       }  
      } else {
       return {
-        list: [],
-        total: 0
+       // list: [],
+       // total: 0
+       list: tableData,
+       total: tableData.length,
       }  
      }
    }).catch()

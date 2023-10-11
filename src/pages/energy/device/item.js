@@ -1,10 +1,15 @@
 import React from 'react'
 import imgurl from './icon'
 import styled from 'styled-components'
+import { nanoid } from "@reduxjs/toolkit";
 import {Image, Typography, Descriptions} from 'antd'
+import {numberformat, Statebox} from "@com/usehandler"
 const {Paragraph} = Typography
 const Itembox = styled.div`
+  position: relative;
+  overflow: hidden;
   background-image:   url(${imgurl.itembg}) ;
+  background-size: contain;
   outline: 1px solid rgba(215,215,215,1);
   outline-offset: 1px ;
   display: grid;
@@ -49,10 +54,11 @@ const Itembox = styled.div`
       background-color: #135abd;
       border-right: 1px solid #fff;
       justify-content: center;
-      &:last-of-type{
+     
+     }
+     .title:nth-of-type(4){
         border-right: none;
       }
-     }
      .topborder {
       border-top: 1px solid #fff;
      }
@@ -76,8 +82,12 @@ const Itembox = styled.div`
       background-color: #fff;
       border-right: 1px solid #d7d7d7;
       border-bottom: 1px solid #d7d7d7 ;
+      color:#000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       &:last-of-type {
-        border-right: none;
+       // border-right: none;
       }
      }
      .bold {
@@ -95,51 +105,50 @@ const Itembox = styled.div`
      } 
   }
 `
-const list = (arr, str,sty) => {
- const title =  <div className={sty}>{str}</div>
- let lists =  Object.entries(arr).map(vs => {
-    let [key, value] = vs
-    if(key == "value") {
-     return <div className='com bold'>{value}</div>
-    }else {
-      return <div className={ value > 0 ? "com rose" : "com decing"}>
-       {value > 0 ? "+" : null}{value}%
-      </div>
-    }
- })
- lists.unshift(title);
- return lists;
-}
+/* total: {
+  value: 312.35,
+  qqq:  0.15,
+  yyy: -6.9,
+}, */
+
+ 
 export default function Item(props) {
-  let {type, name, sn, address, total,peak,avg,low} = props
+  let {type, name, sns, address, e, e2, e3, e4, mome, yoye, mome2, yoye2, mome3, yoye3, mome4, yoye4,} = props
   
   return (
     <Itembox>
-       <div className='upper'>
-           <div className='pic'>
+       <Statebox top="13px" right="-20px" width="85px">正常</Statebox>
+       <div className='upper' key={nanoid()}>
+           <div className='pic' key={nanoid()}>
               <Image src={imgurl[`a${type}`]} preview={false} ></Image>
            </div>
-           <div className='info'>
+           <div className='info' key={nanoid()}>
              <Paragraph ellipsis={{tooltip: name}}>{name}</Paragraph>
-             <Paragraph ellipsis={{tooltip: sn, rows: 2}}>SN:{sn}</Paragraph>
+             <Paragraph ellipsis={{tooltip: sns, rows: 2}}>SN:{sns}</Paragraph>
              <Paragraph ellipsis={{tooltip: address, rows: 3}}>{address}</Paragraph>
            </div>
        </div>
-       <div className='below'>
+       <div className='below' key={nanoid()}>
            {["分类", "能耗(kwh)","同比", "环比"].map(e => <div className='title'>{e}</div>)}
-           
-           {
-              list(total, "总能耗", "back")
-           }
-           {
-            list(peak, "峰能耗", "red")
-           }
-           {
-            list(avg, "平能耗", "yellow")
-           }
-            {
-            list(avg, "谷能耗", "green")
-           }
+
+           <div className='back' key={nanoid()}>总能耗</div>
+           <div className='com bold' key={nanoid()}>{e}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoye)}</div>
+           <div className='com' key={nanoid()}>{numberformat(mome)}</div>
+           <div className='red' key={nanoid()}>峰能耗</div>
+           <div className='com bold' key={nanoid()}>{e2}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoye2)}</div>
+           <div className='com' key={nanoid()}>{numberformat(mome2)}</div>
+
+           <div className='yellow' key={nanoid()}>平能耗</div>
+           <div className='com bold' key={nanoid()}>{e3}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoye3)}</div>
+           <div className='com' key={nanoid()}>{numberformat(mome3)}</div>
+
+           <div className='green' key={nanoid()}>平能耗</div>
+           <div className='com bold' key={nanoid()}>{e4}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoye4)}</div>
+           <div className='com' key={nanoid()}>{numberformat(mome4)}</div>
        </div>
     </Itembox>
   )
