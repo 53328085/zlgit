@@ -550,6 +550,15 @@ export const drawEcharts = (
     dataset,
     series,
   };
+  const sankoption = {
+    series: {
+        type: 'sankey',
+        layout: 'none',
+        emphasis: {
+          focus: 'adjacency'
+        },
+    }
+  }
   const setoption =
     type == 1
       ? option
@@ -560,13 +569,10 @@ export const drawEcharts = (
       : {}; 
      
   if(rest.custoption) {
-    chart.setOption({...rest.custoption, grid: {
-        containLabel: true,
-    }}, true, chartoption); //桑基图
+    chart.setOption({...rest.custoption}); //桑基图
   }else {
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    
-
-  chart.resize();
+  chart?.resize();
 };
 

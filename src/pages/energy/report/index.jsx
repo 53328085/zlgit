@@ -104,27 +104,55 @@ const conscols =[ // 耗能用量
     dataIndex: 'consume',
   },   
 ]
-
+const cellstyle = {
+  textAlign: "center",
+  color: "#fff"
+}
 const timecols =[  // 分时能耗 
   {
     title: '设备名称',
     dataIndex: 'name', 
   },  
   {
-    title: '总计',
-    dataIndex: 'total',
+    title: '总计(kWh)',
+    dataIndex: 'e',
+    onHeaderCell: () => ({
+      style: {
+        background: "#000",
+        ...cellstyle
+      }
+    })
   },
   {
     title: '峰(kWh)',
-    dataIndex: 'address',
+    dataIndex: 'e2',
+    onHeaderCell: () => ({
+      style: {
+        background: "#f33",
+        ...cellstyle
+      }
+    })
   },
   {
     title: '平(kWh)',
-    dataIndex: 'consume',
+    dataIndex: 'e3',
+    onHeaderCell: () => ({
+      style: {
+        background: "#f90",
+        ...cellstyle
+      }
+    })
   },  
   {
     title: '谷(kWh)',
-    dataIndex: 'consume',
+    dataIndex: 'e4',
+    onHeaderCell: () => ({
+      style: {
+        background: "#093",
+        ...cellstyle
+      }
+    })
+
   },  
   {
     title: '设备编号',
@@ -195,9 +223,10 @@ export default function Index() {
         type,
         date: time,
         meterType,
-        current,
+        pageNum: current,
         pageSize,
      }
+     console.log(params)
      return hander(params, treeId).then(res => {
          let {success, data} = res
          if(success && Array.isArray(data) && data.length > 0) {
