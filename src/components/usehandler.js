@@ -46,6 +46,17 @@ export function numberformat(n){
   }
 
 }
+export function getTime(date, type){
+  let time
+      if(type == 0) {
+        time=date.format('YYYY-MM-DD')
+    }else if(type == 1) {
+        time = date.startOf("month").format('YYYY-MM-DD')
+    }else if(type == 2) {
+        time = date.startOf("year").format('YYYY-MM-DD')
+    }
+  return time
+}
 export  const Statebox = styled.div.attrs(props => ({
   bgColor: '#009966',
 }))`

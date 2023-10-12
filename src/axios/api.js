@@ -1628,22 +1628,22 @@ export class DistributionMeter {
  
 //能源流向
 export class EnergyFlowRuntime {
-  static queryComprehensive = (projectId, type, date, data) =>
+  static queryComprehensive = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryComprehensive?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryElectric = (projectId, type, date, data) =>
+  static queryElectric = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryWater = (projectId, type, date, data) =>
+  static queryWater = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryGas = (projectId, type, date, data) =>
+  static queryGas = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`,
       data

@@ -38,7 +38,9 @@ export default function Water (props) {
                 { isPublish ? null : <div style={nodeAction}>
                     {item.parentId == 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item)}>新增子项</span> : null}
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline', marginLeft: 32, marginRight: 32}} onClick={()=>edit(name, item.energyId)}>编辑</span>
-                    {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>}
+                  {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
+                  <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span>
+                   
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item)}>删除</span>
                 </div> }
             </div>

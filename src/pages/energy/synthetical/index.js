@@ -237,7 +237,7 @@ export default function Index() {
   const [tabvalue, setTabvalue] = useState(1)
   const [op, setOp] = useState(1) // 能耗 1， 费用 2
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
+  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;
   
   let type = ['', '日', '月', '年'][timetype]
   const Chartbox = ({data}) => {
@@ -287,11 +287,12 @@ export default function Index() {
     )
 }
 
-const EngItem = ({icon, data, sub, ...otherprop}) => {
+const EngItem = ({name, unit, periodValue, lastMonthPeriodValue, lastYearPeriodValue, mom, yoy
+}) => {
+  let icon = unit.indexOf("kWh")>-1 ? 'electric' : unit.indexOf("m")>-1  ? 'water' : '';
   return (
    <Titlelayout
-   {...otherprop}
-   title={<Title title={data.name} subtitle={sub} />}
+   title={<Title title={name} subtitle={unit} />}
    key={nanoid()}
  >
    <UDbox>
@@ -304,23 +305,23 @@ const EngItem = ({icon, data, sub, ...otherprop}) => {
      <div className="list">
        <div className="item">
          <span>本{type}</span>
-         <span>{data.periodValue}</span>
+         <span>{periodValue}</span>
        </div>
        <div className="item">
          <span>上{type}</span>
-         <span>{data.lastMonthPeriodValue}</span>
+         <span>{lastMonthPeriodValue}</span>
        </div>
        <div className="item">
          <span>环比</span>
 
          
-          {numberformat(data.mom)}
+          {numberformat(mom)}
           
        </div>
        <div className="item">
          <span>同比</span>
           
-          {numberformat(data.yoy)}
+          {numberformat(yoy)}
            
        </div>
      </div>
@@ -360,7 +361,7 @@ const Energyitem = () => {
    return (
     <>
       {
-        items.map(item => <EngItem  {...item} key={nanoid()}/>)
+        consumes.map(item => <EngItem  {...item} key={nanoid()}/>)
       }
     </>
   
