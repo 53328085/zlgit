@@ -135,7 +135,7 @@ const Custbtn = styled(Button)`
       title: "值班人员",
       dataIndex: `userName`,
       align: 'center',
-      width: 280,
+      width: 200,
     }, {
       title: "班次",
       dataIndex: `plan`,
