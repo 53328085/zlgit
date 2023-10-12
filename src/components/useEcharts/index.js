@@ -551,6 +551,10 @@ export const drawEcharts = (
     series,
   };
   const sankoption = {
+    grid: {
+      ...comm.grid,
+      ...grid,
+    },
     series: {
         type: 'sankey',
         layout: 'none',
@@ -569,7 +573,7 @@ export const drawEcharts = (
       : {}; 
      
   if(rest.custoption) {
-    chart.setOption({...rest.custoption}); //桑基图
+    chart.setOption({...rest.custoption}, true); //桑基图
   }else {
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    

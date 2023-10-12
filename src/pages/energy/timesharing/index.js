@@ -9,7 +9,7 @@ import Bluecolumn from '@com/bluecolumn';
 import Timepercent from './timepercent'
 import { energyShare, Monitoring } from '@api/api'
 import {selectProjectId, selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-import { Form, Select, DatePicker, message,Input,Tree ,Button, Space, Radio } from 'antd'
+import { Form, Select, DatePicker, message,Input,Tree ,Button, Space, Radio, Empty } from 'antd'
 import moment from 'moment';
 import UserSearch from "@com/useSerach";
 import Titlelayout from "@com/titlelayout";
@@ -78,9 +78,7 @@ export default function Index() {
   const [typeTree, setTypeTree] = useState(1)
   
   const treekey =  typeTree == 1 ? "id" : "areaId"
-  const [expandedKeys, setExpandedKeys] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
+
 
    const [datas, setDatas] = useState({})
  
@@ -118,18 +116,17 @@ export default function Index() {
     
   ]
   //获取树的数据， 1 线路 2 网格
- const getTreeData= async ()=>{
+ const getTreeData= async (name)=>{
     try {
-      const areaName = onelevel.find(l => l.id == areaId).name
-     
       let params =typeTree == 1 ? {
         projectId,
         areaId,
-        type:0,
+        type:1,
+        lineName: name
       } : typeTree == 2 ? {
         projectId,
         areaId,
-        areaName,
+        areaName: name,
       } : {}
       let hander = ['', LineManagerQuery, QuerySpaceTrees][typeTree]
       const {success, data} = await hander(params)
@@ -137,6 +134,7 @@ export default function Index() {
          setTreeData(data)
          setTreeDatas(data)
       }else{
+        setTreeData([])
         message.error(res.errMsg)
       }
       getDataByLine()
@@ -175,65 +173,14 @@ export default function Index() {
    
      
  } 
- // 树搜索
- const onExpand = (newExpandedKeys) => {
-  setExpandedKeys(newExpandedKeys);
-  setAutoExpandParent(false);
-};
+ 
 
-const getParentKey = (key, tree) => {
-  let parentKey;
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-    if (node.children) {
-      if (node.children.some((item) => item.key === key)) {
-        parentKey = node.key;
-      } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children);
-      }
-    }
-  }
-  return parentKey;
-};
-
-const filterTreeNode = (node, value) => {
-  console.log(node)
-   let f =  node.name.indexOf('dsd') > 0
-   console.log(f)
-   console.log(f)
-}
+ 
 
 
-const onSearch = (value) => {
-
-  const newExpandedKeys = treeData
-    .map((item) => {
-      if (item.title.indexOf(value) > -1) {
-        return getParentKey(item.key, defaultData);
-      }
-      return null;
-    })
-    .filter((item, i, self) => item && self.indexOf(item) === i);
-  setExpandedKeys(newExpandedKeys);
-  setSearchValue(value);
-  setAutoExpandParent(true);
-};
-
-
- const random = (num) =>  Array.from({length: 12}, (v, i) => num ?  parseInt((i+1)*Math.random()*num) : i+1)
 useEffect(() => {
-  const mok = {
-    x: random(),
-    y: random(100),
-    y1: random(200),
-    y2: random(300),
-    y3: random(400),
-    }
   let {detail=[], proportion = []} = datas  
-  const {x, y, y1, y2, y3} = mok;
-
-  
-
+  const {x, y, y1, y2, y3} = detail;
 
   drawEcharts(stackRef.current, {
     dataset: {
@@ -355,19 +302,21 @@ useEffect(() => {
         </Radio.Group>
           <Search 
           placeholder='请输入关键字查询' 
-         
-          onSearch={onSearch}
+          allowClear
+          onSearch={getTreeData}
           />
-          <Tree 
+         { treeData.length > 0 ? <Tree 
           treeData={treeData} 
-          checkable 
-          onExpand={onExpand}
-          expandedKeys={expandedKeys}
-          autoExpandParent={autoExpandParent}
-          onCheck={getDataByLine}
-          filterTreeNode={filterTreeNode}
+         // checkable 
+          defaultExpandParent
+        //  expandedKeys={expandedKeys}
+         // autoExpandParent={autoExpandParent}
+          onSelect={getDataByLine}
+          
           fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />
+          : <Empty />
+         }
         </div>
         </Titlelayout>
          <Titlelayout title="分时能耗" key="stack">

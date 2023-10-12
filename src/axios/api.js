@@ -1275,7 +1275,7 @@ export const Monitoring = {
   //线路管理
   LineManager: {
     AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
-    LineManagerQuery: (data) => server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
+    LineManagerQuery: ({projectId, type, areaId, lineName=''}) => server.get(`/Monitor/LineManager/Query?projectId=${projectId}&type=${type}&areaId=${areaId}&lineName=${lineName}`),//线路查询
     LineManagerAdd: (data) => server.post(`/Monitor/LineManager/Add`, data),//新增线路       
     LineManagerUpdate: (data) => server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
     LineManagerDelete: (data) => server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
