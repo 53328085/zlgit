@@ -13,7 +13,7 @@ export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
   static LoginByName = (data = {}) =>
-    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`); // 根据用户名登录
+    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}&key=${data.key}&code=${data.code}`); // 根据用户名登录
  
   static GetVerification = (mobile) =>
     server.post(`/General/User/GetCode?mobile=${mobile}`); // 获取验证吗
