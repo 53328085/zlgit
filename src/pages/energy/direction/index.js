@@ -75,7 +75,7 @@ export default function Index() {
  
   useEffect(() => {
     getData()
-  }, [value, op, areaId])
+  }, [value, op])
 
 
  
@@ -156,7 +156,7 @@ export default function Index() {
       <Pagecount showserach={true} pd="32px">   
       
         {
-          value =="Sankey" ? <Sankey data={data} key="sankey" /> : <Topology key="topology" />
+          value =="Sankey" ? <Sankey data={data} key="sankey"  /> : <Topology key="topology" />
         }
       </Pagecount>
       </CustContext.Provider>

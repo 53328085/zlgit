@@ -46,18 +46,19 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
  
 
   //获取树的数据， 1 线路 0 网格
- const getTreeData= async ()=>{
+ const getTreeData= async (name='')=>{
     try {
-      const areaName = onelevel.find(l => l.id == areaId).name
+    //  const areaName = onelevel.find(l => l.id == areaId).name
      
       let params =typeTree == 1 ? {
         projectId,
         areaId,
         type:0,
+        lineName: name
       } : typeTree == 0 ? {
         projectId,
         areaId,
-        areaName,
+        areaName:name,
       } : {}
       let hander = [ QuerySpaceTrees, LineManagerQuery][typeTree]
     
@@ -115,21 +116,6 @@ const getParentKey = (key, tree) => {
 
 
 
-const onSearch = (value) => {
-
-  const newExpandedKeys = treeData
-    .map((item) => {
-      if (item.title.indexOf(value) > -1) {
-        return getParentKey(item.key, defaultData);
-      }
-      return null;
-    })
-    .filter((item, i, self) => item && self.indexOf(item) === i);
-  setExpandedKeys(newExpandedKeys);
-  setSearchValue(value);
-  setAutoExpandParent(true);
-};
-
  
  
  
@@ -168,15 +154,15 @@ const onSearch = (value) => {
         }
           <Search 
           placeholder='请输入关键字查询' 
-         
-          onSearch={onSearch}
+          allowClear
+          onSearch={getTreeData}
           />
           <Tree 
           treeData={treeData} 
           checkable 
           onExpand={onExpand}
           expandedKeys={expandedKeys}
-          autoExpandParent={autoExpandParent}
+         
           onCheck={onCheck}
           fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />

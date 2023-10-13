@@ -3,9 +3,6 @@ import { useSelector } from 'react-redux'
 import {useAntdTable} from 'ahooks'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
-import Energyconsum from './energyconsum'
-import Energymeter from './energymeter'
-import Energytimeshare from './energytimeshare'
 import UserSearch from "@com/useSerach";
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree"
@@ -40,18 +37,18 @@ const Mainbox = styled.div`
 `
 const Contentbox = styled.div`
   display: grid;
-  grid-template-columns: 296px 1fr;
+  grid-template-columns: 296px 1334px;
   column-gap: 16px;
   flex: 1;
 `
 const {Item} = Form
 const getTime = (date, type)=> {
   let time
-      if(type == 0) {
+      if(type == 1) {
         time=date.format('YYYY-MM-DD')
-    }else if(type == 1) {
-        time = date.startOf("month").format('YYYY-MM-DD')
     }else if(type == 2) {
+        time = date.startOf("month").format('YYYY-MM-DD')
+    }else if(type == 3) {
         time = date.startOf("year").format('YYYY-MM-DD')
     }
   return time
@@ -72,10 +69,7 @@ const cols =[ // 实时抄表
   {
     title: '用能(kwh)',
     dataIndex: 'consume',
-  }, {
-    title: '费用',
-    dataIndex: 'cost',
-  },
+  }, 
   {
     title: '设备编号',
     dataIndex: 'sn',
@@ -86,22 +80,33 @@ const cols =[ // 实时抄表
   },
 ]
 
-const conscols =[ // 耗能用量
+const conscols =[ // 能耗抄表
   {
     title: '设备名称',
     dataIndex: 'name', 
+    width: 84,
+    key: "name",
+    fixed: 'left',
   },  
   {
     title: '设备编号',
     dataIndex: 'sn',
+    width:134,
+    key: "sn",
+    fixed: 'left',
   },
   {
     title: '安装位置',
     dataIndex: 'address',
+    key: 'address',
+    width: 84,
+    fixed: 'left',
   },
   {
     title: '能耗(kwh)',
     dataIndex: 'consume',
+    key: 'consume',
+    width: 92,
   },   
 ]
 const cellstyle = {
@@ -155,6 +160,10 @@ const timecols =[  // 分时能耗
 
   },  
   {
+    title: '费用',
+    dataIndex: 'cost',
+  },
+  {
     title: '设备编号',
     dataIndex: 'sn',
   }, 
@@ -164,7 +173,7 @@ const timecols =[  // 分时能耗
   }, 
 ]
 
-const typecols =[  // 分时能耗 
+const typecols =[  // 分类能耗 
   {
     title: '能耗类型',
     dataIndex: 'type', 
@@ -197,6 +206,8 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState([])
+  const [concolumns, setConcolumns] = useState(conscols)
+  const [xw, setXw] = useState(394)
   const tabs = [
     { key: '0', label: '实时抄表' },
     { key: '1', label: '能耗抄表' },
@@ -206,16 +217,19 @@ export default function Index() {
   const [form]=Form.useForm()
   const projectId = useSelector(selectProjectId)
   const index = Number(value)
-  const columns = [cols, conscols, timecols, typecols][index]
+ 
+  let columns = [cols, [], timecols, typecols][index]
+  
+  
 
   const getTableData = ({ current, pageSize }, formData={}) => {
-     const row = Number(value);
+  //  const row = Number(value);
      
-     let hander =row < 3 ? [
+     let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
       [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
-      ][row][line] : QueryClassifyConsume
+      ][index][line] : QueryClassifyConsume
      let {type, date, meterType} = formData
      let time = getTime(date, type)
      let params = {
@@ -231,12 +245,12 @@ export default function Index() {
          let {success, data} = res
          if(success && Array.isArray(data) && data.length > 0) {
           
-           if(row == 1) {
+           if(index == 1) {
              let {detailHeaders} = data[0]
-             let column = detailHeaders.map(col => ({title: col, dataIndex: col}))
-             row == 1 && [conscols, ...column];
-             
-
+             let last = detailHeaders.length - 1
+             let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px" }))
+             column[last].fixed = "right"
+             setConcolumns([...conscols, ...column])
              data.forEach(item => {
               let {detailHeaders, detailValues} = item;
               for(const [index, val] of detailHeaders?.entries()) {
@@ -268,14 +282,9 @@ export default function Index() {
     refreshDeps: [areaId, treeId, value, line]
   })
   const { submit} = search;
-  let Coms = [
-    <Energymeter />,
-    <Energyconsum />,
-    <Energytimeshare />
-  ]
-  
-  const [timetype, setTimetype] = useState(0) // 日、月、年 0,1,2
-  const picker= ['date', 'month', 'year'][timetype];
+ 
+  const [timetype, setTimetype] = useState(1) // 日、月、年 0,1,2
+  const picker= ['','date', 'month', 'year'][timetype];
   const timechange = (e) => { 
     setTimetype(e);
     submit()
@@ -301,11 +310,11 @@ export default function Index() {
          />
         </Item>
         <Space>
-        <Item  name="type" initialValue={0}>
+        <Item  name="type" initialValue={1}>
            <Select style={{width: '80px'}}   options={[
-            {value: 0, label: '日'},
-            {value: 1, label: '月'},
-            {value: 2, label: '年'},
+            {value: 1, label: '日'},
+            {value: 2, label: '月'},
+            {value: 3, label: '年'},
            ]}
            onChange={timechange}
            ></Select>
@@ -342,7 +351,15 @@ export default function Index() {
           <Pagecount showSearch={false}>
              <Contentbox>
                 <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} lineType={value} /> 
-                 <UserTable columns={columns} {...tableProps} key="reading"></UserTable>
+                {
+                  value == "1" ? <UserTable columns={concolumns} {...tableProps} key={value} scroll={{
+                    scrollToFirstRowOnChange: true,
+                     x: 1300, 
+                     y: 685
+                   }
+                  }></UserTable>
+                  :<UserTable columns={columns} {...tableProps} key={value}></UserTable>
+                } 
              </Contentbox>
           </Pagecount>
           </Mainbox>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography, message} from "antd";
+import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography,Pagination, message} from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
@@ -13,14 +13,17 @@ import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import moment from "moment";
  
 import UseTable from "@com/useTable"
+import { useActionData } from "react-router-dom";
  
 const {Text, Paragraph} = Typography
 const Laybox = styled.div`
-  display: flex;
+  display: grid;
   flex: 1;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px dotted #d7d7d7;
+  grid-template-rows: 1fr 24px;
+  row-gap: 16px;
   .card {
     flex: 1;
     display: grid;
@@ -97,7 +100,7 @@ const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
   const areaId = useSelector(selectOneLevelDefaultId)
-  const [tableData, setTableData] = useState(datas)
+  const [tableData, setTableData] = useState([])
   const [form] = Form.useForm();
   const {Item} = Form
   const [value, setvalue] = useState("1");
@@ -106,8 +109,8 @@ export default function Index() {
   const [tabvalue, setTabvalue] = useState(1)
   const [op, setOp] = useState(1) // 能耗 1， 费用 2
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
-  
+ // const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
+  const [total, setTotal] = useState(0)
   let type = ['', '日', '月', '年'][timetype]
   const headsty =(bg) =>  ({
     background:bg,
@@ -152,8 +155,8 @@ export default function Index() {
 
   ]
 
-  const getData =  ({current, pageSize}, form) => {
-    console.log(form)
+ /*  const getData =  ({current, pageSize}, form) => {
+   
     if(!form) return;
     let {area, date, type } = form 
    
@@ -174,17 +177,41 @@ export default function Index() {
       }  
      } else {
       return {
-       // list: [],
-       // total: 0
-       list: tableData,
-       total: tableData.length,
+       list: [],
+       total: 0
+       
       }  
+     }
+   }).catch()
+   
+  } */
+
+  const getData =  (current=1, pageSize=14) => {
+    let {area, date, type } = form.getFieldsValue() 
+    const params = {
+      type,
+      projectId,
+      date: date?.format('YYYY-MM-DD'),
+      areaId:area,
+      pageNum: current,
+      pageSize,
+   }
+  QueryElectric.query(params).then(res => {
+     let {success, data, total} = res
+     if (success && Array.isArray(data) && data.length >0) {
+      setTotal(total)
+      setTableData(data)
+     
+     } else {
+      setTotal(0)
+      setTableData([])
      }
    }).catch()
    
   }
 
-  const {tableProps, search, runAsync, params} = useAntdTable(getData, {
+
+/*   const {tableProps, search, runAsync, params} = useAntdTable(getData, {
     form,
     defaultParams: [{current: 1, pageSize: 14}, {
       date: moment(new Date(), 'YYYY-MM-DD'), 
@@ -195,17 +222,15 @@ export default function Index() {
     manual: false,
   })
   
-  console.log(tableProps)
-  const {submit} = search
+ 
+  const {submit} = search */
 
 
   const ontabChange = (e) => {
     console.log(e)
     setTabvalue(e)
   }
-  useEffect(() => {    
-    //getData()
-  }, [tabvalue])
+ 
  const [mode, setMode] = useState(1)
 
 
@@ -217,8 +242,8 @@ export default function Index() {
 
 
  useEffect(() => {
-
- }, []) 
+  getData()
+ }, [areaId]) 
  const Title =  (
       <CustTitle className="t">
         重点设备分时能耗
@@ -245,7 +270,7 @@ export default function Index() {
 
   const timechange = (e) => {
      setTimetype(e);
-     submit()
+     getData()
   }
 
   const CustView = () => {
@@ -272,7 +297,7 @@ export default function Index() {
         </Item>
 
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={submit} style={{width: '160px'}} />
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
         </Item>       
       </Space>
       </div>
@@ -299,14 +324,14 @@ export default function Index() {
       <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
       <UserSearch></UserSearch>
      
-        <Titlelayout title={Title}>
+        <Titlelayout title={Title} layout="flex">
         <Laybox  >
             
              {
-              mode == 1 ? items : <UseTable {...tableProps} columns={columns} key="table" />
+                 mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key="table" />
              }  
            
-           
+             <Pagination  defaultPageSize={14} defaultCurrent={1} total={total} size="small"></Pagination>
            </Laybox>
         </Titlelayout>
     

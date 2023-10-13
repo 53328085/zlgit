@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react'
 import { drawEcharts } from "@com/useEcharts";
 export default function Sankey({data}) {
- console.log("render")
+ console.log("render", data)
  const {link, name} = data
   const chart = useRef()
   let nodes = [
