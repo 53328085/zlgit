@@ -11,13 +11,20 @@ import Citem from './item'
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import moment from "moment";
- 
+ import {getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
-import { useActionData } from "react-router-dom";
  
-const {Text, Paragraph} = Typography
+const Mainbox = styled.div`
+display: grid;
+ grid-template-rows: 48px 1fr;
+  row-gap: 16px;
+   flex: 1;
+ 
+  
+`
 const Laybox = styled.div`
   display: grid;
+  
   flex: 1;
   margin-top: 16px;
   padding-top: 16px;
@@ -104,14 +111,15 @@ export default function Index() {
   const [form] = Form.useForm();
   const {Item} = Form
   const [value, setvalue] = useState("1");
-  const [qverview, setOverview] = useState({})
+   
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-  const [tabvalue, setTabvalue] = useState(1)
-  const [op, setOp] = useState(1) // 能耗 1， 费用 2
+ 
+ 
   const picker= ['', 'date', 'month', 'year'][timetype];
+
  // const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
   const [total, setTotal] = useState(0)
-  let type = ['', '日', '月', '年'][timetype]
+ 
   const headsty =(bg) =>  ({
     background:bg,
     color: "#fff",
@@ -155,43 +163,14 @@ export default function Index() {
 
   ]
 
- /*  const getData =  ({current, pageSize}, form) => {
-   
-    if(!form) return;
-    let {area, date, type } = form 
-   
-    const params = {
-      type,
-      projectId,
-      date: date?.format('YYYY-MM-DD'),
-      areaId:area,
-      pageNum: current,
-      pageSize,
-   }
-   return QueryElectric.query(params).then(res => {
-     let {success, data, total} = res
-     if (success && Array.isArray(data) && data.length >0) {
-      return {
-        list: data,
-        total
-      }  
-     } else {
-      return {
-       list: [],
-       total: 0
-       
-      }  
-     }
-   }).catch()
-   
-  } */
+ 
 
   const getData =  (current=1, pageSize=14) => {
     let {area, date, type } = form.getFieldsValue() 
     const params = {
       type,
       projectId,
-      date: date?.format('YYYY-MM-DD'),
+      date: getTime(date, type),
       areaId:area,
       pageNum: current,
       pageSize,
@@ -210,27 +189,6 @@ export default function Index() {
    
   }
 
-
-/*   const {tableProps, search, runAsync, params} = useAntdTable(getData, {
-    form,
-    defaultParams: [{current: 1, pageSize: 14}, {
-      date: moment(new Date(), 'YYYY-MM-DD'), 
-      type: 2,
-      area: areaId,
-    }],
-    refreshDeps: [projectId, areaId],
-    manual: false,
-  })
-  
- 
-  const {submit} = search */
-
-
-  const ontabChange = (e) => {
-    console.log(e)
-    setTabvalue(e)
-  }
- 
  const [mode, setMode] = useState(1)
 
 
@@ -309,6 +267,7 @@ export default function Index() {
      {tableData.map(d => <Citem  {...d} key={nanoid()}/>)}
   </div>
  )
+ const showTotal = (total) => `共${total}条记录`;
   return (
     <CustContext.Provider
       value={{
@@ -321,7 +280,7 @@ export default function Index() {
       }}
     >
 
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
+      <Mainbox>
       <UserSearch></UserSearch>
      
         <Titlelayout title={Title} layout="flex">
@@ -331,11 +290,11 @@ export default function Index() {
                  mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key="table" />
              }  
            
-             <Pagination  defaultPageSize={14} defaultCurrent={1} total={total} size="small"></Pagination>
+             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}}></Pagination>
            </Laybox>
         </Titlelayout>
     
-      </div>
+      </Mainbox>
     </CustContext.Provider>
   );
 }

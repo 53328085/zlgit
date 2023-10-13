@@ -2,13 +2,13 @@ import React, {useEffect, useRef, useState} from 'react'
 import { drawEcharts } from "@com/useEcharts";
 export default function Sankey({data}) {
  console.log("render", data)
- const {link, name} = data
+ const {link } = data
   const chart = useRef()
-  let nodes = [
-    "A区", "B区", "交易区","塔楼","工业设备机房","水产市场", "冷藏区", "冷库一", "冷库二", "冷库三", "冷库四", "冷库五", "冷库六", "1号楼", "2号楼", "工业设备机房1", "工业设备机房2", "市场A", "市场B"
-  ].map(n => ({name: n}))
+  let source =  link.map(i => i.source)
+  let target = link.map(i => i.target)
+  let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
  let links = link.map(l =>({...l, value: parseFloat(l.value)}))
-
+  console.log(nodes)
   const custoption = {
     tooltip: {
         trigger: 'item',

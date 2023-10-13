@@ -48,25 +48,24 @@ export function numberformat(n){
 }
 export function getTime(date, type){
   let time
-      if(type == 0) {
+      if(type == 1) {
         time=date.format('YYYY-MM-DD')
-    }else if(type == 1) {
-        time = date.startOf("month").format('YYYY-MM-DD')
     }else if(type == 2) {
+        time = date.startOf("month").format('YYYY-MM-DD')
+    }else if(type == 3) {
         time = date.startOf("year").format('YYYY-MM-DD')
     }
   return time
 }
-export  const Statebox = styled.div.attrs(props => ({
-  bgColor: '#009966',
-}))`
+export  const Statebox = styled.div`
   position: absolute;
   top: ${props => props.top};
   right: ${props => props.right};
   transform: rotate(45deg);
-  background-color: ${props => props.bgColor};
+  background-color: ${props => props.bgColor || "#096"};
   color: #fff;
   width: ${props => props.width};
   text-align: center;
   font-size: 14px;
 `
+ 

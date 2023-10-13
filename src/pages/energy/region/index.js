@@ -13,6 +13,7 @@ import {selectProjectId} from '@redux/systemconfig.js'
 import moment from 'moment';
 import imgurl from "./icon";
 import UseTable from "@com/useTable"
+import {numberformat } from "@com/usehandler"
  const {QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear} = EnergyArea
 const {Text, Paragraph} = Typography
 const Laybox = styled.div`
@@ -86,34 +87,34 @@ const Sdiv = styled.div`
     }
   }
 `
- const headers = ["塔楼区", "交易区", "干杂区", "水产市场", "工业设备机房", "库房", "叉车充电间"]
-const mokData = headers.map(n => (
-  {
-    name: n,
-    e: 10000*Math.random().toFixed(2),
-    mom:  10*Math.random().toFixed(2)+"%",
-    yoy: 10*Math.random().toFixed(2)+"%",
-  }
-))
-const piedata = [
-  {value: 1048, name: '塔楼区' },
-  { value: 735, name: '交易区' },
-  { value: 580, name: '干杂区' },
-  { value: 484, name: '水产市场' },
-  { value: 300, name: '工业设备机房' },
-  { value: 700, name: '库房' },
-  { value: 130, name: '叉车充电间' },
-]
+ 
+ 
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  const [tableData, setTableData] = useState(mokData)
+  const [tableData, setTableData] = useState([])
   const [form] = Form.useForm();
   const {Item} = Form
  
-  const [timetype, setTimetype] = useState(0) // 日、月、年 0,1,2
- 
-  
+  const [timetype, setTimetype] = useState(1) // 日、月、年 0,1,2
+  const [dataSet, setDataSet] = useState({
+    dimensions: [],
+    source: []
+  })
+  let length = dataSet.source?.length
+  const piedata = tableData.map(t => ({value: t.e, name: t.name}))
+  const sort = tableData.sort((a, b) => parseFloat(a.e) -parseFloat(b.e) < 0).slice(0, 3)
+  const barconfig = {
+    type: "bar",
+    stack: "count",
+    seriesLayoutBy: 'row',
+   
+  //  barWidth: 30, 
+  //  barCategoryGap: "5%"
+  // barGap: "30%", 
+  // barCategoryGap: "10%"
+  }
+  let series = Array.from({length}, () => barconfig)
   const picker= ['date', 'month', 'year'][timetype];
    
 
@@ -129,12 +130,12 @@ export default function Index() {
     {
         dataIndex: "mom",
         title: "环比",
-        render: (text) =>  <span><span style={{color: "#3c3"}}>&#9650; &nbsp;</span>{text}</span>,
+        render: (text) =>  numberformat(text),
     },
     {
       dataIndex: "yoy",
       title: "同比",
-      render: (text) =>  <span><span style={{color: "#f00"}}>&#9660; &nbsp;</span>{text}</span>
+      render: (text) =>  numberformat(text)
   }
 
   ]
@@ -143,27 +144,45 @@ export default function Index() {
     try {
     const {area, date, type, meterType} = form.getFieldsValue() || {}
     if(isNaN(type)) return;
-    let hander = [QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][type]
+    let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][type]
     let time
-    if(type == 0) {
+    if(type == 1) {
         time=date.format('YYYY-MM-DD')
-    }else if(type == 1) {
-        time = data.startOf("month").format('YYYY-MM-DD')
     }else if(type == 2) {
-        time = data.startOf("year").format('YYYY-MM-DD')
+        time = date.startOf("month").format('YYYY-MM-DD')
+    }else if(type == 3) {
+        time = date.startOf("year").format('YYYY-MM-DD')
     }
     const querys = {
         areaId: area,
         projectId,
         meterType,
+        type,
         date: time
      }
     const params = [area]
     let {success, data} = await hander(querys, params)
-    if(success && Array.isArray(data)) {
-        setTableData(data)
+    if(success && Array.isArray(data) && data.length > 0) {
+           setTableData(data.map(d => d.total))
+      let dimensions = data[0].detail.map(i => i.dot.toString())
+      console.log(dimensions)
+       let source =  data.map(item => {
+           let {detail, total} = item
+          
+          let name = total.name
+          let list = detail.map(i => i.e)
+            
+           
+          return [name, ...list]
+        })
+       setDataSet({
+        source: [ ["name", ...dimensions] , ...source]
+       })
     }else {
-        setTableData([])
+        setDataSet({
+          dimensions: [],
+          source: []
+        })
     }
     } catch (error) {
         console.log(error)    
@@ -173,46 +192,32 @@ export default function Index() {
 
  const [mode, setMode] = useState(1)
  const stack = useRef()
- const  tdataset = {  // 图表数据
- // dimensions: ["日期", "用电量(kwh)"],
-  source: [
-    ["日期", '0','1','2','3','4','5','6'],
-    ["塔楼区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["交易区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["干杂区", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["水产市场", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["工业设备机房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["库房", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],
-    ["叉车充电间", 102.32, 907.01, 402.32, 507.01,202.32, 807.01, 502.32],]
-}
- 
+ const pieref = useRef()
 useEffect(() => {
-  const barconfig = {
-    type: "bar",
-    stack: "count",
-    seriesLayoutBy: 'row',
-   
-    barWidth: 30, 
-    barCategoryGap: "5%"
-  // barGap: "30%", 
-  // barCategoryGap: "10%"
-  }
   drawEcharts(
      stack.current, {
-      dataset: tdataset,
-     
-      series: [
-        barconfig, 
-        barconfig,
-        barconfig,
-        barconfig, 
-        barconfig,
-        barconfig, 
-        barconfig, 
-      ]
+      dataset: {
+       ...dataSet, 
+      },
+      
+      series: series
     }
   )
-})
+  drawEcharts(pieref.current, {
+    pieData: { data: piedata, total: 100 },
+    type: 3,
+    legend: {
+      type: "scroll",
+    //  orient: 'vertical',
+      bottom: 0,
+      top: 'auto',
+      itemGap: 5
+    },
+    grid: {
+      bottom: 20
+    }
+  });
+},[dataSet, mode] )
 
  const onChange = (e) => {
   setMode(e.target.value)
@@ -284,11 +289,11 @@ useEffect(() => {
          />
         </Item>
       <Space size={16}>
-        <Item  name="type" initialValue={0}>
+        <Item  name="type" initialValue={1}>
            <Select style={{width: '80px'}}   options={[
-            {value: 0, label: '日'},
-            {value: 1, label: '月'},
-            {value: 2, label: '年'},
+            {value: 1, label: '日'},
+            {value: 2, label: '月'},
+            {value: 3, label: '年'},
            ]}
            onChange={timechange}
            ></Select>
@@ -301,23 +306,8 @@ useEffect(() => {
       </div>
     )
   }
-  const pieref = useRef()
-  useEffect(() => {
-    drawEcharts(pieref.current, {
-      pieData: { data: piedata, total: 100 },
-      type: 3,
-      legend: {
-        type: "scroll",
-      //  orient: 'vertical',
-        bottom: 0,
-        top: 'auto',
-        itemGap: 5
-      },
-      grid: {
-        bottom: 20
-      }
-    });
-  }, [])
+  
+ 
 
 
   return (
@@ -347,27 +337,40 @@ useEffect(() => {
            </Titlelayout>
            <Titlelayout title="区域能耗排名" key='sort'>
               <Sdiv>
-                 <div className="sort">
-                     <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
+              <div className="sort">
+                    {sort[0] && <>
+                    <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
                      <div className="data">
-                        <Text  ellipsis >交易区</Text>
-                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span></div>
+                        <Text  ellipsis >{sort[0]?.name}</Text>
+                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>kwh</span></div>
                      </div>
+                     </>
+                     }
                  </div>
+
                  <div className="down">
                     <div className="sort">
-                    <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
+                      {
+                   sort[1] &&  <> 
+                   <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
                      <div className="data">
-                        <Text ellipsis>塔楼</Text>
-                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span> </div>
+                        <Text ellipsis>{sort[1]?.name}</Text>
+                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>kwh</span> </div>
                      </div>
+                     </>
+                    }
                     </div>
                     <div className="sort">
-                      <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
+                      {
+                        sort[2] &&
+                    <> 
+                    <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
                      <div className="data">
-                        <Text ellipsis>库房</Text>
-                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(1987.01)}</Text>&nbsp;<span>kwh</span> </div>
+                        <Text ellipsis>{sort[2]?.name}</Text>
+                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>kwh</span> </div>
                      </div>
+                     </>
+                     }
                     </div>
                  </div>
               </Sdiv>

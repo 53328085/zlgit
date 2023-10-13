@@ -297,17 +297,17 @@ export class EnergyOverView {
 }
 // 能源管理--区域能耗
 export class EnergyArea {
-  static QueryEnergyAreaDay = ({projectId, meterType, date, areaId}, params) =>  // 日
+  static QueryEnergyAreaDay = ({projectId, meterType, date, areaId, type}, params) =>  // 日
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Day?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Day?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
- static QueryEnergyAreaMonth = ({projectId, meterType, date, areaId}, params) =>  // 月
+ static QueryEnergyAreaMonth = ({projectId, meterType, date, areaId, type}, params) =>  // 月
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Month?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Month?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
-  static QueryEnergyAreaYear= ({projectId, meterType, date, areaId},params) =>  // 年
+  static QueryEnergyAreaYear= ({projectId, meterType, date, areaId, type},params) =>  // 年
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Year?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Year?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
 }
 
