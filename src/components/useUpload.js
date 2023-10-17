@@ -276,3 +276,29 @@ const cref = useRef()
      </Preview>
   )
 }
+
+
+export  const imgToBase64 = (url)  => {
+  console.log(url)
+	return new Promise((resolve, reject) => {
+		const image = new Image()
+		image.src = url
+		image.onload = () => {
+      console.log(111)
+			const canvas = document.createElement('canvas')
+			canvas.width = image.naturalWidth  
+			canvas.height = image.naturalHeight
+			const ctx = canvas.getContext('2d')
+			if (!ctx) {
+				return null
+			}
+			ctx.drawImage(image, 0, 0)
+			const base64 = canvas.toDataURL('image/png')
+			return resolve(base64)
+		}
+		image.onerror = (err) => {
+			return reject(err);
+		}
+	})
+}
+ 

@@ -1648,6 +1648,23 @@ export class EnergyFlowRuntime {
       `Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
+  // 拓扑图
+
+  static QueryTopologyGatewayState = (projectId) =>  //查询网关状态
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?projectId=${projectId}`   
+  );
+  
+  static QueryTopologyGatewayCommports = ({projectId, gatewayId}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayCommports?projectId=${projectId}&gatewayId=${gatewayId}`   
+  );
+  
+  static QueryTopologyDeviceState = ({projectId, gatewayId,commport}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyDeviceState?projectId=${projectId}&gatewayId=${gatewayId}&commport=${commport}`   
+  );
+
 }
  
 //损耗分析
