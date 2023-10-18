@@ -4,7 +4,7 @@ import {message} from 'antd'
 import {getOnelevel} from '@redux/systemconfig.js'
 import { useDispatch} from 'react-redux'
 import { Area } from "@api/api.js";
-
+import md5 from 'js-md5';
 export const custMsg = ({success=true, type='success', content='', duration=0.1, onClose= () => {}} = {}) => {   
     if (!['success','error', 'warning'].includes(type)) return ;  
      message[success ? 'success' : 'error']({
@@ -57,6 +57,13 @@ export function getTime(date, type){
     }
   return time
 }
+
+export function cipher(name, pwd){
+   
+  return md5(`chint_${name}_${pwd}_wulian`)
+   
+}
+
 export  const Statebox = styled.div`
   position: absolute;
   top: ${props => props.top};

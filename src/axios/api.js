@@ -457,6 +457,18 @@ export class RuntimeHMI {
 
    static onStop = (channel) => server.get(`/Monitor/RuntimeHMI/OnStop?channel=${channel}`); //  定时请求
 }
+
+// 结算收费--结算设置
+export class PrepayConfig {
+  static QueryPrepayServerUrl = (projectId) => server.get(`Energy/PrepayConfig/QueryPrepayServerUrl?projectId=${projectId}` ); //  获取预付费URL
+
+  static SaveUrl = ({projectId, url}) => server.post(`Energy/PrepayConfig/SaveUrl?projectId=${projectId}&url=${url}`); //  保存预付费URL
+  static QueryUsers = (projectId) => server.get(`Energy/PrepayConfig/QueryUsers?projectId=${projectId}`); // 查询用户列表
+  static SavePreapyUser = ({projectId, userId, prepayUserName, prepayPassword, enabled}) => server.post(`Energy/PrepayConfig/SavePreapyUser?projectId=${projectId}&userId=${userId}&prepayUserName=${prepayUserName}&prepayPassword=${prepayPassword}&enabled=${enabled}`); // 保存用户信息
+  
+  static DeletePreapyUser = ({projectId, userId}) => server.post(`Energy/PrepayConfig/DeletePreapyUser?projectId=${projectId}&userId=${userId}`); // 删除用户信息
+}
+
 // zl api end
 // 主页
 export class Home {

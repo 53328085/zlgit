@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import styled from 'styled-components';
 import { drawEcharts } from "@com/useEcharts";
-import {EnergyFlowRuntime} from "@api/api"
+import {EnergyFlowRuntime, Monitoring} from "@api/api"
 import Commport from './Commport';
 import server from './icon/server.png';
 import workstation from './icon/workstation.png'
@@ -10,7 +10,7 @@ import gateway1 from './icon/gateway1.png'
 import imgurl from './icon'
  
 const {QueryTopologyGatewayState, QueryTopologyGatewayCommports} = EnergyFlowRuntime
- 
+const {RuntimeGateway:{CategoryImages}} = Monitoring
 const Mainbox = styled.div`
   flex: 1;
   position: relative;

@@ -59,7 +59,9 @@ const Mainbox = styled.div`
         row-gap: 6px;
         padding: 6px 16px;
         align-content: center;
-     
+        span {
+            text-align: center;
+        }
         .items {
             display: grid;
             grid-template-columns: repeat(16, 56px);
