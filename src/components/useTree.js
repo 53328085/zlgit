@@ -23,32 +23,31 @@ const Treebox = styled.div`
  
 
 export default function Index({areaId, setTreeId, setLine, lineType}) {
- 
+  
   const [treeData,setTreeData] =useState([])
-  const [treeDatas,setTreeDatas]=useState([])
+  
  
-  const onelevel = useSelector(selectOneLevel)
-
-
   const [selectkeys, setSelectkeys] = useState([])
-  const selectRef=useRef()
-  selectRef.current=selectkeys
+ 
  
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
   
   const treekey =  typeTree == 0 ?  "areaId" : "id" ;
   const [expandedKeys, setExpandedKeys] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
-
  
+/*   const [preAreaId, setPreAreaId] = useState(areaId)
+  if(areaId !== preAreaId) {
+    setPreAreaId(areaId)
+    setTreeId([])
+  }
+  */
  
 
   //获取树的数据， 1 线路 0 网格
  const getTreeData= async (name='')=>{
     try {
-    //  const areaName = onelevel.find(l => l.id == areaId).name
+    
      
       let params =typeTree == 1 ? {
         projectId,
@@ -73,8 +72,7 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
-         setTreeData(data)
-         setTreeDatas(data)
+         setTreeData(data)       
       }else{
         message.error(errMsg || '数据出错')
       }
@@ -95,37 +93,13 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
  // 树搜索
  const onExpand = (newExpandedKeys) => {
   setExpandedKeys(newExpandedKeys);
-  setAutoExpandParent(false);
-};
-
-const getParentKey = (key, tree) => {
-  let parentKey;
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-    if (node.children) {
-      if (node.children.some((item) => item.key === key)) {
-        parentKey = node.key;
-      } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children);
-      }
-    }
-  }
-  return parentKey;
-};
-
-
-
-
- 
- 
- 
-
-
   
+};
 
   
   useEffect(()=>{
      if(!areaId) return;
+     // setTreeId([])
      getTreeData()
      
   },[areaId, typeTree])

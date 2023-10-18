@@ -13,7 +13,7 @@ export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
   static LoginByName = (data = {}) =>
-    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`); // 根据用户名登录
+    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}&key=${data.key}&code=${data.code}`); // 根据用户名登录
  
   static GetVerification = (mobile) =>
     server.post(`/General/User/GetCode?mobile=${mobile}`); // 获取验证吗
@@ -297,17 +297,17 @@ export class EnergyOverView {
 }
 // 能源管理--区域能耗
 export class EnergyArea {
-  static QueryEnergyAreaDay = ({projectId, meterType, date, areaId}, params) =>  // 日
+  static QueryEnergyAreaDay = ({projectId, meterType, date, areaId, type}, params) =>  // 日
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Day?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Day?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
- static QueryEnergyAreaMonth = ({projectId, meterType, date, areaId}, params) =>  // 月
+ static QueryEnergyAreaMonth = ({projectId, meterType, date, areaId, type}, params) =>  // 月
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Month?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Month?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
-  static QueryEnergyAreaYear= ({projectId, meterType, date, areaId},params) =>  // 年
+  static QueryEnergyAreaYear= ({projectId, meterType, date, areaId, type},params) =>  // 年
     server.post(
-      `Energy/EnergyAreaRuntime/QueryEnergyArea_Year?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}`, params
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Year?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
     );
 }
 
@@ -457,6 +457,18 @@ export class RuntimeHMI {
 
    static onStop = (channel) => server.get(`/Monitor/RuntimeHMI/OnStop?channel=${channel}`); //  定时请求
 }
+
+// 结算收费--结算设置
+export class PrepayConfig {
+  static QueryPrepayServerUrl = (projectId) => server.get(`Energy/PrepayConfig/QueryPrepayServerUrl?projectId=${projectId}` ); //  获取预付费URL
+
+  static SaveUrl = ({projectId, url}) => server.post(`Energy/PrepayConfig/SaveUrl?projectId=${projectId}&url=${url}`); //  保存预付费URL
+  static QueryUsers = (projectId) => server.get(`Energy/PrepayConfig/QueryUsers?projectId=${projectId}`); // 查询用户列表
+  static SavePreapyUser = ({projectId, userId, prepayUserName, prepayPassword, enabled}) => server.post(`Energy/PrepayConfig/SavePreapyUser?projectId=${projectId}&userId=${userId}&prepayUserName=${prepayUserName}&prepayPassword=${prepayPassword}&enabled=${enabled}`); // 保存用户信息
+  
+  static DeletePreapyUser = ({projectId, userId}) => server.post(`Energy/PrepayConfig/DeletePreapyUser?projectId=${projectId}&userId=${userId}`); // 删除用户信息
+}
+
 // zl api end
 // 主页
 export class Home {
@@ -1648,6 +1660,23 @@ export class EnergyFlowRuntime {
       `Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
+  // 拓扑图
+
+  static QueryTopologyGatewayState = (projectId) =>  //查询网关状态
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?projectId=${projectId}`   
+  );
+  
+  static QueryTopologyGatewayCommports = ({projectId, gatewayId}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayCommports?projectId=${projectId}&gatewayId=${gatewayId}`   
+  );
+  
+  static QueryTopologyDeviceState = ({projectId, gatewayId,commport}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyDeviceState?projectId=${projectId}&gatewayId=${gatewayId}&commport=${commport}`   
+  );
+
 }
  
 //损耗分析

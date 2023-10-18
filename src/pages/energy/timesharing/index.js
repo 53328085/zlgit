@@ -1,12 +1,10 @@
 import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
-import style from './style.module.less'
+
 import styled from 'styled-components'
 import CustContext from "@com/content.js";
 import { drawEcharts } from "@com/useEcharts";
-import Timenergy from './timenergy'
-import Bluecolumn from '@com/bluecolumn';
-import Timepercent from './timepercent'
+
 import { energyShare, Monitoring } from '@api/api'
 import {selectProjectId, selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import { Form, Select, DatePicker, message,Input,Tree ,Button, Space, Radio, Empty } from 'antd'
@@ -14,6 +12,7 @@ import moment from 'moment';
 import UserSearch from "@com/useSerach";
 import Titlelayout from "@com/titlelayout";
 import UseTable from '@com/useTable'
+import {getTime, numberformat} from "@com/usehandler"
 const { Search } = Input;
 const {Item} = Form
 const {QuerySpaceTrees, queryArea, queryLine} = energyShare
@@ -36,34 +35,12 @@ const Mainbox = styled.div`
   }
 
 `
-const getTime = (date, type)=> {
-  let time
-      if(type == 0) {
-        time=date.format('YYYY-MM-DD')
-    }else if(type == 1) {
-        time = date.startOf("month").format('YYYY-MM-DD')
-    }else if(type == 2) {
-        time = date.startOf("year").format('YYYY-MM-DD')
-    }
-  return time
-}
-
-const numberformat = (n) => {
-   let num = parseFloat(n)
-   if(num > 0) {
-    return <span><span style={{color: "#f00"}}>&#9650;&nbsp;</span>&#43;{n}</span>
-   }else if(num < 0) {
-    return <span style={{color: "#090"}}>&#9660;&nbsp;&#45;{n}</span>
-   }else {
-    return <span>{n}</span>
-   }
-
-}
+ 
 
 export default function Index() {
   const [form] =Form.useForm()
   const [treeData,setTreeData] =useState([])
-  const [treeDatas,setTreeDatas]=useState([])
+ 
  
   const onelevel = useSelector(selectOneLevel)
   const areaId = useSelector(selectOneLevelDefaultId)
@@ -132,7 +109,7 @@ export default function Index() {
       const {success, data} = await hander(params)
       if(success && Array.isArray(data)){
          setTreeData(data)
-         setTreeDatas(data)
+         
       }else{
         setTreeData([])
         message.error(res.errMsg)
@@ -149,9 +126,9 @@ export default function Index() {
      
     try {
       let {type, date} = form.getFieldsValue()
-      console.log(date)
+     
       let time = getTime(date, type)
-      console.log(time)
+      
       let key = typeTree == 1 ? 'selectIds' : 'areaIds'
        let params = {
         projectId,
@@ -179,24 +156,22 @@ export default function Index() {
 
 
 useEffect(() => {
-  let {detail=[], proportion = []} = datas  
-  const {x, y, y1, y2, y3} = detail;
+  try {
+    let {detail={}, proportion = []} = datas  
+    const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
 
   drawEcharts(stackRef.current, {
     dataset: {
     
       source: [
         ['日期',...x],
-        ['尖',...y],
-        ['峰',...y1],
-        ['平',...y2],
-        ['谷', ...y3],
+        ['尖能耗(kWh)',...y],
+     //   ['峰',...y1],
+        ['平能耗(kWh)',...y2],
+        ['谷能耗(kWh)', ...y3],
       ]
     },
     series: [
-        {
-          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
-        },
         {
           type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
         },
@@ -221,6 +196,10 @@ useEffect(() => {
       }
   
   })
+  } catch (error) {
+     console.log(error)
+  }
+  
 
 
 
@@ -238,10 +217,10 @@ useEffect(() => {
      getTreeData()
      
   },[areaId, typeTree])
-  const [timetype, setTimetype] = useState(0) // 日、月、年 0,1,2
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
  
   
-  const picker= ['date', 'month', 'year'][timetype];
+  const picker= ['','date', 'month', 'year'][timetype];
   const timechange = (e) => {
     console.log(e)
     setTimetype(e);
@@ -251,11 +230,11 @@ useEffect(() => {
     
      return (
         <Space size={16} style={{marginLeft: "auto"}}>
-         <Item  name="type" initialValue={0}>
+         <Item  name="type" initialValue={1}>
             <Select style={{width: '80px'}}   options={[
-             {value: 0, label: '日'},
-             {value: 1, label: '月'},
-             {value: 2, label: '年'},
+             {value: 1, label: '日'},
+             {value: 2, label: '月'},
+             {value: 3, label: '年'},
             ]}
             onChange={timechange}
             ></Select>

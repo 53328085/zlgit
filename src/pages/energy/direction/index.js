@@ -156,7 +156,7 @@ export default function Index() {
       <Pagecount showserach={true} pd="32px">   
       
         {
-          value =="Sankey" ? <Sankey data={data} key="sankey"  /> : <Topology key="topology" />
+          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Topology key="topology" projectId={projectId}/>
         }
       </Pagecount>
       </CustContext.Provider>

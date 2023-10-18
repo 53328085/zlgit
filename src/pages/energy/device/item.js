@@ -41,7 +41,7 @@ const Itembox = styled.div`
      outline: 1px solid #fff;
      outline-offset: 1px;
      display: grid;
-     grid-template-columns: 86px 132px 80px 80px;
+     grid-template-columns: 86px 120px 86px 86px;
      grid-template-rows: repeat(5, 1fr);
      div {
       display: flex;
@@ -113,14 +113,17 @@ const Itembox = styled.div`
 
  
 export default function Item(props) {
-  let {type, name, sns, address, e, e2, e3, e4, mome, yoye, mome2, yoye2, mome3, yoye3, mome4, yoye4,} = props
-  
+  let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4,} = props
+  // 0，1，2正常，离线，告警
+  let index = states[0];
+  const state = typeof index == "number" ? (['正常', '失联', '告警'][index] || '') : '';
+  const bgColor = typeof index == "number" ? (['#096', '#666', '#ff4d4f'][index] || '') : '';
   return (
     <Itembox>
-       <Statebox top="13px" right="-20px" width="85px">正常</Statebox>
+       <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox>
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>
-              <Image src={imgurl[`a${type}`]} preview={false} ></Image>
+              <Image src={imgurl[`a${1}`]} preview={false} ></Image>
            </div>
            <div className='info' key={nanoid()}>
              <Paragraph ellipsis={{tooltip: name}}>{name}</Paragraph>
@@ -133,22 +136,22 @@ export default function Item(props) {
 
            <div className='back' key={nanoid()}>总能耗</div>
            <div className='com bold' key={nanoid()}>{e}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoye)}</div>
-           <div className='com' key={nanoid()}>{numberformat(mome)}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoyE)}</div>
+           <div className='com' key={nanoid()}>{numberformat(momE)}</div>
            <div className='red' key={nanoid()}>峰能耗</div>
            <div className='com bold' key={nanoid()}>{e2}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoye2)}</div>
-           <div className='com' key={nanoid()}>{numberformat(mome2)}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoyE2)}</div>
+           <div className='com' key={nanoid()}>{numberformat(momE2)}</div>
 
            <div className='yellow' key={nanoid()}>平能耗</div>
            <div className='com bold' key={nanoid()}>{e3}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoye3)}</div>
-           <div className='com' key={nanoid()}>{numberformat(mome3)}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
+           <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
 
            <div className='green' key={nanoid()}>平能耗</div>
            <div className='com bold' key={nanoid()}>{e4}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoye4)}</div>
-           <div className='com' key={nanoid()}>{numberformat(mome4)}</div>
+           <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
+           <div className='com' key={nanoid()}>{numberformat(momE4)}</div>
        </div>
     </Itembox>
   )

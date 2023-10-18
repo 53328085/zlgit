@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState,useContext,useRef } from 'react'
+import React, { useState,useCallback,useRef } from 'react'
 import { useSelector } from 'react-redux'
 import {useAntdTable} from 'ahooks'
 import CustContext from '@com/content.js'
@@ -11,6 +11,7 @@ import moment from 'moment'
 import styled from 'styled-components'
 import {energyReport} from '@api/api'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {  ExportExcel} from '@com/useButton'
 const {
   QueryByArea, 
   QueryByLine, 
@@ -180,13 +181,8 @@ const typecols =[  // 分类能耗
   },  
   {
     title: '子类型',
-    dataIndex: 'subtType',
-  },
-  {
-    title: '峰(kWh)',
-    dataIndex: 'address',
-  },
-  
+    dataIndex: 'subType',
+  },  
   {
     title: '能耗(kWh)',
     dataIndex: 'consume',
@@ -206,17 +202,21 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState([])
-  const [concolumns, setConcolumns] = useState(conscols)
-  const [xw, setXw] = useState(394)
+  const [concolumns, setConcolumns] = useState(conscols) 
+  const [total, setTotal] = useState(0)
+  const tbref = useRef()
+  const tbref2 = useRef()
   const tabs = [
     { key: '0', label: '实时抄表' },
     { key: '1', label: '能耗抄表' },
     { key: '2', label: '分时能耗' },
     { key: '3', label: '分类能耗' },
   ]
+  const index = Number(value)
+  const sheetName = tabs[index]?.label ?? 'sheet'
   const [form]=Form.useForm()
   const projectId = useSelector(selectProjectId)
-  const index = Number(value)
+ 
  
   let columns = [cols, [], timecols, typecols][index]
   
@@ -240,11 +240,11 @@ export default function Index() {
         pageNum: current,
         pageSize,
      }
-     console.log(params)
+    
      return hander(params, treeId).then(res => {
-         let {success, data} = res
-         if(success && Array.isArray(data) && data.length > 0) {
-          
+         let {success, data, total=0} = res
+         setTotal(total)
+         if(success && Array.isArray(data) && data.length > 0) {           
            if(index == 1) {
              let {detailHeaders} = data[0]
              let last = detailHeaders.length - 1
@@ -283,11 +283,10 @@ export default function Index() {
   })
   const { submit} = search;
  
-  const [timetype, setTimetype] = useState(1) // 日、月、年 0,1,2
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
   const picker= ['','date', 'month', 'year'][timetype];
   const timechange = (e) => { 
     setTimetype(e);
-    submit()
  }
   const CustView = () => {
     
@@ -295,8 +294,7 @@ export default function Index() {
       <Divbox>
        <Space size={64} dashed split={<Divider type="vertical" style={{height: "100%"}}/>}>
         <Item  label="能源类型"   initialValue={1} name="meterType">
-        <Select
-        onChange={submit}
+        <Select      
         style={{width: "112px"}}
         options={[
           {
@@ -321,17 +319,21 @@ export default function Index() {
         </Item>
 
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} onChange={submit} />
+          <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}}   />
         </Item>  
         </Space>     
       </Space>
       <Space size={16}>
-        <Button type="primary">查询</Button>
-        <Button type="primary">导出</Button>
+        <Button type="primary" onClick={submit}>查询</Button>
+        <ExportExcel tb={tbref} />
       </Space>
       </Divbox>
     )
   }
+  const onExport =useCallback(() => {   
+    let formData = form.getFieldsValue()
+    return  getTableData({current: 1, pageSize: total}, formData)
+ }, [total])
   
   let dataProps = {
     value,
@@ -352,13 +354,15 @@ export default function Index() {
              <Contentbox>
                 <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} lineType={value} /> 
                 {
-                  value == "1" ? <UserTable columns={concolumns} {...tableProps} key={value} scroll={{
+                  value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,
                      x: 1300, 
                      y: 685
                    }
-                  }></UserTable>
-                  :<UserTable columns={columns} {...tableProps} key={value}></UserTable>
+                  }
+                  sheetName={sheetName} onExport={onExport}
+                  ></UserTable>
+                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
                 } 
              </Contentbox>
           </Pagecount>
