@@ -1,105 +1,135 @@
-import React, { useEffect, useState, useRef } from 'react'
-
+import React, { useEffect, useState, useRef ,useMemo} from 'react'
+import {useSelector,  } from 'react-redux'
 import {nanoid} from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Radio} from 'antd'
+import {Divider, Form, Image, Radio,Select} from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
 import imgurl from './icon'
+import imglist from '@imgs/index.js'
 const echarts = require('echarts')
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-columns: 458px 1206px; 
+  grid-template-columns: 366px 850px 432px; 
   column-gap: 16px;
   justify-content: flex-end;
   .left {
     display: grid;
-    grid-template-rows: 336px 448px;
+    grid-template-rows: 416px 368px;
     row-gap: 16px;
-    .plist {
-      padding-top: 16px;
-      height: 100%;
-      display: grid;
-      grid-template-rows: repeat(3, 112px);
-      row-gap: 16px;
-      .item {
-        border: 1px solid #dedede;
-        padding: 8px;
-        display: grid;
-        grid-template-columns: 107px 1fr;
-        column-gap: 8px;
-        .itemR {
-           height: 87px;
-           display: flex;
-           flex-direction: column;
-           justify-content: space-between;
-           div.sub{
-             display: grid;
-             grid-template-columns: 1fr 1fr;
-             color: #666;
-             grid-template-rows: 19px;
-             align-items: center;
-             span {
-              line-height: 19px;
-             }
-           }
-        }
+    .detail{
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align:center;
+      span{
+        font-size:16px;
+        color: #333;
+        line-height: 32px;
+      }
+      p{
+        color: #999999
       }
     }
+    .plist {
+      .listItem{
+        color: #999;
+        display: flex;
+        align-items:center;
+        padding: 12px 0;
+        border-bottom: 1px dashed #E4E4E4;
+        .icons{
+        width: 42px;
+        height: 42px;
+        background-color: #237AE4;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+        margin-right: 16px;
+       }
+       .valnum{
+        margin-left: auto;
+        font-size:18px;
+        color: #515151;
+      }
+      }
+      
+    }
   }
-  .rigth {
+  .middle {
     display: grid;
-    grid-template-rows: 96px 690px;
+    grid-template-rows: 256px 256px 256px;
     row-gap: 16px;
    
-    .upper {
-      display: grid;
-      grid-template-columns: repeat(4, 290px);
-      grid-template-rows: 96px;
-      column-gap: 16px;
-       >div {
-        background-color: #fff;
-        border: 1px solid #dedede;
-        border-radius: 4px;
-        padding: 16px;
-        display: grid;
-        grid-template-columns: 48px 1fr;
-        column-gap: 32px;
-        grid-template-rows: 1fr;
-        align-items: center;
-        .content {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          line-height: 1;
-          span:first-of-type{
-             color:#999;
-             font-size: 16px;
-          }
-          span:last-of-type{
-            color:#515151;
-            font-size: 26px;
-          }
-        }
-       }
-    }
-    .lower {
-      display: grid;
-      grid-template-rows: 32px 658px;
-      grid-template-columns: 1206px;
-      .control {
-        display: flex;
-        justify-content: space-between;
-        background-color: #fff;
-      }
-    }
+
   }
 
- 
+ .right{
+    display: grid;
+    grid-template-rows: 368px 416px;
+    row-gap: 16px;
+    .list{
+      display: flex;
+    }
+    .levelval{
+        width: 22px;
+        height: 22px;
+        border:1px solid #ff0000;
+        color: #ff0000;
+        text-align: center;
+        line-height:22px;
+        border-radius:50%;
+        margin-left: 12px;
+      }
+    .warncard{  
+      position: absolute;
+      left: 0;
+      top: 48px;
+      width: 100%;
+      height: 64px;
+      padding:0 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-top: 12px;
+      background-color: #f9fafc;
+      border-bottom: 1px solid #e4e4e4;
+      .warnhead{ 
+        span:nth-of-type(2){
+          padding-left: 16px;
+        }
+      }
+      .warncontent{
+        display: flex;
+        align-items: center;
+        padding-bottom: 8px;
+        .tag{
+          width: 53px;
+          height: 19px;
+          background-color: #f44336;
+          border-radius: 8px;
+          color: #fff;
+          text-align: center;
+          line-height: 19px;
+      }
+      .warnval{
+            width: 104px;
+            height: 22px;
+            background: #ffeeee;
+            color: #fa5589;
+            border: 1px solid #fdbbbb;
+            line-height: 22px;
+            margin-left: auto;
+            text-align: center;
+          }
+    }
+ }
     .content {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -111,33 +141,11 @@ const Mainbox = styled.div`
         font-size: 32px;
         font-weight: bold;
       }
+    }
     }`
 
    
-const Radiogroup = styled(Radio.Group)`
 
- .ant-radio-button-wrapper {
-  min-width: 100px;
-  text-align: center;
-  height: 32px;
-  line-height: 32px;
-  background-color: #237ae4;
-  border-color:#237ae4;
-  color: #fff; 
-  font-size: 14px;
-  span {
-    font-size: 14px;
-  }
- }
- .ant-radio-button-wrapper-checked {
-   background-color: #003399;
-   border-color:#003399;
-   &:hover {
-    color:#fff;
-    border-color:#003399;
-   }
- }
-`
 const gauge = {
  
     radius: '85%',
@@ -146,7 +154,6 @@ const gauge = {
       bottom: 0,
       icon: 'none',
       formatter: function (name) {
-        return  '本月最大负荷率:89.2% 发生时间： 2022-7-21 12:32:12'; 
       },   
     },
     tooltip: {
@@ -182,339 +189,200 @@ const gauge = {
       }
     ]
   }
-const Chartbar = (ref)=> {
- let category = [];
-let dottedBase = +new Date();
-let lineData = [];
-let barData = [];
-for (let i = 0; i < 20; i++) {
-  let date = new Date((dottedBase += 3600 * 24 * 1000));
-  category.push(
-    [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-')
-  );
-  let b = Math.random() * 200;
-  let d = Math.random() * 200;
-  barData.push(b);
-  lineData.push(d + b);
-}
-// option
-const option = {
-  backgroundColor: '#0f375f',
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow'
-    }
-  },
-  legend: {
-    data: ['line', 'bar'],
-    textStyle: {
-      color: '#ccc'
-    }
+
+const defaultColor=['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+const trendopts={
+  color:['#5D91F9',...defaultColor],
+  grid:{
+    top: 20,
+    right: 0,
+    bottom: 20,
+    left: '5%'
   },
   xAxis: {
-    data: category,
-    axisLine: {
-      lineStyle: {
-        color: '#ccc'
+    type: 'category',
+    axisLine:{
+      lineStyle:{
+        color:"#D8D8D8",
       }
     },
-    axisLabel: {
-      color:'#fff'
-    }
+    axisLabel:{
+      color:"#333"
+    },
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   },
   yAxis: {
-    splitLine: { show: false },
-    axisLine: {
-      lineStyle: {
-        color: '#ccc'
-      }
-    }
+    type: 'value',
+    scale: true,
+    
   },
   series: [
     {
-      name: 'line',
-      type: 'line',
-      smooth: true,
-      showAllSymbol: true,
-      symbol: 'emptyCircle',
-      symbolSize: 15,
-      data: lineData
-    },
-    {
-      name: 'bar',
-      type: 'bar',
-      barWidth: 10,
-      itemStyle: {
-        borderRadius: 5,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: '#14c8d4' },
-          { offset: 1, color: '#43eec6' }
-        ])
+      lineStyle:{
+        width:1
       },
-      data: barData
-    },
+      symbol:'circle',
+      symbolSize: 6,
+      data: [150, 230, 224, 218, 135, 147, 260],
+      type: 'line'
+    }
+  ]
+}
+const uselopts= {
+  grid:{
+    top: 20,
+    right: 0,
+    bottom: 20,
+    left: '5%'
+  },
+  xAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
     {
-      name: 'line',
-      type: 'bar',
-      barGap: '-100%',
-      barWidth: 10,
-      itemStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(20,200,212,0.5)' },
-          { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
-          { offset: 1, color: 'rgba(20,200,212,0)' }
-        ])
-      },
-      z: -12,
-      data: lineData
-    },
-    {
-      name: 'dotted',
-      type: 'pictorialBar',
-      symbol: 'rect',
-      itemStyle: {
-        color: '#0f375f'
-      },
-      symbolRepeat: true,
-      symbolSize: [12, 4],
-      symbolMargin: 1,
-      z: -10,
-      data: lineData
+      data: [120, 200, 150, 80, 70, 110, 130],
+      type: 'bar'
     }
   ]
 };
-
-
-  drawEcharts(ref, {...option, type: 2})
-
-}
-
 export default function Index() {
   const [form] = Form.useForm()
-  const bref = useRef(null)
+
   const guref = useRef(null)
-  const options = [
-    {
-      label: '负荷趋势 (kW)',
-      value: '1',
-    },
-    {
-      label: '负荷率(%)',
-      value: '2',
-    },
-    {
-      label: '用电量趋势(kWh)',
-      value: '3',
-    },
-  ];
-  const options2 = [
-    {
-      label: '日',
-      value: 'day',
-    },
-    {
-      label: '月',
-      value: 'month',
-    },
-    {
-      label: '年',
-      value: 'year',
-    },
-  ];
+  const trendRef =useRef(null)
+  const trendPreRef=useRef(null)
+  const useElRef=useRef(null)
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+
   const [value, setValue] = useState('1') 
   const onChange = ({target: {value}}) => {
     setValue(value)
   }
-  const [value2, setTime] = useState('day') 
-  const onChange2 = ({target: {value}}) => {
-    console.log(value)
-    setTime(value)
-  }
-  const grid = {
-    // 图表 grid
-    left: "0px",
-    right: "0",
-    top: "30px",
-    bottom: "0px",
-    containLabel: true,
-  }
-  const datasetMonth = {
-    dimensions: ["time", "派单数", "完成"],
-    source: [
-      { time: "1", "派单数": 5600, "完成": 9600 },
-      { time: "2", "派单数": 4600, "完成": 3644 },
-      { time: "3", "派单数": 3600, "完成": 4644 },
-      { time: "4", "派单数": 5611, "完成": 9655 },
-      { time: "5", "派单数": 5644, "完成": 3677 },
-      { time: "6", "派单数": 4677, "完成": 3633 },
-      { time: "7", "派单数": 3688, "完成": 4655 },
-      { time: "8", "派单数": 5088, "完成": 2644 },
-      { time: "9", "派单数": 6677, "完成": 2641 },
-      { time: "10", "派单数": 5866, "完成": 5641 },
-      { time: "11", "派单数": 4677, "完成": 7645 },
-      { time: "12", "派单数": 1877, "完成": 2645 },
-    ],
-  };
-  const datasetMonthl = {
-    dimensions: ["time", "本月", "上月"],
-    source: [
-      { time: "1", "本月": 5600, "上月": 9600 },
-      { time: "2", "本月": 4600, "上月": 3644 },
-      { time: "3", "本月": 3600, "上月": 4644 },
-      { time: "4", "本月": 5611, "上月": 9655 },
-      { time: "5", "本月": 5644, "上月": 3677 },
-      { time: "6", "本月": 4677, "上月": 3633 },
-      { time: "7", "本月": 3688, "上月": 4655 },
-      { time: "8", "本月": 5088, "上月": 2644 },
-      { time: "9", "本月": 6677, "上月": 2641 },
-      { time: "10", "本月": 5866, "上月": 5641 },
-      { time: "11", "本月": 4677, "上月": 7645 },
-      { time: "12", "本月": 1877, "上月": 2645 },
-    ],
-  };
+  const changeArea=()=>{
 
+  }
+ 
+  const select=(<Select style={{
+    width: 120,
+  }} options={[
+    {
+      value: 'jack',
+      label: 'Jack',
+    },
+    {
+      value: 'lucy',
+      label: 'Lucy',
+    },
+    {
+      value: 'Yiminghe',
+      label: 'yiminghe',
+    },
+    {
+      value: 'disabled',
+      label: 'Disabled',
+      disabled: true,
+    },
+  ]}>
+    
+  </Select>)
+  const leveldom=(
+    <div className='list'>
+      <span>告警等级</span>
+      <div className='levelval'>1</div>
+      <div className='levelval'>2</div>
+      <div className='levelval'>3</div>
+    </div>
+  )
+  const statetrans = (
+    <div className='listItem'>
+      <div className='icons'>
+      <img src={imglist.pylon}></img>
+      </div>
+      <span >配电房容量(kVA)</span>
+      <div className='valnum'>8000</div>
+    </div>
+  )
+  const stateList =[statetrans,statetrans,statetrans]
+
+  const warnitem = (
+      <div className='warncard'>
+          <div className='warnhead'>
+            <span>09-01 21:10:02</span>
+            <span>01#T5变压器哦</span> 
+          </div>
+          <div className='warncontent'>
+              <div className='tag'>越限</div>
+              <div className='levelval'>1</div>
+              <div style={{marginLeft:12}}>A相电流过流</div>
+              <div className='warnval'>68.12A</div>
+          </div>
+      </div>
+  )
   useEffect(() => {
 
     drawEcharts(guref.current,  {...gauge, type: 2})
-    Chartbar(bref.current)
- 
-  
+    drawEcharts(trendRef.current,{...trendopts,type:2})
+    drawEcharts(trendPreRef.current,{...trendopts,type:2})
+    drawEcharts(useElRef.current,{...uselopts,type:2}) 
   })
   return (
     <CustContext.Provider value={{form}}>
-      <Pagecount bgcolor="#eeeff3" pd="0px">        
+      <Pagecount bgcolor="#eeeff3" pd="0px">  
+      <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <Form
+            form={form}
+            colon={false}
+            layout="inline"
+          >
+            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
+            </Form.Item>
+            <Form.Item>
+            <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
+            </Form.Item>
+           <Form.Item>
+              <Select style={{ width: 240 }}></Select>
+           </Form.Item>
+          </Form>
+        </div>      
         <Mainbox>
          <div className='left'>
              <Titlelayout title={'实时负荷率'}  >
-             
-                 <div ref={guref} style={{height: '270px'}}>
-                  
+                 <div ref={guref} style={{height: '350px'}}></div> 
+                 <div className='detail'>
+                  <span>本月最大负荷率：89.2%</span>
+                  <p>发生时间:2023-5-11 12:32:12</p>
                  </div>
-                  
              </Titlelayout>
            
-             <Titlelayout title={'变压器状态'}>
+             <Titlelayout title={'配电房信息'}>
                  <div className='plist'>
-                     <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>1#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>2#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                    <div className='item'>
-                       <Image src={imgurl.transformer} preview={false} width={107} height={87}></Image>
-                       <div className='itemR'>
-                               <div>
-                                 <div className='sub'>
-                                  <span>3#变压器</span>
-                                  <span>实时功率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>S11-M-315</span>
-                                  <span>215.21&nbsp;kW</span>
-                                 </div>
-                               </div>
-                               <div>
-                                 <div className='sub'>
-                                  <span>额定容量</span>
-                                  <span>实时负荷率</span>
-                                 </div>
-                                 <div className='sub'>
-                                  <span>315 kVA</span>
-                                  <span>74.21%</span>
-                                 </div>
-                               </div>
-                       </div>
-                    </div>
-                 </div>
-                 
-                  
+                    {stateList}
+                 </div>       
              </Titlelayout>
          </div>
 
-         <div className='rigth'>
-           <div className='upper'>
-              <div>
-                <Image src={imgurl.z02} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>配电房容量(kvA)</span>
-                   <span>8000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z03} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>申报需量 (kW)</span>
-                   <span>7000</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z04} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>电压等级 (kV)</span>
-                   <span>10/0.4</span>
-                </div>
-              </div>
-              <div>
-                <Image src={imgurl.z05} preview={false} width={48} height={48}></Image>
-                <div className='content'>
-                   <span>变压器 (台)</span>
-                   <span>3</span>
-                </div>
-              </div>
-           </div>
-           <div className='lower'>
-              <div className='control'>
-                <Radiogroup options={options} onChange={onChange} value={value} optionType="button" />
-                <Radiogroup options={options2} onChange={onChange2} value={value2} optionType="button" />
-              </div>
-              <div ref={bref}></div>
-           </div>
+         <div className='middle'>
+         <Titlelayout title={'负荷趋势(kW)'}  >
+          <div ref={trendRef} style={{height:'100%'}}></div>
+         </Titlelayout>
+         <Titlelayout title={'负荷率趋势(%)'}  >
+          <div ref={trendPreRef} style={{height:'100%'}}></div>
+         </Titlelayout>
+         <Titlelayout title={'用电量趋势(kWh)'}  >
+          <div ref={useElRef} style={{height:'100%'}}></div>
+         </Titlelayout>
+         </div>
+         <div className='right'>
+         <Titlelayout title={'配电房监控'} extra={select} ></Titlelayout>
+         <Titlelayout title={'最新告警'} extra={leveldom} >
+            {warnitem}
+         </Titlelayout>
          </div>
          </Mainbox>
       </Pagecount>

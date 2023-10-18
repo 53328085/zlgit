@@ -44,31 +44,31 @@ export const columns =[
         ]
       },
       {
-        title: <div ><div>总有功功率</div><div>(kW)</div></div>,
+        title: <div ><div>有功功率</div><div>(kW)</div></div>,
         dataIndex: 'customer',
         key: 'customer',
         align:'center'
       },
       {
-        title: <div ><div>总无功功率</div><div>(kvar)</div></div>,
+        title: <div ><div>无功功率</div><div>(kvar)</div></div>,
         dataIndex: 'customer',
         key: 'customer',
         align:'center'
       },
       {
-        title: <div ><div>总视在功率</div><div>(kVA)</div></div>,
+        title: <div ><div>视在功率</div><div>(kVA)</div></div>,
         dataIndex: 'customer',
         key: 'customer',
         align:'center'
       },
       {
-        title: <div ><div>总负荷</div><div>(kW)</div></div>,
+        title: <div ><div>负荷</div><div>(kW)</div></div>,
         dataIndex: 'customer',
         key: 'customer',
         align:'center'
       },
       {
-        title: <div ><div>总负荷率</div><div>(kW)</div></div>,
+        title: <div ><div>负荷率</div><div>(kW)</div></div>,
         dataIndex: 'customer',
         key: 'customer',
         align:'center'
@@ -102,3 +102,71 @@ export const columns =[
       },
    
 ]
+export const devicecolumns=[ {
+  title: '时间',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'A相电流',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'B相电流',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'C相电流',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'A相电压',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'B相电压',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: 'C相电压',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: '有功功率',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},, {
+  title: '无功功率',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+}, {
+  title: '视在功率',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},  {
+  title: '负荷',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},
+{
+  title: '负荷率',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+}, {
+  title: '温度',
+  dataIndex: 'customer',
+  key: 'customer',
+  align:'center'
+},]
+
