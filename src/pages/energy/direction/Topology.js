@@ -109,11 +109,28 @@ export default function Topology({projectId}) {
   const count = data.length - 1
   const [ids, setIds] = useState([])
   const [gateway, setGateway] = useState()
+  const getImage = async (data, group)=> {
+      try {
+        let {success, data: imgs} = await CategoryImages({projectId, group})
+        if(success && Array.isArray(imgs) && imgs.length > 0) {
+          
+        }
+      } catch (error) {
+        
+      }
+
+  }
   const getData = async () => {
       try {
         let {data, success} = await QueryTopologyGatewayState(projectId)
+        // group:[]
+        // projectId
+         
         if(success && Array.isArray(data)) {
-          setData(data)
+          let group =[...new Set(data.map(d => d.category))]
+            
+          getImage(data, group)
+         // setData(data)
         }else {
           setData([])
         }
