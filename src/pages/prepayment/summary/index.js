@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import { useSelector } from "react-redux";
  
- 
+ import moment from "moment";
 import styled from "styled-components";
 import Pagecount from "@com/pagecontent";
 import Itembox from "./Item";
@@ -237,11 +237,11 @@ export default function Index() {
   const [areas, setAreas] = useState([]);
   const [areaId, setAreaId] = useState("");
   const [costData, setCostData] = useState({});
-  const alarmInfo =mok || costData.alarmInfo.slice(0, 3)
+  const alarmInfo = costData.alarmInfo?.slice(0, 3) || []
   const [rankData, setRankData] = useState({})
   const [info, setInfo] = useState({})
   const [jumurl, setJumurl] = useState()
- 
+  const dateType = useRef()
   const getLogInfo = () => {
         QueryPrepayServerUrl(projectId).then(res => {
           let {success, data} = res
@@ -306,6 +306,7 @@ export default function Index() {
   }
   const pageData = async (id, type=3) => {
     try {
+    //  dateType.current = type
         TransactionStatistics(id, projectId, type).then((res) => {
           let { success, data } = res;
           if (success && data) {
@@ -321,6 +322,14 @@ export default function Index() {
                 { type: "bar", barGap: 0 },
               ],
               grid,
+              legend: {
+                formatter: (name)=> {
+                  if  (type == 3 ) {
+                      if (name=="thisYearIncome")  return "本日";
+                      if(name== "lastYearIncome")  return  "上一日";
+                  }
+                }
+              }
             });
 
             drawEcharts(pref.current, {
