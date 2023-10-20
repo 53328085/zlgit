@@ -69,8 +69,8 @@ export default function Index() {
   let inpval =useRef();
   inpval.current=alike
   const lng = useLatest('0,0')
-  const columns = [
-    {title:onelevel[0]?.levelName,dataIndex:'area'},
+  let columns = [
+    
     {title:'设备名称',dataIndex:'name'},
     {title:'安装地址',dataIndex:'address'},
     {title:'设备编号',dataIndex:'sn'},
@@ -87,6 +87,7 @@ export default function Index() {
    )  
     }}
   ]
+  onelevel[0]&&(columns=[{title:onelevel[0]?.levelName,dataIndex:'area'},...columns])
   columns.forEach(it=>{it.align="center"})
   if(publish){
     columns.pop()
@@ -186,7 +187,11 @@ export default function Index() {
    }
    
   useEffect(()=>{ 
-    getQueryPageDevice(1)
+    console.log(areaId)
+    if(typeof areaId==='number'){
+      getQueryPageDevice(1)
+    }
+    
   },[areaId])
   return (
     <ContainerDiv>

@@ -225,6 +225,7 @@ function useRoute() { // 重写路由
     let Com = components[no];
     let nestroute = runRoutes[key]
     let sider = siderRunMenus[key]
+
     if (Com) {
       no == '0104' ? RunRoute.push({
         path: key,
@@ -237,7 +238,6 @@ function useRoute() { // 重写路由
         children: getNestRout(sider, nestroute)
       })
     }
-   
   })
   
   designerMenus?.forEach(r => {

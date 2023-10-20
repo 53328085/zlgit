@@ -303,7 +303,7 @@ export default function Index() {
     getPage()
   }
   
-  useEffect(() => { getPage() }, [])
+  useEffect(() => { onelevel.length && getPage() }, [])
   return (
     <ContainerDiv>
       <BlueColumn name="巡检点管理" />

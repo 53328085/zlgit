@@ -120,19 +120,20 @@ export default function Index() {
     })
   }
   useEffect(() => {
-    getTableData()
-  }, [pagination.current])
+    console.log(form.getFieldsValue())
+    roomList.length&&getTableData()
+  }, [pagination.current,roomList.length])
 
   const getTableData = () => {
-    queryPageChart(projectId, form.getFieldValue('areaId'), form.getFieldValue('roomId'), pagination.current, pagination.pageSize).then(res => {
+    queryPageChart(projectId, form.getFieldValue('roomId'), pagination.current, pagination.pageSize).then(res => {
       if(res.success){
-        if(res.data){
+       
           setTableData(res.data)
           setPagination({
             ...pagination,
             total: res.total,
           })
-        }
+        
       }else{
         message.error(res.errMsg)
       }

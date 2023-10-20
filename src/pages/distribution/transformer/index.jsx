@@ -10,7 +10,7 @@ import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import BlueColumn from '@com/bluecolumn'
 import { drawEcharts } from "@com/useEcharts"
-import SelectHeader from './selectHeader'
+import {DistributionRoomRuntime} from '@api/api.js'
 
 const MainDiv =styled.div`
 background-color: #fff;
@@ -182,9 +182,13 @@ export default function Index() {
   const changeRadio=(e)=>{
     setPattern(e.target.value)
   }
-
+  const getTransformer =async ()=>{
+    await DistributionRoomRuntime.TransformerList(2,1)
+    await DistributionRoomRuntime.GetEnvironment(2,1)
+  }
   useEffect(()=>{
     drawEcharts(chartRef.current,{...chartOpt,type:2})
+    getTransformer()
   },[pattern])
 
   return (
@@ -237,39 +241,6 @@ export default function Index() {
           }
         </div>
        </MainDiv>
-    {/* <div className={style.transform}>
-      <div className={style.transformheader}>
-        <span className={style.areachoose}>区域选择</span>
-        <Select defaultValue="" style={{ width: 330 }} size="default">
-          <Option value="1">Jack</Option>
-          <Option value="2">Lucy</Option>
-        </Select>
-
-        <span className={style.areachoose}>配电房</span>
-        <Select defaultValue="" style={{ width: 330 }} size="default">
-          <Option value="1">Jack</Option>
-          <Option value="2">Lucy</Option>
-        </Select>
-      </div>
-      <div className={style.transformContent} >
-        <div className={style.transformList}>
-          {
-            list.map((item, index) => <TranCard message={item} key={index} {...TranCardProps} index={index} />)
-          }
-        </div>
-        <div className={style.chatrts}>
-          <div className={style.table}>
-            <UseTable columns={columns} bordered className={style.transformerTable}></UseTable>
-          </div>
-          <div className={style.chartArea}>
-            <SelectHeader type={type}/>
-            <SelectHeader type={[{name:'变压器温度',value:0}]}/>
-          </div>
-        </div>
-
-
-      </div>
-    </div> */}
     </Pagecount>
     </CustContext.Provider>
     </>
