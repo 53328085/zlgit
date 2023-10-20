@@ -196,6 +196,9 @@ export default function Index() {
         axisLabel: {
           color: "#545454",
         },
+        axisTick: {
+          show: false,
+        }
       },
       dataset: {
         source: data
@@ -226,7 +229,7 @@ export default function Index() {
       },
       label: {
         show: true,
-        formatter: "{@[1]}kwh",
+        //formatter: "{@[1]}kwh",
       },
     });
   }
@@ -305,6 +308,7 @@ export default function Index() {
     })
   }
   const pageData = async (id, type=3) => {
+    console.log(type)
     try {
     //  dateType.current = type
         TransactionStatistics(id, projectId, type).then((res) => {
@@ -324,12 +328,20 @@ export default function Index() {
               grid,
               legend: {
                 formatter: (name)=> {
+
                   if  (type == 3 ) {
                       if (name=="thisYearIncome")  return "本日";
-                      if(name== "lastYearIncome")  return  "上一日";
+                      if(name== "lastYearIncome")  return  "上日";
+                  }else if(type == 2) {
+                    if (name=="thisYearIncome")  return "本月";
+                    if(name== "lastYearIncome")  return  "上月";
+                  }else if(type == 1) {
+                    if (name=="thisYearIncome")  return  moment().format('yyyy');
+                    if(name== "lastYearIncome")  return   moment().add(-1, 'y').format('yyyy')
                   }
-                }
-              }
+                } 
+              },
+              
             });
 
             drawEcharts(pref.current, {
@@ -356,8 +368,8 @@ export default function Index() {
             drawEcharts(l2ref.current, {
               color: ["#099c9c"],
               dataset: {
-                dimensions: ['name', "value"],
-                source: waterTrend
+                dimensions: ['name', "'用水量(kWh)"],
+                source: waterTrend.map(i => ({name: i.name, '用水量(kWh)': i.value}))
               },
               series: [
                 { 
@@ -370,8 +382,8 @@ export default function Index() {
             drawEcharts(lref.current, {
               color: ["#5e92f9"],
               dataset: {
-                dimensions: ['name', "value"],
-                source: electricTrend
+                dimensions: ['name', "用电量(kWh)"],
+                source: electricTrend.map(i => ({name: i.name, '用电量(kWh)': i.value}))
               },
               series: [{ type: "line" }],
               grid,
@@ -380,8 +392,8 @@ export default function Index() {
             drawEcharts(l3ref.current, {
               color: ["#ff6803"],
               dataset: {
-                dimensions: ['name', "value"],
-                source: hotWaterTrend
+                dimensions: ['name', "热水量(kWh)"],
+                source: hotWaterTrend.map(i => ({name: i.name, '热水量(kWh)': i.value}))
               },
               series: [{ type: "line" }],
               grid,
