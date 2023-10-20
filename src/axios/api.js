@@ -468,6 +468,17 @@ export class PrepayConfig {
   
   static DeletePreapyUser = ({projectId, userId}) => server.post(`Energy/PrepayConfig/DeletePreapyUser?projectId=${projectId}&userId=${userId}`); // 删除用户信息
 }
+// 结算收费--概述
+export class PrepayRun{
+  static GetPrepayUserInfo = (energyProjectId) => server.get(`Energy/SettlementOverview/GetPrepayUserInfo?energyProjectId=${energyProjectId}` ); //  获取预付费访问用户和密码
+  static GetPrepayProjects = (energyProjectId) => server.get(`Energy/SettlementOverview/GetPrepayProjects?energyProjectId=${energyProjectId}` ); //  获取预付费项目列表 
+  static BaseInfoSummary = (projectId, energyProjectId) => server.get(`Energy/SettlementOverview/BaseInfoSummary?projectId=${projectId}&energyProjectId=${energyProjectId}`); // 获取项目费用的基本信息和告警信息
+  static TransactionStatistics = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/TransactionStatistics?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取项目收入和支付方式统计信息
+  static EnergyRanking = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/EnergyRanking?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取项目客户费用排名
+
+  static EnergyTrends = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/EnergyTrends?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取曲线数据
+  
+}
 
 // zl api end
 // 主页
