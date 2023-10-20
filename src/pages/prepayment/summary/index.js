@@ -11,14 +11,16 @@ import { selectProjectId } from "@redux/systemconfig.js";
 import {
   Radio,
   Timeline,
-  Typography,
+  Image,
   Select,
   Button,
+  Typography,
   message,
 } from "antd";
-
+import projectimg from '@imgs/projectimg.png'
 import { drawEcharts } from "@com/useEcharts";
 import { PrepayConfig, PrepayRun } from "@api/api";
+const {Title, Paragraph, Text} = Typography
 let { QueryPrepayServerUrl } = PrepayConfig;
 let {
   GetPrepayUserInfo,
@@ -105,9 +107,17 @@ const Mainbox = styled.div`
 const Timelinebox = styled(Timeline)`
   max-height: 115px;
   overflow-y: scroll;
-  padding-top: 16px;
+  padding-top: 8px;
+  width: 100%;
+  padding-left: 8px;
   .ant-timeline-item {
     padding-bottom: 8px;
+    padding-left: 4px;
+  }
+  .box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
   .title {
     color: #1e1e1e;
@@ -116,6 +126,20 @@ const Timelinebox = styled(Timeline)`
     font-size: 12px;
     color: #6b6b6b;
   }
+  .cutdot.yellow {
+  border-color: #ff9900;
+  background-color: #ff9900;
+}
+.cutdot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  border-radius: 50%;
+  border: 1px solid #f00;
+  background: #f00;
+  background-clip: content-box;
+}
 `;
 
 const grid = {
@@ -127,7 +151,33 @@ const grid = {
   containLabel: true,
 };
 
-
+const legend ={
+  top: 0,
+  // bottom: 0,
+  icon: "rect",
+  itemHeight: 2,
+  itemWidth: 12,
+  itemGap: 20,
+}
+const TimeLine = ({date, alarmType, deviceAddress,alarmReason, sn, index}) => {
+  return (
+    <Timeline.Item color="red" dot={<span className={index == 2 ? "cutdot yellow" : "cutdot"}></span>}>
+              <div  className="box">
+                <Text ellipsis className="title">
+                   {date}&nbsp;{alarmType}
+                </Text>
+                  <Text className="content">
+                    {deviceAddress}&nbsp;{sn ? `设备编号SN${sn}` : ''}&nbsp;{alarmReason}
+                  </Text>
+              </div>
+         </Timeline.Item>
+  )
+}
+let mok = [
+  {date: '13:45:23', alarmType: "设备上线", deviceAddress: "1号楼12f", sn: '10233585', alarmReason: "终端已上线"},
+  {date: '14:45:23', alarmType: "设备离线", deviceAddress: "2号楼12f", sn: '10335385', alarmReason: "终端已上线"},
+  {date: '15:45:23', alarmType: "账户欠费", deviceAddress: "3号楼12f", sn: '10232885', alarmReason: "终端已上线"},
+]
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const bref = useRef(null);
@@ -181,63 +231,89 @@ export default function Index() {
     });
   }
   const [loginf, setLoginf] = useState({
-    url: "",
     name: "",
     password: "",
   });
   const [areas, setAreas] = useState([]);
   const [areaId, setAreaId] = useState("");
   const [costData, setCostData] = useState({});
+  const alarmInfo =mok || costData.alarmInfo.slice(0, 3)
   const [rankData, setRankData] = useState({})
-  const getLogInfo = async () => {
-    try {
-      let [address, user] = await Promise.allSettled([
-        QueryPrepayServerUrl(projectId),
-        GetPrepayUserInfo(projectId),
-      ]);
+  const [info, setInfo] = useState({})
+  const [jumurl, setJumurl] = useState()
+ 
+  const getLogInfo = () => {
+        QueryPrepayServerUrl(projectId).then(res => {
+          let {success, data} = res
+          if(success && data) {
+            setJumurl(data.url)
+          }else {
+            setJumurl('')
+          }
+        }).catch(),
+        GetPrepayUserInfo(projectId).then(res => {
+            let {success, data} = res
+            if(success && data) {
+              setLoginf({
+                name: data.prepayUserName,
+                password: data.prepayPassword,
+              })
+            }else {
+              setLoginf({
+                name: '',
+                password: '',
+              })
+            }
 
-      setLoginf({
-        url: address?.value?.data.url,
-        name: user?.value?.data.prepayUserName,
-        password: user?.value?.data.prepayPassword,
-      });
-    } catch (error) {}
+        }).catch()
+    
   };
   const getProjectInfo = async () => {
     try {
       let { success, data } = await GetPrepayProjects(projectId);
       if (success && Array.isArray(data) && data.length > 0) {
-        let arr = data.map((d) => ({ label: d.name, value: d.id }));
+
+        let arr = data.map((d) => {
+         let {name, id, ...other} = d 
+         return { label: name, value: id, ...other }
+        });
+        setInfo(arr[0])
         let id = arr[0].value;
         setAreaId(id);
-        setAreas(arr);
+        setAreas([...arr, {label: "全部", value: 0}]);
+        getBaseInfo(id)
         pageData(id);
       } else {
+        setAreas([])
         message.warning("没有园区");
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  const pageData = async (id) => {
+  const getBaseInfo =(id) => {
+    BaseInfoSummary(id, projectId).then((res) => {
+      let { success, data } = res;
+      
+      if (success && data) {
+        setCostData(data);
+      } else {
+        setCostData({});
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+  const pageData = async (id, type=3) => {
     try {
-      BaseInfoSummary(id, projectId).then((res) => {
-        let { success, data } = res;
-        
-        if (success && data) {
-          setCostData(data);
-        } else {
-          setCostData({});
-        }
-      }),
-        TransactionStatistics(id, projectId).then((res) => {
+        TransactionStatistics(id, projectId, type).then((res) => {
           let { success, data } = res;
           if (success && data) {
             let { incomeTrend = [], payMode = [] } = data;
+            let pieData = payMode.map(i => ({name: i.name, value: i.value}))
             drawEcharts(bref.current, {
               dataset: {
-                dimensions: ["月份", "2023", "2024"],
+                dimensions: ["date", "lastYearIncome", "thisYearIncome"],
                 source: incomeTrend,
               },
               series: [
@@ -248,7 +324,7 @@ export default function Index() {
             });
 
             drawEcharts(pref.current, {
-              pieData: { data: payMode, radius: "65%" },
+              pieData: { data: pieData, radius: "65%" },
               type: 3,
               legend: {
                 top: "auto",
@@ -257,159 +333,63 @@ export default function Index() {
             });
           }
         }),
-        EnergyRanking(id, projectId).then((res) => {
+        EnergyRanking(id, projectId, type).then((res) => {
           let {success, data} = res
           if(success && data) {
             setRankData(data)
             drawStach(data['electricRanking'])
           }
         }),
-        EnergyTrends(id, projectId).then((res) => {
+        EnergyTrends(id, projectId, type).then((res) => {
           let {data, success} = res;
           if(success && data) {
-            let {electricTrend, waterTrend,hotWaterTrend} = res;
+            let {electricTrend, waterTrend,hotWaterTrend} = data;
             drawEcharts(l2ref.current, {
               color: ["#099c9c"],
               dataset: {
-                source: hotWaterTrend
+                dimensions: ['name', "value"],
+                source: waterTrend
               },
               series: [
-              
                 { 
-                  encode: {
-                    x: "name",
-                    y: "value"
-                  },
-                  type: "line" }
+                  type: "line"
+                 }
               ],
-              grid: {
-                top: "30px",
-                left: 0,
-                right: 0,
-                bottom: "0",
-                containLabel: true,
+              grid,
+              legend,
+            });
+            drawEcharts(lref.current, {
+              color: ["#5e92f9"],
+              dataset: {
+                dimensions: ['name', "value"],
+                source: electricTrend
               },
+              series: [{ type: "line" }],
+              grid,
+              legend,
+            });
+            drawEcharts(l3ref.current, {
+              color: ["#ff6803"],
+              dataset: {
+                dimensions: ['name', "value"],
+                source: hotWaterTrend
+              },
+              series: [{ type: "line" }],
+              grid,
+              legend,
             });
           }
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   };
   useEffect(() => {
     getLogInfo();
+    
     getProjectInfo();
   }, [projectId]);
-
-
-
  
-  const datasetMonthe = {
-    dimensions: ["time", "用电量"],
-    source: [
-      { time: "1", 用电量: 5600 },
-      { time: "2", 用电量: 4600 },
-      { time: "3", 用电量: 3600 },
-      { time: "4", 用电量: 5611 },
-      { time: "5", 用电量: 5644 },
-      { time: "6", 用电量: 4677 },
-      { time: "7", 用电量: 3688 },
-      { time: "8", 用电量: 5088 },
-      { time: "9", 用电量: 6677 },
-      { time: "10", 用电量: 5866 },
-      { time: "11", 用电量: 4677 },
-      { time: "12", 用电量: 1877 },
-    ],
-  };
-  const datasetMonthw = {
-    dimensions: ["time", "用水量"],
-    source: [
-      { time: "1", 用水量: 7600 },
-      { time: "2", 用水量: 4600 },
-      { time: "3", 用水量: 1600 },
-      { time: "4", 用水量: 2611 },
-      { time: "5", 用水量: 5644 },
-      { time: "6", 用水量: 4677 },
-      { time: "7", 用水量: 2688 },
-      { time: "8", 用水量: 3088 },
-      { time: "9", 用水量: 4677 },
-      { time: "10", 用水量: 5866 },
-      { time: "11", 用水量: 6677 },
-      { time: "12", 用水量: 7877 },
-    ],
-  };
-  const datasetMonthg = {
-    dimensions: ["time", "天燃气"],
-    source: [
-      { time: "1", 天燃气: 5600 },
-      { time: "2", 天燃气: 4600 },
-      { time: "3", 天燃气: 3600 },
-      { time: "4", 天燃气: 5611 },
-      { time: "5", 天燃气: 5644 },
-      { time: "6", 天燃气: 4677 },
-      { time: "7", 天燃气: 1688 },
-      { time: "8", 天燃气: 2088 },
-      { time: "9", 天燃气: 3677 },
-      { time: "10", 天燃气: 5866 },
-      { time: "11", 天燃气: 4677 },
-      { time: "12", 天燃气: 7877 },
-    ],
-  };
-
-  useEffect(() => {
-    drawEcharts(lref.current, {
-      color: ["#5e92f9"],
-      dataset: datasetMonthe,
-      series: [{ type: "line" }],
-      grid: {
-        top: "30px",
-        left: 0,
-        right: 0,
-        bottom: "0",
-        containLabel: true,
-      },
-      legend: {
-        top: 0,
-        // bottom: 0,
-        icon: "rect",
-        itemHeight: 2,
-        itemWidth: 12,
-        itemGap: 20,
-      },
-    });
-    drawEcharts(l2ref.current, {
-      color: ["#099c9c"],
-      dataset: datasetMonthw,
-      series: [{ type: "line" }],
-      grid: {
-        top: "30px",
-        left: 0,
-        right: 0,
-        bottom: "0",
-        containLabel: true,
-      },
-    });
-    drawEcharts(l3ref.current, {
-      color: ["#ff6803"],
-      dataset: datasetMonthg,
-      series: [{ type: "line" }],
-      grid: {
-        top: "30px",
-        left: 0,
-        right: 0,
-        bottom: "0",
-        containLabel: true,
-      },
-      legend: {
-        top: 0,
-        // bottom: 0,
-        icon: "rect",
-        itemHeight: 2,
-        itemWidth: 12,
-        itemGap: 20,
-      },
-    });
-
-
-  });
   const ranks = [{label: "电", value: 'electricRanking'}, {label: "冷水", value: 'waterRanking'}, {label: "热水", value: 'hotWaterRanking'}, {label: "燃气", value: 'gasRanking'}]
   const onChange = (e) => {
     setAreaId(e);
@@ -419,14 +399,19 @@ export default function Index() {
     let data = rankData[e.target.value]
     drawStach(data)
   } 
- 
+  const dates = [{label: "日", value: 3}, {label: "月", value: 2}, {label: "年", value: 1}]
+  const dateChange = (e) => {
+    // console.log(e.target.value)
+     pageData(areaId, e.target.value)
+  }
+
   const jump = useCallback(() => {
-    let { url, name, password } = loginf;
-    if (!url) return message.warning("网站地址为空");
+    let {name, password } = loginf;
+    if (!jumurl) return message.warning("网站地址为空");
     window.open(
-      `${url}/?name=${name}&password=${password}&type=dark&projectId=${projectId}`
+      `${jumurl}/?name=${name}&password=${password}&type=dark&projectId=${projectId}`
     );
-  }, [loginf]);
+  }, [loginf, jumurl]);
   return (
     <Pagecount bgcolor="#eeeff3" pd="0px">
       <Mainbox>
@@ -440,63 +425,28 @@ export default function Index() {
             options={areas}
             onChange={onChange}
           ></Select>
-          <Button onClick={jump} type="primary" style={{ marginLeft: "auto" }}>
+         { areaId > 0 && <Button onClick={jump} type="primary" style={{ marginLeft: "auto" }}>
             控制台
-          </Button>
+          </Button>}
         </div>
         <div className="upper">
-          <Itembox title="项目信息"></Itembox>
+          <Itembox title="项目信息">
+            <div   className="itemContent" style={{justifyContent: "space-between"}}>
+              <Image src={info.imageBase64 || projectimg} preview={false} height={130} width={192}></Image>
+              <div style={{display: 'flex', flexDirection: "column", width: "138px", justifyContent: "space-around"}}>
+                  <Title level={5} ellipsis={{ rows: 2, tooltip: info.label  }}>{info.label}</Title>
+                  <Paragraph ellipsis={{ rows: 3, tooltip: info.address  }}>{info.address}</Paragraph>
+              </div>
+            </div>
+          </Itembox>
           <Itembox title="告警信息">
+          <div   className="itemContent">
             <Timelinebox>
-              <Timeline.Item color="red">
-                <div>
-                  <p className="title">
-                    13:48:55 客户欠费{" "}
-                    <span className="content">
-                      {" "}
-                      02303 张三 / 13588455699 欠费 100.32元
-                    </span>
-                  </p>
-                  {/* <p className='content'>02303  张三 / 13588455699  欠费 100.32元</p> */}
-                </div>
-              </Timeline.Item>
-              <Timeline.Item color="red">
-                <div>
-                  <p className="title">
-                    13:20:23 客户欠费
-                    <span className="content">
-                      {" "}
-                      02303 张三 / 13588455699 欠费 100.32元
-                    </span>
-                  </p>
-                  {/* <p className='content'>02304  李四 / 13588455699  欠费 100.32元</p> */}
-                </div>
-              </Timeline.Item>
-              <Timeline.Item color="red">
-                <div>
-                  <p className="title">
-                    13:20:23 客户欠费
-                    <span className="content">
-                      {" "}
-                      02303 张三 / 13588455699 欠费 100.32元
-                    </span>
-                  </p>
-                  {/* <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p> */}
-                </div>
-              </Timeline.Item>
-              <Timeline.Item color="red">
-                <div>
-                  <p className="title">
-                    13:20:23 客户欠费
-                    <span className="content">
-                      {" "}
-                      02303 张三 / 13588455699 欠费 100.32元
-                    </span>
-                  </p>
-                  {/* <p className='content'>02305  王五 / 13588455699  欠费 100.32元</p> */}
-                </div>
-              </Timeline.Item>
+              {
+                alarmInfo.map((d,index) => <TimeLine {...d} index={index} key={d.sn} /> )
+              }
             </Timelinebox>
+            </div>
           </Itembox>
           <Cost data={costData} />
         </div>
@@ -504,7 +454,11 @@ export default function Index() {
           <Itembox
             title="项目收入趋势"
           >
-            <div ref={bref} className="itemContent"></div>
+            <div   className="itemContent" style={{flexDirection:"column"}}>
+              <Radio.Group options={dates} size="small" onChange={dateChange}  optionType="button"
+                 buttonStyle="solid" defaultValue={3} />
+                 <div ref={bref} style={{flex: 1}}></div>
+            </div>
           </Itembox>
           <Itembox title="支付方式">
             <div ref={pref} className="itemContent"></div>
@@ -513,7 +467,7 @@ export default function Index() {
             <div className="itemContent" style={{flexDirection:"column"}}>
               <Radio.Group options={ranks} size="small" onChange={rankChange}  optionType="button"
               buttonStyle="solid" defaultValue="electricRanking" />
-            <div ref={stref} style={{flex: 1}}></div>
+              <div ref={stref} style={{flex: 1}}></div>
             </div>
           </Itembox>
         </div>
