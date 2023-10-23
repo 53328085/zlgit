@@ -352,8 +352,7 @@ function UserLog() {
   const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
   
   const siderRunMenus = {}; // 运行功能 选择的子菜单
- // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
- console.log(runMenus,sidermenu)
+ 
   runMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) { 

@@ -7,9 +7,10 @@ import CustContext from "@com/content.js";
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
+import {numberformat} from '@com/usehandler'
 import moment from 'moment';
 import imgurl from "./icon";
 
@@ -33,9 +34,12 @@ const Laybox = styled.div`
   }
   .down { 
       display: grid;
-      grid-template-columns: repeat(8, 196px);
+    //  grid-template-columns: repeat(8, 196px);
+     grid-auto-columns: 196px;
+     grid-template-rows:266px ;
+     grid-auto-flow: column;
       column-gap: 16px;
-      overflow: hidden;
+      overflow-x: auto;
   }
   }
   &&.classify {
@@ -212,7 +216,7 @@ const Radiogroup = styled(Radio.Group)`
 
 
 `
-const numberformat = (n) => {
+/* const numberformat = (n) => {
   let num = parseFloat(n)
   if(num > 0) {
    return <span><span style={{color: "#f00"}}>&#9650;&nbsp;</span>&#43;{n}</span>
@@ -222,7 +226,7 @@ const numberformat = (n) => {
    return <span>{n}</span>
   }
 
-}
+} */
 
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
@@ -573,10 +577,7 @@ const CoalStandard =({data={}}) => {
     );
   };
  
-  const Arrow = ({num}) => {
-    if (Number.isNaN(num)) return
-    return num > 0  ? ( <ArrowUpOutlined style={{ color: "#f00" }} />) :  (<ArrowDownOutlined style={{ color: "#06f" }} />)
-  }
+ 
 
   const timechange = (e) => {
      setTimetype(e);
@@ -664,7 +665,7 @@ const CoalStandard =({data={}}) => {
          </div>  
         
        {tabvalue == 1 && <div className="down">
-             <Energyitem />
+             <Energyitem key="12" /> 
         </div>
        }
      

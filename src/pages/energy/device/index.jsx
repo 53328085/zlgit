@@ -142,22 +142,22 @@ export default function Index() {
     },
     {
       dataIndex: "e",
-      title: "总能耗(kwh)",
+      title: "总能耗(kWh)",
       onHeaderCell: () => ({style:  headsty("#000")})
     },
     {
       dataIndex: "e2",
-      title: "峰(kwh)",
+      title: "峰(kWh)",
       onHeaderCell: () => ({style:  headsty("#f33")})
     },
     {
       dataIndex: "e3",
-      title: "平(kwh)",
+      title: "平(kWh)",
       onHeaderCell: () => ({style:  headsty("#f90")})
     },
     {
       dataIndex: "e4",
-      title: "谷(kwh)",
+      title: "谷(kWh)",
       onHeaderCell: () => ({style:  headsty("#093")})
     }
 

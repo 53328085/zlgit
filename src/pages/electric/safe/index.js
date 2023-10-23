@@ -141,7 +141,7 @@ const DemoLiquid = ({ warnData }) => {
 
     statistic: {
       title: {
-        formatter: () => '今日报警',
+        formatter: () => '今日告警',
         style: {
           fontSize: 14,
           color: '#333',

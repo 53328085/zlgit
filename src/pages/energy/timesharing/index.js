@@ -55,8 +55,8 @@ export default function Index() {
   const [typeTree, setTypeTree] = useState(1)
   
   const treekey =  typeTree == 1 ? "id" : "areaId"
-
-
+  const selectedId = useRef([])
+ 
    const [datas, setDatas] = useState({})
  
    const columns = [
@@ -112,7 +112,7 @@ export default function Index() {
          
       }else{
         setTreeData([])
-        message.error(res.errMsg)
+        // message.error(errMsg)
       }
       getDataByLine()
     } catch (error) {
@@ -122,23 +122,29 @@ export default function Index() {
     
   } 
  // 根据区域查询
- const getDataByLine = async (ids=[]) => {
-     
+ const getDataByLine = async () => {
+     let ids = selectedId.current
     try {
       let {type, date} = form.getFieldsValue()
      
       let time = getTime(date, type)
       
-      let key = typeTree == 1 ? 'selectIds' : 'areaIds'
-       let params = {
+      let params = typeTree == 1 ? {
         projectId,
         shift: 0,
         type,
         date: time,
-        [key]: ids
+        lineIds: ids,
+        
+       } : {
+        projectId,
+        shift: 0,
+        type,
+        date: time,
+        areaIds: ids,
        }
       let hander = ['', queryLine, queryArea][typeTree]
-      let {success, data} = await hander(params)
+      let {success, data} = await hander(params, areaId)
       if(success && data.constructor === Object) {
           setDatas({...data}) 
       }else {
@@ -214,6 +220,7 @@ useEffect(() => {
   
   useEffect(()=>{
      if(!areaId) return;
+     selectedId.current = []
      getTreeData()
      
   },[areaId, typeTree])
@@ -225,6 +232,11 @@ useEffect(() => {
     console.log(e)
     setTimetype(e);
     getDataByLine()
+ }
+ const onSelect = (e) => {
+  console.log(e);
+  selectedId.current = e;
+  getDataByLine()
  }
   const CustView = () => {
     
@@ -254,7 +266,7 @@ useEffect(() => {
     borderBottom: '1px dotted #d7d7d7',
    }
   const switchLine = (e) => {
-    
+   
     setTypeTree(e.target.value)
   }
   const boxsty = {
@@ -290,7 +302,8 @@ useEffect(() => {
           defaultExpandParent
         //  expandedKeys={expandedKeys}
          // autoExpandParent={autoExpandParent}
-          onSelect={getDataByLine}
+         selectedKeys={selectedId.current}
+          onSelect={onSelect}
           
           fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />

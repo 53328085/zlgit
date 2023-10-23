@@ -68,7 +68,7 @@ const cols =[ // 实时抄表
     dataIndex: 'end',
   },
   {
-    title: '用能(kwh)',
+    title: '用能(kWh)',
     dataIndex: 'consume',
   }, 
   {
@@ -104,7 +104,7 @@ const conscols =[ // 能耗抄表
     fixed: 'left',
   },
   {
-    title: '能耗(kwh)',
+    title: '能耗(kWh)',
     dataIndex: 'consume',
     key: 'consume',
     width: 92,
@@ -224,7 +224,7 @@ export default function Index() {
 
   const getTableData = ({ current, pageSize }, formData={}) => {
   //  const row = Number(value);
-     
+     console.log(line)
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
@@ -240,7 +240,13 @@ export default function Index() {
         pageNum: current,
         pageSize,
      }
-    
+     if(line == 1) {
+      params.areaId = areaId
+     }else {
+      delete params.areaId
+     }
+     console.log('line', line);
+     console.log(params)
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)
@@ -262,7 +268,7 @@ export default function Index() {
          
             return {
               list: data,
-              total: data.length
+              total: total
             }
          }else {
           return {
@@ -287,6 +293,9 @@ export default function Index() {
   const picker= ['','date', 'month', 'year'][timetype];
   const timechange = (e) => { 
     setTimetype(e);
+    if(e==1) {
+      form.setFieldValue('date', moment(new Date(), 'YYYY-MM-DD'))
+    }
  }
   const CustView = () => {
     
