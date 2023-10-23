@@ -27,7 +27,7 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
   const [treeData,setTreeData] =useState([])
   
  
-  const [selectkeys, setSelectkeys] = useState([])
+  const [checkedKeys, setCheckedKeys] = useState([])
  
  
   const projectId = useSelector(selectProjectId)
@@ -72,9 +72,11 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
+         
          setTreeData(data)       
       }else{
-        message.error(errMsg || '数据出错')
+        setTreeData([]) 
+       // message.error(errMsg || '数据出错')
       }
      
     } catch (error) {
@@ -87,7 +89,7 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
  const onCheck = (ids=[]) => {
      
     setTreeId(ids)
-    
+    setCheckedKeys(ids)
      
  } 
  // 树搜索
@@ -110,10 +112,11 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
     alignContent: 'center',
     borderBottom: '1px dotted #d7d7d7',
    }
-  const switchLine = (e) => {
-    
+  const switchLine = (e) => {  
     setTypeTree(e.target.value)
     setLine(e.target.value)
+    setTreeId([])
+    setCheckedKeys([])
   }
  
   return (
@@ -134,9 +137,10 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
           <Tree 
           treeData={treeData} 
           checkable 
+          defaultExpandAll
           onExpand={onExpand}
           expandedKeys={expandedKeys}
-         
+          checkedKeys={checkedKeys}
           onCheck={onCheck}
           fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />

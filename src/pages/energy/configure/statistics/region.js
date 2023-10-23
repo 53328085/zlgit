@@ -322,7 +322,7 @@ const getSelected = async ({areaId, type=devietype}) => {
   };
 
   const onMove = async (type) => { 
-     console.log(type)
+    
     let {areaId} = Record 
     let selected = devices.current.selected;
     if (selected.length < 1) return message.warning('请选择设备', 2)
@@ -561,6 +561,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         getContainer={() => boxref.current}
         style={{ position: "absolute" }}
         closable={false}
+        destroyOnClose
       >
         <div className="selected">
           <div className="total">

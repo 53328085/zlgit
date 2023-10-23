@@ -99,8 +99,8 @@ export default function Hmenu() {
   
   
   const onSelect = ({key}) => {
-     console.log(key)
-     let item = menus.find(item => item?.key === key);
+    
+     let item = menus.find(item => item?.key === key);   
       if (!item) return;
       const {nested, label, no} = item || {};  
      /*  if(key === 'designerProject' || key == 'runtimeProject' ) {

@@ -18,17 +18,17 @@ export default [
         width: '178px'
       },{
         dataIndex: "meterTotalValue",
-        title: "用电量-总表(Kwh)",
+        title: "用电量-总表(kWh)",
         align:'center',
         width: '174px'
       },{
         dataIndex: "meterSubValue",
-        title: "用电量-分表(Kwh)",
+        title: "用电量-分表(kWh)",
         align:'center',
         width: '174px'
       },{
         dataIndex: "lossValue",
-        title: "总-分差额(Kwh)",
+        title: "总-分差额(kWh)",
         align:'center',
         width: '174px'
       },{
