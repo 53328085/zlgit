@@ -96,26 +96,27 @@ export default function Index() {
   const [form] = Form.useForm();
   const {Item} = Form
  
-  const [timetype, setTimetype] = useState(1) // 日、月、年 0,1,2
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
+ 
   const [dataSet, setDataSet] = useState({
     dimensions: [],
     source: []
   })
-  let length = dataSet.source?.length
+  let length = dataSet.source?.length - 1
   const piedata = tableData.map(t => ({value: t.e, name: t.name}))
   const sort = tableData.sort((a, b) => parseFloat(a.e) -parseFloat(b.e) < 0).slice(0, 3)
   const barconfig = {
     type: "bar",
     stack: "count",
     seriesLayoutBy: 'row',
-   
+    
   //  barWidth: 30, 
   //  barCategoryGap: "5%"
   // barGap: "30%", 
   // barCategoryGap: "10%"
   }
   let series = Array.from({length}, () => barconfig)
-  const picker= ['date', 'month', 'year'][timetype];
+  const picker= ['', 'date', 'month', 'year'][timetype];
    
 
   const columns = [
@@ -193,6 +194,7 @@ export default function Index() {
  const [mode, setMode] = useState(1)
  const stack = useRef()
  const pieref = useRef()
+
 useEffect(() => {
   drawEcharts(
      stack.current, {
@@ -200,7 +202,10 @@ useEffect(() => {
        ...dataSet, 
       },
       
-      series: series
+      series: series,
+      tooltip: {
+       // formatter:  ' {a}'
+      }
     }
   )
   drawEcharts(pieref.current, {

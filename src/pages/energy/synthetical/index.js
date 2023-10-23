@@ -270,7 +270,7 @@ export default function Index() {
       let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
       drawEcharts(ref.current, {
         dataset: {dimensions, source},
-        series: [{ type: "bar" }, { type: "bar" }],
+        series: [{ type: "bar", barGap: 0 }, { type: "bar", barGap: 0 }],
       })
      } catch (error) {
        console.log(error)

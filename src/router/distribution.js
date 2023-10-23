@@ -10,6 +10,8 @@ const Surroundings= lazy(() => import("../pages/distribution/surroundings"))
 const Video = lazy(() => import("../pages/monitoring/video"))
 const Warning= lazy(() => import("../pages/distribution/warning"))
 const Transformer = lazy(() => import("../pages/distribution/transformer"))
+const Contact= lazy(() => import("../pages/distribution/contact"))
+const Fibre= lazy(() => import("../pages/distribution/fibre"))
 
 
 export let runtimeDistribution = {
@@ -19,7 +21,9 @@ export let runtimeDistribution = {
     '010704': Loop,
     '010706': Surroundings,
     '010705': Video,
-    '010707': Warning,
-    '010708': Report
+    '010707': Contact,
+    '010708': Fibre,
+    '010709': Warning,
+    '010710': Report
 }
 

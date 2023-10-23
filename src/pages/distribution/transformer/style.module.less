@@ -84,20 +84,22 @@
     width: 232px;
     height: 112px;
     border: 1px solid #c9c9c9;
-    margin: 16px auto 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    background-color: #f6f6f6;
+    margin-right: 12px;
     .title{
         margin-left: 16px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-    }
-    &:hover{
-        background-color: #237ae4;
-    color: #fff;
+        .tag{
+            background-color: #009933;
+            color: #fff;
+            padding:0 3px;
+        }
     }
 }
 .activecard{

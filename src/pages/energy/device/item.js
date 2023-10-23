@@ -123,7 +123,7 @@ export default function Item(props) {
        <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox>
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>
-              <Image src={imgurl[`a${type}`]} preview={false} ></Image>
+              <Image src={imgurl[`a${1}`]} preview={false} ></Image>
            </div>
            <div className='info' key={nanoid()}>
              <Paragraph ellipsis={{tooltip: name}}>{name}</Paragraph>

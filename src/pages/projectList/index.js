@@ -361,7 +361,7 @@ export default function Index() {
    comSet,      
    projectId: id,
   }
-
+ 
   dispatch(getMenus(menus));
   dispatch(configProject(type === 1))
  

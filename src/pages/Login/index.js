@@ -353,6 +353,7 @@ function UserLog() {
   
   const siderRunMenus = {}; // 运行功能 选择的子菜单
  // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+ console.log(runMenus,sidermenu)
   runMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) { 
