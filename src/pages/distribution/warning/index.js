@@ -9,6 +9,8 @@ import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { OperationLogRuntime } from '@api/api'
 import { ExportExcel } from '@com/useButton'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 const { Paragraph } = Typography
 const { Item } = Form
 const { RangePicker } = DatePicker;
@@ -125,7 +127,7 @@ function Main({ projectId, areaId, siteId }) {
       start,
       end,
       projectId,
-      //  areaId,
+       areaId,
       siteId,
       ...rest
     }
@@ -187,22 +189,7 @@ function Main({ projectId, areaId, siteId }) {
             <Option value="2">正泰物联滨江园区</Option>
             <Option value="3">正泰物联温州园区</Option>
           </Select>
-          {/* <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={oneLevelDefaultId}
-          defaultValue={oneLevelDefaultId}
-          style={{ width: "200px" }}
-          onChange={changeArea}
-        >
-          {areaList.map((item) => {
-            return (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            );
-          })}
-        </Select> */}
+        
           <span style={{ marginLeft: '12px' }}>配电房</span>
           <Select
             placeholder="请选择配电房"

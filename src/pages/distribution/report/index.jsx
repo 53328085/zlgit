@@ -168,7 +168,35 @@ export default function Index() {
   {
     name: '最高温度值',
     message: '',
-  },])
+  },])//剩余电气接头温度监控
+  const [temperatureTransformer,setTemperatureTransformer]=useState([{
+    name: '最高温度发生时间',
+    message: '',
+  },
+  {
+    name: '最高温度发生位置',
+    message: '',
+  },
+  {
+    name: '最高温度值',
+    message: '',
+  },])//剩余变压器温度监控
+  const [water,setWater]=useState([{
+    name: '发生时间',
+    message: '',
+  },
+  {
+    name: '发生位置',
+    message: '',
+  },])//剩余水浸报警
+  const [smokeAlarm,setSmokeAlarm]=useState([{
+    name: '发生时间',
+    message: '',
+  },
+  {
+    name: '发生位置',
+    message: '',
+  },])//剩余水浸报警
   const columns1 = [
     { title: '', dataIndex: 'name', width: 100, align: 'center' },
     { title: '', dataIndex: 'message', align: 'center' }
@@ -364,11 +392,10 @@ export default function Index() {
         <RightDiv>
         <div style={{ padding: 16 }}>
             <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
-            {/* <span style={{ fontSize: 20 }}>{chineseTitle}</span> */}
-            <span style={{ fontSize: 20 }}>配电监控管理平台</span>
+            <span style={{ fontSize: 20 }}>{chineseTitle}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',height:470 }}>
-            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>配电管理分析报告</p>
+            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>电气安全运行分析报告</p>
             <div style={{
               width: 431,
               height: 136,
@@ -381,9 +408,7 @@ export default function Index() {
             }}>
               <p style={{ flex: 1 }}>项目名称:<span style={{ paddingLeft: 24 }}>{report?.project}</span></p>
               <p style={{ flex: 1 }}>项目地址:<span style={{ paddingLeft: 24 }}>{report?.address}</span></p>
-            {/* <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report?moment().format('YYYY-MM-DD'):''}</span></p> */}
-              
-              <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report?.date}</span></p> 
+              <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report?moment().format('YYYY-MM-DD'):''}</span></p>
             </div>
           </div>
           <div className='bgimage'>
@@ -435,49 +460,43 @@ export default function Index() {
               <UseTable columns={columns2} dataSource={leaveElec} showHeader={false} />
             </div>
             <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>6.温度监控</p>
+              <p style={{ marginBottom: 6 }}>6.电气接头温度监控</p>
               <UseTable columns={columns2} dataSource={temperature} showHeader={false} />
             </div>
           </PageComp>
           <div className="page-break" />
           <PageComp>
+            
+          <div style={{ marginBottom: 24 }}>
+              <p style={{ marginBottom: 6 }}>7.变压器温度监控</p>
+              <UseTable columns={columns2} dataSource={temperatureTransformer} showHeader={false} />
+            </div>
             <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>7.用电量趋势</p>
+              <p style={{ marginBottom: 6 }}>8.水浸报警</p>
+              <UseTable columns={columns2} dataSource={water} showHeader={false} />
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <p style={{ marginBottom: 6 }}>9.烟雾报警</p>
+              <UseTable columns={columns2} dataSource={smokeAlarm} showHeader={false} />
+            </div>
+            
+          </PageComp>
+          <div className="page-break" />
+          <PageComp ><div style={{ marginBottom: 24 }}>
+              <p style={{ marginBottom: 6 }}>10.用电量趋势</p>
               <div style={{ width: 514, height: 320 }}>
                 <LineCharts data={report?.eTrend} type={active}/>
               </div>
             </div>
             <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>7.1用电量类型分布</p>
+              <p style={{ marginBottom: 6 }}>11用电量类型分布</p>
               <div style={{ width: 516, height: 320 }}>
                 <PieCharts data={report?.eTypeGroup}/>
               </div>
 
-            </div>
-          </PageComp>
-          <div className="page-break" />
-          <PageComp >
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 68 }}>8.本周期用电安全监测综合分析</p>
-              <div style={{
-                width: 283, height: 64, backgroundColor: '#237ae4', display: 'flex',
-                alignItems: 'center', margin: '0 auto'
-              }}>
-                <img src={anaylse} alt="" style={{ width: 48, height: 48, margin: '0 42px' }} />
-                <span style={{ fontSize: 28, color: '#fff' }}>{
-                  report?.result==0?'无': report?.result==1?'优秀': report?.result==2?'良好': report?.result==3?'及格':report?.result==4?'待及':''
-                }</span>
-              </div>
-            </div>
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>9.建议</p>
-              <p>{report?.suggest}</p>
-            </div>
-          </PageComp>
+            </div> </PageComp>
         </> : null}
         </div>
-       
-
       </div>
       </div>
       </ContainerDiv>
