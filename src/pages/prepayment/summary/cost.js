@@ -6,7 +6,7 @@ import imgurl from './icon'
 const {Text} = Typography
 
 export default function Cost({data}) {
- console.dir(data)
+ 
  const  { arrearAmount, 
     arrearsCustomer,
     totalCustomer,
