@@ -145,6 +145,7 @@ export default function Index() {
       name:'',
       position:'',
       remark:'',
+      addressSpan:""
     })
   }
   const pageinfo = useReactive({
@@ -221,32 +222,38 @@ export default function Index() {
     
   }
   //更新检查项
-  const updateItems = async (position,devicelistref,checklistref) => {
-    const edit = editform.getFieldValue()
-    console.log(edit,position,devicelistref,checklistref)
-    const deviceGroup =devicelistref.current.subMeter.map(it=>it.sn)
-    const contentGroup = checklistref.current.subMeter.map(it=>it.id)
-    let params = {
-      projectId,
-      areaId: edit.areaId,
-      id: edit.id,
-      name: edit.name,
-      lngLat:position.local?position.local:edit.lngLat,
-      address:edit.address,
-      position:edit.position,
-      remark: edit.remark,
-      deviceGroup:deviceGroup.length>0?deviceGroup:edit.deviceGroup,
-      contentGroup:contentGroup.length>0?contentGroup:edit.contentGroup
-    }
+  const updateItems = async (position, devicelistref, checklistref) => {
+    editform.validateFields().then(async () => {
+      const edit = editform.getFieldValue()
+      console.log(edit, position, devicelistref, checklistref)
+      const deviceGroup = devicelistref.current.subMeter.map(it => it.sn)
+      const contentGroup = checklistref.current.subMeter.map(it => it.id)
+      let params = {
+        projectId,
+        areaId: edit.areaId,
+        id: edit.id,
+        name: edit.name,
+        lngLat: position.local ? position.local : edit.lngLat,
+        address: edit.address,
+        position: edit.position,
+        remark: edit.remark,
+        deviceGroup: deviceGroup.length > 0 ? deviceGroup : edit.deviceGroup,
+        contentGroup: contentGroup.length > 0 ? contentGroup : edit.contentGroup
+      }
 
-    const res = await operationDesigin.UpdateInspectionAddress(params)
-    if (res.success) {
-      message.success('编辑成功!')
-      editRef.current.onCancel()
-      getPage()
-    } else {
-      message.error(res.errMsg)
-    }
+      const res = await operationDesigin.UpdateInspectionAddress(params)
+      if (res.success) {
+        message.success('编辑成功!')
+        editRef.current.onCancel()
+        getPage()
+      } else {
+        message.error(res.errMsg)
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+
+
 
   }
   //删除检查项

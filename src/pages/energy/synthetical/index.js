@@ -25,6 +25,7 @@ const Laybox = styled.div`
     display: grid;
     grid-template-columns: 1256px 408px;
     column-gap: 16px; 
+    overflow: hidden;
     .upleft {
       display: grid;
       grid-template-rows: 40px 472px ;
@@ -211,6 +212,18 @@ const Radiogroup = styled(Radio.Group)`
 
 
 `
+const numberformat = (n) => {
+  let num = parseFloat(n)
+  if(num > 0) {
+   return <span><span style={{color: "#f00"}}>&#9650;&nbsp;</span>&#43;{n}</span>
+  }else if(num < 0) {
+   return <span style={{color: "#090"}}>&#9660;&nbsp;&#45;{n}</span>
+  }else {
+   return <span>{n}</span>
+  }
+
+}
+
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
   let shifts = useSelector(selectshifts) // ?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
@@ -224,7 +237,7 @@ export default function Index() {
   const [tabvalue, setTabvalue] = useState(1)
   const [op, setOp] = useState(1) // 能耗 1， 费用 2
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
+  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;
   
   let type = ['', '日', '月', '年'][timetype]
   const Chartbox = ({data}) => {
@@ -257,7 +270,7 @@ export default function Index() {
       let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
       drawEcharts(ref.current, {
         dataset: {dimensions, source},
-        series: [{ type: "bar" }, { type: "bar" }],
+        series: [{ type: "bar", barGap: 0 }, { type: "bar", barGap: 0 }],
       })
      } catch (error) {
        console.log(error)
@@ -274,11 +287,12 @@ export default function Index() {
     )
 }
 
-const EngItem = ({icon, data, sub, ...otherprop}) => {
+const EngItem = ({name, unit, periodValue, lastMonthPeriodValue, lastYearPeriodValue, mom, yoy
+}) => {
+  let icon = unit.indexOf("kWh")>-1 ? 'electric' : unit.indexOf("m")>-1  ? 'water' : '';
   return (
    <Titlelayout
-   {...otherprop}
-   title={<Title title={data.name} subtitle={sub} />}
+   title={<Title title={name} subtitle={unit} />}
    key={nanoid()}
  >
    <UDbox>
@@ -291,25 +305,24 @@ const EngItem = ({icon, data, sub, ...otherprop}) => {
      <div className="list">
        <div className="item">
          <span>本{type}</span>
-         <span>{data.periodValue}</span>
+         <span>{periodValue}</span>
        </div>
        <div className="item">
          <span>上{type}</span>
-         <span>{data.lastMonthPeriodValue}</span>
+         <span>{lastMonthPeriodValue}</span>
        </div>
        <div className="item">
          <span>环比</span>
-         <span>
-           +{data.mom}{" "}
-           <Arrow num={data.mom}/>
-         </span>
+
+         
+          {numberformat(mom)}
+          
        </div>
        <div className="item">
          <span>同比</span>
-         <span>
-           +{data.yoy}{" "}
-           <Arrow num={data.yoy}/>
-         </span>
+          
+          {numberformat(yoy)}
+           
        </div>
      </div>
    </UDbox>
@@ -348,7 +361,7 @@ const Energyitem = () => {
    return (
     <>
       {
-        items.map(item => <EngItem  {...item} key={nanoid()}/>)
+        consumes.map(item => <EngItem  {...item} key={nanoid()}/>)
       }
     </>
   
@@ -373,7 +386,7 @@ const Electric = ({data, des}) => {
   }, [])
   return (
     <ElectricRight type={tabvalue}>
-      <Titlelayout title={<Title title={data?.name} />}>
+      <Titlelayout title={<Title title={data?.name} />} key="electr" >
       <Engbox type={tabvalue}>
         <Image
           src={imgurl.z08}
@@ -386,19 +399,16 @@ const Electric = ({data, des}) => {
           <span>本{type}：</span>
           <span>{data.periodValue}</span>
           <span>同比</span>
-          <span>
-          {data.yoy}
-            <ArrowDownOutlined style={{ color: "#f00" }} />
-          </span>
+          {numberformat(data.yoy)}
         </div>
         <div className="item">
           <span>昨{type}：</span>
           <span>{data.lastMonthPeriodValue}</span>
           <span>环比</span>
-          <span>
-            {data.mom}
-            <ArrowUpOutlined style={{ color: "#f00" }} />
-          </span>
+          
+        
+            {numberformat(data.mom)}
+          
         </div>
       </div>
      </Engbox>
@@ -406,6 +416,7 @@ const Electric = ({data, des}) => {
     { tabvalue == 2 && <Titlelayout
       type="inner"
       title={<Title title={`本${type}能耗占比`} />}
+      key="pie"
     >
       <div
         style={{ width: "368px", height: "356px" }}
@@ -413,7 +424,7 @@ const Electric = ({data, des}) => {
       ></div>
     </Titlelayout>
    }
-      <Titlelayout title="能耗分析">
+      <Titlelayout title="能耗分析" key="analysis">
         <div style={{flex: 1, display:'flex', alignItems: 'center', height: '100%'}}>
          <Space size={8}><span style={{color: "#0c6", fontSize: '18px'}}>&#9673;</span><span style={{color: '#515151'}}>{des}</span></Space>
         </div>
@@ -472,17 +483,15 @@ const CoalStandard =({data={}}) => {
         </div>
         <div className="item">
           <span>同比</span>
-          <span>
-          {data.yoy}
-            <ArrowDownOutlined style={{ color: "#f00" }} />
-          </span>
+          {numberformat(data.yoy)}
+         
         </div>
         <div className="item">
           <span>环比</span>
-          <span>
-            {data.mom}
-            <ArrowUpOutlined style={{ color: "#f00" }} />
-          </span>
+          
+            {numberformat(data.mom)}
+        
+          
         </div>
       </div>
     </Divbox>
@@ -503,12 +512,12 @@ const CoalStandard =({data={}}) => {
   const tabs = [
     { label: "综合能耗", key: 1, },
     { label: "电", key: 2,  },
-    { label: "冷水", key: 3 },
-    { label: "热水", key: 4 },
-    { label: "蒸汽", key: 5 },
-    { label: "燃气", key: 6 },
-    { label: "煤炭", key: 7 },
-    { label: "燃油", key: 8 },
+    { label: "用水", key: 3 },
+    { label: "热力", key: 4 },
+    { label: "气体燃料", key: 5 },
+    { label: "液体燃料", key: 6 },
+    { label: "固态燃料", key: 7 },
+    { label: "碳酸盐", key: 8 },
   ];
 
 
@@ -651,7 +660,7 @@ const CoalStandard =({data={}}) => {
              </Tabsbox>
              <Chartbox  data={detail} />
            </div>
-           {tabvalue == 1 ? <CoalStandard/> : <Electric data={consume} des={analysisDes} /> }
+           {tabvalue == 1 ? <CoalStandard data={coalStandard}/> : <Electric data={consume} des={analysisDes} /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">

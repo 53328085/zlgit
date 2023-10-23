@@ -42,7 +42,7 @@ const Cmenu = styled(Menu)`
    && {
     border-right: none;
    }
-   &&:hover {
+   &&  {
     overflow-y: auto;
    }
    .ant-menu-item {

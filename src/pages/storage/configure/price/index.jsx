@@ -304,13 +304,20 @@ export default function Index() {
     return []
   }
 
+
   const onSave = () => {
+     const isEmpty = (n) => isNaN(n) || n <=0;
+
     let param1 = cloneDeep(pointedForm.getFieldsValue(true))
+   
+
     let param2 = cloneDeep(peakForm.getFieldsValue(true))
+   
     let param3 = cloneDeep(flatForm.getFieldsValue(true))
     let param4 =cloneDeep(valleyForm.getFieldsValue(true))
-    if(param1.price === '' || param2.price=== '' || param3.price=== '' || param4.price===''){
-      message.error('请输入尖峰平谷价格！')
+    
+    if(isEmpty(param1.price) || isEmpty(param2.price)|| isEmpty(param3.price) || isEmpty(param4.price)){
+      message.error('请检查尖峰平谷的价格！')
       return;
     }
     let checkArr = []

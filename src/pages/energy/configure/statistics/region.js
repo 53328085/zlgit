@@ -27,7 +27,7 @@ import { CustButton } from "@com/useButton";
 import Mapcom from "@com/useMap";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
-
+import Mask from '@com/mask.jsx'
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -293,9 +293,11 @@ const getSelected = async ({areaId, type=devietype}) => {
      
    
       let { areaId } = record;
-      let  topareaid = form.getFieldValue('topAreaId');
-      let topid = level == 1 ? areaId : topareaid
-      await getUNselect({ areaId: topid });
+     // let  topareaid = form.getFieldValue('topAreaId');
+     // let topid = level == 1 ? areaId : topareaid
+    //  await getUNselect({ areaId: topid });
+
+      await getUNselect({ areaId});
       await getSelected({ areaId })
       
     } catch (error) {
@@ -303,6 +305,7 @@ const getSelected = async ({areaId, type=devietype}) => {
     }
   };
   const config = async (record) => {
+    console.log(record)
     try {
       setRecord({ ...record });
       deviceData(record).then(() => {
@@ -444,10 +447,10 @@ const getSelected = async ({areaId, type=devietype}) => {
           });
           return row;
         });
-        console.log(formart);
+      //  console.log(formart);
         if (success && data) {
           setTableData([...formart])
-          console.log(tabelData);
+         // console.log(tabelData);
           setPagination({
             ...pagination,
             total: total,
@@ -502,6 +505,7 @@ const getSelected = async ({areaId, type=devietype}) => {
   
   return (
     <Mainbox ref={boxref}>
+      {open ? Mask() : null }
       <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
@@ -566,6 +570,9 @@ const getSelected = async ({areaId, type=devietype}) => {
               rowSelection={rowSelection}
               dataSource={deviceSummary}
               rowKey="id"
+              scroll={{
+                y: 336
+              }}
             />
           </div>
           <div className="sub">
@@ -583,7 +590,11 @@ const getSelected = async ({areaId, type=devietype}) => {
               columns={deviceColumns}
               rowSelection={rowSelection}
               dataSource={deviceSub}
+              scroll={{
+                y: 248
+              }}
               rowKey="id"
+
             />
           </div>
         </div>
@@ -682,6 +693,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             columns={deviceColumns}
             rowSelection={rowSelection}
             dataSource={Unselected}
+            scroll={{y: 616}}
             rowKey="id"
           />
         </div>

@@ -1,25 +1,24 @@
-import React, { useEffect, useState, useRef } from 'react'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
+import React, {  useState, useRef } from 'react'
+
+
+import {Button,  message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
-import { AreaSetting, energyStructure } from '@api/api.js'
+import {  DesElectric} from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
-import { MemoryRouter } from 'react-router-dom';
+import Mask from '@com/mask.jsx'
+import Titlelayout from '@com/titlelayout'
 
 
-export default function Index () {
+export default function Index ({projectId, areaId}) {
   const aref = useRef()
   const dref = useRef()
   const [form] = Form.useForm()
-  const Item = Form.Item
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
+  const Item = Form.Item 
+ 
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -27,25 +26,15 @@ export default function Index () {
       content
     })
   }
-  const { QueryAllArea } = AreaSetting
-  const { queryEnergyStructure, 
-    addEnergyStructure, 
-    updateEnergyStructure, 
-    deleteEnergyStructure,
-    configEnergyStructure,
-    queryEnergyStructureConfig } = energyStructure
-  //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const changeArea = (value) => {
-    setAreaId(value)
-  }
+  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive,} = DesElectric
+ 
+ 
 
   //树形结构
   const {TreeNode} = Tree;
   const [treeData, setTreeData] = useState([])
   const getTreeData = () => {
-    return queryEnergyStructure(projectId, areaId, '').then(res => {
+    return queryDrive({projectId, areaId}).then(res => {
       if(res.success){
         setTreeData(res.data)
       }else{
@@ -54,16 +43,9 @@ export default function Index () {
     })
   }
   const { run: queryRun } = useRequest(getTreeData,{
-    manual: true
+    refreshDeps: [areaId]
   })
-  useEffect(()=> {
-    if(areaId && areaId != 0){
-      queryRun()
-    }else{
-      message.error('当前项目尚未配置园区!')
-      return;
-    }
-  }, [areaId])
+
 
   const nodeTitle = {
     display: 'flex',
@@ -91,7 +73,7 @@ export default function Index () {
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
                 <div style={nodeAction}>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
+                   
                     <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
                     <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
                     <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
@@ -115,27 +97,18 @@ export default function Index () {
   const [updateId, setUpdateId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
   const [modalTag, setModalTag] = useState('')
-  const addSon = id => {
-    setModalTitle('新增能源节点')
-    setFormLabel('能源节点名称')
-    setParentId(id)
-    setModalTag('add')
-    aref.current.onOpen()
-  }
+ 
   const addMain = () => {
-    if(areaId == 0 || !areaId){
-      message.warning('请先选择园区！')
-      return;
-    }
-    setModalTitle('新增主节点')
-    setFormLabel('主节点名称')
+    
+    setModalTitle('新增重点设备')
+    setFormLabel('重点设备名称')
     setParentId(0)
     setModalTag('add')
     aref.current.onOpen()
   }
   const edit = (id, value) => {
-    setModalTitle('编辑能源节点')
-    setFormLabel('能源节点名称')
+    setModalTitle('编辑重点设备')
+    setFormLabel('重点设备名称')
     setUpdateId(id)
     setModalTag('edit')
     form.setFieldValue('name', value)
@@ -147,16 +120,17 @@ export default function Index () {
   }
   const onOk = async() => {
     try{
-      const values = await form.validateFields();
+      const {name} = await form.validateFields();
       let params = {
-        name: values.name,
+        name,
         parentId,
-        areaId
+        areaId,
+        projectId
       }
       if(modalTag == 'add'){
-        addEnergyStructure(projectId, params).then(res => {
+        insertDrive(params).then(res => {
           if(res.success){
-            messageContent('success','新增能源节点成功!')
+            messageContent('success','新增重点设备成功!')
           }else{
             messageContent('error', res.errMsg)
           }
@@ -164,9 +138,9 @@ export default function Index () {
           aref.current.onCancel()
         })
       }else if(modalTag == 'edit'){
-        updateEnergyStructure(projectId, updateId, values.name).then(res => {
+        updateDrive({projectId, id: updateId, name}).then(res => {
           if(res.success){
-            messageContent('success','修改能源节点成功!')
+            messageContent('success','修改重点设备成功!')
           }else{
             messageContent('error', res.errMsg)
           }
@@ -178,15 +152,15 @@ export default function Index () {
     } catch(error){}
   }
   const onDelete = () => {
-    deleteEnergyStructure(projectId, deleteId).then(res=> {
+    deleteDrive({projectId, id: deleteId}).then(res=> {
       if(res.success){
-        messageContent('success','删除能源节点成功!')
+        messageContent('success','删除重点设备成功!')
       }else{
         messageContent('error', res.errMsg)
       }
       queryRun()
       dref.current.onCancel()
-    })
+    }).catch(error);
   }
 
   //配置穿梭框
@@ -214,49 +188,41 @@ export default function Index () {
   const [transferTitle,setTransferTitle] = useState({})
   const [unknownTable, setUnknownTable] = useState([])
   const [structureId, setStructureId] = useState(null)
-  const settingClick = (id, valName) => {
+  const settingClick = async (id, valName) => {
     setStructureId(id)
     setTransferTitle({
       subTitle:valName + '-表计',
       unknownTitle:'未选中的表计',
     })
-    queryEnergyStructureConfig(projectId, id, areaId).then(res => {
-      let {success, data} = res
-      if(success){
-        if(!data){
-          setSubTable([])
-          setUnknownTable([])
+   const allSettledPromise =  Promise.allSettled([queryDriveUnconfig({projectId, id, areaId}), queryDriveConfig({projectId, id, areaId})])
+   
+   allSettledPromise.then(results => {
+       let [{value: {success, data, errMsg}}, {value: {success: sus, data: cdata, errMsg: msg}}] = results
+        if(success) {
+          setUnknownTable(data || [])
         }else{
-          if(data.relations){
-            setSubTable(data.relations)
-          }else{
-            setSubTable([])
-          }
-          if(data.noRelations){
-            setUnknownTable(data.noRelations)
-          }else{
-            setUnknownTable([])
-          }
+          setUnknownTable([])
+          messageContent('error',errMsg)
+        }
+        if(sus) {
+          setSubTable(cdata || [])
+        }else {
+          setSubTable([])
+          messageContent('error',msg)
         }
         setDeleteDom(true)
         setTransTag('open')
-      }else{
-        messageContent('error',res.errMsg)
-      }
-    })
+   })
   }
   const getSaveValue = values => {
-    let Sns = []
+    let params = []
     values.subData.map(item => {
-      Sns.push(item.sn)
+      params.push(item.sn)
     })
-    let params = {
-      EnergyStructureId: structureId,
-      Sns
-    }
-    configEnergyStructure(projectId, params).then(res => {
+    
+    conifgDrive({projectId, id: structureId}, params).then(res => {
       if(res.success){
-        messageContent('success', '能源节点配置成功!')
+        messageContent('success', '重点设备配置成功!')
         setTransTag('close')
         setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
@@ -268,31 +234,16 @@ export default function Index () {
     setTransTag(params)
     setTimeout(()=> {setDeleteDom(false)}, 600)
   }
-
+ 
   return (
-    <div>
+    <div style={{flex: 1, display: 'flex'}}>
       {contextHolder}
-      {transTag == 'open' ? <div className={style.mask}></div> : null}
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={changeArea}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div>
-      <div className={style.mainContent}>
-        <div className={style.title}>
+      {transTag == 'open' ? Mask() : null}
+     
+      <Titlelayout title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
-          <Button type='primary' style={{width: 96}} onClick={() => addMain()}>新增主节点</Button>
-        </div>
+          <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
+        </div>}>
         <div className={style.lineTree}>
           <div className={style.treeTitle}>
             <span className={style.treeItem}>重点设备名称</span>
@@ -305,7 +256,7 @@ export default function Index () {
         {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
           <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
         </div>  : null}
-      </div>
+      </Titlelayout>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>
           <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
@@ -315,10 +266,10 @@ export default function Index () {
           </Form>
         </div>
       </Custmodl>
-      <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={()=>onDelete()}>
+      <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={onDelete}>
         <div style={{display:"flex", alignItems: "center", marginBottom: 32,fontSize: 16}}>
           <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
-          <span> 是否确认删除该能源节点? </span>
+          <span> 是否确认删除该重点设备? </span>
         </div>
       </Custmodl>
     </div>

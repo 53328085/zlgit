@@ -17,3 +17,8 @@ export const phoneValidator = (_, value)  => {
     if ( Number.isNaN(Number(value))) return Promise.reject(new Error('验证码必须是数字'))
     return Promise.resolve()
  }
+
+ export const imgcodeValidator = (_, value) => {
+   if( value?.trim().length !== 4) return Promise.reject(new Error('验证码必须是4位'))
+   return Promise.resolve()
+}

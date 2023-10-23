@@ -18,7 +18,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     const [copydataSource, setCopydataSource] = useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState(null);//未选线路check
     const [selectedRows, setSelectedRows] = useState([]);//未选线路选中data
-    const [subMeter, setSubMeter] = useState([]); //选择设备data
+    const [subMeter, setSubMeter] = useState([]); //已选择设备data
     const [subMeterRowKeys, setSubMeterRowKeys] = useState([]);//选中check
     const [subSelectedRows, setSubSelectedRows] = useState([]);//选中设备data
 
@@ -86,7 +86,9 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         setSearchValue("")
         setDeviceType(0)
         setSelectedRowKeys([])
+        setSelectedRows([])
         setSubMeterRowKeys([])
+        setSubSelectedRows([])
         // setSummaryRowKeys([])
     }
     //未选择线路check
@@ -258,6 +260,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     }
     //设置坐标
     const setlocal=()=>{
+
         if(Array.isArray(subSelectedRows)&&subSelectedRows.length===0){
             message.warning("请先选择设备！")
             return
@@ -332,13 +335,6 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
             </div>
             <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
                 {publish ? null : <>
-                    {/* <div style={{ marginTop: 21 }}>
-                        <div style={{ color: '#fff', marginBottom: 16 }}>选择设备</div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={summaryToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={summaryToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                        </div>
-                    </div> */}
                     <div style={{ marginTop: 150 }}>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -383,60 +379,3 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
         </div>
     )
 })
-// let  SetPosition =({positionRef,savePosition})=>{
-//     const loaclRef=useRef()
-//     return (
-//         <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}}>
-//             <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/>
-//             <LoaclForm  ref={loaclRef}/>
-//         </Modal>
-//     )
-// }
-// let LoaclForm =forwardRef((props,ref)=>{
-//     const [inpvalue,setInpvalue] =useState()
-//     // const inpvalueRef = useRef()
-//     const [local,setLoacl] = useState()
-//     const mapRef = useRef()
-//     const search=(text)=>{
-//         mapRef.current.serachMap.search(inpvalue)
-//     }
-//     const setAaddress=(mes)=>{
-//         console.log(mes)
-//         setInpvalue(mes.address)
-//         if(mes.point){
-//             setLoacl(`${mes.point.lng},${mes.point.lat}`) 
-//         }else{
-//             setLoacl(`${mes.lng},${mes.lat}`)
-//         }
-       
-//     }
-//     useImperativeHandle(ref,()=>({
-//         inpvalue,
-//         local
-//     }))
-//     return (
-//         <>
-//          <div>
-//           <span style={{ paddingRight: 16, }} >设备查询</span>
-//           <Input
-//             style={{
-//               width: 565,
-//               margin: '16px 0'
-//             }}
-//             placeholder="输入地址信息"
-//             value={inpvalue}
-//             onChange={(e)=>{  setInpvalue(e.target.value)}}
-//           />
-//           <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-//         </div>
-//         <div>
-//             <span style={{paddingRight:32}}>经纬度</span>
-//             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
-//         </div>
-//         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
-//         <UseMap setAaddress={setAaddress} ref={mapRef}/>
-//         </div>
-        
-//         </>
-//     )
-// })

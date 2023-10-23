@@ -173,9 +173,9 @@ export default function Index() {
   const [data, setData] = useState([])
   const [deleteModal, setDeleteModal] = useState(false)
   const [deleteId, setDeleteId] = useState()
-  const deleteOk = () => {
-    let deleteArr = cloneDeep(subTable)
-    deleteArr.map(item => {
+  const deleteOk = () => {    
+   /*  let deleteArr = cloneDeep(subTable)
+    deleteArr.map((item,i) => {
       if(item.id = deleteId){
         deleteArr.splice(i, 1)
       }
@@ -185,7 +185,11 @@ export default function Index() {
       deleteArr.map(item => {
         group.push(item.id)
       })
-    }
+    } */
+
+    let group = subTable.filter(i => i.id!=deleteId)?.map(m => m.id);
+    console.log(group)
+ 
     let data = {
       projectId,
       roomId,

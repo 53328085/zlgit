@@ -96,27 +96,7 @@ const Mainbox = styled.div`
 
 
 
-/* const Mapcom = () =>  {
-  const option = {
-   // mapType: 'earth',
-    center: {lng: 120.228166, lat: 30.212296},
-    zoom: 12,
-    enableScrollWheelZoom: true, // 鼠标滚轮缩放
-   // tilt: 20,
-    enableDragging: true,
-   // enableRotate: false
-  }
-  return (
-  <Map  style={{height: '100%', width: '100%'}}  {...option} >
-    <Marker position={{lng:120.228177, lat:30.212296}} /> 
-    <NavigationControl /> 
-    <CityListControl/>
-    <MapTypeControl/>
-    <ScaleControl/>
-    <ZoomControl/>
-  </Map>
-  )
-} */
+
 
 export default function Index() {
   const [form] = Form.useForm()
@@ -373,9 +353,7 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
-  // const MapMemo = useMemo(()=>{
-  //     return <Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>
-  // },[alarmPosition])
+ 
   useEffect(() => {
     if(oneLevel.length>0){
       getAlarmCurrent()
@@ -452,17 +430,17 @@ export default function Index() {
                 <span>一级告警</span>
                 <span style={{ fontWeight: 'bold' }}>{warn?.one}</span>
                 <img src={second} alt="" style={imgcss} />
-                <span>二级总数</span>
+                <span>二级告警</span>
                 <span style={{ fontWeight: 'bold' }}>{warn?.two}</span>
                 <img src={third} alt="" style={imgcss} />
-                <span>三级总数</span>
+                <span>三级告警</span>
                 <span style={{ fontWeight: 'bold' }}>{warn?.three}</span>
               </div>
             </div>
             {/* {alarmPosition&&alarmPosition.length>0?<Mapcom lngLat = {alarmPosition} isck={true}></Mapcom>:<EmptyMap></EmptyMap>} */}
            {alarmPosition&&alarmPosition.length>0?
             <Mapcom lngLat = {alarmPosition} isck={true} key={1} infoconfig={{minWidth:350,}}></Mapcom>
-            :<Mapcom key={2} />} 
+            :<Mapcom key={2} isck={true}/>} 
           </div>
 
           <div className='rigth'>

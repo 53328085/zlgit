@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
-// import UseMap from '@com/useMap/double_modal.js'
 import UseMap from '@com/useMap/index tadi.js'
+// import UseMap from '@com/useMap'
 import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()
@@ -25,6 +25,7 @@ let LoaclForm =forwardRef((props,ref)=>{
     console.log(context)
     const search=(text)=>{
         // mapRef.current.serachMap.search(inpvalue)
+        console.log(inpvalue)
         mapRef.current.serachMap(inpvalue)
     }
     const setAaddress=(mes)=>{
@@ -48,10 +49,11 @@ let LoaclForm =forwardRef((props,ref)=>{
     }))
    
     useEffect(()=>{
+        console.log(context)
         if(context?.lngLat){
             setLoacl(context?.lngLat)
             setInpvalue(context?.address)
-            setPoint(context?.lngLat)
+            // setPoint(context?.lngLat)
         }
     },[context?.lngLat])
     return (
@@ -75,7 +77,7 @@ let LoaclForm =forwardRef((props,ref)=>{
         </div>
         <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
        
-        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={point}/>
+        <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat}/>
        
         </div>
         

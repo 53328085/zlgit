@@ -11,6 +11,7 @@ import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 
 import CustContext from "@com/content";
 
+import Enery from "./enery";
 const Cform = styled(Form)`
     background: #fff;
     padding: 7px 16px;
@@ -40,8 +41,9 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 
 export default function UseSerach(props) {
-  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, initialValue} = useContext(CustContext) || {}
+  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
+ 
   const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
@@ -103,7 +105,7 @@ export default function UseSerach(props) {
     }
    
   }
-  useEffect(() => {
+  useEffect(() => { 
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [])
  
@@ -141,9 +143,12 @@ export default function UseSerach(props) {
       }    
   
   }, [projectId, AreaID, isSite])
-  console.log(levelone)
+ 
+  const onValuesChange = (changedValues, allValues) => {
+  //  console.log(changedValues);
+   // console.log(allValues)
+  }
   
-  console.log(oneLevelDefaultId)
 
   useEffect(() => {
    form.setFieldsValue({
@@ -153,7 +158,7 @@ export default function UseSerach(props) {
   }, [initialValue, oneLevelDefaultId])
   return (  
   
-    <Cform layout="inline"   form={form}   {...props}>
+    <Cform layout="inline"   form={form}   {...props} onValuesChange={onValuesChange} >
       <Space size={64} split={ <Divider style={{margin: '0px',  height: '32px'}} type="vertical" />}>
       <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
@@ -163,7 +168,7 @@ export default function UseSerach(props) {
         {isSite && site}
         {isPcs && pcs}
       </Space>
-
+       
         {
            props.custview? props.custview : custview
         }

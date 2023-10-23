@@ -1,19 +1,20 @@
-import React, { useState, useRef, useEffect, } from "react";
-import { nanoid } from "@reduxjs/toolkit";
+import React, { useState, useRef, useEffect,useCallback } from "react";
+ 
 import { Form, Space, DatePicker, Select} from "antd";
+import moment from 'moment';
  
 import Pagecount from '@com/pagecontent'
  
 import CustContext from "@com/content.js";
-import { drawEcharts } from "@com/useEcharts";
  
-import Titlelayout from "@com/titlelayout";
- 
+import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
-import moment from 'moment';
+import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {getTime} from '@com/usehandler'
 import Sankey from "./Sankey";
 import Topology from "./Topology";
+ 
+const {queryElectric, queryWater, queryGas} = EnergyFlowRuntime
  
  
  
@@ -25,19 +26,17 @@ import Topology from "./Topology";
  
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
+  const areaId = useSelector(selectOneLevelDefaultId)
+ // let [id] = useState(areaId)
+  console.log(areaId)
   const [form] = Form.useForm();
   const {Item} = Form
-  
+  const [data, setData] = useState({link: [], name: []}) 
   
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
    
-  const [op, setOp] = useState(1)  
+  const [op, setOp] = useState(0)  
   const picker= ['', 'date', 'month', 'year'][timetype];
-  
-  
-  let type = ['', '日', '月', '年'][timetype]
- 
- 
  
   const [value, setvalue] = useState('Sankey')
   
@@ -49,13 +48,34 @@ export default function Index() {
   ]
  
   const getData = async () => {
-   
+    console.log(areaId)
+     try {
+      const {type, date, area} = form.getFieldsValue()
+      console.log(area)
+      let hander = [queryElectric, queryWater][op]
+      let time = getTime(date, type)
+      let params = {
+        type,
+        date: time,
+        projectId
+      }
+      let {success, data} = await hander(params, [area])
+      if(success && data.constructor==Object) {
+         setData({...data})
+ 
+      }else {
+        setData({link: [], name: []})
+      }
+     } catch (error) {
+       console.log(error)
+     }
+     
+     
   }
  
   useEffect(() => {
-   
     getData()
-  }, [value])
+  }, [value, op])
  
  
  
@@ -66,11 +86,9 @@ export default function Index() {
      setTimetype(e);
      getData()
   }
-  const opchange = (e) => {   
-     console.log(typeof e.target.value) 
-     setOp(e.target.value)
-   
-     getData()
+  const opchange = (e) => {  
+     console.dir(e)
+     setOp(e)     
   }
   const CustView = () => {
    const viewstyle = {
@@ -83,22 +101,19 @@ export default function Index() {
     }
     return (
       <div style={viewstyle}>
-       <Item  label="综合能耗"   initialValue={1} name="view">
+       <Item  label="能源类型"   initialValue={0} name="energy">
         <Select
+        style={{width: '112px'}}
         onChange={opchange}   
         value={op}    
         options={[
           {
-            label: '综合能耗',
-            value: 1,
-          },
-          {
             label: '电',
-            value: 2,
+            value: 0,
           },
           {
             label: '水',
-            value: 3,
+            value: 1,
           }
         ]}
        
@@ -139,9 +154,10 @@ export default function Index() {
     return (
       <CustContext.Provider value={propsData}>
       <Pagecount showserach={true} pd="32px">   
-          
-       { <Com   projectId={projectId} />}
-        
+      
+        {
+          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Topology key="topology" projectId={projectId}/>
+        }
       </Pagecount>
       </CustContext.Provider>
     )

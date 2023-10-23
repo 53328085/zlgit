@@ -13,7 +13,7 @@ export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
   static LoginByName = (data = {}) =>
-    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`); // 根据用户名登录
+    server.post(`/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}&key=${data.key}&code=${data.code}`); // 根据用户名登录
  
   static GetVerification = (mobile) =>
     server.post(`/General/User/GetCode?mobile=${mobile}`); // 获取验证吗
@@ -239,6 +239,54 @@ export class Area {
     static SetBigScreen = (projectId, params={}) => server.post(`/General/BigScreen/Set?projectId=${projectId}`, params)
   }
 
+// 能源管理--重点设备 -- 运行态
+export class QueryElectric {
+  static query = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+    server.post(
+      `Energy/EnergyImportantRuntime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`
+      
+    );
+}
+
+// 能源管理--重点设备 -- 设计态
+export class DesElectric {
+      
+  static queryDrive = ({projectId,areaId}) => // 查询重点设备列表
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDevices?projectId=${projectId}&areaId=${areaId}` 
+    );
+    static insertDrive = ({projectId,name, areaId}) => // 添加重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}` 
+    );  
+    static updateDrive = ({projectId,name, id}) => // 更新重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}` 
+    );  
+
+    static deleteDrive = ({projectId,id}) => // 删除重点设备
+    server.delete(
+      `Energy/EnergyImportantDesigner/DeleteImportmantDevices?projectId=${projectId}&id=${id}` 
+    ); 
+    static queryDriveConfig = ({projectId,id, areaId}) => // 查询重点设备配置表计
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDeviceConfiged?projectId=${projectId}&importantDeviceId=${id}&areaId=${areaId}` 
+    );  
+
+    static queryDriveUnconfig = ({projectId,id, areaId}) => // 查询重点设备未配置表计
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantDeviceNoConfiged?projectId=${projectId}&importantDeviceId=${id}&areaId=${areaId}` 
+    );  
+
+    static conifgDrive = ({projectId,id}, params) => // 配置重点设备
+    server.post(
+      `Energy/EnergyImportantDesigner/ConfigImportmantDeviceSns?projectId=${projectId}&importantDeviceId=${id}`, params
+    );  
+
+
+}
+
+
 // 能源管理--能源概述
 export class EnergyOverView {
   static EnergyOverViewRuntime = (projectId, params) =>
@@ -247,6 +295,22 @@ export class EnergyOverView {
       params
     );
 }
+// 能源管理--区域能耗
+export class EnergyArea {
+  static QueryEnergyAreaDay = ({projectId, meterType, date, areaId, type}, params) =>  // 日
+    server.post(
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Day?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
+    );
+ static QueryEnergyAreaMonth = ({projectId, meterType, date, areaId, type}, params) =>  // 月
+    server.post(
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Month?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
+    );
+  static QueryEnergyAreaYear= ({projectId, meterType, date, areaId, type},params) =>  // 年
+    server.post(
+      `Energy/EnergyAreaRuntime/QueryEnergyArea_Year?projectId=${projectId}&meterType=${meterType}&date=${date}&areaId=${areaId}&type=${type}`, params
+    );
+}
+
  
 // 能源管理--园区能耗
 export class EnergyComprehensive {
@@ -393,6 +457,18 @@ export class RuntimeHMI {
 
    static onStop = (channel) => server.get(`/Monitor/RuntimeHMI/OnStop?channel=${channel}`); //  定时请求
 }
+
+// 结算收费--结算设置
+export class PrepayConfig {
+  static QueryPrepayServerUrl = (projectId) => server.get(`Energy/PrepayConfig/QueryPrepayServerUrl?projectId=${projectId}` ); //  获取预付费URL
+
+  static SaveUrl = ({projectId, url}) => server.post(`Energy/PrepayConfig/SaveUrl?projectId=${projectId}&url=${url}`); //  保存预付费URL
+  static QueryUsers = (projectId) => server.get(`Energy/PrepayConfig/QueryUsers?projectId=${projectId}`); // 查询用户列表
+  static SavePreapyUser = ({projectId, userId, prepayUserName, prepayPassword, enabled}) => server.post(`Energy/PrepayConfig/SavePreapyUser?projectId=${projectId}&userId=${userId}&prepayUserName=${prepayUserName}&prepayPassword=${prepayPassword}&enabled=${enabled}`); // 保存用户信息
+  
+  static DeletePreapyUser = ({projectId, userId}) => server.post(`Energy/PrepayConfig/DeletePreapyUser?projectId=${projectId}&userId=${userId}`); // 删除用户信息
+}
+
 // zl api end
 // 主页
 export class Home {
@@ -1211,7 +1287,7 @@ export const Monitoring = {
   //线路管理
   LineManager: {
     AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
-    LineManagerQuery: (data) => server.get(`/Monitor/LineManager/Query?projectId=${data.projectId}&type=${data.type}&areaId=${data.areaId}`),//线路查询
+    LineManagerQuery: ({projectId, type, areaId, lineName=''}) => server.get(`/Monitor/LineManager/Query?projectId=${projectId}&type=${type}&areaId=${areaId}&lineName=${lineName}`),//线路查询
     LineManagerAdd: (data) => server.post(`/Monitor/LineManager/Add`, data),//新增线路       
     LineManagerUpdate: (data) => server.get(`/Monitor/LineManager/Update?projectId=${data.projectId}&id=${data.id}&name=${data.name}`),//编辑线路
     LineManagerDelete: (data) => server.get(`/Monitor/LineManager/Delete?projectId=${data.projectId}&id=${data.id}`),//删除线路
@@ -1306,6 +1382,15 @@ export class operationDesigin{
   static DeleteInspectionAddress=(data)=>server.delete(`/Maintenance/InspectionDesigner/DeleteInspectionAddress`,{params:data})//删除巡检项
   static UpdateInspectionAddress=(data)=>server.post(`/Maintenance/InspectionDesigner/UpdateInspectionAddress`,data)//更新巡检点
   static InspectionAddressDetail=(data)=>server.get(`/Maintenance/InspectionDesigner/InspectionAddressDetail`,{params:data})//获取二维码
+  static GetDuty=(data,areaId)=>server.get(`/Maintenance/DutyDesigner/GetDuty?projectId=${data}&areaId=${areaId}`)//获取班次
+  static SetDuty=(data,projectId)=>server.post(`/Maintenance/DutyDesigner/SetDuty?projectId=${projectId}`,data)//设置班次
+  static GetOperatorEx=(projectId,areaId)=>server.get(`/Maintenance/DutyDesigner/GetOperatorEx?projectId=${projectId}&areaId=${areaId}`)//获取排班人员
+  static GetDutyUsers = (projectId,areaId)=>server.get(`/Maintenance/DutyDesigner/GetDutyUsers?projectId=${projectId}&areaId=${areaId}`)
+  static EditDutyUser =(data,params)=>server.post(`/Maintenance/DutyDesigner/EditDutyUser`,data,{params})
+  static SetDutyUser =(data,projectId,areaId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUser?projectId=${projectId}&areaId=${areaId}`,data)//新增人员排班
+  static SetDutyUsers =(data,projectId,areaId)=>server.post(`/Maintenance/DutyDesigner/SetDutyUsers?projectId=${projectId}&areaId=${areaId}`,data)//保存所有人排班信息
+  static DeleteDutyUser =(projectId,userId,areaId)=>server.delete(`/Maintenance/DutyDesigner/DeleteDutyUser?projectId=${projectId}&userId=${userId}&areaId=${areaId}`)//删除排班人员
+
 }
 //电气安全(运行态)
 export class safeElectric {
@@ -1341,13 +1426,28 @@ export class energyShare {
   static QueryShifts = (projectId) => server.get(`/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`)//获取班次
   static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
   static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
+
+  static queryArea = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data)//区域查询
+
+  static queryLine = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data)//线路查询
 }
 //数据报表
 export class energyReport {
   static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-  static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
-  static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
-  static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
+  static QueryByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryReadingByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)// 实时抄表--区域
+  static QueryByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryReadingByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)// 实时抄表--线路
+  static QueryConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//能耗报表--区域
+
+  static QueryConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//能耗报表--线路
+  
+  static QueryTimeConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryTimeConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分时能耗--区域
+
+  static QueryTimeConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryTimeConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分时能耗--线路
+
+  static QueryClassifyConsume = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分类能耗
+  // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
+ // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
+  // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
@@ -1540,26 +1640,43 @@ export class DistributionMeter {
  
 //能源流向
 export class EnergyFlowRuntime {
-  static queryComprehensive = (projectId, type, date, data) =>
+  static queryComprehensive = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryComprehensive?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryElectric = (projectId, type, date, data) =>
+  static queryElectric = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryWater = (projectId, type, date, data) =>
+  static queryWater = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryGas = (projectId, type, date, data) =>
+  static queryGas = ({projectId, type, date}, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryGas?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
+  // 拓扑图
+
+  static QueryTopologyGatewayState = (projectId) =>  //查询网关状态
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?projectId=${projectId}`   
+  );
+  
+  static QueryTopologyGatewayCommports = ({projectId, gatewayId}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayCommports?projectId=${projectId}&gatewayId=${gatewayId}`   
+  );
+  
+  static QueryTopologyDeviceState = ({projectId, gatewayId,commport}) =>  //查询网关通道列表
+  server.post(
+    `Energy/EnergyFlowRuntime/QueryTopologyDeviceState?projectId=${projectId}&gatewayId=${gatewayId}&commport=${commport}`   
+  );
+
 }
  
 //损耗分析

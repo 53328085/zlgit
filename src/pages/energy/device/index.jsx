@@ -1,26 +1,36 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography, message} from "antd";
+import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography,Pagination, message} from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
- 
-import {EnergyComprehensive} from "@api/api.js"
+import {useAntdTable} from 'ahooks'
+import {QueryElectric} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import Citem from './item'
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import moment from "moment";
- 
+ import {getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
  
-const {Text, Paragraph} = Typography
+const Mainbox = styled.div`
+display: grid;
+ grid-template-rows: 48px 1fr;
+  row-gap: 16px;
+   flex: 1;
+ 
+  
+`
 const Laybox = styled.div`
-  display: flex;
+  display: grid;
+  
   flex: 1;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px dotted #d7d7d7;
+  grid-template-rows: 1fr 24px;
+  row-gap: 16px;
   .card {
     flex: 1;
     display: grid;
@@ -69,51 +79,47 @@ const Radiogroup = styled(Radio.Group)`
  
  
  const headers = ["1#压缩机", "21#压缩机", "3#压缩机", "4#压缩机", "5#压缩机", "6#压缩机", "7#压缩机"]
-const datas = headers.map((n, index) => (
+
+// 总尖峰平谷对应E,E1,E2,E3,E4
+
+ const datas = headers.map((n, index) => (
   {
     name: n,
-    sn: Math.random().toString().slice(2,12),
+    sns: [Math.random().toString().slice(2,12)].join(),
     address:   `成都市青江路145号银丽经济贸易区${index + 1}号楼${index+1}层`,
     type: index % 2,
-    total: {
-      value: 312.35,
-      qqq:  0.15,
-      yyy: -6.9,
-    },
-    peak: {
-      value: 422.35,
-      qqq:  0.92,
-      yyy: -6.9,
-    },
-    avg: {
-      value: 932.35,
-      qqq:  0.37,
-      yyy: 8.9,
-    },
-    low: {
-      value: 242.35,
-      qqq:  -0.48,
-      yyy: 1.9,
-    }
-
+    e: 100,
+    e2: 20,
+    e3: 40,
+    e4: 40,
+    mome: "100%",
+    yoye: "100%",
+    mome2: "100%",
+    yoye2: "100%",
+    mome3: "100%",
+    yoye3: "80%",
+    mome4: "-60%",
+    yoye4: "70%",
   }
 ))
  
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  const [tableData, setTableData] = useState(datas)
+  const areaId = useSelector(selectOneLevelDefaultId)
+  const [tableData, setTableData] = useState([])
   const [form] = Form.useForm();
   const {Item} = Form
   const [value, setvalue] = useState("1");
-  const [qverview, setOverview] = useState({})
+   
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-  const [tabvalue, setTabvalue] = useState(1)
-  const [op, setOp] = useState(1) // 能耗 1， 费用 2
+ 
+ 
   const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
-  
-  let type = ['', '日', '月', '年'][timetype]
+
+ // const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
+  const [total, setTotal] = useState(0)
+ 
   const headsty =(bg) =>  ({
     background:bg,
     color: "#fff",
@@ -125,8 +131,9 @@ export default function Index() {
       title: "设备名称",
     },
     {
-      dataIndex: "sn",
+      dataIndex: "sns",
       title: "设备编号",
+      render: (text) =>  <span>{text}</span>
     },
     {
         dataIndex: "address",
@@ -134,69 +141,54 @@ export default function Index() {
          
     },
     {
-      dataIndex: "value",
+      dataIndex: "e",
       title: "总能耗(kwh)",
       onHeaderCell: () => ({style:  headsty("#000")})
     },
     {
-      dataIndex: "yyy",
+      dataIndex: "e2",
       title: "峰(kwh)",
       onHeaderCell: () => ({style:  headsty("#f33")})
     },
     {
-      dataIndex: "avg",
+      dataIndex: "e3",
       title: "平(kwh)",
       onHeaderCell: () => ({style:  headsty("#f90")})
     },
     {
-      dataIndex: "lower",
+      dataIndex: "e4",
       title: "谷(kwh)",
       onHeaderCell: () => ({style:  headsty("#093")})
     }
 
   ]
 
-  const getData = async () => {
-    const {area, date, type, shiftNo, view=1} = form.getFieldsValue() || {}
-    let time;
-    if (type == 1)  {
-      time = date.format('YYYY-MM-DD')
-    } else if(type == 2) {
-      time = date.format('YYYY-MM') + '-01'
+ 
 
-    } else if(type == 3) {
-       time = date.format('YYYY')+ '-01-01'
-    }
-    const querys = {
+  const getData =  (current=1, pageSize=14) => {
+    let {area, date, type } = form.getFieldsValue() 
+    const params = {
       type,
-      shiftNo,
       projectId,
-      date: time
+      date: getTime(date, type),
+      areaId:area,
+      pageNum: current,
+      pageSize,
    }
-    const param = [area]
-    let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
-    let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
-    let handler = ['', energy, cost][view][tabvalue]
-    try {
-     let {success, data} =  await EnergyComprehensive[handler](querys, param)
-   
-     if(success) {
-      setOverview({...qverview, ...data})
-     }else {
-       return {}
+  QueryElectric.query(params).then(res => {
+     let {success, data, total} = res
+     if (success && Array.isArray(data) && data.length >0) {
+      setTotal(total)
+      setTableData(data)
+     
+     } else {
+      setTotal(0)
+      setTableData([])
      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
-  const ontabChange = (e) => {
-    console.log(e)
-    setTabvalue(e)
-  }
-  useEffect(() => {
+   }).catch()
    
-    //getData()
-  }, [tabvalue])
+  }
+
  const [mode, setMode] = useState(1)
 
 
@@ -208,8 +200,8 @@ export default function Index() {
 
 
  useEffect(() => {
-
- }, []) 
+  getData()
+ }, [areaId]) 
  const Title =  (
       <CustTitle className="t">
         重点设备分时能耗
@@ -238,12 +230,7 @@ export default function Index() {
      setTimetype(e);
      getData()
   }
-  const opchange = (e) => {   
-     console.log(typeof e.target.value) 
-     setOp(e.target.value)
-    // form.resetFields()
-     getData()
-  }
+
   const CustView = () => {
    const viewstyle = {
       display: 'flex',
@@ -280,6 +267,7 @@ export default function Index() {
      {tableData.map(d => <Citem  {...d} key={nanoid()}/>)}
   </div>
  )
+ const showTotal = (total) => `共${total}条记录`;
   return (
     <CustContext.Provider
       value={{
@@ -292,21 +280,21 @@ export default function Index() {
       }}
     >
 
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
+      <Mainbox>
       <UserSearch></UserSearch>
      
-        <Titlelayout title={Title}>
+        <Titlelayout title={Title} layout="flex">
         <Laybox  >
             
              {
-              mode == 1 ? items : <UseTable dataSource={tableData} columns={columns} key="table" />
+                 mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key="table" />
              }  
            
-           
+             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}}></Pagination>
            </Laybox>
         </Titlelayout>
     
-      </div>
+      </Mainbox>
     </CustContext.Provider>
   );
 }

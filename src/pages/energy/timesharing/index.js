@@ -1,288 +1,328 @@
 import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
-import style from './style.module.less'
-import Timenergy from './timenergy'
-import Bluecolumn from '@com/bluecolumn';
-import Timepercent from './timepercent'
-import { energyShare } from '@api/api'
-import { Form, Select, DatePicker, message,Input,Tree ,Button } from 'antd'
+
+import styled from 'styled-components'
+import CustContext from "@com/content.js";
+import { drawEcharts } from "@com/useEcharts";
+
+import { energyShare, Monitoring } from '@api/api'
+import {selectProjectId, selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import { Form, Select, DatePicker, message,Input,Tree ,Button, Space, Radio, Empty } from 'antd'
 import moment from 'moment';
+import UserSearch from "@com/useSerach";
+import Titlelayout from "@com/titlelayout";
+import UseTable from '@com/useTable'
+import {getTime, numberformat} from "@com/usehandler"
+const { Search } = Input;
+const {Item} = Form
+const {QuerySpaceTrees, queryArea, queryLine} = energyShare
+const {LineManagerQuery} = Monitoring.LineManager // 线路查询
+const Mainbox = styled.div`
+  && {
+    display: grid;
+    grid-template-columns: 296px 952px 1fr;
+    column-gap: 16px;
+    .treebox {
+       display: grid;
+       grid-template-rows: 32px 32px 604px;
+       row-gap: 32px;
+    }
+    .rightlayout {
+      display: grid;
+      grid-template-rows: 504px 1fr;
+      row-gap: 16px;
+    }
+  }
+
+`
+ 
 
 export default function Index() {
-
+  const [form] =Form.useForm()
   const [treeData,setTreeData] =useState([])
-  const [treeDatas,setTreeDatas]=useState([])
-  const [datetype, setDatetype] = useState(1)
-  const datetypeRef= useRef()
-  datetypeRef.current = datetype
-  const [arealist, setArealist] = useState([{ name: '全部园区', id: 0 }])
-  const [planlist, setPlanlist] = useState([{name:'全部班次',id:0}])
+ 
+ 
+  const onelevel = useSelector(selectOneLevel)
+  const areaId = useSelector(selectOneLevelDefaultId)
 
   const pieRef = useRef()
-  const columnRef =useRef()
+  const stackRef =useRef()
   const [selectkeys, setSelectkeys] = useState([])
   const selectRef=useRef()
   selectRef.current=selectkeys
-  const [form] =Form.useForm()
-  const { Search } = Input;
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state=>state.system.onelevel)
-  const areaOptions =oneLevel.length>0?useMemo(()=>([{name:oneLevel[0].levelName+'(全部)',id:0},...oneLevel]),[oneLevel]):[]
-  const typeoptions = [{
-    label: '日',
-    value: 1
-  }, {
-    label: '月',
-    value: 2
-  }, {
-    label: '年',
-    value: 3
-  }]
-  const energyoptions = [{
-    label: '电',
-    value: 1
-  }]
+ 
+  const projectId = useSelector(selectProjectId)
+  const [typeTree, setTypeTree] = useState(1)
+  
+  const treekey =  typeTree == 1 ? "id" : "areaId"
 
+
+   const [datas, setDatas] = useState({})
  
-  //获取班次
-  const getQueryShifts = async () => {
-    const res = await energyShare.QueryShifts(projectId)
-    if (res.success) {
-      if (Array.isArray(res.data)) {
-        setPlanlist([{name:'全部班次',id:0},...res.data])
-        form.setFieldValue('plan',0)
-      } else {
-        setPlanlist([])
-      }
-    } else {
-      message.error(res.errMsg)
-    }
-  }
-  //获取树
-  const getQuerySpaceTrees=async (areaId,areaName)=>{
-    let params ={
-      projectId,
-      areaId,
-      areaName,
-    }
-    const res = await energyShare.QuerySpaceTrees(params)
-    if(res.success){
-       setTreeData([...res.data])
-       setTreeDatas([...res.data])
-    }else{
-      message.error(res.errMsg)
-    }
-    console.log(res)
-  }
-  //获取日期格式
-  const getdateformat = ()=>{
-    let date= form.getFieldsValue().datevalue
- 
-    if(datetypeRef.current===1){
-      date = moment(date).format('YYYY-MM-DD')
-    }else if(datetypeRef.current ===2){
-      date = moment(date).format('YYYY-MM-01')
-    }else if(datetypeRef.current ===3){
-      date = moment(date).format('YYYY-01-01')
-    }
-    return date
-  }
-  //分时能耗
-  const getQueryElectric =async ()=>{
-    const {plan,area,...formvalue} = form.getFieldValue()
-    const date = getdateformat()
-    let areaId
-      if(area){
-        areaId= [area]
+   const columns = [
+    {
+        title: '分时能耗',
+        dataIndex: 'name',
+        key: 'name',
+        onCell: ()=> ({style: {textAlign: "center" }}),
+        onHeaderCell: ()=> ({style: {textAlign: "center" }}),
+    },
+    {
+      title: '用电量',
+      dataIndex: 'value',
+      key: 'value',
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
+    },
+    {
+      title: '环比',
+      dataIndex: 'mom',
+      key: 'mom',
+      render: numberformat,
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
+    },
+    {
+      title: '同比',
+      dataIndex: 'yoy',
+      key: 'yoy',
+      render: numberformat,
+      onCell: ()=> ({style: {textAlign: "center" }}),
+      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
+    },
+    
+  ]
+  //获取树的数据， 1 线路 2 网格
+ const getTreeData= async (name)=>{
+    try {
+      let params =typeTree == 1 ? {
+        projectId,
+        areaId,
+        type:1,
+        lineName: name
+      } : typeTree == 2 ? {
+        projectId,
+        areaId,
+        areaName: name,
+      } : {}
+      let hander = ['', LineManagerQuery, QuerySpaceTrees][typeTree]
+      const {success, data} = await hander(params)
+      if(success && Array.isArray(data)){
+         setTreeData(data)
+         
       }else{
-        areaId= oneLevel?.map(it=>it.id)
+        setTreeData([])
+        message.error(res.errMsg)
       }
-    let params = {
-      projectId,
-      shift:plan?plan:0,
-      type:formvalue.datetype,
-      date,
-      areaIds:areaId,
-      lineIds:selectRef.current
-    }
-   const res = await energyShare.QueryElectric(params)
-   if(res.success){
-    pieRef.current.setPieData([...res.data.proportion])
-    pieRef.current.setAnalysisDes(res.data.analysisDes)
-    columnRef.current.setList({...res.data.detail})
-   }else{
-    message.error(res.errMsg)
-   }
-  }
-  //树被选中
-  const onCheck=(checkedKeys,e)=>{
-    if(Array.isArray(checkedKeys)){
-      setSelectkeys([...checkedKeys])
-      selectRef.current = [...checkedKeys]
+      getDataByLine()
+    } catch (error) {
+      console.log(error)
     }
    
-    getQueryElectric()
-  }
-  //园区改变
-  const changeArea=(v,option)=>{
-    setSelectkeys([])
-    selectRef.current=[]
-    getQuerySpaceTrees(v,option.name)
-    getQueryElectric()
-  }
-  //日期类型改变
- const changeDateType = (v) => {
-    setDatetype(v)
-    datetypeRef.current=v
-    getQueryElectric()
-  }
-  //改变日期
-  const changeDatevalue = ()=>{
-    getQueryElectric()
-
-  }
-  const changePlan=()=>{
-    getQueryElectric()
-  }
-  //树筛选
-   const filterSearchTree = (nodes, predicate, wrapMatchFn = () => false) => {
-    // 如果已经没有节点了，结束递归
-    if (!(nodes && nodes.length)) {
-      return []
-    }
-    const newChildren = []
-    for (let i = 0; i < nodes.length; i++) {
-      const node ={...nodes[i]} 
-      // 想要截止匹配的那一层（如果有匹配的则不用递归了，直接取下面所有的子节点）
-      if (wrapMatchFn(node) && predicate(node)) {
-        newChildren.push(node)
-        continue
-      }
-      console.log(node)
-      const subs = filterSearchTree(node.nodes, predicate, wrapMatchFn)
-      console.log(subs)
-      // 以下两个条件任何一个成立，当前节点都应该加入到新子节点集中
-      // 1. 子孙节点中存在符合条件的，即 subs 数组中有值
-      // 2. 自己本身符合条件
-      if ((subs && subs.length) || predicate(node)) {
-        node.nodes = subs || []
-        newChildren.push(node)
-      }
-      console.log('subs')
-    }
-    return newChildren.length ? newChildren : []
-  }
-  //搜索数
-  const onSearch=(v)=>{
-    if(!v){
-      setTreeData(()=>{return treeDatas})
-      return 
-    }
-    console.log(treeDatas)
-    const filterData = filterSearchTree(treeDatas,(node) => {
-      if (node.name.indexOf(v) !== -1) {
-          return true;
-      }
-      return false;
-  })
-  console.log(filterData)
-  setTreeData(()=>{return filterData})
-  }
-  useEffect(()=>{
-    if(oneLevel.length>0){
-      getQuerySpaceTrees(0,oneLevel[0]?.levelName)
-      getQueryShifts()
-      getQueryElectric() 
-    }
+    
+  } 
+ // 根据区域查询
+ const getDataByLine = async (ids=[]) => {
      
-  },[])
-  
-  return (
-    <div className={style.timesharing}>
-      <Form
-        className={style.mgbt0}
-        form={form}
-        colon={false}
-        initialValues={
-          {
-            energytype: 1,
-            datetype: 1,
-            datevalue: moment(new Date()),
-          }
+    try {
+      let {type, date} = form.getFieldsValue()
+     
+      let time = getTime(date, type)
+      
+      let key = typeTree == 1 ? 'selectIds' : 'areaIds'
+       let params = {
+        projectId,
+        shift: 0,
+        type,
+        date: time,
+        [key]: ids
+       }
+      let hander = ['', queryLine, queryArea][typeTree]
+      let {success, data} = await hander(params)
+      if(success && data.constructor === Object) {
+          setDatas({...data}) 
+      }else {
+        setDatas({}) 
+      }
+    } catch (error) {
+      console.log(error)
+    }
+   
+     
+ } 
+ 
+
+ 
+
+
+useEffect(() => {
+  try {
+    let {detail={}, proportion = []} = datas  
+    const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
+
+  drawEcharts(stackRef.current, {
+    dataset: {
+    
+      source: [
+        ['日期',...x],
+        ['尖能耗(kWh)',...y],
+     //   ['峰',...y1],
+        ['平能耗(kWh)',...y2],
+        ['谷能耗(kWh)', ...y3],
+      ]
+    },
+    series: [
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        },
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+        },
+        {
+          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
         }
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', background: '#fff' }}>
-          <div style={{ display: 'flex', }}>
-            <Form.Item label={oneLevel[0]?.levelName} name="area">
-              <Select
-              defaultValue={oneLevel.length>0?0:null}
-                style={{ width: 200 }} 
-                
-                fieldNames={{
-                  label: "name",
-                  value: "id"
-                }}
-                options={areaOptions}
-                // options={arealist}
-                
-                onChange={changeArea}
-              ></Select>
-            </Form.Item>
-            <Form.Item label="能源类型" style={{ marginLeft: 64 }} name="energytype">
-              <Select style={{ width: 112 }} options={energyoptions} disabled></Select>
-            </Form.Item>
-            <Form.Item name='datetype'>
-              <Select style={{ width: 80,marginLeft: 32 }} options={typeoptions} onChange={changeDateType}></Select>
-            </Form.Item>
-            <Form.Item style={{ marginLeft: 16 }} name="datevalue">
-              <DatePicker picker={datetype==1?'date':datetype==2?'month':'year'} onChange={changeDatevalue}></DatePicker>
-            </Form.Item>
-            <Form.Item style={{ marginLeft: 16 }} name="plan">
-              <Select
-                style={{ width: 102 }}
-                fieldNames={{
-                  label: "name",
-                  value: "id"
-                }}
-                options={
-                  planlist
-                }
-                onChange={changePlan}
-                ></Select>
-            </Form.Item>
-            </div>
-        </div>
-      </Form>
-      <div className={style.sharecontent}>
-        <div className={style.radiotree}>
+    ]
+  })  
+  drawEcharts(pieRef.current, {
+      pieData: { data: proportion, total: 100 },
+      type: 3,
+      legend: {
+        bottom: 0,
+        top: 'auto',
+        itemGap: 5
+      },
+      grid: {
+        bottom: 20
+      }
+  
+  })
+  } catch (error) {
+     console.log(error)
+  }
+  
+
+
+
+}, [datas])
+
+ 
+ 
+
+
+  
+
+  
+  useEffect(()=>{
+     if(!areaId) return;
+     getTreeData()
+     
+  },[areaId, typeTree])
+  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
+ 
+  
+  const picker= ['','date', 'month', 'year'][timetype];
+  const timechange = (e) => {
+    console.log(e)
+    setTimetype(e);
+    getDataByLine()
+ }
+  const CustView = () => {
+    
+     return (
+        <Space size={16} style={{marginLeft: "auto"}}>
+         <Item  name="type" initialValue={1}>
+            <Select style={{width: '80px'}}   options={[
+             {value: 1, label: '日'},
+             {value: 2, label: '月'},
+             {value: 3, label: '年'},
+            ]}
+            onChange={timechange}
+            ></Select>
+         </Item>
+ 
+         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+           <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} onChange={() => getDataByLine()} />
+         </Item>       
+       </Space>
+       
+     )
+   }
+   const radiosty = {
+    display: 'grid',   
+    gridTemplateColumns: '1fr 1fr',
+    alignContent: 'center',
+    borderBottom: '1px dotted #d7d7d7',
+   }
+  const switchLine = (e) => {
+    
+    setTypeTree(e.target.value)
+  }
+  const boxsty = {
+    height: "100%",
+    paddingTop: '16px',
+  }
+  return (
+    <CustContext.Provider
+    value={{
+      form,
+      custview: <CustView />,
+    }}
+  >
+    <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
+     <UserSearch></UserSearch>
+     
+      <Mainbox>
+        <Titlelayout key="line">
+        <div className="treebox">
+        <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
+          <Radio value={1}>按线路</Radio>
+          <Radio value={2}>按网格</Radio>
+         
+        </Radio.Group>
           <Search 
           placeholder='请输入关键字查询' 
-          style={{marginBottom:24}} 
-          onSearch={onSearch}
+          allowClear
+          onSearch={getTreeData}
           />
-          <Tree 
+         { treeData.length > 0 ? <Tree 
           treeData={treeData} 
-          checkable 
-          // onExpand={onExpand}
-          // expandedKeys={expandedKeys}
-          // autoExpandParent={autoExpandParent}
-          onCheck={onCheck}
-          fieldNames={{title:'name',key:'areaId',children:'nodes'}}
+         // checkable 
+          defaultExpandParent
+        //  expandedKeys={expandedKeys}
+         // autoExpandParent={autoExpandParent}
+          onSelect={getDataByLine}
+          
+          fieldNames={{title:'name',key: treekey,children:'nodes'}}
           />
+          : <Empty />
+         }
         </div>
-        <div className={style.sharingtime}>
-        <Bluecolumn name="分时能耗"/>
-        <div style={{height:'16px'}}> </div>
+        </Titlelayout>
+         <Titlelayout title="分时能耗" key="stack">
+               <div ref={stackRef} style={boxsty}></div>
+         </Titlelayout>
+         <div className='rightlayout'>
+           <Titlelayout title="分时占比" key="pie">
+              <div ref={pieRef} style={boxsty}></div>
+           </Titlelayout>
+           <Titlelayout title="分时能耗同环比" key="momyoy">
+               <div style={boxsty}>
+              <UseTable 
+                columns={columns} 
+                dataSource={datas.momYoy}
+               
+
+              ></UseTable>
+              </div>
+           </Titlelayout>
+         </div>
+
+      
         
-        <Timenergy ref={columnRef}/>
-        </div>
-        <div>
-        <Timepercent ref={pieRef}/>
-        </div>
-        
-      </div>
+      </Mainbox>
       
     </div>
+    </CustContext.Provider>
   )
 }
 

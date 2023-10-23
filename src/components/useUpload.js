@@ -75,7 +75,7 @@ const Ifile = styled.input.attrs(props => ({
 
 
 
-export default function UseUpload({border, wpx=212, hpx=32, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel, text="正泰物联", textStyle={}}) {
+export default function UseUpload({border, wpx=208, hpx=64, swpx='auto', shpx="auto", maximum=200, getfile=() => {}, value, onChange, isDel, text="正泰物联", textStyle={}}) {
 
 const Preview = styled.div`
     flex: 1;
@@ -130,9 +130,9 @@ const cref = useRef()
      let {width, height} = img
      let zoom = Math.min(wpx/width, hpx/height);
      zoom = zoom > 1 ? 1 : zoom;
-  
-     let rheight = Math.ceil(height*zoom)
     
+     let rheight = Math.ceil(height*zoom)
+  
     createImageBitmap(img, {resizeHeight: rheight, resizeWidth: wpx, resizeQuality: 'high'}).then(res => {
 
      
@@ -276,3 +276,29 @@ const cref = useRef()
      </Preview>
   )
 }
+
+
+export  const imgToBase64 = (url)  => {
+  console.log(url)
+	return new Promise((resolve, reject) => {
+		const image = new Image()
+		image.src = url
+		image.onload = () => {
+      console.log(111)
+			const canvas = document.createElement('canvas')
+			canvas.width = image.naturalWidth  
+			canvas.height = image.naturalHeight
+			const ctx = canvas.getContext('2d')
+			if (!ctx) {
+				return null
+			}
+			ctx.drawImage(image, 0, 0)
+			const base64 = canvas.toDataURL('image/png')
+			return resolve(base64)
+		}
+		image.onerror = (err) => {
+			return reject(err);
+		}
+	})
+}
+ 

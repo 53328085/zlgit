@@ -6,8 +6,8 @@ import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import {Form, Image, Timeline, Typography,Select} from 'antd'
-
+import {Form, Image, Timeline, Typography,Select, Button} from 'antd'
+import md5 from 'js-md5';
 import { drawEcharts } from "@com/useEcharts"
 import imgurl from './icon'
 const Mainbox = styled.div`
@@ -24,6 +24,8 @@ const Mainbox = styled.div`
     border: 1px solid #d7d7d7;
     display: flex;
     align-items: center;
+    padding: 0 16px;
+   
 }
 .line{
     width: 0;
@@ -322,19 +324,27 @@ export default function Index() {
   const handleChange=(e)=>{
     console.log(e)//value值
   }
+  const cipher = (name, pwd) => {
+   return  md5('chint_'+name+'_'+pwd+'_wulian')
+    
+     
+  }
   const jump = () => {
-
+    
+    let password = cipher("admin", 'chint@123456')
+    let name = "admin"
+    let projectId = ''
    /*  const hostname = process.env.NODE_ENV === "production"
     ? new URL(window.location.href).hostname
     : "10.5.7.60"; */
-    window.open(`http://localhost:8080?name=${name}&password=${password}`)
+    window.open(`http://pay.yinli56.com:20215/?name=${name}&password=${password}&type=dark&projectId=${projectId}`)
   }
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">        
         <Mainbox>
         <div className='header'>
-        <span style={{marginLeft: '12px'}}>园区选择</span>
+        <span>园区选择</span>
         <Select
           placeholder="请选择园区"
           size="middle"
@@ -346,6 +356,7 @@ export default function Index() {
           <Option value="2">正泰物联滨江园区</Option>
           <Option value="3">正泰物联温州园区</Option>
         </Select>
+        <Button onClick={jump} type='primary' style={{marginLeft: "auto"}}>控制台</Button>
         {/* <div className='line'></div>
         <span>能源类型</span>
         <Select

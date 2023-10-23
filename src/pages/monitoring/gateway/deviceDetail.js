@@ -80,17 +80,19 @@ export default function GatewayDetail(props) {
     let day = new Date().getDate()
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment();
-    const yesterday = date + ' ' + "00:00:00"
+  // const yesterday = date + ' ' + "00:00:00"
+    const yesterday = moment().startOf('day').format('YYYY-MM-DD HH:mm:ss')
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
     let [trend, settrend] = useState(1)
     let [energyReport, setEnergyReport] = useState({})
     let [actuary, setactuary] = useState({})
-    let dataToday = new Date()
+   // let dataToday = new Date()
+    let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
     let [startTime, setstartTime] = useState(yesterday)
     let [endTime, setendTime] = useState(dataToday)
-    let [startTimeAlarm, setstartTimeAlarm] = useState(dataToday)
+    let [startTimeAlarm, setstartTimeAlarm] = useState(yesterday)
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
  
     const onchangeTab = val => {
@@ -318,17 +320,18 @@ export default function GatewayDetail(props) {
           
         }
     });
-
+    const format ='YYYY-MM-DD HH:mm:ss'
+    const [value, setValue] = useState(null);
     const tdrawEcharts = (c, option) => {
         return drawEcharts(c, { ...option, type: 2 })
     }
-    const onTimeOk = (date, dataString) => {
+    const onTimeOk = (date=[], dataString) => {       
         setstartTime(dataString[0])
         setendTime(dataString[1])
         setValue(date)
     }//监控趋势选择时间
     const [dates, setDates] = useState([moment(yesterday), moment(today)]);
-    const [value, setValue] = useState(null);
+ 
     const disabledDate = (current) => {
         if (!dates) {
             return false;
@@ -345,9 +348,11 @@ export default function GatewayDetail(props) {
             setDates(null);
         }
     };
-    const onTimeOkAlarm = (date, dataString) => {
+
+    const onTimeOkAlarm = (date=[], dataString) => {
+        
         setstartTimeAlarm(dataString[0])
-        setendTimeAlarm(dataString[1])
+        setendTimeAlarm(dataString[0])
     }//告警记录选择时间
     const onSearch = () => {
         getHistoryTrend()
@@ -575,7 +580,7 @@ export default function GatewayDetail(props) {
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate} onChange={onTimeOkAlarm} defaultValue={[moment(today), moment(today)]} />
+                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment(yesterday), moment(today)]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
                         
                     </div> : null

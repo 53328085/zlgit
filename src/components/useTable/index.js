@@ -25,7 +25,7 @@ flex-direction: column;
 `
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, ...otherprops} =props  
-  const ecolumns = otherprops.columns.filter(col => !col.hasOwnProperty('export'))
+  const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
   const [lists, setLists] =useState()

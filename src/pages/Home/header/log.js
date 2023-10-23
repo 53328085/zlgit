@@ -3,8 +3,10 @@ import { Dropdown, Menu, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
-import { clearToken, selectUser} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary} from "@redux/systemconfig";
+import { clearToken, selectUser, userRest} from "@redux/user";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, systemConfigRest} from "@redux/systemconfig";
+// import restStore from "@redux/rest";
+ import './log.less'
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
@@ -80,59 +82,6 @@ const Triangle = styled.div`
      border-style: solid;
      border-color: transparent #135abd transparent transparent;
 `;
-
-const CDropdown = styled(Dropdown)`
-  && {
-    padding: 0px;
-    .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child {
-      line-height: 40px;
-      height: 40px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      transition: all 0.1s;
-      padding: 0 16px 0 58px;
-      background-image: url(${imgurl.login});
-      background-repeat: no-repeat;
-      background-size: 20px auto;
-      background-position: 16px center;
-      &&:hover {
-        background-color: #237ae4 !important;
-        background-image: url(${imgurl.login_a});
-        color: #ffffff;
-      } 
-    }
-  }
-`
-const Citem = styled(Menu.Item)`
-  && {
-    line-height: 40px;
-    height: 40px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    transition: all 0.1s;
-    padding: 0 16px 0 58px;
-    background-image: url(${imgurl.login});
-    background-repeat: no-repeat;
-    background-size: 20px auto;
-    background-position: 16px center;
-  }
- &&:hover {
-  background-color: #237ae4 !important;
-  background-image: url(${imgurl.login_a});
-  color: #ffffff;
- } 
-`
-const Uitem = styled(Citem)`
-  && {
-    background-image: url(${imgurl.exit});
-  }
-  &&:hover {
-    background-image: url(${imgurl.exit_a});
-  }
- 
-`
 const Cipt = styled(Input)`
   && {
     height: 36px;
@@ -161,18 +110,24 @@ export default function Log() {
   const {name, roleType} = useSelector(selectUser) || {};
  
   const comurl = useSelector(comSetFirst) 
-  const isconfig = store.getState()?.system.configState
+  const config = useSelector(configState)
+/*   const isconfig = store.getState()?.system.configState
   let [config , SetConfig] = useState(isconfig)
   const unsubscribe = store.subscribe(() => {
     
     SetConfig(store.getState()?.system.configState)
  
-  })
+  }) */
   const Item = Form.Item
   const [form] = Form.useForm()
   const onExit = async () => {
-     await dispatch(clearToken()) 
-     return navgite('/')
+      try {
+      await dispatch(userRest());
+       await dispatch(systemConfigRest())
+        return navgite('/')
+      } catch (error) {
+        return navgite('/')
+      }
   }
   const account = () => {
     user.current.onOpen()
@@ -192,12 +147,7 @@ const onJump = useCallback(() => {
   
   
 }, [screenadr, isgranary])
-  const menu = (
-    <Menu style={{padding: '0px', width: "144px"}}>
-      <Citem key="mg" onClick={account}>账户管理</Citem>
-      <Uitem key="exit" onClick={onExit}>退出系统</Uitem>
-    </Menu>
-  )
+
 
   const items = [
     {label: '账户管理', key:"mg"},
@@ -253,11 +203,11 @@ const onJump = useCallback(() => {
   const projectcfg =() => {
     navgite("/projectList")
   }
-  useEffect(() => {
+/*   useEffect(() => {
     return () => {
       unsubscribe()
     }
-  })
+  }) */
   return (
     <Cdiv>
       <Triangle />
@@ -286,20 +236,22 @@ const onJump = useCallback(() => {
         </Idiv2>):null}
         </>
         }
-       {/*   <CDropdown menu={{items, onClick}}  placement="bottom" trigger={['click']}>
+        <Dropdown
+         menu={{items, 
+         onClick, 
+        }} 
+         placement="bottom" 
+        trigger={['click']
+      } 
+       
+        overlayClassName="custDropdown">
         <Idiv3>
           
             <span>{name}</span>
           
         </Idiv3>
-        </CDropdown> */}
-        <Dropdown overlay={menu}  placement="bottom" trigger={['click']}>
-        <Idiv3>
-          
-            <span>{name}</span>
-          
-        </Idiv3>
-        </Dropdown>
+        </Dropdown> 
+     
        
       </Ldiv>
       <CModal  title="账户信息" mold="cust"  ref={user} width="440px" onOk={onOk}>

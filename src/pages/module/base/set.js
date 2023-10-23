@@ -270,8 +270,12 @@ export default function ProjectSet({projectId}) {
     lngLat: '', // 经纬度 
    // bigScreenUrl: "",
     remark: "", //备注
-    imgLogo: '',
-    imgProject: '',
+   // imgLogo: '',
+    logoImage: '',
+
+    //imgProject: '',
+    projectImage: ''
+
   };  
 
  
@@ -341,7 +345,7 @@ const checkProject = (_, value) => {
 const setAaddress = (value) => {
   console.log(value)
   if (ispublish) return;
-  try {   
+  try {    
   let {lng, lat, address} = value
   
    lng && lat && form.setFieldValue('lngLat', `${lng},${lat}`)
@@ -481,19 +485,19 @@ useEffect(() => {
       <div className='upload'> 
          <Item label="项目logo" className="left" required>
            <div className="img">
-            <Item noStyle name="imgLogo" rules={[
+            <Item noStyle name="logoImage" rules={[
               {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={212} hpx={32} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+              <Cupload wpx={208} hpx={64} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
-           <Info>（图片大小为: 212*32 png 格式)</Info>
+           <Info>（图片大小为: 208*64 png 格式）</Info>
          </Item>
          <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
            <div className="img">
-            <Item noStyle name="imgProject" rules={[
+            <Item noStyle name="projectImage" rules={[
               {
                 validator: checkProject,
               },
