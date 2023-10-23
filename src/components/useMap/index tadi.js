@@ -76,6 +76,7 @@ import {message} from 'antd'
  
   const searchResult = (result) =>{   
     let {lon, lat, keyWord} = result.location || {}
+    console.log(1111)
 		if(result.getStatus() == 0){    
 			map.panTo(result.getLocationPoint(), 16);    
       addmarker(result.getLocationPoint(), keyWord)
@@ -87,6 +88,7 @@ import {message} from 'antd'
 	}
   const serachMap = (value) => {   
     try {
+      console.log(value) 
       map.clearOverLays();
       geocoder.getPoint(value, searchResult)
     } catch (error) {

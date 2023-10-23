@@ -220,7 +220,7 @@ export default function Index() {
 
 
   useEffect(() => {
-    getInspectionPlanPage()
+    onelevel.length&&getInspectionPlanPage()
   }, [])
   // useEffect(() => {
   //   if (key == 1) {

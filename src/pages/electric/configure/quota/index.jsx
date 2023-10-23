@@ -58,7 +58,8 @@ export default function Index() {
     return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
       if (res.success === true) {
         if (res.data) {
-          setDataSource(res.data);
+          const data = res.data.map(item=>({...item,tag:item?.remark}))
+          setDataSource(data);
           setTotal(res.total);
         }
       } else {
@@ -200,6 +201,7 @@ export default function Index() {
   const [editId, setEditId] = useState();
   const [editType, setEditType] = useState(false);
   const edit = (record) => {
+    console.log(record)
     setDataSourceType();
     setEditId(record.id);
     QueryAlarmEvents(record.id).then((res) => {
@@ -218,7 +220,7 @@ export default function Index() {
     setEditType(true);
     setModalTitle("编辑告警方案");
     setaddAlarmModal(true);
-    form.setFieldsValue(record);
+    form.setFieldsValue({...record,tag:record?.remark});
   };
   //用于告警类型  新增、修改、删除、取消后调用
   const alarmTypeTable = () => {
@@ -395,8 +397,9 @@ export default function Index() {
       let params = {
         projectId: projectId,
         name: values.name,
-        tag: values.tag,
+        remark: values.tag?values.tag:'',
       };
+      console.log(params)
       QueryAddAlarm(params).then((res) => {
         if (res.success === true) {
           setDataSourceType();
@@ -423,7 +426,7 @@ export default function Index() {
     let params = {
       id: editId,
       name: values.name,
-      tag: values.tag,
+      remark: values.tag,
     };
     UpdatePlanAlarm(params).then((res) => {
       if (res.success === true) {

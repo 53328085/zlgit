@@ -468,6 +468,17 @@ export class PrepayConfig {
   
   static DeletePreapyUser = ({projectId, userId}) => server.post(`Energy/PrepayConfig/DeletePreapyUser?projectId=${projectId}&userId=${userId}`); // 删除用户信息
 }
+// 结算收费--概述
+export class PrepayRun{
+  static GetPrepayUserInfo = (energyProjectId) => server.get(`Energy/SettlementOverview/GetPrepayUserInfo?energyProjectId=${energyProjectId}` ); //  获取预付费访问用户和密码
+  static GetPrepayProjects = (energyProjectId) => server.get(`Energy/SettlementOverview/GetPrepayProjects?energyProjectId=${energyProjectId}` ); //  获取预付费项目列表 
+  static BaseInfoSummary = (projectId, energyProjectId) => server.get(`Energy/SettlementOverview/BaseInfoSummary?projectId=${projectId}&energyProjectId=${energyProjectId}`); // 获取项目费用的基本信息和告警信息
+  static TransactionStatistics = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/TransactionStatistics?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取项目收入和支付方式统计信息
+  static EnergyRanking = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/EnergyRanking?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取项目客户费用排名
+
+  static EnergyTrends = (projectId, energyProjectId, yearMonthDay=3) => server.get(`Energy/SettlementOverview/EnergyTrends?projectId=${projectId}&energyProjectId=${energyProjectId}&yearMonthDay=${yearMonthDay}`); // 获取曲线数据
+  
+}
 
 // zl api end
 // 主页
@@ -1561,8 +1572,8 @@ export class eneryShift {
  
 export class distributionRoom {
   static queryPageRoom = (projectId, areaId, pageNum, pageSize) =>
-    server.get(
-      `Distribution/DistributionRoom/QueryPageRoom?projectId=${projectId}&areaId=${areaId}&pageNum=${pageNum}&pageSize=${pageSize}`
+    server.post(
+      `Distribution/DistributionRoom/RoomPage`,{projectId, areaId, pageNum, pageSize}
     );
   static addRoom = (data) =>
     server.post(`Distribution/DistributionRoom/AddRoom`, data);
@@ -1574,7 +1585,7 @@ export class distributionRoom {
     );
   static queryLine = (projectId, roomId) =>
     server.get(
-      `Distribution/DistributionRoom/QueryLine?projectId=${projectId}&roomId=${roomId}`
+      `Distribution/DistributionRoom/LineTree?projectId=${projectId}&roomId=${roomId}`
     );
   static addLine = (data) =>
     server.post(`Distribution/DistributionRoom/AddLine`, data);
@@ -1592,9 +1603,10 @@ export class distributionRoom {
     );
   static configLineMeter = (data) =>
     server.post(`Distribution/DistributionRoom/ConfigureLineMeter`, data);
-  static queryPageChart = (projectId, areaId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionRoom/QueryPageChart?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
-  static addChart = (data) => server.post(`Distribution/DistributionRoom/AddChart`, data)  
-  static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/QueryChart?projectId=${projectId}&id= ${id}`)  
+ // static queryPageChart = (projectId, areaId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionRoom/QueryPageChart?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
+ static queryPageChart = (projectId, roomId, pageNum, pageSize) => server.post(`Distribution/DistributionRoom/ChartPage`,{projectId, roomId, pageNum, pageSize}) 
+ static addChart = (data) => server.post(`Distribution/DistributionRoom/AddChart`, data)  
+  static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/ChartList?projectId=${projectId}&id= ${id}`)  
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
 }
@@ -1637,7 +1649,16 @@ export class DistributionMeter {
   static configureSensor = (data) =>
     server.post(`Distribution/DistributionMeter/ConfigureSensor`, data);
 }
- 
+
+export class DistributionRoomRuntime{
+  static GetEnvironment =(projectId,roomId)=>{
+    return  server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`,{params:{projectId,roomId}})
+  };
+  static TransformerList=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/TransformerList`,{params:{projectId,roomId}})
+  }
+
+}
 //能源流向
 export class EnergyFlowRuntime {
   static queryComprehensive = ({projectId, type, date}, data) =>

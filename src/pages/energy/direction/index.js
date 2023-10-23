@@ -74,7 +74,7 @@ export default function Index() {
   }
  
   useEffect(() => {
-    getData()
+    if(value == "Sankey") getData()
   }, [value, op])
  
  
