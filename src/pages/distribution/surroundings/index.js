@@ -5,7 +5,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import * as echarts from "echarts";
 import updateImg from './updateImg.png'
 import ItemCard from './itemCard'
-
+import BlueColumn from '@com/bluecolumn'
+import styled from 'styled-components'
 export default function Index() {
   const {Option} = Select;
   useEffect( ()=>{
@@ -91,15 +92,21 @@ export default function Index() {
       </div>
       <div className={style.content}>
         <div className={style.topContent}>
-          <div className={style.topTitle}>环境温湿度</div>
+          {/* <div className={style.topTitle}>环境温湿度</div> */}
+          <div className={style.topheader}>
+          <BlueColumn name="环境温湿度" styled={{padding: '16px 0 0 16px'}}/>
           <div className={style.searchDiv}>
             <span >日期</span>
             <DatePicker  size='middle' style={{marginLeft:16,marginRight:16}}></DatePicker>
             <Button size='middle' type='primary' icon={<SearchOutlined />}>查询</Button>
           </div>
+          </div>
+          
           <div className={style.lineChart} id='lineChart'></div>
         </div>
         <div className={style.bottomContent}>
+          <BlueColumn name="环境监测" />
+          <div className={style.cardflex}>
           <ItemCard title={'环境温度'} desc={'正常'} value={'28.5℃'} img="temperature"></ItemCard>
           <ItemCard title={'环境湿度'} desc={'正常'} value={'56.2%'} img="humidness"></ItemCard>
           <ItemCard title={'水浸监测'} desc={'无水'} value={''} img="water"></ItemCard>
@@ -107,6 +114,8 @@ export default function Index() {
           <ItemCard title={'噪音监测'} desc={'正常'} value={'56/72 bB'} img="nosie"></ItemCard>
           <ItemCard title={'明火监测'} desc={'无明火'} value={''} img="fire"></ItemCard>
           <ItemCard title={'门禁监控'} desc={'门关闭'} value={'2022-09-23 14:45:25'} img="door"></ItemCard>
+          </div>
+         
         </div>
       </div>
     </div>

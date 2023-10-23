@@ -270,7 +270,7 @@ export default function Index() {
     }
     useEffect(()=>{
         const {roomId} = form.getFieldsValue()
-        getLinePoint(roomId,1)
+        getLinePoint(roomId,0)
     },[])
 
     return (
