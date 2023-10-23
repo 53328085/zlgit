@@ -80,16 +80,32 @@
     .contentRight{
         margin-left: 16px;
         width: 1408px;
-        :global{
-            .tableHeader{
-                .ant-table-thead{
-                    .ant-table-cell{
-                        background-color: #237ae4;
-                        color: #fff;
-                        text-align: center;
-                    }
-                }
+        background-color: #fff;
+        border: 1px solid #d7d7d7;
+        padding: 16px;
+        .contentheader{
+            display: flex;
+            align-items: center;
+            .buttonList{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 480px;
+                margin-left: auto;
+                margin-right: 0;
             }
+        }
+        
+        :global{
+            // .tableHeader{
+            //     .ant-table-thead{
+            //         .ant-table-cell{
+            //             background-color: #237ae4;
+            //             color: #fff;
+            //             text-align: center;
+            //         }
+            //     }
+            // }
             .tableRow{
                 text-align: center;
             }

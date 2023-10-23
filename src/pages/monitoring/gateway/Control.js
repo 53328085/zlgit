@@ -5,7 +5,7 @@ import {Form, Input, message, Button, Divider, Descriptions} from 'antd'
 import {Remote } from '@api/api.js'
 import redwarn from '@imgs/redwarn.png'
 import {CustButton} from '@com/useButton'
- 
+ import {useSelector} from "react-redux"
 const Cdescriptions = styled(Descriptions)`
   && {
     .ant-descriptions-row .ant-descriptions-item-label{
@@ -90,7 +90,7 @@ const Pending =forwardRef((props, ref) => {
 export default function Control({sn,detail, state,  Custmodal, getDetailData}) { // status 状态 Close, Open
     
 
-  
+    const projectId = useSelector(state => state.system.menus.projectId)
     const [form] = Form.useForm()
     const status =detail?.status['1']
  
@@ -131,7 +131,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
               
                 if(step<10) {
                    timer = setTimeout(() => {
-                    onStart([sn])
+                    onStart({projectId,sns:[sn]})
                     }, 7000*step) 
                    }else {
                     pending.current.setPenging('操作失败')
@@ -151,7 +151,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
                console.log('Open')
                 if(step<10) {
                    timer = setTimeout(() => {
-                    onStart([sn])
+                    onStart({projectId,sns:[sn]})
                     }, 7000*step) 
                    }else {
                     pending.current.setPenging('操作失败')
@@ -184,7 +184,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
 
         let {errorCode, isOk, sn} = data[0]
         if(errorCode == 0 && isOk) {
-            onBatch([sn])
+            onBatch({projectId,sns:[sn]})
         }else {
             setResultInfo.current.status = 2
             Remote.SetResult([setResultInfo.current]).then().catch()
@@ -209,9 +209,9 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
     try {
         let res = {};
         if(optype == 0) {
-            res = await  Remote.Close([sn])   
+            res = await  Remote.Close({projectId,sns:[sn]})   
         }else if(optype == 1){
-            res = await  Remote.Open([sn])
+            res = await  Remote.Open({projectId,sns:[sn]})
         }
         if(res.success) {
             if(Array.isArray(res.data) && res.data.length > 0) {
@@ -219,7 +219,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
                setResultInfo.current.id = id
                if(errorCode == 0) {
                
-                    onStart([sn])
+                    onStart({projectId,sns:[sn]})
                 
                }else {
                 setResultInfo.current.status = 2
