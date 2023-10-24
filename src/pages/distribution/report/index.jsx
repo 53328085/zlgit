@@ -392,10 +392,11 @@ export default function Index() {
         <RightDiv>
         <div style={{ padding: 16 }}>
             <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
-            <span style={{ fontSize: 20 }}>{chineseTitle}</span>
+            {/* <span style={{ fontSize: 20 }}>{chineseTitle}</span> */}
+            <span style={{ fontSize: 20 }}>配电监控管理平台</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',height:470 }}>
-            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>电气安全运行分析报告</p>
+            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>配电管理分析报告</p>
             <div style={{
               width: 431,
               height: 136,

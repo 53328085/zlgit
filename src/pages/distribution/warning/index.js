@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import style from './style.module.less'
-import { Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider } from 'antd'
+import { Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider } from 'antd'
 import { useAntdTable } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
 import moment from 'moment'
@@ -10,8 +10,7 @@ import Usetable from '@com/useTable'
 import { OperationLogRuntime } from '@api/api'
 import { ExportExcel } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
-const { Paragraph } = Typography
+import { useNavigate, useLocation } from 'react-router-dom'
 const { Item } = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -26,6 +25,8 @@ const Mainbox = styled.div`
         flex: 1;
         color:#515151;
         padding-top: 16px;
+        height: 700px;   
+        width: 1650px;
         .top {
             display: flex;
             justify-content: space-between;
@@ -47,76 +48,76 @@ const Mainbox = styled.div`
        }
 
 `
-const P = styled(Paragraph)`
-&& {
-  margin-bottom: 0px;
-  line-height: 1;
-  font-size: 18px;
-  color:#666;
-}
- 
-`
-const columns = [
-  {
-    title: '最新告警时间',
-    dataIndex: 'date',
-    key: 'date',
-    align: 'center'
-  },
-  {
-    title: '告警等级',
-    dataIndex: 'eventType',
-    key: 'eventType',
-    align: 'center'
-  },
-  {
-    title: ' 最新告警事件',
-    dataIndex: 'content',
-    key: 'content',
-    align: 'center'
-  },
-  {
-    title: '设备名称',
-    dataIndex: 'content',
-    key: 'content',
-    align: 'center'
-  },
-  {
-    title: '设备安装地址',
-    dataIndex: 'content',
-    key: 'content',
-    align: 'center'
-  },
-  {
-    title: '设备编号',
-    dataIndex: 'content',
-    key: 'content',
-    align: 'center'
-  },
-  {
-    title: '设备类型',
-    dataIndex: 'content',
-    key: 'content',
-    align: 'center'
-  },
-  {
-    title: '操作',
+function Main({ projectId, areaId, siteId }) {
+
+  const columns = [
+    {
+      title: '最新告警时间',
+      dataIndex: 'date',
+      key: 'date',
+      align: 'center'
+    },
+    {
+      title: '告警等级',
+      dataIndex: 'eventType',
+      key: 'eventType',
+      align: 'center'
+    },
+    {
+      title: ' 最新告警事件',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+    },
+    {
+      title: '设备名称',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+    },
+    {
+      title: '设备安装地址',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+    },
+    {
+      title: '设备编号',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+    },
+    {
+      title: '设备类型',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center'
+    },
+    {
+      title: '操作',
       key: 'action',
-      align:'center',
+      align: 'center',
       render: (_, record) => (
         <Space size="middle">
           <span className={style.detailText} onClick={() => onDetail(record)}>详情</span>
         </Space>
       ),
     },
-]
-
-function Main({ projectId, areaId, siteId }) {
+  ]
+  const navigate = useNavigate()
+  const location = useLocation()
   const [form] = Form.useForm()
 
   const [keycode, setKeycode] = useState(0)
   const [total, setTotal] = useState(0)
 
+  const onDetail = (record) => {
+    console.log(record);
+    // ${record.sn}
+    navigate('/deviceDetail?sn=87489220500687', {
+      state: { type: 'index', primary: 'deviceDetail', title: '告警信息', nested: 'deviceDetail' }
+    })
+  }
   const QueryReports = ({ current, pageSize }, form) => {
     let { time, ...rest } = form
     let start = time[0].format('YYYY-MM-DD')
@@ -127,7 +128,7 @@ function Main({ projectId, areaId, siteId }) {
       start,
       end,
       projectId,
-       areaId,
+      areaId,
       siteId,
       ...rest
     }
@@ -164,8 +165,6 @@ function Main({ projectId, areaId, siteId }) {
   })
 
   const { submit } = search
-  const onDetail = (record) => {
-  }
 
   const tableref = useRef()
   //const getref = () => tableref.current
@@ -189,7 +188,7 @@ function Main({ projectId, areaId, siteId }) {
             <Option value="2">正泰物联滨江园区</Option>
             <Option value="3">正泰物联温州园区</Option>
           </Select>
-        
+
           <span style={{ marginLeft: '12px' }}>配电房</span>
           <Select
             placeholder="请选择配电房"
@@ -201,7 +200,7 @@ function Main({ projectId, areaId, siteId }) {
             <Option value="3">配电房3</Option>
           </Select>
         </div>
-        <Titlelayout title="告警列表" layout="flex" >
+        <Titlelayout title="告警列表" layout="flex">
           <div className='content'>
             <Form form={form} className='top' layout='inline' initialValues={{
               content: '',
