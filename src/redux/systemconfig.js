@@ -13,6 +13,7 @@ const initialState = {
     configState: false, // 项目是否处于设计状态   
     jump: false, // 页面跳转
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
+    roomId:0,
     menus: {
         projectId: 0, // 项目ID
         runMenus: [], // 运行 top菜单栏 左边 选择的
@@ -125,10 +126,14 @@ const system = createSlice({
            state.themeColor = payload || "#237AE4";
           
         },
+        getRoomId(state,{payload}){
+          state.roomId=payload
+        },
         systemConfigRest(state, actions) {
           console.log(initialState)
           return state = initialState;
-      }
+      },
+      
     },
 
     extraReducers: {      
@@ -187,6 +192,7 @@ export const currProject  = state => state.system.currProject
 export const custconfig = state => state.system.siteConfig
 
 export const themeColor = state => state.system.themeColor
+export const roomId =state=>state.system.roomId
 export const {
     configProject,
     getSetMenus,
@@ -206,5 +212,6 @@ export const {
     getCurrProjectInfo,
     getThemeColor,
     systemConfigRest,
+    getRoomId
 } = actions
 export default system.reducer

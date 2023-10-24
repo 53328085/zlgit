@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef ,useMemo} from 'react'
-import {useSelector,  } from 'react-redux'
+import {useSelector,useDispatch  } from 'react-redux'
+import {getRoomId} from "@redux/systemconfig";
 import {nanoid} from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
@@ -8,6 +9,8 @@ import CustContext from '@com/content.js'
 import {Divider, Form, Image, Radio,Select} from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
+import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+
 import imgurl from './icon'
 import imglist from '@imgs/index.js'
 const echarts = require('echarts')
@@ -256,9 +259,13 @@ export default function Index() {
   const trendRef =useRef(null)
   const trendPreRef=useRef(null)
   const useElRef=useRef(null)
+  const dispatch =useDispatch()
+  // const roomId =useSelector(state=>state.system.roomId)
+  const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
   const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
 
+  const [roomlist,setRoomList]=useState([])
   const [value, setValue] = useState('1') 
   const onChange = ({target: {value}}) => {
     setValue(value)
@@ -323,13 +330,26 @@ export default function Index() {
           </div>
       </div>
   )
+  const getRoomList =async (projectId,roomId)=>{
+    const resp = await distributionRoom.RoomList(projectId,roomId)
+    if(resp.success){
+      console.log(resp)
+      dispatch(getRoomId(resp.data))
+      
+      setRoomList(resp.data)
+      form.setFieldValue('roomId',resp.data[0][['id']])
+    }
+  }
   useEffect(() => {
-
+    
     drawEcharts(guref.current,  {...gauge, type: 2})
     drawEcharts(trendRef.current,{...trendopts,type:2})
     drawEcharts(trendPreRef.current,{...trendopts,type:2})
     drawEcharts(useElRef.current,{...uselopts,type:2}) 
   })
+  useEffect(()=>{
+    getRoomList(projectId,areaOptions[0].id)
+  },[roomlist.length])
   return (
     <CustContext.Provider value={{form}}>
       <Pagecount bgcolor="#eeeff3" pd="0px">  
@@ -345,8 +365,12 @@ export default function Index() {
             <Form.Item>
             <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
             </Form.Item>
-           <Form.Item>
-              <Select style={{ width: 240 }}></Select>
+           <Form.Item name="roomId" >
+              <Select  
+              options={roomlist} 
+              fieldNames={{ label: 'name', value: 'id' }}
+              style={{ width: 240 }} 
+              placeholder="请选择配电房"></Select>
            </Form.Item>
           </Form>
         </div>      

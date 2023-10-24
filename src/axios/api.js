@@ -1616,6 +1616,7 @@ export class distributionRoom {
   static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/ChartList?projectId=${projectId}&id= ${id}`)  
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
+  static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
 }
  
 //配电房设备
@@ -1664,7 +1665,36 @@ export class DistributionRoomRuntime{
   static TransformerList=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/TransformerList`,{params:{projectId,roomId}})
   }
-
+  static ChartList=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/ChartList`,{params:{projectId,roomId}})
+  }
+  static  ChartDetails=(projectId,id)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/ChartDetails`,{params:{projectId,id}})
+  }
+  static TransformerList=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/TransformerList`,{params:{projectId,roomId}})
+  }
+  static RuntimePoints=(projectId,sn)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/RuntimePoints`,{params:{projectId,sn}})
+  }
+  static HistoryTrends=(data)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/HistoryTrends`,data)
+  }
+  static LineTree=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
+  }
+  static LineRuntimePoints=(projectId,roomId,lineId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints`,{params:{projectId,roomId,lineId}})
+  }
+  static CameraSummary=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/CameraSummary`,{params:{projectId,roomId}})
+  }
+  static CameraPage=(data)=>{
+    return server.post(`/Distribution/DistributionRoomRuntime/CameraPage`,data)
+  }
+  static GetEnvironment=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`,{params:{projectId,roomId}})
+  }
 }
 //能源流向
 export class EnergyFlowRuntime {
