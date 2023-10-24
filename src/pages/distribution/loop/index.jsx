@@ -270,7 +270,8 @@ export default function Index() {
     }
     useEffect(()=>{
         const {roomId} = form.getFieldsValue()
-        getLinePoint(roomId,0)
+        getLinePoint(roomId,1)
+        getLinePoint(roomId,3)
     },[])
 
     return (
@@ -300,51 +301,7 @@ export default function Index() {
                     </Form.Item>
                 </Form>
             </div>
-            {/* <div className={style.header}>
-        <span style={{marginLeft: '12px'}}>园区选择</span>
-              <Form
-                  form={form}
-                  layout='inline'
-              >
-                  <Form.Item>
-                      <Select
-                          placeholder="请选择区域"
-                          size="middle"
-                          style={{ width: '200px', marginLeft: '12px' }}
-                      >
-                          <Option value="1">正泰物联全部园区</Option>
-                          <Option value="2">正泰物联滨江园区</Option>
-                          <Option value="3">正泰物联温州园区</Option>
-                      </Select>
-                  </Form.Item>
-                  <Form.Item>
-                    <Divider dashed type='vertical' style={{borderColor:"#999999",height:'100%'}}></Divider>
-                  </Form.Item>
-                <Form.Item>
-                    <Select
-                        placeholder="请选择配电房"
-                        style={{width: '200px',}}
-                        options={roomId}
-                        fieldNames={{label:'name',value:'id'}}
-                    >
-
-                    </Select>
-                </Form.Item>
-              </Form>
-        
-        { showDetail ? (
-        <>
-          <RangePicker size='middle' style={{width:376, marginLeft:16, marginRight:16}}></RangePicker> 
-          <Button size='middle' type='primary' icon={<SearchOutlined />} >查询</Button>
-        </>): 
-        <span className={style.collectionTime}>参量采集时间：2020-09-03 09:35:21</span> }
-        <div className={style.buttonList}>
-          {showDetail ? <Button className='refresh' type='primary' icon={<RollbackOutlined />} onClick={goBack} >返回</Button> : null}
-          <Button className='refresh' type='primary' icon={<SyncOutlined />} >刷新</Button>
-          <Button className='headerButton' type='primary' >回路拓扑图</Button>
-          <Button className='headerButton' type='primary' icon={<UploadOutlined />} >导出</Button>
-        </div>
-      </div> */}
+         
             <div className={style.content}>
                 <LoopSelect form={form} projectId={projectId}></LoopSelect>
                 <div className={style.contentRight}>

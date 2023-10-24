@@ -1,4 +1,4 @@
-import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
+import React, {useState, useRef, useImperativeHandle, forwardRef, memo} from "react";
 import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
@@ -89,7 +89,7 @@ import Useform from "./useform";
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, ...rest} = props
+  const {onCancel: close, custft=false, onOk, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -101,6 +101,17 @@ import Useform from "./useform";
 
   const onGetvalue = () => formref.current.getValue()
   
+  const CustFooter = [
+      <Button onClick={onCancel}>取消</Button>,
+       <Button type="primary" onClick={onOk}>应用</Button> ,
+       <Button type="primary" onClick={() => {
+        onOk().then(() => {
+          onCancel();
+        });
+        
+       }}>确定</Button>
+      ]
+  
   useImperativeHandle(ref, ()=> ({
     onCancel,
     onOpen,
@@ -110,7 +121,7 @@ import Useform from "./useform";
     onGetvalue
   }))
   
-
+  
  
   return (
     <CModal      
@@ -119,6 +130,8 @@ import Useform from "./useform";
       closable={false}    
       centered  
       maskClosable={false}
+      footer={custft ? CustFooter : undefined }
+      onOk={onOk}
       {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}

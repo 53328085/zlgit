@@ -187,7 +187,7 @@ export default function Index() {
     //await DistributionRoomRuntime.TransformerList(1,1)
     // await DistributionRoomRuntime.GetEnvironment(2,1)
     // await DistributionRoomRuntime.ChartList(2,1)
-    DistributionRoomRuntime.LineTree(1,1)
+    DistributionRoomRuntime.TransformerList(1,1)
   }
   useEffect(()=>{
     drawEcharts(chartRef.current,{...chartOpt,type:2})

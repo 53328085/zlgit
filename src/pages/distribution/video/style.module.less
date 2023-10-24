@@ -1,0 +1,296 @@
+.video{
+    width: 100%;
+    display: grid;
+    grid-template-rows: 44px 1fr;
+    grid-row-gap:16px ;
+    .select{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 6px 16px;
+        background-color: #fff;
+        border: 1px solid #d7d7d7;
+    }
+    .container{
+        background-color: #fff;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows:repeat(2,1fr);
+        grid-gap: 16px;
+        border: 1px solid #d7d7d7;
+    }
+    .replayvideo{
+        width: 1280px;
+        height: 717px;
+    }
+}
+
+.line{
+    border-left: 1px dotted #d7d7d7;
+    height: 32px;
+    margin: 0 16px;
+
+}
+
+.videocard{
+    border: 1px solid #d7d7d7;
+    padding: 16px;
+    .videotitle{
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+   
+}
+.wd100{
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.cameraData{
+    width: 100%;
+    height: 80px;
+    // margin: 16px;
+    display: flex;
+    .dataItem{
+        width: 256px;
+        height: 80px;
+        background-color: #fff;
+        border: 1px solid rgb(204, 204, 204);
+        border-radius: 4px;
+        display: flex;
+        margin-right: 16px;
+        .itemImg{
+            width: 120px;
+            height: 74px;
+            margin: 3px;
+        }
+        .itemValue{
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            font-size: 16px;
+            color: #515151;
+        }
+    }
+}
+.content{
+    width: 1678px;
+    height: 715px;
+    padding: 16px;
+    background-color: #fff;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 4px;
+    position: relative;
+    .contentTitle{
+        height: 32px;
+        // border-left: 4px solid #237ae4;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: 14px;
+        color: #515151;
+        // padding-left: 16px;
+    }
+    .tableList{
+        margin-top: 16px;
+        .playButton{
+            width: 96px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url(./images/playBg.png);
+            background-repeat: no-repeat;
+            background-size: 100%;
+            cursor: pointer;
+            &:hover{
+                background-image: url(./images/playBg_mouseOver.png);
+            }
+            .playImg{
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+    .pageNum{
+      position: absolute;
+      right: 0;
+      margin-right: 16px;
+      bottom: 16px;
+      :global(.ant-pagination-item-active){
+          background-color: #237ae4;
+          :global(a){
+              color: #fff;
+          }
+      }
+  }
+}
+
+.dialogBody{
+    display: flex;
+    :global{
+        .bodyRight{
+            margin-left: 48px;
+            .title{
+              margin-top: 12px;
+              height: 24px;
+              font-size: 16px;
+              color: 333;
+              padding-left: 16px;
+              line-height: 24px;
+              border-left: 4px solid #237ae4;
+            }
+            .controlBackground{
+              margin-top: 24px;
+              width: 256px;
+              height: 256px;
+              background: url('./images/normalControl.png');
+              background-repeat: no-repeat;
+              background-size: 100% 100%;
+              .slotDiv{
+                width: 100%; 
+                height: 100%;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                position:relative;
+              }
+              .leftControl{
+                background: url('./images/leftControl.png');
+              }
+              .rightControl{
+                background: url('./images/rightControl.png');
+              }
+              .topControl{
+                background: url('./images/topControl.png');
+              }
+              .bottomControl{
+                background: url('./images/bottomControl.png');
+              }
+              .clickButton{
+                display: inline-block;
+                position: absolute;
+                cursor: pointer;
+              }
+              .leftClick{
+                width: 86px;
+                height: 96px;
+                left: 0;
+                top: 80px;
+              }
+              .rightClick{
+                width: 86px;
+                height: 96px;
+                right: 0;
+                top: 80px;
+              }
+              .topClick{
+                width: 96px;
+                height: 86px;
+                left: 80px;
+                top: 0;
+              }
+              .bottomClick{
+                width: 96px;
+                height: 86px;
+                bottom: 0;
+                left: 80px;
+              }
+            }
+            .timeControl{
+              width: 288px;
+              margin-top: 72px;
+              .footerButton{
+                display: inline-block;
+                width: 120px;
+                height: 36px;
+                border: 1px solid #237ae4;
+                border-radius: 4px;
+                line-height: 36px;
+                font-size: 13px;
+                text-align: center;
+                cursor: pointer;
+              }
+              .backButton{
+                color: #237ae4;
+                background-color: #fff;
+              }
+              .replay{
+                color: #fff;
+                background-color: #237ae4;
+              }
+            }
+          }
+    }
+}
+.controlBackground{
+  margin-top: 24px;
+  width: 256px;
+  height: 256px;
+  background: url('./images/normalControl.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  .slotDiv{
+    width: 100%; 
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    position:relative;
+  }
+  .leftControl{
+    background: url('./images/leftControl.png');
+  }
+  .rightControl{
+    background: url('./images/rightControl.png');
+  }
+  .topControl{
+    background: url('./images/topControl.png');
+  }
+  .bottomControl{
+    background: url('./images/bottomControl.png');
+  }
+  // .clickButton{
+  //   display: inline-block;
+  //   position: absolute;
+  //   cursor: pointer;
+  // }
+  .leftClick{
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+    width: 86px;
+    height: 96px;
+    left: 0;
+    top: 80px;
+  }
+  .rightClick{
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+    width: 86px;
+    height: 96px;
+    right: 0;
+    top: 80px;
+  }
+  .topClick{
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+    width: 96px;
+    height: 86px;
+    left: 80px;
+    top: 0;
+  }
+  .bottomClick{
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+    width: 96px;
+    height: 86px;
+    bottom: 0;
+    left: 80px;
+  }
+}

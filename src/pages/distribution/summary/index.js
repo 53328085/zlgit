@@ -260,7 +260,7 @@ export default function Index() {
   const trendPreRef=useRef(null)
   const useElRef=useRef(null)
   const dispatch =useDispatch()
-  // const roomId =useSelector(state=>state.system.roomId)
+  // const roomlist =useSelector(state=>state.system.roomId)
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
   const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, useMemo} from 'react'
 import {flushSync} from 'react-dom'
 import {useRequest, useAntdTable} from 'ahooks'
 import {Typography, Space, Form, Input, Select, Switch, message, DatePicker} from 'antd'
@@ -210,19 +210,23 @@ const showModl = () => {
     let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0, validStageTime: data.validStageTime.format('YYYY-MM-DD')} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id, validStageTime: data.validStageTime.format('YYYY-MM-DD')};
     
     let {success, errMsg} = await handler(params)
-    success && custMsg({success, content,  onClose: () => {
-      mref.current.onCancel();
+    
+    if(success) {
+      message.success(content)
+      if(isAdd) mref.current.onResetform()
+      if(!isAdd) mref.current.onCancel();
       refresh()
-    }})
-    !success && message.error({content: errMsg || '数据出错', duration: 1} )
-
-  
-   
+    }else {
+      message.error(errMsg || '数据出错')
+    }
+    
   } catch (error) {
     console.log(error)
   } 
 }
- 
+  const addcmodal = useMemo(() => <CModal width={554} title={title} ref={mref} mold='default' onOk={onOk} custft={isAdd}  fromprops={initform} > 
+
+  </CModal>, [title, isAdd] )
   return (
   <Mainbox>
      {  showview ? 
@@ -237,101 +241,8 @@ const showModl = () => {
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
 
-     <CModal width={554} title={title} ref={mref} mold='default' onOk={onOk}   fromprops={initform} > 
-
-    </CModal>
-    {/*  <CModal width={554} title={title} ref={mref} mold='cust' onOk={onOk}>
-         <Form 
-         form={mform}   
-         size="middle"  
-         labelCol={{flex: '7em'}}
-          labelAlign="left" 
-          preserve={false}
-          validateMessages = {{
-              required: "'${name}' 是必选字段"
-           }}  
-           >
-             <Item label="用户角色">
-                <Select disabled defaultValue="1"  options={[
-                  {
-                    value: '1',
-                    label: '运营管理员',
-                  },
-                ]}>
-                            
-                </Select>
-             </Item>
-             <Item label="用户名" name="name" rules={[
-                  {
-                    required: true,
-                    message: '请输入用户名！',
-                  }]}>
-                <Input />
-             </Item>
-             <Item label="用户姓名" name="nickName" rules={[
-                  {
-                    required: true,
-                    message: '请输入用户姓名！',
-                  }]}
-                  >
-                <Input />
-             </Item>
-             <Item label="账号有效期" name="validStageTime" rules={[
-                  {
-                    required: true,
-                    message: '请选择有效期！',
-                  }]}
-                  >
-                 <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} />
-             </Item>
-             {
-              isAdd &&
-             (<>
-             <Item label="密码" name="pwd" rules={[
-                  {
-                    required: true,
-                    message: '请输入密码！',
-                  }]}>
-                <Input.Password  />
-             </Item>   
-             <Item label="确认密码" dependencies={['pwd']} name='rpwd'
-                rules={[
-                  {
-                    required: true,
-                    message: '请确认你的密码！',
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('pwd') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('密码不一致'));
-                    },
-                  }),
-                ]}
-             >
-                <Input.Password  />
-             </Item>  
-            </>)
-            }
-             <Item label="手机号码" name="mobile" rules={[
-                  {
-                    required: true,
-                    message: '请输入手机号码！',
-                  }]}>
-                <Input  />
-             </Item> 
-             <Item label="是否启用" name="enabled" valuePropName="checked">
-               <Switch checkedChildren="是" unCheckedChildren="否"  />
-             </Item> 
-             <Item label="备注信息" name="remark">
-               <Input.TextArea  autoSize={{
-                    minRows: 2,
-                    maxRows: 6,
-                    }} />
-             </Item> 
-         </Form>
-     </CModal> */}
+      {addcmodal}
+   
      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
          <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
