@@ -237,18 +237,21 @@ export default function Account({ projectId, CModal }) {
   const addManager = async () => {
     // 新增项目管理员 ,运维人员
     try {
-      console.log(fmodal.current);
+      let content = ['编辑成功','新增成功'][person] ;
       const values = await fmodal.current.onGetvalue();
       values.validStageTime = values.validStageTime.format("YYYY-MM-DD");
       const params = { ...values, enabled: values.enabled ? 1 : 0, projectId };
       let hander = ["AddProjectManager", "InsertProjectMaintenance"][person];
       let update = [queryProjectManager, queryProjectMaintenance][person];
       let { success, errMsg } = await User[hander](params);
-      console.log(success)
-      console.log(errMsg)
+     
       if (success) {
-        fmodal.current.onCancel();
-        await update();
+        message.success(content)
+       if(person == 1)  {
+        fmodal.current.onResetform();
+       }
+       if(person == 0)  fmodal.current.onCancel();
+        update();
       }else {
         message.error(errMsg || "数据出错");
       }
@@ -462,6 +465,16 @@ export default function Account({ projectId, CModal }) {
       </div>
     ));
   };
+
+  const addcmodal = useMemo(() =>  <Custmodl
+  title={title}
+  ref={fmodal}
+  fromprops={{ enable: true }}
+  //  onCancal={cancal}
+  onOk={addManager}
+  custft={person == 1}
+  mold="default"
+></Custmodl>, [title, person])
   return (
     <Mainbox>
       {roleType == 1 ? (
@@ -615,14 +628,7 @@ export default function Account({ projectId, CModal }) {
         mold="default"
       ></Custmodl>
 
-      <Custmodl
-        title={title}
-        ref={fmodal}
-        fromprops={{ enable: true }}
-        //  onCancal={cancal}
-        onOk={addManager}
-        mold="default"
-      ></Custmodl>
+      {addcmodal}
       <Custmodl
         mold="cust"
         title="删除账号"
