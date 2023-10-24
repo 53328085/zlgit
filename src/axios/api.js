@@ -1438,28 +1438,31 @@ export class energyShare {
   static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
   static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
 
-  static queryArea = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data)//区域查询
+  static queryArea = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea?areaId=${areaId}`, data)//区域查询
 
   static queryLine = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine?areaId=${areaId}`, data)//线路查询
 }
 //数据报表
 export class energyReport {
   static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-  static QueryByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryReadingByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)// 实时抄表--区域
+  static QueryByArea = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) =>
+   server.post(`Energy/DataReportRuntime/QueryReadingByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)// 实时抄表--区域
   static QueryByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
   server.post(`Energy/DataReportRuntime/QueryReadingByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)// 实时抄表--线路
-  static QueryConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => 
-  server.post(`Energy/DataReportRuntime/QueryConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//能耗报表--区域
+  static QueryConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//能耗报表--区域
 
   static QueryConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
   server.post(`Energy/DataReportRuntime/QueryConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//能耗报表--线路
   
-  static QueryTimeConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryTimeConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分时能耗--区域
+  static QueryTimeConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryTimeConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分时能耗--区域
 
   static QueryTimeConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
   server.post(`Energy/DataReportRuntime/QueryTimeConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分时能耗--线路
 
-  static QueryClassifyConsume = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分类能耗
+  static QueryClassifyConsume = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分类能耗
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
  // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗

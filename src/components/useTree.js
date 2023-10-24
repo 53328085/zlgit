@@ -19,17 +19,14 @@ const Treebox = styled.div`
        row-gap: 16px;
 `
  
-
- 
-
-export default function Index({areaId, setTreeId, setLine, lineType}) {
+export default function Index({areaId, setTreeId,  setLine, lineType}) {
   
   const [treeData,setTreeData] =useState([])
   
  
   const [checkedKeys, setCheckedKeys] = useState([])
  
- 
+  const [keyword, setKeyword] = useState('')
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
   
@@ -46,8 +43,9 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
 
   //获取树的数据， 1 线路 0 网格
  const getTreeData= async (name='')=>{
+    console.log('name', name)
     try {
-    
+      if(name!=keyword) setKeyword(name)
      
       let params =typeTree == 1 ? {
         projectId,
@@ -57,7 +55,7 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
       } : typeTree == 0 ? {
         projectId,
         areaId,
-        areaName:name,
+        areaName: name,
       } : {}
       let hander = [ QuerySpaceTrees, LineManagerQuery][typeTree]
     
@@ -66,16 +64,25 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
         params = {
             projectId,
             areaId,
-            areaName,
+            areaName:name,
           }
       }
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
-         
-         setTreeData(data)       
+         let areaId = data.map(i => i.areaId)
+         setTreeData(data)  
+         if(name) {
+             setTreeId(areaId)
+             setCheckedKeys(areaId)
+         }else {
+          setTreeId([])
+          setCheckedKeys([])
+         }
+      
       }else{
         setTreeData([]) 
+        setCheckedKeys([])
        // message.error(errMsg || '数据出错')
       }
      
@@ -104,7 +111,7 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
      // setTreeId([])
      getTreeData()
      
-  },[areaId, typeTree])
+  },[areaId])
    
    const radiosty = {
     display: 'grid',   
@@ -117,8 +124,11 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
     setLine(e.target.value)
     setTreeId([])
     setCheckedKeys([])
+    setKeyword('')
   }
- 
+  const onChange = (e) => {
+    setKeyword(e.target.value)
+  }
   return (
   
         <Titlelayout key="line">
@@ -132,6 +142,8 @@ export default function Index({areaId, setTreeId, setLine, lineType}) {
           <Search 
           placeholder='请输入关键字查询' 
           allowClear
+          value={keyword}
+          onChange={onChange}
           onSearch={getTreeData}
           />
           <Tree 

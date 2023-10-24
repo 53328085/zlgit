@@ -56,6 +56,10 @@ const getTime = (date, type)=> {
 }
 
 const cols =[ // 实时抄表
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+},
   {
     title: '设备名称',
     dataIndex: 'name', 
@@ -82,7 +86,14 @@ const cols =[ // 实时抄表
 ]
 
 const conscols =[ // 能耗抄表
-  {
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+  key: "nodeName",
+  fixed: 'left',
+  width: 100
+},
+{
     title: '设备名称',
     dataIndex: 'name', 
     width: 84,
@@ -101,7 +112,6 @@ const conscols =[ // 能耗抄表
     dataIndex: 'address',
     key: 'address',
     width: 84,
-    fixed: 'left',
   },
   {
     title: '能耗(kWh)',
@@ -115,7 +125,11 @@ const cellstyle = {
   color: "#fff"
 }
 const timecols =[  // 分时能耗 
-  {
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+},
+{
     title: '设备名称',
     dataIndex: 'name', 
   },  
@@ -239,14 +253,9 @@ export default function Index() {
         meterType,
         pageNum: current,
         pageSize,
+        areaId,
      }
-     if(line == 1) {
-      params.areaId = areaId
-     }else {
-      delete params.areaId
-     }
-     console.log('line', line);
-     console.log(params)
+   
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)
@@ -361,11 +370,11 @@ export default function Index() {
 
           <Pagecount showSearch={false}>
              <Contentbox>
-                <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} lineType={value} /> 
+                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,
-                     x: 1300, 
+                     x: 1400, 
                      y: 685
                    }
                   }

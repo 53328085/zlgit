@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
 import {Form, Space, Input, Button, Typography,Row, Col, message} from 'antd'
 import styled from 'styled-components'
 import Custtable from '@com/useTable'
@@ -21,23 +21,26 @@ export default function Datagroupc({projectId, CModal}) {
  const [type, setType] = useState(0)
  const getData = async () => {
 
-      QueryDataGroups().then(({success, data}) => {       
-        success && setTableData(() => [...data])
-        return true;
+      QueryDataGroups().then(({success, data}) => {  
+        if(success) {
+           Array.isArray(data) ? setTableData(() => [...data]) : setTableData([])
+        }    
+        
+        
       }).catch()
    
  }
- const add = () => {
+ const add =useCallback(() => {
    setTitle('新增数据组') 
    setType(0)
    eref.current.onOpen();
- }
+ }, [type])
  const edit = ({id, name}) => {
    setTitle('编辑数据组')
    setGroupId(id);
    setType(1)
    eref.current.onOpen();
-   console.log(name);
+  
    form.setFieldValue('name', name)
  }
  const del = (id) => { 
@@ -49,15 +52,18 @@ export default function Datagroupc({projectId, CModal}) {
    
    try {
      let data = await form.validateFields()
-     let {success} = type == 0 ? await InsertDataGroup(data) : await UpdateDataGroup({name: data.name, id: groupId})
-     success && message.success({
-      content:  ['新增字段成功', '编辑字段成功'][type],
-      onClose:  () =>  { 
-          getData().then((_) => eref.current.onCancel() ) 
-          
-        },       
-      duration: 0.3,
-     })
+     console.log(data)
+     let {success, errMsg} = type == 0 ? await InsertDataGroup(data) : await UpdateDataGroup({name: data.name, id: groupId})
+     if (success) {
+      let msg = ['新增字段成功', '编辑字段成功'][type]
+       message.success(msg)
+       getData();
+       if(type == 0) form.resetFields();
+       if(type == 1) eref.current.onCancel();
+     }else {
+       message.warning(errMsg||'数据出错')
+     }
+     
    } catch (error) {
      console.log(error)
    }   
@@ -67,14 +73,14 @@ export default function Datagroupc({projectId, CModal}) {
    if(!groupId) return;
    console.log(groupId);
    let {success, errMsg} = await DeleteDataGroup({id:groupId});
-   success && message.success({
-     content: '删除字段成功',
-     onClose:  () =>  { 
-         getData().then(_ => dref.current.onCancel());
-         
-       },       
-     duration: 0.3,
-    })
+   if(success) {
+    message.success('删除字段成功')
+    dref.current.onCancel()
+    getData()
+   }else {
+    message.warning(errMsg || "数据出错")
+   }
+    
   } catch (error) {
      console.log(error)
   }
@@ -109,30 +115,31 @@ export default function Datagroupc({projectId, CModal}) {
   useEffect(() => {
     getData();
   }, [])
+  const addmodal = useMemo(() =>   <CModal title={title} ref={eref}  mold="cust" width={592} onOk={onOk} custft={type == 0}>
+  <Form style={{display:"flex", height: '48px'}} form={form}  labelAlign="left" preserve={false}>   
+    
+     <Form.Item label="数据组名称" name="name" rules={
+         [
+           {
+             required: true,
+             message: '请输入数据组名称'
+           }
+         ]
+      }>
+         <Input style={{width: '412px'}} allowClear />
+      </Form.Item>    
+      
+             
+     
+  </Form>
+</CModal>, [title, type])
   return (
     <Mainbox>
        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
           <Button type="primary" style={{width: '96px'}} onClick={add}>+&nbsp;新增</Button>
        </div>
        <Custtable columns={columns} rowKey="id" dataSource={tableData}></Custtable> 
-       <CModal title={title} ref={eref}  mold="cust" width={592} onOk={onOk}>
-             <Form style={{display:"flex", height: '48px'}} form={form}  labelAlign="left" preserve={false}>   
-               
-                <Form.Item label="数据组名称" name="name" rules={
-                    [
-                      {
-                        required: true,
-                        message: '请输入数据组名称'
-                      }
-                    ]
-                 }>
-                    <Input style={{width: '412px'}} />
-                 </Form.Item>    
-                 
-                        
-                
-             </Form>
-        </CModal>
+        {addmodal}
         <CModal title='删除提示' ref={dref}  mold="cust" width={512} type="warn" onOk={onOkDel} >
              <div style={{display:"flex", alignItems: "center"}}>
                  <span> 是否确认删除数据组名称？ </span>
