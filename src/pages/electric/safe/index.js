@@ -436,9 +436,9 @@ export default function Index() {
           <Titlelayout title={'最新告警'} extra={<NavLink to={{ pathname: "/index/runtimeSafe/alarmDetail" }} state={{ title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe' }}>查看详情</NavLink>} {...fs}>
             <Timelinebox dmheight={domheight} speed={speed}>
               <div className='transformcss' pageTotalRef={pageTotalRef} id='warn'>
-               
+               <Timeline>
               {
-             warnlist&&warnlist.length>0?
+             warnlist&&warnlist.length>3?
               [...warnlist.map(
                 it => {
                   return (
@@ -462,7 +462,7 @@ export default function Index() {
                   )
                 }
               ),
-              <div style={{height:326,overflow:'hidden'}}>
+                <div style={{height:326,overflow:'hidden'}}>
                 {warnlist.map(
                 it => {
                   return (
@@ -487,22 +487,32 @@ export default function Index() {
                 }
               )}
               </div>
-              // <Timeline.Item dot={<div 
-              //   style={{
-              //     borderRadius:'50%', width:16,height:16,border:'1px solid',
-              //     display:'flex',justifyContent: 'center',alignItems: 'center',
-              //     borderColor: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-              //     <div style={{borderRadius:'50%',width:10,height:10,background: warnlist[0]?.level===1?'rgb(255,112,112)':warnlist[0]?.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-              //     </div >
-              //     </div>}>
-              //     <div>
-              //       <p className='title'>{warnlist[0]?.warningTime}  </p>
-              //       <p>{warnlist[0]?.alarmEvent}</p>
-              //       <p className='content'> {warnlist[0]?.name} {warnlist[0]?.address}   </p>
-              //     </div>
-              //   </Timeline.Item>,
-                  ]:null
+                  ]: [...warnlist.map(
+                    it => {
+                      return (
+                        <Timeline.Item dot={<div 
+                        style={{
+                          borderRadius:'50%', width:16,height:16,border:'1px solid',
+                          display:'flex',justifyContent: 'center',alignItems: 'center',
+                          borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                          <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
+                          </div >
+                          </div>}>
+                          <div>
+                            <p className='title'>
+                              <span>{it.warningTime}</span>  
+                              <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
+                            </p>
+                            <p>{it.alarmEvent}</p>
+                            <p className='content'>{it.name}  {it.address}    </p>
+                          </div>
+                        </Timeline.Item>
+                      )
+                    }
+                  )
+                      ]
              }
+             </Timeline>
               </div>
            
             
