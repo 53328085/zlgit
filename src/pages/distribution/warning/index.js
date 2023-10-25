@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import style from './style.module.less'
 import { Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider } from 'antd'
 import { useAntdTable } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
+import {getRoomId} from "@redux/systemconfig";
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import { OperationLogRuntime } from '@api/api'
+import { OperationLogRuntime, distributionRoom } from '@api/api'
 import { ExportExcel } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -48,8 +49,9 @@ const Mainbox = styled.div`
        }
 
 `
-function Main({ projectId, areaId, siteId }) {
+function Main({areaId, siteId }) {
 
+  const projectId = useSelector(state => state.system.menus.projectId)
   const columns = [
     {
       title: '最新告警时间',
@@ -105,12 +107,14 @@ function Main({ projectId, areaId, siteId }) {
     },
   ]
   const navigate = useNavigate()
-  const location = useLocation()
   const [form] = Form.useForm()
 
+  const dispatch =useDispatch()
   const [keycode, setKeycode] = useState(0)
   const [total, setTotal] = useState(0)
-
+  const [roomlist, setRoomList] = useState([])
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const onDetail = (record) => {
     console.log(record);
     // ${record.sn}
@@ -149,6 +153,9 @@ function Main({ projectId, areaId, siteId }) {
     })
 
   }
+  const getAlarmData = () => {
+    console.log(11)
+  }
   const { tableProps, search } = useAntdTable(QueryReports, {
     form,
     defaultParams: [{ pageSize: 14, pageNum: 1 }, {
@@ -167,38 +174,50 @@ function Main({ projectId, areaId, siteId }) {
   const { submit } = search
 
   const tableref = useRef()
-  //const getref = () => tableref.current
   const onExport = useCallback(() => {
     let formData = form.getFieldsValue()
     return QueryReports({ current: 1, pageSize: total }, formData)
   }, [total])
+  const changeArea = () => {
 
+  }
+  const getRoomList = async (projectId, roomId) => {
+    const resp = await distributionRoom.RoomList(projectId, roomId)
+    if (resp.success) {
+      console.log(resp)
+      dispatch(getRoomId(resp.data))
+
+      setRoomList(resp.data)
+      form.setFieldValue('roomId', resp.data[0][['id']])
+    }
+  }
+  useEffect(() => {
+    getRoomList(projectId, areaOptions[0].id)
+  }, [roomlist.length])
 
   return (
     <div>
       <Mainbox>
-        <div className={style.header}>
-          <span style={{ marginLeft: '12px' }}>区域选择</span>
-          <Select
-            placeholder="请选择区域"
-            size="middle"
-            style={{ width: '330px', marginLeft: '12px' }}
+        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <Form
+            form={form}
+            colon={false}
+            layout="inline"
           >
-            <Option value="1">正泰物联全部园区</Option>
-            <Option value="2">正泰物联滨江园区</Option>
-            <Option value="3">正泰物联温州园区</Option>
-          </Select>
-
-          <span style={{ marginLeft: '12px' }}>配电房</span>
-          <Select
-            placeholder="请选择配电房"
-            size="middle"
-            style={{ width: '330px', marginLeft: '12px' }}
-          >
-            <Option value="1">配电房1</Option>
-            <Option value="2">配电房2</Option>
-            <Option value="3">配电房3</Option>
-          </Select>
+            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? 0 : null}></Select>
+            </Form.Item>
+            <Form.Item>
+              <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
+            </Form.Item>
+            <Form.Item name="roomId" >
+              <Select
+                options={roomlist}
+                fieldNames={{ label: 'name', value: 'id' }}
+                style={{ width: 240 }}
+                placeholder="请选择配电房"></Select>
+            </Form.Item>
+          </Form>
         </div>
         <Titlelayout title="告警列表" layout="flex">
           <div className='content'>
@@ -211,6 +230,7 @@ function Main({ projectId, areaId, siteId }) {
               <Space size={32}>
                 <Item label="告警记录" name="content">
                   <Input placeholder='安装地址' style={{ width: '320px' }} allowClear onChange={submit} />
+                  <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getAlarmData}>查询</Button>
                 </Item>
                 <Divider style={{ margin: '0', height: '32px' }} type="vertical" />
                 <Item label="告警等级" name="type">

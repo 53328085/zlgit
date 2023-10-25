@@ -324,7 +324,7 @@ export default function Index(props) {
             );
           })}
         </Select>
-        <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div>
+        {/* <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div> */}
       </div>
       <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
         <div className={style.bottomTab}>
