@@ -202,6 +202,15 @@ const trendopts={
     bottom: 20,
     left: '5%'
   },
+  tooltip:{
+    trigger: 'axis',
+    axisPointer:{
+      type:'line',
+      lineStyle:{
+        type:'solid'
+      }
+    }
+  },
   xAxis: {
     type: 'category',
     axisLine:{
