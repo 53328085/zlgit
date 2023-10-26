@@ -38,9 +38,9 @@ export function useWinSize(projectId, update) {
 export function numberformat(n){
   let num = parseFloat(n)
   if(num > 0) {
-   return <><span style={{color: "#f00"}}>&#9650;&nbsp;</span><span>&#43;{n}</span></>
+   return <div style={{display: "inline-block"}}><span style={{color: "#f00"}}>&#9650;&nbsp;</span><span>&#43;{n}</span></div>
   }else if(num < 0) {
-   return <><span style={{color: "#090"}}>&#9660;&nbsp;</span><span>{n}</span></>
+   return <div style={{display: "inline-block"}}><span style={{color: "#090"}}>&#9660;&nbsp;</span><span>{n}</span></div>
   }else {
    return <span>{n}</span>
   }

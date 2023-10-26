@@ -159,6 +159,7 @@ const legend ={
   itemWidth: 12,
   itemGap: 20,
 }
+ 
 const TimeLine = ({date, alarmType, deviceAddress,alarmReason, sn, index}) => {
   return (
     <Timeline.Item color="red" dot={<span className={index == 2 ? "cutdot yellow" : "cutdot"}></span>}>
@@ -173,11 +174,7 @@ const TimeLine = ({date, alarmType, deviceAddress,alarmReason, sn, index}) => {
          </Timeline.Item>
   )
 }
-let mok = [
-  {date: '13:45:23', alarmType: "设备上线", deviceAddress: "1号楼12f", sn: '10233585', alarmReason: "终端已上线"},
-  {date: '14:45:23', alarmType: "设备离线", deviceAddress: "2号楼12f", sn: '10335385', alarmReason: "终端已上线"},
-  {date: '15:45:23', alarmType: "账户欠费", deviceAddress: "3号楼12f", sn: '10232885', alarmReason: "终端已上线"},
-]
+ 
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const bref = useRef(null);
@@ -318,7 +315,14 @@ export default function Index() {
             let pieData = payMode.map(i => ({name: i.name, value: i.value}))
             drawEcharts(bref.current, {
               dataset: {
-                dimensions: ["date", "lastYearIncome", "thisYearIncome"],
+                dimensions: ["date", 
+                {
+                  name: "lastYearIncome",
+                  displayName: type == 3 ? "上日" : type == 2 ? "上月" : type ==1 ?  moment().add(-1, 'y').format('yyyy') : ''
+                 }, {
+                  name: "thisYearIncome",
+                  displayName:  type == 3 ? "本日" : type == 2 ? "本月" : type ==1 ?  moment().format('yyyy') : ''
+                }],
                 source: incomeTrend,
               },
               series: [
@@ -326,22 +330,6 @@ export default function Index() {
                 { type: "bar", barGap: 0 },
               ],
               grid,
-              legend: {
-                formatter: (name)=> {
-
-                  if  (type == 3 ) {
-                      if (name=="thisYearIncome")  return "本日";
-                      if(name== "lastYearIncome")  return  "上日";
-                  }else if(type == 2) {
-                    if (name=="thisYearIncome")  return "本月";
-                    if(name== "lastYearIncome")  return  "上月";
-                  }else if(type == 1) {
-                    if (name=="thisYearIncome")  return  moment().format('yyyy');
-                    if(name== "lastYearIncome")  return   moment().add(-1, 'y').format('yyyy')
-                  }
-                } 
-              },
-              
             });
 
             drawEcharts(pref.current, {
@@ -368,8 +356,11 @@ export default function Index() {
             drawEcharts(l2ref.current, {
               color: ["#099c9c"],
               dataset: {
-                dimensions: ['name', "'用水量(kWh)"],
-                source: waterTrend.map(i => ({name: i.name, '用水量(kWh)': i.value}))
+                dimensions: ['name',  {
+                  name: 'value',
+                  displayName: "用水量(kWh)"
+                }],
+                source: waterTrend
               },
               series: [
                 { 
@@ -382,8 +373,11 @@ export default function Index() {
             drawEcharts(lref.current, {
               color: ["#5e92f9"],
               dataset: {
-                dimensions: ['name', "用电量(kWh)"],
-                source: electricTrend.map(i => ({name: i.name, '用电量(kWh)': i.value}))
+                dimensions: ['name',  {
+                  name: 'value',
+                  displayName: "用电量(kWh)"
+                }],
+                source: electricTrend
               },
               series: [{ type: "line" }],
               grid,
@@ -392,8 +386,11 @@ export default function Index() {
             drawEcharts(l3ref.current, {
               color: ["#ff6803"],
               dataset: {
-                dimensions: ['name', "热水量(kWh)"],
-                source: hotWaterTrend.map(i => ({name: i.name, '热水量(kWh)': i.value}))
+                dimensions: ['name',  {
+                  name: 'value',
+                  displayName: "热水量(kWh)"
+                }],
+                source: hotWaterTrend
               },
               series: [{ type: "line" }],
               grid,
@@ -430,7 +427,7 @@ export default function Index() {
     let {name, password } = loginf;
     if (!jumurl) return message.warning("网站地址为空");
     window.open(
-      `${jumurl}/?name=${name}&password=${password}&type=dark&projectId=${projectId}`
+      `${jumurl}/?name=${name}&password=${password}&type=dark`
     );
   }, [loginf, jumurl]);
   return (

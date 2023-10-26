@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import style from './style.module.less'
 import Bluecolumn from '@com/bluecolumn';
 import { Divider } from 'antd'
+import {numberformat} from '@com/usehandler'
 import { Charts, PieCharts } from './charts'
 import icon1 from './imgs/icon1.png'
 import icon2 from './imgs/icon2.png'
@@ -18,7 +19,7 @@ export default function Energy({ showData, dateType,showType }) {
   let proportion 
   let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
   if (showData) {
-    consumeTotal = showData.consumeTotal
+    consumeTotal = showData.consumeTotal.sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))
     console.log(consumeTotal)
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
@@ -99,9 +100,10 @@ let Card = ({ index, ...other }) => {
         </div>
       </div>
       <div style={{ marginRight: 16, display: 'flex', alignItems: 'center' }}>
-           <img src={parseFloat(other.mom)>0?uppng:downpng} alt="" style={{ width: 14, height: 19 }} />
+          {numberformat(other.mom)}
+          {/*  <img src={parseFloat(other.mom)>0?uppng:downpng} alt="" style={{ width: 14, height: 19 }} />
         <span style={{ fontSize: 18, lineHeight: '18px', padding: '0 16px' }}>{parseFloat(other.mom)}</span>
-        <span>%</span>
+        <span>%</span> */}
       </div>
     </div>
   )

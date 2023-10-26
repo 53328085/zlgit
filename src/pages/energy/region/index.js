@@ -126,7 +126,7 @@ export default function Index() {
     },
     {
       dataIndex: "e",
-      title: "用电量（kwh）",
+      title: "用电量（kWh）",
     },
     {
         dataIndex: "mom",
@@ -347,7 +347,7 @@ useEffect(() => {
                     <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
                      <div className="data">
                         <Text  ellipsis >{sort[0]?.name}</Text>
-                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>kwh</span></div>
+                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>kWh</span></div>
                      </div>
                      </>
                      }
@@ -360,7 +360,7 @@ useEffect(() => {
                    <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[1]?.name}</Text>
-                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>kwh</span> </div>
+                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>kWh</span> </div>
                      </div>
                      </>
                     }
@@ -372,7 +372,7 @@ useEffect(() => {
                     <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[2]?.name}</Text>
-                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>kwh</span> </div>
+                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>kWh</span> </div>
                      </div>
                      </>
                      }

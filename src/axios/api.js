@@ -255,13 +255,17 @@ export class DesElectric {
     server.get(
       `Energy/EnergyImportantDesigner/QueryImportmantDevices?projectId=${projectId}&areaId=${areaId}` 
     );
-    static insertDrive = ({projectId,name, areaId}) => // 添加重点设备
+    static insertDrive = ({projectId,name, areaId, address}, data) => // 添加重点设备
     server.post(
-      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}` 
+      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}&address=${address}`,data
     );  
-    static updateDrive = ({projectId,name, id}) => // 更新重点设备
+    static QueryImage = (imageKey) => // 查询设备图片
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantImage?imageKey=${imageKey}` 
+    ); 
+    static updateDrive = ({projectId,name, id, address}, data) => // 更新重点设备
     server.post(
-      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}` 
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}&address=${address}`, data
     );  
 
     static deleteDrive = ({projectId,id}) => // 删除重点设备
@@ -1438,24 +1442,31 @@ export class energyShare {
   static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
   static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
 
-  static queryArea = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data)//区域查询
+  static queryArea = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea?areaId=${areaId}`, data)//区域查询
 
-  static queryLine = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data)//线路查询
+  static queryLine = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine?areaId=${areaId}`, data)//线路查询
 }
 //数据报表
 export class energyReport {
   static AeraQueryAll = (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`)//获取区域
-  static QueryByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryReadingByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)// 实时抄表--区域
-  static QueryByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryReadingByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)// 实时抄表--线路
-  static QueryConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//能耗报表--区域
+  static QueryByArea = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) =>
+   server.post(`Energy/DataReportRuntime/QueryReadingByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)// 实时抄表--区域
+  static QueryByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryReadingByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)// 实时抄表--线路
+  static QueryConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//能耗报表--区域
 
-  static QueryConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//能耗报表--线路
+  static QueryConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//能耗报表--线路
   
-  static QueryTimeConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryTimeConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分时能耗--区域
+  static QueryTimeConsumeByArea = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryTimeConsumeByArea?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分时能耗--区域
 
-  static QueryTimeConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryTimeConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分时能耗--线路
+  static QueryTimeConsumeByLine = ({projectId, meterType, type, date, pageNum, pageSize, areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryTimeConsumeByLine?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分时能耗--线路
 
-  static QueryClassifyConsume = ({projectId, meterType, type, date, pageNum, pageSize}, params) => server.post(`Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}`, params)//分类能耗
+  static QueryClassifyConsume = ({projectId, meterType, type, date, pageNum, pageSize,areaId}, params) => 
+  server.post(`Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`, params)//分类能耗
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
  // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
@@ -1609,6 +1620,7 @@ export class distributionRoom {
   static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/ChartList?projectId=${projectId}&id= ${id}`)  
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
+  static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
 }
  
 //配电房设备
@@ -1657,7 +1669,36 @@ export class DistributionRoomRuntime{
   static TransformerList=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/TransformerList`,{params:{projectId,roomId}})
   }
-
+  static ChartList=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/ChartList`,{params:{projectId,roomId}})
+  }
+  static  ChartDetails=(projectId,id)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/ChartDetails`,{params:{projectId,id}})
+  }
+  static TransformerList=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/TransformerList`,{params:{projectId,roomId}})
+  }
+  static RuntimePoints=(projectId,sn)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/RuntimePoints`,{params:{projectId,sn}})
+  }
+  static HistoryTrends=(data)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/HistoryTrends`,data)
+  }
+  static LineTree=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
+  }
+  static LineRuntimePoints=(projectId,roomId,lineId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints`,{params:{projectId,roomId,lineId}})
+  }
+  static CameraSummary=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/CameraSummary`,{params:{projectId,roomId}})
+  }
+  static CameraPage=(data)=>{
+    return server.post(`/Distribution/DistributionRoomRuntime/CameraPage`,data)
+  }
+  static GetEnvironment=(projectId,roomId)=>{
+    return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`,{params:{projectId,roomId}})
+  }
 }
 //能源流向
 export class EnergyFlowRuntime {

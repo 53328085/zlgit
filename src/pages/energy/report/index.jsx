@@ -56,6 +56,10 @@ const getTime = (date, type)=> {
 }
 
 const cols =[ // 实时抄表
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+},
   {
     title: '设备名称',
     dataIndex: 'name', 
@@ -68,7 +72,7 @@ const cols =[ // 实时抄表
     dataIndex: 'end',
   },
   {
-    title: '用能(kwh)',
+    title: '用能(kWh)',
     dataIndex: 'consume',
   }, 
   {
@@ -82,7 +86,14 @@ const cols =[ // 实时抄表
 ]
 
 const conscols =[ // 能耗抄表
-  {
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+  key: "nodeName",
+  fixed: 'left',
+  width: 100
+},
+{
     title: '设备名称',
     dataIndex: 'name', 
     width: 84,
@@ -101,12 +112,11 @@ const conscols =[ // 能耗抄表
     dataIndex: 'address',
     key: 'address',
     width: 84,
-    fixed: 'left',
   },
   {
-    title: '能耗(kwh)',
-    dataIndex: 'consume',
-    key: 'consume',
+    title: '能耗(kWh)',
+    dataIndex: 'total',
+    key: 'total',
     width: 92,
   },   
 ]
@@ -115,7 +125,11 @@ const cellstyle = {
   color: "#fff"
 }
 const timecols =[  // 分时能耗 
-  {
+{
+  title: '名称',
+  dataIndex: 'nodeName', 
+},
+{
     title: '设备名称',
     dataIndex: 'name', 
   },  
@@ -224,7 +238,7 @@ export default function Index() {
 
   const getTableData = ({ current, pageSize }, formData={}) => {
   //  const row = Number(value);
-     
+     console.log(line)
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
@@ -239,8 +253,9 @@ export default function Index() {
         meterType,
         pageNum: current,
         pageSize,
+        areaId,
      }
-    
+   
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)
@@ -262,7 +277,7 @@ export default function Index() {
          
             return {
               list: data,
-              total: data.length
+              total: total
             }
          }else {
           return {
@@ -287,6 +302,9 @@ export default function Index() {
   const picker= ['','date', 'month', 'year'][timetype];
   const timechange = (e) => { 
     setTimetype(e);
+    if(e==1) {
+      form.setFieldValue('date', moment(new Date(), 'YYYY-MM-DD'))
+    }
  }
   const CustView = () => {
     
@@ -333,7 +351,7 @@ export default function Index() {
   const onExport =useCallback(() => {   
     let formData = form.getFieldsValue()
     return  getTableData({current: 1, pageSize: total}, formData)
- }, [total])
+ }, [total, concolumns])
   
   let dataProps = {
     value,
@@ -352,11 +370,11 @@ export default function Index() {
 
           <Pagecount showSearch={false}>
              <Contentbox>
-                <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} lineType={value} /> 
+                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,
-                     x: 1300, 
+                     x: 1400, 
                      y: 685
                    }
                   }

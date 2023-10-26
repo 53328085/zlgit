@@ -161,6 +161,7 @@ const chartOpt= {
   ]
 };
 export default function Index() {
+  const projectId = useSelector(state => state.system.menus.projectId)
   const [form] = Form.useForm() 
   const chartRef =useRef()
   const oneLevel = useSelector(state => state.system.onelevel)
@@ -183,8 +184,10 @@ export default function Index() {
     setPattern(e.target.value)
   }
   const getTransformer =async ()=>{
-    await DistributionRoomRuntime.TransformerList(2,1)
-    await DistributionRoomRuntime.GetEnvironment(2,1)
+    //await DistributionRoomRuntime.TransformerList(1,1)
+    // await DistributionRoomRuntime.GetEnvironment(2,1)
+    // await DistributionRoomRuntime.ChartList(2,1)
+    DistributionRoomRuntime.TransformerList(1,1)
   }
   useEffect(()=>{
     drawEcharts(chartRef.current,{...chartOpt,type:2})
