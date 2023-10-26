@@ -137,10 +137,12 @@ export default function MapContainer() {
      
     
     // 创建 infoWindow 实例	
-   /*  var infoWindow = new AMap.InfoWindow({
-      content:  '<div>信息窗体</div>'  
+   var infoWindow = new AMap.InfoWindow({
+      anchor: 'top-center',
+      isCustom: true,
+      content:   `<div style="background: #ff7314; color: #fff"><h2>浙江物联技术有限公司</h2><sub>月明路</sub></div>`
      }) 
-     infoWindow?.open(map) */
+     infoWindow?.open(map, [120.221494, 30.206116]) 
   
 
 

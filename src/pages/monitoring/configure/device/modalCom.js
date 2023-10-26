@@ -77,7 +77,7 @@ export let ErrorMessage=forwardRef(
     return (
       <Modal mold='cust' ref={ErrModalRef} {...other}>
          <Table columns={columns} dataSource={list} style={{marginTop: 32}} scroll={{
-          y: 800
+          y: 650
          }}></Table>
       </Modal>
      

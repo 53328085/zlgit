@@ -45,7 +45,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
  const getTreeData= async (name='')=>{
     console.log('name', name)
     try {
-      if(name!=keyword) setKeyword(name)
+       if(name!=keyword) setKeyword(name)
      
       let params =typeTree == 1 ? {
         projectId,
@@ -111,7 +111,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
      // setTreeId([])
      getTreeData()
      
-  },[areaId])
+  },[areaId, typeTree])
    
    const radiosty = {
     display: 'grid',   
