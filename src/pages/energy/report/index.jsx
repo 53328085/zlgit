@@ -115,8 +115,8 @@ const conscols =[ // 能耗抄表
   },
   {
     title: '能耗(kWh)',
-    dataIndex: 'consume',
-    key: 'consume',
+    dataIndex: 'total',
+    key: 'total',
     width: 92,
   },   
 ]
@@ -351,7 +351,7 @@ export default function Index() {
   const onExport =useCallback(() => {   
     let formData = form.getFieldsValue()
     return  getTableData({current: 1, pageSize: total}, formData)
- }, [total])
+ }, [total, concolumns])
   
   let dataProps = {
     value,

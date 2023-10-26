@@ -1,18 +1,19 @@
-import React, {  useState, useRef } from 'react'
+import React, {  useState, useRef, useMemo, useEffect} from 'react'
 
 
-import {Button,  message, Form, Input, Tree } from 'antd';
+import {Button,  message, Form, Input, Typography, Space, Image } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import {  DesElectric} from '@api/api.js'
-import { cloneDeep } from 'lodash';
+import Cupload from "@com/useUpload.js" 
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
-
-
+import UseTable from '@com/useTable'
+ 
+const {Link} = Typography
 export default function Index ({projectId, areaId}) {
   const aref = useRef()
   const dref = useRef()
@@ -26,92 +27,92 @@ export default function Index ({projectId, areaId}) {
       content
     })
   }
-  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive,} = DesElectric
+  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage} = DesElectric
  
- 
+  const tbcolumns = [
+    {
+      dataIndex: "name",
+      title: "重点设备名称",
+    },
+    {
+      dataIndex: "address",
+      title: "安装位置",
+    },
+    {
+      dataIndex: "imageKey",
+      title: "设备图片",
+      render: (_, record) =>  record.imgsrc ? <Image src={record.imgsrc} height={56} /> : null
+    },
+    {
+      dataIndex: "op",
+      title: "操作",
+     render: (_,record) => (<Space size={32}><Link underline onClick={()=>settingClick(record.id, record.name)}>配置</Link><Link underline onClick={() =>edit(record)}>编辑</Link>
+        <Link underline type="danger" onClick={()=>deleteRecord(record.id)}>删除</Link>
+        </Space>) 
+    },
+  ]
 
-  //树形结构
-  const {TreeNode} = Tree;
+ 
+ 
   const [treeData, setTreeData] = useState([])
-  const getTreeData = () => {
-    return queryDrive({projectId, areaId}).then(res => {
-      if(res.success){
-        setTreeData(res.data)
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { run: queryRun } = useRequest(getTreeData,{
-    refreshDeps: [areaId]
-  })
-
-
-  const nodeTitle = {
-    display: 'flex',
-    position: 'relative',
-    cursor:'default',
-  }
-  const nodeAction = {
-    position: 'absolute',
-    right: 0,
-    width:'208px',
-    display:'flex',
-    justifyContent:'space-around',
-    fontSize:'14px',
-  }
-  const mainStyle={
-    fontSize: 16,
-    color: '#303133',
-    fontWeight: 700
-  }
-  const renderTreeNodes = (data) => {
-    data = cloneDeep(data);
-    let nodeArr = data.map((item) => {
-      let valName = cloneDeep(item.name);
-        item.name = (
-            <div style={nodeTitle}>
-                <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
-                <div style={nodeAction}>
-                   
-                    <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
-                    <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
-                </div>
-            </div>
-        )
-        if(item.nodes){
-            return (
-                <TreeNode title={item.name} key={item.id} dataRef={item}>
-                    {renderTreeNodes(item.nodes)}
-                </TreeNode>
-            )
+  const getTreeData = async () => {
+    let {success, data, errMsg} = await  queryDrive({projectId, areaId})
+     
+      if(success ){         
+        if(Array.isArray(data))  {
+          let promise = data.map(d => QueryImage(d.imageKey));
+          let images = new Map()
+          let res = await Promise.allSettled(promise) ;
+             res.forEach((r) => {
+              let {value } = r
+              if(value.success) {   
+                   images.set(value.data?.imageKey, value.data?.image)      
+                 
+              } 
+             })
+             data.forEach(d => {
+              d['imgsrc'] = images.get(d.imageKey)
+             })
+             setTreeData(data)
+        }else {
+          setTreeData([])
         }
-        return <TreeNode title={item.name} key={item.id}></TreeNode>
-    })
-    return nodeArr;
+      }else{
+        messageContent('error',errMsg)
+      }
+    
   }
+  useEffect(() => {
+    getTreeData()
+  }, [areaId])
+  
+
+ 
+ 
+
   const [modalTitle,setModalTitle] = useState('')
-  const [formLabel,setFormLabel] = useState('')
+  //const [formLabel,setFormLabel] = useState('')
   const [parentId, setParentId] = useState(null)
   const [updateId, setUpdateId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
   const [modalTag, setModalTag] = useState('')
- 
+  const isAdd = modalTag == 'add'
   const addMain = () => {
     
     setModalTitle('新增重点设备')
-    setFormLabel('重点设备名称')
+   // setFormLabel('重点设备名称')
     setParentId(0)
     setModalTag('add')
     aref.current.onOpen()
   }
-  const edit = (id, value) => {
+  const edit = ({id, name, address, imgsrc}) => {
     setModalTitle('编辑重点设备')
-    setFormLabel('重点设备名称')
+   // setFormLabel('重点设备名称')
     setUpdateId(id)
     setModalTag('edit')
-    form.setFieldValue('name', value)
+    form.setFieldValue('name', name)
+    form.setFieldValue('address', address)
+    form.setFieldValue("imageKey",imgsrc)
     aref.current.onOpen()
   }
   const deleteRecord = id => {
@@ -120,36 +121,40 @@ export default function Index ({projectId, areaId}) {
   }
   const onOk = async() => {
     try{
-      const {name} = await form.validateFields();
+      const {name, address, imageKey} = await form.validateFields();
       let params = {
         name,
         parentId,
         areaId,
-        projectId
+        projectId,
+        address,
       }
-      if(modalTag == 'add'){
-        insertDrive(params).then(res => {
+      if(isAdd){
+        insertDrive(params, {image:imageKey}).then(res => {
           if(res.success){
             messageContent('success','新增重点设备成功!')
           }else{
             messageContent('error', res.errMsg)
           }
-          queryRun()
-          aref.current.onCancel()
+          form.resetFields()
+          getTreeData()
+         // aref.current.onCancel()
         })
-      }else if(modalTag == 'edit'){
-        updateDrive({projectId, id: updateId, name}).then(res => {
+      }else {
+        updateDrive({projectId, id: updateId, name, address}, {image:imageKey}).then(res => {
           if(res.success){
             messageContent('success','修改重点设备成功!')
           }else{
             messageContent('error', res.errMsg)
           }
-          queryRun()
+          getTreeData()
           aref.current.onCancel() 
         })
       }
       
-    } catch(error){}
+    } catch(error){
+
+    }
   }
   const onDelete = () => {
     deleteDrive({projectId, id: deleteId}).then(res=> {
@@ -158,7 +163,7 @@ export default function Index ({projectId, areaId}) {
       }else{
         messageContent('error', res.errMsg)
       }
-      queryRun()
+      getTreeData()
       dref.current.onCancel()
     }).catch(error);
   }
@@ -234,39 +239,66 @@ export default function Index ({projectId, areaId}) {
     setTransTag(params)
     setTimeout(()=> {setDeleteDom(false)}, 600)
   }
- 
+  const imgsty = {
+    width: '160px',
+    height: '120px',
+    display: 'flex',
+    backgroundColor: '#f7f7f7',
+    border: '1px dotted #D7D7D7',
+  }
+  const checkImg = (_, value) => {   
+    if (!!value) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('项目Log必须上传'));
+   
+ }
+  const addmodal = useMemo(() => <Custmodl title={modalTitle} ref={aref} custft={isAdd} mold="cust" width={512} onOk={onOk}>
+  <div style={{display:"flex", alignItems: "center"}}>
+    <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'}   autoComplete='off' preserve={false}>
+      <Item label="重点设备名称" name='name' rules={[{required:true, message:'请输入设备名称'}]}>
+        <Input style={{width:'315px'}} placeholder={'请输入设备名称'}></Input>
+      </Item>
+      <Item label="设备安装位置" name='address' rules={[{required:true, message:'请输入地址'}]}>
+        <Input style={{width:'315px'}} placeholder={'请输入地址'}></Input>
+      </Item>
+      <Item label="缩略图" >
+         <div style={imgsty} >
+            <Item noStyle name="imageKey" rules={[
+              {
+                validator: checkImg,
+              },
+            ]} >
+            <Cupload wpx={160} hpx={120} swpx={160} shpx={120}  maximum={100} /> 
+            </Item>
+           </div>
+           <span style={{color: "#515151"}}>（图片尺寸160*120px，容量小于100KB）</span>
+      </Item>
+    </Form>
+  </div>
+</Custmodl>, [modalTitle])
   return (
     <div style={{flex: 1, display: 'flex'}}>
       {contextHolder}
       {transTag == 'open' ? Mask() : null}
      
-      <Titlelayout title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
+      <Titlelayout layout="flex" title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
           <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
         </div>}>
-        <div className={style.lineTree}>
-          <div className={style.treeTitle}>
-            <span className={style.treeItem}>重点设备名称</span>
-            <span className={style.actionItem}>操作</span>
-          </div>
-          <div className={style.treeContent}>
-          { treeData.length>0 ? <Tree  height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
-          </div>
-        </div>
-        {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
+           <div style={{flex: 1, paddingTop: "16px"}}> 
+           <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>
+      
+       
+          
+           </div>
+      </Titlelayout>
+      {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
           <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
         </div>  : null}
-      </Titlelayout>
-      <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
-        <div style={{display:"flex", alignItems: "center"}}>
-          <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
-            <Item label={formLabel} name='name' rules={[{required:true, message:'节点名称不能为空'}]}>
-              <Input style={{width:'315px'}} placeholder={'请输入节点名称'}></Input>
-            </Item>
-          </Form>
-        </div>
-      </Custmodl>
-      <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={onDelete}>
+ 
+       {addmodal}
+      <Custmodl title='删除重点设备' ref={dref}  mold="cust" width={592} type="warn" onOk={onDelete}>
         <div style={{display:"flex", alignItems: "center", marginBottom: 32,fontSize: 16}}>
           <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
           <span> 是否确认删除该重点设备? </span>

@@ -24,13 +24,23 @@ export default function Index() {
         version:'2.0',
         plugins:['AMap.Scale','AMap.ToolBar']
     }).then((AMap)=>{
-        map = new AMap.Map('map');
+        map = new AMap.Map('map', {
+           // mapStyle: 'amap://styles/whitesmoke'
+        });
+        const traffic = new AMap.TileLayer({
+            'autoRefresh': true,     //是否自动刷新，默认为false
+            'interval': 180,         //刷新间隔，默认180s
+          })
         map.addControl(new AMap.Scale())
         map.addControl(new AMap.ToolBar())
         map.add(new AMap.Marker({
-            position:map.getCenter()
+            position:map.getCenter(),
+            
         }));
-        map.on()
+        map.add(traffic)
+        map.remove(traffic)
+        traffic.hide()
+        
     }).catch((e)=>{
         console.error(e);
     });
@@ -49,7 +59,7 @@ export default function Index() {
    <div   id="map" style={{height: "100vh", position: "relative"}}>
      <Info>
         <Paragraph>获取地图级别与中心点坐标</Paragraph>
-        <Text>当前级别： {level}</Text>
+        <Text>当前级别：</Text>
      </Info>
    </div>
   )

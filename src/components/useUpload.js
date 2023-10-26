@@ -177,7 +177,7 @@ const cref = useRef()
     let { name, size } = fileData;
     let limit = Math.ceil(size / 1024);
     let ext = name.split(".")[1];
-    console.log(limit)
+  //  console.log(limit)
    // let enable = ext && ["png", "jpg", "jpeg"].includes(ext.toLowerCase()) && limit < maximum;
     if (ext && !["png", "jpg", "jpeg"].includes(ext.toLowerCase())) {   
        // clearfile()   
@@ -206,7 +206,7 @@ const cref = useRef()
               let wtext = ws ? `宽度大于${wpx}将被按图片比例裁剪。` : ''
               let htext = hs ? `高度大于${hpx}将被按图片比例裁剪。` : ''
               extref.current= extref.current + wtext + htext;
-              console.log(extref.current)
+            //  console.log(extref.current)
               if(extref.current.trim()) {
                 Modal.confirm({
                   title: '图片压缩',

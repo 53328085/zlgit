@@ -3,7 +3,7 @@ import {createPortal,flushSync} from 'react-dom'
 import {Table, message} from 'antd'
 import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
-
+import {nanoid} from '@reduxjs/toolkit'
 
 
 const Divbox = styled.div`
@@ -121,7 +121,7 @@ const download = useCallback(() => {
 
   return (
     <Divbox>
-        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} { ...otherprops}   />
+        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()} { ...otherprops}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
     </Divbox>
   )
