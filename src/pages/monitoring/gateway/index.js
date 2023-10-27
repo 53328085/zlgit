@@ -185,6 +185,7 @@ const onExport = useCallback(() => {
       return
     } else {
       setAreaId(data.areaId)
+      getData
     }
   }
 
@@ -214,8 +215,10 @@ const onExport = useCallback(() => {
   }//数据导出
   useEffect(() => {
     if (areaId) {
-      getData()
-      queryData()
+      getData().then(()=>{
+        queryData()
+      })
+      
     }
   }, [areaId, changeTag])
   useEffect(() => {
