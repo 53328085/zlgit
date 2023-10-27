@@ -1279,6 +1279,7 @@ export const Monitoring = {
     State: (sn) => server.get(`/Monitor/Gateway/State?sn=${sn}`),//重启网关状态
     GatewayImport: (data) => server.post(`/Monitor/Gateway/Import`, data),//导入网关
     ImportElectric: (data) => server.post(`/Monitor/Device/ImportElectric`, data),//导入电表
+    ImportBreaker: (data) => server.post(`/Monitor/Device/ImportBreaker`, data),//导入电表
     ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data),//导入水表
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data),//导入燃气表
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data),//导入传感器

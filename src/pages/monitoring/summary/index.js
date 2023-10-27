@@ -70,7 +70,7 @@ export default function Index() {
   const grid = {
     // 图表 grid
     left: "0px",
-    right: "0",
+    right: "10px",
     top: "30px",
     bottom: "0px",
     containLabel: true,
@@ -99,10 +99,18 @@ const charts=()=>{
       itemWidth: 8,
       itemGap: 20
     },
+    xAxis:
+      {
+        axisLabel:{
+         
+        },
+      }
+    ,
+   
     dataZoom:{
       type: 'inside',
-      start: days>15?'50':'0',
-      end: days>15?'100':'50',
+      // start: days>15?'50':'0',
+      // end: days>15?'100':'50',
     }
   })
   drawEcharts(wlref.current, {
@@ -115,16 +123,30 @@ const charts=()=>{
       itemWidth: 8,
       itemGap: 20
     },
+    xAxis:
+      {
+        axisLabel:{
+         
+        },
+      }
+    ,
     dataZoom:{
       type: 'inside',
-      start: days>15?'50':'0',
-      end: days>15?'100':'50',
+      // start: days>15?'50':'0',
+      // end: days>15?'100':'50',
     }
   })
   drawEcharts(glref.current, {
     dataset: datasetMonthG,
     series: [{ type: "line" ,name:'用气量(m³)'}],
     grid,
+    xAxis:
+      {
+        axisLabel:{
+         
+        },
+      }
+    ,
     legend: {
       icon: 'rect',
       itemHeight: 8,
@@ -133,8 +155,8 @@ const charts=()=>{
     },
     dataZoom:{
       type: 'inside',
-      start: days>15?'50':'0',
-      end: days>15?'100':'50',
+      // start: days>15?'50':'0',
+      // end: days>15?'100':'50',
     }
   })
 }

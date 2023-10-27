@@ -39,6 +39,7 @@ export default function Index(props) {
   let [total, setTotal] = useState(0)
   let [imageList, setimageList] = useState([])
   let [pageNum, setPageNum] = useState(1)
+  let [statevalue,setStateValue] = useState(0)
   let params = {
     projectId: projectId,
     areaId: areaId,
@@ -185,7 +186,9 @@ const onExport = useCallback(() => {
       return
     } else {
       setAreaId(data.areaId)
-      getData
+      setStateValue(0)
+      // getData()
+      
     }
   }
 
@@ -201,6 +204,8 @@ const onExport = useCallback(() => {
     getOverviewData()
   }//网关型号选择
   const handleChangeState = e => {
+    console.log(e)
+    setStateValue(e)
     params.state = e
     getOverviewData()
   }//网关状态选择
@@ -215,10 +220,9 @@ const onExport = useCallback(() => {
   }//数据导出
   useEffect(() => {
     if (areaId) {
-      getData().then(()=>{
-        queryData()
-      })
       
+      getData()
+      queryData()
     }
   }, [areaId, changeTag])
   useEffect(() => {
@@ -264,6 +268,7 @@ const onExport = useCallback(() => {
           </Select>
           {isCard ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>网关状态</span>
             <Select
+              value={statevalue}
               defaultValue={0}
               style={{
                 width: 200, marginLeft: 16

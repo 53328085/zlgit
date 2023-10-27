@@ -24,7 +24,7 @@ const {
     UpdateElectric,
     UpdateFactor,
     DeleteElectric,
-    ImportElectric,
+    ImportBreaker,
     OneLevel
   }
 } = Monitoring
@@ -522,7 +522,7 @@ export default function gateway({ deviceStyle, name }) {
     const formData =new FormData()
     formData.append("file",flies[0])
     formData.append("projectId",projectId)
-    const res = await ImportElectric(formData)
+    const res = await ImportBreaker(formData)
      if(res.success) {
       if (res.data.success) {
         message.success("上传成功")
