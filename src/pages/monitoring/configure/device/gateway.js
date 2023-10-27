@@ -116,8 +116,8 @@ export default function gateway() {
       render: (text, record, index) => {
         return (
           <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>
-            <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>
+            { record.download == 0 && <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>}
+            { record.download == 0 && <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>}
             <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
             <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
           </p>

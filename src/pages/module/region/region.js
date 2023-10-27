@@ -2,6 +2,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useMemo,
 } from "react";
 import {
   Input,
@@ -148,7 +149,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
-  const [sfrom] = Form.useForm();
+
   const nref = useRef(); // 新增，编辑
   const dref = useRef(); // 删除
   
@@ -156,10 +157,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const boxref = useRef();
   const [Record, setRecord] = useState({});
   const [isAdd, setIsAdd] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [deviceSummary, setDeviceSummary] = useState([]);
-  const [deviceSub, setDeviceSub] = useState([]);
-  const [Unselected, setUnSelected] = useState([]);
+
   
   const [tabelData, setTableData] = useState([])
   const [columns, setColumns] = useState([]);
@@ -176,18 +174,12 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     total: 0
   })
  
-  const devices = useRef({
-    unselected: [],
-    deviceSummary: [],
-    deviceSub: [],
-    selected: [],
-  });
+
  
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
-
-  const curareaId = useRef(null);
+ 
   let params = {
     //查询
     pageNum: pagination.current,
@@ -297,174 +289,6 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 
   }
  //   级联选择 end
-
-  //  配置 start
-  const deviceColumns = [
-    {
-      title: "设备编号",
-      dataIndex: "sn",
-      key: "sn",
-    },
-    {
-      title: "设备名称",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "安装地址",
-      dataIndex: "address",
-      key: "address",
-    },
-  ];
-  const drawClose = () => {
-    setOpen(false);
-  };
-  const drawopen = () => {
-    setOpen(true);
-  };
-
-  const getUNselect = async ({ type = 1, areaId, alike = "" } = {}) => {
-    curareaId.current = areaId;
-    console.log(curareaId);
-    try {
-      let { success, data } = await Area.QueryUnusedMeter({
-        projectId,
-        type,
-        areaId,
-        alike,
-      }); // 未选中
-      if (success && Array.isArray(data)) {
-        setUnSelected([...data]);
-        devices.current.unselected = data;
-      } else {
-        setUnSelected([]);
-      }
-    } catch (error) {}
-  };
-  const deviceData = async (record) => {
-    try {
-      /*  let {type, areaId} = record   
-  let {success, data} = await Area.QueryUnusedMeter({projectId, type:1, areaId}) // 未选中 
-   if (success && Array.isArray(data)) {
-    setUnSelected([...data])
-    devices.current.unselected = data
-   }else {
-    setUnSelected([])
-   } */
-     
-   
-      let { areaId } = record;
-      let  topareaid = form.getFieldValue('topAreaId');
-      let topid = level == 1 ? areaId : topareaid
-      await getUNselect({ areaId: topid });
-
-      let {
-        data: { deviceSummary, deviceSub },
-        success: suc,
-      } = await Area.QueryUsedMeter({ projectId, type: 0, areaId }); // 已选中 type: 0
-      if (suc && Array.isArray(deviceSummary)) {
-        setDeviceSummary([...deviceSummary]);
-        devices.current.deviceSub = deviceSub;
-      } else {
-        setDeviceSummary([]);
-      }
-      if (suc && Array.isArray(deviceSub)) {
-        setDeviceSub([...deviceSub]);
-      } else {
-        setDeviceSub([]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const config = async (record) => {
-    try {
-      setRecord({ ...record });
-      deviceData(record).then(() => {
-        drawopen();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows, info) => {
-      devices.current.selected = selectedRows;
-    },
-  };
-
-
-  const onMove = (type) => {
-    let {areaId} = Record
-       
-
-   
-    let selected = devices.current.selected;
-    const choose = (arr) =>
-      arr.filter((a) => {
-        return !selected.find((s) => s.id == a.id);
-      });
-
-    switch (type) {
-      case 1:
-        setDeviceSummary((arr) => [...arr, ...selected]);
-        setUnSelected(choose);
-        break;
-      case 2:
-        setUnSelected((arr) => [...arr, ...selected]);
-        setDeviceSummary(choose);
-        break;
-      case 3:
-        setDeviceSub((arr) => [...arr, ...selected]);
-        setUnSelected(choose);
-        break;
-      case 4:
-        setUnSelected((arr) => [...arr, ...selected]);
-        setDeviceSub(choose);
-        break;
-      default:
-        break;
-    }
-    devices.current.selected = [];
-  };
-
-/*   const configureMeter = async () => {
-    let params = {
-      projectId,
-      areaId: Record.areaId,
-      deviceSummary: deviceSummary.map((i) => i.sn),
-      deviceSub: deviceSub.map((i) => i.sn),
-    };
-    let { success, errMsg } = await Area.ConfigureMeter(params);
-    success &&
-      custMsg({
-        content: "保存成功",
-        onClose: () => {
-          deviceData(Record);
-        },
-      });
-    !success && custMsg({ success, content: errMsg || "数据出错" });
-  }; */
-  const handlersearch = (e) => {
-    let str = e.trim();
-    str &&
-      setDeviceSub((arr) =>
-        arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str))
-      );
-    !str && setDeviceSub([...devices.current.deviceSub]);
-  };
-  const changeUnselected = () => {
-    let params = sfrom.getFieldsValue();
-    console.log(params);
-    try {
-      getUNselect({ areaId: curareaId.current, ...params });
-    } catch (error) {
-      console.log(e);
-    }
-  };
-
-  //  配置 end
-
   const del = (record) => {
     setRecord({ ...Record, ...record });
     dref.current.onOpen();
@@ -525,9 +349,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-              {/*   <Link underline onClick={() => config(record)}>
-                  配置
-                </Link> */}
+              
                 <Link underline onClick={() => edit(record)}>
                   编辑
                 </Link>
@@ -626,18 +448,16 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       let { success, errMsg } = await Area[methods](params);
 
       if(success) {
-        nref.current.onCancel();
-        getTableData();
-        upateOneLevel();
-        message.success({
-          content: isAdd ? "新增成功" : "编辑成功",
-          onClose: () => { 
-           // getTableData();
-          //  upateOneLevel();
-          },
-        });
+           let msg =  isAdd ? "新增成功" : "编辑成功";
+          message.success(msg)
+          getTableData();
+          upateOneLevel();
+          if(isAdd) nform.resetFields()
+          if(!isAdd)  nref.current.onCancel();
+         
+         
       } else {
-        custMsg({ success: false, content: errMsg || "数据出错", duration: 2 });
+         message.warning(errMsg || "数据出错") 
       }
     } catch (error) {
       console.log(error);
@@ -751,6 +571,81 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       })
    
   }
+
+const addmodal = useMemo(()=> <CModal
+width={islngLat ? 1024 : 554}
+title={title}
+ref={nref}
+onOk={onOk}
+custft={isAdd}
+mold="cust"
+>
+<Formbox
+  islngLat={islngLat}
+  rowes={limitlevle.length + 2 + fields.length}
+  form={nform}
+  size="middle"
+  labelCol={{ flex: "7em" }}
+  labelAlign="left"
+  preserve={false}
+  validateMessages={{
+    required: "'${label}' 是必选字段",
+  }}
+>
+  {isAdd
+    ?  
+      
+     level > 1 && <CascaderSct /> 
+    : limitlevle?.map((lv, index, array) => {
+        return (
+          <Item label={`${lv?.name}名称`} name={lv?.name}>
+            <Input disabled={!isAdd} />
+          </Item>
+        );
+      })}
+
+  <Item
+    label={`${name}名称`}
+    name="name"
+    rules={[
+      {
+        required: true,
+      },
+    ]}
+  >
+    <Input />
+  </Item>
+
+  {fields?.map((f, index) => inputType(f.name, f.type))}
+  <Item
+    label="备注"
+    name="remark"
+  >
+    <Input />
+  </Item>
+  {islngLat && (
+    <>
+      <Item
+        label="地址"
+        className="address"
+        name="address"
+        tooltip="请从地图获取地址"
+      >
+        <Input
+          placeholder="请从地图获取地址"
+          allowClear
+          onChange={(e) => mapref.current.serachMap(e.target.value)}
+          value={address.current}
+        />
+      </Item>
+      <div className="map">
+        <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
+      </div>
+    </>
+  )}
+</Formbox>
+</CModal>, [islngLat, isAdd,  title])
+
  useEffect(() => {
       getTableData()
     
@@ -823,220 +718,9 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
-
-      {/* 抽屉 */}
-      {/*  devices.current.deviceSummary = [];
-        devices.current.deviceSub = [] */}
-      <Drawerbox
-        placement="right"
-        onClose={drawClose}
-        open={open}
-        getContainer={() => boxref.current}
-        style={{ position: "absolute" }}
-        closable={false}
-      >
-        <div className="selected">
-          <div className="total">
-            <p className="title">园区总表</p>
-            <UserTable
-              columns={deviceColumns}
-              rowSelection={rowSelection}
-              dataSource={deviceSummary}
-              rowKey="id"
-            />
-          </div>
-          <div className="sub">
-            <p className="title">园区分表</p>
-            <Space size={16}>
-              <Text style={{ color: "#333" }}>设备搜索</Text>
-              <Inptserach
-                allowClear
-                onPressEnter={handlersearch}
-                placeholder="请输入设备编号/安装地址"
-                onSearch={handlersearch}
-              />
-            </Space>
-            <UserTable
-              columns={deviceColumns}
-              rowSelection={rowSelection}
-              dataSource={deviceSub}
-              rowKey="id"
-            />
-          </div>
-        </div>
-        <div className="optab">
-          <div>
-            <Paragraph>选中园区总表</Paragraph>
-            <Space>
-              <Button
-                type="primary"
-                icon={<LeftOutlined style={{ fontSize: "18px" }} />}
-                onClick={() => onMove(1)}
-              ></Button>
-              <Button
-                type="primary"
-                icon={<RightOutlined style={{ fontSize: "18px" }} />}
-                onClick={() => onMove(2)}
-              ></Button>
-            </Space>
-          </div>
-          <div>
-            <Paragraph>选择园区分表</Paragraph>
-            <Space>
-              <Button
-                type="primary"
-                icon={
-                  <LeftOutlined
-                    style={{ fontSize: "18px" }}
-                    onClick={() => onMove(3)}
-                  />
-                }
-              ></Button>
-              <Button
-                type="primary"
-                icon={
-                  <RightOutlined
-                    style={{ fontSize: "18px" }}
-                    onClick={() => onMove(4)}
-                  />
-                }
-              ></Button>
-            </Space>
-          </div>
-          <div>
-            {/* <Button
-              type="primary"
-              block
-              style={{ marginBottom: "16px" }}
-              onClick={configureMeter}
-            >
-              保存
-            </Button> */}
-            <Button block onClick={drawClose}>
-              关闭
-            </Button>
-          </div>
-        </div>
-        <div className="unselected">
-          <p className="title">未选中的设备</p>
-          <Form
-            form={sfrom}
-            initialValues={{
-              type: "1",
-            }}
-          >
-            <Space size={16}>
-              <Item label="设备类型" name="type">
-                <Select
-                  style={{ width: "112px" }}
-                  onChange={changeUnselected}
-                  options={[
-                    {
-                      value: "1",
-                      label: "电表",
-                    },
-                    {
-                      value: "2",
-                      label: "水表",
-                    },
-                    {
-                      value: "3",
-                      label: "燃气表",
-                    },
-                  ]}
-                ></Select>
-              </Item>
-              <Item name="alike" label="设备搜索">
-                <Inptserach
-                  allowClear
-                  placeholder="请输入设备编号/安装地址"
-                  onSearch={changeUnselected}
-                />
-              </Item>
-            </Space>
-          </Form>
-          <UserTable
-            columns={deviceColumns}
-            rowSelection={rowSelection}
-            dataSource={Unselected}
-            rowKey="id"
-          />
-        </div>
-      </Drawerbox>
-
+ 
       {/* 新增 / 编辑*/}
-      <CModal
-        width={islngLat ? 1024 : 554}
-        title={title}
-        ref={nref}
-        onOk={onOk}
-        mold="cust"
-      >
-        <Formbox
-          islngLat={islngLat}
-          rowes={limitlevle.length + 2 + fields.length}
-          form={nform}
-          size="middle"
-          labelCol={{ flex: "7em" }}
-          labelAlign="left"
-          preserve={false}
-          validateMessages={{
-            required: "'${label}' 是必选字段",
-          }}
-        >
-          {isAdd
-            ?  
-              
-             level > 1 && <CascaderSct /> 
-            : limitlevle?.map((lv, index, array) => {
-                return (
-                  <Item label={`${lv?.name}名称`} name={lv?.name}>
-                    <Input disabled={!isAdd} />
-                  </Item>
-                );
-              })}
-
-          <Item
-            label={`${name}名称`}
-            name="name"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Item>
-
-          {fields?.map((f, index) => inputType(f.name, f.type))}
-          <Item
-            label="备注"
-            name="remark"
-          >
-            <Input />
-          </Item>
-          {islngLat && (
-            <>
-              <Item
-                label="地址"
-                className="address"
-                name="address"
-                tooltip="请从地图获取地址"
-              >
-                <Input
-                  placeholder="请从地图获取地址"
-                  allowClear
-                  onChange={(e) => mapref.current.serachMap(e.target.value)}
-                  value={address.current}
-                />
-              </Item>
-              <div className="map">
-                <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
-              </div>
-            </>
-          )}
-        </Formbox>
-      </CModal>
+      {addmodal}
       {/* 删除 */}
       <CModal
         width={554}

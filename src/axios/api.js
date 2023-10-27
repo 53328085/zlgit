@@ -255,13 +255,17 @@ export class DesElectric {
     server.get(
       `Energy/EnergyImportantDesigner/QueryImportmantDevices?projectId=${projectId}&areaId=${areaId}` 
     );
-    static insertDrive = ({projectId,name, areaId}) => // 添加重点设备
+    static insertDrive = ({projectId,name, areaId, address}, data) => // 添加重点设备
     server.post(
-      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}` 
+      `Energy/EnergyImportantDesigner/InsertImportmantDevice?projectId=${projectId}&name=${name}&areaId=${areaId}&address=${address}`,data
     );  
-    static updateDrive = ({projectId,name, id}) => // 更新重点设备
+    static QueryImage = (imageKey) => // 查询设备图片
+    server.get(
+      `Energy/EnergyImportantDesigner/QueryImportmantImage?imageKey=${imageKey}` 
+    ); 
+    static updateDrive = ({projectId,name, id, address}, data) => // 更新重点设备
     server.post(
-      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}` 
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevice?projectId=${projectId}&id=${id}&name=${name}&address=${address}`, data
     );  
 
     static deleteDrive = ({projectId,id}) => // 删除重点设备
