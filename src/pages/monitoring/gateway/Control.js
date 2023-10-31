@@ -89,7 +89,7 @@ const Pending =forwardRef((props, ref) => {
 )
 export default function Control({sn,detail, state,  Custmodal, getDetailData}) { // status 状态 Close, Open
     
-
+    console.log(detail)
     const projectId = useSelector(state => state.system.menus.projectId)
     const [form] = Form.useForm()
     const status =detail?.status['1']
@@ -305,20 +305,20 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
       </Form>
       <div className="ctrol">
         <CustButton onClick={() => onCtrol(0)}
-           src={status=="Open" ? "closea" : 'zha'}
-           disabled={status=="Close"}
+           src={status=="Open"&&detail.control ? "closea" : 'zha'}
+           disabled={status=="Close" || !detail.control}
            imgh="40px"
            style={{...btstyle, 
-            backgroundColor: status=="Open" ? "#237ae4" : '#f2f2f2',
-            color: status=="Open" ? "#fff" : '#ccc'
+            backgroundColor: status=="Open"&&detail.control ? "#237ae4" : '#f2f2f2',
+            color: status=="Open"&&detail.control ? "#fff" : '#ccc'
              }}>远程合闸</CustButton>
         <CustButton onClick={() => onCtrol(1)}
-           src={status=="Close" ? "opena" : 'zha'}
-           disabled={status=="Open"}
+           src={status=="Close"&&detail.control ? "opena" : 'zha'}
+           disabled={status=="Open" ||!detail.control}
            imgh="40px"
            style={{...btstyle, 
-            backgroundColor: status=="Close" ? "#ff5757" : '#f2f2f2',
-            color: status=="Close" ? "#fff" : '#ccc'
+            backgroundColor: status=="Close"&&detail.control ? "#ff5757" : '#f2f2f2',
+            color: status=="Close"&&detail.control ? "#fff" : '#ccc'
             }}>远程分闸</CustButton>
       </div>
       <Custmodal
