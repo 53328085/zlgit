@@ -559,9 +559,10 @@ const getSelected = async ({areaId, type=devietype}) => {
         onClose={drawClose}
         open={open}
         getContainer={() => boxref.current}
-        style={{ position: "absolute" }}
+        style={{ position: "absolute", top: "0px"}}
         closable={false}
         destroyOnClose
+       
       >
         <div className="selected">
           <div className="total">

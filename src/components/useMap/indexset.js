@@ -8,16 +8,16 @@
  * 天地图无法重复初始化
  */
 
-import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useState} from "react";
+import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useState,memo} from "react";
 import {useSelector} from 'react-redux'
-
+ 
 import {currProject} from '@redux/systemconfig'
 import {message} from 'antd'
  
   function Index(props, ref) {
-  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
+  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}, initaddress} = props   // isck 是否允许点击
   
-
+ 
  let {lngLat: projectLnglat} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
@@ -25,6 +25,7 @@ import {message} from 'antd'
   const [isFish, setFish] = useState(false)
   let map = null
   const getlnglat = (str) => {
+     if(typeof str !== "string") return []
      const [lng, lat] =  str?.split(',') || []
      
      return  new T.LngLat(Number.parseFloat(lng), Number.parseFloat(lat))
@@ -64,51 +65,53 @@ import {message} from 'antd'
   }
  
   const searchResult = (result) =>{   
-    let {lon, lat, keyWord} = result.location || {}
+    try {
+     console.log(result)
 		if(result.getStatus() == 0){    
-			map.panTo(result.getLocationPoint(), 16);    
-      addmarker(result.getLocationPoint(), keyWord)
+      let {lon, lat, keyWord} = result.location || {}
+      let latlng = new T.LngLat(lon, lat)
+     map.panTo(latlng, 16);    
+   
+      addmarker(latlng, keyWord)
+     
       setAaddress && setAaddress({lng: lon, lat, address: keyWord})
 		}else{
 			message.error({count: result.getMsg()});
 		}
-		
+   } catch (error) {
+      console.log(error)
+    }
 	}
   const serachMap = (value) => {   
      console.log(value)
-     console.log(map)
+   //  console.log(map)
     try {
-      map &&  map.clearOverLays();
+    //  map &&  map.clearOverLays();
       geocoder.getPoint(value, searchResult)
     } catch (error) {
       console.log(error)
     }
 		
   }
-  const mapClick = (result) =>  {  
-     
-    if(result.getStatus() == 0) {
+ 
+  const mapClick = (res) =>  {  
+    
+    if(res.getStatus() == 0 && res.addressComponent) {
       
-      let {addressComponent,  location: {lon, lat},} = result
-      console.log(result)
+      let {addressComponent,  location: {lon, lat},} = res
+      console.log(res)
       let {city, province, county, address, address_distance,road='', poi='', poi_position='',poi_distance='',} = addressComponent
       
       let custaddress = city + county + road + poi
-      console.log(custaddress);
-      try {
-        console.log(result.getAddress())
-      } catch (error) {
-        console.log(error);
-      }
-      setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
+     // console.log(custaddress);
      
+      setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
+      map.clearOverLays();
       addmarker(new T.LngLat(lon, lat), custaddress)
     }else {
 
       setAaddress && setAaddress({})
     }
-
-    
    
   }
   useImperativeHandle(ref, () => ({
@@ -117,6 +120,7 @@ import {message} from 'antd'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
+
     let latlng
     if(defaultpoint) {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
@@ -126,8 +130,8 @@ import {message} from 'antd'
       
     if(!latlng) return;
 
-    map = new T.Map("map");
-   
+    map = new T.Map("tmap");
+    console.log(T)
     setFish(true);
    
     // let dom = document.getElementById("mapBox")
@@ -135,29 +139,29 @@ import {message} from 'antd'
      
       // setMapkey(Math.random().toString())
        map.centerAndZoom(latlng, 16)    
-       map.enableDrag();
+      map.enableDrag();
+     
       if (Array.isArray(defaultpoint)) {
        defaultpoint.forEach(item => {
          let {lnglat, text} = item
          addInfo(lnglat, text)
        })
-      }else {
-        geocoder.getLocation(latlng,mapClick)
+      } 
+      if(initaddress)   {
+        addmarker(latlng, initaddress)
       }
       } catch (error) {
         console.log(error)
       }
-    
-     map.addEventListener("click", (e) => {   
-       if(isck) return;
-     
-       geocoder.getLocation(e.lnglat,mapClick)
+   
+     map.addEventListener("click", (e) => {
+      if(isck) return;
+      geocoder.getLocation(e.lnglat,mapClick)
      });
- 
-    
-  }, [defaultpoint])
+  
+  }, [defaultpoint, initaddress])
   return (
-    <div style={{width: "100%", height: '100%', touchAction: "none"}}    id="map"  >
+    <div style={{width: "100%", height: '100%', touchAction: "none"}}    id="tmap"  >
 
     </div>
   /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >

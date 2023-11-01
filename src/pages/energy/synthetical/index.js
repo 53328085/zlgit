@@ -61,7 +61,8 @@ const Custspan = styled.span`
   font-size: 14px;
   color: #515151;
   display: flex;
-  justify-content: ${(props) => (props.jc ? "flex-start" : "space-between")};
+// justify-content: ${(props) => (props.jc ? "flex-start" : "space-between")};
+justify-content: space-between;
   span {
     color: #999;
     padding-left: 1em;
@@ -661,7 +662,7 @@ const CoalStandard =({data={}}) => {
              </Tabsbox>
              <Chartbox  data={detail} />
            </div>
-           {tabvalue == 1 ? <CoalStandard data={coalStandard}/> : <Electric data={consume} des={analysisDes} /> }
+           {tabvalue == 1 ? <CoalStandard data={coalStandard} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes} key="Electric" /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">

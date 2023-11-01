@@ -100,6 +100,7 @@ import {CustButton} from "@com/useButton"
   .map { 
     display: flex;
     height: 370px;
+    width: 624px;
     padding-left: 96px;
   }
 }
@@ -259,9 +260,9 @@ export default function ProjectSet({projectId}) {
   const { Item } = Form;
   const { TextArea } = Input;
 
- const [lngLat, setLngLat] = useState()
-
-
+ 
+ const [address, setAddress] = useState()
+ 
   const params = {   
     id: '',
     validStageTime: "", //项目有效期
@@ -301,8 +302,9 @@ const queryProjectInfo = async () => {
          params[key] = data[key];
       }
     }
-
-    setLngLat(data['lngLat'])
+    setAddress(data.address)
+   
+ 
     const bool = {}
     for(let b of module) {
       bool[b] = Boolean(data[b])
@@ -360,7 +362,24 @@ const setAaddress = (value) => {
 // const serachMap =  useMap({id: "map", lngLat, setAaddress})
 
 // console.log(serachMap)
-  const onInput = (e) =>  map.current.serachMap(e.target.value)
+ 
+const valueref = useRef(address)
+const onInput = (e) =>  {
+   console.log(address)
+   const value = e.target.value?.trim()
+   console.log(value)
+   if(value) {
+     valueref.current = value
+     map.current?.serachMap(value)
+   }
+}
+ 
+ 
+
+
+
+
+ 
 const onFinish = async (values) => {
   try {
     for(let b of module) {
@@ -517,7 +536,7 @@ useEffect(() => {
             ]}
             tooltip="请在地图上点击获取"
             > 
-          <Input placeholder="请输入详细地址"   onChange={onInput}  />         
+          <Input placeholder="请输入详细地址"  onBlur={onInput}  />         
       </Item>
       <Item label="经纬度"  name="lngLat" rules={[  
               {
@@ -527,18 +546,16 @@ useEffect(() => {
             ]}> 
               <Input placeholder="经纬度" /> 
       </Item>
-  {/*   <div id="map"></div> */}
+ 
     
-   <div className='map'> 
-         <Mapcom setAaddress={setAaddress} lngLat={lngLat} ref={map} />         
+      <div className='map'> 
+         <Mapcom setAaddress={setAaddress} address={address}  ref={map} />         
       </div> 
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
       <Item label="项目备注"   name="remark"> 
         <TextArea placeholder="项目详细信息" maxLength={99} style={{height: '32px'}} />
       </Item> 
-      {/* <div className="save">
-         <Button type="primary" htmlType="submit">保存</Button>
-      </div> */}
+    
       </div>
     </Formbox>
     </Titlelayout>

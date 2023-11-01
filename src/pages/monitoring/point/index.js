@@ -65,6 +65,12 @@ export default function Index(props) {
       id: 'id'
     },
     {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      id: 'id'
+    },
+    {
       title: '设备型号',
       dataIndex: 'category',
       key: 'category',
