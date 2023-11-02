@@ -340,14 +340,19 @@ export default function Index() {
       </div>
   )
   const getRoomList =async (projectId,roomId)=>{
-    const resp = await distributionRoom.RoomList(projectId,roomId)
-    if(resp.success){
-      console.log(resp)
-      dispatch(getRoomId(resp.data))
-      
-      setRoomList(resp.data)
-      form.setFieldValue('roomId',resp.data[0][['id']])
+    try {
+      const resp = await distributionRoom.RoomList(projectId,roomId)
+      if(resp.success){
+        console.log(resp)
+        dispatch(getRoomId(resp.data))
+        
+        setRoomList(resp.data)
+        form.setFieldValue('roomId',resp.data[0][['id']])
+      }
+    } catch (error) {
+       console.log(error)
     }
+   
   }
   useEffect(() => {
     
@@ -357,7 +362,7 @@ export default function Index() {
     drawEcharts(useElRef.current,{...uselopts,type:2}) 
   })
   useEffect(()=>{
-    getRoomList(projectId,areaOptions[0].id)
+   if(Array.isArray(areaOptions) && areaOptions.length > 0) getRoomList(projectId,areaOptions[0].id)
   },[roomlist.length])
   return (
     <CustContext.Provider value={{form}}>

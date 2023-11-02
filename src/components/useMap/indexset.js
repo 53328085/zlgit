@@ -10,20 +10,21 @@
 
 import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useState,memo} from "react";
 import {useSelector} from 'react-redux'
- 
+import {Fallack} from "@com/useError"
 import {currProject} from '@redux/systemconfig'
 import {message} from 'antd'
- 
+
   function Index(props, ref) {
-  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}, initaddress} = props   // isck 是否允许点击
+    let map = null
+  const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}, } = props   // isck 是否允许点击
   
  
- let {lngLat: projectLnglat} = useSelector(currProject);
+ let {lngLat: projectLnglat, address} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
    
-  const [isFish, setFish] = useState(false)
-  let map = null
+ 
+ 
   const getlnglat = (str) => {
      if(typeof str !== "string") return []
      const [lng, lat] =  str?.split(',') || []
@@ -44,24 +45,30 @@ import {message} from 'antd'
      })
      map.addOverLay(marker);
      map.addOverLay(label)
-  }
+  } 
  
   const addInfo = (str, text='') => {
-     let latlng = getlnglat(str);
-     let marker = new  T.Marker(latlng);
-     let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
-   //  infoWin.setLngLat(latlng);     
+    try {
+      console.log(str)
+      let latlng = getlnglat(str);
+      let marker = new  T.Marker(latlng);
+      let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
+    //  infoWin.setLngLat(latlng);     
+     
+      map.addOverLay(marker);
+     // map.addOverLay(infoWin)
+     marker.addEventListener("mouseover", function() {
+      
+       marker.openInfoWindow(infoWin);
+      } )
+      marker.addEventListener("mouseout",function() {
+       marker.closeInfoWindow(infoWin)
+      }) 
+      
+    } catch (error) {
+      console.log(error)
+    }
     
-     map.addOverLay(marker);
-    // map.addOverLay(infoWin)
-    marker.addEventListener("mouseover", function() {
-     
-      marker.openInfoWindow(infoWin);
-     } )
-     marker.addEventListener("mouseout",function() {
-      marker.closeInfoWindow(infoWin)
-     }) 
-     
   }
  
   const searchResult = (result) =>{   
@@ -70,7 +77,7 @@ import {message} from 'antd'
 		if(result.getStatus() == 0){    
       let {lon, lat, keyWord} = result.location || {}
       let latlng = new T.LngLat(lon, lat)
-     map.panTo(latlng, 16);    
+     map.panTo(latlng, 18);    
    
       addmarker(latlng, keyWord)
      
@@ -120,49 +127,46 @@ import {message} from 'antd'
   //const [mapkey, setMapkey] = useState(Math.random().toString())
   //const mapkey = Math.random().toString()
   useEffect(() => {
-
+    try {
+  
     let latlng
     if(defaultpoint) {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
     }else {
       latlng = getlnglat( "120.22830511467954,30.21229461177818")
     }
-      
-    if(!latlng) return;
-
-    map = new T.Map("tmap");
-    console.log(T)
-    setFish(true);
    
-    // let dom = document.getElementById("mapBox")
-     try {
+     if(!map) {
      
-      // setMapkey(Math.random().toString())
-       map.centerAndZoom(latlng, 16)    
+      map =new T.Map("tmap");
+      map.centerAndZoom(latlng, 18)    
       map.enableDrag();
-     
+      if(latlng && address)  addmarker(latlng, address)
       if (Array.isArray(defaultpoint)) {
-       defaultpoint.forEach(item => {
-         let {lnglat, text} = item
-         addInfo(lnglat, text)
-       })
-      } 
-      if(initaddress)   {
-        addmarker(latlng, initaddress)
-      }
-      } catch (error) {
-        console.log(error)
-      }
-   
-     map.addEventListener("click", (e) => {
-      if(isck) return;
-      geocoder.getLocation(e.lnglat,mapClick)
-     });
-  
-  }, [defaultpoint, initaddress])
-  return (
-    <div style={{width: "100%", height: '100%', touchAction: "none"}}    id="tmap"  >
+        defaultpoint.forEach(item => {
 
+          let {lnglat, text} = item
+          addInfo(lnglat, text)
+        })
+       }      
+      map.addEventListener("click", (e) => {
+        if(isck) return;
+        geocoder.getLocation(e.lnglat,mapClick)
+       });
+      }
+     
+    } catch (error) {
+      console.log(error)
+    }
+     return () => {
+      map = null
+     }
+  }, [defaultpoint])
+  return (
+    <div style={{width: "100%", height: '100%',  touchAction: "none"}} id="tmap">
+         
+            { !window.T  && <Fallack />}
+           
     </div>
   /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
 

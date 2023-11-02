@@ -101,7 +101,7 @@ import {CustButton} from "@com/useButton"
     display: flex;
     height: 370px;
     width: 624px;
-    padding-left: 96px;
+    margin-left: 96px;
   }
 }
   .save {
@@ -363,7 +363,7 @@ const setAaddress = (value) => {
 
 // console.log(serachMap)
  
-const valueref = useRef(address)
+
 const onInput = (e) =>  {
    console.log(address)
    const value = e.target.value?.trim()
@@ -549,7 +549,7 @@ useEffect(() => {
  
     
       <div className='map'> 
-         <Mapcom setAaddress={setAaddress} address={address}  ref={map} />         
+         <Mapcom setAaddress={setAaddress}   ref={map} />         
       </div> 
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
       <Item label="项目备注"   name="remark"> 

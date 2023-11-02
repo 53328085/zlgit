@@ -124,8 +124,8 @@ function Main({areaId, siteId }) {
   }
   const QueryReports = ({ current, pageSize }, form) => {
     let { time, ...rest } = form
-    let start = time[0].format('YYYY-MM-DD')
-    let end = time[1].format('YYYY-MM-DD')
+    let start = time[0]?.format('YYYY-MM-DD')
+    let end = time[1]?.format('YYYY-MM-DD')
     let params = {
       pageNum: current,
       pageSize,
@@ -150,6 +150,8 @@ function Main({areaId, siteId }) {
           total: 0
         }
       }
+    }).catch(e => {
+      console.log(e)
     })
 
   }
@@ -192,7 +194,7 @@ function Main({areaId, siteId }) {
     }
   }
   useEffect(() => {
-    getRoomList(projectId, areaOptions[0].id)
+    if(areaOptions.length > 0)  getRoomList(projectId, areaOptions[0].id)
   }, [roomlist.length])
 
   return (

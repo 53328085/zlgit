@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, memo, forwardRef, useImperativeHandle, useRef } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate, useParams, useLoaderData } from "react-router-dom";
  
@@ -275,6 +275,35 @@ const Title = styled.div`
   align-items: flex-end;
 `;
 
+const Cord =forwardRef((props, ref) => {
+  let [codekey, setCodeKey] = useState()
+  let [codeUrl, setCodeUrl] =useState()
+  useImperativeHandle(ref, ()=> ({
+     code: codekey
+  }))
+  const getCode = async () => {
+    try {
+      let {data, success} = await  Logapi.GetCode()
+      if(success) {  
+        let {key, image} = data || {}
+        setCodeKey(key)
+        setCodeUrl(image)
+
+      }
+    } catch (error) {
+     
+    }
+      
+ }
+  useEffect(() => {
+    console.log('render')
+    getCode()
+  }, [])
+  return (
+    <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> 
+  )
+}) 
+
 const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
@@ -481,18 +510,21 @@ function UserLog() {
     marginRight: "16px",
   };
 
- 
+
   const Userlog = () => {
     let initmemorize = useSelector(selectMemorize);
     let { name } = useSelector(selectUser);
-    let [codekey, setCodeKey] = useState()
-    let [codeUrl, setCodeUrl] =useState()
+  //  let [codekey, setCodeKey] = useState()
+   // let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
-    const getCode = async () => {
+ 
+    const codekey = useRef()
+    const getcode = useMemo(() => <Cord ref={codekey} />, [])
+   /*  const getCode = async () => {
        try {
          let {data, success} = await  Logapi.GetCode()
          if(success) {  
@@ -505,13 +537,13 @@ function UserLog() {
         
        }
          
-    }
+    } */
     
   /*   store.subscribe(() => {
       initmemorize = store.getState()?.memorize;
     }); */
     useEffect(() => {
-      getCode();
+    //  getCode();
       return () => {
         setLoading(false);
       };
@@ -525,7 +557,7 @@ function UserLog() {
         form={userform}
         name="login"
         onFinish={(value) => {         
-          onSubmit(value, 0, codekey)
+          onSubmit(value, 0, codekey.current.code)
         }}
         onFinishFailed={onFinishFailed}
         initialValues={{
@@ -606,7 +638,9 @@ function UserLog() {
             placeholder="请输入验证码"
           />
           </Item>
-           {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> }
+          {getcode}
+         
+         {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
            </Input.Group>
            </Itembox>
          
@@ -801,9 +835,11 @@ function UserLog() {
     </Logbox>
   );
 }
+
 export default function Login() {
  // const routeData = useLoaderData();
  // console.log(routeData)
+  
   const dispatch = useDispatch();
   const { systemLogoImage, systemBackImage, englishTitle="Integrated Energy Service Platform", literal } = useSelector(systemConfigInfo) || {}
   const enchtitle = useSelector(mixtitle)
@@ -811,7 +847,7 @@ export default function Login() {
  const hostname = process.env.NODE_ENV === "production"
     ? new URL(window.location.href).hostname
     : "10.5.7.60";
-  
+ 
  useEffect(() => {
   dispatch(systemConfig(hostname)).then(res => {   
     let {success, data} = res.payload   
@@ -824,7 +860,8 @@ export default function Login() {
     <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
         <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
-        <UserLog />
+        <UserLog />  
+     
       </Logmain>
     </LoginLayout>
   );

@@ -51,18 +51,24 @@ export default function Index({form,projectId}){
     ])
     
       const getTreeData=async (roomId)=>{
-        const res =  await DistributionRoomRuntime.LineTree(projectId,roomId)
-        if(res.success){
-          setTreeData(res.data)
-          generateList(res.data);
-        }else{
-          message.error(res.errMsg)
+        try {
+          const res =  await DistributionRoomRuntime.LineTree(projectId,roomId)
+          if(res.success && Array.isArray(res.data)){
+            setTreeData(res.data)
+            generateList(res.data);
+          }else{
+            message.error(res.errMsg)
+          }
+        } catch (error) {
+          console.log(error)
         }
+       
       } 
       
     
       let dataList = useRef([]);
       const generateList = data => {
+        if(!Array.isArray(data)) return;
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { id, name } = node;
@@ -126,7 +132,7 @@ export default function Index({form,projectId}){
     //tree={loop(treeData)}会造成编辑树功能无法重新渲染树，node中input渲染不出来
       const loop = data =>
       {
-        if(data.length>0){
+        if(Array.isArray(data) && data.length>0){
           return  data.map(item => {
             // console.log(item)
             const index = item.name.indexOf(searchValue);

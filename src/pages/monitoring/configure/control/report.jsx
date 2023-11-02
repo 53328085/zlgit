@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer} from 'antd'
+import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer, Checkbox, message} from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
@@ -8,8 +8,8 @@ import Titlelayout from '@com/titlelayout'
 import {CustButton, ExportExcel} from '@com/useButton'
 import UseSerach, {AreaSelect} from '@com/useSerach'
 import Usetable from '@com/useTable'
-import {OperationLogRuntime} from '@api/api'
-import Custmodal from '@com/useModal'
+import {AutoValve} from '@api/api'
+ import Custmodal from '@com/useModal'
 import redwarn from '@imgs/redwarn.png'
 import successIcon from '@imgs/success.png'
 import Drag from './Drag'
@@ -200,60 +200,168 @@ const stepcolumns = [
     </Stepconent>
     )
   }
+  let week =  [
+    {label: '周一', value: 1},
+    {label: '周二', value: 2},
+    {label: '周三', value: 3},
+    {label: '周四', value: 4},
+    {label: '周五', value: 5},
+    {label: '周六', value: 6},
+    {label: '周日', value: 7},
+  ]
+  let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
+
+ const Addmodal = memo(({title, modal, isAdd, onOk, form}) => {
+ return  <Custmodal
+  title={title}
+  ref={modal}
+  mold="cust"
+  width="820px"
+  custft={isAdd}
+  onOk={onOk}
+  >
+    <Form
+      form={form}
+     layout="horizontal"
+     labelCol={{span: 5}}
+     colon={false}
+     labelAlign='left'
+     style={{width: "496px"}}
+   >
+     <Form.Item label="选择园区" name="areaId">
+        <AreaSelect />
+     </Form.Item>
+     <Form.Item label="策略名称" name="name">
+        <Input />
+     </Form.Item>
+     <Form.Item label="执行周期" name="cycle">
+        <Select 
+        
+        options={[
+         {value: 1, label: "每日"},
+         {value: 2, label: "每周"},
+         {value: 3, label: "每月"}
+        ]}></Select>
+     </Form.Item>
+       
+     
+         <Item  shouldUpdate   noStyle  >
+            {
+             ({getFieldValue}) => {
+              let type;
+              type= getFieldValue('cycle')
+              let options = [[],[], week, days][type]
+               if(type === 1 || !type) return null
+               return ( 
+                  <Item name="cycleTime" label="选择重复">
+                   <Checkbox.Group options={options}    /> 
+                  </Item>
+               )
+             }
+            } 
+           </Item>
+        
+     <Form.Item label="执行分闸" name="autoOpenTime">
+       <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行分闸时间' />
+     </Form.Item>
+     <Form.Item label="执行合闸" name="autoCloseTime">
+       <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行合闸时间' />
+     </Form.Item>
+     <Form.Item label="备注" name="remark">
+       <Input />
+     </Form.Item>
+   </Form>
+  </Custmodal>
+ })
+
+
  function Main({projectId, areaId}) {
    const [form] = Form.useForm()
-  
+ 
+   
+ 
    const [open, setOpen] = useState(false)
    const [keycode, setKeycode] = useState(0)
    const [total, setTotal] = useState(0)
    const modal = useRef()
    const stepmodl = useRef()
    const delmo = useRef()
-   const exportref = useRef()
-   const [title, setTitle] = useState('')
+   const delId = useRef()
+   const exportref = useRef()   
+   const [isAdd, setIsAdd] = useState(true)
+   const title = isAdd ? '新增自动策略控制' : '编辑自动策略控制'
    const edit = () => {
-    setTitle('自动策略控制')
+    setIsAdd(false)
     modal.current.onOpen()
    }
-   const del = () => {
-    delmo.current.onOpen()
-   }
+
    const add = () => {
-    setTitle('新增自动策略控制')
+    setIsAdd(true)
     modal.current.onOpen()
+   }
+
+   const config = async (planId) => {
+     try {
+       let params = {
+         projectId,
+         planId,
+         device: []
+       }
+       await AutoValve.QueryUsedDevice({projectId, areaId, planId})
+       await AutoValve.ConfigureDevice(params)
+     } catch (error) {
+      
+     }
+
    }
    const onExport = () => {
     exportref.current.onOpen()
    }
+
+   const view = async (planId) => {
+     try {
+      let params = {
+        projectId,
+        areaId,
+        planId,
+        dedeviceStyle: 0,
+        alike: ''
+      }
+      await AutoValve.GetDeviceConfigure(params)
+     } catch (error) {
+       console.log(error)
+     }
+     
+   }
    const columns = [
     {
         title: '策略名称',
-        dataIndex: 'date',
-        key: 'date',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center'
     },
     {
         title: '周期',
-        dataIndex: 'eventType',
-        key: 'eventType',
+        dataIndex: 'cycleTime',
+        key: 'cycleTime',
         align: 'center'
     },
     {
       title: '分闸执行时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'autoOpenTime',
+      key: 'autoOpenTime',
       align: 'center'
      },
      {
       title: '合闸执行时间',
-      dataIndex: 'runtime',
-      key: 'runtime',
+      dataIndex: 'autoCloseTime',
+      key: 'autoCloseTime',
       align: 'center'
      },
      {
       title: '策略说明',
-      dataIndex: 'info',
-      key: 'info',
+      dataIndex: 'remark',
+      key: 'remark',
       align: 'center'
      },
      {
@@ -261,39 +369,36 @@ const stepcolumns = [
       dataIndex: 'device',
       key: 'device',
       align: 'center',
-      render: (text) => {
-        return <Link onClick={() => setOpen(true)}>查看详细</Link>
-      }
+      render: (_, record) => <Link underline onClick={() => view(record.id)}>查看详细</Link>
      },
      {
       title: '操作',
       dataIndex: 'op',
       key: 'op',
       align: 'center',
-      render: (text) => {
+      render: (_, record) => {
         return <Space size={32}>
+          <Link underline onClick={() => config(record.id)}>配置</Link>
           <Link underline onClick={() => edit(true)}>编辑</Link>
-          <Link underline type="danger" onClick={() => del(true)}>删除</Link>
+          <Link underline type="danger" onClick={() => del(record.id)}>删除</Link>
           </Space>
       }
      },
    ]
 
- const QueryReports =  ({current, pageSize}, form) => {   
-    let {time, ...rest} = form
-   // let start = time[0].format('YYYY-MM-DD')
-   // let end = time[1].format('YYYY-MM-DD')
+ const QueryReports =  ({current, pageSize}) => {   
+   
+  
     let params = {
       pageNum: current,
       pageSize,
-    //  start,
-    //  end,
+      areaId,
       projectId,
-    
+      alike: ''
      
-      ...rest
+     
     }
-    return OperationLogRuntime.QueryLogsByPage(params).then(res => {
+    return AutoValve.getPageData(params).then(res => {
       let {success, data, total} = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
@@ -310,29 +415,63 @@ const stepcolumns = [
     })
    
   }
-  const {tableProps, search} = useAntdTable(QueryReports, {
-    form,
-    defaultParams: [{pageSize: 14, pageNum: 1}, {
-      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-      end: moment().format('YYYY-MM-DD'),
-      projectId, 
-      
-      content : "",
-      type: 0,
-      status: 0
-
-    }],
-    refreshDeps: [projectId]
+  const {tableProps, refresh} = useAntdTable(QueryReports, {
+    defaultPageSize: 14,
+    refreshDeps: [areaId]
   })
   
-  const {submit} = search
+  const del = (id) => {
+    delId.current = id
+    delmo.current.onOpen()
+   }
+   const delOk = async () => {
+     try {
+      let param = {
+        projectId,
+        id: delId.current
+       }
+      let {success, errMsg} =  await AutoValve.Delete(param);
+      if(success) {
+        message.success("删除成功")
+        delmo.current.onCancel()
+        run()
+      }else {
+        message.warning(errMsg|| "数据出错")
+      }
+     } catch (error) {
+      
+     }
+    
+   }
   
 
   const tableref = useRef()
-  const onStep = () => {
-    modal.current.onCancel()
-    stepmodl.current.onOpen()
-  }
+  const onOk = useCallback(async() => {
+     try {
+      let {autoCloseTime, autoOpenTime, ...rest} = await  form.validateFields();
+     
+      let params = {
+        ...rest,
+        autoCloseTime: autoCloseTime.format("HH:mm:SS"),
+        autoOpenTime: autoOpenTime.format('HH:mm:SS'),
+        projectId,
+      }
+      let handler = isAdd ? 'Add' : 'Update'
+      let {success, errMsg} = await  AutoValve[handler](params)
+      let content = isAdd ? '新增成功' : '编辑成功';
+      if(success) {
+        message.success(content);
+        if(isAdd) form.resetFields();
+        if(!isAdd)   modal.current.onCancel();
+        refresh()
+      }else {
+        message.warning(errMsg || "数据出错")
+      }
+     
+     } catch (error) {
+        console.log(error)
+     }
+  }, [isAdd])
   const onBack =() => {
     stepmodl.current.onCancel()
     modal.current.onOpen()
@@ -422,13 +561,14 @@ const stepcolumns = [
       >
          <Usetable columns={errColumns} ></Usetable>
       </Custmodal>
-    <Custmodal
+      <Addmodal title={title} modal={modal} isAdd={isAdd} onOk={onOk} form={form} />
+   {/*  <Custmodal
      title={title}
      ref={modal}
      mold="cust"
      width="820px"
-     okText="下一步"
-     onOk={onStep}
+     custft={isAdd}
+     onOk={onOk}
      >
        <Form
          form={form}
@@ -438,33 +578,53 @@ const stepcolumns = [
         labelAlign='left'
         style={{width: "496px"}}
       >
-        <Form.Item label="选择园区" name="area">
+        <Form.Item label="选择园区" name="areaId">
            <AreaSelect />
         </Form.Item>
         <Form.Item label="策略名称" name="name">
            <Input />
         </Form.Item>
-        <Form.Item label="执行周期" name="life">
-           <Select options={[
-            {value: "day", label: "每日"},
-            {value: "week", label: "每周"},
-            {value: "month", label: "每月"}
+        <Form.Item label="执行周期" name="cycle">
+           <Select 
+           
+           options={[
+            {value: 1, label: "每日"},
+            {value: 2, label: "每周"},
+            {value: 3, label: "每月"}
            ]}></Select>
         </Form.Item>
-        <Form.Item label="执行分闸" name="life">
+          
+        
+            <Item  shouldUpdate   noStyle  >
+               {
+                ({getFieldValue}) => {
+                 let type;
+                 type= getFieldValue('cycle')
+                 let options = [[],[], week, days][type]
+                  if(type === 1 || !type) return null
+                  return ( 
+                     <Item name="cycleTime" label="选择重复">
+                      <Checkbox.Group options={options}    /> 
+                     </Item>
+                  )
+                }
+               } 
+              </Item>
+           
+        <Form.Item label="执行分闸" name="autoOpenTime">
           <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行分闸时间' />
         </Form.Item>
-        <Form.Item label="执行合闸" name="life">
+        <Form.Item label="执行合闸" name="autoCloseTime">
           <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行合闸时间' />
         </Form.Item>
-        <Form.Item label="备注">
+        <Form.Item label="备注" name="remark">
           <Input />
         </Form.Item>
       </Form>
-     </Custmodal>
+     </Custmodal> */}
      
 
-     <Custmodal
+ {/*     <Custmodal
      title="选择执行设备"
      ref={stepmodl}
      mold="cust"
@@ -475,7 +635,7 @@ const stepcolumns = [
      onCancel={onBack}
      >
       <Stepcom />
-     </Custmodal>
+     </Custmodal> */}
 
 
      <Custmodal
@@ -485,7 +645,7 @@ const stepcolumns = [
         width={592}
         ref={delmo}
         title="删除"
-       
+        onOk={delOk}
        
       >
         <div
