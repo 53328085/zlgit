@@ -63,7 +63,9 @@ export function cipher(name, pwd){
   return md5(`chint_${name}_${pwd}_wulian`)
    
 }
-
+export function getdays(){ // 获取当前月份的天数
+   return new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
+}
 export  const Statebox = styled.div`
   position: absolute;
   top: ${props => props.top};

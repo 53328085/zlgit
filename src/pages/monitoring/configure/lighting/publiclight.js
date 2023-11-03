@@ -173,7 +173,7 @@ export default function parkstreet({areaList,levelname}) {
   }
   //打开新增窗口
   const addopen=()=>{
-    if(!levelname.current){
+    if(!levelname){
       message.warning('请添加区域')
       return
     }

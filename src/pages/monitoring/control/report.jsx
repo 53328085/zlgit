@@ -153,9 +153,7 @@ const controlcolumns = [
       }
      },
    ]
- const vdata = [
-  {date: "自动控制策略01", eventType: "每日", "time": "07:00：00", info: "学生寝室定时通断电策略", device: ''}
- ]
+ 
   const QueryReports =  ({current, pageSize}, form) => { 
       console.log(current)
        let {alike} = form;
@@ -168,7 +166,7 @@ const controlcolumns = [
          
       }
     
-    console.log(params)
+   
     return AutoValve.getPageData(params).then(res => {
       let {success, data, total} = res
       setTotal(total)
