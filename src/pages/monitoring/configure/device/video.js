@@ -626,7 +626,7 @@ export const FormComp = (props) => {
   console.log(583,levelname)
   const channelList = Array(1, 2, 3, 4, 5, 6, 7, 8).map((item, index) => ({ label: index + 1, value: index + 1 }))
   const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
-  const yumingpattern =  /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
+
   const changeCameraType = (v, option) => {
     setCamera(v)
   }
@@ -699,7 +699,7 @@ export const FormComp = (props) => {
           </Form.Item>
           {
             camera === 2 ? <>
-              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: yumingpattern, message: '请输入正确的服务器' }]}>
+              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true, message: '流媒体服务器地址必须' }]}>
                 <Input />
               </Form.Item>
               <Form.Item label="端口号" name="port" rules={[{ required: true }, {
@@ -717,7 +717,7 @@ export const FormComp = (props) => {
               }]}>
                 <Input />
               </Form.Item>
-              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true, message: '设备IP地址必须' }]}>
                 <Input />
               </Form.Item>
             </> : null
@@ -787,7 +787,6 @@ export const EditFormComp = (props) => {
   }]
   const channelList = Array(1, 2, 3, 4, 5, 6, 7, 8).map((item, index) => ({ label: index + 1, value: index + 1 }))
   const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
-  const yumingpattern =  /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
   const changeCameraType = (v, option) => {
     setCamera(v)
   }
@@ -865,7 +864,7 @@ export const EditFormComp = (props) => {
           </Form.Item>
           {
             camera === 2 ? <>
-              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: yumingpattern , message: '请输入正确的服务器地址' }]}>
+              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
                 <Input />
               </Form.Item>
               <Form.Item label="端口号" name="port" rules={[{ required: true }, {

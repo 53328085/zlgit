@@ -5,16 +5,16 @@ import CModal from '@com/useModal'
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import Report from './report'
-import {Form} from 'antd'
+ 
 export default function Index() {  
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   let [AreaID, setAreaid] = useState(areaId)
-  let [site, setSiteId] = useState({})
+ 
   return (
     <CustContext.Provider value={{handler: setAreaid}}>
     <Pagecount showserach={false} pd="0px" bgcolor="transparent">   
-      <Report projectId={projectId}  areaId={AreaID} siteId={site.id} /> 
+      <Report projectId={projectId}  areaId={AreaID} Custmodal={CModal}   /> 
     </Pagecount>
     </CustContext.Provider>
   )

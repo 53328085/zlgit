@@ -13,7 +13,7 @@ import {useSelector} from 'react-redux'
 
 import {currProject} from '@redux/systemconfig'
 import {message} from 'antd'
- 
+   let map = null;
   function Index(props, ref) {
   const {lngLat, value,setAaddress, onChange, isck=false, infoconfig={}} = props   // isck 是否允许点击
   
@@ -21,7 +21,7 @@ import {message} from 'antd'
  let {lngLat: projectLnglat} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
   let geocoder = new T.Geocoder();
-   let map = null;
+ 
   
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []

@@ -7,7 +7,7 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {OperationLogRuntime} from '@api/api'
+import {AutoValve} from '@api/api'
  
 const {Paragraph} = Typography
 const {Item} = Form
@@ -157,26 +157,19 @@ const controlcolumns = [
   {date: "自动控制策略01", eventType: "每日", "time": "07:00：00", info: "学生寝室定时通断电策略", device: ''}
  ]
   const QueryReports =  ({current, pageSize}, form) => { 
-    try {
-      let {time, ...rest} = form
-      console.log(time)
-      let start = time[0].format('YYYY-MM-DD')
-      let end = time[1].format('YYYY-MM-DD')
-      let params = {
+      console.log(current)
+       let {alike} = form;
+      let  params = {
         pageNum: current,
-        pageSize,
-        start,
-        end,
+        pageSize, 
         projectId,
-     //  areaId,
-       
-        ...rest
+        areaId,
+        alike,
+         
       }
-    } catch (error) {
-      console.log(error)
-    }  
-   
-    return OperationLogRuntime.QueryLogsByPage(params).then(res => {
+    
+    console.log(params)
+    return AutoValve.getPageData(params).then(res => {
       let {success, data, total} = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
@@ -197,17 +190,7 @@ const controlcolumns = [
   }
   const {tableProps, search} = useAntdTable(QueryReports, {
     form,
-    defaultParams: [{pageSize: 14, pageNum: 1}, {
-      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-      end: moment().format('YYYY-MM-DD'),
-      projectId, 
-      
-      content : "",
-      type: 0,
-      status: 0
-
-    }],
-    refreshDeps: [projectId]
+    refreshDeps: [projectId, areaId]
   })
   
   const {submit} = search
@@ -221,14 +204,9 @@ const controlcolumns = [
     <Mainbox>    
     <Titlelayout title="自动控制" layout="flex" >
     <div className='content'>
-        <Form form={form} className='top' layout='inline' initialValues={{
-          content: '',
-          deviceType:0,
-          level: 0,
-          time: [moment().subtract(7, 'day'), moment()]
-        }}>
+        <Form form={form} className='top' layout='inline' >
           <Space size={32}>
-             <Item   name="content">
+             <Item   name="alike">
               <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onChange={submit} enterButton="查询" />
              </Item>
            </Space>
