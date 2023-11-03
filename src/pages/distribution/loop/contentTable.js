@@ -13,6 +13,9 @@ export default function ContentTable(props) {
         scroll={{y: props.height}} 
         bordered  
         size='small' 
-        pagination={false}></Table>
+        pagination={false}
+        ref={props.tableRef}
+        onExport={props.onExport}
+        ></Table>
     )
 }

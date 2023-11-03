@@ -23,14 +23,24 @@ export default function Index(props) {
   };
   const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
+  let areaList;
+  let oneLevelDefaultId;
+  if(props.allarea){
+    areaList = props.allarea
+    oneLevelDefaultId = 0
+  }else{
+    areaList = useSelector(selectOneLevel)
+    oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+  }
+   
   const areaName = useSelector(levelDefaultLabel) || '园区'
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+  
   const { queryShifts } = eneryShift
   //园区
   const [defaultArea, setDefaultArea] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
   const [areaId,setAreaId] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
   const changeArea = (value) => {
+    console.log(value)
     areaList.map(item => {
       if(item.id == value){
         dispatch(setCurrentlevel(item))
@@ -114,9 +124,7 @@ export default function Index(props) {
   };
 
   useEffect(() => {
-    if (areaId == 0) {
-      return;
-    } else {
+    if(props.allarea){
       let params = {
         projectId,
         areaId,
@@ -127,7 +135,23 @@ export default function Index(props) {
         tab,
       };
       props.getValues(params);
+    }else{
+      if (areaId == 0) {
+        return;
+      } else {
+        let params = {
+          projectId,
+          areaId,
+          shift,
+          energyType,
+          type,
+          date,
+          tab,
+        };
+        props.getValues(params);
+      }
     }
+    
   }, [areaId, shift, energyType, type, date, tab]);
   return (
     <div>

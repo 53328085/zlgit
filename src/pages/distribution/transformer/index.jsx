@@ -1,16 +1,20 @@
 import React, { useState, useRef ,useMemo, useEffect } from 'react'
-import { Select ,Form,Divider,DatePicker,Radio, Button } from 'antd'
+import { Select ,Form,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
-import { columns,devicecolumns } from './columns'
+import { columns } from './columns'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import BlueColumn from '@com/bluecolumn'
 import { drawEcharts } from "@com/useEcharts"
-import {DistributionRoomRuntime} from '@api/api.js'
+import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import  imgurl from '@imgs'
+import moment from 'moment'
+import {utils, writeFile} from 'xlsx'
+import { current } from '@reduxjs/toolkit'
 
 const MainDiv =styled.div`
 background-color: #fff;
@@ -55,7 +59,7 @@ flex-direction: column;
   .filterdate{
     display: flex;
     align-items: center;
-    width: 550px;
+    width: 650px;
     justify-content: space-between;
   }
 }
@@ -88,7 +92,6 @@ const chartOpt= {
     // }
   },
   xAxis: {
-    type: 'category',
     axisLine:{
       lineStyle:{
         color:"#D8D8D8",
@@ -97,67 +100,18 @@ const chartOpt= {
     axisLabel:{
       color:"#333"
     },
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+
+  dataZoom:{
+    type: 'inside',
+    start:'50',
+    end:'100',
   },
   yAxis: {
     type: 'value'
   },
   series: [
-    {
-      name: 'Email',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [120, 132, 101, 134, 90, 230, 210]
-    },
-    {
-      name: 'Union Ads',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      name: 'Video Ads',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      name: 'Direct',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      name: 'Search Engine',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
-    }
+   
   ]
 };
 export default function Index() {
@@ -165,35 +119,317 @@ export default function Index() {
   const [form] = Form.useForm() 
   const chartRef =useRef()
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const [pattern,setPattern]=useState(1)
-  const [tabs,setTabs] =useState([
-    {key: '0',label: '1#变压器'},
-    {key: '1',label: '2#变压器'},
-    {key: '2',label: '3#变压器'},
-  ])
-  const [value, setvalue] =useState()
+  const [tabs,setTabs] =useState([])
+  const roomopts = useSelector(state => state.system.roomId)
+  const [roomlist, setRoomList] = useState(roomopts)
+  const [roomId, setRoomId] = useState(roomopts[0]?.id)
+  const [value, setvalue] =useState(0)
+  const [tabledata,setTableData]=useState([])
+  const [type,setType] =useState(1)
+  const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
+  const [header,setHeader] = useState([])
+  const [tabletrend,setTabletrend] = useState([])
+  const chartsRef =useRef()
+  const tableRef=useRef()
+  const initchartRef =useRef()
+  const transInfo =useRef({
+    capacity:null
+  })
   const dataprop={
     tabs,
     setTabs,
     value,
     setvalue
   }
-  const changeArea =()=>{}
+  const opts = [
+    {
+      value:1,
+      label:'电压(V)'},
+    {
+      value:2,
+      label:'电流(A)'},
+    {
+      value:3,
+      label:'总负荷(kW)'},
+    {
+      value:4,
+      label:'总有功功率(kW)'},
+    {
+      value:5,
+      label:'总无功功率(kVar)'},
+    {
+      value:6,
+      label:'总视在功率(kVa)'},
+    {
+      value:7,
+      label:'总功率因素'},
+  ]
+  const changeArea =(v)=>{
+    getRoomList(v)
+  }
   const changeRadio=(e)=>{
     setPattern(e.target.value)
   }
+  const changeTime=(time)=>{
+    console.log(time)
+    setTimeRanger(time)
+  }
+  const disabledDate = (current)=>{
+    console.log(timeRanger)
+   
+    return current && current > moment().endOf('day');
+  }
+ 
+  //单个变压器信息
+  const TransformerOne=async()=>{
+    try {
+     const {success,errMsg,data} = await DistributionRoomRuntime.RoomOne(projectId,roomId)
+     if(success){
+      transInfo.current =  data
+     }else{
+      message.error(errMsg)
+     }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const getRoomList = async (areaId) => {
+    const resp = await distributionRoom.RoomList(projectId, areaId)
+    if (resp.success) {
+      setRoomList(resp.data)
+      if (Array.isArray(resp.data) && resp.data.length > 0) {
+        form.setFieldValue('roomId', resp.data[0][['id']])
+        setRoomId(resp.data[0][['id']])
+        
+      } else {
+        form.setFieldValue('roomId', [])
+        setRoomId(null)
+        setTabs([])
+        setTableData([])
+
+      }
+    }
+  }
+  //变压器 表格数据
+  const RuntimePoints =async(sn)=>{
+    const res = await DistributionRoomRuntime.RuntimePoints(projectId,sn)
+    if(res.success){
+      if(res.data.data){
+        const dataes = structuredClone(res.data)
+        dataes.data?.forEach((it, i) => {
+          if(it.name){
+            dataes[it.name] = it.value
+          }
+          if(it.name==='Load' && transInfo.current.capacity){
+            dataes['LoadPer'] =(parseFloat(it.value)/transInfo.current.capacity).toFixed(2)
+          }
+           })
+      
+        setTableData([dataes])
+      }else{
+        setTableData([])
+      }
+    }else{
+      message.error(res.errMsg)
+    }
+  }
+  //变压器列表
   const getTransformer =async ()=>{
-    //await DistributionRoomRuntime.TransformerList(1,1)
-    // await DistributionRoomRuntime.GetEnvironment(2,1)
-    // await DistributionRoomRuntime.ChartList(2,1)
-    DistributionRoomRuntime.TransformerList(1,1)
+   const res = await DistributionRoomRuntime.TransformerList(projectId,roomId)
+   if(res.success){
+    if(Array.isArray(res.data)&&res.data.length>0){
+      const data = res.data.map((it,i)=>{
+        return {
+          key:i,
+          label:it.name,
+          ...it,
+        }
+      })
+      setTabs(data)
+    }else{
+      setTabs([])
+    }
+   
+   }else{
+    message.error(res.errMsg)
+   }
+  }
+  //数据趋势（echarts）
+  const HistoryTrends =async (sn)=>{
+    try{
+      let startTime ,endTime;
+      startTime =  moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
+      endTime=moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      console.log(startTime)
+   
+   
+    let params = {
+      projectId,
+      sn,
+      type,
+      start:startTime,
+      end:endTime
+    }
+    const res = await DistributionRoomRuntime.HistoryTrends(params)
+    if(res.success){
+      if(res.data&&res.data.length>0){
+        chartsRef.current = res.data[0]
+        if(res.data[0]['data']){
+          const xAxis = res.data[0]['data'][0]['data'].map(it=>it.time)
+          const sdata = res.data[0]['data'].map(it=>{
+            const data = it.data.map(item=>item.value)
+            return {
+                name: it.point,
+                type: 'line',
+                stack: 'Total',
+                lineStyle:{
+                  width:1
+                },
+                symbol:'circle',
+                symbolSize: 6,
+                data
+            }
+          })
+          chartOpt.xAxis.data =xAxis
+          chartOpt.series=sdata
+          initchartRef.current = drawEcharts(chartRef.current,{...chartOpt,type:2})
+        }else{
+          chartOpt.xAxis.data =[]
+          chartOpt.series=[]
+          initchartRef.current = drawEcharts(chartRef.current,{...chartOpt,type:2})
+        }
+       
+      }else{
+          chartOpt.xAxis.data =[]
+          chartOpt.series=[]
+          initchartRef.current= drawEcharts(chartRef.current,{...chartOpt,type:2})
+      }
+    }else{
+      message.error(res.errMsg)
+    }
+    }catch(e){console.log(e)}
+    
+  }
+  //数据趋势（table）
+  const HistoryTable = async (sn) => {
+    try {
+      let startTime, endTime;
+      startTime = moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
+      endTime = moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      console.log(startTime)
+      let params = {
+        projectId,
+        sn,
+        // type,
+        start: startTime,
+        end: endTime
+      }
+      const res = await DistributionRoomRuntime.HistoryTable(params)
+      if(res.success){
+        const header = res.data.header.map(item=>{
+          return {
+            title:item.display,
+            dataIndex:item.name,
+            algin:'center'
+          }
+        })
+        setHeader(header)
+        setTabletrend(res.data.data)
+      }else{
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  //数据导出函数
+ function exportExcelFile(array, sheetName = 'sheet1', fileName = 'example.xlsx') {
+  const jsonWorkSheet = utils.json_to_sheet(array);
+  const workBook = {
+    SheetNames: [sheetName],
+    Sheets: {
+      [sheetName]: jsonWorkSheet,
+    }
+  };
+  return writeFile(workBook, fileName);
+}
+  //导出echarts
+   //导出图片
+  const Export = () => {
+
+    let myChart = initchartRef.current.getDataURL({
+      type: "png",
+      pixelRatio: 1, //放大2倍
+      backgroundColor: "#fff"
+    })
+    console.log()
+    var img = new Image();
+    img.src = myChart
+
+    img.onload = function () {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+
+      var a = document.createElement("a");
+      // 创建一个单击事件
+      var event = new MouseEvent("click");
+      // 将a的download属性设置为我们想要下载的图片名称，若name不存在则使用‘下载图片名称’作为默认名称
+      a.download = "图片.png" || "下载图片名称";
+      // 将生成的URL设置为a.href属性
+      a.href = dataURL;
+      // 触发a的单击事件
+      a.dispatchEvent(event);
+    };
+  }
+
+  //数据导出
+  const exportData=()=>{
+    pattern ===1 &&Export()
+    pattern ===2 &&tableRef.current.download()
+   
+    
+  
+    // let arr=[]
+    // chartsRef.current.data.forEach(item=>{
+    //   if(item.data.length>0){
+    //     item.data.forEach(it=>{
+    //       arr.push({
+    //         point:item.point,
+    //         time:it.time,
+    //         value:it.value
+    //       })
+    //     })
+    //   }
+    // })
+    // console.log(arr)
+    // exportExcelFile(arr)
+  }
+  const search=()=>{
+    HistoryTrends(tabs[value]['sn'])
   }
   useEffect(()=>{
-    drawEcharts(chartRef.current,{...chartOpt,type:2})
-    getTransformer()
-  },[pattern])
-
+    roomId&&getTransformer()
+    roomId&&TransformerOne()
+  },[roomId])
+  useEffect(()=>{
+    chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
+  },[tabs,pattern])
+  useEffect(()=>{
+    if(tabs&&tabs.length>0){
+      RuntimePoints(tabs[value]['sn'])
+    }  
+  },[tabs,value])
+  useEffect(()=>{
+    if(tabs&&tabs.length>0){
+      pattern===1&& HistoryTrends(tabs[value]['sn'])
+      pattern===2&& HistoryTable(tabs[value]['sn'])
+    }
+  },[tabs,value,type,pattern])
   return (
     <>
     <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -201,51 +437,91 @@ export default function Index() {
             form={form}
             colon={false}
             layout="inline"
+            initialValues={{
+              area: oneLevel.length > 0 ? oneLevel[0]?.id : null,
+              roomId: roomlist.length > 0 ? roomlist[0].id : null
+          }}
           >
             <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
+              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} ></Select>
             </Form.Item>
             <Form.Item>
             <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
             </Form.Item>
-           <Form.Item>
-              <Select style={{ width: 240 }}></Select>
-           </Form.Item>
+            <Form.Item name="roomId" >
+            <Select
+              value={roomId}
+              options={roomlist}
+              fieldNames={{ label: 'name', value: 'id' }}
+              style={{ width: 240 }}
+              placeholder="请选择配电房"
+              onChange={(v) => {
+                setRoomId(v)
+              }}></Select>
+          </Form.Item>
           </Form>
-        </div>  
-    <CustContext.Provider value={dataprop}>
-       <Pagecount bgcolor="#eeeff3" pd="0px" > 
-       <MainDiv>
-        <div className='trancss'>
-        <TranCard  />
-        <UseTable columns={columns} bordered className={style.transformerTable} ></UseTable>
-        </div>
-        <Divider dashed style={{borderColor:"#e4e4e4"}}></Divider>
-        <div className="datastyle">
-          <div className="filters">
-            <div className='title'>
-            <BlueColumn  name="数据趋势" styled={{fontSize: '16px'}}></BlueColumn>
-            {
-                pattern===1?<Select style={{width:180,marginLeft:32}}></Select>:null
-            }
+        </div> 
+        {
+          tabs.length>0?(
+            <CustContext.Provider value={dataprop}>
+            <Pagecount bgcolor="#eeeff3" pd="0px" > 
+            <MainDiv>
+             <div className='trancss'>
+             <TranCard  device={tabs[value]}/>
+             <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable>
+             </div>
+             <Divider dashed style={{borderColor:"#e4e4e4"}}></Divider>
+             <div className="datastyle">
+               <div className="filters">
+                 <div className='title'>
+                 <BlueColumn  name="数据趋势" styled={{fontSize: '16px'}}></BlueColumn>
+                 {
+                     pattern===1?<Select 
+                     style={{width:180,marginLeft:32}} 
+                     options={opts} 
+                     value={type} 
+                     onChange={setType}></Select>:null
+                 }
+                 </div>
+                 <div className='filterdate'>
+                   <DatePicker.RangePicker
+                   value={timeRanger} 
+                   format="YYYY-MM-DD" 
+                   onChange={setTimeRanger}
+                   disabledDate={disabledDate}
+                   ></DatePicker.RangePicker>
+                   <Button onClick={search}>查询</Button> 
+                   <Button onClick={exportData}>导出</Button>
+                       <Radio.Group defaultValue={pattern}   buttonStyle="solid" onChange={changeRadio}>
+                         <Radio.Button value={1}>趋势模式</Radio.Button>
+                         <Radio.Button value={2}>列表模式</Radio.Button>
+                       </Radio.Group>
+                 </div>
+               </div>
+               {
+                 pattern===1?(<div ref={chartRef} style={{height:'calc(100% - 63px)'}}></div>):
+                 ( <UseTable 
+                  columns={header} 
+                  bordered  
+                  dataSource={tabletrend}
+                  scroll={{
+                    y: 500,
+                  }}
+                  ref={tableRef}
+                  ></UseTable>)
+               }
+             </div>
+            </MainDiv>
+         </Pagecount>
+         </CustContext.Provider>
+          ):(
+            <div style={{flex:1,display: 'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
+              <img src={imgurl.empty} alt="" style={{width:200}}/>
+              <p style={{color:'#999',marginTop:16,fontSize:16}}>暂无数据</p>
             </div>
-            <div className='filterdate'>
-              <Select style={{width:80}}></Select>
-              <DatePicker style={{width:160}}></DatePicker> 
-              <Button>数据导出</Button>
-                  <Radio.Group defaultValue={pattern}   buttonStyle="solid" onChange={changeRadio}>
-                    <Radio.Button value={1}>趋势模式</Radio.Button>
-                    <Radio.Button value={2}>列表模式</Radio.Button>
-                  </Radio.Group>
-            </div>
-          </div>
-          {
-            pattern===1?(<div ref={chartRef} style={{height:'calc(100% - 63px)'}}></div>):( <UseTable columns={devicecolumns} bordered  ></UseTable>)
-          }
-        </div>
-       </MainDiv>
-    </Pagecount>
-    </CustContext.Provider>
+          )
+        }
+   
     </>
     
   )

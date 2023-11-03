@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef ,useMemo} from 'react'
 import style from './style.module.less'
 import { Select,message } from 'antd'
 import Icard from './card'
@@ -12,10 +12,12 @@ import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
   const projectId = useSelector(selectProjectId)
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const elref = useRef(null)
   const wlref = useRef(null)
   const glref = useRef(null)
-  let [areaId, setAreaId] = useState('')
+  let [areaId, setAreaId] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [status, setStatus] = useState({})
   let [eleConsumes,seteleConsumes]=useState([])
@@ -76,13 +78,14 @@ export default function Index() {
     containLabel: true,
   }
   useEffect(() => {
-    if(areaId){
+    console.log(areaId)
+    if(Number.isFinite(areaId)){
       getData()
     getStatusData()
     }
   }, [areaId,projectId])
   useEffect(() => {
-    if(areaId){
+    if(Number.isFinite(areaId)){
       getMonthUsage(1)
     }
   }, [areaId,eleConsumes.length,projectId])
@@ -170,6 +173,7 @@ useEffect(() => {
     isTab: false,//能耗、费用radioButton
     isSearch: false,//查询按钮
     isExport: false,//导出按钮
+    allarea:areaOptions
     //export: exportData //导出调用方法
   }
   const getFromChild = data => {

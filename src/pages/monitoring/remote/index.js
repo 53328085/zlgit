@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 import { useRequest, useToggle, useAntdTable,useReactive  } from 'ahooks'
@@ -24,7 +24,7 @@ export default function Index() {
     const [form] = Form.useForm()
     const {Item} = Form
     const projectId = useSelector(selectProjectId)
-    let [areaId, setAreaId] = useState(1)   
+    let [areaId, setAreaId] = useState(0)   
     const [DataSourceReadR, setDataSourceReadR] = useState()
     const [tabledata, setTabledata] = useState()
     const tabledataRef = useRef()
@@ -33,7 +33,8 @@ export default function Index() {
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
-  
+    const oneLevel = useSelector(state => state.system.onelevel)
+    const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
     const [brake, setbrake] = useState(false)
     const [brakeC, setbrakeC] = useState(false)
     const [brakeResult, setbrakeResult] = useState(false)
@@ -192,6 +193,7 @@ export default function Index() {
         isTab: false,//能耗、费用radioButton
         isSearch: false,//查询按钮
         isExport: false,//导出按钮
+        allarea:areaOptions
         //export: exportData //导出调用方法
     }
     const getFromChild = data => {

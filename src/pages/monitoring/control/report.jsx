@@ -159,6 +159,7 @@ const controlcolumns = [
   const QueryReports =  ({current, pageSize}, form) => { 
     try {
       let {time, ...rest} = form
+      console.log(time)
       let start = time[0].format('YYYY-MM-DD')
       let end = time[1].format('YYYY-MM-DD')
       let params = {

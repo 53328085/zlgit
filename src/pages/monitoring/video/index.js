@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useMemo  } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux'
@@ -35,7 +35,9 @@ export default function Index() {
   const [endTime, setEndTime] = useState(null)  
   const [startTimeHistory, setStartTimeHistory] = useState(null)
   const [endTimeHistory, setEndTimeHistory] = useState(null)
-  let [areaId, setAreaId] = useState('')
+  let [areaId, setAreaId] = useState(0)
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const [cameraTitle, setCameraTitle] = useState('')
   const [wsType, setwsType] = useState('');
   const [wsUrl, setWsUrl] = useState('');
@@ -467,6 +469,7 @@ const playBackYun=()=>{
     isTab: false,//能耗、费用radioButton
     isSearch: false,//查询按钮
     isExport: false,//导出按钮
+    allarea:areaOptions
     //export: exportData //导出调用方法
   }
   const getFromChild = data => {
@@ -479,12 +482,12 @@ const playBackYun=()=>{
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getStatistics()
     }
   }, [projectId, areaId])
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getOverview()
     }
   }, [projectId, areaId, params.alike, params.pageNum])

@@ -1,13 +1,14 @@
 import React, { useEffect ,useMemo, useState,useRef} from 'react'
 import {useSelector,useDispatch  } from 'react-redux'
 import style from './style.module.less'
-import { Select, Button, DatePicker,Divider,Form } from 'antd'
+import { Select, Button, DatePicker,Divider,Form,message  } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import * as echarts from "echarts";
 import updateImg from './updateImg.png'
 import ItemCard from './itemCard'
 import BlueColumn from '@com/bluecolumn'
 import styled from 'styled-components'
+import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 const opt={
   color:['#6395f9', '#62daab', '#657798'],
@@ -40,46 +41,7 @@ const opt={
   type: 'value',
   },
   series: [
-]
-}
-export default function Index() {
-  const [form]=Form.useForm()
-  const {Option} = Select;
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const roomlist =useSelector(state=>state.system.roomId)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const lineChartRef =useRef(null)
-  const [envlist,setEnvList]=useState({
-    door:"",
-    fire:"",
-    humidness:"",
-    noise:"",
-    smoke:"",
-    temperature:"",
-    water:""
-  })
-  const changeArea=()=>{
-
-  }
-  const getEnvironment=async(roomId)=>{
-    const res = await DistributionRoomRuntime.GetEnvironment(projectId,roomId)
-    if(res.success){
-      setEnvList(res.data)
-    }else{
-      message.error(res.errMsg)
-    }
-  }
-  useEffect(()=>{
-    if(roomlist.length>0){
-      getEnvironment(roomlist[0].id)
-    }
-    
-  },[])
-  useEffect( ()=>{
-    let lineChart1 = echarts.init(document.getElementById('lineChart'));
-    let opt1 = structuredClone(opt)
-    opt1.series=[{
+    {
       name: '温度',
       type: 'line',
       stack: 'Total',
@@ -88,24 +50,108 @@ export default function Index() {
       },
       symbol:'circle',
       symbolSize: 6,
-      data: [26.3, 26.4, 26.2, 27.1, 28.4, 29.1, 29.4, 29.3, 30.3, 27.5, 26.4, 25.4],
+      data: [],
+  }
+]
+}
+const init ={
+  door:"",
+  fire:"",
+  humidness:"",
+  noise:"",
+  smoke:"",
+  temperature:"",
+  water:""
+}
+export default function Index() {
+  const [form]=Form.useForm()
+  const {Option} = Select;
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const [areaId,setAreaId] =useState(oneLevel[0]?.id)
+  const roomlist =useSelector(state=>state.system.roomId)
+  const [roomId,setRoomId]=useState(roomlist[0]?.id)
+  const [roomopts,setRoomOpts] =useState([...roomlist])
+  const lineChartRef =useRef(null)
+  const [dateval,setDateVal] =useState(moment())
+  const [envlist,setEnvList]=useState(init)
+  const [humidness,setHumidness] =useState([])
+  const [temperature,setTemperature] =useState([])
+  const changeArea=(v)=>{
+    setAreaId(v)
+    getRoomList(v)
+  }
+  const changeRoom=(v)=>{
+    setRoomId(v)
+  }
+  const changeTime=(time)=>{
+   
+    setDateVal(time) 
+   
+  }
+  const search=()=>{
+    EnvironmentTrend()
+  }
+  const getRoomList = async (areaId) => {
+    const resp = await distributionRoom.RoomList(projectId, areaId)
+    if (resp.success) {
+      setRoomOpts(resp.data)
+      if (Array.isArray(resp.data) && resp.data.length > 0) {
+        form.setFieldValue('roomId', resp.data[0][['id']])
+        setRoomId(resp.data[0][['id']])
+      } else {
+        form.setFieldValue('roomId', [])
+        setEnvList(init)
+        setRoomId(null)
+        setHumidness([])
+        setTemperature([])
+      }
+    }
+  }
+ 
+
+  const EnvironmentTrend = async()=>{
+  const day =  dateval.format('YYYY MM DD 00:00:00')
+  const resp =   await DistributionRoomRuntime.EnvironmentTrend({projectId,roomId,day})
+  if(resp.success){
+    setEnvList(resp.data.environmentVo)
+    setHumidness(resp.data.humidityTrends)
+    setTemperature(resp.data.tempTrends)
+  }else{
+    message.error(resp.errMsg)
+  }
+}
+  useEffect(()=>{
+    roomId&&EnvironmentTrend()
+  },[roomId,areaId,projectId])
+  useEffect( ()=>{
+    let lineChart1 = echarts.init(document.getElementById('lineChart'));
+    let opt1 = structuredClone(opt)
+    const x1 =temperature.map(it=>it.x)
+    const y1 = temperature.map(it=>{
+     return parseFloat(it.y)
+    })
+    opt1.xAxis.data = [...x1]
+    opt1.series=[{
+      ...opt1.series[0],
+      name: '温度',
+      data:[...y1] ,
   }]
     lineChart1.setOption(opt1)
     let lineChart2=echarts.init(lineChartRef.current)
     let opt2 = structuredClone(opt)
+    const x2 =humidness.map(it=>it.x)
+    const y2 = humidness.map(it=>{
+     return parseFloat(it.y)
+    })
+    opt2.xAxis.data = [...x2]
     opt2.series=[{
+      ...opt2.series[0],
       name: '湿度',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [56.3, 51.3, 56.6, 57.4, 56.4, 58.6, 59.4, 56.3, 54.3, 54.2, 53.2, 56.7],
+      data: [...y2],
   }]
     lineChart2.setOption(opt2)
-} )
+},[humidness,temperature] )
   return (
     <div>
        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -113,19 +159,25 @@ export default function Index() {
             form={form}
             colon={false}
             layout="inline"
+            initialValues={{
+              area:oneLevel[0]?.id,
+              roomId:roomlist[0]?.id
+            }}
           >
             <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
+              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} ></Select>
             </Form.Item>
             <Form.Item>
             <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
             </Form.Item>
            <Form.Item name="roomId" >
               <Select  
-              options={roomlist} 
+              options={roomopts} 
               fieldNames={{ label: 'name', value: 'id' }}
               style={{ width: 240 }} 
-              placeholder="请选择配电房"></Select>
+              placeholder="请选择配电房"
+              onChange={changeRoom}
+              ></Select>
            </Form.Item>
           </Form>
         </div>
@@ -136,8 +188,8 @@ export default function Index() {
           <BlueColumn name="环境温湿度" styled={{padding: '16px 0 0 16px'}}/>
           <div className={style.searchDiv}>
             <span >日期</span>
-            <DatePicker  size='middle' style={{marginLeft:16,marginRight:16}}></DatePicker>
-            <Button size='middle' type='primary' icon={<SearchOutlined />}>查询</Button>
+            <DatePicker  size='middle' style={{marginLeft:16,marginRight:16}} value={dateval} onChange={changeTime}></DatePicker>
+            <Button size='middle' type='primary' icon={<SearchOutlined />} onClick={search}>查询</Button>
           </div>
           </div>
           

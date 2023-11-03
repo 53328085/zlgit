@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
@@ -19,9 +19,11 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
   const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
-  let [areaId, setAreaId] = useState('')
+  let [areaId, setAreaId] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: [], categories: [] })
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const headerProps = {
     isEnergy: false,//能耗类型
     isDate: false,//日期
@@ -29,6 +31,7 @@ export default function Index(props) {
     isTab: false,//能耗、费用radioButton
     isSearch: false,//查询按钮
     isExport: false,//导出按钮
+    allarea:areaOptions
     //export: exportData //导出调用方法
   }
   let [optionsGateway, setoptionsGateway] = useState([])
@@ -219,14 +222,14 @@ const onExport = useCallback(() => {
     tableLoadRef.current.download()
   }//数据导出
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       
       getData()
       queryData()
     }
   }, [areaId, changeTag])
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getOverviewData()
       console.log('getOverviewData')
     }

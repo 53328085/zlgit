@@ -1141,7 +1141,7 @@ export const GetCamerasVideosByProjectId = (Id) =>
  
 export const leftControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzLeft?ip=" +
     ip +
@@ -1155,7 +1155,7 @@ export const leftControl = (params, url, ip, channel, user, pwd) =>
   );
 export const bottomControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzDown?ip=" +
     ip +
@@ -1169,7 +1169,7 @@ export const bottomControl = (params, url, ip, channel, user, pwd) =>
   );
 export const rightControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzRight?ip=" +
     ip +
@@ -1183,7 +1183,7 @@ export const rightControl = (params, url, ip, channel, user, pwd) =>
   );
 export const topControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzUp?ip=" +
     ip +
@@ -1197,7 +1197,7 @@ export const topControl = (params, url, ip, channel, user, pwd) =>
   );
 export const stopControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzStop?ip=" +
     ip +
@@ -1285,7 +1285,12 @@ export const Monitoring = {
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data),//导入传感器
     ImportTransformer: (data) => server.post(`/Monitor/Device/ImportTransformer`, data),//导入变压器
     ImportCamera: (data) => server.post(`/Monitor/Device/ImportCamera`, data),//导入视频监控
-  },
+    QueryByPageGXCW:(data)=>server.post(`/Monitor/Device/QueryByPageCDCW`,data),//查询触点测温
+    AddCDCW:(data)=>server.post(`/Monitor/Device/AddCDCW`,data),//新增触点测温
+    UpdateCDCW:(data)=>server.post(`/Monitor/Device/UpdateCDCW`,data),//更新触点测温
+    DeleteCDCW:(data)=>server.delete(`/Monitor/Device/DeleteCDCW`,{params:data}),//删除触点测温
+    ImportCDCW:(data)=>server.post(`/Monitor/Device/ImportCDCW`,data)//批量导入触点测温
+    },
   //公共照明管理
   PubliclightManager: {
     AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
@@ -1622,6 +1627,7 @@ export class distributionRoom {
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
+ 
 }
  
 //配电房设备
@@ -1683,7 +1689,7 @@ export class DistributionRoomRuntime{
     return server.get(`/Distribution/DistributionRoomRuntime/RuntimePoints`,{params:{projectId,sn}})
   }
   static HistoryTrends=(data)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/HistoryTrends`,data)
+    return server.post(`/Distribution/DistributionRoomRuntime/HistoryTrend`,data)
   }
   static LineTree=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
@@ -1698,8 +1704,12 @@ export class DistributionRoomRuntime{
     return server.post(`/Distribution/DistributionRoomRuntime/CameraPage`,data)
   }
   static GetEnvironment=(projectId,roomId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`,{params:{projectId,roomId}})
+    return server.get(`/Distribution/DistributionRoomRuntime/EnvironmentInfo`,{params:{projectId,roomId}})
   }
+  static EnvironmentTrend=(data)=>server.post(`/Distribution/DistributionRoomRuntime/EnvironmentTrend`,data)
+  static WarningPage=(data)=>server.post(`/Distribution/DistributionRoomRuntime/WarningPage`,data)
+  static RoomOne =(projectId,roomId)=>server.get(`/Distribution/DistributionRoomRuntime/RoomOne`,{params:{projectId,roomId}})
+  static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
 }
 //能源流向
 export class EnergyFlowRuntime {

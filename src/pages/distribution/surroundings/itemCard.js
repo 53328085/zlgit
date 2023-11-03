@@ -7,10 +7,10 @@ export default function Index(props) {
         <div className={style.card}>
             <div className={style.leftcard}>
                 <div className={style.cardTitle}>{props.title}</div>
-                <div className={style.cardData}>{props.value}</div>
+                <div className={style.cardData}>{props.value?props.value:'————'}</div>
                 <div className={style.desc}>
                     <span className={style.normalSign}></span>
-                    <span>{props.desc}</span>
+                    <span>{props.desc?props.desc:'异常'}</span>
                 </div>
             </div>
 

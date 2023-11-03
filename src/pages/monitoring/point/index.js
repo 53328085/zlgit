@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
 import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
@@ -9,7 +9,7 @@ import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
-import {  ExportExcel} from '@com/useButton'
+import { ExportExcel } from '@com/useButton'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
@@ -25,13 +25,16 @@ export default function Index(props) {
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaList = useSelector(selectOneLevel)
-
+  
   const LevelDefaultId = useSelector(selectOneLevelDefaultId)
 
   const defaultLabel = useSelector(levelDefaultLabel)
 
   const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  let [areaId, setAreaId] = useState(defaultArea)
+  // let [areaId, setAreaId] = useState(defaultArea)
+  let [areaId, setAreaId] = useState(0)
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false 
@@ -279,13 +282,14 @@ export default function Index(props) {
     }
   }, [])
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getData()
       getGatewayUsed()
     }
   }, [params.areaId, changeTag, params.deviceStyle])
   useEffect(() => {
-    if (areaId) {
+    
+    if (Number.isFinite(areaId)) {
       getOverviewData() 
     }
   }, [params])
@@ -316,7 +320,7 @@ export default function Index(props) {
           style={{ width: "200px" }}
           onChange={changeArea}
         >
-          {areaList.map((item) => {
+          {areaOptions.map((item) => {
             return (
               <Select.Option key={item.id} value={item.id}>
                 {item.name}

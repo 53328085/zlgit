@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext,useMemo } from 'react'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, Button,Checkbox ,Space,InputNumber, message  } from 'antd'
+import { repeat } from 'lodash'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
 let coms = 0
-let Com = ({ form  }) => {
-    console.log('coms', coms)
+let Com = ({ form, deviceStyle }) => {
+    console.log('coms', coms, )
     const [isaddress, setIsaddress] = useState(true)
     let options = []
     const rules = [{
@@ -37,21 +38,24 @@ let Com = ({ form  }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            <Form.Item label="倍率" name="factor" rules={[...rules,
-            {
-                validator: (_, value) => {
-                    if (!value) {
-                        return Promise.resolve()
-                    } else if (parseInt(value) < 0) {
-                        return Promise.reject(new Error("请输入正整数"))
-                    } else {
-                        return Promise.resolve()
+            {(deviceStyle !== 13 && deviceStyle !== 14) ? (
+                <Form.Item label="倍率" name="factor" rules={[...rules,
+                {
+                    validator: (_, value) => {
+                        if (!value) {
+                            return Promise.resolve()
+                        } else if (parseInt(value) < 0) {
+                            return Promise.reject(new Error("请输入正整数"))
+                        } else {
+                            return Promise.resolve()
+                        }
                     }
-                }
-            },]}>
-                <Input />
-                {/* 默认1 */}
-            </Form.Item>
+                },]}>
+                    <Input />
+                    {/* 默认1 */}
+                </Form.Item>
+            ) : null}
+
             {form.getFieldValue('gatewayId') ?
                 <>
                     <Form.Item label="通讯端口" name="commPort" rules={rules}>
@@ -99,8 +103,25 @@ let Com = ({ form  }) => {
 //新增form表单组件
 export const FormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
- //   console.log( addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname)
+    const { addopts, 
+        gatewaylist, 
+        devicelist, 
+        alarmopts, 
+        form, 
+        deviceStyle, 
+        levelname,
+        setChannelName1,
+        setChannelName2,
+        setChannelName3,
+        setChannelName4,
+        setIndex,
+        setTransition,
+        setMaskTransitionName
+    } = useContext(MyContext)
+    const [name1,setName1]=useState('通道1')
+    const [name2,setName2]=useState('通道2')
+    const [name3,setName3]=useState('通道3')
+    const [name4,setName4]=useState('通道4')
     const [area, setArea] = useState([])
     //const [coms, setComs] = useState(0)
     const rules = [{
@@ -128,7 +149,7 @@ export const FormComp = (props) => {
 
         >
             <Row className={style.customItem}>
-                <Col flex={1}>
+                <Col span={7}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
@@ -179,10 +200,10 @@ export const FormComp = (props) => {
                         <TextArea />
                     </Form.Item>
                 </Col>
-                <Col>
+                <Col >
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col flex={1}>
+                <Col span={7}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -231,18 +252,105 @@ export const FormComp = (props) => {
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="用能类型" name="customerType" rules={rules}>
-                        <Select
-                            options={[{
-                                label: '客户用能',
-                                value: 1
-                            }, {
-                                label: '公共用能',
-                                value: 2
-                            }]}></Select>
-                    </Form.Item>
-                    {(deviceStyle === 1 || deviceStyle == 12)  ? <Com form={form}  ></Com> : null}
+                    {
+                        deviceStyle !== 13 && deviceStyle !== 14 ? (
+                            <Form.Item label="用能类型" name="customerType" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '客户用能',
+                                        value: 1
+                                    }, {
+                                        label: '公共用能',
+                                        value: 2
+                                    }]}></Select>
+                            </Form.Item>
+                        ) : null
+                    }
+
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
+                {
+                    props.isfiber ? (
+                        <>
+                            <Col >
+                                <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+                            </Col>
+                            <Col span={7}>
+                                <div style={{paddingBottom: 12}}>通道配置</div>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel1" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input value={name1} onChange={(e)=>{
+                                        setChannelName1(e.target.value)
+                                        setName1(e.target.value)
+                                    }}></Input>
+                                    <Button type='primary' onClick={()=>{
+                                        props.openarea();
+                                        setIndex(1);
+                                    }}>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel2" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input value={name2} onChange={(e)=>{
+                                         setChannelName2(e.target.value)
+                                         setName2(e.target.value)
+                                    }}></Input>
+                                    <Button type='primary'onClick={()=>{
+                                        props.openarea();
+                                        setIndex(2);
+                                    }}>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel3" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input value={name3} onChange={(e)=>{
+                                         setChannelName3(e.target.value)
+                                         setName3(e.target.value)
+                                    }}></Input>
+                                    <Button type='primary ' onClick={()=>{
+                                        props.openarea();
+                                        setIndex(3);
+                                    }}>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel4" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input value={name4} onChange={(e)=>{
+                                        setChannelName4(e.target.value)
+                                        setName4(e.target.value)
+                                    }}></Input>
+                                    <Button type='primary' onClick={()=>{
+                                        props.openarea();
+                                        setIndex(4);
+                                    }}>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                            </Col>
+                        </>
+                        
+                    ) : null
+                }
+
             </Row>
         </Form>
     )
@@ -250,26 +358,26 @@ export const FormComp = (props) => {
 
 
 //新增设备
-export let AddModalForm = ({ modalFormRef,transitionName,maskTransitionName, ...other }) => {
+export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,isfiber=false,openarea, ...other }) => {
+
     return (
-       <>
-        {
-       <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} {...other} footer={[
-                <Button onClick={other.onAddCancel}>取消</Button>,
-                <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-                <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={()=>{other.onSure();}}>应用</Button>,
-            ]}>
-                <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
-                <FormComp >
-                </FormComp>
-            </Modal>
-        }</>
-       
+        <>
+            {
+                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} {...other} footer={[
+                    <Button onClick={other.onAddCancel}>取消</Button>,
+                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={() => { other.onSure(); }}>应用</Button>,
+                ]}>
+                    <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+                    <FormComp isfiber={isfiber} openarea={openarea}> </FormComp>
+                </Modal>
+            }</>
+
     )
 
 }
 //编辑设备
-export const EditModalForm = ({ EditModalFormRef, ...other }) => {
+export const EditModalForm = ({ EditModalFormRef,isfiber=false, ...other }) => {
     return (
         <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
             <Button onClick={other.onEditCancel}>取消</Button>,
@@ -277,14 +385,14 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
-            <EditFormComp >
+            <EditFormComp isfiber={isfiber}>
             </EditFormComp>
         </Modal>
     )
 
 }
 //编辑com组件
-let EditCom = ({ form, coms }) => {
+let EditCom = ({ form, coms, deviceStyle }) => {
     const [isaddress, setIsaddress] = useState(form.getFieldValue('commProtocol') == 1)
     let options = []
     const rules = [{
@@ -313,10 +421,11 @@ let EditCom = ({ form, coms }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            <Form.Item label="倍率" name="factor" rules={rules}>
+            {deviceStyle !== 13 && deviceStyle !== 14 ? (<Form.Item label="倍率" name="factor" rules={rules}>
                 <Input disabled />
                 {/* 默认1 */}
-            </Form.Item>
+            </Form.Item>) : null}
+
             {form.getFieldValue('gatewayId') ?
                 <>
                     <Form.Item label="通讯端口" name="commPort" rules={rules}>
@@ -387,8 +496,11 @@ export const EditFormComp = (props) => {
         if (form?.getFieldsValue().gatewayId !== 0) {
             setIsdisable(true)
         }
-        const comsnum = gatewaylist.filter(it => it.id === form?.getFieldsValue().gatewayId)
-        comsnum[0] && setComs(comsnum[0].com)
+        if( gatewaylist.filter){
+            const comsnum = gatewaylist.filter(it => it.id === form?.getFieldsValue().gatewayId)
+            comsnum[0] && setComs(comsnum[0].com)
+        }   
+       
         console.log(form?.getFieldsValue())
     }, [])
     return (
@@ -401,7 +513,7 @@ export const EditFormComp = (props) => {
             }}
         >
             <Row className={style.customItem}>
-                <Col flex={1}>
+                <Col span={7}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
@@ -439,7 +551,7 @@ export const EditFormComp = (props) => {
                 <Col>
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col flex={1}>
+                <Col span={7}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -466,7 +578,7 @@ export const EditFormComp = (props) => {
                         ></Select>
                     </Form.Item>
                     <Form.Item label="设备编号" name="sn" rules={rules}>
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
                     {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
                         validator: (_, value) => {
@@ -488,19 +600,163 @@ export const EditFormComp = (props) => {
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="用能类型" name="customerType" rules={rules}>
-                        <Select
-                            options={[{
-                                label: '客户用能',
-                                value: 1
-                            }, {
-                                label: '公共用能',
-                                value: 2
-                            }]}></Select>
-                    </Form.Item>
-                    {deviceStyle === 1 ? <EditCom form={form} coms={coms}></EditCom> : null}
+                    {
+                        deviceStyle !== 13 && deviceStyle !== 14 ? (
+                            <Form.Item label="用能类型" name="customerType" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '客户用能',
+                                        value: 1
+                                    }, {
+                                        label: '公共用能',
+                                        value: 2
+                                    }]}></Select>
+                            </Form.Item>
+                        ) : null
+                    }
+                    {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
+                {
+                    props.isfiber ? (
+                        <>
+                            <Col >
+                                <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+                            </Col>
+                            <Col span={7}>
+                                <div style={{paddingBottom: 12}}>通道配置</div>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel1" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input></Input>
+                                    <Button type='primary'>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel2" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input></Input>
+                                    <Button type='primary'>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel3" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input></Input>
+                                    <Button type='primary '>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                                <Form.Item 
+                                label={<Checkbox></Checkbox>} 
+                                name="channel4" rules={rules}
+                                labelCol={2}
+                                
+                                >
+                                    <Space size='large'>
+                                    <Input></Input>
+                                    <Button type='primary'>分区配置</Button>
+                                    </Space>
+                                </Form.Item>
+                            </Col>
+                        </>
+                        
+                    ) : null
+                }
             </Row>
         </Form>
+    )
+}
+
+//分区配置
+export const AreaOption=({
+    areaModaref,
+    channelName1,
+    channelName2,
+    channelName3,
+    channelName4,
+    index,...other})=>{
+    console.log(index,channelName1 )
+   
+    const channelname=(text='分区配置')=>{
+        return index==1?`${channelName1}${text}`
+        :index==2?`${channelName2}${text}`
+        :index==3?`${channelName3}${text}`
+        :index==4?`${channelName4}${text}`:''
+    }
+
+ 
+   useEffect(()=>{
+    console.log(channelName1)
+   },[channelName1])
+    return   <Modal mold='cust' ref={areaModaref} {...other} footer={[
+        <Button onClick={other.areacancel}>返回</Button>,
+        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.areaok}>确认</Button>,
+        // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+    ]}>
+        <BlueColumn name={channelname()} styled={{ padding: '24px 0px' }}></BlueColumn>
+       <WrapDiv channelname={channelname}></WrapDiv>
+    </Modal>
+}
+const WrapDiv=({channelname})=>{
+    const [numchannel,setNumChannel]=useState()
+    const [list,setList]=useState([])
+    useEffect(()=>{
+        console.log(list)
+    },[list])
+    return (
+        <div>
+        <div style={{display:'flex',alignItems:'center'}}>
+            <span style={{paddingRight:16}}>{channelname('分区个数')}</span>
+            <InputNumber   
+            style={{width:64,marginRight:16}} 
+            value={numchannel} 
+            min={1}
+            max={40}
+            onChange={(value)=>{
+                setNumChannel(value)   
+            }}></InputNumber>
+            <span style={{paddingRight:16}}>(1~40)</span>
+            <Button  type="primary"  ghost onClick={()=>{if(!numchannel){message.warning('请设置通道数');return;};setList( Array(numchannel)?.fill(0).map((it,i)=>{
+                    return <Card Index={i} key={i}/>
+                 }))}}>配置</Button>
+        </div>
+        <Divider type='horizontal' style={{ height: '100%', borderColor: '#bcbcbc' }} dashed />
+        <div className={style.gridcss}>
+            {list}
+        </div>
+        
+       
+    </div>
+    )
+}
+const Card =({Index=1})=>{
+    return (
+        <div style={{width:248,height:90,display:'flex',border:'1px solid rgba(215, 215, 215, 1)'}}>
+            <div style={{width:32,height: 90,textAlign:'center',lineHeight:'82px',backgroundColor:'#3399ff',color:'#fff'}}>
+                {Index+1<10?`0${Index+1}`:Index+1}
+            </div>
+            <div style={{flex:1,display:'flex',alignItems:'center',flexDirection:'column',justifyContent: 'space-around'}}>
+                <div style={{display:'flex',alignItems:'center'}}>
+                    <span style={{flexShrink: 0,padding:'0 6px'}}>名称</span>
+                    <Input size='middle' style={{width:165}}></Input>
+                </div>
+                <div style={{display:'flex',alignItems:'center'}}>
+                    <span style={{flexShrink: 0,padding:'0 6px'}}>备注</span>
+                    <Input size='middle' style={{width:165}}></Input>
+                </div>
+            </div>
+        </div>
     )
 }

@@ -17,7 +17,12 @@ export default function Electric() {
   
   const deviceStyle = parseInt(value)
   
-  const Label = tabs.find(item => item.key == value)?.label || '' ;
+  const Label = tabs.find(item =>{
+    if(item&&item.key){
+     return item.key == value?.label || '' ;
+    }
+    return ''
+  })
 
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource,setTableDataSource]=useState([])//主页表格数据

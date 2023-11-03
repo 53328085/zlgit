@@ -441,7 +441,7 @@ export default function gateway({ deviceStyle }) {
       ...page,
       current:resp.pageNum,
       pageSize: resp.pageSize,
-      total: 0
+      total: resp.total
     })
     if (resp.success && Array.isArray(resp.data)) {
       setDataSource([...resp.data.reverse()])
