@@ -10,15 +10,27 @@ import UseSerach, {AreaSelect} from '@com/useSerach'
 import Usetable from '@com/useTable'
 import {AutoValve} from '@api/api'
  import Custmodal from '@com/useModal'
+ import {getdays} from '@com/usehandler'
 import redwarn from '@imgs/redwarn.png'
 import successIcon from '@imgs/success.png'
 import Drag from './Drag'
+import CDraw from './draw'
+ 
 const {Paragraph, Link} = Typography
 const {Item} = Form
-const { RangePicker } = DatePicker;
+ 
 
 const CDrawer = styled(Drawer)`
 && {
+  .ant-drawer-content-wrapper {
+    width: 928px !important;
+    top: 0;
+    height: 100%;
+  }
+  .ant-drawer-body {
+    display: flex;
+    flex-direction: column;
+  }
   .ant-drawer-title {
     padding-left: 16px;
     border-left: 4px solid #2828a4 ;
@@ -101,62 +113,75 @@ const P = styled(Paragraph)`
 const controlcolumns = [
     {
         title: '序号',
-        dataIndex: 'sn',
-        key: 'date',
-        align: 'center'
+        dataIndex: 'index',
+        onHeaderCell:() => ({
+          style: {
+            backgroundColor: '#237ae4',
+            color: "#fff"
+          }
+        }),
+        align: 'center',
+        render: (text, recoder, index) => <span>{index + 1}</span>
     },
     {
         title: '设备编号',
-        dataIndex: 'bh',
-        key: 'eventType',
+        onHeaderCell:() => ({
+          style: {
+            backgroundColor: '#237ae4',
+            color: "#fff"
+          }
+        }),
+        key: 'sn',
         align: 'center'
     },
     {
       title: '设备名称',
       dataIndex: 'name',
-      key: 'content',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
       align: 'center'
      },
      {
       title: '设备型号',
-      dataIndex: 'caty',
-      key: 'content',
+      dataIndex: 'category',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
       align: 'center'
      },
      {
       title: '安装地址',
       dataIndex: 'address',
-      key: 'content',
-      align: 'center'
-     },
-   ]
-const stepcolumns = [
-   
-    {
-        title: '设备编号',
-        dataIndex: 'bh',
-        key: 'eventType',
-        align: 'center'
-    },
-    {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'content',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
       align: 'center'
      },
      {
-      title: '设备型号',
-      dataIndex: 'caty',
-      key: 'content',
-      align: 'center'
-     },
-     {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'content',
-      align: 'center'
+      title: '启用策略',
+      dataIndex: 'status',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
+      align: 'center',
+      render: (text) => text ? <span>启用</span> : <span style={{color: "f00"}}>停用</span>
+
      },
    ]
+ 
  const errColumns = [
     {
         title: '错误行号',
@@ -171,35 +196,7 @@ const stepcolumns = [
         align: 'center'
     },
   ]
-  const Stepcom = () => {
-    const onSearch = () => {}
-    const [form] = Form.useForm()
-    const tableProps = {}
-    return (
-      <Stepconent>
-      <Form
-       form={form}  
-      layout="inline"
-      colon={false}
-      labelAlign='left'
-      style={{justifyContent: "space-between"}}
-    >
-      
-      <Form.Item label="设备查询" name="name">
-         <Input.Search placeholder='输入设备编号/安装地址' allowClear style={{width: "320px"}} onSearch={onSearch} enterButton="查询"  />
-      </Form.Item>
-      <Form.Item label="设备型号" name="life">
-         <Select style={{width: "200px"}} options={[
-          {value: "0", label: "全部型号"},
-          {value: "1", label: "断路器1"},
-          {value: "2", label: "断路器2"}
-         ]}></Select>
-      </Form.Item>
-    </Form>
-    <Usetable columns={stepcolumns}  {...tableProps}   rowKey={nanoid()} rowSelection={{ columnWidth: "112px"}}   />
-    </Stepconent>
-    )
-  }
+ 
   let week =  [
     {label: '周一', value: 1},
     {label: '周二', value: 2},
@@ -209,9 +206,18 @@ const stepcolumns = [
     {label: '周六', value: 6},
     {label: '周日', value: 7},
   ]
-  let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
-
+  let getweek = new Map();
+  week.forEach(w => {
+    getweek.set(w.value, `每${w.label}`)
+  })
+  let days = Array.from({length: getdays()},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
+  
  const Addmodal = memo(({title, modal, isAdd, onOk, form}) => {
+  const rules = [
+    {
+      required: true
+    }
+  ]
  return  <Custmodal
   title={title}
   ref={modal}
@@ -228,13 +234,13 @@ const stepcolumns = [
      labelAlign='left'
      style={{width: "496px"}}
    >
-     <Form.Item label="选择园区" name="areaId">
+     <Form.Item label="选择园区" name="areaId" rules={rules}>
         <AreaSelect />
      </Form.Item>
-     <Form.Item label="策略名称" name="name">
+     <Form.Item label="策略名称" name="name" rules={rules}>
         <Input />
      </Form.Item>
-     <Form.Item label="执行周期" name="cycle">
+     <Form.Item label="执行周期" name="cycle" rules={rules}>
         <Select 
         
         options={[
@@ -253,7 +259,7 @@ const stepcolumns = [
               let options = [[],[], week, days][type]
                if(type === 1 || !type) return null
                return ( 
-                  <Item name="cycleTime" label="选择重复">
+                  <Item name="cycleTime" label="选择重复" rules={rules}>
                    <Checkbox.Group options={options}    /> 
                   </Item>
                )
@@ -261,11 +267,11 @@ const stepcolumns = [
             } 
            </Item>
         
-     <Form.Item label="执行分闸" name="autoOpenTime">
-       <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行分闸时间' />
+     <Form.Item label="执行分闸" name="autoOpenTime" rules={rules}>
+       <TimePicker  format="HH:mm"   style={{width: "200px"}} placeholder='执行分闸时间' />
      </Form.Item>
-     <Form.Item label="执行合闸" name="autoCloseTime">
-       <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行合闸时间' />
+     <Form.Item label="执行合闸" name="autoCloseTime" rules={rules}>
+       <TimePicker format="HH:mm"   style={{width: "200px"}} placeholder='执行合闸时间' />
      </Form.Item>
      <Form.Item label="备注" name="remark">
        <Input />
@@ -281,17 +287,24 @@ const stepcolumns = [
    
  
    const [open, setOpen] = useState(false)
-   const [keycode, setKeycode] = useState(0)
+ 
    const [total, setTotal] = useState(0)
    const modal = useRef()
-   const stepmodl = useRef()
+   const [viewtb, setViewtb] = useState([])
    const delmo = useRef()
    const delId = useRef()
    const exportref = useRef()   
    const [isAdd, setIsAdd] = useState(true)
+   
    const title = isAdd ? '新增自动策略控制' : '编辑自动策略控制'
-   const edit = () => {
+   const edit = (record) => {
     setIsAdd(false)
+     let {autoCloseTime, autoOpenTime, ...rest} = record
+    form.setFieldsValue({
+      autoCloseTime: moment(autoCloseTime, "HH:mm"),
+      autoOpenTime: moment(autoOpenTime, "HH:mm"),
+      ...rest
+    })
     modal.current.onOpen()
    }
 
@@ -300,7 +313,7 @@ const stepcolumns = [
     modal.current.onOpen()
    }
 
-   const config = async (planId) => {
+/*    const config = async (planId) => {
      try {
        let params = {
          projectId,
@@ -313,24 +326,43 @@ const stepcolumns = [
       
      }
 
-   }
-   const onExport = () => {
-    exportref.current.onOpen()
-   }
-
-   const view = async (planId) => {
-     try {
+   } */
+ 
+   const view = async (planId) =>{
+    try {
       let params = {
+        planId,
+        projectId,
+        areaId,
+      }
+     let {success, data, errMsg} = await  AutoValve.QueryUsedDevice(params)
+     if(success) {
+       if(Array.isArray(data)) {
+        setViewtb(data);
+       }else {
+        setViewtb([])
+       }
+       setOpen(true)
+     }else {
+       message.warning(errMsg || '数据出错')
+     }
+    } catch (error) {
+      
+    }
+     
+   }
+   const drawref = useRef()
+   const [params, setParams] = useState()
+   const config = async (planId) => {
+    
+       setParams({
         projectId,
         areaId,
         planId,
         dedeviceStyle: 0,
         alike: ''
-      }
-      await AutoValve.GetDeviceConfigure(params)
-     } catch (error) {
-       console.log(error)
-     }
+       })
+       drawref.current.drawOpen()   
      
    }
    const columns = [
@@ -344,7 +376,13 @@ const stepcolumns = [
         title: '周期',
         dataIndex: 'cycleTime',
         key: 'cycleTime',
-        align: 'center'
+        align: 'center',
+        render: (_, record) => {
+          let {cycle, cycleTime} = record
+          if(cycle == 1) return <span>每日</span>
+          if(cycle == 2) return  cycleTime.map(t =>  getweek.get(t)).join()
+          if(cycle == 3) return  cycleTime.map(d => `${d}号`).join()
+        }
     },
     {
       title: '分闸执行时间',
@@ -379,12 +417,12 @@ const stepcolumns = [
       render: (_, record) => {
         return <Space size={32}>
           <Link underline onClick={() => config(record.id)}>配置</Link>
-          <Link underline onClick={() => edit(true)}>编辑</Link>
+          <Link underline onClick={() => edit(record)}>编辑</Link>
           <Link underline type="danger" onClick={() => del(record.id)}>删除</Link>
           </Space>
       }
      },
-   ]
+   ] 
 
  const QueryReports =  ({current, pageSize}) => {   
    
@@ -404,7 +442,7 @@ const stepcolumns = [
       if (success && Array.isArray(data) && data.length >0) {
           return {
             list: data,
-            total
+            total,
           }  
      } else {
       return {
@@ -420,6 +458,10 @@ const stepcolumns = [
     refreshDeps: [areaId]
   })
   
+  const onExport =useCallback(() => {
+     return QueryReports({current: 1, pageSize: total})
+   }, [total])
+
   const del = (id) => {
     delId.current = id
     delmo.current.onOpen()
@@ -434,7 +476,7 @@ const stepcolumns = [
       if(success) {
         message.success("删除成功")
         delmo.current.onCancel()
-        run()
+        refresh()
       }else {
         message.warning(errMsg|| "数据出错")
       }
@@ -452,8 +494,8 @@ const stepcolumns = [
      
       let params = {
         ...rest,
-        autoCloseTime: autoCloseTime.format("HH:mm:SS"),
-        autoOpenTime: autoOpenTime.format('HH:mm:SS'),
+        autoCloseTime: autoCloseTime.format("HH:mm"),
+        autoOpenTime: autoOpenTime.format('HH:mm'),
         projectId,
       }
       let handler = isAdd ? 'Add' : 'Update'
@@ -472,10 +514,11 @@ const stepcolumns = [
         console.log(error)
      }
   }, [isAdd])
-  const onBack =() => {
-    stepmodl.current.onCancel()
-    modal.current.onOpen()
-  }
+
+
+
+
+ 
   const successRef = useRef()
   const errorRef = useRef()
   const onResult = () => { // 导入需后端接口
@@ -500,7 +543,7 @@ const stepcolumns = [
        
         
        
-        <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
+        <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}  onExport={onExport} sheetName="自动控制"  />   
        <CDrawer
         title="被控设备"
         width={928}
@@ -518,11 +561,17 @@ const stepcolumns = [
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
        <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
-       <Usetable columns={controlcolumns}  {...tableProps}   rowKey={nanoid()}    />  
+          <div style={{flex: 1, backgroundColor: "#fff"}}>
+          <Usetable columns={controlcolumns}  dataSource={viewtb}   rowKey={nanoid()} scroll={{
+            y: 867
+          }} 
+       
+            />  
+          </div>
        </CDrawer>
     </div>
     </Titlelayout>
-
+     <CDraw  params={params} ref={drawref} />
     <Custmodal
         key="export"
         mold="cust"
@@ -562,81 +611,6 @@ const stepcolumns = [
          <Usetable columns={errColumns} ></Usetable>
       </Custmodal>
       <Addmodal title={title} modal={modal} isAdd={isAdd} onOk={onOk} form={form} />
-   {/*  <Custmodal
-     title={title}
-     ref={modal}
-     mold="cust"
-     width="820px"
-     custft={isAdd}
-     onOk={onOk}
-     >
-       <Form
-         form={form}
-        layout="horizontal"
-        labelCol={{span: 5}}
-        colon={false}
-        labelAlign='left'
-        style={{width: "496px"}}
-      >
-        <Form.Item label="选择园区" name="areaId">
-           <AreaSelect />
-        </Form.Item>
-        <Form.Item label="策略名称" name="name">
-           <Input />
-        </Form.Item>
-        <Form.Item label="执行周期" name="cycle">
-           <Select 
-           
-           options={[
-            {value: 1, label: "每日"},
-            {value: 2, label: "每周"},
-            {value: 3, label: "每月"}
-           ]}></Select>
-        </Form.Item>
-          
-        
-            <Item  shouldUpdate   noStyle  >
-               {
-                ({getFieldValue}) => {
-                 let type;
-                 type= getFieldValue('cycle')
-                 let options = [[],[], week, days][type]
-                  if(type === 1 || !type) return null
-                  return ( 
-                     <Item name="cycleTime" label="选择重复">
-                      <Checkbox.Group options={options}    /> 
-                     </Item>
-                  )
-                }
-               } 
-              </Item>
-           
-        <Form.Item label="执行分闸" name="autoOpenTime">
-          <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行分闸时间' />
-        </Form.Item>
-        <Form.Item label="执行合闸" name="autoCloseTime">
-          <TimePicker   format='HH:mm' style={{width: "200px"}} placeholder='执行合闸时间' />
-        </Form.Item>
-        <Form.Item label="备注" name="remark">
-          <Input />
-        </Form.Item>
-      </Form>
-     </Custmodal> */}
-     
-
- {/*     <Custmodal
-     title="选择执行设备"
-     ref={stepmodl}
-     mold="cust"
-     width="820px"
-     okText="完成"
-     cancelText="上一步"
-     onOk={onStep}
-     onCancel={onBack}
-     >
-      <Stepcom />
-     </Custmodal> */}
-
 
      <Custmodal
         key="warning"

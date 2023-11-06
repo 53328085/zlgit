@@ -65,7 +65,8 @@ const Drawerbox = styled(Drawer)`
       .ant-drawer-body {
         display: grid;
         grid-template-columns: 692px 1fr 714px;
-        column-gap: 32px;
+        column-gap: 30px;
+        grid-template-rows: 700px;
         .title {
           padding-left: 16px;
           border-left: 4px #237ae4 solid;
@@ -555,13 +556,14 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
       <Drawerbox
-        placement="right"
+        placement="bottom"
         onClose={drawClose}
         open={open}
         getContainer={() => boxref.current}
         style={{ position: "absolute", top: "0px"}}
         closable={false}
         destroyOnClose
+        height={760}
        
       >
         <div className="selected">
@@ -571,9 +573,9 @@ const getSelected = async ({areaId, type=devietype}) => {
               columns={deviceColumns}
               rowSelection={rowSelection}
               dataSource={deviceSummary}
-              rowKey="id"
+              rowKey="id" 
               scroll={{
-                y: 336
+                y: 180
               }}
             />
           </div>

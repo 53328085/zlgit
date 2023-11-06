@@ -352,7 +352,7 @@ export default function GatewayDetail(props) {
     const onTimeOkAlarm = (date=[], dataString) => {
         
         setstartTimeAlarm(dataString[0])
-        setendTimeAlarm(dataString[0])
+        setendTimeAlarm(dataString[1])
     }//告警记录选择时间
     const onSearch = () => {
         getHistoryTrend()
