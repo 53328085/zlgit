@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, createContext,useMemo } from 'react'
+import React, { useEffect, useRef, useState, useContext, createContext,useMemo, forwardRef, useImperativeHandle } from 'react'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
@@ -115,6 +115,11 @@ export const FormComp = (props) => {
         setChannelName3,
         setChannelName4,
         setIndex,
+        checklistRef,
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop,
         setTransition,
         setMaskTransitionName
     } = useContext(MyContext)
@@ -138,6 +143,29 @@ export const FormComp = (props) => {
             setArea([])
         }
     }
+    const validator=()=>({
+        validator(_,value){
+            console.log(_, value,checklistRef.current)
+            let count=0;
+            for (const key in checklistRef.current) {
+                if (Object.hasOwnProperty.call(checklistRef.current, key)) {
+                   if(checklistRef.current[key] ){
+                    count++;
+                   }
+                }
+            }
+            if(path1Gruop.current.length==0 && path2Gruop.current.length==0 && path3Gruop.current.length==0 && path4Gruop.current.length==0){
+                count=0
+            }
+            console.log(count)
+            if(count){
+                return Promise.resolve()
+            }else{
+                return Promise.reject(new Error("通道配置未勾选或未配置"))
+            }
+        }
+       
+    })
     return (
         <Form
             labelAlign="left"
@@ -146,7 +174,12 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 6
             }}
-
+            initialValues={{
+                channel1:'通道1',
+                channel2:'通道2',
+                channel3:'通道3',
+                channel4:'通道4'
+            }}
         >
             <Row className={style.customItem}>
                 <Col span={7}>
@@ -277,26 +310,28 @@ export const FormComp = (props) => {
                             </Col>
                             <Col span={7}>
                                 <div style={{paddingBottom: 12}}>通道配置</div>
-                                <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel1" rules={rules}
-                                labelCol={2}
+                                    
+                                    <Form.Item
+                                        label={ <Checkbox onChange={(e)=>{checklistRef.current.check1=e.target.checked}}></Checkbox>}
+                                        name="channel1" rules={[...rules,validator]}
+                                        labelCol={2}
+                                    >   
+                                        <Space size='large'>
+                                            <Input value={name1} onChange={(e) => {
+                                                setChannelName1(e.target.value)
+                                                setName1(e.target.value)
+                                            }}></Input>
+                                            <Button type='primary' onClick={() => {
+                                                props.openarea();
+                                                setIndex(1);
+                                            }}>分区配置</Button>
+                                        </Space>
+                                    </Form.Item>
+
                                 
-                                >
-                                    <Space size='large'>
-                                    <Input value={name1} onChange={(e)=>{
-                                        setChannelName1(e.target.value)
-                                        setName1(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary' onClick={()=>{
-                                        props.openarea();
-                                        setIndex(1);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
                                 <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel2" rules={rules}
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>} 
+                                name="channel2"  rules={[...rules,validator]}
                                 labelCol={2}
                                 
                                 >
@@ -312,8 +347,8 @@ export const FormComp = (props) => {
                                     </Space>
                                 </Form.Item>
                                 <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel3" rules={rules}
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>} 
+                                name="channel3"  rules={[...rules,validator]}
                                 labelCol={2}
                                 
                                 >
@@ -329,8 +364,8 @@ export const FormComp = (props) => {
                                     </Space>
                                 </Form.Item>
                                 <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel4" rules={rules}
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>} 
+                                name="channel4" rules={[...rules,validator]}
                                 labelCol={2}
                                 
                                 >
@@ -377,7 +412,7 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
 
 }
 //编辑设备
-export const EditModalForm = ({ EditModalFormRef,isfiber=false, ...other }) => {
+export const EditModalForm = ({ EditModalFormRef,isfiber=false,openarea, ...other }) => {
     return (
         <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
             <Button onClick={other.onEditCancel}>取消</Button>,
@@ -385,7 +420,7 @@ export const EditModalForm = ({ EditModalFormRef,isfiber=false, ...other }) => {
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
             <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
-            <EditFormComp isfiber={isfiber}>
+            <EditFormComp isfiber={isfiber} openarea={openarea}>
             </EditFormComp>
         </Modal>
     )
@@ -472,13 +507,45 @@ let EditCom = ({ form, coms, deviceStyle }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
     const { TextArea } = Input
-    const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
+    const { addopts, 
+        gatewaylist, 
+        devicelist, 
+        alarmopts, 
+        form, 
+        deviceStyle, 
+        levelname,
+        setIndex,
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop, } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
+    const [formdata,setFormData] = useState({})
+  
     const rules = [{
         required: true
     }]
+
+    const validator=()=>({
+        validator(_, value) {
+             let count=0
+             const {check1,check2,check3,check4} = form.getFieldsValue()
+             if((check1 &&path1Gruop.current.length>0) || (check2 &&path2Gruop.current.length>0)||(check3&&path3Gruop.current.length>0)||(check4&&path4Gruop.current.length>0)){
+                count++;
+             } else{
+                count=0
+             }
+             if(!count){
+                return Promise.reject(new Error("通道配置未勾选或未配置"))
+             } else{
+                return Promise.resolve()
+             }                             
+           
+     
+    }
+    })
     const changeGateway = (v, option) => {
         console.log(v, option)
         setIsdisable(false)
@@ -492,6 +559,9 @@ export const EditFormComp = (props) => {
             form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 })
         }
     }
+    useEffect(()=>{
+       console.log(form.getFieldsValue())
+    },[])
     useEffect(() => {
         if (form?.getFieldsValue().gatewayId !== 0) {
             setIsdisable(true)
@@ -500,8 +570,14 @@ export const EditFormComp = (props) => {
             const comsnum = gatewaylist.filter(it => it.id === form?.getFieldsValue().gatewayId)
             comsnum[0] && setComs(comsnum[0].com)
         }   
-       
-        console.log(form?.getFieldsValue())
+        const obj =form?.getFieldsValue()
+        const len = Object.keys(obj)
+        console.log(len)
+        if(len.length>0){
+            console.log(obj)
+            setFormData({...obj})
+        }
+        
     }, [])
     return (
         <Form
@@ -580,23 +656,7 @@ export const EditFormComp = (props) => {
                     <Form.Item label="设备编号" name="sn" rules={rules}>
                         <Input disabled />
                     </Form.Item>
-                    {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
-                        validator: (_, value) => {
-                            if (!value) {
-                                return Promise.resolve()
-                            } else {
-                                let val = value.trim()
-
-                                if (val.split(" ").join("").length !== 12) {
-                                    return Promise.reject(new Error("设备编号长度12位"))
-                                } else {
-                                    return Promise.resolve()
-                                }
-                            }
-                        }
-                    }]}>
-                        <Input   disabled/>
-                    </Form.Item> */}
+        
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>
@@ -624,49 +684,74 @@ export const EditFormComp = (props) => {
                                 <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                             </Col>
                             <Col span={7}>
-                                <div style={{paddingBottom: 12}}>通道配置</div>
-                                <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel1" rules={rules}
-                                labelCol={2}
-                                
+                                <div style={{ paddingBottom: 12 }}>通道配置</div>
+
+                                <Form.Item
+                                    label={<Form.Item name="check1" noStyle valuePropName="checked"><Checkbox></Checkbox></Form.Item>} 
+                                    labelCol={2}
+                                    name="channel1"
+                                    rules={[...rules,validator ]}
                                 >
                                     <Space size='large'>
-                                    <Input></Input>
-                                    <Button type='primary'>分区配置</Button>
+                                        <Form.Item  name="channel1"
+                                        label={null}>
+                                            <Input></Input>
+                                        </Form.Item>
+
+                                        <Button type='primary' onClick={() => {
+                                            props.openarea();
+                                            setIndex(1);
+                                        }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel2" rules={rules}
-                                labelCol={2}
-                                
+                                <Form.Item
+                                    label={<Form.Item name="check2" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
+                                    name="channel2"
+                                    labelCol={2}
+                                    rules={[...rules,validator]}    
                                 >
                                     <Space size='large'>
-                                    <Input></Input>
-                                    <Button type='primary'>分区配置</Button>
+                                        <Form.Item name="channel2"   label={null}>
+                                            <Input></Input>
+                                        </Form.Item>
+                                        <Button type='primary' onClick={() => {
+                                            props.openarea();
+                                            setIndex(2);
+                                        }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel3" rules={rules}
-                                labelCol={2}
-                                
+                                <Form.Item
+                                    label={<Form.Item name="check3" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
+                                    name="channel3" 
+                                    rules={[...rules,validator]}
+                                    labelCol={2}
+
                                 >
                                     <Space size='large'>
-                                    <Input></Input>
-                                    <Button type='primary '>分区配置</Button>
+                                        <Form.Item name="channel3"  label={null}>
+                                            <Input></Input>
+                                        </Form.Item>
+                                        <Button type='primary ' onClick={() => {
+                                            props.openarea();
+                                            setIndex(3);
+                                        }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox></Checkbox>} 
-                                name="channel4" rules={rules}
-                                labelCol={2}
-                                
+                                <Form.Item
+                                    label={<Form.Item name="check4" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
+                                    name="channel4"
+                                    rules={[...rules,validator]} 
+                                    labelCol={2}
+
                                 >
                                     <Space size='large'>
-                                    <Input></Input>
-                                    <Button type='primary'>分区配置</Button>
+                                        <Form.Item name="channel4"  label={null}>
+                                            <Input></Input>
+                                        </Form.Item>
+                                        <Button type='primary' onClick={() => {
+                                            props.openarea();
+                                            setIndex(4);
+                                        }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
                             </Col>
@@ -687,7 +772,7 @@ export const AreaOption=({
     channelName3,
     channelName4,
     index,...other})=>{
-    console.log(index,channelName1 )
+   
    
     const channelname=(text='分区配置')=>{
         return index==1?`${channelName1}${text}`
@@ -698,7 +783,7 @@ export const AreaOption=({
 
  
    useEffect(()=>{
-    console.log(channelName1)
+  
    },[channelName1])
     return   <Modal mold='cust' ref={areaModaref} {...other} footer={[
         <Button onClick={other.areacancel}>返回</Button>,
@@ -710,11 +795,48 @@ export const AreaOption=({
     </Modal>
 }
 const WrapDiv=({channelname})=>{
+    const { 
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop,
+        rankindex
+    } = useContext(MyContext)
+    const pathGruop = rankindex==1?path1Gruop:rankindex==2?path2Gruop:rankindex==3?path3Gruop:rankindex==4?path4Gruop:[{current:{name:'',remakr:''}}]
+    const cardRef =useRef()
     const [numchannel,setNumChannel]=useState()
     const [list,setList]=useState([])
+    const setChannel= ()=>{
+        if(!numchannel){
+        message.warning('请设置通道数');
+        return;
+    };
+    pathGruop.current=[]
+        setList( Array(numchannel)?.fill(0).map((it,i)=>{
+            // pathGruop.current=[]
+            const order = i+1<10?'0'+(i+1):i+1
+            pathGruop.current[i] ={
+                 name:`${channelname('')}-分区${order}`,
+                 remark:""
+            }
+            // if( cardRef.current){
+            //     cardRef.current.setCardValue(`${channelname('')}-分区${order}`)
+            // }
+           console.log(i)
+            return <Card Index={i} key={pathGruop.current[i]['name']} channelname={channelname('')} pathGruop={pathGruop} ref={cardRef}/>
+         }))
+         console.log(pathGruop)
+        }
     useEffect(()=>{
-        console.log(list)
-    },[list])
+    
+        if(Array.isArray(pathGruop.current)&&pathGruop.current.length>0){
+            const len = pathGruop.current.length
+            setNumChannel(len)
+            setList( pathGruop.current.map((it,i)=>{
+                return <Card Index={i} key={pathGruop.current[i]['name']} channelname={channelname('')}  pathGruop={pathGruop} ref={cardRef}/>
+             }))
+        }
+    },[])
     return (
         <div>
         <div style={{display:'flex',alignItems:'center'}}>
@@ -728,9 +850,9 @@ const WrapDiv=({channelname})=>{
                 setNumChannel(value)   
             }}></InputNumber>
             <span style={{paddingRight:16}}>(1~40)</span>
-            <Button  type="primary"  ghost onClick={()=>{if(!numchannel){message.warning('请设置通道数');return;};setList( Array(numchannel)?.fill(0).map((it,i)=>{
-                    return <Card Index={i} key={i}/>
-                 }))}}>配置</Button>
+            <Button  type="primary"  ghost onClick={
+                setChannel
+               }>配置</Button>
         </div>
         <Divider type='horizontal' style={{ height: '100%', borderColor: '#bcbcbc' }} dashed />
         <div className={style.gridcss}>
@@ -741,22 +863,60 @@ const WrapDiv=({channelname})=>{
     </div>
     )
 }
-const Card =({Index=1})=>{
-    return (
-        <div style={{width:248,height:90,display:'flex',border:'1px solid rgba(215, 215, 215, 1)'}}>
-            <div style={{width:32,height: 90,textAlign:'center',lineHeight:'82px',backgroundColor:'#3399ff',color:'#fff'}}>
-                {Index+1<10?`0${Index+1}`:Index+1}
-            </div>
-            <div style={{flex:1,display:'flex',alignItems:'center',flexDirection:'column',justifyContent: 'space-around'}}>
-                <div style={{display:'flex',alignItems:'center'}}>
-                    <span style={{flexShrink: 0,padding:'0 6px'}}>名称</span>
-                    <Input size='middle' style={{width:165}}></Input>
+ 
+const Card =forwardRef(
+    ({Index=1,channelname,pathGruop},ref)=>{
+      
+        
+        const [cardvalue,setCardValue] =useState()
+        const [reamrk,setRemark] = useState()
+        const order = Index+1<10?'0'+(Index+1):Index+1
+       
+        console.log(pathGruop.current[Index]['name'],cardvalue)
+        useImperativeHandle(ref,()=>{
+            return {
+                setCardValue
+            }
+        })
+        useEffect(()=>{
+           if( pathGruop.current[Index]['name']){
+            setCardValue(pathGruop.current[Index]['name'])
+           }
+        },[pathGruop.current[Index]['name']])
+        return (
+            <div style={{width:248,height:90,display:'flex',border:'1px solid rgba(215, 215, 215, 1)'}}>
+                <div style={{width:32,height: 90,textAlign:'center',lineHeight:'82px',backgroundColor:'#3399ff',color:'#fff'}}>
+                    {Index+1<10?`0${Index+1}`:Index+1}
                 </div>
-                <div style={{display:'flex',alignItems:'center'}}>
-                    <span style={{flexShrink: 0,padding:'0 6px'}}>备注</span>
-                    <Input size='middle' style={{width:165}}></Input>
+                <div style={{flex:1,display:'flex',alignItems:'center',flexDirection:'column',justifyContent: 'space-around'}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <span style={{flexShrink: 0,padding:'0 6px'}}>名称</span>
+                        <Input size='middle' 
+                        style={{width:165}} 
+                        defaultValue={pathGruop.current[Index]?pathGruop.current[Index]['name']:`${channelname}-分区${order}`} 
+                        value={cardvalue} 
+                        onChange={(e)=>{
+                            pathGruop.current[Index]['name'] =e.target.value;
+                            setCardValue(e.target.value)
+                            
+                        }}></Input>
+                    </div>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <span style={{flexShrink: 0,padding:'0 6px'}}>备注</span>
+                        <Input 
+                        size='middle' 
+                        style={{width:165}}
+                        defaultValue={pathGruop.current[Index]?pathGruop.current[Index]['remark']:null}
+                        value={reamrk}
+                        onChange={(e)=>{
+                            pathGruop.current[Index]['remark'] =e.target.value;
+                            setRemark(e.target.value)
+                            
+                        }}
+                        ></Input>
+                    </div>
                 </div>
             </div>
-        </div>
-    )
-}
+        )
+    }
+)

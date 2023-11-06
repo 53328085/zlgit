@@ -62,14 +62,14 @@ export default function Index() {
           arr[i] = <Generic deviceStyle={k.deviceStyle} name={k.name} key={k.deviceStyle} />
         } 
       }
-       console.log(arr)
+
       const tabs = data.map(it=>{
        if(it.state===1){
           return {key:it.deviceStyle.toString(),label:it.name}
        }
       
       })
-      console.log(tabs)
+  
    //   console.log(tabs)
      // tabs.pop()
       setTabs([{key: '0',label: '网关'},

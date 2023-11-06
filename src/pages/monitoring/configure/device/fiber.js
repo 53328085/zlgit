@@ -14,14 +14,15 @@ import {publishState} from '@redux/systemconfig'
 
 const {
   DeviceManager: {
-    QueryByPageGXCW,
+    QueryByPageFibreTempil,
     AeraQueryAll,
     QueryListGateWay,
     QueryUsedDeviceCategory,
     QueryPlanList,
-    AddCDCW,
-    UpdateCDCW,
+    AddFibreTempil,
+    UpdateFibreTempil,
     DeleteCDCW,
+    DeleteFibreTempil,
     ImportCDCW,
     OneLevel
   }
@@ -64,6 +65,7 @@ export default function gateway({ deviceStyle }) {
   const errlistRef =useRef()
   const tableLoadRef = useRef()
   const areaModaref=useRef()
+  const editareaRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const [channelName1,setChannelName1] =useState('通道1')
@@ -71,7 +73,20 @@ export default function gateway({ deviceStyle }) {
   const [channelName3,setChannelName3] =useState('通道3')
   const [channelName4,setChannelName4] =useState('通道4')
   const [index,setIndex]=useState(1)
+  const path1Gruop=useRef([])
+  const path2Gruop=useRef([])
+  const path3Gruop =useRef([])
+  const path4Gruop=useRef([])
+  const checklistRef = useRef({
+    check1:false,
+    check2:false,
+    check3:false,
+    check4:false
+  })
 
+ 
+  const pathGruop = index==1?path1Gruop:index==2?path2Gruop:index==3?path3Gruop:index==4?path4Gruop:[]
+   const flagref =useRef(true)
   const content =useContext(cutContext)
   const levelname =useRef()
   let delid;
@@ -154,12 +169,31 @@ export default function gateway({ deviceStyle }) {
   }
   //打开编辑窗口
   const onEdit = (record) => {
+    console.log(record,record.path1Group?.length>0)
     EditModalFormRef?.current?.onOpen()
-    editform.setFieldsValue({ ...record, commProtocol: record.commProtocol ? record.commProtocol : '' })
+    
+    editform.setFieldsValue({ 
+      ...record, 
+      commProtocol: record.commProtocol ? record.commProtocol : '',
+      channel1:record.path1Name,
+      channel2:record.path2Name,
+      channel3:record.path3Name,
+      channel4:record.path4Name,
+      check1:record.path1Group?.length>0,
+      check2:record.path2Group?.length>0,
+      check3:record.path3Group?.length>0,
+      check4:record.path4Group?.length>0
+     })
+     path1Gruop.current = record.path1Group?record.path1Group:[]
+     path2Gruop.current = record.path2Group?record.path2Group:[]
+     path3Gruop.current = record.path3Group?record.path3Group:[]
+     path4Gruop.current = record.path4Group?record.path4Group:[]
+    console.log(editform.getFieldsValue())
   }
  
   //确认编辑
   const editOk = () => {
+    console.log(editform.getFieldsValue())
     editform.validateFields().then(async()=>{
       const { 
         id,
@@ -171,11 +205,18 @@ export default function gateway({ deviceStyle }) {
         category,
         sn,
         name,
-        customerType,
         commPort,
         commProtocol,
         commAddress,
-        factor } = editform.getFieldValue()
+        channel1,
+        channel2,
+        channel3,
+        channel4,
+        check1,
+        check2,
+        check3,
+        check4,
+         } = editform.getFieldValue()
       let params = {
         id,
         projectId,
@@ -187,13 +228,20 @@ export default function gateway({ deviceStyle }) {
         category,
         sn,
         name,
-        customerType:0,
         commPort,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
-        factor:0
+        path1Name:channel1,
+        path2Name:channel2,
+        path3Name:channel3,
+        path4Name:channel4,
+        path1Group:check1&&path1Gruop.current.length>0?path1Gruop.current:[],
+        path2Group:check2&&path2Gruop.current.length>0?path2Gruop.current:[],
+        path3Group:check3&&path3Gruop.current.length>0?path3Gruop.current:[],
+        path4Group:check4&&path4Gruop.current.length>0?path4Gruop.current:[],
       }
-      const resp = await UpdateCDCW(params)
+      console.log(params,editform.getFieldValue(),path1Gruop,path2Gruop,path3Gruop,path4Gruop,pathGruop)
+      const resp = await UpdateFibreTempil(params)
       if(resp.success){
         message.success("更新成功")
         EditModalFormRef?.current?.onCancel()
@@ -201,7 +249,7 @@ export default function gateway({ deviceStyle }) {
       }else{
         message.error(resp.errMsg)
       }
-    })
+    }).catch(e=>{console.log(e)})
   }
   //编辑应用
   const editSure=()=>{
@@ -216,11 +264,18 @@ export default function gateway({ deviceStyle }) {
         category,
         sn,
         name,
-        customerType,
         commPort,
         commProtocol,
         commAddress,
-        factor } = editform.getFieldValue()
+        channel1,
+        channel2,
+        channel3,
+        channel4,
+        check1,
+        check2,
+        check3,
+        check4,
+        } = editform.getFieldValue()
       let params = {
         id,
         projectId,
@@ -232,13 +287,19 @@ export default function gateway({ deviceStyle }) {
         category,
         sn,
         name,
-        customerType:0,
         commPort,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
-        factor:0
+         path1Name:channel1,
+        path2Name:channel2,
+        path3Name:channel3,
+        path4Name:channel4,
+        path1Group:check1&&path1Gruop.current.length>0?path1Gruop.current:[],
+        path2Group:check2&&path2Gruop.current.length>0?path2Gruop.current:[],
+        path3Group:check3&&path3Gruop.current.length>0?path3Gruop.current:[],
+        path4Group:check4&&path4Gruop.current.length>0?path4Gruop.current:[],
       }
-      const resp = await UpdateCDCW(params)
+      const resp = await UpdateFibreTempil(params)
 
       if(resp.success){
         message.success("应用成功")
@@ -254,14 +315,15 @@ export default function gateway({ deviceStyle }) {
   }
    //打开删除窗口
    const onDelete = (record) => {
+    console.log(record)
     DelModalRef?.current?.onOpen()
-    delid=record.id
+    delid=record.sn
   }
   //确认删除
   const delOk=async()=>{
-    const {success,errMsg} = await DeleteCDCW({
+    const {success,errMsg} = await DeleteFibreTempil({
       projectId,
-      id:delid
+      sn:delid
     })
     if(success){
       message.success('删除成功')
@@ -311,6 +373,7 @@ export default function gateway({ deviceStyle }) {
   const addOk = async () => {
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
+      console.log(formvalue,checklistRef.current,path1Gruop,path2Gruop,path3Gruop,path4Gruop,pathGruop)
       let params = {
         id: 0,
         projectId,
@@ -322,13 +385,20 @@ export default function gateway({ deviceStyle }) {
         category: formvalue.category,
         sn: formvalue.sn,
         name: formvalue.name,
-        customerType:0,
+        // customerType:0,
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: 0
+        path1Name:formvalue.channel1,
+        path2Name:formvalue.channel2,
+        path3Name:formvalue.channel3,
+        path4Name:formvalue.channel4,
+        path1Group:checklistRef.current.check1&&path1Gruop.current.length>0?path1Gruop.current:[],
+        path2Group:checklistRef.current.check2&&path2Gruop.current.length>0?path2Gruop.current:[],
+        path3Group:checklistRef.current.check3&&path3Gruop.current.length>0?path3Gruop.current:[],
+        path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[],
       }
-      const res = await AddCDCW(params)
+      const res = await AddFibreTempil(params)
       if (res.success) {
         message.success('新增成功!')
         modalFormRef?.current?.onCancel()
@@ -355,13 +425,20 @@ export default function gateway({ deviceStyle }) {
         category: formvalue.category,
         sn: formvalue.sn,
         name: formvalue.name,
-        customerType: 0,
+        // customerType: 0,
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor:0
+        path1Name:formvalue.channel1,
+        path2Name:formvalue.channel2,
+        path3Name:formvalue.channel3,
+        path4Name:formvalue.channel4,
+        path1Group:checklistRef.current.check1&&path1Gruop.current.length>0?path1Gruop.current:[],
+        path2Group:checklistRef.current.check2&&path2Gruop.current.length>0?path2Gruop.current:[],
+        path3Group:checklistRef.current.check3&&path3Gruop.current.length>0?path3Gruop.current:[],
+        path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[],
       }
-      const res = await AddCDCW(params)
+      const res = await AddFibreTempil(params)
      
       if (res.success) {
         message.success('应用成功!')
@@ -376,6 +453,8 @@ export default function gateway({ deviceStyle }) {
   //新增弹窗取消
   const onAddCancel = ()=>{
     modalFormRef?.current?.onCancel()
+    pathGruop.current=[]
+    flagref.current =true
     setTransition(undefined)
     setMaskTransitionName(undefined)
   }
@@ -407,7 +486,7 @@ export default function gateway({ deviceStyle }) {
       console.log(e)
     }
   }
-  //获取已使用的电表列表
+  //获取已使用的光纤列表
   const getQueryUsedDeviceCategory = async () => {
     try {
       const resp = await QueryUsedDeviceCategory({
@@ -427,7 +506,6 @@ export default function gateway({ deviceStyle }) {
     try {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        console.log('resp',resp)
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
@@ -439,7 +517,7 @@ export default function gateway({ deviceStyle }) {
   //获取告警计划
   const getQueryPlanList = async () => {
     const res = await QueryPlanList(projectId)
-    console.log(res)
+
 
     if (res.success && Array.isArray(res.data)) {
       setAlarmopts([{ name: '不启用告警方案', id: 0 }, ...res.data])
@@ -447,7 +525,7 @@ export default function gateway({ deviceStyle }) {
       setAlarmopts([{ name: '不启用告警方案', id: 0 }])
     }
   }
-  //获取触点测温列表
+  //获取光纤测温列表
   const getQueryByPageElectric = async (curpage=0,pageSize=0,id, like,customerType) => {
     setLoading(true)
     let params = {
@@ -460,7 +538,7 @@ export default function gateway({ deviceStyle }) {
       alike: like ? like : '',
       customerType:customerType?customerType:0
     }
-    const resp = await QueryByPageGXCW(params)
+    const resp = await QueryByPageFibreTempil(params)
     setLoading(false)
     setPage({
       ...page,
@@ -491,7 +569,7 @@ export default function gateway({ deviceStyle }) {
         customerType:compRef.current.energyVal?compRef.current.energyVal:0
       }
      
-      const resp = await QueryByPageGXCW(params)
+      const resp = await QueryByPageFibreTempil(params)
       if(resp.success){
         resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{
@@ -525,8 +603,17 @@ export default function gateway({ deviceStyle }) {
  }
  const areacancel =()=>{
     areaModaref.current.onCancel()
+    if(flagref.current){
+      pathGruop.current =[]
+    }
+   
     // setTransition(undefined)
     // setMaskTransitionName(undefined)
+ }
+ const areaok=()=>{
+  areaModaref.current.onCancel()
+  flagref.current =false
+  console.log(path1Gruop.current,path2Gruop.current,path3Gruop.current,path4Gruop.current)
  }
   useEffect(() => {
     if(oneLevel?.length>0){
@@ -554,7 +641,7 @@ export default function gateway({ deviceStyle }) {
   const ModalFormProps = {
     modalFormRef,
     width: 1162,
-    name: '新增触点测温',
+    name: '新增光纤测温',
     transitionName:transitionName,
     maskTransitionName:maskTransitionName,
     onOk: addOk,
@@ -575,18 +662,19 @@ export default function gateway({ deviceStyle }) {
     modalImportRef,
     width: 560,
     link:'/deviceExcel/cdcw.xlsx',
-    name:'触点测温导入',
+    name:'光纤测温导入',
     uploadprops,
     onOk:onImportOk
   }
   const EditModalFormProps = {
     EditModalFormRef,
     width: 1162,
-    name: '编辑触点测温',
+    name: '编辑光纤测温',
     onOk: editOk,
     onSure:editSure,
     onEditCancel:onEditCancel,
-    isfiber:true
+    isfiber:true,
+    openarea,
   }
 
   const ErrModalProps = {
@@ -602,7 +690,11 @@ export default function gateway({ deviceStyle }) {
     channelName1 ,
     channelName2,
     channelName3,
-    channelName4
+    channelName4,
+    areaok,
+  }
+  const EditOptionProps={
+    editareaRef
   }
   const AddModalComp=useMemo(()=>{
     return (
@@ -622,7 +714,12 @@ export default function gateway({ deviceStyle }) {
         setChannelName4,
         setIndex,
         setTransition,
-        setMaskTransitionName
+        setMaskTransitionName,
+        checklistRef,
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop,
         }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
@@ -632,7 +729,31 @@ export default function gateway({ deviceStyle }) {
  
   const EditModalComp=useMemo(()=>{
     return (
-      <MyContext.Provider value={{ addopts, gatewaylist:gatewayRef.current, devicelist:deviceRef.current, alarmopts:alarmoptsRef.current, form: editform, deviceStyle,levelname }}>
+      <MyContext.Provider value={{ 
+        addopts, 
+        gatewaylist:gatewayRef.current,
+        devicelist:deviceRef.current, 
+        alarmopts:alarmoptsRef.current, 
+        form: editform, 
+        deviceStyle,levelname, 
+        setIndex,
+        channelName1,
+        setChannelName1,
+        channelName2,
+        setChannelName2,
+        channelName3,
+        setChannelName3,
+        channelName4,
+        setChannelName4,
+        setIndex,
+        setTransition,
+        setMaskTransitionName,
+        checklistRef,
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop,
+         }}>
       <EditModalForm {...EditModalFormProps}></EditModalForm>
     </MyContext.Provider>
     )
@@ -654,10 +775,25 @@ export default function gateway({ deviceStyle }) {
 
       
       <MultImport {...ImportProps}></MultImport>
-      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除触点测温？" onOk={delOk}></DeleteModal>
+      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除光纤测温？" onOk={delOk}></DeleteModal>
       {EditModalComp}
       <ErrorMessage {...ErrModalProps}></ErrorMessage>
-      <AreaOption {...AreaOptionProps}></AreaOption>
+      <MyContext.Provider value={{
+        path1Gruop,
+        path2Gruop,
+        path3Gruop,
+        path4Gruop,
+        rankindex:index
+      }}>
+        <AreaOption {...AreaOptionProps}></AreaOption>
+      </MyContext.Provider>
+
+
+      {/* <MyContext.Provider value={{
+  
+      }}>
+        <AreaOption {...EditOptionProps}></AreaOption>
+      </MyContext.Provider> */}
     </div>
   )
 }

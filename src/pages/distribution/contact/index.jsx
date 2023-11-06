@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
+import { Input, Button, Select, Radio, Pagination, FormTable, message, Space,Divider } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
-import { Monitoring } from '@api/api.js'
+import { Monitoring ,distributionRoom} from '@api/api.js'
 import {  ExportExcel} from '@com/useButton'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 
@@ -24,25 +24,28 @@ export default function Index(props) {
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
-  const areaList = useSelector(selectOneLevel)
-
+  const areaLists = useSelector(selectOneLevel)
+  const oneLevel = useSelector(state => state.system.onelevel)
   const LevelDefaultId = useSelector(selectOneLevelDefaultId)
-
+  const areaList =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):null
   const defaultLabel = useSelector(levelDefaultLabel)
 
   const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
+  console.log(areaList,oneLevel)
   let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false 
   let [total, setTotal] = useState(0)
   let [imageList, setimageList] = useState([])
-
+  const roomopts = useSelector(state => state.system.roomId)
+  const [roomlist, setRoomList] = useState(roomopts)
+  const [roomId, setRoomId] = useState(roomopts[0]?.id)
   let initparams = {
     projectId: projectId,
     areaId: areaId,
     gatewayId: 0,
-    deviceStyle: 1,
+    deviceStyle: 13,
     category: '',
     alike: '',
     state: 0,
@@ -196,6 +199,7 @@ export default function Index(props) {
 
 
   const changeArea = (value) => {
+    getRoomList(value)
     setParams({
       ...initparams,
       areaId: value,
@@ -271,6 +275,23 @@ export default function Index(props) {
     }
   })
 }, [params])
+
+const getRoomList = async (areaId) => {
+  const resp = await distributionRoom.RoomList(projectId, areaId)
+  if (resp.success) {
+    setRoomList(resp.data)
+    if (Array.isArray(resp.data) && resp.data.length > 0) {
+      form.setFieldValue('roomId', resp.data[0][['id']])
+      setRoomId(resp.data[0][['id']])
+     
+    } else {
+      form.setFieldValue('roomId', [])
+      setRoomId(null)
+      // setTableData([])
+
+    }
+  }
+}
   useEffect(() => {
     getType();
     if (areaList.length == 0 || !areaList) {
@@ -279,13 +300,13 @@ export default function Index(props) {
     }
   }, [])
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getData()
       getGatewayUsed()
     }
   }, [params.areaId, changeTag, params.deviceStyle])
   useEffect(() => {
-    if (areaId) {
+    if (Number.isFinite(areaId)) {
       getOverviewData() 
     }
   }, [params])
@@ -313,7 +334,7 @@ export default function Index(props) {
           size="middle"
           key={defaultArea}
           defaultValue={defaultArea}
-          style={{ width: "200px" }}
+          style={{ width: "200px",marginRight: 12 }}
           onChange={changeArea}
         >
           {areaList.map((item) => {
@@ -324,6 +345,16 @@ export default function Index(props) {
             );
           })}
         </Select>
+        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
+        <Select
+          value={roomId}
+          options={roomlist}
+          fieldNames={{ label: 'name', value: 'id' }}
+          style={{ width: 240,marginLeft:12 }}
+          placeholder="请选择配电房"
+          onChange={(v) => {
+            setRoomId(v)
+          }}></Select>
         {/* <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div> */}
       </div>
       <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>

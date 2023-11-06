@@ -238,14 +238,14 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.id
+    delid = record.sn
   }
   //确认删除
   const delOk = async () => {
 
     const { success, errMsg } = await DeleteCamera({
       projectId,
-      id: delid
+      sn: delid
     })
     if (success) {
       message.success('删除成功')

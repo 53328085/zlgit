@@ -1306,7 +1306,11 @@ export const Monitoring = {
     AddCDCW:(data)=>server.post(`/Monitor/Device/AddCDCW`,data),//新增触点测温
     UpdateCDCW:(data)=>server.post(`/Monitor/Device/UpdateCDCW`,data),//更新触点测温
     DeleteCDCW:(data)=>server.delete(`/Monitor/Device/DeleteCDCW`,{params:data}),//删除触点测温
-    ImportCDCW:(data)=>server.post(`/Monitor/Device/ImportCDCW`,data)//批量导入触点测温
+    ImportCDCW:(data)=>server.post(`/Monitor/Device/ImportCDCW`,data),//批量导入触点测温
+    QueryByPageFibreTempil:(data)=>server.post(`/Monitor/Device/QueryByPageFibreTempil`,data),//查询光纤测温
+    AddFibreTempil:(data)=>server.post(`/Monitor/Device/AddFibreTempil`,data),//新增光纤测温
+    UpdateFibreTempil:(data)=>server.post(`/Monitor/Device/UpdateFibreTempil`,data),//更新光纤测温
+    DeleteFibreTempil:(data)=>server.delete(`/Monitor/Device/DeleteFibreTempil`,{params:data}),//删除光纤测温
     },
   //公共照明管理
   PubliclightManager: {

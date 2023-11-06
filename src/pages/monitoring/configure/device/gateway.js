@@ -189,7 +189,7 @@ export default function gateway() {
   }
   //打开删除窗口
   const onDelete = (record) => {
-    setDelId(record.id)
+    setDelId(record.sn)
     modalDelRef?.current?.onOpen()
   }
   //获取第一级区域名
@@ -380,7 +380,7 @@ export default function gateway() {
   const delOk = async () => {
     let params = {
       projectId,
-      id: delId
+      sn: delId
     }
     const resp = await GatewayDelete(params)
     if (resp.success) {
