@@ -122,7 +122,7 @@ export default function Hmenu() {
      
   }
  useEffect(() => {    
-    if(state) {
+    if(state) {    
       let {primary} = state
       dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
     }   

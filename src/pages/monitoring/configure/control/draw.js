@@ -19,7 +19,10 @@ const Inptserach = styled(Input.Search)`
 `;
 const Drawerbox = styled(Drawer)`
   && {
-    
+    .ant-drawer-content-wrapper {
+      height:min-content;
+      top: 80px;
+    }
     .ant-drawer-wrapper-body {
       background-color: #003366;
       .ant-drawer-body {

@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography,Pagination, message} from "antd";
+import { Form, Radio,   Space, DatePicker, Select, Pagination, } from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
@@ -13,7 +13,7 @@ import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
  import moment from "moment";
  import {getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
- 
+import {  ExportExcel} from '@com/useButton'
 const Mainbox = styled.div`
 display: grid;
  grid-template-rows: 48px 1fr;
@@ -76,32 +76,9 @@ const Radiogroup = styled(Radio.Group)`
 
 `
 
- 
- 
- const headers = ["1#压缩机", "21#压缩机", "3#压缩机", "4#压缩机", "5#压缩机", "6#压缩机", "7#压缩机"]
-
 // 总尖峰平谷对应E,E1,E2,E3,E4
 
- const datas = headers.map((n, index) => (
-  {
-    name: n,
-    sns: [Math.random().toString().slice(2,12)].join(),
-    address:   `成都市青江路145号银丽经济贸易区${index + 1}号楼${index+1}层`,
-    type: index % 2,
-    e: 100,
-    e2: 20,
-    e3: 40,
-    e4: 40,
-    mome: "100%",
-    yoye: "100%",
-    mome2: "100%",
-    yoye2: "100%",
-    mome3: "100%",
-    yoye3: "80%",
-    mome4: "-60%",
-    yoye4: "70%",
-  }
-))
+ 
  
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
@@ -175,15 +152,22 @@ export default function Index() {
       pageNum: current,
       pageSize,
    }
-  QueryElectric.query(params).then(res => {
+ return QueryElectric.query(params).then(res => {
      let {success, data, total} = res
      if (success && Array.isArray(data) && data.length >0) {
       setTotal(total)
       setTableData(data)
-     
+      return {
+        list: data,
+        total,
+      }
      } else {
       setTotal(0)
       setTableData([])
+      return {
+         list: [],
+         total: 0
+      }
      }
    }).catch()
    
@@ -202,9 +186,14 @@ export default function Index() {
  useEffect(() => {
   getData()
  }, [areaId]) 
+ const tbref = useRef();
+ const onExport = useCallback(() => {
+    return getData(1, total)
+ }, [total])
  const Title =  (
       <CustTitle className="t">
         重点设备分时能耗
+        <Space size={32}>
         <Radiogroup options={[
           {
           label: "卡片模式",
@@ -220,6 +209,8 @@ export default function Index() {
         onChange={onChange}
         value={mode}
         ></Radiogroup>
+        { mode == 2 && <ExportExcel tb={tbref} />}
+         </Space>
       </CustTitle>
     );
  
@@ -287,7 +278,7 @@ export default function Index() {
         <Laybox  >
             
              {
-                 mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key="table" />
+                 mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />
              }  
            
              <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}}></Pagination>

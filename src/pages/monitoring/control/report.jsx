@@ -7,13 +7,22 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import {AutoValve} from '@api/api'
+import {RunAutoValve} from '@api/api'
  
-const {Paragraph} = Typography
+const {Paragraph, Link} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const CDrawer = styled(Drawer)`
 && {
+  .ant-drawer-content-wrapper {
+    width: 928px !important;
+    top: 0;
+    height: 100%;
+  }
+  .ant-drawer-body {
+    display: flex;
+    flex-direction: column;
+  }
   .ant-drawer-title {
     padding-left: 16px;
     border-left: 4px solid #2828a4 ;
@@ -75,72 +84,171 @@ const P = styled(Paragraph)`
 `
 
 const controlcolumns = [
-    {
-        title: '序号',
-        dataIndex: 'sn',
-        key: 'date',
-        align: 'center'
-    },
-    {
-        title: '设备编号',
-        dataIndex: 'bh',
-        key: 'eventType',
-        align: 'center'
-    },
-    {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'content',
+  {
+      title: '序号',
+      dataIndex: 'index',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
+      align: 'center',
+      render: (text, recoder, index) => <span>{index + 1}</span>
+  },
+  {
+      title: '设备编号',
+      dataIndex: 'sn',
+      onHeaderCell:() => ({
+        style: {
+          backgroundColor: '#237ae4',
+          color: "#fff"
+        }
+      }),
       align: 'center'
-     },
-     {
-      title: '设备型号',
-      dataIndex: 'caty',
-      key: 'content',
-      align: 'center'
-     },
-     {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'content',
-      align: 'center'
-     },
-   ]
-
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    onHeaderCell:() => ({
+      style: {
+        backgroundColor: '#237ae4',
+        color: "#fff"
+      }
+    }),
+    align: 'center'
+   },
+   {
+    title: '设备型号',
+    dataIndex: 'category',
+    onHeaderCell:() => ({
+      style: {
+        backgroundColor: '#237ae4',
+        color: "#fff"
+      }
+    }),
+    align: 'center'
+   },
+   {
+    title: '安装地址',
+    dataIndex: 'address',
+    onHeaderCell:() => ({
+      style: {
+        backgroundColor: '#237ae4',
+        color: "#fff"
+      }
+    }),
+    align: 'center'
+   },
+   {
+    title: '设备状态',
+    dataIndex: 'status',
+    onHeaderCell:() => ({
+      style: {
+        backgroundColor: '#237ae4',
+        color: "#fff"
+      }
+    }),
+    align: 'center',
+    render: (text) => {
+      return text['1'] === 'Open' ? "开闸" : "合闸"
+    }
+  },
+  {
+    title: '策略是否启用',
+    dataIndex: 'enabled',
+    onHeaderCell:() => ({
+      style: {
+        backgroundColor: '#237ae4',
+        color: "#fff"
+      }
+    }),
+    align: 'center',
+    render: (text) => {
+      console.log(text)
+      return text > 0 ? "启用" : "停用"
+       
+    }
+  }
+ ]
+ let week =  [
+  {label: '周一', value: 1},
+  {label: '周二', value: 2},
+  {label: '周三', value: 3},
+  {label: '周四', value: 4},
+  {label: '周五', value: 5},
+  {label: '周六', value: 6},
+  {label: '周日', value: 7},
+]
+let getweek = new Map();
+week.forEach(w => {
+  getweek.set(w.value, `每${w.label}`)
+})
  function Main({projectId, areaId}) {
    const [form] = Form.useForm()
    const [open, setOpen] = useState(false)
    const [keycode, setKeycode] = useState(0)
    const [total, setTotal] = useState(0)
+   const [viewtb, setViewtb] = useState([])
+   const view = async (planId) =>{
+    try {
+      let params = {
+        planId,
+        projectId,
+        areaId,
+      }
+     let {success, data, errMsg} = await  RunAutoValve.QueryUsedDevice(params)
+     if(success) {
+       if(Array.isArray(data)) {
+        setViewtb(data);
+       }else {
+        setViewtb([])
+       }
+       setOpen(true)
+     }else {
+       message.warning(errMsg || '数据出错')
+     }
+    } catch (error) {
+      
+    }
+     
+   }
+
    const columns = [
     {
         title: '策略名称',
-        dataIndex: 'date',
-        key: 'date',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center'
     },
     {
         title: '周期',
-        dataIndex: 'eventType',
-        key: 'eventType',
-        align: 'center'
+        dataIndex: 'cycleTime',
+        key: 'cycleTime',
+        align: 'center',
+        render: (_, record) => {
+          let {cycle, cycleTime} = record
+          if(cycle == 1) return <span>每日</span>
+          if(cycle == 2) return  cycleTime.map(t =>  getweek.get(t)).join()
+          if(cycle == 3) return  cycleTime.map(d => `${d}号`).join()
+        }
     },
     {
       title: '分闸执行时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'autoOpenTime',
+      key: 'autoOpenTime',
       align: 'center'
      },
      {
       title: '合闸执行时间',
-      dataIndex: 'runtime',
-      key: 'runtime',
+      dataIndex: 'autoCloseTime',
+      key: 'autoCloseTime',
       align: 'center'
      },
      {
       title: '策略说明',
-      dataIndex: 'info',
-      key: 'info',
+      dataIndex: 'remark',
+      key: 'remark',
       align: 'center'
      },
      {
@@ -148,15 +256,13 @@ const controlcolumns = [
       dataIndex: 'device',
       key: 'device',
       align: 'center',
-      render: (text) => {
-        return <Link onClick={() => setOpen(true)}>查看详细</Link>
-      }
+      render: (_, record) => <Link underline onClick={() => view(record.id)}>查看详细</Link>
      },
-   ]
+   ] 
  
   const QueryReports =  ({current, pageSize}, form) => { 
       console.log(current)
-       let {alike} = form;
+       let {alike=''} = form;
       let  params = {
         pageNum: current,
         pageSize, 
@@ -166,8 +272,8 @@ const controlcolumns = [
          
       }
     
-   
-    return AutoValve.getPageData(params).then(res => {
+    console.log(params)
+    return RunAutoValve.getPageData(params).then(res => {
       let {success, data, total} = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
@@ -205,7 +311,7 @@ const controlcolumns = [
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onChange={submit} enterButton="查询" />
+              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onSearch={submit} enterButton="查询" />
              </Item>
            </Space>
           
@@ -230,7 +336,11 @@ const controlcolumns = [
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
        <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
-       <Usetable columns={controlcolumns}  {...tableProps}   rowKey={nanoid()}    />  
+       <div style={{flex: 1, backgroundColor: "#fff"}}>
+       <Usetable columns={controlcolumns}  dataSource={viewtb}   rowKey={nanoid()}  scroll={{
+            y: 867
+          }}   />  
+       </div>
        </CDrawer>
     </div>
     </Titlelayout>

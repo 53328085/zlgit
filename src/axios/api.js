@@ -484,7 +484,7 @@ export class PrepayRun{
   
 }
 
-// 运行监控--运行态--自动控制
+// 运行监控--设计态--自动控制
 
 export class AutoValve{
   static getPageData = (params) => server.post(`/Monitor/AutoValve/Page`, params ); //  获取页面数据
@@ -499,6 +499,15 @@ export class AutoValve{
   static ConfigureDevice = (params) => server.post(`/Monitor/AutoValve/ConfigureDevice`, params ); //  被控设备
 }
 
+// 运行监控--运行态--自动控制
+export class RunAutoValve{
+  static getPageData = (params) => server.post(`/Monitor/RuntimeAutoValve/Page`, params ); //  获取页面数据
+
+  
+  static QueryUsedDevice = ({projectId, areaId, planId}) => server.get(`/Monitor/RuntimeAutoValve/QueryUsedDevice?projectId=${projectId}&areaId=${areaId}&planId=${planId}`,   ); //  被控设备
+  
+  
+}
 
 
 // zl api end
