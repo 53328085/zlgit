@@ -92,8 +92,11 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
             str+=it.name+';'
         })
         addform.setFieldValue('contentGroup',str)
-        // setSelectedRowKeys([])
-        // setSubMeterRowKeys([])
+        setSelectedRowKeys([])
+        setSubMeterRowKeys([])
+        setDataSource([])
+        setSubSelectedRows([])
+        setSelectedRows([])
       
     }
     //未选择线路check

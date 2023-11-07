@@ -38,9 +38,9 @@ export function useWinSize(projectId, update) {
 export function numberformat(n){
   let num = parseFloat(n)
   if(num > 0) {
-   return <div style={{display: "inline-block"}}><span style={{color: "#f00"}}>&#9650;&nbsp;</span><span>&#43;{n}</span></div>
+   return <div style={{display: "inline-block", color: "#515151"}}><span style={{color: "#f00"}}>&#9650;&nbsp;</span><span>&#43;{n}</span></div>
   }else if(num < 0) {
-   return <div style={{display: "inline-block"}}><span style={{color: "#090"}}>&#9660;&nbsp;</span><span>{n}</span></div>
+   return <div style={{display: "inline-block",  color: "#515151"}}><span style={{color: "#090"}}>&#9660;&nbsp;</span><span>{n}</span></div>
   }else {
    return <span>{n}</span>
   }
@@ -63,7 +63,9 @@ export function cipher(name, pwd){
   return md5(`chint_${name}_${pwd}_wulian`)
    
 }
-
+export function getdays(){ // 获取当前月份的天数
+   return new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
+}
 export  const Statebox = styled.div`
   position: absolute;
   top: ${props => props.top};

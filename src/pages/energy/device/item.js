@@ -48,7 +48,7 @@ const Itembox = styled.div`
       color: #fff;
       align-items: center;
       justify-content: center;
-      padding: 0 8px;
+      padding: 0 4px;
      }
      .title {
       background-color: #135abd;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 import { useRequest, useToggle, useAntdTable } from 'ahooks'
@@ -19,13 +19,14 @@ const { RangePicker } = DatePicker;
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 export default function Index() {
   const projectId = useSelector(selectProjectId)
-  let [areaId, setAreaId] = useState(1)
+  let [areaId, setAreaId] = useState(0)
   // let [pageNum, setpageNum] = useState(1)
   // let [totalalarm, settotalalarm] = useState(1)
   // let [dataSourceLog, setdataSourceLog] = useState([])
   let [dataSourceRead, setdataSourceRead] = useState([])
   let [DataSourceReadR, setDataSourceReadR] = useState([])
-
+  const oneLevel = useSelector(state => state.system.onelevel)
+  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const tableRef = useRef()
   tableRef.current = DataSourceReadR
   // let [alike, setalike] = useState('')
@@ -235,6 +236,7 @@ useEffect(() => {
     isTab: false,//能耗、费用radioButton
     isSearch: false,//查询按钮
     isExport: false,//导出按钮
+    allarea:areaOptions
     //export: exportData //导出调用方法
   }
   const getFromChild = data => {

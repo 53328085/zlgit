@@ -238,14 +238,14 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.id
+    delid = record.sn
   }
   //确认删除
   const delOk = async () => {
 
     const { success, errMsg } = await DeleteCamera({
       projectId,
-      id: delid
+      sn: delid
     })
     if (success) {
       message.success('删除成功')
@@ -699,7 +699,7 @@ export const FormComp = (props) => {
           </Form.Item>
           {
             camera === 2 ? <>
-              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+              <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true, message: '流媒体服务器地址必须' }]}>
                 <Input />
               </Form.Item>
               <Form.Item label="端口号" name="port" rules={[{ required: true }, {
@@ -717,7 +717,7 @@ export const FormComp = (props) => {
               }]}>
                 <Input />
               </Form.Item>
-              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
+              <Form.Item label="设备IP地址" name="ip" rules={[{ required: true, message: '设备IP地址必须' }]}>
                 <Input />
               </Form.Item>
             </> : null

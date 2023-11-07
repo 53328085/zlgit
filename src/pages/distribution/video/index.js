@@ -16,7 +16,7 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,DistributionRoomRuntime} from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
@@ -41,11 +41,31 @@ export default function Index() {
   const [wsUrl, setWsUrl] = useState('');
   const [wsocket, setwebsocket] = useState(null);
   const [recordData, setrecordData] = useState()
-  const roomlist =useSelector(state=>state.system.roomId)
+  const roomopts =useSelector(state=>state.system.roomId)
+  console.log(roomopts)
+  const [roomlist,setRoomList] = useState(roomopts)
   const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const changeArea=()=>{
+  const [roomId,setRoomId] =useState(roomlist[0]?.id)
+  // const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+  const changeArea=(v)=>{
+    setAreaId(v)
+    getRoomList(v)
+  }
+  const changeRoom=(v)=>{
+    setRoomId(v)
+  }
+  const getRoomList = async (areaId) => {
+    const resp = await distributionRoom.RoomList(projectId, areaId)
+    if (resp.success) {
+      console.log(resp)
+      setRoomList(resp.data)
+      if (Array.isArray(resp.data) && resp.data.length > 0) {
+        form.setFieldValue('roomId', resp.data[0][['id']])
+      } else {
+        form.setFieldValue('roomId', [])
+      }
 
+    }
   }
   const controlStyle = {
     width: 256,
@@ -62,7 +82,7 @@ export default function Index() {
   }
   let [statistics, setStatistics] = useState({ all: '', cloud: '', local: '' })
   const getStatistics = () => {
-    return DistributionRoomRuntime.CameraSummary(projectId, roomlist[0].id).then((res) => {
+    return DistributionRoomRuntime.CameraSummary(projectId, roomlist[0]?.id).then((res) => {
       let { success, data } = res
       if (success && data) {
         setStatistics(data)
@@ -131,6 +151,7 @@ export default function Index() {
     })
   }
   const startYsPtz = () => {
+    console.log(StartYsPtzData)
     return StartYsPtz(StartYsPtzData).then((res) => {
       let { success, data } = res
       if (success && data) {
@@ -140,23 +161,50 @@ export default function Index() {
       }
     })
   }//云监控云台控制
-  const getOverview = () => {
-    return Overview(params).then((res) => {
-      let { success, data } = res
-      if (success && data) {
-        setoverView(data)
-        settotal(res.total)
-      } else {
-        message.error(res.errMsg)
+
+  // const getOverview = () => {
+  //   return Overview(params).then((res) => {
+  //     let { success, data } = res
+  //     if (success && data) {
+  //       setoverView(data)
+  //       settotal(res.total)
+  //     } else {
+  //       message.error(res.errMsg)
+  //     }
+  //   })
+  // }
+  const getCameraPage =async ()=>{
+    try{
+      let p ={
+        projectId,
+        pageNum:params.pageNum,
+        pageSize: 10,
+        roomId,
+        alike:params.alike
       }
-    })
-  }//云监控
+      const resp = await DistributionRoomRuntime.CameraPage(p)
+      let { success, data } = resp
+      if(success && data){
+        setoverView(data)
+        settotal(resp.total)
+      }else{
+        message.error(resp.errMsg)
+      }
+    }catch(e){
+      console.log(e)
+    }
+   
+  }
+  
+  //云监控
   const onChangeValue = e => {
     inputValue = e.target.value
   }//输入框改变值
   const onSearchList = () => {
     params.alike = inputValue
-    getOverview()
+    console.log(params)
+    // getOverview()
+    getCameraPage()
   }//点击查询按钮
   const onChangePage = (page, pageSize) => {
     setpageNum(page)
@@ -296,6 +344,8 @@ export default function Index() {
   }
  
   const showCameraDialog = (record) => {
+    console.log(record,location.protocol)
+
     setrecordData(record)
     if (record.accessMode == 1) {
       showModal()
@@ -305,8 +355,9 @@ export default function Index() {
         setLocalModal(true);
         setCameraTitle(record.address)
         // setwsType('h264')
+        
         setWsUrl('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
-        chooseType('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
+        chooseType('wss://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
       }
     }
   }
@@ -435,7 +486,7 @@ export default function Index() {
         div.setAttribute('id', 'glplayer');
         playerContainer.appendChild(div);
       }
-      let backURL = 'ws://' + recordData.serverAddress + ':' + recordData.port + '/video?ip=' + recordData.ip + '&type=track&user=' + recordData.account + '&pwd=' + recordData.pwd + '&channel=' + recordData.channel + '&startTime=' + start + '&endTime=' + end;
+      let backURL = 'wss://' + recordData.serverAddress + ':' + recordData.port + '/video?ip=' + recordData.ip + '&type=track&user=' + recordData.account + '&pwd=' + recordData.pwd + '&channel=' + recordData.channel + '&startTime=' + start + '&endTime=' + end;
       setWsUrl(backURL);
       chooseType(backURL);
     }, 1000)
@@ -450,7 +501,7 @@ const playBackYun=()=>{
   const changeUTC = (time) => {
     let date = new Date(time);
     let year = date.getFullYear().toString();
-    let month = date.getMonth() + 1;
+    let month = date.getMonth() + 1;``
     month = month < 10 ? '0' + month : month.toString();
     let day = date.getDate();
     day = day < 10 ? '0' + day : day.toString();
@@ -490,10 +541,15 @@ const playBackYun=()=>{
     
   }, [projectId, areaId])
   useEffect(() => {
-    if (areaId) {
-      getOverview()
+    console.log(areaId)
+    if(roomId){
+      getCameraPage()
     }
-  }, [projectId, areaId, params.alike, params.pageNum])
+  
+    // if (areaId) {
+    //   getOverview()
+    // }
+  }, [projectId, roomId, params.alike, params.pageNum])
   return (
     <div className={style.video}>
       {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
@@ -502,9 +558,13 @@ const playBackYun=()=>{
             form={form}
             colon={false}
             layout="inline"
+            initialValues={{
+              area:oneLevel[0]?.id,
+              roomId
+            }}
           >
             <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
+              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} ></Select>
             </Form.Item>
             <Form.Item>
             <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
@@ -514,7 +574,8 @@ const playBackYun=()=>{
               options={roomlist} 
               fieldNames={{ label: 'name', value: 'id' }}
               style={{ width: 240 }} 
-              placeholder="请选择配电房"></Select>
+              placeholder="请选择配电房"
+              onChange={changeRoom}></Select>
            </Form.Item>
           </Form>
         </div>

@@ -235,14 +235,14 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.id
+    delid = record.sn
   }
   //确认删除
   const delOk = async () => {
     console.log(delid)
     const { success, errMsg } = await DeleteWater({
       projectId,
-      id: delid
+      sn: delid
     })
     if (success) {
       message.success('删除成功')
@@ -441,7 +441,7 @@ export default function gateway({ deviceStyle }) {
       ...page,
       current:resp.pageNum,
       pageSize: resp.pageSize,
-      total: 0
+      total: resp.total
     })
     if (resp.success && Array.isArray(resp.data)) {
       setDataSource([...resp.data.reverse()])

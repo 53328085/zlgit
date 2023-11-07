@@ -1,9 +1,10 @@
-import React, {useState, useEffect,useRef, Fragment} from 'react'
+import React, {useState, useEffect,useRef, Fragment, forwardRef,useImperativeHandle} from 'react'
 import style from './style.module.less';
 import {Input, Tree, message } from 'antd';
 import dashLine from '@imgs/line.png'
 import {DistributionRoomRuntime} from '@api/api.js'
-export default function Index({form,projectId}){
+export default forwardRef(
+  function Index({form,projectId,roomId,getLinePoint},ref){
     const { Search } = Input;
 
       const [treeData, setTreeData] = useState([
@@ -49,12 +50,22 @@ export default function Index({form,projectId}){
       //   }]
       // },
     ])
-    
+    const [selectedKeys,setSelectedKeys] =useState([0])
+      const onSelect=(selectedKeys,e)=>{
+        setSelectedKeys(selectedKeys)
+        getLinePoint(roomId,selectedKeys[0])
+      }
       const getTreeData=async (roomId)=>{
         const res =  await DistributionRoomRuntime.LineTree(projectId,roomId)
         if(res.success){
-          setTreeData(res.data)
-          generateList(res.data);
+          if(Array.isArray(res.data)){
+            setTreeData(res.data)
+            generateList(res.data);
+          }else{
+            setTreeData([])
+            generateList([]);
+          }
+          
         }else{
           message.error(res.errMsg)
         }
@@ -151,15 +162,26 @@ export default function Index({form,projectId}){
               key: item.id,
             };
           });
+        }else{
+          return []
         }
         
       }
         
-    
+      
       useEffect(()=>{
-        const {roomId} = form.getFieldsValue()
-        getTreeData(roomId)
-      },[])   
+       
+        roomId&&getTreeData(roomId)
+        
+        if(!roomId){
+          setTreeData([])
+        }
+      },[roomId]) 
+      useImperativeHandle(ref,()=>{
+        return {
+          selectedKeys
+        }
+      })  
       return(
         <div className={style.contentLeft}>
             <div className={style.title}>回路选择</div>
@@ -179,7 +201,11 @@ export default function Index({form,projectId}){
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             treeData={loop(treeData)}
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={0}
+            onSelect={onSelect}
           />
         </div>
       )
 }
+) 

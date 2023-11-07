@@ -488,6 +488,10 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
         setSelectedRowKeys([])
         setSubMeterRowKeys([])
         setSummaryRowKeys([])
+        setDataSource([])
+        setSelectedRows([])
+        setSubSelectedRows([])
+        setSummarySelectedRows([])
     }
     //未选择线路check
     const onSelectChange = (newSelectedRowKeys, selectedRows, info) => {

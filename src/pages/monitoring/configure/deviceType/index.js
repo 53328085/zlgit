@@ -16,6 +16,8 @@ import Hotwate from './hotWate' // 热水
 import Steam from './steam' // 蒸汽
 import Coal from './coal' // 煤炭
 import Fuel from './fuel' // 燃油
+import Shock from './shock' //触点
+import Fiber from './fiber' //光纤
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -31,29 +33,6 @@ export default function Index() {
     tabwidth: "120px",
     tabgap: 8,
   };
- 
-  const getAllDeviceStyle = async () => {
-    try{
-      const result = await AllDeviceStyle()
-      const { data, errMsg, success } = result;
-      if (success) {
-        if(Array.isArray(data)){
-          let arr= data.map(item => ({
-            key: `${item.deviceStyle}`,
-            label: `${item.name}类型`
-          }))
-          arr.unshift({ key: '0', label: '网关类型' })
-         
-          setTabs(arr)
-          dataProps = {...dataProps,  tabs } 
-        }
-      }else{
-        message.error(errMsg)
-      }
-    }catch(e){console.log(e)}
-  
-  }
- // const emptyarr = new Array(4).fill(<></>)
   let Coms = [
     <GateWay />,
     <Electric />,
@@ -67,8 +46,38 @@ export default function Index() {
     <Coal/>,
     <Fuel/>,
     <Energy/>,
-    <Circuit/>
+    <Circuit/>,
+    <Shock/>,
+    <Fiber/>
   ]
+  const getAllDeviceStyle = async () => {
+    try{
+      const result = await AllDeviceStyle()
+      const { data, errMsg, success } = result;
+      if (success) {
+        if(Array.isArray(data)){
+          let arr= data.map(item => {
+            if(item.state===1){
+              return{
+                key: `${item.deviceStyle}`,
+                label: `${item.name}类型`
+              }
+            }
+           
+          })
+          arr.unshift({ key: '0', label: '网关类型' })
+         console.log(arr)
+          setTabs(arr)
+          dataProps = {...dataProps,  tabs } 
+        }
+      }else{
+        message.error(errMsg)
+      }
+    }catch(e){console.log(e)}
+  
+  }
+ // const emptyarr = new Array(4).fill(<></>)
+  
   useEffect(() => {
     getAllDeviceStyle()
   }, [])

@@ -1,22 +1,24 @@
+
+import {Link} from 'react-router-dom'
 export const columns =[
      {
         title: '电压(V)',
         children:[
             {
                 title:'A相',
-                dataIndex:'AVolt',
-                key:'AVolt',
+                dataIndex:'Ua',
+                key:'Ua',
                 align:'center',
             },
             {
                 title:'B相',
-                dataIndex:'BVolt',
-                key:'BVolt',
+                dataIndex:'Ub',
+                key:'Ub',
                 align:'center',
             }, {
                 title:'C相',
-                dataIndex:'CVolt',
-                key:'CVolt',
+                dataIndex:'Uc',
+                key:'Uc',
                 align:'center',
             }
         ]
@@ -26,69 +28,69 @@ export const columns =[
         children:[
             {
                 title:'A相',
-                dataIndex:'ACurrent',
-                key:'ACurrent',
+                dataIndex:'Ia',
+                key:'Ia',
                 align:'center',
             },
             {
                 title:'B相',
-                dataIndex:'BCurrent',
-                key:'NCurrent',
+                dataIndex:'Ib',
+                key:'Ib',
                 align:'center',
             }, {
                 title:'C相',
-                dataIndex:'CCurrent',
-                key:'CCurrent',
+                dataIndex:'Ic',
+                key:'Ic',
                 align:'center',
             }
         ]
       },
       {
         title: <div ><div>有功功率</div><div>(kW)</div></div>,
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'TotW',
+        key: 'TotW',
         align:'center'
       },
       {
         title: <div ><div>无功功率</div><div>(kvar)</div></div>,
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'TotVar',
+        key: 'TotVar',
         align:'center'
       },
       {
         title: <div ><div>视在功率</div><div>(kVA)</div></div>,
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'TotVA',
+        key: 'TotVA',
         align:'center'
       },
       {
         title: <div ><div>负荷</div><div>(kW)</div></div>,
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'Load',
+        key: 'Load',
         align:'center'
       },
       {
         title: <div ><div>负荷率</div><div>(kW)</div></div>,
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'LoadPer',
+        key: 'LoadPer',
         align:'center'
       },
       {
         title: '功率因素',
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'TotPF',
+        key: 'TotPF',
         align:'center'
       },
       {
         title: '温度',
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'Tmp',
+        key: 'Tmp',
         align:'center'
       },
       {
         title: '风机状态',
-        dataIndex: 'customer',
-        key: 'customer',
+        dataIndex: 'Fan',
+        key: 'Fan',
         align:'center'
       },
       {
@@ -97,7 +99,7 @@ export const columns =[
         key: 'customer',
         align:'center',
         render: (_, record) => (
-                    <a  style={{textDecoration:'underline'}}>查看详情</a>
+                    <a  style={{textDecoration:'underline'}} target='_blank' href={`/deviceDetail?sn=${record.sn}`}>查看详情</a>
                 ),
       },
    

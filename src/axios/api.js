@@ -484,6 +484,32 @@ export class PrepayRun{
   
 }
 
+// 运行监控--设计态--自动控制
+
+export class AutoValve{
+  static getPageData = (params) => server.post(`/Monitor/AutoValve/Page`, params ); //  获取页面数据
+
+  static Add = (params) => server.post(`/Monitor/AutoValve/Add`, params ); //  增加
+  
+  static Update = (params) => server.post(`/Monitor/AutoValve/Update`, params ); //  修改
+  static Delete = ({projectId, id}) => server.get(`/Monitor/AutoValve/Delete?projectId=${projectId}&id=${id}`  ); //  删除
+  static GetDeviceConfigure = (params) => server.post(`/Monitor/AutoValve/GetDeviceConfigure`, params ); //  被控设备
+  static QueryUsedDevice = ({projectId, areaId, planId}) => server.get(`/Monitor/AutoValve/QueryUsedDevice?projectId=${projectId}&areaId=${areaId}&planId=${planId}`,   ); //  被控设备
+  
+  static ConfigureDevice = (params) => server.post(`/Monitor/AutoValve/ConfigureDevice`, params ); //  被控设备
+}
+
+// 运行监控--运行态--自动控制
+export class RunAutoValve{
+  static getPageData = (params) => server.post(`/Monitor/RuntimeAutoValve/Page`, params ); //  获取页面数据
+
+  
+  static QueryUsedDevice = ({projectId, areaId, planId}) => server.get(`/Monitor/RuntimeAutoValve/QueryUsedDevice?projectId=${projectId}&areaId=${areaId}&planId=${planId}`,   ); //  被控设备
+  
+  
+}
+
+
 // zl api end
 // 主页
 export class Home {
@@ -1141,7 +1167,7 @@ export const GetCamerasVideosByProjectId = (Id) =>
  
 export const leftControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzLeft?ip=" +
     ip +
@@ -1155,7 +1181,7 @@ export const leftControl = (params, url, ip, channel, user, pwd) =>
   );
 export const bottomControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzDown?ip=" +
     ip +
@@ -1169,7 +1195,7 @@ export const bottomControl = (params, url, ip, channel, user, pwd) =>
   );
 export const rightControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzRight?ip=" +
     ip +
@@ -1183,7 +1209,7 @@ export const rightControl = (params, url, ip, channel, user, pwd) =>
   );
 export const topControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzUp?ip=" +
     ip +
@@ -1197,7 +1223,7 @@ export const topControl = (params, url, ip, channel, user, pwd) =>
   );
 export const stopControl = (params, url, ip, channel, user, pwd) =>
   server.post(
-    "http://" +
+    "https://" +
     url +
     "/V1/Ptz/PtzStop?ip=" +
     ip +
@@ -1279,12 +1305,22 @@ export const Monitoring = {
     State: (sn) => server.get(`/Monitor/Gateway/State?sn=${sn}`),//重启网关状态
     GatewayImport: (data) => server.post(`/Monitor/Gateway/Import`, data),//导入网关
     ImportElectric: (data) => server.post(`/Monitor/Device/ImportElectric`, data),//导入电表
+    ImportBreaker: (data) => server.post(`/Monitor/Device/ImportBreaker`, data),//导入电表
     ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data),//导入水表
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data),//导入燃气表
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data),//导入传感器
     ImportTransformer: (data) => server.post(`/Monitor/Device/ImportTransformer`, data),//导入变压器
     ImportCamera: (data) => server.post(`/Monitor/Device/ImportCamera`, data),//导入视频监控
-  },
+    QueryByPageGXCW:(data)=>server.post(`/Monitor/Device/QueryByPageCDCW`,data),//查询触点测温
+    AddCDCW:(data)=>server.post(`/Monitor/Device/AddCDCW`,data),//新增触点测温
+    UpdateCDCW:(data)=>server.post(`/Monitor/Device/UpdateCDCW`,data),//更新触点测温
+    DeleteCDCW:(data)=>server.delete(`/Monitor/Device/DeleteCDCW`,{params:data}),//删除触点测温
+    ImportCDCW:(data)=>server.post(`/Monitor/Device/ImportCDCW`,data),//批量导入触点测温
+    QueryByPageFibreTempil:(data)=>server.post(`/Monitor/Device/QueryByPageFibreTempil`,data),//查询光纤测温
+    AddFibreTempil:(data)=>server.post(`/Monitor/Device/AddFibreTempil`,data),//新增光纤测温
+    UpdateFibreTempil:(data)=>server.post(`/Monitor/Device/UpdateFibreTempil`,data),//更新光纤测温
+    DeleteFibreTempil:(data)=>server.delete(`/Monitor/Device/DeleteFibreTempil`,{params:data}),//删除光纤测温
+    },
   //公共照明管理
   PubliclightManager: {
     AeraQueryAll: (projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`),//获取区域 
@@ -1621,6 +1657,7 @@ export class distributionRoom {
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
+ 
 }
  
 //配电房设备
@@ -1682,7 +1719,7 @@ export class DistributionRoomRuntime{
     return server.get(`/Distribution/DistributionRoomRuntime/RuntimePoints`,{params:{projectId,sn}})
   }
   static HistoryTrends=(data)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/HistoryTrends`,data)
+    return server.post(`/Distribution/DistributionRoomRuntime/HistoryTrend`,data)
   }
   static LineTree=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
@@ -1697,8 +1734,12 @@ export class DistributionRoomRuntime{
     return server.post(`/Distribution/DistributionRoomRuntime/CameraPage`,data)
   }
   static GetEnvironment=(projectId,roomId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`,{params:{projectId,roomId}})
+    return server.get(`/Distribution/DistributionRoomRuntime/EnvironmentInfo`,{params:{projectId,roomId}})
   }
+  static EnvironmentTrend=(data)=>server.post(`/Distribution/DistributionRoomRuntime/EnvironmentTrend`,data)
+  static WarningPage=(data)=>server.post(`/Distribution/DistributionRoomRuntime/WarningPage`,data)
+  static RoomOne =(projectId,roomId)=>server.get(`/Distribution/DistributionRoomRuntime/RoomOne`,{params:{projectId,roomId}})
+  static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
 }
 //能源流向
 export class EnergyFlowRuntime {

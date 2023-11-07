@@ -116,8 +116,8 @@ export default function gateway() {
       render: (text, record, index) => {
         return (
           <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>
-            <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>
+            { record.download == 0 && <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>}
+            { record.download == 0 && <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>}
             <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
             <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
           </p>
@@ -189,7 +189,7 @@ export default function gateway() {
   }
   //打开删除窗口
   const onDelete = (record) => {
-    setDelId(record.id)
+    setDelId(record.sn)
     modalDelRef?.current?.onOpen()
   }
   //获取第一级区域名
@@ -380,7 +380,7 @@ export default function gateway() {
   const delOk = async () => {
     let params = {
       projectId,
-      id: delId
+      sn: delId
     }
     const resp = await GatewayDelete(params)
     if (resp.success) {

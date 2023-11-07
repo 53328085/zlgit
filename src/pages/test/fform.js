@@ -1,66 +1,67 @@
- 
-import React, {useRef, useEffect} from 'react'
-import {Typography} from 'antd'
-import styled from 'styled-components';
-const {Text, Paragraph} = Typography
-const Info = styled.div`
-   position: absolute;
-   top: 10px;
-   right: 10px;
-   background-color: #fff;
-   border: 1px solid #d7d7d7;
-   border-radius: 4px;
-
-`
-export default function Index() {
-   
-    let map;
-    
-   
-
-  useEffect(() => {
-    AMapLoader.load({ //首次调用 load
-        key:'0a004d3329b9515715462f6af92f40eb',//首次load key为必填
-        version:'2.0',
-        plugins:['AMap.Scale','AMap.ToolBar']
-    }).then((AMap)=>{
-        map = new AMap.Map('map', {
-           // mapStyle: 'amap://styles/whitesmoke'
-        });
-        const traffic = new AMap.TileLayer({
-            'autoRefresh': true,     //是否自动刷新，默认为false
-            'interval': 180,         //刷新间隔，默认180s
-          })
-        map.addControl(new AMap.Scale())
-        map.addControl(new AMap.ToolBar())
-        map.add(new AMap.Marker({
-            position:map.getCenter(),
-            
-        }));
-        map.add(traffic)
-        map.remove(traffic)
-        traffic.hide()
-        
-    }).catch((e)=>{
-        console.error(e);
-    });
-   
-    AMapLoader.load({ //可多次调用load
-        plugins:['AMap.MapType']
-    }).then((AMap)=>{
-        map.addControl(new AMap.MapType())
-    }).catch((e)=>{
-        console.error(e);
-    });
-    
-  })
- 
+import React, {useCallback, useEffect, useMemo, useState, memo, useContext, createContext} from 'react'
+import {Form, Input, Button} from 'antd'
+import { FundTwoTone } from '@ant-design/icons'
+ const Context = createContext(null)
+ const Userson =  memo((props) => {
+  console.log('Userson')
+   return (
+    <h>{props.num}</h>
+   )
+ })
+ const User =  memo(() => {
+  const {data, num} = useContext(Context);
+  console.log('user')
   return (
-   <div   id="map" style={{height: "100vh", position: "relative"}}>
-     <Info>
-        <Paragraph>获取地图级别与中心点坐标</Paragraph>
-        <Text>当前级别：</Text>
-     </Info>
-   </div>
+    <div>
+      <h1>{data}</h1>
+       <Userson num={num} />
+      </div>
+  
   )
+ })
+ function  Box({children, ch}) {
+  const [form] = Form.useForm()
+  const [name, setName] = useState('zl')
+  const [title, setTitle] = useState('')
+  const person =useMemo(() => ({
+    name
+  }), [name])
+  const onCK= useCallback(() => {
+    alert(name)
+  }, [name])
+  useEffect(() => {
+    
+  }, [])
+  return (
+    <div>
+       <h1>{title}</h1>
+      <label> 父组件<input value={name} onChange={(e) => setName(e.target.value)}></input></label>
+       <input value={title} onChange={(e) => setTitle(e.target.value)}></input>
+     <Form form={form}>
+      <Form.Item name="name" label="姓名">
+      <Input  ></Input>
+      </Form.Item>
+       
+     </Form>
+      <div style={{backgroundColor: "#ff7313", height: '300px'}}>
+            {ch}
+      </div>
+     
+    </div>
+  )
+}
+export default function Index() {
+   const [data, setData] = useState("")
+   const [num, setNum] = useState(0);
+   return (
+     <div>
+      <label>顶层组件<input value={data} onChange={e => setData(e.target.value)} /> </label>
+      <label>数字<input type="number" onChange={e => setNum(e.target.value)} /> </label>
+      <Context.Provider value={{data, num}}>
+       <Box ch={<User />}> 
+      
+       </Box>
+       </Context.Provider>
+     </div>
+   )
 }

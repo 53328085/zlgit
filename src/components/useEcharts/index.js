@@ -578,5 +578,6 @@ export const drawEcharts = (
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    
   chart?.resize();
+  return chart
 };
 

@@ -89,8 +89,11 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform }, ref) =>
             str+=it.name+';'
         })
         addform.setFieldValue('deviceGroup',str)
-        // setSelectedRowKeys([])
-        // setSubMeterRowKeys([])
+        setSelectedRowKeys([])
+        setSubMeterRowKeys([])
+        setDataSource([])
+        setSubSelectedRows([])
+        setSelectedRows([])
        
     }
     //未选择线路check

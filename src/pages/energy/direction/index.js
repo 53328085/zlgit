@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect,useCallback } from "react";
- 
+
 import { Form, Space, DatePicker, Select} from "antd";
 import moment from 'moment';
- 
+import {Navigate} from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
  
 import CustContext from "@com/content.js";
@@ -27,8 +27,7 @@ const {queryElectric, queryWater, queryGas} = EnergyFlowRuntime
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
   const areaId = useSelector(selectOneLevelDefaultId)
- // let [id] = useState(areaId)
-  console.log(areaId)
+
   const [form] = Form.useForm();
   const {Item} = Form
   const [data, setData] = useState({link: [], name: []}) 
@@ -156,7 +155,7 @@ export default function Index() {
       <Pagecount showserach={true} pd="32px">   
       
         {
-          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Topology key="topology" projectId={projectId}/>
+          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Navigate to="/index/runtimeMaintenance/chart" />
         }
       </Pagecount>
       </CustContext.Provider>
