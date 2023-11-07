@@ -245,6 +245,7 @@ export default function Index() {
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;
   
   let type = ['', '日', '月', '年'][timetype]
+  let my = ['', '昨', '上', '去'][timetype]
   const Chartbox = ({data}) => {
     const ref = useRef()
     const charw = () => {
@@ -252,24 +253,24 @@ export default function Index() {
       let {x =[], y=[], y1=[]} = data || {}
 
       let cost = ['',
-      ["time", `本${type}(万元)`, `昨${type}(万元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
-      ["time", `本${type}(元)`, `昨${type}(元)`],
+      ["time", `本${type}(万元)`, `${my}${type}(万元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
     ]
       let energy = ['',
-      ["time", `本${type}能耗(吨标煤)`, `昨${type}能耗(吨标煤)`],
-      ["time", `本${type}(kWh)`, `昨${type}(kWh)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(m³)`, `昨${type}(m³)`],
-      ["time", `今${type}(吨)`, `昨${type}(吨)`],
-      ["time", `今${type}(吨)`, `昨${type}(吨)`],
+      ["time", `本${type}能耗(吨标煤)`, `${my}${type}能耗(吨标煤)`],
+      ["time", `本${type}(kWh)`, `${my}${type}(kWh)`],
+      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+      ["time", `今${type}(吨)`, `${my}${type}(吨)`],
+      ["time", `今${type}(吨)`, `${my}${type}(吨)`],
     ]
       let dimensions = ['', energy, cost ][op][tabvalue]      
       let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
@@ -313,7 +314,7 @@ const EngItem = ({name, unit, periodValue, lastMonthPeriodValue, lastYearPeriodV
          <span>{periodValue}</span>
        </div>
        <div className="item">
-         <span>上{type}</span>
+         <span>{my}{type}</span>
          <span>{lastMonthPeriodValue}</span>
        </div>
        <div className="item">
@@ -407,7 +408,7 @@ const Electric = ({data, des}) => {
           {numberformat(data.yoy)}
         </div>
         <div className="item">
-          <span>昨{type}：</span>
+          <span>{my}{type}：</span>
           <span>{data.lastMonthPeriodValue}</span>
           <span>环比</span>
           
@@ -483,7 +484,7 @@ const CoalStandard =({data={}}) => {
           <span>{data.periodValue}</span>
         </div>
         <div className="item">
-          <span>昨{type}能耗：</span>
+          <span>{my}{type}能耗：</span>
           <span>{data.lastMonthPeriodValue}</span>
         </div>
         <div className="item">
