@@ -7,8 +7,8 @@ const LineManage = lazy(() => import("@pages/distribution/configure/index/lineMa
 const TransformerManage = lazy(() => import("@pages/distribution/configure/index/transformerManage"))
 const MonitorManage = lazy(() => import("@pages/distribution/configure/index/monitorManage"))
 const SensorManage = lazy(() => import("@pages/distribution/configure/index/sensorManage"))
- 
-
+const ContactManage = lazy(() => import("@pages/distribution/configure/index/contactManage")) 
+const FibrtManage = lazy(() => import("@pages/distribution/configure/index/fibreManage"))
 export let designerDistribution = {
     '020501': Room,
     '020502': Topology,
@@ -16,5 +16,7 @@ export let designerDistribution = {
     '020504': TransformerManage,
     '020505': MonitorManage,
     '020506': SensorManage,
+    '020507': ContactManage,
+    '020508': FibrtManage
 }
 

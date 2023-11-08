@@ -120,7 +120,7 @@ function Main({ areaId, siteId }) {
   const [level,setLevel] =useState(0)
   const [pageInfo,setPageInfo] =useState({
     pageNum:1,
-    pageSize:1,
+    pageSize:10,
     total:0
   })
   // const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []

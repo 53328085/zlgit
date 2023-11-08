@@ -86,7 +86,7 @@ export default function gateway({ deviceStyle }) {
 
  
   const pathGruop = index==1?path1Gruop:index==2?path2Gruop:index==3?path3Gruop:index==4?path4Gruop:[]
-   const flagref =useRef(true)
+   const flagref =useRef([true,true,true,true])
   const content =useContext(cutContext)
   const levelname =useRef()
   let delid;
@@ -188,7 +188,11 @@ export default function gateway({ deviceStyle }) {
      path2Gruop.current = record.path2Group?record.path2Group:[]
      path3Gruop.current = record.path3Group?record.path3Group:[]
      path4Gruop.current = record.path4Group?record.path4Group:[]
-    console.log(editform.getFieldsValue())
+     if(path1Gruop.current)flagref.current[0]=false
+     if(path2Gruop.current)flagref.current[1]=false
+     if(path3Gruop.current)flagref.current[2]=false
+     if(path4Gruop.current)flagref.current[3]=false
+    console.log(editform.getFieldsValue(),flagref)
   }
  
   //确认编辑
@@ -453,8 +457,11 @@ export default function gateway({ deviceStyle }) {
   //新增弹窗取消
   const onAddCancel = ()=>{
     modalFormRef?.current?.onCancel()
-    pathGruop.current=[]
-    flagref.current =true
+    flagref.current=[true,true,true,true]
+    path1Gruop.current=[]
+    path2Gruop.current=[]
+    path3Gruop.current=[]
+    path4Gruop.current=[]
     setTransition(undefined)
     setMaskTransitionName(undefined)
   }
@@ -598,21 +605,27 @@ export default function gateway({ deviceStyle }) {
       message.error(res.errMsg)
     }
   }
- const openarea=()=>{
+ const openarea=(index)=>{
+  console.log(index)
+  // flagref.current[index]=true
     areaModaref.current.onOpen()
  }
  const areacancel =()=>{
+    console.log(flagref,index)
     areaModaref.current.onCancel()
-    if(flagref.current){
-      pathGruop.current =[]
+    if(flagref.current[index]){
+      index ==1?path1Gruop.current=[]:index==2?path2Gruop.current=[]:index==3?path3Gruop.current=[]:path4Gruop.current=[]
+      // pathGruop.current =[]
     }
    
     // setTransition(undefined)
     // setMaskTransitionName(undefined)
  }
  const areaok=()=>{
+  console.log(index)
   areaModaref.current.onCancel()
-  flagref.current =false
+  flagref.current[index] = false
+  
   console.log(path1Gruop.current,path2Gruop.current,path3Gruop.current,path4Gruop.current)
  }
   useEffect(() => {

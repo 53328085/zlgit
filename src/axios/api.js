@@ -1697,6 +1697,12 @@ export class DistributionMeter {
     );
   static configureSensor = (data) =>
     server.post(`Distribution/DistributionMeter/ConfigureSensor`, data);
+  static QueryUnusedCDCW = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedCDCW`,{params:{projectId, roomId}})
+  static QueryPageCDCW =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageCDCW`,{params:{projectId, roomId, pageNum, pageSize}})
+  static ConfigureCDCW=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureCDCW`,data)
+  static QueryUnusedFibreTempil = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedFibreTempil`,{params:{projectId, roomId}})
+  static QueryPageFibreTempil =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageFibreTempil`,{params:{projectId, roomId, pageNum, pageSize}})
+  static ConfigureFibreTempil=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureFibreTempil`,data)
 }
 
 export class DistributionRoomRuntime{
@@ -1740,6 +1746,8 @@ export class DistributionRoomRuntime{
   static WarningPage=(data)=>server.post(`/Distribution/DistributionRoomRuntime/WarningPage`,data)
   static RoomOne =(projectId,roomId)=>server.get(`/Distribution/DistributionRoomRuntime/RoomOne`,{params:{projectId,roomId}})
   static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
+  static Statistics=(data)=>server.get(`/Distribution/DistributionRoomRuntime/Statistics`,{params:data})
+  static Overview =(data)=>server.post(`/Distribution/DistributionRoomRuntime/Overview`,data)
 }
 //能源流向
 export class EnergyFlowRuntime {

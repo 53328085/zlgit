@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
+import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message, Space,Divider } from 'antd'
+import { Input, Button, Select, Radio, Pagination, FormTable, message, Space, Divider, Form } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
-import { Monitoring ,distributionRoom} from '@api/api.js'
-import {  ExportExcel} from '@com/useButton'
+import { Monitoring, distributionRoom, DistributionRoomRuntime } from '@api/api.js'
+import { ExportExcel } from '@com/useButton'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
+
 
 
 let inputValue = ''
@@ -20,18 +21,18 @@ export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
-  const {DeviceTypeManager: {AllDeviceStyle}, RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
+  const { DeviceTypeManager: { AllDeviceStyle }, RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaLists = useSelector(selectOneLevel)
   const oneLevel = useSelector(state => state.system.onelevel)
   const LevelDefaultId = useSelector(selectOneLevelDefaultId)
-  const areaList =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):null
+  const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : null
   const defaultLabel = useSelector(levelDefaultLabel)
 
   const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  console.log(areaList,oneLevel)
+  console.log(areaList, oneLevel)
   let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
@@ -41,12 +42,14 @@ export default function Index(props) {
   const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState(roomopts)
   const [roomId, setRoomId] = useState(roomopts[0]?.id)
+  const [form] = Form.useForm()
+  const { Item } = Form
   let initparams = {
     projectId: projectId,
-    areaId: areaId,
-    gatewayId: 0,
+    // areaId: areaId,
+    // gatewayId: 0,
     deviceStyle: 13,
-    category: '',
+    // category: '',
     alike: '',
     state: 0,
     pageNum: 1,
@@ -97,20 +100,20 @@ export default function Index(props) {
   let [devices, setDevies] = useState([])
 
   const getType = async () => { // 表计类型
-        
-        try {
-          let {success, data} = await AllDeviceStyle();
-          if(success && Array.isArray(data)) {
-             setDevies(data);
-          }else {
-            setDevies([]);
-          }
-        } catch (error) {
-          setDevies([]);
-        }
+
+    try {
+      let { success, data } = await AllDeviceStyle();
+      if (success && Array.isArray(data)) {
+        setDevies(data);
+      } else {
+        setDevies([]);
+      }
+    } catch (error) {
+      setDevies([]);
+    }
   }
   const getData = () => {                   // 表计状态
-     Statistics({ projectId: params.projectId, areaId: params.areaId, deviceStyle: params.deviceStyle }).then(res => {
+    DistributionRoomRuntime.Statistics({ projectId: params.projectId, roomId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
         setStatistics(data || [])
@@ -120,7 +123,7 @@ export default function Index(props) {
     })
   }
   const getGatewayUsed = () => {            // 表计型号
-     QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: params.deviceStyle }).then(res => {
+    QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: params.deviceStyle }).then(res => {
       let { success, data } = res
       if (success) {
         setoptionsGateway(data || [])
@@ -130,23 +133,23 @@ export default function Index(props) {
     })
   }
   const getOverviewData = () => {        //   表计数据
-    Overview(params).then(res => {
+    DistributionRoomRuntime.Overview({...params,roomId}).then(res => {
       let { success, data, total, pageNum } = res
       if (success) {
-       
+
         setoverView(data || [])
         setTotal(total)
-       // setPageNum(pageNum)
-        let overViewList=[]
-        data?.details?.map(item=>{
-          let description=''
-          item.fields.map(items=>{
-             description+=items.name+' '+items.value+' '
+        // setPageNum(pageNum)
+        let overViewList = []
+        data?.details?.map(item => {
+          let description = ''
+          item.fields.map(items => {
+            description += items.name + ' ' + items.value + ' '
           })
-          overViewList.push({...item,description:description})
+          overViewList.push({ ...item, description: description })
         })
-         console.log(overViewList)
-         setdataSource(overViewList)
+        console.log(overViewList)
+        setdataSource(overViewList)
       } else {
         message.error(res.errMsg)
       }
@@ -163,11 +166,11 @@ export default function Index(props) {
     showTotal: (total) => `共${total}条记录`,
   };
   const handlePageChange = (page) => {
-     //setPageNum(page);
-     setParams({
+    //setPageNum(page);
+    setParams({
       ...params,
       pageNum: page
-     })
+    })
   };
 
 
@@ -200,98 +203,102 @@ export default function Index(props) {
 
   const changeArea = (value) => {
     getRoomList(value)
+    // setParams({
+    //   ...initparams,
+    //   areaId: value,
+    //   pageNum: 1,
+    // })
+  };
+  const handleChangeDevice = (value) => {
+    console.log(value);
     setParams({
       ...initparams,
-      areaId: value,
+      deviceStyle: value,
       pageNum: 1,
     })
-  };
-  const handleChangeDevice = (value) => { 
-   console.log(value);
-   setParams({
-    ...initparams,
-    deviceStyle: value,
-    pageNum: 1,
-   })
   }
   const onChangeValue = e => {
-     setParams({
+    setParams({
       ...params,
       alike: e.target.value
-     })
+    })
   }//输入框改变值
-   
+
   const handleChange = e => {
-   
-   // getOverviewData()
-   setParams({
-    ...params,
-    category: e,
-    pageNum: 1,
-   })
+
+    // getOverviewData()
+    setParams({
+      ...params,
+      category: e,
+      pageNum: 1,
+    })
   }//网关型号选择
   const handleChangeState = e => {
     setParams({
       ...params,
       state: e,
       pageNum: 1,
-     })
-   // params.state = e
-   // getOverviewData()
+    })
+    // params.state = e
+    // getOverviewData()
 
   }//网关状态选择
   const changeTab = val => {
     console.log(val)
     setisCard(val.target.value == 'card' ? true : false)
-   // setPageNum(1)
+    // setPageNum(1)
     // setParams({ 
     //   ...initparams
     // })
     //getOverviewData()
   }//切换卡片列表模式
 
- 
- const onExport = useCallback( () => {        //   表计数据
- let posts = {...params, pageNum: 1, pageSize: total}
- return Overview(posts).then(res => {
-    let { success, data, total, pageNum } = res
-    if (success) {
-     // setPageNum(pageNum)
-      let overViewList=[]
-      data?.details?.map(item=>{
-        let description=''
-        item.fields.map(items=>{
-           description+=items.name+' '+items.value+' '
+
+  const onExport = useCallback(() => {        //   表计数据
+    let posts = { ...params,roomId, pageNum: 1, pageSize: total }
+    return DistributionRoomRuntime.Overview(posts).then(res => {
+      let { success, data, total, pageNum } = res
+      if (success) {
+        // setPageNum(pageNum)
+        let overViewList = []
+        data?.details?.map(item => {
+          let description = ''
+          item.fields.map(items => {
+            description += items.name + ' ' + items.value + ' '
+          })
+          overViewList.push({ ...item, description: description })
         })
-        overViewList.push({...item,description:description})
+        return {
+          list: overViewList,
+          total,
+        }
+
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }, [params])
+
+  const getRoomList = async (areaId) => {
+    const resp = await distributionRoom.RoomList(projectId, areaId)
+    if (resp.success) {
+      setRoomList(resp.data)
+      setParams({
+        ...initparams,
+        pageNum: 1,
       })
-      return {
-        list:overViewList,
-        total,
-      } 
+      if (Array.isArray(resp.data) && resp.data.length > 0) {
+        form.setFieldValue('roomId', resp.data[0][['id']])
+        setRoomId(resp.data[0][['id']])
        
-    } else {
-      message.error(res.errMsg)
-    }
-  })
-}, [params])
+      } else {
+        form.setFieldValue('roomId', [])
+        setRoomId(null)
+        // setTableData([])
 
-const getRoomList = async (areaId) => {
-  const resp = await distributionRoom.RoomList(projectId, areaId)
-  if (resp.success) {
-    setRoomList(resp.data)
-    if (Array.isArray(resp.data) && resp.data.length > 0) {
-      form.setFieldValue('roomId', resp.data[0][['id']])
-      setRoomId(resp.data[0][['id']])
-     
-    } else {
-      form.setFieldValue('roomId', [])
-      setRoomId(null)
-      // setTableData([])
-
+      }
     }
   }
-}
   useEffect(() => {
     getType();
     if (areaList.length == 0 || !areaList) {
@@ -300,16 +307,19 @@ const getRoomList = async (areaId) => {
     }
   }, [])
   useEffect(() => {
-    if (Number.isFinite(areaId)) {
+    console.log(roomId,Number.isFinite(roomId))
+    if (Number.isFinite(roomId)) {
+      getOverviewData()
       getData()
       getGatewayUsed()
+    }else{
+      setdataSource([])
+      setoverView({ details: undefined, categories: undefined })
+      setStatistics(
+        {all: 0, off: 0, on: 0, alarm: 0}
+      )
     }
-  }, [params.areaId, changeTag, params.deviceStyle])
-  useEffect(() => {
-    if (Number.isFinite(areaId)) {
-      getOverviewData() 
-    }
-  }, [params])
+  }, [roomId])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()
@@ -325,43 +335,56 @@ const getRoomList = async (areaId) => {
     })
   }
   return (
-    <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
       <div className={style.header}>
-        <span style={{ marginLeft: "16px", marginRight: 16 }}>{defaultLabel || '园区'}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{ width: "200px",marginRight: 12 }}
-          onChange={changeArea}
+        {/* <span style={{ marginLeft: "16px", marginRight: 16 }}>{defaultLabel || '园区'}选择</span> */}
+        <Form
+          form={form}
+          colon={false}
+          layout="inline"
         >
-          {areaList.map((item) => {
-            return (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            );
-          })}
-        </Select>
-        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-        <Select
-          value={roomId}
-          options={roomlist}
-          fieldNames={{ label: 'name', value: 'id' }}
-          style={{ width: 240,marginLeft:12 }}
-          placeholder="请选择配电房"
-          onChange={(v) => {
-            setRoomId(v)
-          }}></Select>
+          <Item name="area" label={defaultLabel || '园区'} style={{ marginLeft: "16px", }}>
+            <Select
+              placeholder="请选择园区"
+              size="middle"
+              key={defaultArea}
+              defaultValue={defaultArea}
+              style={{ width: "200px"}}
+              onChange={changeArea}
+            >
+              {areaList.map((item) => {
+                return (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Item>
+          <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
+          <Item>
+            <Select
+              value={roomId}
+              options={roomlist}
+              fieldNames={{ label: 'name', value: 'id' }}
+              style={{ width: 240, marginLeft: 12 }}
+              placeholder="请选择配电房"
+              onChange={(v) => {
+                setRoomId(v)
+              }}></Select>
+          </Item>
+        </Form>
+
+        
+
         {/* <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div> */}
       </div>
-      <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+      <div className={style.bottom} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div className={style.bottomTab}>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>触点查询</span><Input size="middle" placeholder='输入设备编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
             <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getOverviewData}>查询</Button>
-            </div>
+          </div>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>测温状态</span>
             <Select
               value={params.state}
@@ -388,7 +411,7 @@ const getRoomList = async (areaId) => {
                 },
               ]}
             /></div>
-          <Space size={16} style={{marginLeft: 'auto'}}>
+          <Space size={16} style={{ marginLeft: 'auto' }}>
             <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
               <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
               <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
@@ -402,21 +425,21 @@ const getRoomList = async (areaId) => {
           {overView.details != null ? overView.details.map((item, index) => {
             let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
             return <div key={index}>
-              <Link to={`/deviceDetail?sn=${item.sn}`}  target="_blank">
+              <Link to={`/deviceDetail?sn=${item.sn}`} target="_blank">
                 <Icard img={imageList[index] ? imageList[index] : imgurl.contactor} title={item.name}
-                 deviceStyle={params.deviceStyle}
+                  deviceStyle={params.deviceStyle}
                   value={item.address} state={item.state} fields={item.fields}
                   lastSampleTime={item.lastSampleTime} category={item.sn} />
               </Link>
             </div>
           }) : ''}
-        </div> : <div className={style.tableHead} style={{flex: 1, display: 'flex'}}>
+        </div> : <div className={style.tableHead} style={{ flex: 1, display: 'flex' }}>
           <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} onExport={onExport} expandable={{
             expandedRowRender: (record) => (
               <p
                 style={{
                   margin: 0,
-                  textAlign:'center'
+                  textAlign: 'center'
                 }}
               >
                 {record.description}
@@ -424,10 +447,10 @@ const getRoomList = async (areaId) => {
             ),
             rowExpandable: (record) => record.description,
           }}
-          pagination={paginationProps}
+            pagination={paginationProps}
           ></Table>
         </div>}
-     {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>  }
+        {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false} />}
       </div>
 
     </div >
