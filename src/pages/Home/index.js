@@ -9,9 +9,13 @@ import {Outlet, useLocation} from 'react-router-dom'
 import {  mixtitle,jump} from "@redux/systemconfig";
 import Loading from '@pages/Loading';
 export default function Index(props) {
+
+ 
+
   let location = useLocation()
   const enchtitle = useSelector(mixtitle)
   const desin = useSelector(jump)
+  
   useEffect(() => {
     document.title = enchtitle+ ' ' + location.state?.title
     return () => document.title = enchtitle

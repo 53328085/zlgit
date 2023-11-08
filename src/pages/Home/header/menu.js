@@ -1,11 +1,12 @@
 import React, {useState, useMemo, useEffect} from "react";
-import {useNavigate, useLocation} from 'react-router-dom'
+import {useNavigate, useLocation, useResolvedPath} from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import { Menu, Image } from "antd";
 import './style.less'
-import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState} from '@redux/systemconfig'
+import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject} from '@redux/systemconfig'
 import useJump from "./useJump";
 import imgurl from './icon/index.js'
+ 
 const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
   return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
@@ -14,7 +15,8 @@ export default function Hmenu() {
   const dispath = useDispatch()
   const navigate = useNavigate()
   const {state} = useLocation()
-   
+  let path = useResolvedPath()
+  let paths = path.pathname.slice(1).split('/')
  // const [current, SetCurrent] = useState(state.primary)
 
   const current = useMemo(() => state?.primary, [state])
@@ -47,57 +49,8 @@ export default function Hmenu() {
   }))
 
   const menus = isconfig ? designer : run
-//
-  //const Menus   = store.getState()?.system.menus;
- 
-
-  //const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = Menus; 
 
 
-
- /*  let [config , SetConfig] = useState(isconfig)
-  let [runmenus, setRunMenus] = useState(runMenus)
-  let [siderrunmenus, setSiderRunMenus] = useState(siderRunMenus)
-  let [designermenus, setDesignerMenus] = useState(designerMenus)
-  let [siderdesignermenus, setSiderDesignerMenus] = useState(siderDesignerMenus)
-  let [menus, setMenus] = useState([]); */
-/*   const unsubscribe =  store.subscribe(() => {
-    SetConfig(store.getState()?.system.configState)
-    const {runMenus, siderRunMenus, designerMenus, siderDesignerMenus} = store.getState()?.system.menus;   
-     setRunMenus(runMenus)
-     setSiderRunMenus(siderRunMenus)
-     setDesignerMenus(designerMenus)
-     setSiderDesignerMenus(siderDesignerMenus)
-
-
-     
-  }) */
-/* useEffect(() => {
-  const run = runmenus?.map(item => ({
-    no: item.no,
-    label: item.label,
-    key: item.key,
-    icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
-    className: 'custsubmenu',
-    danger: true,
-    nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
-  }))
-  const designer = designermenus?.map(item => ({
-   no: item.no,
-   label: item.label,
-   key: item.key,
-   icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
-   className: 'custsubmenu',
-   danger: true,
-   nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
-  }))
-  
-  setMenus(isconfig ? designer : run);
-  
-}, [isconfig, runmenus, siderrunmenus, current]) */
-
-  
-  
   const onSelect = ({key}) => {
     
      let item = menus.find(item => item?.key === key);   
@@ -117,17 +70,35 @@ export default function Hmenu() {
         url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
         state = key == 'runtimeProject'  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
       }
-      
+    
       navigate(url, {state}) 
      
   }
  useEffect(() => {    
-    if(state) {    
+    if(state) {
       let {primary} = state
       dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
-    }   
+    } else {
+       let url, state
+       let primary = paths[1];
+       let len = paths.length > 2;
+       let nested = len ? paths[2] : ''
+       let isdes = primary.slice(0, 8)=='designer' // 是否设计态
+       dispath(configProject(isdes))
+       if(isdes) {
+          url =  primary =='designerProject' ? `/config/${primary}` : `/config/${primary}/${nested}`
+          let title = len ? siderdesignermenus[primary]?.find(item => item.key ==nested).label : designermenus[primary]?.label || ''
+          state = primary === 'designerProject' ? {primary, index: true, title} : {nested, title, primary}
+       }else {
+        url = primary == 'runtimeProject' ? `/index/${primary}` : `/index/${primary}/${nested}`;
+        let title = len ? siderrunmenus[primary]?.find(item => item.key ==nested).label :  runmenus[primary]?.label || ''
+        state = primary == 'runtimeProject'  ?  {index: true, nested, title, primary} : {nested, title, primary}
+       }
+      
+       navigate(url, {state})
+    }  
    },[state]) 
- return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
+  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 
 }

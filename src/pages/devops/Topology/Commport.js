@@ -22,7 +22,7 @@ const Mainbox = styled.div`
         align-items: center;
         justify-content:  space-between;
         width: 272px;
-        padding: 0 10px;
+        padding: 0 15px;
         .dotto {
             display: flex;
             align-items: center;
