@@ -258,9 +258,16 @@ function useRoute() { // 重写路由
    
   }) 
   
-
+  RunRoute.push( {
+    path: '/index/*',
+    element: <Notfound />
+   })
+   DesignerRoute.push({
+    path: 'index/*',
+    element: <Notfound />
+   })
   routes[2].children = RunRoute ;  
-  routes[3].children = DesignerRoute; 
+  routes[3].children = DesignerRoute;   
   const {type, key, primary} = bigScreen
   if (type == 1 && key) {
       let path = primary + key
