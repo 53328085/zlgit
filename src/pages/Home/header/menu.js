@@ -87,11 +87,11 @@ export default function Hmenu() {
        dispath(configProject(isdes))
        if(isdes) {
           url =  primary =='designerProject' ? `/config/${primary}` : `/config/${primary}/${nested}`
-          let title = len ? siderdesignermenus[primary]?.find(item => item.key ==nested).label : designermenus[primary]?.label || ''
+          let title = len ? siderdesignermenus[primary]?.find(item => item.key ==nested)?.label : designermenus[primary]?.label || ''
           state = primary === 'designerProject' ? {primary, index: true, title} : {nested, title, primary}
        }else {
         url = primary == 'runtimeProject' ? `/index/${primary}` : `/index/${primary}/${nested}`;
-        let title = len ? siderrunmenus[primary]?.find(item => item.key ==nested).label :  runmenus[primary]?.label || ''
+        let title = len ? siderrunmenus[primary]?.find(item => item.key ==nested)?.label :  runmenus[primary]?.label || ''
         state = primary == 'runtimeProject'  ?  {index: true, nested, title, primary} : {nested, title, primary}
        }
       

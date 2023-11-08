@@ -300,7 +300,7 @@ const Cord =forwardRef((props, ref) => {
     getCode()
   }, [])
   return (
-    <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> 
+   <div style={{display: "inline-block"}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
   )
 }) 
 
@@ -853,7 +853,7 @@ export default function Login() {
  
  useEffect(() => {
   dispatch(systemConfig(hostname)).then(res => {   
-    let {success, data} = res.payload   
+    let {success, data} = res.payload || {}
     if(success) dispatch(getThemeColor(data.themeColor));
   }).catch(e => {
     console.log(e)
