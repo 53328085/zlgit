@@ -263,7 +263,7 @@ function useRoute() { // 重写路由
     element: <Notfound />
    })
    DesignerRoute.push({
-    path: 'index/*',
+    path: '/config/*',
     element: <Notfound />
    })
   routes[2].children = RunRoute ;  

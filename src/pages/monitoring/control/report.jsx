@@ -261,7 +261,7 @@ week.forEach(w => {
    ] 
  
   const QueryReports =  ({current, pageSize}, form) => { 
-      console.log(current)
+      
        let {alike=''} = form;
       let  params = {
         pageNum: current,
@@ -272,8 +272,9 @@ week.forEach(w => {
          
       }
     
-    console.log(params)
+     
     return RunAutoValve.getPageData(params).then(res => {
+      if(isNaN(areaId)) return
       let {success, data, total} = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {
