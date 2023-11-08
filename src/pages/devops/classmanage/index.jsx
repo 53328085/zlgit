@@ -298,7 +298,7 @@ const Custbtn = styled(Button)`
       setIsLoading(false)
     }
     areaId&&func()
-  
+    !areaId&&setIsLoading(false)
   }, [areaId])
   return (
     <>

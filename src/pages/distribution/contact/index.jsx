@@ -28,7 +28,7 @@ export default function Index(props) {
   const areaLists = useSelector(selectOneLevel)
   const oneLevel = useSelector(state => state.system.onelevel)
   const LevelDefaultId = useSelector(selectOneLevelDefaultId)
-  const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : null
+  const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const defaultLabel = useSelector(levelDefaultLabel)
 
   const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)

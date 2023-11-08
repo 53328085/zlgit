@@ -9,8 +9,11 @@ export default function Index(props) {
                 <div className={style.cardTitle}>{props.title}</div>
                 <div className={style.cardData}>{props.value?props.value:'————'}</div>
                 <div className={style.desc}>
-                    <span className={style.normalSign}></span>
-                    <span>{props.desc?props.desc:'异常'}</span>
+                    {
+                        props.value?<span className={style.normalSign}></span>:<span className={`${style.normalSign} ${style.warnSign}` }></span>
+                    }
+                    
+                    <span>{props.desc}</span>
                 </div>
             </div>
 

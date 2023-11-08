@@ -1748,6 +1748,9 @@ export class DistributionRoomRuntime{
   static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
   static Statistics=(data)=>server.get(`/Distribution/DistributionRoomRuntime/Statistics`,{params:data})
   static Overview =(data)=>server.post(`/Distribution/DistributionRoomRuntime/Overview`,data)
+  static QueryFibreTempilPartitions =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilPartitions`,{params:data})
+  static QuerySinglePartitionsInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QuerySinglePartitionsInfo`,{params:data})
+  static QueryFibreTempilWarningInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningInfo`,{params:data})
 }
 //能源流向
 export class EnergyFlowRuntime {

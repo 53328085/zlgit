@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-export default function index() {
+export default function Index({QueryFibreTempilPartitions,active,setActive,setChannel,channelInfo,initchart,QueryFibreTempilWarningInfo}) {
     const projectId = useSelector(state => state.system.menus.projectId)
     const oneLevel = useSelector(state => state.system.onelevel)
     const roomopts = useSelector(state => state.system.roomId)
@@ -17,6 +17,7 @@ export default function index() {
       const resp = await distributionRoom.RoomList(projectId, areaId)
       if (resp.success) {
         setRoomList(resp.data)
+        
         if (Array.isArray(resp.data) && resp.data.length > 0) {
           form.setFieldValue('roomId', resp.data[0][['id']])
           setRoomId(resp.data[0][['id']])
@@ -27,7 +28,18 @@ export default function index() {
         }
       }
     }
-    useEffect(()=>{},[])
+    useEffect(()=>{
+      roomId&&QueryFibreTempilWarningInfo(roomId)
+    },[roomId])
+    useEffect(()=>{
+      !roomId&&setChannel([])
+       roomId&&QueryFibreTempilPartitions(roomId)
+      if(!roomId){
+        channelInfo.info={}
+      }
+      initchart()
+      console.log(channelInfo)
+    },[roomId,active])
   return (
     <div>
             <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -54,7 +66,8 @@ export default function index() {
                             style={{ width: 240 }}
                             placeholder="请选择配电房"
                             onChange={(v)=>{
-                                setRoomId(v)   
+                                setRoomId(v) 
+                                setActive(0)  
                             }}></Select>
                     </Form.Item>
                 </Form>

@@ -138,7 +138,7 @@ export default function Warncontent({ style,form }) {
     return (
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
-                <BlueColumn name="告警信息"/>
+                <BlueColumn name="告警信息" />
                 <Form 
                  layout="inline"
                  colon={false}

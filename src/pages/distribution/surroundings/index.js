@@ -199,13 +199,13 @@ export default function Index() {
         <div className={style.bottomContent}>
           <BlueColumn name="环境监测" />
           <div className={style.cardflex}>
-          <ItemCard title={'环境温度'} desc={'正常'} value={envlist.temperature} img="temperature"></ItemCard>
-          <ItemCard title={'环境湿度'} desc={'正常'} value={envlist.humidness} img="humidness"></ItemCard>
-          <ItemCard title={'水浸监测'} desc={'无水'} value={envlist.water} img="water"></ItemCard>
-          <ItemCard title={'烟感监测'} desc={'无烟'} value={envlist.smoke} img="smook"></ItemCard>
-          <ItemCard title={'噪音监测'} desc={'正常'} value={envlist.noise} img="nosie"></ItemCard>
-          <ItemCard title={'明火监测'} desc={'无明火'} value={envlist.fire} img="fire"></ItemCard>
-          <ItemCard title={'门禁监控'} desc={'门关闭'} value={envlist.door} img="door"></ItemCard>
+          <ItemCard title={'环境温度'} desc={envlist.temperature?'正常':'异常'} value={envlist.temperature} img="temperature"></ItemCard>
+          <ItemCard title={'环境湿度'} desc={envlist.humidness?'正常':'异常'} value={envlist.humidness} img="humidness"></ItemCard>
+          <ItemCard title={'水浸监测'} desc={envlist.water?'无水':'异常'} value={envlist.water} img="water"></ItemCard>
+          <ItemCard title={'烟感监测'} desc={envlist.smoke?'无烟':'异常'} value={envlist.smoke} img="smook"></ItemCard>
+          <ItemCard title={'噪音监测'} desc={envlist.noise?'正常':'异常'} value={envlist.noise} img="nosie"></ItemCard>
+          <ItemCard title={'明火监测'} desc={envlist.fire?'无明火':'异常'} value={envlist.fire} img="fire"></ItemCard>
+          <ItemCard title={'门禁监控'} desc={envlist.door?'门关闭':'异常'} value={envlist.door} img="door"></ItemCard>
           </div>
          
         </div>
