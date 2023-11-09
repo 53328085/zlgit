@@ -127,7 +127,8 @@ const system = createSlice({
           
         },
         getRoomId(state,{payload}){
-          state.roomId=payload
+          state.roomId= Array.isArray(payload)?payload:[]
+          
         },
         systemConfigRest(state, actions) {
           console.log(initialState)
