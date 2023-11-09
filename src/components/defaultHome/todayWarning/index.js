@@ -4,14 +4,15 @@ import {Liquid} from "@ant-design/charts"
 import {selectCurProject} from '@redux/user.js'
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
-
+import { drawEcharts } from "@com/useEcharts"; 
+ 
 const Mainbox = styled.div`
   position: relative;
   display: grid;
   grid-template-columns: 1fr 248px;
  column-gap: 16px;
  height: 142px;
- align-items: stretch;
+ align-items: center;
  justify-items: center;
  .alarm {
    display: grid;
@@ -106,13 +107,38 @@ const DemoLiquid = () => {
 
 export default function DefaultHome(){
   const curProject = useSelector(selectCurProject)
-  
+  const ref= useRef()
+  useEffect(() => {
+    drawEcharts(ref.current, {
+      type: 4,
+      liuqiu: {
+        series: {
+         data: [0.3],
+       
+        label: {
+          normal: {
+            formatter: function() {
+                return '今日告警\n\n\n36次';
+            },
+            textStyle: {
+                fontSize: 16,
+                color: '#333'
+            },
+            position: ['50%', '65%']
+         }
+        },
+        
+      },
+      
+    }
+    })
+  })
   
   return (
          <Titlelayout title={'今日告警'} {...fs}>
         <Mainbox>
-          <div style={{width: '112px', height: '112px'}}>
-              <DemoLiquid></DemoLiquid>
+          <div style={{width: '112px', height: '112px'}} ref={ref}>
+              {/* <DemoLiquid></DemoLiquid> */}
               
           </div>
           <div className='alarm'>
