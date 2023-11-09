@@ -248,6 +248,15 @@ export class QueryElectric {
     );
 }
 
+// 能源管理--运行报告 -- 运行态
+export class QueryRunReport {
+  static RunReport = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+    server.post(
+      `Energy/EnergyRunReport/QueryRunReport?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`
+      
+    );
+}
+
 // 能源管理--重点设备 -- 设计态
 export class DesElectric {
       
