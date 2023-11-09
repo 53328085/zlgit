@@ -239,8 +239,7 @@ export default function Index(props) {
       state: e,
       pageNum: 1,
     })
-    // params.state = e
-    // getOverviewData()
+   
 
   }//网关状态选择
   const changeTab = val => {
@@ -319,7 +318,7 @@ export default function Index(props) {
         {all: 0, off: 0, on: 0, alarm: 0}
       )
     }
-  }, [roomId])
+  }, [roomId,params.state])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()

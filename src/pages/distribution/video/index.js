@@ -57,12 +57,15 @@ export default function Index() {
   const getRoomList = async (areaId) => {
     const resp = await distributionRoom.RoomList(projectId, areaId)
     if (resp.success) {
-      console.log(resp)
       setRoomList(resp.data)
       if (Array.isArray(resp.data) && resp.data.length > 0) {
         form.setFieldValue('roomId', resp.data[0][['id']])
+        setRoomId(resp.data[0][['id']])
       } else {
         form.setFieldValue('roomId', [])
+        setRoomId(null)
+        setStatistics({ all: '', cloud: '', local: '' })
+        setoverView([])
       }
 
     }
@@ -82,7 +85,7 @@ export default function Index() {
   }
   let [statistics, setStatistics] = useState({ all: '', cloud: '', local: '' })
   const getStatistics = () => {
-    return DistributionRoomRuntime.CameraSummary(projectId, roomlist[0]?.id).then((res) => {
+    return DistributionRoomRuntime.CameraSummary(projectId, roomId).then((res) => {
       let { success, data } = res
       if (success && data) {
         setStatistics(data)
@@ -474,7 +477,7 @@ export default function Index() {
     }
     let start = changeUTC(startTime);
     let end = changeUTC(endTime);
-    console.log(start, end);
+    console.log(start, end,wsType);
     setTimeout(() => {
       if (wsType == 'h265') {
         let playerContainer = document.getElementById("player-container");
@@ -536,10 +539,10 @@ const playBackYun=()=>{
   }
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
+     console.log(roomId,areaId)
+     roomId&&getStatistics()
     
-      getStatistics()
-    
-  }, [projectId, areaId])
+  }, [projectId, roomId])
   useEffect(() => {
     console.log(areaId)
     if(roomId){

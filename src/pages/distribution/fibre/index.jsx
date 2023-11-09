@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined ,CloseOutlined} from '@ant-design/icons';
 import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline } from 'antd'
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import UseHead from '../usehead'
+import UseTable from '@com/useTable'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import time from './time.png'
@@ -11,6 +12,9 @@ import * as echarts from "echarts";
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
+
+import moment from 'moment';
+
 const WrapDiv = styled.div`
   display: grid;
   gap: 16px;
@@ -121,6 +125,8 @@ const WrapDiv = styled.div`
   }
   .griditem3{
     grid-area: c;
+    display: flex;
+    flex-direction: column;
     .warn{
       display: flex;
       justify-content: space-between;
@@ -131,6 +137,7 @@ const WrapDiv = styled.div`
     }
     .timeline{
       margin-top: 32px;
+      flex: 1;
       .title {
           color:#1e1e1e;
           margin-top:-4px;
@@ -144,6 +151,11 @@ const WrapDiv = styled.div`
     
   }
   
+`
+const ModalDiv = styled.div`
+  .ant-modal-body{
+    height: 850px;
+  }
 `
 const opt={
   color:['#6395f9', '#62daab', '#657798'],
@@ -188,11 +200,14 @@ const opt={
   }
 ]
 }
+
+const { Item } = Form
+const { RangePicker  } = DatePicker
+
 export default function Index() {
   const [active, setActive] = useState(0)
   const projectId = useSelector(selectProjectId)
   const chartRef = useRef()
-  const { Item } = Form
   const [activename,setActiveName]=useState('')
   const chooseBox = (i,it) => {
     setActive(i)
@@ -202,9 +217,14 @@ export default function Index() {
   const [channel,setChannel] = useState([])
   const channelInfo = useReactive({
     info:{},
-    warnlist:[]
+    warnlist:[],
+    typeopts:[],
+   
   })
   const modalRef=useRef()
+  const [form]=Form.useForm()
+  const headRef =useRef()
+  const tableRef=useRef()
   const maparr=(patharr,data,port)=>{
     if(!patharr ){
       return []
@@ -220,6 +240,7 @@ export default function Index() {
     }
     return arr
   }
+  //获取分区
   const QueryFibreTempilPartitions =async (roomId)=>{
     try {
     const res = await  DistributionRoomRuntime.QueryFibreTempilPartitions({
@@ -249,6 +270,7 @@ export default function Index() {
     }
    
   } 
+  //分区信息
   const QuerySinglePartitionsInfo=async(pathGroup,sn)=>{
     const res = await DistributionRoomRuntime.QuerySinglePartitionsInfo({
       projectId,
@@ -287,6 +309,7 @@ export default function Index() {
     }
     chartdom.setOption(opt)
   }
+  //告警列表
   const QueryFibreTempilWarningInfo=async(roomId)=>{
     const res = await DistributionRoomRuntime.QueryFibreTempilWarningInfo({projectId,roomId})
     if(res.success){
@@ -296,12 +319,69 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
+  //告警类型
+  const QueryAlarmType=async ()=>{
+    try{
+     const res = await DistributionRoomRuntime.QueryAlarmType()
+     if(res.success){
+      console.log(form.getFieldsValue())
+      if(res.data &&Array.isArray(res.data)){
+        channelInfo.typeopts=res.data
+      }else{
+        channelInfo.typeopts=[]
+      }
+      
+     }
+    }catch(e){
+      console.log(e)
+    }
+  }
+  //报警日志
+  const QueryFibreTempilWarningRecords=async()=>{
+    try {
+      const formvalue = form.getFieldsValue()
+      const start =formvalue.time&&formvalue.time[0]?moment(formvalue.time[0]).format('YYYY-MM-DD 00:00:00'):moment().format('YYYY-MM-DD 00:00:00')
+      const end =formvalue.time&&formvalue.time[1]?moment(formvalue.time[1]).format('YYYY-MM-DD 23:59:59'):moment().format('YYYY-MM-DD 23:59:59')
+      const alarmType = formvalue.dangerType?formvalue.dangerType:(channelInfo.typeopts&&channelInfo.typeopts[0])?channelInfo.typeopts[0]:1
+      const res = await DistributionRoomRuntime.QueryFibreTempilWarningRecords({
+        projectId,
+        roomId:headRef.current.roomId,
+        start,
+        end,
+        alarmType,
+      })
+      if(res.success){
+        if(res.data){
+          tableRef.current?.setTabledata(res.data)
+        }else{
+         
+          tableRef.current?.setTabledata([])
+        }
+      }else{
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
   const SeeDetail=()=>{
     modalRef.current.onOpen()
   }
+  const close=()=>{
+    modalRef.current.onCancel()
+  }
+  const disabledDate = (current) => {
+    
+    return current && current > moment().endOf('day');
+  };
   useEffect(()=>{
     channelInfo.info.tempData && initchart()
   },[channelInfo.info.tempData])
+  useEffect(()=>{
+    QueryAlarmType()
+    
+  },[])
   return (
     <div>
       <UseHead 
@@ -312,6 +392,7 @@ export default function Index() {
       channelInfo={channelInfo}
       initchart={initchart}
       QueryFibreTempilWarningInfo={QueryFibreTempilWarningInfo}
+      ref={headRef}
       />
       <WrapDiv>
         <div className='griditem griditem1'>
@@ -348,22 +429,13 @@ export default function Index() {
                   channelInfo.info.states?.length > 0 
                   &&channelInfo.info.states.map(
                     item=>(
-                      <div className='sitem'>
+                      <div className='sitem' key={item}>
                       <div className={`circle ${item.stateFlag==1?'active':null}` }></div>
                       <span>{item.state}</span>
                     </div>
                     )
                   )
                 }
-               
-                {/* <div className='sitem'>
-                  <div className='circle'></div>
-                  <span>{channelInfo.states[1].state}</span>
-                </div>
-                <div className='sitem'>
-                  <div className='circle'></div>
-                  <span>{channelInfo.states[2].state}</span>
-                </div> */}
               </div>
               <Divider dashed style={{ borderColor: "#999", margin: "16px 0" }}></Divider>
               <Form>
@@ -392,7 +464,7 @@ export default function Index() {
           <Timeline className='timeline'>
             {channelInfo.warnlist.length>0&&channelInfo.warnlist.map(it=>{
               return(
-                <Timeline.Item dot={<div
+                <Timeline.Item key={it} dot={<div
                   style={{
                     borderRadius: '50%', width: 16, height: 16, border: '1px solid',
                     display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -416,23 +488,84 @@ export default function Index() {
           </Timeline>
         </div>
       </WrapDiv>
-      <UseModal mold ='cust' ref={modalRef} width={1600}>
-        <BlueColumn name="报警日志查看" styled={{padding:'32px 0'}}/>
-        <Form
-        layout='inline'
-        >
-            <Item></Item>
-            <Item>
-            <Button
-            type="primary"
-            icon={<SearchOutlined  />}
-            >
-              查询
+      <ModalDiv>
+        <UseModal mold='cust' ref={modalRef} width={1600} footer={null} getContainer={false}>
+          <BlueColumn name="报警日志查看" styled={{ padding: '32px 0' }}>
+            <CloseOutlined
+              style={{ marginLeft: 'auto', fontSize: 16, cursor: 'pointer' }}
+              onClick={close}
+            ></CloseOutlined>
+          </BlueColumn>
+          <Form
+            layout='inline'
+            form={form}
+            initialValues={{
+              time: [moment(), moment()],
+              dangerType: channelInfo.typeopts[0]?.x
+            }}
+          >
+            <Item name="time">
+              <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate}></RangePicker>
+            </Item>
+            <Item >
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                onClick={QueryFibreTempilWarningRecords}
+              >
+                查询
               </Button>
             </Item>
-            <Item></Item>
-        </Form>
-      </UseModal>
+            <Item >
+              <Divider dashed type='vertical' style={{ borderColor: "#999", height: 26 }}></Divider>
+            </Item>
+            <Item label="报警类型" name="dangerType">
+              <Select 
+              style={{ width: 160 }} 
+              options={channelInfo.typeopts} 
+              fieldNames={{ label: 'y', value: 'x' }}
+              onChange={QueryFibreTempilWarningRecords}
+              ></Select>
+            </Item>
+          </Form>
+            <CusTable ref={tableRef} QueryFibreTempilWarningRecords={QueryFibreTempilWarningRecords}></CusTable>
+          
+        </UseModal>
+      </ModalDiv>
     </div>
   )
 }
+const CusTable=forwardRef(({QueryFibreTempilWarningRecords},ref)=>{
+  const columns=[{
+    title:'时间',
+    dataIndex:'createTime'
+  },{
+    title:'类型',
+    dataIndex:'alarmType'
+  },{
+    title:'名称',
+    dataIndex:'content'
+  },{
+    title:'地点',
+    dataIndex:'address'
+  },{
+    title:'指标量',
+    dataIndex:'originalIndicator'
+  },{
+    title:'备注',
+    dataIndex:'remark'
+  }]
+const [tabledata,setTabledata]=useState()
+useEffect(()=>{
+  QueryFibreTempilWarningRecords(setTabledata)
+},[])
+useImperativeHandle(ref,()=>{
+  return {
+    setTabledata
+  }
+})
+  return (
+    <UseTable columns={columns} style={{ marginTop: 24 }} dataSource={tabledata} ></UseTable>
+  )
+}
+)

@@ -1751,6 +1751,8 @@ export class DistributionRoomRuntime{
   static QueryFibreTempilPartitions =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilPartitions`,{params:data})
   static QuerySinglePartitionsInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QuerySinglePartitionsInfo`,{params:data})
   static QueryFibreTempilWarningInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningInfo`,{params:data})
+  static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
+  static QueryFibreTempilWarningRecords=(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningRecords`,{params:data})
 }
 //能源流向
 export class EnergyFlowRuntime {
