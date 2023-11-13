@@ -1,12 +1,33 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import style from './style.module.less'
 import {useSelector} from 'react-redux'
+import styled from "styled-components";
 import {systemConfigInfo} from '@redux/systemconfig.js'
 import { drawEcharts } from '@com/useEcharts'
-import { Table } from "antd";
+import { Descriptions } from "antd";
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
-
+const DesItem = styled(Descriptions)`
+&& {
+ .ant-descriptions-item-label {
+   height: 30px;
+   padding: 0 16px;
+   background-color: transparent;
+   color:#515151;
+   text-align: center;
+ }
+ .ant-descriptions-item-content {
+   height: 30px;
+   color:#515151;
+   padding: 0 16px;
+   text-align: center;
+ }
+ .ant-descriptions-title {
+   font-weight: normal;
+   color:#515151;
+ }
+}
+`
 export default function PageList({reportData}) {
     console.log(reportData)
     const {chineseTitle} =useSelector(systemConfigInfo)
@@ -253,7 +274,9 @@ export default function PageList({reportData}) {
                         <span>{chineseTitle}</span>
                     </div>
                     <div className={style.mainTitle}>运行监控报告</div>
+
                     <div className={style.mainDetail} >
+
                         <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}>{reportData.projectName}</span></div>
                         <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}>{reportData.projectAddress}</span></div>
                         <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{reportData.Date}</span></div>
@@ -264,7 +287,15 @@ export default function PageList({reportData}) {
                     <div className={style.pages} >
                         <Header></Header>
                         <div className={style.pageContent}>
-                            <div className={style.mainTitle}>1.项目概况</div>
+
+                                <DesItem title="1.项目概况" bordered size='small' layout="horizontal" column={1}>
+                                    <DesItem.Item label="项目名称">{reportData.projectName}</DesItem.Item>
+                                    <DesItem.Item label="站点地址">{reportData.projectAddress}</DesItem.Item>
+                                    <DesItem.Item label="网关数量">{reportData.totalGateway}</DesItem.Item>
+                                    <DesItem.Item label="测点数量">{reportData.totalDevice}</DesItem.Item>
+                                    
+                            </DesItem>
+                          {/*   <div className={style.mainTitle}>1.项目概况</div>
                             <div className={style.tableList}>
                                 <div className={style.tableItem}>
                                     <span className={style.tableTitle}>项目名称</span><span className={style.tableValue}>{reportData.projectName}</span>
@@ -279,7 +310,7 @@ export default function PageList({reportData}) {
                                     <span className={style.tableTitle}>测点数量</span><span className={style.tableValue}>{reportData.totalDevice}</span>
                                 </div>
                                
-                            </div>
+                            </div> */}
                             <div className={style.mainTitle}>2.用电量分析</div>
                             <div className={style.mainText}>该变配电站监测周期内总耗电量{reportData.e}kW·h， 日平均耗电量{reportData.avgE}kW·h，单日最大耗电量{reportData.maxE}kW·h，日耗电情况详见下图:</div>
                             <div className={style.currChart}  ref={lineref}></div>
