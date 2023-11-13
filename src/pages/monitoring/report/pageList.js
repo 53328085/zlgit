@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import style from './style.module.less'
 import {useSelector} from 'react-redux'
 import {systemConfigInfo} from '@redux/systemconfig.js'
@@ -7,7 +7,8 @@ import { Table } from "antd";
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 
-export default function PageList(props) {
+export default function PageList({reportData}) {
+    console.log(reportData)
     const {chineseTitle} =useSelector(systemConfigInfo)
     const Header = () => {
         return (
@@ -23,18 +24,30 @@ export default function PageList(props) {
         source: [],
     };//props.query?.eleConsums
     const [dataset, setDataset] = useState(datasetDay);
+    const lineref = useRef()
     useEffect(() => {
-        if (props.query) {
-            let arr = []
-            for (let i = 0; i < props.query.eleConsums.length; i++) {
-                arr.push({
-                    time: props.query.eleConsums[i].name,
-                    "日用电量(kWh)": props.query.eleConsums[i].value,
-                })
+        if(!reportData)return ;
+        let {timetype} = reportData
+        let msg = timetype == 2 ? '日用电量' : timetype == 1 ? '月用电量' : ''
+        drawEcharts(lineref.current, {
+            dataset: {
+                dimensions: [
+                    {name: 'name', type: "time"},
+                    {name: 'value', displayName: msg}
+                ],
+                source: reportData.eleConsums
+            },
+            series: [{type: 'line'}],
+            legend: {
+                bottom: 1,
+                top: 'auto',
+                itemWidth: 25,
+                itemHeight: 2
             }
-            setDataset(() => ({ dimensions: ["time", "日用电量(kWh)"], source: arr }))
-        }
-    }, [props.query]);
+            
+        })
+    
+}, [reportData]);
     const datasetLine = {
         dimensions: ["time", "tokyo",],
         source: [
@@ -90,7 +103,7 @@ export default function PageList(props) {
     };
 
     useEffect(() => {
-        let currChart = document.getElementById('currChart')
+       /*  let currChart = document.getElementById('currChart')
         drawEcharts(currChart, {
             dataset,
             series: [{ type: "line" }],
@@ -106,7 +119,7 @@ export default function PageList(props) {
         drawEcharts(dailyLoad, { dataset: datasetLoad, series: [{ type: 'line' }, { type: 'line' }] })
 
         let powerFactor = document.getElementById('powerFactor')
-        drawEcharts(powerFactor, { dataset: datasetPF, series: [{ type: 'line' }, { type: 'line' }] })
+        drawEcharts(powerFactor, { dataset: datasetPF, series: [{ type: 'line' }, { type: 'line' }] }) */
     })
 
     const dataSource = [{
@@ -232,7 +245,7 @@ export default function PageList(props) {
 
     return (
         <Fragment>
-            {props.display?<div className={style.report}>
+            {!!reportData?<div className={style.report}>
                 <div  id='contentPage'>
                 <div className={style.firstPage} >
                     <div className={style.header}>
@@ -241,9 +254,9 @@ export default function PageList(props) {
                     </div>
                     <div className={style.mainTitle}>运行监控报告</div>
                     <div className={style.mainDetail} >
-                        <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}>{props.coverData?.ProjectName}</span></div>
-                        <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}>{props.coverData?.Address}</span></div>
-                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{props.coverData?.Date}</span></div>
+                        <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}>{reportData.projectName}</span></div>
+                        <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}>{reportData.projectAddress}</span></div>
+                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{reportData.Date}</span></div>
                     </div>
                     <img src={firstPage} className={style.backgroundImg}></img>
                 </div>
@@ -251,31 +264,29 @@ export default function PageList(props) {
                     <div className={style.pages} >
                         <Header></Header>
                         <div className={style.pageContent}>
-                            <div className={style.mainTitle}>1.配电房概况</div>
+                            <div className={style.mainTitle}>1.项目概况</div>
                             <div className={style.tableList}>
                                 <div className={style.tableItem}>
-                                    <span className={style.tableTitle}>站点名称</span><span className={style.tableValue}>正泰物联</span>
+                                    <span className={style.tableTitle}>项目名称</span><span className={style.tableValue}>{reportData.projectName}</span>
                                 </div>
                                 <div className={style.tableItem}>
-                                    <span className={style.tableTitle}>站点地址</span><span className={style.tableValue}>浙江省杭州市滨江区月明路560号</span>
+                                    <span className={style.tableTitle}>站点地址</span><span className={style.tableValue}>{reportData.projectAddress}</span>
                                 </div>
                                 <div className={style.tableItem}>
-                                    <span className={style.tableTitle}>配电房容量</span><span className={style.tableValue}>6000 KVA</span>
+                                    <span className={style.tableTitle}>网关数量</span><span className={style.tableValue}>{reportData.totalGateway}</span>
                                 </div>
                                 <div className={style.tableItem}>
-                                    <span className={style.tableTitle}>电压等级</span><span className={style.tableValue}>0.4 KV</span>
+                                    <span className={style.tableTitle}>测点数量</span><span className={style.tableValue}>{reportData.totalDevice}</span>
                                 </div>
-                                <div className={style.tableItem}>
-                                    <span className={style.finalTitle}>变压器数</span><span className={style.finalValue}>3台</span>
-                                </div>
+                               
                             </div>
                             <div className={style.mainTitle}>2.用电量分析</div>
-                            <div className={style.mainText}>该变配电站监测周期内总耗电量{props.query?.e}kW·h， 日平均耗电量{props.query?.avgE}kW·h，单日最大耗电量{props.query?.maxE}kW·h，日耗电情况详见下图:</div>
-                            <div className={style.currChart} id="currChart"></div>
+                            <div className={style.mainText}>该变配电站监测周期内总耗电量{reportData.e}kW·h， 日平均耗电量{reportData.avgE}kW·h，单日最大耗电量{reportData.maxE}kW·h，日耗电情况详见下图:</div>
+                            <div className={style.currChart}  ref={lineref}></div>
                         </div>
                     </div>
 
-                    <div className={style.pages}>
+                 {/*   <div className={style.pages}>
                         <Header></Header>
                         <div className={style.pageContent}>
                             <div className={style.mainTitle}>3. 线路能耗情况</div>
@@ -325,22 +336,24 @@ export default function PageList(props) {
                             <div className={style.mainTitle}>7. 现场运维情况</div>
                             <div className={style.mainText}>本周期内，该变配电站共完成巡检0次，巡检过程未发现缺陷。</div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 </div>
-            </div>:<div className={style.report}><div className={style.firstPage} >
+            </div>  
+            : <div className={style.report}><div className={style.firstPage} >
                     <div className={style.header}>
                         <img src={logo} className={style.logo}></img>
                         <span>{chineseTitle}</span>
                     </div>
                     <div className={style.mainTitle}>运行监控报告</div>
                     <div className={style.mainDetail} >
-                        <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}>{props.coverData?.ProjectName}</span></div>
-                        <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}>{props.coverData?.Address}</span></div>
-                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{props.coverData?.Date}</span></div>
+                        <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}></span></div>
+                        <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}></span></div>
+                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}></span></div>
                     </div>
                     <img src={firstPage} className={style.backgroundImg}></img>
-                </div></div>}
+                </div></div>
+                }
 
         </Fragment>
     )

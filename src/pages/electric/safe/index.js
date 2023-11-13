@@ -218,6 +218,7 @@ export default function Index() {
   const pref = useRef(null)
   const opref = useRef(null)
   const lref = useRef(null)
+  const warnref = useRef();
   const store = useStore();
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -390,7 +391,7 @@ export default function Index() {
         <Mainbox>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
-              <div style={{ width: '148px', height: '148px' }}>
+              <div style={{ width: '148px', height: '148px' }} ref={warnref}>
                 <DemoLiquid warnData={warnData}></DemoLiquid>
 
               </div>
