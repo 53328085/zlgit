@@ -300,7 +300,7 @@ const Cord =forwardRef((props, ref) => {
     getCode()
   }, [])
   return (
-    <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> 
+   <div style={{display: "inline-block"}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
   )
 }) 
 
@@ -369,6 +369,7 @@ function UserLog() {
   // 进入项目配置/项目 
 
  const handlermenu = (data,  id) => {
+ 
   const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
   const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
 //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
@@ -490,6 +491,7 @@ function UserLog() {
   };
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
+    window.sessionStorage.removeItem('chintwuliu')
     dispatch(getIsGranary(false))
   }, []);
  
@@ -635,6 +637,7 @@ function UserLog() {
             prefix={<Ipticon />}
             url={imgurl.pwd}
             aurl={imgurl.pwda}
+            autoComplete="off"
             placeholder="请输入验证码"
           />
           </Item>
@@ -850,7 +853,7 @@ export default function Login() {
  
  useEffect(() => {
   dispatch(systemConfig(hostname)).then(res => {   
-    let {success, data} = res.payload   
+    let {success, data} = res.payload || {}
     if(success) dispatch(getThemeColor(data.themeColor));
   }).catch(e => {
     console.log(e)

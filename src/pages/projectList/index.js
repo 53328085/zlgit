@@ -325,6 +325,7 @@ export default function Index() {
 // 进入项目配置/项目 
 
  const handlermenu = (data, type, id) => {
+ 
   const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
   const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
 //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 

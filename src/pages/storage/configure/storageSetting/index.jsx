@@ -428,10 +428,10 @@ export default function Index() {
             <Item
               name="areaId"
               label={
-                oneLevel[0]?.levelName ? '所属' + oneLevel[0].levelName : "所属园区"
+                oneLevel[0]?.levelName ? '所属' + oneLevel[0]?.levelName : "所属园区"
               }
               rules={[
-                { required: true, message: `请选择${oneLevel[0].levelName}` },
+                { required: true, message: `请选择${oneLevel[0]?.levelName}` },
               ]}
             >
               <Select

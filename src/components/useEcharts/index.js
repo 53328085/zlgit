@@ -1,6 +1,7 @@
 
+import { message } from "antd";
 import * as echarts from "echarts";
-
+import 'echarts-liquidfill'
 
 
 /**
@@ -420,6 +421,39 @@ const chartoption = {
   lazyUpdate: true,
   replaceMerge: ["xAxis", "series"],
 };
+
+const liuqiuOption =(option) =>  {  // 水球图
+    
+    let {series, ...set} = option
+  return  {
+        series: [{
+            type: "liquidFill",
+            color: ['#237AE4'],
+       
+            radius: "95%",
+            backgroundStyle: {
+              color: '#fff'
+            },
+            itemStyle: {
+              opacity: 0.95,
+              shadowBlur: 5,
+              shadowColor: 'rgba(0, 0, 0, 0.1)'
+           },
+          
+            outline: {
+              borderDistance: 2,
+              itemStyle: {
+                borderWidth: 2,
+                borderColor: '#237AE4',
+              }
+            },
+            ...series,
+         }],
+         ...set
+    } 
+
+}
+
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, grid={left: 0, right: 0, containLabel: true,}} = {}) => ({
   // 饼图的设置 
   tooltip: {
@@ -472,6 +506,7 @@ export const drawEcharts = (
     series = [],
     dataset = [],
     pieData = { data: [], total: 0, radius: ["60%", "80%"] },
+    liuqiu={},
     type = 1,
     grid={},
     legend={},
@@ -480,7 +515,8 @@ export const drawEcharts = (
 ) => {  
 
   if (!dom) return
-  const bar = echarts.getInstanceByDom(dom);
+  if(type == 0) return message.warning("图表类型错误")
+ // const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
   const comm = {
     grid: {
@@ -563,14 +599,14 @@ export const drawEcharts = (
         },
     }
   }
-  const setoption =
-    type == 1
+  const setoption = ['', option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
+  /*   type == 1
       ? option
       : type == 2
       ? baseoption
       : type == 3
       ? pieOption({...pieData, grid, legend})
-      : {}; 
+      : {};  */
      
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图

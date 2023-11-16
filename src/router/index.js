@@ -93,6 +93,12 @@ const loginrouter =  [{
   return token ? (<Projectlist/>) : (<Navigate to="/" />)  
  }
 
+ function RedirectIndex({Com}) { // 路由守卫
+ // const {token} = useSelector(selectUser) || {}; 
+  const islog =window.sessionStorage.getItem("chintwulian")
+  return islog ? (<Com />) : (<Navigate to="/" />)  
+ }
+
  const components = {
   '0104': Defauthome,
   '0105': Monitoring,
@@ -106,13 +112,7 @@ const loginrouter =  [{
   '0113': Devops,
 } 
 
-function getconfig({request}) {
-  console.log(request);
-  const hostname = process.env.NODE_ENV === "production"
-  ? new URL(window.location.href).hostname  : "10.5.7.60";
-   Api.SystemConfig(hostname)
-  return null
-}
+ 
 
  let RunRoute = [];
  let DesignerRoute = [];
@@ -129,20 +129,20 @@ function getconfig({request}) {
  
    {
      path: "/projectList",
-     element: <Redirect />
+     element: <RedirectIndex Com={Projectlist} />
    },
    // 进入项目
 
    {
      path: "/index", 
-     element: <Index />,
+     element: <RedirectIndex Com={Index} />,
      children: [],
      key: 'run'
    },
    // 配置项目
    {
      path: "/config",
-     element: <Index />,
+     element: <RedirectIndex Com={Index} />,
      children: [],
      key: 'ddesignere',
      
@@ -158,7 +158,7 @@ function getconfig({request}) {
   },
   {
     path: '/devicedetail',
-    element: <DeviceDetail />
+    element: <DeviceDetail />,
   },
   {
     path: '/devicedtl',
@@ -258,9 +258,16 @@ function useRoute() { // 重写路由
    
   }) 
   
-
+  RunRoute.push( {
+    path: '/index/*',
+    element: <Notfound />
+   })
+   DesignerRoute.push({
+    path: '/config/*',
+    element: <Notfound />
+   })
   routes[2].children = RunRoute ;  
-  routes[3].children = DesignerRoute; 
+  routes[3].children = DesignerRoute;   
   const {type, key, primary} = bigScreen
   if (type == 1 && key) {
       let path = primary + key

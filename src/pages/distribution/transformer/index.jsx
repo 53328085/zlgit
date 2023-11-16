@@ -130,6 +130,7 @@ export default function Index() {
   const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
   const [header,setHeader] = useState([])
   const [tabletrend,setTabletrend] = useState([])
+  const [disableDate,setDisableDate] = useState([])
   const chartsRef =useRef()
   const tableRef=useRef()
   const initchartRef =useRef()
@@ -172,13 +173,35 @@ export default function Index() {
     setPattern(e.target.value)
   }
   const changeTime=(time)=>{
-    console.log(time)
+    console.log('onChange',time)
     setTimeRanger(time)
   }
-  const disabledDate = (current)=>{
-    console.log(timeRanger)
+  let copytime =useRef()
+  const onOpenChange=(open)=>{
+    
    
-    return current && current > moment().endOf('day');
+    if(open){
+      setTimeRanger([null,null])
+      setDisableDate([null,null])
+      copytime.current =[...timeRanger]
+      console.log(copytime)
+    }else{
+      if(!timeRanger[0] || !timeRanger[1]){
+        console.log(copytime=== timeRanger)
+        setTimeRanger(copytime.current)
+      }
+     
+      setDisableDate(null)
+    }
+  }
+  const disabledDate = (current)=>{
+    if(!disableDate){
+      return false
+    }
+    const tooLate = disableDate[0]&& current.diff(disableDate[0],'days')>6
+    const tooEarly = disableDate[1] && disableDate[1].diff(current,'days')>6
+    return tooLate || tooEarly ||(current && current > moment().endOf('day'))
+    
   }
  
   //单个变压器信息
@@ -259,8 +282,13 @@ export default function Index() {
   const HistoryTrends =async (sn)=>{
     try{
       let startTime ,endTime;
-      startTime =  moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
-      endTime=moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      if(Array.isArray(timeRanger)&&timeRanger.length>0){
+        startTime =  moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
+        endTime=moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      }else{
+        message.error('请选择日期！')
+      }
+     
       console.log(startTime)
    
    
@@ -487,7 +515,9 @@ export default function Index() {
                    <DatePicker.RangePicker
                    value={timeRanger} 
                    format="YYYY-MM-DD" 
-                   onChange={setTimeRanger}
+                   onChange={changeTime}
+                   onCalendarChange={(time)=>{setDisableDate(time)}}
+                   onOpenChange={onOpenChange}
                    disabledDate={disabledDate}
                    ></DatePicker.RangePicker>
                    <Button onClick={search}>查询</Button> 

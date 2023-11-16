@@ -55,9 +55,11 @@ const user = createSlice({
         [loginByName.fulfilled]: (state, {payload}) => {           
            let {success, errMsg, data} = payload
            if (success) {
+               window.sessionStorage.setItem("chintwulian", 's')
                return Object.assign({}, state, data, {loading: false, password},   )
            }else {
                return Object.assign({}, state, {errMsg, loading: false, password: ''})
+               
            }
         },
         [loginByName.rejected]: (state) => {           

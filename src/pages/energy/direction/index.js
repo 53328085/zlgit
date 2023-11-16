@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect,useCallback } from "react";
+import React, { useState,  useEffect, } from "react";
 
 import { Form, Space, DatePicker, Select} from "antd";
 import moment from 'moment';
@@ -12,9 +12,9 @@ import {useSelector} from 'react-redux'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Sankey from "./Sankey";
-import Topology from "./Topology";
- 
-const {queryElectric, queryWater, queryGas} = EnergyFlowRuntime
+
+
+const {queryElectric, queryWater} = EnergyFlowRuntime
  
  
  
@@ -47,7 +47,7 @@ export default function Index() {
   ]
  
   const getData = async () => {
-    console.log(areaId)
+    
      try {
       const {type, date, area} = form.getFieldsValue()
       console.log(area)
@@ -66,7 +66,7 @@ export default function Index() {
         setData({link: [], name: []})
       }
      } catch (error) {
-       console.log(error)
+       
      }
      
      
@@ -145,17 +145,14 @@ export default function Index() {
     value,
     setvalue,
   }
-  const ProjectCom = {
-    Sankey,
-    Topology,
-   }
-   let Com = ProjectCom[value]
+ 
+
     return (
       <CustContext.Provider value={propsData}>
       <Pagecount showserach={true} pd="32px">   
       
         {
-          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Navigate to="/index/runtimeMaintenance/chart" />
+          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Navigate to="/index/runtimeMaintenance/chart"  />
         }
       </Pagecount>
       </CustContext.Provider>

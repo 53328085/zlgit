@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import style from "./style.module.less";
 import Runreportleft from "./runreportLeft";
 import Runreportright from "./runreportRight";
-import { energyDesigner } from "@api/api.js";
+import { energyDesigner, QueryRunReport } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
@@ -11,7 +11,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import printJS from 'print-js'
 export default function Index() {
-  const { querOverview } = energyDesigner;
+  const { RunReport } = QueryRunReport;
   const [messageApi] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -25,9 +25,9 @@ export default function Index() {
   const [dataInfo, setDataInfo] = useState({});
   // Child2中的组件事件的回调更改Child1中的数据
   const getReport = (data) => {
-    console.log(data);
+    let {type, areaId, date} = data
     setReportInfo(data.rightInfo);
-    return querOverview(projectId, data.type, data.areaId, data.date).then(
+    return RunReport({projectId, type, areaId, date}).then(
       (res) => {
         let { success, data } = res;
         if (success && data) {

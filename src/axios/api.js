@@ -248,6 +248,15 @@ export class QueryElectric {
     );
 }
 
+// 能源管理--运行报告 -- 运行态
+export class QueryRunReport {
+  static RunReport = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+    server.post(
+      `Energy/EnergyRunReport/QueryRunReport?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`
+      
+    );
+}
+
 // 能源管理--重点设备 -- 设计态
 export class DesElectric {
       
@@ -1697,6 +1706,12 @@ export class DistributionMeter {
     );
   static configureSensor = (data) =>
     server.post(`Distribution/DistributionMeter/ConfigureSensor`, data);
+  static QueryUnusedCDCW = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedCDCW`,{params:{projectId, roomId}})
+  static QueryPageCDCW =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageCDCW`,{params:{projectId, roomId, pageNum, pageSize}})
+  static ConfigureCDCW=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureCDCW`,data)
+  static QueryUnusedFibreTempil = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedFibreTempil`,{params:{projectId, roomId}})
+  static QueryPageFibreTempil =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageFibreTempil`,{params:{projectId, roomId, pageNum, pageSize}})
+  static ConfigureFibreTempil=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureFibreTempil`,data)
 }
 
 export class DistributionRoomRuntime{
@@ -1740,6 +1755,13 @@ export class DistributionRoomRuntime{
   static WarningPage=(data)=>server.post(`/Distribution/DistributionRoomRuntime/WarningPage`,data)
   static RoomOne =(projectId,roomId)=>server.get(`/Distribution/DistributionRoomRuntime/RoomOne`,{params:{projectId,roomId}})
   static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
+  static Statistics=(data)=>server.get(`/Distribution/DistributionRoomRuntime/Statistics`,{params:data})
+  static Overview =(data)=>server.post(`/Distribution/DistributionRoomRuntime/Overview`,data)
+  static QueryFibreTempilPartitions =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilPartitions`,{params:data})
+  static QuerySinglePartitionsInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QuerySinglePartitionsInfo`,{params:data})
+  static QueryFibreTempilWarningInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningInfo`,{params:data})
+  static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
+  static QueryFibreTempilWarningRecords=(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningRecords`,{params:data})
 }
 //能源流向
 export class EnergyFlowRuntime {

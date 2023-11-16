@@ -437,6 +437,9 @@ const controlcolumns = [
      
     }
     return AutoValve.getPageData(params).then(res => {
+   
+
+    
       let {success, data, total} = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length >0) {

@@ -443,20 +443,23 @@ export default function Index() {
     console.log(id)
     setAreaId(id)
   }
+  console.log(oneLevel)
   useEffect(()=>{
+   
     if(oneLevel.length > 0){
       setAreaId(oneLevel[0]['id'])
     }
   
   },[])
   useEffect( () => {
+    console.log(areaId)
     async function func(){
      await GetDutyUsers()
      await GetOperatorEx()
      setIsLoading(false)
     }
     areaId&&func()
-    
+    !areaId&&setIsLoading(false)
   }, [areaId])
   return (
     <>
@@ -479,7 +482,7 @@ export default function Index() {
               <div className='mgt16'>
                 <div className='title'>
                   <div className='wd96'>
-                    <Button type="primary" block onClick={() => { planRef.current.onOpen() }}>班次管理</Button>
+                    <Button type="primary" block onClick={() => {if(!areaId){message.warning('请新增园区');return}; planRef.current.onOpen() }}>班次管理</Button>
                   </div>
                   <div className='wd96'>
                     <Button type="primary" block onClick={completeEvent}>完成</Button>

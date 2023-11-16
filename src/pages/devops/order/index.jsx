@@ -21,9 +21,12 @@ export default function Index() {
           <Form
             form={form}
             colon={false}
+            initialValues={{
+              area: oneLevel.length>0?0:null
+            }}
           >
             <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
+              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea}></Select>
             </Form.Item>
           </Form>
         </div>

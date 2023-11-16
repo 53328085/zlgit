@@ -15,7 +15,7 @@ import firstwarn from '@imgs/warning.png'
 export default function Index() {
   const tableRef = useRef()
   const { queryPageRoom } = distributionRoom
-  const { queryPageSensor, queryUnusedSensor, configureSensor } = DistributionMeter
+  const { QueryPageFibreTempil,QueryUnusedFibreTempil,ConfigureFibreTempil} = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
     messageApi.open({
@@ -82,7 +82,7 @@ export default function Index() {
   const [total, setTotal] = useState(0)
   const pageSize = 10
   const getTableData = () => {
-    return queryPageSensor(projectId, roomId, pageNum, pageSize).then(res => {
+    return QueryPageFibreTempil(projectId, roomId, pageNum, pageSize).then(res => {
       if(res.success){
         if(res.data){
           setData(res.data)
@@ -101,28 +101,31 @@ export default function Index() {
   useEffect(()=> {
     if(roomId){
       queryTable()
+    }else{
+      setData([])
+      setSubTable([])
     }
   },[roomId, pageNum])
 
   const columns = [
     {
       align:'center',
-      title: '传感器编号',
+      title: '光纤测温名称',
       dataIndex: 'sn',
       key: 'sn',
     },{
       align:'center',
-      title: '传感器名称',
+      title: '安装地址',
       dataIndex: 'name',
       key: 'name',
     },{
       align:'center',
-      title: '传感器型号',
+      title: '光纤测温编号',
       dataIndex: 'category',
       key: 'category',
     },{
       align:'center',
-      title: '安装地址',
+      title: '光纤测温型号',
       dataIndex: 'address',
       key: 'address',
       width: 480
@@ -178,7 +181,7 @@ export default function Index() {
       roomId,
       sns:group
     }
-    configureSensor(data).then(res=> {
+    ConfigureFibreTempil(data).then(res=> {
       if(res.success){
         messageContent('success','设备删除成功!')
         if(subTable.length == 1 && pageNum > 1){
@@ -209,7 +212,7 @@ export default function Index() {
       return;
     }
     if(roomId){
-      queryUnusedSensor(projectId, roomId).then(res => {
+      QueryUnusedFibreTempil(projectId, roomId).then(res => {
         let { success, data } = res
         if(success){
           if(data){
@@ -239,9 +242,9 @@ export default function Index() {
       roomId,
       sns:group
     }
-    configureSensor(data).then(res=> {
+    ConfigureFibreTempil(data).then(res=> {
       if(res.success){
-        messageContent('success','传感器设备配置成功!')
+        messageContent('success','光纤测温设备配置成功!')
         queryTable()
         setTransTag('close')
       }else{
@@ -278,8 +281,8 @@ export default function Index() {
 
   const transferTitle = {
     mainTitle:'',
-    subTitle:'配电房传感器',
-    unknownTitle:'未选中的传感器设备'
+    subTitle:'配电房光纤测温',
+    unknownTitle:'未选中的光纤测温设备'
   }  
   //分页
   const paginationProps = {
@@ -305,7 +308,7 @@ export default function Index() {
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
     let file =  "xlsx";
-    writeFile(workbook, '配电房传感器.xlsx', { bookType: file }); // 下载
+    writeFile(workbook, '配电房光纤测温.xlsx', { bookType: file }); // 下载
   }
 
   return (
@@ -343,7 +346,7 @@ export default function Index() {
       </div>
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
-            <span>配电房传感器</span>
+            <span>配电房光纤测温</span>
             <div>
             <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
                 选择设备
@@ -357,14 +360,21 @@ export default function Index() {
           <img className={style.lineImg} src={dashed}></img>
         </div>
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-        <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
+        <UseTransfer 
+        transferTitle={transferTitle} 
+        saveValue={getSaveValue} 
+        columns={transferColumns} 
+        mainTable={mainTable} 
+        subTable={subTable} 
+        unknownTable={unknownTable} 
+        closeValue={getCloseValue}></UseTransfer>
         </div>
       <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
       <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
         <div className={style.deleteHeader}>删除提示</div>
         <div className={style.deleteBody}>
           <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认在该配电房中删除该传感器？</span>
+          <span>是否确认在该配电房中删除该光纤测温？</span>
         </div>
       </Modal>
       </div>

@@ -17,7 +17,7 @@ export default function index (props) {
         let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
         let unknownArr = cloneDeep(props.unknownTable)
-        
+    
         setMainData(mainArr)
         setSubData(subArr)
         setSubCopy(subArr)
@@ -95,6 +95,13 @@ export default function index (props) {
     }
 
     const unknownToSub = () => {
+        if(subData.length>0){
+            messageApi.open({
+                type: 'warning',
+                content:'光纤设备至多添加一个！',
+            })
+            return;
+        }
         if( selectedRowKeys.length == 0 ){
             messageApi.open({
                 type: 'warning',

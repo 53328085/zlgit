@@ -1,14 +1,16 @@
 import React, {useEffect, useRef, useState} from 'react'
 import { drawEcharts } from "@com/useEcharts";
+import {Empty} from 'antd'
 export default function Sankey({data}) {
- console.log("render", data)
- const {link } = data
+  
+  const {link=[] } = data
+  let isempty = link.length < 1
   const chart = useRef()
   let source =  link.map(i => i.source)
   let target = link.map(i => i.target)
   let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
  let links = link.map(l =>({...l, value: parseFloat(l.value)}))
-  console.log(nodes)
+ 
   const custoption = {
     tooltip: {
         trigger: 'item',
@@ -34,7 +36,7 @@ export default function Sankey({data}) {
    
    // if(data.name?.length < 1 || data.links?.length < 1 ) return
     // console.log(name)
-    console.log(links)
+  
      drawEcharts(
         chart.current,
         {
@@ -47,6 +49,11 @@ export default function Sankey({data}) {
    
   }, [data])
   return (
-    <div ref={chart} style={{flex: 1}}></div>
+    <>
+    {
+      isempty ? <Empty /> :  <div ref={chart} style={{flex: 1}}></div>
+    }
+    </>
+   
   )
 }

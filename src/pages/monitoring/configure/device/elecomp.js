@@ -322,7 +322,7 @@ export const FormComp = (props) => {
                                                 setName1(e.target.value)
                                             }}></Input>
                                             <Button type='primary' onClick={() => {
-                                                props.openarea();
+                                                props.openarea(1);
                                                 setIndex(1);
                                             }}>分区配置</Button>
                                         </Space>
@@ -341,7 +341,7 @@ export const FormComp = (props) => {
                                          setName2(e.target.value)
                                     }}></Input>
                                     <Button type='primary'onClick={()=>{
-                                        props.openarea();
+                                        props.openarea(2);
                                         setIndex(2);
                                     }}>分区配置</Button>
                                     </Space>
@@ -358,7 +358,7 @@ export const FormComp = (props) => {
                                          setName3(e.target.value)
                                     }}></Input>
                                     <Button type='primary ' onClick={()=>{
-                                        props.openarea();
+                                        props.openarea(3);
                                         setIndex(3);
                                     }}>分区配置</Button>
                                     </Space>
@@ -375,7 +375,7 @@ export const FormComp = (props) => {
                                         setName4(e.target.value)
                                     }}></Input>
                                     <Button type='primary' onClick={()=>{
-                                        props.openarea();
+                                        props.openarea(4);
                                         setIndex(4);
                                     }}>分区配置</Button>
                                     </Space>
@@ -572,9 +572,7 @@ export const EditFormComp = (props) => {
         }   
         const obj =form?.getFieldsValue()
         const len = Object.keys(obj)
-        console.log(len)
         if(len.length>0){
-            console.log(obj)
             setFormData({...obj})
         }
         
@@ -699,7 +697,7 @@ export const EditFormComp = (props) => {
                                         </Form.Item>
 
                                         <Button type='primary' onClick={() => {
-                                            props.openarea();
+                                            props.openarea(1);
                                             setIndex(1);
                                         }}>分区配置</Button>
                                     </Space>
@@ -715,7 +713,7 @@ export const EditFormComp = (props) => {
                                             <Input></Input>
                                         </Form.Item>
                                         <Button type='primary' onClick={() => {
-                                            props.openarea();
+                                            props.openarea(2);
                                             setIndex(2);
                                         }}>分区配置</Button>
                                     </Space>
@@ -732,7 +730,7 @@ export const EditFormComp = (props) => {
                                             <Input></Input>
                                         </Form.Item>
                                         <Button type='primary ' onClick={() => {
-                                            props.openarea();
+                                            props.openarea(3);
                                             setIndex(3);
                                         }}>分区配置</Button>
                                     </Space>
@@ -749,7 +747,7 @@ export const EditFormComp = (props) => {
                                             <Input></Input>
                                         </Form.Item>
                                         <Button type='primary' onClick={() => {
-                                            props.openarea();
+                                            props.openarea(4);
                                             setIndex(4);
                                         }}>分区配置</Button>
                                     </Space>
@@ -872,7 +870,7 @@ const Card =forwardRef(
         const [reamrk,setRemark] = useState()
         const order = Index+1<10?'0'+(Index+1):Index+1
        
-        console.log(pathGruop.current[Index]['name'],cardvalue)
+      
         useImperativeHandle(ref,()=>{
             return {
                 setCardValue

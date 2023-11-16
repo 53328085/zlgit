@@ -34,7 +34,7 @@ export default function Index(props) {
     const areaName = useSelector(levelDefaultLabel) || '园区'
     const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
    
-  const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
+  const [selectAreaName, setSelectAreaName] = useState(areaList[0]?.name) || ''
   useEffect(() => {    
     if (areaList.length == 0 || !areaList) {    
       message.error('当前项目尚未创建园区!')
@@ -272,9 +272,9 @@ export default function Index(props) {
         setTransTag('close')
         getFromHeader()
       } else {
-        message.error(res.errMsg)
+        message.error(res.errMsg || "数据出错")
       }
-    })
+    }).cahtch()
   }
 
   const getCloseValue = params => {

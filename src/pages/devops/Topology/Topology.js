@@ -1,13 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react'
 import styled from 'styled-components';
 import {Image, Spin} from 'antd'
-import { drawEcharts } from "@com/useEcharts";
+ 
 import {EnergyFlowRuntime, Monitoring} from "@api/api"
 import Commport from './Commport';
 import server from './icon/server.png';
 import workstation from './icon/workstation.png'
 import switchboard from './icon/switchboard.png';
-import gateway from './icon/gateway1.png'
+import TitleLayout from '@com/titlelayout'
  
 const {QueryTopologyGatewayState, QueryTopologyGatewayCommports} = EnergyFlowRuntime
 const {RuntimeGateway:{CategoryImages}} = Monitoring
@@ -17,6 +17,7 @@ const Mainbox = styled.div`
   padding: 10px;
   color: #515151;
   font-size: 14px;
+  background-color: #fff;
   .top {
     position: absolute;
     display: flex;
@@ -119,12 +120,13 @@ const LineSty = styled.div`
 
  })
  
-export default function Topology({projectId}) {
+export default function Topology({projectId, areaId}) {
   const [data, setData] = useState([])
   const [iscom, setIscom] = useState(true)
   const count = data.length - 1
   const [ids, setIds] = useState([])
   const [gateway, setGateway] = useState()
+  
   const getImage = async (data, group)=> {
       
       try {
@@ -159,7 +161,7 @@ export default function Topology({projectId}) {
           setData([])
         }
       } catch (e) {
-        ooo
+         
       }
   }
   
@@ -189,8 +191,9 @@ export default function Topology({projectId}) {
     flex: 1,
     position: "re"
   }
-  return  <>
-  { iscom ? <Mainbox count={count}>
+  return <>  { 
+    iscom ? <TitleLayout> 
+    <Mainbox count={count}>
      {/*   <div className='top' >
          <Imgbox  bg={server} ><span>服务器</span></Imgbox>
          <LineSty width="234px" />
@@ -220,7 +223,9 @@ export default function Topology({projectId}) {
            }
        </div>
     </Mainbox>
+    </TitleLayout>
     : <Commport ids={ids} projectId={projectId} gateway={gateway} back={setIscom}/> 
+   
   }
-  </>
+   </>
 }
