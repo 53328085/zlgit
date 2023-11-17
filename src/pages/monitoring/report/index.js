@@ -26,7 +26,7 @@ export default function Index() {
   const areaList = useSelector(selectOneLevel)
   const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
   let [areaId, setAreaId] = useState(defaultArea)
-  const [queryData, setqueryData] = useState()
+ 
   const today = moment();
   const changeArea = (value) => {
     setAreaId(value);
@@ -34,20 +34,23 @@ export default function Index() {
   const { Option } = Select
   const options = [{
     label: '月度报告',
-    value: 'month'
+    value: 2
   }, {
     label: '年度报告',
-    value: 'year'
+    value: 1
   }]
-  const [radioValue, setRadioValue] = useState('month');
+  const [radioValue, setRadioValue] = useState(2);
   const [date, setdate] = useState();
+  const picker= [,"year", 'month'][radioValue]
+ 
+  const [reportData, setReportdata]= useState(null)
   const changeType = ({ target: { value } }) => {
     setRadioValue(value);
   }
   let params = {
     projectId: projectId,
     areaId: areaId,
-    type: radioValue == 'month' ? 1 : 2,
+    type: parseInt(radioValue), 
     date: date
   }
 
@@ -55,13 +58,13 @@ export default function Index() {
     QueryReport(params).then(res => {
       let { success, data } = res
       if (success) {
-        setqueryData(data)
-        setcoverData({
-          ProjectName: data?.projectName,
-          Address: data?.projectAddress,
-          Date: new Date().toLocaleDateString()
-        })
+        if(data.constructor == Object)  {
+          setReportdata({...data, Data: new Date().toLocaleDateString(), timetype: radioValue})
+        }else {
+          setReportdata(null)
+        }
       } else {
+        setReportdata(null)
         message.error(res.errMsg)
       }
     })
@@ -73,27 +76,11 @@ export default function Index() {
     }
   }, []);
   const changeDate = (date, dateString) => {
-    console.log(date, dateString)
     setdate(dateString)
   }
-
-  const [display, setdisplay] = useState(false);
-
-  const [coverData, setcoverData] = useState({
-    ProjectName: '',
-    Address: '',
-    Date: ''
-  });
-
   const createReport = () => {
     if (date) {
-      setdisplay(true);
       getData()
-      setcoverData({
-        ProjectName: queryData?.projectName,
-        Address: queryData?.projectAddress,
-        Date: new Date().toLocaleDateString()
-      })
     } else {
       message.error('请选择日期范围！')
     }
@@ -203,7 +190,7 @@ export default function Index() {
         </div>
         <div className={style.item}>
           <div className={style.itemTitle}>日期范围</div>
-          <DatePicker style={{ width: 324 }} onChange={changeDate} picker={radioValue} ></DatePicker>
+          <DatePicker style={{ width: 324 }} onChange={changeDate} picker={picker} ></DatePicker>
         </div>
         <div className={style.button} onClick={createReport}>
           <img src={searchFile} className={style.searchFile}></img>
@@ -218,7 +205,7 @@ export default function Index() {
           <span>导出报告</span>
         </div>
       </div>
-       <PageList coverData={coverData} display={display}  query={queryData}></PageList> 
+       <PageList   reportData={reportData}></PageList> 
 
     </div>
   )

@@ -423,7 +423,7 @@ const chartoption = {
 };
 
 const liuqiuOption =(option) =>  {  // 水球图
-    console.dir(option)
+    
     let {series, ...set} = option
   return  {
         series: [{
