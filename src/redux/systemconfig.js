@@ -130,6 +130,9 @@ const system = createSlice({
           state.roomId= Array.isArray(payload)?payload:[]
           
         },
+        getSystemconfiginfo(state, {payload}) {
+           state.systemConfigInfo = payload ?? {}
+        },
         systemConfigRest(state, actions) {
           console.log(initialState)
           return state = initialState;
@@ -137,18 +140,12 @@ const system = createSlice({
       
     },
 
-    extraReducers: {      
+  /*   extraReducers: {      
         [systemConfig.fulfilled]: (state, {payload}) => { 
            let {success, errMsg, data={}} = payload || {}
-           if (success) {
-             
-            
-              // state.systemConfigInfo = data
-           //  Object.assign({}, state, {siteconfig})
-            //  state.siteconfig.theme.primaryColor = data.themeColor || "#237AE4" // 主题色
+           if (success) {          
               return Object.assign({}, state, {systemConfigInfo: data} )
-           }else {
-             // state.systemConfigInfo = {}
+           }else {            
               return Object.assign({}, state, {systemConfigInfo: {}})
            }
         },
@@ -156,7 +153,7 @@ const system = createSlice({
             state.systemConfigInfo = {}
          }
 
-    }
+    } */
 
 })
  
@@ -213,6 +210,7 @@ export const {
     getCurrProjectInfo,
     getThemeColor,
     systemConfigRest,
-    getRoomId
+    getRoomId,
+    getSystemconfiginfo
 } = actions
 export default system.reducer

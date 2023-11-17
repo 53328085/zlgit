@@ -1,371 +1,90 @@
-import React, { useEffect, useState, useMemo, memo, forwardRef, useImperativeHandle, useRef } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import { useNavigate, useParams, useLoaderData } from "react-router-dom";
- 
- 
-import md5 from 'js-md5';
+import React, { useEffect,  memo,  } from "react";
+import { useDispatch, useSelector,  } from "react-redux";
+import { useNavigate,} from "react-router-dom"; 
 import {
-  loginByName,
-  selectLoading,
-  selectMemorize,
-  selectMemoPhone,
-  clearToken,
-  memorizeName,
-  memorizePhone,
-  selectUser,
+  loginByName, 
+  clearToken, 
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary, configProject,
+import {  getpublishState,   getJump, getdataScreen, getIsGranary, configProject,
   getMenus,
   getshifts,
-  getOnelevel, getThemeColor, setCurrentlevel} from "@redux/systemconfig";
-import { useBoolean, useCountDown, useRequest } from "ahooks";
-import { Area, ProjectList, eneryShift } from "@api/api.js";
-import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
-import styled from "styled-components";
-import { LoginLayout } from "@com/layout";
-import { pwdValidator, phoneValidator, codeValidator, imgcodeValidator } from "@pages/rule";
-import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
-import imgurl from "./icon";
-import bgImg from "./logBg.png";
-
+  getOnelevel,  setCurrentlevel, getSystemconfiginfo} from "@redux/systemconfig";
  
+import { Area, ProjectList, eneryShift } from "@api/api.js";
+import { message, Tabs } from "antd";
+import styled from "styled-components";
+import { ProjectSetting, BigScreen } from "@api/api";
+import {cipher} from "@com/usehandler"
+import imgurl from "./icon";
+ 
+ import  Headicon from './Headicon'
+import Listitem from "./Listitem";
+import Username from "./Username";
+import Phonelog from "./Phonelog";
+import Copyright from './Copyright'
+const Loginpage =  styled.div`
+  display: flex;
+  flex:1;
+  flex-direction: column;
+  position: relative;
+  background-image: ${props => `url(${props.bgImg})`};
+  background-size: cover;
+`
+const CTabs = styled(Tabs)`
+   && {
+      width: 402px;
+      .ant-tabs-nav {
+         margin-bottom: 32px;
+         &::before {
+           border: none;
+         }
+      }
+     
+      .ant-tabs-tab .ant-tabs-tab-btn{
+         font-size: 26px;
+         color: #515151;
+         font-style: italic;
+         transition: none;
+      }
+      .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+         font-size: 28px;
+         color: #fff;
+         transition: none;
+      }
+      .ant-tabs-ink-bar.ant-tabs-ink-bar-animated{
+         background-color: transparent;
+      }
+      .ant-tabs-ink-bar {
+        display: none;
+      }
+   }
+
+`
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
     display: flex;
     height: calc(100vh - 138px - 24px);
     overflow-y: auto;
+    justify-content: space-between;
   }
 `;
 
-const List = styled.div`
-  width: 660px;
-  display: flex;
-  flex-direction: column;
-  .chtitle {
-    .text {
-      color: #fff;
-      font-style: italic;
-      font-size: 52px;
-      z-index: 2;
-      position: absolute;
-      min-width: 744px;
-    }
-    position: relative;
-    height: 90px;
-    text-align: center;
-  }
-  .block {
-    display: block;
-    width: 775px;
-    height: 35px;
-    background-color: #012bd2;
-    position: absolute;
-    top: 59px;
-    transform: skewX(-20deg);
-    box-shadow: rgb(0 0 0 / 30%) 12px 12px;
-  }
-  .entitle {
-    font-size: 28px;
-    line-height: 2;
-    color: rgba(255, 255, 255, 0.7);
-    padding-left: 20px;
-    padding-bottom: 72px;
-    font-style: oblique;
-  }
-  .itemlist {
-    display: flex;
-    flex-direction: column;
-    padding-left: 20px;
-    .item {
-      display: flex;
-      align-items: center;
-    }
-    .text {
-      display: inline-block;
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.6);
-    }
-    .icon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      background-color:#0033ff ;
-      transform: rotate(45deg);
-      border: 1px solid #0099ff;
-      margin-right: 16px;
-    }
-    .item + .item {
-      margin-top: 24px;
-    }
-  }
-`;
  
-const Logbox = styled.div`
-  width: 402px;
-  color: #fff;
-  background: transparent;
-  margin-left: auto;
-`;
-const Logtype = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  height: 44px;
-  span {
-    font-style: italic;
-    transition: font-size 0.3s, color 0.3s;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-`;
-const { Item } = Form;
-const Itembox = styled(Item)`
-  &:not(:last-child) {
-    margin-bottom: ${props => props.btm || "64px"};
-  }
-  .ant-input-affix-wrapper-lg {
-    height: 48px;
-  }
-`;
-const Ipticon = styled.span`
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-
-  background-size: 32px 32px;
-  transition: all 0.3s;
-`;
-const Logipt = styled(Input)`
-  font-size: 14px;
-  background-color: transparent !important;
-  border: 1px solid #9c9ea4;
-  border-radius: 4px;
-  ${Ipticon} {
-    background-image: url(${(props) => props.url});
-  }
-  &:focus,
-  &:hover {
-    border-color: #1f83fe !important;
-    ${Ipticon} {
-      background-image: url(${(props) => props.aurl});
-    }
-    .ant-input {
-      color: #1f83fe;
-    }
-  }
-  && {
-    .ant-input-prefix {
-      margin-right: 16px;
-    }
-  }
-  .ant-input-affix-wrapper-status-error {
-    background-color: transparent !important;
-  }
-  .ant-input {
-    background-color: transparent;
-    color: #999;
-  }
-  .ant-input::placeholder {
-    color: #999;
-  }
-  input:-internal-autofill-previewed,
-  input:-internal-autofill-selected {
-    -webkit-text-fill-color: #999 !important;
-    　　transition: background-color 5000s ease-in-out 0s !important;
-  }
-`;
-const Logpsd = styled(Input.Password)`
-  background-color: transparent !important;
-  border: 1px solid #9c9ea4;
-  font-size: 14px;
-  border-radius: 4px;
-  ${Ipticon} {
-    background-image: url(${(props) => props.url});
-  }
-  &:focus,
-  &:hover {
-    border-color: #1f83fe !important;
-    ${Ipticon} {
-      background-image: url(${(props) => props.aurl});
-    }
-    .ant-input {
-      color: #1f83fe;
-    }
-    .ant-input-password-icon.anticon {
-      color: #1f83fe !important;
-    }
-  }
-  && {
-    .ant-input-prefix {
-      margin-right: 16px;
-    }
-  }
-  .ant-input-password-icon.anticon {
-    color: #999;
-  }
-  .ant-input-affix-wrapper-status-error {
-    background-color: transparent !important;
-  }
-  .ant-input {
-    background-color: transparent;
-    color: #999;
-  }
-  .ant-input::placeholder {
-    color: #999;
-  }
-`;
-const Logck = styled(Checkbox)`
-  display: flex;
-  align-items: center;
-  &:hover {
-    .ant-checkbox:hover {
-      border-color: #9c9ea4;
-    }
-  }
-  .ant-checkbox + span {
-    padding-left: 0;
-    padding-right: 0;
-    color: #999;
-    font-size: 16px;
-  }
-  .ant-checkbox-checked .ant-checkbox-inner:after {
-    transform: rotate(45deg) scale(2) translate(-25%, -50%);
-  }
-  .ant-checkbox {
-    width: 32px;
-    height: 32px;
-    margin-right: 16px;
-    top: 0px;
-    .ant-checkbox-input,
-    .ant-checkbox-inner {
-      width: inherit;
-      height: inherit;
-      background-color: transparent;
-    }
-    .ant-checkbox-inner {
-      border-color: #9c9ea4;
-      background-color: transparent;
-      &:hover {
-        border-color: #9c9ea4;
-      }
-    }
-  }
-`;
-
-const Logbtn = styled(Button)`
-  border-color: #0e2db3;
-  background-color: #0e2db3;
-  font-size: 18px;
-  color: #fff;
-  &:hover {
-    border-color: #0728ae;
-    background-color: #0728ae;
-    color: #fff;
-  }
-`;
-
-const Title = styled.div`
-  display: flex;
-  height: inherit;
-  flex: 1;
-  padding: 0 84px 0 96px;
-  justify-content: space-between;
-  align-items: flex-end;
-`;
-
-const Cord =forwardRef((props, ref) => {
-  let [codekey, setCodeKey] = useState()
-  let [codeUrl, setCodeUrl] =useState()
-  useImperativeHandle(ref, ()=> ({
-     code: codekey
-  }))
-  const getCode = async () => {
-    try {
-      let {data, success} = await  Logapi.GetCode()
-      if(success) {  
-        let {key, image} = data || {}
-        setCodeKey(key)
-        setCodeUrl(image)
-
-      }
-    } catch (error) {
-     
-    }
-      
- }
-  useEffect(() => {
-    console.log('render')
-    getCode()
-  }, [])
-  return (
-   <div style={{display: "inline-block"}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
-  )
-}) 
-
-const Logtitle = ({log, logtitle}) => {
-  return (
-    <Title>
-      <Image src={log ?  `data:image/png;base64,${log}` : imgurl.logo} preview={false} fallback={imgurl.logo} />
-      <Image src={imgurl.credentials} preview={false} width={200} />
-    </Title>
-  );
-};
-const Loglist = ({logtitle, englishTitle, literal}) => {
- 
-  
- 
-  let items = [
-    "运行监控",
-    "电气安全",
-    "配电管理",
-    "结算收费",
-    "光伏发电",
-    "碳排管理",
-    "运维管理",
-  ];
- 
- 
-  return (
-    <List>
-      <div className="chtitle">
-        <p className="text">{logtitle}</p>
-        <p className="block"></p>
-      </div>
-      <p className="entitle">{englishTitle}</p>
-      <div className="itemlist" style={{display: literal== 1 ? 'flex' : 'none'}}>
-        {items.map((i, index) => (
-          <div className="item" key={index}>
-            <span className="icon"></span>
-            <span className="text">{i}</span>
-          </div>
-        ))}
-      </div>
-    </List>
-  );
-};
 function UserLog() {
-  const store = useStore();
-
+   
   const navigate = useNavigate();
-  let initloaidng = useSelector(selectLoading);
-  let [loading, setLoading] = useState(initloaidng);
+ 
+ 
   const dispatch = useDispatch();
-  store.subscribe(() => {
-    setLoading(store.getState()?.user?.loading);
-  });
+ 
   const projectRun = ({ key, label }) => {
     dispatch(getJump(true))
     navigate(`/index/${key}`, {
       state: { type: "index", primary: key, index: true, title: label },
     });
   };
-/*   const hostname =
-    process.env.NODE_ENV === "production"
-      ? new URL(window.location.href).hostname
-      : "10.5.7.60";
- */
+ 
   // 进入项目配置/项目 
 
  const handlermenu = (data,  id) => {
@@ -451,14 +170,11 @@ function UserLog() {
 
  }
  
- const cipher = (name, pwd) => {
-   
-   return md5(`chint_${name}_${pwd}_wulian`)
-    
- }
-
- let onSubmit = async (value, type=0, codekey) => {
+ 
+ 
+ let onSubmit = async (value, type=0, codekey, setLoading) => {
    try {
+    setLoading && setLoading(true) 
     const {name, pwd, code, mobile} = value;  
     value.pwd = cipher(name, pwd)
     value.type = type;
@@ -470,6 +186,7 @@ function UserLog() {
     }
     let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
     if(success) {
+      setLoading &&  setLoading(false) 
        let {projectId, roleType} = data
        if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
        if (roleType == 3 || roleType == 4) {      
@@ -477,18 +194,18 @@ function UserLog() {
        }
  
     }else {
+      setLoading &&   setLoading(false) 
      return message.warning(errMsg || "数据出错,请重试");
     }
    } catch (error) {
+    setLoading &&   setLoading(false) 
      console.log(error)
    }
   
 
  }
 
-  const onFinishFailed = (error) => {
-    console.log(error);
-  };
+ 
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
     window.sessionStorage.removeItem('chintwuliu')
@@ -496,376 +213,42 @@ function UserLog() {
   }, []);
  
 
-  const [userform] = Form.useForm();
+  const items = [
+   {
+      label: "账户登录",
+       key: '1',
+       children:   <Username onSubmit={onSubmit} />,
+   },
+   {
+      label: "手机登录",
+       key: '2',
+       children:   <Phonelog onSubmit={onSubmit} />,
+   }
+  ]
+  return (     
+         <CTabs 
+           defaultActiveKey="1"
+           items={items}
+          
+           tabBarGutter={128}
+           
+         >
 
-  const [state, { toggle }] = useBoolean(true);
-
-  const stylefn = (state) => {
-    return state
-      ? { fontSize: "28px", color: "#fff" }
-      : { fontSize: "26px", color: "#515151" };
-  };
-
-  const iconsty = {
-    fontSize: "26px",
-    color: "#999",
-    marginRight: "16px",
-  };
-
-
-  const Userlog = () => {
-    let initmemorize = useSelector(selectMemorize);
-    let { name } = useSelector(selectUser);
-  //  let [codekey, setCodeKey] = useState()
-   // let [codeUrl, setCodeUrl] =useState()
-    const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
-    const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
-    const ckChange = (e) => {
-      dispatch(memorizeName(e.target.checked));
-    };
- 
-    const codekey = useRef()
-    const getcode = useMemo(() => <Cord ref={codekey} />, [])
-   /*  const getCode = async () => {
-       try {
-         let {data, success} = await  Logapi.GetCode()
-         if(success) {  
-           let {key, image} = data || {}
-           setCodeKey(key)
-           setCodeUrl(image)
-
-         }
-       } catch (error) {
-        
-       }
-         
-    } */
-    
-  /*   store.subscribe(() => {
-      initmemorize = store.getState()?.memorize;
-    }); */
-    useEffect(() => {
-    //  getCode();
-      return () => {
-        setLoading(false);
-      };
-    }, []);
-    return (
-      <Form
-        layout="horizontal"
-        labelCol={{ flex: "4em" }}
-        wrapperCol={{ flex: 1 }}
-        labelWrap
-        form={userform}
-        name="login"
-        onFinish={(value) => {         
-          onSubmit(value, 0, codekey.current.code)
-        }}
-        onFinishFailed={onFinishFailed}
-        initialValues={{
-          name: userName,
-          pwd: "",
-          code: '',
-        }}
-      >
-        <Itembox
-          name="name"
-          hasFeedback
-          btm="32px"
-          rules={[
-            {
-              required: true,
-              message: "请输入用户姓名",
-            },
-            {
-              type: "string",
-              min: 2,
-              max: 20,
-              message: "用户名2至20个字符串",
-            },
-          ]}
-        >
-          <Logipt
-            prefix={<Ipticon />}
-            url={imgurl.user}
-            aurl={imgurl.usera}
-            placeholder="请输入用户名"
-            allowClear
-            autoComplete={auto}
-          />
-        </Itembox>
-        <Itembox
-          name="pwd"
-          hasFeedback
-          btm="32px"
-          rules={[
-            {
-              required: true,
-              message: "请输入密码",
-            },
-             {
-            validator: pwdValidator
-            },  
-          ]}
-        >
-          <Logpsd
-            prefix={<Ipticon />}
-            url={imgurl.pwd}
-            aurl={imgurl.pwda}
-            placeholder="请输入密码"
-          />
-        </Itembox>
-       
-        
-          <Itembox
-         hasFeedback
-         btm="32px"
-         style={{alignItems: "center"}}
-       >
-        <Input.Group compact>
-          <Item  name="code" noStyle  rules={[
-           {
-             required: true,
-             message: "请输入验证码",
-           },
-            {
-           validator: imgcodeValidator
-           },  
-         ]}>
-          <Logipt
-            style={{width: "264px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
-            prefix={<Ipticon />}
-            url={imgurl.pwd}
-            aurl={imgurl.pwda}
-            autoComplete="off"
-            placeholder="请输入验证码"
-          />
-          </Item>
-          {getcode}
-         
-         {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
-           </Input.Group>
-           </Itembox>
-         
-       
-        <Itembox valuePropName="checked">
-          <Logck onChange={ckChange} defaultChecked={initmemorize}>
-            记住用户名
-          </Logck>
-        </Itembox>
-        <Itembox>
-          <Logbtn
-            htmlType="submit"
-            block
-            loading={loading}
-            style={{ height: "56px" }}
-          >
-            立即登录
-          </Logbtn>
-        </Itembox>
-      </Form>
-    );
-  };
-  function Phonelog() {
-    const { GetVerification } = Logapi;
-    const [phoneform] = Form.useForm();
-    let initPhone = useSelector(selectMemoPhone);
-    let { mobile } = useSelector(selectUser);
-    const auto = useMemo(() => (initPhone ? "on" : "off"), [initPhone]);
-    const initMobile = useMemo(() => (initPhone ? mobile : ""), [initPhone]);
-    const ckchange = (e) => {
-      dispatch(memorizePhone(e.target.checked));
-    };
-   /*  store.subscribe(() => {
-      initPhone = store.getState()?.memoPhone;
-    }); */
-    const [targetDate, setTargetDate] = useState(0);
-    const [countdown] = useCountDown({
-      targetDate,
-    });
-    const { loading, run } = useRequest(GetVerification, {
-      // 获取验证码
-      manual: true,
-      onSuccess: (res) => {
-        let { success, data } = res;
-        if (success) phoneform.setFieldValue("code", data.code);
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    });
-    const getCode = () => {
-      const phone = phoneform.getFieldValue("mobile");
-      phoneform
-        .validateFields(["mobile"])
-        .then((res) => {
-          setTargetDate(Date.now() + 1000 * 60);
-          run(phone);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    };
-    const Countdown = () => {
-      return (
-        <Logbtn
-          style={{ height: "42px", width: "112px", fontSize: "16px" }}
-          onClick={() => getCode()}
-          disabled={countdown !== 0}
-        >
-          {countdown === 0 ? "获取验证码" : ` ${Math.round(countdown / 1000)}s`}
-        </Logbtn>
-      );
-    };
-    useEffect(() => {});
-    return (
-      <Form
-        layout="horizontal"
-        labelCol={{ flex: "4em" }}
-        wrapperCol={{ flex: 1 }}
-        labelWrap
-        form={phoneform}
-        name="phonelogin"
-        onFinish={(e) => onSubmit(e, 1)}
-        onFinishFailed={onFinishFailed}
-        initialValues={{
-          mobile: initMobile,
-          remember: initPhone,
-        }}
-      >
-        <Itembox
-          name="mobile"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: "请输入手机号",
-            },
-            {
-              validator: phoneValidator,
-            },
-          ]}
-        >
-          <Logipt
-            prefix={<Ipticon />}
-            url={imgurl.phone}
-            aurl={imgurl.phonea}
-            placeholder="请输入手机号"
-            autoComplete={auto}
-          />
-        </Itembox>
-        <Itembox>
-          <Space size={16}>
-            <Item
-              name="code"
-              hasFeedback
-              rules={[
-                {
-                  required: true,
-                  message: "请输入验证码",
-                },
-                {
-                  validator: codeValidator,
-                },
-              ]}
-              noStyle
-            >
-              <Logipt
-                prefix={<Ipticon />}
-                url={imgurl.code}
-                aurl={imgurl.codea}
-                placeholder="请输入验证码"
-                style={{ width: "275px" }}
-              />
-            </Item>
-            <Item noStyle>
-              {/*  <Button type="primary" style={{height: '48px', width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
-               {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
-         </Button> */}
-              <Countdown />
-            </Item>
-          </Space>
-        </Itembox>
-        <Itembox name="remember" valuePropName="checked">
-          <Logck onChange={ckchange}>记住手机号</Logck>
-        </Itembox>
-        <Itembox>
-          <Logbtn
-            htmlType="submit"
-            block
-            loading={loading}
-            style={{ height: "56px" }}
-          >
-            立即登录
-          </Logbtn>
-        </Itembox>
-      </Form>
-    );
-  }
-
- 
-  const Phone = React.memo(Phonelog);
-  const params = useParams();
-  const type = useMemo(() => {
-    let param = Object.values(params)?.[0];
-
-    return !param || param == "user";
-  }, [params]);
-  return (
-    <Logbox>
-      <Logtype>
-        <span
-          onClick={() => {
-            //  navigate('user')
-            toggle();
-          }}
-          style={stylefn(state)}
-        >
-          账户登录
-        </span>
-        <span
-          onClick={() => {
-            // navigate('mobile')
-            toggle();
-          }}
-          style={stylefn(!state)}
-        >
-          手机登录
-        </span>
-      </Logtype>
-     {state ? <Userlog /> : <Phonelog />}
-  
-    </Logbox>
+         </CTabs>    
   );
 }
-
+const Log = memo(UserLog)
 export default function Login() {
- // const routeData = useLoaderData();
- // console.log(routeData)
-  
-  const dispatch = useDispatch();
-  const { systemLogoImage, systemBackImage, englishTitle="Integrated Energy Service Platform", literal } = useSelector(systemConfigInfo) || {}
-  const enchtitle = useSelector(mixtitle)
-  document.title = enchtitle
- const hostname = process.env.NODE_ENV === "production"
-    ? new URL(window.location.href).hostname
-    : "10.5.7.60";
- 
- useEffect(() => {
-  dispatch(systemConfig(hostname)).then(res => {   
-    let {success, data} = res.payload || {}
-    if(success) dispatch(getThemeColor(data.themeColor));
-  }).catch(e => {
-    console.log(e)
-  })
-}, [hostname]); 
+  const {systemBackImage} = useSelector(getSystemconfiginfo) || {}
+  const bgImg= systemBackImage ? `data:image/png;base64,${systemBackImage}` : imgurl.logBg
   return (
-    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
+    <Loginpage bgImg={bgImg}>
+      <Headicon /> 
       <Logmain>
-        <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
-        <UserLog />  
-     
+         <Listitem />
+         <Log />
       </Logmain>
-    </LoginLayout>
+      <Copyright/>
+    </Loginpage>
   );
 }
