@@ -2052,4 +2052,5 @@ export class HomeRuntime {
   static GetMonthEnergyTrends = (projectId) => server.get(`/Home/HomeRuntime/GetMonthEnergyTrends?projectId=${projectId}`)//月度能耗趋势
   static GetUseETrends_Water = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Water?projectId=${projectId}`)//用水量
   static GetUseETrends_Gas = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Gas?projectId=${projectId}`)//用气量
+  static GetTodayAlarmInfo = (projectId) => server.get(`/Home/HomeRuntime/GetTodayAlarmInfo?projectId=${projectId}`)//今日告警
 }
