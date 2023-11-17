@@ -1662,9 +1662,9 @@ export class distributionRoom {
  // static queryPageChart = (projectId, areaId, roomId, pageNum, pageSize) => server.get(`Distribution/DistributionRoom/QueryPageChart?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&pageNum=${pageNum}&pageSize=${pageSize}`)
  static queryPageChart = (projectId, roomId, pageNum, pageSize) => server.post(`Distribution/DistributionRoom/ChartPage`,{projectId, roomId, pageNum, pageSize}) 
  static addChart = (data) => server.post(`Distribution/DistributionRoom/AddChart`, data)  
-  static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/ChartList?projectId=${projectId}&id= ${id}`)  
+  static queryChart = (projectId, id) => server.get(`Distribution/DistributionRoom/ChartList?projectId=${projectId}&id=${id}`)  
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
-  static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id= ${id}`)  
+  static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id=${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
  
 }
@@ -2047,4 +2047,10 @@ export class HomeRuntime {
   static GetStorageProfitTrends = (projectId) => server.get(`/Home/HomeRuntime/GetStorageProfitTrends?projectId=${projectId}`)//储能收益统计
   static GetWarningDistribute = (projectId) => server.get(`/Home/HomeRuntime/GetWarningDistribute?projectId=${projectId}`)//告警分布
   static GetSiteSoc = (projectId) => server.get(`/Home/HomeRuntime/GetSiteSoc?projectId=${projectId}`)//站点Soc
+
+  static GetAlarmInfo = (projectId) => server.get(`/Home/HomeRuntime/GetAlarmInfo?projectId=${projectId}`)//告警信息
+  static GetMonthEnergyTrends = (projectId) => server.get(`/Home/HomeRuntime/GetMonthEnergyTrends?projectId=${projectId}`)//月度能耗趋势
+  static GetUseETrends_Water = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Water?projectId=${projectId}`)//用水量
+  static GetUseETrends_Gas = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Gas?projectId=${projectId}`)//用气量
+  static GetTodayAlarmInfo = (projectId) => server.get(`/Home/HomeRuntime/GetTodayAlarmInfo?projectId=${projectId}`)//今日告警
 }

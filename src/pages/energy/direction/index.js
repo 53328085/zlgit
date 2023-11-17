@@ -12,14 +12,14 @@ import {useSelector} from 'react-redux'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Sankey from "./Sankey";
- 
+
 
 const {queryElectric, queryWater} = EnergyFlowRuntime
  
-
  
  
-
+ 
+ 
  
  
  
@@ -36,7 +36,7 @@ export default function Index() {
    
   const [op, setOp] = useState(0)  
   const picker= ['', 'date', 'month', 'year'][timetype];
-
+ 
   const [value, setvalue] = useState('Sankey')
   
   const tabs = [
@@ -45,7 +45,7 @@ export default function Index() {
     {label: '能源拓扑图', key: 'Topology'},
     
   ]
-
+ 
   const getData = async () => {
     
      try {
@@ -61,7 +61,7 @@ export default function Index() {
       let {success, data} = await hander(params, [area])
       if(success && data.constructor==Object) {
          setData({...data})
-
+ 
       }else {
         setData({link: [], name: []})
       }
@@ -75,12 +75,12 @@ export default function Index() {
   useEffect(() => {
     if(value == "Sankey") getData()
   }, [value, op])
-
-
  
  
  
-
+ 
+ 
+ 
   const timechange = (e) => {
      setTimetype(e);
      getData()
@@ -128,7 +128,7 @@ export default function Index() {
            onChange={timechange}
            ></Select>
         </Item>
-
+ 
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
           <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
         </Item>
@@ -136,7 +136,7 @@ export default function Index() {
       </div>
     )
   }
-
+ 
   const propsData = {
     form,
     custview: <CustView />,

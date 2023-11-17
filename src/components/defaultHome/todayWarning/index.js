@@ -1,10 +1,12 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import {Liquid} from "@ant-design/charts"
-import {selectCurProject} from '@redux/user.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
 import { drawEcharts } from "@com/useEcharts"; 
+import { HomeRuntime } from '@api/api.js'
+import { useReactive } from 'ahooks';
  
 const Mainbox = styled.div`
   position: relative;
@@ -69,56 +71,31 @@ const fs = {
   hv: '24px',
   fc: '#333'
 }
-const DemoLiquid = () => {
-  const config = {
-    percent: 0.4,
-    outline: {
-      border: 2,
-      distance: 2,
-    },
-    wave: {
-      length: 128,
-    },
-  
-      statistic: {
-        title: {
-          formatter: () => '今日告警',
-          style: {
-            fontSize: 14,
-            color: '#333',
-            
-          }
-        },
-        
-        content: {
-          style: {
-            fontSize: 14,
-            color: '#fff'
-          },
-          customHtml: () => {
-            return <span>31次</span>
-          }
-        }
-      }
-   
-  };
-  return <Liquid {...config} />;
-};
 
-export default function DefaultHome(){
-  const curProject = useSelector(selectCurProject)
+
+export default function DefaultHome(props){
+  const projectId = useSelector(selectProjectId)
   const ref= useRef()
-  useEffect(() => {
-    drawEcharts(ref.current, {
+
+  const state = useReactive({
+    alarmCount: 30,
+    confirmCount: 0,
+    unconfirmCount: 30,
+    confirmPercent: 0,
+    confirmPercent: 100
+  })
+
+  const tdrawEcharts = () => {
+    return drawEcharts(ref.current, {
       type: 4,
       liuqiu: {
         series: {
-         data: [0.3],
+         data: [(state.alarmCount/100)],
        
         label: {
           normal: {
             formatter: function() {
-                return '今日告警\n\n\n36次';
+                return `今日告警\n\n\n${state.alarmCount}次`;
             },
             textStyle: {
                 fontSize: 16,
@@ -132,6 +109,33 @@ export default function DefaultHome(){
       
     }
     })
+  }
+
+  const { GetTodayAlarmInfo } = HomeRuntime
+
+  useEffect(() => {
+    if (props.type == 'runtTime') {
+      GetTodayAlarmInfo(projectId).then(res => {
+        let {success, data} = res
+          if(success){
+            if(data){
+              state.alarmCount = data.alarmCount
+              state.confirmCount = data.confirmCount
+              state.unconfirmCount = data.unconfirmCount
+              state.confirmPercent = (data.confirmCount / (data.confirmCount + data.unconfirmCount)) * 100
+              state.confirmPercent = state.confirmPercent.toFixed(2)
+              state.unconfirmPercent = (data.unconfirmCount / (data.confirmCount + data.unconfirmCount)) * 100
+              state.unconfirmPercent = state.unconfirmPercent.toFixed(2)
+              tdrawEcharts()
+            }
+          }else{
+            message.error(res.errMsg)
+          }
+      })
+    }else{
+      tdrawEcharts()
+    }
+    
   })
   
   return (
@@ -143,12 +147,12 @@ export default function DefaultHome(){
           </div>
           <div className='alarm'>
              <div>
-                 <span>未确认 10%</span>
-                 <span>3 条</span>
+                 <span>未确认 {state.unconfirmPercent}%</span>
+                 <span>{state.unconfirmCount} 条</span>
              </div>
              <div>
-                 <span>已确认 90%</span>
-                 <span>27 条</span>
+                 <span>已确认 {state.confirmPercent}%</span>
+                 <span>{state.confirmCount} 条</span>
              </div>
           </div>
         </Mainbox>

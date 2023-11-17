@@ -25,7 +25,7 @@ import '../../assets/css/font_bz4csze2alg/iconfont.css'
 
 import FileSaver from 'file-saver'
 
-import { distributionRoom } from '@api/api.js'
+import { distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { useReactive } from "ahooks";
 
 export default function index() {
@@ -39,6 +39,7 @@ export default function index() {
   const projectId = useSelector(selectProjectId);
 
   const { addChart, queryChart, updateChart } = distributionRoom
+  const { ChartDetails } = DistributionRoomRuntime
 
   const nameRef = useRef()
   const bindRef = useRef()
@@ -75,8 +76,9 @@ export default function index() {
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
+    console.log(getData.id)
     if (getData.type == 'edit') {
-      queryChart(projectId, getData.id).then(res => {
+      ChartDetails(projectId, getData.id).then(res => {
         if (res.success) {
           let data = {
             id: res.data.id,
@@ -85,6 +87,7 @@ export default function index() {
             remark: res.data.remark
           }
           state.chartData = data
+          console.log(state.chartData)
           let dateGroup = JSON.parse(res.data.dataGroup)
 
           canvas.data.grid = dateGroup.grid
@@ -93,7 +96,10 @@ export default function index() {
           canvas.data.locked = dateGroup.locked == 1 ? true : false
           console.log(canvas.data)
           form.setFieldsValue(canvas.data)
-          canvas.open(dateGroup)
+          setTimeout(()=> {
+            canvas.open(dateGroup)
+            canvas.render()
+          }, 1000)
         } else {
           message.error(res.errMsg)
         }
