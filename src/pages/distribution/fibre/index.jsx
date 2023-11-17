@@ -257,6 +257,9 @@ export default function Index() {
         if(arrlist.length>0){
             setActiveName(arrlist[active]['name'])
             QuerySinglePartitionsInfo(arrlist[active],res.data.sn)
+        }else{
+          channelInfo.info = {}
+          initchart()
         }
         setChannel(arrlist)
       } else {

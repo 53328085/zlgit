@@ -32,6 +32,7 @@ export default forwardRef(function Index({QueryFibreTempilPartitions,active,setA
     roomId&&QueryFibreTempilWarningInfo(roomId)
   },[roomId])
   useEffect(()=>{
+    console.log(roomId)
     !roomId&&setChannel([])
      roomId&&QueryFibreTempilPartitions(roomId)
     if(!roomId){
@@ -58,7 +59,13 @@ return (
                   }}
               >
                   <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-                      <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea}></Select>
+                      <Select 
+                      style={{ width: 200 }} 
+                      options={oneLevel} 
+                      fieldNames={{ label: 'name', value: 'id' }} 
+                      onChange={changeArea}
+                      placeholder="请选择园区"
+                      ></Select>
                   </Form.Item>
                   <Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>

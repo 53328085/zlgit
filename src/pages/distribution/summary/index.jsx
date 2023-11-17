@@ -134,6 +134,7 @@ export default function Index() {
                 style={{ width: 200 }}
                 options={oneLevel}
                 fieldNames={{ label: 'name', value: 'id' }}
+                placeholder="请选择园区"
                 onChange={changeArea}
               ></Select>
             </Form.Item>
