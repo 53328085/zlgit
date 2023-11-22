@@ -241,7 +241,11 @@ const showModl = () => {
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
 
-      {addcmodal}
+     {/*  {addcmodal} */}
+
+     <CModal width={554} title={title} ref={mref} mold='default' onOk={onOk} custft={isAdd}  fromprops={initform} > 
+
+     </CModal>
    
      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
          <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
