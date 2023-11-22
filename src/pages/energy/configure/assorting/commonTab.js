@@ -367,10 +367,7 @@ export default function Index (props) {
                 </div>
             </Custmodl>
             <Custmodl title='删除能耗分类' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDelete()}>
-                <div style={{display:"flex", alignItems: "center"}}>
-                    <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
-                    <span> 是否确认删除选中的能耗分类名称？ </span>
-                </div>
+                   是否确认删除选中的能耗分类名称？ 
             </Custmodl>
             <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
                 <div className={style.addHeader}>批量导入</div>

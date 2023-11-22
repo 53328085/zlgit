@@ -141,10 +141,7 @@ export default function Datagroupc({projectId, CModal}) {
        <Custtable columns={columns} rowKey="id" dataSource={tableData}></Custtable> 
         {addmodal}
         <CModal title='删除提示' ref={dref}  mold="cust" width={512} type="warn" onOk={onOkDel} >
-             <div style={{display:"flex", alignItems: "center"}}>
-                 <span> 是否确认删除数据组名称？ </span>
-               
-             </div>
+              是否确认删除数据组名称？
         </CModal>
     </Mainbox>
   )

@@ -719,7 +719,7 @@ const getvalidate = (start, end, type, choosedate) => {
       </CModal>
 
       <CModal ref={dref} title='删除策略' mold='cust' onOk={DeleteRuntimePlan} width={592} type="warn">
-       <Pinfo> <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', margin: '0 32px'}}/> 是否确认删除该运行计划？</Pinfo> 
+       是否确认删除该运行计划？
       </CModal>
       <CModal ref={oref} title='操作提示' mold='cust'   width={592}   footer={<Button type='primary' onClick={onPlanClose}>关闭</Button>}>
        <Pinfo style={{justifyContent: 'center'}}> <CheckCircleFilled style={{color: '#237ae4', fontSize: '38px', margin: '0 16px'}}/> 运行计划保存成功！</Pinfo> 

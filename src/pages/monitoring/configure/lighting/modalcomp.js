@@ -176,11 +176,7 @@ export const EditModal=(props)=>{
 export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) => {
     return (
       <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} title={name} type='warn'>
-        {/* <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
-        <div>
-          <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-          <span>{content}</span>
-        </div>
+           {content} 
       </Modal>
     )
   }

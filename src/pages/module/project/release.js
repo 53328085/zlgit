@@ -289,7 +289,7 @@ const publishing = (
             
            </CModal>
 
-           <CModal ref={delmodal} title='删除项目' mold='cust' onOk={delProject} width={640} type="warn">
+           <CModal ref={delmodal} title='删除项目' mold='cust' onOk={delProject} width={640} type="warn" warnimg={false} bodyStyle={{padding: "32px"}}>
                <div>
                  <Title level={4}>删除项目时 用户需知：</Title>
                  <Paragraph>1、删除项目后会同步删除所有项目下员工及管理员账号；</Paragraph>

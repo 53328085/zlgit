@@ -213,11 +213,8 @@ export default function Index() {
         </div>
         {isPublish ? null : <Button type="primary" icon={<PlusOutlined />} onClick={() => showAdd(form.getFieldValue('areaId'), form.getFieldValue('roomId'), 'add')}>新增</Button>}
         <Usetable style={{marginTop: 16}} ref={tableRef} columns={columns} dataSource={tableData} rowKey='id' pagination={pagination} onChange={tableOnchange} />
-        <CustModal title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img style={{ marginLeft: 64, marginRight: 32 }} src={warning}></img>
-          <span> 是否确认删除配电系统图？ </span>
-        </div>
+        <CustModal title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>        
+          是否确认删除配电系统图？ 
       </CustModal>
       </div>
     </div>

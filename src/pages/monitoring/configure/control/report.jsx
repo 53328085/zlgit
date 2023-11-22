@@ -625,14 +625,7 @@ const controlcolumns = [
         onOk={delOk}
        
       >
-        <div
-          style={{ display: "flex", alignItems: "center", padding: "0 32px" }}
-        >
-          <img src={redwarn} style={{ width: "48px" }}></img>
-          <p style={{ fontSize: "16px", paddingLeft: "16px" }}>
-             是否确认删除该自动控制策略?
-          </p>
-        </div>
+ 是否确认删除该自动控制策略?
       </Custmodal>
     </Mainbox>
   )

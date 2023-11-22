@@ -12,6 +12,7 @@ border-radius: 4px;
 padding: 16px;
 background-color: #fff;
 width: 1678px;
+flex: 1;
 .title{
   display: flex;
   justify-content: space-between;

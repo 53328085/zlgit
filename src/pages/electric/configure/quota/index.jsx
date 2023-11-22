@@ -19,6 +19,7 @@ import { selectProjectId, publishState } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 
 import { useSelector } from "react-redux";
+import CModal from '@com/useModal'
 export default function Index() {
   const ispublish = useSelector(publishState);
   const {
@@ -599,46 +600,32 @@ export default function Index() {
           ref={tableRef}
           bordered
         ></Table>
-        <Modal
-          className={style.deleteModal}
+        <CModal
           open={deleteTypeModal}
           onOk={deleteTypeOk}
           onCancel={handleTypeDelete}
           width={512}
-          cancelText={"取消"}
+          title="删除提示"
           centered={true}
           closable={false}
-          maskClosable={false}
-          okText={"确认"}
-          okType={"primary"}
+          type="warn"
+          mold="cust"
         >
-          <div className={style.deleteHeader}>删除提示</div>
-          <div className={style.deleteBody}>
-            <img className={style.warnIcon} src={firstwarn}></img>
-            <span>是否确认删除告警类型？</span>
-          </div>
-        </Modal>
+           是否确认删除告警类型？
+        </CModal>
 
-        <Modal
-          className={style.deleteModal}
+        <CModal
+          title="删除提示"
           open={deleteModal}
           onOk={deleteOk}
           onCancel={handleDelete}
-          width={512}
-          cancelText={"取消"}
-          centered={true}
+          width={512}         
           closable={false}
-          maskClosable={false}
-          okText={"确认"}
-          okType={"primary"}
-          okButtonProps={{ danger: true }}
+          type="warn"
+          mold="cust"
         >
-          <div className={style.deleteHeader}>删除提示</div>
-          <div className={style.deleteBody}>
-            <img className={style.warnIcon} src={firstwarn}></img>
-            <span>是否确认删除告警方案？</span>
-          </div>
-        </Modal>
+ 是否确认删除告警方案？
+        </CModal>
         <Modal
           className={style.addModal}
           open={addModal}

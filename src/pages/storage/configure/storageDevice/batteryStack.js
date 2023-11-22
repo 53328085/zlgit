@@ -510,10 +510,7 @@ export default function Index(props) {
       <Divider />
       <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey='sn' pagination={pagination} onChange={tableOnchange} sheetName='电池堆.xlsx' />
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img style={{ marginLeft: 64, marginRight: 32 }} src={warning}></img>
-          <span> 是否确认删除该电池堆？ </span>
-        </div>
+         是否确认删除该电池堆？ 
       </Custmodl>
       <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
         <div className={style.addHeader}>批量导入</div>

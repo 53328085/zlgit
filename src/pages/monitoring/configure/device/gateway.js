@@ -422,22 +422,23 @@ export default function gateway() {
         polloption.cancel();
         if(result.data.message){
           setisSuccess(false)
-          setSpinShow(false)
-          modalReStartResRef?.current?.onOpen()
+          setSpinShow(false)         
           setgatewayRes(result.data.message)
-        }else{
-          setisSuccess(true)
           modalReStartResRef?.current?.onOpen()
+        }else{
+          setisSuccess(true)        
           setgatewayRes("重启网关成功!")
           setSpinShow(false)
+          modalReStartResRef?.current?.onOpen()
         }
       }
       if (latest.current == 15) {
         polloption.cancel();
-        modalReStartResRef?.current?.onOpen()
+       
         setgatewayRes('任务超时，请重试！')
         setisSuccess(false)
         setSpinShow(false)
+        modalReStartResRef?.current?.onOpen()
       }
       setrebootNum(latest.current+1)
       console.log(result,params)
@@ -451,9 +452,10 @@ export default function gateway() {
     if (success) {
       if(data.code===1){
         setSpinShow(false)
-        modalReStartResRef?.current?.onOpen()
+       
         setgatewayRes(data.message)
         setisSuccess(false)
+        modalReStartResRef?.current?.onOpen()
       }else{
         polloption.run()
       }

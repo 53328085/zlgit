@@ -244,8 +244,7 @@ const onClose = () => {
             <Containner projectId={projectId} form={form} areaId={AreaId}/>         
             </CModal>           
           <CModal width={592} title="操作提示" ref={dref}   mold='cust' type="warn" onOk={delOk}>
-          <Space style={{marginLeft: '32px'}} size={32} align='center'><Image src={imgurl.warning} preview={false}/> <span style={{fontSize: '16px'}}>是否确认删除站点?</span></Space>
-         
+          是否确认删除站点?
           </CModal>  
     </Titlelayout>
   )

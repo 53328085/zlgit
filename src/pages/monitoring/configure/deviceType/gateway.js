@@ -661,11 +661,10 @@ let DeleteModal = ({ DelModalRef, ...other }) => {
 
   return (
     <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} title="删除网关类型" type="warn">
-      {/* <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>是否确认删除网关类型?</span>
-      </div>
+  
+      
+      是否确认删除网关类型?
+      
     </Modal>
   )
 }

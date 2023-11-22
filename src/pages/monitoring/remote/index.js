@@ -405,14 +405,14 @@ export default function Index() {
                     </Button>,
                 ]}
             >
-                <MyTable snList={snList} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
+                <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
             </Modal>
 
         </div>
     )
 }
-const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
+const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
     console.log(snList)
     let params = {
         sns:snList,
@@ -473,7 +473,11 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                         setTimeout(() => {
                             if (status) {
                                 if (snRemoteList.length > 0) {
-                                    Remote.StartBatchValveTask(snRemoteList).then((res) => {
+                                    let post = {
+                                        sns:snRemoteList,
+                                        projectId,
+                                    }
+                                    Remote.StartBatchValveTask(post).then((res) => {
                                         if (res.success) {
                                             newsnList = []
                                             state.push(index)
@@ -499,7 +503,11 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                             })
                                             setTimeout(() => {
                                                 if (newsnList.length > 0) {
-                                                    Remote.BatchValveStatus(newsnList).then(result => {
+                                                    let bodys = {
+                                                        sns: newsnList,
+                                                        projectId,
+                                                    }
+                                                    Remote.BatchValveStatus(bodys).then(result => {
                                                         if (result.success) {
                                                             snRemoteList = []
                                                             result.data.map((aitem, aindex) => {

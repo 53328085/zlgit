@@ -438,10 +438,7 @@ export default function Index() {
         </div>
       </Modal>
       <Custmodl title='删除班次' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDeleteShift()}>
-        <div style={{display:"flex", alignItems: "center"}}>
-          <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
-          <span> 是否确认删除班次方案？ </span>
-        </div>
+         是否确认删除班次方案？ 
       </Custmodl>
       {/* 编辑 */}
       <Modal className={style.addModal} open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} >

@@ -92,7 +92,7 @@ const CModal = styled(Modal)`
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk,title, ...rest} = props
+  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -135,7 +135,16 @@ const CModal = styled(Modal)`
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
       type={type}
-      {...rest}    
+      bodyStyle= {
+         type=="warn" ? {
+           padding: "32px 128px",
+           display: 'flex',
+           alignItems: 'center',
+           fontSize: '16px',
+           color: "#515151",
+           ...bodyStyle
+         }: null
+      }
       title={
       title ?   <div 
         style={{cursor: 'move'}}
@@ -158,8 +167,9 @@ const CModal = styled(Modal)`
           <div ref={draggleRef}>{modal}</div>
         </Draggable>
       )}
+      {...rest}  
     >
-      {type=="warn" && <img src={redwarn} /> }
+      {type=="warn" && warnimg && <img src={redwarn} style={{width: '54px', marginRight: "32px"}} /> }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )
