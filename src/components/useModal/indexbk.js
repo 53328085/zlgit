@@ -4,59 +4,6 @@ import styled from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
 
-const theme =(type) =>   `4px solid ${custCorle[type]}`
-const custCorle = {
-  normal: "#337af0",
-  warn: "#ff4d4f",
- 
-}
-
-const CModal = styled(Modal)`
-   .ant-modal-content {
-     background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
-  }
-  .ant-modal-header {
-    padding: 32px;
-    border-bottom: none;
-    background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
-    .ant-modal-title {
-      font-size: 16px;
-      color: ${(props) => props.type=='dark' ? '#fff' : custCorle[props.type]};;
-      padding-left: ${(props) => props.type=='dark' ? '0px' : '16px'};
-      border-left:    ${(props) => theme(props.type)};
-      height: 32px;
-      line-height: 32px;
-    }
-  }
-  .ant-modal-body {
-    padding: 0 32px 32px 32px;
-  }
-  .ant-modal-footer {
-    border-top: none;
-    padding: 0 32px 32px 32px;
-    .ant-btn {
-      padding: 0px;
-      width: 96px;
-      height: 36px;
-    }
-    .ant-btn + .ant-btn {
-      margin-left: 16px;
-    }
-    .ant-btn-default {
-      background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
-      color: ${(props) => props.type=='dark' ? '#fff' : '#666'};
-    }
-    .ant-btn-primary {
-      border-color:   ${props => custCorle[props.type]};
-      background-color: ${props => custCorle[props.type]};
-    }
-  }
-  .ant-form-item:last-of-type {
-    margin-bottom: 0px;
-  }
-`;
-
-
  function Custmodal({ 
   fromprops = {
   initialValues: {},
@@ -69,7 +16,57 @@ const CModal = styled(Modal)`
   children = null,  
   ...props
 } = {}, ref) { 
-
+  const custCorle = {
+    normal: "#337af0",
+    warn: "#ff4d4f",
+   
+  }
+  const theme = `4px solid ${custCorle[type]}`
+  
+  const CModal = styled(Modal)`
+     .ant-modal-content {
+       background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
+    }
+    .ant-modal-header {
+      padding: 32px;
+      border-bottom: none;
+      background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
+      .ant-modal-title {
+        font-size: 16px;
+        color: ${() => type=='dark' ? '#fff' : custCorle[type]};;
+        padding-left: ${() => type=='dark' ? '0px' : '16px'};
+        border-left: ${theme};
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+    .ant-modal-body {
+      padding: 0 32px 32px 32px;
+    }
+    .ant-modal-footer {
+      border-top: none;
+      padding: 0 32px 32px 32px;
+      .ant-btn {
+        padding: 0px;
+        width: 96px;
+        height: 36px;
+      }
+      .ant-btn + .ant-btn {
+        margin-left: 16px;
+      }
+      .ant-btn-default {
+        background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
+        color: ${() => type=='dark' ? '#fff' : '#666'};
+      }
+      .ant-btn-primary {
+        border-color: ${custCorle[type]};
+        background-color: ${custCorle[type]};
+      }
+    }
+    .ant-form-item:last-of-type {
+      margin-bottom: 0px;
+    }
+  `;
   const [open, setOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [bounds, setBounds] = useState({
@@ -92,7 +89,7 @@ const CModal = styled(Modal)`
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk,title, ...rest} = props
+  const {onCancel: close, custft=false, onOk, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -134,30 +131,7 @@ const CModal = styled(Modal)`
       maskClosable={false}
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
-      type={type}
-      {...rest}    
-      title={
-        <div 
-        style={{cursor: 'move'}}
-        onMouseOver={() => {
-          if(disabled) {
-            setDisabled(false)
-          }
-        }}
-        onMouseOut={() => {
-          setDisabled(true)
-        }}
-        >{title}</div>
-      }  
-      modalRender={(modal) => (
-        <Draggable
-          disabled={disabled}
-          bounds={bounds}
-          onStart={(event, uiData) => onStart(event, uiData)}
-        >
-          <div ref={draggleRef}>{modal}</div>
-        </Draggable>
-      )}
+      {...rest}      
     >
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
@@ -166,4 +140,3 @@ const CModal = styled(Modal)`
 }
 
 export default forwardRef(Custmodal)
- 

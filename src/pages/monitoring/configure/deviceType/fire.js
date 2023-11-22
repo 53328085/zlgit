@@ -464,13 +464,13 @@ const onSureEditModal=async()=>{
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return (<Modal  mold='cust' {...editModalProps} footer={[
+    return (<Modal  mold='cust' {...editModalProps} title="编辑燃气表类型" footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       onClick={ onSureEditModal}>应用</Button>,
   ]}>
-    <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
+    {/* <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn> */}
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])

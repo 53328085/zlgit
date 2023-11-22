@@ -183,23 +183,10 @@ export default function Warncontent({ style,areavalue }) {
     useEffect(()=>{
       oneLevel.length>0&&getAlarmPage()
     },[areavalue])
-    // useEffect(()=>{
-    //   if(key==1){
-    //     tableRef.current.download()
-    //   }else if(key==2){
-    //     tableRef.current.downloadAll()
-    //   }
-    // },[key])
+
     return (
         <div className={style.WarnContent}>
             <div className={style.SearchContent}>
-                {/* <Search
-                    placeholder="请输入设备编号/安装地址"
-                    allowClear
-                    enterButton={<><SearchOutlined />&nbsp; 查询</>}
-                    size="default"
-                    style={{ width: 356 }}
-                /> */}
                 <div>
                 <span style={{paddingRight:16,}} >告警查询</span>
                 <Input
@@ -231,8 +218,9 @@ export default function Warncontent({ style,areavalue }) {
             mold = 'cust' 
             okText="立即派单" 
             onOk={dispatchOrderOk}
+            title="派单提示"
             >
-                <BlueColumn name="派单提示" styled={{padding: '24px 0'}}/>
+                {/* <BlueColumn name="派单提示" styled={{padding: '24px 0'}}/> */}
                 <div style={{margin:'16px 0'}}>
                     <img src={unknow} alt="" style={{margin:'0 16px'}}/>
                     <span>是否要对本告警事件进行派单？</span>

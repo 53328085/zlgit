@@ -494,12 +494,12 @@ export default function Index() {
               </div>
             </MainBox>
           </Pagecount>
-          <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan}>
-            <BlueColumn name="创建班次" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn>
+          <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan} title="创建班次">
+            {/* <BlueColumn name="" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn> */}
             <BuildPlan ref={planListRef} plansObj={reactiveObj} areaId={areaId}/>
           </MyModal>
-          <MyModal ref={palnEditRef} mold="cust" width={420} onOk={saveUserPlan}>
-            <BlueColumn name={modalTitle} styled={{ padding: '24px 0px', fontSize: '16px' }} key={2}></BlueColumn>
+          <MyModal ref={palnEditRef} mold="cust" width={420} onOk={saveUserPlan} title={modalTitle}>
+            {/* <BlueColumn name={modalTitle} styled={{ padding: '24px 0px', fontSize: '16px' }} key={2}></BlueColumn> */}
             <EditUser editUser={editUser} userList={userList} ref={setUserRef}/>  
           </MyModal>
           <DeleteModal delRef={delRef} name="删除值班人员" content="是否确认删除值班人员" onOk={DeleteDutyUser}/>

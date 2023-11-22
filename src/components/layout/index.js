@@ -25,6 +25,7 @@ const Logheaer = styled(Header)`
 
 export function LoginLayout(props) { // 登录页
  //const bgImg = useMemo(() => Logbg, []);
+  
   return( 
   <Layout className={style.pagelayout} style={{backgroundImage: `url(${props.bgImg})`, backgroundSize: 'cover'}}>  
  { props.header &&  <Logheaer>

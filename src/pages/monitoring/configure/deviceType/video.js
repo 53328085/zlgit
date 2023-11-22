@@ -342,13 +342,13 @@ export default function video() {
   }
  
   const EditModalComp=useMemo(()=>{
-    return ( <Modal mold='cust' {...editModalProps} footer={[
+    return ( <Modal mold='cust' {...editModalProps} title="编辑视频监控类型" footer={[
       <Button onClick={()=>{EditModalRef.current?.onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEdit}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       onClick={ onSureEditModal}>应用</Button>,
   ]}>
-    <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+    {/* <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn> */}
     <EditModal {...editFormProps}></EditModal>
   </Modal>)
   },[])
@@ -367,10 +367,6 @@ export default function video() {
         ></Table>
       </DeviceContent>
       {EditModalComp}
-      {/* <Modal mold='cust' {...editModalProps} >
-        <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn>
-        <EditModal {...editFormProps}></EditModal>
-      </Modal> */}
       <DeleteModal {...delModal}></DeleteModal>
       <MultImport modalImportRef = {modalImportRef} link = '/deviceExcel/camera.xlsx' name='批量导入' uploadprops={uploadprops}></MultImport>
     </div>
@@ -456,8 +452,8 @@ let EditModal = (props) => {
 
 let DeleteModal = ({ DelModalRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name='删除视频监控类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} type="warn" title="删除视频监控类型">
+      {/* <BlueColumn name='删除视频监控类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
       <div>
         <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
         <span>是否确认删除监控设备类型?</span>

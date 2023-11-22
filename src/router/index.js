@@ -72,6 +72,7 @@ const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedet
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
+ 
 const Notfound = lazy(() => import("./notfound"))
 
 import {designerComponents,  designerRoutes} from "./designer";
@@ -171,6 +172,7 @@ const loginrouter =  [{
      path: '/zltest',
      element: <Fform/>, 
    },
+  
    {
     path: "/granary",
     element: <Granary />,   

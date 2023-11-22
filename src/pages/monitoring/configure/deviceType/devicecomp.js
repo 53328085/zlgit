@@ -53,7 +53,7 @@ export default function DeviceContent(props,ref) {
         <div style={{display:'flex',height:700}}>
           {other.children}
         </div>
-        <Modal ref={ModalRef} mold='cust' onCancel={()=>{onCancel()}} {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
+        <Modal ref={ModalRef} mold='cust' title={name} onCancel={()=>{onCancel()}} {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
       <Button onClick={()=>{onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
@@ -68,7 +68,7 @@ export default function DeviceContent(props,ref) {
         }
       }>应用</Button>,
   ]}>
-      <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
+      {/* <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn> */}
       {AddModal}
   </Modal>
  

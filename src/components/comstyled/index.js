@@ -4,9 +4,17 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox} from 'antd'
 const {Search, Password, TextArea} = Input
-
+const { Item } = Form;
+export const Ipticon = styled.span`
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  
+  background-size: 32px 32px;
+  transition: all 0.3s;
+`;
 const normal = css`
     background-color: transparent !important; // 背景色透明
     border: 1px solid #9c9ea4;
@@ -118,16 +126,19 @@ export const Iptserach = styled(Search)`
   }
 `
 export const Cselect = styled(Select)`
+  &:focus,
+  &:hover {
+    border-color: #1f83fe !important;  
+    .ant-input {
+      color: #1f83fe;
+    }
+  }
   && {
-    color: #999;   
-    width: ${props => props.w || 'auto'} ;
-   
-
+    color: #999;     
     border-radius: 4px;
     overflow: hidden;
-    
   }
-
+  
  &:hover,&:focus {
     color: #1f83fe;
  }
@@ -150,6 +161,64 @@ export const Cselect = styled(Select)`
   }
  }
 `
+ 
+export const Logselect = styled(Select)`
+  ${Ipticon} {
+    background-image: url(${(props) => props.url});
+    background-size: 32px 32px;
+  }
+  &:focus,
+  &:hover {
+    border-color: #1f83fe !important;
+    ${Ipticon} {
+      background-image: url(${(props) => props.aurl});
+      background-size: 32px 32px;
+    }
+    .ant-input {
+      color: #1f83fe;
+    }
+  }
+  && {
+    color: #999;   
+    width: ${props => props.w || 'auto'} ;
+    height: ${props => props.h || 'auto'} ;
+
+    border-radius: 4px;
+    overflow: hidden;
+    .ant-select-selection-placeholder, .ant-select-selection-item{
+       line-height: 42px;
+       padding-left: 56px;
+     }
+   
+     .ant-select-arrow{
+       left: 16px;
+       right: 0px
+     }
+  }
+  
+ &:hover,&:focus {
+    color: #1f83fe;
+ }
+ .ant-select-arrow {
+    color: #999;
+    &:hover,&:focus {
+    color: #1f83fe;
+ }
+ }
+
+ &:not(.ant-select-customize-input) .ant-select-selector {
+    background-color: transparent;
+    border: 1px solid #8091b2;
+    border-radius: 4px;
+    overflow: hidden;
+    height: ${props => props.h || 'auto'} !important ;
+    &:focus, &:hover {    
+    border-color: #1f83fe !important;
+    
+  }
+ }
+`
+
 export const Cradiogroup = styled(Radio.Group)`
 
  && {
@@ -193,3 +262,140 @@ export const Cradiogroup = styled(Radio.Group)`
  
  }
 `
+
+export const Itembox = styled(Item)`
+ 
+  .ant-input-affix-wrapper-lg {
+    height: 48px;
+  }
+`;
+ 
+export const Logipt = styled(Input)`
+  font-size: 14px;
+  background-color: transparent !important;
+  border: 1px solid #9c9ea4;
+  border-radius: 4px;
+  ${Ipticon} {
+    background-image: url(${(props) => props.url});
+  }
+  &:focus,
+  &:hover {
+    border-color: #1f83fe !important;
+    ${Ipticon} {
+      background-image: url(${(props) => props.aurl});
+    }
+    .ant-input {
+      color: #1f83fe;
+    }
+  }
+  && {
+    .ant-input-prefix {
+      margin-right: 16px;
+    }
+  }
+  .ant-input-affix-wrapper-status-error {
+    background-color: transparent !important;
+  }
+  .ant-input {
+    background-color: transparent;
+    color: #999;
+  }
+  .ant-input::placeholder {
+    color: #999;
+  }
+  input:-internal-autofill-previewed,
+  input:-internal-autofill-selected {
+    -webkit-text-fill-color: #999 !important;
+    　　transition: background-color 5000s ease-in-out 0s !important;
+  }
+`;
+export const Logpsd = styled(Input.Password)`
+  background-color: transparent !important;
+  border: 1px solid #9c9ea4;
+  font-size: 14px;
+  border-radius: 4px;
+  ${Ipticon} {
+    background-image: url(${(props) => props.url});
+  }
+  &:focus,
+  &:hover {
+    border-color: #1f83fe !important;
+    ${Ipticon} {
+      background-image: url(${(props) => props.aurl});
+    }
+    .ant-input {
+      color: #1f83fe;
+    }
+    .ant-input-password-icon.anticon {
+      color: #1f83fe !important;
+    }
+  }
+  && {
+    .ant-input-prefix {
+      margin-right: 16px;
+    }
+  }
+  .ant-input-password-icon.anticon {
+    color: #999;
+  }
+  .ant-input-affix-wrapper-status-error {
+    background-color: transparent !important;
+  }
+  .ant-input {
+    background-color: transparent;
+    color: #999;
+  }
+  .ant-input::placeholder {
+    color: #999;
+  }
+`;
+ export const Logck = styled(Checkbox)`
+  display: flex;
+  align-items: center;
+  &:hover {
+    .ant-checkbox:hover {
+      border-color: #9c9ea4;
+    }
+  }
+  .ant-checkbox + span {
+    padding-left: 0;
+    padding-right: 0;
+    color: #999;
+    font-size: 16px;
+  }
+  .ant-checkbox-checked .ant-checkbox-inner:after {
+    transform: rotate(45deg) scale(2) translate(-25%, -50%);
+  }
+  .ant-checkbox {
+    width: 32px;
+    height: 32px;
+    margin-right: 16px;
+    top: 0px;
+    .ant-checkbox-input,
+    .ant-checkbox-inner {
+      width: inherit;
+      height: inherit;
+      background-color: transparent;
+    }
+    .ant-checkbox-inner {
+      border-color: #9c9ea4;
+      background-color: transparent;
+      &:hover {
+        border-color: #9c9ea4;
+      }
+    }
+  }
+`;
+
+export const Logbtn = styled(Button)`
+  border-color: #0e2db3;
+  background-color: #0e2db3;
+  font-size: 18px;
+  color: #fff;
+  &:hover, &:active, &:focus {
+    border-color: #0728ae;
+    background-color: #0728ae;
+    color: #fff;
+  }
+`;
+ 
