@@ -3,7 +3,7 @@ import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
-
+import redwarn from '@imgs/redwarn.png'
 const theme =(type) =>   `4px solid ${custCorle[type]}`
 const custCorle = {
   normal: "#337af0",
@@ -137,7 +137,7 @@ const CModal = styled(Modal)`
       type={type}
       {...rest}    
       title={
-        <div 
+      title ?   <div 
         style={{cursor: 'move'}}
         onMouseOver={() => {
           if(disabled) {
@@ -147,7 +147,7 @@ const CModal = styled(Modal)`
         onMouseOut={() => {
           setDisabled(true)
         }}
-        >{title}</div>
+        >{title}</div> : null
       }  
       modalRender={(modal) => (
         <Draggable
@@ -159,6 +159,7 @@ const CModal = styled(Modal)`
         </Draggable>
       )}
     >
+      {type=="warn" && <img src={redwarn} /> }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )
