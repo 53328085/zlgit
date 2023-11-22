@@ -316,10 +316,14 @@ export default function Index() {
   const QueryFibreTempilWarningInfo=async(roomId)=>{
     const res = await DistributionRoomRuntime.QueryFibreTempilWarningInfo({projectId,roomId})
     if(res.success){
-     channelInfo.warnlist = res.data
-     console.log(channelInfo)
+      if(res.data &&  Array.isArray(res.data)){
+        channelInfo.warnlist = res.data
+      }else{
+        channelInfo.warnlist = []
+      }
     }else{
       message.error(res.errMsg)
+      channelInfo.warnlist = []
     }
   }
   //告警类型

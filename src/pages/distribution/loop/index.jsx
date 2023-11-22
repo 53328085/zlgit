@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import style from './style.module.less'
-import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
+import { Select, Button, DatePicker, Form, Divider, message,Table } from 'antd'
 import { SyncOutlined, UploadOutlined, RollbackOutlined, SearchOutlined } from '@ant-design/icons';
 import LoopSelect from './loopSelect'
 import ContentTable from './contentTable';
@@ -10,8 +10,19 @@ import BlueColumn from '@com/bluecolumn'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import {Link} from 'react-router-dom'
 import {ExportExcel} from '@com/useButton'
+import styled from 'styled-components';
+const WrapTable = styled.div`
+.ant-table{
+    .ant-table-scroll {
+      .ant-table-hide-scrollbar {
+        overflow-y: auto !important;
+      }
+    }
+}
+   
+`
 export default function Index() {
-  
+
     const roomopts = useSelector(state => state.system.roomId)
     const [roomlist, setRoomList] = useState(roomopts)
     const [roomId, setRoomId] = useState(roomopts[0]?.id)
@@ -25,7 +36,7 @@ export default function Index() {
         {
             title: '回路名称',
             dataIndex: 'lineName',
-            width: 180,
+            width: 176,
             
         }, 
         {
@@ -44,17 +55,17 @@ export default function Index() {
                 {
                     title: 'Ua(V)',
                     dataIndex: 'Ua',
-                    width: 120
+                    width: 96
                 },
                 {
                     title: 'Ub(V)',
                     dataIndex: 'Ub',
-                    width: 120
+                    width: 96
                 },
                 {
                     title: 'Uc(V)',
                     dataIndex: 'Uc',
-                    width: 120
+                    width: 96
                 },
             ]
         }, {
@@ -63,56 +74,51 @@ export default function Index() {
                 {
                     title: 'Ia(V)',
                     dataIndex: 'Ia',
-                    width: 120
+                    width: 96
                 },
                 {
                     title: 'Ib(V)',
                     dataIndex: 'Ib',
-                    width: 120
+                    width: 96
                 },
                 {
                     title: 'Ic(V)',
                     dataIndex: 'Ic',
-                    width: 120
+                    width: 96
                 },
             ]
         }, {
             title: '功率因数',
             dataIndex: 'PFt',
-            width: 118
+            width: 95
         }, {
             title: '总有功功率',
-            width: 130,
             children:[
                 {
                     title:'(kW)',
-                    width:130,
+                    width:96,
                     dataIndex: 'Pt',
                 }
             ]
         },{
             title: '总无功功率',
-            
-            width: 130,
             children:[
                 {
                     title:'(kVar)',
-                    width: 130,
+                    width:96,
                     dataIndex: 'Qt',
                 }
             ]
         },  {
             title: '总能耗',
-            
-            width: 130,
             children:[
                 {
                     title:'(kW·h)',
-                    width: 130,
+
                     dataIndex: 'Ep',
                 }
             ]
-        }
+        },
     ]
 
     // const tableData = [
@@ -372,7 +378,19 @@ export default function Index() {
                         </div>
                     </div>
                     <div style={{height:16}}></div>
-                    <ContentTable  columns={columns} tableData={tableData} tableRef={tableRef} onExport={onExport}></ContentTable>
+                    <WrapTable>
+                    <ContentTable  
+                    columns={columns} 
+                    tableData={tableData} 
+                    tableRef={tableRef} 
+                    onExport={onExport}
+                    height={
+                      630
+                      }
+                    ></ContentTable>
+                 
+                    </WrapTable>
+                   
                  
                 </div>
             </div>

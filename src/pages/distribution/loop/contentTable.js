@@ -16,6 +16,7 @@ export default function ContentTable(props) {
         pagination={false}
         ref={props.tableRef}
         onExport={props.onExport}
+       
         ></Table>
     )
 }
