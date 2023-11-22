@@ -29,7 +29,7 @@ export default forwardRef(function Index({QueryFibreTempilPartitions,active,setA
     }
   }
   useEffect(()=>{
-    roomId&&QueryFibreTempilWarningInfo(roomId)
+    QueryFibreTempilWarningInfo(roomId)
   },[roomId])
   useEffect(()=>{
     console.log(roomId)

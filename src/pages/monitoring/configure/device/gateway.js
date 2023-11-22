@@ -819,12 +819,12 @@ export default function gateway() {
 let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} footer={[
+    <Modal mold='cust' ref={modalFormRef} {...other} title="新增网关" footer={[
       <Button onClick={other.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
     ]}>
-      <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn>
+      {/* <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
         form={addForm}
         labelCol={{
@@ -922,8 +922,8 @@ let Count = ({ value, onChange }) => {
 //重启网关组件
 let ReStart = ({ modalReStartRef, startOk }) => {
   return (
-    <Modal mold='cust' ref={modalReStartRef} onOk={startOk}>
-      <BlueColumn name="重启提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
+    <Modal mold='cust' ref={modalReStartRef} onOk={startOk} title="重启提示">
+      {/* <BlueColumn name="重启提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn> */}
       <div style={{ margin: '16px 32px 0' }}>
         <img src={restart}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>确认要重启网关？</span>
@@ -935,8 +935,8 @@ let ReStart = ({ modalReStartRef, startOk }) => {
 //重启结果
 let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
   return (
-    <Modal mold='cust' ref={modalReStartResRef} footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
-      <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
+    <Modal mold='cust' ref={modalReStartResRef} title="操作提示" footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
+      {/* <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn> */}
       {errorList ? <div style={{ margin: '16px 32px 0' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>{gatewayRes}</span>
@@ -949,8 +949,8 @@ let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorL
 //参数下发组件
 const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
   return (
-    <Modal mold='cust' ref={keyParamRef} onOk={downloadOk}>
-      <BlueColumn name="网关参数下发" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn>
+    <Modal mold='cust' ref={keyParamRef} onOk={downloadOk} title="网关参数下发">
+      {/* <BlueColumn name="网关参数下发" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn> */}
       <div style={{ margin: '16px 32px 0', display: 'flex', alignItems: 'center' }}>
         <div><img src={restart}></img></div>
         <div style={{ paddingLeft: 32, fontSize: 16 }}>
@@ -965,12 +965,12 @@ const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
 const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalEditRef} {...other} footer={[
+    <Modal mold='cust' ref={modalEditRef} {...other}  title="编辑网关" footer={[
       <Button onClick={other.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
     ]}>
-      <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn>
+      {/* <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
         form={editform}
         labelCol={{

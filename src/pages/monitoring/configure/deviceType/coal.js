@@ -476,13 +476,13 @@ const onSureEditModal=async()=>{
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return (<Modal  mold='cust' {...editModalProps} footer={[
+    return (<Modal title={`编辑${Label}`} mold='cust' {...editModalProps} footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
       onClick={ onSureEditModal}>应用</Button>,
   ]}>
-    <BlueColumn name={`编辑${Label}`}  styled={{ padding: '24px 0px' }}></BlueColumn>
+    {/* <BlueColumn name={`编辑${Label}`}  styled={{ padding: '24px 0px' }}></BlueColumn> */}
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])
@@ -502,10 +502,7 @@ const onSureEditModal=async()=>{
         ></Table>
       </DeviceContent>
       {EditModalComp}
-      {/* <Modal  mold='cust' {...editModalProps}>
-      <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
-      <EditModal {...editFormProps}></EditModal>
-      </Modal> */}
+     
       <DeleteModal {...delModalProps}></DeleteModal>
       </cusContext.Provider>
     </div>

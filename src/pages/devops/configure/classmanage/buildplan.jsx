@@ -393,9 +393,9 @@ export let EditUser = forwardRef(EditUsers)
 export let DeleteModal = ({ delRef, name = '', content = '', ...other }) => {
   return (
 
-    <MyModal mold='cust' ref={delRef} {...other} className={style.DelModal}>
+    <MyModal mold='cust' ref={delRef} {...other} className={style.DelModal} title={name} type='warn'>
 
-      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      {/* <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
       <div>
         <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
         <span>{content}</span>

@@ -22,13 +22,13 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
     })
    }
     return (
-        <Modal mold="cust" ref={addModalRef} {...other} transitionName={transitionName} maskTransitionName={maskTransitionName}  footer={[
+        <Modal mold="cust" ref={addModalRef} {...other} transitionName={transitionName} maskTransitionName={maskTransitionName} title={title} footer={[
           <Button onClick={()=>{addModalRef.current.onCancel()}}>取消</Button>,
           <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
           <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
           onClick={()=>{other.onSure();setTransition("");setMaskTransitionName("")}}>应用</Button>,
       ]} >
-            <BlueColumn name={title} styled={{ padding: '24px 0px' }}></BlueColumn>
+            {/* <BlueColumn name={title} styled={{ padding: '24px 0px' }}></BlueColumn> */}
             <Form
              colon={false}
              form={addform}
@@ -100,13 +100,13 @@ export const EditModal=(props)=>{
      })
     }
     const MemoModal=useMemo(()=>{
-      return( <Modal mold="cust" ref={editModalRef} {...other} footer={[
+      return( <Modal mold="cust" ref={editModalRef} {...other} title="编辑园区路灯" footer={[
         <Button onClick={()=>{editModalRef.current?.onCancel()}}>取消</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
         onClick={ other.onSureEditModal}>应用</Button>,
     ]}>
-      <BlueColumn name="编辑园区路灯" styled={{ padding: '24px 0px' }}></BlueColumn>
+      {/* <BlueColumn name="编辑园区路灯" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
        colon={false}
        form={editform}
@@ -175,8 +175,8 @@ export const EditModal=(props)=>{
 //删除modal组件
 export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) => {
     return (
-      <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-        <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
+      <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} title={name} type='warn'>
+        {/* <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
         <div>
           <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
           <span>{content}</span>
@@ -188,8 +188,8 @@ export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) =>
 //批量上传导入
 export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',name="",uploadprops, ...other }) => {
     return (
-      <Modal mold='cust' ref={modalImportRef} {...other}>
-        <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn>
+      <Modal mold='cust' ref={modalImportRef} {...other} title={name}>
+        {/* <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
         <Dragger {...uploadprops}>
           <img src={upCloud}></img>
           <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>

@@ -136,7 +136,7 @@ import {message} from 'antd'
      map = new T.Map("map");
    
    
-   
+   console.log(latlng)
     // let dom = document.getElementById("mapBox")
      try {
      
