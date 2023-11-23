@@ -417,10 +417,7 @@ export default function Index() {
         </div>
       </CustModal>
       <CustModal title='删除策略' ref={deleteRef}  mold="cust" type={'warn'} width={592}   maskClosable={false} onOk={()=>onConfirmDel()}>
-        <div style={{display:'flex',alignItems:'center'}}>
-          <img src={firstwarn} style={{width:48, height: 48,marginLeft: 32, marginRight:32}}></img>
-          <span style={{fontSize: 16, color: '#333'}}>是否确认删除该策略？</span>
-        </div>
+       是否确认删除该策略？
       </CustModal>
     </div>
   )

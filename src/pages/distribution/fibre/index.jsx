@@ -154,7 +154,7 @@ const WrapDiv = styled.div`
 `
 const ModalDiv = styled.div`
   .ant-modal-body{
-    height: 850px;
+    height: 750px;
   }
 `
 const opt={
@@ -316,10 +316,14 @@ export default function Index() {
   const QueryFibreTempilWarningInfo=async(roomId)=>{
     const res = await DistributionRoomRuntime.QueryFibreTempilWarningInfo({projectId,roomId})
     if(res.success){
-     channelInfo.warnlist = res.data
-     console.log(channelInfo)
+      if(res.data &&  Array.isArray(res.data)){
+        channelInfo.warnlist = res.data
+      }else{
+        channelInfo.warnlist = []
+      }
     }else{
       message.error(res.errMsg)
+      channelInfo.warnlist = []
     }
   }
   //告警类型
@@ -492,13 +496,13 @@ export default function Index() {
         </div>
       </WrapDiv>
       <ModalDiv>
-        <UseModal mold='cust' ref={modalRef} width={1600} footer={null} getContainer={false}>
-          <BlueColumn name="报警日志查看" styled={{ padding: '32px 0' }}>
+        <UseModal mold='cust' ref={modalRef} width={1600} footer={null} getContainer={false} title="报警日志查看" closable>
+          {/* <BlueColumn name="报警日志查看" styled={{ padding: '32px 0' }}>
             <CloseOutlined
               style={{ marginLeft: 'auto', fontSize: 16, cursor: 'pointer' }}
               onClick={close}
             ></CloseOutlined>
-          </BlueColumn>
+          </BlueColumn> */}
           <Form
             layout='inline'
             form={form}

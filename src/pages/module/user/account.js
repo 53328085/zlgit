@@ -241,15 +241,19 @@ const showModl = () => {
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
 
-      {addcmodal}
+     {/*  {addcmodal} */}
+
+     <CModal width={554} title={title} ref={mref} mold='default' onOk={onOk} custft={isAdd}  fromprops={initform} > 
+
+     </CModal>
    
      <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
          <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
          
      </CModal>
      <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>
-     <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
-        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
+     
+        是否确认删除 <Text type="danger">{Record.name}</Text>账号? 
      </CModal>
      </>
        : null

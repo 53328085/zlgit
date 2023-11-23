@@ -534,11 +534,8 @@ export default function Index() {
           </Form>
         </div> : null}
       </Custmodl>
-      <Custmodl title='删除价格' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDelete()}>
-        <div style={{display:"flex", alignItems: "center"}}>
-          <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
-          <span> 是否删除{ changeTag == 'electric'? '电价' : changeTag == 'water'? '水价' : changeTag == 'gas'? '燃气价' : changeTag == 'coal'? '煤炭价' : changeTag == 'fuel'? '燃油价' : '' }? </span>
-        </div>
+      <Custmodl title='删除价格' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDelete()}>        
+          <span> 是否删除{ changeTag == 'electric'? '电价' : changeTag == 'water'? '水价' : changeTag == 'gas'? '燃气价' : changeTag == 'coal'? '煤炭价' : changeTag == 'fuel'? '燃油价' : '' }? </span>       
       </Custmodl>
     </div>
   )

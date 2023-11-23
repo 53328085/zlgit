@@ -11,20 +11,16 @@ const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) => {
   return (
-    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>{content}</span>
-      </div>
+    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} type="warn" title={name}>      
+         {content} 
     </Modal>
   )
 }
 //批量上传导入
 export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',name='' ,uploadprops,...other }) => {
   return (
-    <Modal mold='cust' ref={modalImportRef} {...other}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn>
+    <Modal mold='cust' ref={modalImportRef} {...other} title={name}>
+      {/* <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Dragger {...uploadprops}>
         <img src={upCloud}></img>
         <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>

@@ -289,8 +289,8 @@ export default function Index() {
       <div style={{ height: 673, display: 'flex' }}>
         <Table columns={columns} dataSource={tableData} pagination={tableParams} ref={tableRef} onChange={changePage} onExport={onExport}></Table>
       </div>
-      <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd}>
-        <BlueColumn name="新建巡检计划" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
+      <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} title="新建巡检计划">
+        {/* <BlueColumn name="" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} /> */}
         <AddPlan projectId={projectId} ref={addformRef} getQueryProjectMaintenance={getQueryProjectMaintenance} />
       </Modal>
       <PlanAddres PlanAddresRef={PlanAddresRef} planAddress={planAddress} />
@@ -514,8 +514,8 @@ let PlanAddres = ({ PlanAddresRef, planAddress }, ref) => {
   ]
   console.log(planAddress)
   return (
-    <Modal mold='cust' ref={PlanAddresRef} onOk={()=>{PlanAddresRef.current.onCancel()}}>
-      <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} />
+    <Modal mold='cust' ref={PlanAddresRef} onOk={()=>{PlanAddresRef.current.onCancel()}} title="查看巡检点">
+      {/* <BlueColumn name="查看巡检点" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} /> */}
       <Table columns={columns} dataSource={planAddress}
         scroll={{
           y: 240,
@@ -529,12 +529,11 @@ let PlanAddres = ({ PlanAddresRef, planAddress }, ref) => {
 let DeleteModal = ({ delModalRef, name = '', content = '', ...other }) => {
   return (
 
-    <Modal mold='cust' ref={delModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>{content}</span>
-      </div>
+    <Modal mold='cust' ref={delModalRef} {...other} className={style.DelModal} title={name} type="warn">
+      {/* <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn> */}
+    
+       {content}
+      
     </Modal>
 
 

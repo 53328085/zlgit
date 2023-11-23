@@ -12,12 +12,8 @@ const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal=({DelModalRef,name='',content='',...other})=>{
     return(
-      <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-          <BlueColumn name={name}  styled={{ padding: '24px 0px',color:'#ff4d4f' }} bg={{backgroundColor: '#ff4d4f'}}></BlueColumn>
-          <div>
-            <img src={WarningPng} style={{margin:'0 32px',width:48,height:48}}></img>
-            <span>{content}</span>
-          </div>
+      <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} title={name} type="warn">          
+          {content}
       </Modal>
     )
   }
@@ -517,8 +513,8 @@ export let AddModal = forwardRef(
 //批量上传导入
 export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',name='' ,uploadprops,...other }) => {
   return (
-    <Modal mold='cust' ref={modalImportRef} {...other}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn>
+    <Modal mold='cust' ref={modalImportRef} {...other} title={name}>
+      {/* <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Dragger {...uploadprops}>
         <img src={upCloud}></img>
 

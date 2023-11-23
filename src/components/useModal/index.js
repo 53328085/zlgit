@@ -3,6 +3,59 @@ import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
+import redwarn from '@imgs/redwarn.png'
+const theme =(type) =>   `4px solid ${custCorle[type]}`
+const custCorle = {
+  normal: "#337af0",
+  warn: "#ff4d4f",
+ 
+}
+
+const CModal = styled(Modal)`
+   .ant-modal-content {
+     background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
+  }
+  .ant-modal-header {
+    padding: 32px;
+    border-bottom: none;
+    background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
+    .ant-modal-title {
+      font-size: 16px;
+      color: ${(props) => props.type=='dark' ? '#fff' : custCorle[props.type]};;
+      padding-left: ${(props) => props.type=='dark' ? '0px' : '16px'};
+      border-left:    ${(props) => theme(props.type)};
+      height: 32px;
+      line-height: 32px;
+    }
+  }
+  .ant-modal-body {
+    padding: 0 32px 32px 32px;
+  }
+  .ant-modal-footer {
+    border-top: none;
+    padding: 0 32px 32px 32px;
+    .ant-btn {
+      padding: 0px;
+      width: 96px;
+      height: 36px;
+    }
+    .ant-btn + .ant-btn {
+      margin-left: 16px;
+    }
+    .ant-btn-default {
+      background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
+      color: ${(props) => props.type=='dark' ? '#fff' : '#666'};
+    }
+    .ant-btn-primary {
+      border-color:   ${props => custCorle[props.type]};
+      background-color: ${props => custCorle[props.type]};
+    }
+  }
+  .ant-form-item:last-of-type {
+    margin-bottom: 0px;
+  }
+`;
+
 
  function Custmodal({ 
   fromprops = {
@@ -16,57 +69,7 @@ import Useform from "./useform";
   children = null,  
   ...props
 } = {}, ref) { 
-  const custCorle = {
-    normal: "#337af0",
-    warn: "#ff4d4f",
-   
-  }
-  const theme = `4px solid ${custCorle[type]}`
-  
-  const CModal = styled(Modal)`
-     .ant-modal-content {
-       background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
-    }
-    .ant-modal-header {
-      padding: 32px;
-      border-bottom: none;
-      background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
-      .ant-modal-title {
-        font-size: 16px;
-        color: ${() => type=='dark' ? '#fff' : custCorle[type]};;
-        padding-left: ${() => type=='dark' ? '0px' : '16px'};
-        border-left: ${theme};
-        height: 32px;
-        line-height: 32px;
-      }
-    }
-    .ant-modal-body {
-      padding: 0 32px 32px 32px;
-    }
-    .ant-modal-footer {
-      border-top: none;
-      padding: 0 32px 32px 32px;
-      .ant-btn {
-        padding: 0px;
-        width: 96px;
-        height: 36px;
-      }
-      .ant-btn + .ant-btn {
-        margin-left: 16px;
-      }
-      .ant-btn-default {
-        background-color: ${() => type=='dark' ? '#1b1d23' : '#fff'};
-        color: ${() => type=='dark' ? '#fff' : '#666'};
-      }
-      .ant-btn-primary {
-        border-color: ${custCorle[type]};
-        background-color: ${custCorle[type]};
-      }
-    }
-    .ant-form-item:last-of-type {
-      margin-bottom: 0px;
-    }
-  `;
+
   const [open, setOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [bounds, setBounds] = useState({
@@ -89,7 +92,7 @@ import Useform from "./useform";
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk, ...rest} = props
+  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -131,8 +134,42 @@ import Useform from "./useform";
       maskClosable={false}
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
-      {...rest}      
+      type={type}
+      bodyStyle= {
+         type=="warn" ? {
+           padding: "32px 128px",
+           display: 'flex',
+           alignItems: 'center',
+           fontSize: '16px',
+           color: "#515151",
+           ...bodyStyle
+         }: null
+      }
+      title={
+      title ?   <div 
+        style={{cursor: 'move'}}
+        onMouseOver={() => {
+          if(disabled) {
+            setDisabled(false)
+          }
+        }}
+        onMouseOut={() => {
+          setDisabled(true)
+        }}
+        >{title}</div> : null
+      }  
+      modalRender={(modal) => (
+        <Draggable
+          disabled={disabled}
+          bounds={bounds}
+          onStart={(event, uiData) => onStart(event, uiData)}
+        >
+          <div ref={draggleRef}>{modal}</div>
+        </Draggable>
+      )}
+      {...rest}  
     >
+      {type=="warn" && warnimg && <img src={redwarn} style={{width: '54px', marginRight: "32px"}} /> }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )
@@ -140,3 +177,4 @@ import Useform from "./useform";
 }
 
 export default forwardRef(Custmodal)
+ 

@@ -636,20 +636,7 @@ export default function Account({ projectId, CModal }) {
         onOk={onDeletehandle}
         ref={mref}
       >
-        <p
-          style={{
-            paddingLeft: "32px",
-            color: "#333",
-            display: "flex",
-            alignItems: "center",
-            fontSize: "18px",
-          }}
-        >
-          <WarningFilled
-            style={{ color: "#ff4d4f", fontSize: "38px", marginRight: "32px" }}
-          />
           是否确认删除{delinfo}?
-        </p>
       </Custmodl>
 
       <CModal width={554} title="重置密码" ref={rref} onOk={restOk} mold="cust">

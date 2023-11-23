@@ -182,7 +182,7 @@ export const FormComp = (props) => {
             }}
         >
             <Row className={style.customItem}>
-                <Col span={7}>
+                <Col span={deviceStyle===14?7:10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
@@ -236,7 +236,7 @@ export const FormComp = (props) => {
                 <Col >
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col span={7}>
+                <Col span={deviceStyle===14?7:10}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -398,12 +398,12 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
     return (
         <>
             {
-                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} {...other} footer={[
+                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other} footer={[
                     <Button onClick={other.onAddCancel}>取消</Button>,
                     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
                     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={() => { other.onSure(); }}>应用</Button>,
                 ]}>
-                    <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+                    {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
                     <FormComp isfiber={isfiber} openarea={openarea}> </FormComp>
                 </Modal>
             }</>
@@ -414,12 +414,12 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef,isfiber=false,openarea, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} {...other} footer={[
+        <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} footer={[
             <Button onClick={other.onEditCancel}>取消</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
         ]}>
-            <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn>
+            {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
             <EditFormComp isfiber={isfiber} openarea={openarea}>
             </EditFormComp>
         </Modal>
@@ -587,7 +587,7 @@ export const EditFormComp = (props) => {
             }}
         >
             <Row className={style.customItem}>
-                <Col span={7}>
+                <Col span={deviceStyle===14?7:10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
@@ -625,7 +625,7 @@ export const EditFormComp = (props) => {
                 <Col>
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col span={7}>
+                <Col span={deviceStyle===14?7:10}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -783,12 +783,12 @@ export const AreaOption=({
    useEffect(()=>{
   
    },[channelName1])
-    return   <Modal mold='cust' ref={areaModaref} {...other} footer={[
+    return   <Modal mold='cust' title={channelname()} ref={areaModaref} {...other} footer={[
         <Button onClick={other.areacancel}>返回</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.areaok}>确认</Button>,
         // <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
     ]}>
-        <BlueColumn name={channelname()} styled={{ padding: '24px 0px' }}></BlueColumn>
+        {/* <BlueColumn name={channelname()} styled={{ padding: '24px 0px' }}></BlueColumn> */}
        <WrapDiv channelname={channelname}></WrapDiv>
     </Modal>
 }

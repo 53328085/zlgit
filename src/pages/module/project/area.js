@@ -7,7 +7,7 @@ import {flushSync} from 'react-dom'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
 import {useOneLevel} from '@hooks/usePublic'
-//import CModal from '@com/useModal'
+ import CModal from '@com/useModal'
 const Item = Form.Item
 const Boxitem = styled.div`
   display: grid;
@@ -32,7 +32,7 @@ const Boxitem = styled.div`
 `
 
 const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields, InsertAreaLevelField, DeleteAreaLevelField} = AreaSetting 
-const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
+const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
   const [tableData, setTableData] = useState([])
   const nfref = useRef()
   const fref = useRef()
@@ -64,7 +64,7 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
   }
  
  
- const onNewFiled = async (type=false) => {  // 新增字段
+ const onNewFiled = async () => {  // 新增字段
    try {
     let values = await ffrom.validateFields().then(res => res).catch(e => {
       console.log(e)
@@ -74,8 +74,8 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
      let {success, errMsg} = await InsertAreaLevelField(params)
      if(!success) return message.warning(errMsg || '数据出错')
      if (success) {
-       console.log(type)
-       type && onCancel()
+     //  console.log(type)
+     //  type && onCancel()
        queyFiled(level)
      }
     
@@ -85,11 +85,7 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
  
  }
  
- const CustFooter =  (<Space>
-  <Button onClick={onCancel}>取消</Button>
-     <Button type="primary" onClick={() => onNewFiled(false)}>应用</Button> 
-   <Button type="primary" onClick={() => onNewFiled(true)}>确定</Button>
-   </Space>)
+ 
    const columns = [
      {
         dataIndex: "name",
@@ -113,9 +109,13 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
     useEffect(() => {
       queyFiled()
     }, [level])
-    const modal = useMemo(() =>  <CModal title="新增字段" ref={ref}  mold="cust" width={512}  
-    footer={CustFooter}
- >
+ 
+    return (
+        <div style={{height: '350px', overflow: 'auto'}}>
+         <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
+         <CModal title="新增字段" ref={ref}  mold="cust" width={512}  onOk={onNewFiled}
+           custft={true}
+        >
       <Form name="modalform" form={ffrom}  preserve={false}>
           <Item name="name" label="字段名称" rules={[{
             required: true
@@ -132,31 +132,8 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
                </Select>
           </Item>
       </Form>
- </CModal>, [])
-    return (
-        <div style={{height: '350px', overflow: 'auto'}}>
-         <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
-         {modal}
-        {/*  <CModal title="新增字段" ref={ref}  mold="cust" width={512}  
-            footer={CustFooter}
-         >
-              <Form name="modalform" form={ffrom}  preserve={false}>
-                  <Item name="name" label="字段名称" rules={[{
-                    required: true
-                  }]}>
-                      <Input/>
-                  </Item>
-                  <Item name="type" label="字段用户" rules={[{
-                    required: true
-                  }]}>
-                       <Select>
-                          <Select.Option value={0}>无</Select.Option>
-                          <Select.Option value={1}>经纬度</Select.Option>
-                          <Select.Option value={2}>面积</Select.Option>
-                       </Select>
-                  </Item>
-              </Form>
-         </CModal> */}
+ </CModal>
+      
       </div>
     )
  
@@ -175,7 +152,8 @@ const Editfiled = React.forwardRef(({level, projectId, CModal}, ref) => {
 
 const [title, setTitle] = useState()
 const [datas, setDatas] = useState([])
-const [handler,setHandler ] = useState(0);
+const [handler,setHandler ] = useState(1);
+const isAdd =  handler == 1
 const [level, setLevel] = useState()
 const [curlevel, setCurlevel] = useState({})
 const newlevel = useRef()
@@ -387,7 +365,7 @@ const closeArea = () => {
           
         
         <CModal title='删除区域' ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
-              <p>是否确认删除区域</p>
+              是否确认删除区域
         </CModal>
        
        

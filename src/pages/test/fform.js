@@ -1,38 +1,91 @@
-import React, {useCallback, useEffect, forwardRef, useImperativeHandle, useMemo, useState, memo, useContext, createContext, useRef, useReducer, useId} from 'react'
-import {Form, Input, Button, Space, Typography, Image} from 'antd'
-import {useLocation} from 'react-router-dom'
-import { drawEcharts } from "@com/useEcharts";
-import {nanoid} from '@reduxjs/toolkit'
-
-import imgurl from '@imgs/index'
- import useOnline from './useOnline';
- const {Link, Text, Paragraph} = Typography
-
-
+import React, {useState, useRef, memo, useCallback, useEffect, forwardRef, createContext, useContext} from 'react'
  
- 
- 
+import styled from 'styled-components'
+ import {Modal, Button, Space, Row, Col} from 'antd'
+ import {ExclamationCircleOutlined, ClearOutlined} from '@ant-design/icons'
+const {confirm} = Modal
+const context = createContext({name: 'zzzzzz'})
+const showConfirm = () => {
+   confirm({
+     title: '你确定',
+     icon: <ExclamationCircleOutlined />,
+     content: "some descr",
+     onOk: () => {
+      return new Promise((resolv, reject) => {
+        setTimeout(() => {
+          Math.random() > 0.5 ? resolv('1') : reject('2')
+        },2000)
+      }).then(e => {
+        console.log(e);
+      }).catch(e => {
+        console.log(e)
+      })
+     },
+     okText: 'Yes',
+     okType: 'danger',
+     okButtonProps: {
+      disabled: true,
+     },
+     cancelText: 'no'
+   })
+}
+const info = () => {
+  Modal.error({
+   // title: 'This is a notification message',
+    content: (
+      <div>
+        <p>some messages...some messages...</p>
+        <p>some messages...some messages...</p>
+      </div>
+    ),
+  })
+}
+const Mc = memo(function() {
+  console.log('render')
+  return  (
+    <div>记忆组件</div>
+  )
+})
+const Cmodal = styled(Modal)``
 export default function Index() {
-   const [count, setCount] = useState(0)
-    const [increment, setIncrement] = useState(1)  
-    const loction = useLocation();
-    const online = useOnline();
-    console.log(online)
+ 
+  const [v, setv] = useState('')
+  const ref=useRef()
+  
+   const [confirmLoading, setConfirmLoading] = useState(false)
+   const [modalText, setModalText] = useState('ddd')
+  const box= useRef()
+  const onopen = () =>  {
+       ref.current.onOpen()
     
-    function onTick() {
-       setCount(count+increment)
-    }
-
-   return (
-    
-     <div style={{display: 'flex', flex: 1, padding: "20px", alignItems: 'flex-start',}}>
-         <div>
-          <Paragraph>{online.online.toString()}</Paragraph>
-           <Text>每秒递增</Text><Button onClick={() => setIncrement(i => i+1)}>add</Button>{increment}
-           <Text>每秒递减</Text><Button onClick={() => setIncrement(i => i-1)}>dec</Button>
-         </div>
+  }
+ 
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+    }, 3000);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const afterCloase = () => {
+    console.log('完全关闭后的回调')
+  } 
+ 
+ 
+  
+  return (
+        <Row>
+          <Col span={2}><Button onClick={onopen}>show</Button></Col>
+          <Col span={4}>{v}</Col>
          
-     </div>
-     
-   )
+        </Row>
+  )
 }

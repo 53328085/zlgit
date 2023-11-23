@@ -15,9 +15,11 @@ import redwarn from '@imgs/redwarn.png'
 import imgurl from './images/index.js'
 import UseHeader from '@com/useHeader'
 import style from './style.module.less'
+import CModal from '@com/useModal'
 import moment from 'moment'
 import { cloneDeep } from 'lodash'
 import { deepClone } from '@topology/core'
+
 const { RangePicker } = DatePicker;
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 export default function Index() {
@@ -257,7 +259,7 @@ export default function Index() {
         setisComplate(false)
     }
     const changesetbrake = (type) => {
-        console.log(tableRefs.current)
+       // console.log(tableRefs.current)
         if (tableRefs.current&&tableRefs.current.length > 0) {
             setsnList([])
             let List = []
@@ -275,9 +277,9 @@ export default function Index() {
             setTabledata(deepClone(all))
             myref.current?.setDataSourceRead(deepClone(all))
             tabledataRef.current = all
-            console.log(all, dataSourceReadR, tabledataRef.current)
-            console.log(DataSourceReadR, dataSourceReadR, all)
-            console.log(type)
+          //  console.log(all, dataSourceReadR, tabledataRef.current)
+         //   console.log(DataSourceReadR, dataSourceReadR, all)
+          //  console.log(type)
             if (type == 1) {
                 setbrake(true)
             } else if (type == 2) {
@@ -339,7 +341,7 @@ export default function Index() {
                     </div>}  
                 </div>
             </div>
-            <Modal
+          {/*   <Modal
                 title={<Bluecolumn name="分闸控制" />}
                 width={640}
                 open={brake}
@@ -356,7 +358,21 @@ export default function Index() {
                 ]}
             >
                 <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！</p></div>
-            </Modal>
+            </Modal> */}
+
+               <CModal
+                 title="分闸控制"
+                 width={640}
+                 open={brake}
+                 centered={true}
+                 closable={false}
+                 type="warn"
+                 mold="cust"
+                 onOk={() => openStatus('open')}
+                 onCancel={() =>handleCancel('open')}
+               >
+                  分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！
+               </CModal>
             <Modal
                 title={<Bluecolumn name="合闸控制" />}
                 width={640}
@@ -389,14 +405,19 @@ export default function Index() {
                     </Button>,
                 ]}
             >
-                <MyTable snList={snList} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
+                <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
             </Modal>
 
         </div>
     )
 }
-const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
+const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
+    console.log(snList)
+    let params = {
+        sns:snList,
+        projectId,
+    }
     const [DataSourceRead, setDataSourceRead] = useState(deepClone(dataSourceRead))
     let columnsRead = [
         {
@@ -416,9 +437,9 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
         return new Promise(async (resolve, reject) => {
             let res
             if (changeBtnType == 'open') {
-                res = await Remote.Open(snList)
+                res = await Remote.Open(params)
             } else if (changeBtnType == 'close') {
-                res = await Remote.Close(snList)
+                res = await Remote.Close(params)
             }
             if (res.success) {
                 let snRemoteList = []
@@ -452,7 +473,11 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                         setTimeout(() => {
                             if (status) {
                                 if (snRemoteList.length > 0) {
-                                    Remote.StartBatchValveTask(snRemoteList).then((res) => {
+                                    let post = {
+                                        sns:snRemoteList,
+                                        projectId,
+                                    }
+                                    Remote.StartBatchValveTask(post).then((res) => {
                                         if (res.success) {
                                             newsnList = []
                                             state.push(index)
@@ -478,7 +503,11 @@ const MyTable = forwardRef(({ snList, dataSourceRead, changeDisabled, changeBtnT
                                             })
                                             setTimeout(() => {
                                                 if (newsnList.length > 0) {
-                                                    Remote.BatchValveStatus(newsnList).then(result => {
+                                                    let bodys = {
+                                                        sns: newsnList,
+                                                        projectId,
+                                                    }
+                                                    Remote.BatchValveStatus(bodys).then(result => {
                                                         if (result.success) {
                                                             snRemoteList = []
                                                             result.data.map((aitem, aindex) => {

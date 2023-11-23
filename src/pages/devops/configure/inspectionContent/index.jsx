@@ -277,8 +277,8 @@ export default function Index() {
 //新增
 const AddItem = ({ addRef, addoptions, addItems, addform }) => {
   return (
-    <Modal mold='cust' ref={addRef} onOk={addItems}>
-      <BlueColumn name="新增检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
+    <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项">
+      {/* <BlueColumn name="新增检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
       <DropstartDiv>
         <Form
           form={addform}
@@ -309,8 +309,8 @@ const AddItem = ({ addRef, addoptions, addItems, addform }) => {
 //编辑
 const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
   return (
-    <Modal mold='cust' ref={editRef} onOk={updateItems}>
-      <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
+    <Modal mold='cust' ref={editRef} onOk={updateItems} title="编辑检查项">
+      {/* <BlueColumn name="编辑检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
       <DropstartDiv>
         <Form
           form={editform}
@@ -337,12 +337,8 @@ const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
 //删除组件
 let DeleteModal = ({ delRef, name = '', content = '', ...other }) => {
   return (
-    <Modal mold='cust' ref={delRef} {...other} className={style.DelModal}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>{content}</span>
-      </div>
+    <Modal mold='cust' ref={delRef} {...other} className={style.DelModal} type="warn" title={name}>
+       {content}
     </Modal>
 
 

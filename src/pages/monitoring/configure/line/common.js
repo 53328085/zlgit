@@ -379,8 +379,8 @@ let Treeline = forwardRef(
 //新增主线
 let AddMianMianModal = forwardRef(({ addmianRef, addmianform, ...other }) => {
     return (
-        <Modal mold='cust' ref={addmianRef} {...other}>
-            <BlueColumn name="新增主线" styled={{ padding: '24px 0px' }}></BlueColumn>
+        <Modal mold='cust' ref={addmianRef} {...other} title="新增主线">
+            {/* <BlueColumn name="新增主线" styled={{ padding: '24px 0px' }}></BlueColumn> */}
             <Form
                 form={addmianform}
                 preserve={false}
@@ -395,8 +395,8 @@ let AddMianMianModal = forwardRef(({ addmianRef, addmianform, ...other }) => {
 //新增线路
 let AddModal = forwardRef(({ addmodalRef, addform, ...other }) => {
     return (
-        <Modal mold='cust' ref={addmodalRef} {...other}>
-            <BlueColumn name="新增线路" styled={{ padding: '24px 0px' }}></BlueColumn>
+        <Modal mold='cust' ref={addmodalRef} {...other} title="新增线路">
+            {/* <BlueColumn name="新增线路" styled={{ padding: '24px 0px' }}></BlueColumn> */}
             <Form
                 form={addform}
             >
@@ -410,12 +410,9 @@ let AddModal = forwardRef(({ addmodalRef, addform, ...other }) => {
 //编辑线路
 let EditModal = ({ editmodalRef, editform, ...other }) => {
     return (
-        <Modal mold='cust' ref={editmodalRef} {...other}>
-            <BlueColumn name="编辑线路" styled={{ padding: '24px 0px' }}></BlueColumn>
-            {/* <div style={{ display: 'flex', alignItems: "center" }}>
-                <span style={{ paddingRight: 32 }}>线路名称</span>
-                <Input value={inpvalue} style={{ width: 435 }}></Input>
-            </div> */}
+        <Modal mold='cust' ref={editmodalRef} {...other} title="编辑线路">
+            {/* <BlueColumn name="编辑线路" styled={{ padding: '24px 0px' }}></BlueColumn> */}
+          
             <Form
                 form={editform}
             >
@@ -429,12 +426,8 @@ let EditModal = ({ editmodalRef, editform, ...other }) => {
 //删除线路
 let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
     return (
-        <Modal mold='cust' ref={delmodalRef} {...other} className={commonstyle.DelModal}>
-            <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-            <div>
-                <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-                <span>{content}</span>
-            </div>
+        <Modal mold='cust' ref={delmodalRef} {...other} className={commonstyle.DelModal} title={name} type='warn'>
+               {content}
         </Modal>
     )
 }

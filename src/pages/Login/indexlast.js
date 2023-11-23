@@ -1,9 +1,6 @@
-
-/* 大国粮仓的登录页面 */
-
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, memo, forwardRef, useImperativeHandle, useRef } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLoaderData } from "react-router-dom";
  
  
 import md5 from 'js-md5';
@@ -17,32 +14,32 @@ import {
   memorizePhone,
   selectUser,
 } from "@redux/user";
-import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary } from "@redux/systemconfig";
+import { systemConfig, getpublishState, systemConfigInfo, mixtitle, getJump, getdataScreen, getIsGranary, configProject,
+  getMenus,
+  getshifts,
+  getOnelevel, getThemeColor, setCurrentlevel} from "@redux/systemconfig";
 import { useBoolean, useCountDown, useRequest } from "ahooks";
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { Button, Checkbox, Form, Input, message, Space, Image } from "antd";
 import styled from "styled-components";
 import { LoginLayout } from "@com/layout";
-import { pwdValidator, phoneValidator, codeValidator } from "@pages/rule";
+import { pwdValidator, phoneValidator, codeValidator, imgcodeValidator } from "@pages/rule";
 import { Login as Logapi, ProjectSetting, BigScreen } from "@api/api";
 import imgurl from "./icon";
+import bgImg from "./logBg.png";
+
  
-import {
-  configProject,
-  getMenus,
-  getshifts,
-  getOnelevel,
-} from "@redux/systemconfig";
 const Logmain = styled.div`
   && {
-    padding: 64px 45px 0 64px;
+    padding: 142px 45px 0 100px;
     display: flex;
-    height: calc(100vh - 24px);
+    height: calc(100vh - 138px - 24px);
     overflow-y: auto;
   }
 `;
 
 const List = styled.div`
+  width: 660px;
   display: flex;
   flex-direction: column;
   .chtitle {
@@ -50,22 +47,22 @@ const List = styled.div`
       color: #fff;
       font-style: italic;
       font-size: 52px;
-      line-height: 104px;
       z-index: 2;
-      text-indent: 32px ;
-      position: relative;
+      position: absolute;
+      min-width: 744px;
     }
     position: relative;
-  
-    text-align: left;
+    height: 90px;
+    text-align: center;
   }
   .block {
     display: block;
     width: 775px;
     height: 35px;
-    background-color: #bf490f;  
-    transform: skewX(-20deg) translateY(-40px);
-   
+    background-color: #012bd2;
+    position: absolute;
+    top: 59px;
+    transform: skewX(-20deg);
     box-shadow: rgb(0 0 0 / 30%) 12px 12px;
   }
   .entitle {
@@ -105,15 +102,10 @@ const List = styled.div`
 `;
  
 const Logbox = styled.div`
-  min-width: 466px;
+  width: 402px;
   color: #fff;
-  background: #fff;
+  background: transparent;
   margin-left: auto;
-  margin-top: 104px;
-  align-self: self-start;
-  padding: 48px 30px 8px 30px;
-  border-radius: 8px;
-  box-shadow: 5px 5px 5px rgb(0 0 0 / 35%);
 `;
 const Logtype = styled.div`
   display: flex;
@@ -131,7 +123,7 @@ const Logtype = styled.div`
 const { Item } = Form;
 const Itembox = styled(Item)`
   &:not(:last-child) {
-    margin-bottom: 64px;
+    margin-bottom: ${props => props.btm || "64px"};
   }
   .ant-input-affix-wrapper-lg {
     height: 48px;
@@ -150,18 +142,17 @@ const Logipt = styled(Input)`
   background-color: transparent !important;
   border: 1px solid #9c9ea4;
   border-radius: 4px;
-  box-shadow: none;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
   &:focus,
   &:hover {
-    border-color: #dd9d7e !important;
+    border-color: #1f83fe !important;
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #dd9d7e;
+      color: #1f83fe;
     }
   }
   && {
@@ -190,21 +181,20 @@ const Logpsd = styled(Input.Password)`
   border: 1px solid #9c9ea4;
   font-size: 14px;
   border-radius: 4px;
-  box-shadow: none;
   ${Ipticon} {
     background-image: url(${(props) => props.url});
   }
   &:focus,
   &:hover {
-    border-color: #dd9d7e !important;
+    border-color: #1f83fe !important;
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #dd9d7e;
+      color: #1f83fe;
     }
     .ant-input-password-icon.anticon {
-      color: #dd9d7e !important;
+      color: #1f83fe !important;
     }
   }
   && {
@@ -230,9 +220,8 @@ const Logck = styled(Checkbox)`
   display: flex;
   align-items: center;
   &:hover {
-    
-    .ant-checkbox,.ant-checkbox:hover {
-      border-color: #DD9D7E;
+    .ant-checkbox:hover {
+      border-color: #9c9ea4;
     }
   }
   .ant-checkbox + span {
@@ -243,10 +232,6 @@ const Logck = styled(Checkbox)`
   }
   .ant-checkbox-checked .ant-checkbox-inner:after {
     transform: rotate(45deg) scale(2) translate(-25%, -50%);
-    border-color: #DD9D7E;
-  }
-  .ant-checkbox-checked::after {
-    border-color: #DD9D7E;
   }
   .ant-checkbox {
     width: 32px;
@@ -260,23 +245,23 @@ const Logck = styled(Checkbox)`
       background-color: transparent;
     }
     .ant-checkbox-inner {
-      border-color: #DD9D7E;
+      border-color: #9c9ea4;
       background-color: transparent;
       &:hover {
-        border-color: #DD9D7E;
+        border-color: #9c9ea4;
       }
     }
   }
 `;
 
 const Logbtn = styled(Button)`
-  border-color: #bf490f;
-  background-color: #bf490f;
+  border-color: #0e2db3;
+  background-color: #0e2db3;
   font-size: 18px;
   color: #fff;
   &:hover {
-    border-color: rgba(255,0,0,1);
-    background-color:  rgba(255,0,0,1);
+    border-color: #0728ae;
+    background-color: #0728ae;
     color: #fff;
   }
 `;
@@ -290,6 +275,35 @@ const Title = styled.div`
   align-items: flex-end;
 `;
 
+const Cord =forwardRef((props, ref) => {
+  let [codekey, setCodeKey] = useState()
+  let [codeUrl, setCodeUrl] =useState()
+  useImperativeHandle(ref, ()=> ({
+     code: codekey
+  }))
+  const getCode = async () => {
+    try {
+      let {data, success} = await  Logapi.GetCode()
+      if(success) {  
+        let {key, image} = data || {}
+        setCodeKey(key)
+        setCodeUrl(image)
+
+      }
+    } catch (error) {
+     
+    }
+      
+ }
+  useEffect(() => {
+    console.log('render')
+    getCode()
+  }, [])
+  return (
+   <div style={{display: "inline-block"}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
+  )
+}) 
+
 const Logtitle = ({log, logtitle}) => {
   return (
     <Title>
@@ -298,13 +312,35 @@ const Logtitle = ({log, logtitle}) => {
     </Title>
   );
 };
-const Loglist = () => {
+const Loglist = ({logtitle, englishTitle, literal}) => {
+ 
+  
+ 
+  let items = [
+    "运行监控",
+    "电气安全",
+    "配电管理",
+    "结算收费",
+    "光伏发电",
+    "碳排管理",
+    "运维管理",
+  ];
+ 
  
   return (
     <List>
       <div className="chtitle">
-        <p className="text">国家粮仓</p>
+        <p className="text">{logtitle}</p>
         <p className="block"></p>
+      </div>
+      <p className="entitle">{englishTitle}</p>
+      <div className="itemlist" style={{display: literal== 1 ? 'flex' : 'none'}}>
+        {items.map((i, index) => (
+          <div className="item" key={index}>
+            <span className="icon"></span>
+            <span className="text">{i}</span>
+          </div>
+        ))}
       </div>
     </List>
   );
@@ -333,6 +369,7 @@ function UserLog() {
   // 进入项目配置/项目 
 
  const handlermenu = (data,  id) => {
+ 
   const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
   const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
 //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
@@ -345,7 +382,7 @@ function UserLog() {
   const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
   
   const siderRunMenus = {}; // 运行功能 选择的子菜单
- // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
+ 
   runMenus.forEach(item => {
    let {no, key, parentNo} = item 
    if (!exclude.includes(item.no)) { 
@@ -390,6 +427,7 @@ function UserLog() {
        let {status, value: {success, data}} = res
        if (status ==='fulfilled') {
           if(success) {
+            dispatch(setCurrentlevel({})) //当前项目设置为空对象
             index == 0 && dispatch(getOnelevel(data || []));
             index == 1 && dispatch(getshifts(data || []))
             index == 2 && (menu = handlermenu(data, id))
@@ -419,21 +457,32 @@ function UserLog() {
     
  }
 
- const onSubmit = async (value, type=0) => {
-   const {name, pwd} = value;  
-   value.pwd = cipher(name, pwd)
-   value.type = type;
-   let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
-   if(success) {
-      let {projectId, roleType} = data
-      if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
-      if (roleType == 3 || roleType == 4) {      
-        enterProject(projectId)
-      }
-
-   }else {
-    return message.warning(errMsg || "数据出错,请重试");
+ let onSubmit = async (value, type=0, codekey) => {
+   try {
+    const {name, pwd, code, mobile} = value;  
+    value.pwd = cipher(name, pwd)
+    value.type = type;
+    if(type == 0){
+     value.code = code
+     value.key = codekey
+    } else if(type == 1) {
+      value.code = cipher(mobile, code)
+    }
+    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
+    if(success) {
+       let {projectId, roleType} = data
+       if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
+       if (roleType == 3 || roleType == 4) {      
+         enterProject(projectId)
+       }
+ 
+    }else {
+     return message.warning(errMsg || "数据出错,请重试");
+    }
+   } catch (error) {
+     console.log(error)
    }
+  
 
  }
 
@@ -442,7 +491,8 @@ function UserLog() {
   };
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
-    dispatch(getIsGranary(true))
+    window.sessionStorage.removeItem('chintwuliu')
+    dispatch(getIsGranary(false))
   }, []);
  
 
@@ -452,8 +502,8 @@ function UserLog() {
 
   const stylefn = (state) => {
     return state
-      ? { fontSize: "28px", color: "#BF490F" }
-      : { fontSize: "22px", color: "#dd9d7e" };
+      ? { fontSize: "28px", color: "#fff" }
+      : { fontSize: "26px", color: "#515151" };
   };
 
   const iconsty = {
@@ -461,22 +511,45 @@ function UserLog() {
     color: "#999",
     marginRight: "16px",
   };
+
+
   const Userlog = () => {
     let initmemorize = useSelector(selectMemorize);
     let { name } = useSelector(selectUser);
+  //  let [codekey, setCodeKey] = useState()
+   // let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
-    store.subscribe(() => {
+ 
+    const codekey = useRef()
+    const getcode = useMemo(() => <Cord ref={codekey} />, [])
+   /*  const getCode = async () => {
+       try {
+         let {data, success} = await  Logapi.GetCode()
+         if(success) {  
+           let {key, image} = data || {}
+           setCodeKey(key)
+           setCodeUrl(image)
+
+         }
+       } catch (error) {
+        
+       }
+         
+    } */
+    
+  /*   store.subscribe(() => {
       initmemorize = store.getState()?.memorize;
-    });
+    }); */
     useEffect(() => {
+    //  getCode();
       return () => {
         setLoading(false);
       };
-    });
+    }, []);
     return (
       <Form
         layout="horizontal"
@@ -485,16 +558,20 @@ function UserLog() {
         labelWrap
         form={userform}
         name="login"
-        onFinish={onSubmit}
+        onFinish={(value) => {         
+          onSubmit(value, 0, codekey.current.code)
+        }}
         onFinishFailed={onFinishFailed}
         initialValues={{
           name: userName,
           pwd: "",
+          code: '',
         }}
       >
         <Itembox
           name="name"
           hasFeedback
+          btm="32px"
           rules={[
             {
               required: true,
@@ -510,8 +587,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.usera1}
-            aurl={imgurl.usera2}
+            url={imgurl.user}
+            aurl={imgurl.usera}
             placeholder="请输入用户名"
             allowClear
             autoComplete={auto}
@@ -520,6 +597,7 @@ function UserLog() {
         <Itembox
           name="pwd"
           hasFeedback
+          btm="32px"
           rules={[
             {
               required: true,
@@ -532,11 +610,44 @@ function UserLog() {
         >
           <Logpsd
             prefix={<Ipticon />}
-            url={imgurl.pwda1}
-            aurl={imgurl.pwda2}
+            url={imgurl.pwd}
+            aurl={imgurl.pwda}
             placeholder="请输入密码"
           />
         </Itembox>
+       
+        
+          <Itembox
+         hasFeedback
+         btm="32px"
+         style={{alignItems: "center"}}
+       >
+        <Input.Group compact>
+          <Item  name="code" noStyle  rules={[
+           {
+             required: true,
+             message: "请输入验证码",
+           },
+            {
+           validator: imgcodeValidator
+           },  
+         ]}>
+          <Logipt
+            style={{width: "264px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
+            prefix={<Ipticon />}
+            url={imgurl.pwd}
+            aurl={imgurl.pwda}
+            autoComplete="off"
+            placeholder="请输入验证码"
+          />
+          </Item>
+          {getcode}
+         
+         {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
+           </Input.Group>
+           </Itembox>
+         
+       
         <Itembox valuePropName="checked">
           <Logck onChange={ckChange} defaultChecked={initmemorize}>
             记住用户名
@@ -565,9 +676,9 @@ function UserLog() {
     const ckchange = (e) => {
       dispatch(memorizePhone(e.target.checked));
     };
-    store.subscribe(() => {
+   /*  store.subscribe(() => {
       initPhone = store.getState()?.memoPhone;
-    });
+    }); */
     const [targetDate, setTargetDate] = useState(0);
     const [countdown] = useCountDown({
       targetDate,
@@ -637,8 +748,8 @@ function UserLog() {
         >
           <Logipt
             prefix={<Ipticon />}
-            url={imgurl.phonea1}
-            aurl={imgurl.phonea2}
+            url={imgurl.phone}
+            aurl={imgurl.phonea}
             placeholder="请输入手机号"
             autoComplete={auto}
           />
@@ -661,8 +772,8 @@ function UserLog() {
             >
               <Logipt
                 prefix={<Ipticon />}
-                url={imgurl.codea1}
-                aurl={imgurl.codea2}
+                url={imgurl.code}
+                aurl={imgurl.codea}
                 placeholder="请输入验证码"
                 style={{ width: "275px" }}
               />
@@ -692,6 +803,7 @@ function UserLog() {
     );
   }
 
+ 
   const Phone = React.memo(Phonelog);
   const params = useParams();
   const type = useMemo(() => {
@@ -718,32 +830,41 @@ function UserLog() {
           }}
           style={stylefn(!state)}
         >
-          手机号登录
+          手机登录
         </span>
       </Logtype>
-      {state ? <Userlog /> : <Phonelog />}
+     {state ? <Userlog /> : <Phonelog />}
+  
     </Logbox>
   );
 }
-export default function Login() {
 
+export default function Login() {
+ // const routeData = useLoaderData();
+ // console.log(routeData)
+  
   const dispatch = useDispatch();
-  const { systemLogoImage, systemBackImage, englishTitle, literal } = useSelector(systemConfigInfo)
+  const { systemLogoImage, systemBackImage, englishTitle="Integrated Energy Service Platform", literal } = useSelector(systemConfigInfo) || {}
   const enchtitle = useSelector(mixtitle)
- 
-  const hostname = process.env.NODE_ENV === "production"
+  document.title = enchtitle
+ const hostname = process.env.NODE_ENV === "production"
     ? new URL(window.location.href).hostname
     : "10.5.7.60";
+ 
  useEffect(() => {
-  dispatch(systemConfig(hostname)).then(res => {    
-    document.title = enchtitle
-  });
-}, [hostname]);  
+  dispatch(systemConfig(hostname)).then(res => {   
+    let {success, data} = res.payload || {}
+    if(success) dispatch(getThemeColor(data.themeColor));
+  }).catch(e => {
+    console.log(e)
+  })
+}, [hostname]); 
   return (
-    <LoginLayout login={true}  bgImg={imgurl.logBgf} preview={true}>
+    <LoginLayout login={true} header={<Logtitle img={systemLogoImage} />} bgImg={systemBackImage ? `data:image/png;base64,${systemBackImage}` : bgImg}>
       <Logmain>
         <Loglist  logtitle={enchtitle} englishTitle={englishTitle} literal={literal} ></Loglist>
-        <UserLog />
+        <UserLog />  
+     
       </Logmain>
     </LoginLayout>
   );

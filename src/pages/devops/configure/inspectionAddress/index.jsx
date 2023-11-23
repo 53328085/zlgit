@@ -438,8 +438,8 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
   },[ positionRef])
   return (
     <>
-    <Modal mold='cust' width={587} ref={addRef} onOk={()=>{addItems(position,devicelistref,checklistref)}} >
-      <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
+    <Modal mold='cust' width={587} ref={addRef} onOk={()=>{addItems(position,devicelistref,checklistref)}} title="新增巡检点">
+      {/* <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
         form={addform}
         labelCol={{ span: 5 }}
@@ -554,9 +554,9 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
     
   },[editform.getFieldValue()])
   return (
-    <Modal mold='cust' width={587} ref={editRef} onOk={()=>{updateItems(position,devicelistref,checklistref)}} >
+    <Modal mold='cust' width={587} ref={editRef} onOk={()=>{updateItems(position,devicelistref,checklistref)}} title="编辑巡检点">
      
-        <BlueColumn name="编辑巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn>
+        {/* <BlueColumn name="编辑巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
         form={editform}
         labelCol={{ span: 5 }}
@@ -614,12 +614,8 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
 //删除组件
 let DeleteModal = ({ delRef, name = '', content = '', ...other }) => {
   return (
-    <Modal mold='cust' ref={delRef} {...other} className={style.DelModal}>
-      <BlueColumn name={name} styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>{content}</span>
-      </div>
+    <Modal mold='cust' ref={delRef} {...other} className={style.DelModal} type="warn" title={name}>
+       {content}
     </Modal>
   )
 }

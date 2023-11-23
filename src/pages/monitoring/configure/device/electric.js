@@ -653,8 +653,8 @@ export default function gateway({ deviceStyle }) {
 
 let SetFactor=({FactorRef,name,factorform,...other})=>{
   return(
-    <Modal mold='cust' ref={FactorRef} {...other}>
-      <BlueColumn name={name}  styled={{ padding: '24px 0px' }}></BlueColumn>
+    <Modal mold='cust' ref={FactorRef} title={name} {...other}>
+      {/* <BlueColumn name={name}  styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form 
       form={factorform}
       labelAlign="left"

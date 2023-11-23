@@ -19,7 +19,7 @@ import {message} from 'antd'
   
 
  let {lngLat: projectLnglat} = useSelector(currProject);
- let defaultpoint =  value || lngLat || projectLnglat;
+ let defaultpoint =projectLnglat || value || lngLat ;
   let geocoder = new T.Geocoder();
  
   
@@ -136,7 +136,7 @@ import {message} from 'antd'
      map = new T.Map("map");
    
    
-   
+   console.log(latlng)
     // let dom = document.getElementById("mapBox")
      try {
      
@@ -154,13 +154,19 @@ import {message} from 'antd'
       } catch (error) {
         console.log(error)
       }
-    
-     map.addEventListener("click", (e) => {   
+     const clickhandler = (e) => {
+        if(isck) return;     
+        geocoder.getLocation(e.lnglat,mapClick)
+     }
+    /*  map.addEventListener("click", (e) => {   
        if(isck) return;
      
        geocoder.getLocation(e.lnglat,mapClick)
-     });
- 
+     }); */
+      map.addEventListener('click', clickhandler)
+      return () => {
+        map.removeEventListener('click', clickhandler)
+      }
     
   }, [defaultpoint])
   return (

@@ -331,12 +331,12 @@ export default function gateway() {
   },[])
   const EditModalComp=useMemo(()=>{
     return (
-      <Modal mold='cust' ref={EditModalRef} {...editModal} footer={[
+      <Modal mold='cust' ref={EditModalRef} title="编辑网关类型" {...editModal}  footer={[
         <Button onClick={()=>{ EditModalRef.current.onCancel()}}>取消</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={editOk}>保存</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,
     ]}>
-      <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn>
+      {/* <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <EditModal {...editModalProps}></EditModal>
     </Modal>
     )
@@ -660,12 +660,11 @@ let EditModal = ({ name, EditModalRef, editform, ...other }) => {
 let DeleteModal = ({ DelModalRef, ...other }) => {
 
   return (
-    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal}>
-      <BlueColumn name='删除网关类型' styled={{ padding: '24px 0px', color: '#ff4d4f' }} bg={{ backgroundColor: '#ff4d4f' }}></BlueColumn>
-      <div>
-        <img src={WarningPng} style={{ margin: '0 32px', width: 48, height: 48 }}></img>
-        <span>是否确认删除网关类型?</span>
-      </div>
+    <Modal mold='cust' ref={DelModalRef} {...other} className={style.DelModal} title="删除网关类型" type="warn">
+  
+      
+      是否确认删除网关类型?
+      
     </Modal>
   )
 }

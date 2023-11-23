@@ -316,10 +316,7 @@ export default function Index () {
         </div>
       </Custmodl>
       <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={()=>onDelete()}>
-        <div style={{display:"flex", alignItems: "center", marginBottom: 32,fontSize: 16}}>
-          <img style={{marginLeft:64, marginRight: 32}} src={warning}></img>
-          <span> 是否确认删除该能源节点? </span>
-        </div>
+        是否确认删除该能源节点? 
       </Custmodl>
     </div>
   )
