@@ -531,8 +531,9 @@ export default function gateway() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         DownloadTaskState(gatewaySn).then(res => {
-          if (res.data.code === 1) {
-            if (res.data.message) {
+          if (res.data?.code === 1) {
+            if (res.data?.message) {
+              console.log(res.data)
               setisSuccess(false)
               modalReStartResRef?.current?.onOpen()
               seterrorList(res.data.message)
@@ -557,14 +558,18 @@ export default function gateway() {
     })
 
   }
-  const downloadOk = () => {
+  const downloadOk = async () => {
+    try {
+   
     keyParamRef?.current?.onCancel()
     setspinLoading("网关参数正在下发，请稍候")
     setSpinShow(true)
-    StartDownloadTask(projectId, gatewaySn).then(async result => {
+    let result = await  StartDownloadTask(projectId, gatewaySn) 
+    console.log(result)
       if (result.success) {
         while (countnum < 15) {
           const resp = await poll()
+          console.log(resp)
           if (resp == 'break') break;
           if (resp === 15) {
             setisSuccess(false)
@@ -581,7 +586,10 @@ export default function gateway() {
         modalReStartResRef?.current?.onOpen()
         setgatewayRes(res.errMsg)
       }
-    })
+       
+    } catch (error) {
+      
+    }
   }
   //原参数下发(废弃)
   const downloadOk1 = () => {
@@ -936,6 +944,7 @@ let ReStart = ({ modalReStartRef, startOk }) => {
 }
 //重启结果
 let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
+  console.log(gatewayRes)
   return (
     <Modal mold='cust' ref={modalReStartResRef} title="操作提示" footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
       {/* <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn> */}

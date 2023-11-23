@@ -186,18 +186,26 @@ export default function index (props) {
         })
     }
     let tag = columns[0].key;
-
+    let keys = columns.map(c => c.key);
+    console.log(keys)
     const onSearchSub = (value) => {
+       
         let arr = [];
-        console.log(123)
+      
         setSelectedSubKeys([])
         if(value == '') {
             setSubData([...subCopy]);
         }else{
+             
             subCopy.map(item => {
-                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
+                let f = []
+                for(let key of keys) {
+                  f.push(item[key].indexOf(value) !=-1)
                 }
+                if(f.includes(true))  arr.push(item);  
+                /* if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                } */
             })
             setSubData([...arr]);
         }
@@ -210,9 +218,14 @@ export default function index (props) {
             setUnknownData([...unknownCopy]);
         }else{
             unknownCopy.map(item => {
-                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
+                let f = []
+                for(let key of keys) {
+                  f.push(item[key].indexOf(value) !=-1)
                 }
+                if(f.includes(true))  arr.push(item);  
+               /*  if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                } */
             })
             setUnknownData([...arr]);
         }
