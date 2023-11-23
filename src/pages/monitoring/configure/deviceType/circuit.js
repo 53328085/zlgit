@@ -16,13 +16,13 @@ export default function Electric() {
   const {value, tabs} =useContext(cusContext) 
   
   const deviceStyle = parseInt(value)
-  
-  const Label = tabs.find(item =>{
-    if(item&&item.key){
-     return item.key == value?.label || '' ;
-    }
-    return ''
-  })
+  const Label ="断路器类型"
+  // const Label = tabs.find(item =>{
+  //   if(item&&item.key){
+  //    return item.key == value?.label || '' ;
+  //   }
+  //   return ''
+  // })
 
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource,setTableDataSource]=useState([])//主页表格数据

@@ -56,6 +56,7 @@ export default function Index() {
       const { data, errMsg, success } = result;
       if (success) {
         if(Array.isArray(data)){
+          console.log(59,data)
           let arr= data.map(item => {
             if(item.state===1){
               return{
@@ -65,10 +66,12 @@ export default function Index() {
             }
            
           })
-          arr.unshift({ key: '0', label: '网关类型' })
-         console.log(arr)
-          setTabs(arr)
-          dataProps = {...dataProps,  tabs } 
+          let list = arr.filter(it=>it)
+          console.log(69,arr)
+          list.unshift({ key: '0', label: '网关类型' })
+         console.log(list)
+          setTabs(list)
+          dataProps = {...dataProps,  list } 
         }
       }else{
         message.error(errMsg)
