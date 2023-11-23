@@ -141,7 +141,7 @@ import {message} from 'antd'
      try {
      
       // setMapkey(Math.random().toString())
-       map.centerAndZoom(latlng, 10)    
+       map.centerAndZoom(latlng, 16)    
        map.enableDrag();
       if (Array.isArray(defaultpoint)) {
        defaultpoint.forEach(item => {
