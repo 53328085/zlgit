@@ -136,7 +136,7 @@ export default function DefaultHome(props){
       tdrawEcharts()
     }
     
-  })
+  },[])
   
   return (
          <Titlelayout title={'今日告警'} {...fs}>
