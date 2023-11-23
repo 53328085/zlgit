@@ -178,6 +178,7 @@ function Draw({params}, ref) {
     const changeUnselected = () => {
         let params = sfrom.getFieldsValue();
         let {type} = params
+        console.log(type)
       //  setDevietype(type)
         try {
         //  getUNselect({ areaId: curareaId.current, ...params });
