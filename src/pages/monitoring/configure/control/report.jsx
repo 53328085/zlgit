@@ -11,7 +11,7 @@ import Usetable from '@com/useTable'
 import {AutoValve} from '@api/api'
  import Custmodal from '@com/useModal'
  import {getdays} from '@com/usehandler'
-import redwarn from '@imgs/redwarn.png'
+ 
 import successIcon from '@imgs/success.png'
 import Drag from './Drag'
 import CDraw from './draw'
@@ -125,13 +125,13 @@ const controlcolumns = [
     },
     {
         title: '设备编号',
+        dataIndex: 'sn',
         onHeaderCell:() => ({
           style: {
             backgroundColor: '#237ae4',
             color: "#fff"
           }
         }),
-        key: 'sn',
         align: 'center'
     },
     {

@@ -1,5 +1,5 @@
 import React, {useState, forwardRef, useImperativeHandle, useRef, useEffect} from 'react'
-import {Drawer, Select, Button, Typography, Space, Form, Input, message} from 'antd'
+import {Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
 import {   LeftOutlined, RightOutlined } from "@ant-design/icons";
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout.js'
@@ -109,8 +109,30 @@ const deviceColumns = [
         title: '是否启用',
         dataIndex: 'status',
         key: 'status',
-        align: 'center'
+        align: 'center',
+        render: (_, record) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => record.enabled = Number(e.target.checked)} />
     },
+]
+
+const unselectdevice = [
+  {
+      title: '设备编号',
+      dataIndex: 'sn',
+      key: 'sn',
+     
+  },
+  {
+      title: '设备名称',
+      dataIndex: 'name',
+      key: 'name',
+      
+  },
+  {
+      title: '安装位置',
+      dataIndex: 'address',
+      key: 'address',
+     
+  }
 ]
 function Draw({params}, ref) {
     const [open, setOpen] = useState(false)
@@ -120,6 +142,7 @@ function Draw({params}, ref) {
    // let {used, unused} = tabledata
    const [usedtb, setusedtable] = useState([])
    const [unusedtb, setUnusedtb] = useState([])
+   const unusedtbbk = useRef()
     const getData = async () =>{
         try {
         let {success, data, errMsg} =   await AutoValve.GetDeviceConfigure(params)
@@ -128,6 +151,7 @@ function Draw({params}, ref) {
              let {unused, used} = data
              setUnusedtb(unused)
              setusedtable(used)
+             unusedtbbk.current = unused
            }else {
             setUnusedtb([])
             setusedtable([])
@@ -175,18 +199,46 @@ function Draw({params}, ref) {
         drawOpen,
     }))
    
-    const changeUnselected = () => {
-        let params = sfrom.getFieldsValue();
-        let {type} = params
-        console.log(type)
-      //  setDevietype(type)
-        try {
-        //  getUNselect({ areaId: curareaId.current, ...params });
-        //  getSelected({ areaId: curareaId.current, type})
-        } catch (error) {
-          console.log(e);
+    const changeUnselected = (v) => {
+       try {
+        if (v != 0) {
+          let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle ) || []
+          setUnusedtb(arr)
+        }else {
+          setUnusedtb(unusedtbbk.current || [])
         }
+       } catch (error) {
+        
+       }
+     
       };
+      let keys = unselectdevice.map(i => i.key)
+     const onSerach = (v) => {
+
+       try {
+        if(v) {
+          let value = v.trim().toLowerCase()
+          let arr = [];
+          unusedtbbk.current.forEach(i => {
+            let f = [];
+             for(let key of keys) {
+              f.push(i[key]?.toLowerCase().includes(value))
+             }
+             if(f.includes(true)) {
+              arr.push(i)
+             }
+          })
+          setUnusedtb(arr)
+       }else {
+        setUnusedtb(unusedtbbk.current || [])
+       }
+       } catch (error) {
+          
+       }
+       
+
+
+    }
       const setb = useRef()
       const untb = useRef()
       const rowSelection = { // 已选中的设备
@@ -283,7 +335,7 @@ function Draw({params}, ref) {
       <Form
         form={sfrom}
         initialValues={{
-          type: "1",
+          type: "0",
         }}
       >
         <Space size={16}>
@@ -292,6 +344,10 @@ function Draw({params}, ref) {
               style={{ width: "112px" }}
               onChange={changeUnselected}
               options={[
+                {
+                  value: "0",
+                  label: "全部类型",
+                },
                 {
                   value: "1",
                   label: "电表",
@@ -311,13 +367,13 @@ function Draw({params}, ref) {
             <Inptserach
               allowClear
               placeholder="请输入设备编号/安装地址"
-              onSearch={changeUnselected}
+              onSearch={onSerach}
             />
           </Item>
         </Space>
       </Form>
       <UserTable
-        columns={deviceColumns}
+        columns={unselectdevice}
         rowSelection={unrowSelection}
         dataSource={unusedtb}
         scroll={{y: 696}}

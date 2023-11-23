@@ -23,7 +23,7 @@ const { DeviceManager:
     GatewayImport,
     OneLevel,
     StartReboot, State, StartDownloadTask, DownloadTaskState } } = Monitoring
-export default function gateway() {
+export default function Gateway() {
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
   const selectoptsRef = useRef()
@@ -945,14 +945,23 @@ let ReStart = ({ modalReStartRef, startOk }) => {
 //重启结果
 let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
   console.log(gatewayRes)
+  console.log(errorList)
   return (
     <Modal mold='cust' ref={modalReStartResRef} title="操作提示" footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
-      {/* <BlueColumn name="操作提示" styled={{ padding: '24px 0px', color: '#237ae4' }}></BlueColumn> */}
-      {errorList ? <div style={{ margin: '16px 32px 0' }}>
+     
+    {/*   {errorList ? <div style={{ margin: '16px 32px 0' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>{gatewayRes}</span>
         <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
-      </div> : <Table bordered columns={columns} dataSource={errorList} rowKey='erros' size='small' pagination={false} />}
+      </div> : <Table bordered columns={columns} dataSource={errorList} rowKey='erros' size='small' pagination={false} />} */}
+
+      <div style={{ margin: '16px 32px 0', display: 'flex', alignContent: 'center' }}>
+        <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList || gatewayRes}</span>
+        <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
+        </div>
+      </div>  
 
     </Modal>
   )

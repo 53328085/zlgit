@@ -137,7 +137,7 @@ const CModal = styled(Modal)`
       type={type}
       bodyStyle= {
          type=="warn" ? {
-           padding: "32px 128px",
+           padding: "32px 64px 32px 128px",
            display: 'flex',
            alignItems: 'center',
            fontSize: '16px',
@@ -167,6 +167,7 @@ const CModal = styled(Modal)`
           <div ref={draggleRef}>{modal}</div>
         </Draggable>
       )}
+      destroyOnClose
       {...rest}  
     >
       {type=="warn" && warnimg && <img src={redwarn} style={{width: '54px', marginRight: "32px"}} /> }
