@@ -369,7 +369,7 @@ const onInput = (e) =>  {
    const value = e.target.value?.trim()
    console.log(value)
    if(value) {
-     valueref.current = value
+    // valueref.current = value
      map.current?.serachMap(value)
    }
 }
