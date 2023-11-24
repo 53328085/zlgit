@@ -24,7 +24,7 @@ import {
 } from "@redux/systemconfig.js";
 import { SiteManagerDesigner } from '@api/api.js'
 import { cloneDeep } from "lodash";
-
+import CModal from '@com/useModal'
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
@@ -87,8 +87,8 @@ export default function Index() {
   ];
   //删除告警类型弹窗
   const [deleteTypeModal, setDeleteTypeModal] = useState(false);
-  //新增 修改 弹窗
-  const [addModal, setAddModal] = useState(false);
+  //新增 true 修改 false
+  const [addModal, setAddModal] = useState(false); 
   const [modalTitle, setModalTitle] = useState("");
   //&所属园区
   const areaList = useSelector(selectOneLevel);
@@ -223,18 +223,21 @@ export default function Index() {
       },
     ];
 
+
+    const ref = useRef()
   //点击新增 打开弹框
   const showAdd = () => {
-    form.resetFields(); //当新增时重置
+  
     setFileList([]);
     setImageUrl();
     setModalTitle("新增站点");
     setAddModal(true);
+    ref.current.onOpen()
   };
   //编辑
   const [selectId, setSelectId] = useState(0)
   const editRecord = (record) => {
-    console.log(record);
+    
     record.deliveryTime = moment(record.deliveryTime)
     form.setFieldsValue(record)
     setSelectId(record.id)
@@ -246,7 +249,8 @@ export default function Index() {
     setFileList([])
     }
     setModalTitle("编辑站点");
-    setAddModal(true);
+    setAddModal(false);
+    ref.current.onOpen()
   };
   //删除
   const deleteRecord = (record) => {
@@ -289,8 +293,9 @@ export default function Index() {
     if (modalTitle === "新增站点") {
       AddSite(projectId, params).then(res => {
         if(res.success){
-          setAddModal(false);
+          
           message.success('新增站点成功!')
+          form.resetFields();
           getTableData();
         }else{
           message.error(res.errMsg)
@@ -300,7 +305,7 @@ export default function Index() {
       params.id = selectId
       UpdateSite(projectId, params).then(res => {
         if(res.success){
-          setAddModal(false);
+           ref.current.onCancel()
           message.success('站点信息修改成功!')
           getTableData();
         }else{
@@ -382,40 +387,29 @@ export default function Index() {
           ref={tableRef}
           bordered
         ></Table>
-        <Modal
-          className={style.deleteModal}
+        <CModal
           open={deleteTypeModal}
           onOk={deleteOk}
           onCancel={deleteCancel}
           width={512}
-          cancelText={"取消"}
-          centered={true}
           closable={false}
-          maskClosable={false}
-          okText={"确认"}
-          okType={"danger primary"}
+          type="warn"
+          mold="cust"
+          title="删除提示"
         >
-          <div className={style.deleteHeader}>删除提示</div>
-          <div className={style.deleteBody}>
-            <img className={style.warnIcon} src={firstwarn}></img>
-            <span>是否确认删除站点？</span>
-          </div>
-        </Modal>
-        <Modal
-          className={style.addModal}
-          open={addModal}
+            是否确认删除站点？ 
+        </CModal>
+        <CModal 
+          ref={ref}
+          title={modalTitle}
           onOk={addOk}
           onCancel={addCancel}
-          width={640}
-          cancelText={"取消"}
-          centered={true}
-          closable={false}
-          maskClosable={false}
-          okText={"确认"}
-          okType={"primary"}
-          forceRender={true}
+          width={640} 
+          closable={false} 
+          custft={addModal}
+          mold="cust"
         >
-          <div className={style.addHeaderTitle}>{modalTitle}</div>
+         
           <Form
             name="addform"
             form={form}
@@ -424,6 +418,7 @@ export default function Index() {
             labelAlign="left"
             colon={false}
             labelCol={{ flex: "110px" }}
+            preserve={false}
           >
             <Item
               name="areaId"
@@ -541,8 +536,8 @@ export default function Index() {
               </Upload>
             </Item>
           </Form>
-        </Modal>
-        <Modal open={previewOpen} footer={null} onCancel={handleCancel}>
+        </CModal>
+        <CModal open={previewOpen} footer={null} mold="cust" onCancel={handleCancel}>
           <img
             alt="example"
             style={{
@@ -550,7 +545,7 @@ export default function Index() {
             }}
             src={previewImage}
           />
-        </Modal>
+        </CModal>
       </div>
     </div>
   );

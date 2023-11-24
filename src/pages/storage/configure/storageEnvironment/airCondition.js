@@ -196,12 +196,13 @@ export default function Index(props) {
   const exportData = () => {
     tableRef.current.download()
   }
-
+   const  cref = useRef()
   //新增
   const addData = () => {
     state.modalTitle = '新增空调'
-    addForm.resetFields()
-    state.editModal = true
+    
+    state.editModal = true  // true 新增 false 编辑
+    cref.current.onOpen()
   }
   const changeAddArea = val => {
     addForm.setFieldValue('siteId', null)
@@ -260,12 +261,13 @@ export default function Index(props) {
         let { success, data } = res
         if (success) {
           message.success('新增空调成功!')
-          state.editModal = false
+          
           if (pagination.current != 1) {
             tableOnchange({ current: 1 })
           } else {
             getFromHeader()
           }
+          addForm.resetFields()
         } else {
           message.error(res.errMsg)
         }
@@ -278,7 +280,7 @@ export default function Index(props) {
         let { success, data } = res
         if (success) {
           message.success('修改空调成功!')
-          state.editModal = false
+          cref.current.onCancel()
           getFromHeader()
         } else {
           message.error(res.errMsg)
@@ -319,7 +321,8 @@ export default function Index(props) {
     })
 
     state.modalTitle = '编辑空调'
-    state.editModal = true
+    state.editModal = false
+    cref.current.onOpen()
   }
 
   //删除
@@ -469,10 +472,8 @@ export default function Index(props) {
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除空调？
       </Custmodl>
-      <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
-        <div className={style.addHeader}>批量导入</div>
-        <div className={style.addBody}>
-          <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
+      <Custmodl    title="批量导入" open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} maskClosable={false} mold="cust"  >
+           <div style={{position: 'relative'}}>
             <Dragger {...propData} maxCount={1}>
               <div style={{ width: 536, height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: 16 }}>
                 <img style={{ width: 84, height: 60, marginTop: 44 }} src={upload}></img>
@@ -480,18 +481,15 @@ export default function Index(props) {
               </div>
             </Dragger>
             <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/storageDevice.xlsx' download>下载模板</a>
-          </div>
-        </div>
-      </Modal>
+            </div>
+      </Custmodl>
       <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Modal className={style.addModal} open={state.editModal} width={544} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
-        <div className={style.addHeader}>{state.modalTitle}</div>
-        <div className={style.addBody}>
-          <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
+      <Custmodl  title={state.modalTitle} custft={state.editModal}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
+          <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false} preserve={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
               <Select
                 placeholder="请选择"
@@ -560,14 +558,8 @@ export default function Index(props) {
             <Item name='remark' label='备注' >
               <TextArea style={{ width: '320px' }} rows={4}></TextArea>
             </Item>
-          </Form>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
-            <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
-            <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
-            {state.modalTitle == '新增空调' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
-          </div>
-        </div>
-      </Modal>
+          </Form> 
+      </Custmodl>
     </div>
   )
 }
