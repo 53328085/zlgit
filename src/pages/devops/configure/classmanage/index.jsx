@@ -443,11 +443,13 @@ export default function Index() {
     console.log(id)
     setAreaId(id)
   }
-  console.log(oneLevel)
+
   useEffect(()=>{
-   
+     console.log('effect')
     if(oneLevel.length > 0){
       setAreaId(oneLevel[0]['id'])
+    }else{
+      setIsLoading(false)
     }
   
   },[])
@@ -457,10 +459,11 @@ export default function Index() {
      await GetDutyUsers()
      await GetOperatorEx()
      setIsLoading(false)
+     console.log(areaId)
     }
-    areaId&&func()
-    !areaId&&setIsLoading(false)
+    areaId&&func()   
   }, [areaId])
+
   return (
     <>
       {
