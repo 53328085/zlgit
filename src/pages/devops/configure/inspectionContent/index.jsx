@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
 import Modal from '@com/useModal'
 import style from './style.module.less'
-import WarningPng from '@imgs/warning.png'
+
 import { operationDesigin } from '@api/api'
 const DropstartDiv = styled.div`
  .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
