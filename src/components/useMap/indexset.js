@@ -148,7 +148,9 @@ import {message} from 'antd'
           let {lnglat, text} = item
           addInfo(lnglat, text)
         })
-       }      
+       } else {
+         geocoder.getLocation(latlng,mapClick)
+       }    
       map.addEventListener("click", (e) => {
         if(isck) return;
         geocoder.getLocation(e.lnglat,mapClick)

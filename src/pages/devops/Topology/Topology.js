@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import styled from 'styled-components';
 import {Image, Spin} from 'antd'
- 
+import {CaretLeftFilled, CaretRightFilled} from '@ant-design/icons'
 import {EnergyFlowRuntime, Monitoring} from "@api/api"
 import Commport from './Commport';
 import server from './icon/server.png';
@@ -42,12 +42,14 @@ const Mainbox = styled.div`
     grid-template-rows: 340px;
     grid-auto-flow: column;
     column-gap: 64px;
+    margin: 0 32px;
     .item {
       display: flex;
       flex-direction: column;
       align-items: center;
      
     }
+   
     /*  .item.first {
       transform: translate(-64px,-3px)
      }
@@ -148,7 +150,7 @@ export default function Topology({projectId, areaId}) {
   }
   const getData = async () => {
       try {
-        let {data, success} = await QueryTopologyGatewayState(projectId)
+        let {data, success} = await QueryTopologyGatewayState({areaId, projectId})
         // group:[]
         // projectId
          
@@ -186,7 +188,7 @@ export default function Topology({projectId, areaId}) {
 
   useEffect(() => {
     getData()
-  }, [projectId])
+  }, [areaId, projectId])
   const sty = {
     flex: 1,
     position: "re"
@@ -205,6 +207,8 @@ export default function Topology({projectId, areaId}) {
          <LineSty height="56px" />
        </div> */}
        <Fixed />
+       
+     
        <div className='bottom'>
            {
             data.map((d, index) =>  (
@@ -221,7 +225,10 @@ export default function Topology({projectId, areaId}) {
             </div>
             ))
            }
+        
        </div>
+      
+        
     </Mainbox>
     </TitleLayout>
     : <Commport ids={ids} projectId={projectId} gateway={gateway} back={setIscom}/> 
