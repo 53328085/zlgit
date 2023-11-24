@@ -13,6 +13,7 @@ export default function index (props) {
     const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
     const [unknownCopy, setUnknownCopy] = useState([])
+    const [searchValue,setSearchValue] = useState("")
     useEffect(()=>{
         let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
@@ -176,7 +177,9 @@ export default function index (props) {
     }
 
     const handleClose = () => {
+        setSearchValue("")
         props.closeValue('close');
+        
     }
     const handleSave = () => {
         props.saveValue({
@@ -293,7 +296,14 @@ export default function index (props) {
                 <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
                 <div className={style.searchInput}>
                     <span style={{marginRight: 16}}>设备搜索</span>
-                    <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
+                    <Search 
+                    placeholder="请输入设备编号/安装地址" 
+                    style={{width: 256}} 
+                    enterButton 
+                    onSearch={onSearchUnknown} 
+                    value={searchValue}
+                    onChange={(e)=>{setSearchValue(e.target.value)}}
+                    ></Search>
                 </div>
                 <div className={style.mainContent}>
                     <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
