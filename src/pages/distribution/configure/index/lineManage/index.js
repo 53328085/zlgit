@@ -9,7 +9,7 @@ import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '
 import { distributionRoom } from '@api/api.js'
 import CModal from '@com/useModal'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
+
 
 export default function Index() {
   const isPublish = useSelector(publishState)

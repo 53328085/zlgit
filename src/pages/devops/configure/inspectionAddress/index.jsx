@@ -214,7 +214,8 @@ export default function Index() {
       message.success('新增成功!')
       pageinfo.pageNum = 1
       getPage()
-      addRef.current.onCancel()
+      addform.resetFields()
+    //  addRef.current.onCancel()
     } else {
       message.error(res.errMsg)
     }
@@ -438,7 +439,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
   },[ positionRef])
   return (
     <>
-    <Modal mold='cust' width={587} ref={addRef} onOk={()=>{addItems(position,devicelistref,checklistref)}} title="新增巡检点">
+    <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={ async ()=>{addItems(position,devicelistref,checklistref)}} title="新增巡检点">
       {/* <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
         form={addform}
