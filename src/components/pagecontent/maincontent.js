@@ -52,10 +52,11 @@ const PageContentMain = styled.div`
     flex-direction: column;
     position: relative;
     height:  ${props => {
-         let {showserach, beTabs} = props
-         if (!showserach) return beTabs ? '832px' : '873px'
-         if (showserach) return beTabs ? '764px' : '805px'
-        
+         let {showserach, beTabs, custserach} = props  // custserach 自定义搜索
+         if (showserach || custserach) return beTabs ? '764px' : '805px'
+         if (!showserach && !custserach) return beTabs ? '832px' : '873px'
+       
+          
     }};
     overflow-y: auto;
 `
@@ -119,7 +120,7 @@ useEffect(() => {
         <TabsEl ></TabsEl>
       
        {/*  <div className='page--content--main'>{props.children}</div> */}
-        <PageContentMain pd={props.pd} bgcolor={props.bgcolor} beTabs={beTabs} showserach={props.showserach}>
+        <PageContentMain   beTabs={beTabs}  {...props}>
           {props.children}
         </PageContentMain>
     </Pagecontentbox>

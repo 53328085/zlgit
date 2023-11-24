@@ -18,7 +18,7 @@ export class Login {
   static GetVerification = (mobile) =>
     server.post(`/General/User/GetCode?mobile=${mobile}`); // 获取验证吗
   static LoginByPhone = (data = {}) =>
-    server.post(`/General/User/LoginByCode?mobile=${data.mobile}&code=${data.code}`); // 根据手机号登录
+    server.post(`/General/User/LoginByCode?mobile=${data.mobile}&code=${data.code}&span=${data.span}`); // 根据手机号登录
   static GetMenuByRoleType = (params = {}) =>
     server.get("/Project/GetMenuByRoleType", { params }); // 根据登录人查询项目和侧边栏
   static SystemQueryLoginConfigInfo = (data = {}) =>

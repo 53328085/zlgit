@@ -1,91 +1,97 @@
-import React, {useState, useRef, memo, useCallback, useEffect, forwardRef, createContext, useContext} from 'react'
+import { useState, useTransition } from 'react';
  
-import styled from 'styled-components'
- import {Modal, Button, Space, Row, Col} from 'antd'
- import {ExclamationCircleOutlined, ClearOutlined} from '@ant-design/icons'
-const {confirm} = Modal
-const context = createContext({name: 'zzzzzz'})
-const showConfirm = () => {
-   confirm({
-     title: '你确定',
-     icon: <ExclamationCircleOutlined />,
-     content: "some descr",
-     onOk: () => {
-      return new Promise((resolv, reject) => {
-        setTimeout(() => {
-          Math.random() > 0.5 ? resolv('1') : reject('2')
-        },2000)
-      }).then(e => {
-        console.log(e);
-      }).catch(e => {
-        console.log(e)
-      })
-     },
-     okText: 'Yes',
-     okType: 'danger',
-     okButtonProps: {
-      disabled: true,
-     },
-     cancelText: 'no'
-   })
-}
-const info = () => {
-  Modal.error({
-   // title: 'This is a notification message',
-    content: (
-      <div>
-        <p>some messages...some messages...</p>
-        <p>some messages...some messages...</p>
-      </div>
-    ),
-  })
-}
-const Mc = memo(function() {
-  console.log('render')
-  return  (
-    <div>记忆组件</div>
-  )
-})
-const Cmodal = styled(Modal)``
-export default function Index() {
- 
-  const [v, setv] = useState('')
-  const ref=useRef()
-  
-   const [confirmLoading, setConfirmLoading] = useState(false)
-   const [modalText, setModalText] = useState('ddd')
-  const box= useRef()
-  const onopen = () =>  {
-       ref.current.onOpen()
-    
+const TabButton =({ children, isActive, onClick }) => {
+  if (isActive) {
+    return <b>{children}</b>
   }
- 
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const showModal = () => {
-    setOpen(true);
-  };
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-    }, 3000);
-  };
-  const handleCancel = () => {
-    setOpen(false);
-  };
-  const afterCloase = () => {
-    console.log('完全关闭后的回调')
-  } 
- 
- 
-  
   return (
-        <Row>
-          <Col span={2}><Button onClick={onopen}>show</Button></Col>
-          <Col span={4}>{v}</Col>
-         
-        </Row>
+    <button onClick={() => {
+      onClick();
+    }}>
+      {children}
+    </button>
   )
+}
+
+const AboutTab = () => {
+  <p>Welcome to my profile!</p>
+}
+
+const PostsTab = memo(function PostsTab() {
+  // 打印一次。真正变慢的地方在 SlowPost 内。
+  console.log('[ARTIFICIALLY SLOW] Rendering 500 <SlowPost />');
+
+  let items = [];
+  for (let i = 0; i < 500; i++) {
+    items.push(<SlowPost key={i} index={i} />);
+  }
+  return (
+    <ul className="items">
+      {items}
+    </ul>
+  );
+});
+
+function SlowPost({ index }) {
+  let startTime = performance.now();
+  while (performance.now() - startTime < 1) {
+    // 每个 item 都等待 1 毫秒以模拟极慢的代码。
+  }
+
+  return (
+    <li className="item">
+      Post #{index + 1}
+    </li>
+  );
+}
+const ContactTab = () =>{
+  return (
+    <>
+      <p>
+        You can find me online here:
+      </p>
+      <ul>
+        <li>admin@mysite.com</li>
+        <li>+123456789</li>
+      </ul>
+    </>
+  );
+}
+
+export default function TabContainer() {
+  const [isPending, startTransition] = useTransition();
+  const [tab, setTab] = useState('about');
+
+  function selectTab(nextTab) {
+    startTransition(() => {
+      setTab(nextTab);
+    });
+  }
+
+  return (
+    <>
+      <TabButton
+        isActive={tab === 'about'}
+        onClick={() => selectTab('about')}
+      >
+        About
+      </TabButton>
+      <TabButton
+        isActive={tab === 'posts'}
+        onClick={() => selectTab('posts')}
+      >
+        Posts (slow)
+      </TabButton>
+      <TabButton
+        isActive={tab === 'contact'}
+        onClick={() => selectTab('contact')}
+      >
+        Contact
+      </TabButton>
+      <hr />
+      {tab === 'about' && <AboutTab />}
+      {tab === 'posts' && <PostsTab />}
+      {tab === 'contact' && <ContactTab />}
+    </>
+  );
 }
