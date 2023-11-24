@@ -368,7 +368,7 @@ export default function Index() {
           <Mainbox>
           <UserSearch></UserSearch>
 
-          <Pagecount showSearch={false}>
+          <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
                 <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
                 {
