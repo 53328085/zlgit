@@ -1,9 +1,10 @@
-import React, {useEffect, useState, useRef} from 'react'
-import {message} from 'antd'
+import React, {useEffect, useState, useRef, useMemo} from 'react'
+import {message, Empty, Spin, Typography} from 'antd'
 import {EnergyFlowRuntime} from "@api/api"
 import {Button} from 'antd'
  import styled from 'styled-components'
 const {QueryTopologyDeviceState} = EnergyFlowRuntime
+const {Text} = Typography
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
@@ -115,6 +116,19 @@ const Mainbox = styled.div`
         visibility: visible;
       }
     }
+    .empty {
+      border: 1px solid #237ae4;
+      border-radius: 8px;
+      background-color: #f2f2f2;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      width: 1465px;
+      height: 528px;
+    
+      overflow-y: auto;
+    }
     .downcenter {
         border: 1px solid #237ae4;
         border-radius: 8px;
@@ -139,6 +153,11 @@ const Mainbox = styled.div`
         border-radius: 24px;
         padding: 4px 12px;
         position: relative;
+        .ant-typography-ellipsis-single-line {
+          color:#fff; 
+          padding-left: 28px;
+          width: 216px;
+        }
         .state {
            height: 24px;
            width: 24px;
@@ -162,27 +181,36 @@ const Mainbox = styled.div`
     }
   }
 `
-export default function Commport({projectId,gateway:{gatewayId, name}, ids=[], back}) {
- console.log('render')
-  //const [active, setActive] = useState(ids[0])
-  const active = useRef(ids[0])
+ 
+
+export default function Commport({projectId,gateway:{gatewayId, name}, device={}, back}) {
+  
+  const {children: ids, com} = device
+ 
   const [datas, setData] = useState([])
-  const [acindex, setIndex] = useState(0)
+  const isdatas = datas?.length >0
+  const [acindex, setIndex] = useState(ids[0])
+  const [loading, setLoading] = useState(false)
+ 
+
   const getData = async (commport) => {
     try {
         let {success, data} = await  QueryTopologyDeviceState({projectId, gatewayId, commport})
-        if(success && Array.isArray(data)) {
-            setData([...data])
+        setLoading(false)
+        if(success) {
+          Array.isArray(data) ?  setData([...data]) : setData([])
         }else {
             setData([])
         }
     } catch (e) {
-        
+      setLoading(false)
     }
+    
   }
   const detail = (id, index) => {
-    setIndex(index)
-    active.current = id
+     setLoading(true)
+    setIndex(id)
+  
     getData(id)
   }
   useEffect(() => {
@@ -191,13 +219,13 @@ export default function Commport({projectId,gateway:{gatewayId, name}, ids=[], b
     }
     getData(ids[0])
 
-  }, [ids, projectId])
+  }, [device, projectId])
 
   /* /// 1 离线
         /// 2 在线
         /// 3 告警 */
   return (
-    <Mainbox len={ids.length}>
+    <Mainbox len={com}>
         <div className='up'>
             <div className='upLeft'>
                 <div className='dotto'><b className='g'></b>&nbsp;正常</div>
@@ -210,19 +238,23 @@ export default function Commport({projectId,gateway:{gatewayId, name}, ids=[], b
          <div className='downUp'>
             <span>{name}</span>
             <div className='items'>
-            {ids.map((i, index)=> <div className={active.current == i ? "item active" : "item"}  onClick={() => detail(i, index)} key={i}>{index + 1}</div>)}
+
+              { Array.from({length: com}, (v, i) => <div className={acindex == (i+1) ? "item active" : "item"}  onClick={() => detail(i+1, i)} key={i}>{i+1}</div>)}
+         
             </div>
          </div>
          <div className='arrow'>
-            {Array.from({length: ids.length}, (v, i) => <span className={acindex ==i ?  'arrowitem show' : 'arrowitem' }>&#8593;</span>)}
+            {Array.from({length: com}, (v, i) => <span className={acindex ==(i+1)?  'arrowitem show' : 'arrowitem' }>&#8593;</span>)}
          </div>
-         <div className='downcenter'>
-              {datas.map(d => 
+         <Spin spinning={loading} delay={300}>
+         <div className={isdatas ? 'downcenter' : 'empty'}>
+              {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
                  <div className={'state '+ ['', 'b', 's', 'r'][d.state] }>{}</div>
-                 <span>{d.address}</span>
-              </div>) )}
+                 <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
+              </div>) ) : <Empty />}
          </div>
+         </Spin>
        </div>
     </Mainbox>
   )

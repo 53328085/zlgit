@@ -110,7 +110,10 @@ const deviceColumns = [
         dataIndex: 'status',
         key: 'status',
         align: 'center',
-        render: (_, record) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => record.enabled = Number(e.target.checked)} />
+        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
+          console.log(index)
+          record.enabled = Number(e)
+        }} />
     },
 ]
 
@@ -143,6 +146,44 @@ function Draw({params}, ref) {
    const [usedtb, setusedtable] = useState([])
    const [unusedtb, setUnusedtb] = useState([])
    const unusedtbbk = useRef()
+   const deviceColumns = [
+    {
+        title: '设备编号',
+        dataIndex: 'sn',
+        key: 'sn',
+        align: 'center'
+    },
+    {
+        title: '设备名称',
+        dataIndex: 'name',
+        key: 'name',
+        align: 'center'
+    },
+    {
+        title: '安装位置',
+        dataIndex: 'address',
+        key: 'address',
+        align: 'center'
+    },
+    {
+        title: '是否启用',
+        dataIndex: 'status',
+        key: 'status',
+        align: 'center',
+        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
+          let arr = usedtb.map((el, i) => {
+              if(index == i) {
+                el.enabled = Number(e);
+                 return el
+              }else {
+                return el
+              }
+
+          })
+          setusedtable([...arr])
+        }} />
+    },
+]
     const getData = async () =>{
         try {
         let {success, data, errMsg} =   await AutoValve.GetDeviceConfigure(params)
@@ -184,7 +225,7 @@ function Draw({params}, ref) {
         let post = {
             planId,
             projectId,
-            device: usedtb.map(t => t.sn)
+            device:  usedtb.map(t => ({sn: t.sn, enabled: Number(t.enabled)}))
         }
      let {success, errMsg} = await  AutoValve.ConfigureDevice(post)
      if(success) {

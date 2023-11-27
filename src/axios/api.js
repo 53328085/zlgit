@@ -1787,9 +1787,9 @@ export class EnergyFlowRuntime {
     );
   // 拓扑图
 
-  static QueryTopologyGatewayState = (projectId) =>  //查询网关状态
+  static QueryTopologyGatewayState = ({areaId, projectId}) =>  //查询网关状态
   server.post(
-    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?projectId=${projectId}`   
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?areaId=${areaId}&projectId=${projectId}`   
   );
   
   static QueryTopologyGatewayCommports = ({projectId, gatewayId}) =>  //查询网关通道列表

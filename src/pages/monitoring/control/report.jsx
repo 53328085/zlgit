@@ -332,7 +332,7 @@ week.forEach(w => {
           backgroundColor: '#f2f2f2',
           padding: '32px 32px 0 32px'
         }}
-        closable={false}
+        
 
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
