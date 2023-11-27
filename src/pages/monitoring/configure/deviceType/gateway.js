@@ -44,7 +44,7 @@ export default function gateway() {
         title: '网关缩略图',
         dataIndex: 'imageBase64',
         key:'imageBase64',
-        render:(t,r,i)=>(<img src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></img>)
+        render:(t,r,i)=>(<Image src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></Image>)
       },
       {
         title: '已用网关数量',

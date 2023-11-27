@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider ,Image} from 'antd';
 import { useSelector } from 'react-redux'
 import DeviceContent from './devicecomp'
 import Table from '@com/useTable'
@@ -189,7 +189,7 @@ export default function video() {
       render: (text) => {
         
         return (<div >
-          <img src={text.includes(`data:image/`) ? `${text}` : `data:image/jpeg;base64,${text}`} style={{ width: 64, height: 53 }}></img>
+          <Image src={text.includes(`data:image/`) ? `${text}` : `data:image/jpeg;base64,${text}`} style={{ width: 64, height: 53 }}></Image>
         </div>)
       }
     },
