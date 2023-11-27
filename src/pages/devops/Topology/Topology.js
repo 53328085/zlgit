@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react'
 import styled from 'styled-components';
-import {Image, Spin} from 'antd'
+import {Image, Spin, message} from 'antd'
 import {CaretLeftFilled, CaretRightFilled} from '@ant-design/icons'
 import {EnergyFlowRuntime, Monitoring} from "@api/api"
 import Commport from './Commport';
@@ -18,31 +18,44 @@ const Mainbox = styled.div`
   color: #515151;
   font-size: 14px;
   background-color: #fff;
+  .fixed {
+    margin-left: 300px;
+   // height: 298px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .top {
-    position: absolute;
     display: flex;
     align-items: center;
-    height: 88px;
+   // height: 88px;
+    padding-left: 15px;
   }
   .center {
-    position: absolute;
-    top: 88px;
+   
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 210px;
+  //  height: 210px;
     padding-top: 10px;
   }
+  .box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .bottom {
-    position: absolute;
-    top: 308px;
+   /*  position: absolute;
+    top: 308px; */
     border-top: 3px solid #06c;
     display: grid;
-    grid-auto-columns: 128px;
+   // grid-auto-columns: 128px;
+    grid-template-columns: repeat(8, 128px);
     grid-template-rows: 340px;
     grid-auto-flow: column;
-    column-gap: 64px;
-    margin: 0 32px;
+    column-gap: 64px;    
+    width: 1472px;
+    overflow-x: auto;
     .item {
       display: flex;
       flex-direction: column;
@@ -79,10 +92,11 @@ const Mainbox = styled.div`
 `
 const Imgbox = styled.div`
   background-image: url(${props =>props.bg});
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
-   width:${props => props.widht || "90px"} ;
-   height: ${props => props.height || "88px"} ;
+   width:${props => props.w || "90px"} ;
+   height: ${props => props.h || "88px"} ;
+   background-position: center;
    position: relative;
   span {
     position: absolute;
@@ -106,7 +120,7 @@ const LineSty = styled.div`
  
  const Fixed =React.memo(() => {
      return (
-      <div style={{position: "absolute", left: "300px", height: "298px"}}>
+      <div className="fixed">
          <div className='top' >
          <Imgbox  bg={server} ><span>服务器</span></Imgbox>
          <LineSty width="234px" />
@@ -114,7 +128,7 @@ const LineSty = styled.div`
         </div>
        <div className='center' >
         <LineSty height="56px" />
-         <Imgbox  bg={switchboard} ><span>交换机</span></Imgbox>
+         <Imgbox  bg={switchboard} w="128px" h="80px" ><span>交换机</span></Imgbox>
          <LineSty height="56px" />
        </div>
       </div>
@@ -126,9 +140,10 @@ export default function Topology({projectId, areaId}) {
   const [data, setData] = useState([])
   const [iscom, setIscom] = useState(true)
   const count = data.length - 1
-  const [ids, setIds] = useState([])
+  const total = data.length
+  const [ids, setIds] = useState({})
   const [gateway, setGateway] = useState()
-  
+  const [items, setItems] = useState([])
   const getImage = async (data, group)=> {
       
       try {
@@ -170,19 +185,49 @@ export default function Topology({projectId, areaId}) {
  const jumcomm = async (item) => {
     try {
       let {data, success} = await QueryTopologyGatewayCommports({projectId, gatewayId: item.gatewayId})
-      if(success && Array.isArray(data)) {
-        setGateway(item)
-        setIds(data)
+      if(success && data.constructor === Object) {
+        setGateway(item)     
+        setIds({...data})
         setIscom(false)
       }
     } catch (e) {
       console.log(e)
     }
  }
+const  index = useRef(0) // 
+const move =(type) => {
  
+  console.log(index.current)
+  if(type == 1) {
+    let  len = total-index.current
+    if  (len >8 ) {
+      index.current+=8
+    } else {
+      message.warning('最后一屏了')
+    }
+    
+     
+  }else if(type == 2) {
+    let i = index.current - 8
+    if(i >= 0) {
+      index.current-=8;
+    }else {
+      message.warning("已到第一屏")
+    }
+  }
+   
+   items[index.current].scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest',
+    inline: 'start'
+  })
+}
 
-
-
+  useEffect(() => {
+    if(data.length < 1) return;
+    let els =   document.querySelectorAll('.item')
+    setItems(els)
+  }, [data])
 
 
 
@@ -193,23 +238,20 @@ export default function Topology({projectId, areaId}) {
     flex: 1,
     position: "re"
   }
+  const icosty = { 
+    fontSize: "64px",
+    cursor: "pointer",
+    
+  }
   return <>  { 
     iscom ? <TitleLayout> 
     <Mainbox count={count}>
-     {/*   <div className='top' >
-         <Imgbox  bg={server} ><span>服务器</span></Imgbox>
-         <LineSty width="234px" />
-         <Imgbox  bg={workstation} ><span>操作员工作站</span></Imgbox>
-       </div>
-       <div className='center' >
-        <LineSty height="56px" />
-         <Imgbox  bg={switchboard} ><span>交换机</span></Imgbox>
-         <LineSty height="56px" />
-       </div> */}
        <Fixed />
        
-     
+       <div className="box">
+       {total > 8 &&  < CaretLeftFilled style={{...icosty}} onClick={() =>move(1)} />}
        <div className='bottom'>
+        
            {
             data.map((d, index) =>  (
               <div className={index ==0 ? "item first" : index==count ? "item last" : "item"} key={d.sn} onClick={() => jumcomm(d)}>
@@ -225,13 +267,14 @@ export default function Topology({projectId, areaId}) {
             </div>
             ))
            }
-        
+         
        </div>
-      
+       {total > 8 &&  < CaretRightFilled style={{...icosty}} onClick={() => move(2)} />}
+       </div>
         
     </Mainbox>
     </TitleLayout>
-    : <Commport ids={ids} projectId={projectId} gateway={gateway} back={setIscom}/> 
+    : <Commport device={ids} projectId={projectId} gateway={gateway} back={setIscom}/> 
    
   }
    </>
