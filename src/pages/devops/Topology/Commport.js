@@ -221,7 +221,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
 
   }, [device, projectId])
 
-  /* /// 1 离线
+  /* /// 1 离线（2,3以外的状态）
         /// 2 在线
         /// 3 告警 */
   return (
@@ -229,7 +229,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
         <div className='up'>
             <div className='upLeft'>
                 <div className='dotto'><b className='g'></b>&nbsp;正常</div>
-                <div className='dotto'><b className='r'></b>&nbsp;故障</div>
+                <div className='dotto'><b className='r'></b>&nbsp;告警</div>
                 <div className='dotto'><b  className='b'></b>&nbsp;离线</div>
            </div>
            <Button type="primary" onClick={() => back(true)}>返回</Button>
@@ -250,7 +250,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
          <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
-                 <div className={'state '+ ['', 'b', 's', 'r'][d.state] }>{}</div>
+                 <div className={'state '+ ['b', 'b', 's', 'r'][d.state] }>{}</div>
                  <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
               </div>) ) : <Empty />}
          </div>
