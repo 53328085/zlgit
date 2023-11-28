@@ -152,12 +152,13 @@ export default function Index() {
 
   }
   //确认新增
-  const confirmAdd = () => {
+  const confirmAdd = async () => {
     addformRef.current.form.validateFields().then(async (result) => {
       const flag = await addformRef.current.getInsertInspectionPlan()
       if (flag) {
+        addformRef.current.form.resetFields()
         getInspectionPlanPage()
-        addmodalRef.current.onCancel()
+       // addmodalRef.current.onCancel()
       }
     }).catch((e) => {
       console.log(e)
@@ -289,7 +290,7 @@ export default function Index() {
       <div style={{ height: 673, display: 'flex' }}>
         <Table columns={columns} dataSource={tableData} pagination={tableParams} ref={tableRef} onChange={changePage} onExport={onExport}></Table>
       </div>
-      <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} title="新建巡检计划">
+      <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={true} title="新建巡检计划">
         {/* <BlueColumn name="" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} /> */}
         <AddPlan projectId={projectId} ref={addformRef} getQueryProjectMaintenance={getQueryProjectMaintenance} />
       </Modal>
