@@ -71,7 +71,7 @@ const CModal = styled(Modal)`
 } = {}, ref) { 
 
   const [open, setOpen] = useState(false)
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState(true)
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
