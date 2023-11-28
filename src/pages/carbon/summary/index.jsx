@@ -55,7 +55,7 @@ flex: 1;
 display: grid;
 grid-template-areas:"a b c""d d c";
 grid-template-columns:592px 592px 464px;
-grid-template-rows: 320px 319px;
+grid-template-rows: 323px 323px;
 grid-gap: 16px;
 margin-top: 16px;
 .a{
@@ -68,8 +68,7 @@ margin-top: 16px;
   grid-area: c;
   .tableclass{
     margin-top:16px;
-    height:100%;
-    width:100%
+    flex: 1;
   }
 }
 .d{
@@ -80,6 +79,8 @@ margin-top: 16px;
     border-radius:4px;
     padding: 16px;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
     .mgauto{
      margin-left: auto;
      display: flex;
@@ -201,7 +202,7 @@ export default function Index() {
     drawEcharts(columndom2.current,columndata2)
   },[])
   return (
-    <div style={{ flex: 1, display: "flex", justifyContent: 'center', alignContent: 'center' }}>
+    
       <Pagecount bgcolor="#eeeff3" pd={0}>
         <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
           <Form
@@ -290,6 +291,6 @@ export default function Index() {
           
         </Griddiv>
       </Pagecount>
-    </div>
+   
   )
 }
