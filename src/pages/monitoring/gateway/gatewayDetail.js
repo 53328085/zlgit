@@ -2,14 +2,14 @@ import { React, useState,useEffect } from "react";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import {  Pagination,message} from 'antd'
+import {  Pagination,message, Typography} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
 import {Link, useNavigate } from 'react-router-dom'
 import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
  
 import Table from '@com/useTable'
-
+const {Text} = Typography
 export default function GatewayDetail(props) {
     let location = useLocation()
     let qs=require('query-string')
@@ -41,37 +41,57 @@ export default function GatewayDetail(props) {
             dataIndex: 'sn',
             key: 'sn',
             render: (sn) => <Link to={`/deviceDetail?sn=${sn}`} target="_blank"> {sn} </Link>,
-            id: 'id'
+            id: 'id',
+            width: 315
         },
         {
             title: '设备型号',
             dataIndex: 'category',
             key: 'category',
-            id: 'id'
+            id: 'id',
+            width:224
         },
+        {
+          title: '设备状态',
+          dataIndex: 'state',
+          key: 'state',
+          id: 'id',
+          width:150,
+          render: (state) =>  {
+            if(isNaN(state)) return 
+            let text = ['离线','离线', '正常', '告警']
+            let s = state > 3 ? 1 : state
+            let type = ['secondary','secondary', 'success', 'danger'][s]
+            return <Text type={type}>{text[s]}</Text>
+          }
+       },
         {
             title: '安装地址',
             dataIndex: 'address',
             key: 'address',
-            id: 'id'
+            id: 'id',
+            width: 288,
         },
         {
             title: '通信地址',
             dataIndex: 'commAddressName',
             key: 'commAddressName',
-            id: 'id'
+            id: 'id',
+            width: 150
         },
         {
             title: '通信端口',
             dataIndex: 'commPortName',
             key: 'commPort',
-            id: 'id'
+            id: 'id',
+            width: 150,
         },
         {
             title: '通信协议',
             dataIndex: 'commProtocolName',
             key: 'commProtocol',
-            id: 'id'
+            id: 'id',
+          //  width: 258
         },
     ];
     const columnsLog = [
@@ -79,18 +99,21 @@ export default function GatewayDetail(props) {
             title: '操作时间',
             dataIndex: 'time',
             key: 'sn',
-            id: 'id'
+            id: 'id',
+            width: 510
         },
         {
             title: '操作日志',
             dataIndex: 'content',
             key: 'category',
-            id: 'id'
+            id: 'id',
+            width: 510,
         },{
           title: '操作者',
           dataIndex: 'creator',
           key: 'sn',
-          id: 'id'
+          id: 'id',
+         
       },
     ];
     let [dataSource, setdataSource] = useState([])
@@ -198,11 +221,16 @@ export default function GatewayDetail(props) {
                     <div className={style.tableBox}>
                         {state ?
                             <div>
-                                <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ></Table>
+                                <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id}  
+                                scroll={{
+                                        y: 668
+                                      }} ></Table>
                             <Pagination className={style.pageNumD} size="small" current={page} total={total}  defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>
                             </div>
                             : <div>
-                                <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} ></Table>
+                                <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id}  scroll={{
+                                        y: 668
+                                      }}></Table>
                                 <Pagination className={style.pageNumD} size="small" current={pageLog} total={totalLog}  defaultPageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                             </div>}
                             
