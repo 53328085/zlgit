@@ -130,15 +130,18 @@ export default function Electric() {
   let columns = [
     {
       title: '设备型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      align:'center'
     },
     {
       title: '设备厂家',
-      dataIndex: 'manufacturer'
+      dataIndex: 'manufacturer',
+      align:'center'
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
+      align:'center',
       render: (text) => {
         return (<Image src={text} width={64} height={53}></Image>)
 
@@ -146,12 +149,14 @@ export default function Electric() {
     },
     {
       title: '当前设备数量',
-      dataIndex: 'cnt'
+      dataIndex: 'cnt',
+      align:'center'
     },
     {
       title: '操作',
       dataIndex: 'options',
       export:false,
+      align:'center',
       render: (text, record) => {
         return (
           <div style={{display:'flex'}}>
@@ -481,7 +486,7 @@ export default function Electric() {
     onOk: delOK,
   }
   const EditComp=useMemo(()=>{
-    return (<Modal mold='cust' title="编辑电表类型" {...editModalProps} footer={[
+    return (<Modal mold='cust' title="编辑电表类型"  {...editModalProps} footer={[
       <Button onClick={EditModalRef.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSureEditModal}>应用</Button>,

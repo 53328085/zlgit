@@ -38,24 +38,28 @@ export default function gateway() {
     {
         title: '网关型号',
         dataIndex: 'category',
-        key:'category'
+        key:'category',
+        align:'center',
       },
       {
         title: '网关缩略图',
         dataIndex: 'imageBase64',
         key:'imageBase64',
+        align:'center',
         render:(t,r,i)=>(<Image src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></Image>)
       },
       {
         title: '已用网关数量',
         dataIndex: 'cnt',
-        key:'cnt'
+        key:'cnt',
+        align:'center',
       },
       {
         title: '操作',
         dataIndex: 'options',
         key:'options',
-        export:false
+        export:false,
+        align:'center',
       },
 ] 
   if(publish){
@@ -331,7 +335,7 @@ export default function gateway() {
   },[])
   const EditModalComp=useMemo(()=>{
     return (
-      <Modal mold='cust' ref={EditModalRef} title="编辑网关类型" {...editModal}  footer={[
+      <Modal mold='cust' ref={EditModalRef}  title="编辑网关类型" {...editModal}  footer={[
         <Button onClick={()=>{ EditModalRef.current.onCancel()}}>取消</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={editOk}>保存</Button>,
         <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,

@@ -177,15 +177,18 @@ export default function video() {
   let columns = [
     {
       title: '监控设备厂家',
-      dataIndex: 'manufacturer'
+      dataIndex: 'manufacturer',
+      align:'center',
     },
     {
       title: '监控设备型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      align:'center',
     },
     {
       title: '视频监控缩略图',
       dataIndex: 'imageBase64',
+      align:'center',
       render: (text) => {
         
         return (<div >
@@ -195,12 +198,14 @@ export default function video() {
     },
     {
       title: '已用监控数量',
-      dataIndex: 'cnt'
+      dataIndex: 'cnt',
+      align:'center',
     },
     {
       title: '操作',
       dataIndex: 'options',
       export:false,
+      align:'center',
       render: (text, record) => {
         return (
           <div>
@@ -342,7 +347,7 @@ export default function video() {
   }
  
   const EditModalComp=useMemo(()=>{
-    return ( <Modal mold='cust' {...editModalProps} title="编辑视频监控类型" footer={[
+    return ( <Modal mold='cust'  {...editModalProps} title="编辑视频监控类型" footer={[
       <Button onClick={()=>{EditModalRef.current?.onCancel()}}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEdit}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 

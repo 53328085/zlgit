@@ -53,7 +53,7 @@ export default function DeviceContent(props,ref) {
     width,
   }
   const AddModalComp=useMemo(()=>{
-    return ( <Modal ref={ModalRef} mold='cust' title={name} {...modalProps} footer={[
+    return ( <Modal ref={ModalRef} mold='cust' title={name}  {...modalProps} footer={[
       <Button onClick={onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
@@ -94,14 +94,7 @@ export default function DeviceContent(props,ref) {
           {other.children}
       </div>
         {AddModalComp}
-    {/* <Modal ref={ModalRef} mold='cust' {...modalProps} footer={[
-      <Button onClick={onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSure}>应用</Button>,
-  ]}>
-      <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn>
-      <AddModal form={form} ref={addformRef}/>
-  </Modal> */}
+
     </div>
   )
 }

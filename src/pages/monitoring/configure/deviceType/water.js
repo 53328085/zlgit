@@ -127,15 +127,18 @@ export default function Electric() {
   let columns = [
     {
       title: '设备型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      align:'center',
     },
     {
       title: '设备厂家',
-      dataIndex: 'manufacturer'
+      dataIndex: 'manufacturer',
+      align:'center',
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
+      align:'center',
       render: (text) => {
         return (<Image src={text} width={64} height={53}></Image>)
 
@@ -143,12 +146,14 @@ export default function Electric() {
     },
     {
       title: '当前设备数量',
-      dataIndex: 'cnt'
+      dataIndex: 'cnt',
+      align:'center',
     },
     {
       title: '操作',
       dataIndex: 'options',
       export:false,
+      align:'center',
       render: (text, record) => {
         return (
           <div>
