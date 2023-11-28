@@ -286,7 +286,8 @@ export default function Electric() {
           dataUnit: item.unit,
           isSave: item.isSave,
           watchPoint: item.isRuningPoint,
-          dataOrder: item.secquence
+          dataOrder: item.secquence,
+          category:data.category
         }))
         updateTableRef.current = lodash.cloneDeep(arr)
         if (foRef.current) {
@@ -370,6 +371,7 @@ export default function Electric() {
   }
   //确认新增应用
   const onSure=async()=>{
+    console.log(foRef.current)
   const result= foRef.current?.choosemes()
    if(!result){
     message.warning('请至少选择一项标记检测运行点！')

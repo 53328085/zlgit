@@ -276,7 +276,8 @@ if(publish){
         dataUnit: item.unit,
         isSave: item.isSave,
         watchPoint: item.isRuningPoint,
-        dataOrder: item.secquence
+        dataOrder: item.secquence,
+        category:data.category
       }))
       
       console.log(foRef, arr,lodash.cloneDeep(arr)===arr)

@@ -259,7 +259,7 @@ export default function video() {
     const resp = await DeviceQueryCategoryFull(params)
     if (resp.success) {
       AddModalForm.setFieldsValue({
-        ...resp.data
+        ...resp.data,
       })
     }
   }

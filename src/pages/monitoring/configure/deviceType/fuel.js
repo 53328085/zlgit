@@ -291,7 +291,8 @@ const onSureEditModal=async()=>{
         dataUnit: item.unit,
         isSave: item.isSave,
         watchPoint: item.isRuningPoint,
-        dataOrder: item.secquence
+        dataOrder: item.secquence,
+        category:data.category
       }))
       
       updateTableRef.current = lodash.cloneDeep(arr)
