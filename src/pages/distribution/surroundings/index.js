@@ -154,7 +154,7 @@ export default function Index() {
 },[humidness,temperature] )
   return (
     <div>
-       <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+       <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
           <Form
             form={form}
             colon={false}

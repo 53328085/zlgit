@@ -11,6 +11,7 @@ import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
+import Titlelayout from '@com/titlelayout'
 import Sankey from "./Sankey";
 
 
@@ -37,14 +38,7 @@ export default function Index() {
   const [op, setOp] = useState(0)  
   const picker= ['', 'date', 'month', 'year'][timetype];
  
-  const [value, setvalue] = useState('Sankey')
-  
-  const tabs = [
-   /*  {label: '项目基础设置', key: 'set'}, */
-    {label: '能源流向', key: 'Sankey'},
-    {label: '能源拓扑图', key: 'Topology'},
-    
-  ]
+ 
  
   const getData = async () => {
     
@@ -73,8 +67,8 @@ export default function Index() {
   }
  
   useEffect(() => {
-    if(value == "Sankey") getData()
-  }, [value, op])
+    getData()
+  }, [op])
  
  
  
@@ -140,20 +134,18 @@ export default function Index() {
   const propsData = {
     form,
     custview: <CustView />,
-    tabs,
-    handler: getData,
-    value,
-    setvalue,
+   
   }
  
 
     return (
       <CustContext.Provider value={propsData}>
-      <Pagecount showserach={true} pd="32px">   
-      
-        {
-          value =="Sankey" ? <Sankey data={data} key={areaId}  /> : <Navigate to="/index/runtimeMaintenance/chart"  />
-        }
+      <Pagecount showserach={true} pd="0px">   
+      <Titlelayout title="能源流向" layout="flex">
+          <div style={{display: 'flex', flex:1, alignItems: 'center',justifyContent: 'center'}}>
+          <Sankey data={data} key={areaId}  />  
+          </div>
+       </Titlelayout>
       </Pagecount>
       </CustContext.Provider>
     )

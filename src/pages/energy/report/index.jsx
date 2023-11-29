@@ -10,7 +10,7 @@ import { Form, message, Select, Space, DatePicker, Button, Divider } from 'antd'
 import moment from 'moment'
 import styled from 'styled-components'
 import {energyReport} from '@api/api'
-import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {selectProjectId,  selectOneLevelDefaultId,levelDefaultLabel} from '@redux/systemconfig.js'
 import {  ExportExcel} from '@com/useButton'
 const {
   QueryByArea, 
@@ -85,7 +85,7 @@ const cols =[ // 实时抄表
   },
 ]
 
-const conscols =[ // 能耗抄表
+let conscols =[ // 能耗抄表
 {
   title: '名称',
   dataIndex: 'nodeName', 
@@ -213,9 +213,13 @@ const typecols =[  // 分类能耗
 
 export default function Index() {
   const areaId = useSelector(selectOneLevelDefaultId)
+  const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState([])
+  conscols[0].title = levelname
+  cols[0].title = levelname
+  timecols[0].title = levelname
   const [concolumns, setConcolumns] = useState(conscols) 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
@@ -368,7 +372,7 @@ export default function Index() {
           <Mainbox>
           <UserSearch></UserSearch>
 
-          <Pagecount showSearch={false}>
+          <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
                 <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
                 {

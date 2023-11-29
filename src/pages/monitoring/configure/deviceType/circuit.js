@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,use
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
@@ -16,13 +16,13 @@ export default function Electric() {
   const {value, tabs} =useContext(cusContext) 
   
   const deviceStyle = parseInt(value)
-  
-  const Label = tabs.find(item =>{
-    if(item&&item.key){
-     return item.key == value?.label || '' ;
-    }
-    return ''
-  })
+  const Label ="断路器类型"
+  // const Label = tabs.find(item =>{
+  //   if(item&&item.key){
+  //    return item.key == value?.label || '' ;
+  //   }
+  //   return ''
+  // })
 
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource,setTableDataSource]=useState([])//主页表格数据
@@ -139,28 +139,33 @@ const editOption=(record)=>{
 let columns =  [
     {
         title:'设备型号',
-        dataIndex: 'category'
+        dataIndex: 'category',
+        align:'center'
     },
     {
         title:'设备厂家',
-        dataIndex: 'manufacturer'
+        dataIndex: 'manufacturer',
+        align:'center'
     },
     {
         title:'设备缩略图',
         dataIndex: 'imageBase64',
+        align:'center',
         render:(text)=>{
-          return( <img src={text} width={64} height={53}></img>)
+          return( <Image src={text} width={64} height={53}></Image>)
          
         }
     },
     {
         title:'当前设备数量',
-        dataIndex: 'cnt'
+        dataIndex: 'cnt',
+        align:'center'
     },
     {
         title:'操作',
         dataIndex: 'options',
         export:false,
+        align:'center',
         render:(text,record)=>{
           return(
             <div>
@@ -291,7 +296,8 @@ const onSureEditModal=async()=>{
         dataUnit: item.unit,
         isSave: item.isSave,
         watchPoint: item.isRuningPoint,
-        dataOrder: item.secquence
+        dataOrder: item.secquence,
+        category:data.category
       }))
       
       updateTableRef.current = lodash.cloneDeep(arr)
@@ -476,7 +482,7 @@ const onSureEditModal=async()=>{
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return (<Modal title={`编辑${Label}`}  mold='cust' {...editModalProps} footer={[
+    return (<Modal title={`编辑${Label}`}   mold='cust' {...editModalProps} footer={[
       <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 

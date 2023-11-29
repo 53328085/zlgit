@@ -128,7 +128,7 @@ export default  memo(({onSubmit})=> {
           />
         </Itembox>
        <Itembox
-          name="time" 
+          name="span" 
         >
           <Logselect
              url={imgurl.time}

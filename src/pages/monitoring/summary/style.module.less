@@ -17,19 +17,20 @@
     margin-top: 10px;
     height: 264px;
     display: grid;
-    grid-template-columns: repeat(4,425px);
-    grid-template-rows: repeat(2,140px);
+    grid-template-columns: repeat(4,404px);
+    grid-template-rows: repeat(2,124px);
+    gap: 16px 21px;
     // display: flex;
     // flex-wrap: wrap;
     // justify-content: space-between;
     // align-items: flex-end;
     .cardItem{
-        width: 404px;
-        height: 124px;
+     //   width: 404px;
+      //  height: 124px;
         background-color: #fff;
         border: 1px solid rgb(215, 215, 215);
         border-radius: 4px;
-        margin-right: 16px;
+      //  margin-right: 16px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -125,17 +126,21 @@
     }
 }
 .content{
-    width: 1682px;
+    width: 1680px;
     margin-top: 16px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+     grid-template-columns: 1fr 1fr;
+     column-gap: 16px;
+     grid-template-rows: 513px;
     .contentLeft{
         margin-bottom: 16px;
-        width: 548px;
-        height: 513px;
+     //   width: 548px;
+      //  height: 513px;
         background-color: #fff;
         border: 1px solid rgb(215, 215, 215);
         border-radius: 4px;
+        display: flex;
+        flex-direction: column;
         .pieTitle{
             margin: 16px;
             padding-left: 16px;

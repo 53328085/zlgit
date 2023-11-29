@@ -441,10 +441,7 @@ export default function Index() {
          是否确认删除班次方案？ 
       </Custmodl>
       {/* 编辑 */}
-      <Modal className={style.addModal} open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} >
-        <div className={style.addHeader}>编辑班次</div>
-        <div className={style.addBody}>
-          <div style={{display:"flex", alignItems: "center"}}>
+      <Custmodl  title="编辑班次" open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530}  closable={false} mold="cust" >
             <Form name='editform' labelCol={{span:4}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off'>
               <Item label='班次1名称' name='className1' rules={[{required:true, message:'班次名称不能为空'}]}>
                 <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
@@ -497,9 +494,7 @@ export default function Index() {
                 <img src={dashed} style={{width:'100%'}}></img> 
                 </> : null }
             </Form>
-          </div>
-        </div>
-      </Modal>
+      </Custmodl>
     </div>
   )
 }

@@ -290,7 +290,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   }
  //   级联选择 end
   const del = (record) => {
-    setRecord({ ...Record, ...record });
+    setRecord({...record});
     dref.current.onOpen();
   };
   const delOk = async () => {
@@ -410,7 +410,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 
   const onOk = async () => {
     // 新增、编辑
-
+     console.log(Record)
     try {
       let values = await nform.validateFields();
       console.log(values)
@@ -465,7 +465,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   };
   
   const edit = (record) => {
-     
+    console.log(record)
     let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
     if(Array.isArray(lngLat) && lngLat.length > 0) {
        for(let name of lngLat) {
@@ -478,7 +478,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
        }
     }
     setIsAdd(false);
-    setRecord({ ...Record, ...record });
+    setRecord({...record});
     let { 名称, 备注, areaId, parentId,...keys } = record;
      
     nform.setFieldsValue({
@@ -571,81 +571,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
       })
    
   }
-
-const addmodal = useMemo(()=> <CModal
-width={islngLat ? 1024 : 554}
-title={title}
-ref={nref}
-onOk={onOk}
-custft={isAdd}
-mold="cust"
->
-<Formbox
-  islngLat={islngLat}
-  rowes={limitlevle.length + 2 + fields.length}
-  form={nform}
-  size="middle"
-  labelCol={{ flex: "7em" }}
-  labelAlign="left"
-  preserve={false}
-  validateMessages={{
-    required: "'${label}' 是必选字段",
-  }}
->
-  {isAdd
-    ?  
-      
-     level > 1 && <CascaderSct /> 
-    : limitlevle?.map((lv, index, array) => {
-        return (
-          <Item label={`${lv?.name}名称`} name={lv?.name}>
-            <Input disabled={!isAdd} />
-          </Item>
-        );
-      })}
-
-  <Item
-    label={`${name}名称`}
-    name="name"
-    rules={[
-      {
-        required: true,
-      },
-    ]}
-  >
-    <Input />
-  </Item>
-
-  {fields?.map((f, index) => inputType(f.name, f.type))}
-  <Item
-    label="备注"
-    name="remark"
-  >
-    <Input />
-  </Item>
-  {islngLat && (
-    <>
-      <Item
-        label="地址"
-        className="address"
-        name="address"
-        tooltip="请从地图获取地址"
-      >
-        <Input
-          placeholder="请从地图获取地址"
-          allowClear
-          onChange={(e) => mapref.current.serachMap(e.target.value)}
-          value={address.current}
-        />
-      </Item>
-      <div className="map">
-        <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
-      </div>
-    </>
-  )}
-</Formbox>
-</CModal>, [islngLat, isAdd,  title])
-
+ 
  useEffect(() => {
       getTableData()
     
@@ -720,7 +646,79 @@ mold="cust"
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
  
       {/* 新增 / 编辑*/}
-      {addmodal}
+      <CModal
+width={islngLat ? 1024 : 554}
+title={title}
+ref={nref}
+onOk={onOk}
+custft={isAdd}
+mold="cust"
+>
+<Formbox
+  islngLat={islngLat}
+  rowes={limitlevle.length + 2 + fields.length}
+  form={nform}
+  size="middle"
+  labelCol={{ flex: "7em" }}
+  labelAlign="left"
+  preserve={false}
+  validateMessages={{
+    required: "'${label}' 是必选字段",
+  }}
+>
+  {isAdd
+    ?  
+      
+     level > 1 && <CascaderSct /> 
+    : limitlevle?.map((lv, index, array) => {
+        return (
+          <Item label={`${lv?.name}名称`} name={lv?.name}>
+            <Input disabled={!isAdd} />
+          </Item>
+        );
+      })}
+
+  <Item
+    label={`${name}名称`}
+    name="name"
+    rules={[
+      {
+        required: true,
+      },
+    ]}
+  >
+    <Input />
+  </Item>
+
+  {fields?.map((f, index) => inputType(f.name, f.type))}
+  <Item
+    label="备注"
+    name="remark"
+  >
+    <Input />
+  </Item>
+  {islngLat && (
+    <>
+      <Item
+        label="地址"
+        className="address"
+        name="address"
+        tooltip="请从地图获取地址"
+      >
+        <Input
+          placeholder="请从地图获取地址"
+          allowClear
+          onChange={(e) => mapref.current.serachMap(e.target.value)}
+          value={address.current}
+        />
+      </Item>
+      <div className="map">
+        <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
+      </div>
+    </>
+  )}
+</Formbox>
+</CModal>
       {/* 删除 */}
       <CModal
         width={554}

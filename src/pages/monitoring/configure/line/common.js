@@ -594,7 +594,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
             return
         }
         const filterarr = copydataSource.filter(it => {
-            return (it.sn.includes(value) || it.address.includes(value))
+            return (it.sn.includes(value) || it.name.includes(value) || it.address.includes(value))
         })
 
         setDataSource([...filterarr])

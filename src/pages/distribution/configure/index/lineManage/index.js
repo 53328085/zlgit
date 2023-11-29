@@ -7,9 +7,9 @@ import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
-
+import CModal from '@com/useModal'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
+
 
 export default function Index() {
   const isPublish = useSelector(publishState)
@@ -34,6 +34,7 @@ export default function Index() {
   const handleChange = (values) => {
     setAreaId(values)
   }
+  const addref = useRef();
   //配电房下拉框
   const [roomList, setRoomList] = useState([])
   const [defaultRoom, setDefaultRoom] = useState()
@@ -111,21 +112,24 @@ export default function Index() {
     setModalTitle('新增线路')
     setAddModal(true)
     setClickTag('addMain')
-    form.resetFields();
+     addref.current.onOpen()
   }
   const addSon = (record) => {
     setModalTitle('新增线路')
     setAddModal(true)
+    
     setClickTag('addSub')
     setSubId(record)
-    form.resetFields();
+    addref.current.onOpen()
+    
   }
   const edit = (id, name) => {
     setModalTitle('编辑线路')
-    setAddModal(true)
+    setAddModal(false)
     setClickTag('edit')
     setSubId(id)
     form.setFieldValue('name', name)
+    addref.current.onOpen()
   }
   const addOk = async () => {
     try {
@@ -141,6 +145,7 @@ export default function Index() {
           if(res.success){
             messageContent('success', '线路名称修改成功!')
             lineQuery()
+            addref.current.onCancel();
           }else{
             messageContent('error', res.errMsg)
           }
@@ -154,14 +159,15 @@ export default function Index() {
         addLine(params).then(res=> {
           if(res.success){
             messageContent('success', '新增线路成功！')
+            form.resetFields()
             lineQuery()
           }else{
             messageContent('error', res.errMsg)
           }
         })
       }
-      form.resetFields()
-      setAddModal(false)
+      
+     
     }catch(errorInfo){}
   }
   const handleCancel = () => {
@@ -403,23 +409,18 @@ export default function Index() {
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
           <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
-        <Modal className={style.addModal} open={addModal} onOk={addOk} onCancel={handleCancel} width={592} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} >
-        <div className={style.addHeader}>{ modalTitle }</div>
-        <div className={style.addBody}>
-          <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+        <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal}  >
+       
+          <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
             <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
           </Form>
-        </div>
-        </Modal>
-        <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
-            <div className={style.deleteHeader}>删除提示</div>
-            <div className={style.deleteBody}>
-            <img className={style.warnIcon} src={firstwarn}></img>
-            <span>是否确认删除选中线路？</span>
-            </div>
-        </Modal>
+         
+        </CModal>
+        <CModal  title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} mold="cust" type="warn">
+           是否确认删除选中线路？
+        </CModal>
       </div>
     </div>
   )

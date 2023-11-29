@@ -18,7 +18,7 @@ export class Login {
   static GetVerification = (mobile) =>
     server.post(`/General/User/GetCode?mobile=${mobile}`); // 获取验证吗
   static LoginByPhone = (data = {}) =>
-    server.post(`/General/User/LoginByCode?mobile=${data.mobile}&code=${data.code}`); // 根据手机号登录
+    server.post(`/General/User/LoginByCode?mobile=${data.mobile}&code=${data.code}&span=${data.span}`); // 根据手机号登录
   static GetMenuByRoleType = (params = {}) =>
     server.get("/Project/GetMenuByRoleType", { params }); // 根据登录人查询项目和侧边栏
   static SystemQueryLoginConfigInfo = (data = {}) =>
@@ -1787,9 +1787,9 @@ export class EnergyFlowRuntime {
     );
   // 拓扑图
 
-  static QueryTopologyGatewayState = (projectId) =>  //查询网关状态
+  static QueryTopologyGatewayState = ({areaId, projectId}) =>  //查询网关状态
   server.post(
-    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?projectId=${projectId}`   
+    `Energy/EnergyFlowRuntime/QueryTopologyGatewayState?areaId=${areaId}&projectId=${projectId}`   
   );
   
   static QueryTopologyGatewayCommports = ({projectId, gatewayId}) =>  //查询网关通道列表

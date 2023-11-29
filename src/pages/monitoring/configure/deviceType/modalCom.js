@@ -63,15 +63,14 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     const {updateTableRef} =useContext(cusContext)
  
     const [pointSource, setPointSource] = useState([...defaultTableData])
-    console.log(updateTableRef,pointSource)
-    console.log('pointSource更新了')
+    // console.log(updateTableRef,pointSource)
+    console.log('pointSource更新了',pointSource)
     const tableDataRef =useRef()
-    tableDataRef.current=[...pointSource]
     let checedList=[]
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-    
+   
     const choosemes =()=>{
       let count =0;
       tableDataRef.current?.forEach(it=>{
@@ -83,41 +82,45 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
       }
       return  tableDataRef.current
     }
-  
-   useEffect(()=>{
-    console.log(updateTableRef)
-    setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
-   },[JSON.stringify(updateTableRef)])
     const columns = [
       {
         title: '序号',
         key: 'index',
-        dataIndex: 'index'
+        dataIndex: 'index',
+        align: 'center'  
       },
       {
         title: '数据标识',
         key: 'dataMark',
-        dataIndex: 'dataMark'
+        dataIndex: 'dataMark',
+        align: 'center'  
       },
       {
         title: '数据名称',
         key: 'dataName',
-        dataIndex: 'dataName'
+        dataIndex: 'dataName',
+        align: 'center'  
       },
       {
         title: '数据单位',
         key: 'dataUnit',
-        dataIndex: 'dataUnit'
+        dataIndex: 'dataUnit',
+        align: 'center'  
       },
       {
         title: '是否存储',
         key: 'isSave',
         dataIndex: 'isSave',
         width:118,
+        align: 'center',
         // shouldCellUpdate:()=>true,
-        render: (_, v, index) => {
+        render: (_, record, index) => {
           return (
-            <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
+            <Switch 
+            key={record.category}
+            checkedChildren="存储" 
+            unCheckedChildren="不存储" 
+            defaultChecked={_}
               onChange={(o) => {
                 let arr =[...pointSource]
                 arr.forEach((it, index) => {
@@ -137,21 +140,27 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         key: 'watchPoint',
         dataIndex: 'watchPoint',
         width: 160,
-        shouldCellUpdate: (r, o) => { },
+        align: 'center' ,
         render: (t, record, index) => {
+      
           return (
-            <Switch
+            <>
+             <Switch
+              key={record.category}
               checkedChildren="标记"
               unCheckedChildren="不标记"
-              defaultChecked={t}
+              // defaultChecked={t}
               disabled={siwtched.length>3&&!siwtched.includes(record.index)}
               onChange={(o) => {
-                pointSource.forEach((it, i) => {
+                // const list = structuredClone(pointSource)
+                console.log('onchange',o)
+                tableDataRef.current.forEach((it, i) => {
                   if (it.index === record.index) {
                     it.watchPoint = o
                   }
                 })
-                setPointSource([...pointSource])
+                // console.log(index,o)
+                // setPointSource(list)
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
@@ -160,6 +169,8 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
                 }
               }}
             />
+            </>
+           
           )
         }
   
@@ -168,11 +179,22 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         title: '数据显示顺序',
         key: 'dataOrder',
         dataIndex: 'dataOrder',
+        align: 'center'  ,
         render: (text, record, i) => {
           return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource}></Count>
         }
       },
     ]
+  //  useEffect(()=>{
+
+  //   setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
+  //  },[JSON.stringify(updateTableRef)])
+   useEffect(()=>{
+    tableDataRef.current=structuredClone(pointSource)
+    console.log('pointSource变化了',pointSource)
+ 
+   },[pointSource])
+   
     
     useImperativeHandle(ref, () => ({
       setSwitched,
@@ -209,10 +231,6 @@ export let AddModal = forwardRef(
         getDeviceQueryCategoryFull(option)
         tableRef.current.setTableParams({ current: 1, pageSize: 10 })
       }
-  
-
-
-
       useImperativeHandle(ref, () => ({
         pointSource: tableRef.current.pointSource,
         setPointSource: tableRef.current.setPointSource,
@@ -322,29 +340,33 @@ export let AddModal = forwardRef(
       {
         title: '序号',
         key: 'index',
-        dataIndex: 'index'
+        dataIndex: 'index',
+        align: 'center' 
       },
       {
         title: '数据标识',
         key: 'dataMark',
-        dataIndex: 'dataMark'
+        dataIndex: 'dataMark',
+        align: 'center' 
       },
       {
         title: '数据名称',
         key: 'dataName',
-        dataIndex: 'dataName'
+        dataIndex: 'dataName',
+        align: 'center' 
       },
       {
         title: '数据单位',
         key: 'dataUnit',
-        dataIndex: 'dataUnit'
+        dataIndex: 'dataUnit',
+        align: 'center' 
       },
       {
         title: '是否存储',
         key: 'isSave',
         dataIndex: 'isSave',
         width:118,
-        // shouldCellUpdate:()=>true,
+        align: 'center' ,
         render: (_, v, index) => {
           return (
             <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
@@ -367,7 +389,7 @@ export let AddModal = forwardRef(
         key: 'watchPoint',
         dataIndex: 'watchPoint',
         width: 160,
-        shouldCellUpdate: (r, o) => { },
+        align: 'center' ,
         render: (t, record, index) => {
           return (
             <Switch
@@ -376,12 +398,13 @@ export let AddModal = forwardRef(
               defaultChecked={t}
               disabled={siwtched.length>3&&!siwtched.includes(record.index)}
               onChange={(o) => {
-                pointSource.forEach((it, i) => {
+                const list = structuredClone(pointSource)
+                list.forEach((it, i) => {
                   if (it.index === record.index) {
                     it.watchPoint = o
                   }
                 })
-                setPointSource([...pointSource])
+                setPointSource(list)
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
@@ -398,6 +421,7 @@ export let AddModal = forwardRef(
         title: '数据显示顺序',
         key: 'dataOrder',
         dataIndex: 'dataOrder',
+        align: 'center' ,
         render: (text, record, i) => {
           return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource}></Count>
         }

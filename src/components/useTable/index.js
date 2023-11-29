@@ -13,6 +13,7 @@ flex-direction: column;
 justify-content: space-between;
 `
 const Tablecom = styled(Table)`
+&& {
 display: flex;
 flex:1;
 flex-direction: column;
@@ -21,6 +22,8 @@ flex-direction: column;
   flex:1;
   flex-direction: column;
   justify-content: space-between;
+}
+ 
 }
 `
  function Index(props, ref) { 

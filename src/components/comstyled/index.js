@@ -14,6 +14,7 @@ export const Ipticon = styled.span`
   
   background-size: 32px 32px;
   transition: all 0.3s;
+  overflow: hidden;
 `;
 const normal = css`
     background-color: transparent !important; // 背景色透明

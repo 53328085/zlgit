@@ -10,8 +10,8 @@ import { distributionRoom, DistributionMeter } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
-
+ 
+import CModal from '@com/useModal'
 export default function Index() {
   const tableRef = useRef()
   const { queryPageRoom } = distributionRoom
@@ -360,13 +360,10 @@ export default function Index() {
         <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
       <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
-      <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
-        <div className={style.deleteHeader}>删除提示</div>
-        <div className={style.deleteBody}>
-          <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认在该配电房中删除该传感器？</span>
-        </div>
-      </Modal>
+      <CModal title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} maskClosable={false} mold="cust" type="warn">
+         是否确认在该配电房中删除该传感器？ 
+       
+      </CModal>
       </div>
     </div>
   )

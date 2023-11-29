@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Select, Button, Table, Space, Form, Input, Modal,message } from 'antd';
+import { Select, Button, Table, Space, Form, Input, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
@@ -8,7 +8,7 @@ import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
-
+import Custmodal from '@com/useModal'
 export default function Index() {
   const isPublish = useSelector(publishState)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom } = distributionRoom
@@ -157,9 +157,11 @@ export default function Index() {
       return;
     }
     setModalTitle('新增配电房')
-    setAddModal(true)
-    form.resetFields();
+    ref.current.onOpen()
+   //  setAddModal(true)
+    // form.resetFields();
   }
+  const ref = useRef()
   const addOk = async () => {
     try {
       const values = await form.validateFields();
@@ -180,6 +182,7 @@ export default function Index() {
               type:'success',
               content:'配电房新增成功！',
             })
+            form.resetFields()
             queryRoom()
           }else{
             messageApi.open({
@@ -196,6 +199,7 @@ export default function Index() {
               type:'success',
               content:'配电房编辑成功！',
             })
+            ref.current.onCancel();
             queryRoom()
           }else{
             messageApi.open({
@@ -206,18 +210,22 @@ export default function Index() {
         })
       }
       // form.resetFields()
-      setAddModal(false)
-    }catch(errorInfo){}
+       //  setAddModal(false)
+    }catch(errorInfo){
+      console.log(errorInfo)
+    }
   }
   const handleCancel = () => {
+    console.log(111)
     setAddModal(false)
   }
   const [editId, setEditId] = useState()
   const edit = (record) => {
     setEditId(record.id)
+    ref.current.onOpen()
     setModalTitle('编辑配电房')
-    setAddModal(true)
-    console.log(record);
+   // setAddModal(true)
+    //console.log(record);
     form.setFieldsValue(record)
   }
 
@@ -306,10 +314,10 @@ export default function Index() {
         </div>
         { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
-      <Modal className={style.addModal} open={addModal} onOk={addOk} onCancel={handleCancel} width={592} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'保存'} okType={'primary'} >
-        <div className={style.addHeader}>{ modalTitle }</div>
+      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  onOk={addOk} width={592} mold="cust" ref={ref}>
+        
         <div className={style.addBody}>
-          <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+          <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>
             <Item label='配电房名称' name='name' rules={[{required:true, message:'请输入配电房名称'}]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
@@ -330,14 +338,13 @@ export default function Index() {
             </Item>
           </Form>
         </div>
-      </Modal>
-      <Modal className={style.deleteModal} open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} okButtonProps={{danger:true}}>
-        <div className={style.deleteHeader}>删除提示</div>
-        <div className={style.deleteBody}>
-          <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认删除配电房？</span>
-        </div>
-      </Modal>
+      </Custmodal>
+      <Custmodal title="删除提示" mold="cust" type="warn" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'}>
+        
+       
+          是否确认删除配电房？ 
+         
+      </Custmodal>
       </div>
     </div>
   )

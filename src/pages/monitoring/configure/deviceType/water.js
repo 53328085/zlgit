@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,use
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
@@ -127,28 +127,33 @@ export default function Electric() {
   let columns = [
     {
       title: '设备型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      align:'center',
     },
     {
       title: '设备厂家',
-      dataIndex: 'manufacturer'
+      dataIndex: 'manufacturer',
+      align:'center',
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
+      align:'center',
       render: (text) => {
-        return (<img src={text} width={64} height={53}></img>)
+        return (<Image src={text} width={64} height={53}></Image>)
 
       }
     },
     {
       title: '当前设备数量',
-      dataIndex: 'cnt'
+      dataIndex: 'cnt',
+      align:'center',
     },
     {
       title: '操作',
       dataIndex: 'options',
       export:false,
+      align:'center',
       render: (text, record) => {
         return (
           <div>
@@ -277,7 +282,8 @@ export default function Electric() {
         dataUnit: item.unit,
         isSave: item.isSave,
         watchPoint: item.isRuningPoint,
-        dataOrder: item.secquence
+        dataOrder: item.secquence,
+        category:data.category
       }))
 
       updateTableRef.current = lodash.cloneDeep(arr)

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
 import Modal from '@com/useModal'
 import style from './style.module.less'
-import WarningPng from '@imgs/warning.png'
+
 import { operationDesigin } from '@api/api'
 const DropstartDiv = styled.div`
  .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
@@ -124,7 +124,7 @@ export default function Index() {
     tablesource: []
   })
   //新增检查项
-  const addItems = () => {
+  const addItems = async () => {
     addform.validateFields().then(async () => {
       const add = addform.getFieldsValue()
       let params = {
@@ -138,7 +138,8 @@ export default function Index() {
         message.success('新增成功!')
         pageinfo.pageNum = 1
         getPage()
-        addRef.current.onCancel()
+        addform.resetFields()
+      //  addRef.current.onCancel()
       } else {
         message.error(res.errMsg)
       }
@@ -268,17 +269,9 @@ export default function Index() {
           onChange={changePage}
         ></Table>
       </div>
-      <AddItem addRef={addRef} addform={addform} addoptions={addoptions} addItems={addItems} />
-      <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems} />
-      <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
-    </ContainerDiv>
-  )
-}
-//新增
-const AddItem = ({ addRef, addoptions, addItems, addform }) => {
-  return (
-    <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项">
-      {/* <BlueColumn name="新增检查项" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
+     
+      <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={true}>
+     
       <DropstartDiv>
         <Form
           form={addform}
@@ -303,9 +296,14 @@ const AddItem = ({ addRef, addoptions, addItems, addform }) => {
         </Form>
       </DropstartDiv>
     </Modal>
-  )
 
+
+      <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems} />
+      <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
+    </ContainerDiv>
+  )
 }
+ 
 //编辑
 const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
   return (

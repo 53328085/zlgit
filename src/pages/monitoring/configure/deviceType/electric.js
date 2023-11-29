@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,use
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
@@ -130,28 +130,33 @@ export default function Electric() {
   let columns = [
     {
       title: '设备型号',
-      dataIndex: 'category'
+      dataIndex: 'category',
+      align:'center'
     },
     {
       title: '设备厂家',
-      dataIndex: 'manufacturer'
+      dataIndex: 'manufacturer',
+      align:'center'
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
+      align:'center',
       render: (text) => {
-        return (<img src={text} width={64} height={53}></img>)
+        return (<Image src={text} width={64} height={53}></Image>)
 
       }
     },
     {
       title: '当前设备数量',
-      dataIndex: 'cnt'
+      dataIndex: 'cnt',
+      align:'center'
     },
     {
       title: '操作',
       dataIndex: 'options',
       export:false,
+      align:'center',
       render: (text, record) => {
         return (
           <div style={{display:'flex'}}>
@@ -286,7 +291,8 @@ export default function Electric() {
           dataUnit: item.unit,
           isSave: item.isSave,
           watchPoint: item.isRuningPoint,
-          dataOrder: item.secquence
+          dataOrder: item.secquence,
+          category:data.category
         }))
         updateTableRef.current = lodash.cloneDeep(arr)
         if (foRef.current) {
@@ -370,6 +376,7 @@ export default function Electric() {
   }
   //确认新增应用
   const onSure=async()=>{
+    console.log(foRef.current)
   const result= foRef.current?.choosemes()
    if(!result){
     message.warning('请至少选择一项标记检测运行点！')
@@ -479,7 +486,7 @@ export default function Electric() {
     onOk: delOK,
   }
   const EditComp=useMemo(()=>{
-    return (<Modal mold='cust' title="编辑电表类型" {...editModalProps} footer={[
+    return (<Modal mold='cust' title="编辑电表类型"  {...editModalProps} footer={[
       <Button onClick={EditModalRef.current?.onCancel}>取消</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
       <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSureEditModal}>应用</Button>,

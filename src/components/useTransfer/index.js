@@ -13,6 +13,7 @@ export default function index (props) {
     const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
     const [unknownCopy, setUnknownCopy] = useState([])
+    const [searchValue,setSearchValue] = useState("")
     useEffect(()=>{
         let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
@@ -176,7 +177,9 @@ export default function index (props) {
     }
 
     const handleClose = () => {
+        setSearchValue("")
         props.closeValue('close');
+        
     }
     const handleSave = () => {
         props.saveValue({
@@ -186,18 +189,26 @@ export default function index (props) {
         })
     }
     let tag = columns[0].key;
-
+    let keys = columns.map(c => c.key);
+    console.log(keys)
     const onSearchSub = (value) => {
+       
         let arr = [];
-        console.log(123)
+      
         setSelectedSubKeys([])
         if(value == '') {
             setSubData([...subCopy]);
         }else{
+             
             subCopy.map(item => {
-                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
+                let f = []
+                for(let key of keys) {
+                  f.push(item[key].indexOf(value) !=-1)
                 }
+                if(f.includes(true))  arr.push(item);  
+                /* if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                } */
             })
             setSubData([...arr]);
         }
@@ -210,9 +221,14 @@ export default function index (props) {
             setUnknownData([...unknownCopy]);
         }else{
             unknownCopy.map(item => {
-                if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
+                let f = []
+                for(let key of keys) {
+                  f.push(item[key].indexOf(value) !=-1)
                 }
+                if(f.includes(true))  arr.push(item);  
+               /*  if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                    arr.push(item)
+                } */
             })
             setUnknownData([...arr]);
         }
@@ -280,7 +296,14 @@ export default function index (props) {
                 <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
                 <div className={style.searchInput}>
                     <span style={{marginRight: 16}}>设备搜索</span>
-                    <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
+                    <Search 
+                    placeholder="请输入设备编号/安装地址" 
+                    style={{width: 256}} 
+                    enterButton 
+                    onSearch={onSearchUnknown} 
+                    value={searchValue}
+                    onChange={(e)=>{setSearchValue(e.target.value)}}
+                    ></Search>
                 </div>
                 <div className={style.mainContent}>
                     <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>

@@ -288,6 +288,8 @@ const Custbtn = styled(Button)`
   useEffect(()=>{
     if(oneLevel.length > 0){
       setAreaId(oneLevel[0]['id'])
+    }else{
+      setIsLoading(false)
     }
   
   },[])
@@ -298,7 +300,6 @@ const Custbtn = styled(Button)`
       setIsLoading(false)
     }
     areaId&&func()
-    !areaId&&setIsLoading(false)
   }, [areaId])
   return (
     <>
