@@ -70,7 +70,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-   
+    tableDataRef.current = structuredClone(pointSource)
     const choosemes =()=>{
       let count =0;
       tableDataRef.current?.forEach(it=>{
@@ -152,15 +152,15 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
               // defaultChecked={t}
               disabled={siwtched.length>3&&!siwtched.includes(record.index)}
               onChange={(o) => {
-                // const list = structuredClone(pointSource)
+                const list = structuredClone(pointSource)
                 console.log('onchange',o)
-                tableDataRef.current.forEach((it, i) => {
+                list.forEach((it, i) => {
                   if (it.index === record.index) {
                     it.watchPoint = o
                   }
                 })
                 // console.log(index,o)
-                // setPointSource(list)
+                setPointSource(list)
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
@@ -189,11 +189,11 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
   //   setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
   //  },[JSON.stringify(updateTableRef)])
-   useEffect(()=>{
-    tableDataRef.current=structuredClone(pointSource)
-    console.log('pointSource变化了',pointSource)
+  //  useEffect(()=>{
+  //   tableDataRef.current=structuredClone(pointSource)
+  //   console.log('pointSource变化了',pointSource)
  
-   },[pointSource])
+  //  },[pointSource])
    
     
     useImperativeHandle(ref, () => ({
