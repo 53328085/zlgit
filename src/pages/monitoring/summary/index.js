@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import UseHeader from '@com/useHeader'
 import imgurl from './images/index.js'
- 
+import breaker from './images/breaker.png'
 import { Monitoring } from '@api/api.js'
 export default function Index() {
   const { Option } = Select
@@ -204,7 +204,7 @@ useEffect(() => {
         <Icard img={imgurl.water} title={'水表'} value={status.waterMeterCount}
           isShow={true} on={'水表在线'} off={'水表离线'} per={'在线率'} onValue={status.waterMeterOnlineCount}
           offValue={status.waterMeterOfflineCount} perValue={status.waterMeterOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" />
-          <Icard img={imgurl.breaker} title={'断路器'} value={status.breakerCount}
+          <Icard img={breaker} title={'断路器'} value={status.breakerCount}
           isShow={true} on={'断路器在线'} off={'断路器离线'} per={'在线率'} onValue={status.breakerOnlineCount}
           offValue={status.breakerOfflineCount} perValue={status.breakerOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" />
       {/*   <Icard img={imgurl.gas} title={'燃气表'} value={status.gasCount}

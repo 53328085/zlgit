@@ -385,6 +385,9 @@ export const Logpsd = styled(Input.Password)`
         border-color: #9c9ea4;
       }
     }
+    .ant-checkbox-inner::after {
+      left: 25%;
+    }
   }
 `;
 
