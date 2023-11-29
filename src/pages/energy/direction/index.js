@@ -11,6 +11,7 @@ import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
+import Titlelayout from '@com/titlelayout'
 import Sankey from "./Sankey";
 
 
@@ -139,8 +140,12 @@ export default function Index() {
 
     return (
       <CustContext.Provider value={propsData}>
-      <Pagecount showserach={true} pd="32px">   
+      <Pagecount showserach={true} pd="0px">   
+      <Titlelayout title="能源流向" layout="flex">
+          <div style={{display: 'flex', flex:1, alignItems: 'center',justifyContent: 'center'}}>
           <Sankey data={data} key={areaId}  />  
+          </div>
+       </Titlelayout>
       </Pagecount>
       </CustContext.Provider>
     )

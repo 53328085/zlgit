@@ -233,6 +233,7 @@ const move =(type) => {
 
   useEffect(() => {
     getData()
+    if (!iscom)  setIscom(true)
   }, [areaId, projectId])
   const sty = {
     flex: 1,

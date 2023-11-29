@@ -419,8 +419,18 @@ export default function index() {
       label: (
         <div onClick={() => exportJson()}>导出json文件</div>
       )
+    }, {
+      key: '3',
+      label: (
+        <div onClick={() => handleMenuClick()}>导出png图片</div>
+      )
     }
   ]
+
+  const handleMenuClick = () => {
+    let fileName = (newCanvas.data.name || '未命名配电图') + '.png'
+    newCanvas.saveAsImage(fileName)
+  }
 
   const importJson = () => {
     const input = document.createElement('input')

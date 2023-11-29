@@ -1,4 +1,4 @@
-import { useState, useTransition } from 'react';
+import { useState, useTransition, memo, Fragment } from 'react';
  
 const TabButton =({ children, isActive, onClick }) => {
   if (isActive) {
@@ -58,7 +58,7 @@ const ContactTab = () =>{
   );
 }
 
-export default function TabContainer() {
+  function TabContainer() {
   const [isPending, startTransition] = useTransition();
   const [tab, setTab] = useState('about');
 
@@ -95,3 +95,140 @@ export default function TabContainer() {
     </>
   );
 }
+const recipes = [
+  {
+    id: 'greek-salad',
+    name: '希腊沙拉',
+    ingredients: ['西红柿', '黄瓜', '洋葱', '油橄榄', '羊奶酪'],
+  },
+  {
+    id: 'hawaiian-pizza',
+    name: '夏威夷披萨',
+    ingredients: ['披萨饼皮', '披萨酱', '马苏里拉奶酪', '火腿', '菠萝'],
+  },
+  {
+    id: 'hummus',
+    name: '鹰嘴豆泥',
+    ingredients: ['鹰嘴豆', '橄榄油', '蒜瓣', '柠檬', '芝麻酱'],
+  },
+];
+const Recipes = ({id,name, ingredients}) => {
+    return (
+      <div >
+         <h1>{name}</h1>
+         <ul>{ingredients.map(i => <li key={i}>{i}</li>)}</ul>
+      </div>
+    )
+}
+
+const poem = {
+  lines: [
+    'I write, erase, rewrite',
+    'Erase again, and then',
+    'A poppy blooms.'
+  ]
+}; //1,2,3
+let len = poem.lines.length -1;
+export function Index() {
+   return (
+      <article style={{padding: '16px', width: '600px'}}>
+        
+        {
+          poem.lines.map((i,index)=> <Fragment key={'chint'+i}>
+             {index > 0 && <hr/>} 
+            <p>{i}</p>
+             
+          </Fragment>)
+        }
+      </article>
+   )
+}
+
+function Item({ name, importance }) {
+   
+ 
+    return (<li className="item">{name}{importance >0 && (<i>(重要性:{importance})</i>)}</li>);
+ 
+ 
+}
+
+export  function PackingList() {
+  return (
+    <section>
+      <h1>Sally Ride 的行李清单</h1>
+      <ul>
+      <Item 
+          importance={9} 
+          name="宇航服" 
+        />
+        <Item 
+          importance={0} 
+          name="带金箔的头盔" 
+        />
+        <Item 
+          importance={6} 
+          name="Tam 的照片" 
+        />
+      </ul>
+    </section>
+  );
+}
+
+function Drink({ name }) {
+  let obj = {
+    plan: 'leaf',
+    content: '15–70 mg/cup',
+    age: '4,000+ years'
+  }
+  if(name !=='tea' ) {
+    obj= {
+      plan: 'bean',
+      content: '80–185 mg/cup',
+      age: '1,000+ years'
+    }
+  }
+  return (
+    <section>
+      <h1>{name}</h1>
+      <dl>
+        <dt>Part of plant</dt>
+        <dd>{obj.plan}</dd>
+        <dt>Caffeine content</dt>
+        <dd>{obj.content}</dd>
+        <dt>Age</dt>
+        <dd>{obj.age}</dd>
+      </dl>
+    </section>
+  );
+}
+
+ function DrinkList() {
+  return (
+    <div>
+      <Drink name="tea" />
+      <Drink name="coffee" />
+    </div>
+  );
+}
+
+export default function Bio() {
+  return (
+    <Fragment>
+    <div class="intro">
+      <h1>欢迎来到我的站点！</h1>
+    </div>
+    <p class="summary">
+      你可以在这里了解我的想法。
+      <br></br>
+      <b>还有科学家们的<i>照片</i></b>
+    </p>
+    </Fragment>
+  );
+ 
+}
+
+/* 
+
+key 只有在就近的数组上下文中才有意义
+
+*/

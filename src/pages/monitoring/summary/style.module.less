@@ -128,15 +128,19 @@
 .content{
     width: 1680px;
     margin-top: 16px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+     grid-template-columns: 1fr 1fr;
+     column-gap: 16px;
+     grid-template-rows: 513px;
     .contentLeft{
         margin-bottom: 16px;
-        width: 548px;
-        height: 513px;
+     //   width: 548px;
+      //  height: 513px;
         background-color: #fff;
         border: 1px solid rgb(215, 215, 215);
         border-radius: 4px;
+        display: flex;
+        flex-direction: column;
         .pieTitle{
             margin: 16px;
             padding-left: 16px;
