@@ -310,7 +310,7 @@ const onExport = useCallback(() => {
                 <Icard img={imageList[index] ? 'data:image/png;base64,' + imageList[index] : imgurl.category} title={item.sn}
 
                   value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
-                  lastSampleTime={item.lastSampleTime} category={item.category} />
+                  lastSampleTime={item.lastSampleTime} category={item.category} name={item.name}/>
               </Link>
             </div>
           }) : ''}
