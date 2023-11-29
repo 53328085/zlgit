@@ -5,7 +5,7 @@ export default function Icard(props){
         <div className={style.cardItem} >
             <div className={style.cardImgBox}><img src={ props.img }  className={style.cardImg} alt={props.title}></img></div>
             <div className={style.ItemValue}>
-                <div className={style.valueTitle}><span>{ props.title }</span><span>{ props.category }</span></div>
+                <div className={style.valueTitle}><span>{ props.name }</span><span>{ props.title  }</span></div>
                 <div className={style.valueData}>{ props.value }</div>
                 <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>更新时间</p><p className={style.timeValueStyle}>{props.lastSampleTime}</p>
