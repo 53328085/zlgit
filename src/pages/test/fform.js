@@ -211,7 +211,7 @@ function Drink({ name }) {
   );
 }
 
-export default function Bio() {
+export  function Bio() {
   return (
     <Fragment>
     <div class="intro">
@@ -226,6 +226,55 @@ export default function Bio() {
   );
  
 }
+
+
+const baseUrl = 'https://i.imgur.com/';
+const person = {
+  name: 'Gregorio Y. Zara',
+  imageId: '7vQD0fP',
+  imageSize: 's',
+  theme: {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+}
+
+export  function TodoList() {
+  return (
+    <div style={person.theme}>
+      <h1>{person.name}'s Todos</h1>
+      <img
+        className="avatar"
+        src={baseUrl+person.imageId+person.imageSize+'.jpg'}
+        alt={person.name}
+      />
+      <ul>
+        <li>Improve the videophone</li>
+        <li>Prepare aeronautics lectures</li>
+        <li>Work on the alcohol-fuelled engine</li>
+      </ul>
+    </div>
+  );
+}
+
+function Card({ children }) {
+  return (
+    <div className="card">
+      {children}
+    </div>
+  );
+}
+
+export default function Profile() {
+  return (
+    <Card>
+       <TodoList />
+       <TodoList />
+    </Card>
+  );
+}
+
+
 
 /* 
 
