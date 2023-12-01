@@ -319,7 +319,8 @@ export let AddModal = forwardRef(
   let TableEditForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
-    tableDataRef.current=[...pointSource]
+    tableDataRef.current=structuredClone(pointSource)
+    // console.log('tableDataRef',tableDataRef.current)
     let checedList=[]
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
@@ -371,13 +372,13 @@ export let AddModal = forwardRef(
           return (
             <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
               onChange={(o) => {
-                let arr =[...pointSource]
-                arr.forEach((it, index) => {
+                const list = structuredClone(pointSource)
+                list.forEach((it, index) => {
                   if (it.index === v.index) {
                     it.isSave = o
                   }
                 })
-              setPointSource(arr)
+              setPointSource(list)
               }} />
   
           )
@@ -458,6 +459,7 @@ export let AddModal = forwardRef(
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
+    console.log(tableRef.current?.tabledata)
     useEffect(() => {
       // setIsControl(editForm.getFieldsValue().Control)
       // setIsCount(editForm.getFieldsValue().IsCount)
@@ -465,10 +467,11 @@ export let AddModal = forwardRef(
     useImperativeHandle(ref, () => ({
       pointSource: tableRef.current.pointSource,
       setPointSource: tableRef.current.setPointSource,
-      setSwitched:tableRef.current.setSwitched
-
+      setSwitched:tableRef.current.setSwitched,
+      choosemes:tableRef.current.choosemes
 
     }))
+ 
     return (
       <Form
         layout="vertical"

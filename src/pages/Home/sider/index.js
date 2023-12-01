@@ -97,10 +97,11 @@ export default function Sider() {
     
       let state = location.state || {}    
       let {nested, primary } = state;
-      
+      console.log(state,location)
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || [];     
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || []; 
+      console.log(nested,sidermenus)    
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {

@@ -167,20 +167,14 @@ export default function Electric() {
   }
   //保存编辑
   const onOkEditModal = async () => {
-    console.log(editFromRef.current.pointSource, editForm.getFieldsValue())
-    const tableforvalues = editFromRef.current.pointSource
-
-    let count =0;
-    tableforvalues.forEach(it=>{
-      it.watchPoint&& count++
-    })
-    if(count===0){
-      message.warning('请至少选择一项标记检测运行点！')
-      return
-    }
+    const tabledata =  editFromRef.current.choosemes()
+  if(!tabledata){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
 
     const formvalues = editForm.getFieldsValue()
-    const tableData = tableforvalues.map(it => ({
+    const tableData = tabledata.map(it => ({
       name: it.dataMark,
       isSave: it.isSave,
       isRuningPoint: it.watchPoint,
@@ -206,19 +200,14 @@ export default function Electric() {
   }
 //应用编辑
 const onSureEditModal=async()=>{
-  const tableforvalues = editFromRef.current.pointSource
-
-    let count =0;
-    tableforvalues.forEach(it=>{
-      it.watchPoint&& count++
-    })
-    if(count===0){
-      message.warning('请至少选择一项标记检测运行点！')
-      return
-    }
+  const tabledata =  editFromRef.current.choosemes()
+  if(!tabledata){
+    message.warning('请至少选择一项标记检测运行点！')
+     return
+   }
 
     const formvalues = editForm.getFieldsValue()
-    const tableData = tableforvalues.map(it => ({
+    const tableData = tabledata.map(it => ({
       name: it.dataMark,
       isSave: it.isSave,
       isRuningPoint: it.watchPoint,
