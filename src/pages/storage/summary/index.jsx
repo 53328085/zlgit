@@ -4,15 +4,165 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Form, Select } from 'antd'
+import { message, Form, Select ,Typography} from 'antd'
+import CustContext from '@com/content.js'
 import { range } from 'lodash'
-import BarChart from './barChart'
-import LineChart from './lineChart'
 import imgurl from './imgs'
-import warningPoint from '@imgs/warningPoint.png'
+ 
 import styled from 'styled-components'
 
-
+import Pagecount from '@com/pagecontent'
+import Titlelayout from "@com/titlelayout";
+import { drawEcharts } from "@com/useEcharts";
+const {Link, Paragraph, Text} = Typography
+const  Mainbox = styled.div`
+  display: grid;
+  flex: 1;
+  grid-template-columns: 360px 1fr ;
+  column-gap: 16px;
+  align-content: stretch;
+  .left {
+    display: grid;
+    grid-template-rows: 236px 548px;
+    row-gap: 16px;
+    .info {
+      display: grid;
+      grid-template-columns: 208px 1fr;
+      place-content:flex-end;;
+      color: #666;
+      column-gap: 16px;
+      img {
+        width: 208px;
+        height: 156px;
+      }
+      .dtl {
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        row-gap: 6px;
+      }
+    }
+  }
+  .right {
+     display: grid;
+     grid-template-rows: 88px 696px;
+     row-gap: 16px;
+     .rightup {
+        display: flex;
+        justify-content: space-between;
+        .tips {
+           display: flex;           
+           padding: 12px;
+           align-items: center;
+           color: #fff;
+           .tipsdown {
+             font-size: 20px;
+             color: #fff;
+           }
+        }
+     }
+     .rightdown {
+       display: grid;
+       grid-template-columns: 752px 536px;
+       column-gap: 16px;
+       .topology {
+         position: relative;
+         .zhanwei{
+                    width: 752px;
+                    height: 696px;
+                }
+                .storageMeter{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-direction: column;
+                    position: absolute;
+                    left: 223px;
+                    top: 367px;
+                    padding: 6px 12px;
+                    width: 164px;
+                    height: 80px;
+                    border: 1px solid #41A4B9;
+                    background-color: #003;
+                   
+                }
+                .transformer{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-direction: column;
+                    position: absolute;
+                    right: 130px;
+                    top: 163px;
+                    padding: 4px 12px;
+                    width: 164px;
+                    height: 80px;
+                    border: 1px solid #41A4B9;
+                    background-color: #003;
+                   
+                }
+                .batterys{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-direction: column;
+                    position: absolute;
+                    right: 176px;
+                    top: 367px;
+                    padding: 4px 12px;
+                    width: 164px;
+                    height: 80px;
+                    border: 1px solid #41A4B9;
+                    background-color: #003;
+                }
+                .meterData{
+                        display: flex;
+                        align-items: center;
+                        span{
+                            display: inline-block;
+                            text-align: right;
+                            height: 20px;
+                            line-height: 20px;
+                            font-size: 12px;
+                            color: #fff;
+                        }
+                        span:first-child{
+                            width: 38px;
+                            text-align: left;
+                        }
+                        span:nth-child(2){
+                            width: 67px;
+                            font-size: 14px;
+                        }
+                        span:last-child{
+                            width: 32px;
+                            color: #c9c9c9;
+                        }
+                    }
+                .transPlaceholder{
+                    position: absolute;
+                    width: 136px;
+                    height: 136px;
+                    left: 76px;
+                    top: 364px;
+                    cursor: pointer;
+                }
+                .batteryPlaceholder{
+                    position: absolute;
+                    width: 136px;
+                    height: 136px;
+                    left: 76px;
+                    top: 549px;
+                    cursor: pointer;
+                }
+       }
+       .rightdownright {
+         display: grid;
+         grid-template-rows: repeat(2, 340px);
+         row-gap: 16px;
+       }
+     }
+  }
+`
 export default function Index() {
   const TransDiv = styled.div`
   padding-top: 18px;
@@ -55,43 +205,24 @@ export default function Index() {
           background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
           }
   `
-  const [form] = Form.useForm()
-  const Item = Form.Item
+ 
   const { querySiteInfo,
     queryStorageIncome,
     queryStorageWarning,
     queryTopologyDiagramInfo,
     queryChargeETrends } = SiteSummaryRuntime
-  const { FindSiteList } = SiteManagerDesigner
+ 
 
   const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
 
-  //siteList
-  const [siteList, setSiteList] = useState([])
-  const querySite = () => {
-    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
-          setSiteList(res.data)
-          form.setFieldValue('siteId', res.data[0].id)
-          getFromHeader()
-        } else {
-          setSiteList([])
-          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
-          return;
-        }
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const changeSite = val => {
-    getFromHeader()
-  }
+  const areaId = useSelector(selectOneLevelDefaultId)
+ 
+  let [AreaID, setAreaid] = useState(areaId)
+ 
+  const [site, setInitname] = useState({})
+  let sitename = site.name
+  
 
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
@@ -103,33 +234,19 @@ export default function Index() {
     onGridDevice: {},
     storageDevice: {}
   }) //接线图数据
+
   useEffect(() => {
-    if (areaList.length == 0 || !areaList) {
-      message.error('当前项目尚未创建园区!')
-    } else {
-      form.setFieldValue('areaId', oneLevelDefaultId)
-      querySite()
-    }
-  }, [])
-  const changeArea = (val) => {
-    areaList.map(item => {
-      if (item.id == val) {
-        dispatch(setCurrentlevel(item))
-      }
-    })
-    form.setFieldValue('siteId', null)
-    querySite()
-  }
-  const getFromHeader = () => {
-    querySiteInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+    if(!areaId || !sitename) return
+     
+    querySiteInfo(projectId, areaId, sitename).then(res => {
       if (res.success) {
         setCardData(res.data)
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
 
-    queryStorageIncome(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+    queryStorageIncome(projectId,  areaId, sitename).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -140,9 +257,9 @@ export default function Index() {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch
 
-    queryStorageWarning(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+    queryStorageWarning(projectId,  areaId, sitename).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -153,9 +270,9 @@ export default function Index() {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
 
-    queryTopologyDiagramInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+    queryTopologyDiagramInfo(projectId,  areaId, sitename).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
@@ -169,10 +286,10 @@ export default function Index() {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
 
 
-    queryChargeETrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
+    queryChargeETrends(projectId,  areaId, sitename).then(res => {
       if (res.success) {
         if (res.data) {
           setLineData(res.data)
@@ -182,29 +299,20 @@ export default function Index() {
       } else {
         message.error(res.errMsg)
       }
-    })
-  }
-  const CardItem = props => {
-    return <div className={style.leftCard} style={{ height: props.height, position: 'relative' }} >
-      <div className={style.cardTitle}>{props.title}</div>
-      {props.children}
-    </div>
-  }
+    }).catch()
+
+
+  }, [AreaID, site])
   const Tips = props => {
-    return <div className={style.tips} style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
+    return <div className="tips"style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
       <img src={props.imgUrl} className={style.tipImg}></img>
-      <div className={style.tipsData} style={{ marginLeft: props.width ? 42 : 22 }}>
-        <div className={style.tipTitle}>{props.title}</div>
-        <div className={style.tipValue}>{props.value}</div>
+      <div style={{paddingLeft: "16px"}}> 
+        <Paragraph style={{color: "#fff"}}>{props.title}</Paragraph >
+        <Text className="tipsdown" ellipsis={{tooltip: props.value}}>{props.value}</Text>
       </div>
     </div>
   }
-  const RightItem = props => {
-    return <div className={style.rightCard} style={{ height: props.height }}>
-      <div className={style.cardTitle}>{props.title}</div>
-      {props.children}
-    </div>
-  }
+  
   const CustomProgress = props => {
     let { dischargeData, chargeData } = props
     let total = parseFloat(dischargeData) + parseFloat(chargeData)
@@ -278,71 +386,109 @@ export default function Index() {
       setSpeed(warndom.getBoundingClientRect().height/60)
     }
   },[warningData.length])
+  const barref = useRef();
+  const lineref = useRef()
+  useEffect(() => {   // lineData
+     if(!lineData) return;
+    
+     let {x=[], y=[], y1=[]} = lineData.constructor ===  Object ? lineData : {}
+     drawEcharts(lineref.current, {
+       dataset: {
+        dimensions: [
+          {
+            name: 'x',
+            type: 'time'
+          },
+          {
+            name: 'y',
+            displayName: '充电电量(kWh)'
+          },
+          {
+            name: 'y1',
+            displayName: '放电电量(kwh)'
+          }
+        ],
+        source: [x, y, y1],
+        sourceHeader: false,
+       
+       },
+       series: [
+        { type: "line", seriesLayoutBy: 'row' },
+        { type: "line", seriesLayoutBy: 'row' },
+      ],
+       legend: {
+        icon: 'circle'
+       }
+     })
+  }, [lineData])
+  useEffect(() => {
+    if(!barData) return
+    let {x=[], y=[], y1=[], y2=[]} = barData.constructor ===  Object ? barData : {}
+    drawEcharts(barref.current, {
+      dataset: {
+       dimensions: [
+         {
+           name: 'x',
+           type: 'time'
+         },
+         {
+           name: 'y',
+           displayName: '充电金额(元)'
+         },
+         {
+           name: 'y1',
+           displayName: '放电金额(元)'
+         },
+         {
+          name: 'y2',
+          displayName: '收益(元)'
+        }
+       ],
+       source: [x, y, y1, y2],
+       sourceHeader: false,
+      
+      },
+      series: [
+       { type: "bar", seriesLayoutBy: 'row' },
+       { type: "bar", seriesLayoutBy: 'row' },
+       { type: "line", seriesLayoutBy: 'row' },
+     ],
+    })
+ 
+  }, [barData])
   return (
-    <div>
-      <div className={style.header}>
-        <Form form={form} layout='inline'>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
-            <Select
-              placeholder="请选择"
-              size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
-              onChange={changeArea}
-            >
-              {areaList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          <div className={style.line}></div>
-          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
-            <Select
-              placeholder="请选择站点"
-              size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
-              onChange={changeSite}
-            >
-              {siteList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-        </Form>
-      </div>
-      <div className={style.content}>
-        <div className={style.left}>
-          <CardItem title='站点信息' height='236px'>
-            <div className={style.information}>
+    <CustContext.Provider value={{handler: setAreaid, sitehandler: setInitname,  isSite: true}}>
+    <Pagecount  showserach={true} pd={0} bgcolor='transparent'  >    
+      <Mainbox>
+        <div className="left">
+          <Titlelayout title='站点信息' layout="flex">
+            <div className="info">
               {
-                cardData.image ? <img src={cardData.image} className={style.siteImg}></img> : <img src={imgurl.zhandian} className={style.siteImg}></img>
+                cardData.image ? <img src={cardData.image} className='siteImg'></img> : <img src={imgurl.zhandian} className='siteImg'></img>
               }
-              <div className={style.siteData}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className={style.siteTitle}>站点容量</span>
-                  <span className={style.siteValue}>{cardData?.storageCapacity} &nbsp;kVA</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className={style.siteTitle}>实时充电功率</span>
-                  <span className={style.siteValue}> {cardData?.runtimeChargeP}&nbsp;kW</span>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className={style.siteTitle}>投运时间</span>
-                  <span className={style.siteValue}>{cardData?.useDate}</span>
-                </div>
+              <div className="dtl">
+                   <div key="1">
+                  <Text>站点容量</Text>
+                     <Text ellipsis={{tooltip: cardData?.storageCapacity}}>{cardData?.storageCapacity} &nbsp;kVA</Text>
+                  </div>
+                  <div key="2">
+                  <Text>实时充电功率</Text>
+                  <Text ellipsis={{tooltip: cardData?.runtimeChargeP}}> {cardData?.runtimeChargeP}&nbsp;kW</Text>
+                  </div>
+                  <div key="3">
+                  <Text>投运时间</Text>
+                  <Text ellipsis={{ tooltip: cardData?.useDate}}>{cardData?.useDate}</Text>
+                  </div>
               </div>
             </div>
-          </CardItem>
+          </Titlelayout>
           {/* <CardItem title='充放电统计' height='136px'>
             <div className={style.stateItems}>
               <StateCard width={'156px'} title={'储能总充电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
               <StateCard width={'156px'} title={'储能总放电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
             </div>
           </CardItem> */}
-          <CardItem title='最新告警' height='548px'>
-            <span className={style.toWarning} onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</span>
-            <div className={style.warningDetails}  >
-
+          <Titlelayout title='最新告警' height='548px' extra={<Link underline onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</Link>}>
               <TransDiv   dmheight={domheight} speed={speed}>
                   <div id='warn'>
                     {warningData.map((item, index) => {
@@ -365,88 +511,90 @@ export default function Index() {
                     }):null
                   }
                 
-              </TransDiv>
-            </div>
-          </CardItem>
+              </TransDiv>            
+          </Titlelayout>
         </div>
-        <div className={style.right}>
-          <div className={style.top}>
+        <div className="right">
+          <div className="rightup">
             <Tips imgUrl={imgurl.totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity} bgcolor={'#56b653'}></Tips>
             <Tips imgUrl={imgurl.totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity} bgcolor={'#4370ff'}></Tips>
             <Tips imgUrl={imgurl.totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount} bgcolor={'#fea526'}></Tips>
             <Tips imgUrl={imgurl.totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount} bgcolor={'#ff6642'}></Tips>
             <Tips imgUrl={imgurl.totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome} bgcolor={'#9951fe'} width={'280px'}></Tips>
           </div>
-          <div className={style.bottom}>
-            <div className={style.topology}>
+          <div className="rightdown" >
+            <div className="topology">
               <img src={imgurl.zhanwei} className={style.zhanwei}></img>
               {/* 储能总表 */}
-              <div className={style.storageMeter}>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.storageDevice.v}</span>
-                  <span className={style.dataUnit}>(V)</span>
+              <div className='storageMeter'>
+                <div className='meterData'>
+                  <span>电压:</span>
+                  <span>{topologyData?.storageDevice.v}</span>
+                  <span>(V)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.storageDevice.i}</span>
-                  <span className={style.dataUnit}>(A)</span>
+                <div className='meterData'>
+                  <span>电流:</span>
+                  <span>{topologyData?.storageDevice.i}</span>
+                  <span>(A)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.storageDevice.p}</span>
-                  <span className={style.dataUnit}>(kW)</span>
+                <div className='meterData'>
+                  <span>功率:</span>
+                  <span >{topologyData?.storageDevice.p}</span>
+                  <span>(kW)</span>
                 </div>
               </div>
               {/*并网总表器*/}
-              <div className={style.transformer}>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.onGridDevice.v}</span>
-                  <span className={style.dataUnit}>(V)</span>
+              <div className='transformer'>
+                <div className='meterData'>
+                  <span >电压:</span>
+                  <span>{topologyData?.onGridDevice.v}</span>
+                  <span>(V)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.onGridDevice.i}</span>
-                  <span className={style.dataUnit}>(A)</span>
+                <div className='meterData'>
+                  <span>电流:</span>
+                  <span>{topologyData?.onGridDevice.i}</span>
+                  <span>(A)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.onGridDevice.p}</span>
-                  <span className={style.dataUnit}>(kW)</span>
+                <div className='meterData'>
+                  <span>功率:</span>
+                  <span>{topologyData?.onGridDevice.p}</span>
+                  <span>(kW)</span>
                 </div>
               </div>
               {/*负载总表*/}
-              <div className={style.batterys}>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电压:</span>
-                  <span className={style.dataValue}>{topologyData?.loadDevice.v}</span>
-                  <span className={style.dataUnit}>(V)</span>
+              <div className='batterys'>
+                <div  className='meterData'>
+                  <span>电压:</span>
+                  <span>{topologyData?.loadDevice.v}</span>
+                  <span>(V)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>电流:</span>
-                  <span className={style.dataValue}>{topologyData?.loadDevice.i}</span>
-                  <span className={style.dataUnit}>(A)</span>
+                <div  className='meterData'>
+                  <span >电流:</span>
+                  <span  >{topologyData?.loadDevice.i}</span>
+                  <span >(A)</span>
                 </div>
-                <div className={style.meterData}>
-                  <span className={style.dataName}>功率:</span>
-                  <span className={style.dataValue}>{topologyData?.loadDevice.p}</span>
-                  <span className={style.dataUnit}>(kW)</span>
+                <div  className='meterData'>
+                  <span>功率:</span>
+                  <span>{topologyData?.loadDevice.p}</span>
+                  <span>(kW)</span>
                 </div>
               </div>
-              <div className={style.batteryPlaceholder} onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
+              <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
-            <div className={style.otherDatas}>
-              <RightItem title='能耗收益统计' height={'340px'}>
-                <BarChart data={barData}></BarChart>
-              </RightItem>
-              <RightItem title='储能充放电趋势' height={'340px'}>
-                <LineChart data={lineData}></LineChart>
-              </RightItem>
+            <div className="rightdownright">
+              <Titlelayout title='能耗收益统计' layout="flex">
+                 <div ref={barref} style={{flex: 1}}></div>
+             
+              </Titlelayout>
+              <Titlelayout title='储能充放电趋势' layout="flex">
+             
+                <div ref={lineref} style={{flex: 1}}></div>
+              </Titlelayout>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Mainbox>
+    </Pagecount>
+    </CustContext.Provider>
   )
 }

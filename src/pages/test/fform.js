@@ -1,281 +1,102 @@
-import { useState, useTransition, memo, Fragment } from 'react';
- 
-const TabButton =({ children, isActive, onClick }) => {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-  return (
-    <button onClick={() => {
-      onClick();
-    }}>
-      {children}
-    </button>
-  )
-}
-
-const AboutTab = () => {
-  <p>Welcome to my profile!</p>
-}
-
-const PostsTab = memo(function PostsTab() {
-  // 打印一次。真正变慢的地方在 SlowPost 内。
-  console.log('[ARTIFICIALLY SLOW] Rendering 500 <SlowPost />');
-
-  let items = [];
-  for (let i = 0; i < 500; i++) {
-    items.push(<SlowPost key={i} index={i} />);
-  }
-  return (
-    <ul className="items">
-      {items}
-    </ul>
+import { useState, useTransition, memo, Fragment, useDeferredValue, Suspense, useEffect, useRef} from 'react';
+import styled from 'styled-components';
+ const Main =styled.div`
+  display: flex;
+  padding: 20px;
+   .ani {
+    background-color: aqua;
+    color: #fff;
+    height: 30px;
+    width: 100%;
+   }
+   .cylon_eye {
+  background-color: red;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 25%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.9) 75%
   );
-});
-
-function SlowPost({ index }) {
-  let startTime = performance.now();
-  while (performance.now() - startTime < 1) {
-    // 每个 item 都等待 1 毫秒以模拟极慢的代码。
+  color: white;
+  height: 100%;
+  width: 60px;
+  animation:  eye 5s linear 0.3s, ear 5s linear 0.3s ;
   }
-
-  return (
-    <li className="item">
-      Post #{index + 1}
-    </li>
-  );
-}
-const ContactTab = () =>{
-  return (
-    <>
-      <p>
-        You can find me online here:
-      </p>
-      <ul>
-        <li>admin@mysite.com</li>
-        <li>+123456789</li>
-      </ul>
-    </>
-  );
-}
-
-  function TabContainer() {
-  const [isPending, startTransition] = useTransition();
-  const [tab, setTab] = useState('about');
-
-  function selectTab(nextTab) {
-    startTransition(() => {
-      setTab(nextTab);
-    });
-  }
-
-  return (
-    <>
-      <TabButton
-        isActive={tab === 'about'}
-        onClick={() => selectTab('about')}
-      >
-        About
-      </TabButton>
-      <TabButton
-        isActive={tab === 'posts'}
-        onClick={() => selectTab('posts')}
-      >
-        Posts (slow)
-      </TabButton>
-      <TabButton
-        isActive={tab === 'contact'}
-        onClick={() => selectTab('contact')}
-      >
-        Contact
-      </TabButton>
-      <hr />
-      {tab === 'about' && <AboutTab />}
-      {tab === 'posts' && <PostsTab />}
-      {tab === 'contact' && <ContactTab />}
-    </>
-  );
-}
-const recipes = [
-  {
-    id: 'greek-salad',
-    name: '希腊沙拉',
-    ingredients: ['西红柿', '黄瓜', '洋葱', '油橄榄', '羊奶酪'],
-  },
-  {
-    id: 'hawaiian-pizza',
-    name: '夏威夷披萨',
-    ingredients: ['披萨饼皮', '披萨酱', '马苏里拉奶酪', '火腿', '菠萝'],
-  },
-  {
-    id: 'hummus',
-    name: '鹰嘴豆泥',
-    ingredients: ['鹰嘴豆', '橄榄油', '蒜瓣', '柠檬', '芝麻酱'],
-  },
-];
-const Recipes = ({id,name, ingredients}) => {
-    return (
-      <div >
-         <h1>{name}</h1>
-         <ul>{ingredients.map(i => <li key={i}>{i}</li>)}</ul>
-      </div>
-    )
-}
-
-const poem = {
-  lines: [
-    'I write, erase, rewrite',
-    'Erase again, and then',
-    'A poppy blooms.'
-  ]
-}; //1,2,3
-let len = poem.lines.length -1;
-export function Index() {
-   return (
-      <article style={{padding: '16px', width: '600px'}}>
-        
-        {
-          poem.lines.map((i,index)=> <Fragment key={'chint'+i}>
-             {index > 0 && <hr/>} 
-            <p>{i}</p>
-             
-          </Fragment>)
-        }
-      </article>
-   )
-}
-
-function Item({ name, importance }) {
-   
- 
-    return (<li className="item">{name}{importance >0 && (<i>(重要性:{importance})</i>)}</li>);
- 
- 
-}
-
-export  function PackingList() {
-  return (
-    <section>
-      <h1>Sally Ride 的行李清单</h1>
-      <ul>
-      <Item 
-          importance={9} 
-          name="宇航服" 
-        />
-        <Item 
-          importance={0} 
-          name="带金箔的头盔" 
-        />
-        <Item 
-          importance={6} 
-          name="Tam 的照片" 
-        />
-      </ul>
-    </section>
-  );
-}
-
-function Drink({ name }) {
-  let obj = {
-    plan: 'leaf',
-    content: '15–70 mg/cup',
-    age: '4,000+ years'
-  }
-  if(name !=='tea' ) {
-    obj= {
-      plan: 'bean',
-      content: '80–185 mg/cup',
-      age: '1,000+ years'
+  @keyframes eye {
+    from {
+      margin-left: -10%;
+    }
+    to {
+      margin-left:110%
     }
   }
-  return (
-    <section>
-      <h1>{name}</h1>
-      <dl>
-        <dt>Part of plant</dt>
-        <dd>{obj.plan}</dd>
-        <dt>Caffeine content</dt>
-        <dd>{obj.content}</dd>
-        <dt>Age</dt>
-        <dd>{obj.age}</dd>
-      </dl>
-    </section>
-  );
-}
 
- function DrinkList() {
-  return (
-    <div>
-      <Drink name="tea" />
-      <Drink name="coffee" />
-    </div>
-  );
-}
-
-export  function Bio() {
-  return (
-    <Fragment>
-    <div class="intro">
-      <h1>欢迎来到我的站点！</h1>
-    </div>
-    <p class="summary">
-      你可以在这里了解我的想法。
-      <br></br>
-      <b>还有科学家们的<i>照片</i></b>
-    </p>
-    </Fragment>
-  );
- 
-}
-
-
-const baseUrl = 'https://i.imgur.com/';
-const person = {
-  name: 'Gregorio Y. Zara',
-  imageId: '7vQD0fP',
-  imageSize: 's',
-  theme: {
-    backgroundColor: 'black',
-    color: 'pink'
+  @keyframes  ear{
+    from {
+      margin-left: -10%;
+      font-size: 14px
+    }
+    to {
+      font-size:28px;
+      margin-left:110%
+    }
   }
-}
+  .ai {
 
-export  function TodoList() {
-  return (
-    <div style={person.theme}>
-      <h1>{person.name}'s Todos</h1>
-      <img
-        className="avatar"
-        src={baseUrl+person.imageId+person.imageSize+'.jpg'}
-        alt={person.name}
-      />
-      <ul>
-        <li>Improve the videophone</li>
-        <li>Prepare aeronautics lectures</li>
-        <li>Work on the alcohol-fuelled engine</li>
-      </ul>
-    </div>
-  );
-}
+  
+    width: 600px;
+    padding: 8px;
+   // border: 1px solid #dedede;
+    animation: scrol 3s linear 0.1s infinite ;
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+ 
+ `
+ const Adiv = styled.div`
+    width: 600px;
+    padding: 8px;
+   // border: 1px solid #dedede;
+    animation: ${props => `scrol ${props.step}s linear   infinite`};
+    &:hover {
+      animation-play-state: paused;
+    }
+    @keyframes scrol {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      // transform:  ${props => `translateY(-${props.h}px)` };
+    }
+  }
+ `
+ export default function Index(){
+  const ref = useRef()
+  const [h, setH] = useState(0)
+  const [step, setSeepd] = useState(0)
+  useEffect(() => {
+    let el = ref.current.getBoundingClientRect();
+    setH(el.height)
+     setSeepd(el.height / 60)
+  }, [])
 
-function Card({ children }) {
-  return (
-    <div className="card">
-      {children}
-    </div>
-  );
-}
+   return (
+    <Main>
+       
+      <div style={{border: "1px solid #dedede", overflow: "hidden"}}>
+        <Adiv   ref={ref} h={h} step={step}> 
+        <p>是使元素从一种样式逐渐变化为另一种样式的效果。</p>
+        <p> 您可以改变任意多的样式任意多的次数。</p>
+        <p>请用百分比来规定变化发生的时间，或用关键词 "from" 和 "to"，等同于 0% 和 100%。</p>
+        
+        
+      </Adiv>
+      </div>
+    </Main>
+   )
 
-export default function Profile() {
-  return (
-    <Card>
-       <TodoList />
-       <TodoList />
-    </Card>
-  );
-}
-
-
-
+ }
 /* 
 
 key 只有在就近的数组上下文中才有意义

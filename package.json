@@ -111,7 +111,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "buildaly": "source-map-explorer 'build/static/js/*.js'"
   },
   "browserslist": {
     "production": [
@@ -130,6 +131,7 @@
     "browserslist": "^4.21.10",
     "caniuse-lite": "^1.0.30001522",
     "postcss-normalize": "^10.0.1",
+    "source-map-explorer": "^2.5.3",
     "typescript": "^4.8.2"
   },
   "jest": {
