@@ -17,7 +17,7 @@ import './index.less'
 import CusContext from '@com/content'
 import styled from 'styled-components'
 import backimg  from '@imgs/backimg.png'
-import { systemConfigInfo} from '@redux/systemconfig.js'
+import { systemConfigInfo, selectOneLevel} from '@redux/systemconfig.js'
 import { drawEcharts } from "@com/useEcharts"; 
 const ContainerDiv = styled.div`
 

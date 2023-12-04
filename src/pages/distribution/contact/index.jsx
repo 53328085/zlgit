@@ -25,14 +25,14 @@ export default function Index(props) {
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
-  const areaLists = useSelector(selectOneLevel)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  // const areaLists = useSelector(selectOneLevel)
+  const oneLevel = useSelector(selectOneLevel)
   const LevelDefaultId = useSelector(selectOneLevelDefaultId)
-  const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
+ // const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const defaultLabel = useSelector(levelDefaultLabel)
 
-  const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  console.log(areaList, oneLevel)
+  const [defaultArea, setDefaultArea] = useState(oneLevel[0] ? oneLevel[0].id : undefined)
+ // console.log(areaList, oneLevel)
   let [areaId, setAreaId] = useState(defaultArea)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
@@ -300,7 +300,7 @@ export default function Index(props) {
   }
   useEffect(() => {
     getType();
-    if (areaList.length == 0 || !areaList) {
+    if (oneLevel.length == 0 || !oneLevel) {
       message.error('当前项目尚未创建园区!')
       return;
     }
@@ -352,7 +352,7 @@ export default function Index(props) {
               style={{ width: "200px"}}
               onChange={changeArea}
             >
-              {areaList.map((item) => {
+              {oneLevel.map((item) => {
                 return (
                   <Select.Option key={item.id} value={item.id}>
                     {item.name}

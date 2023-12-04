@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { useStore } from "react-redux";
+import { useDispatch } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import styled from 'styled-components'
 import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus} from "@redux/systemconfig";
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution} from "@redux/systemconfig";
 import imgurl from './icon';
  
 const Micon = () => {
@@ -77,7 +77,7 @@ export default function Sider() {
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
- 
+  const dispatch = useDispatch()
   
   const [key, Setkey] = useState('')
   const [menus, setMenus] = useState()
@@ -97,11 +97,12 @@ export default function Sider() {
     
       let state = location.state || {}    
       let {nested, primary } = state;
-      console.log(state,location)
+    //  console.log(state,location)
+      dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
       let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || []; 
-      console.log(nested,sidermenus)    
+     // console.log(nested,sidermenus)    
       setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {

@@ -8,6 +8,7 @@ import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
 import BlueColumn from '@com/bluecolumn'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import { selectOneLevel } from "@redux/systemconfig";
 import {Link} from 'react-router-dom'
 import {ExportExcel} from '@com/useButton'
 import styled from 'styled-components';
@@ -28,7 +29,7 @@ export default function Index() {
     const [roomId, setRoomId] = useState(roomopts[0]?.id)
     const [form] = Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
-    const oneLevel = useSelector(state => state.system.onelevel)
+    const oneLevel = useSelector(selectOneLevel)
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()

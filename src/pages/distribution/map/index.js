@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getRoomId } from "@redux/systemconfig";
+import { getRoomId, selectOneLevel } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Divider, Form, Select, message } from 'antd'
@@ -59,7 +59,7 @@ export default function Index() {
   const [form] = Form.useForm()
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const state = useReactive({
     chartList: [],
     activeChart: 0,

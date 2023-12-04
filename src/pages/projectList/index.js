@@ -36,7 +36,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel, getDisonlevel } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -380,7 +380,13 @@ export default function Index() {
  const enterProject = async ({id, type, publishState}) => {
    try {
      dispatch(getpublishState(publishState)) 
-     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), BigScreen.QueryBigScreen(id)] 
+     let promises = [
+      Area.QueryAll({projectId: id,level: 1,parentId: 0}), 
+      eneryShift.queryShifts(id), 
+      ProjectList.QueryMenus(id), 
+      BigScreen.QueryBigScreen(id),
+      Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+    ] 
      let results = await Promise.allSettled(promises)   
      let menu;
      results.forEach((res, index) => {
@@ -392,10 +398,12 @@ export default function Index() {
             index == 1 && dispatch(getshifts(data || []))
             index == 2 && (menu = handlermenu(data, type, id))           
             index == 3 && dispatch(getdataScreen(data))
+            index == 4 && dispatch(getDisonlevel(data))
           }else{
             index== 0 && dispatch(getOnelevel([]));
             index == 1 && dispatch(getshifts([]));
             index == 3 && dispatch(getdataScreen({}));
+            index == 4 && dispatch(getDisonlevel([]))
           }
        }
      })

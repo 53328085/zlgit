@@ -21,7 +21,7 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
   const {DeviceTypeManager: {AllDeviceStyle}, RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
-  let [deviceStyle, setdeviceStyle] = useState(1)
+ // let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
   const areaList = useSelector(selectOneLevel)
@@ -55,7 +55,7 @@ export default function Index(props) {
   }
 
   const [params, setParams] = useState(initparams)
-
+  let deviceStyle = params.deviceStyle
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
     {
@@ -409,7 +409,7 @@ export default function Index(props) {
           {overView.details != null ? overView.details.map((item, index) => {
             let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
             return <div key={index}>
-              <Link to={`/deviceDetail?sn=${item.sn}`}  target="_blank">
+              <Link to={`/deviceDetail?sn=${item.sn}&deviceStyle=${deviceStyle}`}  target="_blank">
                 <Icard img={imageList[index] ? imageList[index] : imgurl.category} title={item.name}
                  deviceStyle={params.deviceStyle}
                   value={item.address} state={item.state} fields={item.fields}

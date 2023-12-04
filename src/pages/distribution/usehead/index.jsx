@@ -2,9 +2,10 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import { selectOneLevel } from "@redux/systemconfig";
 export default forwardRef(function Index({QueryFibreTempilPartitions,active,setActive,setChannel,channelInfo,initchart,QueryFibreTempilWarningInfo},ref) {
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState(roomopts)
   const [roomId, setRoomId] = useState(roomopts[0]?.id)

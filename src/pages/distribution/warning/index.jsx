@@ -4,7 +4,7 @@ import style from './style.module.less'
 import { Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider, message } from 'antd'
 import { useAntdTable, useSetState } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
-import { getRoomId } from "@redux/systemconfig";
+import { selectOneLevel } from "@redux/systemconfig";
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
@@ -116,7 +116,7 @@ function Main({ areaId, siteId }) {
   const [roomlist, setRoomList] = useState(roomopts)
   const [roomId, setRoomId] = useState(roomopts[0]?.id)
   const [tabledata,setTabledata] = useState([])
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const [level,setLevel] =useState(0)
   const [pageInfo,setPageInfo] =useState({
     pageNum:1,

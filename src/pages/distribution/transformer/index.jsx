@@ -2,6 +2,7 @@ import React, { useState, useRef ,useMemo, useEffect } from 'react'
 import { Select ,Form,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
+import { selectOneLevel } from "@redux/systemconfig";
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
@@ -118,7 +119,7 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const [form] = Form.useForm() 
   const chartRef =useRef()
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const [pattern,setPattern]=useState(1)
   const [tabs,setTabs] =useState([])
   const roomopts = useSelector(state => state.system.roomId)

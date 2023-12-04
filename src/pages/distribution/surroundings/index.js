@@ -7,6 +7,7 @@ import * as echarts from "echarts";
 import updateImg from './updateImg.png'
 import ItemCard from './itemCard'
 import BlueColumn from '@com/bluecolumn'
+import { selectOneLevel } from "@redux/systemconfig";
 import styled from 'styled-components'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
@@ -67,7 +68,7 @@ export default function Index() {
   const [form]=Form.useForm()
   const {Option} = Select;
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const [areaId,setAreaId] =useState(oneLevel[0]?.id)
   const roomlist =useSelector(state=>state.system.roomId)
   const [roomId,setRoomId]=useState(roomlist[0]?.id)

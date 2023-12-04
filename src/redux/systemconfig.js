@@ -14,6 +14,7 @@ const initialState = {
     jump: false, // 页面跳转
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     roomId:0,
+    curlRommid: '',
     menus: {
         projectId: 0, // 项目ID
         runMenus: [], // 运行 top菜单栏 左边 选择的
@@ -26,6 +27,10 @@ const initialState = {
       //  allsinderRunMenus: {},
     },
    onelevel: [], // 一级
+   disonlevel: [], // 配电管理运行态下 一级
+
+   discurlevel: '', // 配电管理运行状态 选中的值
+   isDistribution: false, // 是否在配电管理运行状态下
    currlevel: {}, // 当前选择的一级区域
    shifts: [], // 班次
    datascreen: {}, // 大屏配置
@@ -97,6 +102,16 @@ const system = createSlice({
             state.onelevel =Array.isArray(payload) ? payload : []       
            // return Object.assign({}, state, {onelevel: actions.payload })
         },
+        getDisonlevel(state, {payload}) {
+           state.disonlevel =Array.isArray(payload) ? payload : [] 
+        },
+        getisDistribution(state, {payload}) {
+          
+           state.isDistribution = payload
+        },
+        getDiscurlevel(state, {payload}) {
+          state.discurlevel = payload
+        },
         setCurrentlevel(state, {payload}) {
             state.currlevel = payload
 
@@ -129,6 +144,9 @@ const system = createSlice({
         getRoomId(state,{payload}){
           state.roomId= Array.isArray(payload)?payload:[]
           
+        },
+        getcurlRommid(state, {payload}) {
+          state.curlRommid = payload
         },
         getSystemconfiginfo(state, {payload}) {
            state.systemConfigInfo = payload ?? {}
@@ -170,9 +188,12 @@ export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
-export const selectOneLevel = state => state.system.onelevel
+export const selectOneLevel = state => state.system.isDistribution ? state.system.disonlevel : state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || ''
 
+export const selectdiscurlevel = state => state.system.discurlevel || state.system.disonlevel[0]?.id;
+
+export const selectcurlRommid = state => state.system.curlRommid || state.system.roomId[0]?.id
 export const levelDefaultLabel = state =>  state.system.currlevel?.levelName || state.system.onelevel[0]?.levelName || ''
 export const selectshifts = state => state.system.shifts
 export const publishState = state => {
@@ -211,6 +232,10 @@ export const {
     getThemeColor,
     systemConfigRest,
     getRoomId,
-    getSystemconfiginfo
+    getSystemconfiginfo,
+    getDisonlevel,
+    getisDistribution,
+    getcurlRommid,
+    getDiscurlevel,
 } = actions
 export default system.reducer

@@ -2,7 +2,7 @@ import React, { useState, useEffect,useMemo } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination,Select,Divider } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 // import Header from './header'
 import UseHeader from '@com/useHeader'
 import style from './style.module.less'
@@ -44,7 +44,7 @@ export default function Index() {
   const roomopts =useSelector(state=>state.system.roomId)
   console.log(roomopts)
   const [roomlist,setRoomList] = useState(roomopts)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
   const [roomId,setRoomId] =useState(roomlist[0]?.id)
   // const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const changeArea=(v)=>{
@@ -187,8 +187,8 @@ export default function Index() {
       }
       const resp = await DistributionRoomRuntime.CameraPage(p)
       let { success, data } = resp
-      if(success && data){
-        setoverView(data)
+      if(success){
+       Array.isArray(data)  ? setoverView(data) : setoverView([])
         settotal(resp.total)
       }else{
         message.error(resp.errMsg)

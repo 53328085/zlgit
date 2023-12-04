@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getRoomId } from "@redux/systemconfig";
+import { getRoomId, selectOneLevel, getDiscurlevel, getcurlRommid, selectdiscurlevel, selectcurlRommid } from "@redux/systemconfig";
 import { nanoid } from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
@@ -66,7 +66,8 @@ export default function Index() {
   const dispatch = useDispatch()
   // const roomlist =useSelector(state=>state.system.roomId)
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const oneLevel = useSelector(selectOneLevel)
+  
   const init = {
     door:"",
     fire:"",
