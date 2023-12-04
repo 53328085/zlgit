@@ -120,7 +120,7 @@ export default function Index(props) {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
   }
   const getGatewayUsed = () => {            // 表计型号
     QueryUsedDeviceCategory({ projectId: projectId, deviceStyle: params.deviceStyle }).then(res => {
@@ -130,7 +130,7 @@ export default function Index(props) {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
   }
   const getOverviewData = () => {        //   表计数据
     DistributionRoomRuntime.Overview({...params,roomId}).then(res => {
@@ -153,7 +153,7 @@ export default function Index(props) {
       } else {
         message.error(res.errMsg)
       }
-    })
+    }).catch()
   }
 
   const paginationProps = {

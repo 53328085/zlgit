@@ -8,7 +8,7 @@ import logo from '@imgs/chintlog.png'
 import PageComp from './pagecomp.jsx'
 import { safeElectric } from '@api/api'
 import moment from 'moment'
-import { PieCharts, LineCharts } from './charts'
+ 
 import { drawEcharts } from "@com/useEcharts"; 
 import anaylse from './imgs/anaylse.svg'
 import {exportPDF} from './topdf.js'
@@ -271,6 +271,7 @@ export default function Index() {
   }
   //年度报告
   const getYearReport = async (date) => {
+    try {
     const res = await safeElectric.YearReport({
       projectId,
       date: date ? date.format('YYYY-01-01') : moment().format('YYYY-01-01'),
@@ -291,6 +292,10 @@ export default function Index() {
     } else {
       message.error(res.errMsg)
     }
+       
+   } catch (error) {
+      
+   }
   }
    const pieref = useRef();
    const lineref = useRef();
@@ -316,7 +321,7 @@ export default function Index() {
       drawEcharts(lineref.current, {
         dataset: {
           dimensions: [
-            {name: x, displayName: '月份', type: "time"},
+            {name: x, displayName: '时间', type: "time"},
             {name: y, displayName: '用电量(kWh)',  },
             {name: y1, displayName: '尖(kWh)', },
             {name: y2, displayName: '峰(kWh)',  },
@@ -333,8 +338,22 @@ export default function Index() {
           {type: "line", seriesLayoutBy: 'row'},
           {type: "line", seriesLayoutBy: 'row'},
           {type: "line", seriesLayoutBy: 'row'},
-        ]
-       
+        ],
+        xAxis: {
+          axisLabel: {
+             formatter: (value, index) => {
+               return  active == 2 ?  moment(value, "mm").format('m[月]') :  value
+             },
+             interval:0,
+          },
+          axisPointer: {
+             label: {
+               formatter: ({value}) => { 
+                return  active == 2 ?  moment(value, "mm").format('m[月]') :  moment(value, 'DD').format('D') + '日'
+              }
+             }
+          }
+        }
       })
    }
        

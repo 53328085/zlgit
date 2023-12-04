@@ -18,6 +18,7 @@ import CusContext from '@com/content'
 import styled from 'styled-components'
 import backimg  from '@imgs/backimg.png'
 import { systemConfigInfo} from '@redux/systemconfig.js'
+import { drawEcharts } from "@com/useEcharts"; 
 const ContainerDiv = styled.div`
 
 .container{
@@ -226,7 +227,7 @@ export default function Index() {
     })
     const data = res.data
     if (res.success) {
-      setReport(() => res.data)
+      setReport( {... res.data})
       setProjectMes([
         {
           name: '项目名称',
@@ -332,9 +333,94 @@ export default function Index() {
     const type =  active === 1 ? 'month' : 'year'
     return current && current > moment().endOf(type);
   };
+
+ const pieref = useRef(); // report?.alarmTypeGroup
+ const lineref= useRef();  // report?.eTrend
+ const pieref2 = useRef(); // report?.eTypeGroup
   useEffect(() => {
-    console.log(printRef)
-  }, [])
+    try {
+  
+    if(Array.isArray(report?.alarmTypeGroup)) {
+      let data = report?.alarmTypeGroup
+      let total = data.map(d => Number(d.value)).reduce((a, b) => a +b, 0)
+      drawEcharts(pieref.current, {
+        pieData: {
+           total,
+           data,
+           radius: 100
+        },
+        type: 3
+      })
+
+    }
+
+    if(report?.eTrend && report.eTrend.constructor  == Object) {
+    //  let {x, y, y1, y2, y3, y4} = report.eTrend
+      let {x, y,} = report.eTrend
+      drawEcharts(lineref.current, {
+        dataset: {
+          dimensions: [
+            {name: x, displayName: '时间', type: "time"},
+            {name: y, displayName: '用电量(kWh)',  },
+         /*    {name: y1, displayName: '尖(kWh)', },
+            {name: y2, displayName: '峰(kWh)',  },
+            {name: y3, displayName: '平(kWh)',  },
+            {name: y4, displayName: '谷(kWh)',  } */
+          ],
+          source: [x, y],
+          sourceHeader: false,
+        
+        },
+        series: [
+          {type: "line", seriesLayoutBy: 'row'},
+        ],
+        xAxis: {
+          axisLabel: {
+             formatter: (value, index) => {
+               return  active == 2 ?  moment(value, "mm").format('m[月]') :  value
+             },
+             interval:0,
+          },
+          axisPointer: {
+             label: {
+               formatter: ({value}) => { 
+                return  active == 2 ?  moment(value, "mm").format('m[月]') :  moment(value, 'DD').format('D') + '日'
+              }
+             }
+          }
+        }
+      })
+   }
+   if(Array.isArray(report?.eTypeGroup)) {
+    console.log(2222)
+    let datas = report?.eTypeGroup?.map(d => ({name: d.name, value: parseInt(d.value)}));
+    console.log(datas)
+    let totals = datas.map(d => Number(d.value)).reduce((a, b) => a +b, 0)
+     drawEcharts(pieref2.current, {
+      pieData: {
+          //  stillShowZeroSum: true,
+            total: totals,
+            data: datas,
+            radius: 100
+
+        },
+        type: 3
+
+     })
+
+
+   }
+       
+  } catch (error) {
+      console.log(error)
+  }
+  }, [report])
+  const boxsty = {
+    display: 'flex',
+     flexDirection: 'column', 
+     flex: 1,
+     marginBottom: 24
+  }
   return (
     <CusContext.Provider value={{active,datevalue}}>
       <ContainerDiv>
@@ -441,9 +527,12 @@ export default function Index() {
                 <div className='divcss'>{report?.smokeAlarmCnt ? report?.smokeAlarmCnt : '/'}</div>
               </GridDiv>
             </div>
-            <div style={{ marginBottom: 24 }}>
+            <div style={{...boxsty}}>
               <p style={{ marginBottom: 6 }}>2.1告警类型分布</p>
-              <PieCharts data={report?.alarmTypeGroup} />
+            {/*   <PieCharts data={report?.alarmTypeGroup} /> */}
+
+              <div ref={pieref} style={{flex: 1}}></div>    
+
             </div>
           </PageComp>
           <div className="page-break" />
@@ -485,14 +574,16 @@ export default function Index() {
           <div className="page-break" />
           <PageComp ><div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>10.用电量趋势</p>
-              <div style={{ width: 514, height: 320 }}>
-                <LineCharts data={report?.eTrend} type={active}/>
+              <div style={{ width: 514, height: 320, display: 'flex' }}>
+                  <div ref={lineref} style={{flex: 1}}></div>
+               {/*  <LineCharts data={report?.eTrend} type={active}/> */}
               </div>
             </div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>11用电量类型分布</p>
-              <div style={{ width: 516, height: 320 }}>
-                <PieCharts data={report?.eTypeGroup}/>
+              <div style={{ width: 516, height: 320, display: 'flex' }}>
+              <div ref={pieref2} style={{flex: 1}}></div>
+              {/*   <PieCharts data={report?.eTypeGroup}/> */}
               </div>
 
             </div> </PageComp>
