@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getRoomId } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import { Divider, Form, Select, message } from 'antd'
+import { Divider, Form, Select, message, Spin } from 'antd'
 import { useReactive } from "ahooks";
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import styled from 'styled-components';
@@ -63,6 +63,7 @@ export default function Index() {
   const state = useReactive({
     chartList: [],
     activeChart: 0,
+    globalLoading: false,
   })
   const [roomlist, setRoomList] = useState([])
   //切换区域
@@ -71,10 +72,12 @@ export default function Index() {
   }
   //切换配电房
   const changeRoom = (e) => {
+    
     getChartList(e)
   }
 
   const getChartList = async (roomId) => {
+    
     const res = await DistributionRoomRuntime.ChartList(projectId, roomId)
     if (res.success) {
       if (Array.isArray(res.data) && res.data.length > 0) {
@@ -85,6 +88,7 @@ export default function Index() {
         state.chartList = []
         state.activeChart = 0
         setTimeout(()=> {
+          
           newCanvas.open({})
           newCanvas.render()
         }, 1000)
@@ -98,18 +102,21 @@ export default function Index() {
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
+    state.globalLoading = true
     const res = await DistributionRoomRuntime.ChartDetails(projectId, id)
     if(res.success){
       let dateGroup = JSON.parse(res.data.dataGroup)
           dateGroup.locked = 1
           console.log(canvas)
           setTimeout(()=> {
+            state.globalLoading = false
             canvas.open(dateGroup)
             canvas.render()
             canvas.fitView(16);
           }, 1000)
     }else{
       setTimeout(()=> {
+        state.globalLoading = false
         canvas.open({})
         canvas.render()
       }, 1000)
@@ -206,6 +213,7 @@ export default function Index() {
   }, [])
 
   return (
+    <Spin tip="Loading..." spinning={state.globalLoading}>
     <CustContext.Provider value={{ form }}>
       <Pagecount bgcolor="#eeeff3" pd="0px">
         <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -247,5 +255,6 @@ export default function Index() {
         </div>
       </Pagecount>
     </CustContext.Provider>
+    </Spin>
   )
 }
