@@ -87,7 +87,7 @@ export default function Index() {
             ]
         }, {
             title: '功率因数',
-            dataIndex: 'PFt',
+            dataIndex: 'phsA',
             width: 95
         }, {
             title: '总有功功率',
@@ -95,7 +95,7 @@ export default function Index() {
                 {
                     title:'(kW)',
                     width:96,
-                    dataIndex: 'Pt',
+                    dataIndex: 'Pa',
                 }
             ]
         },{
@@ -104,7 +104,7 @@ export default function Index() {
                 {
                     title:'(kVar)',
                     width:96,
-                    dataIndex: 'Qt',
+                    dataIndex: 'Q',
                 }
             ]
         },  {
@@ -113,7 +113,7 @@ export default function Index() {
                 {
                     title:'(kW·h)',
 
-                    dataIndex: 'Ep',
+                    dataIndex: 'EP',
                 }
             ]
         },
@@ -279,12 +279,12 @@ export default function Index() {
             dataes.forEach((it, i) => {
                    if (Array.isArray(it.data)) {
                        it.data.forEach((item, index) => {
-                           it[item.name] = item.value
+                           it[item.alias] = item.value
                        })
                    }
     
                })
-         
+            console.log(dataes)
             setTableData(dataes)
         }else{
             setTableData([])

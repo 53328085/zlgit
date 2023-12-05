@@ -185,7 +185,7 @@ export default function Index() {
 
   return (
    
-      <Pagecount bgcolor="#eeeff3" pd="0px">  
+      <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">  
         <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)}>
           <ChartItem>
             {state.chartList.map((item, index) => {

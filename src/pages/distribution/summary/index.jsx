@@ -13,7 +13,7 @@ import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
 
-import imglist from '@imgs/index.js'
+ 
 
 
 const Mainbox = styled.div`
@@ -94,7 +94,7 @@ export default function Index() {
   }, [roomId])
   return (
   
-      <Pagecount bgcolor="#eeeff3" pd="0px">
+      <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
         <Mainbox >
           <img className='bgiamge' src={dimg}></img>
           <div className='cardList'>
@@ -121,28 +121,28 @@ export default function Index() {
             </div>
             <div className='card'>
               <div>
-                <img src={imgurl.water} alt="" />
+                <img src={imgurl.nosie} alt="" />
                 <span>噪音</span>
+              </div>
+              <div className='cardval'>
+              {envlist.noise}
+              </div>
+            </div>
+            <div className='card'>
+              <div>
+                <img src={imgurl.water} alt="" />
+                <span>水浸</span>
               </div>
               <div className='cardval'>
               {envlist.water}
               </div>
             </div>
             <div className='card'>
-              <div>
-                <img src={imgurl.smook} alt="" />
-                <span>水浸</span>
-              </div>
-              <div className='cardval'>
-              {envlist.smoke}
-              </div>
-            </div>
-            <div className='card'>
-              <div> <img src={imgurl.nosie} alt="" />
+              <div> <img src={imgurl.smook} alt="" />
                 <span>烟感</span>
               </div>
                 <div className='cardval'>
-                {envlist.noise}
+                {envlist.smoke}
               </div>
             </div>
             <div className='card'>

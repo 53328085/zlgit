@@ -116,8 +116,7 @@ const chartOpt= {
   ]
 };
 export default function Index() {
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const [form] = Form.useForm() 
+  const projectId = useSelector(state => state.system.menus.projectId)  
   const chartRef =useRef()
   const roomId = useSelector(selectcurlRommid)
   const [pattern,setPattern]=useState(1)
@@ -165,9 +164,7 @@ export default function Index() {
       value:7,
       label:'总功率因素'},
   ]
-  const changeArea =(v)=>{
-    getRoomList(v)
-  }
+
   const changeRadio=(e)=>{
     setPattern(e.target.value)
   }

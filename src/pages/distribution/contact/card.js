@@ -1,12 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react'
+import {Typography} from 'antd'
+import styled from 'styled-components'
 import style from './style.module.less'
+const {Text} = Typography
+const Textbox = styled(Text)`
+  &&{
+    width: 183px;
+    font-weight: 700;
+    color: #000;
+  }
+` 
+const Adrbox = styled(Text)`
+  &&{
+    width: 384px;
+    color: #333;
+  }
+` 
 export default function Icard(props) {
     return (
         <div className={style.cardItem} >
             <div className={style.cardImgBox}><img src={props.img} className={style.cardImg} alt={props.title}></img></div>
             <div className={style.ItemValue}>
-                <div className={style.valueTitle}><span>{props.title}</span><span>SN:{props.category}</span></div>
-                <div className={style.valueData}>{props.value}</div>
+                <div className={style.valueTitle}>
+                    <Textbox ellipsis={{
+                        tooltip: props.title
+                    }}>{props.title}</Textbox>
+                    <Textbox ellipsis={{
+                        tooltip: props.category
+                    }}>SN:{props.category}</Textbox>
+                </div>
+                <Adrbox ellipsis={{
+                        tooltip: props.value
+                    }}>{props.value}</Adrbox>
                 {/* <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>更新时间</p><p className={style.timeValueStyle}>{props.lastSampleTime}</p>
                     </div> */}

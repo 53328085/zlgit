@@ -268,7 +268,7 @@ export default function Index(props) {
     getType();   
   }, [])
   useEffect(() => {
-    if(!roomId) return
+    
     if (Number.isFinite(roomId)) {
       getOverviewData()
       getData()
@@ -280,7 +280,7 @@ export default function Index(props) {
         {all: 0, off: 0, on: 0, alarm: 0}
       )
     }
-  }, [roomId,params.state])
+  }, [roomId, params])
   useEffect(() => {
     if (overView.categories) {
       getGatewayImages()
