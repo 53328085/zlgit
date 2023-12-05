@@ -3,14 +3,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import {selectcurlRommid} from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import { Divider, Form, Select, message } from 'antd'
+import { Divider, Form, Select, message, Spin } from 'antd'
 import { useReactive } from "ahooks";
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import styled from 'styled-components';
 import Comhead from '../usehead/com'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-
+ 
 // 左侧工具栏图标
 import '../../../assets/css/fonts/font/iconfont.css'
 import '../../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
@@ -24,7 +24,7 @@ import '../../../assets/css/font_ugr1luq01xe/iconfont.css'
 import '../../../assets/css/fonts/font/libs/iconfont.css'
 import '../../../assets/css/font_g4v09lxfde/iconfont.css'
 import '../../../assets/css/font_bz4csze2alg/iconfont.css'
-
+ 
 const { Option } = Select;
 export default function Index() {
   const ChartItem = styled.div`
@@ -49,23 +49,24 @@ export default function Index() {
       background-color: #237ae4;
     }
   `
-
+ 
   let canvas
   const [newCanvas, setNewCanvas] = useState()
   const canvasOptions = {}
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
-
+ 
  
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
   const roomId = useSelector(selectcurlRommid)
   const state = useReactive({
+    spining:false,
     chartList: [],
     activeChart: 0,
   })
  
-
+ 
   const getChartList = async (roomId) => {
     const res = await DistributionRoomRuntime.ChartList(projectId, roomId)
     if (res.success) {
@@ -83,8 +84,9 @@ export default function Index() {
       }
     }
   }
-
+ 
   const getChartDetail = async (id) => {
+    state.spining = true
     registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
@@ -96,21 +98,23 @@ export default function Index() {
           dateGroup.locked = 1
           console.log(canvas)
           setTimeout(()=> {
+            state.spining = false
             canvas.open(dateGroup)
             canvas.render()
             canvas.fitView(16);
           }, 1000)
     }else{
       setTimeout(()=> {
+        state.spining = false
         canvas.open({})
         canvas.render()
       }, 1000)
       message.error(res.errMsg)
     }
   }
-
  
-
+ 
+ 
   const [contextmenu, setContextMenu] = useState({
     left: null,
     top: null,
@@ -138,7 +142,7 @@ export default function Index() {
   const [nodeTag, setNodeTag] = useState(false)
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
-
+ 
   const onDrag = (event, node) => {
     // 解决浏览器手势插件命名冲突
     event.dataTransfer.setData('Topology', JSON.stringify(node.data))
@@ -147,7 +151,7 @@ export default function Index() {
     event.preventDefault()
     event.stopPropagation()
   }
-
+ 
   const onMessage = (event, data) => {
     // console.log(event)
     // console.log(data)
@@ -172,19 +176,19 @@ export default function Index() {
       }
     }
   }
-
+ 
   const changeChart = id => {
     state.activeChart = id
     getChartDetail(id)
   }
-
+ 
   useEffect(() => {
    if(roomId) getChartList(roomId)
     
   }, [roomId])
-
+ 
   return (
-   
+      <Spin spinning={state.spining} tip="Loading...">
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">  
         <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)}>
           <ChartItem>
@@ -194,5 +198,6 @@ export default function Index() {
           </ChartItem>
         </div>
       </Pagecount>
+      </Spin>
   )
 }
