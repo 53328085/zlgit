@@ -1287,32 +1287,32 @@ export const Monitoring = {
     QueryUsedDeviceCategory: (data) => server.get(`/Monitor/DeviceCategory/QueryUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取设备类型
     GatewayAdd: (data) => server.post(`/Monitor/Gateway/Add`, data),//新增网关
     GatewayUpdate: (data) => server.post(`/Monitor/Gateway/Update`, data),//更新网关
-    GatewayDelete: (data) => server.delete(`/Monitor/Gateway/Delete?projectId=${data.projectId}&id=${data.id}`),//删除网关
+    GatewayDelete: (data) => server.delete(`/Monitor/Gateway/Delete?projectId=${data.projectId}&sn=${data.sn}`),//删除网关
     QueryPlanList: (projectId) => server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`),//告警计划
     AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data),//新增电表
     UpdateElectric: (data) => server.post(`/Monitor/Device/UpdateElectric`, data),//更新电表
     UpdateFactor: (data) => server.get(`/Monitor/Device/UpdateFactor?projectId=${data.projectId}&id=${data.id}&factor=${data.factor}`),//更新倍率
-    DeleteElectric: (data) => server.delete(`/Monitor/Device/DeleteElectric?projectId=${data.projectId}&id=${data.id}`),//删除电表
+    DeleteElectric: (data) => server.delete(`/Monitor/Device/DeleteElectric?projectId=${data.projectId}&sn=${data.sn}`),//删除电表
     QueryByPageWater: (data) => server.post(`/Monitor/Device/QueryByPageWater`, data),//查询水表
     AddWater: (data) => server.post(`/Monitor/Device/AddWater`, data),//新增水表
     UpdateWater: (data) => server.post(`/Monitor/Device/UpdateWater`, data),//更新水表
-    DeleteWater: (data) => server.delete(`/Monitor/Device/DeleteWater?projectId=${data.projectId}&id=${data.id}`),//删除水表
+    DeleteWater: (data) => server.delete(`/Monitor/Device/DeleteWater?projectId=${data.projectId}&sn=${data.sn}`),//删除水表
     QueryByPageGas: (data) => server.post(`/Monitor/Device/QueryByPageGas`, data),//查询燃气表
     AddGas: (data) => server.post(`/Monitor/Device/AddGas`, data),//新增燃气表
     UpdateGas: (data) => server.post(`/Monitor/Device/UpdateGas`, data),//更新燃气表
-    DeleteGas: (data) => server.delete(`/Monitor/Device/DeleteGas?projectId=${data.projectId}&id=${data.id}`),//删除燃气表
+    DeleteGas: (data) => server.delete(`/Monitor/Device/DeleteGas?projectId=${data.projectId}&sn=${data.sn}`),//删除燃气表
     QueryByPageSensor: (data) => server.post(`/Monitor/Device/QueryByPageSensor`, data),//查询传感器
     AddSensor: (data) => server.post(`/Monitor/Device/AddSensor`, data),//新增传感器
     UpdateSensor: (data) => server.post(`/Monitor/Device/UpdateSensor`, data),//更新传感器
-    DeleteSensor: (data) => server.delete(`/Monitor/Device/DeleteSensor?projectId=${data.projectId}&id=${data.id}`),//删除传感器
+    DeleteSensor: (data) => server.delete(`/Monitor/Device/DeleteSensor?projectId=${data.projectId}&sn=${data.sn}`),//删除传感器
     QueryByPageTransformer: (data) => server.post(`/Monitor/Device/QueryByPageTransformer`, data),//查询变压器
     AddTransformer: (data) => server.post(`/Monitor/Device/AddTransformer`, data),//新增变压器
     UpdateTransformer: (data) => server.post(`/Monitor/Device/UpdateTransformer`, data),//更新变压器
-    DeleteTransformer: (data) => server.delete(`/Monitor/Device/DeleteTransformer?projectId=${data.projectId}&id=${data.id}`),//删除变压器
+    DeleteTransformer: (data) => server.delete(`/Monitor/Device/DeleteTransformer?projectId=${data.projectId}&sn=${data.sn}`),//删除变压器
     QueryByPageCamera: (data) => server.post(`/Monitor/Device/QueryByPageCamera`, data),//查询视频监控
     AddCamera: (data) => server.post(`/Monitor/Device/AddCamera`, data),//新增视频监控
     UpdateCamera: (data) => server.post(`/Monitor/Device/UpdateCamera`, data),//更新视频监控
-    DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
+    DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&sn=${data.sn}`),//删除视频监控
     StartReboot: (sn) => server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
     StartDownloadTask: (projectId,sn) => server.get(`/Monitor/Gateway/StartDownloadTask?projectId=${projectId}&sn=${sn}`),//参数下发
     DownloadTaskState: (sn) => server.get(`/Monitor/Gateway/DownloadTaskState?sn=${sn}`),//参数下发
