@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getRoomId, selectOneLevel } from "@redux/systemconfig";
+import {selectcurlRommid} from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Divider, Form, Select, message } from 'antd'
 import { useReactive } from "ahooks";
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import styled from 'styled-components';
-
+import Comhead from '../usehead/com'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
 
@@ -56,23 +56,15 @@ export default function Index() {
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
 
-  const [form] = Form.useForm()
+ 
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(selectOneLevel)
+  const roomId = useSelector(selectcurlRommid)
   const state = useReactive({
     chartList: [],
     activeChart: 0,
   })
-  const [roomlist, setRoomList] = useState([])
-  //切换区域
-  const changeArea = (e) => {
-    getRoomList(e)
-  }
-  //切换配电房
-  const changeRoom = (e) => {
-    getChartList(e)
-  }
+ 
 
   const getChartList = async (roomId) => {
     const res = await DistributionRoomRuntime.ChartList(projectId, roomId)
@@ -117,21 +109,7 @@ export default function Index() {
     }
   }
 
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      console.log(resp)
-      dispatch(getRoomId(resp.data))
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        getChartList(resp.data[0].id)
-      } else {
-        form.setFieldValue('roomId', [])
-        message.warn('当前园区无配电房！')
-      }
-    }
-  }
+ 
 
   const [contextmenu, setContextMenu] = useState({
     left: null,
@@ -201,43 +179,13 @@ export default function Index() {
   }
 
   useEffect(() => {
-    getRoomList(oneLevel[0]?.id)
+   if(roomId) getChartList(roomId)
     
-  }, [])
+  }, [roomId])
 
   return (
-    <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="#eeeff3" pd="0px">
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area: oneLevel[0]?.id
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select
-                style={{ width: 200 }}
-                options={oneLevel}
-                fieldNames={{ label: 'name', value: 'id' }}
-                onChange={changeArea}
-              ></Select>
-            </Form.Item>
-            <Form.Item>
-              <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-            </Form.Item>
-            <Form.Item name="roomId" >
-              <Select
-                options={roomlist}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 240 }}
-                placeholder="请选择配电房"
-                onChange={changeRoom}></Select>
-            </Form.Item>
-          </Form>
-        </div>
+   
+      <Pagecount bgcolor="#eeeff3" pd="0px">  
         <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)}>
           <ChartItem>
             {state.chartList.map((item, index) => {
@@ -246,6 +194,5 @@ export default function Index() {
           </ChartItem>
         </div>
       </Pagecount>
-    </CustContext.Provider>
   )
 }

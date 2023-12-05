@@ -2,7 +2,7 @@ import React, { useState, useEffect,useMemo } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination,Select,Divider } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 // import Header from './header'
 import UseHeader from '@com/useHeader'
 import style from './style.module.less'
@@ -41,35 +41,9 @@ export default function Index() {
   const [wsUrl, setWsUrl] = useState('');
   const [wsocket, setwebsocket] = useState(null);
   const [recordData, setrecordData] = useState()
-  const roomopts =useSelector(state=>state.system.roomId)
-  console.log(roomopts)
-  const [roomlist,setRoomList] = useState(roomopts)
-  const oneLevel = useSelector(selectOneLevel)
-  const [roomId,setRoomId] =useState(roomlist[0]?.id)
+  const roomId = useSelector(selectcurlRommid)
   // const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const changeArea=(v)=>{
-    setAreaId(v)
-    getRoomList(v)
-  }
-  const changeRoom=(v)=>{
-    setRoomId(v)
-  }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        setRoomId(resp.data[0][['id']])
-      } else {
-        form.setFieldValue('roomId', [])
-        setRoomId(null)
-        setStatistics({ all: '', cloud: '', local: '' })
-        setoverView([])
-      }
-
-    }
-  }
+ 
   const controlStyle = {
     width: 256,
     height: 256,
@@ -529,22 +503,12 @@ const playBackYun=()=>{
     isExport: false,//导出按钮
     //export: exportData //导出调用方法
   }
-  const getFromChild = data => {
-    console.log(data.areaId)//园区id
-    if (data.areaId == undefined) {
-      return
-    } else {
-      setAreaId(data.areaId)
-    }
-  }
+ 
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
-     console.log(roomId,areaId)
-     roomId&&getStatistics()
-    
+     if(projectId && roomId) roomId&&getStatistics()
   }, [projectId, roomId])
-  useEffect(() => {
-    console.log(areaId)
+  useEffect(() => {    
     if(roomId){
       getCameraPage()
     }
@@ -554,49 +518,14 @@ const playBackYun=()=>{
     // }
   }, [projectId, roomId, params.alike, params.pageNum])
   return (
-    <div className={style.video}>
-      {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
-      <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area:oneLevel[0]?.id,
-              roomId
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select 
-              style={{ width: 200 }} 
-              options={oneLevel} 
-              fieldNames={{ label: 'name', value: 'id' }} 
-              onChange={changeArea} 
-              placeholder="请选择园区"
-              ></Select>
-            </Form.Item>
-            <Form.Item>
-            <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
-            </Form.Item>
-           <Form.Item name="roomId" >
-              <Select  
-              options={roomlist} 
-              fieldNames={{ label: 'name', value: 'id' }}
-              style={{ width: 240 }} 
-              placeholder="请选择配电房"
-              onChange={changeRoom}></Select>
-           </Form.Item>
-          </Form>
-        </div>
-      <div id='cameraData' className={style.cameraData}>
+    <div className={style.video}>     
+      <div id='cameraData' className={style.cameraData} key="h">
         <CameraValue img={totalCamera} title={'监控总数'} value={statistics.all ? statistics.all : '0'}></CameraValue>
         <CameraValue img={cloudCamera} title={'云监控'} value={statistics.cloud ? statistics.cloud : '0'}></CameraValue>
         <CameraValue img={localCamera} title={'本地监控'} value={statistics.local ? statistics.local : '0'}></CameraValue>
       </div>
-      {/* <div className={style.container}>
-        <VideoList showModal={showModal} setplay={setplay}/>
-      </div> */}
-      <div className={style.content}>
+    
+      <div className={style.content} key="c">
         <div className={style.contentTitle}>
           <span>设备查询</span>
           <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>

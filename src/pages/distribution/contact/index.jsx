@@ -10,7 +10,7 @@ import Icard from './card'
 import imgurl from './images/index.js'
 import { Monitoring, distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { ExportExcel } from '@com/useButton'
-import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
+import { selectProjectId,selectcurlRommid} from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
 
@@ -18,6 +18,7 @@ import Table from '@com/useTable'
 
 let inputValue = ''
 export default function Index(props) {
+  const dispatch = useDispatch()
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
   // const [messageApi, contextHolder] = message.useMessage();
@@ -25,25 +26,15 @@ export default function Index(props) {
   let [deviceStyle, setdeviceStyle] = useState(1)
   let [statistics, setStatistics] = useState({})
   let [overView, setoverView] = useState({ details: undefined, categories: undefined })
-  // const areaLists = useSelector(selectOneLevel)
-  const oneLevel = useSelector(selectOneLevel)
-  const LevelDefaultId = useSelector(selectOneLevelDefaultId)
- // const areaList = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
-  const defaultLabel = useSelector(levelDefaultLabel)
-
-  const [defaultArea, setDefaultArea] = useState(oneLevel[0] ? oneLevel[0].id : undefined)
- // console.log(areaList, oneLevel)
-  let [areaId, setAreaId] = useState(defaultArea)
+  
+ const roomId = useSelector(selectcurlRommid)
   let [optionsGateway, setoptionsGateway] = useState([])
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false 
   let [total, setTotal] = useState(0)
   let [imageList, setimageList] = useState([])
-  const roomopts = useSelector(state => state.system.roomId)
-  const [roomlist, setRoomList] = useState(roomopts)
-  const [roomId, setRoomId] = useState(roomopts[0]?.id)
-  const [form] = Form.useForm()
-  const { Item } = Form
+ 
+  
   let initparams = {
     projectId: projectId,
     // areaId: areaId,
@@ -201,14 +192,7 @@ export default function Index(props) {
   }
 
 
-  const changeArea = (value) => {
-    getRoomList(value)
-    // setParams({
-    //   ...initparams,
-    //   areaId: value,
-    //   pageNum: 1,
-    // })
-  };
+ 
   const handleChangeDevice = (value) => {
     console.log(value);
     setParams({
@@ -278,35 +262,13 @@ export default function Index(props) {
     })
   }, [params])
 
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      setRoomList(resp.data)
-      setParams({
-        ...initparams,
-        pageNum: 1,
-      })
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        setRoomId(resp.data[0][['id']])
-       
-      } else {
-        form.setFieldValue('roomId', [])
-        setRoomId(null)
-        // setTableData([])
-
-      }
-    }
-  }
+ 
+ 
   useEffect(() => {
-    getType();
-    if (oneLevel.length == 0 || !oneLevel) {
-      message.error('当前项目尚未创建园区!')
-      return;
-    }
+    getType();   
   }, [])
   useEffect(() => {
-    console.log(roomId,Number.isFinite(roomId))
+    if(!roomId) return
     if (Number.isFinite(roomId)) {
       getOverviewData()
       getData()
@@ -335,17 +297,21 @@ export default function Index(props) {
   }
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      {/* <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
-      <div className={style.header}>
-        {/* <span style={{ marginLeft: "16px", marginRight: 16 }}>{defaultLabel || '园区'}选择</span> */}
+    
+     {/*  <div className={style.header}>
+    
         <Form
           form={form}
           colon={false}
           layout="inline"
+          initialValues={{
+            area: curlevel,
+            roomId: curromid
+          }}
         >
-          <Item name="area" label={defaultLabel || '园区'} style={{ marginLeft: "16px", }}>
+          <Item name="area" label='' style={{ marginLeft: "16px", }}>
             <Select
-              placeholder="请选择园区"
+              placeholder=""
               size="middle"
               key={defaultArea}
               defaultValue={defaultArea}
@@ -362,7 +328,7 @@ export default function Index(props) {
             </Select>
           </Item>
           <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-          <Item>
+          <Item name="roomid">
             <Select
               value={roomId}
               options={roomlist}
@@ -370,15 +336,12 @@ export default function Index(props) {
               style={{ width: 240, marginLeft: 12 }}
               placeholder="请选择配电房"
               onChange={(v) => {
+                dispatch(getcurlRommid(v))
                 setRoomId(v)
               }}></Select>
           </Item>
         </Form>
-
-        
-
-        {/* <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div> */}
-      </div>
+      </div> */}
       <div className={style.bottom} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div className={style.bottomTab}>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>触点查询</span><Input size="middle" placeholder='输入设备编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />

@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { SearchOutlined ,CloseOutlined} from '@ant-design/icons';
 import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline } from 'antd'
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
-import UseHead from '../usehead'
+
 import UseTable from '@com/useTable'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import time from './time.png'
 import * as echarts from "echarts";
-import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
+import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 
@@ -207,6 +207,7 @@ const { RangePicker  } = DatePicker
 export default function Index() {
   const [active, setActive] = useState(0)
   const projectId = useSelector(selectProjectId)
+  const roomId = useSelector(selectcurlRommid)
   const chartRef = useRef()
   const [activename,setActiveName]=useState('')
   const chooseBox = (i,it) => {
@@ -352,7 +353,7 @@ export default function Index() {
       const alarmType = formvalue.dangerType?formvalue.dangerType:(channelInfo.typeopts&&channelInfo.typeopts[0])?channelInfo.typeopts[0]:1
       const res = await DistributionRoomRuntime.QueryFibreTempilWarningRecords({
         projectId,
-        roomId:headRef.current.roomId,
+        roomId: roomId,
         start,
         end,
         alarmType,
@@ -382,6 +383,18 @@ export default function Index() {
     
     return current && current > moment().endOf('day');
   };
+
+  useEffect(() => {
+    if(roomId && projectId) {
+      QueryFibreTempilWarningInfo(roomId)
+      QueryFibreTempilPartitions(roomId)
+    }
+    
+  }, [roomId, projectId])
+ 
+  useEffect(() => {
+    QueryFibreTempilPartitions(roomId)
+  }, [active])
   useEffect(()=>{
     channelInfo.info.tempData && initchart()
   },[channelInfo.info.tempData])
@@ -391,7 +404,7 @@ export default function Index() {
   },[])
   return (
     <div>
-      <UseHead 
+     {/*  <UseHead 
       QueryFibreTempilPartitions={QueryFibreTempilPartitions} 
       active={active} 
       setActive={setActive} 
@@ -400,7 +413,7 @@ export default function Index() {
       initchart={initchart}
       QueryFibreTempilWarningInfo={QueryFibreTempilWarningInfo}
       ref={headRef}
-      />
+      /> */}
       <WrapDiv>
         <div className='griditem griditem1'>
           <BlueColumn name="光纤测温分区" />

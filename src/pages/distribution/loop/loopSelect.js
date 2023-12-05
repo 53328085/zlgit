@@ -4,7 +4,7 @@ import {Input, Tree, message } from 'antd';
 import dashLine from '@imgs/line.png'
 import {DistributionRoomRuntime} from '@api/api.js'
 export default forwardRef(
-  function Index({form,projectId,roomId,getLinePoint},ref){
+  function Index({projectId,roomId,getLinePoint},ref){
     const { Search } = Input;
 
       const [treeData, setTreeData] = useState([

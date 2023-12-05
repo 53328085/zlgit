@@ -4,7 +4,7 @@ import style from './style.module.less'
 import { Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider, message } from 'antd'
 import { useAntdTable, useSetState } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
-import { selectOneLevel } from "@redux/systemconfig";
+import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
@@ -49,9 +49,10 @@ const Mainbox = styled.div`
        }
 
 `
-function Main({ areaId, siteId }) {
+export default  function Index() {
 
-  const projectId = useSelector(state => state.system.menus.projectId)
+  const projectId = useSelector(selectProjectId)
+  const roomId = useSelector(selectcurlRommid)
   const columns = [
     {
       title: '最新告警时间',
@@ -112,11 +113,9 @@ function Main({ areaId, siteId }) {
   const dispatch = useDispatch()
   const [keycode, setKeycode] = useState(0)
   const [total, setTotal] = useState(0)
-  const roomopts = useSelector(state => state.system.roomId)
-  const [roomlist, setRoomList] = useState(roomopts)
-  const [roomId, setRoomId] = useState(roomopts[0]?.id)
+ 
   const [tabledata,setTabledata] = useState([])
-  const oneLevel = useSelector(selectOneLevel)
+  
   const [level,setLevel] =useState(0)
   const [pageInfo,setPageInfo] =useState({
     pageNum:1,
@@ -156,58 +155,7 @@ function Main({ areaId, siteId }) {
       total:page.total
     })
   }
-  const changeAddress=()=>{}
-  const getAlarmData = () => {
-    console.log(11)
-  }
-  // const QueryReports = ({ current, pageSize }, form) => {
-  //   let { time, ...rest } = form
-  //   let start = time[0].format('YYYY-MM-DD')
-  //   let end = time[1].format('YYYY-MM-DD')
-  //   let params = {
-  //     pageNum: current,
-  //     pageSize,
-  //     start,
-  //     end,
-  //     projectId,
-  //     areaId,
-  //     siteId,
-  //     ...rest
-  //   }
-  //   return OperationLogRuntime.QueryLogsByPage(params).then(res => {
-  //     let { success, data, total } = res
-  //     setTotal(total)
-  //     if (success && Array.isArray(data) && data.length > 0) {
-  //       return {
-  //         list: data,
-  //         total
-  //       }
-  //     } else {
-  //       return {
-  //         list: [],
-  //         total: 0
-  //       }
-  //     }
-  //   })
 
-  // }
-
-  // const { tableProps, search } = useAntdTable(QueryReports, {
-  //   form,
-  //   defaultParams: [{ pageSize: 14, pageNum: 1 }, {
-  //     start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-  //     end: moment().format('YYYY-MM-DD'),
-  //     projectId,
-  //     siteId,
-  //     content: "",
-  //     type: 0,
-  //     status: 0
-
-  //   }],
-  //   refreshDeps: [projectId, siteId]
-  // })
-
-  // const { submit } = search
 
   const tableref = useRef()
   const onExport = useCallback(() => {
@@ -216,43 +164,11 @@ function Main({ areaId, siteId }) {
   }, [total])
 
 
-  const changeArea = (v) => {
-    getRoomList(v)
-    setPageInfo({
-      ...pageInfo,
-      pageNum:1
-    })
-  }
-  const changeRoom=(v)=>{
-    setRoomId(v)
-    setPageInfo({
-      ...pageInfo,
-      pageNum:1
-    })
-  }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        setRoomId(resp.data[0][['id']])
-       
-      } else {
-        form.setFieldValue('roomId', [])
-        setRoomId(null)
-        setTabledata([])
-        setPageInfo({
-          pageNum:1,
-          pageSize:1,
-          total:0
-        })
-      }
-    }
-  }
+ 
+ 
 
   const warnPage =async () => {
-    const {area, content,roomId,time,type} = form.getFieldsValue()
+    const {time,type} = form.getFieldsValue()
     let params = {
       projectId,
       pageNum:pageInfo.pageNum ,
@@ -281,59 +197,22 @@ function Main({ areaId, siteId }) {
 
   }
   useEffect(() => {
-    console.log(pageInfo)
-    roomId&&warnPage()
+    if(roomId) {
+      warnPage()
+    }
+
   }, [roomId,level,JSON.stringify(pageInfo) ])
 
   return (
     <div>
-      <Mainbox>
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area: oneLevel[0]?.id,
-              roomId: roomlist[0]?.id
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select 
-              style={{ width: 200 }} 
-              options={oneLevel} 
-              fieldNames={{ label: 'name', value: 'id' }} 
-              onChange={changeArea} 
-              placeholder="请选择配电房"
-              ></Select>
-            </Form.Item>
-            <Form.Item>
-              <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-            </Form.Item>
-            <Form.Item name="roomId" >
-              <Select
-                options={roomlist}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 240 }}
-                placeholder="请选择配电房"
-                onChange={changeRoom}
-                ></Select>
-            </Form.Item>
-          </Form>
-        </div>
+      <Mainbox>       
         <Titlelayout title="告警列表" layout="flex">
           <div className='content'>
-            <Form form={form} className='top' layout='inline' initialValues={{
-              content: '',
+            <Form form={form} className='top' layout='inline' initialValues={{            
               type: 0,
               time: [moment().subtract(7, 'day'), moment()]
             }}>
-              <Space size={32}>
-                {/* <Item label="告警记录" name="content">
-                  <Input placeholder='安装地址' style={{ width: '320px' }} allowClear onChange={changeAddress} />
-                  <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getAlarmData}>查询</Button>
-                </Item> */}
-                {/* <Divider style={{ margin: '0', height: '32px' }} type="vertical" /> */}
+              <Space size={32}>               
                 <Item label="告警等级" name="type">
                   <Select options={[
                     { label: '全部告警', value: 0 },
@@ -374,11 +253,8 @@ function Main({ areaId, siteId }) {
 
           </div>
         </Titlelayout>
-      </Mainbox></div>
+      </Mainbox>
+      </div>
   )
 }
-export default function Index(props) {
-  return (
-    <Main {...props} />
-  )
-}
+ 

@@ -47,9 +47,12 @@ const Chartin = (props) => {
     let {group, data, deviceStyle} = props
     console.log(data)
     if(!group) return <Empty />
-    if(!data) return <Empty/>
+    if(!Array.isArray(data) || data.length ==0) return <Empty/>
+    let series = Array(data.length).fill({
+        type: "line",
+        seriesLayoutBy: 'row',
+       })
     
-  
     let dimensions=["time"]
     let source = []
      data.forEach((d,index) => {
@@ -68,7 +71,7 @@ const Chartin = (props) => {
         EC: '电流(A)',
        EP: '电压(V)',
        TP: '温度(℃)'
-    }[group]
+    }[group] || '未知'
     let ref = useRef()
     useEffect(() => {
         drawEcharts(ref.current, {
@@ -77,10 +80,7 @@ const Chartin = (props) => {
              source,
              sourceHeader: true,
            },
-           series: [{
-            type: "line",
-            seriesLayoutBy: 'row',
-           }],
+           series,
            dataZoom: {
              type: 'inside'
            },
@@ -143,7 +143,7 @@ export default function GatewayDetail(props) {
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment();
   // const yesterday = date + ' ' + "00:00:00"
-    const yesterday = moment().startOf('day').format('YYYY-MM-DD HH:mm:ss')
+    const yesterday =moment().subtract(7, 'day').format('YYYY-MM-DD HH:mm:ss')
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -392,7 +392,7 @@ export default function GatewayDetail(props) {
         setendTime(dataString[1])
         setValue(date)
     }//监控趋势选择时间
-    const [dates, setDates] = useState([moment(yesterday), moment(today)]);
+    const [dates, setDates] = useState([moment().subtract(7, 'day'), moment()]);
  
     const disabledDate = (current) => {
         if (!dates) {
@@ -632,7 +632,7 @@ export default function GatewayDetail(props) {
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
                                 onOpenChange={onOpenChange}
-                                defaultValue={[moment(yesterday), moment(today)]}
+                                defaultValue={[moment().subtract(7, 'day'), moment()]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime
                             />
@@ -643,7 +643,7 @@ export default function GatewayDetail(props) {
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment(yesterday), moment(today)]} />
+                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment().subtract(7, 'day'), moment()]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
                         
                     </div> : null

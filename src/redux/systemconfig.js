@@ -188,12 +188,16 @@ export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
-export const selectOneLevel = state => state.system.isDistribution ? state.system.disonlevel : state.system.onelevel
+export const selectOneLevel = state =>  state.system.onelevel
 export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || ''
 
-export const selectdiscurlevel = state => state.system.discurlevel || state.system.disonlevel[0]?.id;
 
-export const selectcurlRommid = state => state.system.curlRommid || state.system.roomId[0]?.id
+
+export const selectdisOneLevel = state =>  state.system.disonlevel
+
+export const selectdiscurlevel = state => state.system.disonlevel[0]?.id;
+
+export const selectcurlRommid = state =>  state.system.curlRommid
 export const levelDefaultLabel = state =>  state.system.currlevel?.levelName || state.system.onelevel[0]?.levelName || ''
 export const selectshifts = state => state.system.shifts
 export const publishState = state => {

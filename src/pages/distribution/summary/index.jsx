@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getRoomId, selectOneLevel, getDiscurlevel, getcurlRommid, selectdiscurlevel, selectcurlRommid } from "@redux/systemconfig";
+import React, { useEffect, useState,  } from 'react'
+import { useSelector } from 'react-redux'
+import {selectcurlRommid, selectProjectId } from "@redux/systemconfig";
 import { nanoid } from '@reduxjs/toolkit'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
@@ -61,13 +61,10 @@ const Mainbox = styled.div`
 
 
 export default function Index() {
+ 
+  const projectId = useSelector(selectProjectId)
 
-  const [form] = Form.useForm()
-  const dispatch = useDispatch()
-  // const roomlist =useSelector(state=>state.system.roomId)
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(selectOneLevel)
-  
+  const roomId = useSelector(selectcurlRommid)
   const init = {
     door:"",
     fire:"",
@@ -78,16 +75,8 @@ export default function Index() {
     water:""
   }
 
-  const [roomlist, setRoomList] = useState([])
   const [envlist,setEnvList]=useState(init)
-  //切换区域
-  const changeArea = (e) => {
-    getRoomList(e)
-  }
-  //切换配电房
-  const changeRoom=(e)=>{
-    getEnvironment(e)
-  }
+  
 
   const getEnvironment = async (roomId) => {
     const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
@@ -97,61 +86,15 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      console.log(resp)
-      dispatch(getRoomId(resp.data))
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        getEnvironment(resp.data[0][['id']])
-      } else {
-        form.setFieldValue('roomId', [])
-        setEnvList(init)
-      }
-    }
-  }
-
+ 
   
   useEffect(() => {
-    getRoomList(oneLevel[0]?.id)
+   if(roomId)  getEnvironment(roomId)
    
-  }, [])
+  }, [roomId])
   return (
-    <CustContext.Provider value={{ form }}>
+  
       <Pagecount bgcolor="#eeeff3" pd="0px">
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area: oneLevel[0]?.id
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select
-                style={{ width: 200 }}
-                options={oneLevel}
-                fieldNames={{ label: 'name', value: 'id' }}
-                placeholder="请选择园区"
-                onChange={changeArea}
-              ></Select>
-            </Form.Item>
-            <Form.Item>
-              <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-            </Form.Item>
-            <Form.Item name="roomId" >
-              <Select
-                options={roomlist}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 240 }}
-                placeholder="请选择配电房"
-                onChange={changeRoom}></Select>
-            </Form.Item>
-          </Form>
-        </div>
         <Mainbox >
           <img className='bgiamge' src={dimg}></img>
           <div className='cardList'>
@@ -222,6 +165,6 @@ export default function Index() {
           </div>
         </Mainbox>
       </Pagecount>
-    </CustContext.Provider>
+    
   )
 }

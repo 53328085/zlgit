@@ -1,18 +1,25 @@
-import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHandle } from 'react'
+import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHandle, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectOneLevel } from "@redux/systemconfig";
-export default forwardRef(function Index({QueryFibreTempilPartitions,active,setActive,setChannel,channelInfo,initchart,QueryFibreTempilWarningInfo=() => {}},ref) {
+import { selectdisOneLevel, getDiscurlevel, getcurlRommid,  selectdiscurlevel  } from "@redux/systemconfig";
+export default  memo(function Index(props) {
+  const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(selectOneLevel)
+  const oneLevel = useSelector(selectdisOneLevel)
+   
+  const areaId = useSelector(selectdiscurlevel)
+  
   const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState(roomopts)
   const [roomId, setRoomId] = useState(roomopts[0]?.id)
   const [form] = Form.useForm()
-  const changeArea=(v)=>{
-    console.log(v)
+  const changeArea=(v)=>{  
+    getDiscurlevel(v)   
     getRoomList(v)
+  }
+  const changeRomme = (v) => {      
+       dispacth(getcurlRommid(v))
   }
   const getRoomList = async (areaId) => {
     const resp = await distributionRoom.RoomList(projectId, areaId)
@@ -20,52 +27,43 @@ export default forwardRef(function Index({QueryFibreTempilPartitions,active,setA
       setRoomList(resp.data)
       
       if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        setRoomId(resp.data[0][['id']])
-       
+        let rommid = resp.data[0][['id']]
+        form.setFieldValue('roomId', rommid)
+        setRoomId(rommid)
+        dispacth(getcurlRommid(rommid))
       } else {
         form.setFieldValue('roomId', [])
         setRoomId(null)  
       }
     }
   }
-  useEffect(()=>{
-    QueryFibreTempilWarningInfo && QueryFibreTempilWarningInfo(roomId)
-  },[roomId])
-  useEffect(()=>{
-    console.log(roomId)
-    !roomId&&setChannel([])
-     roomId&&QueryFibreTempilPartitions && QueryFibreTempilPartitions(roomId)
-    if(!roomId){
-      channelInfo.info={}
-    }
-    initchart && initchart()
-    console.log(channelInfo)
-  },[roomId,active])
-  useImperativeHandle(ref,()=>{
-    return {
-      roomId
-    }
-  })
+ 
+ useEffect(() => {
+  if(areaId) {
+    getRoomList(areaId)
+  }
+ 
+ }, [areaId])
 return (
   <div>
-          <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
               <Form
                   form={form}
                   colon={false}
                   layout="inline"
-                  initialValues={{
-                      area: oneLevel.length > 0 ? oneLevel[0]?.id : null,
-                      roomId: roomlist.length > 0 ? roomlist[0].id : null
-                  }}
+                  initialValues={
+                    {
+                      area: areaId,
+                      roomId: roomId
+                    }
+                  }
               >
-                  <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
+                  <Form.Item   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: 200 }} 
                       options={oneLevel} 
                       fieldNames={{ label: 'name', value: 'id' }} 
-                      onChange={changeArea}
-                      placeholder="请选择园区"
+                      onChange={changeArea}                      
                       ></Select>
                   </Form.Item>
                   <Form.Item>
@@ -73,19 +71,15 @@ return (
                   </Form.Item>
                   <Form.Item name="roomId" >
                       <Select
-                          value={roomId}
                           options={roomlist}
                           fieldNames={{ label: 'name', value: 'id' }}
                           style={{ width: 240 }}
                           placeholder="请选择配电房"
-                          onChange={(v)=>{
-                              setRoomId(v) 
-                              setActive(0)  
-                          }}></Select>
+                          onChange={changeRomme}></Select>
                   </Form.Item>
               </Form>
           </div>
   </div>
 )
-}
-) 
+})
+ 
