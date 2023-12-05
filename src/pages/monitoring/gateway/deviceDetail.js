@@ -47,24 +47,7 @@ const Chartin = (props) => {
     let {group, data, deviceStyle} = props
     console.log(data)
     if(!group) return <Empty />
-    if(!Array.isArray(data) || data.length ==0) return <Empty/>
-    let series = Array(data.length).fill({
-        type: "line",
-        seriesLayoutBy: 'row',
-       })
-    
-    let dimensions=["time"]
-    let source = []
-     data.forEach((d,index) => {
-       let {point, data} = d;
-       dimensions.push(point)
-       if(index == 0) {
-         source.push(data.map(t => t.time));
-         source.push(data.map(t => t.value))
-       }else {
-        source.push(data.map(t => t.value))
-       }
-    })  
+
     let title = {
         EC: '电流(A)',
         WF: [2, 7].includes(deviceStyle) ? '用水量(m³)' :  '电度(kWh)',
@@ -72,8 +55,32 @@ const Chartin = (props) => {
        EP: '电压(V)',
        TP: '温度(℃)'
     }[group] || '未知'
+    let isempty = !Array.isArray(data) || data.length ==0
+     
+   
+  
     let ref = useRef()
     useEffect(() => {
+        if(isempty) return
+        let dimensions=["time"]
+        let source = []        
+         let series=  Array(data.length).fill({
+            type: "line",
+            seriesLayoutBy: 'row',
+           })       
+      
+         data.forEach((d,index) => {
+           let {point, data} = d;
+           dimensions.push(point)
+           if(index == 0) {
+             source.push(data.map(t => t.time));
+             source.push(data.map(t => t.value))
+           }else {
+            source.push(data.map(t => t.value))
+           }
+        })  
+
+
         drawEcharts(ref.current, {
            dataset: {
              dimensions,
@@ -95,7 +102,9 @@ const Chartin = (props) => {
     }, [data])
     return (
         <Titlelayout title={title} layout="flex" pd={0} bordered="n">
-           <div style={{flex: 1}} ref={ref}></div>
+           <div style={{flex: 1}} ref={ref}>
+             {isempty && <Empty />}
+           </div>
         </Titlelayout>
     )
 

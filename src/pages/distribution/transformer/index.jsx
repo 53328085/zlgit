@@ -46,6 +46,8 @@ flex-direction: column;
 }
 .datastyle{
   flex: 1;
+  display: flex;
+  flex-direction: column;
   .filters{
     display: flex;
     justify-content: space-between;
@@ -483,7 +485,7 @@ export default function Index() {
                  </div>
                </div>
                {
-                 pattern===1?(<div ref={chartRef} style={{height:'calc(100% - 63px)'}}></div>):
+                 pattern===1?(<div ref={chartRef} style={{flex: 1}}></div>):
                  ( <UseTable 
                   columns={header} 
                   bordered  
