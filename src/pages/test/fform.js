@@ -1,151 +1,104 @@
-import { useState, useTransition, memo, Fragment } from 'react';
+import { useState, useTransition, memo, Fragment, useDeferredValue, Suspense, useEffect, useRef} from 'react';
+import styled from 'styled-components';
+ const Main =styled.div`
+  display: flex;
+  padding: 20px;
+   .ani {
+    background-color: aqua;
+    color: #fff;
+    height: 30px;
+    width: 100%;
+   }
+   .cylon_eye {
+  background-color: red;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 25%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.9) 75%
+  );
+  color: white;
+  height: 100%;
+  width: 60px;
+  animation:  eye 5s linear 0.3s, ear 5s linear 0.3s ;
+  }
+  @keyframes eye {
+    from {
+      margin-left: -10%;
+    }
+    to {
+      margin-left:110%
+    }
+  }
+
+  @keyframes  ear{
+    from {
+      margin-left: -10%;
+      font-size: 14px
+    }
+    to {
+      font-size:28px;
+      margin-left:110%
+    }
+  }
+  .ai {
+
+  
+    width: 600px;
+    padding: 8px;
+   // border: 1px solid #dedede;
+    animation: scrol 3s linear 0.1s infinite ;
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
  
-const TabButton =({ children, isActive, onClick }) => {
-  if (isActive) {
-    return <b>{children}</b>
+ `
+ const Adiv = styled.div`
+    width: 600px;
+    padding: 8px;
+   // border: 1px solid #dedede;
+    animation: ${props => `scrol ${props.step}s linear   infinite`};
+    &:hover {
+      animation-play-state: paused;
+    }
+    @keyframes scrol {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      // transform:  ${props => `translateY(-${props.h}px)` };
+    }
   }
-  return (
-    <button onClick={() => {
-      onClick();
-    }}>
-      {children}
-    </button>
-  )
-}
+ `
+ export default function Index(){
+  const ref = useRef()
+  const [h, setH] = useState(0)
+  const [step, setSeepd] = useState(0)
+  useEffect(() => {
+    let el = ref.current.getBoundingClientRect();
+    setH(el.height)
+     setSeepd(el.height / 60)
+  }, [])
 
-const AboutTab = () => {
-  <p>Welcome to my profile!</p>
-}
-
-const PostsTab = memo(function PostsTab() {
-  // 打印一次。真正变慢的地方在 SlowPost 内。
-  console.log('[ARTIFICIALLY SLOW] Rendering 500 <SlowPost />');
-
-  let items = [];
-  for (let i = 0; i < 500; i++) {
-    items.push(<SlowPost key={i} index={i} />);
-  }
-  return (
-    <ul className="items">
-      {items}
-    </ul>
-  );
-});
-
-function SlowPost({ index }) {
-  let startTime = performance.now();
-  while (performance.now() - startTime < 1) {
-    // 每个 item 都等待 1 毫秒以模拟极慢的代码。
-  }
-
-  return (
-    <li className="item">
-      Post #{index + 1}
-    </li>
-  );
-}
-const ContactTab = () =>{
-  return (
-    <>
-      <p>
-        You can find me online here:
-      </p>
-      <ul>
-        <li>admin@mysite.com</li>
-        <li>+123456789</li>
-      </ul>
-    </>
-  );
-}
-
-  function TabContainer() {
-  const [isPending, startTransition] = useTransition();
-  const [tab, setTab] = useState('about');
-
-  function selectTab(nextTab) {
-    startTransition(() => {
-      setTab(nextTab);
-    });
-  }
-
-  return (
-    <>
-      <TabButton
-        isActive={tab === 'about'}
-        onClick={() => selectTab('about')}
-      >
-        About
-      </TabButton>
-      <TabButton
-        isActive={tab === 'posts'}
-        onClick={() => selectTab('posts')}
-      >
-        Posts (slow)
-      </TabButton>
-      <TabButton
-        isActive={tab === 'contact'}
-        onClick={() => selectTab('contact')}
-      >
-        Contact
-      </TabButton>
-      <hr />
-      {tab === 'about' && <AboutTab />}
-      {tab === 'posts' && <PostsTab />}
-      {tab === 'contact' && <ContactTab />}
-    </>
-  );
-}
-const people = [
-  {
-    id: 0, // 在 JSX 中作为 key 使用
-    name: '凯瑟琳·约翰逊',
-    profession: '数学家',
-    accomplishment: '太空飞行相关数值的核算',
-    imageId: 'MK3eW3A',
-  },
-  {
-    id: 1, // 在 JSX 中作为 key 使用
-    name: '马里奥·莫利纳',
-    profession: '化学家',
-    accomplishment: '北极臭氧空洞的发现',
-    imageId: 'mynHUSa',
-  },
-  {
-    id: 2, // 在 JSX 中作为 key 使用
-    name: '穆罕默德·阿卜杜勒·萨拉姆',
-    profession: '物理学家',
-    accomplishment: '关于基本粒子间弱相互作用和电磁相互作用的统一理论',
-    imageId: 'bE7W1ji',
-  },
-  {
-    id: 3, // 在 JSX 中作为 key 使用
-    name: '珀西·莱温·朱利亚',
-    profession: '化学家',
-    accomplishment: '开创性的可的松药物、类固醇和避孕药',
-    imageId: 'IOjWm71',
-  },
-  {
-    id: 4, // 在 JSX 中作为 key 使用
-    name: '苏布拉马尼扬·钱德拉塞卡',
-    profession: '天体物理学家',
-    accomplishment: '白矮星质量计算',
-    imageId: 'lrWQx8l',
-  },
-];
-const lis = people.filter(p =>p.profession == '化学家').map(p => <Fragment key={p.id}>
-  <h3> {p.name}</h3>
-  <p>{p.profession}</p>
-  </Fragment> )
-const oth = people.filter(p =>p.profession !== '化学家').map(p => <Fragment key={p.id}>
-  <h3> {p.name}</h3>
-  <p>{p.profession}</p>
-  </Fragment> )
-
-export default  function Index() {
    return (
-      <div>
-        {lis}
-        {oth}
+    <Main>
+       
+      <div style={{border: "1px solid #dedede", overflow: "hidden"}}>
+        <Adiv   ref={ref} h={h} step={step}> 
+        <p>是使元素从一种样式逐渐变化为另一种样式的效果。</p>
+        <p> 您可以改变任意多的样式任意多的次数。</p>
+        <p>请用百分比来规定变化发生的时间，或用关键词 "from" 和 "to"，等同于 0% 和 100%。</p>
+        
+        
+      </Adiv>
       </div>
+    </Main>
    )
-}
+
+ }
+/* 
+
+key 只有在就近的数组上下文中才有意义
+
+*/

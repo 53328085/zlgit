@@ -1,6 +1,6 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
-import {Liquid} from "@ant-design/charts"
+
 import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';

@@ -40,6 +40,12 @@ export default function Index() {
             type: 'warning',
             content: "当前" + levelName + "没有配电房"
           })
+          setTableData([])
+          setPagination({
+            current: 1,
+            pageSize: 15,
+            total: 0
+          })
         } else {
           form.setFieldValue('roomId', res.data[0].id)
           getTableData()

@@ -444,6 +444,7 @@ export default function Gateway() {
       console.log(result,params)
     }
   })
+
   const startOk = async () => {
     modalReStartRef?.current?.onCancel()
     setspinLoading('正在重启网关……')
@@ -456,8 +457,15 @@ export default function Gateway() {
         setgatewayRes(data.message)
         setisSuccess(false)
         modalReStartResRef?.current?.onOpen()
-      }else{
-        polloption.run()
+      }
+      else{
+        // polloption.run()
+        setSpinShow(false)
+        
+        setgatewayRes("操作成功")
+        setisSuccess(true)
+        modalReStartResRef?.current?.onOpen()
+       
       }
       
     } else {
@@ -788,7 +796,9 @@ export default function Gateway() {
       getQueryUsedGateway()
     }
   }, [])
+  useEffect(()=>{
 
+  },[gatewayRes])
   return (
     <Spin tip={spinLoading} spinning={spinShow}>
       <div>
@@ -814,7 +824,7 @@ export default function Gateway() {
         <MultImport {...ImportProps}></MultImport>
         <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
         <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
-          errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips}></ReStartRes>
+          errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips} ></ReStartRes>
         <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
         <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
         {EditFormComp}
@@ -958,7 +968,7 @@ let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorL
       <div style={{ margin: '16px 32px 0', display: 'flex', alignContent: 'center' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList || gatewayRes}</span>
+        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList.length>0?errorList:null || gatewayRes }</span>
         <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
         </div>
       </div>  

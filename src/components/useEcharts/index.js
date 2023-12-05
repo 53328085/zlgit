@@ -456,6 +456,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, grid={left: 0, right: 0, containLabel: true,}} = {}) => ({
   // 饼图的设置 
+ 
   tooltip: {
     trigger: "item",
   },
@@ -473,12 +474,13 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, gr
     left: "center",
     top: "center",
     style: {
-      text: total ? ["总", "", total].join("\n") : "",
+      text: !isNaN(total) ? ["总", "", total].join("\n") : "",
     },
   },
   series: [
     {
       type: "pie",
+      stillShowZeroSum: true,
       data,
       radius,
       label: {
@@ -513,7 +515,7 @@ export const drawEcharts = (
     ...rest
   } = {}
 ) => {  
-
+  
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
  // const bar = echarts.getInstanceByDom(dom);
@@ -532,17 +534,18 @@ export const drawEcharts = (
       axisTick: {
         alignWithLabel: true,
         lineStyle: {
-         // color: '#ccc'
+         
         }
       },   
       axisLine: {
         lineStyle: {
-         // color:"#ccc"
+         
         }
       },
       axisLabel: {
-       // color:"#545454",
+       
         interval:0, // 显示所有x轴的label
+        
       },
       
       ...xAxis,

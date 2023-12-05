@@ -8,7 +8,7 @@ import {
 import {  getpublishState,   getJump, getdataScreen, getIsGranary, configProject,
   getMenus,
   getshifts,
-  getOnelevel,  setCurrentlevel, getSystemconfiginfo} from "@redux/systemconfig";
+  getOnelevel,  setCurrentlevel, getSystemconfiginfo, getDisonlevel} from "@redux/systemconfig";
  
 import { Area, ProjectList, eneryShift } from "@api/api.js";
 import { message, Tabs } from "antd";
@@ -139,7 +139,14 @@ function UserLog() {
 
  const enterProject = async (id) => {
    try {    
-     let promises = [Area.QueryAll({projectId: id,level: 1,parentId: 0}),  eneryShift.queryShifts(id), ProjectList.QueryMenus(id), ProjectSetting.queryProjectPublishInfo(id), BigScreen.QueryBigScreen(id)] 
+     let promises = [
+       Area.QueryAll({projectId: id,level: 1,parentId: 0}), 
+       eneryShift.queryShifts(id), 
+       ProjectList.QueryMenus(id), 
+       ProjectSetting.queryProjectPublishInfo(id),
+       BigScreen.QueryBigScreen(id),
+       Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+      ] 
      let results = await Promise.allSettled(promises)   
      let menu;   
      results.forEach((res, index) => {
@@ -152,10 +159,12 @@ function UserLog() {
             index == 2 && (menu = handlermenu(data, id))
             index == 3 && dispatch(getpublishState(data?.state))
             index == 4 && dispatch(getdataScreen(data))
+            index == 5 && dispatch(getDisonlevel(data))
           }else{
             index== 0 && dispatch(getOnelevel([]));
             index == 1 && dispatch(getshifts([]));
             index == 4 && dispatch(getdataScreen({}))
+            index == 5 && dispatch(getDisonlevel(data))
           }
        }
      })  

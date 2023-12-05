@@ -224,7 +224,7 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const arealist = useSelector(state => state.system.onelevel)
   const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName+'(全部)', id: 0 }, ...arealist]:[]
-  console.log(arealist)
+ 
   const [warnData, setWarnData] = useState()
   const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
   const [datasetMonthl, setDatasetMonthl] = useState()
@@ -269,31 +269,41 @@ export default function Index() {
 
 
   //查询今日告警
-  const getQueryWarningDetails = async () => {
-    const res = await safeElectric.TodayWarningStatistics(params)
+  const getQueryWarningDetails = async () => {  
+    try {
+      const res = await safeElectric.TodayWarningStatistics(params)
     if (res.success) {
       setWarnData({ ...res.data })
     } else {
       message.error(res.errMsg)
     }
+    } catch (error) {
+      
+    }
+    
   }
   //查询本月告警趋势
   const getQueryMonthWarningTrends = async () => {
-    const res = await safeElectric.QueryMonthWarningTrends(params)
-    if (res.success) {
-      const length = Math.max(res.data.lastMonth.length, res.data.month.length)
-      let arr = []
-      for (let i = 0; i < length; i++) {
-        arr.push({
-          time: i + 1,
-          "本月": res.data.month[i].value,
-          "上月": res.data.lastMonth[i].value
-        })
+    try {
+      const res = await safeElectric.QueryMonthWarningTrends(params)
+      if (res.success) {
+        const length = Math.max(res.data.lastMonth.length, res.data.month.length)
+        let arr = []
+        for (let i = 0; i < length; i++) {
+          arr.push({
+            time: i + 1,
+            "本月": res.data.month[i].value,
+            "上月": res.data.lastMonth[i].value
+          })
+        }
+        setDatasetMonthl(() => ({ dimensions: ["time", "本月", "上月"], source: arr }))
+      } else {
+        message.error(res.errMsg)
       }
-      setDatasetMonthl(() => ({ dimensions: ["time", "本月", "上月"], source: arr }))
-    } else {
-      message.error(res.errMsg)
+    } catch (error) {
+      
     }
+   
   }
   drawEcharts(lref.current, {
     dataset: datasetMonthl,
@@ -351,6 +361,34 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
+  const tdrawEcharts = () => {
+    return drawEcharts(warnref.current, {
+      type: 4,
+      liuqiu: {
+        series: {
+         data: [(warnData?.todayWarningCnt.alarmCount/100)],
+       
+        label: {
+          normal: {
+            formatter: function() {
+                return `今日告警\n\n\n${warnData?.todayWarningCnt}次`;
+            },
+            textStyle: {
+                fontSize: 16,
+                color: '#333'
+            },
+            position: ['50%', '65%']
+         }
+        },
+        
+      },
+      
+    }
+    })
+  }
+useEffect(() => {
+  tdrawEcharts()
+},[warnData])
   useEffect(() => {
     if(arealist.length===0)return
     getQueryWarningDetails()
@@ -392,8 +430,8 @@ export default function Index() {
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
               <div style={{ width: '148px', height: '148px' }} ref={warnref}>
-                <DemoLiquid warnData={warnData}></DemoLiquid>
-
+              {/*   <DemoLiquid warnData={warnData}></DemoLiquid> */}
+                
               </div>
               <div className='alarm'>
                 <div className='warning'>

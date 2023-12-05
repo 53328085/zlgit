@@ -8,6 +8,7 @@ import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
 import BlueColumn from '@com/bluecolumn'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import { selectcurlRommid } from "@redux/systemconfig";
 import {Link} from 'react-router-dom'
 import {ExportExcel} from '@com/useButton'
 import styled from 'styled-components';
@@ -22,13 +23,10 @@ const WrapTable = styled.div`
    
 `
 export default function Index() {
-
-    const roomopts = useSelector(state => state.system.roomId)
-    const [roomlist, setRoomList] = useState(roomopts)
-    const [roomId, setRoomId] = useState(roomopts[0]?.id)
-    const [form] = Form.useForm()
+   
+    
     const projectId = useSelector(state => state.system.menus.projectId)
-    const oneLevel = useSelector(state => state.system.onelevel)
+    const roomId = useSelector(selectcurlRommid)
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()
@@ -89,7 +87,7 @@ export default function Index() {
             ]
         }, {
             title: '功率因数',
-            dataIndex: 'PFt',
+            dataIndex: 'phsA',
             width: 95
         }, {
             title: '总有功功率',
@@ -97,7 +95,7 @@ export default function Index() {
                 {
                     title:'(kW)',
                     width:96,
-                    dataIndex: 'Pt',
+                    dataIndex: 'Pa',
                 }
             ]
         },{
@@ -106,7 +104,7 @@ export default function Index() {
                 {
                     title:'(kVar)',
                     width:96,
-                    dataIndex: 'Qt',
+                    dataIndex: 'Q',
                 }
             ]
         },  {
@@ -115,7 +113,7 @@ export default function Index() {
                 {
                     title:'(kW·h)',
 
-                    dataIndex: 'Ep',
+                    dataIndex: 'EP',
                 }
             ]
         },
@@ -268,25 +266,8 @@ export default function Index() {
     //     }
     // ]
 
-    const getRoomList = async (areaId) => {
-        const resp = await distributionRoom.RoomList(projectId, areaId)
-        if (resp.success) {
-          setRoomList(resp.data)
-          if (Array.isArray(resp.data) && resp.data.length > 0) {
-            form.setFieldValue('roomId', resp.data[0][['id']])
-            setRoomId(resp.data[0][['id']])
-           
-          } else {
-            form.setFieldValue('roomId', [])
-            setRoomId(null)
-            setTableData([])
     
-          }
-        }
-      }
-    const changeArea = (v) => {
-        getRoomList(v)
-    }
+   
  
 
    
@@ -298,12 +279,12 @@ export default function Index() {
             dataes.forEach((it, i) => {
                    if (Array.isArray(it.data)) {
                        it.data.forEach((item, index) => {
-                           it[item.name] = item.value
+                           it[item.alias] = item.value
                        })
                    }
     
                })
-         
+            console.log(dataes)
             setTableData(dataes)
         }else{
             setTableData([])
@@ -323,52 +304,15 @@ export default function Index() {
         getLinePoint(roomId,selectRef.current.selectedKeys)
     }
     useEffect(()=>{
-        const {roomId} = form.getFieldsValue()
-        getLinePoint(roomId,0)
+         if(roomId)  getLinePoint(roomId,0);
     },[roomId])
 
     return (
         <div>
-            <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-                <Form
-                    form={form}
-                    colon={false}
-                    layout="inline"
-                    initialValues={{
-                        area: oneLevel.length > 0 ? oneLevel[0]?.id : null,
-                        roomId: roomlist.length > 0 ? roomlist[0].id : null
-                    }}
-                >
-                    <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-                        <Select 
-                        style={{ width: 200 }} 
-                        options={oneLevel} 
-                        fieldNames={{ label: 'name', value: 'id' }} 
-                        onChange={changeArea}
-                        placeholder="请选择园区"
-                        ></Select>
-                    </Form.Item>
-                    <Form.Item>
-                        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-                    </Form.Item>
-                    <Form.Item name="roomId" >
-                        <Select
-                            value={roomId}
-                            options={roomlist}
-                            fieldNames={{ label: 'name', value: 'id' }}
-                            style={{ width: 240 }}
-                            placeholder="请选择配电房"
-                            onChange={(v)=>{
-                                setRoomId(v)   
-                            }}></Select>
-                    </Form.Item>
-                </Form>
-            </div>
-         
             <div className={style.content}>
-                <LoopSelect form={form} projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
+                <LoopSelect   projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 <div className={style.contentRight}>
-                    <div className={style.contentheader}>
+                    <div className={style.contentheader} key="d">
                         <BlueColumn name="详细参数"/>
                         <div className={style.buttonList}>
                             <span style={{paddingRight:40,fontSize:16}}>参量采集时间 : 2020-09-03 09:35:21</span>
@@ -377,7 +321,7 @@ export default function Index() {
                             <ExportExcel tb={tableRef}/>
                         </div>
                     </div>
-                    <div style={{height:16}}></div>
+                    <div style={{height:16}} key="e"></div>
                     <WrapTable>
                     <ContentTable  
                     columns={columns} 

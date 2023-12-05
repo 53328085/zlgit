@@ -8,7 +8,8 @@ import logo from '@imgs/chintlog.png'
 import PageComp from './pagecomp.jsx'
 import { safeElectric } from '@api/api'
 import moment from 'moment'
-import { PieCharts, LineCharts } from './charts'
+ 
+import { drawEcharts } from "@com/useEcharts"; 
 import anaylse from './imgs/anaylse.svg'
 import {exportPDF} from './topdf.js'
 import imgurl from '@imgs/index'
@@ -270,6 +271,7 @@ export default function Index() {
   }
   //年度报告
   const getYearReport = async (date) => {
+    try {
     const res = await safeElectric.YearReport({
       projectId,
       date: date ? date.format('YYYY-01-01') : moment().format('YYYY-01-01'),
@@ -290,7 +292,96 @@ export default function Index() {
     } else {
       message.error(res.errMsg)
     }
+       
+   } catch (error) {
+      
+   }
   }
+   const pieref = useRef();
+   const lineref = useRef();
+   const pierefT = useRef();
+   useEffect(() => {
+
+    try {
+   
+    if(Array.isArray(report?.alarmTypeGroup)){
+    let data = report?.alarmTypeGroup
+    let total = data.map(d => Number(d.value)).reduce((a, b) => a +b, 0)
+ 
+    drawEcharts(pieref.current, {
+      pieData: {
+         total,
+         data,
+      },
+      type: 3
+    })
+    }
+   if(report?.eTrend && report.eTrend.constructor  == Object) {
+      let {x, y, y1, y2, y3, y4} = report.eTrend
+      drawEcharts(lineref.current, {
+        dataset: {
+          dimensions: [
+            {name: x, displayName: '时间', type: "time"},
+            {name: y, displayName: '用电量(kWh)',  },
+            {name: y1, displayName: '尖(kWh)', },
+            {name: y2, displayName: '峰(kWh)',  },
+            {name: y3, displayName: '平(kWh)',  },
+            {name: y4, displayName: '谷(kWh)',  }
+          ],
+          source: [x, y, y1, y2, y3, y4],
+          sourceHeader: false,
+        
+        },
+        series: [
+          {type: "line", seriesLayoutBy: 'row'},
+          {type: "line", seriesLayoutBy: 'row'},
+          {type: "line", seriesLayoutBy: 'row'},
+          {type: "line", seriesLayoutBy: 'row'},
+          {type: "line", seriesLayoutBy: 'row'},
+        ],
+        xAxis: {
+          axisLabel: {
+             formatter: (value, index) => {
+               return  active == 2 ?  moment(value, "mm").format('m[月]') :  value
+             },
+             interval:0,
+          },
+          axisPointer: {
+             label: {
+               formatter: ({value}) => { 
+                return  active == 2 ?  moment(value, "mm").format('m[月]') :  moment(value, 'DD').format('D') + '日'
+              }
+             }
+          }
+        }
+      })
+   }
+       
+   if(report?.eTypeGroup && report.eTrend.constructor  == Object) {
+    let datas = report?.eTypeGroup
+    let totals = datas.map(d => Number(d.value)).reduce((a, b) => a +b, 0)
+     drawEcharts(pierefT.current, {
+        pieData: {
+          pieData: {
+            total: totals,
+            data: datas,
+         },
+       
+
+        },
+        type: 3
+
+     })
+
+
+   }
+
+  
+  } catch (error) {
+      console.log(error)
+  }
+   }, [report])
+
   //生成报告
   const makeReport = () => {
     setIsshow(true)
@@ -414,24 +505,25 @@ export default function Index() {
             </div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>2.1告警类型分布</p>
-              <PieCharts data={report?.alarmTypeGroup} />
+               <div ref={pieref} style={{height: "360px"}}></div>
+              {/* <PieCharts data={report?.alarmTypeGroup} /> */}
             </div>
           </PageComp>
           <div className="page-break" />
           <PageComp>
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 24 }} key="1">
               <p style={{ marginBottom: 6 }}>3.电流监控</p>
               <UseTable columns={columns2} dataSource={elec} showHeader={false} />
             </div>
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 24 }} key="2">
               <p style={{ marginBottom: 6 }}>4.电压监控</p>
               <UseTable columns={columns2} dataSource={voltage} showHeader={false} />
             </div>
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 24 }} key="3">
               <p style={{ marginBottom: 6 }}>5.剩余电流监控</p>
               <UseTable columns={columns2} dataSource={leaveElec} showHeader={false} />
             </div>
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 24 }} key="4">
               <p style={{ marginBottom: 6 }}>6.温度监控</p>
               <UseTable columns={columns2} dataSource={temperature} showHeader={false} />
             </div>
@@ -440,14 +532,14 @@ export default function Index() {
           <PageComp>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>7.用电量趋势</p>
-              <div style={{ width: 514, height: 320 }}>
-                <LineCharts data={report?.eTrend} type={active}/>
+              <div style={{ width: 514, height: 320 }} ref={lineref}>
+              {/*   <LineCharts data={report?.eTrend} type={active}/> */}
               </div>
             </div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ marginBottom: 6 }}>7.1用电量类型分布</p>
-              <div style={{ width: 516, height: 320 }}>
-                <PieCharts data={report?.eTypeGroup}/>
+              <div style={{ width: 516, height: 320 }} ref={pierefT}>
+               {/*  <PieCharts data={report?.eTypeGroup}/> */}
               </div>
 
             </div>

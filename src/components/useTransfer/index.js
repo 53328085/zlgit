@@ -96,13 +96,13 @@ export default function index (props) {
     }
 
     const unknownToSub = () => {
-        if(subData.length>0){
+       /*  if(subData.length>0){
             messageApi.open({
                 type: 'warning',
                 content:'光纤设备至多添加一个！',
             })
             return;
-        }
+        } */
         if( selectedRowKeys.length == 0 ){
             messageApi.open({
                 type: 'warning',

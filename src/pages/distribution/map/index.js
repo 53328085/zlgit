@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getRoomId } from "@redux/systemconfig";
+import {selectcurlRommid} from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Divider, Form, Select, message, Spin } from 'antd'
 import { useReactive } from "ahooks";
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import styled from 'styled-components';
-
+import Comhead from '../usehead/com'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-
+ 
 // 左侧工具栏图标
 import '../../../assets/css/fonts/font/iconfont.css'
 import '../../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
@@ -24,7 +24,7 @@ import '../../../assets/css/font_ugr1luq01xe/iconfont.css'
 import '../../../assets/css/fonts/font/libs/iconfont.css'
 import '../../../assets/css/font_g4v09lxfde/iconfont.css'
 import '../../../assets/css/font_bz4csze2alg/iconfont.css'
-
+ 
 const { Option } = Select;
 export default function Index() {
   const ChartItem = styled.div`
@@ -49,35 +49,25 @@ export default function Index() {
       background-color: #237ae4;
     }
   `
-
+ 
   let canvas
   const [newCanvas, setNewCanvas] = useState()
   const canvasOptions = {}
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
-
-  const [form] = Form.useForm()
+ 
+ 
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const roomId = useSelector(selectcurlRommid)
   const state = useReactive({
+    spining:false,
     chartList: [],
     activeChart: 0,
-    globalLoading: false,
   })
-  const [roomlist, setRoomList] = useState([])
-  //切换区域
-  const changeArea = (e) => {
-    getRoomList(e)
-  }
-  //切换配电房
-  const changeRoom = (e) => {
-    
-    getChartList(e)
-  }
-
+ 
+ 
   const getChartList = async (roomId) => {
-    
     const res = await DistributionRoomRuntime.ChartList(projectId, roomId)
     if (res.success) {
       if (Array.isArray(res.data) && res.data.length > 0) {
@@ -88,58 +78,43 @@ export default function Index() {
         state.chartList = []
         state.activeChart = 0
         setTimeout(()=> {
-          
           newCanvas.open({})
           newCanvas.render()
         }, 1000)
       }
     }
   }
-
+ 
   const getChartDetail = async (id) => {
+    state.spining = true
     registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
-    state.globalLoading = true
     const res = await DistributionRoomRuntime.ChartDetails(projectId, id)
     if(res.success){
       let dateGroup = JSON.parse(res.data.dataGroup)
           dateGroup.locked = 1
           console.log(canvas)
           setTimeout(()=> {
-            state.globalLoading = false
+            state.spining = false
             canvas.open(dateGroup)
             canvas.render()
             canvas.fitView(16);
           }, 1000)
     }else{
       setTimeout(()=> {
-        state.globalLoading = false
+        state.spining = false
         canvas.open({})
         canvas.render()
       }, 1000)
       message.error(res.errMsg)
     }
   }
-
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      console.log(resp)
-      dispatch(getRoomId(resp.data))
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        getChartList(resp.data[0].id)
-      } else {
-        form.setFieldValue('roomId', [])
-        message.warn('当前园区无配电房！')
-      }
-    }
-  }
-
+ 
+ 
+ 
   const [contextmenu, setContextMenu] = useState({
     left: null,
     top: null,
@@ -167,7 +142,7 @@ export default function Index() {
   const [nodeTag, setNodeTag] = useState(false)
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
-
+ 
   const onDrag = (event, node) => {
     // 解决浏览器手势插件命名冲突
     event.dataTransfer.setData('Topology', JSON.stringify(node.data))
@@ -176,7 +151,7 @@ export default function Index() {
     event.preventDefault()
     event.stopPropagation()
   }
-
+ 
   const onMessage = (event, data) => {
     // console.log(event)
     // console.log(data)
@@ -201,51 +176,20 @@ export default function Index() {
       }
     }
   }
-
+ 
   const changeChart = id => {
     state.activeChart = id
     getChartDetail(id)
   }
-
+ 
   useEffect(() => {
-    getRoomList(oneLevel[0]?.id)
+   if(roomId) getChartList(roomId)
     
-  }, [])
-
+  }, [roomId])
+ 
   return (
-    <Spin tip="Loading..." spinning={state.globalLoading}>
-    <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="#eeeff3" pd="0px">
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area: oneLevel[0]?.id
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select
-                style={{ width: 200 }}
-                options={oneLevel}
-                fieldNames={{ label: 'name', value: 'id' }}
-                onChange={changeArea}
-              ></Select>
-            </Form.Item>
-            <Form.Item>
-              <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-            </Form.Item>
-            <Form.Item name="roomId" >
-              <Select
-                options={roomlist}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 240 }}
-                placeholder="请选择配电房"
-                onChange={changeRoom}></Select>
-            </Form.Item>
-          </Form>
-        </div>
+      <Spin spinning={state.spining} tip="Loading...">
+      <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">  
         <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)}>
           <ChartItem>
             {state.chartList.map((item, index) => {
@@ -254,7 +198,6 @@ export default function Index() {
           </ChartItem>
         </div>
       </Pagecount>
-    </CustContext.Provider>
-    </Spin>
+      </Spin>
   )
 }

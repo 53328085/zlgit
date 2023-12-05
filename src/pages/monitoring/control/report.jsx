@@ -150,8 +150,9 @@ const controlcolumns = [
       }
     }),
     align: 'center',
-    render: (text) => {
-      return text['1'] === 'Open' ? "开闸" : "合闸"
+    render: (text) => {     
+      return  Number(text) === 1 ? "开闸" : "合闸"
+     // return text['1'] === 'Open' ? "开闸" : "合闸"
     }
   },
   {
@@ -324,6 +325,7 @@ week.forEach(w => {
         title="被控设备"
         width={928}
         open= {open}
+        closable={false}
         bodyStyle={{
           backgroundColor: '#f2f2f2',
           padding: '32px'

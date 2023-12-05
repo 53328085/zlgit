@@ -181,6 +181,11 @@ export class User {
 export class Area {
   static AllLevel = (projectId) =>
     server.get(`/General/Area/AllLevel?projectId=${projectId}`);
+
+   static AreaList = (projectId) =>  // 配电管理模块
+    server.get(
+      `/Distribution/DistributionRoomRuntime/AreaList?projectId=${projectId}`
+    );  
  
   static QueryByPage = ({
     projectId,

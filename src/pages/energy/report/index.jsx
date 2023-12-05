@@ -55,7 +55,7 @@ const getTime = (date, type)=> {
   return time
 }
 
-const cols =[ // 实时抄表
+const cols =[ // 实时抄表  
 {
   title: '名称',
   dataIndex: 'nodeName', 
@@ -85,7 +85,7 @@ const cols =[ // 实时抄表
   },
 ]
 
-let conscols =[ // 能耗抄表
+let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
 {
   title: '名称',
   dataIndex: 'nodeName', 
@@ -224,25 +224,31 @@ export default function Index() {
   const [total, setTotal] = useState(0)
   const tbref = useRef()
   const tbref2 = useRef()
-  const tabs = [
+  const etabs = [
     { key: '0', label: '实时抄表' },
-    { key: '1', label: '能耗抄表' },
+    { key: '1', label: '能耗报表' },
     { key: '2', label: '分时能耗' },
     { key: '3', label: '分类能耗' },
   ]
+  const wtabs = [
+    { key: '0', label: '实时抄表' },
+    { key: '1', label: '能耗报表' },
+    { key: '3', label: '分类能耗' },
+  ]
+  const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
   const sheetName = tabs[index]?.label ?? 'sheet'
   const [form]=Form.useForm()
   const projectId = useSelector(selectProjectId)
  
  
-  let columns = [cols, [], timecols, typecols][index]
+  let columns = [cols, [], timecols, typecols][index] // 
   
   
 
   const getTableData = ({ current, pageSize }, formData={}) => {
   //  const row = Number(value);
-     console.log(line)
+     console.log(formData)
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
@@ -259,7 +265,33 @@ export default function Index() {
         pageSize,
         areaId,
      }
+     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
+     if(meterType == 1) {
+      setTabs([...etabs])
+     }else if(meterType == 2) {
+      setTabs([...wtabs])
+     }
    
+     columns.forEach(c => {
+             if(c.dataIndex == 'consume' && index == 0) { // 实时抄表
+                c.title = meterType == 1 ? '用能(kWh)' : '差值（m³）'
+             }
+             if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+              c.title = meterType == 1 ? '用能(kWh)' : '用水量（m³）'
+             }
+           })
+       
+      
+    if(index == 1) {
+      conscols.forEach(e => {
+        if(e.dataIndex == 'total') {
+           e.title = meterType == 1 ? '能耗(kWh)' : '能耗（m³）'
+        }
+      })
+    }
+  
+
+
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)

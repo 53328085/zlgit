@@ -2,6 +2,7 @@ import React, { useState, useRef ,useMemo, useEffect } from 'react'
 import { Select ,Form,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
+import { selectcurlRommid } from "@redux/systemconfig";
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
@@ -14,7 +15,7 @@ import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import  imgurl from '@imgs'
 import moment from 'moment'
 import {utils, writeFile} from 'xlsx'
-import { current } from '@reduxjs/toolkit'
+ 
 
 const MainDiv =styled.div`
 background-color: #fff;
@@ -45,6 +46,8 @@ flex-direction: column;
 }
 .datastyle{
   flex: 1;
+  display: flex;
+  flex-direction: column;
   .filters{
     display: flex;
     justify-content: space-between;
@@ -115,15 +118,12 @@ const chartOpt= {
   ]
 };
 export default function Index() {
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const [form] = Form.useForm() 
+  const projectId = useSelector(state => state.system.menus.projectId)  
   const chartRef =useRef()
-  const oneLevel = useSelector(state => state.system.onelevel)
+  const roomId = useSelector(selectcurlRommid)
   const [pattern,setPattern]=useState(1)
   const [tabs,setTabs] =useState([])
-  const roomopts = useSelector(state => state.system.roomId)
-  const [roomlist, setRoomList] = useState(roomopts)
-  const [roomId, setRoomId] = useState(roomopts[0]?.id)
+ 
   const [value, setvalue] =useState(0)
   const [tabledata,setTableData]=useState([])
   const [type,setType] =useState(1)
@@ -166,9 +166,7 @@ export default function Index() {
       value:7,
       label:'总功率因素'},
   ]
-  const changeArea =(v)=>{
-    getRoomList(v)
-  }
+
   const changeRadio=(e)=>{
     setPattern(e.target.value)
   }
@@ -217,23 +215,7 @@ export default function Index() {
       console.log(error)
     }
   }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      setRoomList(resp.data)
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        form.setFieldValue('roomId', resp.data[0][['id']])
-        setRoomId(resp.data[0][['id']])
-        
-      } else {
-        form.setFieldValue('roomId', [])
-        setRoomId(null)
-        setTabs([])
-        setTableData([])
 
-      }
-    }
-  }
   //变压器 表格数据
   const RuntimePoints =async(sn)=>{
     const res = await DistributionRoomRuntime.RuntimePoints(projectId,sn)
@@ -441,8 +423,10 @@ export default function Index() {
     HistoryTrends(tabs[value]['sn'])
   }
   useEffect(()=>{
-    roomId&&getTransformer()
-    roomId&&TransformerOne()
+    if(roomId) {
+      getTransformer();
+      TransformerOne()
+    }
   },[roomId])
   useEffect(()=>{
     chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
@@ -460,40 +444,7 @@ export default function Index() {
   },[tabs,value,type,pattern])
   return (
     <>
-    <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout="inline"
-            initialValues={{
-              area: oneLevel.length > 0 ? oneLevel[0]?.id : null,
-              roomId: roomlist.length > 0 ? roomlist[0].id : null
-          }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select 
-              style={{ width: 200 }} 
-              options={oneLevel} 
-              fieldNames={{ label: 'name', value: 'id' }} 
-              placeholder="请选择园区"
-              onChange={changeArea} ></Select>
-            </Form.Item>
-            <Form.Item>
-            <Divider dashed type="vertical" style={{borderColor: "#999",height:'30px'}}></Divider>
-            </Form.Item>
-            <Form.Item name="roomId" >
-            <Select
-              value={roomId}
-              options={roomlist}
-              fieldNames={{ label: 'name', value: 'id' }}
-              style={{ width: 240 }}
-              placeholder="请选择配电房"
-              onChange={(v) => {
-                setRoomId(v)
-              }}></Select>
-          </Form.Item>
-          </Form>
-        </div> 
+ 
         {
           tabs.length>0?(
             <CustContext.Provider value={dataprop}>
@@ -534,7 +485,7 @@ export default function Index() {
                  </div>
                </div>
                {
-                 pattern===1?(<div ref={chartRef} style={{height:'calc(100% - 63px)'}}></div>):
+                 pattern===1?(<div ref={chartRef} style={{flex: 1}}></div>):
                  ( <UseTable 
                   columns={header} 
                   bordered  

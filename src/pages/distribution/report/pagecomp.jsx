@@ -27,7 +27,9 @@ flex-direction: column;
 }
 .contentcss{
 padding: 24px;
-flex:1
+flex:1;
+flex-direction: column;
+display: flex;
 }
 `
 export default function pagecomp({title="配电监控管理平台 ",time=moment().format('YYYY-MM月'),children}) {

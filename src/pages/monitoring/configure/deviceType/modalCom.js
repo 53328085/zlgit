@@ -70,7 +70,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-   
+    tableDataRef.current = structuredClone(pointSource)
     const choosemes =()=>{
       let count =0;
       tableDataRef.current?.forEach(it=>{
@@ -152,15 +152,15 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
               // defaultChecked={t}
               disabled={siwtched.length>3&&!siwtched.includes(record.index)}
               onChange={(o) => {
-                // const list = structuredClone(pointSource)
+                const list = structuredClone(pointSource)
                 console.log('onchange',o)
-                tableDataRef.current.forEach((it, i) => {
+                list.forEach((it, i) => {
                   if (it.index === record.index) {
                     it.watchPoint = o
                   }
                 })
                 // console.log(index,o)
-                // setPointSource(list)
+                setPointSource(list)
                 if (o&&siwtched.length <= 3) {
                     setSwitched([...siwtched,record.index])
                 }else{
@@ -189,11 +189,11 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
   //   setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
   //  },[JSON.stringify(updateTableRef)])
-   useEffect(()=>{
-    tableDataRef.current=structuredClone(pointSource)
-    console.log('pointSource变化了',pointSource)
+  //  useEffect(()=>{
+  //   tableDataRef.current=structuredClone(pointSource)
+  //   console.log('pointSource变化了',pointSource)
  
-   },[pointSource])
+  //  },[pointSource])
    
     
     useImperativeHandle(ref, () => ({
@@ -319,7 +319,8 @@ export let AddModal = forwardRef(
   let TableEditForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
     const [pointSource, setPointSource] = useState([...defaultTableData])
     const tableDataRef =useRef()
-    tableDataRef.current=[...pointSource]
+    tableDataRef.current=structuredClone(pointSource)
+    // console.log('tableDataRef',tableDataRef.current)
     let checedList=[]
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
@@ -371,13 +372,13 @@ export let AddModal = forwardRef(
           return (
             <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
               onChange={(o) => {
-                let arr =[...pointSource]
-                arr.forEach((it, index) => {
+                const list = structuredClone(pointSource)
+                list.forEach((it, index) => {
                   if (it.index === v.index) {
                     it.isSave = o
                   }
                 })
-              setPointSource(arr)
+              setPointSource(list)
               }} />
   
           )
@@ -458,6 +459,7 @@ export let AddModal = forwardRef(
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
+    console.log(tableRef.current?.tabledata)
     useEffect(() => {
       // setIsControl(editForm.getFieldsValue().Control)
       // setIsCount(editForm.getFieldsValue().IsCount)
@@ -465,10 +467,11 @@ export let AddModal = forwardRef(
     useImperativeHandle(ref, () => ({
       pointSource: tableRef.current.pointSource,
       setPointSource: tableRef.current.setPointSource,
-      setSwitched:tableRef.current.setSwitched
-
+      setSwitched:tableRef.current.setSwitched,
+      choosemes:tableRef.current.choosemes
 
     }))
+ 
     return (
       <Form
         layout="vertical"

@@ -4,13 +4,13 @@ import styled from "styled-components";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import { Pagination, message, DatePicker, Button, Radio, Form, Input, Divider } from 'antd'
+import { Pagination, message, DatePicker, Button, Radio, Empty, Form, Input, Divider, Typography } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Monitoring, RuntimeHMI} from '@api/api.js'
 import Custmodal from '@com/useModal'
 import { drawEcharts } from '@com/useEcharts'
-
+import Titlelayout from '@com/titlelayout'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
@@ -24,28 +24,99 @@ import moment from "moment";
  
 import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
-/// 1  电表
-/// 2  冷水表
-/// 3  燃气表
-/// 4  传感器
-/// 5  变压器
-/// 7  热水表
-/// 8  蒸汽表
-/// 9  煤炭表
-/// 10 燃油表
-/// 11 储能设备
+ 
+const {Text} = Typography
+const Textbox = styled(Text)`
+   && {
+    color: #666;
+    width: 162px;
+   }
 
-const deviceStyle = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备']
+`
+const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备']
+
+const Chartbox = styled.div`
+  display: grid;
+  grid-template-rows:   ${props =>  {
+    return props.n > 3 ? `repeat(${props.n}, 320)` : `repeat(${props.n}, 1fr)`
+  }};
+  flex: 1;
+`
+// 2,7
+const Chartin = (props) => {
+    let {group, data, deviceStyle} = props
+    console.log(data)
+    if(!group) return <Empty />
+
+    let title = {
+        EC: '电流(A)',
+        WF: [2, 7].includes(deviceStyle) ? '用水量(m³)' :  '电度(kWh)',
+        EC: '电流(A)',
+       EP: '电压(V)',
+       TP: '温度(℃)'
+    }[group] || '未知'
+    let isempty = !Array.isArray(data) || data.length ==0
+     
+   
+  
+    let ref = useRef()
+    useEffect(() => {
+        if(isempty) return
+        let dimensions=["time"]
+        let source = []        
+         let series=  Array(data.length).fill({
+            type: "line",
+            seriesLayoutBy: 'row',
+           })       
+      
+         data.forEach((d,index) => {
+           let {point, data} = d;
+           dimensions.push(point)
+           if(index == 0) {
+             source.push(data.map(t => t.time));
+             source.push(data.map(t => t.value))
+           }else {
+            source.push(data.map(t => t.value))
+           }
+        })  
 
 
+        drawEcharts(ref.current, {
+           dataset: {
+             dimensions,
+             source,
+             sourceHeader: true,
+           },
+           series,
+           dataZoom: {
+             type: 'inside'
+           },
+           xAxis: {
+             axisLabel: {
+                formatter: (value, index) => {
+                    return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+                }
+             }
+           }
+        })
+    }, [data])
+    return (
+        <Titlelayout title={title} layout="flex" pd={0} bordered="n">
+           <div style={{flex: 1}} ref={ref}>
+             {isempty && <Empty />}
+           </div>
+        </Titlelayout>
+    )
 
+
+}
 export default function GatewayDetail(props) {
    
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
     const sn = searchParams.get('sn')
-
- 
+    const deviceStyle =  searchParams.get('deviceStyle')
+    const isclude = [2,7].includes(deviceStyle); // 是否是水表
     let qs = require('query-string')
     let search = qs.parse(location.search)
   /*   useEffect(() => {
@@ -81,7 +152,7 @@ export default function GatewayDetail(props) {
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment();
   // const yesterday = date + ' ' + "00:00:00"
-    const yesterday = moment().startOf('day').format('YYYY-MM-DD HH:mm:ss')
+    const yesterday =moment().subtract(7, 'day').format('YYYY-MM-DD HH:mm:ss')
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -330,7 +401,7 @@ export default function GatewayDetail(props) {
         setendTime(dataString[1])
         setValue(date)
     }//监控趋势选择时间
-    const [dates, setDates] = useState([moment(yesterday), moment(today)]);
+    const [dates, setDates] = useState([moment().subtract(7, 'day'), moment()]);
  
     const disabledDate = (current) => {
         if (!dates) {
@@ -357,7 +428,7 @@ export default function GatewayDetail(props) {
     const onSearch = () => {
         getHistoryTrend()
         getHistoryTable()
-        //dealData()
+        
     }//监控趋势更改时间
     const onSearchAlarm = () => {
         getAlarmPage()
@@ -489,9 +560,9 @@ export default function GatewayDetail(props) {
         document.title = enchtitle+ ' ' + (location.state?.title || '')
         return () => document.title = enchtitle
       },[location])
-    useEffect(() => {
+/*     useEffect(() => {
         dealData()
-    }, [historyTable, historyTrend])
+    }, [historyTable, historyTrend]) */
    
     useEffect(() => {
         getData()
@@ -533,12 +604,12 @@ export default function GatewayDetail(props) {
                         <div className={detail.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
                     </div>
                     <div className={style.leftBottom}>
-                        <p><span className={style.leftBottomSpan}>设备类型：</span><span>{deviceStyle[detail.deviceStyle] || ''}</span></p>
-                        <p><span className={style.leftBottomSpan}>设备编号：</span><span>{detail.sn}</span></p>
-                        <p><span className={style.leftBottomSpan}>设备型号：</span><span>{detail.category}</span></p>
-                        <p><span className={style.leftBottomSpan}>设备名称：</span><span>{detail.name}</span></p>
-                        <p><span className={style.leftBottomSpan}>能耗类型：</span><span>{detail.customerType == 1 ? '客户能耗' : detail.customerType == 2 ? '公共能耗' : '/'}</span></p>
-                        <p><span className={style.leftBottomSpan}>所属网关：</span><span>{detail.gateway ? detail.gateway : '/'}</span></p>
+                        <p><span className={style.leftBottomSpan}>设备类型：</span><Textbox ellipsis={{tooltip: deviceList[detail.deviceStyle]}}>{deviceList[detail.deviceStyle] || ''}</Textbox></p>
+                        <p><span className={style.leftBottomSpan}>设备编号：</span><Textbox ellipsis={{tooltip: detail.sn}}>{detail.sn}</Textbox></p>
+                        <p><span className={style.leftBottomSpan}>设备型号：</span><Textbox ellipsis={{tooltip: detail.category}}>{detail.category}</Textbox></p>
+                        <p><span className={style.leftBottomSpan}>设备名称：</span><Textbox ellipsis={{tooltip: detail.name}}>{detail.name}</Textbox></p>
+                        <p><span className={style.leftBottomSpan}>能耗类型：</span><Textbox>{detail.customerType == 1 ? '客户能耗' : detail.customerType == 2 ? '公共能耗' : '/'}</Textbox></p>
+                        <p><span className={style.leftBottomSpan}>所属网关：</span><Textbox ellipsis={{tooltip: detail.gateway || ''}}>{detail.gateway ? detail.gateway : '/'}</Textbox></p>
                         <div className={style.line}></div>
                         <p><span className={style.leftBottomSpan}>安装地址：</span></p>
                         <p><span>{detail.address}</span></p>
@@ -570,7 +641,7 @@ export default function GatewayDetail(props) {
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
                                 onOpenChange={onOpenChange}
-                                defaultValue={[moment(yesterday), moment(today)]}
+                                defaultValue={[moment().subtract(7, 'day'), moment()]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime
                             />
@@ -581,13 +652,13 @@ export default function GatewayDetail(props) {
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment(yesterday), moment(today)]} />
+                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment().subtract(7, 'day'), moment()]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
                         
                     </div> : null
                     }
 
-                    <div className={state !==5 ? style.tableBox : ''}>
+                    <div className={state !==5 ? style.tableBox : ''} style={{display: 'flex', flexDirection: "column", flex: 1}}>
                         {state == 1 ?
                             <div>
                                 <div className={style.dataHeader}>
@@ -602,14 +673,20 @@ export default function GatewayDetail(props) {
                                     }) : ''}
                                 </div>
                             </div>
-                            : state == 2 ? <div className={style.chartsBox}>
+                            : state == 2 ? 
+                              <Chartbox n={historyTrend?.length}>
+                                   {historyTrend?.map(data => <Chartin {...data} deviceStyle={deviceStyle} key={data.group}/>)}
+                                 
+
+                              </Chartbox>
+                        /*   <div className={style.chartsBox}>
                                 <div className={style.title}><div className={style.blueLine}></div><p>电压 (V)</p></div>
                                 <div><div ref={vlref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
                                 <div className={style.title}><div className={style.blueLine}></div><p>电流 (A)</p></div>
                                 <div><div ref={alref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
                                 <div className={style.title}><div className={style.blueLine}></div><p>电度 (kWh)</p></div>
                                 <div> <div ref={elref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
-                            </div> : state == 3 ? <div>
+                            </div>  */ : state == 3 ? <div>
                                 <div className={style.energyHead}>
                                     <div className={style.dateData}>
                                         <p><span>今日用电量 (kWh)</span><span>日环比{actuary?.e_DayRatio?.slice(0,1) !='-' ? <CaretUpOutlined
@@ -653,8 +730,8 @@ export default function GatewayDetail(props) {
                                 <img src={imgurl.line} className={style.timeline} ></img>
                                 <div className={style.chartHead}>
                                     <div>
-                                        <Radio.Group defaultValue="1" buttonStyle="solid" onChange={changeTime}>
-                                            <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="1">今日</Radio.Button>
+                                        <Radio.Group defaultValue={isclude ? '2' : '1'} buttonStyle="solid" onChange={changeTime}>
+                                          {!isclude && <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="1">今日</Radio.Button>}
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="2">本月</Radio.Button>
                                             <Radio.Button style={{ width: 96, height: 32, textAlign: 'center' }} value="3">本年</Radio.Button>
                                         </Radio.Group>
