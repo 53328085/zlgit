@@ -564,6 +564,11 @@ export default function index() {
     }
     bindRef.current.onOpen()
   }
+  const unBindData = () => {
+    selectedNode.tags.length = 0
+    message.success('测点解绑成功！')
+    setNodeTag(false)
+  }
   const changeCoverage = val => {
     switch (val){
       case "top":
@@ -633,8 +638,9 @@ export default function index() {
           </Collapse>
         </div>
         <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{ position: 'relative' }}>
-          {(nodeTag) ? <Card style={{ width: 120, height: 202, position: 'absolute', ...contextmenu }} >
+          {(nodeTag) ? <Card style={{ width: 120, height: 236, position: 'absolute', ...contextmenu }} >
             <div className="bindMenu" onClick={() => bindData()}>{nodeType}</div>
+            <div className="bindMenu" onClick={() => unBindData()}>解除绑定</div>
             <div className="bindMenu" onClick={()=> changeCoverage('top')}>置顶</div>
             <div className="bindMenu" onClick={()=> changeCoverage('bottom')}>置底</div>
             <div className="bindMenu" onClick={()=> changeCoverage('up')}>上一图层</div>
