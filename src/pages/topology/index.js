@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message, Spin } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
 import { selectProjectId } from '@redux/systemconfig.js'
@@ -38,7 +38,7 @@ export default function index() {
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
 
-  const { addChart, queryChart, updateChart } = distributionRoom
+  const { addChart, queryChart, updateChart, getEquipmentList } = distributionRoom
   const { ChartDetails } = DistributionRoomRuntime
 
   const nameRef = useRef()
@@ -67,8 +67,29 @@ export default function index() {
 
   const state = useReactive({
     title: '',
-    chartData: {}
+    chartData: {},
+    deviceList:[],
+    pointList:[],
+    spining:false,
   })
+  const changeDevice = val => {
+    bindForm.setFieldValue('pointId', null)
+    state.deviceList.map(item => {
+      if(item.sn == val){
+        state.pointList = item.points
+      }
+    })
+  }
+  const getDeviceList = (projectId, areaId) => {
+    getEquipmentList(projectId, areaId).then(res => {
+      if(res.success && res.data){
+        state.deviceList = res.data
+      }else{
+        state.deviceList = []
+        message.error(res.errMsg)
+      }
+    })
+  }
 
   useEffect(() => {
     registerFlow()
@@ -76,8 +97,9 @@ export default function index() {
     canvas = new Topology('topology-canvas', canvasOptions)
     canvas.render()
     setNewCanvas(canvas)
-    console.log(getData.id)
+    getDeviceList(getData.projectId, getData.areaId)
     if (getData.type == 'edit') {
+      state.spining = true
       ChartDetails(projectId, getData.id).then(res => {
         if (res.success) {
           let data = {
@@ -97,6 +119,7 @@ export default function index() {
           console.log(canvas.data)
           form.setFieldsValue(canvas.data)
           setTimeout(()=> {
+            state.spining = false
             canvas.open(dateGroup)
             canvas.render()
           }, 1000)
@@ -195,7 +218,7 @@ export default function index() {
           left: data.evs.x - 210 + 'px',
           top: data.evs.y - 110 + 'px'
         })
-        setNodeTag(true)
+        // setNodeTag(true)
         setSelectedNode(data)
         setNodeType('设备绑定')
       }
@@ -488,11 +511,6 @@ export default function index() {
     newCanvas.data.gridColor = form.getFieldValue('gridColor')
     newCanvas.data.bkColor = form.getFieldValue('bkColor')
     newCanvas.data.locked = form.getFieldValue('locked')  == true ? 1 : 0
-    // newCanvas.data = {
-    //   ...newCanvas.data,
-    //   ...form.getFieldsValue(true)
-    // }
-    console.log(newCanvas.data)
     if (getData.type == 'add') {
       let param = {
         projectId,
@@ -533,21 +551,50 @@ export default function index() {
 
   const bindData = () => {
     setNodeTag(false)
+    bindForm.resetFields()
+    // let penArr = newCanvas.data.pens
+    // for (let i = 0; i < penArr.length; i++) {
+    //   if (penArr[i].tags.length > 1) {
+    //     newCanvas.data.pens[i].tags.length = 0
+    //   }
+    // }
+    if(selectedNode.tags.length > 1){
+      bindForm.setFieldValue('deviceId', selectedNode.tags[0])
+      bindForm.setFieldValue('pointId', selectedNode.tags[1])
+    }
     bindRef.current.onOpen()
   }
-
-  const deviceList = []
-  const pointList = []
-  const changeDevice = val => {
-
+  const changeCoverage = val => {
+    switch (val){
+      case "top":
+        newCanvas.top(selectedNode)
+        break
+      case "bottom":
+        newCanvas.bottom(selectedNode)
+        break
+      case "up":
+        newCanvas.up(selectedNode)
+        break
+      case "down":
+        newCanvas.down(selectedNode)
+        break
+    }
+    newCanvas.render()
+    setNodeTag(false)
   }
+
 
   const onbindOk = async () => {
     const values = await bindForm.validateFields()
+    selectedNode.tags[0] = values.deviceId
+    selectedNode.tags[1] = values.pointId
+    selectedNode.tags[2] = values.deviceId + '_' + values.pointId
+    message.success('测点绑定成功！')
+    bindRef.current.onCancel()
   }
 
   return (
-    <>
+    <Spin spinning={state.spining} tip="Loading...">
       <div className={style.header}>
         <img className={style.logo} src={logo}></img>
         <span className={style.headerTitle}>智慧能源服务平台</span>
@@ -586,8 +633,12 @@ export default function index() {
           </Collapse>
         </div>
         <div id="topology-canvas" className={`full ${TopologyData.grid ? 'canvas-container' : ''}`} onContextMenu={e => onContextMenu(e)} style={{ position: 'relative' }}>
-          {(nodeTag) ? <Card style={{ width: 120, height: 46, position: 'absolute', ...contextmenu }} >
+          {(nodeTag) ? <Card style={{ width: 120, height: 202, position: 'absolute', ...contextmenu }} >
             <div className="bindMenu" onClick={() => bindData()}>{nodeType}</div>
+            <div className="bindMenu" onClick={()=> changeCoverage('top')}>置顶</div>
+            <div className="bindMenu" onClick={()=> changeCoverage('bottom')}>置底</div>
+            <div className="bindMenu" onClick={()=> changeCoverage('up')}>上一图层</div>
+            <div className="bindMenu" onClick={()=> changeCoverage('down')}>下一图层</div>
           </Card> : null}
         </div>
         <div className={style.props}>
@@ -871,8 +922,8 @@ export default function index() {
                 style={{ marginLeft: 16, width: '280px' }}
                 onChange={changeDevice}
               >
-                {deviceList.map(item => {
-                  return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                {state.deviceList.map(item => {
+                  return <Select.Option key={item.sn} value={item.sn}>{item.name}</Select.Option>
                 })}
               </Select>
             </Item>
@@ -884,14 +935,14 @@ export default function index() {
                   style={{ marginLeft: 16, width: '280px' }}
                   disabled={!bindForm.getFieldValue('deviceId') ? true : false}
                 >
-                  {pointList.map(item => {
-                    return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+                  {state.pointList.map(item => {
+                    return <Select.Option key={item} value={item}>{item}</Select.Option>
                   })}
                 </Select>
               </Item>}
           </Form>
         </div>
       </CustModal>
-    </>
+    </Spin>
   )
 }

@@ -146,8 +146,8 @@ export default function Index() {
     })
   }
 
-  const showAdd = (areaId, roomId, type) => {
-    window.open(`/topology?roomId=${roomId}&type=${type}`, '_blank')
+  const showAdd = (roomId, type) => {
+    window.open(`/topology?projectId=${projectId}&areaId=${form.getFieldValue('areaId')}&roomId=${roomId}&type=${type}`, '_blank')
     // navigate(`/topology?id=${key}&type=${label}`, {
     //   state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
     // })
@@ -156,7 +156,7 @@ export default function Index() {
   const edit = (record) => {
     let { id } = record
     let type = 'edit'
-    window.open(`/topology?id=${id}&type=${type}`, '_blank')
+    window.open(`/topology?projectId=${projectId}&areaId=${form.getFieldValue('areaId')}&id=${id}&type=${type}`, '_blank')
   }
 
   const [deleteId, setDeleteId] = useState(null)

@@ -1671,7 +1671,7 @@ export class distributionRoom {
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id=${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
- 
+  static getEquipmentList = (projectId, areaId) => server.get(`Distribution/DistributionRoom/GetEquipmentList?projectId=${projectId}&areaId=${areaId}`) 
 }
  
 //配电房设备
