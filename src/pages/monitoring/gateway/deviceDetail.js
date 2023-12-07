@@ -114,15 +114,7 @@ export default function GatewayDetail(props) {
    
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
-    const sn = searchParams.get('sn')
-    const deviceStyle =  searchParams.get('deviceStyle')
-    const isclude = [2,7].includes(deviceStyle); // 是否是水表
-    let qs = require('query-string')
-    let search = qs.parse(location.search)
-  /*   useEffect(() => {
-        document.title = `NIS6000 正泰储能 设备详情`
-        return () => document.title= 'NIS6000 正泰储能 设备详情'
-      },[location])  */
+    const sn = searchParams.get('sn')  
     const projectId = useSelector(selectProjectId)
     const enchtitle = useSelector(mixtitle)
     const {hostServer} = useSelector(selectUser)
@@ -138,7 +130,12 @@ export default function GatewayDetail(props) {
     const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
+    const deviceStyle = detail?.deviceStyle;
+    const isclude = [2,7].includes(deviceStyle); // 是否是水表
     let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
+   
+    let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true;
+    console.log(dtlkeys)
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
@@ -168,6 +165,7 @@ export default function GatewayDetail(props) {
  
     const onchangeTab = val => {
         setstate(val)
+        if(dtlkeys) return
         if (val == 3) {
             setreportTypeTime(1)
             getEnergyReport()
@@ -181,7 +179,7 @@ export default function GatewayDetail(props) {
     // };
    
     const getData = () => {//设备详情
-        return Current(projectId, search.sn).then(res => {
+        return Current(projectId, sn).then(res => {
             let { success, data } = res
             if (success) {
                 setCurrent(data)
@@ -192,21 +190,24 @@ export default function GatewayDetail(props) {
         })
     }
     const getDetailData = () => {//设备详情
-        return Detail(projectId, search.sn).then(res => {
+        return Detail(projectId, sn).then(res => {
             let { success, data } = res
             if (success) {
-                setDetail(data)
+                setDetail(data || {})
                
             } else {
+                 
                 message.error(res.errMsg)
             }
         }).catch(e => {
+           
+            setDetail({})
             console.log(e)
         }) 
     }
    
     let paramsTrend = {
-        sn: search.sn,
+        sn,
         start: startTime,
         end: endTime,
         projectId
@@ -239,7 +240,7 @@ export default function GatewayDetail(props) {
         })
     }
     const getEnergyTrend = () => {//
-        return EnergyActuary(projectId, search.sn).then(res => {
+        return EnergyActuary(projectId, sn).then(res => {    // getEnergyTrend getData projectId, sn   detail
             let { success, data } = res
             if (success) {
                 setactuary(data || {})
@@ -252,7 +253,7 @@ export default function GatewayDetail(props) {
     let [totalalarm, settotalalarm] = useState(1)
     let paramsAlarm = {
         projectId: projectId,
-        sn: search.sn,
+        sn: sn,
         start: startTimeAlarm,
         end: endTimeAlarm,
         pageSize: 12,
@@ -275,7 +276,7 @@ export default function GatewayDetail(props) {
     }
     let paramsReport = {
         projectId: projectId,
-        sn: search.sn,
+        sn,
         type: reportTypeTime,
         date: dateValue
     }
@@ -426,11 +427,13 @@ export default function GatewayDetail(props) {
         setendTimeAlarm(dataString[1])
     }//告警记录选择时间
     const onSearch = () => {
+        if(dtlkeys) return
         getHistoryTrend()
         getHistoryTable()
         
     }//监控趋势更改时间
     const onSearchAlarm = () => {
+        if(dtlkeys) return
         getAlarmPage()
     }
     const changeTime = (e) => {
@@ -564,31 +567,39 @@ export default function GatewayDetail(props) {
         dealData()
     }, [historyTable, historyTrend]) */
    
+  useEffect(() => {  // 设备详情如果没有数据返回就不调下面的接口
+    getDetailData()
+  }, [projectId, sn])
     useEffect(() => {
+      if(dtlkeys) return
         getData()
-        getDetailData()
         getEnergyTrend()
-    }, [search.sn, projectId])
+    }, [sn, projectId, dtlkeys])
+
+
+    
     useEffect(() => {
-        getHistoryTrend()
-        getHistoryTable()
+       if(dtlkeys) return
+       console.log(dtlkeys)
+       getHistoryTrend()
+       getHistoryTable()
+    }, [sn, projectId, startTime, endTime, dtlkeys])
+
+
+    useEffect(() => {
+        if(dtlkeys) return
         getAlarmPage()
-    }, [paramsTrend.sn])
+    }, [sn, projectId, startTimeAlarm, endTimeAlarm, pageNum, dtlkeys])
+
+ 
     useEffect(() => {
-        getAlarmPage()
-    }, [pageNum])
-    useEffect(() => {
+        if(dtlkeys) return
         getEnergyReport()
-        getEnergyTrend()
-    }, [paramsReport.date, projectId, search.sn, paramsReport.type, trend])
+       
+    }, [dateValue, projectId, sn, reportTypeTime, trend, dtlkeys])
 
-
-    const Test = () => {
-        console.log(1)
-        return (
-            <div>test</div>
-        )
-    }
+         
+ 
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -600,8 +611,8 @@ export default function GatewayDetail(props) {
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
-                        <img src={detail.imageBase64 ? detail.imageBase64 : imgurl.category} className={style.leftImg} ></img>
-                        <div className={detail.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
+                        <img src={detail?.imageBase64 ? detail?.imageBase64 : imgurl.category} className={style.leftImg} ></img>
+                        <div className={detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
                     </div>
                     <div className={style.leftBottom}>
                         <p><span className={style.leftBottomSpan}>设备类型：</span><Textbox ellipsis={{tooltip: deviceList[detail.deviceStyle]}}>{deviceList[detail.deviceStyle] || ''}</Textbox></p>

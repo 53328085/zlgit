@@ -4,6 +4,7 @@ import { selectcurlRommid } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import { Divider, Form, Select, message, Spin } from 'antd'
 import { useReactive } from "ahooks";
+import {useNavigate} from 'react-router-dom'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
 import styled from 'styled-components';
 import { Topology } from "@topology/core/src/core";
@@ -58,7 +59,7 @@ export default function Index() {
   const lineNames = ['curve', 'polyline', 'line']
   const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
 
-
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
   const roomId = useSelector(selectcurlRommid)
@@ -103,7 +104,7 @@ export default function Index() {
     if (res.success) {
       let dateGroup = JSON.parse(res.data.dataGroup)
       dateGroup.locked = 1
-      console.log(canvas)
+      
       setTimeout(() => {
         state.spining = false
         canvas.open(dateGroup)
@@ -257,8 +258,8 @@ export default function Index() {
   }
 
   const onMessage = (event, data) => {
-    // console.log(event)
-    // console.log(data)
+    
+    
     if (event == 'nodeRightClick') {
       // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
@@ -278,6 +279,12 @@ export default function Index() {
         setSelectedNode(data)
         setNodeType('设备绑定')
       }
+    } else if(event == 'dblclick') {
+      console.log(data)
+       let {tags} = data
+       console.log(tags)
+        if(!Array.isArray(tags) || tags.length < 1) return
+       window.open(`/deviceDetail?sn=${tags[0]}`, "_blank")
     }
   }
 

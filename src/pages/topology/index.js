@@ -88,7 +88,7 @@ export default function index() {
         state.deviceList = []
         message.error(res.errMsg)
       }
-    })
+    }).catch()
   }
 
   useEffect(() => {
@@ -597,7 +597,9 @@ export default function index() {
     message.success('测点绑定成功！')
     bindRef.current.onCancel()
   }
-
+  const onSearch = (value) => {
+    console.log(value)
+  }
   return (
     <Spin spinning={state.spining} tip="Loading...">
       <div className={style.header}>
@@ -922,7 +924,7 @@ export default function index() {
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
           <Form name='bindForm' form={bindForm} requiredMark={false}>
             <Item name='deviceId' label='设备名称'  labelAlign='left' rules={[{ required: true, message: '请选择绑定设备' }]}>
-              <Select
+             {/*  <Select
                 placeholder="请选择"
                 size="middle"
                 style={{ marginLeft: 16, width: '280px' }}
@@ -931,6 +933,25 @@ export default function index() {
                 {state.deviceList.map(item => {
                   return <Select.Option key={item.sn} value={item.sn}>{item.name}</Select.Option>
                 })}
+              </Select> */}
+               <Select
+                showSearch
+                onSearch={onSearch}
+                placeholder="请选择"
+                size="middle"
+                style={{ marginLeft: 16, width: '280px' }}
+                onChange={changeDevice}
+                fieldNames={{label: "name", value: "sn"}}
+                options={state.deviceList}
+                filterOption={(input, option) =>{
+                  console.log(option)
+                  return (option?.name ?? '').toLowerCase().includes(input.toLowerCase())
+                 }
+                }
+              >
+              {/*   {state.deviceList.map(item => {
+                  return <Select.Option key={item.sn} value={item.sn}>{item.name}</Select.Option>
+                })} */}
               </Select>
             </Item>
             {nodeType == '设备绑定' ? null :
