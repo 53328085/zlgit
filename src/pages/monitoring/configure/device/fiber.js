@@ -23,7 +23,7 @@ const {
     UpdateFibreTempil,
     DeleteCDCW,
     DeleteFibreTempil,
-    ImportCDCW,
+    ImportGXCW,
     OneLevel
   }
 } = Monitoring
@@ -175,23 +175,7 @@ export default function gateway({ deviceStyle }) {
     editform.setFieldsValue({ 
       ...record, 
       commProtocol: record.commProtocol ? record.commProtocol : '',
-      channel1:record.path1Name,
-      channel2:record.path2Name,
-      channel3:record.path3Name,
-      channel4:record.path4Name,
-      check1:record.path1Group?.length>0,
-      check2:record.path2Group?.length>0,
-      check3:record.path3Group?.length>0,
-      check4:record.path4Group?.length>0
-     })
-     path1Gruop.current = record.path1Group?record.path1Group:[]
-     path2Gruop.current = record.path2Group?record.path2Group:[]
-     path3Gruop.current = record.path3Group?record.path3Group:[]
-     path4Gruop.current = record.path4Group?record.path4Group:[]
-     if(path1Gruop.current)flagref.current[0]=false
-     if(path2Gruop.current)flagref.current[1]=false
-     if(path3Gruop.current)flagref.current[2]=false
-     if(path4Gruop.current)flagref.current[3]=false
+     })    
     console.log(editform.getFieldsValue(),flagref)
   }
  
@@ -211,15 +195,7 @@ export default function gateway({ deviceStyle }) {
         name,
         commPort,
         commProtocol,
-        commAddress,
-        channel1,
-        channel2,
-        channel3,
-        channel4,
-        check1,
-        check2,
-        check3,
-        check4,
+        commAddress,       
          } = editform.getFieldValue()
       let params = {
         id,
@@ -235,14 +211,8 @@ export default function gateway({ deviceStyle }) {
         commPort,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
-        path1Name:channel1,
-        path2Name:channel2,
-        path3Name:channel3,
-        path4Name:channel4,
-        path1Group:check1&&path1Gruop.current.length>0?path1Gruop.current:[],
-        path2Group:check2&&path2Gruop.current.length>0?path2Gruop.current:[],
-        path3Group:check3&&path3Gruop.current.length>0?path3Gruop.current:[],
-        path4Group:check4&&path4Gruop.current.length>0?path4Gruop.current:[],
+        factor: 1,
+        customerType: 1,     
       }
       console.log(params,editform.getFieldValue(),path1Gruop,path2Gruop,path3Gruop,path4Gruop,pathGruop)
       const resp = await UpdateFibreTempil(params)
@@ -255,64 +225,7 @@ export default function gateway({ deviceStyle }) {
       }
     }).catch(e=>{console.log(e)})
   }
-  //编辑应用
-  const editSure=()=>{
-    editform.validateFields().then(async()=>{
-      const { 
-        id,
-        areaId,
-        alarmPlanId,
-        address,
-        remark,
-        gatewayId,
-        category,
-        sn,
-        name,
-        commPort,
-        commProtocol,
-        commAddress,
-        channel1,
-        channel2,
-        channel3,
-        channel4,
-        check1,
-        check2,
-        check3,
-        check4,
-        } = editform.getFieldValue()
-      let params = {
-        id,
-        projectId,
-        areaId,
-        alarmPlanId,
-        address,
-        remark,
-        gatewayId,
-        category,
-        sn,
-        name,
-        commPort,
-        commProtocol:commProtocol?commProtocol:0,
-        commAddress,
-         path1Name:channel1,
-        path2Name:channel2,
-        path3Name:channel3,
-        path4Name:channel4,
-        path1Group:check1&&path1Gruop.current.length>0?path1Gruop.current:[],
-        path2Group:check2&&path2Gruop.current.length>0?path2Gruop.current:[],
-        path3Group:check3&&path3Gruop.current.length>0?path3Gruop.current:[],
-        path4Group:check4&&path4Gruop.current.length>0?path4Gruop.current:[],
-      }
-      const resp = await UpdateFibreTempil(params)
-
-      if(resp.success){
-        message.success("应用成功")
-        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-      }else{
-        message.error(resp.errMsg)
-      }
-    })
-  }
+ 
   const onEditCancel=()=>{
 
     EditModalFormRef?.current?.onCancel()
@@ -377,7 +290,7 @@ export default function gateway({ deviceStyle }) {
   const addOk = async () => {
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
-      console.log(formvalue,checklistRef.current,path1Gruop,path2Gruop,path3Gruop,path4Gruop,pathGruop)
+      console.log(formvalue)
       let params = {
         id: 0,
         projectId,
@@ -393,75 +306,32 @@ export default function gateway({ deviceStyle }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        path1Name:formvalue.channel1,
+        factor: 1,
+       /*  path1Name:formvalue.channel1,
         path2Name:formvalue.channel2,
         path3Name:formvalue.channel3,
         path4Name:formvalue.channel4,
         path1Group:checklistRef.current.check1&&path1Gruop.current.length>0?path1Gruop.current:[],
         path2Group:checklistRef.current.check2&&path2Gruop.current.length>0?path2Gruop.current:[],
         path3Group:checklistRef.current.check3&&path3Gruop.current.length>0?path3Gruop.current:[],
-        path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[],
+        path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[], */
       }
       const res = await AddFibreTempil(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+        addform.resetFields()
+      //  modalFormRef?.current?.onCancel()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  //新增确认应用
-  const onSure=()=>{
-    addform.validateFields().then(async () => {
-      setTransition("")
-      setMaskTransitionName("")
-      const formvalue = addform.getFieldsValue()
-      let params = {
-        id: 0,
-        projectId,
-        areaId: formvalue.areaId,
-        alarmPlanId: formvalue.alarmPlanId,
-        address: formvalue.address,
-        remark: formvalue.remark,
-        gatewayId: formvalue.gatewayId,
-        category: formvalue.category,
-        sn: formvalue.sn,
-        name: formvalue.name,
-        // customerType: 0,
-        commPort: formvalue.commPort ? formvalue.commPort : 0,
-        commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
-        commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        path1Name:formvalue.channel1,
-        path2Name:formvalue.channel2,
-        path3Name:formvalue.channel3,
-        path4Name:formvalue.channel4,
-        path1Group:checklistRef.current.check1&&path1Gruop.current.length>0?path1Gruop.current:[],
-        path2Group:checklistRef.current.check2&&path2Gruop.current.length>0?path2Gruop.current:[],
-        path3Group:checklistRef.current.check3&&path3Gruop.current.length>0?path3Gruop.current:[],
-        path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[],
-      }
-      const res = await AddFibreTempil(params)
-     
-      if (res.success) {
-        message.success('应用成功!')
-        getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-      } else {
-        message.error(res.errMsg)
-      }
-    }).catch(()=>{
-
-    })
-  }
+ 
   //新增弹窗取消
   const onAddCancel = ()=>{
     modalFormRef?.current?.onCancel()
-    flagref.current=[true,true,true,true]
-    path1Gruop.current=[]
-    path2Gruop.current=[]
-    path3Gruop.current=[]
-    path4Gruop.current=[]
+    flagref.current=[true,true,true,true]   
     setTransition(undefined)
     setMaskTransitionName(undefined)
   }
@@ -543,6 +413,7 @@ export default function gateway({ deviceStyle }) {
       pageSize: pageSize?pageSize:pageRef.current.pageSize,
       areaId: id ? id : 0,
       alike: like ? like : '',
+      deviceStyle: 14,
       customerType:customerType?customerType:0
     }
     const resp = await QueryByPageFibreTempil(params)
@@ -589,7 +460,7 @@ export default function gateway({ deviceStyle }) {
     const formData =new FormData()
     formData.append("file",flies[0])
     formData.append("projectId",projectId)
-    const res = await ImportCDCW(formData)
+    const res = await ImportGXCW(formData)
      if(res.success) {
       if (res.data.success) {
         message.success("上传成功")
@@ -649,16 +520,16 @@ export default function gateway({ deviceStyle }) {
     exportExecel,
     getList:getQueryByPageElectric,
     tb:tableLoadRef,
-    btnlist:false
+    btnlist: true
   }
   const ModalFormProps = {
     modalFormRef,
-    width: 1162,
+    width: 732,
     name: '新增光纤测温',
     transitionName:transitionName,
     maskTransitionName:maskTransitionName,
     onOk: addOk,
-    onSure:onSure,
+    
     onAddCancel:onAddCancel,
     isfiber:true,
     openarea,
@@ -681,10 +552,9 @@ export default function gateway({ deviceStyle }) {
   }
   const EditModalFormProps = {
     EditModalFormRef,
-    width: 1162,
+    width: 732,
     name: '编辑光纤测温',
-    onOk: editOk,
-    onSure:editSure,
+    onOk: editOk,    
     onEditCancel:onEditCancel,
     isfiber:true,
     openarea,
@@ -749,23 +619,12 @@ export default function gateway({ deviceStyle }) {
         alarmopts:alarmoptsRef.current, 
         form: editform, 
         deviceStyle,levelname, 
-        setIndex,
-        channelName1,
-        setChannelName1,
-        channelName2,
-        setChannelName2,
-        channelName3,
-        setChannelName3,
-        channelName4,
-        setChannelName4,
+        setIndex,       
         setIndex,
         setTransition,
         setMaskTransitionName,
         checklistRef,
-        path1Gruop,
-        path2Gruop,
-        path3Gruop,
-        path4Gruop,
+       
          }}>
       <EditModalForm {...EditModalFormProps}></EditModalForm>
     </MyContext.Provider>

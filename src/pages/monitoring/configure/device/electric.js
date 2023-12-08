@@ -348,7 +348,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddElectric(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+        addform.resetFields()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
@@ -571,9 +571,6 @@ export default function gateway({ deviceStyle }) {
     transitionName:transitionName,
     maskTransitionName:maskTransitionName,
     onOk: addOk,
-    onSure:onSure,
-    onAddCancel:onAddCancel,
-  
   }
   const uploadprops = {
     maxCount: 1,

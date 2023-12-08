@@ -361,6 +361,7 @@ export default function Index() {
         </div>
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
         <UseTransfer 
+        type="fibre"
         transferTitle={transferTitle} 
         saveValue={getSaveValue} 
         columns={transferColumns} 

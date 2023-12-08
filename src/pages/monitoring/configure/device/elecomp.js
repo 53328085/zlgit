@@ -174,15 +174,15 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 6
             }}
-            initialValues={{
+           /*  initialValues={{
                 channel1:'通道1',
                 channel2:'通道2',
                 channel3:'通道3',
                 channel4:'通道4'
-            }}
+            }} */
         >
             <Row className={style.customItem}>
-                <Col span={deviceStyle===14?7:10}>
+                <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
@@ -236,7 +236,7 @@ export const FormComp = (props) => {
                 <Col >
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col span={deviceStyle===14?7:10}>
+                <Col span={10}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -302,7 +302,7 @@ export const FormComp = (props) => {
 
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
-                {
+              {/*   {
                     props.isfiber ? (
                         <>
                             <Col >
@@ -384,7 +384,7 @@ export const FormComp = (props) => {
                         </>
                         
                     ) : null
-                }
+                } */}
 
             </Row>
         </Form>
@@ -393,16 +393,19 @@ export const FormComp = (props) => {
 
 
 //新增设备
-export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,isfiber=false,openarea, ...other }) => {
+export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,isfiber=false,openarea,onOk, ...other }) => {
 
     return (
         <>
             {
-                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other} footer={[
+                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                  custft={true}
+                  onOk={onOk}
+                /*  footer={[
                     <Button onClick={other.onAddCancel}>取消</Button>,
                     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
                     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={() => { other.onSure(); }}>应用</Button>,
-                ]}>
+                ]} */>
                     {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
                     <FormComp isfiber={isfiber} openarea={openarea}> </FormComp>
                 </Modal>
@@ -412,13 +415,13 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
 
 }
 //编辑设备
-export const EditModalForm = ({ EditModalFormRef,isfiber=false,openarea, ...other }) => {
+export const EditModalForm = ({ EditModalFormRef,isfiber=false,openarea, onOk, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} footer={[
+        <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} onOk={onOk} /* footer={[
             <Button onClick={other.onEditCancel}>取消</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-        ]}>
+        ]} */>
             {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
             <EditFormComp isfiber={isfiber} openarea={openarea}>
             </EditFormComp>
@@ -515,10 +518,7 @@ export const EditFormComp = (props) => {
         deviceStyle, 
         levelname,
         setIndex,
-        path1Gruop,
-        path2Gruop,
-        path3Gruop,
-        path4Gruop, } = useContext(MyContext)
+        } = useContext(MyContext)
     const [area, setArea] = useState([])
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
@@ -528,24 +528,6 @@ export const EditFormComp = (props) => {
         required: true
     }]
 
-    const validator=()=>({
-        validator(_, value) {
-             let count=0
-             const {check1,check2,check3,check4} = form.getFieldsValue()
-             if((check1 &&path1Gruop.current.length>0) || (check2 &&path2Gruop.current.length>0)||(check3&&path3Gruop.current.length>0)||(check4&&path4Gruop.current.length>0)){
-                count++;
-             } else{
-                count=0
-             }
-             if(!count){
-                return Promise.reject(new Error("通道配置未勾选或未配置"))
-             } else{
-                return Promise.resolve()
-             }                             
-           
-     
-    }
-    })
     const changeGateway = (v, option) => {
         console.log(v, option)
         setIsdisable(false)
@@ -585,9 +567,10 @@ export const EditFormComp = (props) => {
             labelCol={{
                 span: 6
             }}
+            preserve={false}
         >
             <Row className={style.customItem}>
-                <Col span={deviceStyle===14?7:10}>
+                <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
                         {
                             (area.length || isdisable) > 0 ? <Select
@@ -625,7 +608,7 @@ export const EditFormComp = (props) => {
                 <Col>
                     <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col span={deviceStyle===14?7:10}>
+                <Col span={10}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -675,88 +658,7 @@ export const EditFormComp = (props) => {
                     {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
-                {
-                    props.isfiber ? (
-                        <>
-                            <Col >
-                                <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
-                            </Col>
-                            <Col span={7}>
-                                <div style={{ paddingBottom: 12 }}>通道配置</div>
-
-                                <Form.Item
-                                    label={<Form.Item name="check1" noStyle valuePropName="checked"><Checkbox></Checkbox></Form.Item>} 
-                                    labelCol={2}
-                                    name="channel1"
-                                    rules={[...rules,validator ]}
-                                >
-                                    <Space size='large'>
-                                        <Form.Item  name="channel1"
-                                        label={null}>
-                                            <Input></Input>
-                                        </Form.Item>
-
-                                        <Button type='primary' onClick={() => {
-                                            props.openarea(1);
-                                            setIndex(1);
-                                        }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item
-                                    label={<Form.Item name="check2" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
-                                    name="channel2"
-                                    labelCol={2}
-                                    rules={[...rules,validator]}    
-                                >
-                                    <Space size='large'>
-                                        <Form.Item name="channel2"   label={null}>
-                                            <Input></Input>
-                                        </Form.Item>
-                                        <Button type='primary' onClick={() => {
-                                            props.openarea(2);
-                                            setIndex(2);
-                                        }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item
-                                    label={<Form.Item name="check3" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
-                                    name="channel3" 
-                                    rules={[...rules,validator]}
-                                    labelCol={2}
-
-                                >
-                                    <Space size='large'>
-                                        <Form.Item name="channel3"  label={null}>
-                                            <Input></Input>
-                                        </Form.Item>
-                                        <Button type='primary ' onClick={() => {
-                                            props.openarea(3);
-                                            setIndex(3);
-                                        }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item
-                                    label={<Form.Item name="check4" valuePropName="checked"><Checkbox></Checkbox></Form.Item>}
-                                    name="channel4"
-                                    rules={[...rules,validator]} 
-                                    labelCol={2}
-
-                                >
-                                    <Space size='large'>
-                                        <Form.Item name="channel4"  label={null}>
-                                            <Input></Input>
-                                        </Form.Item>
-                                        <Button type='primary' onClick={() => {
-                                            props.openarea(4);
-                                            setIndex(4);
-                                        }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                            </Col>
-                        </>
-                        
-                    ) : null
-                }
+            
             </Row>
         </Form>
     )

@@ -7,7 +7,7 @@ import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
 import { selectProjectId } from '@redux/systemconfig.js'
 import { useSelector } from 'react-redux'
-
+import {useSearchParams} from 'react-router-dom'
 import logo from './topologyLogo.png'
 // 左侧工具栏图标
 import '../../assets/css/fonts/font/iconfont.css'
@@ -64,6 +64,9 @@ export default function index() {
   }
 
   const getData = getUrlParams(window.location.href)
+
+  let [searchParams] = useSearchParams()
+  const type = searchParams.get('type')  
 
   const state = useReactive({
     title: '',
@@ -503,9 +506,8 @@ export default function index() {
     nameRef.current.onOpen()
   }
 
-  const onOk = async () => {
-    const values = await nameForm.validateFields()
-    console.log(form.getFieldsValue(true))
+  const onOk = async () => { 
+    const values = await nameForm.validateFields()  
     newCanvas.data.name = nameForm.getFieldValue('name')
     newCanvas.data.grid = form.getFieldValue('grid')
     newCanvas.data.gridColor = form.getFieldValue('gridColor')
@@ -527,7 +529,7 @@ export default function index() {
         } else {
           message.error(res.errMsg)
         }
-      })
+      }).catch()
     } else {
       let param = {
         id: state.chartData.id,
@@ -539,16 +541,56 @@ export default function index() {
       }
       updateChart(param).then(res => {
         if (res.success) {
-          nameRef.current.onCancel()
-          message.success('配电图编辑成功!')
+            nameRef.current.onCancel()
+            message.success('配电图编辑成功!')
         } else {
           message.error(res.errMsg)
         }
-      })
+      }).catch()
     }
 
   }
+  let issuccess = useRef(false)
+  const autosave = () => {
+    let name = state.chartData.name
+    let remark = state.chartData.remark
+    newCanvas.data.name = name
+    newCanvas.data.grid = form.getFieldValue('grid')
+    newCanvas.data.gridColor = form.getFieldValue('gridColor')
+    newCanvas.data.bkColor = form.getFieldValue('bkColor')
+    newCanvas.data.locked = form.getFieldValue('locked')  == true ? 1 : 0
+    let param = {
+      id: state.chartData.id,
+      projectId,
+      roomId: state.chartData.roomId,
+      name,
+      remark,
+      dataGroup: JSON.stringify(newCanvas.data)
+    }
+    updateChart(param).then(res => {
+       let {success, errMsg} = res || {}
+      if (!success) {
+          message.warning(errMsg || '数据保存出错')
+      }else {
+        issuccess.current = true
+      }  
+    }).catch()
 
+  }
+  const step = 5*60*1000; // 每隔五分钟保存一次
+  useEffect(() => {
+    if(!newCanvas) return
+     let timeid;
+        if(type === 'edit') {
+          timeid = setInterval(() => {
+           autosave();
+          }, step)
+        }
+    
+     return () => {
+       clearInterval(timeid)
+     }
+  }, [type, newCanvas])
   const bindData = () => {
     setNodeTag(false)
     bindForm.resetFields()

@@ -262,7 +262,7 @@ export default function Gateway() {
 
   }
   //确认新增
-  const addOk = () => {
+  const addOk = async () => {
     addForm.validateFields().then(async () => {
       const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
       let params = {
@@ -280,7 +280,8 @@ export default function Gateway() {
       const { data, success, errMsg } = await GatewayAdd(params)
       if (success) {
         message.success('新增成功')
-        modalFormRef.current.onCancel()
+        addForm.resetFields()
+      //  modalFormRef.current.onCancel()
         getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
       } else {
         message.error(errMsg)
@@ -288,31 +289,7 @@ export default function Gateway() {
     })
 
   }
-  //确认新增应用
-  const addSure = () => {
-    addForm.validateFields().then(async () => {
-      const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
-      let params = {
-        id: 0,
-        projectId,
-        areaId: area,
-        address,
-        category,
-        sn,
-        pwd,
-        name,
-        heartInterval: heartInterval ? parseInt(heartInterval) : 30,
-        remark
-      }
-      const { data, success, errMsg } = await GatewayAdd(params)
-      if (success) {
-        message.success('应用成功')
-        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
-      } else {
-        message.error(errMsg)
-      }
-    })
-  }
+ 
   const cancelOk = () => {
     modalFormRef.current.onCancel()
   }
@@ -749,9 +726,7 @@ export default function Gateway() {
     selectopts: selectoptsRef.current,
     addForm,
     usecategory: usecategoryRef.current,
-    onOk: addOk,
-    onCancel: cancelOk,
-    onSure: addSure,
+    onOk: addOk,    
     levelname
   }
   const uploadprops = {
@@ -836,14 +811,10 @@ export default function Gateway() {
 }
 
 //新增网关组件
-let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, ...other }) => {
+let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onOk, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title="新增网关" footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-    ]}>
+    <Modal mold='cust' ref={modalFormRef} {...other} title="新增网关" onOk={onOk}  custft={true}>
       {/* <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
         form={addForm}

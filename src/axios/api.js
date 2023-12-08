@@ -1330,10 +1330,12 @@ export const Monitoring = {
     UpdateCDCW:(data)=>server.post(`/Monitor/Device/UpdateCDCW`,data),//更新触点测温
     DeleteCDCW:(data)=>server.delete(`/Monitor/Device/DeleteCDCW`,{params:data}),//删除触点测温
     ImportCDCW:(data)=>server.post(`/Monitor/Device/ImportCDCW`,data),//批量导入触点测温
-    QueryByPageFibreTempil:(data)=>server.post(`/Monitor/Device/QueryByPageFibreTempil`,data),//查询光纤测温
-    AddFibreTempil:(data)=>server.post(`/Monitor/Device/AddFibreTempil`,data),//新增光纤测温
-    UpdateFibreTempil:(data)=>server.post(`/Monitor/Device/UpdateFibreTempil`,data),//更新光纤测温
-    DeleteFibreTempil:(data)=>server.delete(`/Monitor/Device/DeleteFibreTempil`,{params:data}),//删除光纤测温
+  
+    DeleteFibreTempil:(data)=>server.delete(`/Monitor/Device/DeleteGXCW`,{params:data}),//删除光纤测温 
+    QueryByPageFibreTempil:(data)=>server.post(`/Monitor/Device/QueryByPageGXCW`,data),//查询光纤测温
+    AddFibreTempil:(data)=>server.post(`/Monitor/Device/AddGXCW`,data),//新增光纤测温
+    UpdateFibreTempil:(data)=>server.post(`/Monitor/Device/UpdateGXCW`,data),//更新光纤测温
+    ImportGXCW:(data)=>server.post(`/Monitor/Device/ImportGXCW`,data),//批量导入触点测温
     },
   //公共照明管理
   PubliclightManager: {
@@ -1715,7 +1717,7 @@ export class DistributionMeter {
   static QueryPageCDCW =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageCDCW`,{params:{projectId, roomId, pageNum, pageSize}})
   static ConfigureCDCW=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureCDCW`,data)
   static QueryUnusedFibreTempil = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedFibreTempil`,{params:{projectId, roomId}})
-  static QueryPageFibreTempil =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageFibreTempil`,{params:{projectId, roomId, pageNum, pageSize}})
+  static QueryPageFibreTempil =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageGXCWInfo`,{params:{projectId, roomId, pageNum, pageSize}})
   static ConfigureFibreTempil=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureFibreTempil`,data)
 }
 

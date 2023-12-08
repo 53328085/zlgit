@@ -8,6 +8,7 @@ export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
+    const type = props.type // 调用组件的父组件
     const [mainData, setMainData] = useState([])
     const [subData, setSubData] = useState([])
     const [subCopy, setSubCopy] = useState([])
@@ -96,7 +97,7 @@ export default function index (props) {
     }
 
     const unknownToSub = () => {
-      if(subData.length>0){
+      if(subData.length>0 && type == "fiber"){  // fiber 光纤测温
             messageApi.open({
                 type: 'warning',
                 content:'光纤设备至多添加一个！',
