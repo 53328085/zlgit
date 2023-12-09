@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SearchOutlined ,CloseOutlined} from '@ant-design/icons';
+import { SearchOutlined ,CloseOutlined, CodeSandboxCircleFilled} from '@ant-design/icons';
 import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline } from 'antd'
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 
@@ -46,26 +46,30 @@ const WrapDiv = styled.div`
       overflow-y: auto;
       .fiberarea{
       display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(10,116px);
-      grid-template-rows: repeat(auto-fit,56px) ;
+      gap: 8px;
+      grid-template-columns: repeat(9,136px);
+      grid-template-rows: repeat(auto-fit,64px) ;
       margin:16px 0;
      
       .box{
-        background-color: #00cc33;
-        color: #fff;
-        border: 1px solid #009900;
+        background-color: #ecf5ff;
+        color: #333;
+        border: 1px solid #ccc;
         border-radius: 2px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        flex-direction: column;
-        padding: 4px 0;
+        justify-content: center;         
+        padding: 4px;
         cursor: pointer;
       }
       .active{
         animation: activecss .8s linear infinite;
         border: 1px solid #cc0000;
+        color:#fff;
+      }
+      .current {
+         background-color: #090;
+         color: #fff;
       }
     }
     }
@@ -211,9 +215,9 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const chartRef = useRef()
   const [activename,setActiveName]=useState('')
-  const chooseBox = (i,it) => {
+  const chooseBox = (i,it) => {   
     setActive(i)
-    setActiveName(it.name)
+    setActiveName(it.subfieldName)
   }
   const [level, setLevel] = useState(1)
   const [channel,setChannel] = useState([])
@@ -245,7 +249,7 @@ export default function Index() {
   //获取分区
   const QueryFibreTempilPartitions =async ()=>{
     try {
-    const {success, data} = await  DistributionRoomRuntime.QueryFibreTempilPartitions({
+    const {success, data, errMsg} = await  DistributionRoomRuntime.QueryFibreTempilPartitions({
       projectId,
       roomId
     }) 
@@ -270,7 +274,7 @@ export default function Index() {
         setChannel([])
       }
     }else{
-      message.error(res.error)
+      message.error(errMsg)
     }
     } catch (error) {
       console.log(error)
@@ -425,7 +429,7 @@ export default function Index() {
             {
              channel.length>0&&channel.map(
                 (it, i) => (
-                  <div className={active === i ? 'active box' : 'box'} key={i} onClick={() => { 
+                  <div className={active === i  ?  `${it.state == 1 ? 'current' : 'active'} box` : 'box'} key={it.sn+i} onClick={() => { 
                     chooseBox(i,it) 
                     QuerySinglePartitionsInfo(it.sn)
                     }}>
@@ -451,7 +455,23 @@ export default function Index() {
             <div className='status'>
               <h5>分区状态</h5>
               <div className='statusitem'>
-                {
+
+              <div className='sitem' key="preW">
+                      <div className={`circle ${channelInfo.info.preW==1?'active': ''}` }></div>
+                      <span>预报警</span>
+               </div>
+
+               <div className='sitem' key="fireW">
+                      <div className={`circle ${channelInfo.info.fireW==1?'active': ''}` }></div>
+                      <span>火警</span>
+               </div>
+
+               <div className='sitem' key="tmpW">
+                      <div className={`circle ${channelInfo.info.tmpW==1?'active': ''}` }></div>
+                      <span>升温报警</span>
+               </div>
+
+               {/*  {
                   channelInfo.info.states?.length > 0 
                   &&channelInfo.info.states.map(
                     item=>(
@@ -461,19 +481,19 @@ export default function Index() {
                     </div>
                     )
                   )
-                }
+                } */}
               </div>
               <Divider dashed style={{ borderColor: "#999", margin: "16px 0" }}></Divider>
-              <Form>
+              <Form labelCol={{span: 13}} labelAlign='left'>
                 <Item >分区报警阀值</Item>
-                <Item label="上线温度" >
-                  <Input size='small' value={channelInfo.info.temperatureRange}></Input>
+                <Item label="预报警阈值" >
+                  <Input size='small' value={channelInfo.info.preWV}></Input>
                 </Item>
-                <Item label="温差范围" >
-                  <Input size='small' value={channelInfo.info.topLimitTemp}></Input>
+                <Item label="火警阀值" >
+                  <Input size='small' value={channelInfo.info.fireWV}></Input>
                 </Item>
-                <Item label="上升速率" >
-                  <Input size='small' value={channelInfo.info.risingRate}></Input>
+                <Item label="温升报警阈值" >
+                  <Input size='small' value={channelInfo.info.tmpWV}></Input>
                 </Item>
               </Form>
             </div>
@@ -490,7 +510,7 @@ export default function Index() {
           <Timeline className='timeline'>
             {channelInfo.warnlist.length>0&&channelInfo.warnlist.map(it=>{
               return(
-                <Timeline.Item key={it} dot={<div
+                <Timeline.Item key={it.warningTime} dot={<div
                   style={{
                     borderRadius: '50%', width: 16, height: 16, border: '1px solid',
                     display: 'flex', justifyContent: 'center', alignItems: 'center',

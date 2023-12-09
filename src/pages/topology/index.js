@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message, Spin } from "antd";
+import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message, Spin, Typography } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
 import { selectProjectId } from '@redux/systemconfig.js'
@@ -27,7 +27,7 @@ import FileSaver from 'file-saver'
 
 import { distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { useReactive } from "ahooks";
-
+const {Text} = Typography
 export default function index() {
   const { TextArea } = Input;
   const [form] = Form.useForm()
@@ -642,6 +642,7 @@ export default function index() {
   const onSearch = (value) => {
     console.log(value)
   }
+ 
   return (
     <Spin spinning={state.spining} tip="Loading...">
       <div className={style.header}>
@@ -983,14 +984,44 @@ export default function index() {
                 size="middle"
                 style={{ marginLeft: 16, width: '280px' }}
                 onChange={changeDevice}
-                fieldNames={{label: "name", value: "sn"}}
-                options={state.deviceList}
-                filterOption={(input, option) =>{
-                  console.log(option)
-                  return (option?.name ?? '').toLowerCase().includes(input.toLowerCase())
+                dropdownMatchSelectWidth={380}              
+                filterOption={(input, option) =>{    
+                  return (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) || (option?.sn ?? '').toLowerCase().includes(input.toLowerCase()) || (option?.address ?? '').toLowerCase().includes(input.toLowerCase())
                  }
-                }
+                }               
               >
+                {
+
+                  state.deviceList?.length > 0 ?
+                    <>
+                    <Select.Option disabled>
+                    <div className={style.custoptionbg} >
+                        <span>设备名称</span>
+                        <span>设备编号</span>
+                        <span>设备地址</span>
+                    </div>
+                    </Select.Option>
+                    { state.deviceList.map((option) => {
+                     return (                      
+                      <Select.Option key={option.sn} label={option.name} value={option.sn}>
+                         <div className={style.custoption} >
+                           <Text ellipsis={{tooltip: option.name}}>{option.name}</Text>
+                           <Text ellipsis={{tooltip: option.sn}}>{option.sn}</Text>
+                           <Text ellipsis={{tooltip: option.address}}>{option.address}</Text>
+                         </div>
+
+                      </Select.Option>
+                     
+                     )
+
+
+
+                  })   
+                  } 
+                   </>
+                    : null
+
+                }
               {/*   {state.deviceList.map(item => {
                   return <Select.Option key={item.sn} value={item.sn}>{item.name}</Select.Option>
                 })} */}

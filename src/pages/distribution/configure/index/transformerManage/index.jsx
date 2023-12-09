@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Select, Button, Table, Space, Modal, message } from 'antd';
+import React, { useRef, useState, useEffect, useCallback } from 'react'
+import { Select, Button,  Space, message } from 'antd';
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
@@ -8,9 +8,10 @@ import {utils, writeFile} from 'xlsx'
 import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { distributionRoom, DistributionMeter } from '@api/api.js'
 import { cloneDeep } from 'lodash';
+import Usetable from '@com/useTable'
 import CModal from '@com/useModal'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
+import {  ExportExcel} from '@com/useButton'
 
 export default function Index() {
   const tableRef = useRef()
@@ -80,18 +81,32 @@ export default function Index() {
   //设备查询
   const [pageNum, setPageNum] = useState(1)
   const [total, setTotal] = useState(0)
-  const pageSize = 10
-  const getTableData = () => {
+  
+  let page = 14
+  const getTableData = (size) => {
+    
+    let pageSize = size || page;
     return queryPageTransformer(projectId, roomId, pageNum, pageSize).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data)
-          setSubTable(res.data)
+      let {success, data, total} = res || {}
+      
+      if(success){
+        if(data){
+          setData(data)
+          setSubTable(data)         
+          setTotal(total)
+          return {
+            list: data,
+            total,
+          }
         }else{
           setData([])
           setSubTable([])
+          return {
+            list: [],
+            total: 0
+          }
         }
-        setTotal(res.total)
+        
       }
     })
   }
@@ -291,30 +306,20 @@ export default function Index() {
   //分页
   const paginationProps = {
     current: pageNum, //当前页码
-    pageSize, // 每页数据条数
+    pageSize: page, // 每页数据条数
     total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
+    onChange: p => handlePageChange(p), //改变页码的函数
     hideOnSinglePage: false,
     showSizeChanger: false,
   }
-  const handlePageChange = (page) => {
-    setPageNum(page)
+  const handlePageChange = (p) => {
+    setPageNum(p)
   }
 
-  const exportData = () => {
-    const params = { raw: true };
-    const workbook = utils.book_new(); // 新建工作簿   
-    let table = tableRef.current  
-    const ws = utils.table_to_sheet(
-      // 新建工作表
-      table,
-      params
-    );
-    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file =  "xlsx";
-    writeFile(workbook, '配电房变压器.xlsx', { bookType: file }); // 下载
-  }
-
+  const onExport =useCallback(async () => { 
+     console.log(total)
+    return getTableData(total)
+ }, [total, roomId])
   return (
     <div>
       {transTag =='open' ? <div className={style.mask}></div> : null }
@@ -351,14 +356,13 @@ export default function Index() {
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
             <span>配电房变压器</span>
-            <div>
+            <Space size={32}>
             <Button type="primary" onClick={()=> settingClick()} style={{ width: 96}}>
                 选择设备
             </Button>
-            <Button type="primary" style={{marginLeft:'16px', width: 96}} onClick={()=>exportData()}>
-                导出
-            </Button>
-            </div>
+            <ExportExcel tb={tableRef} />
+        
+            </Space>
         </div>
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
@@ -366,7 +370,7 @@ export default function Index() {
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
         <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
-      <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
+      <Usetable ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps} sheetName="变压器管理" onExport={onExport} ></Usetable>
       <CModal title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} type="warn" mold="cust">
        
          是否确认在该配电房中删除该变压器？ 
