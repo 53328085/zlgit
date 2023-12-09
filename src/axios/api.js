@@ -1716,9 +1716,15 @@ export class DistributionMeter {
   static QueryUnusedCDCW = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedCDCW`,{params:{projectId, roomId}})
   static QueryPageCDCW =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageCDCW`,{params:{projectId, roomId, pageNum, pageSize}})
   static ConfigureCDCW=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureCDCW`,data)
-  static QueryUnusedFibreTempil = (projectId, roomId)=>server.get(`/Distribution/DistributionMeter/QueryUnusedFibreTempil`,{params:{projectId, roomId}})
+  static QueryUnusedFibreTempil = ({projectId, areaId, alike})=>server.get(`/Distribution/DistributionMeter/QueryUnusedGXCW?projectId=${projectId}&areaId=${areaId}&alike=${alike}` )
   static QueryPageFibreTempil =(projectId, roomId, pageNum, pageSize)=>server.get(`/Distribution/DistributionMeter/QueryPageGXCWInfo`,{params:{projectId, roomId, pageNum, pageSize}})
-  static ConfigureFibreTempil=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureFibreTempil`,data)
+  static ConfigureFibreTempil=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureGXCW`,data)
+  static ConfigureGXCWInfo=(data)=>server.post(`/Distribution/DistributionMeter/ConfigureGXCWInfo`, data)
+  static QueryGXCWBaseInfo=()=>server.get(`/Distribution/DistributionMeter/QueryGXCWBaseInfo`)
+
+  static DeleteGXCWInfo=(id)=>server.delete(`/Distribution/DistributionMeter/DeleteGXCWInfo?id=${id}`)
+  
+  
 }
 
 export class DistributionRoomRuntime{
@@ -1764,11 +1770,11 @@ export class DistributionRoomRuntime{
   static HistoryTable =(data)=>server.post(`/Distribution/DistributionRoomRuntime/HistoryTable`,data)
   static Statistics=(data)=>server.get(`/Distribution/DistributionRoomRuntime/Statistics`,{params:data})
   static Overview =(data)=>server.post(`/Distribution/DistributionRoomRuntime/Overview`,data)
-  static QueryFibreTempilPartitions =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilPartitions`,{params:data})
-  static QuerySinglePartitionsInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QuerySinglePartitionsInfo`,{params:data})
-  static QueryFibreTempilWarningInfo =(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningInfo`,{params:data})
+  static QueryFibreTempilPartitions =({projectId, roomId})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWInfoList?projectId=${projectId}&roomId=${roomId}`) // 分区？
+  static QuerySinglePartitionsInfo =({projectId, sn})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWInfoDetail?projectId=${projectId}&sn=${sn}`) // 详细信息
+  static QueryFibreTempilWarningInfo =({projectId, roomId})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningInfo?projectId=${projectId}&roomId=${roomId}`)
   static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
-  static QueryFibreTempilWarningRecords=(data)=>server.get(`/Distribution/DistributionRoomRuntime/QueryFibreTempilWarningRecords`,{params:data})
+  static QueryFibreTempilWarningRecords=({projectId, roomId, start, end,alarmType})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords?projectId=${projectId}&roomId=${roomId}&start=${start}&end=${end}&alarmType=${alarmType}`)
 }
 //能源流向
 export class EnergyFlowRuntime {

@@ -319,7 +319,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddFibreTempil(params)
       if (res.success) {
         message.success('新增成功!')
-        addform.resetFields()
+       // addform.resetFields()
       //  modalFormRef?.current?.onCancel()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {

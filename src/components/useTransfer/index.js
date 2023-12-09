@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
-import { Table, Input, message } from "antd";
+import { Table, Input, message, Descriptions, Divider} from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 
@@ -8,7 +8,8 @@ export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
-    const type = props.type // 调用组件的父组件
+  
+    const fibre = props.fibre || {}
     const [mainData, setMainData] = useState([])
     const [subData, setSubData] = useState([])
     const [subCopy, setSubCopy] = useState([])
@@ -97,12 +98,14 @@ export default function index (props) {
     }
 
     const unknownToSub = () => {
-      if(subData.length>0 && type == "fiber"){  // fiber 光纤测温
-            messageApi.open({
+      console.log(subData)
+      console.log(props.type)
+      if(subData.length>0 && props.type == "fibre"){  // fiber 光纤测温
+        return  messageApi.open({
                 type: 'warning',
                 content:'光纤设备至多添加一个！',
             })
-            return;
+           
         } 
         if( selectedRowKeys.length == 0 ){
             messageApi.open({
@@ -128,7 +131,7 @@ export default function index (props) {
                     }
                 }
             }
-            setSubData(subData.concat(arr2));
+            setSubData([...subData.concat(arr2)]);
             setSubCopy(subCopy.concat(arr2));
             setUnknownData(arr);
             setUnknownCopy(copyArr);
@@ -191,7 +194,7 @@ export default function index (props) {
     }
     let tag = columns[0].key;
     let keys = columns.map(c => c.key);
-    console.log(keys)
+  
     const onSearchSub = (value) => {
        
         let arr = [];
@@ -238,8 +241,8 @@ export default function index (props) {
     return (
         <div className={style.transferContent}>
             {contextHolder}
-            { props.transferTitle.mainTitle != '' ? 
-            <div className={style.leftTable}>
+            { props.transferTitle.mainTitle != ''  ? 
+            (props.type !="fibre" && <div className={style.leftTable}>
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
                     <div className={style.mainContent}>
@@ -256,8 +259,9 @@ export default function index (props) {
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:270}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
-            </div> : 
-            <div className={style.leftTable}>
+            </div>
+             ) : 
+            (props.type !="fibre" && <div className={style.leftTable}>
                 <div className={style.otherSubTable}>
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
@@ -266,6 +270,22 @@ export default function index (props) {
                     </div>
                     <div className={style.mainContent}>
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
+                    </div>
+                </div>
+            </div>)
+            }
+            {
+                props.type == "fibre" && <div className={style.leftTable}>
+                <div className={style.otherSubTable}>
+                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                    <Descriptions title="" column={1}  size="small" bordered>
+    <Descriptions.Item label="测温通道">{fibre.channel}</Descriptions.Item>
+    <Descriptions.Item label="分区编号">{fibre.subfield}</Descriptions.Item>
+    <Descriptions.Item label="分区名称">{fibre.subfieldName}</Descriptions.Item>
+                    </Descriptions>
+                    <Divider />
+                    <div className={style.mainContent}>
+                        <Table bordered dataSource={subData} columns={columns}   rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>
@@ -307,7 +327,7 @@ export default function index (props) {
                     ></Search>
                 </div>
                 <div className={style.mainContent}>
-                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
+                    <Table bordered dataSource={unknownData} columns={columns}  rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
                 </div>
             </div>
         </div>

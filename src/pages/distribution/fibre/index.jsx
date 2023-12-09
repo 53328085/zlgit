@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
+import React, { useState, useMemo, useCallback, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SearchOutlined ,CloseOutlined} from '@ant-design/icons';
 import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline } from 'antd'
@@ -14,6 +14,7 @@ import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 
 import moment from 'moment';
+import { roomId } from '../../../redux/systemconfig';
 
 const WrapDiv = styled.div`
   display: grid;
@@ -242,27 +243,29 @@ export default function Index() {
     return arr
   }
   //获取分区
-  const QueryFibreTempilPartitions =async (roomId)=>{
+  const QueryFibreTempilPartitions =async ()=>{
     try {
-    const res = await  DistributionRoomRuntime.QueryFibreTempilPartitions({
+    const {success, data} = await  DistributionRoomRuntime.QueryFibreTempilPartitions({
       projectId,
       roomId
     }) 
-    if(res.success){
-      if (res.data) {
-        const arr1 = maparr(res.data.path1Group,res.data.path1Name,1)
+    if(success){
+
+      if (Array.isArray(data)) {
+       /*  const arr1 = maparr(res.data.path1Group,res.data.path1Name,1)
         const arr2 = maparr(res.data.path2Group,res.data.path2Name,2)
         const arr3 = maparr(res.data.path3Group,res.data.path3Name,3)
         const arr4 = maparr(res.data.path4Group,res.data.path4Name,4)
-        const arrlist = [...arr1,...arr2,...arr3,...arr4]
-        if(arrlist.length>0){
-            setActiveName(arrlist[active]['name'])
-            QuerySinglePartitionsInfo(arrlist[active],res.data.sn)
+        const arrlist = [...arr1,...arr2,...arr3,...arr4] */
+        if(data.length>0){
+            setActiveName(data[active]['subfieldName'])
+            let {sn} = data[0]
+          if(sn)   QuerySinglePartitionsInfo(sn)
         }else{
           channelInfo.info = {}
           initchart()
         }
-        setChannel(arrlist)
+        setChannel(data)
       } else {
         setChannel([])
       }
@@ -275,12 +278,11 @@ export default function Index() {
    
   } 
   //分区信息
-  const QuerySinglePartitionsInfo=async(pathGroup,sn)=>{
+  const QuerySinglePartitionsInfo=async(sn)=>{
     const res = await DistributionRoomRuntime.QuerySinglePartitionsInfo({
       projectId,
       sn,
-      port :pathGroup.port,
-      partition:pathGroup.partition
+   
     })
     if(res.success){
       if(res.data){
@@ -314,7 +316,7 @@ export default function Index() {
     chartdom.setOption(opt)
   }
   //告警列表
-  const QueryFibreTempilWarningInfo=async(roomId)=>{
+  const QueryFibreTempilWarningInfo=async()=>{
     const res = await DistributionRoomRuntime.QueryFibreTempilWarningInfo({projectId,roomId})
     if(res.success){
       if(res.data &&  Array.isArray(res.data)){
@@ -345,12 +347,15 @@ export default function Index() {
     }
   }
   //报警日志
-  const QueryFibreTempilWarningRecords=async()=>{
+  const QueryFibreTempilWarningRecords= async()=>{
+  
     try {
       const formvalue = form.getFieldsValue()
+      console.log(formvalue)
       const start =formvalue.time&&formvalue.time[0]?moment(formvalue.time[0]).format('YYYY-MM-DD 00:00:00'):moment().format('YYYY-MM-DD 00:00:00')
       const end =formvalue.time&&formvalue.time[1]?moment(formvalue.time[1]).format('YYYY-MM-DD 23:59:59'):moment().format('YYYY-MM-DD 23:59:59')
       const alarmType = formvalue.dangerType?formvalue.dangerType:(channelInfo.typeopts&&channelInfo.typeopts[0])?channelInfo.typeopts[0]:1
+      
       const res = await DistributionRoomRuntime.QueryFibreTempilWarningRecords({
         projectId,
         roomId: roomId,
@@ -386,15 +391,13 @@ export default function Index() {
 
   useEffect(() => {
     if(roomId && projectId) {
-      QueryFibreTempilWarningInfo(roomId)
-      QueryFibreTempilPartitions(roomId)
+      QueryFibreTempilWarningInfo()
+      QueryFibreTempilPartitions()
     }
     
   }, [roomId, projectId])
  
-  useEffect(() => {
-    QueryFibreTempilPartitions(roomId)
-  }, [active])
+ 
   useEffect(()=>{
     channelInfo.info.tempData && initchart()
   },[channelInfo.info.tempData])
@@ -422,9 +425,12 @@ export default function Index() {
             {
              channel.length>0&&channel.map(
                 (it, i) => (
-                  <div className={active === i ? 'active box' : 'box'} key={i} onClick={() => { chooseBox(i,it) }}>
-                    <div>{it.pathName}</div>
-                    <div>{it.name}</div>
+                  <div className={active === i ? 'active box' : 'box'} key={i} onClick={() => { 
+                    chooseBox(i,it) 
+                    QuerySinglePartitionsInfo(it.sn)
+                    }}>
+                   
+                    <div>{it.subfieldName}</div>
                   </div>
                 )
               )
@@ -520,7 +526,7 @@ export default function Index() {
             layout='inline'
             form={form}
             initialValues={{
-              time: [moment(), moment()],
+              time: [moment().subtract(7, 'day'), moment()],
               dangerType: channelInfo.typeopts[0]?.x
             }}
           >
