@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react'
+import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
 import { useRequest } from 'ahooks';
 import style from './style.module.less';
 import { Select,DatePicker,Table,Button, message, Radio } from 'antd';
@@ -38,6 +38,7 @@ export default function Index() {
   //园区
   const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
   const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
+
   const changeArea = (value) => {
     setAreaId(value)
   }
@@ -159,7 +160,7 @@ export default function Index() {
       message.error('当前项目尚未配置园区!')
       return;
     }else{
-      if(areaId == 0) {return;}
+      if(!Number.isFinite(areaId)) {return;}
       if(value == 'line'){
         runLine()
       }
@@ -378,7 +379,7 @@ export default function Index() {
         </div>
         <div className={style.contentRight}>
           <div className={style.rightTitle}>损耗分析</div>
-          <Table ref={tableRef} size='small' bordered style={{margin:'16px'}} dataSource={tableData} columns={columns} rowKey='Id' pagination={paginationProps}/>;
+          <Table ref={tableRef} size='small' bordered style={{margin:'16px'}} dataSource={tableData} columns={columns} rowKey='Id' pagination={paginationProps}/>
         </div>
       </div>
     </div>

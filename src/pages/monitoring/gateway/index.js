@@ -38,12 +38,12 @@ export default function Index(props) {
   const [changeTag, setChangeTag] = useState('')
   const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
   let inputValue = ''
-  const [page, setpage] = useState(1)
+ // const [page, setpage] = useState(1)
   let [total, setTotal] = useState(0)
   let [imageList, setimageList] = useState([])
   let [pageNum, setPageNum] = useState(1)
   let [statevalue,setStateValue] = useState(0)
-  let params = {
+/*   let params = {
     projectId: projectId,
     areaId: areaId,
     category: '',
@@ -51,7 +51,16 @@ export default function Index(props) {
     state: 0,
     pageNum: page,
     pageSize: 12,
-  }
+  } */
+  const [params, setParams] = useState({
+    projectId: projectId,
+    areaId: areaId,
+    category: '',
+    alike: '',
+    state: 0,
+    pageNum: 1,
+    pageSize: 12,
+  })
   // let [arr,setArr] = useState([])
   const showTotal = (total) => `共 ${total} 条记录`;
   const columns = [
@@ -182,40 +191,63 @@ const onExport = useCallback(() => {
     refreshDeps: [changeTag],
     manual: true,
   })
-
+ const [svalue, setSvalue] = useState('')
   const getFromChild = data => {
+    console.log(data)
     //园区id
     if (data.areaId == undefined) {
       return
     } else {
       setAreaId(data.areaId)
-      setStateValue(0)
+      setSvalue('')
+      setParams({
+        ...params,
+        areaId: data.areaId,
+        state: 0,
+        category: '',
+        alike: ''
+      })
+     //setStateValue(0)
       // getData()
       
     }
   }
 
+ const onChange = (e) => {
+    setSvalue(e.target.value)
+ }
   const onChangeValue = e => {
-    inputValue = e.target.value
-  }//输入框改变值
-  const onSearchList = () => {
-    params.alike = inputValue
-    getOverviewData()
-  }//点击查询按钮
+    console.log(e)
+      setParams({
+        ...params,
+        alike: e
+      })
+  }// 点击查询按钮
+ 
   const handleChange = e => {
-    params.category = e
-    getOverviewData()
+    setParams({
+      ...params,
+      category: e
+    })
+    
   }//网关型号选择
   const handleChangeState = e => {
-    console.log(e)
+   
     setStateValue(e)
-    params.state = e
-    getOverviewData()
+    setParams({
+      ...params,
+      state: e
+    })
+    
   }//网关状态选择
   const changeTab = val => {
     setisCard(val.target.value == 'card' ? true : false)
-    setpage(1)
-    getOverviewData()
+   // setpage(1)
+    setParams({
+      ...params,
+      pageNum: 1
+    })
+  //  getOverviewData()
   }//切换卡片列表模式
 
   const exportExecel = () => {
@@ -231,9 +263,9 @@ const onExport = useCallback(() => {
   useEffect(() => {
     if (Number.isFinite(areaId)) {
       getOverviewData()
-      console.log('getOverviewData')
+      
     }
-  }, [params.alike, params.areaId, params.category, params.pageNum, params.projectId, params.state, page])
+  }, [params, projectId])
   useEffect(() => {
     console.log(overView)
     if (overView.categories) {
@@ -242,19 +274,30 @@ const onExport = useCallback(() => {
     }
   }, [overView.categories])
   const onChangePage = (page, pageSize) => {
-    setpage(page)
+    //setpage(page)
+    setParams({
+      ...params,
+      pageNum: page
+    })
   }
   return (
     <div>
       <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
       <div className={style.bottom}>
         <div className={style.bottomTab}>
-          {isCard ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>网关查询</span><Input size="middle" placeholder='输入网关编号/安装地址' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151' }} size="middle" onClick={() => { onSearchList() }}>查询</Button>
+          {isCard ? 
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>网关查询</span><Input.Search size="middle" value={svalue} placeholder='输入网关编号/安装地址' 
+          style={{ width: '340px', marginLeft: 16 }} 
+          allowClear
+          enterButton="搜索"
+          onChange={onChange}
+          onSearch = {onChangeValue}
+           />
+             
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div> : ''}
           <span>网关型号</span>
           <Select
-            defaultValue=''
+            value={params.category}
             style={{
               width: 200, marginLeft: 16
             }}
@@ -271,8 +314,8 @@ const onExport = useCallback(() => {
           </Select>
           {isCard ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>网关状态</span>
             <Select
-              value={statevalue}
-              defaultValue={0}
+              value={params.state}
+              
               style={{
                 width: 200, marginLeft: 16
               }}

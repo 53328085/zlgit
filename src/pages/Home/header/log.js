@@ -15,6 +15,7 @@ const Cdiv = styled.div`
   display: flex;
   height: 62px;
   overflow: hidden;
+  align-items: center;
 `;
 const Ldiv = styled.div`
   height: inherit;
@@ -22,6 +23,8 @@ const Ldiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  border-bottom: 1px solid #036;
+  border-top: 1px solid #036;
 `;
 const Idiv = styled.div`
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -78,7 +81,7 @@ const Idiv5 = styled(Idiv)`
 const Triangle = styled.div`
     width: 0; 
      height: 0;
-     border-width: 32px;
+     border-width: 30px;
      border-style: solid;
      border-color: transparent #135abd transparent transparent;
 `;

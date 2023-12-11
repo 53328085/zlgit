@@ -9,7 +9,7 @@ import {systemConfigInfo, currProject} from '@redux/systemconfig'
 import logo from '@imgs/logo.png'
 import style from '../index.module.less'
 const Divlog = styled.div` 
-   height: 65px;
+   height: 64px;
    display: flex;
    flex-direction: column;
    justify-content: space-evenly;
@@ -31,10 +31,6 @@ export default function  Title (){
  
  
    return (
-    <Divlog>
-        <Image  preview={false} height={65}   src={projectLog || logo}></Image>
-       {/*  <span >{titleCn || '正泰智慧能源服务平台'}</span> */}
-        {/* <Text ellipsis={{tooltip: projectName}} style={{maxWidth: "200px", fontSize: "16px", color: "#fff"}}>{projectName || '正泰综合能源服务平台'}</Text> */}
-    </Divlog>
+        <img  height={64}   src={projectLog || logo}></img>
    )
   }

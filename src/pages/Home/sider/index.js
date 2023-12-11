@@ -34,7 +34,7 @@ const Imgbox = styled.div`
 
 const Sdiv = styled.div`
     display: grid;
-    grid-template-rows: 65px 158px 1fr;
+    grid-template-rows: 64px 158px 1fr;
     height: inherit;
 `
 const Cmenu = styled(Menu)`

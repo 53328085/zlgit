@@ -8,13 +8,13 @@ import UseTable from '@com/useTable'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import time from './time.png'
-import * as echarts from "echarts";
+import { drawEcharts } from "@com/useEcharts";
 import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 
 import moment from 'moment';
-import { roomId } from '../../../redux/systemconfig';
+
 
 const WrapDiv = styled.div`
   display: grid;
@@ -70,6 +70,10 @@ const WrapDiv = styled.div`
       .current {
          background-color: #090;
          color: #fff;
+      }
+      .offline {
+        background-color: #ccc;
+        color: #333
       }
     }
     }
@@ -299,7 +303,39 @@ export default function Index() {
     }
   }
   const initchart =()=>{
-    const chartdom = echarts.init(chartRef.current)
+
+    drawEcharts(chartRef.current, {
+       dataset: {
+        dimensions: [
+          {
+            name: 'x',
+            displayName: '时间'
+          },
+          {
+            name: 'y',
+            displayName: '光纤测点温度'
+          }
+        ],
+         source: Array.isArray(channelInfo.info.tempData) ? channelInfo.info.tempData : [],
+
+       },
+      dataZoom: {
+        type: 'inside'
+      },
+      xAxis: {
+        axisLabel: {
+           formatter: (value, index) => {
+               return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+           }
+        }
+      },
+       series: [{type: 'line'}]
+       
+    })
+
+
+
+    /* const chartdom = echarts.init(chartRef.current)
     if(channelInfo.info.tempData){
       const x =channelInfo.info.tempData.map(it=>it.x)
       const y =channelInfo.info.tempData.map(it=>it.y)
@@ -317,7 +353,7 @@ export default function Index() {
         data:[] ,
     }]
     }
-    chartdom.setOption(opt)
+    chartdom.setOption(opt) */
   }
   //告警列表
   const QueryFibreTempilWarningInfo=async()=>{
@@ -429,7 +465,7 @@ export default function Index() {
             {
              channel.length>0&&channel.map(
                 (it, i) => (
-                  <div className={active === i  ?  `${it.state == 1 ? 'current' : 'active'} box` : 'box'} key={it.sn+i} onClick={() => { 
+                  <div className={active === i  ?  `${it.state == 2 ? 'current' : isFinite.state == 3 ?  'active' : "offline"} box` : 'box'} key={it.sn+i} onClick={() => { 
                     chooseBox(i,it) 
                     QuerySinglePartitionsInfo(it.sn)
                     }}>
@@ -484,7 +520,7 @@ export default function Index() {
                 } */}
               </div>
               <Divider dashed style={{ borderColor: "#999", margin: "16px 0" }}></Divider>
-              <Form labelCol={{span: 13}} labelAlign='left'>
+              <Form labelCol={{span: 8}} labelAlign='left' labelWrap={true} >
                 <Item >分区报警阀值</Item>
                 <Item label="预报警阈值" >
                   <Input size='small' value={channelInfo.info.preWV}></Input>

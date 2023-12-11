@@ -113,6 +113,7 @@ const system = createSlice({
           state.discurlevel = payload
         },
         setCurrentlevel(state, {payload}) {
+            console.log(payload)
             state.currlevel = payload
 
            // return Object.assign({}, state, {currlevel: actions.payload })

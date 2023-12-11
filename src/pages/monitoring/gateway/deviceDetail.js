@@ -33,7 +33,7 @@ const Textbox = styled(Text)`
    }
 
 `
-const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备']
+const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '', '触点测温', '光纤测温']
 
 const Chartbox = styled.div`
   display: grid;

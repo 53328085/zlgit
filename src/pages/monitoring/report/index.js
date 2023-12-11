@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useRequest } from 'ahooks'
+import styled from 'styled-components'
 import { Monitoring } from '@api/api.js'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import style from './style.module.less'
-import { Select, Radio, DatePicker, Button, message } from 'antd'
+import { Select, Radio, DatePicker, Button, message, Form, Divider } from 'antd'
 import { ExportOutlined, PrinterOutlined } from '@ant-design/icons'
 import PageList from './pageList'
 import searchFile from './images/searchFile.png'
@@ -15,17 +15,59 @@ import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import Titlelayout from '@com/titlelayout'
+import {CustButton} from '@com/useButton'
 // import ReactToPrint from "react-to-print";
 import printJs from 'print-js'
 
+const {Item} = Form;
 
+
+const Leftbox = styled.div`
+  && {
+      width: 384px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      background: #fff; 
+      .content {
+       padding: 32px 0;
+       display: grid;
+       row-gap: 32px;
+       .ant-radio-group.ant-radio-group-solid {
+         width: 100%;
+         .ant-radio-group.ant-radio-group-solid {
+           width: 50%;
+         }
+       }
+      }
+      .btns {
+      
+       display: grid; 
+       row-gap: 16px;
+       justify-items: center;
+      }
+    
+  }
+
+
+
+`
+const RadioGroup = styled(Radio.Group)`
+&& {
+ width: 100%;
+ .ant-radio-button-wrapper {
+   width: 50%;
+   text-align: center;
+ }
+}
+`
 export default function Index() {
+  const [form] = Form.useForm()
   const { RuntimeReport: { QueryReport } } = Monitoring
   // let componentRef = useRef();
   const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const [defaultArea, setDefaultArea] = useState(areaList[0] ? areaList[0].id : undefined)
-  let [areaId, setAreaId] = useState(defaultArea)
+
  
   const today = moment();
   const changeArea = (value) => {
@@ -44,18 +86,35 @@ export default function Index() {
   const picker= [,"year", 'month'][radioValue]
  
   const [reportData, setReportdata]= useState(null)
-  const changeType = ({ target: { value } }) => {
-    setRadioValue(value);
-  }
-  let params = {
-    projectId: projectId,
-    areaId: areaId,
-    type: parseInt(radioValue), 
-    date: date
+ 
+  const changetype = (e) => {
+     
+    setRadioValue(e.target.value)
   }
 
-  const getData = () => {
-    QueryReport(params).then(res => {
+  const getData = async () => {
+    try {
+      let {type, date} = await form.getFieldsValue(true)
+      let params = {
+        type,
+        projectId,
+        date: type == 1 ? date.format("yyyy")+'-1'+'-1' : date.format("yyyy-M")
+      }
+     let {success, data} = await  QueryReport(params)
+      if(success) {
+        if(data.constructor == Object)  {
+          setReportdata({...data, Data: new Date().toLocaleDateString(), timetype: radioValue})
+        }else {
+          setReportdata(null)
+        } 
+      }else {
+        setReportdata(null)
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+   /*  QueryReport(params).then(res => {
       let { success, data } = res
       if (success) {
         if(data.constructor == Object)  {
@@ -68,22 +127,11 @@ export default function Index() {
         message.error(res.errMsg)
       }
     })
-  }
-  useEffect(() => {
-    if (areaList.length == 0 || !areaList) {
-      message.error('当前项目尚未创建园区!')
-      return;
-    }
-  }, []);
-  const changeDate = (date, dateString) => {
-    setdate(dateString)
-  }
-  const createReport = () => {
-    if (date) {
-      getData()
-    } else {
-      message.error('请选择日期范围！')
-    }
+  } */
+ 
+}
+  const createReport = async () => {
+    getData()
   }
   const printReport = () => {
     let printDom = document.getElementById('contentPage');
@@ -163,27 +211,44 @@ export default function Index() {
   }
   return (
     <div className={style.content}>
-      <div className={style.selectDiv}>
-        <div className={style.item}>
-          <div className={style.itemTitle}>{areaList[0]?.levelName || '园区'}选择</div>
-          {/* <span style={{ marginLeft: "16px", marginRight: 16 }}>{areaList[0]?.levelName || '园区'}选择</span> */}
-          <Select
-            placeholder="请选择园区"
-            style={{ width: '324px' }}
-            size="middle"
-            key={defaultArea}
-            defaultValue={defaultArea}
-            onChange={changeArea}
-          >
-            {areaList.map((item) => {
-              return (
-                <Select.Option key={item.id} value={item.id}>
-                  {item.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-        </div>
+
+
+  <Leftbox>
+<Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" > 
+                 <Form className="content" form={form} initialValues={{type: 1, date: moment()}}>
+                   <Item name="type" noStyle>
+                   <RadioGroup  options={[{
+                     label: '月度报告',
+                     value: 2
+                   }, {
+                     label: '年度报告',
+                     value: 1
+                   }]}   value={radioValue}
+                   optionType="button"
+                   buttonStyle="solid"
+                   onChange={changetype}
+                   />
+                   </Item>
+                   <Item name="date" noStyle>
+                    <DatePicker picker={picker} allowClear={false}    />
+                   </Item>
+                       <Divider   style={{  margin: '0px'}} />
+                      
+                  </Form>
+                  <div className="btns">
+                         <CustButton wh="192px" src="createrpt" onClick={createReport}>生成报告</CustButton>
+                         <CustButton wh="192px" src="print" onClick={printReport}>打印报告</CustButton>
+                         <CustButton wh="192px" src="export" onClick={downloadReport}>导出报告</CustButton>
+                  </div>
+                    
+                   
+               </Titlelayout>      
+
+               </Leftbox>
+
+
+      {/* <div className={style.selectDiv}>
+      
         <div className={style.item}>
           <div className={style.itemTitle}>报告类型</div>
           <Radio.Group options={options} value={radioValue} optionType='button' onChange={changeType} buttonStyle="solid"></Radio.Group>
@@ -204,7 +269,7 @@ export default function Index() {
           <img src={downFile} className={style.searchFile} style={{ zIndex: 1 }}></img>
           <span>导出报告</span>
         </div>
-      </div>
+      </div> */}
        <PageList   reportData={reportData}></PageList> 
 
     </div>

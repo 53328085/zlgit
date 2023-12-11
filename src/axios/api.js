@@ -1404,7 +1404,7 @@ export const Monitoring = {
   },
   //运行报告
   RuntimeReport:{
-    QueryReport:(data) => server.get(`/Monitor/RuntimeReport/QueryReport?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}&date=${data.date}`),//
+    QueryReport:(data) => server.get(`/Monitor/RuntimeReport/QueryReport?projectId=${data.projectId}&type=${data.type}&date=${data.date}`),//
   }
 }
 //运维管理(运行)

@@ -117,12 +117,12 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
   const getData = async () => {
-    const { area } = form.getFieldsValue();
+   
     try {
-      let params = [area];
+     
       let { success, data } = await EnergyOverView.EnergyOverViewRuntime(
         projectId,
-        params
+        [0]
       );
       if (success) {
         setEnergyValue({ ...energyValue, ...data });
@@ -138,8 +138,8 @@ export default function Index() {
     getData();
   }, []);
   return (
-    <CustContext.Provider value={{ form, handler: getData }}>
-      <Pagecount showserach={true}>
+    <CustContext.Provider >
+      <Pagecount >
         <Titlelayout title="能源概述">
           <Mainbox>
             <div className="up">

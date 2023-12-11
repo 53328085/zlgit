@@ -11,6 +11,7 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(state => state.system.onelevel)
   const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+  
   const dateOptions = [{ label: '日', value: 1 }, { label: '月', value: 2 }, { label: '年', value: 3 }]
   const [dateType, setDateType] = useState(1)
   const [showType, setShowType] = useState(1)

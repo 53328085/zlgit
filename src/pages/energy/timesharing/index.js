@@ -42,9 +42,10 @@ export default function Index() {
   const [treeData,setTreeData] =useState([])
  
  
-  const onelevel = useSelector(selectOneLevel)
+ 
   const areaId = useSelector(selectOneLevelDefaultId)
-
+  
+  console.log(areaId)
   const pieRef = useRef()
   const stackRef =useRef()
   const [selectkeys, setSelectkeys] = useState([])
@@ -219,7 +220,7 @@ useEffect(() => {
 
   
   useEffect(()=>{
-     if(!areaId) return;
+     if(!Number.isFinite(areaId)) return;
      selectedId.current = []
      getTreeData()
      
