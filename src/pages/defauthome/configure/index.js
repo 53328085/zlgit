@@ -1,10 +1,10 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less';
 import configIcon from './configIcon.png'
 import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
 
 import CompanyMessage from '../../../components/defaultHome/companyMessage'
@@ -29,6 +29,10 @@ import DayIncome from '@com/defaultHome/dayIncome'
 import StorageStatistics from '@com/defaultHome/storageStatistics'
 import StorageTrend from '@com/defaultHome/storageTrend'
 import SocData from '@com/defaultHome/socData'
+import GatewayMessage from '@com/defaultHome/gatewayMessage'
+import DeviceMessage from '@com/defaultHome/deviceMessage'
+import ChooperMessage from '@com/defaultHome/chooperMessage'
+import EnergyRanking from '@com/defaultHome/energyRank'
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
@@ -68,6 +72,11 @@ import storageTrend from './itemImgs/storageTrend.svg';
 import soc from './itemImgs/soc.svg';
 import firstwarn from '../../../assets/image/warning.png'
 import finished from '@imgs/finished.png'
+import gatewayConfig from '@imgs/gateway_config.png'
+import deviceConfig from '@imgs/device_config.png'
+import chooperConfig from '@imgs/chooper_config.png'
+
+
 import { useRequest } from 'ahooks';
 export default function Index() {
   const { Search } = Input
@@ -84,85 +93,88 @@ export default function Index() {
   const { InsertUISummary, QueryUISummary } = UISummary
 
   const [activeName, setactiveName] = useState(null);
-  const SelectTab = (props) =>{
-    return <div className={style.selectTab} style={{backgroundColor: props.tabName == activeName? '#237ae4' :'#003366'  }}  onClick={() => changeTab(props.tabName)}>
+  const SelectTab = (props) => {
+    return <div className={style.selectTab} style={{ backgroundColor: props.tabName == activeName ? '#237ae4' : '#003366' }} onClick={() => changeTab(props.tabName)}>
       <img className={style.configIcon} src={configIcon} ></img>
-      {props.tabName.length< 5 ? <div className={style.configName}>{props.tabName}</div> : <div className={style.specialConfigName}>{props.tabName}</div> }
+      {props.tabName.length < 5 ? <div className={style.configName}>{props.tabName}</div> : <div className={style.specialConfigName}>{props.tabName}</div>}
     </div>
   }
   const [dragList, setDragList] = useState([])
   const [dragListCopy, setDragListCopy] = useState([])
   const basicItems = [
-    {img:company, itemName:'公司信息', draggable:true },
-    {img:device, itemName:'设备信息', draggable:false },
-    {img:safe, itemName:'安全运行天数', draggable:false },
-    {img:weather, itemName:'天气信息', draggable:false },
+    { img: company, itemName: '公司信息', draggable: true },
+    { img: device, itemName: '设备信息', draggable: false },
+    { img: safe, itemName: '安全运行天数', draggable: false },
+    { img: weather, itemName: '天气信息', draggable: false },
   ]
   const monitorItems = [
-    {img:electric, itemName:'用电量', draggable:true },
-    {img:water, itemName:'用水量', draggable:true },
-    {img:gas, itemName:'用燃气量', draggable:true },
-    {img:coal, itemName:'用煤量', draggable:false },
-    {img:load, itemName:'实时负荷率', draggable:true },
-    {img:monitor, itemName:'实时监控', draggable:false },
-    {img:carbon, itemName:'碳排放量', draggable:true },
+    { img: electric, itemName: '用电量', draggable: true },
+    { img: water, itemName: '用水量', draggable: true },
+    { img: gas, itemName: '用燃气量', draggable: true },
+    { img: coal, itemName: '用煤量', draggable: false },
+    { img: load, itemName: '实时负荷率', draggable: true },
+    { img: monitor, itemName: '实时监控', draggable: false },
+    { img: carbon, itemName: '碳排放量', draggable: true },
+    { img: gatewayConfig, itemName: '网关信息', draggable: true },
+    { img: deviceConfig, itemName: '电表信息', draggable: true },
+    { img: chooperConfig, itemName: '断路器信息', draggable: true },
   ]
   const orderItems = [
-    {img:warning, itemName:'今日告警', draggable:true },
-    {img:warningMessage, itemName:'告警信息', draggable:true },
-    {img:todayOrder, itemName:'今日工单', draggable:true },
-    {img:spread, itemName:'告警分布', draggable:false },
+    { img: warning, itemName: '今日告警', draggable: true },
+    { img: warningMessage, itemName: '告警信息', draggable: true },
+    { img: todayOrder, itemName: '今日工单', draggable: true },
+    { img: spread, itemName: '告警分布', draggable: false },
   ]
   const disItems = [
-    {img:distribution, itemName:'配电房监测', draggable:false },
-    {img:transformer, itemName:'变压器监控', draggable:false },
-    {img:humiture, itemName:'温湿度监控', draggable:false },
+    { img: distribution, itemName: '配电房监测', draggable: false },
+    { img: transformer, itemName: '变压器监控', draggable: false },
+    { img: humiture, itemName: '温湿度监控', draggable: false },
   ]
   const energyItems = [
-    {img:energyCost, itemName:'能耗费用', draggable:false },
-    {img:energyTrend, itemName:'能耗趋势', draggable:true },
-    {img:costTrend, itemName:'能耗费用趋势', draggable:false },
-    {img:energyRank, itemName:'能耗排名', draggable:false },
+    { img: energyCost, itemName: '能耗费用', draggable: false },
+    { img: energyTrend, itemName: '能耗趋势', draggable: true },
+    { img: costTrend, itemName: '能耗费用趋势', draggable: false },
+    { img: energyRank, itemName: '能耗排名', draggable: true },
   ]
   const storageItems = [
-    {img:charge, itemName:'总充电量', draggable:true },
-    {img:discharge, itemName:'总放电量', draggable:true },
-    {img:cost, itemName:'总充电金额', draggable:true },
-    {img:dischargeCost, itemName:'总放电金额', draggable:true },
-    {img:income, itemName:'储能总收益', draggable:true },
-    {img:income, itemName:'储能月收益', draggable:true },
-    {img:income, itemName:'储能日收益', draggable:true },
-    {img:storageStatistics, itemName:'储能收益统计', draggable:true },
-    {img:storageTrend, itemName:'充放电量趋势', draggable:true },
-    {img:soc, itemName:'站点soc', draggable:true },
+    { img: charge, itemName: '总充电量', draggable: true },
+    { img: discharge, itemName: '总放电量', draggable: true },
+    { img: cost, itemName: '总充电金额', draggable: true },
+    { img: dischargeCost, itemName: '总放电金额', draggable: true },
+    { img: income, itemName: '储能总收益', draggable: true },
+    { img: income, itemName: '储能月收益', draggable: true },
+    { img: income, itemName: '储能日收益', draggable: true },
+    { img: storageStatistics, itemName: '储能收益统计', draggable: true },
+    { img: storageTrend, itemName: '充放电量趋势', draggable: true },
+    { img: soc, itemName: '站点soc', draggable: true },
   ]
-  const changeTab = (value) =>{
-     if(value == activeName) {
+  const changeTab = (value) => {
+    if (value == activeName) {
       return;
     }
     setactiveName(value);
     setbasicOpen(true);
-    if(value == '基础信息'){
-    setDragList(basicItems)
-    setDragListCopy(basicItems)
+    if (value == '基础信息') {
+      setDragList(basicItems)
+      setDragListCopy(basicItems)
     }
-    if(value == '运行监控'){
+    if (value == '运行监控') {
       setDragList(monitorItems)
       setDragListCopy(monitorItems)
     }
-    if(value == '运维工单'){
+    if (value == '运维工单') {
       setDragList(orderItems)
       setDragListCopy(orderItems)
     }
-    if(value == '配电房信息'){
+    if (value == '配电房信息') {
       setDragList(disItems)
       setDragListCopy(disItems)
     }
-    if(value == '能耗统计'){
+    if (value == '能耗统计') {
       setDragList(energyItems)
       setDragListCopy(energyItems)
     }
-    if(value == '储能管理'){
+    if (value == '储能管理') {
       setDragList(storageItems)
       setDragListCopy(storageItems)
     }
@@ -183,15 +195,15 @@ export default function Index() {
     //props.dragTag
     return (
       <div className={style.dragItem} draggable={true} unselectable="on" onDrag={e => setclassOfName(props.itemName)}>
-        <img className={style.itemImg} src={props.imgUrl} style={{width: 52, height: 52}}></img>
+        <img className={style.itemImg} src={props.imgUrl} style={{ width: 52, height: 52 }}></img>
         <span className={style.itemName}>{props.itemName}</span>
       </div>
     )
   }
 
   //RGL布局
-  const [defaultProps, setDefaultProps]  = useState({
-    className:'layout',
+  const [defaultProps, setDefaultProps] = useState({
+    className: 'layout',
     rowHeight: 200,
     cols: 8,
     margin: [16, 16]
@@ -203,12 +215,12 @@ export default function Index() {
 
   const getLayoutData = () => {
     return QueryUISummary(projectId).then(res => {
-      let {success, data } = res
+      let { success, data } = res
       if (success && data) {
         return {
           list: data
         }
-      }else {
+      } else {
         return {
           list: []
         }
@@ -216,8 +228,8 @@ export default function Index() {
     })
   }
 
-  const {queryData} = useRequest(getLayoutData, {
-    onSuccess:(result, params) => {
+  const { queryData } = useRequest(getLayoutData, {
+    onSuccess: (result, params) => {
       sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
       setlayoutItem(result.list)
     }
@@ -225,12 +237,12 @@ export default function Index() {
 
   const InsertLayoutData = () => {
     return InsertUISummary(projectId, layoutItem).then(res => {
-      let {success } = res
-      if (success ) {
+      let { success } = res
+      if (success) {
         return {
           list: true
         }
-      }else {
+      } else {
         return {
           list: false
         }
@@ -238,11 +250,11 @@ export default function Index() {
     })
   }
 
-  const { run } = useRequest(InsertLayoutData,{
+  const { run } = useRequest(InsertLayoutData, {
     manual: true,
-    onSuccess:(result, params) => {
+    onSuccess: (result, params) => {
       showConfirmModal()
-    } 
+    }
   })
 
   const createElement = el => {
@@ -250,35 +262,39 @@ export default function Index() {
       position: "absolute",
       right: "5px",
       top: 0,
-      zIndex:1000,
+      zIndex: 1000,
       cursor: "pointer"
     }
     const i = el.i;
     return (
-      <div key = {i} data-grid={el}>
-        <span className="remove" style={removeStyle} onClick={ () => onRemoveItem(i)}> X </span>
-        { i.indexOf('公司信息') != -1 ? <CompanyMessage></CompanyMessage> : null  }
-        { i.indexOf('今日告警') != -1 ? <TodayWarning></TodayWarning> : null  }
-        { i.indexOf('今日工单') != -1 ? <OrderDetail></OrderDetail> : null  }
-        { i.indexOf('告警信息') != -1 ? <WarningMessage></WarningMessage> : null  }
-        { i.indexOf('用电量') != -1 ? <ElectricValue></ElectricValue> : null }
-        { i.indexOf('用水量') != -1 ? <WaterValue></WaterValue> : null }
-        { i.indexOf('用燃气量') != -1 ? <GasValue></GasValue> : null }
-        { i.indexOf('碳排放量') != -1 ? <CarbonValue></CarbonValue> : null }
-        { i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null }
-        { i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null }
-        { i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null }
-        { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null }
-        { i.indexOf('总充电量') != -1 ? <TotalCharge></TotalCharge> : null }
-        { i.indexOf('总放电量') != -1 ? <TotalDischarge></TotalDischarge> : null }
-        { i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null }
-        { i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null }
-        { i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null }
-        { i.indexOf('储能月收益') != -1 ? <MonthIncome></MonthIncome> : null }
-        { i.indexOf('储能日收益') != -1 ? <DayIncome></DayIncome> : null }
-        { i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null }
-        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null }
-        { i.indexOf('站点soc') != -1 ? <SocData></SocData> : null }
+      <div key={i} data-grid={el}>
+        <span className="remove" style={removeStyle} onClick={() => onRemoveItem(i)}> X </span>
+        {i.indexOf('公司信息') != -1 ? <CompanyMessage></CompanyMessage> : null}
+        {i.indexOf('今日告警') != -1 ? <TodayWarning></TodayWarning> : null}
+        {i.indexOf('今日工单') != -1 ? <OrderDetail></OrderDetail> : null}
+        {i.indexOf('告警信息') != -1 ? <WarningMessage></WarningMessage> : null}
+        {i.indexOf('用电量') != -1 ? <ElectricValue></ElectricValue> : null}
+        {i.indexOf('用水量') != -1 ? <WaterValue></WaterValue> : null}
+        {i.indexOf('用燃气量') != -1 ? <GasValue></GasValue> : null}
+        {i.indexOf('碳排放量') != -1 ? <CarbonValue></CarbonValue> : null}
+        {i.indexOf('网关信息') != -1 ? <GatewayMessage></GatewayMessage> : null}
+        {i.indexOf('电表信息') != -1 ? <DeviceMessage></DeviceMessage> : null}
+        {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
+        {i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null}
+        {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
+        {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
+        {i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null}
+        {i.indexOf('总充电量') != -1 ? <TotalCharge></TotalCharge> : null}
+        {i.indexOf('总放电量') != -1 ? <TotalDischarge></TotalDischarge> : null}
+        {i.indexOf('总充电金额') != -1 ? <ChargeCost></ChargeCost> : null}
+        {i.indexOf('总放电金额') != -1 ? <DischargeCost></DischargeCost> : null}
+        {i.indexOf('储能总收益') != -1 ? <TotalIncome></TotalIncome> : null}
+        {i.indexOf('储能月收益') != -1 ? <MonthIncome></MonthIncome> : null}
+        {i.indexOf('储能日收益') != -1 ? <DayIncome></DayIncome> : null}
+        {i.indexOf('储能收益统计') != -1 ? <StorageStatistics></StorageStatistics> : null}
+        {i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null}
+        {i.indexOf('站点soc') != -1 ? <SocData></SocData> : null}
+        {i.indexOf('能耗排名') != -1 ? <EnergyRanking></EnergyRanking> : null}
       </div>
     )
   }
@@ -287,70 +303,71 @@ export default function Index() {
   }
 
   const onAddlayout = (xValue, yValue) => {
-    let newlayout ;
+    let newlayout;
     let time = new Date()
-    if(classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
-    classOfName == '充放电量趋势' || classOfName == '站点soc'){
+    if (classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
+      classOfName == '充放电量趋势' || classOfName == '站点soc' || classOfName == '能耗排名') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
-        x:xValue,
-        y:yValue,
-        w:2,
-        h:2,
+        x: xValue,
+        y: yValue,
+        w: 2,
+        h: 2,
         'description': classOfName
       })
-      setlayoutItem (newlayout)
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    }else if(classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '今日工单' || classOfName == '告警信息' ||
-    classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' ){
+    } else if (classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '今日工单' || classOfName == '告警信息' ||
+      classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
+      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
-        x:xValue,
-        y:yValue,
-        w:2,
-        h:1,
+        x: xValue,
+        y: yValue,
+        w: 2,
+        h: 1,
         'description': classOfName
       })
-      setlayoutItem (newlayout)
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    }else if(classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
-    classOfName == '储能总收益' || classOfName == '储能日收益' || classOfName == '储能月收益' ){
+    } else if (classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
+      classOfName == '储能总收益' || classOfName == '储能日收益' || classOfName == '储能月收益') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
-        x:xValue,
-        y:yValue,
-        w:1,
-        h:1,
+        x: xValue,
+        y: yValue,
+        w: 1,
+        h: 1,
         'description': classOfName
       })
-      setlayoutItem (newlayout)
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    }else if(classOfName == '储能收益统计' ){
+    } else if (classOfName == '储能收益统计') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
-        x:xValue,
-        y:yValue,
-        w:4,
-        h:2,
+        x: xValue,
+        y: yValue,
+        w: 4,
+        h: 2,
         'description': classOfName
       })
-      setlayoutItem (newlayout)
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    }else{
+    } else {
       message.warning('当前模块尚未配置，请等待后续版本更新!')
       return;
     }
-    
-    
+
+
   }
 
-  const onDrop = (layouts, layoutValue, _event) =>{
+  const onDrop = (layouts, layoutValue, _event) => {
     onAddlayout(layoutValue.x, layoutValue.y)
   }
 
   const onLayoutChange = (layout) => {
-    if(layout.length == 0) return;
-    if(layout[layout.length - 1].i == '__dropping-elem__') return;
+    if (layout.length == 0) return;
+    if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
   }
 
@@ -377,12 +394,12 @@ export default function Index() {
     setConfirmModal(false)
   }
   const onSearch = val => {
-    if(val == ''){
+    if (val == '') {
       setDragList(dragListCopy)
-    }else{
+    } else {
       let arr = []
       dragListCopy.map(item => {
-        if(item.itemName.indexOf(val) != -1){
+        if (item.itemName.indexOf(val) != -1) {
           arr.push(item)
         }
       })
@@ -391,10 +408,10 @@ export default function Index() {
   }
 
   return (
-    <div className={style.mainContent} style={{backgroundColor:'#eee'}}>
+    <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
       {contextHolder}
-      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop = {onDrop} >
-        {_.map( layoutItem, el =>createElement(el) )} 
+      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} >
+        {_.map(layoutItem, el => createElement(el))}
       </ReactGridLayout>
       <div className={style.selectMenu}>
         <SelectTab tabName={'基础信息'}></SelectTab>
@@ -407,7 +424,7 @@ export default function Index() {
       <div className={style.reset} onClick={() => showResetModal()}>重置</div>
       <div className={style.confirm} onClick={run}>保存</div>
 
-      <Modal className={style.resetModal} open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'重置'} okType={'primary'} okButtonProps={{danger:true}}>
+      <Modal className={style.resetModal} open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'重置'} okType={'primary'} okButtonProps={{ danger: true }}>
         <div className={style.resetHeader}>重置提示</div>
         <div className={style.resetBody}>
           <img className={style.warnIcon} src={firstwarn}></img>
@@ -425,20 +442,20 @@ export default function Index() {
 
       <Drawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} className={style.drawer}>
         <div className={style.searchInput}>
-          <Search 
-          placeholder="模块名称" 
-          allowClear 
-          enterButton="查询" 
-          style={{width: 240, backgroundColor:'#000', color:'#fff'}} 
-          size="middle" 
-          onSearch={onSearch} 
+          <Search
+            placeholder="模块名称"
+            allowClear
+            enterButton="查询"
+            style={{ width: 240, backgroundColor: '#000', color: '#fff' }}
+            size="middle"
+            onSearch={onSearch}
           />
         </div>
         <div className={style.addModule}>
-        {dragList.map((item, index)=>{
+          {dragList.map((item, index) => {
             return <AddItem imgUrl={item.img} itemName={item.itemName} dragTag={item.draggable} key={index}></AddItem>
-        })}
-        {dragList.length == 0 ? <Empty style={{marginTop: 200, marginLeft: 32, color: "#fff"}}></Empty> : null}
+          })}
+          {dragList.length == 0 ? <Empty style={{ marginTop: 200, marginLeft: 32, color: "#fff" }}></Empty> : null}
         </div>
         <div className={style.closeDrawer}>
           <MenuUnfoldOutlined onClick={onClose} />

@@ -5,6 +5,7 @@ import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
+import { useReactive } from 'ahooks';
 
 import CompanyMessage from '../../components/defaultHome/companyMessage'
 import TodayWarning from '../../components/defaultHome/todayWarning'
@@ -28,19 +29,29 @@ import DayIncome from '@com/defaultHome/dayIncome'
 import StorageStatistics from '@com/defaultHome/storageStatistics'
 import StorageTrend from '@com/defaultHome/storageTrend'
 import SocData from '@com/defaultHome/socData'
+import GatewayMessage from '@com/defaultHome/gatewayMessage'
+import DeviceMessage from '@com/defaultHome/deviceMessage'
+import ChooperMessage from '@com/defaultHome/chooperMessage'
+import EnergyRanking from '@com/defaultHome/energyRank'
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import './configure/style.css';
 import './index.css';
+import { message } from 'antd';
 
 
 
 export default function Index() {
   const [layoutItem, setlayoutItem] = useState([])
+  const state = useReactive({
+    statusData:{},
+  })
 
   const projectId = useSelector(selectProjectId)
   const { QueryUISummary } = UISummary
+
+  
 
   //RGL布局
   const [defaultProps, setDefaultProps]  = useState({
@@ -99,6 +110,9 @@ export default function Index() {
         { i.indexOf('用水量') != -1 ? <WaterValue type={'runtTime'}></WaterValue> : null }
         { i.indexOf('用燃气量') != -1 ? <GasValue type={'runtTime'}></GasValue> : null }
         { i.indexOf('碳排放量') != -1 ? <CarbonValue type={'runtTime'}></CarbonValue> : null }
+        {i.indexOf('网关信息') != -1 ? <GatewayMessage type={'runtTime'}></GatewayMessage> : null}
+        {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'}></DeviceMessage> : null}
+        {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'}></ChooperMessage> : null}
         { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
         { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }
@@ -113,9 +127,14 @@ export default function Index() {
         { i.indexOf('储能收益统计') != -1 ? <StorageStatistics type={'runtTime'}></StorageStatistics> : null }
         { i.indexOf('充放电量趋势') != -1 ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
+        {i.indexOf('能耗排名') != -1 ? <EnergyRanking type={'runtTime'}></EnergyRanking> : null}
       </div>
     )
   }
+
+  
+
+
 
   return (
     <div className={style.mainContent} style={{backgroundColor:'#135abd'}}>

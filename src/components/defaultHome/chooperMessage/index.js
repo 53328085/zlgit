@@ -1,0 +1,119 @@
+import React, { useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig.js'
+import styled from 'styled-components';
+import Titlelayout from '@com/titlelayout';
+import { useReactive } from 'ahooks';
+import { Monitoring } from '@api/api.js'
+import { message } from 'antd';
+
+import chooperRuntime from '@imgs/chooper_runtime.png'
+
+const Divorder = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  .card_icon{
+    margin-left: 25px;
+    width: 64px;
+    height: 64px;
+    margin-right: 24px;
+  }
+  .totalCount{
+    display: flex;
+    flex-direction: column;
+    .count_title{
+        font-size: 14px;
+        color: #303133;
+        line-height: 24px;
+    }
+    .count_val{
+        font-size: 24px;
+        line-height: 32px;
+        color: #515151;
+    }
+  }
+  .details{
+    margin-left: 14px;
+    border: 1px solid #e4e4e4;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.647058823529412);
+    width: 224px;
+    height: 112px;
+    padding: 10px 32px 10px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .detail_item{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+  }
+  
+`
+
+const fs = {
+  hv: '24px',
+  fc: '#333'
+}
+
+export default function DefaultHome(props) {
+  const projectId = useSelector(selectProjectId)
+
+  const { RuntimeStatus } = Monitoring.Runtime
+
+  const state = useReactive({
+    breakerCount: 100,
+    breakerOfflineCount: 0,
+    breakerOnlineCount: 100,
+    percent: 100
+  })
+
+  useEffect(() => {
+    if (props.type == 'runtTime') {
+        RuntimeStatus({
+            projectId: projectId,
+            areaId: 0
+          }).then(res => {
+            if(res.success && res.data){
+                state.breakerCount = res.data.breakerCount
+                state.breakerOnlineCount = res.data.breakerOnlineCount
+                state.breakerOfflineCount = res.data.breakerOfflineCount
+                state.percent = ((res.data.breakerOnlineCount / res.data.breakerCount) * 100).toFixed(2)
+            }else{
+              message.error(res.errMsg)
+            }
+          })
+    } else if (props.type == 'configure') {
+      return;
+    }
+  }, [])
+
+
+  return (
+    <Titlelayout title={'断路器信息'} {...fs}>
+      <Divorder>
+        <img src={ chooperRuntime } className='card_icon'></img>
+        <div className='totalCount'>
+            <span className='count_title'>断路器总数</span>
+            <span className='count_val'>{ state.breakerCount }</span>
+        </div>
+        <div className='details'>
+            <div className='detail_item'>
+                <span className='item_title'>断路器在线</span>
+                <span className='item_value' style={{ color: '#096' }}>{ state.breakerOnlineCount }</span>
+            </div>
+            <div className='detail_item'>
+                <span className='item_title'>断路器离线</span>
+                <span className='item_value' style={{ color: '#f44336' }}>{ state.breakerOfflineCount }</span>
+            </div>
+            <div className='detail_item'>
+                <span className='item_title'>在线率</span>
+                <span className='item_value'>{state.percent}%</span>
+            </div>
+        </div>
+      </Divorder>
+    </Titlelayout>
+  )
+}
