@@ -266,7 +266,7 @@ const cref = useRef()
       <Ciocn>   
         <Uspan className='iconfont'>
         &#xe62d;
-          <Ifile onChange={upload} ref={file} />
+          <Ifile onChange={upload} ref={file} accept=".png, .jpg, .jpeg" />
         </Uspan>    
     
       </Ciocn>

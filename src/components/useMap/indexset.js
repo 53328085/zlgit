@@ -21,7 +21,7 @@ import {message} from 'antd'
  
  let {lngLat: projectLnglat, address} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
-  let geocoder = new T.Geocoder();
+  let geocoder = window.T  ?    new T.Geocoder() : null;
    
  
  
@@ -128,7 +128,7 @@ import {message} from 'antd'
   //const mapkey = Math.random().toString()
   useEffect(() => {
     try {
-  
+    if (!geocoder) return
     let latlng
     if(defaultpoint) {
       latlng =Array.isArray(defaultpoint) ? getlnglat(defaultpoint[0]?.lnglat) : getlnglat(defaultpoint)
@@ -167,7 +167,7 @@ import {message} from 'antd'
   return (
     <div style={{width: "100%", height: '100%',  touchAction: "none"}} id="tmap">
          
-            { !window.T  && <Fallack />}
+            { !window.T  && <Fallack error="地图出错，请检查网络是否断开" />}
            
     </div>
   /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >

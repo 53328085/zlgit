@@ -21,7 +21,7 @@ export let MultImport = ({ modalImportRef, link = '/deviceExcel/gateway.xlsx',na
   return (
     <Modal mold='cust' ref={modalImportRef} {...other} title={name}>
       {/* <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
-      <Dragger {...uploadprops}>
+      <Dragger {...uploadprops} accept=".xlsx">
         <img src={upCloud}></img>
         <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>
         <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={link}>下载模板</a>

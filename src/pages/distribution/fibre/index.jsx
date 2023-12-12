@@ -102,7 +102,7 @@ const WrapDiv = styled.div`
       border: 1px solid #d7d7d7;
       border-radius: 4px;
       padding: 16px 12px;
-      width: 192px;
+      width: 250px;
       height: 352px;
       .ant-form-item{
         margin-bottom: 8px;
@@ -329,7 +329,7 @@ export default function Index() {
            }
         }
       },
-       series: [{type: 'line'}]
+       series: [{type: 'line', smooth:true, showSymbol: false,}]
        
     })
 
@@ -520,7 +520,7 @@ export default function Index() {
                 } */}
               </div>
               <Divider dashed style={{ borderColor: "#999", margin: "16px 0" }}></Divider>
-              <Form labelCol={{span: 8}} labelAlign='left' labelWrap={true} >
+              <Form labelCol={{span: 11}} labelAlign='left' labelWrap={true} >
                 <Item >分区报警阀值</Item>
                 <Item label="预报警阈值" >
                   <Input size='small' value={channelInfo.info.preWV}></Input>

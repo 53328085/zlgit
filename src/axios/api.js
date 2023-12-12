@@ -1640,6 +1640,9 @@ export class distributionRoom {
     );
   static addRoom = (data) =>
     server.post(`Distribution/DistributionRoom/AddRoom`, data);
+
+  static GetRoomImage = ({projectId, imgKey}) =>    
+    server.get(`Distribution/DistributionRoom/GetRoomImage?projectId=${projectId}&imgKey=${imgKey}`);   
   static updateRoom = (data) =>
     server.post(`Distribution/DistributionRoom/UpdateRoom`, data);
   static deleteRoom = (projectId, id) =>

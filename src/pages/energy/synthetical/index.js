@@ -236,7 +236,7 @@ export default function Index() {
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部", startTime: "", endTime: ""}]) 
   const [form] = Form.useForm();
   const {Item} = Form
-  const [value, setvalue] = useState("1");
+  const [value, setvalue] = useState("0");
   const [qverview, setOverview] = useState({})
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
   const [tabvalue, setTabvalue] = useState(1)

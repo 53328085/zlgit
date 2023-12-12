@@ -336,7 +336,7 @@ export default function Index() {
           style={{width: '200px'}}
           onChange={ChangeRoom}
         >
-          {roomList.map((item) => {
+          {roomList?.map((item) => {
             return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
           })}
         </Select>

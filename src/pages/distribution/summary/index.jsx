@@ -74,17 +74,24 @@ export default function Index() {
     temperature:"",
     water:""
   }
-
+  const [imgBg, setImgBg] = useState()
   const [envlist,setEnvList]=useState(init)
   
 
   const getEnvironment = async (roomId) => {
-    const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
-    if (res.success) {
-      setEnvList(res.data)
-    } else {
-      message.error(res.errMsg)
-    }
+     try {
+      const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
+      if (res.success) {
+        setEnvList(res.data)
+        setImgsrc(res?.data?.imgBg)
+      } else {
+        setImgBg(null)
+        message.error(res.errMsg)
+      }
+     } catch (error) {
+       console.log(error)
+     }
+   
   }
  
   
@@ -96,7 +103,7 @@ export default function Index() {
   
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
         <Mainbox >
-          <img className='bgiamge' src={dimg}></img>
+          <img className='bgiamge' src={imgBg || dimg}></img>
           <div className='cardList'>
             <div className='card headtext'>
               配电房环境监控
