@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SearchOutlined ,CloseOutlined, CodeSandboxCircleFilled} from '@ant-design/icons';
-import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline } from 'antd'
+import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline, Typography } from 'antd'
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 
 import UseTable from '@com/useTable'
@@ -14,8 +14,13 @@ import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 
 import moment from 'moment';
+const {Paragraph} = Typography
 
-
+const Pt = styled(Paragraph)`
+  && {
+    margin-bottom: 0px;
+  }
+`
 const WrapDiv = styled.div`
   display: grid;
   gap: 16px;
@@ -48,8 +53,10 @@ const WrapDiv = styled.div`
       display: grid;
       gap: 8px;
       grid-template-columns: repeat(9,136px);
-      grid-template-rows: repeat(auto-fit,64px) ;
-      margin:16px 0;
+      grid-auto-rows: 64px;
+    //  grid-template-rows: repeat(auto-fit,64px) ;
+       padding-top: 16px;
+       justify-content: center;
      
       .box{
         background-color: #ecf5ff;
@@ -62,16 +69,19 @@ const WrapDiv = styled.div`
         padding: 4px;
         cursor: pointer;
       }
-      .active{
+      .normal {
+        background-color: #ecf5ff;
+      }
+      .active{  // 报警
         animation: activecss .8s linear infinite;
-        border: 1px solid #cc0000;
+        outline: 1px solid #cc0000;
         color:#fff;
       }
-      .current {
-         background-color: #090;
+      .current {  // 选中
+         outline:2px solid #090;
          color: #fff;
       }
-      .offline {
+      .offline {  // 失联
         background-color: #ccc;
         color: #333
       }
@@ -221,7 +231,7 @@ export default function Index() {
   const [activename,setActiveName]=useState('')
   const chooseBox = (i,it) => {   
     setActive(i)
-    setActiveName(it.subfieldName)
+    setActiveName('通道'+it.channel + " " +it.subfieldName)
   }
   const [level, setLevel] = useState(1)
   const [channel,setChannel] = useState([])
@@ -258,24 +268,20 @@ export default function Index() {
       roomId
     }) 
     if(success){
-
-      if (Array.isArray(data)) {
-       /*  const arr1 = maparr(res.data.path1Group,res.data.path1Name,1)
-        const arr2 = maparr(res.data.path2Group,res.data.path2Name,2)
-        const arr3 = maparr(res.data.path3Group,res.data.path3Name,3)
-        const arr4 = maparr(res.data.path4Group,res.data.path4Name,4)
-        const arrlist = [...arr1,...arr2,...arr3,...arr4] */
-        if(data.length>0){
-            setActiveName(data[active]['subfieldName'])
+      setActive(0)
+      if (Array.isArray(data) && data.length > 0) {
+        setActiveName('通道'+ data[0]['channel'] + " "+data[0]['subfieldName'])
             let {sn} = data[0]
           if(sn)   QuerySinglePartitionsInfo(sn)
-        }else{
-          channelInfo.info = {}
-          initchart()
-        }
+         
         setChannel(data)
       } else {
+        setActiveName('')
+        channelInfo.info = {}
+        channelInfo.warnlist=[]
+        channelInfo.typeopts=[]
         setChannel([])
+        initchart()
       }
     }else{
       message.error(errMsg)
@@ -421,9 +427,7 @@ export default function Index() {
   const SeeDetail=()=>{
     modalRef.current.onOpen()
   }
-  const close=()=>{
-    modalRef.current.onCancel()
-  }
+ 
   const disabledDate = (current) => {
     
     return current && current > moment().endOf('day');
@@ -465,12 +469,15 @@ export default function Index() {
             {
              channel.length>0&&channel.map(
                 (it, i) => (
-                  <div className={active === i  ?  `${it.state == 2 ? 'current' : isFinite.state == 3 ?  'active' : "offline"} box` : 'box'} key={it.sn+i} onClick={() => { 
+                  <div className={ `${it.state == 2 ? 'normal' : it.state == 3 ?  'active' : "offline"} box ${active == i ? 'current' : ""}` } key={it.sn+i} onClick={() => { 
                     chooseBox(i,it) 
                     QuerySinglePartitionsInfo(it.sn)
                     }}>
                    
-                    <div>{it.subfieldName}</div>
+                    <Pt ellipsis={{
+                      tooltip: it.subfieldName,
+                      rows: 2,
+                    }}>{it.subfieldName}</Pt>
                   </div>
                 )
               )

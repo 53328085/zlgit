@@ -249,7 +249,7 @@ export default function Index() {
        } 
        setSpinning(false)
       }else {
-        form.setFieldValue(record)
+        form.setFieldsValue(record)
       }
       ref.current.onOpen()
       setModalTitle('编辑配电房')
