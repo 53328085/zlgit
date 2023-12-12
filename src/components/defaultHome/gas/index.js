@@ -9,7 +9,8 @@ import { useReactive } from 'ahooks';
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 

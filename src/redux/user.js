@@ -1,7 +1,7 @@
 import { createSlice,nanoid, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
-    memorize: false, // 是否记住用户名
+    memorize: false, // 是否记住用户名, 记住用户名同时记住密码
     memoPhone: false, // 是否记住手机号码
     loading: false,
     name: "",

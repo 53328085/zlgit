@@ -218,6 +218,8 @@ export default function Index() {
       }else{
         message.error(res.errMsg)
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 
@@ -309,11 +311,18 @@ export default function Index() {
 
   }, [roomId])
  const mapref = useRef();
- const fullref = useRef()
+ const [isf, setIsf] = useState(false)
  const fullscreen = (e) => {
+
    e.preventDefault();
    e.stopPropagation();
-   mapref.current.requestFullscreen()
+  
+   if(isf) {
+    document.exitFullscreen();
+   }else {
+    mapref.current.requestFullscreen()
+   }
+   setIsf(!isf)
  }
   return (
     <Spin spinning={state.spining} tip="Loading...">
@@ -324,7 +333,7 @@ export default function Index() {
               return <div className={`chartitem ${state.activeChart == item.id ? 'activeItem' : ''}`} key={index} onClick={() => changeChart(item.id)}>{item.name}</div>
             })}
           
-           {state.chartList?.length && <Button type="primary" style={{marginLeft: "auto"}} onClick={fullscreen}>全屏显示</Button>}
+           {(state.chartList?.length > 0) && <Button type="primary" style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</Button>}
           </ChartItem>
          
         </div>

@@ -16,6 +16,7 @@ const Mainbox = styled.div`
  height: 142px;
  align-items: center;
  justify-items: center;
+
  .alarm {
    display: grid;
    grid-template-rows: repeat(2, 52px);

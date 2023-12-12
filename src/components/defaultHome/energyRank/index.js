@@ -9,7 +9,8 @@ import { energyRanking } from '@api/api.js'
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 const Divorder = styled.div`

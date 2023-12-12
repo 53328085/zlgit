@@ -20,11 +20,12 @@ export default memo(function({onSubmit}){
     const [userform] = Form.useForm();
     const dispatch = useDispatch()
     let initmemorize = useSelector(selectMemorize);
-    let { name } = useSelector(selectUser);
+    let { name, password } = useSelector(selectUser);
     let [loading, setLoading] = useState(false);
     let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
+    const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
@@ -68,7 +69,7 @@ export default memo(function({onSubmit}){
         }}       
         initialValues={{
           name: userName,
-          pwd: "",
+          pwd: '',
           code: '',
         }}
       >

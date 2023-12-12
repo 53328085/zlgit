@@ -124,15 +124,22 @@ const WrapDiv = styled.div`
             .circle{
               width: 20px;
               height: 20px;
-              background-color: #00cc33;
-              border:1px solid #00a633;
+            
               border-radius: 50%;
               margin-right: 16px;
             }
-            .active{
+            .normal {
+              background-color: #00cc33;
+              border:1px solid #00a633;
+            }
+            .waring{
               animation: activecss .8s linear infinite;
               border: 1px solid #cc0000;
-      }
+             }
+             .unknown {
+              background-color: #ccc;
+              border:1px solid #ccc;
+             }
           }
       }
     }
@@ -500,17 +507,17 @@ export default function Index() {
               <div className='statusitem'>
 
               <div className='sitem' key="preW">
-                      <div className={`circle ${channelInfo.info.preW==1?'active': ''}` }></div>
+                      <div className={`circle ${channelInfo.info.preW==1 ?'waring': channelInfo.info.preW==0 ?  'normal' : "unknown"}` }></div>
                       <span>预报警</span>
                </div>
 
                <div className='sitem' key="fireW">
-                      <div className={`circle ${channelInfo.info.fireW==1?'active': ''}` }></div>
+                      <div className={`circle ${channelInfo.info.fireW==1 ?'waring': channelInfo.info.fireW==0 ?  'normal' : "unknown"}` }></div>
                       <span>火警</span>
                </div>
 
                <div className='sitem' key="tmpW">
-                      <div className={`circle ${channelInfo.info.tmpW==1?'active': ''}` }></div>
+                      <div className={`circle ${channelInfo.info.tmpW==1 ?'waring': channelInfo.info.tmpW==0 ?  'normal' : "unknown"}` }></div>
                       <span>升温报警</span>
                </div>
 

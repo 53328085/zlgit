@@ -13,6 +13,7 @@ const Mainbox = styled.div`
   padding: 16px;
   background-color: rgba(254, 165, 38, 1);
   border-radius: 4px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
   .headerTitle{
     padding-left: 16px;
     border-left: 4px solid #fff;

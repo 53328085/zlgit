@@ -29,7 +29,8 @@ const Timelinebox = styled(Timeline)`
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 
