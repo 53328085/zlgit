@@ -520,6 +520,29 @@ export const drawEcharts = (
   if(type == 0) return message.warning("图表类型错误")
  // const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
+  let custSeries
+  if(series.constructor == Object) {
+    if (series.type == 'line') {
+        custSeries = {
+            ...series,
+            smooth:true, 
+            showSymbol: false
+        }
+    }else{
+        custSeries = {...series}
+    }
+    
+  }else if(series.constructor == Array) {
+    custSeries = series.map(s => {
+        if(s.type == "line") {
+            return ({...s, smooth:true,  showSymbol: false})
+        }else {
+            return s
+        }
+    })
+  }
+
+
   const comm = {
     grid: {
       left: "80px",
@@ -572,7 +595,7 @@ export const drawEcharts = (
     yAxis: {
       type: "value",   
     },
-    series,
+    series: custSeries,
   };
   const option = {  // 数据集
     ...comm,
@@ -587,7 +610,7 @@ export const drawEcharts = (
       },
     ],
     dataset,
-    series,
+    series: custSeries,
   };
   const sankoption = {
     grid: {

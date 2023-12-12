@@ -25,11 +25,11 @@ export default memo(function({onSubmit}){
     let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
-    const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])
+    const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])    
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
-     
+    console.log(password)
     const keyvalue = useRef()
     const getCode = async () => {
       try {
@@ -49,7 +49,7 @@ export default memo(function({onSubmit}){
       }
         
    }
-  
+ 
     useEffect(() => {
       getCode();
       return () => {
@@ -69,7 +69,7 @@ export default memo(function({onSubmit}){
         }}       
         initialValues={{
           name: userName,
-          pwd: '',
+          pwd: usepassword,
           code: '',
         }}
       >

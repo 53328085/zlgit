@@ -3,6 +3,7 @@ import {ExclamationCircleOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
 import style from './style.module.less'
 import upload from './upload.svg'
+import del from './del.svg'
 import {Image, message, Modal} from 'antd'
 /**
  * @author zhenglin zhu
@@ -77,7 +78,10 @@ const Luspan = styled(Uspan)`
      right: 0px;
      font-size: 32px;
      line-height: 32px;
-    
+     background-image: url(${del});
+     background-repeat: no-repeat;
+     background-size: 20px 20px;
+     background-position: center;
   }
 `
 const Ifile = styled.input.attrs(props => ({
@@ -282,7 +286,7 @@ const cref = useRef()
       url ? 
       (<Imgbox>
            <Image src={url} preview={true} width={swpx} height={shpx}   />
-           <Luspan onClick={delImg} className="iconfont iconicon_shanchu"></Luspan>
+           <Luspan onClick={delImg} ></Luspan>
       </Imgbox>)
       : 
       <>
