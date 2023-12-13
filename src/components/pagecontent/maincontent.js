@@ -70,7 +70,7 @@ export default function Maincontent(props) {
  
  const location = useLocation()
  const navigate = useNavigate()
- const {tabs, value, setvalue, tabwidth, tabgap} = useContext(CustContext) || {}
+ const {tabs, value, setvalue, tabwidth, tabgap, initialval=''} = useContext(CustContext) || {}
  const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
  //const {tabs, value, setvalue} = props
  const [defaultTab, setDefaultTab] = useState(value)
@@ -89,11 +89,14 @@ export default function Maincontent(props) {
  }
 
 useEffect(() => {   
+    let param = searchParams.get('item')
+    
     let {pathname, state} = location
     setPathName(pathname)
     setUrlstate((s) => ({...s, ...state}))
-    let param = searchParams.get('item')
-    if(param) {
+    if(initialval &&param) {
+        setSearchParams({item: initialval})
+    }else if(param) {
         setvalue(param)
         setDefaultTab(param)
     }

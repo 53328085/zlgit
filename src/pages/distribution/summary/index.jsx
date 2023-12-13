@@ -1,15 +1,14 @@
 import React, { useEffect, useState,  } from 'react'
 import { useSelector } from 'react-redux'
-import {selectcurlRommid, selectProjectId } from "@redux/systemconfig";
-import { nanoid } from '@reduxjs/toolkit'
-import Titlelayout from '@com/titlelayout'
+import {selectcurlRommid, selectProjectId, roomName } from "@redux/systemconfig";
+
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
-import CustContext from '@com/content.js'
-import { Divider, Form, Image, Radio, Select,message  } from 'antd'
+
+import {message  } from 'antd'
 
 import { drawEcharts } from "@com/useEcharts"
-import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
+import { DistributionRoomRuntime } from '@api/api.js'
 import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
 
@@ -21,13 +20,15 @@ const Mainbox = styled.div`
   position: relative;
   .cardList{
     position: absolute;
-    right: 221px;
-    top: 21px;
+    right: 32px;
+    top: 32px;
     color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
     .card{
       width: 256px;
       height: 48px;
-      background-color: rgba(15, 34, 63, 1);
+      background-color: rgba(15, 34, 63, 0.8);
       border: 1px solid rgba(0, 153, 204, 1);
       padding: 4px 24px;
       display: flex;
@@ -39,6 +40,12 @@ const Mainbox = styled.div`
       .cardval{
         color: #00ff00;
         font-size: 16px;
+      }
+      &:first-child{
+        border-radius: 4px 4px 0 0;
+      }
+      &:last-child {
+        border-radius: 0 0 4px 4px;
       }
     }
     img{
@@ -65,6 +72,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
 
   const roomId = useSelector(selectcurlRommid)
+  const rname = useSelector(roomName)
+  console.log(rname)
   const init = {
     door:"",
     fire:"",
@@ -76,14 +85,15 @@ export default function Index() {
   }
   const [imgBg, setImgBg] = useState()
   const [envlist,setEnvList]=useState(init)
-  
+ 
 
   const getEnvironment = async (roomId) => {
      try {
       const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
       if (res.success) {
         setEnvList(res.data)
-        setImgsrc(res?.data?.imgBg)
+        setImgBg(res?.data?.imgBg)
+        
       } else {
         setImgBg(null)
         message.error(res.errMsg)
@@ -106,7 +116,7 @@ export default function Index() {
           <img className='bgiamge' src={imgBg || dimg}></img>
           <div className='cardList'>
             <div className='card headtext'>
-              配电房环境监控
+             {rname}环境监控
             </div>
             <div className='card'>
               <div>

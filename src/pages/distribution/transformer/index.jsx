@@ -139,9 +139,10 @@ export default function Index() {
   })
   const dataprop={
     tabs,
-    setTabs,
+  //  setTabs,
     value,
-    setvalue
+    setvalue,
+    initialval: '0'
   }
   const opts = [
     {
@@ -218,7 +219,9 @@ export default function Index() {
 
   //变压器 表格数据
   const RuntimePoints =async(sn)=>{
+    if(!sn) return;
     const res = await DistributionRoomRuntime.RuntimePoints(projectId,sn)
+
     if(res.success){
       if(res.data.data){
         const dataes = structuredClone(res.data)
@@ -251,6 +254,7 @@ export default function Index() {
           ...it,
         }
       })
+      console.log(data)
       setTabs(data)
     }else{
       setTabs([])
@@ -262,6 +266,7 @@ export default function Index() {
   }
   //数据趋势（echarts）
   const HistoryTrends =async (sn)=>{
+    if(!sn) return
     try{
       let startTime ,endTime;
       if(Array.isArray(timeRanger)&&timeRanger.length>0){
@@ -323,6 +328,7 @@ export default function Index() {
   }
   //数据趋势（table）
   const HistoryTable = async (sn) => {
+    if(!sn) return
     try {
       let startTime, endTime;
       startTime = moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
@@ -424,6 +430,7 @@ export default function Index() {
   }
   useEffect(()=>{
     if(roomId) {
+     
       getTransformer();
       TransformerOne()
     }
@@ -432,14 +439,15 @@ export default function Index() {
     chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
   },[tabs,pattern])
   useEffect(()=>{
+    
     if(tabs&&tabs.length>0){
-      RuntimePoints(tabs[value]['sn'])
+      RuntimePoints(tabs[value]?.sn)
     }  
   },[tabs,value])
   useEffect(()=>{
     if(tabs&&tabs.length>0){
-      pattern===1&& HistoryTrends(tabs[value]['sn'])
-      pattern===2&& HistoryTable(tabs[value]['sn'])
+      pattern===1&& HistoryTrends(tabs[value]?.sn)
+      pattern===2&& HistoryTable(tabs[value]?.sn)
     }
   },[tabs,value,type,pattern])
   return (

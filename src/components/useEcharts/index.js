@@ -583,6 +583,9 @@ export const drawEcharts = (
      
       ...legend
     },  
+    dataZoom: {
+        type: "inside",
+    },
     tooltip: {
       trigger: "axis",
       axisPointer: {

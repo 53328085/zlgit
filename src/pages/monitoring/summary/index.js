@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { Select,message } from 'antd'
 import Icard from './card'
 import { drawEcharts } from '@com/useEcharts'
-import ChartData from './chartData'
+
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import UseHeader from '@com/useHeader'

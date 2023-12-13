@@ -11,20 +11,21 @@ export default function Index() {
     username: '',
     password: ''
   }
-  const client = mqtt.connect(hostServer, option) // 
+  const client = mqtt.connect(hostServer, option) // 创建客户端实例
  
   const getMqtt = () => {
-    client.on("connect", e => {
-      console.log("连接成功")
-      client.subscribe("HMI", {qos: 1}, (error, granted) => {
+    client.on("connect", e => { // 创建连接
+     
+      client.subscribe("HMI", {qos: 1}, (error, granted) => { 
         console.log(granted)
+        console.log(error)
         if(error) {
-          console.log("订阅成功")
+          console.log("订阅失败")
 
 
 
         }else {
-          console.log("订阅失败")
+          console.log("订阅成功")
         }
       })
     })
@@ -32,22 +33,19 @@ export default function Index() {
       console.log(e)
     })
   }
-  const ref =useRef()
-  const quall = () => {
+ 
+ client.on('message', (topic, message) => {
+    console.log(message.toString())
 
-    ref.current.requestFullscreen();
-  }
+ })
 
   useEffect(() => {
-    ref.current.addEventListener('click', () => {
-      document.exitFullscreen();
-    })
-    // getMqtt();
+    
+     getMqtt();
   }, [client])
   return (
     <div style={{flex: 1}}>
-       <Button onClick={quall}>全屏</Button>
-       <div style={{width: "300px", height: "300px", backgroundColor: "#ff7313"}} ref={ref}>全屏</div>
+        
     </div>
   )
 }

@@ -169,8 +169,9 @@ export default function Index() {
     })
     // 接收消息处理
     state.client.on("message", (topic, message) => {
+      console.log('接所消息')
       let mqttData = JSON.parse(message.toString());
-      console.log(mqttData);
+ 
       for (let key in mqttData.Points) {
         // console.log(mqttData.DeviceId + "_" +key)
         if (window.topology.find(mqttData.SN + "_" + key)) {
@@ -187,6 +188,7 @@ export default function Index() {
         }
         let value = mqttData.Points[key].Value;
       }
+    
       canvas.render();
     });
     // 断开发起重连
@@ -204,7 +206,7 @@ export default function Index() {
   }
 
   const getHeart = (devices) => {
-    console.log(devices)
+  //  console.log(devices)
     let params = {
       projectId: projectId,
       channel: state.getGuid,

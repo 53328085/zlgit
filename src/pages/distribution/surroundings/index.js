@@ -4,13 +4,14 @@ import style from './style.module.less'
 import {  Button, DatePicker,message  } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
 import * as echarts from "echarts";
-import updateImg from './updateImg.png'
+ 
 import ItemCard from './itemCard'
 import BlueColumn from '@com/bluecolumn'
 import { selectcurlRommid } from "@redux/systemconfig";
 import styled from 'styled-components'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import { drawEcharts } from "@com/useEcharts";
 const opt={
   color:['#6395f9', '#62daab', '#657798'],
   tooltip:{
@@ -85,21 +86,84 @@ export default function Index() {
  
 
   const EnvironmentTrend = async()=>{
-  const day =  dateval.format('YYYY MM DD 00:00:00')
-  const resp =   await DistributionRoomRuntime.EnvironmentTrend({projectId,roomId,day})
-  if(resp.success){
-    setEnvList(resp.data.environmentVo)
-    setHumidness(resp.data.humidityTrends)
-    setTemperature(resp.data.tempTrends)
-  }else{
-    message.error(resp.errMsg)
-  }
+    try {
+      const day =  dateval.format('YYYY MM DD 00:00:00')
+      const resp =   await DistributionRoomRuntime.EnvironmentTrend({projectId,roomId,day})
+     if(resp.success){
+        setEnvList(resp?.data?.environmentVo || {})
+        setHumidness(resp?.data?.humidityTrends || [])
+        setTemperature(resp?.data?.tempTrends || [])
+     }else{
+       message.error(resp.errMsg)
+     }
+    } catch (error) {
+      
+    }
+  
 }
+  const tempref = useRef();
   useEffect(()=>{
    if(roomId && projectId) EnvironmentTrend()
   },[roomId, projectId])
   useEffect( ()=>{
-    let lineChart1 = echarts.init(document.getElementById('lineChart'));
+    drawEcharts(tempref.current, {
+      dataset: {
+       dimensions: [
+         {
+           name: 'x',
+           displayName: '时间'
+         },
+         {
+           name: 'y',
+           displayName: '温度(℃)'
+         }
+       ],
+        source: Array.isArray(temperature) ? temperature : [],
+
+      },
+     dataZoom: {
+       type: 'inside'
+     },
+     xAxis: {
+       axisLabel: {
+          formatter: (value, index) => {
+              return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+          }
+       }
+     },
+      series: [{type: 'line'}]
+      
+   })
+   drawEcharts(lineChartRef.current, {
+    dataset: {
+     dimensions: [
+       {
+         name: 'x',
+         displayName: '时间'
+       },
+       {
+         name: 'y',
+         displayName: '湿度(RH)'
+       }
+     ],
+      source: Array.isArray(humidness) ? humidness : [],
+
+    },
+   dataZoom: {
+     type: 'inside'
+   },
+   xAxis: {
+     axisLabel: {
+        formatter: (value, index) => {
+            return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+        }
+     }
+   },
+    series: [{type: 'line'}]
+    
+ }) 
+
+    /* let lineChart1 = echarts.init(document.getElementById('lineChart'));
     let opt1 = structuredClone(opt)
     const x1 =temperature.map(it=>it.x)
     const y1 = temperature.map(it=>{
@@ -124,7 +188,7 @@ export default function Index() {
       name: '湿度(RH)',
       data: [...y2],
   }]
-    lineChart2.setOption(opt2)
+    lineChart2.setOption(opt2) */
 },[humidness,temperature] )
   return (
     <div>    
@@ -140,7 +204,7 @@ export default function Index() {
           </div>
           </div>
           
-          <div className={style.lineChart} id='lineChart'></div>
+          <div className={style.lineChart} ref={tempref}></div>
           <div className={style.lineChart} ref={lineChartRef}></div>
         </div>
         <div className={style.bottomContent}>

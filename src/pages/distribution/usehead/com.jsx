@@ -2,17 +2,17 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectdisOneLevel, getDiscurlevel, getcurlRommid,  selectdiscurlevel  } from "@redux/systemconfig";
+import { selectdisOneLevel, getDiscurlevel, getcurlRommid,  selectdiscurlevel, selectcurlRommid,  getRoomId} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(selectdisOneLevel)
   
   const areaId = useSelector(selectdiscurlevel)
-  
-  const roomopts = useSelector(state => state.system.roomId)
-  const [roomlist, setRoomList] = useState(roomopts)
-  const [roomId, setRoomId] = useState(roomopts[0]?.id)
+ 
+  //const roomopts = useSelector(state => state.system.roomId)
+  const [roomlist, setRoomList] = useState([])
+  const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
   const changeArea=(v)=>{  
     getDiscurlevel(v)   
@@ -23,14 +23,15 @@ export default  memo(function Index(props) {
   }
   const getRoomList = async (areaId) => {
     const resp = await distributionRoom.RoomList(projectId, areaId)
-    if (resp.success) {
-      setRoomList(resp.data)
-      
-      if (Array.isArray(resp.data) && resp.data.length > 0) {
-        let rommid = resp.data[0][['id']]
-        form.setFieldValue('roomId', rommid)
-        setRoomId(rommid)
-        dispacth(getcurlRommid(rommid))
+    if (resp?.success) {
+      setRoomList(resp?.data)
+      dispacth(getRoomId(resp?.data))
+     // dispacth(getRoomList(resp?.data))
+      if (Array.isArray(resp?.data) && resp.data.length > 0) {
+        let id = resp.data[0][['id']]
+        form.setFieldValue('roomId', id)
+        setRoomId(id)
+        dispacth(getcurlRommid(id))
       } else {
         form.setFieldValue('roomId', [])
         setRoomId(null)  

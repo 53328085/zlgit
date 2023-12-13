@@ -57,7 +57,7 @@ const WrapDiv = styled.div`
     //  grid-template-rows: repeat(auto-fit,64px) ;
        padding-top: 16px;
        justify-content: center;
-     
+       padding-bottom: 4px;
       .box{
         background-color: #ecf5ff;
         color: #333;
@@ -507,17 +507,17 @@ export default function Index() {
               <div className='statusitem'>
 
               <div className='sitem' key="preW">
-                      <div className={`circle ${channelInfo.info.preW==1 ?'waring': channelInfo.info.preW==0 ?  'normal' : "unknown"}` }></div>
+                      <div className={`circle ${channelInfo.info.preW==='1' ?'waring': channelInfo.info.preW==='0'?  'normal' : "unknown"}` }></div>
                       <span>预报警</span>
                </div>
 
                <div className='sitem' key="fireW">
-                      <div className={`circle ${channelInfo.info.fireW==1 ?'waring': channelInfo.info.fireW==0 ?  'normal' : "unknown"}` }></div>
+                      <div className={`circle ${channelInfo.info.fireW==='1' ?'waring': channelInfo.info.fireW==='0' ?  'normal' : "unknown"}` }></div>
                       <span>火警</span>
                </div>
 
                <div className='sitem' key="tmpW">
-                      <div className={`circle ${channelInfo.info.tmpW==1 ?'waring': channelInfo.info.tmpW==0 ?  'normal' : "unknown"}` }></div>
+                      <div className={`circle ${channelInfo.info.tmpW==='1' ?'waring': channelInfo.info.tmpW==='0' ?  'normal' : "unknown"}` }></div>
                       <span>升温报警</span>
                </div>
 

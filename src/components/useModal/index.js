@@ -67,6 +67,7 @@ const CModal = styled(Modal)`
   type = "normal",
   mold = "form",
   children = null,  
+  loading=false,
   ...props
 } = {}, ref) { 
 
@@ -103,11 +104,15 @@ const CModal = styled(Modal)`
  // const onResetform = () => formref.current.resetfrom()
 
   const onGetvalue = () => formref.current.getValue()
-  
+  const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
       <Button onClick={onCancel}>取消</Button>,
-       <Button type="primary" onClick={onOk}>应用</Button> ,
-       <Button type="primary" onClick={() => {
+       <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
+        setCurrbtn(1)
+        onOk()
+       }}>应用</Button> ,
+       <Button type="primary" loading={currbtn == 2 && loading} onClick={() => {
+        setCurrbtn(2)
         onOk().then(() => {
           onCancel();
         });
@@ -135,6 +140,7 @@ const CModal = styled(Modal)`
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
       type={type}
+      confirmLoading={loading}
       bodyStyle= {
          type=="warn" ? {
            padding: "32px 64px 32px 128px",

@@ -176,6 +176,7 @@ export default function Index() {
     // form.resetFields();
   }
   const ref = useRef()
+  const [loading, setLoading] = useState(false)
   const addOk = async () => {
     try {
       const values = await form.validateFields();
@@ -192,6 +193,7 @@ export default function Index() {
         imgBg: values.imgBg,
       }
       if(modalTitle == '新增配电房'){
+        setLoading(true)
         addRoom(params).then(res => {
           if(res.success){
             messageApi.open({
@@ -206,9 +208,13 @@ export default function Index() {
               content:res.errMsg || '新增失败,请重试！',
             })
           }
+          setLoading(false)
+        }).catch(e => {
+          setLoading(false)
         })
       }else if(modalTitle == '编辑配电房'){
         params.id = editId
+        setLoading(true)
         updateRoom(params).then(res => {
           if(res.success){
             messageApi.open({
@@ -223,6 +229,9 @@ export default function Index() {
               content:res.errMsg || '配电房编辑失败,请重试！',
             })
           }
+          setLoading(false)
+        }).catch(e => {
+          setLoading(false)
         })
       }
       // form.resetFields()
@@ -351,7 +360,7 @@ export default function Index() {
         </div>
         { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
-      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  onOk={addOk} width={592} mold="cust" ref={ref}>
+      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref}>
         
         <div className={style.addBody}>
           <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>

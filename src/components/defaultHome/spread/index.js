@@ -5,12 +5,13 @@ import Titlelayout from '@com/titlelayout';
 import { drawEcharts } from '@com/useEcharts'
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
-import { message } from 'antd';
-
+import {  message } from 'antd';
+import UseEmpty from '@com/useEmpty'
 const fs = {
   hv: '24px',
   fc: '#333',
-  shadow: "y"
+  shadow: "y",
+  
 }
 
 // const pieData = 
@@ -23,10 +24,6 @@ export default function DefaultHome(props) {
 
   const state = useReactive({
     pieData: [
-      { value: 30, name: "组合式电气火灾监测器" },
-      { value: 25, name: "智能微断" },
-      { value: 25, name: "导轨表" },
-      { value: 20, name: "其他" },
     ]
   })
 
@@ -62,11 +59,14 @@ export default function DefaultHome(props) {
       })
     }
   }, [])
-
+  const sty = {
+    width: '422px', height: '358px', display: 'flex' 
+  }
   return (
     <Titlelayout title={'报警分布'} {...fs}>
-      <div ref={wnref} style={{ width: '422px', height: '358px' }}>
-      </div>
+     { (state?.pieData?.length > 0) ? <div ref={wnref} style={sty}></div>
+      : <div style={sty}><UseEmpty /></div>
+      }
     </Titlelayout>
   )
 }
