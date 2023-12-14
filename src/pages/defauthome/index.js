@@ -34,6 +34,14 @@ import DeviceMessage from '@com/defaultHome/deviceMessage'
 import ChooperMessage from '@com/defaultHome/chooperMessage'
 import EnergyRanking from '@com/defaultHome/energyRank'
 
+
+import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
+
+import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
+
+import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
+import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
+
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import './configure/style.css';
@@ -113,6 +121,12 @@ export default function Index() {
         {i.indexOf('网关信息') != -1 ? <GatewayMessage type={'runtTime'}></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'}></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'}></ChooperMessage> : null}
+
+        
+        {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'}></Sensor> : null} 
+        {i.indexOf('变压器信息') != -1 ? <Transformer type={'runtTime'}></Transformer> : null} 
+        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg type={'runtTime'}></Cdcwmg> : null} 
+        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg type={'runtTime'}></Gxcwmg> : null} 
         { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
         { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }

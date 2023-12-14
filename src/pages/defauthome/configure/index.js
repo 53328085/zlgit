@@ -34,6 +34,14 @@ import DeviceMessage from '@com/defaultHome/deviceMessage'
 import ChooperMessage from '@com/defaultHome/chooperMessage'
 import EnergyRanking from '@com/defaultHome/energyRank'
 
+import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
+
+import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
+
+import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
+import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
+
+
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import { MenuUnfoldOutlined } from '@ant-design/icons';
@@ -118,6 +126,11 @@ export default function Index() {
     { img: gatewayConfig, itemName: '网关信息', draggable: true },
     { img: deviceConfig, itemName: '电表信息', draggable: true },
     { img: chooperConfig, itemName: '断路器信息', draggable: true },
+ 
+    { img: carbon, itemName: '传感器信息', draggable: true },
+    { img: gatewayConfig, itemName: '触点测温信息', draggable: true },
+    { img: deviceConfig, itemName: '变压器信息', draggable: true },
+    { img: chooperConfig, itemName: '光纤测温信息', draggable: true },
   ]
   const orderItems = [
     { img: warning, itemName: '今日告警', draggable: true },
@@ -280,6 +293,12 @@ export default function Index() {
         {i.indexOf('网关信息') != -1 ? <GatewayMessage></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
+
+        {i.indexOf('传感器信息') != -1 ? <Sensor></Sensor> : null} 
+        {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null} 
+        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg></Cdcwmg> : null} 
+        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg></Gxcwmg> : null} 
+
         {i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null}
         {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
         {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
@@ -319,7 +338,7 @@ export default function Index() {
       setNewCounter(newCounter + 1);
     } else if (classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '今日工单' || classOfName == '告警信息' ||
       classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
-      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息') {
+      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温信息' || classOfName == '光纤测温信息') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,
