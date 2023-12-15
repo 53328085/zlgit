@@ -60,41 +60,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    gxcwCount: '',
-    gxcwOnlineCount: '',
-    gxcwOfflineCount: '',
-    gxcwOnlineRate: ''
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.gxcwCount = res.data.gxcwCount
-                state.gxcwOnlineCount = res.data.gxcwOnlineCount
-                state.gxcwOfflineCount = res.data.gxcwOfflineCount
-                state.gxcwOnlineRate = res.data.gxcwOnlineRate
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-        
-        
-    } else if (props.type == 'configure') {
-        
-      return;
-    }
-  }, [])
-
+   let {state={}} = props
 
   return (
     <Titlelayout title={'光纤测温信息'} {...fs}>

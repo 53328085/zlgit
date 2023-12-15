@@ -1,11 +1,9 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+ 
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
-import { useReactive } from 'ahooks';
-import { message } from 'antd';
-import { Monitoring } from '@api/api.js'
+ 
+ 
 
 import gatewayRuntime from '../cdcw.svg'
 
@@ -60,40 +58,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    cdcwCount: '',
-    cdcwOnlineCount: '',
-    cdcwOfflineCount: '',
-    cdcwOnlineRate: ''
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.cdcwCount = res.data.cdcwCount
-                state.cdcwOnlineCount = res.data.cdcwOnlineCount
-                state.cdcwOfflineCount = res.data.cdcwOfflineCount
-                state.cdcwOnlineRate = res.data.cdcwOnlineRate
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-        
-        
-    } else if (props.type == 'configure') {
-        
-      return;
-    }
-  }, [])
+  let {state={}} = props
 
 
   return (

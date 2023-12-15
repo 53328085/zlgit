@@ -60,41 +60,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    transformerCount: '',
-    transformerOnlineCount: '',
-    transformerOfflineCount: '',
-    transformerOnlineRate: '',
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.transformerCount = res.data.transformerCount
-                state.transformerOnlineCount = res.data.transformerOnlineCount
-                state.transformerOfflineCount = res.data.transformerOfflineCount
-                state.transformerOnlineRate =  res.data.transformerOnlineRate
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-        
-        
-    } else if (props.type == 'configure') {
-        
-      return;
-    }
-  }, [])
-
+  let {state={}} = props
 
   return (
     <Titlelayout title={'变压器信息'} {...fs}>

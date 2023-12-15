@@ -524,18 +524,25 @@ export const drawEcharts = (
   if(series.constructor == Object) {
     if (series.type == 'line') {
         custSeries = {
-            ...series,
             smooth:true, 
-            showSymbol: false
+            showSymbol: false,
+            ...series,
         }
-    }else{
+    }else if(series.type == 'bar'){
+        custSeries = {
+            barGap: 0,
+            ...series,
+        }
+    }else {
         custSeries = {...series}
     }
     
   }else if(series.constructor == Array) {
     custSeries = series.map(s => {
         if(s.type == "line") {
-            return ({...s, smooth:true,  showSymbol: false})
+            return ({smooth:true,  showSymbol: false, ...s, })
+        }else if(s.type == "bar") {
+            return ({barGap: 0, ...s,})
         }else {
             return s
         }

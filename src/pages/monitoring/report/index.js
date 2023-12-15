@@ -84,7 +84,7 @@ export default function Index() {
   const [radioValue, setRadioValue] = useState(2);
   const [date, setdate] = useState();
   const picker= [,"year", 'month'][radioValue]
- 
+  console.log(picker)
   const [reportData, setReportdata]= useState(null)
  
   const changetype = (e) => {
@@ -215,7 +215,7 @@ export default function Index() {
 
   <Leftbox>
 <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" > 
-                 <Form className="content" form={form} initialValues={{type: 1, date: moment()}}>
+                 <Form className="content" form={form} initialValues={{type: 2, date: moment()}}>
                    <Item name="type" noStyle>
                    <RadioGroup  options={[{
                      label: '月度报告',

@@ -1,11 +1,8 @@
-import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import React from 'react'
+
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
-import { useReactive } from 'ahooks';
-import { message } from 'antd';
-import { Monitoring } from '@api/api.js'
+
 
 import gatewayRuntime from '../sensor.svg'
 
@@ -60,40 +57,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    sensorCount: 100,
-    sensorOnlineCount: 82,
-    sensorOfflineCount: 18,
-    sensorOnlineRate: 82
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.sensorCount = res.data.sensorCount
-                state.sensorOnlineCount = res.data.sensorOnlineCount
-                state.sensorOfflineCount = res.data.sensorOfflineCount
-                state.sensorOnlineRate = res.data.sensorOnlineRate
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-        
-        
-    } else if (props.type == 'configure') {
-        
-      return;
-    }
-  }, [])
+  let {state={}} = props
 
 
   return (

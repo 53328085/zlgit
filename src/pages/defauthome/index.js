@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
-import { UISummary } from '@api/api.js'
+import { UISummary, Monitoring} from '@api/api.js'
 import { useReactive } from 'ahooks';
 
 import CompanyMessage from '../../components/defaultHome/companyMessage'
@@ -51,16 +51,36 @@ import { message } from 'antd';
 
 
 export default function Index() {
+
+ 
+
+  const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
+  const [data, setData] = useState({})
   const state = useReactive({
     statusData:{},
   })
 
   const projectId = useSelector(selectProjectId)
+ 
   const { QueryUISummary } = UISummary
 
-  
-
+  const getData = async () => {
+    try {
+       let {success, data} = await RuntimeStatus({projectId: projectId,areaId: 0})
+       if(success) {
+         setData(data || {})
+       }else {
+        setData({})
+       }
+    } catch (error) {
+      
+    }
+       
+  }
+   useEffect(() => {
+     if(projectId) getData()
+   }, [projectId])
   //RGL布局
   const [defaultProps, setDefaultProps]  = useState({
     className:'layout',
@@ -118,15 +138,15 @@ export default function Index() {
         { i.indexOf('用水量') != -1 ? <WaterValue type={'runtTime'}></WaterValue> : null }
         { i.indexOf('用燃气量') != -1 ? <GasValue type={'runtTime'}></GasValue> : null }
         { i.indexOf('碳排放量') != -1 ? <CarbonValue type={'runtTime'}></CarbonValue> : null }
-        {i.indexOf('网关信息') != -1 ? <GatewayMessage type={'runtTime'}></GatewayMessage> : null}
-        {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'}></DeviceMessage> : null}
-        {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'}></ChooperMessage> : null}
+        {i.indexOf('网关信息') != -1 ? <GatewayMessage type={'runtTime'} state={data}></GatewayMessage> : null}
+        {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'} state={data}></DeviceMessage> : null}
+        {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'} state={data}></ChooperMessage> : null}
 
         
-        {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'}></Sensor> : null} 
-        {i.indexOf('变压器信息') != -1 ? <Transformer type={'runtTime'}></Transformer> : null} 
-        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg type={'runtTime'}></Cdcwmg> : null} 
-        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg type={'runtTime'}></Gxcwmg> : null} 
+        {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'} state={data}></Sensor> : null} 
+        {i.indexOf('变压器信息') != -1 ? <Transformer type={'runtTime'} state={data}></Transformer> : null} 
+        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg type={'runtTime'} state={data}></Cdcwmg> : null} 
+        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg type={'runtTime'} state={data}></Gxcwmg> : null} 
         { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
         { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }

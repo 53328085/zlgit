@@ -60,40 +60,8 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
+  let {state={}} = props
 
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    gatewayCount: 100,
-    gatewayOnlineCount: 82,
-    gatewayOfflineCount: 18,
-    percent: 82
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.gatewayCount = res.data.gatewayCount
-                state.gatewayOnlineCount = res.data.gatewayOnlineCount
-                state.gatewayOfflineCount = res.data.gatewayOfflineCount
-                state.percent = ((res.data.gatewayOnlineCount / res.data.gatewayCount) * 100).toFixed(2)
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-        
-        
-    } else if (props.type == 'configure') {
-        
-      return;
-    }
-  }, [])
 
 
   return (
@@ -115,7 +83,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.percent + '%' }</span>
+                <span className='item_value'>{ state.gatewayOnlineRate + '%' }</span>
             </div>
         </div>
       </Divorder>

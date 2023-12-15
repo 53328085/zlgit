@@ -10,6 +10,8 @@ import UseHeader from '@com/useHeader'
 import imgurl from './images/index.js'
 import breaker from './images/breaker.png'
 import { Monitoring } from '@api/api.js'
+import Ichart  from '@com/useEcharts/Ichart';
+import Titlelayout from '@com/titlelayout';
 export default function Index() {
   const { Option } = Select
   const projectId = useSelector(selectProjectId)
@@ -17,13 +19,24 @@ export default function Index() {
   const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const elref = useRef(null)
   const wlref = useRef(null)
-  const glref = useRef(null)
+ 
   let [areaId, setAreaId] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [status, setStatus] = useState({})
-  let [eleConsumes,seteleConsumes]=useState([])
-  let [waterConsumes,setwaterConsumes]=useState([])
-  let [gasConsumes,setgasConsumes]=useState([])
+  
+
+
+ let series = [{ type: "line"}]
+  const [eoptions, setEptions] = useState({   //用电量
+    series,
+    dataset: {}
+  })
+  
+  const [woptions, setWptions] = useState({   //用水量
+    series,
+    dataset: {}
+  })
+
   const { Runtime: { RuntimeStatistics, RuntimeStatus, RuntimeQueryMonthUsage } } = Monitoring
   const getData = () => {//设备统计
     return RuntimeStatistics({ projectId, areaId }).then(res => {
@@ -49,124 +62,49 @@ export default function Index() {
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
       if (success) {
-        seteleConsumes(data?data.eleConsumes:[])
-        setwaterConsumes(data?data.waterConsumes:[])
-        setgasConsumes(data?data.gasConsumes:[])
+        if(data.constructor == Object) {
+          let {eleConsumes=[],waterConsumes = []} = data
+          let edataset = {
+            dimensions: [
+              {name: 'name', type: 'time'},
+              {name: "value", displayName: '用电量(kWh)'},
+            ],
+            source: eleConsumes,
+          }
+          let wdataset = {
+            dimensions: [
+              {name: 'name', type: 'time'},
+              {name: 'value',displayName: '用水量(m³)'},
+            ],
+            source: waterConsumes,
+          }
+          setEptions({...eoptions, dataset: edataset})
+          setWptions({...woptions, dataset: wdataset})
+        }
         
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  const datasetMonth = {
-    dimensions: ["name", "value"],
-    source:eleConsumes?eleConsumes:[] ,
-  };
-  const datasetMonthW = {
-    dimensions: ["name", "value"],
-    source:waterConsumes?waterConsumes:[] ,
-  };
-  const datasetMonthG = {
-    dimensions: ["name", "value"],
-    source:gasConsumes?gasConsumes:[] ,
-  };
-  const grid = {
-    // 图表 grid
-    left: "0px",
-    right: "10px",
-    top: "30px",
-    bottom: "0px",
-    containLabel: true,
-  }
+ 
+
+
+
+
+
+ 
   useEffect(() => {
-    console.log(areaId)
     if(Number.isFinite(areaId)){
       getData()
-    getStatusData()
-    }
-  }, [areaId,projectId])
-  useEffect(() => {
-    if(Number.isFinite(areaId)){
+      getStatusData()
       getMonthUsage(1)
     }
-  }, [areaId,eleConsumes.length,projectId])
-  let date=new Date()
-  let days=date.getDate()
-const charts=()=>{
-  drawEcharts(elref.current, {
-    dataset: datasetMonth,
-    series: [{ type: "line" ,name:'用电量(kWh)'}],
-    grid,
-    legend: {
-      icon: 'rect',
-      itemHeight: 8,
-      itemWidth: 8,
-      itemGap: 20
-    },
-    xAxis:
-      {
-        axisLabel:{
-         
-        },
-      }
-    ,
-   
-    dataZoom:{
-      type: 'inside',
-      // start: days>15?'50':'0',
-      // end: days>15?'100':'50',
-    }
-  })
-  drawEcharts(wlref.current, {
-    dataset: datasetMonthW,
-    series: [{ type: "line" ,name:'用水量(m³)'}],
-    grid,
-    legend: {
-      icon: 'rect',
-      itemHeight: 8,
-      itemWidth: 8,
-      itemGap: 20
-    },
-    xAxis:
-      {
-        axisLabel:{
-         
-        },
-      }
-    ,
-    dataZoom:{
-      type: 'inside',
-      // start: days>15?'50':'0',
-      // end: days>15?'100':'50',
-    }
-  })
-  drawEcharts(glref.current, {
-    dataset: datasetMonthG,
-    series: [{ type: "line" ,name:'用气量(m³)'}],
-    grid,
-    xAxis:
-      {
-        axisLabel:{
-         
-        },
-      }
-    ,
-    legend: {
-      icon: 'rect',
-      itemHeight: 8,
-      itemWidth: 8,
-      itemGap: 20
-    },
-    dataZoom:{
-      type: 'inside',
-      // start: days>15?'50':'0',
-      // end: days>15?'100':'50',
-    }
-  })
-}
-useEffect(() => {
-  charts()
-}, [eleConsumes, waterConsumes, gasConsumes])
+  }, [areaId,projectId])
+ 
+  
+
+
   const headerProps = {
     isEnergy: false,//能耗类型
     isDate: false,//日期
@@ -212,18 +150,16 @@ useEffect(() => {
           offValue={status.gasOfflineCount} perValue={status.gasOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" /> */}
       </div>
       <div className={style.content}>
-        <div className={style.contentLeft}>
-          <h4 className={style.pieTitle}>月度用电量（kWh）</h4>
-          <div ref={elref} style={{flex: 1, padding: 16 }}></div>
-        </div>
-        <div className={style.contentLeft}>
-          <h4 className={style.pieTitle}>月度用水量（m³）</h4>
-          <div ref={wlref} style={{ flex: 1, padding: 16 }}></div>
-        </div>
-      {/*   <div className={style.contentLeft}>
-          <h4 className={style.pieTitle}>月度用气量（m³）</h4>
-          <div ref={glref} style={{ width: 548, height: 446, padding: 16 }}></div>
-        </div> */}
+        <Titlelayout title="月度用电量（kWh）" layout="flex">
+            <Ichart {...eoptions} />
+
+        </Titlelayout>
+        <Titlelayout title="月度用水量（(m³)）" layout="flex">
+            <Ichart {...woptions} />
+
+        </Titlelayout>
+        
+     
       </div>
     </div>
   )

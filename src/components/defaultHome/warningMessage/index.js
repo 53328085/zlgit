@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import Cempty from '@com/useEmpty'
 const Timelinebox = styled(Timeline)`
     height: 142px;
     overflow-y: auto;
@@ -70,19 +70,22 @@ export default function DefaultHome(props) {
 
   return (
     <Titlelayout title={'最新告警'} {...fs}>
-      <Timelinebox>
-        {
-          state.alarmList.map((item, index) => {
+      
+      {  (state.alarmList?.length > 0) ? (
+         <Timelinebox>
+        {  state.alarmList.map((item, index) => {
             return <Timeline.Item key={index}>
               <div>
                 <p className='title'>{item.alarmTime + '  ' + item.alarmDes}</p>
                 <p className='content'>{item.address + '  SN ' + item.sn}</p>
               </div>
             </Timeline.Item>
-          })
+          }) 
         }
-      </Timelinebox>
-
+      </Timelinebox>)
+      :  <Cempty />
+      }
+       
     </Titlelayout>
   )
 }
