@@ -83,7 +83,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.gatewayOnlineRate + '%' }</span>
+                <span className='item_value'>{ state.gatewayOnlineRate }%</span>
             </div>
         </div>
       </Divorder>

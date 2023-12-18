@@ -16,6 +16,7 @@ import WaterValue from '../../components/defaultHome/water'
 import GasValue from '../../components/defaultHome/gas'
 import CarbonValue from '../../components/defaultHome/carbon'
 import EnergyTrend from '../../components/defaultHome/energyTrend'
+import EnergyCost from '@com/defaultHome/energyCost'
 import RealLoad from '../../components/defaultHome/load'
 import WarningSpread from '../../components/defaultHome/spread'
 import ElectricAnalysis from '../../components/defaultHome/electricAnalysis'
@@ -33,6 +34,7 @@ import GatewayMessage from '@com/defaultHome/gatewayMessage'
 import DeviceMessage from '@com/defaultHome/deviceMessage'
 import ChooperMessage from '@com/defaultHome/chooperMessage'
 import EnergyRanking from '@com/defaultHome/energyRank'
+import EnergyProportion from '@com/defaultHome/energyProportion'
 
 
 import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
@@ -148,6 +150,8 @@ export default function Index() {
         {i.indexOf('触点测温信息') != -1 ? <Cdcwmg type={'runtTime'} state={data}></Cdcwmg> : null} 
         {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg type={'runtTime'} state={data}></Gxcwmg> : null} 
         { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
+        { i.indexOf('能耗费用趋势') != -1 ? <EnergyCost type={'runtTime'}></EnergyCost> : null }
+        { i.indexOf('分类能耗占比') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }
         { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }
         { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis type={'runtTime'}></ElectricAnalysis> : null }
