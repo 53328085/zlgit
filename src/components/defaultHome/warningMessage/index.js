@@ -28,13 +28,15 @@ const Timelinebox = styled(Timeline)`
     color:#6b6b6b;
   }
   #scrollTimeLine{
-    animation: 'transY' 10s 1s linear infinite;
-    -webkit-animation: ${props=>{if(props.domht>142){
+    animation: ${props=>{if(props.domht>142){
       return 'transY'
-    }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite;
+    }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite;;
+    /* -webkit-animation: ${props=>{if(props.domht>142){
+      return 'transY'
+    }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite; */
     &:hover{
       animation-play-state: paused;
-      -webkit-animation-play-state: paused;
+      /* -webkit-animation-play-state: paused; */
     }
   }
   @keyframes transY{
