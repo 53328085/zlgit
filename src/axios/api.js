@@ -260,7 +260,20 @@ export class QueryRunReport {
       `Energy/EnergyRunReport/QueryRunReport?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`
       
     );
+  
 }
+// 能源管理-- 园区图片（设计态）
+export class UpdateEnergyImage {
+  static update = (parmas) =>
+    server.post(
+      `/Energy/EnergyInfo/UpdateEnergyImage`, parmas
+    );
+    static query = (projectId) =>
+    server.get(
+      `/Energy/EnergyInfo/QueryEnergyImage?projectId=${projectId}`, 
+    );  
+}
+
 
 // 能源管理--重点设备 -- 设计态
 export class DesElectric {
