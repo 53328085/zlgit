@@ -366,7 +366,7 @@ export default function Index() {
       type: 4,
       liuqiu: {
         series: {
-         data: [(warnData?.todayWarningCnt.alarmCount/100)],
+         data: [(warnData?.todayWarningCnt/100)],
        
         label: {
           normal: {
@@ -387,7 +387,7 @@ export default function Index() {
     })
   }
 useEffect(() => {
-  tdrawEcharts()
+    tdrawEcharts()
 },[warnData])
   useEffect(() => {
     if(arealist.length===0)return
