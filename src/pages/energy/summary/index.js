@@ -7,7 +7,7 @@ import Pagecount from "@com/pagecontent";
 import CustContext from "@com/content.js";
 import { Form, Image, Progress, Typography } from "antd";
 import imgurl from "./icon";
-import { EnergyOverView } from "@api/api.js";
+import { EnergyOverView, UpdateEnergyImage} from "@api/api.js";
 import { useSelector } from "react-redux";
 import {
   selectProjectId,
@@ -145,14 +145,31 @@ const labels = {
   curMonthAvgPF: "月平均功率因素", //月平均功率因素
 };
 
-const Imgbg = memo(() => {
-  return    <Image src={imgurl.engeryBg} preview={false} />
+const Imgbg = memo(({projectId}) => {
+  const [energyImage, setEnergyImage]= useState(imgurl.engeryBg)
+  const queryimg =async () => { //获取图片
+    try {
+     let {success, data} = await  UpdateEnergyImage.query(projectId)
+     if(success) {
+         setEnergyImage(data)
+     } 
+    } catch (error) {
+       setEnergyImage('')
+    }
+  }      
+  useEffect(() => {
+     if(!projectId) return
+     queryimg()
+  }, [projectId])
+  return    <Image src={energyImage} preview={false} />
 })
 export default function Index() {
   const [form] = Form.useForm();
   const [energyValue, setEnergyValue] = useState({});
   const projectId = useSelector(selectProjectId);
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
+
+ 
   const getData = async () => {
    
     try {
@@ -182,7 +199,7 @@ export default function Index() {
                <span className="text">园区概述</span>
            </div>
            <div className="main">
-              <Imgbg />
+              <Imgbg projectId={projectId} />
               <div className="right">
               <Itembox key="today">
                 <Image

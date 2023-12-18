@@ -38,7 +38,7 @@ const Laybox = styled.div`
      grid-auto-columns: 196px;
      grid-template-rows:266px ;
      grid-auto-flow: column;
-      column-gap: 16px;
+     justify-content: space-between;
       overflow-x: auto;
   }
   }
@@ -378,7 +378,7 @@ const Energyitem = () => {
     mom: "100.00%",
     name: "消费及其他特殊用水(m³)",
     periodValue: "0.00",
-    unit: "",
+    unit: "(m³)",
     yoy: "100.00%",
    }
   ]

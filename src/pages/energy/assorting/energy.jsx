@@ -38,7 +38,7 @@ export default function Energy({ showData, dateType,showType }) {
           <div className={`${style.bgclass}  ${index === 0 ? "" : index === 1 ? bg1class : index === 2 ? bg2class : bg3class}`}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: 4, height: 32, backgroundColor: '#237ae4' }}></div>
-              <div style={{ fontSize: 12, color: '#666' }}><span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>{showType===1?'(吨标煤)':'(元)'}</div>
+              <div style={{ fontSize: 12, color: '#666' }}><span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>{showType===1?'(kWh)':'(元)'}</div>
             </div>
           </div>
           <div className={style.textstyle} style={{ backgroundColor: index % 2 === 0 ? '#a0cede' : '#afdb92' }} >
@@ -73,7 +73,7 @@ export default function Energy({ showData, dateType,showType }) {
 
         </div>
         <div className={style.sorts}>
-          <Bluecolumn name={<span>{showType===1?'分类能耗':'分类能耗费用'}<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'(吨标煤)':'(元)'}</span></span>} />
+          <Bluecolumn name={<span>{showType===1?'分类能耗':'分类能耗费用'}<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'':'(元)'}</span></span>} />
           <Divider style={{ margin: "16px 0", borderColor: '#d7d7d7' }} dashed />
           <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             {
