@@ -155,7 +155,7 @@ export default memo(function({onSubmit}){
        
         <Itembox valuePropName="checked">
           <Logck onChange={ckChange} defaultChecked={initmemorize}>
-            记住用户名
+            记住用户名和密码
           </Logck>
         </Itembox>
         <Itembox>
