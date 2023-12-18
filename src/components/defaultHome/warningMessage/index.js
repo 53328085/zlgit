@@ -8,7 +8,17 @@ import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Cempty from '@com/useEmpty'
-const Timelinebox = styled(Timeline)`
+
+
+const fs = {
+  hv: '24px',
+  fc: '#333',
+  shadow: "y"
+}
+
+
+export default function DefaultHome(props) {
+  const Timelinebox = styled(Timeline)`
     height: 142px;
     overflow-y: hidden;
    padding-top: 16px;
@@ -31,12 +41,8 @@ const Timelinebox = styled(Timeline)`
     animation: ${props=>{if(props.domht>142){
       return 'transY'
     }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite;;
-    /* -webkit-animation: ${props=>{if(props.domht>142){
-      return 'transY'
-    }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite; */
     &:hover{
       animation-play-state: paused;
-      /* -webkit-animation-play-state: paused; */
     }
   }
   @keyframes transY{
@@ -48,26 +54,17 @@ const Timelinebox = styled(Timeline)`
    }
  }
 `
-
-const fs = {
-  hv: '24px',
-  fc: '#333',
-  shadow: "y"
-}
-
-
-export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)
   const [dmheight,setDomHeight] =useState(0)
   const domRef =useRef()
   const state = useReactive({
     alarmList: [
-      {
-        alarmDes: '测试告警',
-        alarmTime: '2022-01-01 01:01:01',
-        sn: '123',
-        address: '测试地址'
-      }
+      // {
+      //   alarmDes: '测试告警',
+      //   alarmTime: '2022-01-01 01:01:01',
+      //   sn: '123',
+      //   address: '测试地址'
+      // }
     ]
   })
 
@@ -91,21 +88,25 @@ export default function DefaultHome(props) {
     }
   }, [])
   useEffect(()=>{
-    const listdom = document.querySelector('#scrollTimeLine')
-    if(listdom&&state.alarmList?.length>0){
+    
+
+    if(state.alarmList?.length>0){
+      console.log(state.alarmList?.length)
+      const listdom = document.querySelector('#scrollTimeLine')
       const domstyle = listdom.getBoundingClientRect()
       domRef.current = domstyle.height
-      console.log(domstyle.height-142)
+      console.log(domstyle,domstyle.height-142)
       setDomHeight(domstyle.height-142)
     }
-  },[state.alarmList?.length])
+    
+  },[state.alarmList.length])
   return (
     <Titlelayout title={'最新告警'} {...fs}>
       
       {  (state.alarmList?.length > 0) ? (
         <Timelinebox dmheight={dmheight} domht ={domRef.current}>
           <div id="scrollTimeLine">
-          {
+          {state.alarmList?.length > 3?(
              [...state.alarmList.map((item, index) => {
               return (<Timeline.Item key={index}>
                 <div>
@@ -126,14 +127,23 @@ export default function DefaultHome(props) {
                   })
                 }
               </div>]
+          ):state.alarmList.map((item, index) => {
+            return (<Timeline.Item key={index}>
+              <div>
+                <p className='title'>{item.alarmTime + '  ' + item.alarmDes}</p>
+                <p className='content'>{item.address + '  SN ' + item.sn}</p>
+              </div>
+            </Timeline.Item>)
           }
-           
+          )
             
+          } 
             </div>
 
-        </Timelinebox>)
+        </Timelinebox>
+        )
       :  <Cempty />
-      }
+      } 
        
     </Titlelayout>
   )
