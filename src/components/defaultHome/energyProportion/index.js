@@ -29,7 +29,7 @@ export default function DefaultHome(props){
   return (
          <Titlelayout title={'分类能耗占比'} {...fs}>
          <div  style={{width: '424px', height: '341px', display: 'flex'}}>
-              <Ichart {...options} />
+              {/* <Ichart {...options} /> */}
          </div>
          </Titlelayout>
   )
