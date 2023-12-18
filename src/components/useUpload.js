@@ -2,6 +2,8 @@ import React, {useState, useRef, useEffect, useCallback} from 'react'
 import {ExclamationCircleOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
 import style from './style.module.less'
+import upload from './upload.svg'
+import del from './del.svg'
 import {Image, message, Modal} from 'antd'
 /**
  * @author zhenglin zhu
@@ -27,7 +29,7 @@ const Ciocn = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #e4e4e4;
+   // background: #e4e4e4;
   }
  
 `
@@ -41,6 +43,7 @@ const Uspan = styled.span`
     line-height: 40px;
     overflow: hidden;
     color: #333;
+   
   }
  &&:hover {
     cursor: pointer;
@@ -48,14 +51,37 @@ const Uspan = styled.span`
    }
    
 ` 
+const Uspdate = styled.span`
+  && {
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    position: relative;
+    font-size: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    color: #333;
+    background-image: url(${upload});
+     background-repeat: no-repeat;
+     background-size: 40px 40px;
+  }
+ &&:hover {
+    cursor: pointer;
+   // color: #999
+   }
+   
+`
 const Luspan = styled(Uspan)`
   && {
     position: absolute;
      top: 0px;
      right: 0px;
      font-size: 32px;
-     line-height: 32px
-
+     line-height: 32px;
+     background-image: url(${del});
+     background-repeat: no-repeat;
+     background-size: 20px 20px;
+     background-position: center;
   }
 `
 const Ifile = styled.input.attrs(props => ({
@@ -68,6 +94,7 @@ const Ifile = styled.input.attrs(props => ({
   opacity: 0;
   position: absolute;
   top: 0;
+ 
   &&:hover {
     cursor: pointer;
   }
@@ -259,15 +286,14 @@ const cref = useRef()
       url ? 
       (<Imgbox>
            <Image src={url} preview={true} width={swpx} height={shpx}   />
-           <Luspan onClick={delImg} className="iconfont iconicon_shanchu"></Luspan>
+           <Luspan onClick={delImg} ></Luspan>
       </Imgbox>)
       : 
       <>
       <Ciocn>   
-        <Uspan className='iconfont'>
-        &#xe62d;
-          <Ifile onChange={upload} ref={file} />
-        </Uspan>    
+        <Uspdate>
+          <Ifile onChange={upload} ref={file} accept=".png, .jpg, .jpeg" />
+        </Uspdate>    
     
       </Ciocn>
       </>

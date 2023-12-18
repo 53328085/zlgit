@@ -1,7 +1,7 @@
 import { createSlice,nanoid, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 const initialState = {
-    memorize: false, // 是否记住用户名
+    memorize: false, // 是否记住用户名, 记住用户名同时记住密码
     memoPhone: false, // 是否记住手机号码
     loading: false,
     name: "",
@@ -15,12 +15,13 @@ const initialState = {
     projects: [],   
     hostServer: '', // ws
 }
-let password = ''
+//let password = ''
 export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手机号
     'user/loginByName',
     async (params) => { 
-       password = params.pwd
-      let {type, ...param} = params     
+       console.log(params)
+      let {type, ...param} = params  
+    //  password = params.passowrd   
       let handler = ['LoginByName', 'LoginByPhone'][type] 
       console.log(handler)
       const response =  await Login[handler](param)
@@ -41,6 +42,9 @@ const user = createSlice({
         memorizePhone(state, actions) {           
             return Object.assign({}, state, {memoPhone: actions.payload})
         },
+        getPassword(state, {payload}) {
+            state.password = payload
+        },
         userRest(state, actions) {  
             let name = state.memorize ? state.name : '';
             let mobile = state.memoPhone ? state.mobile : '';
@@ -56,9 +60,10 @@ const user = createSlice({
            let {success, errMsg, data} = payload
            if (success) {
                window.sessionStorage.setItem("chintwulian", 's')
-               return Object.assign({}, state, data, {loading: false, password},   )
+              // state = {...data, loading: false, password}
+              return Object.assign({}, state, data, {loading: false},   )
            }else {
-               return Object.assign({}, state, {errMsg, loading: false, password: ''})
+               return Object.assign({}, state, {errMsg, loading: false})
                
            }
         },
@@ -81,7 +86,7 @@ export const manager = state => state.user?.roleType == 3 // 是否是项目管�
 export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员
 export const selectMemorize = state => state.user.memorize
 export const selectMemoPhone = state => state.user.memoPhone
-export const {clearToken, memorizeName, memorizePhone, userRest} = actions
+export const {clearToken, memorizeName, memorizePhone, userRest, getPassword} = actions
 
 
 

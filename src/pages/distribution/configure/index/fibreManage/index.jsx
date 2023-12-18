@@ -390,7 +390,7 @@ const rules = [{
           style={{width: '200px'}}
           onChange={ChangeRoom}
         >
-          {roomList.map((item) => {
+          {roomList?.map((item) => {
             return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
           })}
         </Select>
@@ -432,21 +432,25 @@ const rules = [{
             labelAlign="left"
             form={form}
             colon={false}
+            labelCol={{span: 4}}
             initialValues={{
               channel: channel[0]?.channel,
               subfield: items[0]?.subfield
             }}
             preserve={false}
             >
-                 <Space size={32} style={{marginBottom: '24px'}}>
-                     <Form.Item label="测温通道" name="channel" rules={rules}>
+                 <Form.Item label="测温通道" >
+                    <Input.Group compact style={{display: 'flex'}}>
+                     <Form.Item  name="channel" rules={rules} noStyle >
                          <Select options={channel} onChange={changeCh} fieldNames={{label: "name", value: "channel"}} disabled={state} style={{width: "148px"}}></Select>
                   
                      </Form.Item>
-                     <Form.Item label="分区编号" name="subfield" rules={rules}>
+                     <Form.Item label="分区编号" name="subfield" rules={rules} style={{marginLeft: "auto"}}  >
                          <Select options={items} fieldNames={{label: 'subfieldName', value: 'subfield'}} disabled={state} style={{width: "148px"}}    ></Select>    
                       </Form.Item>
-                 </Space>
+                      </Input.Group>
+                 </Form.Item>
+                
               <Form.Item label="分区名称" name="subfieldName" rules={rules}>
                  <Input allowClear />
               </Form.Item>

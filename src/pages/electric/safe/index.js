@@ -180,7 +180,7 @@ export default function Index() {
   padding-left: 5px;
   padding-top: 15px;
   & .transformcss{
-    animation:${props=>{if(props.children.props.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.length)*1.2)}s 1s linear infinite
+    animation:${props=>{if(props.children.props.children?.props?.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.props?.children?.length)*1.2)}s 1s linear infinite
   }
   .transformcss:hover{
     animation-play-state: paused;

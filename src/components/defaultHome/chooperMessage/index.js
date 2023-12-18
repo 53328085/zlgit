@@ -1,11 +1,8 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+ 
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
-import { useReactive } from 'ahooks';
-import { Monitoring } from '@api/api.js'
-import { message } from 'antd';
+ 
 
 import chooperRuntime from '@imgs/chooper_runtime.png'
 
@@ -55,40 +52,12 @@ const Divorder = styled.div`
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    breakerCount: 100,
-    breakerOfflineCount: 0,
-    breakerOnlineCount: 100,
-    percent: 100
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.breakerCount = res.data.breakerCount
-                state.breakerOnlineCount = res.data.breakerOnlineCount
-                state.breakerOfflineCount = res.data.breakerOfflineCount
-                state.percent = ((res.data.breakerOnlineCount / res.data.breakerCount) * 100).toFixed(2)
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-    } else if (props.type == 'configure') {
-      return;
-    }
-  }, [])
+  let {state={}} = props
 
 
   return (
@@ -110,7 +79,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{state.percent}%</span>
+                <span className='item_value'>{state.breakerOnlineRate}%</span>
             </div>
         </div>
       </Divorder>

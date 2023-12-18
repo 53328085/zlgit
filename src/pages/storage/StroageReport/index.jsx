@@ -11,7 +11,7 @@ export default function Index() {
  
   return (
     <CustContext.Provider value={{}}>
-    <Pagecount showserach={true}  bgcolor="transparent" pd="0px">   
+    <Pagecount   bgcolor="transparent" pd="0px">   
        <Report projectId={projectId}  />
     </Pagecount>
     </CustContext.Provider>

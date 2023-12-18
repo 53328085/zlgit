@@ -4,6 +4,7 @@ import { useNavigate,} from "react-router-dom";
 import {
   loginByName, 
   clearToken, 
+  getPassword,
 } from "@redux/user";
 import {  getpublishState,   getJump, getdataScreen, getIsGranary, configProject,
   getMenus,
@@ -185,6 +186,7 @@ function UserLog() {
    try {
     setLoading && setLoading(true) 
     const {name, pwd, code, mobile} = value;  
+  
     value.pwd = cipher(name, pwd)
     value.type = type;
     if(type == 0){
@@ -195,6 +197,7 @@ function UserLog() {
     }
     let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
     if(success) {
+      dispatch(getPassword(pwd))
       setLoading &&  setLoading(false) 
        let {projectId, roleType} = data
        if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
@@ -203,6 +206,7 @@ function UserLog() {
        }
  
     }else {
+      dispatch(getPassword(''))
       setLoading &&   setLoading(false) 
      return message.warning(errMsg || "数据出错,请重试");
     }

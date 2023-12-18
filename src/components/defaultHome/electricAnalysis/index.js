@@ -7,7 +7,8 @@ import {drawEcharts} from '@com/useEcharts'
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y",
 }
 
 const pietmData = [

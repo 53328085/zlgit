@@ -20,15 +20,16 @@ export default memo(function({onSubmit}){
     const [userform] = Form.useForm();
     const dispatch = useDispatch()
     let initmemorize = useSelector(selectMemorize);
-    let { name } = useSelector(selectUser);
+    let { name, password } = useSelector(selectUser);
     let [loading, setLoading] = useState(false);
     let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
+    const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])    
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
     };
-     
+    console.log(password)
     const keyvalue = useRef()
     const getCode = async () => {
       try {
@@ -48,7 +49,7 @@ export default memo(function({onSubmit}){
       }
         
    }
-  
+ 
     useEffect(() => {
       getCode();
       return () => {
@@ -68,7 +69,7 @@ export default memo(function({onSubmit}){
         }}       
         initialValues={{
           name: userName,
-          pwd: "",
+          pwd: usepassword,
           code: '',
         }}
       >
@@ -126,7 +127,7 @@ export default memo(function({onSubmit}){
          btm="32px"
          style={{alignItems: "center"}}
        >
-        <Input.Group compact>
+        <Input.Group compact style={{display: 'flex'}}>
           <Form.Item  name="code" noStyle  rules={[
            {
              required: true,
@@ -137,7 +138,7 @@ export default memo(function({onSubmit}){
            },  
          ]}>
           <Logipt
-            style={{width: "264px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
+            style={{width: "256px", borderTopRightRadius: "0px", borderBottomRightRadius: "0px"}}
             prefix={<Ipticon />}
             url={imgurl.pwd}
             aurl={imgurl.pwda}
@@ -145,7 +146,7 @@ export default memo(function({onSubmit}){
             placeholder="请输入验证码"
           />
           </Form.Item>
-          <div style={{display: "inline-block"}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
+          <div style={{display: "inline-block", marginLeft: 'auto'}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} />} </div>
          
          {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
            </Input.Group>

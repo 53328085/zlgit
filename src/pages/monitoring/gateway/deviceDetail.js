@@ -147,9 +147,10 @@ export default function GatewayDetail(props) {
     let month = new Date().getMonth() + 1
     let day = new Date().getDate()
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
-    const today = moment();
+    const today = moment().startOf('day');
+    console.log(today)
   // const yesterday = date + ' ' + "00:00:00"
-    const yesterday =moment().subtract(7, 'day').format('YYYY-MM-DD HH:mm:ss')
+    const yesterday =moment()
     let [dataList, setdataList] = useState([])
     let [dateValue, setdateValue] = useState(date)
     let [dataSourceLog, setdataSourceLog] = useState([])
@@ -402,7 +403,7 @@ export default function GatewayDetail(props) {
         setendTime(dataString[1])
         setValue(date)
     }//监控趋势选择时间
-    const [dates, setDates] = useState([moment().subtract(7, 'day'), moment()]);
+    const [dates, setDates] = useState([moment().startOf('day'), moment()]);
  
     const disabledDate = (current) => {
         if (!dates) {
@@ -652,7 +653,7 @@ export default function GatewayDetail(props) {
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
                                 onOpenChange={onOpenChange}
-                                defaultValue={[moment().subtract(7, 'day'), moment()]}
+                                defaultValue={[moment().startOf('day'), yesterday]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime
                             />
@@ -663,7 +664,7 @@ export default function GatewayDetail(props) {
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
-                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[moment().subtract(7, 'day'), moment()]} />
+                        <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[today,yesterday]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
                         
                     </div> : null

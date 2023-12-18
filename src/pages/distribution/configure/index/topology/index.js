@@ -32,10 +32,10 @@ export default function Index() {
   const [roomList, setRoomList] = useState([])
   const getRoomData = () => {
     queryPageRoom(projectId, form.getFieldValue('areaId'), 0, 0).then(res => {
-      if (res.success) {
+      if (res.success ) {
         setRoomList(res.data)
         form.setFieldValue('roomId', null)
-        if (res.data.length == 0) {
+        if (!Array.isArray(res.data)) {
           message.open({
             type: 'warning',
             content: "当前" + levelName + "没有配电房"
@@ -127,8 +127,8 @@ export default function Index() {
   }
   useEffect(() => {
     console.log(form.getFieldsValue())
-    roomList.length&&getTableData()
-  }, [pagination.current,roomList.length])
+    roomList?.length&&getTableData()
+  }, [pagination.current,roomList?.length])
 
   const getTableData = () => {
     queryPageChart(projectId, form.getFieldValue('roomId'), pagination.current, pagination.pageSize).then(res => {
@@ -205,7 +205,7 @@ export default function Index() {
               style={{ width: '200px' }}
               onChange={ChangeRoom}
             >
-              {roomList.map(item => {
+              {roomList?.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectcurlRommid } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
-import { Divider, Form, Select, message, Spin } from 'antd'
+import {Button, Select, message, Spin } from 'antd'
 import { useReactive } from "ahooks";
 import {useNavigate} from 'react-router-dom'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
@@ -33,6 +33,8 @@ export default function Index() {
     top: 32px;
     display: flex;
     align-items: center;
+    width: 1616px;
+    padding-right: 32px;
     .chartitem{
       width: 112px;
       height: 36px;
@@ -167,8 +169,9 @@ export default function Index() {
     })
     // 接收消息处理
     state.client.on("message", (topic, message) => {
+      console.log('接所消息')
       let mqttData = JSON.parse(message.toString());
-      console.log(mqttData);
+ 
       for (let key in mqttData.Points) {
         // console.log(mqttData.DeviceId + "_" +key)
         if (window.topology.find(mqttData.SN + "_" + key)) {
@@ -185,6 +188,7 @@ export default function Index() {
         }
         let value = mqttData.Points[key].Value;
       }
+    
       canvas.render();
     });
     // 断开发起重连
@@ -202,7 +206,7 @@ export default function Index() {
   }
 
   const getHeart = (devices) => {
-    console.log(devices)
+  //  console.log(devices)
     let params = {
       projectId: projectId,
       channel: state.getGuid,
@@ -216,6 +220,8 @@ export default function Index() {
       }else{
         message.error(res.errMsg)
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 
@@ -306,16 +312,32 @@ export default function Index() {
     if (roomId) getChartList(roomId)
 
   }, [roomId])
+ const mapref = useRef();
+ const [isf, setIsf] = useState(false)
+ const fullscreen = (e) => {
 
+   e.preventDefault();
+   e.stopPropagation();
+  
+   if(isf) {
+    document.exitFullscreen();
+   }else {
+    mapref.current.requestFullscreen()
+   }
+   setIsf(!isf)
+ }
   return (
     <Spin spinning={state.spining} tip="Loading...">
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
-        <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)}>
+        <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
           <ChartItem>
             {state.chartList.map((item, index) => {
               return <div className={`chartitem ${state.activeChart == item.id ? 'activeItem' : ''}`} key={index} onClick={() => changeChart(item.id)}>{item.name}</div>
             })}
+          
+           {(state.chartList?.length > 0) && <Button type="primary" style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</Button>}
           </ChartItem>
+         
         </div>
       </Pagecount>
     </Spin>

@@ -39,11 +39,11 @@ export default class ErrorBoundary extends Component {
   }
 }
 
-export function Fallack({error}) {
+export function Fallack({error='抱歉！页面出错'}={}) {
    const {resetBoundary} = useErrorBoundary()
    return <Empty image={imgurl.error}
    imageStyle={{width: '200px', height: '180px'}}
    style={style}
-   description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={resetBoundary}>试下刷新</Link></Paragraph>}
+   description={<Paragraph><Text strong type="warning">{error}</Text><Link  onClick={resetBoundary}>试下刷新</Link></Paragraph>}
    /> ;
 }

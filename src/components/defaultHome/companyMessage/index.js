@@ -15,6 +15,7 @@ border-radius: 4px;
 padding: 16px;
 display: flex;
 align-items: center;
+box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
 .company{
   width: 188px;
   height: 100%;

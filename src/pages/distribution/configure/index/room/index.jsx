@@ -1,17 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Select, Button, Table, Space, Form, Input, message } from 'antd';
+import { Select, Button, Table, Space, Form, Input, message, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 import style from './style.module.less'
 import dashed from '@imgs/dashed.png'
-import firstwarn from '@imgs/warning.png' 
+import styled from 'styled-components';
+ 
 import { AreaSetting, distributionRoom } from '@api/api.js'
 import { useRequest } from "ahooks";
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
 import Custmodal from '@com/useModal'
+import Cupload from "@com/useUpload.js" 
+const Info = styled.span`
+  font-size: 12px;
+  color: rgba(0,0,0,0.85);
+`
+const Imgbox = styled.div`
+    width: 300px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ 
+`
 export default function Index() {
   const isPublish = useSelector(publishState)
-  const { queryPageRoom, addRoom, updateRoom, deleteRoom } = distributionRoom
+  const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
   const columns = isPublish ? [
@@ -162,9 +176,11 @@ export default function Index() {
     // form.resetFields();
   }
   const ref = useRef()
+  const [loading, setLoading] = useState(false)
   const addOk = async () => {
     try {
       const values = await form.validateFields();
+      console.log(values)
       let params = {
         projectId: projectId,
         areaId: areaId,
@@ -173,9 +189,11 @@ export default function Index() {
         capacity: parseFloat(values.capacity),
         demand: parseFloat(values.demand),
         level: values.level,
-        remark: values.remark
+        remark: values.remark,
+        imgBg: values.imgBg,
       }
       if(modalTitle == '新增配电房'){
+        setLoading(true)
         addRoom(params).then(res => {
           if(res.success){
             messageApi.open({
@@ -190,9 +208,13 @@ export default function Index() {
               content:res.errMsg || '新增失败,请重试！',
             })
           }
+          setLoading(false)
+        }).catch(e => {
+          setLoading(false)
         })
       }else if(modalTitle == '编辑配电房'){
         params.id = editId
+        setLoading(true)
         updateRoom(params).then(res => {
           if(res.success){
             messageApi.open({
@@ -207,6 +229,9 @@ export default function Index() {
               content:res.errMsg || '配电房编辑失败,请重试！',
             })
           }
+          setLoading(false)
+        }).catch(e => {
+          setLoading(false)
         })
       }
       // form.resetFields()
@@ -219,14 +244,28 @@ export default function Index() {
     console.log(111)
     setAddModal(false)
   }
+  const [spinning, setSpinning] = useState(false)
   const [editId, setEditId] = useState()
-  const edit = (record) => {
-    setEditId(record.id)
-    ref.current.onOpen()
-    setModalTitle('编辑配电房')
-   // setAddModal(true)
-    //console.log(record);
-    form.setFieldsValue(record)
+  const edit = async (record) => {
+    try {
+      setEditId(record.id)
+      let imgKey = record.imgBgKey
+      if(imgKey?.trim()) {
+       setSpinning(true)
+       let {success, data} = await   GetRoomImage({projectId, imgKey})
+       if(success && data) {
+        form.setFieldsValue({...record, imgBg: data})
+       } 
+       setSpinning(false)
+      }else {
+        form.setFieldsValue(record)
+      }
+      ref.current.onOpen()
+      setModalTitle('编辑配电房')
+    } catch (error) {
+      
+    }
+   
   }
 
   const [deleteModal, setDeleteModal] = useState(false)
@@ -289,8 +328,15 @@ export default function Index() {
   const handlePageChange = (page) => {
     setPageNum(page)
   }
-
+  const checkLog = (_, value) => {   
+    if (!!value) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('配电房图片必须上传'));
+   
+ }
   return (
+ <Spin tip="图片数据加载中 ……" spinning={spinning}>
     <div>
       {contextHolder}
       <div className={style.header}>
@@ -314,7 +360,7 @@ export default function Index() {
         </div>
         { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
-      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  onOk={addOk} width={592} mold="cust" ref={ref}>
+      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref}>
         
         <div className={style.addBody}>
           <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>
@@ -333,6 +379,19 @@ export default function Index() {
             <Item label='电压等级(kV)' name='level' rules={[{required:true, message:'请输入电压等级(kV)'}]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
+            <Item label="配电房图片" >
+            <Imgbox>
+            <Item noStyle name="imgBg" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
+              <Cupload wpx={1676} hpx={796} swpx={200} shpx={116} maximum={500} style={{padding: '16px'}}   /> 
+            </Item>
+            <Info>（图片大小为: 1676*796 png 格式,不超过500KB）</Info>
+           </Imgbox>
+           
+           </Item>
             <Item label='备注' name='remark'>
               <TextArea rows={4} style={{width:'400px'}}></TextArea>
             </Item>
@@ -347,5 +406,6 @@ export default function Index() {
       </Custmodal>
       </div>
     </div>
+    </Spin>
   )
 }

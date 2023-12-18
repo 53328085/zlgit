@@ -9,7 +9,8 @@ import { message } from 'antd';
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 export default function DefaultHome(props){

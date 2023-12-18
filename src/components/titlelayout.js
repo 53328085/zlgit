@@ -9,6 +9,7 @@ const Boxdiv = styled(Card)`
   grid-template-rows: ${(props) => props.title ? `${props.hv || '32px'} 1fr` : '1fr'};
   flex:1;
   background-color: ${(props) =>  props.bgcolor || '#fff'};
+  box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
   .ant-card-head {
     padding-left: ${({pl}) => pl || '16px'};
     border-left: ${({bl}) => bl || '4px solid #237ae4'};

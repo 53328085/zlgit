@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectOneLevel } from "@redux/systemconfig";
+import { selectOneLevel, getRoomList } from "@redux/systemconfig";
 export default forwardRef(function Index({QueryFibreTempilPartitions,active,setActive,setChannel,channelInfo,initchart,QueryFibreTempilWarningInfo=() => {}},ref) {
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(selectOneLevel)
@@ -17,8 +17,8 @@ export default forwardRef(function Index({QueryFibreTempilPartitions,active,setA
   const getRoomList = async (areaId) => {
     const resp = await distributionRoom.RoomList(projectId, areaId)
     if (resp.success) {
-      setRoomList(resp.data)
-      
+      setRoomList(resp?.data)
+      getRoomList(resp?.data)
       if (Array.isArray(resp.data) && resp.data.length > 0) {
         form.setFieldValue('roomId', resp.data[0][['id']])
         setRoomId(resp.data[0][['id']])
@@ -79,6 +79,7 @@ return (
                           style={{ width: 240 }}
                           placeholder="请选择配电房"
                           onChange={(v)=>{
+                              console.log(v)
                               setRoomId(v) 
                               setActive(0)  
                           }}></Select>

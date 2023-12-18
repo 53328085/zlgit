@@ -13,7 +13,8 @@ const initialState = {
     configState: false, // 项目是否处于设计状态   
     jump: false, // 页面跳转
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
-    roomId:0,
+    roomId: [],    
+    
     curlRommid: '',
     menus: {
         projectId: 0, // 项目ID
@@ -146,6 +147,7 @@ const system = createSlice({
           state.roomId= Array.isArray(payload)?payload:[]
           
         },
+       
         getcurlRommid(state, {payload}) {
           state.curlRommid = payload
         },
@@ -199,6 +201,7 @@ export const selectdisOneLevel = state =>  state.system.disonlevel
 export const selectdiscurlevel = state => state.system.disonlevel[0]?.id;
 
 export const selectcurlRommid = state =>  state.system.curlRommid
+export const selectRoomList = state => state.system.roomIdList
 export const levelDefaultLabel = state =>  state.system.currlevel?.levelName || state.system.onelevel[0]?.levelName || ''
 export const selectshifts = state => state.system.shifts
 export const publishState = state => {
@@ -217,6 +220,11 @@ export const custconfig = state => state.system.siteConfig
 
 export const themeColor = state => state.system.themeColor
 export const roomId =state=>state.system.roomId
+
+export const roomName = state =>  {
+  return state.system.roomId?.find && state.system.roomId?.find(r => r.id == state.system.curlRommid)?.name 
+} 
+ 
 export const {
     configProject,
     getSetMenus,
@@ -242,5 +250,6 @@ export const {
     getisDistribution,
     getcurlRommid,
     getDiscurlevel,
+   
 } = actions
 export default system.reducer

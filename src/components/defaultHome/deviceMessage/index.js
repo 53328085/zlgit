@@ -55,39 +55,12 @@ const Divorder = styled.div`
 
 const fs = {
   hv: '24px',
-  fc: '#333'
+  fc: '#333',
+  shadow: "y"
 }
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-
-  const { RuntimeStatus } = Monitoring.Runtime
-
-  const state = useReactive({
-    electricMeterCount: 1250,
-    electricMeterOnlineCount: 1200,
-    electricMeterOfflineCount: 50
-  })
-
-  useEffect(() => {
-    if (props.type == 'runtTime') {
-        RuntimeStatus({
-            projectId: projectId,
-            areaId: 0
-          }).then(res => {
-            if(res.success && res.data){
-                state.electricMeterCount = res.data.electricMeterCount
-                state.electricMeterOnlineCount = res.data.electricMeterOnlineCount
-                state.electricMeterOfflineCount = res.data.electricMeterOfflineCount
-                state.percent = ((res.data.electricMeterOnlineCount / res.data.electricMeterCount) * 100).toFixed(2)
-            }else{
-              message.error(res.errMsg)
-            }
-          })
-    } else if (props.type == 'configure') {
-      return;
-    }
-  }, [])
+  let {state={}} = props
 
 
   return (
@@ -109,7 +82,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.percent }%</span>
+                <span className='item_value'>{ state.electricMeterOnlineRate }%</span>
             </div>
         </div>
       </Divorder>

@@ -468,6 +468,10 @@ const onPrint = () => {
    )
   }, [wadataset])
  
+  const changedate = (e) => {
+    console.log(e)
+    setType(e.target.value)
+  }
   return (
    
     <Mainbox>
@@ -496,6 +500,7 @@ const onPrint = () => {
               }]}   value={type}
               optionType="button"
               buttonStyle="solid"
+              onChange={changedate}
               />
               </Item>
               <Item name="date" noStyle>
