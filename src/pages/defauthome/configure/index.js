@@ -16,6 +16,8 @@ import WaterValue from '../../../components/defaultHome/water'
 import GasValue from '../../../components/defaultHome/gas'
 import CarbonValue from '../../../components/defaultHome/carbon'
 import EnergyTrend from '../../../components/defaultHome/energyTrend'
+import EnergyCost from '@com/defaultHome/energyCost'
+import EnergyProportion from '@com/defaultHome/energyProportion'
 import RealLoad from '../../../components/defaultHome/load'
 import WarningSpread from '../../../components/defaultHome/spread'
 import ElectricAnalysis from '../../../components/defaultHome/electricAnalysis'
@@ -83,6 +85,7 @@ import finished from '@imgs/finished.png'
 import gatewayConfig from '@imgs/gateway_config.png'
 import deviceConfig from '@imgs/device_config.png'
 import chooperConfig from '@imgs/chooper_config.png'
+import energyPercent from '@imgs/energyProportion.png'
 
 
 import { useRequest } from 'ahooks';
@@ -148,6 +151,7 @@ export default function Index() {
     { img: energyTrend, itemName: '能耗趋势', draggable: true },
     { img: costTrend, itemName: '能耗费用趋势', draggable: false },
     { img: energyRank, itemName: '能耗排名', draggable: true },
+    { img: energyPercent, itemName: '分类能耗占比', draggable: true },
   ]
   const storageItems = [
     { img: charge, itemName: '总充电量', draggable: true },
@@ -300,6 +304,7 @@ export default function Index() {
         {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg></Gxcwmg> : null} 
 
         {i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null}
+        {i.indexOf('能耗费用趋势') != -1 ? <EnergyCost></EnergyCost> : null}
         {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
         {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
         {i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null}
@@ -314,6 +319,7 @@ export default function Index() {
         {i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null}
         {i.indexOf('站点soc') != -1 ? <SocData></SocData> : null}
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking></EnergyRanking> : null}
+        {i.indexOf('分类能耗占比') != -1 ? <EnergyProportion></EnergyProportion> : null}
       </div>
     )
   }
@@ -325,7 +331,7 @@ export default function Index() {
     let newlayout;
     let time = new Date()
     if (classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
-      classOfName == '充放电量趋势' || classOfName == '站点soc' || classOfName == '能耗排名') {
+      classOfName == '充放电量趋势' || classOfName == '站点soc' || classOfName == '能耗排名' || classOfName == '能耗费用趋势' || classOfName == '分类能耗占比') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,

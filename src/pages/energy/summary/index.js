@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 
 import { nanoid } from "@reduxjs/toolkit";
 import Titlelayout from "@com/titlelayout";
@@ -15,6 +15,38 @@ import {
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 const { Paragraph, Text, Title } = Typography;
+ 
+
+const Content = styled.div`
+  display: grid;
+  grid-template-rows: 48px 800px;
+  row-gap: 16px;
+  .title {
+     border: 1px solid #d7d7d7;
+     padding: 10px 16px;
+     border-radius: 4px;
+     background-color: #fff;
+     .text {
+      display: inline-block;
+      border-left: 4px solid #237ae4;
+      color: #515151;
+      padding-left: 16px;
+     }
+    
+      
+  }
+  .main {
+    display: grid;
+    grid-template-columns: 1368px 292px;
+    column-gap: 16px;
+    .right {
+      display: grid;
+      grid-template-rows: repeat(6, 120px);
+      row-gap: 16px;
+    }
+  }
+`
+
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
@@ -55,7 +87,7 @@ const Itembox = styled.div`
   border: 1px solid #c9e9ff;
   display: grid;
   grid-template-columns: 56px 138px;
-  padding: 16px;
+  padding: 10px 16px;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
@@ -65,8 +97,9 @@ const Itembox = styled.div`
     align-items: center;
     justify-items: flex-end;
     .num {
-      font-size: 20px;
+      font-size: 18px;
       display: block;
+      line-height: 1;
     }
   }
   .desc2 {
@@ -75,8 +108,9 @@ const Itembox = styled.div`
     align-items: center;
     justify-items: flex-end;
     .num {
-      font-size: 20px;
+      font-size: 18px;
       display: block;
+      line-height: 1;
     }
   }
 `;
@@ -111,6 +145,9 @@ const labels = {
   curMonthAvgPF: "月平均功率因素", //月平均功率因素
 };
 
+const Imgbg = memo(() => {
+  return    <Image src={imgurl.engeryBg} preview={false} />
+})
 export default function Index() {
   const [form] = Form.useForm();
   const [energyValue, setEnergyValue] = useState({});
@@ -139,8 +176,128 @@ export default function Index() {
   }, []);
   return (
     <CustContext.Provider >
-      <Pagecount >
-        <Titlelayout title="能源概述">
+       
+        <Content>
+           <div className="title">
+               <span className="text">园区概述</span>
+           </div>
+           <div className="main">
+              <Imgbg />
+              <div className="right">
+              <Itembox key="today">
+                <Image
+                  src={imgurl["e01"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <span>今日用电量(kwh)</span>
+                  <Text className="num" ellipsis>
+                    {energyValue.todayElectricConsume}
+                  </Text>
+                  <span>今日电费(元)</span>
+
+                  <Cp ellipsis className="num">
+                    {energyValue.todayElectricConsumePay}
+                  </Cp>
+                </div>
+              </Itembox>
+              <Itembox key="month">
+                <Image
+                  src={imgurl["e02"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <Text>本月用电量（kWh）</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curMonthElectricConsume}
+                  </Text>
+                  <Text>本月累计电费（元）</Text>
+
+                  <Cp ellipsis className="num">
+                    {energyValue.curMonthElectricConsumePay}
+                  </Cp>
+                </div>
+              </Itembox>
+              <Itembox key="totalY">
+                <Image
+                  src={imgurl["e03"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <Text ellipsis>年度总用电量(kWh)</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curYearElectricConsume}
+                  </Text>
+                  <Text ellipsis>本年累计电费(元)</Text>
+
+                  <Cp ellipsis className="num">
+                    {energyValue.curYearElectricConsumePay}
+                  </Cp>
+                </div>
+              </Itembox>
+              <Itembox key="current">
+                <Image
+                  src={imgurl["e04"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <Text>当前负荷(kW)</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curLoad}
+                  </Text>
+                
+                </div>
+              </Itembox>
+              <Itembox key={nanoid()}>
+                <Image
+                  src={imgurl["e05"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <Text>本月最大负荷(kW)</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curMonthMaxLoad}
+                  </Text>
+                  <Text>本月平均负载(kWh)</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curMonthAvgLoad}
+                  </Text>
+              
+                </div>
+              </Itembox>
+              <Itembox key="curPF">
+                <Image
+                  src={imgurl["e06"]}
+                  preview={false}
+                  width={56}
+                  height={56}
+                />
+                <div className="desc">
+                  <Text>功率因数</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curPF}
+                  </Text>
+                  <Text>月平均功率因数</Text>
+                  <Text className="num" ellipsis>
+                    {energyValue.curMonthAvgPF}
+                  </Text>
+                
+                </div>
+              </Itembox>
+              </div>
+           </div>
+        </Content>
+       {/*  <Titlelayout title="能源概述">
           <Mainbox>
             <div className="up">
               <Image src={imgurl.engeryBg} preview={false} />
@@ -338,12 +495,7 @@ export default function Index() {
                   <Text className="num" ellipsis>
                     {energyValue.curLoad}
                   </Text>
-                  {/*    <Text>当前负荷率(%)</Text>
-              
-              <Cp  ellipsis className='num'>
-           
-                <Progress percent={energyValue.curLoadPercent} />
-              </Cp> */}
+                
                 </div>
               </Itembox>
               <Itembox key={nanoid()}>
@@ -362,10 +514,7 @@ export default function Index() {
                   <Text className="num" ellipsis>
                     {energyValue.curMonthAvgLoad}
                   </Text>
-                  {/*   <Cp  ellipsis className='num'>
-               
-                <Progress percent={energyValue.curMonthAvgLoad} />
-              </Cp> */}
+              
                 </div>
               </Itembox>
               <Itembox key={nanoid()}>
@@ -384,16 +533,13 @@ export default function Index() {
                   <Text className="num" ellipsis>
                     {energyValue.curMonthAvgPF}
                   </Text>
-                  {/*   <Cp  ellipsis className='num'>
-              
-                <Progress percent={energyValue.curMonthAvgPF} />
-              </Cp> */}
+                
                 </div>
               </Itembox>
             </div>
           </Mainbox>
-        </Titlelayout>
-      </Pagecount>
+        </Titlelayout> */}
+       
     </CustContext.Provider>
   );
 }

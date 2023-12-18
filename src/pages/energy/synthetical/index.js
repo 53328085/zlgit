@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs} from "antd";
+import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography} from "antd";
 import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
@@ -13,7 +13,7 @@ import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
 import {numberformat} from '@com/usehandler'
 import moment from 'moment';
 import imgurl from "./icon";
-
+const {Text} = Typography
  
 
 const Laybox = styled.div`
@@ -57,8 +57,9 @@ const Laybox = styled.div`
   }
  
 `;
-const Custspan = styled.span`
+const Custspan = styled(Text)`
   font-size: 14px;
+   width: 142px;
   color: #515151;
   display: flex;
 // justify-content: ${(props) => (props.jc ? "flex-start" : "space-between")};
@@ -362,12 +363,30 @@ const Energyitem = () => {
       }
       items.push(obj)
    }
-  
+   let extra = [{
+    lastMonthPeriodValue: "0.00",
+    lastYearPeriodValue: "0.00",
+    mom: "100.00%",
+    name: "公共服务用水",
+    periodValue: "0.00",
+    unit: "(m³)",
+    yoy: "100.00%",
+   },
+   {
+    lastMonthPeriodValue: "0.00",
+    lastYearPeriodValue: "0.00",
+    mom: "100.00%",
+    name: "消费及其他特殊用水(m³)",
+    periodValue: "0.00",
+    unit: "",
+    yoy: "100.00%",
+   }
+  ]
 
    return (
     <>
       {
-        consumes.map(item => <EngItem  {...item} key={nanoid()}/>)
+       [...consumes,...extra].map(item => <EngItem  {...item} key={nanoid()}/>)
       }
     </>
   
@@ -519,11 +538,11 @@ const CoalStandard =({data={}}) => {
     { label: "综合能耗", key: 1, },
     { label: "电", key: 2,  },
     { label: "用水", key: 3 },
-    { label: "热力", key: 4 },
+   /*  { label: "热力", key: 4 },
     { label: "气体燃料", key: 5 },
     { label: "液体燃料", key: 6 },
     { label: "固态燃料", key: 7 },
-    { label: "碳酸盐", key: 8 },
+    { label: "碳酸盐", key: 8 }, */
   ];
 
 
@@ -572,7 +591,7 @@ const CoalStandard =({data={}}) => {
 
   const Title = ({ title, subtitle, jc }) => {
     return (
-      <Custspan className="t" jc={jc}>
+      <Custspan className="t" jc={jc} ellipsis={{tooltip: title}}>
         {title}
         <span>{subtitle}</span>
       </Custspan>

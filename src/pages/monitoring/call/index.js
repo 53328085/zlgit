@@ -295,10 +295,13 @@ useEffect(() => {
         snList.push(item.sn)
       })
     }
-   
+    let parmas = {
+      Sns: snList,
+      ProjectId: projectId
+    }
     if (tableRefs.current&&tableRefs.current.length > 0) {
       setLoading(true)
-      Remote.StartCalling(snList).then(res => {
+      Remote.StartCalling(parmas).then(res => {
         let { success, data } = res
         if (success) {
           let isOkList = []
@@ -370,6 +373,8 @@ useEffect(() => {
         } else {
           message.error(res.errMsg)
         }
+      }).catch(() => {
+        setLoading(false)
       })
     } else {
       message.error('请先选择设备！')

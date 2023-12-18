@@ -57,12 +57,12 @@ export default function DefaultHome(props) {
   const { GetProjectInfo } = HomeRuntime
 
   const state = useReactive({
-    projectName: '诚办企业服务有限公司',
+    projectName: '项目名称',
     deviceNum: 0,
     gatewayNum: 0,
-    projectManager: '张三',
-    mobile: '13588566548',
-    address: '浙江省杭州市滨江区月明路560号',
+    projectManager: '项目管理员名称',
+    mobile: '手机号码',
+    address: '项目地址',
     projectImage:'',
   })
 
