@@ -5,13 +5,14 @@ import Bluecolumn from '@com/bluecolumn';
 import { Divider } from 'antd'
 import {numberformat} from '@com/usehandler'
 import { Charts, PieCharts } from './charts'
-import icon1 from './imgs/icon1.png'
+/* import icon1 from './imgs/icon1.png'
 import icon2 from './imgs/icon2.png'
 import icon3 from './imgs/icon3.png'
-import icon4 from './imgs/icon4.png'
+import icon4 from './imgs/icon4.png' */
 import uppng from './imgs/up.png'
 import downpng from './imgs/down.png'
 import empty from './imgs/empty.png'
+import imgurl from './imgs'
 export default function Energy({ showData, dateType,showType }) {
   const { bg1class, bg2class, bg3class } = style
   let consumeTotal 
@@ -93,9 +94,9 @@ let Card = ({ index, ...other }) => {
   return (
     <div style={{ border: '1px solid #d7d7d7', padding: 1, display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex' }}>
-        <img src={index === 0 ? icon1 : index === 1 ? icon2 : index === 2 ? icon3 : icon4} alt="" style={{ width: 54, height: 42 }} />
+      <img src={imgurl[other.name]} alt="" style={{ width: 54, height: 42 }} />  
         <div style={{ marginLeft: 24 }}>
-          <div style={{ fontSize: 12, color: '#666', minHeight: 18 }}>{other.name ? other.name : ""}</div>
+          <div style={{ fontSize: 12, color: '#666', minHeight: 18 }}>{other.name ? other.name : ""}(kwh)</div>
           <div style={{ fontSize: 18, color: '#333', lineHeight: '18px' }}>{other.periodValue}</div>
         </div>
       </div>

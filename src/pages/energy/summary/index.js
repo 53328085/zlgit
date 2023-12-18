@@ -9,6 +9,7 @@ import { Form, Image, Progress, Typography } from "antd";
 import imgurl from "./icon";
 import { EnergyOverView, UpdateEnergyImage} from "@api/api.js";
 import { useSelector } from "react-redux";
+import Ichart  from '@com/useEcharts/Ichart';
 import {
   selectProjectId,
   selectOneLevelDefaultId,
@@ -41,7 +42,7 @@ const Content = styled.div`
     column-gap: 16px;
     .right {
       display: grid;
-      grid-template-rows: repeat(6, 120px);
+      grid-template-rows: repeat(3, 120px) 1fr;
       row-gap: 16px;
     }
   }
@@ -145,6 +146,8 @@ const labels = {
   curMonthAvgPF: "月平均功率因素", //月平均功率因素
 };
 
+
+
 const Imgbg = memo(({projectId}) => {
   const [energyImage, setEnergyImage]= useState(imgurl.engeryBg)
   const queryimg =async () => { //获取图片
@@ -164,11 +167,28 @@ const Imgbg = memo(({projectId}) => {
   return    <Image src={energyImage} preview={false} />
 })
 export default function Index() {
-  const [form] = Form.useForm();
+  //const [form] = Form.useForm();
   const [energyValue, setEnergyValue] = useState({});
   const projectId = useSelector(selectProjectId);
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
+ // const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
 
+ const vdata = [
+  {name: "照明插座", value: 65},
+  {name: "动力用电", value: 20},
+  {name: "特殊用电", value: 5},
+  {name: "空调用电", value: 10},
+]
+ const [options, setOptions] = useState({
+  type: 3,
+  pieData: { data: vdata, total: 100, radius: ["60%", "70%"] },
+  legend: {
+    bottom: 5,
+    top: 'auto'
+  },
+  grid: {
+    containLabel: true,
+  }
+})
  
   const getData = async () => {
    
@@ -258,7 +278,11 @@ export default function Index() {
                   </Cp>
                 </div>
               </Itembox>
-              <Itembox key="current">
+
+              <Titlelayout title="分类能耗占比" layout="flex">
+                   <Ichart {...options} />
+              </Titlelayout>
+            {/*   <Itembox key="current">
                 <Image
                   src={imgurl["e04"]}
                   preview={false}
@@ -310,7 +334,7 @@ export default function Index() {
                   </Text>
                 
                 </div>
-              </Itembox>
+              </Itembox> */}
               </div>
            </div>
         </Content>
