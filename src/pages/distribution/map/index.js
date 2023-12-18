@@ -326,6 +326,14 @@ export default function Index() {
    }
    setIsf(!isf)
  }
+
+ useEffect(()=> {
+  return () => {
+    state.client.end();
+    console.log('卸载')
+  }
+ }, [])
+
   return (
     <Spin spinning={state.spining} tip="Loading...">
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
