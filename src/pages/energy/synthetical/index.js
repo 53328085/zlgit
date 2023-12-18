@@ -538,11 +538,11 @@ const CoalStandard =({data={}}) => {
     { label: "综合能耗", key: 1, },
     { label: "电", key: 2,  },
     { label: "用水", key: 3 },
-    { label: "热力", key: 4 },
+   /*  { label: "热力", key: 4 },
     { label: "气体燃料", key: 5 },
     { label: "液体燃料", key: 6 },
     { label: "固态燃料", key: 7 },
-    { label: "碳酸盐", key: 8 },
+    { label: "碳酸盐", key: 8 }, */
   ];
 
 

@@ -161,6 +161,7 @@ export default function Index() {
         (error) => {
           if (!error) {
             console.log("订阅成功");
+            getHeart(HMIDevices);
           } else {
             console.log("订阅失败");
           }
@@ -200,9 +201,9 @@ export default function Index() {
       console.log("连接失败:", error);
     });
 
-    setTimeout(() => {
+  /*  setTimeout(() => {
       getHeart(HMIDevices);
-    }, 100);
+    }, 100); */
   }
 
   const getHeart = (devices) => {
