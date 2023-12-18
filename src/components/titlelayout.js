@@ -20,6 +20,9 @@ const Boxdiv = styled(Card)`
     /* height: ${(props) =>  props.hv || '32px'}; */
     height: 32px;
     padding-right: 0px;
+    background-color:${({bg}) => bg || '#fff'};
+    z-index:${({zd}) => zd || 100};
+  
     .ant-card-head-wrapper {
       flex:1;
       height: inherit;
