@@ -61,8 +61,8 @@ export default function DefaultHome(){
   }, [])
   
   return (
-         <Titlelayout title={'实时负荷率'} {...fs}>
-         <div ref={guref} style={{width: '422px', height: '358px'}}>
+         <Titlelayout title={'实时负荷率'} {...fs} style={{height: "200px"}} layout="flex">
+         <div ref={guref} style={{flex: 1}}>
           </div>
          </Titlelayout>
   )

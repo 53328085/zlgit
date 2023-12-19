@@ -90,7 +90,7 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title="本月巡检" {...fs} style={{width: '456px', height: '200px'}}>
+    <Titlelayout title="本月巡检" {...fs} style={{height: '200px'}}>
       <Divorder>
         <div className='order'>
           <p>{idata.all}</p>

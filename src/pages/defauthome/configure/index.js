@@ -380,7 +380,7 @@ export default function Index() {
       })
       setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    } else if (classOfName == '告警分布' ||classOfName == '本月巡检' ||classOfName == '配电房监测' ||classOfName == '变压器总负荷' ||classOfName == '今日用电量' ||classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
+    } else if (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' || classOfName == '今日用电量' || classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
       classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
       classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') {
       newlayout = layoutItem.concat({

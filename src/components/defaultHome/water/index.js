@@ -36,6 +36,9 @@ export default function DefaultHome(props){
       bottom: "0px",
       containLabel: true,
     },
+    legend: {
+      top: "5px"
+    },
     color 
   });
   
@@ -70,8 +73,8 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'用水量'} {...fs}>
-         <div ref={wref} style={{width: '422px', height: '142px'}}></div>
+         <Titlelayout title={'用水量'} {...fs} style={{height: "200px"}} layout="flex">
+         <div ref={wref} style={{flex: 1}}></div>
          </Titlelayout>
   )
 }

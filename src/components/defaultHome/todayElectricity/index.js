@@ -77,8 +77,8 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'今日用电量'} {...fs} style={{width: '456px', height: '200px'}}>
-         <div  style={{width: '424px', height: '140px', display: 'flex'}}>
+         <Titlelayout title={'今日用电量'} {...fs} style={{height: '200px'}} layout="flex">
+         <div  style={{flex: 1, display: 'flex'}}>
               <Ichart {...options} />
          </div>
          </Titlelayout>

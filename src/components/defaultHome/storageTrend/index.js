@@ -96,8 +96,8 @@ export default function DefaultHome(props){
   },[])
   
   return (
-         <Titlelayout title={'充放电量趋势'} {...fs}>
-            <div style={{width: '440px', height: '358px'}}  ref={lineRef}></div>
+         <Titlelayout title={'充放电量趋势'} {...fs} style={{height: "200px"}} layout="flex">
+            <div style={{flex: 1}}  ref={lineRef}></div>
          </Titlelayout>
   )
 }

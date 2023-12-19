@@ -101,7 +101,7 @@ export default function DefaultHome(props) {
     
   },[state.alarmList.length])
   const sty = {
-    width: '458px', height: '200px' 
+     height: '200px' 
   }
   return (
     <Titlelayout title={'最新告警'} {...fs} style={sty}>

@@ -105,7 +105,7 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'本月能耗排名'} {...fs}>
+         <Titlelayout title={'本月能耗排名'} {...fs} style={{height: "200px"}}>
             <Divorder>
                 { state.rankList.length > 0 ? <div className='rank_item'>
                     <div className='item_name' title={state.rankList[0].name}>{ state.rankList[0].name }</div>

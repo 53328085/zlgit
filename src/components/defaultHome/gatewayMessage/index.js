@@ -65,7 +65,7 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title={'网关信息'} {...fs}>
+    <Titlelayout title={'网关信息'} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>
