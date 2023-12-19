@@ -107,7 +107,7 @@ export default function DefaultHome(props) {
     <Titlelayout title={'最新告警'} {...fs} style={sty}>
       
       {  (state.alarmList?.length > 0) ? (
-        <Timelinebox dmheight={dmheight} domht ={domRef.current}>
+        <Timelinebox dmheight={dmheight} domht ={domRef.current} >
           <div id="scrollTimeLine">
           {state.alarmList?.length > 3?(
              [...state.alarmList.map((item, index) => {
