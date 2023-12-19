@@ -4,10 +4,10 @@ import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
  
 import moment from 'moment';
- 
+import fuhe from '../fuhe.svg'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-import Ichart  from '@com/useEcharts/Ichart';
+ 
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -20,46 +20,16 @@ const fs = {
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
 
-  const { RoomInfo } = HomeRuntime
+  const [total, setTotal] = useState(0)
 
-
-  const [options, setOptions] = useState({
-    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }],  
-    grid:{
-      // 图表 grid
-      left: "0px",
-      right: "0",
-      top: "30px",
-      bottom: "0px",
-      containLabel: true,
-    },
-    dataset: {}
-  })
+ 
   useEffect(() => {
 
     
-    HomeRuntime.GetMonthEnergyTrends(projectId).then(res => {
+    HomeRuntime.GetTransformerLoad(projectId).then(res => {
         let { success, data } = res
         if (success) {
-          if (data.constructor == Object) {
-            let {x, y, y1} = data           
-            let dataset = {
-              dimensions: [
-                {name: '日期', type: 'time'},
-                {name: moment().format('yyyy') },
-                {name: moment().subtract(1, 'y').format('yyyy') },
-              ],
-              source: [
-                x, 
-                y,
-                y1,
-              ],
-             sourceHeader: false,
-            }
-          
-            setOptions({...options, dataset})
-           // drawBar(dataSets)
-          }
+           setTotal(data)
         } else {
           message.error(res.errMsg)
         }
@@ -71,9 +41,15 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'变压器总负荷'} {...fs} style={{height: '200px'}}>
+         <Titlelayout title={'变压器总负荷'} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
-              <Ichart {...options} />
+               <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: "0 32px"}}>
+                  <img src={fuhe} width={48} height={44} />
+                  <div style={{display: "flex", flexDirection: "column", }}>
+                    <span style={{color: "#333"}}>实时总负荷</span>
+                    <p style={{marginTop: "16px"}}><span style={{fontSize: "24px",color: "#515151"}}>{total}</span><span sytle={{paddingLeft: "64px"}}>kw</span></p>
+                  </div>
+               </div>
          </div>
          </Titlelayout>
   )

@@ -6,8 +6,8 @@ import {useSelector} from 'react-redux'
 const {Text} = Typography
 //import {selectCurProject} from '@redux/user'
 import {systemConfigInfo, currProject} from '@redux/systemconfig'
-import logo from '@imgs/logo.png'
-import style from '../index.module.less'
+import logo from '@imgs/czt.png'
+
 const Divlog = styled.div` 
    height: 64px;
    display: flex;

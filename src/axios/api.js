@@ -1050,7 +1050,7 @@ export class RechargeSubsidy {
   static FileRecharge = (data) =>
     server.post(`/RechargeSubsidy/FileRecharge`, data); //文件充值
 }
- 
+ // http://127.0.0.1:4155/V1/Home/HomeRuntime/GetTransformerLoad?projectId=2
 //设备管理
 export class SettingManage {
   static FindAlike = (data) =>
@@ -2090,5 +2090,8 @@ export class HomeRuntime {
   static QueryElectricToday = (projectId, date) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectricToday?projectId=${projectId}&date=${date}`)//今日用电量
 
   static RoomInfo = (projectId) => server.get(`/Distribution/DistributionRoomRuntime/RoomInfo?projectId=${projectId}`)//配电房监测（变压器数量）
+
+   static GetTransformerLoad = (projectId) => server.get(`/Home/HomeRuntime/GetTransformerLoad?projectId=${projectId}`)//配电房监测（变压器数量）
+ 
 
 }
