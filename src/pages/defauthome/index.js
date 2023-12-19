@@ -3,7 +3,7 @@ import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
-import {selectProjectId,getSystemconfiginfo} from '@redux/systemconfig.js'
+import {selectProjectId,getCurrProjectInfo} from '@redux/systemconfig.js'
 import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 
@@ -192,15 +192,18 @@ export default function Index() {
     console.log(1111)
     try {
   
-     const {data ,success,errMsg} = await HomeRuntime.GetProjectInfo(projectId)
+     const {data ,success, errMsg} = await HomeRuntime.GetProjectInfo(projectId)
      if(success){
-      dispatch(getSystemconfiginfo(data))
+         dispatch(getCurrProjectInfo(data || {}))
      }
     } catch (error) {
       console.log(error)
     }
   }
-  GetProjectInfo()
+  useEffect(() => {
+    GetProjectInfo()
+  }, [])
+  
 
 
 

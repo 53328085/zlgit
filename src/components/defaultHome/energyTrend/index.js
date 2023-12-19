@@ -20,7 +20,7 @@ const fs = {
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
 
-  const { GetMonthEnergyTrends } = HomeRuntime
+  const { RoomInfo } = HomeRuntime
 
 
   const [options, setOptions] = useState({
@@ -34,14 +34,14 @@ export default function DefaultHome(props){
       containLabel: true,
     },
     dataset: {},
-    type: 2
-
+    legend: {
+      top: "5px"
+    }
   })
-  console.log(options)
   useEffect(() => {
 
     
-      GetMonthEnergyTrends(projectId).then(res => {
+    HomeRuntime.GetMonthEnergyTrends(projectId).then(res => {
         let { success, data } = res
         if (success) {
           if (data.constructor == Object) {
@@ -57,9 +57,12 @@ export default function DefaultHome(props){
                 y,
                 y1,
               ],
+
              sourceHeader: false,
             }
+          
             setOptions({...options, dataset})
+           // drawBar(dataSets)
           }
         } else {
           message.error(res.errMsg)
@@ -73,7 +76,7 @@ export default function DefaultHome(props){
   
   return (
          <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}} layout="flex">
-         <div  style={{ flex:1, display: 'flex'}}>
+         <div  style={{flex:1, display: 'flex'}}>
               <Ichart {...options} />
          </div>
          </Titlelayout>

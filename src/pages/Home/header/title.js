@@ -6,9 +6,8 @@ import {useSelector} from 'react-redux'
 const {Text} = Typography
 //import {selectCurProject} from '@redux/user'
 import {systemConfigInfo, currProject} from '@redux/systemconfig'
-import logo from '@imgs/logo.png'
-import style from '../index.module.less'
-import logobg from '@imgs/logobg.png'
+import logo from '@imgs/czt.png'
+
 const Divlog = styled.div` 
    height: 64px;
    display: flex;
@@ -25,14 +24,13 @@ const Divlog = styled.div`
 export default function  Title (){
    // const project = useSelector(selectCurProject)  
   //  const { logoImageBase64} = project 
-   const {logoImage} = useSelector(systemConfigInfo)
-   console.log(logoImage)
+   // const {chineseTitle} = useSelector(systemConfigInfo)
     const currproject = useSelector(currProject) || {}
     let projectLog = currproject.logoImage;
     let projectName = currproject.projectName || currproject.name
  
  
    return (
-        <img  height={64} width={200}   src={logoImage||projectLog || logo}></img>
+        <img  height={64} width={200}   src={projectLog || logo}></img>
    )
   }
