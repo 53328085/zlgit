@@ -79,8 +79,8 @@ export default function Index() {
             source: waterConsumes,
           }
           console.log(wdataset)
-          setEptions({...eoptions, dataset: edataset})
-          setWptions({...woptions, dataset: wdataset})
+          setEptions({...eoptions, dataset: edataset,xAxis:{axisLabel:{interval:'auto'}}})
+          setWptions({...woptions, dataset: wdataset,xAxis:{axisLabel:{interval:'auto'}}})
         }
         
       } else {
