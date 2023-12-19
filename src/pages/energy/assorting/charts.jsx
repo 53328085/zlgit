@@ -1,11 +1,11 @@
 import { Area, Pie } from '@ant-design/plots';
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
 //折线图
-export let Charts = ({ consumeDetail, color,showType }) => {
-  console.log(consumeDetail)
+export let Charts = ({ consumeDetail, color,showType ,xlist}) => {
+  console.log(xlist)
   const data = consumeDetail.y.map((it, index) => {
     return {
-      x: consumeDetail.x[index],
+      x:xlist&&xlist.length>0?xlist[index]: consumeDetail.x[index],
       y: Number(it),
       type:showType===1? 'kWh':'元'
     }

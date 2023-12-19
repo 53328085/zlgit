@@ -61,7 +61,17 @@ export default function Index() {
       }
       if (res.success) {
         if (res.data) {
-          setShowData(res.data)
+          let xlist=null
+          if(dateType ===1 ){
+          const hours =   moment().hours()
+          xlist =  res.data.consumeDetail[0].x.filter(it=>parseInt(it)<=hours)
+      
+          }else if (dateType ===2){
+           const date =  moment().date()
+           xlist = res.data.consumeDetail[0].x.filter(it=>parseInt(it)<=date)
+          }
+          console.log(xlist)
+          setShowData({...res.data,x:xlist})
         } else {
           setShowData([])
         }

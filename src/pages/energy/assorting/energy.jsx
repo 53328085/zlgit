@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import style from './style.module.less'
 import Bluecolumn from '@com/bluecolumn';
-import { Divider } from 'antd'
+import { Divider,Tooltip  } from 'antd'
 import {numberformat} from '@com/usehandler'
 import { Charts, PieCharts } from './charts'
 /* import icon1 from './imgs/icon1.png'
@@ -18,15 +18,21 @@ export default function Energy({ showData, dateType,showType }) {
   let consumeTotal 
   let consumeDetail 
   let proportion 
+  let xlist
   let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
   if (showData) {
     consumeTotal = showData.consumeTotal.sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))
     console.log(consumeTotal)
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
+    xlist =  showData.x??[]
   }
-
-
+  console.log(showData,xlist)
+  const overcss={
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
   useEffect(() => {
 
   }, [])
@@ -39,27 +45,37 @@ export default function Energy({ showData, dateType,showType }) {
           <div className={`${style.bgclass}  ${index === 0 ? "" : index === 1 ? bg1class : index === 2 ? bg2class : bg3class}`}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: 4, height: 32, backgroundColor: '#237ae4' }}></div>
-              <div style={{ fontSize: 12, color: '#666' }}><span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>{showType===1?'(kWh)':'(元)'}</div>
+              <div style={{ fontSize: 12, color: '#666' }}>
+                <span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>
+                {showType===1?'(kWh)':'(元)'}</div>
             </div>
           </div>
           <div className={style.textstyle} style={{ backgroundColor: index % 2 === 0 ? '#a0cede' : '#afdb92' }} >
-            <div>{dateType === 1 ? "今日:" : dateType === 2 ? "本月:" : "本年:"}<span className={style.pdlf16}>{it?.periodValue}</span></div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>环比:<span className={style.pdlf16}>
-              {it?.mom}
+            <div style={overcss}>{dateType === 1 ? "今日:" : dateType === 2 ? "本月:" : "本年:"}
+            <Tooltip title={parseInt(it?.periodValue)}>
+            <span className={style.pdlf16}>{parseInt(it?.periodValue)}</span>
+            </Tooltip>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center',...overcss }}>环比:<span className={style.pdlf16}>
+              {parseInt(it?.mom)}%
             </span>
             {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
              <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
-            <div>{dateType === 1 ? "昨日:" : dateType === 2 ? "上月:" : "上年:"}<span className={style.pdlf16}>{it?.lastMonthPeriodValue}</span></div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>同比:<span className={style.pdlf16}>{it?.yoy}</span>
+            <div style={overcss}>{dateType === 1 ? "昨日:" : dateType === 2 ? "上月:" : "上年:"}
+            <Tooltip title={parseInt(it?.lastMonthPeriodValue)}>
+            <span className={style.pdlf16}>{parseInt(it?.lastMonthPeriodValue) }</span>
+            </Tooltip>
+           </div>
+            <div style={{ display: 'flex', alignItems: 'center',...overcss }}>同比:<span className={style.pdlf16}>{parseInt(it?.yoy)}%</span>
             {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
              <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-            <Charts consumeDetail={consumeDetail[index]} color={color[index]} showType={showType}/>
+            <Charts consumeDetail={consumeDetail[index]} color={color[index]} showType={showType} xlist={xlist}/>
           </div>
         </div>))
       }
