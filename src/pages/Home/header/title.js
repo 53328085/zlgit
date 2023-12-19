@@ -8,6 +8,7 @@ const {Text} = Typography
 import {systemConfigInfo, currProject} from '@redux/systemconfig'
 import logo from '@imgs/logo.png'
 import style from '../index.module.less'
+import logobg from '@imgs/logobg.png'
 const Divlog = styled.div` 
    height: 64px;
    display: flex;
@@ -31,6 +32,6 @@ export default function  Title (){
  
  
    return (
-        <img  height={64} width={200}   src={projectLog || logo}></img>
+        <img  height={64} width={200}   src={logobg||projectLog || logo}></img>
    )
   }
