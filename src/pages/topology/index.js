@@ -5,10 +5,12 @@ import { register as registerFlow } from '@topology/flow-diagram'
 import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message, Spin, Typography } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle } from '@redux/systemconfig.js'
 import { useSelector } from 'react-redux'
-import {useSearchParams} from 'react-router-dom'
+import {useSearchParams, useLocation} from 'react-router-dom'
 import logo from './topologyLogo.png'
+
+ 
 // 左侧工具栏图标
 import '../../assets/css/fonts/font/iconfont.css'
 import '../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
@@ -29,6 +31,7 @@ import { distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { useReactive } from "ahooks";
 const {Text} = Typography
 export default function index() {
+  let location = useLocation()
   const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
@@ -37,7 +40,7 @@ export default function index() {
   const [bindForm] = Form.useForm()
   const Item = Form.Item
   const projectId = useSelector(selectProjectId);
-
+  const cnmixtitle = useSelector(mixtitle)
   const { addChart, queryChart, updateChart, getEquipmentList } = distributionRoom
   const { ChartDetails } = DistributionRoomRuntime
 
@@ -93,7 +96,10 @@ export default function index() {
       }
     }).catch()
   }
-
+  useEffect(() => {
+    document.title = cnmixtitle+ ' ' + (location.state?.title || '')
+    return () => document.title = cnmixtitle
+  },[location])
   useEffect(() => {
     registerFlow()
     canvasOptions.on = onMessage
@@ -647,7 +653,7 @@ export default function index() {
     <Spin spinning={state.spining} tip="Loading...">
       <div className={style.header}>
         <img className={style.logo} src={logo}></img>
-        <span className={style.headerTitle}>智慧能源服务平台</span>
+        <span className={style.headerTitle}>{cnmixtitle}</span>
       </div>
       <div className={style.titleMenu}>
         <Dropdown menu={{ items: menuItems }} overlayStyle={{ width: 120 }}>

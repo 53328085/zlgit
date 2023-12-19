@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
@@ -27,14 +27,19 @@ export default function DefaultHome(props) {
       // 图表 grid
       left: "0px",
       right: "0",
-      top: "30px",
+      top: "35px",
       bottom: "0px",
       containLabel: true,
     },
     type: 3,
     pieData: {
-      data: []
-    }
+      data: [],
+      total: '100%', 
+      radius:  "65%",
+    },
+    legend: {
+      top: 6,
+    },
   })
 
   useEffect(() => {
@@ -57,23 +62,16 @@ export default function DefaultHome(props) {
           message.error(res.errMsg)
         }
       })
-    } else {
-      drawEcharts(wnref.current, {
-        pieData: { data: state.pieData, radius: '75%', }, legend: {
-          top: 'auto',
-          bottom: 0,
-        }, type: 3
-      })
-    }
+    } 
   }, [])
   const sty = {
     width: '458px', height: '200px' 
   }
   return (
     <Titlelayout title={'告警分布'} {...fs} layout="flex" style={sty}>
-     { (state?.pieData?.length > 0) ? <div ref={wnref}  style={{flex: 1}}></div>
-      : <div  style={{flex: 1}}><UseEmpty /></div>
-      }
+        <div  style={{flex: 1, display: 'flex'}}>
+             <Ichart {...options} />
+         </div>
     </Titlelayout>
   )
 }

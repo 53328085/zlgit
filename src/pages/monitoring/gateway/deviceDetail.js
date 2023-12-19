@@ -158,10 +158,11 @@ export default function GatewayDetail(props) {
     let [energyReport, setEnergyReport] = useState({})
     let [actuary, setactuary] = useState({})
    // let dataToday = new Date()
+    
     let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
-    let [startTime, setstartTime] = useState(yesterday)
+    let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
     let [endTime, setendTime] = useState(dataToday)
-    let [startTimeAlarm, setstartTimeAlarm] = useState(yesterday)
+    let [startTimeAlarm, setstartTimeAlarm] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
  
     const onchangeTab = val => {
@@ -653,7 +654,7 @@ export default function GatewayDetail(props) {
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
                                 onOpenChange={onOpenChange}
-                                defaultValue={[moment().startOf('day'), yesterday]}
+                                defaultValue={[moment().startOf('day'), moment()]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime
                             />
