@@ -31,6 +31,6 @@ export default function  Title (){
  
  
    return (
-        <img  height={64}   src={projectLog || logo}></img>
+        <img  height={64} width={200}   src={projectLog || logo}></img>
    )
   }

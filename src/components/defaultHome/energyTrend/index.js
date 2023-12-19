@@ -33,8 +33,11 @@ export default function DefaultHome(props){
       bottom: "0px",
       containLabel: true,
     },
-    dataset: {}
+    dataset: {},
+    type: 2
+
   })
+  console.log(options)
   useEffect(() => {
 
     
@@ -56,9 +59,7 @@ export default function DefaultHome(props){
               ],
              sourceHeader: false,
             }
-          
             setOptions({...options, dataset})
-           // drawBar(dataSets)
           }
         } else {
           message.error(res.errMsg)
@@ -71,8 +72,8 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}}>
-         <div  style={{ flex:1, display: 'flex'}}>
+         <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}} layout="flex">
+         <div  style={{ flex:1, display: 'flex'}} >
               <Ichart {...options} />
          </div>
          </Titlelayout>

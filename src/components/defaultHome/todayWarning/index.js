@@ -124,9 +124,7 @@ export default function DefaultHome(props){
               state.confirmCount = data.confirmCount
               state.unconfirmCount = data.unconfirmCount
               state.confirmPercent = (data.confirmCount / (data.confirmCount + data.unconfirmCount)) * 100
-              state.confirmPercent = state.confirmPercent.toFixed(2)
-              state.unconfirmPercent = (data.unconfirmCount / (data.confirmCount + data.unconfirmCount)) * 100
-              state.unconfirmPercent = state.unconfirmPercent.toFixed(2)
+              state.confirmPercent = state.confirmPercent.toFixed(2)            
               tdrawEcharts()
             }
           }else{

@@ -330,7 +330,7 @@ export default function Index() {
 
  useEffect(()=> {
   return () => {
-    state.client.end();
+   (typeof state?.client?.end == "function") && state?.client?.end();
     console.log('卸载')
   }
  }, [])
