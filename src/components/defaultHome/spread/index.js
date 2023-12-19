@@ -65,7 +65,7 @@ export default function DefaultHome(props) {
     } 
   }, [])
   const sty = {
-    width: '458px', height: '200px' 
+    height: '200px' 
   }
   return (
     <Titlelayout title={'告警分布'} {...fs} layout="flex" style={sty}>

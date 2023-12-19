@@ -71,7 +71,7 @@ export default function DefaultHome(props) {
     getData()
    }, [projectId])
   return (
-    <Titlelayout title={'变压器数量'} {...fs} style={{width: '456px', height: '200px'}}>
+    <Titlelayout title={'变压器数量'} {...fs} style={{height: '200px'}}>
       <Divorder>
         <img src={ transformerNum } className='card_icon'></img>
         

@@ -140,7 +140,7 @@ export default function DefaultHome(props){
   },[])
   
   return (
-         <Titlelayout title={'今日告警'} {...fs}>
+         <Titlelayout title={'今日告警'} {...fs} style={{height: "200px"}}>
         <Mainbox>
           <div style={{width: '112px', height: '112px'}} ref={ref}>
               {/* <DemoLiquid></DemoLiquid> */}

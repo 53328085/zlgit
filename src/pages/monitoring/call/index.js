@@ -320,7 +320,7 @@ useEffect(() => {
             }
           })
           if (isOkList.length > 0) {
-            let count = [1, 2, 3, 4, 5, 6]
+            let count = [1, 2, 3]
             let arr = []
             let resData = []
             let status = true
@@ -364,7 +364,7 @@ useEffect(() => {
                   })
                 }
 
-              }, 5000)
+              }, 5000*index)
 
             })
 

@@ -145,15 +145,15 @@ export default function Index() {
     const end = i.indexOf('_');
     return (
       <div key = {i} data-grid={el}>
-       {i.substring(0, end)=='公司信息'? <CompanyMessage></CompanyMessage> : null}
-        {i.substring(0, end)=='今日告警'? <TodayWarning></TodayWarning> : null}
-        {i.substring(0, end) =='本月工单' ? <OrderDetail></OrderDetail> : null}
-        {i.substring(0, end)=='告警信息' ? <WarningMessage></WarningMessage> : null}
-        {i.substring(0, end) =='用电量' ? <ElectricValue></ElectricValue> : null}
-        {i.substring(0, end)=='用水量' ? <WaterValue></WaterValue> : null}
-        {i.substring(0, end)=='用燃气量' ? <GasValue></GasValue> : null}
-        {i.substring(0, end)=='碳排放量' ? <CarbonValue></CarbonValue> : null}
-        {i.substring(0, end)=='网关信息' ? <GatewayMessage></GatewayMessage> : null}
+       {i.substring(0, end)=='公司信息'? <CompanyMessage type={'runtTime'}></CompanyMessage> : null}
+        {i.substring(0, end)=='今日告警'? <TodayWarning type={'runtTime'}></TodayWarning> : null}
+        {i.substring(0, end) =='本月工单' ? <OrderDetail type={'runtTime'}></OrderDetail> : null}
+        {i.substring(0, end)=='告警信息' ? <WarningMessage type={'runtTime'}></WarningMessage> : null}
+        {i.substring(0, end) =='用电量' ? <ElectricValue type={'runtTime'}></ElectricValue> : null}
+        {i.substring(0, end)=='用水量' ? <WaterValue type={'runtTime'}></WaterValue> : null}
+        {i.substring(0, end)=='用燃气量' ? <GasValue type={'runtTime'}></GasValue> : null}
+        {i.substring(0, end)=='碳排放量' ? <CarbonValue type={'runtTime'}></CarbonValue> : null}
+        {i.substring(0, end)=='网关信息' ? <GatewayMessage type={'runtTime'}></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'} state={data}></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'} state={data}></ChooperMessage> : null}        
         {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'} state={data}></Sensor> : null} 

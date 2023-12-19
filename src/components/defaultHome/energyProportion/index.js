@@ -59,7 +59,7 @@ export default function DefaultHome(props){
   }, [projectId])
   
   return (
-         <Titlelayout title={'分类能耗'} {...fs} style={{height: "200px", width: "456px"}}>
+         <Titlelayout title={'分类能耗'} {...fs} style={{height: "200px"}}>
          <div  style={{flex: 1, display: 'flex'}}>
              <Ichart {...options} />
          </div>

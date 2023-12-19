@@ -45,8 +45,8 @@ export default function DefaultHome(){
   }, [])
   
   return (
-    <Titlelayout title={'碳排放量'} {...fs}>
-        <div ref={cref} style={{width: '422px', height: '142px'}}></div>
+    <Titlelayout title={'碳排放量'} {...fs} style={{height: "200px"}} layout="flex">
+        <div ref={cref} style={{flex:1}}></div>
     </Titlelayout>
   )
 }

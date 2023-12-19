@@ -5,7 +5,7 @@ import Titlelayout from "@com/titlelayout";
 import styled from "styled-components";
  import moment from "moment";
 import CustContext from "@com/content.js";
-import { Form, Image, Progress, Typography } from "antd";
+import { Form, Image, Progress, Typography, Spin } from "antd";
 import imgurl from "./icon";
 import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import {
   selectOneLevelDefaultId,
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
+ 
 const { Paragraph, Text, Title } = Typography;
  
 
@@ -122,7 +123,19 @@ const Cp = styled(Paragraph)`
     text-align: right;
   }
 `;
-
+const Tip = styled(Paragraph)`
+&& {
+position: absolute;
+left: ${props => props.left};
+top: ${props => props.top};
+color: #036; // #993300
+font-size: 20px;
+ margin-bottom: 0px;
+}
+`
+const DTip = styled(Tip)`
+  color: #090;
+`
 const labels = {
   totalInstalledCapacity: "总装机容量(MWh)", //装机容量
   totalInstalledPower: "总装机功率(MW)", //装机功率
@@ -149,15 +162,20 @@ const labels = {
 
 
 const Imgbg = memo(({projectId}) => {
-  const [energyImage, setEnergyImage]= useState(imgurl.engeryBg)
-  
+  const [energyImage, setEnergyImage]= useState()
+  const [spinning, setSpinning] = useState(false)
   const queryimg =async () => { //获取图片
     try {
+      setSpinning(true)
      let {success, data} = await  UpdateEnergyImage.query(projectId)
      if(success && data) {
+        setSpinning(false)
          setEnergyImage(data)
-     } 
+     } else {
+      setSpinning(false)
+     }
     } catch (error) {
+      setSpinning(false)
        setEnergyImage(imgurl.engeryBg)
     }
   }      
@@ -165,7 +183,29 @@ const Imgbg = memo(({projectId}) => {
      if(!projectId) return
      queryimg()
   }, [projectId])
-  return    <Image src={energyImage} preview={false} />
+  return    (
+    <Spin spinning={spinning} tip="图片下载中……">
+    <div style={{position: "relative"}}>
+        <img src={energyImage || imgurl.engeryBg}   />
+        <Tip left="84px" top="100px"> 11</Tip>
+        <DTip left="84px" top="162px"> 11</DTip>
+        <Tip left="312px" top="100px"> 11</Tip>
+        <DTip left="312px" top="162px"> 11</DTip>
+        <Tip left="538px" top="162px"> 11</Tip>
+        <DTip left="538px" top="100px"> 11</DTip>
+        <Tip left="1018px" top="162px"> 11</Tip>
+        <DTip left="1018px" top="100px"> 11</DTip>
+      
+
+
+        <Tip left="356px" top="438px"> 11</Tip>
+        <DTip left="356px" top="500px"> 11</DTip>
+        <Tip left="1184px" top="438px"> 11</Tip>
+        <DTip left="1184px" top="500px"> 11</DTip>
+    </div>
+    </Spin>
+    )
+
 })
 export default function Index() {
   //const [form] = Form.useForm();
@@ -267,7 +307,7 @@ const getDataEnergy = async () => {
                 <div className="desc">
                   <Text>本月用电量（kWh）</Text>
                   <Text className="num" ellipsis>
-                    {energyValue.curMonthElectricConsum}
+                    {energyValue.curMonthElectricConsume}
                   </Text>
                   <Text>本月累计电费（元）</Text>
 

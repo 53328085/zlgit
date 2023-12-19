@@ -88,7 +88,7 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title={'工单信息'} {...fs}>
+    <Titlelayout title={'工单信息'} {...fs} style={{height: "200px"}}>
       <Divorder>
         <div className='order'>
           <p>本月工单数</p>

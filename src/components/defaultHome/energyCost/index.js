@@ -71,8 +71,8 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'月度能耗费用趋势'} {...fs}>
-         <div  style={{width: '422px', height: '358px', display: 'flex'}}>
+         <Titlelayout title={'月度能耗费用趋势'} {...fs} layout="flex" style={{height: "200px"}}>
+         <div  style={{flex: 1, display: 'flex'}}>
               <Ichart {...options} />
          </div>
          </Titlelayout>
