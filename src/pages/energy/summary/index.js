@@ -1,13 +1,13 @@
 import React, { useEffect, useState, memo } from "react";
 
-import { nanoid } from "@reduxjs/toolkit";
+ 
 import Titlelayout from "@com/titlelayout";
 import styled from "styled-components";
-import Pagecount from "@com/pagecontent";
+ import moment from "moment";
 import CustContext from "@com/content.js";
 import { Form, Image, Progress, Typography } from "antd";
 import imgurl from "./icon";
-import { EnergyOverView, UpdateEnergyImage} from "@api/api.js";
+import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js";
 import { useSelector } from "react-redux";
 import Ichart  from '@com/useEcharts/Ichart';
 import {
@@ -150,14 +150,15 @@ const labels = {
 
 const Imgbg = memo(({projectId}) => {
   const [energyImage, setEnergyImage]= useState(imgurl.engeryBg)
+  
   const queryimg =async () => { //获取图片
     try {
      let {success, data} = await  UpdateEnergyImage.query(projectId)
-     if(success) {
+     if(success && data) {
          setEnergyImage(data)
      } 
     } catch (error) {
-       setEnergyImage('')
+       setEnergyImage(imgurl.engeryBg)
     }
   }      
   useEffect(() => {
@@ -172,45 +173,61 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
  // const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
 
- const vdata = [
-  {name: "照明插座", value: 65},
-  {name: "动力用电", value: 20},
-  {name: "特殊用电", value: 5},
-  {name: "空调用电", value: 10},
-]
+ 
  const [options, setOptions] = useState({
   type: 3,
-  pieData: { data: vdata, total: 100, radius: ["60%", "70%"] },
+  pieData: { data: [], total: "100%", radius: ["55%",  "65%"] },
   legend: {
     bottom: 5,
     top: 'auto'
   },
   grid: {
     containLabel: true,
+    left: 0,
+    right: 0,
   }
 })
  
+const getDataEnergy = async () => {
+  try {
+    
+   let date = moment().format("yyyy-MM-DD")
+   let {success, data} =  await HomeRuntime.EnergyProportion(projectId, date)
+   console.log(data)
+    if (success) {
+      setOptions({...options, pieData: {
+       ...options.pieData,
+       data: data || []
+      }})
+    }
+  } catch (error) {
+   
+  }
+  
+
+}
+
+
+
   const getData = async () => {
    
     try {
      
-      let { success, data } = await EnergyOverView.EnergyOverViewRuntime(
-        projectId,
-        [0]
-      );
+      let { success, data } = await EnergyOverView.EnergyOverViewRuntime(projectId);
       if (success) {
         setEnergyValue({ ...energyValue, ...data });
       } else {
-        setEnergyValue([]);
+        setEnergyValue({});
       }
     } catch (error) {
       console.log(error);
     }
   };
-
+ 
   useEffect(() => {
     getData();
-  }, []);
+    getDataEnergy()
+  }, [projectId]);
   return (
     <CustContext.Provider >
        
@@ -250,7 +267,7 @@ export default function Index() {
                 <div className="desc">
                   <Text>本月用电量（kWh）</Text>
                   <Text className="num" ellipsis>
-                    {energyValue.curMonthElectricConsume}
+                    {energyValue.curMonthElectricConsum}
                   </Text>
                   <Text>本月累计电费（元）</Text>
 

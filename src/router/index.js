@@ -177,9 +177,13 @@ const loginrouter =  [{
     path: "/granary",
     element: <Granary />,   
     },
+    {
+      path: "/front",
+      element: <Navigate to="https://dmm.chint.com/front/development/view/c0766e737b554e6eab7196676f410c40$$0$$fd3e94c07c40492b907aea9af565528d" />
+      },
    {
     path: '*',
-    element: <Notfound />
+    element:   <Notfound />
    }
   
 ];

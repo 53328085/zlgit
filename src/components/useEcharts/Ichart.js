@@ -6,7 +6,7 @@ export default function Ichart(props={}) {
   let {dataset={}, type, pieData} = props
   console.log(props)
   useEffect(() => {
-    if(type == 2 && dataset?.source?.length > 0) {
+    if(dataset?.source?.length > 0) {
         drawEcharts(ref.current, {...props})
     }
     if(type == 3 && pieData?.data?.length > 0) {

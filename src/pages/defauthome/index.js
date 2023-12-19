@@ -16,7 +16,7 @@ import WaterValue from '../../components/defaultHome/water'
 import GasValue from '../../components/defaultHome/gas'
 import CarbonValue from '../../components/defaultHome/carbon'
 import EnergyTrend from '../../components/defaultHome/energyTrend'
-import EnergyCost from '@com/defaultHome/energyCost'
+// import EnergyCost from '@com/defaultHome/energyCost'
 import RealLoad from '../../components/defaultHome/load'
 import WarningSpread from '../../components/defaultHome/spread'
 import ElectricAnalysis from '../../components/defaultHome/electricAnalysis'
@@ -43,6 +43,18 @@ import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
 
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
+
+import TodayElectricity from "@com/defaultHome/todayElectricity" // TodayElectricity 今日用电量
+
+import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerTotal 变压器总负荷
+
+import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
+
+
+import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
+
+// TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量 
+
 
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
@@ -127,31 +139,36 @@ export default function Index() {
   });
 
   
-
+// TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量 Inspection 本月巡检
   const createElement = el => {
     const i = el.i;
+    const end = i.indexOf('_');
     return (
       <div key = {i} data-grid={el}>
-        { i.indexOf('公司信息') != -1 ? <CompanyMessage type={'runtTime'}></CompanyMessage> : null  }
-        { i.indexOf('今日告警') != -1 ? <TodayWarning type={'runtTime'}></TodayWarning> : null  }
-        { i.indexOf('今日工单') != -1 ? <OrderDetail type={'runtTime'}></OrderDetail> : null  }
-        { i.indexOf('告警信息') != -1 ? <WarningMessage type={'runtTime'}></WarningMessage> : null  }
-        { i.indexOf('用电量') != -1 ? <ElectricValue type={'runtTime'}></ElectricValue> : null }
-        { i.indexOf('用水量') != -1 ? <WaterValue type={'runtTime'}></WaterValue> : null }
-        { i.indexOf('用燃气量') != -1 ? <GasValue type={'runtTime'}></GasValue> : null }
-        { i.indexOf('碳排放量') != -1 ? <CarbonValue type={'runtTime'}></CarbonValue> : null }
-        {i.indexOf('网关信息') != -1 ? <GatewayMessage type={'runtTime'} state={data}></GatewayMessage> : null}
+       {i.substring(0, end)=='公司信息'? <CompanyMessage></CompanyMessage> : null}
+        {i.substring(0, end)=='今日告警'? <TodayWarning></TodayWarning> : null}
+        {i.substring(0, end) =='本月工单' ? <OrderDetail></OrderDetail> : null}
+        {i.substring(0, end)=='告警信息' ? <WarningMessage></WarningMessage> : null}
+        {i.substring(0, end) =='用电量' ? <ElectricValue></ElectricValue> : null}
+        {i.substring(0, end)=='用水量' ? <WaterValue></WaterValue> : null}
+        {i.substring(0, end)=='用燃气量' ? <GasValue></GasValue> : null}
+        {i.substring(0, end)=='碳排放量' ? <CarbonValue></CarbonValue> : null}
+        {i.substring(0, end)=='网关信息' ? <GatewayMessage></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'} state={data}></DeviceMessage> : null}
-        {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'} state={data}></ChooperMessage> : null}
-
-        
+        {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'} state={data}></ChooperMessage> : null}        
         {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'} state={data}></Sensor> : null} 
         {i.indexOf('变压器信息') != -1 ? <Transformer type={'runtTime'} state={data}></Transformer> : null} 
-        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg type={'runtTime'} state={data}></Cdcwmg> : null} 
-        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg type={'runtTime'} state={data}></Gxcwmg> : null} 
-        { i.indexOf('能耗趋势') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }
-        { i.indexOf('能耗费用趋势') != -1 ? <EnergyCost type={'runtTime'}></EnergyCost> : null }
-        { i.indexOf('分类能耗占比') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }
+        {i.indexOf('触点测温') != -1 ? <Cdcwmg type={'runtTime'} state={data}></Cdcwmg> : null} 
+        {i.indexOf('光纤测温') != -1 ? <Gxcwmg type={'runtTime'} state={data}></Gxcwmg> : null} 
+
+        {i.substring(0,end)=='今日用电量' ? <TodayElectricity type={'runtTime'} state={data}></TodayElectricity> : null} 
+        {i.indexOf('变压器总负荷') != -1 ? <TransformerTotal type={'runtTime'} state={data}></TransformerTotal> : null} 
+
+        {i.indexOf('配电房监测') != -1 ? <TransformerNum type={'runtTime'} state={data}></TransformerNum> : null} 
+
+        {i.indexOf('本月巡检') != -1 ? <Inspection type={'runtTime'} state={data}></Inspection> : null} 
+
+        { i.indexOf('月度能耗') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }         
         { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }
         { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis type={'runtTime'}></ElectricAnalysis> : null }
@@ -166,6 +183,7 @@ export default function Index() {
         { i.indexOf('充放电量趋势') != -1 ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking type={'runtTime'}></EnergyRanking> : null}
+        { i.indexOf('分类能耗') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }
       </div>
     )
   }

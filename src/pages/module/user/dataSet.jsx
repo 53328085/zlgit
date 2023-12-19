@@ -235,11 +235,13 @@ function Index({ projectId, userId, onupdate }, ref) {
   return (
     <CModal
       mold="cust"
-      title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>数据权限</span>  <Button   type="primary" onClick={saveMenu} >保存 </Button></div>}
-      footer={false}
+      title="数据权限" 
       ref={mref}
       width={832}
       closable={false}
+      okText="保存"
+      cancelText="关闭"
+      onOk={saveMenu}
     >
     {/*   {<CheckboxList data={area} mod='area' key='area' title='园区' />}
       {<CheckboxList data={energy} mod='energy' key='energy' title='能耗类型' />}

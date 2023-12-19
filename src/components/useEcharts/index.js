@@ -474,7 +474,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, gr
     left: "center",
     top: "center",
     style: {
-      text: !isNaN(total) ? ["总计", "", total].join("\n") : "",
+      text:  total ? ["总计", "", total].join("\n") : "",
     },
   },
   series: [

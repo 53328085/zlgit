@@ -16,7 +16,7 @@ import WaterValue from '../../../components/defaultHome/water'
 import GasValue from '../../../components/defaultHome/gas'
 import CarbonValue from '../../../components/defaultHome/carbon'
 import EnergyTrend from '../../../components/defaultHome/energyTrend'
-import EnergyCost from '@com/defaultHome/energyCost'
+// import EnergyCost from '@com/defaultHome/energyCost'  
 import EnergyProportion from '@com/defaultHome/energyProportion'
 import RealLoad from '../../../components/defaultHome/load'
 import WarningSpread from '../../../components/defaultHome/spread'
@@ -42,6 +42,17 @@ import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
 
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
+
+
+import TodayElectricity from "@com/defaultHome/todayElectricity" // TodayElectricity 今日用电量
+
+import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerTotal 变压器总负荷
+
+import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
+
+import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
+
+// TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
 
 
 import RGL, { WidthProvider } from 'react-grid-layout'
@@ -70,7 +81,7 @@ import transformer from './itemImgs/transformer.png';
 import humiture from './itemImgs/humiture.png'
 import energyCost from './itemImgs/energyCost.png'
 import energyTrend from './itemImgs/energyTrend.png'
-import costTrend from './itemImgs/costTrend.png'
+
 import energyRank from './itemImgs/energyRank.png'
 import charge from './itemImgs/charge.png'
 import discharge from './itemImgs/discharge.png'
@@ -86,7 +97,9 @@ import gatewayConfig from '@imgs/gateway_config.png'
 import deviceConfig from '@imgs/device_config.png'
 import chooperConfig from '@imgs/chooper_config.png'
 import energyPercent from '@imgs/energyProportion.png'
+import inspection from './itemImgs/inspection.svg' // 本月工单
 
+import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
 
 import { useRequest } from 'ahooks';
 export default function Index() {
@@ -118,40 +131,54 @@ export default function Index() {
     { img: safe, itemName: '安全运行天数', draggable: false },
     { img: weather, itemName: '天气信息', draggable: false },
   ]
+  // 运行监控
   const monitorItems = [
     { img: electric, itemName: '用电量', draggable: true },
     { img: water, itemName: '用水量', draggable: true },
-    { img: gas, itemName: '用燃气量', draggable: true },
+   /*  { img: gas, itemName: '用燃气量', draggable: true },
     { img: coal, itemName: '用煤量', draggable: false },
     { img: load, itemName: '实时负荷率', draggable: true },
     { img: monitor, itemName: '实时监控', draggable: false },
-    { img: carbon, itemName: '碳排放量', draggable: true },
+    { img: carbon, itemName: '碳排放量', draggable: true }, */
     { img: gatewayConfig, itemName: '网关信息', draggable: true },
     { img: deviceConfig, itemName: '电表信息', draggable: true },
     { img: chooperConfig, itemName: '断路器信息', draggable: true },
  
     { img: carbon, itemName: '传感器信息', draggable: true },
-    { img: gatewayConfig, itemName: '触点测温信息', draggable: true },
+  /*   { img: gatewayConfig, itemName: '触点测温信息', draggable: true },
     { img: deviceConfig, itemName: '变压器信息', draggable: true },
-    { img: chooperConfig, itemName: '光纤测温信息', draggable: true },
+    { img: chooperConfig, itemName: '光纤测温信息', draggable: true }, */
   ]
+  // 运维工单
   const orderItems = [
     { img: warning, itemName: '今日告警', draggable: true },
     { img: warningMessage, itemName: '告警信息', draggable: true },
-    { img: todayOrder, itemName: '今日工单', draggable: true },
+    { img: todayOrder, itemName: '本月工单', draggable: true },
     { img: spread, itemName: '告警分布', draggable: false },
+    { img: inspection, itemName: '本月巡检', draggable: false },
   ]
+
+  // 配电房信息
+
   const disItems = [
-    { img: distribution, itemName: '配电房监测', draggable: false },
-    { img: transformer, itemName: '变压器监控', draggable: false },
-    { img: humiture, itemName: '温湿度监控', draggable: false },
+    { img: distribution, itemName: '配电房监测', draggable: false },  // 变压器数量
+  /*   { img: transformer, itemName: '变压器监控', draggable: false },
+    { img: humiture, itemName: '温湿度监控', draggable: false },   */
+    { img: transformerTota, itemName: '变压器总负荷', draggable: false },// transformerTota
+    { img: gatewayConfig, itemName: '触点测温', draggable: true },    
+    { img: chooperConfig, itemName: '光纤测温', draggable: true },
   ]
+
+  // 能耗统计
+
   const energyItems = [
-    { img: energyCost, itemName: '能耗费用', draggable: false },
-    { img: energyTrend, itemName: '能耗趋势', draggable: true },
-    { img: costTrend, itemName: '能耗费用趋势', draggable: false },
+    { img: energyCost, itemName: '今日用电量', draggable: true }, // 今日用电量
+    { img: energyTrend, itemName: '月度能耗', draggable: true },  
+    { img: energyPercent, itemName: '分类能耗', draggable: true },
+ /*   { img: energyCost, itemName: '能耗费用', draggable: false }, */   
     { img: energyRank, itemName: '能耗排名', draggable: true },
-    { img: energyPercent, itemName: '分类能耗占比', draggable: true },
+   ,
+    
   ]
   const storageItems = [
     { img: charge, itemName: '总充电量', draggable: true },
@@ -283,28 +310,37 @@ export default function Index() {
       cursor: "pointer"
     }
     const i = el.i;
+    const end = i.indexOf('_');
+    
     return (
       <div key={i} data-grid={el}>
         <span className="remove" style={removeStyle} onClick={() => onRemoveItem(i)}> X </span>
-        {i.indexOf('公司信息') != -1 ? <CompanyMessage></CompanyMessage> : null}
-        {i.indexOf('今日告警') != -1 ? <TodayWarning></TodayWarning> : null}
-        {i.indexOf('今日工单') != -1 ? <OrderDetail></OrderDetail> : null}
-        {i.indexOf('告警信息') != -1 ? <WarningMessage></WarningMessage> : null}
-        {i.indexOf('用电量') != -1 ? <ElectricValue></ElectricValue> : null}
-        {i.indexOf('用水量') != -1 ? <WaterValue></WaterValue> : null}
-        {i.indexOf('用燃气量') != -1 ? <GasValue></GasValue> : null}
-        {i.indexOf('碳排放量') != -1 ? <CarbonValue></CarbonValue> : null}
-        {i.indexOf('网关信息') != -1 ? <GatewayMessage></GatewayMessage> : null}
+        {i.substring(0, end)=='公司信息'? <CompanyMessage></CompanyMessage> : null}
+        {i.substring(0, end)=='今日告警'? <TodayWarning></TodayWarning> : null}
+        {i.substring(0, end) =='本月工单' ? <OrderDetail></OrderDetail> : null}
+        {i.substring(0, end)=='告警信息' ? <WarningMessage></WarningMessage> : null}
+        {i.substring(0, end) =='用电量' ? <ElectricValue></ElectricValue> : null}
+        {i.substring(0, end)=='用水量' ? <WaterValue></WaterValue> : null}
+        {i.substring(0, end)=='用燃气量' ? <GasValue></GasValue> : null}
+        {i.substring(0, end)=='碳排放量' ? <CarbonValue></CarbonValue> : null}
+        {i.substring(0, end)=='网关信息' ? <GatewayMessage></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
 
         {i.indexOf('传感器信息') != -1 ? <Sensor></Sensor> : null} 
         {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null} 
-        {i.indexOf('触点测温信息') != -1 ? <Cdcwmg></Cdcwmg> : null} 
-        {i.indexOf('光纤测温信息') != -1 ? <Gxcwmg></Gxcwmg> : null} 
+        {i.indexOf('触点测温') != -1 ? <Cdcwmg></Cdcwmg> : null} 
+        {i.indexOf('光纤测温') != -1 ? <Gxcwmg></Gxcwmg> : null} 
 
-        {i.indexOf('能耗趋势') != -1 ? <EnergyTrend></EnergyTrend> : null}
-        {i.indexOf('能耗费用趋势') != -1 ? <EnergyCost></EnergyCost> : null}
+        {i.substring(0, end)=='今日用电量' ? <TodayElectricity></TodayElectricity> : null} 
+
+        {i.indexOf('变压器总负荷') != -1 ? <TransformerTotal></TransformerTotal> : null} 
+
+        {i.indexOf('配电房监测') != -1 ? <TransformerNum></TransformerNum> : null} 
+
+        {i.substring(0, end)=='本月巡检' ? <Inspection></Inspection> : null} 
+
+        {i.indexOf('月度能耗') != -1 ? <EnergyTrend></EnergyTrend> : null}     
         {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
         {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
         {i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis></ElectricAnalysis> : null}
@@ -319,7 +355,7 @@ export default function Index() {
         {i.indexOf('充放电量趋势') != -1 ? <StorageTrend></StorageTrend> : null}
         {i.indexOf('站点soc') != -1 ? <SocData></SocData> : null}
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking></EnergyRanking> : null}
-        {i.indexOf('分类能耗占比') != -1 ? <EnergyProportion></EnergyProportion> : null}
+        {i.indexOf('分类能耗') != -1 ? <EnergyProportion></EnergyProportion> : null}
       </div>
     )
   }
@@ -327,11 +363,13 @@ export default function Index() {
     setlayoutItem(_.reject(layoutItem, { i: i }));
   }
 
+ // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 配电房监测  Inspection 本月巡检
+
   const onAddlayout = (xValue, yValue) => {
     let newlayout;
     let time = new Date()
-    if (classOfName == '能耗趋势' || classOfName == '实时负荷率' || classOfName == '告警分布' || classOfName == '分时电量分析' ||
-      classOfName == '充放电量趋势' || classOfName == '站点soc' || classOfName == '能耗排名' || classOfName == '能耗费用趋势' || classOfName == '分类能耗占比') {
+    if (classOfName == '实时负荷率' || classOfName == '分时电量分析' ||
+      classOfName == '充放电量趋势' || classOfName == '站点soc') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,
@@ -342,9 +380,9 @@ export default function Index() {
       })
       setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    } else if (classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '今日工单' || classOfName == '告警信息' ||
+    } else if (classOfName == '告警分布' ||classOfName == '本月巡检' ||classOfName == '配电房监测' ||classOfName == '变压器总负荷' ||classOfName == '今日用电量' ||classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
       classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
-      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温信息' || classOfName == '光纤测温信息') {
+      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,

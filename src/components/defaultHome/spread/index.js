@@ -6,7 +6,7 @@ import { drawEcharts } from '@com/useEcharts'
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import {  message } from 'antd';
-import UseEmpty from '@com/useEmpty'
+import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -22,9 +22,19 @@ export default function DefaultHome(props) {
 
   const { GetWarningDistribute } = HomeRuntime
 
-  const state = useReactive({
-    pieData: [
-    ]
+  const [options, setOptions] = useState({ 
+    grid:{
+      // 图表 grid
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    type: 3,
+    pieData: {
+      data: []
+    }
   })
 
   useEffect(() => {
@@ -33,19 +43,16 @@ export default function DefaultHome(props) {
       GetWarningDistribute(projectId).then(res => {
         let { success, data } = res
         if (success) {
-          if (data && data.length > 0) {
-            state.pieData = data
-          } else {
-            state.pieData = []
+          if (Array.isArray(data)) { 
+             setOptions({
+              ...options,
+              pieData: {
+                ...options.pieData,
+                data,
+              }
+             })
           }
-
-          drawEcharts(wnref.current, {
-            pieData: { data: state.pieData, radius: '75%', }, legend: {
-              top: 'auto',
-              bottom: 0,
-            }, type: 3
-          })
-
+          
         } else {
           message.error(res.errMsg)
         }
@@ -60,12 +67,12 @@ export default function DefaultHome(props) {
     }
   }, [])
   const sty = {
-    width: '422px', height: '358px', display: 'flex' 
+    width: '458px', height: '200px' 
   }
   return (
-    <Titlelayout title={'报警分布'} {...fs}>
-     { (state?.pieData?.length > 0) ? <div ref={wnref} style={sty}></div>
-      : <div style={sty}><UseEmpty /></div>
+    <Titlelayout title={'告警分布'} {...fs} layout="flex" style={sty}>
+     { (state?.pieData?.length > 0) ? <div ref={wnref}  style={{flex: 1}}></div>
+      : <div  style={{flex: 1}}><UseEmpty /></div>
       }
     </Titlelayout>
   )

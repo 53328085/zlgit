@@ -322,8 +322,7 @@ export class DesElectric {
 export class EnergyOverView {
   static EnergyOverViewRuntime = (projectId, params) =>
     server.post(
-      `/Energy/EnergyOverViewRuntime/QueryElectricOverview?projectId=${projectId}`,
-      params
+      `/Energy/EnergyOverViewRuntime/QueryEnergyInfoOverview?projectId=${projectId}`
     );
 }
 // 能源管理--区域能耗
@@ -2082,4 +2081,14 @@ export class HomeRuntime {
   static GetUseETrends_Water = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Water?projectId=${projectId}`)//用水量
   static GetUseETrends_Gas = (projectId) => server.get(`/Home/HomeRuntime/GetUseETrends_Gas?projectId=${projectId}`)//用气量
   static GetTodayAlarmInfo = (projectId) => server.get(`/Home/HomeRuntime/GetTodayAlarmInfo?projectId=${projectId}`)//今日告警
+
+  static EnergyProportion = (projectId, date) => server.post(`/Energy/EnergyClassifyRuntime/EnergyProportion?projectId=${projectId}&date=${date}`)//分类能耗
+
+
+  static InspectionStatistics = (projectId) => server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=0`)//本月巡检
+
+  static QueryElectricToday = (projectId, date) => server.post(`/Energy/EnergyComprehensiveRuntime/QueryElectricToday?projectId=${projectId}&date=${date}`)//今日用电量
+
+  static RoomInfo = (projectId) => server.get(`/Distribution/DistributionRoomRuntime/RoomInfo?projectId=${projectId}`)//配电房监测（变压器数量）
+
 }

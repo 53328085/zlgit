@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo,useRef } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message  } from 'antd';
+import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message ,Image } from 'antd';
 import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons'
 import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeicon'
 import UserTable from '@com/useTable'
@@ -22,7 +22,7 @@ export default function Warncontent({ style ,areavalue}) {
     const [order,setOrder]=useState(false)
     const [orderdetail,setOrderdetail]=useState()
     const [tableParams,setTableParams] = useState({current:1,pageSize:10})
-    const [rangerTime,setRangerTime] = useState([moment(),moment()])
+    const [rangerTime,setRangerTime] = useState([moment().subtract(1, 'months'),moment()])
     const [status,setStatus] = useState(0)
     const [tableData,setTableData] = useState()
     const [key,setKey] = useState()
@@ -216,9 +216,9 @@ export default function Warncontent({ style ,areavalue}) {
                         <div style={{ minHeight: 100 }}>
                             <div style={{fontWeight:'bold',color:orderdetail?.state>2?'#000':'#ccc'}}>到达现场</div>
                             {orderdetail?.arriveImages?.map((it,index)=>{
-                                return   <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} key={index}></img>
+                                return   <Image src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} key={index} />
                             })}
-                            {!orderdetail?.arriveImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
+                            {!orderdetail?.arriveImages&&(<Image src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} />)}
                         </div>
                        
                     </Timeline.Item>
@@ -226,10 +226,10 @@ export default function Warncontent({ style ,areavalue}) {
                         <div style={{fontWeight:'bold',color:orderdetail?.state>3?'#000':'#ccc'}}>故障处理</div>
                         {
                             orderdetail?.processImages?.map((it,index)=>{
-                                return  <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
+                                return  <Image src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} />
                             })
                         }
-                        {!orderdetail?.processImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
+                        {!orderdetail?.processImages&&(<Image src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} />)}
                         {/* <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
                         <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
                         <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img> */}

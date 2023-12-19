@@ -79,7 +79,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.sensorOnlineRate + '%' }</span>
+                <span className='item_value'>{state.sensorOnlineRate}%</span>
             </div>
         </div>
       </Divorder>

@@ -14,8 +14,7 @@ const fs = {
 }
 
 const Divorder = styled.div`
-  margin-top: 30px;
-  height: 328px;
+  height: 140px;
   .rank_item{
     display: flex;
     align-items: center;
@@ -120,11 +119,11 @@ export default function DefaultHome(props){
                     <div className='item_name' title={state.rankList[2].name}>{ state.rankList[2].name }</div>
                     <div className='item_progress' style={{ width: '231px', backgroundColor:'#f90' }}>{ state.rankList[2].value + ' kWh' }</div>
                 </div> : null }
-                { state.rankList.length > 3 ? <div className='rank_item'>
+              {/*    { state.rankList.length > 3 ? <div className='rank_item'>
                     <div className='item_name' title={state.rankList[3].name}>{ state.rankList[3].name }</div>
                     <div className='item_progress' style={{ width: '216px', backgroundColor:'#3c9' }}>{ state.rankList[3].value + ' kWh' }</div>
                 </div> : null }
-                { state.rankList.length > 4 ? <div className='rank_item'>
+               { state.rankList.length > 4 ? <div className='rank_item'>
                     <div className='item_name' title={state.rankList[4].name}>{ state.rankList[4].name }</div>
                     <div className='item_progress' style={{ width: '197px', backgroundColor:'#399' }}>{ state.rankList[4].value + ' kWh' }</div>
                 </div> : null }
@@ -135,7 +134,7 @@ export default function DefaultHome(props){
                 { state.rankList.length > 6 ? <div className='rank_item'>
                     <div className='item_name' title={state.rankList[6].name}>{ state.rankList[6].name }</div>
                     <div className='item_progress' style={{ width: '144px', backgroundColor:'#27d4ff' }}>{ state.rankList[6].value + ' kWh' }</div>
-                </div> : null }
+                </div> : null } */}
             </Divorder>
          </Titlelayout>      
     

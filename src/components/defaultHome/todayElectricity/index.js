@@ -20,39 +20,45 @@ const fs = {
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
 
-  const { GetMonthEnergyTrends } = HomeRuntime
+  const { QueryElectricToday } = HomeRuntime
 
 
   const [options, setOptions] = useState({
-    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }],  
+    series: [{ type: "line",  seriesLayoutBy: 'row', areaStyle: {color: "#d6e3fd"} }],  
     grid:{
       // 图表 grid
       left: "0px",
       right: "0",
-      top: "30px",
+      top: "35px",
       bottom: "0px",
       containLabel: true,
+    },
+    legend: {
+      left: "left",
+      top: "5px"
+    },
+    yAxis: {
+      show: false,
     },
     dataset: {}
   })
   useEffect(() => {
 
-    
-      GetMonthEnergyTrends(projectId).then(res => {
+    let date = moment().format("yyyy-MM-DD")
+    QueryElectricToday(projectId, date).then(res => {
         let { success, data } = res
         if (success) {
           if (data.constructor == Object) {
-            let {x, y, y1} = data           
+            let {x, y, y1} = data   
+
             let dataset = {
               dimensions: [
                 {name: '日期', type: 'time'},
-                {name: moment().format('yyyy') },
-                {name: moment().subtract(1, 'y').format('yyyy') },
+                {name: "用电量"},
               ],
               source: [
                 x, 
                 y,
-                y1,
               ],
              sourceHeader: false,
             }
@@ -71,7 +77,7 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'月度能耗趋势'} {...fs} style={{width: '456px', height: '200px'}}>
+         <Titlelayout title={'今日用电量'} {...fs} style={{width: '456px', height: '200px'}}>
          <div  style={{width: '424px', height: '140px', display: 'flex'}}>
               <Ichart {...options} />
          </div>

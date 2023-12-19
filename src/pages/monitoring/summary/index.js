@@ -62,8 +62,8 @@ export default function Index() {
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
       if (success) {
-        if(data.constructor == Object) {
-          let {eleConsumes=[],waterConsumes = []} = data
+        if(data) {
+          let {eleConsumes =[],waterConsumes = []} = data
           let edataset = {
             dimensions: [
               {name: 'name', type: 'time'},
@@ -78,6 +78,7 @@ export default function Index() {
             ],
             source: waterConsumes,
           }
+          console.log(wdataset)
           setEptions({...eoptions, dataset: edataset})
           setWptions({...woptions, dataset: wdataset})
         }
