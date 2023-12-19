@@ -73,7 +73,7 @@ export default function DefaultHome(props){
   
   return (
          <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}} layout="flex">
-         <div  style={{ flex:1, display: 'flex'}} >
+         <div  style={{ flex:1, display: 'flex'}}>
               <Ichart {...options} />
          </div>
          </Titlelayout>
