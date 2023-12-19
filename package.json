@@ -24,11 +24,7 @@
     "@topology/flow-diagram": "^0.3.0",
     "@topology/layout": "^0.3.0",
     "@topology/sequence-diagram": "^0.3.0",
-<<<<<<< HEAD
-    "ahooks": "^3.7.8",
-=======
     "ahooks": "3.7.8",
->>>>>>> 673d4b8543db1dc4c6ca152284da2065e6f0fdf4
     "antd": "^4.24.8",
     "axios": "^0.27.2",
     "babel-jest": "^27.4.2",
