@@ -24,7 +24,7 @@ export default function Ichart(props={}) {
     }
   }
   return (
-     <div style={{flex: 1}} ref={ref}>
+     <div style={{flex: 1}} ref={ref} >
 
     </div>
   )
