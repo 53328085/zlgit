@@ -37,6 +37,11 @@ export default function DefaultHome(props){
       left: "left",
       top: "5px"
     },
+    xAxis:{
+      axisLabel:{
+        interval:'auto'
+      }
+    },
     yAxis: {
       show: false,
     },

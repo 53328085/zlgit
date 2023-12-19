@@ -126,7 +126,7 @@ export default function Index() {
     // 图表 grid
     left: "0px",
     right: "0",
-    top: "30px",
+    top: "50px",
     bottom: "0px",
     containLabel: true,
   }
@@ -374,7 +374,8 @@ export default function Index() {
         icon: 'rect',
         itemHeight: 8,
         itemWidth: 8,
-        itemGap: 20
+        itemGap: 20,
+        padding: [15,0,0,0]
       }
     })
     // drawEcharts(pref.current, {
