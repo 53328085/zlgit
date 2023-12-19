@@ -33,8 +33,11 @@ export default function DefaultHome(props){
       bottom: "0px",
       containLabel: true,
     },
-    dataset: {}
+    dataset: {},
+    type: 2
+
   })
+  console.log(options)
   useEffect(() => {
 
     
@@ -56,9 +59,7 @@ export default function DefaultHome(props){
               ],
              sourceHeader: false,
             }
-            console.log(dataset)
             setOptions({...options, dataset})
-           // drawBar(dataSets)
           }
         } else {
           message.error(res.errMsg)

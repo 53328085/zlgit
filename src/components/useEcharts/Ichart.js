@@ -3,10 +3,11 @@ import {drawEcharts} from './index'
 import Cempty from '@com/useEmpty'
 export default function Ichart(props={}) {
   const ref = useRef()
-  let {dataset={}, type, pieData} = props
-  console.log(props)
+  let {dataset={}, type=2, pieData} = props
+
   useEffect(() => {
-    if(dataset?.source?.length > 0) {
+    if(type == 2 && dataset?.source?.length > 0) {
+      console.log(props)
         drawEcharts(ref.current, {...props})
     }
     if(type == 3 && pieData?.data?.length > 0) {
@@ -24,8 +25,8 @@ export default function Ichart(props={}) {
     }
   }
   return (
-     <div style={{flex: 1}} ref={ref} >
-
+     <div style={{flex: 1}}  ref={ref}>
+      
     </div>
   )
 }
