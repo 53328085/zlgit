@@ -27,7 +27,7 @@ import {
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
  
-import { ProjectList, eneryShift, BigScreen, Area } from "@api/api.js";
+import { ProjectList, eneryShift, BigScreen, Area,HomeRuntime } from "@api/api.js";
 import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"

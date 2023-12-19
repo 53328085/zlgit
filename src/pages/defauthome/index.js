@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react'
 import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import { UISummary, Monitoring} from '@api/api.js'
+import {useSelector,useDispatch} from 'react-redux'
+import {selectProjectId,getSystemconfiginfo} from '@redux/systemconfig.js'
+import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 
 import CompanyMessage from '../../components/defaultHome/companyMessage'
@@ -66,7 +66,7 @@ import { message } from 'antd';
 
 export default function Index() {
 
- 
+  const dispatch=useDispatch()
 
   const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
@@ -188,7 +188,19 @@ export default function Index() {
     )
   }
 
+  const GetProjectInfo=async()=>{
+    console.log(1111)
+    try {
   
+     const {data ,success,errMsg} = await HomeRuntime.GetProjectInfo(projectId)
+     if(success){
+      dispatch(getSystemconfiginfo(data))
+     }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  GetProjectInfo()
 
 
 

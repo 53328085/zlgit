@@ -25,13 +25,14 @@ const Divlog = styled.div`
 export default function  Title (){
    // const project = useSelector(selectCurProject)  
   //  const { logoImageBase64} = project 
-   // const {chineseTitle} = useSelector(systemConfigInfo)
+   const {logoImage} = useSelector(systemConfigInfo)
+   console.log(logoImage)
     const currproject = useSelector(currProject) || {}
     let projectLog = currproject.logoImage;
     let projectName = currproject.projectName || currproject.name
  
  
    return (
-        <img  height={64} width={200}   src={logobg||projectLog || logo}></img>
+        <img  height={64} width={200}   src={logoImage||projectLog || logo}></img>
    )
   }
