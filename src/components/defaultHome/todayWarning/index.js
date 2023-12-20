@@ -83,7 +83,7 @@ export default function DefaultHome(props){
     confirmCount: 0,
     unconfirmCount: 30,
     confirmPercent: 0,
-    confirmPercent: 100
+    unconfirmPercent: 0,
   })
 
   const tdrawEcharts = () => {
@@ -91,8 +91,8 @@ export default function DefaultHome(props){
       type: 4,
       liuqiu: {
         series: {
-         data: [(state.alarmCount/100)],
-       
+         data: [(state.alarmCount/50)],
+         waveLength: "89%",
         label: {
           normal: {
             formatter: function() {
@@ -120,11 +120,11 @@ export default function DefaultHome(props){
         let {success, data} = res
           if(success){
             if(data){
-              state.alarmCount = data.alarmCount
-              state.confirmCount = data.confirmCount
-              state.unconfirmCount = data.unconfirmCount
-              state.confirmPercent = (data.confirmCount / (data.confirmCount + data.unconfirmCount)) * 100
-              state.confirmPercent = state.confirmPercent.toFixed(2)            
+              state.alarmCount = data.alarmCount // 总的告警数
+              state.confirmCount = data.confirmCount // 已确认
+              state.unconfirmCount = data.unconfirmCount // 没确认
+              state.confirmPercent = ((data.confirmCount / data.alarmCount)* 100).toFixed(1)
+              state.unconfirmPercent =  ((data.unconfirmCount / data.alarmCount)* 100).toFixed(1)          
               tdrawEcharts()
             }
           }else{

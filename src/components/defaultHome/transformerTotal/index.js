@@ -44,7 +44,7 @@ export default function DefaultHome(props){
          <Titlelayout title={'变压器总负荷'} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
                <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: "0 32px"}}>
-                  <img src={fuhe} width={48} height={44} />
+                  <img src={fuhe} width={64} height={64} />
                   <div style={{display: "flex", flexDirection: "column", }}>
                     <span style={{color: "#333"}}>实时总负荷</span>
                     <p style={{marginTop: "16px"}}><span style={{fontSize: "24px",color: "#515151"}}>{total}</span><span sytle={{paddingLeft: "64px"}}>kw</span></p>
