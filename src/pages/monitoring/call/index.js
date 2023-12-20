@@ -171,58 +171,49 @@ useEffect(() => {
     {
       title: '抄读时间',
       dataIndex: 'LastSampleTime',
-      key: 'sn',
-      id: 'sn',
+
     },
     {
       title: '设备编号',
       dataIndex: 'sn',
-      key: 'sn',
-      id: 'sn',
+
     },
     {
       title: 'A相电压(V)',
       dataIndex: 'Ua',
-      key: 'sn',
-      id: 'sn',
+
     },
     {
       title: 'B相电压(V)',
       dataIndex: 'Ub',
-      key: 'sn',
-      id: 'sn',
+
     },
     {
       title: 'C相电压(V)',
       dataIndex: 'Uc',
-      key: 'sn',
-      id: 'sn',
+  
     },
     {
       title: 'A相电流(A)',
       dataIndex: 'Ia',
-      key: 'sn',
-      id: 'sn',
+ 
     },
     {
       title: 'B相电流(A)',
       dataIndex: 'Ib',
-      key: 'sn',
-      id: 'sn',
+
     },
 
     {
       title: 'C相电流(A)',
       dataIndex: 'Ic',
       // render: (data) => <span> {JSON.parse(data).Ic} </span>,
-      key: 'sn',
-      id: 'sn',
+
     },
     {
       title: '总电度(kWh)',
       dataIndex: 'EP',
-      key: 'sn',
-      id: 'sn',
+
     }
   ]
   const onChangePageLog = (page, pageSize) => {
@@ -320,12 +311,12 @@ useEffect(() => {
             }
           })
           if (isOkList.length > 0) {
-            let count = [1, 2, 3]
+            let count = [1, 2, 3,4,5,6,7,8,9,10,11,12]
             let arr = []
             let resData = []
             let status = true
             count.map((item, index) => {
-             
+              console.log(index)
               setTimeout(() => {
                 if (status) {
                   Remote.CallingResponse(isOkList).then(res => {
@@ -343,7 +334,7 @@ useEffect(() => {
                           isOkList.push({ sn: item.sn, taskNo: item.taskNo })
                         }
                         console.log(arr, resData)
-                        if (arr.length == 3 || resData.length == data.length) {
+                        if (arr.length == 12 || resData.length == data.length) {
                           setreadout(true)
                           setLoading(false)
                           status = false
@@ -352,8 +343,8 @@ useEffect(() => {
                             arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
                           })
                           setdataSourceRead(arrlist)
-                          console.log(dataSourceRead)
-                          Remote.SetResult(setResultInfoList).then((res) => { })
+                          console.log(dataSourceRead,arrlist)
+                          Remote.SetResult(setResultInfoList).then((res) => {console.log(res) })
                         }
                       })
                     } else {

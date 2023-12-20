@@ -155,6 +155,7 @@ const DemoLiquid = ({ warnData }) => {
         },
         offsetY: 18,
         customHtml: () => {
+          console.log(warnData?.todayWarningCnt)
           return <span>{warnData?.todayWarningCnt}次</span>
         }
       }
@@ -371,7 +372,7 @@ export default function Index() {
         label: {
           normal: {
             formatter: function() {
-                return `今日告警\n\n\n${warnData?.todayWarningCnt}次`;
+                return `今日告警\n\n\n${warnData?.todayWarningCnt?warnData?.todayWarningCnt:''}次`;
             },
             textStyle: {
                 fontSize: 16,
