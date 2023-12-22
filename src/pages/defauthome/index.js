@@ -153,7 +153,7 @@ export default function Index() {
         {i.substring(0, end)=='用水量' ? <WaterValue type={'runtTime'}></WaterValue> : null}
         {i.substring(0, end)=='用燃气量' ? <GasValue type={'runtTime'}></GasValue> : null}
         {i.substring(0, end)=='碳排放量' ? <CarbonValue type={'runtTime'}></CarbonValue> : null}
-        {i.substring(0, end)=='网关信息' ? <GatewayMessage type={'runtTime'}></GatewayMessage> : null}
+        {i.substring(0, end)=='网关信息' ? <GatewayMessage type={'runtTime'} state={data}></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage type={'runtTime'} state={data}></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage type={'runtTime'} state={data}></ChooperMessage> : null}        
         {i.indexOf('传感器信息') != -1 ? <Sensor type={'runtTime'} state={data}></Sensor> : null} 

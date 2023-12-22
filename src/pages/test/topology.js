@@ -6,8 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
  
 import { Topology } from "@topology/core/src/core";
-
-import { register as registerFlow } from '@topology/flow-diagram' // 基础图形库
+import { register as registerFlow } from '@topology/flow-diagram'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
 import { useReactive } from "ahooks"; 
  
@@ -132,7 +131,7 @@ export default function Index() {
     clearTimeout(state.timer)
     state.spining = true
     state.getGuid = guid()
-    registerFlow() // 基础图形库
+    registerFlow()
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions) // 创建画布
     canvas.render() // 重绘
