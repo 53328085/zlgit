@@ -250,7 +250,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
          <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
-                 <div className={'state '+ ['b', 'b', 's', 'r'][d.state > 3 ? 1 : d.state] }>{}</div>
+                 <div className={'state '+ ['b', 'b', 's', 'r'][(d.state!=2 || d.state!=3) ? 1 : d.state] }>{}</div>
                  <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
               </div>) ) : <Empty />}
          </div>

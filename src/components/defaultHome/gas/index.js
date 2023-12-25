@@ -15,6 +15,7 @@ const fs = {
 
 
 export default function DefaultHome(props){
+  let {type} =props
   const projectId = useSelector(selectProjectId)
  
   const [options, setOptions] = useState({
@@ -34,7 +35,7 @@ export default function DefaultHome(props){
   const { GetUseETrends_Gas } = HomeRuntime
 
   useEffect(() => {
-   
+     if(type =="runtTime" && projectId) {
       GetUseETrends_Gas(projectId).then(res => {
         let {success, data} = res
           if(success){
@@ -60,8 +61,9 @@ export default function DefaultHome(props){
           }
       }).catch()
      
-    // tdrawEcharts(gref.current, option('用燃气量', ["#ff6803"]))
-  }, [])
+   
+  }
+}, [projectId, type])
   
   return (
     <Titlelayout title={'用燃气量'} {...fs} style={{height: '200px'}}>

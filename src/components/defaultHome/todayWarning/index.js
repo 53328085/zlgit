@@ -75,6 +75,7 @@ const fs = {
 
 
 export default function DefaultHome(props){
+  const {type} = props
   const projectId = useSelector(selectProjectId)
   const ref= useRef()
 
@@ -135,7 +136,7 @@ export default function DefaultHome(props){
       tdrawEcharts()
     }
     
-  },[])
+  },[projectId, type])
   
   return (
          <Titlelayout title={'今日告警'} {...fs} style={{height: "200px"}}>

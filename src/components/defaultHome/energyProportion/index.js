@@ -17,6 +17,7 @@ const fs = {
  
 
 export default function DefaultHome(props){
+  let {type} = props
   const projectId = useSelector(selectProjectId)
   const [options, setOptions] = useState({
     type: 3,
@@ -53,10 +54,12 @@ export default function DefaultHome(props){
   }
 
   useEffect(() => {
-     getData()
-   
+    if(type == "runtTime" && projectId) {
+       getData()
+    }
     
-  }, [projectId])
+    
+  }, [projectId, type])
   
   return (
          <Titlelayout title={'分类能耗'} {...fs} style={{height: "200px"}}>

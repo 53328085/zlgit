@@ -60,7 +60,10 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-   let {state={}} = props
+   let {state={}, type} = props
+   if(type !=="runtTime") {
+    state={}
+  }
 
   return (
     <Titlelayout title={'光纤测温信息'} {...fs} style={{height: "200px"}}>
@@ -81,7 +84,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.gxcwOnlineRate + '%' }</span>
+                <span className='item_value'>{ state.gxcwOnlineRate}%</span>
             </div>
         </div>
       </Divorder>

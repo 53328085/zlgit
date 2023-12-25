@@ -2,9 +2,7 @@ import React, { useState,  useEffect, } from "react";
 
 import { Form, Space, DatePicker, Select} from "antd";
 import moment from 'moment';
-import {Navigate} from 'react-router-dom'
-import Pagecount from '@com/pagecontent'
- 
+import Pagecount from '@com/pagecontent' 
 import CustContext from "@com/content.js";
  
 import {EnergyFlowRuntime} from "@api/api"
@@ -12,8 +10,8 @@ import {useSelector} from 'react-redux'
 import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-import Sankey from "./Sankey";
 
+import Ichart  from '@com/useEcharts/Ichart';
 
 const {queryElectric, queryWater} = EnergyFlowRuntime
  
@@ -28,39 +26,71 @@ const {queryElectric, queryWater} = EnergyFlowRuntime
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
   const areaId = useSelector(selectOneLevelDefaultId)
-
+   
   const [form] = Form.useForm();
   const {Item} = Form
-  const [data, setData] = useState({link: [], name: []}) 
+ 
   
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
    
   const [op, setOp] = useState(0)  
   const picker= ['', 'date', 'month', 'year'][timetype];
- 
- 
+  const [params, setParams] = useState({
+      type: 1,
+      date: moment().format('yyyy-MM-DD'),
+      projectId
+  })
+ const [options, setOptions] = useState({
+  tooltip: {
+    trigger: 'item',
+    triggerOn: 'mousemove'
+  },
+  series: [
+    {
+      type: 'sankey',
+      layout: "none",
+      emphasis: {
+      },
+      data: [],
+      links: [],
+      right: "5%",
+      lineStyle: {
+        color: 'gradient',
+        curveness: 0.5
+      },
+
+    }
+  ],
+  type: 5,
+})
  
   const getData = async () => {
     
      try {
-      const {type, date, area} = form.getFieldsValue()
-      console.log(area)
-      let hander = [queryElectric, queryWater][op]
-      let time = getTime(date, type)
-      let params = {
-        type,
-        date: time,
-        projectId
-      }
-      let {success, data} = await hander(params, [area])
+      let hander = [queryElectric, queryWater][op]    
+      let {success, data} = await hander(params, [areaId])
       if(success && data.constructor==Object) {
-         setData({...data})
- 
-      }else {
-        setData({link: [], name: []})
-      }
-     } catch (error) {
        
+         const {link=[] } = data
+       
+         let source =  link.map(i => i.source)
+         let target = link.map(i => i.target)
+         let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
+         let links = link.map(l =>({...l, value: parseFloat(l.value)}))
+          setOptions({
+            ...options,
+            series: [
+              {
+                ...options.series[0],
+                data: nodes,
+                links,
+              }
+            ]
+          })
+ 
+      } 
+     } catch (error) {
+        console.log(error)
      }
      
      
@@ -68,19 +98,26 @@ export default function Index() {
  
   useEffect(() => {
     getData()
-  }, [op])
+  }, [params, areaId, op])
  
  
- 
+ const datechange = (e) => {
+   console.log(e);
+ }
  
  
  
   const timechange = (e) => {
      setTimetype(e);
-     getData()
+     let date = getTime(moment(), e)
+     setParams({
+      ...params,
+      type: e,
+      date,
+     })
   }
   const opchange = (e) => {  
-     console.dir(e)
+    
      setOp(e)     
   }
   const CustView = () => {
@@ -124,7 +161,7 @@ export default function Index() {
         </Item>
  
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{width: '160px'}} />
         </Item>
       </Space>
       </div>
@@ -134,7 +171,6 @@ export default function Index() {
   const propsData = {
     form,
     custview: <CustView />,
-   
   }
  
 
@@ -142,8 +178,8 @@ export default function Index() {
       <CustContext.Provider value={propsData}>
       <Pagecount showserach={true} pd="0px">   
       <Titlelayout title="能源流向" layout="flex">
-          <div style={{display: 'flex', flex:1, alignItems: 'center',justifyContent: 'center'}}>
-          <Sankey data={data} key={areaId}  />  
+          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}}>
+               <Ichart  custoption={options}   />
           </div>
        </Titlelayout>
       </Pagecount>

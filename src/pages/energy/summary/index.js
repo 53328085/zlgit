@@ -187,21 +187,21 @@ const Imgbg = memo(({projectId, areaVos}) => {
     <Spin spinning={spinning} tip="图片下载中……">
     <div style={{position: "relative"}}>
         <img src={energyImage || imgurl.engeryBg}   />
-       {areaVos?.length >  0 && <><Tip left="84px" top="100px">{areaVos[1].todayElectricConsume}</Tip>
-        <DTip left="84px" top="162px">{areaVos[1].curMonthElectricConsume}</DTip>
-        <Tip left="312px" top="100px">{areaVos[5].todayElectricConsume}</Tip>
-        <DTip left="312px" top="162px">{areaVos[5].curMonthElectricConsume}</DTip>
-        <Tip left="538px" top="162px">{areaVos[4].todayElectricConsume}</Tip>
-        <DTip left="538px" top="100px">{areaVos[4].curMonthElectricConsume}</DTip>
-        <Tip left="1018px" top="162px">{areaVos[3].todayElectricConsume}</Tip>
-        <DTip left="1018px" top="100px">{areaVos[3].curMonthElectricConsume}</DTip>
+       {areaVos?.length >  0 && <><Tip left="84px" top="100px">{areaVos[1]?.todayElectricConsume}</Tip>
+        <DTip left="84px" top="162px">{areaVos[1]?.curMonthElectricConsume}</DTip>
+        <Tip left="312px" top="100px">{areaVos[5]?.todayElectricConsume}</Tip>
+        <DTip left="312px" top="162px">{areaVos[5]?.curMonthElectricConsume}</DTip>
+        <Tip left="538px" top="162px">{areaVos[4]?.todayElectricConsume}</Tip>
+        <DTip left="538px" top="100px">{areaVos[4]?.curMonthElectricConsume}</DTip>
+        <Tip left="1018px" top="162px">{areaVos[3]?.todayElectricConsume}</Tip>
+        <DTip left="1018px" top="100px">{areaVos[3]?.curMonthElectricConsume}</DTip>
       
 
 
-        <Tip left="356px" top="438px">{areaVos[0].todayElectricConsume}</Tip>
-        <DTip left="356px" top="500px">{areaVos[0].curMonthElectricConsume}</DTip>
-        <Tip left="1184px" top="438px">{areaVos[6].todayElectricConsume}</Tip>
-        <DTip left="1184px" top="500px">{areaVos[6].curMonthElectricConsume}</DTip>
+        <Tip left="356px" top="438px">{areaVos[0]?.todayElectricConsume}</Tip>
+        <DTip left="356px" top="500px">{areaVos[0]?.curMonthElectricConsume}</DTip>
+        <Tip left="1184px" top="438px">{areaVos[6]?.todayElectricConsume}</Tip>
+        <DTip left="1184px" top="500px">{areaVos[6]?.curMonthElectricConsume}</DTip>
         </>
         }
     </div>

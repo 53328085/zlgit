@@ -520,6 +520,8 @@ export const drawEcharts = (
   if(type == 0) return message.warning("图表类型错误")
  // const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
+  // 对不同图表类型设置不同的格式
+
   let custSeries
   if(series.constructor == Object) {
     if (series.type == 'line') {
@@ -533,7 +535,7 @@ export const drawEcharts = (
             barGap: 0,
             ...series,
         }
-    }else {
+    }else  {
         custSeries = {...series}
     }
     
@@ -643,7 +645,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-     
+  console.log(rest)  
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

@@ -18,6 +18,7 @@ const fs = {
 
 
 export default function DefaultHome(props){
+  const {type} = props
   const projectId = useSelector(selectProjectId)
 
   const { QueryElectricToday } = HomeRuntime
@@ -48,7 +49,7 @@ export default function DefaultHome(props){
     dataset: {}
   })
   useEffect(() => {
-
+    if(projectId && type == "runtTime") {
     let date = moment().format("yyyy-MM-DD")
     QueryElectricToday(projectId, date).then(res => {
         let { success, data } = res
@@ -78,7 +79,7 @@ export default function DefaultHome(props){
         console.log(e);
       })
    
-    
+    }
   }, [])
   
   return (

@@ -57,8 +57,10 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  let {state={}} = props
-
+  let {state={}, type} = props
+  if(type !== "runtTime") {
+    state = {}
+  }
 
   return (
     <Titlelayout title={'断路器信息'} {...fs} style={{height: "200px"}}>
