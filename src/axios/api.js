@@ -32,6 +32,12 @@ export class Login {
     server.get(`/User/GetUseMenus?projectId=${projectId}&userId=${userId}`);
   static GetCode = () =>
     server.get(`/General/User/CreateCode`);
+
+    static CheckAuthorization = () => server.get(`/General/SystemConfig/CheckAuthorization`);
+
+    static Registe = (params) => server.post(`/General/SystemConfig/Register`, params);
+   
+    
 }
  
 // 项目列表

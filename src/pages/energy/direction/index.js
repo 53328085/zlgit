@@ -7,7 +7,7 @@ import CustContext from "@com/content.js";
  
 import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
-import {selectProjectId,  selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 
@@ -25,7 +25,8 @@ const {queryElectric, queryWater} = EnergyFlowRuntime
  
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  const areaId = useSelector(selectOneLevelDefaultId)
+  const levelone = useSelector(selectOneLevel)
+  const areaId = levelone.map(a => a.id);
    
   const [form] = Form.useForm();
   const {Item} = Form
@@ -68,7 +69,7 @@ export default function Index() {
     
      try {
       let hander = [queryElectric, queryWater][op]    
-      let {success, data} = await hander(params, [areaId])
+      let {success, data} = await hander(params, areaId)
       if(success && data.constructor==Object) {
        
          const {link=[] } = data
@@ -98,7 +99,7 @@ export default function Index() {
  
   useEffect(() => {
     getData()
-  }, [params, areaId, op])
+  }, [params, op])
  
  
  const datechange = (e) => {
@@ -125,9 +126,9 @@ export default function Index() {
       display: 'flex',
        justifyContent: "space-between",
        flex: 1,
-       'marginLeft': '32px',
-      'paddingLeft': '32px',
-      'borderLeft': '1px dotted #d7d7d7',
+   //    'marginLeft': '32px',
+   //   'paddingLeft': '32px',
+   //   'borderLeft': '1px dotted #d7d7d7',
     }
     return (
       <div style={viewstyle}>
@@ -171,6 +172,7 @@ export default function Index() {
   const propsData = {
     form,
     custview: <CustView />,
+    isAreaId: false
   }
  
 

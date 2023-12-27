@@ -605,7 +605,6 @@ const CoalStandard =({data={}}) => {
      getData()
   }
   const opchange = (e) => {   
-     console.log(typeof e.target.value) 
      setOp(e.target.value)
     // form.resetFields()
      getData()

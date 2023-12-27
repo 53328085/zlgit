@@ -42,22 +42,35 @@ export default function Index() {
   const getRoomData = () => {
     return queryPageRoom( projectId, areaId, 0, 0).then(res => {
       if(res.success){
-        setRoomList(res.data)
-        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
-        setRoomId(res.data.length > 0  ? res.data[0].id : null)
-        if(res.data.length == 0){
+        if(Array.isArray(res.data)) {
+          setRoomList(res.data)
+          setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
+          setRoomId(res.data.length > 0  ? res.data[0].id : null)
+          if(res.data.length == 0){
+            messageApi.open({
+              type: 'warning',
+              content:"当前园区没有配电房"
+            })
+            setTreeData([])
+          }
+        } else {
+          setRoomList([])
+          setDefaultRoom(null)
+          setRoomId(null)
           messageApi.open({
             type: 'warning',
             content:"当前园区没有配电房"
           })
-          setTreeData([])
         }
+       
       }else{
         messageApi.open({
           type:'error',
           content:res.errMsg
         })
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
   const { run : queryRoom } = useRequest(getRoomData,{
@@ -92,6 +105,8 @@ export default function Index() {
           content: res.errMsg
         })
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
   const {run: lineQuery } = useRequest(getLine,{
@@ -100,6 +115,8 @@ export default function Index() {
   useEffect(()=> {
     if(roomId){
       lineQuery()
+    }else {
+      setTreeData([])
     }
   },[roomId])
   const [clickTag, setClickTag] = useState('')
@@ -390,7 +407,7 @@ export default function Index() {
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
             <span>配电房线路图</span>
-            { isPublish ? null : <Button type="primary" onClick={()=>showAdd()} style={{marginRight:0}}>新增主线</Button> }
+            { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={()=>showAdd()} style={{marginRight:0}}>新增主线</Button> }
         </div>
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
