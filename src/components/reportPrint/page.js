@@ -17,17 +17,22 @@ const Pagecont =  styled.div`
                 padding: 0 16px;
               }
               .main {
-                padding: 0 16px 16px 16px;
-                display: grid;
-                grid-template-rows: ${({count, rows}) => count ? `repeat(${count}, auto) 1fr` : rows };
-                row-gap: 32px;
+                padding: 16px;
               }
 
 
 `
 
-export default function page() {
+export default function Page(props) {
+  
   return (
-    <div>page</div>
+    <Pagecont>
+       <div className='header'>
+          
+       </div>
+       <div className='main'>
+          {props.children}
+       </div>
+    </Pagecont>
   )
 }

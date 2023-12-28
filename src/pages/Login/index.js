@@ -195,7 +195,7 @@ function UserLog() {
    codekey: '',
    setLoading: null
  })
- const regOk = async () => {  //注册成功后直接用当前账户登录 code 等于 0 成功
+ const regOk = async () => {  //注册成功后需要授权
     try {
       let values = form.getFieldsValue(true)
       let {success, data}  = await LoginApi.Registe(values)
@@ -205,15 +205,16 @@ function UserLog() {
           message.info(info)
           regRef.current.onCancel()
         }else if(code == 0 ) {
-          let {value, type, codekey, setLoading} = params.current
-          message.success({
+            message.success(info || '注册成功')
+            regRef.current.onCancel()
+         /*  message.success({
             content: info,
             duration: 2,
             onClose: onSubmit(value, type, codekey, setLoading)
-          })
+          }) */
           
         }
-      } 
+      }
     } catch (error) {
        
     }
@@ -223,25 +224,26 @@ function UserLog() {
 const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
     let {success, data} = await LoginApi.CheckAuthorization()
     if(success) {
-        let {code, message} = data
-        if(code!=0) {
+        let {code, message:msg} = data  // 0 成功, 1 注册, 2 等待处理提示
+        if(code==1) {
           params.current = {
             value,
             type,
             codekey,
             setLoading
           }
-          setMsg(message);          
+          setMsg(msg);          
           ref.current.onOpen()
-           
-        }else {
+        }else if(code==2) {
+          message.success(msg) //处理中
+        }else if(code == 0) {  // 成功
           onSubmit(value, type, codekey, setLoading)
         }
     }
 }
  
  let onSubmit = async (value, type=0, codekey, setLoading) => {  
-  
+   
    try {   
     setLoading && setLoading(true) 
     const {name, pwd, code, mobile} = value;  

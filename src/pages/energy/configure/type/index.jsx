@@ -148,6 +148,7 @@ export default function Index () {
   const onOk = async() => {
     try{
       const values = await form.validateFields();
+      console.log(values)
       let params = {
         name: values.name,
         parentId,
@@ -164,7 +165,12 @@ export default function Index () {
           aref.current.onCancel()
         })
       }else if(modalTag == 'edit'){
-        updateEnergyStructure(projectId, updateId, values.name).then(res => {
+        let  params = {
+          projectId,
+          id: updateId,
+          name: values.name
+        }
+        updateEnergyStructure(params).then(res => {
           if(res.success){
             messageContent('success','修改能源节点成功!')
           }else{
@@ -172,6 +178,8 @@ export default function Index () {
           }
           queryRun()
           aref.current.onCancel() 
+        }).catch(e => {
+          console.log(e)
         })
       }
       
@@ -273,7 +281,7 @@ export default function Index () {
     <div>
       {contextHolder}
       {transTag == 'open' ? Mask() : null}
-      <div className={style.header}>
+     <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"

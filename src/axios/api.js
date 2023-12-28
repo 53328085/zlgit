@@ -252,10 +252,9 @@ export class Area {
 
 // 能源管理--重点设备 -- 运行态
 export class QueryElectric {
-  static query = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+  static query = (params) =>
     server.post(
-      `Energy/EnergyImportantRuntime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`
-      
+      `Energy/EnergyImportantRuntime/QueryElectric`, params
     );
 }
 
@@ -1512,9 +1511,9 @@ export class energyShare {
   static QuerySpaceTrees = (data) => server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data })//查询树
   static QueryElectric = (data) => server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data)//分时能耗
 
-  static queryArea = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea?areaId=${areaId}`, data)//区域查询
+  static queryArea = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data)//区域查询
 
-  static queryLine = (data, areaId) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine?areaId=${areaId}`, data)//线路查询
+  static queryLine = (data) => server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data)//线路查询
 }
 //数据报表
 export class energyReport {
@@ -1612,9 +1611,9 @@ export class energyStructure {
       `Energy/EnergyStructureDesigner/AddEnergyStructure?projectId=${projectId}`,
       data
     );
-  static updateEnergyStructure = (projectId, id, name) =>
-    server.get(
-      `Energy/EnergyStructureDesigner/UpdateEnergyStructure?projectId=${projectId}&id=${id}&name=${name}`
+  static updateEnergyStructure = (params) =>
+    server.post(
+      `Energy/EnergyStructureDesigner/UpdateEnergyStructure`, params
     );
   static deleteEnergyStructure = (projectId, id) =>
     server.delete(
@@ -1785,6 +1784,7 @@ export class DistributionRoomRuntime{
   static GetEnvironment=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/EnvironmentInfo`,{params:{projectId,roomId}})
   }
+
   static EnvironmentTrend=(data)=>server.post(`/Distribution/DistributionRoomRuntime/EnvironmentTrend`,data)
   static WarningPage=(data)=>server.post(`/Distribution/DistributionRoomRuntime/WarningPage`,data)
   static RoomOne =(projectId,roomId)=>server.get(`/Distribution/DistributionRoomRuntime/RoomOne`,{params:{projectId,roomId}})
@@ -1795,7 +1795,9 @@ export class DistributionRoomRuntime{
   static QuerySinglePartitionsInfo =({projectId, sn})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWInfoDetail?projectId=${projectId}&sn=${sn}`) // 详细信息
   static QueryFibreTempilWarningInfo =({projectId, roomId})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningInfo?projectId=${projectId}&roomId=${roomId}`)
   static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
-  static QueryFibreTempilWarningRecords=({projectId, roomId, start, end,alarmType})=>server.get(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords?projectId=${projectId}&roomId=${roomId}&start=${start}&end=${end}&alarmType=${alarmType}`)
+  static QueryFibreTempilWarningRecords=(params)=>server.post(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords`,params)
+
+  static Report =({projectId, type, date})=>server.get(`/Distribution/DistributionRoomRuntime/Report?projectId=${projectId}&type=${type}&date=${date}`)  // 报告
 }
 //能源流向
 export class EnergyFlowRuntime {

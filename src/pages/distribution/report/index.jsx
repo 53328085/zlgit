@@ -6,7 +6,7 @@ import { Select, Divider, DatePicker, message } from 'antd'
 import UseTable from '@com/useTable'
 import logo from '@imgs/chintlog.png'
 import PageComp from './pagecomp.jsx'
-import { safeElectric } from '@api/api'
+import { DistributionRoomRuntime } from '@api/api'
 import moment from 'moment'
 import { PieCharts, LineCharts } from './charts'
 import anaylse from './imgs/anaylse.svg'
@@ -219,9 +219,20 @@ export default function Index() {
     setDatevalue(v)
 
   }
+  const getReport = async() => {
+    let params = {
+      projectId,
+      type: 1,
+      date: moment().startOf('month').format("yyyy-MM-DD")
+    }
+     await await DistributionRoomRuntime.Report(params)
+  }
+  useEffect(() => {
+    getReport()
+  }, [projectId])
   //月度报告
   const getMonthReport = async (date) => {
-    const res = await safeElectric.MonthReport({
+    const res = await DistributionRoomRuntime.Report({
       projectId,
       date: date ? date.format('YYYY-MM-01') : moment().format('YYYY-MM-01'),
     })

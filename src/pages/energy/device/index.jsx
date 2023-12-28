@@ -93,6 +93,15 @@ export default function Index() {
  
  
   const picker= ['', 'date', 'month', 'year'][timetype];
+ console.log(areaId)
+ const [params, setParams] = useState({
+ projectId,
+ pageNum: 1,
+ pageSize: 14,
+ areaId,
+ type: 1,
+ date: getTime(moment(), 1)
+  }) 
 
  // const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
   const [total, setTotal] = useState(0)
@@ -142,8 +151,8 @@ export default function Index() {
 
  
 
-  const getData =  (current=1, pageSize=14) => {
-    let {area, date, type } = form.getFieldsValue() 
+  const getData =  () => {
+ /*    let {area, date, type } = form.getFieldsValue() 
     const params = {
       type,
       projectId,
@@ -151,7 +160,7 @@ export default function Index() {
       areaId:area,
       pageNum: current,
       pageSize,
-   }
+   } */
  return QueryElectric.query(params).then(res => {
      let {success, data, total} = res
      if (success && Array.isArray(data) && data.length >0) {
@@ -185,7 +194,7 @@ export default function Index() {
 
  useEffect(() => {
   getData()
- }, [areaId]) 
+ }, [params, areaId]) 
  const tbref = useRef();
  const onExport = useCallback(() => {
     return getData(1, total)
@@ -214,14 +223,21 @@ export default function Index() {
       </CustTitle>
     );
  
- 
+ const dateChange = (e) => {
+   let date = getTime(e, timetype)
+    setParams({...params, date})
+ }
 
 
   const timechange = (e) => {
      setTimetype(e);
-     getData()
+     let date = getTime(moment(), e)
+     
+     setParams({...params, type: e, date})
   }
-
+ const pagechange =(page, pageSize) => {
+     setParams({...params, pageNum: page, pageSize})
+ }
   const CustView = () => {
    const viewstyle = {
       display: 'flex',
@@ -246,7 +262,7 @@ export default function Index() {
         </Item>
 
         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
+          <DatePicker placeholder="请选择日期" picker={picker} onChange={dateChange} style={{width: '160px'}} />
         </Item>       
       </Space>
       </div>
@@ -265,7 +281,9 @@ export default function Index() {
         form,
         custview: <CustView />,
        // tabs,
-        handler: getData,
+     handler:  (e) => {
+       setParams({...params,areaId: e})
+     },
         value,
         setvalue,
       }}
@@ -281,7 +299,7 @@ export default function Index() {
                  mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />
              }  
            
-             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}}></Pagination>
+             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}} onChange={pagechange}></Pagination>
            </Laybox>
         </Titlelayout>
     

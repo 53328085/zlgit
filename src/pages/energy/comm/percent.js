@@ -10,6 +10,7 @@ import down from "@imgs/down.png";
 
 export default function Index(props) {
   const { energySubGive, energyTotalGive } = props;
+  
   return (
     // <div className={style.rightBottom}>
      <div>
@@ -24,9 +25,13 @@ export default function Index(props) {
             {energyTotalGive.periodValue}
           </span>
         </div>
-        <img className={style.upOrDown} src={up}></img>
-        <span className={style.percentUp}>+7.88</span>
-        <span>%</span>
+        {
+        parseFloat(energyTotalGive.yoy) > 0 ?  
+        <img className={style.upOrDown} src={up}></img>: 
+        <img className={style.upOrDown} src={down}></img>
+        }  
+       <span className={parseFloat(energyTotalGive.yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[0].yoy}</span>
+        
       </div>
 
       <div className={style.items}>
@@ -39,9 +44,13 @@ export default function Index(props) {
             {energySubGive[0].periodValue}
           </span>
         </div>
-        <img className={style.upOrDown} src={up}></img>
-        <span className={style.percentUp}>+3.25</span>
-        <span>%</span>
+        {
+        parseFloat(energySubGive[0].yoy) > 0 ?  
+        <img className={style.upOrDown} src={up}></img>: 
+        <img className={style.upOrDown} src={down}></img>
+        }  
+        <span className={parseFloat(energySubGive[0].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[0].yoy}</span>
+       
       </div>
 
       <div className={style.items}>
@@ -54,9 +63,13 @@ export default function Index(props) {
             {energySubGive[1].periodValue}
           </span>
         </div>
-        <img className={style.upOrDown} src={up}></img>
-        <span className={style.percentUp}>+18.75</span>
-        <span>%</span>
+        {
+        parseFloat(energySubGive[1].yoy) > 0 ?  
+        <img className={style.upOrDown} src={up}></img>: 
+        <img className={style.upOrDown} src={down}></img>
+        }  
+        <span className={parseFloat(energySubGive[1].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[1].yoy}</span>
+    
       </div>
 
       <div className={style.items}>
@@ -69,9 +82,13 @@ export default function Index(props) {
             {energySubGive[2].periodValue}
           </span>
         </div>
+        {
+        parseFloat(energySubGive[2].yoy) > 0 ?  
+        <img className={style.upOrDown} src={up}></img>: 
         <img className={style.upOrDown} src={down}></img>
-        <span className={style.percentUp}>-8.13</span>
-        <span>%</span>
+        }  
+        <span className={parseFloat(energySubGive[2].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[2].yoy}</span>
+      
       </div>
 
       <div className={style.items}>
@@ -84,9 +101,14 @@ export default function Index(props) {
             {energySubGive[3].periodValue}
           </span>
         </div>
+        {
+        parseFloat(energySubGive[3].yoy) > 0 ?  
+        <img className={style.upOrDown} src={up}></img>: 
         <img className={style.upOrDown} src={down}></img>
-        <span className={style.percentUp}>-1.59</span>
-        <span>%</span>
+        }  
+        
+        <span className={parseFloat(energySubGive[3].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[3].yoy}</span>
+       
       </div>
     </div>
   );
