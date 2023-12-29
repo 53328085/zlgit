@@ -1797,7 +1797,7 @@ export class DistributionRoomRuntime{
   static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
   static QueryFibreTempilWarningRecords=(params)=>server.post(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords`,params)
 
-  static Report =({projectId, type, date})=>server.get(`/Distribution/DistributionRoomRuntime/Report?projectId=${projectId}&type=${type}&date=${date}`)  // 报告
+  static Report =(params)=>server.post(`/Distribution/DistributionRoomRuntime/Report`, params)  // 报告
 }
 //能源流向
 export class EnergyFlowRuntime {

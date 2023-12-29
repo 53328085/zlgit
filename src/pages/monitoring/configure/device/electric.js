@@ -348,7 +348,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddElectric(params)
       if (res.success) {
         message.success('新增成功!')
-        addform.resetFields()
+     //   addform.resetFields()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)

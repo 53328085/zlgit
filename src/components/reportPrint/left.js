@@ -1,16 +1,17 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, message } from 'antd'
  import moment from 'moment'
  import {useReactToPrint} from 'react-to-print'
 
- 
+ import printContext from './context'
  import {exportPDF} from './topdf'
 import Titlelayout from '@com/titlelayout'
 import {useSelector} from 'react-redux'
-import { systemConfigInfo} from '@redux/systemconfig.js'
- import {CustButton} from '@com/useButton'
- import {StorageRunReport} from '@api/api'
+import { selectProjectId} from '@redux/systemconfig.js'
+import {CustButton} from '@com/useButton'
+ 
+ 
  
 const Left = styled.div`
   && {
@@ -53,22 +54,45 @@ const { RangePicker } = DatePicker;
  `
 
  
- export default  function Leftlayout({projectId}) {
+ export default  function Leftlayout(props) {
+  let {printRef} = props
+   const {getReport} = useContext(printContext)   
+   const projectId = useSelector(selectProjectId)
    const [form] = Form.useForm()
-   const [type, setType] = useState(1)  
-   const datetype = ['', 'month', 'year'][type]
+   const [type, setType] = useState(2)  
+   const datetype = ['','', 'month', 'year'][type]
    const [loading, setLoading] = useState(false)
-
-
-
-const printRef = useRef()
+  
+const create = async () => {
+    try {
+        let {type, date} = form.getFieldsValue(true);
+        let params = {
+            type,
+            date:  type== 2? date.startOf('month').format("yyyy-MM-DD") : date.startOf("year").format("yyyy-MM-DD"),
+            projectId
+        }
+     let suc =  await  getReport(params)
+     setLoading(suc)
+    } catch (error) {
+        
+    }
+   
+    
+}
+ 
 const reactToPrintContent = useCallback(() => {
-  return printRef.current;
-}, [printRef.current])
+  return printRef;
+}, [loading])
 
 // 导出
 const downloadReport = (id) => {
-  exportPDF('运行报告',  id)
+   try {
+    if(!loading) return message.warning('请先生成报告', 0.3)  
+     exportPDF('配电管理运行报告',  id)
+   } catch (error) {
+    
+   }
+ 
 }
 
 const handlePrint = useReactToPrint({
@@ -84,7 +108,7 @@ const onPrint = () => {
   }
 
 }
-
+ 
 // 打印 end
   const changedate = (e) => {  
     setType(e.target.value)
@@ -93,14 +117,14 @@ const onPrint = () => {
          <Left>
            <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" > 
                  
-            <Form className="content" form={form} initialValues={{type: 1, date: moment()}}>
+            <Form className="content" form={form} initialValues={{type: 2, date: moment()}}>
               <Item name="type" noStyle>
               <RadioGroup  options={[{
                 label: '月度报告',
-                value: 1
+                value: 2
               }, {
                 label: '年度报告',
-                value: 2
+                value: 3
               }]}   value={type}
               optionType="button"
               buttonStyle="solid"
@@ -114,7 +138,7 @@ const onPrint = () => {
                  
              </Form>
              <div className='btns'>
-                    <CustButton wh="192px" src="createrpt" onClick={getReport}>生成报告</CustButton>
+                    <CustButton wh="192px" src="createrpt" onClick={create}>生成报告</CustButton>
                     <CustButton wh="192px" src="print" onClick={onPrint}>打印报告</CustButton>
                     <CustButton wh="192px" src="export" onClick={() => downloadReport('printRef')}>导出报告</CustButton>
              </div>              
