@@ -30,7 +30,10 @@ const Pagecont = styled.div`
 
 export default function Index(props) {
   const {params} = useContext(printContext)
-  let date = params.type == 2 ? moment(params.date, "yyyy-MM-DD").format("yyyy-MM") : params.type == 3 ? moment(params.date, "yyyy-MM-DD").format("yyyy") : ''
+  let date 
+  if (params) {
+     date = params.type == 2 ? moment(params.date, "yyyy-MM-DD").format("yyyy-MM") : params.type == 3 ? moment(params.date, "yyyy-MM-DD").format("yyyy") : ''
+  }
   let title = ''
   if(date) {
     title =   params.type == 2 ? `本期报告分析周期为：${date}月` : params.type == 3? `本期报告分析周期为：${date}年` : ''

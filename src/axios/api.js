@@ -260,9 +260,9 @@ export class QueryElectric {
 
 // 能源管理--运行报告 -- 运行态
 export class QueryRunReport {
-  static RunReport = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+  static RunReport = (params) =>
     server.post(
-      `Energy/EnergyRunReport/QueryRunReport?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`
+      `/Energy/EnergyRunReport/Report`, params
       
     );
   

@@ -67,7 +67,7 @@ export default function pagecomp({data,index, params}) {
   let transformerD = useRef([])
   let len = 0  // 变压器是否超过3个
   let {type} = params?? {}
-  console.log(type)
+ 
   if(Array.isArray(transformers)) {
     let arr = transformers.length
     if(arr>3) {
@@ -80,7 +80,7 @@ export default function pagecomp({data,index, params}) {
       len = 0
     }
   }
-  console.log(transformerD)
+  let text = type==2 ? '日' : '月'
    let option =useRef({      
       series: [{ type: "line",  seriesLayoutBy: 'row', }],  
       grid:{
@@ -101,11 +101,8 @@ export default function pagecomp({data,index, params}) {
           interval:'auto'
         }
       },
-      yAxis: {
-        show: false,
-      },
       title: {
-        text: '日用电量',
+        text:  `${text}电量`,
         textStyle: {
           fontSize: 14,
           color: '#51515',
@@ -134,7 +131,7 @@ export default function pagecomp({data,index, params}) {
      marginBottom: "10px",
      display: "inline-block"
    }
-  let text = type==2 ? '日' : '月'
+  
   return (
       <>
       <Page>        

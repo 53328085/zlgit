@@ -138,9 +138,9 @@ const onPrint = () => {
                  
              </Form>
              <div className='btns'>
-                    <CustButton wh="192px" src="createrpt" onClick={create}>生成报告</CustButton>
-                    <CustButton wh="192px" src="print" onClick={onPrint}>打印报告</CustButton>
-                    <CustButton wh="192px" src="export" onClick={() => downloadReport('printRef')}>导出报告</CustButton>
+                    <CustButton wh="192px" width="20px" src="search" onClick={create}>生成报告</CustButton>
+                    <CustButton wh="192px" width="20px" src="print" onClick={onPrint}>打印报告</CustButton>
+                    <CustButton wh="192px" width="20px" src="export" onClick={() => downloadReport('printRef')}>导出报告</CustButton>
              </div>              
           </Titlelayout>      
           </Left>

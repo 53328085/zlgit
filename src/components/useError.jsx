@@ -39,8 +39,9 @@ export default class ErrorBoundary extends Component {
   }
 }
 
-export function Fallack({error='抱歉！页面出错'}={}) {
+export function Fallack(props) {
    const {resetBoundary} = useErrorBoundary()
+    let error=props.error ?? '抱歉！页面出错'
    return <Empty image={imgurl.error}
    imageStyle={{width: '200px', height: '180px'}}
    style={style}
