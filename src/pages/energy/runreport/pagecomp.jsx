@@ -52,13 +52,13 @@ const Main =styled.div`
  
  
 export default function pagecomp({data, params}) {
-  let {eUse={}, timeEnergy={}, constEnergy={}} = data.constructor===Object ? data : {} ;
+  let {eUse={}, timeEnergy={}, constEnergy={}, range=[]} = data.constructor===Object ? data : {} ;
   let time = timeEnergy?.constructor == Object ? timeEnergy : {}
   let {analysis={}, detail: td, proportion=[]} = time 
   let constE = constEnergy?.constructor == Object ? constEnergy : {}
   let {analysis: ean={}, detail: constD} = constE
   let {type} = params?? {}
- 
+  let ran = Array.isArray(range) ? range : [];
   let text = type==2 ? '日' : '月'
    let option =useRef({      
       series: [{ type: "line",  seriesLayoutBy: 'row'}],  
@@ -135,7 +135,7 @@ export default function pagecomp({data, params}) {
       bottom: 20
     }
   })
-
+ 
   let coption =useRef({      
     series: [{ type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}],  
     grid: {
@@ -166,6 +166,32 @@ export default function pagecomp({data, params}) {
      sourceHeader: false,
     }
    })
+
+   let boption =useRef({      
+    series: [{ type: "bar" }],  
+    legend: {
+      show: false
+    },   
+    xAxis: {
+      type: 'value'
+    },
+    yAxis: {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      }
+    },   
+    
+    dataset: { 
+      dimensions: [
+        "name",
+        "value"
+      ],
+      source: [
+      ],
+    
+    }
+   })
    if(eUse?.detail?.constructor==Object && eUse?.detail?.x?.length > 0) {
      let {x,y} = eUse?.detail
       option.current.dataset.source = [
@@ -191,6 +217,7 @@ export default function pagecomp({data, params}) {
   }else {
     coption.current.dataset.source = []
   }
+  boption.current.dataset.source = ran
   const sty = {
     flex: 1,
     display: 'flex'
@@ -230,11 +257,13 @@ export default function pagecomp({data, params}) {
           <Main>
           <p  className='title'>4.电费</p>    
           <p className='text'>{`当${text}总用电费用${ean.e}元，其中尖时段电费为${ean.e1}元，占总电费${ean.percentE1}%，峰时段电费为${ean.e2}元，占总电费${ean.percentE2}%，平时段电费为${ean.e3}元，占总电费${ean.percentE3}%,谷时段电费为${ean.e4}元，占总电费${ean.percentE4}%。`}</p>
-          <div style={{display: "grid", gridTemplateRows: "1fr 1fr", flex: 1}}> 
+          <div style={{display: "flex", height: '214px', marginBottom: '32px'}}> 
               <Ichart {...coption.current}  tip={`${data.project}${text}电费`} />
-             
           </div>
-        
+          <p  className='title'>5.线路能耗排名</p>
+          <div style={{display: 'flex', height: '300px'}}>
+             <Ichart {...boption.current}  tip={`${data.project}${text}线路能耗排名`} />
+          </div>
           </Main>
         </Page>
       </>

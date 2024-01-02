@@ -415,7 +415,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-  console.log(setoption)
+  console.log(rest)
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {
