@@ -135,17 +135,17 @@ export default function Index() {
         shift: 0,
         type,
         date: time,
-        lineIds: ids,
+        ids: ids,
         
        } : {
         projectId,
         shift: 0,
         type,
         date: time,
-        areaIds: ids,
+        ids: ids,
        }
       let hander = ['', queryLine, queryArea][typeTree]
-      let {success, data} = await hander(params, areaId)
+      let {success, data} = await hander(params)
       if(success && data.constructor === Object) {
           setDatas({...data}) 
       }else {

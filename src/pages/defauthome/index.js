@@ -71,6 +71,7 @@ export default function Index() {
   const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
   const [data, setData] = useState({})
+  const [currproject, setCurrproject] = useState({})
   const state = useReactive({
     statusData:{},
   })
@@ -145,7 +146,7 @@ export default function Index() {
     const end = i.indexOf('_');
     return (
       <div key = {i} data-grid={el}>
-       {i.substring(0, end)=='公司信息'? <CompanyMessage type={'runtTime'}></CompanyMessage> : null}
+       {i.substring(0, end)=='公司信息'? <CompanyMessage type={'runtTime'} currproject={currproject}></CompanyMessage> : null}
         {i.substring(0, end)=='今日告警'? <TodayWarning type={'runtTime'}></TodayWarning> : null}
         {i.substring(0, end) =='本月工单' ? <OrderDetail type={'runtTime'}></OrderDetail> : null}
         {i.substring(0, end)=='告警信息' ? <WarningMessage type={'runtTime'}></WarningMessage> : null}
@@ -187,13 +188,14 @@ export default function Index() {
       </div>
     )
   }
-
+  
   const GetProjectInfo=async()=>{
-    console.log(1111)
+   
     try {
   
      const {data ,success, errMsg} = await HomeRuntime.GetProjectInfo(projectId)
      if(success){
+         setCurrproject(data??{})
          dispatch(getCurrProjectInfo(data || {}))
      }
     } catch (error) {

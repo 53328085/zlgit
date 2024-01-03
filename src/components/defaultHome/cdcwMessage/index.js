@@ -58,9 +58,11 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
-  let {state={}} = props
-
-
+  let {state={}, type} = props
+  if(!type) {
+    state = {}
+  }
+ 
   return (
     <Titlelayout title={'触点测温信息'} {...fs} style={{height: "200px"}}>
       <Divorder>
@@ -80,7 +82,7 @@ export default function DefaultHome(props) {
             </div>
             <div className='detail_item'>
                 <span className='item_title'>在线率</span>
-                <span className='item_value'>{ state.cdcwOnlineRate + '%' }</span>
+                <span className='item_value'>{ state.cdcwOnlineRate}%</span>
             </div>
         </div>
       </Divorder>

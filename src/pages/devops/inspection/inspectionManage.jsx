@@ -24,7 +24,7 @@ export default function Warncontent({ style, areavalue }) {
     // order.current=false
     const [order, setOrder] = useState(false)
     const [orderdetail, setOrderdetail] = useState()
-    const [rangerTime, setRangerTime] = useState([moment(), moment()])
+    const [rangerTime, setRangerTime] = useState([moment().subtract('day', 7), moment()])
     const [stateopts, setStateopts] = useState([{
         label: '全部',
         value: 0,
@@ -161,7 +161,7 @@ export default function Warncontent({ style, areavalue }) {
     return (
         <div className={style.OrderContent}>
             <Form form={form} layout='inline' className={style.SearchContent} initialValues={{
-                date: [moment(), moment().add(7, 'day')],
+                date: [moment().subtract(7, 'day'), moment()],
                 state: 0,
             }}>
                 <Item name="date" style={{ marginRight: '0px' }}>

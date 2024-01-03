@@ -1,4 +1,4 @@
-import React, { useEffect,  memo,  } from "react";
+import React, { useEffect,  memo, useRef, useState,  } from "react";
 import { useDispatch, useSelector,  } from "react-redux";
 import { useNavigate,} from "react-router-dom"; 
 import {
@@ -11,11 +11,12 @@ import {  getpublishState,   getJump, getdataScreen, getIsGranary, configProject
   getshifts,
   getOnelevel,  setCurrentlevel, getSystemconfiginfo, getDisonlevel} from "@redux/systemconfig";
  
-import { Area, ProjectList, eneryShift } from "@api/api.js";
-import { message, Tabs } from "antd";
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Login as LoginApi } from "@api/api.js";
+import { message, Tabs, Form, Input } from "antd";
 import styled from "styled-components";
-import { ProjectSetting, BigScreen } from "@api/api";
+import CModal from "@com/useModal"
 import {cipher} from "@com/usehandler"
+import { phoneValidator} from "@pages/rule";
 import imgurl from "./icon";
  
  import  Headicon from './Headicon'
@@ -23,6 +24,7 @@ import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
 import Copyright from './Copyright'
+import { registerUpdateLifecycle } from "echarts";
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
@@ -179,11 +181,70 @@ function UserLog() {
         
 
  }
+ const ref = useRef()
+ const regRef = useRef()
+ const [msg, setMsg] = useState('')
+ const [form] = Form.useForm()
+ const onOK = () => {
+    ref.current.onCancel()
+    regRef.current.onOpen()
+ }
+ const params = useRef({
+  value: {},
+   type: 0,
+   codekey: '',
+   setLoading: null
+ })
+ const regOk = async () => {  //注册成功后需要授权
+    try {
+      let values = form.getFieldsValue(true)
+      let {success, data}  = await LoginApi.Registe(values)
+      if(success) {
+        let {code, message:info} = data
+        if(code!=0) {
+          message.info(info)
+          regRef.current.onCancel()
+        }else if(code == 0 ) {
+            message.success(info || '注册成功')
+            regRef.current.onCancel()
+         /*  message.success({
+            content: info,
+            duration: 2,
+            onClose: onSubmit(value, type, codekey, setLoading)
+          }) */
+          
+        }
+      }
+    } catch (error) {
+       
+    }
+
+ }
+
+const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
+    let {success, data} = await LoginApi.CheckAuthorization()
+    if(success) {
+        let {code, message:msg} = data  // 0 成功, 1 注册, 2 等待处理提示
+        if(code==1) {
+          params.current = {
+            value,
+            type,
+            codekey,
+            setLoading
+          }
+          setMsg(msg);          
+          ref.current.onOpen()
+        }else if(code==2) {
+          message.success(msg) //处理中
+        }else if(code == 0) {  // 成功
+          onSubmit(value, type, codekey, setLoading)
+        }
+    }
+}
  
- 
- 
- let onSubmit = async (value, type=0, codekey, setLoading) => {
-   try {
+ let onSubmit = async (value, type=0, codekey, setLoading) => {  
+   
+   try {   
     setLoading && setLoading(true) 
     const {name, pwd, code, mobile} = value;  
   
@@ -230,15 +291,21 @@ function UserLog() {
    {
       label: "账户登录",
        key: '1',
-       children:   <Username onSubmit={onSubmit} />,
+       children:   <Username onSubmit={CheckAuthorization} />,
    },
    {
       label: "手机登录",
        key: '2',
-       children:   <Phonelog onSubmit={onSubmit} />,
+       children:   <Phonelog onSubmit={CheckAuthorization} />,
    }
   ]
+  const rules = [
+    {
+      required: true
+    }
+  ]
   return (     
+        <>
          <CTabs 
            defaultActiveKey="1"
            items={items}
@@ -246,8 +313,54 @@ function UserLog() {
            tabBarGutter={128}
            
          >
-
          </CTabs>    
+         <CModal
+            width={554}
+            ref={ref}
+            onOk={onOK}
+            type="warn"
+            mold="cust"
+          >
+            <p>{msg}</p>
+          </CModal>
+
+          <CModal
+            width={554}
+            ref={regRef}
+            onOk={regOk}
+            mold="cust"
+            title="系统授权申请"
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item label="服务器网站" name="url" rules={[
+                 ...rules,
+                 {
+                  type: "url"
+                 }
+              ]}>
+                  <Input /> 
+              </Form.Item>
+              <Form.Item label="公司名称" name="customer" rules={rules}>
+                  <Input /> 
+              </Form.Item>
+              <Form.Item label="公司地址" name="address" rules={rules}>
+                  <Input /> 
+              </Form.Item>
+              <Form.Item label="申请人" name="user" rules={rules}>
+                  <Input /> 
+              </Form.Item>
+              <Form.Item label="手机号" name="mobile" rules={[
+                ...rules,
+                {
+                  validator: phoneValidator,
+                },
+              ]}>
+                  <Input /> 
+              </Form.Item>
+            </Form>
+          </CModal>
+
+         </>
   );
 }
 const Log = memo(UserLog)

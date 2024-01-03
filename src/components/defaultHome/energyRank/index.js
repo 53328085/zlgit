@@ -42,7 +42,7 @@ const Divorder = styled.div`
 `
 
 export default function DefaultHome(props){
-
+    const {type} = props
     const projectId = useSelector(selectProjectId)
 
     const state = useReactive({
@@ -75,7 +75,7 @@ export default function DefaultHome(props){
     const { Query } = energyRanking
 
   useEffect(() => {
-    if (props.type == 'runtTime') {
+    if (type == 'runtTime') {
         const date = new Date();
 		let year = date.getFullYear();
 		let month = date.getMonth() + 1;
@@ -102,7 +102,7 @@ export default function DefaultHome(props){
         
       return;
     }
-  }, [])
+  }, [type])
   
   return (
          <Titlelayout title={'本月能耗排名'} {...fs} style={{height: "200px"}}>

@@ -47,7 +47,10 @@ export default function DefaultHome(props){
                   <img src={fuhe} width={64} height={64} />
                   <div style={{display: "flex", flexDirection: "column", }}>
                     <span style={{color: "#333"}}>实时总负荷</span>
-                    <p style={{marginTop: "16px"}}><span style={{fontSize: "24px",color: "#515151"}}>{total}</span><span sytle={{paddingLeft: "64px"}}>kw</span></p>
+                    <p style={{marginTop: "16px"}}>
+                      <span style={{fontSize: "24px",color: "#515151"}}>{total}</span>
+                      <span style={{paddingLeft: "32px", color:"#999", display: "inline-block"}}>kw</span>
+                      </p>
                   </div>
                </div>
          </div>

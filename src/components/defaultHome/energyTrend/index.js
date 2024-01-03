@@ -18,9 +18,10 @@ const fs = {
 
 
 export default function DefaultHome(props){
+  let {type} = props
   const projectId = useSelector(selectProjectId)
 
-  const { RoomInfo } = HomeRuntime
+ 
 
 
   const [options, setOptions] = useState({
@@ -39,7 +40,7 @@ export default function DefaultHome(props){
     }
   })
   useEffect(() => {
-
+    if(type=="runtTime" && projectId) {
     
     HomeRuntime.GetMonthEnergyTrends(projectId).then(res => {
         let { success, data } = res
@@ -70,9 +71,9 @@ export default function DefaultHome(props){
       }).catch(e => {
         console.log(e);
       })
-   
+    }
     
-  }, [])
+  }, [projectId, type])
   
   return (
          <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}} layout="flex">

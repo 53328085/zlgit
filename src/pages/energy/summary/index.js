@@ -10,6 +10,7 @@ import imgurl from "./icon";
 import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js";
 import { useSelector } from "react-redux";
 import Ichart  from '@com/useEcharts/Ichart';
+import Ctip from './Ctip'
 import {
   selectProjectId,
   selectOneLevelDefaultId,
@@ -123,19 +124,7 @@ const Cp = styled(Paragraph)`
     text-align: right;
   }
 `;
-const Tip = styled(Paragraph)`
-&& {
-position: absolute;
-left: ${props => props.left};
-top: ${props => props.top};
-color: #036; // #993300
-font-size: 20px;
- margin-bottom: 0px;
-}
-`
-const DTip = styled(Tip)`
-  color: #090;
-`
+ 
 const labels = {
   totalInstalledCapacity: "总装机容量(MWh)", //装机容量
   totalInstalledPower: "总装机功率(MW)", //装机功率
@@ -187,23 +176,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
     <Spin spinning={spinning} tip="图片下载中……">
     <div style={{position: "relative"}}>
         <img src={energyImage || imgurl.engeryBg}   />
-       {areaVos?.length >  0 && <><Tip left="84px" top="100px">{areaVos[1].todayElectricConsume}</Tip>
-        <DTip left="84px" top="162px">{areaVos[1].curMonthElectricConsume}</DTip>
-        <Tip left="312px" top="100px">{areaVos[5].todayElectricConsume}</Tip>
-        <DTip left="312px" top="162px">{areaVos[5].curMonthElectricConsume}</DTip>
-        <Tip left="538px" top="162px">{areaVos[4].todayElectricConsume}</Tip>
-        <DTip left="538px" top="100px">{areaVos[4].curMonthElectricConsume}</DTip>
-        <Tip left="1018px" top="162px">{areaVos[3].todayElectricConsume}</Tip>
-        <DTip left="1018px" top="100px">{areaVos[3].curMonthElectricConsume}</DTip>
-      
-
-
-        <Tip left="356px" top="438px">{areaVos[0].todayElectricConsume}</Tip>
-        <DTip left="356px" top="500px">{areaVos[0].curMonthElectricConsume}</DTip>
-        <Tip left="1184px" top="438px">{areaVos[6].todayElectricConsume}</Tip>
-        <DTip left="1184px" top="500px">{areaVos[6].curMonthElectricConsume}</DTip>
-        </>
-        }
+        <Ctip areaVos={areaVos} />
     </div>
     </Spin>
     )
@@ -218,16 +191,19 @@ export default function Index() {
  let areaVos = energyValue.areaVos || {}
  const [options, setOptions] = useState({
   type: 3,
-  pieData: { data: [], total: "100%", radius: ["55%",  "65%"] },
+  pieData: { data: [], total: "100%", radius: ["40%",  "50%"],  center: ['50%', '50%'], labelLine: {
+    length: 5,
+    length2: 1,
+  } },
   legend: {
     bottom: 5,
     top: 'auto'
   },
-  grid: {
+/*   grid: {
     containLabel: true,
-    left: 0,
-    right: 0,
-  }
+    left: 10,
+    right: 10,
+  } */
 })
  
 const getDataEnergy = async () => {

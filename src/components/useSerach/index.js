@@ -41,7 +41,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 
 export default function UseSerach(props) {
-  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
+  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, isAreaId=true, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
  
   const dispatch = useDispatch()
@@ -161,11 +161,13 @@ export default function UseSerach(props) {
   
     <Cform layout="inline"   form={form}   {...props} onValuesChange={onValuesChange} >
       <Space size={64} split={ <Divider style={{margin: '0px',  height: '32px'}} type="vertical" />}>
-      <Item label={varlabel} name='area'>
+      {isAreaId && <Item label={varlabel} name='area'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
-      </Item>
+     
+         </Item>
+          }
         {isSite && site}
         {isPcs && pcs}
       </Space>

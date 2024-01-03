@@ -17,6 +17,7 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/useButton'
+import {useReactToPrint} from 'react-to-print'
 // import ReactToPrint from "react-to-print";
 import printJs from 'print-js'
 
@@ -133,10 +134,17 @@ export default function Index() {
   const createReport = async () => {
     getData()
   }
+ const printRef = useRef()
+
+ const handlePrint = useReactToPrint({
+  content: () => printRef.current,
+})
+
   const printReport = () => {
+   
     let printDom = document.getElementById('contentPage');
     let wholeNodes = document.querySelectorAll(".pages")
-    //打印的时候因为页面高度问题，需要改变margin-bottom的值
+  
     for (let i = 0; i < wholeNodes.length; i++) {
       if (i !== 6) {
         wholeNodes[i].classList.replace('pageMargin', 'printPageMargin')
@@ -270,7 +278,7 @@ export default function Index() {
           <span>导出报告</span>
         </div>
       </div> */}
-       <PageList   reportData={reportData}></PageList> 
+       <PageList   reportData={reportData} ref={printRef}></PageList> 
 
     </div>
   )

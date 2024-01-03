@@ -6,7 +6,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
  
 import { Topology } from "@topology/core/src/core";
-import { register as registerFlow } from '@topology/flow-diagram'
+
+import { register as registerFlow } from '@topology/flow-diagram' // 基础图形库
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
 import { useReactive } from "ahooks"; 
  
@@ -131,7 +132,7 @@ export default function Index() {
     clearTimeout(state.timer)
     state.spining = true
     state.getGuid = guid()
-    registerFlow()
+    registerFlow() // 基础图形库
     canvasOptions.on = onMessage
     canvas = new Topology('topology-canvas', canvasOptions) // 创建画布
     canvas.render() // 重绘
@@ -227,6 +228,9 @@ export default function Index() {
                <Button onClick={getValue}>获取值</Button>
                <Button onClick={setValue}>设置值</Button>
                <Button onClick={showInput}>自适应大小</Button>
+            </Space>
+            <Space>
+               <span className='ticon ticon-cube'></span>
             </Space>
          </div>
         <div id="topology-canvas" style={{flex: 1}}></div>

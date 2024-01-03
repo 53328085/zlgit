@@ -454,7 +454,11 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 }
 
-const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, grid={left: 0, right: 0, containLabel: true,}} = {}) => ({
+const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
+    
+  
+    
+ return {
   // 饼图的设置 
  
   tooltip: {
@@ -487,16 +491,19 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"], legend={}, gr
         show: true,
         position: "outside",
         formatter: "{d}%",
+        ...label,
       },
       labelLine: {
         show: true,
         length:8,
-        length2:8
+        length2:8,
+        ...labelLine,
       },
     },
+
   ],
-});
- 
+};
+}
 /* fetch("./walden.json").then(r => r.json()).then(theme => {
     echarts.registerTheme(JSON.parse(theme))
 }) */
@@ -520,6 +527,8 @@ export const drawEcharts = (
   if(type == 0) return message.warning("图表类型错误")
  // const bar = echarts.getInstanceByDom(dom);
   const chart = echarts.init(dom);
+  // 对不同图表类型设置不同的格式
+
   let custSeries
   if(series.constructor == Object) {
     if (series.type == 'line') {
@@ -533,7 +542,7 @@ export const drawEcharts = (
             barGap: 0,
             ...series,
         }
-    }else {
+    }else  {
         custSeries = {...series}
     }
     
@@ -643,7 +652,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-     
+  console.log(setoption)  
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

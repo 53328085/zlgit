@@ -1,10 +1,8 @@
-import React, { useRef, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, getCurrProjectInfo, currProject } from '@redux/systemconfig.js'
+import React, { useState,useEffect } from 'react'
+ 
 import styled from 'styled-components';
 import companyImg from './company.png'
-import { useReactive } from 'ahooks';
-import { HomeRuntime } from '@api/api.js'
+ 
 import { message } from 'antd';
 
 const MainBox = styled.div`
@@ -51,12 +49,8 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
 `
 
 export default function DefaultHome(props) {
-  const projectId = useSelector(selectProjectId)
-  const CurrProject = useSelector(currProject);
-  const dispatch = useDispatch()
-  const { GetProjectInfo } = HomeRuntime
-
-  const state = useReactive({
+   let {currproject, type} = props
+   const [state, setState] =useState({
     projectName: '项目名称',
     deviceNum: 0,
     gatewayNum: 0,
@@ -64,34 +58,18 @@ export default function DefaultHome(props) {
     mobile: '手机号码',
     address: '项目地址',
     projectImage:'',
-  })
-
+   }
+  )
+ 
   useEffect(() => {
-    if (props.type == 'runtTime') {
-      GetProjectInfo(projectId).then(res => {
-        let {success, data} = res
-          if(success){
-            if(data){
-              dispatch(getCurrProjectInfo({...CurrProject,...data}))
-              state.projectName = data.projectName
-              state.deviceNum = data.deviceNum
-              state.gatewayNum = data.gatewayNum
-              state.projectManager = data.projectManager
-              state.mobile = data.mobile
-              state.address = data.address
-              state.projectImage = data.projectImage
-            }
-          }else{
-            dispatch(getCurrProjectInfo({}))
-            message.error(res.errMsg)
-          }
-      }).catch(e => {
-           dispatch(getCurrProjectInfo({}))
+    if(type) {
+      setState({
+        ...state,
+        ...currproject
       })
-    } else if (props.type == 'configure') {
-      return;
     }
-  }, [])
+}, [currproject, type])
+ 
   return (
     <MainBox>
       <div className='company'>

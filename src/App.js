@@ -1,6 +1,6 @@
-import React, {Suspense} from 'react'
-import {BrowserRouter} from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import React, {Suspense,useEffect} from 'react'
+import {BrowserRouter,useNavigate} from 'react-router-dom'
+import {useSelector,useDispatch} from 'react-redux'
 import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
@@ -15,7 +15,10 @@ import ErrorBoundary from './ErrorBoundary';
 import {ConfigProvider} from 'antd'
 import {themeColor} from "@redux/systemconfig";
 import CustConfig from './custConfig';
+import { clearToken} from "@redux/user";
 function App() {
+  const dispatch = useDispatch()
+  const navgite = useNavigate()
   const primaryColor = useSelector(themeColor)
   const config = {
     csp: {
@@ -29,7 +32,11 @@ function App() {
     }
   }
   )
- 
+ useEffect(()=>{
+  return ()=>{
+    dispatch(clearToken()) 
+  }
+ },[])
   return   (
     <CustConfig>
     <ErrorBoundary>

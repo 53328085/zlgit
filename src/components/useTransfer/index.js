@@ -38,25 +38,26 @@ export default function index (props) {
     };
 
     const unknownToMain = () => {
-        if(mainData.length == 1) {
+  /*       if(mainData.length == 1) {
             messageApi.open({
                 type: 'warning',
                 content:'当前线路已有总表！',
             })
             return;
-        }else if( selectedRowKeys.length == 0 ){
+        }else */ if( selectedRowKeys.length == 0 ){
             messageApi.open({
                 type: 'warning',
                 content:'请至少选择一个设备！',
             })
             return;
-        }else if(selectedRowKeys.length > 1 ) {
+        }/* else if(selectedRowKeys.length > 1 ) {
             messageApi.open({
                 type: 'warning',
                 content:'线路总表只能有一个设备！',
             })
             return;
-        }else{
+        } */else{
+            console.log(unknownData)
             let arr = [...unknownData];
             let arr2 = [];
             for(let i =0;i< arr.length;i++){
@@ -246,7 +247,7 @@ export default function index (props) {
                 <div className={style.mainTable}>
                     <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} scroll={{y:50}}></Table>
+                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} scroll={{y:141}}></Table>
                     </div>
                 </div>
                 <div className={style.subTable}>

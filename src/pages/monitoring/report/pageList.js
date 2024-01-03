@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef, forwardRef } from "react";
 import style from './style.module.less'
 import {useSelector} from 'react-redux'
 import styled from "styled-components";
@@ -8,7 +8,7 @@ import { Descriptions } from "antd";
 import logo from './images/logo.png'
 import firstPage from './images/firstPage.png'
 import { Monitoring } from '@api/api.js'
-
+import moment from "moment";
 const { RuntimeStatus } = Monitoring.Runtime
 const DesItem = styled(Descriptions)`
 && {
@@ -102,11 +102,12 @@ let columns2 = [
 ]
 
 
-export default function PageList({reportData}) {
+export default forwardRef(function PageList({reportData}, ref) {
     
     const {chineseTitle} =useSelector(systemConfigInfo)
     const projectId = useSelector(selectProjectId)
     const [reptdata, setRepdata] = useState({})
+    const reportdate = moment().format("yyyy-MM-DD")
     let dataSource = [
         {type: '网关', count: reptdata.gatewayCount, online: reptdata.gatewayOnlineCount, offline: reptdata.gatewayOfflineCount, rate: reptdata.gatewayOnlineRate},
         {type: '电表', count: reptdata.electricMeterCount, online: reptdata.electricMeterOfflineCount, offline: reptdata.electricMeterOfflineCount, rate: reptdata.electricMeterOnlineRate},
@@ -156,7 +157,7 @@ export default function PageList({reportData}) {
     return (
         <Fragment>
             {!!reportData?<div className={style.report}>
-                <div  id='contentPage'>
+                <div  id='contentPage' className="printContet'" ref={ref}>
                 <div className={style.firstPage} >
                     <div className={style.header}>
                         <img src={logo} className={style.logo}></img>
@@ -168,10 +169,11 @@ export default function PageList({reportData}) {
 
                         <div className={style.detailItem}>项目名称: <span style={{ marginLeft: 18 }}>{reportData.projectName}</span></div>
                         <div className={style.detailItem}>项目地址: <span style={{ marginLeft: 18 }}>{reportData.projectAddress}</span></div>
-                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{reportData.Date}</span></div>
+                        <div className={style.detailItem}>报告日期: <span style={{ marginLeft: 18 }}>{reportdate}</span></div>
                     </div>
                     <img src={firstPage} className={style.backgroundImg}></img>
                 </div>
+                <div className="page-break" />
                  <div>
                     <div className={style.pages} >
                         <Header></Header>
@@ -182,6 +184,7 @@ export default function PageList({reportData}) {
                                     <DesItem.Item label="站点地址">{reportData.projectAddress}</DesItem.Item>
                             </DesItem> 
                             <Usetable dataSource={counts} columns={columns2} size="small" title={() => "2.设备统计"}></Usetable>
+                            
                             <Usetable dataSource={dataSource} columns={columns} size="small" title={() => "3.在线率统计"}></Usetable>
                         </div>
                     </div>
@@ -207,4 +210,4 @@ export default function PageList({reportData}) {
 
         </Fragment>
     )
-}
+})
