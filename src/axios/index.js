@@ -40,12 +40,15 @@ server.interceptors.response.use(
             })
         }
         if (state == 401)  {
-          return  message.warning({          
+         
+           message.warning({          
             content: '登录状态发生改变,请重新登录',
-            onClose: () => window.location.href="/",
+            onClose: () => {
+                window.location.href="/"
+            },
             duration: 0.5,
-           
-        })
+          })
+          message.destroy()
         }
         if (state >= 500)   message.error(msg || '数据出错')
         return Promise.reject(error)

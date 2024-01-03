@@ -39,7 +39,8 @@ const Boxdiv = styled(Card)`
   }
  .ant-card-body {
   padding: 0;
-  display: ${props => props.layout || 'block'}
+  display: ${props => props.layout || 'block'};
+  flex-direction: ${props => props.dr || 'row'};
  }
 `
 Boxdiv.defaultProps = {

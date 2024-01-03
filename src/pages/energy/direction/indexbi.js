@@ -1,33 +1,22 @@
-import React, { useState,  useEffect,memo, useRef } from "react";
+import React, { useState,  useEffect, } from "react";
 
 import { Form, Space, DatePicker, Select} from "antd";
-import styled from "styled-components";
 import moment from 'moment';
 import Pagecount from '@com/pagecontent' 
 import CustContext from "@com/content.js";
-import {useSearchParams} from 'react-router-dom'
+ 
 import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, currProject} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/useButton'
+
 import Ichart  from '@com/useEcharts/Ichart';
- 
 
 const {queryElectric, queryWater} = EnergyFlowRuntime
  
  
-const Headcom = memo(() => {
-  const {projectName,  logoImage  } = useSelector(currProject) 
-  return (
-    <div style={{height: "64px", display: 'flex', alignItems: "center", backgroundColor: "#036"}}>
-        <img src={logoImage} width={200} height={64} style={{marginRight: '16px'}}></img>
-        <span style={{fontSize: "22px", color: "#fff"}}>{projectName}综合能源服务平台</span>
-    </div>
-  )
-
-})
+ 
  
  
  
@@ -38,11 +27,10 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const levelone = useSelector(selectOneLevel)
   const areaId = levelone.map(a => a.id);
- 
+   
   const [form] = Form.useForm();
   const {Item} = Form
-  let [searchParams] = useSearchParams()
-  const isfull = searchParams.get('full')  
+ 
   
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
    
@@ -66,17 +54,12 @@ export default function Index() {
       },
       data: [],
       links: [],
+      right: "5%",
       lineStyle: {
         color: 'gradient',
         curveness: 0.5
       },
-      left: 16,
-      top: 32,
-      bottom: 32,  
-      right: 200,
-      nodeGap: 8,
-     // layoutIterations: 0,
-    
+
     }
   ],
   type: 5,
@@ -90,45 +73,18 @@ export default function Index() {
       if(success && data.constructor==Object) {
        
          const {link=[] } = data
-        let arr = []
-         let sources = Array.from(new Set([...link.map(i => i.source)]))
-
-      
        
-        sources.forEach(s => {
-            let depth =link.filter(l => l.source == s).map(d =>  d.target)
-            
-             arr = [...arr, s, ...depth]
-
-         })    
-       
-        let datas = Array.from(new Set([...arr])).map(name => ({name}))
-        console.log(datas)
-     /*    let source =  link.map(i => i.source)
-        let target = link.map(i => i.target)
-        let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
-
-        console.log(nodes) */
-
-
-
-
-         let links = link.map(l =>({...l, value: parseFloat(l.value) }))
+         let source =  link.map(i => i.source)
+         let target = link.map(i => i.target)
+         let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
+         let links = link.map(l =>({...l, value: parseFloat(l.value)}))
           setOptions({
             ...options,
             series: [
               {
                 ...options.series[0],
-                data: datas,
+                data: nodes,
                 links,
-                label: {
-                  fontSize: 10
-                },
-                nodeAlign: "left",
-                nodeGap: 12,
-                lineStyle: {
-                  color: "source"
-                }
               }
             ]
           })
@@ -218,58 +174,13 @@ export default function Index() {
     custview: <CustView />,
     isAreaId: false
   }
-   
-   const full = () => {
-      window.open('/directionfull?full=full')
-   }
-   const mapref = useRef()
+ 
 
-   useEffect(() => {
-     if(!mapref.current || !isfull) return
-     let map = document.getElementsByClassName('ichartmap')[0];
-     console.log(mapref.current?.style?.height)
-     window.onmousewheel = (event) => {
-      
-       let {x, y, deltaY } = event
-       let {left, right, top, bottom} = mapref.current.getClientRects()[0]
-      
-       if(x>left && x<right&& y>top && y<bottom) {
-        console.log(deltaY)
-        if(deltaY > 0) {
-          setOptions({
-            ...options,
-            series: [
-              {
-                ...options.series[0],
-                nodeGap: options.series[0].nodeGap+=2,
-              }
-            ]
-          })
-          
-          mapref.current.style.height = mapref.current.style.height + 20 + 'px'
-        }else {
-          setOptions({
-            ...options,
-            series: [
-              {
-                ...options.series[0],
-                nodeGap: options.series[0].nodeGap<12 ? 10 : options.series[0].nodeGap - 2
-              }
-            ]
-          })
-          mapref.current.style.height = mapref.current.style.height - 20 + 'px'
-        }
-        
-
-       }
-     }
-   }, [options, isfull])
     return (
       <CustContext.Provider value={propsData}>
-      <Pagecount showserach={!isfull} pd="0px">   
-      <Titlelayout title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column">
-          {isfull && <Headcom />}
-          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}} ref={mapref}>
+      <Pagecount showserach={true} pd="0px">   
+      <Titlelayout title="能源流向" layout="flex">
+          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}}>
                <Ichart  custoption={options}   />
           </div>
        </Titlelayout>

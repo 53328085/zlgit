@@ -201,7 +201,13 @@ useEffect(() => {
       dataset: {
        ...dataSet, 
       },
-      
+      legend: {
+        height: "30px"
+      },
+      grid: {
+        top: "60px",
+        
+      },
       series: series,
       tooltip: {
        // formatter:  ' {a}'
@@ -328,7 +334,7 @@ useEffect(() => {
       <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
       <UserSearch></UserSearch>
       <Laybox  >
-        <Titlelayout title={Title} key={nanoid()}>
+        <Titlelayout title={Title} key="up">
            <div style={{paddingTop: "16px", height: "100%", display: "flex"}}>
              {
               mode == 1 ? <div style={{flex: 1}} ref={stack} key="echart"></div> : <UseTable dataSource={tableData} columns={columns} key="table" />

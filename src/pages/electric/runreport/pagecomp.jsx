@@ -3,7 +3,7 @@ import React,{useRef} from 'react'
  import {Descriptions} from 'antd'
 import Page from "@com/reportPrint/page"
 import Ichart from '@com/useEcharts/Ichart'
- 
+import fine from './fine.svg'
 
 const DesItem = styled(Descriptions)`
 &&.bgsty {
@@ -58,6 +58,20 @@ const Main =styled.div`
       flex:1;
       text-indent: 2.5em;
     }
+    .fine {
+      display: flex;
+      width: 284px;
+      height: 64px;
+      align-items: center;
+      background: url(fine) #237ae4 ;
+      background-position: 32px center;
+      font-size: 28px;
+      padding-left: 32px;
+      color: #fff;
+      img {
+        margin-right: 32px;
+      }
+    }
    }
 
 `
@@ -66,7 +80,7 @@ const Main =styled.div`
  
 export default function pagecomp({data, params}) {
   let {alarmTypeGroup} = data.constructor===Object ? data : {} ;
-  
+  let {type} = params?? {}
   let text = type==2 ? '日' : '月'
  
    let epoption = useRef({
@@ -85,10 +99,7 @@ export default function pagecomp({data, params}) {
  
   
  
-  const sty = {
-    flex: 1,
-    display: 'flex'
-  }
+ 
 
   const labsty = {
      background: "#f60",
@@ -128,7 +139,7 @@ export default function pagecomp({data, params}) {
          </div>
          </Main> 
       </Page>
-      <Page>
+      <Page key="b">
         <Main>
             <p  className='title'>3.电量监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
@@ -156,10 +167,11 @@ export default function pagecomp({data, params}) {
             </DesItem> 
         </Main>
       </Page>
-       <Page>
+       <Page key="c">
           <Main>
              <p  className='title'>7.本周期用电安全监测综合分析:</p> 
-             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '300px', marginBottom: '16px'}}>
+             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end',   padding: '64px 0px'}}>
+                <div className='fine'><img src={fine} height={48} /> <span>良好</span></div> 
              </div> 
              <p className='title'>建议:</p>
              <div  className='suggest'>

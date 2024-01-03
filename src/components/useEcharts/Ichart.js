@@ -36,7 +36,7 @@ export default function Ichart(props={}) {
     }
   }
   return (
-     <div style={{flex:1, height: "100%"}}  ref={ref}>
+     <div style={{flex:1, height: "100%"}}  ref={ref} className='ichartmap'>
       
     </div>
   )

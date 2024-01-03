@@ -7,7 +7,7 @@ import Pagecom from './pagecomp'
 export default function Index() {
   const [reportData, setData] = useState(null)
   const  [params, setType] = useState()
-  console.log(params)
+
   const getReport = async (params) => {
     try {
     
