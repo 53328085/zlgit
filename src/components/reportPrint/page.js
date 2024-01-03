@@ -1,38 +1,52 @@
-import React from 'react'
-import styled from 'styled-components'
-const Pagecont =  styled.div`
-    height: 806px;
-              display: grid;
-              grid-template-rows: 36px 1fr;
-              row-gap: 32px;
-              background-color: #fff;
-              page-break-after: always;
-              .header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background-color: #237ae4;
-                color: #fff;
-                font-size: 14px;
-                padding: 0 16px;
-              }
-              .main {
-                padding: 16px;
-              }
+import React, {useContext} from "react";
+import styled from "styled-components";
+import {useSelector} from 'react-redux'
+import { systemConfigInfo} from '@redux/systemconfig.js'
+import moment from "moment";
+import printContext from "./context";
+const Pagecont = styled.div`
+  height: 806px;
+  display: grid;
+  grid-template-rows: 36px 1fr;
+  row-gap: 32px;
+  background-color: #fff;
+  page-break-after: always;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #237ae4;
+    color: #fff;
+    font-size: 14px;
+    padding: 0 16px;
+  }
+  .main {
+    padding: 0 16px 16px 16px;
+    color: #515151;
+    display: flex;
+    flex-direction: column;
+  }
+`;
 
-
-`
-
-export default function Page(props) {
-  
+export default function Index(props) {
+  const {params} = useContext(printContext)
+  let date 
+  if (params) {
+     date = params.type == 2 ? moment(params.date, "yyyy-MM-DD").format("yyyy-MM") : params.type == 3 ? moment(params.date, "yyyy-MM-DD").format("yyyy") : ''
+  }
+  let title = ''
+  if(date) {
+    title =   params.type == 2 ? `本期报告分析周期为：${date}月` : params.type == 3? `本期报告分析周期为：${date}年` : ''
+  }
+  const {chineseTitle} = useSelector(systemConfigInfo)
   return (
     <Pagecont>
-       <div className='header'>
-          
-       </div>
-       <div className='main'>
-          {props.children}
-       </div>
+      <div className="header">
+          <span>{chineseTitle}</span>
+          <span>{title}</span>
+       </div> 
+      <div className="main"> {props.children} </div>
+     
     </Pagecont>
-  )
+  );
 }

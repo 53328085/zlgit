@@ -17,9 +17,9 @@ const Itemsty = styled.div`
  && {
       width: 140px;
       height: 180px;
-      background-color: rgba(0, 0, 51, 0.7);
+      background-color: rgba(0, 102, 255, 0.56);
      box-sizing: border-box;
-      border: 2px solid rgba(0, 255, 0, 1); 
+      border: 1px solid #0099cc; 
       border-radius: 8px;
       display: flex;
       flex-direction: column;

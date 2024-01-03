@@ -1,6 +1,6 @@
 import React, { useState} from 'react'
 
-import { safeElectric } from '@api/api'
+import { QueryRunReport } from '@api/api'
 import './index.less'
 import Report from '@com/reportPrint'
 import Pagecom from './pagecomp'
@@ -11,7 +11,7 @@ export default function Index() {
   const getReport = async (params) => {
     try {
     
-      let {success, data} =  await  safeElectric.Report(params)
+      let {success, data} =  await  QueryRunReport.RunReport(params)
       if(success) {
         setData(data)
         setType(params)
@@ -31,7 +31,7 @@ export default function Index() {
 
   return (
     <div style={{display: "flex", flex: 1}}>
-           <Report  getReport={getReport} params={params} reportName="电气安全分析报告" >
+           <Report  getReport={getReport} params={params} reportName="能源管理分析报告" >
               {
                 reportData && <Pagecom data={reportData}  params={params}  />
               }

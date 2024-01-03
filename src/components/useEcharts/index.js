@@ -11,407 +11,169 @@ import 'echarts-liquidfill'
  */
 
 echarts.registerTheme('walden', {
-  "color": [
-      "#5aaef3",
-      "#62d9ad",
-      "#5b6e96",
-      "#97d5f4",
-      "#ffdc4c",
-      "#ff974c",
-      "#e65a56",
-      "#6d61e4",
-      "#4a6fe2",
-      "#6d9ae7",
-      "#23c2db",
-      "#d4ec59"
-  ],
-  "backgroundColor": "rgba(255,255,255,0)",
-  "textStyle": {},
-  "title": {
-      "textStyle": {
-          "color": "#237ae4"
-      },
-      "subtextStyle": {
-          "color": "#999999"
-      }
-  },
-  "line": {
-      "itemStyle": {
-          "borderWidth": "2"
-      },
-      "lineStyle": {
-          "width": "3"
-      },
-      "symbolSize": "8",
-      "symbol": "emptyCircle",
-      "smooth": false
-  },
-  "radar": {
-      "itemStyle": {
-          "borderWidth": "2"
-      },
-      "lineStyle": {
-          "width": "3"
-      },
-      "symbolSize": "8",
-      "symbol": "emptyCircle",
-      "smooth": false
-  },
-  "bar": {
-      "itemStyle": {
-          "barBorderWidth": "0",
-          "barBorderColor": "#d7d7d7"
-      }
-  },
-  "pie": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "scatter": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "boxplot": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "parallel": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "sankey": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "funnel": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "gauge": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      }
-  },
-  "candlestick": {
-      "itemStyle": {
-          "color": "#e6a0d2",
-          "color0": "transparent",
-          "borderColor": "#e6a0d2",
-          "borderColor0": "#3fb1e3",
-          "borderWidth": "2"
-      }
-  },
-  "graph": {
-      "itemStyle": {
-          "borderWidth": "0",
-          "borderColor": "#d7d7d7"
-      },
-      "lineStyle": {
-          "width": "1",
-          "color": "#cccccc"
-      },
-      "symbolSize": "8",
-      "symbol": "emptyCircle",
-      "smooth": false,
-      "color": [
-          "#5aaef3",
-          "#62d9ad",
-          "#5b6e96",
-          "#97d5f4",
-          "#ffdc4c",
-          "#ff974c",
-          "#e65a56",
-          "#6d61e4",
-          "#4a6fe2",
-          "#6d9ae7",
-          "#23c2db",
-          "#d4ec59"
-      ],
-      "label": {
-          "color": "#ffffff"
-      }
-  },
-  "map": {
-      "itemStyle": {
-          "areaColor": "#eeeeee",
-          "borderColor": "#aaaaaa",
-          "borderWidth": 0.5
-      },
-      "label": {
-          "color": "#ffffff"
-      },
-      "emphasis": {
-          "itemStyle": {
-              "areaColor": "rgba(63,177,227,0.25)",
-              "borderColor": "#3fb1e3",
-              "borderWidth": 1
-          },
-          "label": {
-              "color": "#3fb1e3"
-          }
-      }
-  },
-  "geo": {
-      "itemStyle": {
-          "areaColor": "#eeeeee",
-          "borderColor": "#aaaaaa",
-          "borderWidth": 0.5
-      },
-      "label": {
-          "color": "#ffffff"
-      },
-      "emphasis": {
-          "itemStyle": {
-              "areaColor": "rgba(63,177,227,0.25)",
-              "borderColor": "#3fb1e3",
-              "borderWidth": 1
-          },
-          "label": {
-              "color": "#3fb1e3"
-          }
-      }
-  },
-  "categoryAxis": {
-      "axisLine": {
-          "show": true,
-          "lineStyle": {
-              "color": "#cccccc"
-          }
-      },
-      "axisTick": {
-          "show": false,
-          "lineStyle": {
-              "color": "#333"
-          }
-      },
-      "axisLabel": {
-          "show": true,
-          "color": "#999999"
-      },
-      "splitLine": {
-          "show": true,
-          "lineStyle": {
-              "color": [
-                  "#eeeeee"
-              ]
-          }
-      },
-      "splitArea": {
-          "show": false,
-          "areaStyle": {
-              "color": [
-                  "rgba(250,250,250,0.05)",
-                  "rgba(200,200,200,0.02)"
-              ]
-          }
-      }
-  },
-  "valueAxis": {
-      "axisLine": {
-          "show": true,
-          "lineStyle": {
-              "color": "#cccccc"
-          }
-      },
-      "axisTick": {
-          "show": false,
-          "lineStyle": {
-              "color": "#333"
-          }
-      },
-      "axisLabel": {
-          "show": true,
-          "color": "#999999"
-      },
-      "splitLine": {
-          "show": true,
-          "lineStyle": {
-              "color": [
-                  "#eeeeee"
-              ]
-          }
-      },
-      "splitArea": {
-          "show": false,
-          "areaStyle": {
-              "color": [
-                  "rgba(250,250,250,0.05)",
-                  "rgba(200,200,200,0.02)"
-              ]
-          }
-      }
-  },
-  "logAxis": {
-      "axisLine": {
-          "show": true,
-          "lineStyle": {
-              "color": "#cccccc"
-          }
-      },
-      "axisTick": {
-          "show": false,
-          "lineStyle": {
-              "color": "#333"
-          }
-      },
-      "axisLabel": {
-          "show": true,
-          "color": "#999999"
-      },
-      "splitLine": {
-          "show": true,
-          "lineStyle": {
-              "color": [
-                  "#eeeeee"
-              ]
-          }
-      },
-      "splitArea": {
-          "show": false,
-          "areaStyle": {
-              "color": [
-                  "rgba(250,250,250,0.05)",
-                  "rgba(200,200,200,0.02)"
-              ]
-          }
-      }
-  },
-  "timeAxis": {
-      "axisLine": {
-          "show": true,
-          "lineStyle": {
-              "color": "#cccccc"
-          }
-      },
-      "axisTick": {
-          "show": false,
-          "lineStyle": {
-              "color": "#333"
-          }
-      },
-      "axisLabel": {
-          "show": true,
-          "color": "#999999"
-      },
-      "splitLine": {
-          "show": true,
-          "lineStyle": {
-              "color": [
-                  "#eeeeee"
-              ]
-          }
-      },
-      "splitArea": {
-          "show": false,
-          "areaStyle": {
-              "color": [
-                  "rgba(250,250,250,0.05)",
-                  "rgba(200,200,200,0.02)"
-              ]
-          }
-      }
-  },
-  "toolbox": {
-      "iconStyle": {
-          "borderColor": "#999999"
-      },
-      "emphasis": {
-          "iconStyle": {
-              "borderColor": "#666666"
-          }
-      }
-  },
-  "legend": {
-      "textStyle": {
-          "color": "#999999"
-      }
-  },
-  "tooltip": {
-      "axisPointer": {
-          "lineStyle": {
-              "color": "#cccccc",
-              "width": 1
-          },
-          "crossStyle": {
-              "color": "#cccccc",
-              "width": 1
-          }
-      }
-  },
-  "timeline": {
-      "lineStyle": {
-          "color": "#626c91",
-          "width": 1
-      },
-      "itemStyle": {
-          "color": "#626c91",
-          "borderWidth": 1
-      },
-      "controlStyle": {
-          "color": "#626c91",
-          "borderColor": "#626c91",
-          "borderWidth": 0.5
-      },
-      "checkpointStyle": {
-          "color": "#3fb1e3",
-          "borderColor": "#3fb1e3"
-      },
-      "label": {
-          "color": "#626c91"
-      },
-      "emphasis": {
-          "itemStyle": {
-              "color": "#626c91"
-          },
-          "controlStyle": {
-              "color": "#626c91",
-              "borderColor": "#626c91",
-              "borderWidth": 0.5
-          },
-          "label": {
-              "color": "#626c91"
-          }
-      }
-  },
-  "visualMap": {
-      "color": [
-          "#2a99c9",
-          "#afe8ff"
-      ]
-  },
-  "dataZoom": {
-      "backgroundColor": "rgba(255,255,255,0)",
-      "dataBackgroundColor": "rgba(222,222,222,1)",
-      "fillerColor": "rgba(114,230,212,0.25)",
-      "handleColor": "#cccccc",
-      "handleSize": "100%",
-      "textStyle": {
-          "color": "#999999"
-      }
-  },
-  "markPoint": {
-      "label": {
-          "color": "#ffffff"
-      },
-      "emphasis": {
-          "label": {
-              "color": "#ffffff"
-          }
-      }
-  }
+    "seriesCnt": "3",
+    "backgroundColor": "rgba(252,252,252,0)",
+    "titleColor": "#666666",
+    "subtitleColor": "#999999",
+    "textColorShow": false,
+    "textColor": "#333",
+    "markTextColor": "#ffffff",
+    "color": [
+      "#237AE4",
+      "#62D9AD",
+      "#5472B1",
+      "#23C2DB",
+      "#4A6FE2",
+      "#FED428",
+      "#FF974C",
+      "#E65A56",
+    ],
+    "borderColor": "#ccc",
+    "borderWidth": 0,
+    "visualMapColor": [
+        "#2a99c9",
+        "#afe8ff"
+    ],
+    "legendTextColor": "#999999",
+    "kColor": "#e6a0d2",
+    "kColor0": "transparent",
+    "kBorderColor": "#e6a0d2",
+    "kBorderColor0": "#3fb1e3",
+    "kBorderWidth": "2",
+    "lineWidth": "3",
+    "symbolSize": "8",
+    "symbol": "emptyCircle",
+    "symbolBorderWidth": "2",
+    "lineSmooth": false,
+    "graphLineWidth": "1",
+    "graphLineColor": "#cccccc",
+    "mapLabelColor": "#ffffff",
+    "mapLabelColorE": "#3fb1e3",
+    "mapBorderColor": "#aaaaaa",
+    "mapBorderColorE": "#3fb1e3",
+    "mapBorderWidth": 0.5,
+    "mapBorderWidthE": 1,
+    "mapAreaColor": "#eeeeee",
+    "mapAreaColorE": "rgba(63,177,227,0.25)",
+    "axes": [
+        {
+            "type": "all",
+            "name": "通用坐标轴",
+            "axisLineShow": true,
+            "axisLineColor": "#cccccc",
+            "axisTickShow": false,
+            "axisTickColor": "#333",
+            "axisLabelShow": true,
+            "axisLabelColor": "#999999",
+            "splitLineShow": true,
+            "splitLineColor": [
+                "#eeeeee"
+            ],
+            "splitAreaShow": false,
+            "splitAreaColor": [
+                "rgba(250,250,250,0.05)",
+                "rgba(200,200,200,0.02)"
+            ]
+        },
+        {
+            "type": "category",
+            "name": "类目坐标轴",
+            "axisLineShow": true,
+            "axisLineColor": "#333",
+            "axisTickShow": true,
+            "axisTickColor": "#333",
+            "axisLabelShow": true,
+            "axisLabelColor": "#333",
+            "splitLineShow": false,
+            "splitLineColor": [
+                "#ccc"
+            ],
+            "splitAreaShow": false,
+            "splitAreaColor": [
+                "rgba(250,250,250,0.3)",
+                "rgba(200,200,200,0.3)"
+            ]
+        },
+        {
+            "type": "value",
+            "name": "数值坐标轴",
+            "axisLineShow": true,
+            "axisLineColor": "#333",
+            "axisTickShow": true,
+            "axisTickColor": "#333",
+            "axisLabelShow": true,
+            "axisLabelColor": "#333",
+            "splitLineShow": true,
+            "splitLineColor": [
+                "#ccc"
+            ],
+            "splitAreaShow": false,
+            "splitAreaColor": [
+                "rgba(250,250,250,0.3)",
+                "rgba(200,200,200,0.3)"
+            ]
+        },
+        {
+            "type": "log",
+            "name": "对数坐标轴",
+            "axisLineShow": true,
+            "axisLineColor": "#333",
+            "axisTickShow": true,
+            "axisTickColor": "#333",
+            "axisLabelShow": true,
+            "axisLabelColor": "#333",
+            "splitLineShow": true,
+            "splitLineColor": [
+                "#ccc"
+            ],
+            "splitAreaShow": false,
+            "splitAreaColor": [
+                "rgba(250,250,250,0.3)",
+                "rgba(200,200,200,0.3)"
+            ]
+        },
+        {
+            "type": "time",
+            "name": "时间坐标轴",
+            "axisLineShow": true,
+            "axisLineColor": "#333",
+            "axisTickShow": true,
+            "axisTickColor": "#333",
+            "axisLabelShow": true,
+            "axisLabelColor": "#333",
+            "splitLineShow": true,
+            "splitLineColor": [
+                "#ccc"
+            ],
+            "splitAreaShow": false,
+            "splitAreaColor": [
+                "rgba(250,250,250,0.3)",
+                "rgba(200,200,200,0.3)"
+            ]
+        }
+    ],
+    "axisSeperateSetting": false,
+    "toolboxColor": "#999999",
+    "toolboxEmphasisColor": "#666666",
+    "tooltipAxisColor": "#cccccc",
+    "tooltipAxisWidth": 1,
+    "timelineLineColor": "#626c91",
+    "timelineLineWidth": 1,
+    "timelineItemColor": "#626c91",
+    "timelineItemColorE": "#626c91",
+    "timelineCheckColor": "#3fb1e3",
+    "timelineCheckBorderColor": "#3fb1e3",
+    "timelineItemBorderWidth": 1,
+    "timelineControlColor": "#626c91",
+    "timelineControlBorderColor": "#626c91",
+    "timelineControlBorderWidth": 0.5,
+    "timelineLabelColor": "#626c91",
+    "datazoomBackgroundColor": "rgba(255,255,255,0)",
+    "datazoomDataColor": "rgba(222,222,222,1)",
+    "datazoomFillColor": "rgba(114,230,212,0.25)",
+    "datazoomHandleColor": "#cccccc",
+    "datazoomHandleWidth": "100",
+    "datazoomLabelColor": "#999999"
 });
 
 
@@ -526,7 +288,7 @@ export const drawEcharts = (
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
  // const bar = echarts.getInstanceByDom(dom);
-  const chart = echarts.init(dom);
+  const chart = echarts.init(dom, 'walden');
   // 对不同图表类型设置不同的格式
 
   let custSeries
@@ -535,6 +297,7 @@ export const drawEcharts = (
         custSeries = {
             smooth:true, 
             showSymbol: false,
+            areaStyle: {},
             ...series,
         }
     }else if(series.type == 'bar'){
@@ -549,7 +312,7 @@ export const drawEcharts = (
   }else if(series.constructor == Array) {
     custSeries = series.map(s => {
         if(s.type == "line") {
-            return ({smooth:true,  showSymbol: false, ...s, })
+            return ({smooth:true,  areaStyle: {}, showSymbol: false, ...s, })
         }else if(s.type == "bar") {
             return ({barGap: 0, ...s,})
         }else {
@@ -590,7 +353,7 @@ export const drawEcharts = (
       ...xAxis,
     },
     legend: {
-      top: 0,
+    //  top: 0,
 
       icon: 'rect',
       itemHeight: 8,
@@ -652,7 +415,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-  console.log(setoption)  
+  console.log(rest)
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

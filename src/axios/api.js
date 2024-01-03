@@ -260,9 +260,9 @@ export class QueryElectric {
 
 // 能源管理--运行报告 -- 运行态
 export class QueryRunReport {
-  static RunReport = ({projectId, type,date, pageNum, pageSize, areaId}) =>
+  static RunReport = (params) =>
     server.post(
-      `Energy/EnergyRunReport/QueryRunReport?projectId=${projectId}&type=${type}&areaId=${areaId}&date=${date}`
+      `/Energy/EnergyRunReport/Report`, params
       
     );
   
@@ -1487,6 +1487,7 @@ export class safeElectric {
   static WarningDetailsList =(data)=>server.get(`/Safe/SafeRuntime/WarningDetailsList`,{ params: data })//查询告警列表
   static MonthReport =(data)=>server.get(`/Safe/SafeRuntime/MonthReport`,{ params: data })//月度报告
   static YearReport =(data)=>server.get(`/Safe/SafeRuntime/YearReport`,{ params: data})//年度报告
+  static Report =(data)=>server.post(`/Safe/SafeRuntime/Report`, data)//年度报告
 }
 //告警详情
 export class warnDetail {
@@ -1797,7 +1798,7 @@ export class DistributionRoomRuntime{
   static QueryAlarmType=()=>server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
   static QueryFibreTempilWarningRecords=(params)=>server.post(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords`,params)
 
-  static Report =({projectId, type, date})=>server.get(`/Distribution/DistributionRoomRuntime/Report?projectId=${projectId}&type=${type}&date=${date}`)  // 报告
+  static Report =(params)=>server.post(`/Distribution/DistributionRoomRuntime/Report`, params)  // 报告
 }
 //能源流向
 export class EnergyFlowRuntime {

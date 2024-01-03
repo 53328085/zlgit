@@ -280,7 +280,7 @@ export default function Gateway() {
       const { data, success, errMsg } = await GatewayAdd(params)
       if (success) {
         message.success('新增成功')
-        addForm.resetFields()
+      //  addForm.resetFields()
       //  modalFormRef.current.onCancel()
         getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
       } else {

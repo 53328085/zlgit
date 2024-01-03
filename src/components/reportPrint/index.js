@@ -1,35 +1,32 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useContext } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, message } from 'antd'
-
+import printContext from './context' 
+ 
  import Leftlayout from './left'
-const {Item} = Form
-const { RangePicker } = DatePicker;
+ import Rightlayout from './right'
+ 
 const Mainbox = styled.div`
     && {
-      padding-top: 16px;
        display: grid;
        grid-template-columns: 384px 678px;
        column-gap: 32px; 
        flex: 1;
        color:#515151;
-      
-       
        }
 `
 
- function Maincom({projectId}) {
+ export default function Index(props) {
+  let {reportName, params} = props; 
+  const printRef =useRef()
+ 
   return (
+    <printContext.Provider value={props}>
     <Mainbox>
-          <Leftlayout />
-           
+          <Leftlayout  printRef={printRef.current}  />
+          <Rightlayout reportName={reportName} params ={params} ref={r => printRef.current = r}>{props.children}</Rightlayout>
     </Mainbox>
-    
-  )
+    </printContext.Provider>
+  )  
 }
 
-export default function Index(props) {
-    return (
-        <Maincom {...props}     />
-    )
-}
+ 

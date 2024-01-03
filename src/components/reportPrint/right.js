@@ -1,27 +1,30 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, {forwardRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, message } from 'antd'
+import {Image} from 'antd'
  
- import {useReactToPrint} from 'react-to-print'
-
  
- import {exportPDF} from './topdf'
-import Titlelayout from '@com/titlelayout'
 import {useSelector} from 'react-redux'
-import { systemConfigInfo} from '@redux/systemconfig.js'
- 
+import { systemConfigInfo, currProject} from '@redux/systemconfig.js'
+import moment from 'moment'
  import log from './log.png'
  import bg from './bg.png'
-
+// 2 在线， 3 告警， 其他：失联
 const Mainbox = styled.div`
     && {
+        @media  print {
+          background-color: #fff;
+          border: none;
+        }
+        @media print {
+          overflow: hidden;
+        }
         background-color: #f2f2f2;
         padding: 16px 32px;
         border: 1px solid #ccc;
-        height: 840px;
+    //    height: 840px;
         overflow-y: auto;
         display: grid;
-        grid-auto-rows: 806px;
+        grid-auto-rows:  806px;
         row-gap: 32px;
         .front {
           background-color: #fff;
@@ -82,23 +85,13 @@ const Mainbox = styled.div`
  
 
  
-export default  function Rightlayout(props) {
-
-  const {reportData, reportName} = props
+export default  forwardRef(function Rightlayout(props, ref) {
+  const {reportName='', params} = props
+  const {address, projectName} = useSelector(currProject)  
+  let reportDate = moment().format("yyyy-MM-DD")
   const {chineseTitle} = useSelector(systemConfigInfo)
- 
-
-
-
-const printRef = useRef()
-const reactToPrintContent = useCallback(() => {
-  return printRef.current;
-}, [printRef.current])
-
-
-
   return (
-          <div className='right printContet' ref={printRef} id="printRef">                         
+          <Mainbox ref={ref} id="printRef">                         
                <div className='front'>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>
@@ -107,18 +100,26 @@ const reactToPrintContent = useCallback(() => {
                    <div className="frontcont">
                    <div className='head'>
                       <h1 style={{fontSize: "32px", color:"#515151"}}>{reportName}</h1>
-                      <div className='box'>
-                          <p>项目名称：{reportData.projectName}</p>
-                          <p>项目地址：{reportData.projectAddress}</p>
-                          <p>报告日期：{reportData.reportDate}</p>
-                      </div>
+                      { params ? (<div className='box'>
+                          <p>项目名称：{projectName}</p>
+                          <p>项目地址：{address}</p>
+                          <p>报告日期：{reportDate}</p>
+                      </div>)
+                      : (<div className='box'>
+                        <p>项目名称：</p>
+                        <p>项目地址：</p>
+                        <p>报告日期：</p>
+                       </div>)
+                      }
                    </div>
                    </div>
                    <Image src={bg} preview={false} ></Image>
                </div>
-               
-          </div>
+                
+                  {props.children}
+                 
+          </Mainbox>
   )
-}
+})
 
  
