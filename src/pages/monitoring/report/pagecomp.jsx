@@ -1,0 +1,166 @@
+ import styled from 'styled-components'
+import React from 'react'
+ import {Descriptions} from 'antd'
+import Page from "@com/reportPrint/page"
+ 
+import Usetable from '@com/useTable'
+import {useSelector} from 'react-redux'
+import {currProject} from '@redux/systemconfig.js'
+ 
+const DesItem = styled(Descriptions)`
+&& {
+  margin-bottom: 32px;
+ .ant-descriptions-item-label {
+   height: 30px;
+   padding: 0 16px;
+  
+   text-align: center;
+   min-width: 120px;
+   background: transparent;
+ }
+ .ant-descriptions-item-content {
+   height: 30px;
+   color:#515151;
+   padding: 0 16px;
+ }
+ .ant-descriptions-header {
+  margin-bottom: 10px;
+ .ant-descriptions-title {
+   font-weight: normal;
+   color:#515151;
+   font-size: 14px;
+ }
+}
+}
+`
+const Main =styled.div`
+   && {
+    color: #515151;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .title {
+       font-size: 18px;
+       margin-bottom: 16px;
+    }
+    .text {
+      font-size: 16px;
+      text-indent: 2em;
+    }
+   }
+
+`
+let columns = [
+  {
+      title: '设备类型',
+      dataIndex: 'type',
+      key: 'type',
+  },
+  {
+      title: '设备总数',
+      dataIndex: 'count',
+      key: 'count',
+  },
+  {
+      title: '在线设备',
+      dataIndex: 'online',
+      key: 'online',
+  },
+  {
+      title: '离线设备',
+      dataIndex: 'offline',
+      key: 'offline',
+  },
+  {
+      title: '在线率',
+      dataIndex: 'rate',
+      key: 'rate',
+      render: (text) => `${text}%`
+  },
+]
+let columns2 = [
+  {
+      title: '总计',
+      dataIndex: 'count',
+      key: 'count',
+      render: (_, r) => {
+         return   Object.values(r).reduce((c, p) => c+p, 0)
+          
+      }
+  },
+  {
+      title: '网关',
+      dataIndex: 'gatewayCount',
+      key: 'gatewayCount',
+  },
+  {
+      title: '电表',
+      dataIndex: 'electricMeterCount',
+      key: 'electricMeterCount',
+  },
+  {
+      title: '水表',
+      dataIndex: 'waterMeterCount',
+      key: 'waterMeterCount',
+  },
+  {
+      title: '断路器',
+      dataIndex: 'breakerCount',
+      key: 'breakerCount',
+  },
+  {
+      title: '传感器',
+      dataIndex: 'sensorCount',
+      key: 'sensorCount',
+  },
+  {
+      title: '监控',
+      dataIndex: 'cameraCount',
+      key: 'cameraCount',
+  },
+]
+ 
+ 
+export default function pagecomp({data}) {
+  let  reptdata= data?.constructor===Object ? data : {} ;
+  const {address, projectName} = useSelector(currProject)  
+ 
+ 
+  let counts =[
+    {
+        gatewayCount: reptdata.gatewayCount,
+        electricMeterCount: reptdata.electricMeterCount,
+         waterMeterCount: reptdata.waterMeterCount,
+        breakerCount: reptdata.breakerCount,
+         sensorCount: reptdata.sensorCount,
+         cameraCount: reptdata.cameraCount
+    }
+]
+let dataSource = [
+  {type: '网关', count: reptdata.gatewayCount, online: reptdata.gatewayOnlineCount, offline: reptdata.gatewayOfflineCount, rate: reptdata.gatewayOnlineRate},
+  {type: '电表', count: reptdata.electricMeterCount, online: reptdata.electricMeterOfflineCount, offline: reptdata.electricMeterOfflineCount, rate: reptdata.electricMeterOnlineRate},
+  {type: '水表', count: reptdata.waterMeterCount, online: reptdata.waterMeterOfflineCount, offline: reptdata.waterMeterOfflineCount, rate: reptdata.waterMeterOnlineRate},
+  {type: '断路器', count: reptdata.sensorCount, online: reptdata.sensorOfflineCount, offline: reptdata.sensorOfflineCount, rate: reptdata.sensorOnlineRate}
+]
+ const stye ={
+  marginBottom: '32px',
+ }
+  return (
+      <>
+      <Page key="a"> 
+        <Main> 
+          <p  className='title'>1.项目概况</p>    
+        <DesItem title=""  bordered size='small' column={1}>
+          <DesItem.Item label="项目名称" key="name">{projectName}</DesItem.Item>
+          <DesItem.Item label="项目地址" key="address">{address}</DesItem.Item>
+        </DesItem> 
+        <Usetable dataSource={counts} columns={columns2} size="small" title={() => "2.设备统计"} key="statistic" style={stye} flex="none" tfs="18px"></Usetable>
+                            
+        <Usetable dataSource={dataSource} columns={columns} size="small" title={() => "3.在线率统计"} key="online" style={stye} flex="none" tfs="18px"></Usetable>
+         </Main> 
+      </Page>
+      </>
+  )
+}
+ 
+   

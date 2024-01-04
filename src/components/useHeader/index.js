@@ -166,7 +166,7 @@ export default function Index(props) {
           style={{ width: "200px" }}
           onChange={changeArea}
         >
-          {areaList.map((item) => {
+          {areaList?.map((item) => {
             return (
               <Select.Option key={item.id} value={item.id}>
                 {item.name}

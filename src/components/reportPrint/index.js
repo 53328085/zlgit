@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import printContext from './context' 
- 
+ import './index.less'
  import Leftlayout from './left'
  import Rightlayout from './right'
  
@@ -23,7 +23,7 @@ const Mainbox = styled.div`
     <printContext.Provider value={props}>
     <Mainbox>
           <Leftlayout  printRef={printRef.current}  />
-          <Rightlayout reportName={reportName} params ={params} ref={r => printRef.current = r}>{props.children}</Rightlayout>
+          <Rightlayout reportName={reportName} params={params} ref={r => printRef.current = r}>{props.children}</Rightlayout>
     </Mainbox>
     </printContext.Provider>
   )  

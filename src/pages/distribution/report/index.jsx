@@ -1,13 +1,13 @@
 import React, { useState} from 'react'
 
 import { DistributionRoomRuntime } from '@api/api'
-import './index.less'
+ 
 import Report from '@com/reportPrint'
 import Pagecom from './pagecomp'
 export default function Index() {
   const [reportData, setData] = useState({})
   const  [params, setType] = useState()
-  console.log(params)
+  
   const getReport = async (params) => {
     try {
     

@@ -6,7 +6,8 @@ const server = axios.create({
     baseURL: process.env.NODE_ENV === "production" ? '/V1' :  '/api/V1',
     timeout: 50000,
     headers: {      
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Cache-Control': 'no-cache',
     }
 })
 server.interceptors.request.use(

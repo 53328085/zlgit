@@ -297,13 +297,14 @@ export default function Index() {
             return {
                 name: it.point,
                 type: 'line',
-                stack: 'Total',
+              //  stack: 'Total',
                 lineStyle:{
                   width:1
                 },
                 symbol:'circle',
                 symbolSize: 6,
-                data
+                data,
+                areaStyle: null,
             }
           })
           chartOpt.xAxis.data =xAxis

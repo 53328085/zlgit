@@ -8,7 +8,7 @@ import { systemConfigInfo, currProject} from '@redux/systemconfig.js'
 import moment from 'moment'
  import log from './log.png'
  import bg from './bg.png'
-// 2 在线， 3 告警， 其他：失联
+// 2 在线， 3 告警， 其他：失联  //   a4纸大小210mm×297mm
 const Mainbox = styled.div`
     && {
         @media  print {
@@ -85,13 +85,13 @@ const Mainbox = styled.div`
  
 
  
-export default  forwardRef(function Rightlayout(props, ref) {
+export default  forwardRef(function Rightlayout(props, ref) { 
   const {reportName='', params} = props
   const {address, projectName} = useSelector(currProject)  
   let reportDate = moment().format("yyyy-MM-DD")
   const {chineseTitle} = useSelector(systemConfigInfo)
   return (
-          <Mainbox ref={ref} id="printRef">                         
+          <Mainbox ref={ref} id="printRef" className='printContet'>                         
                <div className='front'>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>

@@ -8,13 +8,15 @@ import { message } from 'antd';
 import { Monitoring } from '@api/api.js'
 
 import gatewayRuntime from '../gxcw.svg'
+import { layout } from '@topology/layout';
 
 const Divorder = styled.div`
   display: flex;
   align-items: center;
   margin-top: 30px;
+  flex: 1;
   .card_icon{
-    margin-left: 25px;
+    margin-left: 16px;
     width: 64px;
     height: 64px;
     margin-right: 16px;
@@ -66,16 +68,16 @@ export default function DefaultHome(props) {
   }
 
   return (
-    <Titlelayout title={'光纤测温信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={'光纤测温信息'} {...fs} style={{height: "200px"}} layout="flex">
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>光纤总数</span>
+            <span className='count_title'>光纤测温总数</span>
             <span className='count_val'>{ state.gxcwCount }</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>光纤在线</span>
+                <span className='item_title'>光纤测温在线</span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.gxcwOnlineCount }</span>
             </div>
             <div className='detail_item'>

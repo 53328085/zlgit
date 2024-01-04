@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
+
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
-import WarningPng from '@imgs/warning.png'
+
 import { Monitoring } from '@api/api'
 // import Table from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -277,7 +277,7 @@ let Treeline = forwardRef(
             let params = {
                 id: tree.id,
                 projectId,
-                name,
+                name: encodeURIComponent(name),
             }
             console.log(params)
             const res = await LineManagerUpdate(params)
@@ -534,17 +534,18 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
     }
     //未选择to总表
     const summaryToLeft = () => {
-        if (selectedRows.length !== 1 || summaryMeter.length === 1) {
+           
+       /*  if (selectedRows.length !== 1 || summaryMeter.length === 1) {
             message.warning('总表最多为一条')
             return
-        }
+        } */
         if (dataSource.length <= 0) {
             message.warning('请至少选择一项!')
             return
         }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
         const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
-        setSummaryMeter([...selectedRows])
+        setSummaryMeter([...summaryMeter,...selectedRows])
         setDataSource([...arr])
         setCopydataSource([...unarr])
         setSelectedRowKeys([])
@@ -614,27 +615,28 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
     return (
         <div style={{ position: 'absolute', width: 1686, height: 755, top: 73, left: open ? -17 : 2000, background: "#003366", transition: 'all .5s 0s', padding: 32, display: 'flex' }}>
             <div style={{ position: 'relative', width: 692 }}>
-                <div style={{ marginBottom: 32, background: "#ffffff", padding: 16 }} >
+                <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
                     <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
                     <Table
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys: summaryRowKeys, onChange: summarySelectChange }}
                         columns={columns}
-                        scroll={{ y: 39 }}
+                        scroll={{ y: "100%" }}
                         size={'small'}
                         rowKey={record => record.id}
+                        style={{height: 139 }}
                         dataSource={summaryMeter}
                     ></Table>
                 </div>
-                <div style={{ background: "#ffffff", padding: 16, height: 497 }}>
+                <div style={{ background: "#ffffff", padding: 16, height: 397 }} key="down">
                     <BlueColumn name="线路分表" styled={{ marginBottom: 16 }}></BlueColumn>
                     <Table
                         bordered
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
                         columns={columns}
-                        scroll={{ y: 360 }}
+                        scroll={{ y: 260 }}
                         size={'small'}
                         dataSource={subMeter}
                         rowKey={record => record.id}

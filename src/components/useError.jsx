@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect } from 'react'
 import {Button, Empty, Typography, Space} from 'antd'
  import {useErrorBoundary} from 'react-error-boundary'
+ import {useLocation} from 'react-router-dom'
  import imgurl from '@imgs';
  const {Link, Text, Paragraph} = Typography
  const style = {
@@ -31,7 +32,7 @@ export default class ErrorBoundary extends Component {
       return <Empty image={imgurl.error}
          imageStyle={{width: '200px', height: '180px'}}
          style={style}
-         description={<Paragraph><Text strong type="warning">抱歉！页面出错点击</Text><Link  onClick={() => window.location.reload(true)}>刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
+         description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={() => window.location.reload(true)}>试下刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
       /> ;
     }
 
@@ -39,12 +40,20 @@ export default class ErrorBoundary extends Component {
   }
 }
 
-export function Fallack(props) {
+export function Fallack({error}) {
+   let location = useLocation
+   console.log(error.message)
    const {resetBoundary} = useErrorBoundary()
-    let error=props.error ?? '抱歉！页面出错'
-   return <Empty image={imgurl.error}
+  // let error=props.error ?? '抱歉！页面出错'
+   let msg = "抱歉！页面出错"
+   useEffect(() => {
+     if(error?.message) {
+      resetBoundary()
+     }
+   }, [location])
+   return (<Empty image={imgurl.error}
    imageStyle={{width: '200px', height: '180px'}}
    style={style}
-   description={<Paragraph><Text strong type="warning">{error}</Text><Link  onClick={resetBoundary}>试下刷新</Link></Paragraph>}
-   /> ;
+   description={<Paragraph><Text strong type="warning">{msg}</Text><Link  onClick={resetBoundary}>试下刷新</Link></Paragraph>}
+   />);
 }

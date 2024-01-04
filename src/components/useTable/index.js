@@ -8,18 +8,18 @@ import {nanoid} from '@reduxjs/toolkit'
 
 const Divbox = styled.div`
 display: flex;
-flex:1;
+flex: ${props => props.flex || 1};
 flex-direction: column;
 justify-content: space-between;
 `
 const Tablecom = styled(Table)`
 && {
 display: flex;
-flex:1;
+flex: 1;
 flex-direction: column;
 .ant-table-title {
   border: none;
-  font-size: 16px;
+  font-size: ${props => props.tfs || '16px'};
   color: #515151;
   padding-bottom: 16px;
 }
@@ -153,7 +153,7 @@ const download = useCallback(() => {
  
 
   return (
-    <Divbox>
+    <Divbox flex={props.flex}>
         <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()} { ...otherprops}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
     </Divbox>

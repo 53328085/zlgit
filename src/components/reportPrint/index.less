@@ -1,6 +1,3 @@
-/**
-    index.less样式文件
-*/
 @media all {
     .page-break {
       display: none;
@@ -13,14 +10,21 @@
       overflow: initial !important; // 如果出现无法分页加入此属性
       -webkit-print-color-adjust: exact;
     }
+    .printContet {
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+       align-items: center;
+      }
+        .page-break {
+          margin-top: 1rem;
+          display: block;
+          page-break-after: always;
+        }
   }
   
-
-    .page-break {
-      margin-top: 1rem;
-      display: block;
-      page-break-after: always;
-    }
+  
   
   
   @page {
