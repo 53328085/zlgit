@@ -22,7 +22,7 @@ const Mainbox = styled.div`
   return (
     <printContext.Provider value={props}>
     <Mainbox>
-          <Leftlayout  printRef={printRef.current}  />
+          <Leftlayout  printRef={printRef.current} title={reportName} />
           <Rightlayout reportName={reportName} params={params} ref={r => printRef.current = r}>{props.children}</Rightlayout>
     </Mainbox>
     </printContext.Provider>

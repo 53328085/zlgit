@@ -78,6 +78,8 @@ export default function index (props) {
     //总表->未知
     const [selectedMainKeys, setSelectedMainKeys] = useState([]);
     const onSelectMain = (newSelectedRowKeys) => {
+        console.log(newSelectedRowKeys)
+        console.log(mainData)
         setSelectedMainKeys(newSelectedRowKeys);
     };
     const mainSelection = {
@@ -92,8 +94,10 @@ export default function index (props) {
             })
             return;
         }else{
-            setUnknownData(unknownData.concat(mainData))
-            setMainData([]);
+            let tounknowData = mainData.filter(d => selectedMainKeys.includes(d.id) )
+            let restData = mainData.filter(d => !selectedMainKeys.includes(d.id))
+            setUnknownData(unknownData.concat(tounknowData))
+            setMainData([...restData]);
             setSelectedMainKeys([]);
         }
     }
@@ -183,6 +187,7 @@ export default function index (props) {
 
     const handleClose = () => {
         setSearchValue("")
+        setSubserach("")
         props.closeValue('close');
         
     }
@@ -197,7 +202,7 @@ export default function index (props) {
     let keys = columns.map(c => c.key);
   
     const onSearchSub = (value) => {
-       
+        setSubserach(value)
         let arr = [];
       
         setSelectedSubKeys([])
@@ -215,6 +220,7 @@ export default function index (props) {
                     arr.push(item)
                 } */
             })
+            console.log(arr)
             setSubData([...arr]);
         }
     }
@@ -235,10 +241,11 @@ export default function index (props) {
                     arr.push(item)
                 } */
             })
+            console.log(arr)
             setUnknownData([...arr]);
         }
     }
-
+   const [subserach, setSubserach] = useState('')
     return (
         <div className={style.transferContent}>
             {contextHolder}
@@ -254,10 +261,10 @@ export default function index (props) {
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
                         <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:270}} rowSelection={subSelection}></Table>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:188}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>
@@ -267,10 +274,10 @@ export default function index (props) {
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
                         <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchSub}></Search>
+                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:141}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>)
@@ -323,6 +330,7 @@ export default function index (props) {
                     style={{width: 256}} 
                     enterButton 
                     onSearch={onSearchUnknown} 
+                    allowClear
                     value={searchValue}
                     onChange={(e)=>{setSearchValue(e.target.value)}}
                     ></Search>

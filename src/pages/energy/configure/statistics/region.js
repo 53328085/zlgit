@@ -316,17 +316,47 @@ const getSelected = async ({areaId, type=devietype}) => {
       console.log(error);
     }
   };
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows, info) => {
-      devices.current.selected = selectedRows;
+ const [rowSelectionData, setRowSelection] = useState([])
+ const [maindata, setMaindata] = useState([])
+  const rowSelection = {   // 总表
+    selectedRowKeys:rowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => {     
+      setRowSelection(selectedRowKeys)
+       setMaindata([...selectedRows]);
     },
   };
+  const [subrowSelectionData, setSubRowSelection] = useState([])
+  const [subdata, setSubdata] = useState([])
+  const subrowSelection = {   // 分表
+    selectedRowKeys:subrowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => { 
+      setSubRowSelection(selectedRowKeys)
+      setSubdata([...selectedRows]);
+    },
+  };
+   
+  const [unrowSelectionData, setUnRowSelection] = useState([])
+  const [undata, setUndata] = useState([])
+  const unrowSelection = {   // 分表
+    selectedRowKeys:unrowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => { 
+      setUnRowSelection(selectedRowKeys)
+      setUndata([...selectedRows]);
+    },
+  };
+
+
 
   const onMove = async (type) => { 
     
     let {areaId} = Record 
-    let selected = devices.current.selected;
+    let selected = [[], undata,maindata, undata, subdata][type]
+   // let selected = devices.current.selected; 
+      
     if (selected.length < 1) return message.warning('请选择设备', 2)
+    if(type == 2 || type == 4) setUnRowSelection([])
+    if(type == 1) setRowSelection([])
+    if(type == 3) setSubRowSelection([])
     let params = selected.map(s => s.sn);
     let handler = ['', 'AddSummaryDevice', 'RemoveSummaryDevice', 'AddSubDevice', 'RemoveSubDevice'][type]
      let {success, errMsg} =  await Area[handler](projectId, areaId, params)
@@ -556,7 +586,6 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
       <Drawerbox
-        placement="bottom"
         onClose={drawClose}
         open={open}
         getContainer={() => boxref.current}
@@ -592,7 +621,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             </Space>
             <UserTable
               columns={deviceColumns}
-              rowSelection={rowSelection}
+              rowSelection={subrowSelection}
               dataSource={deviceSub}
               scroll={{
                 y: 248
@@ -695,9 +724,9 @@ const getSelected = async ({areaId, type=devietype}) => {
           </Form>
           <UserTable
             columns={deviceColumns}
-            rowSelection={rowSelection}
+            rowSelection={unrowSelection}
             dataSource={Unselected}
-            scroll={{y: 616}}
+            scroll={{y: 556}}
             rowKey="id"
           />
         </div>

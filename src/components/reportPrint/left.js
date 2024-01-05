@@ -55,7 +55,7 @@ const { RangePicker } = DatePicker;
 
  
  export default  function Leftlayout(props) {
-  let {printRef} = props
+  let {printRef, title} = props
    const {getReport} = useContext(printContext)   
    const projectId = useSelector(selectProjectId)
    const [form] = Form.useForm()
@@ -88,7 +88,7 @@ const reactToPrintContent = useCallback(() => {
 const downloadReport = (id) => {
    try {
     if(!loading) return message.warning('请先生成报告', 0.3)  
-     exportPDF('配电管理运行报告',  id)
+     exportPDF(title,  id)
    } catch (error) {
     
    }

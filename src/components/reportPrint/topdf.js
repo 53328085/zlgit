@@ -5,7 +5,6 @@ export const exportPDF = (title,node) =>{
     const element = document.getElementById(node);    // 这个dom元素是要导出pdf的div容器
     const w = (element ).offsetWidth;    // 获得该容器的宽
     const h = (element ).offsetHeight;    // 获得该容器的高
-   
     const offsetTop = (element).offsetTop;    // 获得该容器到文档顶部的距离
     const offsetLeft = (element).offsetLeft;    // 获得该容器到文档最左的距离
     const canvas = document.createElement("canvas");
@@ -38,7 +37,7 @@ export const exportPDF = (title,node) =>{
         let position = 0;
         //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
         const imgWidth = 595.28;
-        const imgHeight = 806 / contentWidth * contentHeight;
+        const imgHeight = 670 / contentWidth * contentHeight;
    
         const pageData = canvas.toDataURL('image/jpeg', 1.0);
         const str = ''
