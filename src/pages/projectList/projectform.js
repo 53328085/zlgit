@@ -11,11 +11,11 @@ import {
 } from "antd";
 import styled from "styled-components";
 import Mapcom from "@com/useMap/indexset";
-import imgurl from "@imgs"
+import projectlog from "@imgs/chintlog.png";
+import projectimg from "@imgs/projectimg.png";
 import Upload from '@com/useUpload'
 import {Comipt, Comtext, CdatePicker} from "@com/comstyled"
-import projectimg from './projectimg.png'
-import projectlog from './projectlog.png'
+ 
  
 const Formbox = styled(Form)`
   display: grid;
@@ -249,7 +249,7 @@ const imgToBase = (url) => {
           required: true 
         }
       ]}>
-        <Comipt placeholder="请输入项目名称" />
+        <Comipt placeholder="请输入项目名称"  autoComplete="off" />
       </Item>
       <Item label="项目有效期" required name="validStageTime" rules={[
         {

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import moment from "moment";
 import {
   Space,
   Image,
@@ -32,6 +32,7 @@ import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
+ 
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
@@ -368,9 +369,12 @@ export default function Index() {
  
 
   if (type == 2) {
+  
     return runMenus?.find(item => item.no == '0104') || runMenus[0] 
-  }else if(type == 1) {
-    return designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
+  }else if(type == 1) {  
+    let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
+    let {label, key: nested} = siderDesignerMenus[key][0]
+    return  {label, key, nested}
   }
 
  
@@ -430,10 +434,12 @@ export default function Index() {
     })
   };
 
- const projectDesigner = ({key, label}) => { 
+ const projectDesigner = (menu) => { 
+     console.log(menu)
+     let {label, key, nested} = menu
       dispatch(getJump(false))
-      navigate(`/config/${key}/base`, {
-        state: { type: 'config', primary: key,  title: label, nested: 'base'  } 
+      navigate(`/config/${key}/${nested}`, {
+        state: { type: 'config', primary: key,  title: label, nested } 
       }) 
   }
   /* 新增项目  start*/
@@ -507,7 +513,8 @@ export default function Index() {
 
   const getTableData = ({ current, pageSize }, formData) => {
     //setFormParams((formParams) => ({ ...formParams, ...formData }));
-
+   let {name} = formData
+   formData.name = encodeURIComponent(name)
    const params = Object.assign(
       {},
      // params,
@@ -639,15 +646,17 @@ tableProps.pagination.size="default" // 页码大小默认
     form: opform,
   })
  let {submit} = search
+ const disabledDate = (current) => {
  
+  return current && current > moment() ;
+};
  return  <Opbox>
          
   <Form
     form={opform}
   >
-    
       <Item label="操作时间" name="date">
-         <RangePicker style={{width: '408px'}} onChange={submit} />
+         <RangePicker style={{width: '408px'}} onChange={submit} disabledDate={disabledDate} />
       </Item>
   </Form>
 <UseTabel
@@ -714,12 +723,13 @@ const closeModl = () => {
                   type="vertical"
                 />} >
               
-              <Item name="name">
+              <Item name="name" normalize={(v) => v.trim() }>
               <Iptserach
                    placeholder="请输入项目名称"
                    style={{ width: "500px" }}
                    allowClear
                    onSearch={submit}
+                   autoComplete="off"
                    enterButton={ <CutSerachBt
                     width="98px"                  
                     icon={

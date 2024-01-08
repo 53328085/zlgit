@@ -24,7 +24,7 @@ import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
 import Copyright from './Copyright'
-import { registerUpdateLifecycle } from "echarts";
+ 
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
