@@ -8,7 +8,7 @@ import {useSelector, useDispatch} from 'react-redux'
  import {selectUser, userRest} from '@redux/user.js'
 import {manager } from '@redux/user'  
 import { getpublishState, publishState, systemConfigRest} from '@redux/systemconfig.js'  
-import log from './log.png'
+import log from '@imgs/log.png'
  
  
 const { Title, Text, Paragraph, Link } = Typography;

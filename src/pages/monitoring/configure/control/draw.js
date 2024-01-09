@@ -282,15 +282,21 @@ function Draw({params}, ref) {
     }
       const setb = useRef()
       const untb = useRef()
+      const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 已选中的设备
+      const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 未选中的设备
       const rowSelection = { // 已选中的设备
+        selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows, info) => {
            devices.current = selectedRows;
+           setSelectedRowKeys([...selectedRowKeys])
            
         },
       };
       const unrowSelection = { // 未选中的设备
+        selectedRowKeys: unselectedRowKeys,
         onChange: (selectedRowKeys, selectedRows, info) => {
            undevices.current = selectedRows;
+           setUnselectedRowKeys([...selectedRowKeys])
            
         },
 
@@ -298,10 +304,10 @@ function Draw({params}, ref) {
       const unselect = () => {
         if(!devices.current) return
         let keys = devices.current.map(k => k.id)
-        
         setUnusedtb([...unusedtb, ...devices.current])
         let data = usedtb.filter(t => !keys.includes(t.id))
         setusedtable([...data])
+        setUnselectedRowKeys([])
         devices.current = {}
         undevices.current={}
       }
@@ -312,7 +318,7 @@ function Draw({params}, ref) {
            setusedtable([...usedtb, ...undevices.current])
             let undata = unusedtb.filter(t => !keys.includes(t.id))
             setUnusedtb([...undata])
-           
+            setSelectedRowKeys([])
             devices.current = {}
            undevices.current={}
       }

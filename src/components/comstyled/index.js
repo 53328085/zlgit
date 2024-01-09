@@ -403,3 +403,21 @@ export const Logbtn = styled(Button)`
   }
 `;
  
+
+export const Serach = styled(Input.Search)`   // 运行监控 运行态
+  && {
+     width: 340px;
+     margin-left: 16px;
+     .ant-input-affix-wrapper.ant-input-affix-wrapper-status-success:focus, .ant-input-affix-wrapper:focus{
+       border-color: #d7d7d7;
+       box-shadow: none;
+     }
+     .ant-btn.ant-btn-primary.ant-input-search-button, .ant-btn.ant-btn-primary.ant-input-search-button:hover{
+        width: 80px;
+        background-color: #f5f7fa;
+        color:#515151;
+        border-color: #d7d7d7;
+     }
+    }
+`
+  

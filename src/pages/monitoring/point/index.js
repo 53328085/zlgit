@@ -5,6 +5,7 @@ import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } f
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
+import styled from 'styled-components';
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
@@ -13,7 +14,7 @@ import { ExportExcel } from '@com/useButton'
 import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
-
+import {Serach} from "@com/comstyled"
 
 let inputValue = ''
 export default function Index(props) {
@@ -136,7 +137,7 @@ export default function Index(props) {
       }
     })
   }
-  const getOverviewData = () => {        //   表计数据
+  const getOverviewData = (e) => {        //   表计数据
     Overview(params).then(res => {
       let { success, data, total, pageNum } = res
       if (success) {
@@ -221,11 +222,12 @@ export default function Index(props) {
    })
   }
   const onChangeValue = e => {
+     console.log(e)
      setParams({
       ...params,
-      alike: e.target.value
+      alike: e.trim()
      })
-  }//输入框改变值
+  } 
    
   const handleChange = e => {
    
@@ -349,8 +351,18 @@ export default function Index(props) {
       </div>
       <div className={style.bottom} style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
         <div className={style.bottomTab}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span><Input size="middle" placeholder='输入设备名称/表计编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getOverviewData}>查询</Button>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>表计查询</span>
+
+          <Serach size="middle"   placeholder='输入设备名称/表计编号/安装地址' 
+          style={{ width: '340px', marginLeft: 16 }} 
+          allowClear
+          enterButton="查询"
+        //  onChange={onChangeValue}
+          onSearch = {onChangeValue}
+           />
+
+         {/*  <Serach size="middle" placeholder='输入设备名称/表计编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
+            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getOverviewData}>查询</Button> */}
             <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div>
           <span>表计型号</span>
           <Select

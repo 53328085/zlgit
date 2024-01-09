@@ -19,7 +19,7 @@ import CModal from '@com/useModal'
 import moment from 'moment'
 import { cloneDeep } from 'lodash'
 import { deepClone } from '@topology/core'
-
+import {Serach} from "@com/comstyled"
 const { RangePicker } = DatePicker;
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 export default function Index() {
@@ -312,7 +312,7 @@ export default function Index() {
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
                         <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
-                            <Input.Search placeholder='请输入设备编号/安装地址' allowClear style={{ width: '370px' }} size='middle' enterButton="查询" onSearch={submit} /> 
+                            <Serach placeholder='请输入设备编号/安装地址' allowClear   size='middle' enterButton="查询" onSearch={submit} /> 
                              
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />

@@ -5,6 +5,7 @@ import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } f
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
+ 
 import style from './style.module.less'
 import Icard from './card'
 import imgurl from './images/index.js'
@@ -12,8 +13,10 @@ import { Monitoring } from '@api/api.js'
 import { selectProjectId } from '@redux/systemconfig.js'
 import {  ExportExcel} from '@com/useButton'
 import Table from '@com/useTable'
-
-
+import {Serach} from "@com/comstyled"
+ 
+  
+ 
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
@@ -286,10 +289,10 @@ const onExport = useCallback(() => {
       <div className={style.bottom}>
         <div className={style.bottomTab}>
           {isCard ? 
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>网关查询</span><Input.Search size="middle" value={svalue} placeholder='输入网关编号/安装地址' 
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>网关查询</span><Serach size="middle" value={svalue} placeholder='输入网关编号/安装地址' 
           style={{ width: '340px', marginLeft: 16 }} 
           allowClear
-          enterButton="搜索"
+          enterButton="查询"
           onChange={onChange}
           onSearch = {onChangeValue}
            />

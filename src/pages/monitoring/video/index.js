@@ -1,5 +1,6 @@
 import React, { useState, useEffect,useMemo  } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination } from 'antd'
+ 
 import { SearchOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
@@ -17,7 +18,7 @@ import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
 import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
-
+import {Serach} from "@com/comstyled"
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
   const { token } = useSelector(selectUser);
@@ -150,8 +151,8 @@ export default function Index() {
   const onChangeValue = e => {
     inputValue = e.target.value
   }//输入框改变值
-  const onSearchList = () => {
-    params.alike = inputValue
+  const onSearchList = (e) => {
+    params.alike = e
     getOverview()
   }//点击查询按钮
   const onChangePage = (page, pageSize) => {
@@ -505,8 +506,15 @@ const playBackYun=()=>{
       <div className={style.content}>
         <div className={style.contentTitle}>
           <span>设备查询</span>
-          <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>
-          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }} onClick={() => { onSearchList() }}>查询</Button>
+          <Serach size="middle"  placeholder='请输入设备编号/安装地址' 
+          style={{ width: '340px', marginLeft: 16 }} 
+          allowClear
+          enterButton="查询"
+        //  onChange={onChange}
+          onSearch = {onSearchList}
+           />
+        {/*   <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>
+          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }} onClick={() => { onSearchList() }}>查询</Button> */}
         </div>
         <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
         <div className={style.tableList}>

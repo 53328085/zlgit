@@ -8,7 +8,7 @@ import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {RunAutoValve} from '@api/api'
- 
+import {Serach} from "@com/comstyled"
 const {Paragraph, Link} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -313,7 +313,7 @@ week.forEach(w => {
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onSearch={submit} enterButton="查询" />
+              <Serach placeholder='请输入策略名称'   allowClear onSearch={submit} enterButton="查询" />
              </Item>
            </Space>
           

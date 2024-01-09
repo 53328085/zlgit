@@ -492,6 +492,7 @@ const onSureEditModal=async()=>{
         loading={ loading}
         pagination={tableParams}
         onChange={onChangePage}
+        rowKey={(record) => record.category + record.cnt }
         onExport={onExport}
         ></Table>
       </DeviceContent>

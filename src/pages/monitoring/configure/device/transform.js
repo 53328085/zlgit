@@ -317,6 +317,8 @@ export default function gateway({ deviceStyle }) {
       } else {
         message.error(res.errMsg)
       }
+    }).catch(e => {
+      console.log(e)
     })
 
 
@@ -691,7 +693,7 @@ export const FormComp = (props) => {
             }
           </Form.Item>
           <Form.Item label="安装地址" name="address" rules={rules}>
-            <Input />
+            <Input autoComplete='off' />
           </Form.Item>
           <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
             <Select

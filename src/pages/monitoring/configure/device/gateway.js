@@ -434,6 +434,7 @@ export default function Gateway() {
         setgatewayRes(data.message)
         setisSuccess(false)
         modalReStartResRef?.current?.onOpen()
+        seterrorList(data?.message)
       }
       else{
         // polloption.run()
@@ -441,6 +442,7 @@ export default function Gateway() {
         
         setgatewayRes("操作成功")
         setisSuccess(true)
+        seterrorList(data?.message)
         modalReStartResRef?.current?.onOpen()
        
       }
@@ -531,6 +533,7 @@ export default function Gateway() {
               setgatewayResTips('注意：重启网关后参数才生效')
               setSpinShow(false)
               resolve('break')
+              seterrorList(res.errMsg)
             }
           } else {
 
@@ -569,7 +572,8 @@ export default function Gateway() {
         setspinLoading('')
         setSpinShow(false)
         modalReStartResRef?.current?.onOpen()
-        setgatewayRes(res.errMsg)
+        setgatewayRes(result.errMsg)
+        seterrorList(result.errMsg)
       }
        
     } catch (error) {
