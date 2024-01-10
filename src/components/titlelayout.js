@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Space} from 'antd'
+import {Card } from 'antd'
 import styled from 'styled-components'
 const Boxdiv = styled(Card)`
   padding: ${props => props.pv};

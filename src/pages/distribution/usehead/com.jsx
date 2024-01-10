@@ -2,21 +2,23 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectdisOneLevel, getDiscurlevel, getcurlRommid,  selectdiscurlevel, selectcurlRommid,  getRoomId} from "@redux/systemconfig";
+import { selectdisOneLevel, getDiscurlevel, getcurlRommid, selectOneLevelDefaultId, selectdiscurlevel,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
 export default  memo(function Index(props) {
+  let {showRoom = true} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(selectdisOneLevel)
-  
-  const areaId = useSelector(selectdiscurlevel)
+  const levelName = useSelector(levelDefaultLabel) || '园区'
+  const areaId = useSelector(selectOneLevelDefaultId)
  
   //const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState([])
   const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
-  const changeArea=(v)=>{  
-    getDiscurlevel(v)   
-    getRoomList(v)
+  const changeArea=(v, option)=>{  
+     dispacth(setCurrentlevel(option))
+  //  getDiscurlevel(v)   
+     showRoom &&  getRoomList(v)
   }
   const changeRomme = (v) => {      
        dispacth(getcurlRommid(v))
@@ -59,7 +61,7 @@ return (
                     }
                   }
               >
-                  <Form.Item   name="area" style={{ marginBottom: 0 }}>
+                  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: 200 }} 
                       options={oneLevel} 
@@ -67,7 +69,7 @@ return (
                       onChange={changeArea}                      
                       ></Select>
                   </Form.Item>
-                  <Form.Item>
+                  {showRoom && <><Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
                   </Form.Item>
                   <Form.Item name="roomId" >
@@ -78,6 +80,8 @@ return (
                           placeholder="请选择配电房"
                           onChange={changeRomme}></Select>
                   </Form.Item>
+                  </>
+                  }
               </Form>
           </div>
   </div>

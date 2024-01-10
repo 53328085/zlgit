@@ -1,16 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Select, Button, Table, Space, Modal, message } from 'antd';
+import React, { useRef, useState, useEffect, useCallback } from 'react'
+import { Select, Button, Space, message } from 'antd';
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
-import { useRequest } from 'ahooks';
+import { useRequest, useAntdTable } from 'ahooks';
 import {useSelector} from 'react-redux'
-import {utils, writeFile} from 'xlsx'
+ 
 import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
 import { distributionRoom, DistributionMeter } from '@api/api.js'
 import { cloneDeep } from 'lodash';
-
+import Usetable from '@com/useTable'
 import dashed from '@imgs/dashed.png'
- 
+import {  ExportExcel} from '@com/useButton'
 import CModal from '@com/useModal'
 export default function Index() {
   const tableRef = useRef()
@@ -30,7 +30,7 @@ export default function Index() {
   const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
   const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
   const handleChange = (values) => {
-    setPageNum(1)
+    
     setAreaId(values)
   }
   //配电房下拉框
@@ -40,15 +40,20 @@ export default function Index() {
   const getRoomData = () => {
     return queryPageRoom( projectId, areaId, 0, 0).then(res => {
       if(res.success){
-        setRoomList(res.data)
-        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
-        setRoomId(res.data.length > 0  ? res.data[0].id : null)
-        if(res.data.length == 0){
+        if(Array.isArray(res.data) && res.data?.length > 0) {
+          setRoomList(res.data)
+          setDefaultRoom(res.data[0].id)
+          setRoomId(res.data[0].id)
+        }else {
+          setRoomList([])
+          setDefaultRoom(null)
+          setRoomId(null)
           messageApi.open({
             type: 'warning',
             content:"当前园区没有配电房"
           })
         }
+        
       }else{
         messageApi.open({
           type:'error',
@@ -72,37 +77,49 @@ export default function Index() {
     }
   },[areaId])
   const ChangeRoom = values => {
-    setPageNum(1)
+    
     setDefaultRoom(values)
     setRoomId(values)
   }
 
   //设备查询
-  const [pageNum, setPageNum] = useState(1)
+ 
   const [total, setTotal] = useState(0)
   const pageSize = 10
-  const getTableData = () => {
-    return queryPageSensor(projectId, roomId, pageNum, pageSize).then(res => {
+  const getTableData = ({current, pageSize}) => {
+    if(!roomId)  return  new Promise((resolve) => {
+      setSubTable([])
+      setTotal(0)
+      resolve({
+       list: [],
+       total: 0
+     })
+
+ })
+    return queryPageSensor(projectId, roomId, current, pageSize).then(res => {
       if(res.success){
-        if(res.data){
-          setData(res.data)
+        if(Array.isArray(res.data)){
+         // setData(res.data)
           setSubTable(res.data)
         }else{
           setData([])
           setSubTable([])
         }
         setTotal(res.total)
+      }else {
+        setTotal(0)
       }
     })
   }
-  const {run: queryTable } = useRequest(getTableData,{
-    manual:true
+  const {tableProps} = useAntdTable(getTableData,{
+    refreshDeps: [roomId],
+    defaultPageSize: 14
   })
-  useEffect(()=> {
+/*   useEffect(()=> {
     if(roomId){
       queryTable()
     }
-  },[roomId, pageNum])
+  },[roomId, pageNum]) */
 
   const columns = [
     {
@@ -182,7 +199,7 @@ export default function Index() {
       if(res.success){
         messageContent('success','设备删除成功!')
         if(subTable.length == 1 && pageNum > 1){
-          setPageNum(pageNum  - 1)
+          
         }else{
           queryTable()
         }
@@ -281,33 +298,13 @@ export default function Index() {
     subTitle:'配电房传感器',
     unknownTitle:'未选中的传感器设备'
   }  
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-  }
+ 
 
-  const exportData = () => {
-    const params = { raw: true };
-    const workbook = utils.book_new(); // 新建工作簿   
-    let table = tableRef.current  
-    const ws = utils.table_to_sheet(
-      // 新建工作表
-      table,
-      params
-    );
-    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file =  "xlsx";
-    writeFile(workbook, '配电房传感器.xlsx', { bookType: file }); // 下载
-  }
-
+ 
+  const onExport =useCallback(async () => { 
+    console.log(total)
+   return getTableData({current: 1, pageSize: total})
+}, [total, roomId])
   return (
     <div>
       {transTag =='open' ? <div className={style.mask}></div> : null }
@@ -344,14 +341,12 @@ export default function Index() {
       <div className={style.mainContent}>
         <div className={style.contentTitle}>
             <span>配电房传感器</span>
-            <div>
+            <Space size={16}>
             <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
                 选择设备
             </Button>
-            <Button type="primary" style={{marginLeft:'16px', width: 96}} onClick={()=>exportData()}>
-                导出
-            </Button>
-            </div>
+            <ExportExcel tb={tableRef} />
+            </Space>
         </div>
         <div className={style.line}>
           <img className={style.lineImg} src={dashed}></img>
@@ -359,7 +354,7 @@ export default function Index() {
         <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
         <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         </div>
-      <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
+      <Usetable ref={tableRef} style={{marginTop:'16px'}}   columns={columns}   rowKey='id'  {...tableProps} sheetName="传感器管理" onExport={onExport}></Usetable>
       <CModal title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} maskClosable={false} mold="cust" type="warn">
          是否确认在该配电房中删除该传感器？ 
        
