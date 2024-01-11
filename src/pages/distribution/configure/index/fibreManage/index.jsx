@@ -1,22 +1,24 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Select, Button, Table, Space,  message, Typography, Form, Input,} from 'antd';
+import React, { useRef, useState, useEffect, useCallback } from 'react'
+import { Select, Button,  Space,  message, Typography, Form, Input, Divider} from 'antd';
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
-import { useRequest } from 'ahooks';
+import { useAntdTable} from 'ahooks';
 import {useSelector} from 'react-redux'
-import {utils, writeFile} from 'xlsx'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { distributionRoom, DistributionMeter } from '@api/api.js'
-import { cloneDeep } from 'lodash';
-import CModal from '@com/useModal'
-import dashed from '@imgs/dashed.png'
  
+import {selectProjectId, selectcurlRommid, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import { DistributionMeter } from '@api/api.js'
+ 
+import CModal from '@com/useModal'
+ 
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
+import {  ExportExcel} from '@com/useButton'
+import Usetable from '@com/useTable' 
  
 const {Link} = Typography
 
 export default function Index() {
-  const tableRef = useRef()
-  const { queryPageRoom } = distributionRoom
+  const tableRef = useRef() 
   const { QueryPageFibreTempil,QueryUnusedFibreTempil,ConfigureFibreTempil, QueryGXCWBaseInfo, ConfigureGXCWInfo, DeleteGXCWInfo} = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
@@ -26,87 +28,48 @@ export default function Index() {
     })
   }
   const projectId = useSelector(selectProjectId);
-  //园区选择
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const handleChange = (values) => {
-    setPageNum(1)
-    setAreaId(values)
-  }
-  //配电房下拉框
-  const [roomList, setRoomList] = useState([])
-  const [defaultRoom, setDefaultRoom] = useState()
-  const [roomId, setRoomId] = useState()
-  const getRoomData = () => {
-    return queryPageRoom( projectId, areaId, 0, 0).then(res => {
-      if(res.success){
-        setRoomList(res.data)
-        setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
-        setRoomId(res.data.length > 0  ? res.data[0].id : null)
-        if(res.data.length == 0){
-          messageApi.open({
-            type: 'warning',
-            content:"当前园区没有配电房"
-          })
-        }
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    })
-  }
-  const { run : queryRoom } = useRequest(getRoomData,{
-    manual: true,
-  })
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
-      message.error('当前项目尚未配置园区!')
-      return;
-    }
-    if(areaId == 0 || !areaId){
-      return
-    }else{
-      queryRoom()
-    }
-  },[areaId])
-  const ChangeRoom = values => {
-    setPageNum(1)
-    setDefaultRoom(values)
-    setRoomId(values)
-  }
+  const roomId = useSelector(selectcurlRommid)
+  const areaId = useSelector(selectOneLevelDefaultId)
 
   //设备查询
-  const [pageNum, setPageNum] = useState(1)
-  const [total, setTotal] = useState(0)
-  const pageSize = 10
-  const getTableData = () => {
-    return QueryPageFibreTempil(projectId, roomId, pageNum, pageSize).then(res => {
-      if(res.success){
-        if(res.data){
-          setData(res.data)
-        //  setSubTable(res.data)
-        }else{
-          setData([])
-        //  setSubTable([])
+ 
+  const [total, setTotal] = useState(0) 
+  const getTableData = ({current, pageSize}) => {
+    if(!areaId || !roomId) return  new Promise((resolve) => {
+      setSubTable([])
+      setTotal(0)
+      resolve({
+       list: [],
+       total: 0
+     })
+
+   })
+    return QueryPageFibreTempil(projectId, roomId, current, pageSize).then(res => {
+      let {success, data, total} = res
+      if(success){
+        setTotal(total)
+        if(Array.isArray(data) && data.length > 0){
+           
+         setSubTable(data)
+         return {
+           list: data,
+           total
+         }
+        }else{ 
+         setSubTable([])
+         return {
+          list: [],
+          total: 0
+         }
         }
-        setTotal(res.total)
       }
     })
   }
-  const {run: queryTable } = useRequest(getTableData,{
-    manual:true
+  const {refresh: queryTable, tableProps } = useAntdTable(getTableData,{
+    refreshDeps: [roomId,projectId],
+    defaultPageSize: 14,
   })
-  useEffect(()=> {
-    if(roomId){
-      queryTable()
-    }else{
-      setData([])
-    }
-  },[roomId, pageNum])
+ 
 
   const columns = [
     {
@@ -160,11 +123,6 @@ export default function Index() {
     },
   ];
 
-  const [data, setData] = useState([])
- 
-  
- 
- 
 // 创建、编辑分区
 const rules = [{
   required: true
@@ -260,6 +218,7 @@ const rules = [{
  
   const [transTag, setTransTag] = useState('')
   const settingClick =(record) => {
+    console.log(record)
     if(areaId == 0 || !areaId){
       message.warning('请先选择园区!')
       return;
@@ -335,88 +294,34 @@ const rules = [{
     subTitle:'光纤测温',
     unknownTitle:'未选中的光纤测温设备'
   }  
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-  }
-
-  const exportData = () => {
-    const params = { raw: true };
-    const workbook = utils.book_new(); // 新建工作簿   
-    let table = tableRef.current  
-    const ws = utils.table_to_sheet(
-      // 新建工作表
-      table,
-      params
-    );
-    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file =  "xlsx";
-    writeFile(workbook, '配电房光纤测温.xlsx', { bookType: file }); // 下载
-  }
-
-  return (
-    <div>
-      {transTag =='open' ? <div className={style.mask}></div> : null }
-      {contextHolder}
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName + '选择'}</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={handleChange}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-        <div className={style.division}></div>
-        <Select
-          placeholder="请选择配电房"
-          size="middle"
-          // key={defaultRoom}
-          // defaultValue={defaultRoom}
-          value={defaultRoom}
-          style={{width: '200px'}}
-          onChange={ChangeRoom}
-        >
-          {roomList?.map((item) => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div>
-      <div className={style.mainContent}>
-        <div className={style.contentTitle}>
-            <span>配电房光纤测温</span>
-            <div>
-           {/*  <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
-                选择设备
-            </Button> */}
-             <Button type="primary" onClick={() => onOpen(false)} >
+  const Title = (
+    <div style={{display: 'flex',justifyContent: "space-between"}}>
+      <span>光纤测温</span>
+            <Space size={32}>
+            <Button type="primary" onClick={() => onOpen(false)} >
                创建测温分区
             </Button>
-            <Button type="primary" style={{marginLeft:'16px', width: 96}} onClick={()=>exportData()}>
-                导出
-            </Button>
-            </div>
-        </div>
-        <div className={style.line}>
-          <img className={style.lineImg} src={dashed}></img>
-        </div>
-        <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
+            <ExportExcel tb={tableRef} />
+        
+            </Space>
+    </div>
+ )
+
+  const onExport =useCallback(async () => {   
+    return getTableData({current: 1, pageSize: total})
+   }, [total, roomId, projectId])
+
+  return (
+    <Pagecont showserach={false} custserach pd="0px" >  
+      {transTag =='open' ? <div className={style.mask}></div> : null }
+      {contextHolder}
+      <Titlelayout title= {Title}  layout="flex" dr="column">        
+      <Divider style={{margin: "16px 0"}} />
+        
         <UseTransfer 
         type="fibre"
         fibre={fibre}
+        mask={transTag} 
         transferTitle={transferTitle} 
         saveValue={getSaveValue} 
         columns={transferColumns} 
@@ -424,8 +329,8 @@ const rules = [{
         subTable={subTable} 
         unknownTable={unknownTable}
         closeValue={getCloseValue}></UseTransfer>
-        </div>
-      <Table ref={tableRef} style={{marginTop:'16px'}} bordered columns={columns} dataSource={data} rowKey='id' pagination={paginationProps}></Table>
+       
+      <Usetable ref={tableRef}   columns={columns}   rowKey='id'  {...tableProps}  sheetName="配电房光纤测温" onExport={onExport}></Usetable>
      
       <CModal title={title} ref={zref} closable={false}  mold="cust"  custft={!state} onOk={onOk} width={592}>
       <Form
@@ -466,7 +371,7 @@ const rules = [{
       <CModal title="删除提示"  ref={delref} onOk={delOk}   width={512}  closable={false} type="warn" mold="cust"  >
         是否要删除光纤测温分区？ 
       </CModal>
-      </div>
-    </div>
+      </Titlelayout>
+    </Pagecont>
   )
 }

@@ -127,7 +127,7 @@ export default function Index() {
       render: (_, record) => (
         <Space size="middle">
           <Link type="primary" underline onClick={() => edit(record)}>编辑</Link>
-          <Link type="error" underline  onClick={() => deleteRecord(record)}>删除</Link>
+          <Link type="danger" underline  onClick={() => deleteRecord(record)}>删除</Link>
         </Space>
       ),
     },
@@ -143,6 +143,14 @@ export default function Index() {
       })
     }
     return queryPageRoom( projectId, areaId, current, pageSize).then(res => {
+      if(!projectId || !areaId) {
+        return new Promise((resolve) => {
+          resolve({
+            list: [],
+            total: 0
+          })
+        })
+      }
       if(res.success){
         if(Array.isArray(res.data) && res?.data?.length > 0) {
           return {
@@ -165,7 +173,7 @@ export default function Index() {
     })
   }
 
-  const {tableProps} = useAntdTable(getRoomData,{
+  const {tableProps, refresh:queryRoom} = useAntdTable(getRoomData,{
      defaultPageSize: 14,
      refreshDeps: [areaId]
   })
@@ -191,7 +199,7 @@ export default function Index() {
     try {
       const values = await form.validateFields();
       console.log(values)
-      let params = {
+      let post = {
         projectId: projectId,
         areaId: areaId,
         name: values.name,
@@ -204,45 +212,49 @@ export default function Index() {
       }
       if(modalTitle == '新增配电房'){
         setLoading(true)
-        addRoom(params).then(res => {
-          if(res.success){
+        try {
+          let {success} = await addRoom(post)
+          setLoading(false)
+          if(success) {
             messageApi.open({
               type:'success',
               content:'配电房新增成功！',
-            })
-            form.resetFields()
+            })   
+          
             queryRoom()
-          }else{
+          }else {
             messageApi.open({
               type:'error',
               content:res.errMsg || '新增失败,请重试！',
             })
           }
+        } catch (error) {
           setLoading(false)
-        }).catch(e => {
-          setLoading(false)
-        })
-      }else if(modalTitle == '编辑配电房'){
-        params.id = editId
-        setLoading(true)
-        updateRoom(params).then(res => {
-          if(res.success){
-            messageApi.open({
-              type:'success',
-              content:'配电房编辑成功！',
-            })
-            ref.current.onCancel();
-            queryRoom()
-          }else{
-            messageApi.open({
-              type:'error',
-              content:res.errMsg || '配电房编辑失败,请重试！',
-            })
-          }
-          setLoading(false)
-        }).catch(e => {
-          setLoading(false)
-        })
+        }
+         
+        }else if(modalTitle == '编辑配电房'){       
+          try {
+            setLoading(true)
+            params.id = editId
+            let {success} = updateRoom(params)
+            setLoading(false)
+            if(success){
+              messageApi.open({
+                type:'success',
+                content:'配电房编辑成功！',
+              })
+              ref.current.onCancel();
+              queryRoom()
+            }else{
+              messageApi.open({
+                type:'error',
+                content:res.errMsg || '配电房编辑失败,请重试！',
+              })
+            }
+           
+          } catch (error) {
+            setLoading(false)
+          }        
       }
       // form.resetFields()
        //  setAddModal(false)
@@ -250,10 +262,7 @@ export default function Index() {
       console.log(errorInfo)
     }
   }
-  const handleCancel = () => {
-    console.log(111)
-    setAddModal(false)
-  }
+ 
   const [spinning, setSpinning] = useState(false)
   const [editId, setEditId] = useState()
   const edit = async (record) => {
@@ -278,36 +287,37 @@ export default function Index() {
    
   }
 
-  const [deleteModal, setDeleteModal] = useState(false)
-  const deleteOk = () => {
-    deleteRoom(projectId, deleteId).then(res=>{
-      if(res.success){
+  const delref = useRef()
+  const deleteOk = async () => {
+    try {
+      let {success} = await deleteRoom(projectId, deleteId)
+      if(success) {
         messageApi.open({
           type:'success',
           content:'配电房删除成功！',
         })
-        if(dataSource.length == 1 && pageNum > 1){
-          setPageNum(pageNum - 1)
-        }else{
-          queryRoom()
-        }
-        // queryRoom()
-      }else{
+
+      }else {
         messageApi.open({
           type:'error',
           content:res.errMsg || '删除失败,请重试！',
         })
       }
-    })
-    setDeleteModal(false)
+      delref.current.onCancel()
+      queryRoom()
+    } catch (error) {
+       console.log(error)
+    }
+   
   }
   const handleDelete = () => {
-    setDeleteModal(false)
+     delref.current.onCancel()
   }
   const [deleteId, setDeleteId] = useState()
   const deleteRecord = (record) => {
+    delref.current.onOpen()
     setDeleteId(record.id)
-    setDeleteModal(true)
+    
   }
  
   const checkLog = (_, value) => {   
@@ -328,7 +338,7 @@ export default function Index() {
          <Divider style={{margin: "16px 0"}} />
         { isPublish ? null :<Button type="primary" style={{width: 96}}    icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
-      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref}>
+      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         
         <div>
           <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>
@@ -366,7 +376,7 @@ export default function Index() {
           </Form>
         </div>
       </Custmodal>
-      <Custmodal title="删除提示" mold="cust" type="warn" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'}>
+      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'} key="del">
         
        
           是否确认删除配电房？ 

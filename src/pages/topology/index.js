@@ -92,7 +92,7 @@ export default function index() {
         state.deviceList = res.data
       }else{
         state.deviceList = []
-        message.error(res.errMsg)
+       // message.error(res.errMsg)
       }
     }).catch()
   }

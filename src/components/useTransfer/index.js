@@ -3,9 +3,10 @@ import style from './style.module.less'
 import { Table, Input, message, Descriptions, Divider} from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
-
+import Mask from '../mask'
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
+    const task = props.mask == "open"
     const { Search } = Input
     const columns = props.columns
   
@@ -247,6 +248,8 @@ export default function index (props) {
     }
    const [subserach, setSubserach] = useState('')
     return (
+        <>
+      {  task && <Mask task={task}>
         <div className={style.transferContent}>
             {contextHolder}
             { props.transferTitle.mainTitle != ''  ? 
@@ -340,5 +343,7 @@ export default function index (props) {
                 </div>
             </div>
         </div>
+        </Mask> }
+        </>
     )
 }
