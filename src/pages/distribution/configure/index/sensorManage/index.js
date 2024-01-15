@@ -252,7 +252,7 @@ export default function Index() {
 
 const Title = (
   <div style={{display: 'flex',justifyContent: "space-between"}}>
-    <span>传感器管理</span>
+    <span>配电房传感器</span>
           <Space size={32}>
           <Button type="primary" onClick={()=> settingClick()} style={{ width: 96}}>
               选择设备
@@ -271,7 +271,7 @@ const Title = (
        
         <UseTransfer mask={transTag} transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
         
-      <Usetable ref={tableRef}  columns={columns}   rowKey='id'  {...tableProps} sheetName="传感器管理" onExport={onExport}></Usetable>
+      <Usetable ref={tableRef}  columns={columns}   rowKey='id'  {...tableProps} sheetName="配电房传感器" onExport={onExport}></Usetable>
       <CModal title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} maskClosable={false} mold="cust" type="warn">
          是否确认在该配电房中删除该传感器？ 
        

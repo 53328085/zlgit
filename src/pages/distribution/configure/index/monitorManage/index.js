@@ -5,10 +5,10 @@ import UseTransfer from '@com/useTransfer'
 import { useAntdTable } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectcurlRommid} from '@redux/systemconfig.js'
-import { distributionRoom, DistributionMeter } from '@api/api.js'
+import { DistributionMeter } from '@api/api.js'
  
 import CModal from '@com/useModal'
-import dashed from '@imgs/dashed.png'
+
 import Usetable from "@com/useTable"
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
@@ -17,7 +17,7 @@ const {Link} = Typography
 export default function Index() {
   const tableRef = useRef()
   const roomId = useSelector(selectcurlRommid)
-  const { queryPageCamera, queryUsedCamera, queryUnusedCamera, configureCamera } = DistributionMeter
+  const { queryPageCamera,  queryUnusedCamera, configureCamera } = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
     messageApi.open({
@@ -262,7 +262,7 @@ export default function Index() {
   
   const Title = (
      <div style={{display: "flex", justifyContent: "space-between"}}>
-         <span>视频监控管理</span>
+         <span>配电房视频监控</span>
             <Space size={16}>
             <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
                 选择设备

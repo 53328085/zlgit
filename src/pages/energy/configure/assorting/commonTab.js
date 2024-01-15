@@ -181,15 +181,15 @@ export default function Index (props) {
     const onOk = async () => {
         try {
             const values = await form.validateFields();
-            inputName = values.name
-            aref.current.onCancel()
+            inputName = encodeURIComponent(values.name)
+           // aref.current.onCancel()
             insertRun()
         }catch(errorInfo){}
     }
     const onUpdate = async () => {
         try {
             const values = await editform.validateFields();
-            inputName = values.name
+            inputName = encodeURIComponent(values.name)
             eref.current.onCancel()
             updateRun()
         }catch(errorInfo){}
@@ -348,20 +348,20 @@ export default function Index (props) {
         <Spin tip='Loading...' spinning={loading}>
             {contextHolder}
             <ClassfyTree getValues={getFromChild} {...dataProps}></ClassfyTree>
-            <Custmodl title='新增能耗分类' ref={aref}  mold="cust" width={512} onOk={onOk}>
+            <Custmodl title='新增能耗分类' ref={aref}  mold="cust" width={512} onOk={onOk} custft>
                 <div style={{display:"flex", alignItems: "center"}}>
                     <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
-                        <Item label='新增分类名称' name='name' rules={[{required:true, message:'分类名称不能为空'}]}>
-                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'}></Input>
+                        <Item label='新增分类名称' name='name' normalize={v => v.trim()} rules={[{required:true, message:'分类名称不能为空'}]}>
+                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} allowClear></Input>
                         </Item>
                     </Form>
                 </div>
             </Custmodl>
             <Custmodl title='编辑能耗分类' ref={eref}  mold="cust" width={512} onOk={()=>onUpdate()}>
                 <div style={{display:"flex", alignItems: "center"}}>
-                    <Form name='editform' labelCol={{span:7}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+                    <Form name='editform' labelCol={{span:7}} form={editform} normalize={v => v.trim()} labelAlign={'left'} requiredMark={false} autoComplete='off'>
                         <Item label='编辑分类名称' name='name' rules={[{required:true, message:'分类名称不能为空'}]}>
-                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'}></Input>
+                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} allowClear></Input>
                         </Item>
                     </Form>
                 </div>
@@ -384,9 +384,9 @@ export default function Index (props) {
                     </div>
                 </div>
             </Modal>
-            <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-                <UseTransfer transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
-            </div>
+            
+                <UseTransfer mask={transTag} transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
+            
             <Custmodl title='错误原因' ref={errRef}  mold="cust" width={600} onOk={()=>onCloseError()}>
                 <div style={{display:"flex", alignItems: "center"}}>
                     <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{y:300}}></Table>

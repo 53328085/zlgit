@@ -247,7 +247,7 @@ export default function Index() {
   }  
   const Title = (
     <div style={{display: 'flex',justifyContent: "space-between"}}>
-      <span>触点测温设备</span>
+      <span>配电房触点测温</span>
             <Space size={32}>
             <Button type="primary" onClick={()=> settingClick()} style={{ width: 96}}>
                 选择设备

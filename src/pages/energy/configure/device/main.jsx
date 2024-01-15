@@ -123,7 +123,7 @@ export default function Index ({projectId, areaId}) {
     try{
       const {name, address, imageKey} = await form.validateFields();
       let params = {
-        name,
+        name:encodeURIComponent(name),
         parentId,
         areaId,
         projectId,
@@ -152,7 +152,7 @@ export default function Index ({projectId, areaId}) {
         })
       }
       
-    } catch(error){
+    }catch(e) {
 
     }
   }
@@ -165,7 +165,9 @@ export default function Index ({projectId, areaId}) {
       }
       getTreeData()
       dref.current.onCancel()
-    }).catch(error);
+    }).catch(error => {
+      
+    })  
   }
 
   //配置穿梭框
@@ -188,7 +190,7 @@ export default function Index ({projectId, areaId}) {
     }
   ]
   const [transTag, setTransTag] = useState('')
-  const [deleteDom, setDeleteDom] = useState(false)
+  //const [deleteDom, setDeleteDom] = useState(false)
   const [subTable, setSubTable] = useState([])
   const [transferTitle,setTransferTitle] = useState({})
   const [unknownTable, setUnknownTable] = useState([])
@@ -215,7 +217,7 @@ export default function Index ({projectId, areaId}) {
           setSubTable([])
           messageContent('error',msg)
         }
-        setDeleteDom(true)
+      //  setDeleteDom(true)
         setTransTag('open')
    })
   }
@@ -228,16 +230,16 @@ export default function Index ({projectId, areaId}) {
     conifgDrive({projectId, id: structureId}, params).then(res => {
       if(res.success){
         messageContent('success', '重点设备配置成功!')
-        setTransTag('close')
-        setTimeout(()=> {setDeleteDom(false)}, 600)
+        setTransTag(false)
+       // setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
         messageContent('error', res.errMsg)
       }
     }) 
   }
-  const getCloseValue = params => {
-    setTransTag(params)
-    setTimeout(()=> {setDeleteDom(false)}, 600)
+  const getCloseValue = () => {
+    setTransTag(false)
+   // setTimeout(()=> {setDeleteDom(false)}, 600)
   }
   const imgsty = {
     width: '160px',
@@ -256,11 +258,11 @@ export default function Index ({projectId, areaId}) {
   const addmodal = useMemo(() => <Custmodl title={modalTitle} ref={aref} custft={isAdd} mold="cust" width={512} onOk={onOk}>
   <div style={{display:"flex", alignItems: "center"}}>
     <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'}   autoComplete='off' preserve={false}>
-      <Item label="重点设备名称" name='name' rules={[{required:true, message:'请输入设备名称'}]}>
-        <Input style={{width:'315px'}} placeholder={'请输入设备名称'}></Input>
+      <Item label="重点设备名称" name='name' normalize={v => v.trim()} rules={[{required:true, message:'请输入设备名称'}]}>
+        <Input style={{width:'315px'}} placeholder={'请输入设备名称'} allowClear></Input>
       </Item>
-      <Item label="设备安装位置" name='address' rules={[{required:true, message:'请输入地址'}]}>
-        <Input style={{width:'315px'}} placeholder={'请输入地址'}></Input>
+      <Item label="设备安装位置" name='address' normalize={v => v.trim()} rules={[{required:true, message:'请输入地址'}]}>
+        <Input style={{width:'315px'}} placeholder={'请输入地址'} allowClear></Input>
       </Item>
       <Item label="缩略图" >
          <div style={imgsty} >
@@ -278,10 +280,8 @@ export default function Index ({projectId, areaId}) {
   </div>
 </Custmodl>, [modalTitle])
   return (
-    <div style={{flex: 1, display: 'flex'}}>
+    <div style={{flex: 1, display: 'flex', flexDirection: "column"}}>
       {contextHolder}
-      {transTag == 'open' ? Mask() : null}
-     
       <Titlelayout layout="flex" title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
           <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
@@ -293,10 +293,11 @@ export default function Index ({projectId, areaId}) {
           
            </div>
       </Titlelayout>
-      {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
+         { transTag &&   <Mask task={transTag}>
           <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
-        </div>  : null}
- 
+       
+          </Mask>
+     }
        {addmodal}
       <Custmodl title='删除重点设备' ref={dref}  mold="cust" width={592} type="warn" onOk={onDelete}>
             是否确认删除该重点设备? 

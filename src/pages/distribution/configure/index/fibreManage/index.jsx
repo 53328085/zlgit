@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Select, Button,  Space,  message, Typography, Form, Input, Divider} from 'antd';
-import style from './style.module.less'
+
 import UseTransfer from '@com/useTransfer'
 import { useAntdTable} from 'ahooks';
 import {useSelector} from 'react-redux'
@@ -312,8 +312,7 @@ const rules = [{
    }, [total, roomId, projectId])
 
   return (
-    <Pagecont showserach={false} custserach pd="0px" >  
-      {transTag =='open' ? <div className={style.mask}></div> : null }
+    <Pagecont showserach={false} custserach pd="0px" >       
       {contextHolder}
       <Titlelayout title= {Title}  layout="flex" dr="column">        
       <Divider style={{margin: "16px 0"}} />
