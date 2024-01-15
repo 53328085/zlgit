@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import dashed from "@imgs/dashed.png";
 import { PlusOutlined } from "@ant-design/icons";
-import firstwarn from "@imgs/warning.png";
+ 
 import {
   Button,
   Table,
@@ -12,14 +12,19 @@ import {
   Input,
   Divider,
   message,
+  Typography
 } from "antd";
 import AlarmEventModal from "./alarmEventModal";
 import { AlarmManagement } from "@api/api.js";
 import { selectProjectId, publishState } from "@redux/systemconfig.js";
-import { useRequest } from "ahooks";
+import { useRequest, useAntdTable } from "ahooks";
 
 import { useSelector } from "react-redux";
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
+import Usetable from '@com/useTable' 
+const {Link} = Typography
 export default function Index() {
   const ispublish = useSelector(publishState);
   const {
@@ -49,19 +54,35 @@ export default function Index() {
   const [pageNum, setPageNum] = useState(1);
   const [modalTitle, setModalTitle] = useState("");
   const [addModalTitle, setAddModalTitle] = useState("");
-  const [total, setTotal] = useState(0);
-  const pageSize = 10;
+ 
   //表格展示数据
-  const [dataSource, setDataSource] = useState([]);
+ 
   const [dataSourceType, setDataSourceType] = useState([]);
   const [noDataInForm, setNoDataInForm] = useState();
-  const getAlarmData = () => {
-    return QueryAlarmPage(projectId, pageNum, pageSize).then((res) => {
-      if (res.success === true) {
-        if (res.data) {
+  const getAlarmData = ({current, pageSize}) => {
+    if(!projectId) return new Promise((resolve) =>{
+
+       resolve({
+        list: [],
+        total: 0
+       })
+    } )
+    return QueryAlarmPage(projectId, current, pageSize).then((res) => {
+      let {success, data, total} = res
+      if (success) {
+        if (Array.isArray(data) && data?.length > 0) {
           const data = res.data.map(item=>({...item,tag:item?.remark}))
-          setDataSource(data);
-          setTotal(res.total);
+           return {
+            list: data,
+            total
+           }
+          //setDataSource(data);
+           //setTotal(res.total);
+        }else {
+          return {
+            list: [],
+            total: 0
+          }
         }
       } else {
         messageApi.open({
@@ -71,21 +92,11 @@ export default function Index() {
       }
     });
   };
-  const { data: AreaData } = useRequest(getAlarmData, {
-    onSuccess: (result, params) => {},
+  const {tableProps, refresh} = useAntdTable(getAlarmData, {
+    defaultPageSize: 14,
+    refreshDeps: [projectId]
   });
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    total, // 总条数
-    onChange: (page) => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  };
-  const handlePageChange = (page) => {
-    setPageNum(page);
-  };
+ 
 
   const columns = ispublish
     ? [
@@ -121,15 +132,16 @@ export default function Index() {
           align: "center",
           render: (_, record) => (
             <Space size="middle">
-              <span className={style.editText} onClick={() => edit(record)}>
+              <Link underline  className={style.editText} onClick={() => edit(record)}>
                 编辑
-              </span>
-              <span
-                className={style.deleteText}
+              </Link>
+              <Link
+                type="danger"
+                underline
                 onClick={() => deleteRecord(record)}
               >
                 删除
-              </span>
+              </Link>
             </Space>
           ),
         },
@@ -155,11 +167,7 @@ export default function Index() {
     DeletePlanAlarm(projectId, deleteId).then((res) => {
       if (res.success === true) {
         message.success("告警方案删除成功！");
-        if (dataSource.length == 1 && pageNum > 1) {
-          setPageNum(pageNum - 1);
-        } else {
-          getAlarmData();
-        }
+        refresh()
       } else {
         message.error(res.errMsg ? res.errMsg : "删除失败,请重试！");
       }
@@ -418,7 +426,7 @@ export default function Index() {
     setAddModal(false);
     setaddAlarmModal(false);
     if (addAlarmModal === true) {
-      getAlarmData();
+      refresh();
     }
   };
   //新增保存--编辑告警方案
@@ -432,7 +440,7 @@ export default function Index() {
     UpdatePlanAlarm(params).then((res) => {
       if (res.success === true) {
         message.success("告警方案编辑成功！");
-        getAlarmData();
+        refresh();
         setaddAlarmModal(false);
       } else {
         message.error(res.errMsg ? res.errMsg : "编辑告警方案失败！");
@@ -568,38 +576,34 @@ export default function Index() {
     manual: true,
   });
   //获取子组件
-  useEffect(() => {
-    getAlarmData();
-  }, [pageNum]);
+ 
   useEffect(() => {
     runChildformInfo();
   }, [childFormInfo]);
+  
   return (
-    <div className={style.box}>
-      <div className={style.content}>
-        <div className={style.contentTitle}>告警管理</div>
-        <div className={style.line}>
-          <img className={style.lineImg} src={dashed}></img>
-        </div>
+    <Pagecont showserach={false} custserach pd="0px" >  
+      <Titlelayout title="告警管理"  layout="flex" dr="column">  
+      <Divider style={{margin: "16px 0"}} />
         {ispublish ? null : (
           <Button
             type="primary"
+            style={{width: "96px"}}
             icon={<PlusOutlined />}
             onClick={() => showAdd()}
           >
             新增方案
           </Button>
         )}
-        <Table
+        <Usetable
           style={{ marginTop: "16px" }}
           columns={columns}
-          dataSource={dataSource}
+        
           rowKey={(record) => record.id}
-          size="small"
-          pagination={paginationProps}
+         
           ref={tableRef}
-          bordered
-        ></Table>
+          {...tableProps}
+        ></Usetable>
         <CModal
           open={deleteTypeModal}
           onOk={deleteTypeOk}
@@ -732,7 +736,7 @@ export default function Index() {
           giveFormType={noDataInForm}
           giveModalTitle={addModalTitle}
         ></AlarmEventModal>
-      </div>
-    </div>
+      </Titlelayout>
+    </Pagecont>
   );
 }

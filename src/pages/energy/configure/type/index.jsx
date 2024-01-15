@@ -216,7 +216,7 @@ export default function Index () {
         key:'address'
     }
   ]
-  const [transTag, setTransTag] = useState('')
+  const [transTag, setTransTag] = useState(false)
   const [deleteDom, setDeleteDom] = useState(false)
   const [subTable, setSubTable] = useState([])
   const [transferTitle,setTransferTitle] = useState({})
@@ -247,7 +247,7 @@ export default function Index () {
           }
         }
         setDeleteDom(true)
-        setTransTag('open')
+        setTransTag(true)
       }else{
         messageContent('error',res.errMsg)
       }
@@ -265,7 +265,7 @@ export default function Index () {
     configEnergyStructure(projectId, params).then(res => {
       if(res.success){
         messageContent('success', '能源节点配置成功!')
-        setTransTag('close')
+        setTransTag(false)
         setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
         messageContent('error', res.errMsg)
@@ -273,14 +273,14 @@ export default function Index () {
     }) 
   }
   const getCloseValue = params => {
-    setTransTag(params)
+    setTransTag(false)
     setTimeout(()=> {setDeleteDom(false)}, 600)
   }
 
   return (
     <div>
       {contextHolder}
-      {transTag == 'open' ? Mask() : null}
+   
      <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select
@@ -310,9 +310,9 @@ export default function Index () {
           { treeData.length>0 ? <Tree  height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
           </div>
         </div>
-        {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-          <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
-        </div>  : null}
+        {deleteDom ? 
+          <Mask task={transTag}> <UseTransfer  transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer></Mask>
+         : null}
       </div>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>

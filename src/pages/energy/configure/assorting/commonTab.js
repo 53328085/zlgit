@@ -4,13 +4,13 @@ import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
 import { Input, Form, message, Spin, Upload, Modal, Table } from "antd";
-import warning from '@imgs/warning.png'
+ 
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import upload from '@imgs/upload.png'
-
+ 
 export default function Index (props) {
     const { Dragger } = Upload
     const projectId = useSelector(selectProjectId);
@@ -345,23 +345,23 @@ export default function Index (props) {
         })
     }
     return (
-        <Spin tip='Loading...' spinning={loading}>
+        <Spin tip='Loading...' spinning={loading} >
             {contextHolder}
             <ClassfyTree getValues={getFromChild} {...dataProps}></ClassfyTree>
             <Custmodl title='新增能耗分类' ref={aref}  mold="cust" width={512} onOk={onOk} custft>
                 <div style={{display:"flex", alignItems: "center"}}>
-                    <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+                    <Form name='addform' labelCol={{span:7}} form={form} labelAlign={'left'} requiredMark={false} preserve={false} >
                         <Item label='新增分类名称' name='name' normalize={v => v.trim()} rules={[{required:true, message:'分类名称不能为空'}]}>
-                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} allowClear></Input>
+                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} allowClear autoComplete='off'></Input>
                         </Item>
                     </Form>
                 </div>
             </Custmodl>
             <Custmodl title='编辑能耗分类' ref={eref}  mold="cust" width={512} onOk={()=>onUpdate()}>
                 <div style={{display:"flex", alignItems: "center"}}>
-                    <Form name='editform' labelCol={{span:7}} form={editform} normalize={v => v.trim()} labelAlign={'left'} requiredMark={false} autoComplete='off'>
-                        <Item label='编辑分类名称' name='name' rules={[{required:true, message:'分类名称不能为空'}]}>
-                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} allowClear></Input>
+                    <Form name='editform' labelCol={{span:7}} form={editform}  labelAlign={'left'} requiredMark={false} preserve={false}>
+                        <Item label='编辑分类名称' name='name' rules={[{required:true, message:'分类名称不能为空'}]} normalize={v => v.trim()}>
+                            <Input style={{width:'315px'}} placeholder={'请输入分类名称'} autoComplete='off' allowClear></Input>
                         </Item>
                     </Form>
                 </div>

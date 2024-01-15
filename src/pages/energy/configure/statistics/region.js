@@ -536,7 +536,7 @@ const getSelected = async ({areaId, type=devietype}) => {
   
   return (
     <Mainbox ref={boxref}>
-      {open ? Mask() : null }
+     
       <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
@@ -585,11 +585,13 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
+       <Mask task={open} />
       <Drawerbox
         onClose={drawClose}
         open={open}
-        getContainer={() => boxref.current}
-        style={{ position: "absolute", top: "0px"}}
+       getContainer={() => boxref.current}
+       
+        style={{ position: "absolute", top: "0", zIndex: 1982}}
         closable={false}
         destroyOnClose
         height={760}
@@ -731,6 +733,7 @@ const getSelected = async ({areaId, type=devietype}) => {
           />
         </div>
       </Drawerbox>
+      
     </Mainbox>
   );
 }

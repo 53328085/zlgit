@@ -8,7 +8,7 @@ import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId, publishState, selectcurlRommid} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
 import CModal from '@com/useModal'
-import dashed from '@imgs/dashed.png'
+ 
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 

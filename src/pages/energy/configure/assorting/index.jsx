@@ -32,9 +32,8 @@ export default function Index() {
    }
    let Com = ProjectCom[value]
   return (
-    <CustContext.Provider value={propsData}>
-      {tag == 'open' ? <div className={style.mask}></div> : null}
-      <Pagecount showserach={false} pd="32px">   
+    <CustContext.Provider value={propsData}>      
+      <Pagecount showserach={false} pd="16px">   
       { <Com projectId={projectId} getValues={getFromChild}/>}
       </Pagecount>
     </CustContext.Provider>

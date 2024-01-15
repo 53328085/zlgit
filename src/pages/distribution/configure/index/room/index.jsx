@@ -12,7 +12,7 @@ import Titlelayout from '@com/titlelayout'
 import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
 import Pagecont from "@com/pagecontent"
- 
+import {Cspin} from "@com/comstyled"
 const {Link} = Typography
 const Info = styled.span`
   font-size: 12px;
@@ -331,7 +331,7 @@ export default function Index() {
   setShowroom(false)
  }, [])
   return (
- <Spin tip="图片数据加载中 ……" spinning={spinning}>
+ <Cspin tip="图片数据加载中 ……" spinning={spinning}>
     <Pagecont showserach={false} custserach pd="0px" >
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
@@ -385,6 +385,6 @@ export default function Index() {
      
       </Titlelayout>
     </Pagecont>
-    </Spin>
+    </Cspin>
   )
 }

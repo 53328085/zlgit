@@ -4,7 +4,7 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio, Form, Button, Checkbox} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin} from 'antd'
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 export const Ipticon = styled.span`
@@ -420,4 +420,45 @@ export const Serach = styled(Input.Search)`   // 运行监控 运行态
      }
     }
 `
-  
+  export const Cspin =  (props) => {
+
+    return (<Spin {...props}  style={{display: 'flex', flex: 1}}>
+           {props.children}
+          </Spin>)
+  }
+  const Normal = styled.div`
+   width: ${props => props.wh || "72px"};
+   height: 24px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 14px;
+   border: 1px solid transparent;
+   border-radius: 2px;
+`
+export  const Ptag = styled(Normal)`
+   background-color: #ecf5ff;
+   color: #409eff;
+   border-color:#409eff;
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(64,158,255);
+    border-color:rgb(64,158,255) ;
+    color:#fff;
+   }
+
+`
+export  const Wtag = styled(Normal)`
+   background-color: rgba(254,240,240,1);
+   color: #f35656;
+   border-color:rgba(251,200,200,1);
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(240,60,60,1);
+    border-color:rgb(240,60,60,1) ;
+    color:#fff;
+   }
+
+`

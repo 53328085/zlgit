@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import style from "./style.module.less";
-import firstwarn from "@imgs/warning.png";
 import { useSelector } from "react-redux";
+import {useAntdTable} from 'ahooks'
+import Usetable from '@com/useTable'
 import moment from "moment";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
-  Table,
   Space,
-  Modal,
   Form,
   Input,
   message,
   Select,
   DatePicker,
   Upload,
+  Typography
 } from "antd";
 import {
   selectProjectId,
@@ -23,8 +23,10 @@ import {
   levelDefaultLabel
 } from "@redux/systemconfig.js";
 import { SiteManagerDesigner } from '@api/api.js'
-import { cloneDeep } from "lodash";
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
+const {Link} = Typography
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
@@ -35,42 +37,40 @@ export default function Index() {
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
 
   const { GetSites, AddSite, UpdateSite, DeleteSite } = SiteManagerDesigner
-  //表格展示数据
-  const [dataSource, setDataSource] = useState([]);
-  const getTableData = () => {
-    GetSites(projectId, pageNum, pageSize).then(res => {
-      let {success, data} = res
+ 
+  const getTableData = ({current, pageSize}) => {
+   if(!projectId) return new Promise((resolve) => {
+      resolve({
+        list: [],
+        total: 0
+      })
+   })
+   return   GetSites(projectId, current, pageSize).then(res => {
+      let {success, data, total} = res
       if(success){
-        if(data && data.length > 0){
-          setDataSource(data)
-          setTotal(res.total)
+        if(Array.isArray(data) && data?.length > 0){
+          //setDataSource(data)
+         //setTotal(res.total)
+         return {
+          list: data,
+          total
+         }
         }else{
-          setDataSource([])
+          return {
+            list: [],
+            total: 0
+           }
         }
       }else{
         message.error(res.errMsg)
       }
     })
   }
-  //分页
-  const [pageNum, setPageNum] = useState(1);
-  const pageSize = 15;
-  const [total, setTotal] = useState(0);
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    total, // 总条数
-    onChange: (page) => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-    showTotal: (total) => `共${total}条记录`,
-  };
-  const handlePageChange = (page) => {
-    setPageNum(page);
-  };
-  useEffect(()=> {
-    getTableData()
-  }, [pageNum])
+  const {tableProps, refresh} = useAntdTable(getTableData, {
+    defaultPageSize: 14,
+    refreshDeps: [projectId]
+  })
+  
   const natureList = [
     {
       id: 1,
@@ -206,18 +206,19 @@ export default function Index() {
         align: "center",
         render: (_, record) => (
           <Space size="middle">
-            <span
-              className={style.editText}
+            <Link
+              underline
               onClick={() => editRecord(record)}
             >
               编辑
-            </span>
-            <span
-              className={style.deleteText}
+            </Link>
+            <Link
+              type="danger"
+              underline
               onClick={() => deleteRecord(record)}
             >
               删除
-            </span>
+            </Link>
           </Space>
         ),
       },
@@ -262,11 +263,7 @@ export default function Index() {
     let res = await DeleteSite(projectId, selectId)
     if(res.success){
       message.success('站点删除成功!')
-      if(pageNum > 1 && dataSource.length  == 1){
-        setPageNum(pageNum - 1)
-      }else{
-        getTableData()
-      }
+      refresh()
     }else{
       message.error(res.errMsg)
     }
@@ -295,10 +292,10 @@ export default function Index() {
         if(res.success){
           
           message.success('新增站点成功!')
-          form.resetFields();
-          getTableData();
+        //  form.resetFields();
+          refresh();
         }else{
-          message.error(res.errMsg)
+         // message.error(res.errMsg)
         }
       })
     } else if (modalTitle === "编辑站点") {
@@ -307,7 +304,7 @@ export default function Index() {
         if(res.success){
            ref.current.onCancel()
           message.success('站点信息修改成功!')
-          getTableData();
+          refresh();
         }else{
           message.error(res.errMsg)
         }
@@ -316,7 +313,8 @@ export default function Index() {
   };
   //新增 取消
   const addCancel = () => {
-    setAddModal(false);
+   // setAddModal(false);
+    ref.current.onCancel()
     setImageUrl();
   };
   const [fileList, setFileList] = useState([]); //文件列表
@@ -358,35 +356,31 @@ export default function Index() {
     setPreviewOpen(false);
   };
 
-  useEffect(()=>{
-    getTableData()
-  },[])
+ const Title = (
+  <div style={{display: 'flex', justifyContent: "space-between"}}>
+   <span>站点管理</span>
+  {ispublish ? null : (
+    <Button
+      type="primary"
+      className={style.contentAdd}
+      onClick={showAdd}
+    >
+      新增
+    </Button>
+  )}
+</div>
+ )
 
   return (
-    <div className={style.box}>
-      <div className={style.content}>
-        <div className={style.contentHead}>
-          <div className={style.contentTitle}>站点管理</div>
-          {ispublish ? null : (
-            <Button
-              type="primary"
-              className={style.contentAdd}
-              onClick={showAdd}
-            >
-              新增
-            </Button>
-          )}
-        </div>
-        <Table
+    <Pagecont showserach={false} custserach pd="0px" >  
+       <Titlelayout title= {Title}  layout="flex" dr="column">  
+        <Usetable
           style={{ marginTop: "16px" }}
-          columns={columns}
-          dataSource={dataSource}
           rowKey={(record) => record.id}
-          size="small"
-          pagination={paginationProps}
           ref={tableRef}
-          bordered
-        ></Table>
+          columns={columns}
+          {...tableProps}
+        ></Usetable>
         <CModal
           open={deleteTypeModal}
           onOk={deleteOk}
@@ -396,6 +390,7 @@ export default function Index() {
           type="warn"
           mold="cust"
           title="删除提示"
+          key="ma"
         >
             是否确认删除站点？ 
         </CModal>
@@ -408,6 +403,7 @@ export default function Index() {
           closable={false} 
           custft={addModal}
           mold="cust"
+          key="mb"
         >
          
           <Form
@@ -470,7 +466,7 @@ export default function Index() {
             <Item
               name="capacity"
               label="站点容量 (KVA)"
-              rules={[{ required: true, message: "请输入站点容量" }]}
+              rules={[{ required: true, message: "请输入站点容量" } ]}
             >
               <Input placeholder="请输入站点容量" />
             </Item>
@@ -546,7 +542,7 @@ export default function Index() {
             src={previewImage}
           />
         </CModal>
-      </div>
-    </div>
+      </Titlelayout>
+    </Pagecont>
   );
 }
