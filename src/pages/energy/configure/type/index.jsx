@@ -10,7 +10,7 @@ import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
-
+import {Ptag, Wtag} from '@com/comstyled'
 
 export default function Index () {
   const aref = useRef()
@@ -73,10 +73,10 @@ export default function Index () {
   const nodeAction = {
     position: 'absolute',
     right: 0,
-    width:'208px',
+    width:'265px',
     display:'flex',
-    justifyContent:'space-around',
-    fontSize:'14px',
+    justifyContent:'space-between',
+    
   }
   const mainStyle={
     fontSize: 16,
@@ -91,10 +91,10 @@ export default function Index () {
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
                 <div style={nodeAction}>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
-                    <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
-                    <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
+                    <Ptag onClick={()=>addSon(item.id)} wh="60px">新增</Ptag>
+                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">编辑</Ptag>
+                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="60px">配置</Ptag>
+                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">删除</Wtag>
                 </div>
             </div>
         )

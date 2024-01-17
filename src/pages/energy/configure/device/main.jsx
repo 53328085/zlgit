@@ -282,7 +282,7 @@ export default function Index ({projectId, areaId}) {
   return (
     <div style={{flex: 1, display: 'flex', flexDirection: "column"}}>
       {contextHolder}
-      <Titlelayout layout="flex" title={<div style={{display: 'flex',alignContent: "center", justifyContent: "space-between"}}>
+      <Titlelayout layout="flex" title={<div style={{display: 'flex',alignItems: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
           <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
         </div>}>

@@ -585,7 +585,7 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
-       <Mask task={open} />
+      {open && <Mask task={open} />} 
       <Drawerbox
         onClose={drawClose}
         open={open}

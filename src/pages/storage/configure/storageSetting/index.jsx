@@ -424,6 +424,7 @@ export default function Index() {
               rules={[
                 { required: true, message: `请选择${oneLevel[0]?.levelName}` },
               ]}
+              key="areaId"
             >
               <Select
                 disabled={modalTitle === "编辑站点"}
@@ -446,6 +447,7 @@ export default function Index() {
               name="no"
               label="站点编号"
               rules={[{ required: true, message: "请输入站点编号" }]}
+              key="no"
             >
               <Input placeholder="请输入站点编号" disabled={modalTitle === "编辑站点"} />
             </Item>
@@ -453,6 +455,7 @@ export default function Index() {
               name="name"
               label="站点名称"
               rules={[{ required: true, message: "请输入站点名称" }]}
+              key="name"
             >
               <Input placeholder="请输入站点名称"></Input>
             </Item>
@@ -460,6 +463,7 @@ export default function Index() {
               name="address"
               label="站点地址"
               rules={[{ required: true, message: "请输入站点地址" }]}
+              key="address"
             >
               <Input placeholder="请输入站点地址" />
             </Item>
@@ -467,6 +471,7 @@ export default function Index() {
               name="capacity"
               label="站点容量 (KVA)"
               rules={[{ required: true, message: "请输入站点容量" } ]}
+              key="capacity"
             >
               <Input placeholder="请输入站点容量" />
             </Item>
@@ -479,6 +484,7 @@ export default function Index() {
                   message: "请选择投运时间",
                 },
               ]}
+              key="deliveryTime"
             >
               <DatePicker
                 format="YYYY-MM-DD"
@@ -489,6 +495,7 @@ export default function Index() {
               name="investmentNature"
               label="投资性质"
               rules={[{ required: true, message: "请选择所属站点" }]}
+              key="investmentNature"
             >
               <Select
                 placeholder="请选择投资性质"
@@ -502,10 +509,10 @@ export default function Index() {
                 })}
               </Select>
             </Item>
-            <Item name="remark" label="备注信息">
+            <Item name="remark" label="备注信息"  key="remark">
               <Input placeholder="请输入备注信息" />
             </Item>
-            <Item name="image" label="站点图片" getValueFromEvent={normFile}>
+            <Item name="image" label="站点图片" getValueFromEvent={normFile} key="image">
               <Upload
                 listType="picture-card"
                 className={style.uploader}
@@ -533,7 +540,7 @@ export default function Index() {
             </Item>
           </Form>
         </CModal>
-        <CModal open={previewOpen} footer={null} mold="cust" onCancel={handleCancel}>
+        <CModal open={previewOpen} footer={null} mold="cust" onCancel={handleCancel} key="del">
           <img
             alt="example"
             style={{

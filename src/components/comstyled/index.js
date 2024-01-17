@@ -405,20 +405,61 @@ export const Logbtn = styled(Button)`
  
 
 export const Serach = styled(Input.Search)`   // 运行监控 运行态
-  && {
-     width: 340px;
-     margin-left: 16px;
-     .ant-input-affix-wrapper.ant-input-affix-wrapper-status-success:focus, .ant-input-affix-wrapper:focus{
-       border-color: #d7d7d7;
-       box-shadow: none;
-     }
-     .ant-btn.ant-btn-primary.ant-input-search-button, .ant-btn.ant-btn-primary.ant-input-search-button:hover{
+ && {
+  border-radius: 4px;
+  overflow: hidden;
+}
+ .ant-input-affix-wrapper {
+    background-color: transparent !important;
+    border: none;
+    height: 32px;
+    &:hover {
+      border-color: transparent;
+      border-right-width: 0;
+      box-shadow: none;
+    }
+ }
+ 
+ .ant-input-group-addon {
+    background-color: transparent;
+ }
+ background-color: transparent !important;
+ border: 1px solid #d7d7d7;
+  &:focus:not(.ant-input-disabled), &:hover:not(.ant-input-disabled) {    
+    border-color: #1f83fe !important;
+    .ant-input {
+      color: #1f83fe;
+    }    
+  }
+ .ant-input-group>.ant-input-group-addon:last-child {
+    left: 0px;
+  }
+
+  .ant-input {
+    background-color: transparent;
+    color:#999;
+  
+  } 
+ .ant-input::placeholder {
+    color: #999;
+    }
+    .ant-input-clear-icon, .anticon.ant-input-clear-icon {
+        color: #999;
+        &:focus, &:hover {
+            color:  #1f83fe;
+        }
+    }
+    .ant-btn.ant-btn-primary.ant-input-search-button{
         width: 80px;
         background-color: #f5f7fa;
         color:#515151;
-        border-color: #d7d7d7;
+        border-color: transparent;
      }
-    }
+  input:-internal-autofill-previewed,
+  input:-internal-autofill-selected {
+    -webkit-text-fill-color: #999 !important;
+　　transition: background-color 5000s ease-in-out 0s !important;
+  }
 `
   export const Cspin =  (props) => {
 

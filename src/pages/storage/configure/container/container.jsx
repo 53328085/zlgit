@@ -202,12 +202,10 @@ const onOk = async () => { // 新增，编辑 保存
     console.log(handler)
     let {success,errMsg } = await StorageContainerDesigner[handler](projectId, params)
     if(success) {
-       nref.current.onCancel()
+      type == 1 && nref.current.onCancel()
        refresh()
        let msg = ['新增成功', '编辑成功'][type];
        message.success({content: msg,duration: 0.3})
-    }else {
-      message.error({content: errMsg || '数据出错',duration: 0.3})
     }
   } catch (error) {
     console.log('error')
@@ -235,13 +233,13 @@ const onClose = () => {
   
  }
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between"}}><span>储能柜管理</span><CustButton onClick={added}>新增</CustButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems:"center"}}><span>储能柜管理</span><CustButton onClick={added}>新增</CustButton></div>}>
           <Mainbox>
              <UseTabel columns={columns} {...tableProps}></UseTabel>          
             </Mainbox>
            
-            <CModal width={640} title={title} ref={nref}   mold='cust' onOk={onOk}  >
-            <Containner projectId={projectId} form={form} areaId={AreaId}/>         
+            <CModal width={640} title={title} ref={nref}   mold='cust' onOk={onOk} custft={type===0}   >
+               <Containner projectId={projectId} form={form} areaId={AreaId}/>         
             </CModal>           
           <CModal width={592} title="操作提示" ref={dref}   mold='cust' type="warn" onOk={delOk}>
           是否确认删除站点?

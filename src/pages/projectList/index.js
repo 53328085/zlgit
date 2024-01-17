@@ -716,6 +716,7 @@ const closeModl = () => {
             layout="inline"
             className="serach"
             form={form}
+            autoComplete="off"
           >
             <Space size={64} split={ <Divider
                   dashed
@@ -729,7 +730,7 @@ const closeModl = () => {
                    style={{ width: "500px" }}
                    allowClear
                    onSearch={submit}
-                   autoComplete="off"
+                 
                    enterButton={ <CutSerachBt
                     width="98px"                  
                     icon={

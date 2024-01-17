@@ -10,7 +10,7 @@ import {operationDesigin} from '@api/api'
 import {SetPosition} from './position'
 
 //配置线路
-export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
+export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) => {
     const [open,setOpen] = useState(false)
     const publish = useSelector(publishState)
     const { Search } = Input;
@@ -82,7 +82,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
   }
     //关闭抽屉
     const close = () => {
-        setOpen(false)
+       // setOpen(false)
+       setTarg(false)
         setSearchValue("")
         setDeviceType(0)
         setSelectedRowKeys([])
@@ -311,8 +312,20 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId }, ref) => {
     useEffect(()=>{
         // getQueryDeviceList()
     },[areaId])
+    const style = {
+        width: "1686px",
+    height: "770px",
+    backgroundColor: "#003366",
+    padding: "32px",
+    display: "flex",
+    position: "absolute",
+    left: "0px",
+    top: "50%",
+    transform: "translate(200px, -50%)",
+    padding: "32px",
+    }
     return (
-        <div style={{ position: 'absolute', width: 1686, height: 770, top: 101, left: open ? 0 : 2000, background: "#003366", transition: 'all .5s linear', padding: 32, display: 'flex' }}>
+        <div style={style}>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: 698 }}>
                     <div style={{display:'flex',justifyContent:'space-between'}}>
