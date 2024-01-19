@@ -1,0 +1,43 @@
+:root {
+    --print-margin: 2cm
+}
+@media all {
+    .page-break {
+      display: none;
+    }
+  }
+ 
+  @media print {
+    @page {
+      margin-top: var(--print-margin);
+       
+     }
+    html, body {
+      height: initial !important;
+      overflow: initial !important;
+      -webkit-print-color-adjust: exact;
+    }
+    body { break-inside: avoid; break-after: auto; }
+   .printContet {
+     flex:1;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+    align-items: center;
+   }
+ 
+
+   
+ 
+    .pagebreak {
+       display: block;
+       break-before: always;  
+      
+    }
+  }
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-after: page !important;
+    break-after: page !important;
+  }

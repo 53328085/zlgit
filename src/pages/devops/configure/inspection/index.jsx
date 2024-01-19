@@ -1,69 +1,41 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, useCallback } from 'react'
 import styled from 'styled-components'
-import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message, Form, Switch, DatePicker, TimePicker } from 'antd'
+ 
+import { Select, Divider, Input,   message, Form, Space, DatePicker, TimePicker, Typography } from 'antd'
 import Modal from '@com/useModal'
 import { useSelector } from 'react-redux'
 import Table from '@com/useTable'
 import { operationDesigin } from '@api/api'
 import moment from 'moment'
-import WarningPng from '@imgs/warning.png'
+ import {useAntdTable} from 'ahooks'
 import style from './style.module.less'
 import { publishState } from '@redux/systemconfig'
 import { SetLine } from './inspectcomp.jsx'
-import { ExportExcel } from '@com/useButton'
+import { ExportExcel, CustButton } from '@com/useButton'
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
+import {Serach} from '@com/comstyled'
+ 
 const DropstartDiv =styled.div`
 .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
   display: none;
 }
 
 `
+const {Link} = Typography
 const ContainerDiv = styled.div`
-      border: 1px solid #d7d7d7;
-      background-color: #fff;
-      height: 100%;
-      padding: 16px;
-      .searchbtn:hover,.searchbtn:focus{
-          border-color: #d9d9d9 !important;
-          color: #000;
-      }
-      .flexcss{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        .btnflex{
-          display: flex;
-          div:nth-of-type(1){
-            margin-right: 16px;
-          }
-          .btncss{
-            width: 96px;
-            height: 32px;
-            background-color: #237ae4;
-            border-radius: 2px;
-            color: #fff;
-            text-align: center;
-            line-height: 32px;
-            cursor: pointer;
-            &:hover{
-              opacity: .7;
-            }
-          }
-        }
-      }
-      
+      display: flex;
+      flex-direction: column;
+      padding-top: 16px;
+      flex: 1;
   `
 const { RangePicker } = DatePicker;
 export default function Index() {
 
-  const [tableParams, setTableParams] = useState({
-    current: 1,
-    pageSize: 10
-  })
+ 
   const onelevel = useSelector(state => state.system.onelevel);
   const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
-  const [tableData, setTableData] = useState()
+ 
   const addmodalRef = useRef() //modal的ref
   const addformRef = useRef() //addform的ref
   const delModalRef = useRef() //del
@@ -74,6 +46,9 @@ export default function Index() {
   const [form] = Form.useForm()
   const PlanAddresRef = useRef()
   const [key, setKey] = useState()
+  const  [total, setTtoal] = useState(0)
+  const curPage = useRef();
+  const PageSize = 14
   const columns = [
     { title: onelevel[0]?.levelName, dataIndex: 'area' },
     { title: '巡检计划名称', dataIndex: 'name' },
@@ -88,11 +63,11 @@ export default function Index() {
       title: '操作', dataIndex: '',export:false, render(text) {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async () => {
+            <Link underline onClick={async () => {
               setPlanAddress(text.usedAddress)
               PlanAddresRef.current.onOpen();
-            }}>查看巡检点</span>
-            <span style={{ color: '#ff0000', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => openDel(text)}>删除</span>
+            }}>查看巡检点</Link>
+            <Link type="danger" underline onClick={() => openDel(text)}>删除</Link>
           </div>
         )
       }
@@ -106,28 +81,47 @@ export default function Index() {
 
 
   //获取设备
-  const getInspectionPlanPage = async (pageNum) => {
-    const { areaId, alike } = form.getFieldsValue()
+  const getInspectionPlanPage =   ({current, pageSize}, formData) => {
+    curPage.current = current
+    const { areaId, alike } = formData
+    if(!Number.isInteger(areaId)) return new Promise(resolve => {
+      setTtoal(0)
+      return resolve({
+        list: [],
+        total: 0
+      })
+    })
     let params = {
       projectId,
-      pageNum: pageNum ? pageNum : tableParams.current,
-      pageSize: tableParams.pageSize,
+      pageNum:  current,
+      pageSize,
       areaId,
       alike,
     }
-    const res = await operationDesigin.InspectionPlanPage(params)
-    if (res.success) {
+    return operationDesigin.InspectionPlanPage(params).then(res => {
+       const {success, data, total} = res
+       setTtoal(Number.isFinite(total) ? total : 0)
+       if(success) {
+          return {
+             list: Array.isArray(data) ? data : [],
+             total: Number.isFinite(total) ? total : 0
+          }
 
-      setTableData(res.data)
-      setTableParams({
-        current: res.pageNum,
-        pageSize: res.pageSize,
-        total: res.total,
-      })
-    } else {
-      message.error(res.errMsg)
-    }
+       }else {
+         return {
+           list: [],
+           total: 0
+         }
+       }
+    })
+    
   }
+
+  const {tableProps, refresh, run, search} = useAntdTable(getInspectionPlanPage, {
+    form,
+    defaultPageSize: PageSize,
+  })
+  const {submit} = search
   //查询运维人员
   const getQueryProjectMaintenance = async (areaId, callback) => {
     const res = await operationDesigin.QueryProjectMaintenanceArea({ projectId, areaId })
@@ -156,8 +150,8 @@ export default function Index() {
     addformRef.current.form.validateFields().then(async (result) => {
       const flag = await addformRef.current.getInsertInspectionPlan()
       if (flag) {
-        addformRef.current.form.resetFields()
-        getInspectionPlanPage()
+       //  addformRef.current.form.resetFields()
+        refresh()
        // addmodalRef.current.onCancel()
       }
     }).catch((e) => {
@@ -180,28 +174,29 @@ export default function Index() {
     if (success) {
       message.success('删除成功')
       delModalRef.current.onCancel()
-      getInspectionPlanPage(1)
+      try {
+        let current = Math.ceil((total - 1) / 14)< curPage.current
+        if(current) {
+          let values = form.getFieldsValue()
+          run({current: curPage.current - 1, pageSize: PageSize}, values)
+        }else {
+          refresh()
+        }
+      } catch (error) {
+        
+      }
     } else {
       message.error(errMsg)
     }
   }
-  const changePage = (page) => {
-    getInspectionPlanPage(page.current)
-  }
-  const search = (e) => {
-
-    getInspectionPlanPage(1)
-  }
-  const changeSelect = (v) => {
-    getInspectionPlanPage(1)
-  }
+ 
   const onExport = () => {
     return new Promise(async (resolve, reject) => {
       const { areaId, alike } = form.getFieldsValue()
       let params = {
         projectId,
         pageNum: 1,
-        pageSize: tableParams.total,
+        pageSize: total,
         areaId,
         alike,
       }
@@ -218,23 +213,12 @@ export default function Index() {
 
   }
 
-
-
-  useEffect(() => {
-    onelevel.length&&getInspectionPlanPage()
-  }, [])
-  // useEffect(() => {
-  //   if (key == 1) {
-  //     tableRef.current.download()
-  //   } else if (key == 2) {
-  //     tableRef.current.downloadAll()
-  //   }
-
-  // }, [key])
+ 
   return (
-    <ContainerDiv>
-      <BlueColumn name="巡检计划管理" />
-      <div className='flexcss'>
+    <Pagecont showserach={false}   pd="0px" > 
+    <Titlelayout title="巡检计划管理" layout="flex" dr="column" style={{height: "823px", overflow: "hidden"}}>
+    <ContainerDiv>     
+     
         <Form
           layout="inline"
           form={form}
@@ -248,55 +232,48 @@ export default function Index() {
             alike: ''
           }}
         >
-          <Form.Item name="areaId" noStyle={true} labelAlign="left">
+           <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+          <Form.Item name="areaId" style={{marginRight: 0, marginBottom: 0}}>
             <Select
               options={options}
               style={{ width: 264 }}
               fieldNames={{ label: 'name', value: 'id' }}
               className="pdtop8 pdbottom12"
-              onChange={changeSelect}
+              onChange={submit}
             ></Select>
           </Form.Item>
-          <Divider style={{ margin: '0 32px', borderColor: '#999999', height: 32 }} dashed type="vertical"></Divider>
-          <Form.Item style={{ marginRight: 'auto' }} >
-            <div >
-              <Form.Item noStyle={true} name="alike">
-                <Input
-                  style={{
-                    width: 290,
-                    margin: '16px 0'
-                  }}
-                  placeholder="巡检点名称/具体位置"
-                />
-              </Form.Item>
-              <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-            </div>
+         
+          <Form.Item name="alike" style={{marginRight: 0, marginBottom: 0}}>
+            <Serach
+                placeholder="巡检点名称/具体位置"
+                allowClear
+                enterButton="查询"
+                onSearch = {submit}
+              />
           </Form.Item>
-
-
-        </Form>
-        <div className='btnflex'>
-          {publish ? null : <div className='btncss' onClick={openAdd}>
+          </Space>  
+            <Space size={16}>
+            {publish ? null : <CustButton   onClick={openAdd}>
             新增
-          </div>}
-
-          {/* <div className='btncss' onClick={() => { tableRef.current.download() }}>
-            导出
-          </div> */}
+          </CustButton>}
           <ExportExcel setKey={setKey} tb={tableRef}/>
-        </div>
-      </div>
-      <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
-      <div style={{ height: 673, display: 'flex' }}>
-        <Table columns={columns} dataSource={tableData} pagination={tableParams} ref={tableRef} onChange={changePage} onExport={onExport}></Table>
-      </div>
+            </Space>
+        </Form>
+        
+       
+      <Divider style={{ margin: "32px 0", borderColor: '#d7d7d7' }} dashed ></Divider>
+      
+        <Table columns={columns}   ref={tableRef}  {...tableProps} onExport={onExport} sheetName="巡检计划管理"></Table>
+     
       <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={true} title="新建巡检计划">
-        {/* <BlueColumn name="" styled={{ padding: '16px 0', color: "#237ae4", fontSize: 16 }} /> */}
+        
         <AddPlan projectId={projectId} ref={addformRef} getQueryProjectMaintenance={getQueryProjectMaintenance} />
       </Modal>
       <PlanAddres PlanAddresRef={PlanAddresRef} planAddress={planAddress} />
       <DeleteModal delModalRef={delModalRef} name="删除巡检计划" content="确认是否要删除巡检计划？" onOk={delOk} />
     </ContainerDiv>
+    </Titlelayout>
+    </Pagecont>
   )
 }
 
@@ -463,7 +440,7 @@ let AddPlan = forwardRef(
             <Input placeholder="请输入巡检内容"></Input>
           </Form.Item>
           <Form.Item label="添加巡检点" name="group"  rules={[rule]}>
-            <div className={style.btncss} onClick={chooseAddress}>选择巡检点</div>
+            <CustButton onClick={chooseAddress}>选择巡检点</CustButton>
           </Form.Item>
           <Form.Item label="巡检人员" name="userId" rules={[rule]}>
             <Select options={mapuserlist} fieldNames={{ value: 'id' }} placeholder="请选择巡检人员"></Select>

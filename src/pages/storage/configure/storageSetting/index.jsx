@@ -357,7 +357,7 @@ export default function Index() {
   };
 
  const Title = (
-  <div style={{display: 'flex', justifyContent: "space-between"}}>
+  <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
    <span>站点管理</span>
   {ispublish ? null : (
     <Button

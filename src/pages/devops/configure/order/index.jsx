@@ -16,6 +16,7 @@ import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
 import Mask from "@com/mask"
+import { CustButton } from '@com/useButton'
 const {Item} = Form
 const {Link} = Typography
 const ContainerDiv = styled.div`
@@ -24,34 +25,6 @@ const ContainerDiv = styled.div`
  row-gap: 32px;
  padding-top: 16px;
  flex: 1;
-.pdtop8{
-  padding-top: 8px;
-}
-.pdbottom12{
-  padding-bottom: 12px;
-}
-.searchbtn:hover,.searchbtn:focus{
-  border-color: #d9d9d9 !important;
-  color: #000;
-}
-.flexcss{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.btncss{
-   width: 96px;
-   height: 32px;
-   background-color: #237ae4;
-   border-radius: 2px;
-   color: #fff;
-   text-align: center;
-   line-height: 32px;
-   cursor: pointer;
-   &:hover{
-    opacity: .7;
-   }
-}
 `
 export default function Index() {
   const [form] = Form.useForm() 
@@ -198,8 +171,7 @@ const {submit} = search
           <Select
             options={options}
             fieldNames={{ label: 'name', value: 'id' }}
-            style={{ width: 264 }}
-            className="pdtop8 pdbottom12"
+            style={{ width: 264 }}           
             onChange={submit}
            
           ></Select>
@@ -216,9 +188,9 @@ const {submit} = search
             </Item>
            
             </Space>
-            {publish ? null : <div className='btncss' onClick={addDevice}>
+            {publish ? null : <CustButton onClick={addDevice}>
               新增
-            </div>}
+            </CustButton>}
         </Form>
 
        

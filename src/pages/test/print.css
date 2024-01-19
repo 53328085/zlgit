@@ -1,0 +1,21 @@
+@page {
+    size: 8.5in 9in; 
+    
+   }
+   @page :first {
+    margin-left: 50%;
+    margin-top: 50%;
+  } 
+  @media print {
+    main {
+        font-size: 24px;
+    }
+    button {
+        display: none;
+      }
+      section {
+        page-break-after: always;
+        break-after: page;
+      }  
+  }
+  
