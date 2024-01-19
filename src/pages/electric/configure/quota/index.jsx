@@ -588,7 +588,7 @@ export default function Index() {
         {ispublish ? null : (
           <Button
             type="primary"
-            style={{width: "96px"}}
+            style={{width: "110px"}}
             icon={<PlusOutlined />}
             onClick={() => showAdd()}
           >

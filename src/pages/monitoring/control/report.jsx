@@ -200,12 +200,9 @@ week.forEach(w => {
       }
      let {success, data, errMsg} = await  RunAutoValve.QueryUsedDevice(params)
      if(success) {
-       if(Array.isArray(data)) {
-        setViewtb(data);
-       }else {
-        setViewtb([])
-       }
-       setOpen(true)
+        setViewtb(Array.isArray(data) ? data : [])
+      
+        setOpen(true)
      }else {
        message.warning(errMsg || '数据出错')
      }

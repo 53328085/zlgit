@@ -591,7 +591,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         open={open}
        getContainer={() => boxref.current}
        
-        style={{ position: "absolute", top: "0", zIndex: 1982}}
+        style={{ position: "absolute", top: "-16px", left: "-16px", zIndex: 1982}}
         closable={false}
         destroyOnClose
         height={760}

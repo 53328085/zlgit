@@ -216,7 +216,7 @@ export default function Index() {
     if (res.success) {
       message.success('删除成功!')
       try {
-        let current = Math.ceil((totalItem.current - 1)  / 14) < curPage.current
+        let current = Math.ceil((totalItem.current - 1)  / PageSize) < curPage.current
         
         if(current) {
           let values = form.getFieldsValue()
@@ -241,6 +241,12 @@ export default function Index() {
      
     curPage.current = current
     const {alike, areaId} =formData
+    if(!Number.isInteger(areaId)) return new Promise((resolve) => {
+      resolve({
+        list: [],
+        total: 0
+      })
+    })
     let params = {
       projectId,
       pageNum: current,
@@ -250,7 +256,7 @@ export default function Index() {
     }
    return operationDesigin.QueryInspectionAddressPage(params).then(res => {
       let {success, data, total} = res
-      totalItem.current = total
+      totalItem.current =Number.isInteger(total) ? total : 0
     
       if(success) {
          return {

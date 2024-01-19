@@ -10,7 +10,7 @@ import UseTransfer from '@com/useTransfer'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import upload from '@imgs/upload.png'
- 
+import {Cspin} from '@com/comstyled'
 export default function Index (props) {
     const { Dragger } = Upload
     const projectId = useSelector(selectProjectId);
@@ -345,7 +345,7 @@ export default function Index (props) {
         })
     }
     return (
-        <Spin tip='Loading...' spinning={loading} >
+        <Cspin tip='Loading...' spinning={loading} >
             {contextHolder}
             <ClassfyTree getValues={getFromChild} {...dataProps}></ClassfyTree>
             <Custmodl title='新增能耗分类' ref={aref}  mold="cust" width={512} onOk={onOk} custft>
@@ -392,7 +392,7 @@ export default function Index (props) {
                     <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{y:300}}></Table>
                 </div>
             </Custmodl>
-        </Spin>
+        </Cspin>
         
     )
 }

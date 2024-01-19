@@ -29,6 +29,9 @@ const Containner = ({projectId, form, areaId}) => {
   const levelLabel = useSelector(levelDefaultLabel) 
   const [options, setOptions] = useState([])
   const [id, setId] = useState(areaId)  
+  const totalItem = useRef();
+  const curPage = useRef();
+  const PageSize = 14
   const getopti = async() => {
     try {
      let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, id)
@@ -101,7 +104,9 @@ const edit = (record) => {
 }
 const idref = useRef()
 
-
+const totalItem = useRef();
+const curPage = useRef();
+const PageSize = 14
 const columns = [
   {
       title: levelLabel,
@@ -155,9 +160,12 @@ const columns = [
 
 
  const getData = ({current, pageSize}) => { // areaId, sisteId 参数暂时设置为0 ，后续需求改变后再加
+
+     curPage.current = current
     let params = {projectId, areaId: 0, siteId:0, pageNum: current, pageSize }
     return StorageContainerDesigner.GetContainers(params).then(res => {
       let {success, data, total} = res
+      totalItem.current =Number.isInteger(total) ? total : 0
          if(success && Array.isArray(data) && data.length > 0) {
             return {
               list: data,
@@ -176,12 +184,9 @@ const columns = [
  }
 
   
- const {tableProps, refresh} = useAntdTable(getData, {
+ const {tableProps, refresh, run} = useAntdTable(getData, {
     defaultPageSize: 14,
     refreshDeps: [projectId], 
-    onError: (e) => {
-        console.log(e)
-    }
  })
 
 
@@ -221,9 +226,22 @@ const delOk = async () => {
   if(!idref.current) return
   let {success, errMsg} = await StorageContainerDesigner.DeleteContainer(projectId, idref.current)
   if(success) {
-    dref.current.onCancel()
-    refresh()
-    message.success({content: '删除成功', duration: 0.3})
+
+    message.success('删除成功!')
+    try {
+      let current = Math.ceil((totalItem.current - 1)  / PageSize) < curPage.current      
+      if(current) {
+        run({current: curPage.current - 1, pageSize: PageSize})
+      }else {
+        refresh()
+      }
+    
+      dref.current.onCancel()
+    } catch (error) {
+      
+    }
+
+    
   }else {
     message.error({content: errMsg || '数据出错', duration: 0.3})
   }

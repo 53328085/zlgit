@@ -461,9 +461,10 @@ export const Serach = styled(Input.Search)`   // 运行监控 运行态
 　　transition: background-color 5000s ease-in-out 0s !important;
   }
 `
+ 
   export const Cspin =  (props) => {
 
-    return (<Spin {...props}  style={{display: 'flex', flex: 1}}>
+    return (<Spin {...props}  wrapperClassName="spincsut">
            {props.children}
           </Spin>)
   }

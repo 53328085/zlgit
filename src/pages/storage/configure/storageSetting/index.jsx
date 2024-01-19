@@ -6,7 +6,7 @@ import Usetable from '@com/useTable'
 import moment from "moment";
 import { PlusOutlined } from "@ant-design/icons";
 import {
-  Button,
+   InputNumber,
   Space,
   Form,
   Input,
@@ -26,6 +26,7 @@ import { SiteManagerDesigner } from '@api/api.js'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
+import { CustButton } from '@com/useButton'
 const {Link} = Typography
 export default function Index() {
   const tableRef = useRef();
@@ -38,7 +39,12 @@ export default function Index() {
 
   const { GetSites, AddSite, UpdateSite, DeleteSite } = SiteManagerDesigner
  
+  const totalItem = useRef();
+  const curPage = useRef();
+  const PageSize = 14
+
   const getTableData = ({current, pageSize}) => {
+    curPage.current = current
    if(!projectId) return new Promise((resolve) => {
       resolve({
         list: [],
@@ -47,6 +53,7 @@ export default function Index() {
    })
    return   GetSites(projectId, current, pageSize).then(res => {
       let {success, data, total} = res
+      totalItem.current = Number.isInteger(total) ? total : 0
       if(success){
         if(Array.isArray(data) && data?.length > 0){
           //setDataSource(data)
@@ -66,8 +73,8 @@ export default function Index() {
       }
     })
   }
-  const {tableProps, refresh} = useAntdTable(getTableData, {
-    defaultPageSize: 14,
+  const {tableProps, refresh, run} = useAntdTable(getTableData, {
+    defaultPageSize: PageSize,
     refreshDeps: [projectId]
   })
   
@@ -263,7 +270,19 @@ export default function Index() {
     let res = await DeleteSite(projectId, selectId)
     if(res.success){
       message.success('站点删除成功!')
-      refresh()
+      try {
+        let current = Math.ceil((totalItem.current - 1)  / PageSize) < curPage.current
+        
+        if(current) {
+          let values = form.getFieldsValue()
+          run({current: curPage.current - 1, pageSize: PageSize}, values)
+        }else {
+          refresh()
+        }
+      
+      } catch (error) {
+        
+      }
     }else{
       message.error(res.errMsg)
     }
@@ -295,7 +314,7 @@ export default function Index() {
         //  form.resetFields();
           refresh();
         }else{
-         // message.error(res.errMsg)
+          message.error(res.errMsg || "请求出错")
         }
       })
     } else if (modalTitle === "编辑站点") {
@@ -360,13 +379,11 @@ export default function Index() {
   <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
    <span>站点管理</span>
   {ispublish ? null : (
-    <Button
-      type="primary"
-      className={style.contentAdd}
+    <CustButton
       onClick={showAdd}
     >
       新增
-    </Button>
+    </CustButton>
   )}
 </div>
  )
@@ -414,6 +431,7 @@ export default function Index() {
             labelAlign="left"
             colon={false}
             labelCol={{ flex: "110px" }}
+            wrapperCol={{flex: 1}}
             preserve={false}
           >
             <Item
@@ -473,7 +491,7 @@ export default function Index() {
               rules={[{ required: true, message: "请输入站点容量" } ]}
               key="capacity"
             >
-              <Input placeholder="请输入站点容量" />
+              <InputNumber placeholder="请输入站点容量" style={{width: "466px"}} />
             </Item>
             <Item
               label="投运时间"
