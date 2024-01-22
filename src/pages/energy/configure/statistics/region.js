@@ -11,20 +11,16 @@ import {
   message,
   Typography,
   Select,
-  InputNumber,
   Drawer,
-  Cascader
 } from "antd";
-import { nanoid } from "@reduxjs/toolkit";
+ 
 import styled from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { useAntdTable } from "ahooks";
-import warningImg from "@imgs/warning.png";
-import { CustButton } from "@com/useButton";
  
-import Mapcom from "@com/useMap";
+import {Serach} from '@com/comstyled'
+ 
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 import Mask from '@com/mask.jsx'
@@ -541,13 +537,13 @@ const getSelected = async ({areaId, type=devietype}) => {
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}查询`}>
-              <Input.Search
-                placeholder={`请输入${name}名称`}
-                allowClear
-                enterButton="查询"
-                style={{ width: "550px" }}
-                onSearch={getTableData}
-              />
+              <Serach
+                  placeholder={`请输入${name}名称`}
+                  allowClear
+                  enterButton="查询"
+                  style={{ width: "340px" }}
+                  onSearch = {getTableData}
+                />
             </Form.Item>
           )}
           {level > 1 && (
@@ -564,13 +560,13 @@ const getSelected = async ({areaId, type=devietype}) => {
                   onChange={getTableData}
                 ></Select>
               </Item>
-              <Form.Item name="name" label={`${name}查询`}>
-                <Input.Search
+              <Form.Item name="name" label={`${name}查询`}>                 
+              <Serach
                   placeholder={`请输入${name}名称`}
                   allowClear
                   enterButton="查询"
-                  style={{ width: "550px" }}
-                  onSearch={getTableData}
+                  style={{ width: "340px" }}
+                  onSearch = {getTableData}
                 />
               </Form.Item>
             </>
@@ -585,7 +581,7 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
-      {open && <Mask task={open} />} 
+      <Mask task={open} >
       <Drawerbox
         onClose={drawClose}
         open={open}
@@ -733,7 +729,7 @@ const getSelected = async ({areaId, type=devietype}) => {
           />
         </div>
       </Drawerbox>
-      
+      </Mask>
     </Mainbox>
   );
 }

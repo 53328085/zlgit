@@ -200,7 +200,7 @@ const {submit} = search
       <Table columns={columns}  {...tableProps}></Table>
      
       
-     {targ && <Mask task={targ}><SetLine addDevice={addDevice} ref={setlineRef} areaId={areaId} getQueryPageDevice={refresh} setTarg={setTarg}/></Mask>}
+     <Mask task={targ}><SetLine addDevice={addDevice} ref={setlineRef} areaId={areaId} getQueryPageDevice={refresh} setTarg={setTarg}/></Mask>
       <CustContext.Provider value={{lngLat:lng}}>
       <SetPosition positionRef={editRef} savePosition={saveEditPosition} />
       </CustContext.Provider>

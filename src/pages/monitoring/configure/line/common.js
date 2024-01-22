@@ -7,6 +7,7 @@ import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
 
 import { Monitoring } from '@api/api'
+import Mask from '@com/mask'
 // import Table from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { publishState } from '@redux/systemconfig'
@@ -122,29 +123,35 @@ export default function Common({ type }) {
 
     //获取线路数据
     const gettablelineData = async (tree = '') => {
-        let params = {
-            projectId,
-            type,
-            areaId: selform.getFieldsValue().area,
-            alike: ''
-        }
-        const res = await QueryUnusedMeter(params)
-        if (res.success && Array.isArray(res.data)) {
-            setforwardRef.current.setDataSource([...res.data])
-            setforwardRef.current.setCopydataSource([...res.data])
-            setforwardRef.current.setSelectedRowKeys([])
-            setforwardRef.current.setSubMeterRowKeys([])
-            setforwardRef.current.setSummaryRowKeys([])
-            if (tree) {
-                tree.deviceSub ? setforwardRef.current.setSubMeter([...tree.deviceSub]) : setforwardRef.current.setSubMeter([])
-                tree.deviceSummary ? setforwardRef.current.setSummaryMeter([...tree.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
-            } else {
-                treelist.deviceSub ? setforwardRef.current.setSubMeter([...treelist.deviceSub]) : setforwardRef.current.setSubMeter([])
-                treelist.deviceSummary ? setforwardRef.current.setSummaryMeter([...treelist.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
+        try {
+            let params = {
+                projectId,
+                type,
+                areaId: selform.getFieldsValue().area,
+                alike: ''
             }
-        } else {
-            setforwardRef.current.setDataSource([])
+            const res = await QueryUnusedMeter(params)
+            if (res.success && Array.isArray(res.data)) {
+                setforwardRef.current.setDataSource([...res.data])
+                setforwardRef.current.setCopydataSource([...res.data])
+                setforwardRef.current.setSelectedRowKeys([])
+                setforwardRef.current.setSubMeterRowKeys([])
+                setforwardRef.current.setSummaryRowKeys([])
+                if (tree) {
+                    tree.deviceSub ? setforwardRef.current.setSubMeter([...tree.deviceSub]) : setforwardRef.current.setSubMeter([])
+                    tree.deviceSummary ? setforwardRef.current.setSummaryMeter([...tree.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
+                } else {
+                    treelist.deviceSub ? setforwardRef.current.setSubMeter([...treelist.deviceSub]) : setforwardRef.current.setSubMeter([])
+                    treelist.deviceSummary ? setforwardRef.current.setSummaryMeter([...treelist.deviceSummary]) : setforwardRef.current.setSummaryMeter([])
+                }
+            } else {
+                setforwardRef.current.setDataSource([])
+            }
+
+        } catch (error) {
+            
         }
+       
     }
     //关闭抽屉
     const closeDrawer = () => {
@@ -214,7 +221,7 @@ export default function Common({ type }) {
                     treeData={tdata}
                 />
                 <AddMianMianModal {...addmianprops}></AddMianMianModal>
-                <SetLine {...setprops}></SetLine>
+              <Mask task={open}> <SetLine {...setprops}></SetLine></Mask> 
             </div>
 
         </>
@@ -613,7 +620,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
         setSearchValue
     }))
     return (
-        <div style={{ position: 'absolute', width: 1686, height: 755, top: 73, left: open ? -17 : 2000, background: "#003366", transition: 'all .5s 0s', padding: 32, display: 'flex' }}>
+        <div style={{position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
                     <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>

@@ -416,7 +416,7 @@ export default function Index(props) {
       <Divider />
       <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 } : null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
      {/*  <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} > */}
-      {transTag &&   <Mask task={transTag}>  <UseTransfer
+      <Mask task={transTag}>  <UseTransfer
           transferTitle={transferTitle}
           saveValue={getSaveValue}
           columns={transferColumns}
@@ -426,7 +426,7 @@ export default function Index(props) {
           unknownTable={unknownTable}
           closeValue={getCloseValue}></UseTransfer>
           </Mask>
-      }
+     
      {/*  </div> */}
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
          是否确认删除电表？ 

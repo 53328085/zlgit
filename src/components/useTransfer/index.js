@@ -248,8 +248,8 @@ export default function index (props) {
     }
    const [subserach, setSubserach] = useState('')
     return (
-        <>
-      {  task && <Mask task={task}>
+   
+     <Mask task={task}>
         <div className={style.transferContent}>
             {contextHolder}
             { props.transferTitle.mainTitle != ''  ? 
@@ -343,7 +343,6 @@ export default function index (props) {
                 </div>
             </div>
         </div>
-        </Mask> }
-        </>
+        </Mask>
     )
 }

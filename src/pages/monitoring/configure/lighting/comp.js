@@ -6,6 +6,7 @@ import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
 import {  ExportExcel} from '@com/useButton'
+import {Serach} from '@com/comstyled'
 function Comp(props, ref) {
     const publish = useSelector(publishState)
     const context = useContext(CustContext)
@@ -46,13 +47,13 @@ function Comp(props, ref) {
         setInpValue(e.target.value)
 
     }
-    const searchBtn = () => {
+    const searchBtn = (value) => {
         setTableParams({
             ...tableParams,
             current: 1
         })
         console.log(selRef)
-        getList({ pageSize: tableParams.pageSize, pageNum: 1, alike: inpvalue, areaId: selRef.current ? selRef.current : 0 })
+        getList({ pageSize: tableParams.pageSize, pageNum: 1, alike: value, areaId: selRef.current ? selRef.current : 0 })
 
     }
     useImperativeHandle(ref, () => ({
@@ -96,11 +97,19 @@ function Comp(props, ref) {
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
-                        <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp} />
+                                <Serach
+                                style={{ width: 321 }}
+                                placeholder={placeholder}
+                                allowClear
+                                onChange={changeInp}
+                                enterButton="查询"
+                                onSearch = {searchBtn}
+                                />
+                      {/*   <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp} /> */}
                     </Col>
-                    <Col>
+                    {/* <Col>
                         <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={searchBtn}>查询</Button>
-                    </Col>
+                    </Col> */}
                     {
                         isenergy && (<>
                             <Divider type="vertical" dashed style={{ margin: '0 16px', borderColor: ' #d7d7d7', height: 30 }} />

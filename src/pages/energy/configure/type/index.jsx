@@ -310,9 +310,9 @@ export default function Index () {
           { treeData.length>0 ? <Tree  height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
           </div>
         </div>
-        {deleteDom ? 
+      
           <Mask task={transTag}> <UseTransfer  transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer></Mask>
-         : null}
+       
       </div>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>

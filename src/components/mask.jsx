@@ -13,6 +13,7 @@ export default function Msk(props) {
     height: '100%',
     zIndex: 1978,
   } */
-  return  createPortal(<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>, document.body )
+  // return  createPortal(<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>, document.body )
+  return (<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>)
 
 }

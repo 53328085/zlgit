@@ -48,15 +48,23 @@ Ifile.input:hover {
 }
 /*  */
 .mask {
-  position: absolute;  
+  position: fixed;  
   top: 0;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0,0,0,0.45);
   width: 100%;
   height: 100%;
   z-index: 1978;
+  transition: all 0.5s 0s;
+}
+.endAnimation {
+  left: 2000px
+}
+.startAnimation{
+  left: 0px;
+  
 }
 
-.startAnimation{
+/* .startAnimation{
   animation: change 0.3s;
   animation-fill-mode: both;
   
@@ -71,7 +79,7 @@ Ifile.input:hover {
 }
 .endAnimation{
   animation: changeTo 0.3s;
-  // left: 0!important;
+   
   animation-fill-mode: both;
   
 }
@@ -82,5 +90,5 @@ Ifile.input:hover {
   to {
       left: 2680px;
   }
-}
- 
+} */
+  
