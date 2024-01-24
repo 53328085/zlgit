@@ -1,371 +1,406 @@
-import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
-import { useSelector, useStore, useDispatch } from 'react-redux'
-import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useRequest } from "ahooks";
- 
-import style from './style.module.less'
-import Icard from './card'
-import imgurl from './images/index.js'
-import { Monitoring } from '@api/api.js'
-import { selectProjectId } from '@redux/systemconfig.js'
-import {  ExportExcel} from '@com/useButton'
-import Table from '@com/useTable'
-import {Serach} from "@com/comstyled"
- 
-  
- 
-export default function Index(props) {
-  const tableLoadRef = useRef()
-  const projectId = useSelector(selectProjectId)
-  // const [messageApi, contextHolder] = message.useMessage();
-  const { RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages }, DeviceManager: { QueryUsedGateway } } = Monitoring
-  let [areaId, setAreaId] = useState(0)
-  let [statistics, setStatistics] = useState({})
-  let [overView, setoverView] = useState({ details: [], categories: [] })
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const headerProps = {
-    isEnergy: false,//能耗类型
-    isDate: false,//日期
-    isShift: false,//班次
-    isTab: false,//能耗、费用radioButton
-    isSearch: false,//查询按钮
-    isExport: false,//导出按钮
-    allarea:areaOptions
-    //export: exportData //导出调用方法
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { Select, Radio, Pagination, message, Space, Form, Divider } from "antd";
+
+import { Link } from "react-router-dom";
+import { useAntdTable } from "ahooks";
+
+import style from "./style.module.less";
+import Icard from "./card";
+import imgurl from "./images/index.js";
+import { Monitoring } from "@api/api.js";
+import {
+  selectProjectId,
+  selectOneLevelDefaultId,
+} from "@redux/systemconfig.js";
+import { ExportExcel } from "@com/useButton";
+import Table from "@com/useTable";
+import { Serach } from "@com/comstyled";
+import Pagecount from '@com/pagecontent' 
+
+const Mainbxox = styled.div`
+  && {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
-  let [optionsGateway, setoptionsGateway] = useState([])
-  const [changeTag, setChangeTag] = useState('')
-  const [isCard, setisCard] = useState(true)//卡片模式true或列表模式false
-  let inputValue = ''
- // const [page, setpage] = useState(1)
-  let [total, setTotal] = useState(0)
-  let [imageList, setimageList] = useState([])
-  let [pageNum, setPageNum] = useState(1)
-  let [statevalue,setStateValue] = useState(0)
-/*   let params = {
-    projectId: projectId,
-    areaId: areaId,
-    category: '',
-    alike: '',
-    state: 0,
-    pageNum: page,
-    pageSize: 12,
-  } */
-  const [params, setParams] = useState({
-    projectId: projectId,
-    areaId: areaId,
-    category: '',
-    alike: '',
-    state: 0,
-    pageNum: 1,
-    pageSize: 12,
-  })
+
+`
+export default function Index(props) {
+  const tableLoadRef = useRef();
+  const projectId = useSelector(selectProjectId);
+  const [form] = Form.useForm();
+  let areaId = useSelector(selectOneLevelDefaultId);
+
+  const {
+    RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages },
+    DeviceManager: { QueryUsedGateway },
+  } = Monitoring;
+   
+  let [statistics, setStatistics] = useState({});
+ 
+
+  let [optionsGateway, setoptionsGateway] = useState([]);
+
+  const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
+ 
+  let [imageList, setimageList] = useState([]);
+  
+  const [total, setTotal] = useState(0)
   // let [arr,setArr] = useState([])
-  const showTotal = (total) => `共 ${total} 条记录`;
+ 
   const columns = [
     {
-      title: '网关编号',
-      dataIndex: 'sn',
-      key: 'sn',
-      id: 'id'
+      title: "网关编号",
+      dataIndex: "sn",
+      key: "sn",
+      id: "id",
     },
     {
-      title: '网关型号',
-      dataIndex: 'category',
-      key: 'category',
-      id: 'id'
+      title: "网关型号",
+      dataIndex: "category",
+      key: "category",
+      id: "id",
     },
     {
-      title: '网络连接',
-      dataIndex: 'state',
-      render: (text) => <span> {text === 2 ? '在线' : '离线'} </span>,
-      key: 'state',
-      id: 'id'
+      title: "网络连接",
+      dataIndex: "state",
+      render: (text) => <span> {text === 2 ? "在线" : "离线"} </span>,
+      key: "state",
+      id: "id",
     },
     {
-      title: '联网方式',
-      dataIndex: 'connMethod',
-      key: 'connMethod',
-      id: 'id'
+      title: "联网方式",
+      dataIndex: "connMethod",
+      key: "connMethod",
+      id: "id",
     },
     {
-      title: '子设备',
-      dataIndex: 'childrenCnt',
-      key: 'childrenCnt',
-      id: 'id'
+      title: "子设备",
+      dataIndex: "childrenCnt",
+      key: "childrenCnt",
+      id: "id",
     },
     {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'address',
-      id: 'id'
+      title: "安装地址",
+      dataIndex: "address",
+      key: "address",
+      id: "id",
     },
     {
-      title: '更新时间',
-      dataIndex: 'lastSampleTime',
-      key: 'lastSampleTime',
-      id: 'id'
+      title: "更新时间",
+      dataIndex: "lastSampleTime",
+      key: "lastSampleTime",
+      id: "id",
     },
   ];
-  let [dataSource, setdataSource] = useState([])
 
-  const getData = () => {//设备统计
-    return RuntimeGatewayStatistics({ projectId, areaId }).then(res => {
-      let { success, data } = res
-      if (success) {
-        setStatistics(data)
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-
-  const getGatewayUsed = () => {//使用的网关
-    return QueryUsedGateway(projectId).then(res => {
-      let { success, data } = res
-      if (success) {
-        setoptionsGateway(data)
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const getOverviewData = () => {//设备统计
-    return Overview(params).then(res => {
-      let { success, data, total, pageNum } = res
-      if (success) {
-        setoverView(data)
-        setTotal(total)
-        setPageNum(pageNum)
-        //  if(data.categories!=null){
-        //    getGatewayImages()
-        //  }
-        setdataSource(data.details)
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-const onExport = useCallback(() => {
-   params.pageNum = 1
-   params.pageSize = total
-  return Overview(params).then(res => {
-    let { success, data, total, pageNum } = res
-    if (success) {
-      return {
-        list: data.details || [],
-        total,
-      }
-      
-    } else {
-      message.error(res.errMsg)
-    }
-  })
-}, [total, areaId, projectId])
-
-
-  let [imgUrl, setimgUrl] = useState()
-  const getGatewayImages = () => {//网关图片
-    return CategoryImages({ projectId: projectId, group: overView.categories }).then(res => {
-      let { success, data } = res
-      if (success) {
-        if (data != []) {
-          let imgList = []
-          overView.details.map((item, index) => {
-            data.map((items, indexs) => {
-              if (data[indexs].category == item.category) {
-                imgList.push(data[indexs].imageBase64)
-              } else {
-              }
-            })
-          })
-          setimageList(imgList)
+  const getData = () => {
+    //设备统计
+    RuntimeGatewayStatistics({ projectId, areaId })
+      .then((res) => {
+        let { success, data } = res;
+        if (success) {
+          setStatistics(data|| {});
+        } else {
+          setStatistics({});
+          message.error(res.errMsg);
         }
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const { run: queryData } = useRequest(getGatewayUsed, {
-    refreshDeps: [changeTag],
-    manual: true,
-  })
- const [svalue, setSvalue] = useState('')
-  const getFromChild = data => {
-    console.log(data)
-    //园区id
-    if (data.areaId == undefined) {
+      })
+      .catch(() => {
+        setStatistics({});
+      });
+  };
+
+  const getGatewayUsed = () => {
+    //使用的网关
+    QueryUsedGateway(projectId)
+      .then((res) => {
+        let { success, data } = res;
+        if (success) {
+          setoptionsGateway(Array.isArray(data) ? data : []);
+        } else {
+          setoptionsGateway([]);
+          message.error(res.errMsg);
+        }
+      })
+      .catch(() => {
+        setoptionsGateway([]);
+      });
+  };
+  useEffect(() => {
+    getGatewayUsed();
+  }, []);
+  useEffect(() => {
+    if (Number.isFinite(areaId)) {
+      getData();
+    }
+  }, [areaId]);
+
+  
+  const getGatewayImages = (categories, details) => {
+    //网关图片
+    if (details.length < 1) {
+      setimageList([])
       return
-    } else {
-      setAreaId(data.areaId)
-      setSvalue('')
-      setParams({
-        ...params,
-        areaId: data.areaId,
-        state: 0,
-        category: '',
-        alike: ''
-      })
-     //setStateValue(0)
-      // getData()
-      
     }
-  }
-
- const onChange = (e) => {
-    setSvalue(e.target.value)
- }
-  const onChangeValue = e => {
-    console.log(e)
-      setParams({
-        ...params,
-        alike: e
-      })
-  }// 点击查询按钮
- 
-  const handleChange = e => {
-    setParams({
-      ...params,
-      category: e
-    })
-    
-  }//网关型号选择
-  const handleChangeState = e => {
-   
-    setStateValue(e)
-    setParams({
-      ...params,
-      state: e
-    })
-    
-  }//网关状态选择
-  const changeTab = val => {
-    setisCard(val.target.value == 'card' ? true : false)
-   // setpage(1)
-    setParams({
-      ...params,
-      pageNum: 1
-    })
-  //  getOverviewData()
-  }//切换卡片列表模式
-
-  const exportExecel = () => {
-    tableLoadRef.current.download()
-  }//数据导出
-  useEffect(() => {
-    if (Number.isFinite(areaId)) {
-      
-      getData()
-      queryData()
+    CategoryImages({ projectId: projectId, group: categories }).then(
+      (res) => {
+        let { success, data } = res;
+        if (success) {
+          if (data != []) {
+            let imgList = [];
+           details.map((item, index) => {
+              data.map((items, indexs) => {
+                if (data[indexs].category == item.category) {
+                  imgList.push(data[indexs].imageBase64);
+                } else {
+                }
+              });
+            });
+            setimageList(imgList);
+          }
+        } else {
+          message.error(res.errMsg);
+        }
+      }
+    );
+  };
+  const  params =useRef({
+    projectId: projectId,
+    areaId: areaId,
+    category: '',
+    alike: '',
+    state: '',
+    pageNum: 1,
+    pageSize: 14,
+  })
+  const getOverviewData = ({ current, pageSize }, formData) => {
+    //设备统计
+    let { category, alike, state } = formData;
+    params.current ={
+      projectId,
+      areaId,
+      pageNum: current,
+      pageSize: pageSize,
+      alike,
+      state,
+      category
     }
-  }, [areaId, changeTag])
-  useEffect(() => {
-    if (Number.isFinite(areaId)) {
-      getOverviewData()
-      
-    }
-  }, [params, projectId])
-  useEffect(() => {
-    console.log(overView)
-    if (overView.categories) {
-      getGatewayImages()
-      console.log(456)
-    }
-  }, [overView.categories])
-  const onChangePage = (page, pageSize) => {
-    //setpage(page)
-    setParams({
-      ...params,
-      pageNum: page
-    })
-  }
-  return (
-    <div>
-      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
-      <div className={style.bottom}>
-        <div className={style.bottomTab}>
-          {isCard ? 
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>网关查询</span><Serach size="middle" value={svalue} placeholder='输入网关编号/安装地址' 
-          style={{ width: '340px', marginLeft: 16 }} 
-          allowClear
-          enterButton="查询"
-          onChange={onChange}
-          onSearch = {onChangeValue}
-           />
-             
-            <div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div></div> : ''}
-          <span>网关型号</span>
-          <Select
-            value={params.category}
-            style={{
-              width: 200, marginLeft: 16
-            }}
-            onChange={handleChange}
-          >
-            <Select.Option value={''}>全部型号</Select.Option>
-            {optionsGateway.map((item, index) => {
-              return (
-                <Select.Option key={index} value={item}>
-                  {item}
-                </Select.Option>
-              );
-            })}
-          </Select>
-          {isCard ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>网关状态</span>
-            <Select
-              value={params.state}
-              
-              style={{
-                width: 200, marginLeft: 16
-              }}
-              onChange={handleChangeState}
-              options={[
-                {
-                  value: 0,
-                  label: '全部(' + (statistics.all==undefined?0:statistics.all) + ')',
-                },
-                {
-                  value: 2,
-                  label: '正常(' + (statistics.on==undefined?0:statistics.on) + ')',
-                },
-                {
-                  value: 1,
-                  label: '失联(' + (statistics.off==undefined?0:statistics.off) + ')',
-                },
-              ]}
-            /></div> : ''}
-          <Space size={16} style={{marginLeft: 'auto'}}>
-            <Radio.Group onChange={changeTab} defaultValue="card" buttonStyle="solid">
-              <Radio.Button style={{ width: '96px', marginLeft: 16, textAlign: 'center', }} value="card">卡片模式</Radio.Button>
-              <Radio.Button style={{ width: '96px', textAlign: 'center', }} value="list">列表模式</Radio.Button>
-            </Radio.Group>
-           {/*  <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>数据导出</Button> */}
-           <ExportExcel disabled={isCard} tb={tableLoadRef} />
+    return Overview(params.current).then((res) => {
+      let { success, data, total } = res;
+      setTotal(Number.isFinite(total) ? total : 0)
+      if (success) {
+        let { details, categories } = data || {}
+        let list = Array.isArray(details) ? details : [];
+        let cates = Array.isArray(categories) ? categories : [];
+        getGatewayImages(cates, list)
+        return {
+          list,
+          total: Number.isFinite(total) ? total : 0,
+        };
+      } else {
         
-          </Space>
-        </div>
-        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
-        {isCard ? <div className={style.cardBox}>
-          {overView.details != null ? overView.details.map((item, index) => {
-            return <div key={index}>
-              <Link to={`/gatewayDetail?sn=${item.sn}`} target="_blank">
-                <Icard img={imageList[index] ? 'data:image/png;base64,' + imageList[index] : imgurl.category} title={item.sn}
+        return {
+          list: [],
+          total: 0,
+        };
+      }
+    });
+  };
 
-                  value={item.address} state={item.state} childrenCnt={item.childrenCnt} connMethod={item.connMethod}
-                  lastSampleTime={item.lastSampleTime} category={item.category} name={item.name}/>
-              </Link>
-            </div>
-          }) : ''}
-        </div> : <div className={style.tableHead}>
-          <Table columns={columns} dataSource={dataSource} rowKey={columns => columns.id} ref={tableLoadRef} onExport={onExport}></Table>
-        </div>}
-        <Pagination className={style.pageNum} size="small" current={pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false}/>
-      </div>
+  const { tableProps, search: hanlder, run} = useAntdTable(getOverviewData, {
+    form,
+    defaultPageSize: 12,
+    refreshDeps: [projectId, areaId],
+  });
+  console.log(tableProps)
+  const { submit } = hanlder;
+  const showTotal =(total) =>  `共 ${total} 条记录`;
+  const onExport = useCallback(() => {
+    params.current.pageSize = total
+    return Overview(params.current).then((res) => {
+      let { success, data, total } = res;
+      if (success) {
+        return {
+          list: data.details || [],
+          total,
+        };
+      } else {
+        message.error(res.errMsg);
+        return {
+          list: [],
+          total: 0,
+        };
+      }
+    });
+  }, [total]);
 
-    </div >
-  )
+
+  const changeTab = (val) => {
+    setisCard(val.target.value == "card" ? true : false);
+    
+    //  getOverviewData()
+  }; //切换卡片列表模式
+ const changepage = (current, pageSize) => {
+    try {
+       let values = form.getFieldsValue();
+        run({current, pageSize}, values)
+    } catch (error) {
+      
+    }
+ }
+  return (
+    <Pagecount>
+        <Mainbxox>
+       
+          <Form
+            layout="line"
+            form={form}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between"
+            }}
+            initialValues={{
+              alike: '',
+              category: '',
+              state: 0
+            }}
+          >
+            <Space size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+              {isCard ? (
+                <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
+                  <Serach
+                    size="middle"
+                    placeholder="输入网关编号/安装地址"
+                    style={{ width: "340px" }}
+                    allowClear
+                    enterButton="查询"
+                    onSearch={submit}
+                  />
+                </Form.Item>
+              ) : null}  
+              <Form.Item label="网关型号" name="category" style={{marginBottom: 0}}>
+                <Select
+                  style={{
+                    width: 200,
+                  }}
+                  onChange={submit}
+                >
+                  <Select.Option value={""}>全部型号</Select.Option>
+                  {optionsGateway.map((item, index) => {
+                    return (
+                      <Select.Option key={index} value={item}>
+                        {item}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+              {isCard ? (
+                <Form.Item label="网关状态" name="state" style={{marginBottom: 0}}>
+                  <Select
+                    style={{
+                      width: 200,
+                    }}
+                    onChange={submit}
+                    options={[
+                      {
+                        value: 0,
+                        label:
+                          "全部(" +
+                          (statistics.all == undefined ? 0 : statistics.all) +
+                          ")",
+                      },
+                      {
+                        value: 2,
+                        label:
+                          "正常(" +
+                          (statistics.on == undefined ? 0 : statistics.on) +
+                          ")",
+                      },
+                      {
+                        value: 1,
+                        label:
+                          "失联(" +
+                          (statistics.off == undefined ? 0 : statistics.off) +
+                          ")",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+              ) : null}
+            </Space>
+            <Space size={16} style={{ marginLeft: "auto" }}>
+              <Radio.Group
+                onChange={changeTab}
+                defaultValue="card"
+                buttonStyle="solid"
+              >
+                <Radio.Button
+                  style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+                  value="card"
+                >
+                  卡片模式
+                </Radio.Button>
+                <Radio.Button
+                  style={{ width: "96px", textAlign: "center" }}
+                  value="list"
+                >
+                  列表模式
+                </Radio.Button>
+              </Radio.Group>
+
+              <ExportExcel disabled={isCard} tb={tableLoadRef} />
+            </Space>
+          </Form>
+        
+        <Divider type="horizontal" style={{ margin: "16px 0",borderColor: '#d7d7d7',  }} dashed />
+        {isCard ? (
+          <div className={style.cardBox}>
+            {  tableProps?.dataSource?.length > 0 ?   tableProps?.dataSource?.map((item, index) => {
+              return (
+                <div key={index}>
+                  <Link to={`/gatewayDetail?sn=${item.sn}`} target="_blank">
+                    <Icard
+                      img={
+                        imageList[index]
+                          ? "data:image/png;base64," + imageList[index]
+                          : imgurl.category
+                      }
+                      title={item.sn}
+                      value={item.address}
+                      state={item.state}
+                      childrenCnt={item.childrenCnt}
+                      connMethod={item.connMethod}
+                      lastSampleTime={item.lastSampleTime}
+                      category={item.category}
+                      name={item.name}
+                    />
+                  </Link>
+                </div>
+              );
+            })
+            : null
+          }
+          </div>
+        ) : (
+          <div  style={{flex: 1, display: 'flex'}}>
+            <Table
+              columns={columns}
+              {...tableProps}
+              rowKey={(columns) => columns.id}
+              ref={tableLoadRef}
+              onExport={onExport}
+              sheetName="网关"
+            ></Table>
+          </div>
+        )}
+     { isCard && <Pagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}  showTotal={showTotal}  {...tableProps.pagination} showSizeChanger={false}/>  }
+      </Mainbxox>
+    </Pagecount>
+  );
 }

@@ -74,7 +74,7 @@ const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDeta
 const Fform = lazy(() => import("../pages/test/fform.js"))
 const Directionful = lazy(() => import("../pages/energy/direction"))
 const Notfound = lazy(() => import("./notfound"))
-
+const Comindex = lazy(() => import("./comindex"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  

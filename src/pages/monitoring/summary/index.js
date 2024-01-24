@@ -1,26 +1,19 @@
-import React, { useEffect, useState, useRef ,useMemo} from 'react'
+import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
-import { Select,message } from 'antd'
+import {message } from 'antd'
 import Icard from './card'
- 
-
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
-import UseHeader from '@com/useHeader'
+import { useSelector } from 'react-redux' 
 import imgurl from './images/index.js'
 import breaker from './images/breaker.png'
 import { Monitoring } from '@api/api.js'
 import Ichart  from '@com/useEcharts/Ichart';
 import Titlelayout from '@com/titlelayout';
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import Pagecount from '@com/pagecontent'
 export default function Index() {
-  const { Option } = Select
   const projectId = useSelector(selectProjectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const elref = useRef(null)
-  const wlref = useRef(null)
- 
-  let [areaId, setAreaId] = useState(0)
+  let areaId = useSelector(selectOneLevelDefaultId)
+ // let [areaId, setAreaId] = useState(0)
   let [statistics, setStatistics] = useState({})
   let [status, setStatus] = useState({})
   
@@ -93,14 +86,7 @@ export default function Index() {
     }).catch(e => {
       console.log(e)
     })
-  }
- 
-
-
-
-
-
- 
+  } 
   useEffect(() => {
     if(Number.isFinite(areaId) && Number.isFinite(projectId)){
       getData()
@@ -108,31 +94,8 @@ export default function Index() {
       getMonthUsage(1)
     }
   }, [areaId,projectId])
- 
-  
-
-
-  const headerProps = {
-    isEnergy: false,//能耗类型
-    isDate: false,//日期
-    isShift: false,//班次
-    isTab: false,//能耗、费用radioButton
-    isSearch: false,//查询按钮
-    isExport: false,//导出按钮
-    allarea:areaOptions
-    //export: exportData //导出调用方法
-  }
-  const getFromChild = data => {
-    console.log(data.areaId)//园区id
-    if(data.areaId==undefined){
-      return
-    }else{
-      setAreaId(data.areaId)
-    }
-  }
   return (
-    <div>
-      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
+    <Pagecount pd="0" bgcolor="transparent">
       <div className={style.cardList}>
         <Icard img={imgurl.device} title={'设备总数'} value={statistics.deviceCount} key="device" />
         <Icard img={imgurl.chuan} title={'传感器数量'} value={statistics.sensorCount}  key="chuan"  />
@@ -166,6 +129,6 @@ export default function Index() {
 
         </Titlelayout>
       </div>
-    </div>
+    </Pagecount>
   )
 }

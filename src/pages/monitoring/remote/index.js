@@ -11,7 +11,7 @@ import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
-import redwarn from '@imgs/redwarn.png'
+ 
 import imgurl from './images/index.js'
 import UseHeader from '@com/useHeader'
 import style from './style.module.less'
@@ -236,7 +236,7 @@ export default function Index() {
         } else if (type == 'close') {
             setbrakeC(false)
         }
-        tableRefs.current=[]
+      //  tableRefs.current=[]
         //getData()
     }
     const [isComplate, setisComplate] = useState(false)
@@ -373,41 +373,36 @@ export default function Index() {
                >
                   分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！
                </CModal>
-            <Modal
-                title={<Bluecolumn name="合闸控制" />}
+            <CModal
+                title= "合闸控制"
                 width={640}
                 open={brakeC}
                 centered={true}
                 closable={false}
-                className={style.readout}
-                footer={[
-                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={() => { handleCancel('close') }}>
-                        取消
-                    </Button>,
-                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={() => { openStatus('close') }}>
-                        确定
-                    </Button>,
-                ]}
+                type="warn"
+                mold="cust"
+                onOk={() => {  openStatus('close') }}
+                onCancel={() => {  handleCancel('close')}}
             >
-                <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>合闸后,该电表控制内的所有用电设备将恢复供电，请确认！</p></div>
-            </Modal>
-            <Modal
-                title={<Bluecolumn name="远程控制" />}
+               合闸后,该电表控制内的所有用电设备将恢复供电，请确认！
+            </CModal>
+            <CModal
+                title="远程控制"
                 width={640}
                 className={style.readoutBule}
                 open={brakeResult}
                 centered={true}
                 closable={false}
                 destroyOnClose
-                footer={[
-                    <Button key="submit" disabled={isComplate} style={{ backgroundColor: '#237AE4', color: '#fff', width: 96, height: 32 }} onClick={handleCancelResult}>
-                        完成
-                    </Button>,
-                ]}
+                mold="cust"
+                onCancel={() => {
+                    setbrakeResult(false)
+                }}
+                onOk={handleCancelResult}
             >
                 <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
-            </Modal>
+            </CModal>
 
         </div>
     )

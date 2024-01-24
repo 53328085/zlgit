@@ -69,39 +69,39 @@ const system = createSlice({
         },
         configProject(state, {payload}) { // 项目是否处于设计状态     
             state.configState = payload    
-            //return Object.assign({}, state, {configState: actions.payload})
+            
         },
         getJump(state, {payload}) { // 页面跳转到设计态，还是运行态    
             state.jump = payload     
-           // return Object.assign({}, state, {jump: actions.payload})
+           
         },
         getMenus(state, {payload}) { 
             state.menus = payload
-            //return Object.assign({}, state, {menus: actions.payload})
+            
         },
         getRunMenus(state, {payload}) {
             state.runMenus = payload
-           // return Object.assign({}, state, {runMenus: actions.payload })
+           
         },
         getDesignerMenus(state, {payload}) {
            state.designerMenus = payload
-          // return Object.assign({}, state, {designerMenus: actions.payload })
+          
         },
         getSiderRunMenus(state, {payload}) {
             state.siderRunMenus = payload
-            //return Object.assign({}, state, {siderRunMenus: actions.payload })
+           
         },
         getSiderDesignerMenus(state, {payload}) {
             state.siderDesignerMenus = payload
-            // return Object.assign({}, state, {siderDesignerMenus: actions.payload })
+            
          },
         getSetMenus(state, {payload}) {
             state.setMenus = payload
-           // return Object.assign({}, state, {setMenus: actions.payload })
+          
         },
         getOnelevel(state, {payload}) {  
             state.onelevel =Array.isArray(payload) ? payload : []       
-           // return Object.assign({}, state, {onelevel: actions.payload })
+          
         },
         getDisonlevel(state, {payload}) {
            state.disonlevel =Array.isArray(payload) ? payload : [] 
@@ -114,7 +114,6 @@ const system = createSlice({
           state.discurlevel = payload
         },
         setCurrentlevel(state, {payload}) {
-            console.log(payload)
             state.currlevel = payload
 
            // return Object.assign({}, state, {currlevel: actions.payload })
@@ -192,7 +191,7 @@ export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state =>  state.system.onelevel
-export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || ''
+export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || null
 
 
 

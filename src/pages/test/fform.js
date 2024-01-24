@@ -1,91 +1,165 @@
-import { Form, InputNumber, Input, Button } from 'antd';
+import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 import React, { useState } from 'react';
-const validatePrimeNumber = (number) => {
-  if (number < 15) {
-    return {
-      validateStatus: 'error',
-      errorMsg: "去儿科挂号",
-    };
-  }
-  return {
-    validateStatus: 'success',
-    errorMsg: '可以看成人科室',
-  };
-};
-const formItemLayout = {
-  labelCol: {
-    span: 7,
-  },
-  wrapperCol: {
-    span: 12,
-  },
+const originData = [];
+for (let i = 0; i < 100; i++) {
+  originData.push({
+    key: i.toString(),
+    name: `Edrward ${i}`,
+    age: 32,
+    address: `London Park no. ${i}`,
+  });
+}
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+  return (
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: true,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );
 };
 const App = () => {
-  const [form] = Form.useForm()
-  const [number, setNumber] = useState({
-    value: 11,
-  });
-  const tips ="医院挂号指南";
-  const onNumberChange = (value) => {
-    console.log(value)
-    setNumber({
-      ...validatePrimeNumber(value),
-      value,
+  const [form] = Form.useForm();
+  const [data, setData] = useState(originData);
+  const [editingKey, setEditingKey] = useState('');
+  const isEditing = (record) => record.key === editingKey;
+  const edit = (record) => {
+    form.setFieldsValue({
+      name: '',
+      age: '',
+      address: '',
+      ...record,
     });
+    setEditingKey(record.key);
   };
-  const onFinish = () => {
-     try {
-      let values = form.getFieldsValue()
-      console.log(values)
-     } catch (error) {
-       console.log(error)
-     }
-     
-  }
+  const cancel = () => {
+    setEditingKey('');
+  };
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setData(newData);
+        setEditingKey('');
+      } else {
+        newData.push(row);
+        setData(newData);
+        setEditingKey('');
+      }
+    } catch (errInfo) {
+      console.log('Validate Failed:', errInfo);
+    }
+  };
+  const columns = [
+    {
+      title: 'name',
+      dataIndex: 'name',
+      width: '25%',
+      editable: true,
+    },
+    {
+      title: 'age',
+      dataIndex: 'age',
+      width: '15%',
+      editable: true,
+    },
+    {
+      title: 'address',
+      dataIndex: 'address',
+      width: '40%',
+      editable: true,
+    },
+    {
+      title: 'operation',
+      dataIndex: 'operation',
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Save
+            </Typography.Link>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+              <a>Cancel</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+            Edit
+          </Typography.Link>
+        );
+      },
+    },
+  ];
+  const mergedColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: col.dataIndex === 'age' ? 'number' : 'text',
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
   return (
-    <Form onFinish={onFinish} form={form} initialValues={{
-      name: 'zl',
-      age: 12
-    }}>
-      <Form.Item
-        {...formItemLayout}
-        label="患者年龄"
-        validateStatus={number.validateStatus}
-        help={number.errorMsg || tips}
-        name="age"
-      >
-        <InputNumber min={10} max={20} value={number.value} onChange={onNumberChange} />
-      </Form.Item>
-      <Form.Item name="name"   validateStatus='warning' label="姓名" rules={[
-        {
-          require: true,
-          message: "请输入姓名"
-        }
-      ]}>
-        <Input /> 
-      </Form.Item>
-      <Form.Item dependencies={["age"]} name="keshi" rules={[
-        
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('age') > 14) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error('挂成人科室年龄必须大于14周岁'));
-            },
-          })
-        
-      ]}>
-          {
-            () => {
-              
-            }
-          }
-              <Input />
-      </Form.Item>
-      <Form.Item label=" ">
-         <Button htmlType='submit'>submit</Button>
-      </Form.Item>
+    <Form form={form} component={false}>
+      <Table
+        components={{
+          body: {
+            cell: EditableCell,
+          },
+        }}
+      
+        showHeader={false}
+        dataSource={data}
+        columns={mergedColumns}
+        rowClassName="editable-row"
+        pagination={{
+          onChange: cancel,
+        }}
+      />
     </Form>
   );
 };
