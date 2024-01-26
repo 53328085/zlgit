@@ -10,7 +10,7 @@ export default  memo(function Index(props) {
   const oneLevel = useSelector(selectdisOneLevel)
   const levelName = useSelector(levelDefaultLabel) || '园区'
   const areaId = useSelector(selectOneLevelDefaultId)
- 
+  
   //const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState([])
   const [roomId, setRoomId] = useState()
@@ -23,8 +23,8 @@ export default  memo(function Index(props) {
   const changeRomme = (v) => {      
        dispacth(getcurlRommid(v))
   }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
+  const getRoomList = async (id) => {
+    const resp = await distributionRoom.RoomList(projectId, id)
     if (resp?.success) {
       setRoomList(resp?.data)
       dispacth(getRoomId(resp?.data))
@@ -42,11 +42,12 @@ export default  memo(function Index(props) {
   }
  
  useEffect(() => {
+  if(oneLevel?.length < 1) return 
   if(areaId) {
     getRoomList(areaId)
   }
  
- }, [areaId])
+ }, [areaId, oneLevel])
 return (
   <div>
           <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
