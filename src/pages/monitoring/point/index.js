@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useRef, useCallback,useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
 import UseHeader from '@com/useHeader'
-import { Input, Button, Select, Radio, Pagination, FormTable, message, Space } from 'antd'
+import { Input, Button, Select, Radio, Pagination, Form, message, Space } from 'antd'
 import { SearchOutlined } from '@ant-design/icons';
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useRequest } from "ahooks";
+import { Link,   } from 'react-router-dom'
+import {useAntdTable} from "ahooks";
 import styled from 'styled-components';
 import style from './style.module.less'
 import Icard from './card'
@@ -15,11 +15,13 @@ import { selectProjectId, selectOneLevel, selectOneLevelDefaultId, levelDefaultL
 
 import Table from '@com/useTable'
 import {Serach} from "@com/comstyled"
-
+import Pagecount from '@com/pagecontent' 
 let inputValue = ''
 export default function Index(props) {
   const tableLoadRef = useRef()
   const projectId = useSelector(selectProjectId)
+  const [form] = Form.useForm();
+  let areaId = useSelector(selectOneLevelDefaultId);
   // const [messageApi, contextHolder] = message.useMessage();
   const {DeviceTypeManager: {AllDeviceStyle}, RuntimeDevice: { Statistics, Overview, CategoryImages, Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, DeviceManager: { QueryUsedDeviceCategory } } = Monitoring
  // let [deviceStyle, setdeviceStyle] = useState(1)
@@ -33,7 +35,7 @@ export default function Index(props) {
 
   
   // let [areaId, setAreaId] = useState(defaultArea)
-  let [areaId, setAreaId] = useState(0)
+  //let [areaId, setAreaId] = useState(0)
   const oneLevel = useSelector(state => state.system.onelevel)
   const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
   const [defaultArea, setDefaultArea] = useState(areaOptions[0] ? areaOptions[0].id : undefined)

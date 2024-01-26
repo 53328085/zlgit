@@ -4,7 +4,7 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 export const Ipticon = styled.span`
@@ -504,3 +504,18 @@ export  const Wtag = styled(Normal)`
    }
 
 `
+export const Cdivider = ({
+  margin=0, 
+  borderColor="#d7d7d7",
+  height="32px",
+   type="v", 
+  
+  } ={}) => {
+   if(type == 'v') {
+     return <Divider type="vertical" style={{ margin,borderColor, height}} dashed />
+   }else if(type == 'h') {
+
+     return  <Divider type="horizontal" style={{ margin,borderColor }} dashed />
+   }
+ 
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { Select, Radio, Pagination, message, Space, Form, Divider } from "antd";
+import { Select, Radio, Pagination, message, Space, Form} from "antd";
 
 import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
@@ -16,7 +16,7 @@ import {
 } from "@redux/systemconfig.js";
 import { ExportExcel } from "@com/useButton";
 import Table from "@com/useTable";
-import { Serach } from "@com/comstyled";
+import { Serach, Cdivider } from "@com/comstyled";
 import Pagecount from '@com/pagecontent' 
 
 const Mainbxox = styled.div`
@@ -215,7 +215,7 @@ export default function Index(props) {
     defaultPageSize: 12,
     refreshDeps: [projectId, areaId],
   });
-  console.log(tableProps)
+  
   const { submit } = hanlder;
   const showTotal =(total) =>  `共 ${total} 条记录`;
   const onExport = useCallback(() => {
@@ -270,7 +270,7 @@ export default function Index(props) {
               state: 0
             }}
           >
-            <Space size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+            <Space size={64} split={<Cdivider />} dashed >
               {isCard ? (
                 <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
                   <Serach
@@ -358,7 +358,7 @@ export default function Index(props) {
             </Space>
           </Form>
         
-        <Divider type="horizontal" style={{ margin: "16px 0",borderColor: '#d7d7d7',  }} dashed />
+        <Cdivider type="h" margin="16px 0" />
         {isCard ? (
           <div className={style.cardBox}>
             {  tableProps?.dataSource?.length > 0 ?   tableProps?.dataSource?.map((item, index) => {
@@ -395,7 +395,7 @@ export default function Index(props) {
               rowKey={(columns) => columns.id}
               ref={tableLoadRef}
               onExport={onExport}
-              sheetName="网关"
+              sheetName="网关监测"
             ></Table>
           </div>
         )}
