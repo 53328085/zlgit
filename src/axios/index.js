@@ -49,6 +49,7 @@ server.interceptors.response.use(
             },
             duration: 0.5,
           })
+          
          // message.destroy()
         }
         if (state >= 500)   message.error(msg || '数据出错')
