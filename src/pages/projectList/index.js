@@ -231,39 +231,6 @@ const Mainbox = styled.div`
     }
   }
 `;
-const Modalbox = styled(Modal)`
-  .ant-modal-header,
-  .ant-modal-body,
-  .ant-modal-footer {
-    background-color: #1b1d23;
-    color: #ccc;
-  }
-  .ant-modal-body {
-    font-size: 18px;
-  }
-  .ant-modal-header {
-    .ant-modal-title {
-      color: #ccc;
-      font-size: 18px;
-    }
-  }
-  .ant-modal-footer {
-    .ant-btn {
-      width: 96px;
-      height: 36px;
-    }
-    .ant-btn + .ant-btn {
-      margin-left: 16px;
-    }
-    .ant-btn-default {
-      background-color: transparent;
-      color: #ccc;
-    }
-    .ant-btn-primary {
-      background-color: #0b2ba7;
-    }
-  }
-`;
 const Opbox = styled.div`
  display: grid;
  grid-template-rows: 32px 1fr;
