@@ -3,9 +3,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
-import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift} from "@api/api.js"; 
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
  
-
+const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
 
@@ -81,7 +81,7 @@ const initialState = {
     },
    onelevel: [], // 一级
    disonlevel: [], // 配电管理运行态下 一级
-
+   
    discurlevel: '', // 配电管理运行状态 选中的值
    isDistribution: false, // 是否在配电管理运行状态下
    currlevel: {}, // 当前选择的一级区域
@@ -93,8 +93,25 @@ const initialState = {
      primary:'',
    },
   asider: true,
+  deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
 }
+export const getDevies = createAsyncThunk(
+  'system/getdevies',
+  async () => {
+      try {
+        let {success, data} = AllDeviceStyle()
+        if(success) {
+          return Array.isArray(data) ? data : []
+        }else {
+          return []
+        }
+      } catch (error) {
+        
+      }
+     
+  }
+  )
 export const getWebsiteState = createAsyncThunk(
   'system/getState',
   async (id, {rejectWithValue}) => {
@@ -274,6 +291,9 @@ const system = createSlice({
          let {payload} = action
          state.menus = payload
 
+      },
+      [getDevies.fulfilled]:(state, action) => {
+        
       }
 
      }
