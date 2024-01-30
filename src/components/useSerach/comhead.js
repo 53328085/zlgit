@@ -57,10 +57,9 @@ export default function UseSerach(props) {
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
-  const onChange = (e, option) => {    
-    console.log(option) 
-    dispatch(setCurrentlevel(option))
-    setAreaid(e)
+  const onChange = (e, option) => {  
+      dispatch(setCurrentlevel(option))
+      setAreaid(e)
  }
  
  

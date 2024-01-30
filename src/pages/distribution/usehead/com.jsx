@@ -9,9 +9,9 @@ export default  memo(function Index(props) {
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(selectdisOneLevel)
   const levelName = useSelector(levelDefaultLabel) || '园区'
-  const areaId = useSelector(selectOneLevelDefaultId)
+  const areaId = useSelector(selectdiscurlevel)
   
-  //const roomopts = useSelector(state => state.system.roomId)
+ 
   const [roomlist, setRoomList] = useState([])
   const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
