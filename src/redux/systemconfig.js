@@ -96,22 +96,7 @@ const initialState = {
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
 }
-export const getDevies = createAsyncThunk(
-  'system/getdevies',
-  async () => {
-      try {
-        let {success, data} = AllDeviceStyle()
-        if(success) {
-          return Array.isArray(data) ? data : []
-        }else {
-          return []
-        }
-      } catch (error) {
-        
-      }
-     
-  }
-  )
+ 
 export const getWebsiteState = createAsyncThunk(
   'system/getState',
   async (id, {rejectWithValue}) => {
@@ -123,6 +108,7 @@ export const getWebsiteState = createAsyncThunk(
           ProjectSetting.queryProjectPublishInfo(id),
           BigScreen.QueryBigScreen(id),
           Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+          AllDeviceStyle(), // 表计类型
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -276,12 +262,14 @@ const system = createSlice({
                index == 2 && (state.publishState=data?.state)
                index == 3 && (state.datascreen = data || {})
                index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
+               index == 5 && (state.deviceStyle = Array.isArray(data) ? data : [])
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
                index == 1 && (state.shifts=[]);
                index == 3 &&  (state.datascreen = {})
                index == 4 && (state.disonlevel = [])
+               index == 5 && (state.deviceStyle = [])
              }
           }
         })
@@ -292,10 +280,6 @@ const system = createSlice({
          state.menus = payload
 
       },
-      [getDevies.fulfilled]:(state, action) => {
-        
-      }
-
      }
 
      
@@ -332,7 +316,7 @@ export const comSetFirst  = state => state.system.menus?.comSet[0]
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state =>  state.system.onelevel
-export const selectOneLevelDefaultId = state => state.system.currlevel?.id || state.system.onelevel[0]?.id || null
+export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
 
 
 
@@ -365,6 +349,7 @@ export const roomName = state =>  {
   return state.system.roomId?.find && state.system.roomId?.find(r => r.id == state.system.curlRommid)?.name 
 } 
  
+export const deviceStyle = state => state.system.deviceStyle;
 export const {
     configProject,
     getSetMenus,

@@ -133,6 +133,7 @@ export default function Index(props) {
     getGatewayUsed();
   }, []);
   useEffect(() => {
+    console.log(areaId)
     if (Number.isFinite(areaId)) {
       getData();
     }
@@ -220,6 +221,7 @@ export default function Index(props) {
   const showTotal =(total) =>  `共 ${total} 条记录`;
   const onExport = useCallback(() => {
     params.current.pageSize = total
+    params.current.pageNum = 1
     return Overview(params.current).then((res) => {
       let { success, data, total } = res;
       if (success) {
@@ -270,7 +272,7 @@ export default function Index(props) {
               state: 0
             }}
           >
-            <Space size={64} split={<Cdivider />} dashed >
+            <Space size={64} split={<Cdivider />}  >
               {isCard ? (
                 <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
                   <Serach

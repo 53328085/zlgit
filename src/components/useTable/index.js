@@ -102,6 +102,7 @@ const download = useCallback(() => {
   );
   utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
   let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
+  console.log(file)
   let fileName = sheetName.split(".")[0]
   writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
     

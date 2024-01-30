@@ -181,7 +181,15 @@ const Mainbox = styled.div`
     }
   }
 `
- 
+ /*  b.g {
+                background-color: #090;
+            }
+            b.r {
+                background-color:#f30 ;
+            }
+            b.b {
+                background-color: #e4e4e4;
+            } */
 
 export default function Commport({projectId,gateway:{gatewayId, name}, device={}, back}) {
   
@@ -250,7 +258,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
          <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
-                 <div className={'state '+ ['b', 'b', 's', 'r'][(d.state!=2 || d.state!=3) ? 1 : d.state] }>{}</div>
+                 <div className={'state '+ ['b', 'b', 's', 'r'][d.state >3  ? 1 : d.state] }>{}</div>
                  <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
               </div>) ) : <Empty />}
          </div>

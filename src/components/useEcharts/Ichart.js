@@ -5,7 +5,7 @@ export default function Ichart(props={}) {
   const ref = useRef()
   let {dataset={}, type=2, pieData, custoption, tip} = props
   let typechart = custoption?.type || type
-  console.log(dataset)
+ 
   useEffect(() => {
     if(typechart == 2 && dataset?.source?.length > 0) {
      
@@ -14,8 +14,7 @@ export default function Ichart(props={}) {
     if(typechart == 3 && pieData?.data?.length > 0) {
       drawEcharts(ref.current, {...props})
     }
-    if(typechart == 5 && custoption?.series[0]?.data.length > 0) {
-        console.log(5)
+    if(typechart == 5 && custoption?.series[0]?.data.length > 0) {         
         drawEcharts(ref.current, {...props})
     }
   }, [props])
@@ -29,8 +28,7 @@ export default function Ichart(props={}) {
       return <Cempty tip={tip} />
     }
   }
-  if(typechart==5) {
-    console.log(custoption?.series)
+  if(typechart==5) {   
     if(!Array.isArray(custoption?.series) || (Array.isArray(custoption?.series[0].data) && custoption?.series[0].data.length ===0)) {
       return <Cempty tip={tip} />
     }

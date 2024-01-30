@@ -4,7 +4,7 @@ import { Form, Select,  Space, Divider, message} from "antd";
 import styled from "styled-components";
  
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
 
 
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
@@ -43,7 +43,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, isAreaId=true, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   //const {printArea, setPrintArea} = useState()
-   
+ 
   const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
@@ -56,33 +56,23 @@ export default function UseSerach(props) {
  
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
-  
-  const onChange = (e, option) => {   
+  const deviceStyles = useSelector(deviceStyle)
+  const onChange = (e, option) => {    
+    console.log(option) 
     dispatch(setCurrentlevel(option))
     setAreaid(e)
-    if (typeof handler == 'function') {       
-       handler(e)
-    }
  }
- const sitechange = (e,options) => {
-   
-    if (typeof sitehandler == 'function') {
-      sitehandler(options)
-    }
-     
- }
- const pcschange = (e,options) => {
-   
-  if (typeof pcshandler == 'function') {
-    pcshandler(options)
-  }
-   
-}
+ 
+ 
+const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
+
+<Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
+</Item>)
   const site = (<Item name="stationName" label="站点选择" >
-              <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} onChange={sitechange}></Select>  
+              <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
              </Item>)
   const pcs = (<Item name="pcsId" label="PCS选择" >
-              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} onChange={pcschange}></Select>  
+              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
              </Item>)
   const getpcs = async () => {
     try {
@@ -146,13 +136,20 @@ export default function UseSerach(props) {
   
   }, [projectId, AreaID, isSite])
  
-  const onValuesChange = (changedValues, allValues) => {
-  //  console.log(changedValues);
-   // console.log(allValues)
+  const onValuesChange = (changedValues, allValues) => {   
+    let key = Object.keys(changedValues)[0]
+     if(key !== 'areaId') {
+         props.setexparams({...changedValues})
+     }   
   }
   useEffect(() => {
-    form.setFieldsValue({'area': AreaID})
-  }, [])
+    if(props.config?.isdevsty) {
+      form.setFieldsValue({'areaId': AreaID, 'deviceStyle': deviceStyles[0]?.deviceStyle??null})
+    }else {
+      form.setFieldsValue({'areaId': AreaID})
+    }
+   
+  }, [props.config])
 
   useEffect(() => {
    form.setFieldsValue({
@@ -161,9 +158,9 @@ export default function UseSerach(props) {
   }, [initialValue])
   return (  
   
-    <Cform layout="inline"   form={form}   {...props} onValuesChange={onValuesChange} >
+    <Cform layout="inline"   form={form}   {...props.formprop} onValuesChange={onValuesChange} >
       <Space size={64} split={ <Cdivider />}>
-      {isAreaId && <Item label={varlabel} name='area'>
+      {isAreaId && <Item label={varlabel} name='areaId'>
         <Select style={{ width: "200px" }} onChange={onChange} options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
@@ -172,6 +169,8 @@ export default function UseSerach(props) {
           }
         {isSite && site}
         {isPcs && pcs}
+        {props.config?.isdevsty && deviceStyleNode}
+
       </Space>
        
         {
