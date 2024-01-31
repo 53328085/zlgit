@@ -41,7 +41,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
-  console.log(deviceStyle)
+ 
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -60,8 +60,7 @@ export default function Index(props) {
   });
 
 
-  let [optionsGateway, setoptionsGateway] = useState([]);
-  const [changeTag, setChangeTag] = useState("");
+  let [optionsGateway, setoptionsGateway] = useState([]);  
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   let [total, setTotal] = useState(0);
   let [imageList, setimageList] = useState([]);
@@ -227,8 +226,7 @@ export default function Index(props) {
 
  
 
-  const changeTab = (val) => {
-    console.log(val);
+  const changeTab = (val) => {   
     setisCard(val.target.value == "card" ? true : false);
    
   }; 
@@ -268,7 +266,7 @@ export default function Index(props) {
       getData();
       getGatewayUsed();
     }
-  }, [areaId, changeTag, deviceStyle]);
+  }, [areaId, deviceStyle]);
 
   useEffect(() => {
     if (overView.categories) {
@@ -387,8 +385,8 @@ export default function Index(props) {
         <Cdivider type="h" margin="16px 0" />
         {isCard ? (
           <div className={style.cardBox}>
-            {overView.details != null
-              ? overView.details.map((item, index) => {
+            {tableProps?.dataSource?.length > 0 ?
+                tableProps?.dataSource.map((item, index) => {
                   let status =
                     Object.prototype.toString.call(item.status) ===
                     "[object Object]"

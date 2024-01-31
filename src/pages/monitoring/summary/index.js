@@ -74,8 +74,7 @@ export default function Index() {
               {name: 'value',displayName: '用水量(m³)'},
             ],
             source: waterConsumes,
-          }
-          console.log(wdataset)
+          }        
           setEptions({...eoptions, dataset: edataset,xAxis:{axisLabel:{interval:'auto'}}})
           setWptions({...woptions, dataset: wdataset,xAxis:{axisLabel:{interval:'auto'}}})
         }

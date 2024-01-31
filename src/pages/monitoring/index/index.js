@@ -3,15 +3,19 @@ import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
 import {useLocation} from 'react-router-dom'
 import Serach from '@com/useSerach/comhead'
- 
+import {useDispatch, useSelector} from 'react-redux'
+import {levelDefaultLabel, selectOneLevel, getOnelevel} from '@redux/systemconfig.js' 
 export default function Index() {
+   const dispatch = useDispatch();
    const location = useLocation()
    let {state={}} = location
    let {nested = '', primary} = state;
-
- const [inpage, setInpage] = useState(['monitor', 'gateway', 'point'])
+   let whole =  ['runtimeMonitor']  // 需要设置全部项目的模块
+   const onelevel = useSelector(selectOneLevel)
+   const varlabel = useSelector(levelDefaultLabel) 
+ const [inpage, setInpage] = useState(['monitor', 'gateway', 'point', 'camera'])
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
- const [isall, setIsall] =useState('visible')
+ 
  const [exparams, setexparams] = useState({deviceStyle: 1})
  const [config, setConfig] = useState({
   isdevsty: false, // 表计类型
@@ -25,16 +29,25 @@ export default function Index() {
  }
  const context ={
    setInpage,
-   setShowroom,
-   setIsall,
+   setShowroom,  
    setConfig,
    exparams
  }
  const props = {
-    isall,
     config,
     setexparams
  }
+
+useEffect(() => {   
+  if(whole.includes(primary)) {   
+    let  isin = onelevel.find(l => l.id == 0);   
+      if(!isin) dispatch(getOnelevel([{name: `${varlabel}(全部)`, id: 0, levelName: varlabel}, ...onelevel]));
+  }else {
+    let level = onelevel.filter(l => l.id!=0);
+    dispatch(getOnelevel([...level]))
+  }
+
+}, [primary])
 
  useEffect(() => {
    setConfig({

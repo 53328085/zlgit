@@ -39,21 +39,20 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
    )
 
 }
-// 1.  全部的问题， 2. areaId 全站状态保存， 3.默认值的问题
+// 1.   状态中获取
 export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, isAreaId=true, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
-  //const {printArea, setPrintArea} = useState()
  
   const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel) 
+ 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
  
-  let [AreaID, setAreaid] = useState(props.isall=="visible" ? 0 : oneLevelDefaultId) 
-  const levelone = useSelector(selectOneLevel)
-  const levels = useMemo(() =>props.isall=="visible" ?  [...levelone, {name: `${varlabel}(全部)`, id: 0}] : levelone, [props.isall, levelone] ) 
- 
+  let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
+  const levelone = useSelector(selectOneLevel)  
+  console.log(levelone)
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
@@ -160,7 +159,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
     <Cform layout="inline"   form={form}   {...props.formprop} onValuesChange={onValuesChange} >
       <Space size={64} split={ <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId'>
-        <Select style={{ width: "200px" }} onChange={onChange} options={levels} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
      
