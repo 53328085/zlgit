@@ -13,7 +13,7 @@ export default function Index() {
    let whole =  ['runtimeMonitor']  // 需要设置全部项目的模块
    const onelevel = useSelector(selectOneLevel)
    const varlabel = useSelector(levelDefaultLabel) 
- const [inpage, setInpage] = useState(['monitor', 'gateway', 'point', 'camera'])
+ const [inpage, setInpage] = useState(['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'])
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  
  const [exparams, setexparams] = useState({deviceStyle: 1})
