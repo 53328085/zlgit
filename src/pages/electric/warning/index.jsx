@@ -2,24 +2,38 @@ import React,{useEffect, useState} from 'react'
 import { Form, Select, Button, Checkbox, message } from 'antd'
 import WarnContent from './warncontent'
 import style from './style.module.less'
+import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import total from '../imgs/total.png'
 import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
 import {warnDetail} from '@api/api'
-const { Item } = Form
+import {  selectOneLevelDefaultId, selectProjectId, } from '@redux/systemconfig.js'
+import Pagecount from '@com/pagecontent' 
+const Mainbxox = styled.div`
+&& {
+  flex: 1;
+  display: grid;
+  grid-template-rows: 64px 1fr ;
+  row-gap: 16px;
+  .warning {
+    display: grid;
+    grid-template-columns: repeat(4, 320px);
+    column-gap: 16px;
+  }
+}
+`
 export default function Index() {
-    const projectId = useSelector(state => state.system.menus.projectId)
-    const arealist = useSelector(state => state.system.onelevel)
-    const onelevel = arealist[0]?.levelName
+    const projectId = useSelector(selectProjectId)
+    const areaId = useSelector(selectOneLevelDefaultId);
     const [form] = Form.useForm()
     const [warndata,setWarndata]=useState(null)
     //获取告警
-    const warnTotal = async (areaId) => {
+    const warnTotal = async () => {
         let param={
             projectId,
-            areaId:areaId?areaId:0
+            areaId,
         }
         const res = await warnDetail.QueryWarningStatistics(param)
         if(res.success){
@@ -28,45 +42,18 @@ export default function Index() {
             message.error(res.errMsg)
         }
     }
-    //改变区域
-    const changeArea=async(v)=>{
-        console.log(v)
-     warnTotal(v)
-     
-    }
+   
     useEffect(()=>{
-        console.log(onelevel)
-        if(onelevel){
+        
+        if(Number.isFinite(areaId)){
             warnTotal() 
         }
        
-    },[])
+    },[areaId])
     return (
-        <div className={style.warning}>
-            <div className={style.header}>
-                <Form
-                    layout='inline'
-                    form={form}
-                    className={style.formstyle}
-                    colon={false}
-                    initialValues={
-                        {
-                            area:onelevel?0:null
-                        }
-                    }
-                >
-                    <Item label={onelevel} name="area" style={{padding:'8px 0'}}>
-                        <Select
-                            style={{ width: 200 }}
-                            options={onelevel?[{ name: onelevel+"(全部)", id: 0 }, ...arealist]:[]}
-                            fieldNames={{ label: 'name', value: 'id' }}
-                            onChange={changeArea}
-                        >
-                        </Select>
-                    </Item>
-                </Form>
-            </div>
-            <div style={{ display: 'flex' }}>
+        <Pagecount bgcolor="transparent" pd="0"> 
+           <Mainbxox>          
+            <div className='warning'>
                 <Card count={warndata?.allCnt} />
                 <Card png={first} count={warndata?.levelOneCnt} percent={warndata?.levelOneRate} name="一级告警"/>
                 <Card png={second} count={warndata?.levelTwoCnt} percent={warndata?.levelTwoRate} name="二级告警"/>
@@ -74,14 +61,13 @@ export default function Index() {
             </div>
 
             <WarnContent style={style} form={form}/>
-        </div>
+            </Mainbxox> 
+        </Pagecount>
     )
 }
 
 let Card = ({ png = total ,count=0,percent=0,name="告警总数"}) => {
     const divcss = {
-        width: 320,
-        height: 64,
         border: '1px solid #d7d7d7',
         background: '#fff',
         borderRadius: 4,
@@ -89,8 +75,7 @@ let Card = ({ png = total ,count=0,percent=0,name="告警总数"}) => {
         alignItems: 'center',
         padding: '0 16px',
         fontSize: 18,
-        marginTop: 16,
-        marginRight: 16
+        
     }
     return (
         <div style={divcss}>

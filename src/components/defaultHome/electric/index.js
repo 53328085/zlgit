@@ -55,7 +55,7 @@ export default function DefaultHome(props){
                   
                 ],
                 source: [x, y],
-               sourceHeader: false,
+                sourceHeader: false,
               }
             
               setOptions({...options, dataset})

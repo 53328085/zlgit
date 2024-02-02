@@ -64,30 +64,8 @@ export default function Index() {
     refreshDeps: [areaId]
    })
    const {submit} = search
-  const changeArea = (value) => {
-    setAreaId(value);
-  };
-  // const submit = e => {
-  //   setalike(e.target.value)
-  // }
-  const changeType = () => {
-    getData()
-  }
-  let [state, setstate] = useState(1)
-  const changeTab = val => {
-     setstate(val)
-    // setpageNum(1)
-    if (val == 2) {
-      setSelectionType("checkbox")
-      // setselectTableList(selectTableListCheckbox)
-    } else if (val == 1) {
-      setSelectionType("radio")
-      // let list = []
-      // list.push(selectTableListCheckbox[0])
-      // setselectTableList(selectTableListCheckbox ? list : [])
-    }
-  }
-  const [selectionType, setSelectionType] = useState("radio");
+
+
   const columnsLog = [
     {
       title: '设备编号',

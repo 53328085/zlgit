@@ -1,19 +1,32 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
-//import Comhead from '../usehead/com'
 import {useLocation} from 'react-router-dom'
-import Serach from '@com/useSerach'
+import Serach from '@com/useSerach/comhead'
+import {useDispatch, useSelector} from 'react-redux'
+import {levelDefaultLabel, selectOneLevel, getOnelevel} from '@redux/systemconfig.js' 
 export default function Index() {
+   const dispatch = useDispatch();
    const location = useLocation()
    let {state={}} = location
    let {nested = '', primary} = state;
-   //let show = nested !== 'report'
+   let whole =['runtimeMonitor', 'runtimeSafe', 'runtimeEnergy']  // 需要显示搜索 ***（全部）的模块
+   const onelevel = useSelector(selectOneLevel)
+   const varlabel = useSelector(levelDefaultLabel) 
+ const [inpage, setInpage] = useState({
+   runtimeMonitor: ['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'], // 运行监控
+   runtimeSafe: ['summary', 'alarmDetail'], // 电气安全
+   runtimeEnergy: ['area'],  // 能源管理
+}) // 需要显示搜索的页面
 
- const [inpage, setInpage] = useState(['report'])
+ 
+
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
- const [isall, setIsall] =useState(true)
- let showSerach = !inpage.includes(nested)
+ 
+ const [exparams, setexparams] = useState({deviceStyle: 1})
+ const [config, setConfig] = useState({
+ })
+ let showSerach =  inpage[primary]?.includes(nested) 
  let style = showSerach ? {
   flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px"
  }: {
@@ -22,15 +35,64 @@ export default function Index() {
  }
  const context ={
    setInpage,
-   setShowroom,
-   setIsall,
+   setShowroom,  
+   setConfig,
+   exparams
  }
+ const props = {
+    config,
+    setexparams
+ }
+
+const sethandler = () => {
+     try {
+       if(primary == 'runtimeMonitor' && nested == 'point') {
+        if(!config.isdevsty) setConfig({...config, isdevsty: true })
+       }else {
+         setConfig({...config, isdevsty: false })
+       } 
+       if(primary == 'runtimeEnergy') {
+          switch(nested) {
+            case 'area':
+              setConfig({...config, isview: true, isdate: true})
+              break;
+
+            default:
+              break;
+          }
+           
+       }
+     } catch (error) {
+      
+     }
+   
+
+
+
+}
+
+
+
+useEffect(() => {   
+  if(whole.includes(primary)) {   
+    let  isin = onelevel.find(l => l.id == 0);   
+      if(!isin) dispatch(getOnelevel([{name: `${varlabel}(全部)`, id: 0, levelName: varlabel}, ...onelevel]));
+  }else {
+    let level = onelevel.filter(l => l.id!=0);
+    dispatch(getOnelevel([...level]))
+  }
+
+}, [primary])
+
+ useEffect(() => {
+      sethandler()
+ }, [nested, primary])
  const {Content } = Layout;   
     return (  
       <Content className='page--main'>
         <div style={style}>
-         { showSerach && <Serach isall={isall} /> }
-           <Outlet context={context} />
+         { showSerach && <Serach  {...props}  />  }
+           <Outlet context={context}   />
         </div>
        </Content>
     )

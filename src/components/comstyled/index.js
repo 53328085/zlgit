@@ -519,3 +519,18 @@ export const Cdivider = ({
    }
  
 }
+export   const Radiogroup = styled(Radio.Group)`
+  && {
+    .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
+      width: 96px;
+      text-align: center;
+      &:first-child {
+        border-radius: 16px 0 0 16px;
+      }
+     &:last-child {
+      border-radius: 0 16px 16px 0;
+     }
+    }
+  }
+
+`

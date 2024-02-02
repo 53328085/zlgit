@@ -10,10 +10,10 @@ export default function Index() {
    const location = useLocation()
    let {state={}} = location
    let {nested = '', primary} = state;
-   let whole =  ['runtimeMonitor']  // 需要设置全部项目的模块
+   let whole =  ['runtimeMonitor']  // 需要显示搜索 ***（全部）的模块
    const onelevel = useSelector(selectOneLevel)
    const varlabel = useSelector(levelDefaultLabel) 
- const [inpage, setInpage] = useState(['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'])
+ const [inpage, setInpage] = useState(['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call']) // 需要显示搜索的页面
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  
  const [exparams, setexparams] = useState({deviceStyle: 1})

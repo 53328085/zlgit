@@ -11,7 +11,7 @@ import moment from 'moment';
 
 const { Search } = Input;
 const {RangePicker } = DatePicker
-export default function Warncontent({ style,form }) {
+export default function Warncontent({ style,form, areaId }) {
 
     const [warnform] =Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
@@ -80,7 +80,7 @@ export default function Warncontent({ style,form }) {
             start,
             end,
             status:warnform.getFieldsValue().status,
-            areaId:form.getFieldValue('area')?form.getFieldValue('area'):0
+            areaId,
         }
         const res = await warnDetail.QueryWarningDetails(param)
       
@@ -129,11 +129,9 @@ export default function Warncontent({ style,form }) {
     }
     useEffect(()=>{
         getTableData()
-        // if(form.getFieldValue('area')){
-           
-        // }
+       
      
-    },[form.getFieldValue('area')])
+    },[areaId])
 
     return (
         <div className={style.WarnContent}>

@@ -103,11 +103,11 @@ const loginrouter =  [{
 
  const components = {
   '0104': Defauthome,
-  '0105': Monitoring,
-  '0106': Electric,
+  '0105': Comindex,
+  '0106': Comindex,
   '0107': Distribution,
   '0108': Prepayment,
-  '0109': Energy,
+  '0109': Comindex,
   '0110': Photovoltaic,
   '0111': Storage,
   '0112': Carbon,

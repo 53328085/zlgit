@@ -1,14 +1,14 @@
 import React, {useState, useContext,  useEffect, useMemo} from "react";
 
-import { Form, Select,  Space, Divider, message} from "antd";
+import { Form, Select,  Space, DatePicker, message} from "antd";
 import styled from "styled-components";
  
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
-
+import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
+import moment from "moment";
 
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
-import {Cdivider} from '@com/comstyled'
+import {Cdivider, Radiogroup} from '@com/comstyled'
 import CustContext from "@com/content";
 
 import Enery from "./enery";
@@ -46,13 +46,13 @@ export default function UseSerach(props) {
   const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
-  const varlabel = useSelector(levelDefaultLabel) 
- 
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
- 
+  const varlabel = useSelector(levelDefaultLabel)  
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
-  console.log(levelone)
+  let shifts = useSelector(selectshifts)
+  
+  const [allshifts] = useState( [...shifts, {id: 0, name: "全部", startTime: "", endTime: ""}]) 
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
@@ -61,8 +61,56 @@ export default function UseSerach(props) {
       setAreaid(e)
  }
  
- 
-const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
+const dateselect = (
+  <Space size={16}>
+  <Item   name="type" initialValue={1}>
+     <Select style={{width: '80px'}}   options={[
+      {value: 1, label: '日'},
+      {value: 2, label: '月'},
+      {value: 3, label: '年'},
+     ]}
+    
+     ></Select>
+  </Item>
+
+  <Item noStyle  shouldUpdate={(pre,cur) => pre.type!=cur.type}  >
+      {
+        ({getFieldValue}) => {
+          let type = ['date', 'date', 'month', 'year'][getFieldValue('type')] 
+         return (
+          <Item name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}> 
+             <DatePicker placeholder="请选择日期" picker={type}   style={{width: '160px'}} />
+         </Item>
+         )
+      }
+     }
+  </Item>
+  <Item   name="shiftNo" initialValue={0}>
+     <Select style={{width: '96px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
+       
+     ></Select>
+  </Item>
+</Space>
+
+)
+
+const viewtype = (<Item name="view" initialValue={1} >
+  <Radiogroup
+        options={[
+          {
+            label: '能耗',
+            value: 1,
+          },
+          {
+            label: '费用',
+            value: 2,
+          }]}
+        optionType="button"
+        buttonStyle="solid"
+         />
+        </Item>
+ )
+const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={1}>
 
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
@@ -134,18 +182,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
   
   }, [projectId, AreaID, isSite])
  
-  const onValuesChange = (changedValues, allValues) => {   
-    let key = Object.keys(changedValues)[0]
-     if(key !== 'areaId') {
-         props.setexparams({...changedValues})
-     }   
+  const onValuesChange = (changedValues, allValues) => {    
+    console.log(allValues)  
+    props.setexparams({...allValues})
   }
   useEffect(() => {
-    if(props.config?.isdevsty) {
-      form.setFieldsValue({'areaId': AreaID, 'deviceStyle': deviceStyles[0]?.deviceStyle??null})
-    }else {
-      form.setFieldsValue({'areaId': AreaID})
-    }
+     props.setexparams(form.getFieldsValue(true))
    
   }, [props.config])
 
@@ -156,9 +198,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
   }, [initialValue])
   return (  
   
-    <Cform layout="inline"   form={form}   {...props.formprop} onValuesChange={onValuesChange} >
+    <Cform layout="inline"   form={form}   {...props.formprop} 
+    onValuesChange={onValuesChange}  
+
+    style={{displey: 'flex', justifyContent: 'space-between'}} >
       <Space size={64} split={ <Cdivider />}>
-      {isAreaId && <Item label={varlabel} name='areaId'>
+      {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
@@ -167,10 +212,13 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型">
           }
         {isSite && site}
         {isPcs && pcs}
-        {props.config?.isdevsty && deviceStyleNode}
 
+        {props.config?.isdevsty && deviceStyleNode}
+        {props.config?.isview && viewtype}  
       </Space>
-       
+         {
+           props.config?.isdate && dateselect
+         }
         {
            props.custview? props.custview : custview
         }

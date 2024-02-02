@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography} from "antd";
+import { Image, Space, Tabs, Typography} from "antd";
 import styled from "styled-components";
-import UserSearch from "@com/useSerach";
-import CustContext from "@com/content.js";
+import {useOutletContext} from 'react-router-dom' 
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
-
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectshifts} from '@redux/systemconfig.js'
+import {selectProjectId} from '@redux/systemconfig.js'
 import {numberformat} from '@com/usehandler'
-import moment from 'moment';
+import Pagecount from "@com/pagecontent";
+import Ichart  from '@com/useEcharts/Ichart';
 import imgurl from "./icon";
 const {Text} = Typography
  
@@ -38,7 +37,7 @@ const Laybox = styled.div`
      grid-auto-columns: 196px;
      grid-template-rows:266px ;
      grid-auto-flow: column;
-     justify-content: space-between;
+     column-gap: 16px;
       overflow-x: auto;
   }
   }
@@ -202,52 +201,19 @@ const ElectricRight = styled.div`
    row-gap: 16px;
    
 `
-const Radiogroup = styled(Radio.Group)`
-  && {
-    .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
-      width: 96px;
-      text-align: center;
-      &:first-child {
-        border-radius: 16px 0 0 16px;
-      }
-     &:last-child {
-      border-radius: 0 16px 16px 0;
-     }
-    }
-  }
-
-
-`
-/* const numberformat = (n) => {
-  let num = parseFloat(n)
-  if(num > 0) {
-   return <span><span style={{color: "#f00"}}>&#9650;&nbsp;</span>&#43;{n}</span>
-  }else if(num < 0) {
-   return <span style={{color: "#090"}}>&#9660;&nbsp;&#45;{n}</span>
-  }else {
-   return <span>{n}</span>
-  }
-
-} */
-
+ 
 export default function Index() {   
   const projectId = useSelector(selectProjectId);
-  let shifts = useSelector(selectshifts) // ?.unshift({id: 0, name: "全部", startTime: "", endTime: ""})
-  
-  const [allshifts] = useState( [...shifts, {id: 0, name: "全部", startTime: "", endTime: ""}]) 
-  const [form] = Form.useForm();
-  const {Item} = Form
-  const [value, setvalue] = useState("0");
-  const [qverview, setOverview] = useState({})
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-  const [tabvalue, setTabvalue] = useState(1)
-  const [op, setOp] = useState(1) // 能耗 1， 费用 2
-  const picker= ['', 'date', 'month', 'year'][timetype];
-  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;
-  
-  let type = ['', '日', '月', '年'][timetype]
-  let my = ['', '昨', '上', '去'][timetype]
-  const Chartbox = ({data}) => {
+  let {exparams} = useOutletContext()
+  const [qverview, setOverview] = useState({}) 
+  const [tabvalue, setTabvalue] = useState(1)  
+  const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;  
+  let type = ['', '日', '月', '年'][exparams.type]
+  let my = ['', '昨', '上', '去'][exparams.type]
+
+ 
+  const Chartbox = ({data, op, type, my, tabvalue}) => {
+    if(!op || !type || !my || data?.length < 1 ) return
     const ref = useRef()
     const charw = () => {
      try {
@@ -285,8 +251,8 @@ export default function Index() {
    
   }
     useEffect(() => {
-      charw()
-    }, [timetype, tabvalue])
+       charw()
+    }, [])
     return (
       <Echartbox ref={ref}>
  
@@ -459,7 +425,7 @@ const Electric = ({data, des}) => {
 
 
 }
-const CoalStandard =({data={}}) => {
+const CoalStandard =({data={}, op}) => {
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
@@ -547,7 +513,8 @@ const CoalStandard =({data={}}) => {
 
 
   const getData = async () => {
-    const {area, date, type, shiftNo, view=1} = form.getFieldsValue() || {}
+    
+    const {areaId, date, type, shiftNo, view} = exparams
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')
@@ -563,7 +530,7 @@ const CoalStandard =({data={}}) => {
       projectId,
       date: time
    }
-    const param = [area]
+    const param = [areaId]
     let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
     let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
     let handler = ['', energy, cost][view][tabvalue]
@@ -579,15 +546,13 @@ const CoalStandard =({data={}}) => {
       console.log(e)
     }
   }
-  const ontabChange = (e) => {
-    console.log(e)
+  const ontabChange = (e) => {   
     setTabvalue(e)
   }
   useEffect(() => {
-   
-    getData()
-  }, [tabvalue])
-
+    let values = Object.values(exparams)
+    if(values.length == 5)   getData()
+  }, [tabvalue, exparams])
 
   const Title = ({ title, subtitle, jc }) => {
     return (
@@ -598,90 +563,17 @@ const CoalStandard =({data={}}) => {
     );
   };
  
- 
-
-  const timechange = (e) => {
-     setTimetype(e);
-     getData()
-  }
-  const opchange = (e) => {   
-     setOp(e.target.value)
-    // form.resetFields()
-     getData()
-  }
-  const CustView = () => {
-   const viewstyle = {
-      display: 'flex',
-       justifyContent: "space-between",
-       flex: 1,
-       'marginLeft': '32px',
-      'paddingLeft': '32px',
-      'borderLeft': '1px dotted #d7d7d7',
-    }
-    return (
-      <div style={viewstyle}>
-       <Item nostyle   initialValue={1} name="view">
-        <Radiogroup
-        onChange={opchange}   
-        value={op}    
-        options={[
-          {
-            label: '能耗',
-            value: 1,
-          },
-          {
-            label: '费用',
-            value: 2,
-          }]}
-        optionType="button"
-        buttonStyle="solid"
-         />
-        </Item>
-      <Space size={16}>
-        <Item label="日期选择" name="type" initialValue={1}>
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={timechange}
-           ></Select>
-        </Item>
-
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
-        </Item>
-        <Item  noStyle name="shiftNo" initialValue={0}>
-           <Select style={{width: '96px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
-              onChange={getData}
-           ></Select>
-        </Item>
-      </Space>
-      </div>
-    )
-  }
   return (
-    <CustContext.Provider
-      value={{
-        form,
-        custview: <CustView />,
-       // tabs,
-        handler: getData,
-        value,
-        setvalue,
-      }}
-    >
-
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
-      <UserSearch></UserSearch>
-      <Laybox value={value} className={ tabvalue == 1 ? 'zonghe' : 'classify'}>
+    <Pagecount bgcolor="transparent" pd="0">
+      <div style={{display: 'flex',  flex: 1}}>   
+      <Laybox   className={ tabvalue == 1 ? 'zonghe' : 'classify'}>
         <div className="up">
           <div className="upleft">
              <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange}>
              </Tabsbox>
-             <Chartbox  data={detail} />
+             <Chartbox  data={detail} op={exparams.view} type={type} my={my} tabvalue={tabvalue} />
            </div>
-           {tabvalue == 1 ? <CoalStandard data={coalStandard} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes} key="Electric" /> }
+           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes} key="Electric" /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">
@@ -691,6 +583,6 @@ const CoalStandard =({data={}}) => {
      
       </Laybox>
       </div>
-    </CustContext.Provider>
+    </Pagecount>
   );
 }
