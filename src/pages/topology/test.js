@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {Button, Collapse, Form, Switch, Input, Select, Space, InputNumber, } from 'antd'
+import {Button, Collapse, Form, Switch, Input, Select, Space, InputNumber, Table} from 'antd'
 import styled from 'styled-components'
 import {Topology, Options, registerNode} from '@topology/core'
 import {register as registerFlow} from "@topology/flow-diagram" //流程图
@@ -8,7 +8,8 @@ import {register as registerClass} from '@topology/class-diagram' // 类图
 import {register as registerSequence} from "@topology/sequence-diagram" // 时序图
 import {register as registerChart} from "@topology/chart-diagram"
 
-import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
+import {cust, addantd,custimg, basic, flows, sgcc, ltdx, normal } from "../../assets/js/Tools"
+import reactNodes from './drawFn'
 // 左侧工具栏图标
 import '../../assets/css/fonts/font/iconfont.css'
 import '../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
@@ -84,6 +85,22 @@ const Mainbox =  styled.div`
 
 const Tools = [
   {
+     group: '自定义组件',
+     children: cust,
+     id: 'cust'
+  },
+  {
+    group: 'antd组件',
+    children: addantd,
+    id: 'addantd'
+
+  },
+  {
+   group: '自定义图片',
+   children: custimg,
+   id: 'custimg'
+  },
+  {
     group: '常用元器件',
     children: normal,
     id: 'normal'
@@ -132,10 +149,12 @@ export default function Index() {
 })
   const registerHandler = () => {
     registerFlow();
-    registerActivity();
+  //  registerActivity();
     registerClass();
     registerSequence();
-    registerChart()
+    registerChart();
+    registerNode('button', reactNodes(Button), null, null, null)
+     registerNode('antdtable', reactNodes(Table), null, null, null)
   }
   
   let canvas = useRef()
@@ -156,7 +175,7 @@ export default function Index() {
   const onMessage = (e, data) => {
      switch(e) {
         case 'node':
-        case 'addNode': {
+        case 'addNode': 
           nodeForm.resetFields();
           setProps({
             node: data,
@@ -172,8 +191,26 @@ export default function Index() {
           }
           console.log('node, addNode')
           break
-        }
-
+        case 'space':  
+          setProps({
+          node: null,
+          line: null,
+          multi: false,
+          nodes: null,
+          locked: TopologyData.locked
+          })
+         break
+       case 'dbclick':
+        canvas.current.lock(0);
+        setProps({
+          node: null,
+          line: null,
+          multi: false,
+          nodes: null,
+          locked: 0
+          })
+        break;
+         
      }
       
 
@@ -240,7 +277,9 @@ const linechange =(a) => {
                            <div className='icons'>
                                 {item.children.map((value, val) => {
                                 return <a title={value.name} draggable={true} onDragStart={e => onDrag(e, value)} key={val} className='aicon'>
-                                  {(value.icon.indexOf('sgcc') != - 1 || value.icon.indexOf('ltdx') != -1) ? <i className={value.icon}></i> : <i className={`iconfont ${value.icon}`}></i>}
+                                  {
+                                        (value.icon.indexOf('sgcc') != - 1 || value.icon.indexOf('ltdx') != -1) ? <i className={value.icon}></i> : <i className={`iconfont ${value.icon}`}></i>
+                                  }
                                 </a>
                               })}
                            </div>

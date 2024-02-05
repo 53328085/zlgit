@@ -10,7 +10,6 @@ import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import {numberformat} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
-import Ichart  from '@com/useEcharts/Ichart';
 import imgurl from "./icon";
 const {Text} = Typography
  
@@ -512,8 +511,7 @@ const CoalStandard =({data={}, op}) => {
   ];
 
 
-  const getData = async () => {
-    
+  const getData = async () => {    
     const {areaId, date, type, shiftNo, view} = exparams
     let time;
     if (type == 1)  {

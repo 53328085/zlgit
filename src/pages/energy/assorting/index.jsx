@@ -1,63 +1,44 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Energy from './energy'
 import style from './style.module.less'
-import { Form, Input, Select, Divider, DatePicker, message } from 'antd'
+import { message } from 'antd'
 import { useSelector } from 'react-redux'
+import {useOutletContext} from 'react-router-dom' 
 import moment from 'moment'
 import { energyClassified } from '@api/api'
+import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import Pagecount from "@com/pagecontent";
+import {getTime} from '@com/usehandler'
 export default function Index() {
-  const shifts = useSelector(state => state.system.shifts)
-  const shiftsOptions = useMemo(() => ([{ name: "全部班次", id: 0 }, ...shifts]), [shifts])
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  
-  const dateOptions = [{ label: '日', value: 1 }, { label: '月', value: 2 }, { label: '年', value: 3 }]
-  const [dateType, setDateType] = useState(1)
-  const [showType, setShowType] = useState(1)
+  let {exparams} = useOutletContext()
+  const projectId = useSelector(selectProjectId)
+  const oneLevel = useSelector(selectOneLevel)
   const [showData, setShowData] = useState()
-  const [form] = Form.useForm()
-  const {datetype} = form.getFieldsValue()
-  //获取日期格式
-  const getdateformat = () => {
-    let date = form.getFieldsValue().datevalue
-    if (dateType === 1) {
-      date = moment(date).format('YYYY-MM-DD')
-    } else if (dateType === 2) {
-      date = moment(date).format('YYYY-MM-01')
-    } else if (dateType === 3) {
-      date = moment(date).format('YYYY-01-01')
-    }
-    return date
-  }
-  //日期类型改变
-  const changDateType = (v) => {
-    setDateType(v)
-  }
   //查询分类能耗
   const getEnergyData = async () => {
+    let {view: showType, areaId, date, type:dateType, shiftNo,} = exparams 
     try {
-      const formvalues = form.getFieldsValue()
-      const date = getdateformat()
+      
+     
       let params = {
         projectId,
-        type: formvalues.datetype,
-        date,
-        shiftsNo: formvalues.plan
+        type: dateType,
+        date: getTime(date, dateType),
+        shiftsNo: shiftNo
       }
-      let areaId
-      if(formvalues.area){
-        areaId= [formvalues.area]
+      let areaIds
+      if(areaId!=0){
+        areaIds= [areaId]
       }else{
-        areaId= oneLevel?.map(it=>it.id)
+        areaIds= oneLevel?.map(it=>it.id)
       }
       
     
       let res;
       if(showType===1){
-        res= await energyClassified.QueryEnergy(params, areaId)
+        res= await energyClassified.QueryEnergy(params, areaIds)
       }else{
-        res= await energyClassified.QueryEnergyCost(params, areaId)
+        res= await energyClassified.QueryEnergyCost(params, areaIds)
       }
       if (res.success) {
         if (res.data) {
@@ -69,8 +50,7 @@ export default function Index() {
           }else if (dateType ===2){
            const date =  moment().date()
            xlist = res.data.consumeDetail[0].x.filter(it=>parseInt(it)<=date)
-          }
-          console.log(xlist)
+          }         
           setShowData({...res.data,x:xlist})
         } else {
           setShowData([])
@@ -81,58 +61,18 @@ export default function Index() {
     } catch (e) { console.log(e) }
   }
  
- 
+
+
   useEffect(() => {
-    if(oneLevel.length>0){
-      getEnergyData()
-    }
-  
-  }, [showType,datetype])
+    let values = Object.values(exparams)
+    if(values.length == 5)   getEnergyData()
+  }, [exparams])
   return (
-    <>
-      <div className={style.headform}>
-        <Form
-          className={style.formstyle}
-          colon={false}
-          form={form}
-          initialValues={{
-            area:oneLevel.length>0?0:null,
-            datetype: 1,
-            datevalue: moment(),
-            plan: 0
-          }}
-        >
-          <div className={style.divflex}>
-            <Form.Item label={oneLevel[0]?.levelName} name="area" className={style.mgbt0}>
-              <Select
-                options={areaOptions}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 200 }}
-                onChange={()=>{getEnergyData()}}
-              ></Select>
-            </Form.Item>
-            <Divider style={{ background: '#d7d7d7', height: 32, margin: '0 32px' }} type="vertical" dashed></Divider>
-            <div className={style.checkBox}>
-              <div className={showType === 1 ? `${style.box} ${style.boxactive}` : style.box} onClick={() => { setShowType(1) }}>能耗</div>
-              <div className={showType === 2 ? `${style.box} ${style.boxactive}` : style.box} onClick={() => { setShowType(2) }}>费用</div>
-            </div>
-          </div>
-          <div className={style.divflex}>
-            <Form.Item name="datetype" className={style.mgbt0} >
-              <Select options={dateOptions} style={{ width: 80 }} onChange={changDateType}></Select>
-            </Form.Item>
-            <Form.Item name="datevalue" className={style.mgbt0} style={{ marginLeft: 16 }}>
-              <DatePicker picker={dateType === 1 ? 'date' : dateType === 2 ? 'month' : 'year'} onChange={()=>{getEnergyData()}}/>
-            </Form.Item>
-            <Form.Item name="plan" className={style.mgbt0} style={{ marginLeft: 16 }}>
-              <Select style={{ width: 100 }} options={shiftsOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={()=>{getEnergyData()}}></Select>
-            </Form.Item>
-          </div>
-        </Form>
-      </div>
+    <Pagecount bgcolor="transparent" pd="0">
+   
       <div className={style.content}></div>
-      <Energy showData={showData} dateType={dateType} showType={showType}/> 
-    </>
+      <Energy showData={showData} dateType={exparams.type} showType={exparams.showType}/> 
+    </Pagecount>
 
   )
 }

@@ -52,7 +52,7 @@ export default function UseSerach(props) {
   const levelone = useSelector(selectOneLevel)  
   let shifts = useSelector(selectshifts)
   
-  const [allshifts] = useState( [...shifts, {id: 0, name: "全部", startTime: "", endTime: ""}]) 
+  const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
