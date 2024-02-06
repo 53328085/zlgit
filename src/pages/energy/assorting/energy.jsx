@@ -1,41 +1,121 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+ 
 import style from './style.module.less'
 import Bluecolumn from '@com/bluecolumn';
 import { Divider,Tooltip  } from 'antd'
 import {numberformat} from '@com/usehandler'
-import { Charts, PieCharts } from './charts'
+ 
+import Titlelayout from '@com/titlelayout'
+import  Ichart from '@com/useEcharts/Ichart'
 /* import icon1 from './imgs/icon1.png'
 import icon2 from './imgs/icon2.png'
 import icon3 from './imgs/icon3.png'
 import icon4 from './imgs/icon4.png' */
 import uppng from './imgs/up.png'
 import downpng from './imgs/down.png'
-import empty from './imgs/empty.png'
+ 
 import imgurl from './imgs'
+
+const Boxchart = ({index, showType, data}) => {
+  let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
+  const [options, setOptions] = useState({
+    series: [{ type: "line",  seriesLayoutBy: 'row' }],  
+    grid:{
+      left: "0px",
+      right: "0",
+      top: "40px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      top: "0px",
+     // itemHeight: 4,
+     // itemWidth: 16,
+    },
+    xAxis: {
+      axisLabel:  {
+        showMaxLabel: true,
+        hideOverlap: true
+      }
+    },
+    dataset: {},
+    
+  })
+     
+  useEffect(() => {  
+    if(data.constructor == Object) {
+      let {x=[], y} = data
+      let hours = new Date().getHours();
+      let xaxis = x.filter(h => parseInt(h)<=hours)
+      console.log(xaxis)
+      setOptions({
+        ...options,
+        dataset: {
+         dimensions: [
+           {name: '时间', type: 'time'},
+           {name:   showType===1? 'kWh':'元' },
+           
+         ],
+         source: [xaxis, y],
+         sourceHeader: false,
+        },
+        color: color[index]
+
+    })
+    }
+     
+       
+
+  }, [index, showType, data])
+
+   return <Ichart {...options} />
+}
+
 export default function Energy({ showData, dateType,showType }) {
   const { bg1class, bg2class, bg3class } = style
   let consumeTotal 
   let consumeDetail 
   let proportion 
-  let xlist
-  let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
+   
+  
   if (showData) {
-    consumeTotal = showData.consumeTotal.sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))
-    console.log(consumeTotal)
+    consumeTotal = showData.consumeTotal.sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))   
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
-    xlist =  showData.x??[]
+    
   }
-  console.log(showData,xlist)
+
+  const [options, setOptions] = useState({
+    type: 3,
+    pieData: { data: [], total: '100%', radius: ["55%",  "70%"] },
+    legend: {
+      top: 'auto',
+      bottom: 16,
+    //  orient: 'vertical',
+     // left: 'left'
+    },
+    grid: {
+      containLabel: true,
+      left: 0,
+      right: 0,
+    }
+  })
+
   const overcss={
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   }
   useEffect(() => {
+    setOptions({
+      ...options,
+      pieData: {
+        ...options.pieData,
+        data: proportion
+      }
+    })
 
-  }, [])
+  }, [proportion])
   return (
 
 
@@ -74,8 +154,8 @@ export default function Energy({ showData, dateType,showType }) {
             }
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-            <Charts consumeDetail={consumeDetail[index]} color={color[index]} showType={showType} xlist={xlist}/>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: 16, flex: 1 }}>
+                <Boxchart index={index} data={consumeDetail[index]} showType={showType} />
           </div>
         </div>))
       }
@@ -84,7 +164,8 @@ export default function Energy({ showData, dateType,showType }) {
         <div className={style.piestyle}>
           <Bluecolumn name={showType===1?"分类能耗占比" :"分类能耗费用占比"}/>
           <div style={{ width: 378, height: 360, marginTop: 16 }}>
-            {proportion && proportion.length > 0 ? <PieCharts proportion={proportion}></PieCharts> : <img src={empty}></img>}
+             <Ichart {...options} />
+         
 
           </div>
 

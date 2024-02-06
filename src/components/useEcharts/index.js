@@ -321,7 +321,7 @@ export const drawEcharts = (
     })
   }
 
-
+ let {axisTick, axisLine, axisLabel, ...restxAxis} = xAxis
   const comm = {
     grid: {
       left: "80px",
@@ -337,20 +337,22 @@ export const drawEcharts = (
         alignWithLabel: true,
         lineStyle: {
          
-        }
+        },
+        ...axisTick
       },   
       axisLine: {
         lineStyle: {
          
-        }
+        },
+        ...axisLine,
       },
       axisLabel: {
        
         interval:0, // 显示所有x轴的label
-        
+        ...axisLabel,
       },
       
-      ...xAxis,
+      ...restxAxis,
     },
     legend: {
     //  top: 0,

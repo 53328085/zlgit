@@ -16,7 +16,7 @@ export default function Index() {
   const [showData, setShowData] = useState()
   //查询分类能耗
   const getEnergyData = async () => {
-    let {view: showType, areaId, date, type:dateType, shiftNo,} = exparams 
+    let {view, areaId, date, type:dateType, shiftNo,} = exparams 
     try {
       
      
@@ -35,7 +35,7 @@ export default function Index() {
       
     
       let res;
-      if(showType===1){
+      if(view===1){
         res= await energyClassified.QueryEnergy(params, areaIds)
       }else{
         res= await energyClassified.QueryEnergyCost(params, areaIds)
@@ -69,9 +69,7 @@ export default function Index() {
   }, [exparams])
   return (
     <Pagecount bgcolor="transparent" pd="0">
-   
-      <div className={style.content}></div>
-      <Energy showData={showData} dateType={exparams.type} showType={exparams.showType}/> 
+      <Energy showData={showData} dateType={exparams.type} showType={exparams.view}/> 
     </Pagecount>
 
   )
