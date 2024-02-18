@@ -262,11 +262,11 @@ export default function Index(props) {
 
 
   useEffect(() => {
-    if (Number.isFinite(areaId)) {
+    if (Number.isFinite(areaId) && Number.isFinite(deviceStyle) && Number.isFinite(projectId)) {
       getData();
       getGatewayUsed();
     }
-  }, [areaId, deviceStyle]);
+  }, [areaId, deviceStyle, projectId]);
 
   useEffect(() => {
     if (overView.categories) {

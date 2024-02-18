@@ -86,7 +86,7 @@ const dateselect = (
      }
   </Item>
   <Item   name="shiftNo" initialValue={0}>
-     <Select style={{width: '96px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
+     <Select style={{width: '100px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
        
      ></Select>
   </Item>
@@ -110,13 +110,34 @@ const viewtype = (<Item name="view" initialValue={1} >
          />
         </Item>
  )
+ // 能源类型
+
+ const energyoptions = [{
+  label: '电',
+  value: 1
+}, {
+  label: '水',
+  value: 2
+}, {
+  label: '燃气',
+  value: 3
+}]
+const energytype = (
+  <Item label="能源类型"  name="energytype" initialValue={1}>
+        <Select style={{ width: 112 }} options={energyoptions}></Select>
+  </Item>
+)
+
+// 表计类型
 const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={1}>
 
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
+// 站点选择
   const site = (<Item name="stationName" label="站点选择" >
               <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
              </Item>)
+// pcs选择
   const pcs = (<Item name="pcsId" label="PCS选择" >
               <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
              </Item>)
@@ -213,8 +234,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {isSite && site}
         {isPcs && pcs}
 
-        {props.config?.isdevsty && deviceStyleNode}
+        {props.config?.isdevsty && deviceStyleNode}  
         {props.config?.isview && viewtype}  
+        {props.config?.energytype && energytype}
       </Space>
          {
            props.config?.isdate && dateselect

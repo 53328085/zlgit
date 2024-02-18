@@ -16,7 +16,7 @@ export default function Index() {
  const [inpage, setInpage] = useState({
    runtimeMonitor: ['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'], // 运行监控
    runtimeSafe: ['summary', 'alarmDetail'], // 电气安全
-   runtimeEnergy: ['area', 'assorting'],  // 能源管理
+   runtimeEnergy: ['area', 'assorting', 'range'],  // 能源管理
 }) // 需要显示搜索的页面
 
  
@@ -47,17 +47,19 @@ export default function Index() {
 const sethandler = () => {
      try {
        if(primary == 'runtimeMonitor' && nested == 'point') {
-        if(!config.isdevsty) setConfig({...config, isdevsty: true })
+        if(!config.isdevsty) setConfig({ isdevsty: true })
        }else {
-         setConfig({...config, isdevsty: false })
+         setConfig({isdevsty: false })
        } 
        if(primary == 'runtimeEnergy') {
           switch(nested) {
             case 'area':
             case 'assorting':
-              setConfig({...config, isview: true, isdate: true})
+              setConfig({isview: true, isdate: true})
               break;
-
+            case 'range':
+              setConfig({ energytype: true, isdate: true})
+              break;
             default:
               break;
           }

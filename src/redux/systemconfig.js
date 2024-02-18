@@ -258,7 +258,7 @@ const system = createSlice({
              //  dispatch(setCurrentlevel({})) //当前项目设置为空对象   
                state.currlevel={}        
                index == 0 && (state.onelevel = Array.isArray(data) ? data : [])         
-               index == 1 && ( state.shifts == Array.isArray(data) ? data : [])
+               index == 1 && ( state.shifts = Array.isArray(data) ? data : [])
                index == 2 && (state.publishState=data?.state)
                index == 3 && (state.datascreen = data || {})
                index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])

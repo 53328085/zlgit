@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Energy from './energy'
-import style from './style.module.less'
+ 
 import { message } from 'antd'
 import { useSelector } from 'react-redux'
 import {useOutletContext} from 'react-router-dom' 
