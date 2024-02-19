@@ -16,7 +16,7 @@ export default function Index() {
  const [inpage, setInpage] = useState({
    runtimeMonitor: ['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'], // 运行监控
    runtimeSafe: ['summary', 'alarmDetail'], // 电气安全
-   runtimeEnergy: ['area', 'assorting', 'range'],  // 能源管理
+   runtimeEnergy: ['area', 'assorting', 'range', 'time'],  // 能源管理
 }) // 需要显示搜索的页面
 
  
@@ -59,6 +59,9 @@ const sethandler = () => {
               break;
             case 'range':
               setConfig({ energytype: true, isdate: true})
+              break;
+            case 'time':
+              setConfig({ shiftNo: true, isdate: true})  // shiftNo: true 不显示
               break;
             default:
               break;

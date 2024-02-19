@@ -1,20 +1,19 @@
 import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
-
+import {useOutletContext} from 'react-router-dom' 
 import styled from 'styled-components'
-import CustContext from "@com/content.js";
-import { drawEcharts } from "@com/useEcharts";
 
+import Ichart  from '@com/useEcharts/Ichart';
 import { energyShare, Monitoring } from '@api/api'
-import {selectProjectId, selectOneLevel, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-import { Form, Select, DatePicker, message,Input,Tree ,Button, Space, Radio, Empty } from 'antd'
-import moment from 'moment';
-import UserSearch from "@com/useSerach";
+import {selectProjectId} from '@redux/systemconfig.js'
+import {Tree ,Radio, Empty, Input } from 'antd'
+ 
 import Titlelayout from "@com/titlelayout";
+import Pagecount from "@com/pagecontent";
 import UseTable from '@com/useTable'
 import {getTime, numberformat} from "@com/usehandler"
-const { Search } = Input;
-const {Item} = Form
+ 
+const {Search} = Input
 const {QuerySpaceTrees, queryArea, queryLine} = energyShare
 const {LineManagerQuery} = Monitoring.LineManager // 线路查询
 const Mainbox = styled.div`
@@ -32,22 +31,24 @@ const Mainbox = styled.div`
       grid-template-rows: 504px 1fr;
       row-gap: 16px;
     }
+    .chart {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
 `
  
 
 export default function Index() {
-  const [form] =Form.useForm()
   const [treeData,setTreeData] =useState([])
  
+  let {exparams} = useOutletContext() 
  
+  const {areaId, date, type} =  exparams
  
-  const areaId = useSelector(selectOneLevelDefaultId)
-  
-  console.log(areaId)
-  const pieRef = useRef()
-  const stackRef =useRef()
   const [selectkeys, setSelectkeys] = useState([])
   const selectRef=useRef()
   selectRef.current=selectkeys
@@ -126,8 +127,6 @@ export default function Index() {
  const getDataByLine = async () => {
      let ids = selectedId.current
     try {
-      let {type, date} = form.getFieldsValue()
-     
       let time = getTime(date, type)
       
       let params = typeTree == 1 ? {
@@ -158,108 +157,77 @@ export default function Index() {
      
  } 
  
+ const options = {
+  series: [ {
+    type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+  },
+  {
+    type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+  },
+  {
+    type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+  }],  
+  grid:{
+    left: "0px",
+    right: "0",
+    top: "35px",
+    bottom: "0px",
+    containLabel: true,
+  },
+  legend: {
+    top: "5px",
+  },
+  
 
+}
  
-
-
-useEffect(() => {
-  try {
-    let {detail={}, proportion = []} = datas  
-    const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
-
-  drawEcharts(stackRef.current, {
+const [baropt, pieopt, momYoy] = useMemo(() => {
+ let {detail={}, proportion = [], momYoy=[]} =  Object.prototype.toString.call(datas).slice(8,-1) === 'Object' ? datas : {}  
+ const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
+ return [
+  {
+    ...options,
     dataset: {
-    
-      source: [
-        ['日期',...x],
-        ['尖能耗(kWh)',...y],
-     //   ['峰',...y1],
-        ['平能耗(kWh)',...y2],
-        ['谷能耗(kWh)', ...y3],
-      ]
+      dimensions: [
+        {name: 'x', type: 'time'},
+        {name: 'y', displayName: '尖能耗(kWh)'},
+        {name: 'y2', displayName: '平能耗(kWh)'},
+        {name: 'y3', displayName: '谷能耗(kWh)'},
+      ],
+      source: [x, y, y2, y3]
+    }
+  },
+  {
+    pieData: { data: proportion, total: 100 },
+    type: 3,
+    legend: {
+      bottom: 0,
+      top: 'auto',
+      itemGap: 5
     },
-    series: [
-        {
-          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
-        },
-        {
-          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
-        },
-        {
-          type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
-        }
-    ]
-  })  
-  drawEcharts(pieRef.current, {
-      pieData: { data: proportion, total: 100 },
-      type: 3,
-      legend: {
-        bottom: 0,
-        top: 'auto',
-        itemGap: 5
-      },
-      grid: {
-        bottom: 20
-      }
-  
-  })
-  } catch (error) {
-     console.log(error)
-  }
-  
-
-
+    grid: {
+      bottom: 20
+    }
+},
+momYoy
+ ]
 
 }, [datas])
-
- 
- 
-
-
-  
-
-  
   useEffect(()=>{
-     if(!Number.isFinite(areaId)) return;
+     if(!Number.isFinite(areaId) || !Number.isFinite(type) || !date) return;
      selectedId.current = []
      getTreeData()
      
-  },[areaId, typeTree])
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
+  },[areaId, typeTree, date, type])
+ 
  
   
-  const picker= ['','date', 'month', 'year'][timetype];
-  const timechange = (e) => {
-    console.log(e)
-    setTimetype(e);
-    getDataByLine()
- }
- const onSelect = (e) => {
-  console.log(e);
+ 
+ const onSelect = (e) => {  
   selectedId.current = e;
   getDataByLine()
  }
-  const CustView = () => {
-    
-     return (
-        <Space size={16} style={{marginLeft: "auto"}}>
-         <Item  name="type" initialValue={1}>
-            <Select style={{width: '80px'}}   options={[
-             {value: 1, label: '日'},
-             {value: 2, label: '月'},
-             {value: 3, label: '年'},
-            ]}
-            onChange={timechange}
-            ></Select>
-         </Item>
- 
-         <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-           <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}} onChange={() => getDataByLine()} />
-         </Item>       
-       </Space>
-       
-     )
-   }
+  
    const radiosty = {
     display: 'grid',   
     gridTemplateColumns: '1fr 1fr',
@@ -270,20 +238,9 @@ useEffect(() => {
    
     setTypeTree(e.target.value)
   }
-  const boxsty = {
-    height: "100%",
-    paddingTop: '16px',
-  }
+ 
   return (
-    <CustContext.Provider
-    value={{
-      form,
-      custview: <CustView />,
-    }}
-  >
-    <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
-     <UserSearch></UserSearch>
-     
+    <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
         <Titlelayout key="line">
         <div className="treebox">
@@ -312,32 +269,33 @@ useEffect(() => {
          }
         </div>
         </Titlelayout>
-         <Titlelayout title="分时能耗" key="stack">
-               <div ref={stackRef} style={boxsty}></div>
+         <Titlelayout title="分时能耗" key="stack" layout="flex">
+          <div className='chart'>
+              <Ichart {...baropt} />
+          </div>
+           
+
          </Titlelayout>
          <div className='rightlayout'>
-           <Titlelayout title="分时占比" key="pie">
-              <div ref={pieRef} style={boxsty}></div>
+           <Titlelayout title="分时占比" key="pie" layout="flex">
+           <div className='chart'>
+              <Ichart {...pieopt} />
+          </div>
            </Titlelayout>
            <Titlelayout title="分时能耗同环比" key="momyoy">
-               <div style={boxsty}>
+               <div className='chart' style={{paddingTop: '16px'}}>
               <UseTable 
                 columns={columns} 
-                dataSource={datas.momYoy}
-               
-
+                dataSource={momYoy}
               ></UseTable>
               </div>
            </Titlelayout>
          </div>
-
-      
-        
       </Mainbox>
       
-    </div>
-    </CustContext.Provider>
+    </Pagecount>
   )
+    
 }
 
 

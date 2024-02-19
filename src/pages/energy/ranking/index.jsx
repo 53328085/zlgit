@@ -1,15 +1,13 @@
 import React, {useMemo } from 'react'
 import {useOutletContext} from 'react-router-dom' 
 import styled from 'styled-components';
-import { useSelector } from 'react-redux'
- 
+import { useSelector } from 'react-redux' 
 import Ichart  from '@com/useEcharts/Ichart';
 import { energyRanking } from '@api/api'
 import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout'; 
 import {getTime} from '@com/usehandler'
 import {useRequest} from 'ahooks'
-
 const Mainbox = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -71,7 +69,7 @@ export default function Index() {
     type: 'category',
     axisTick: {
       show: false
-    }
+    },   
   },
 
 }

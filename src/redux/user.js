@@ -58,6 +58,7 @@ const user = createSlice({
            let {success, errMsg, data} = payload
            if (success) {
                window.sessionStorage.setItem("chintwulian", 's')
+               window.sessionStorage.setItem('useToken', data.token)
               // state = {...data, loading: false, password}
               return Object.assign({}, state, data, {loading: false},   )
            }else {

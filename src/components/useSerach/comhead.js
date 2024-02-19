@@ -85,11 +85,12 @@ const dateselect = (
       }
      }
   </Item>
-  <Item   name="shiftNo" initialValue={0}>
+ {!props.config?.shiftNo  && <Item   name="shiftNo" initialValue={0}>
      <Select style={{width: '100px'}}   options={allshifts} fieldNames={{label: 'name', value: 'id'}}
        
      ></Select>
   </Item>
+    }
 </Space>
 
 )
@@ -203,12 +204,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   
   }, [projectId, AreaID, isSite])
  
-  const onValuesChange = (changedValues, allValues) => {    
-    console.log(allValues)  
-    props.setexparams({...allValues})
+  const onValuesChange = (changedValues, allValues) => {   
+    props.setexparams({...allValues, projectId})
   }
   useEffect(() => {
-     props.setexparams(form.getFieldsValue(true))
+     props.setexparams({...form.getFieldsValue(true), projectId})
    
   }, [props.config])
 

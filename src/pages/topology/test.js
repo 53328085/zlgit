@@ -170,6 +170,7 @@ export default function Index() {
   }
   const onDrag = (event, node) => {
     // 解决浏览器手势插件命名冲突
+    console.log(node)
     event.dataTransfer.setData('Topology', JSON.stringify(node.data))
   }
   const onMessage = (e, data) => {
@@ -218,9 +219,15 @@ export default function Index() {
 
   useEffect(() => {
    registerHandler()
+   
     config.on = onMessage
     canvas.current = new Topology('canvas', config)
     canvas.current.render() 
+    if (window.registerTools) {
+      window.registerTools();
+      console.log(window.topologyTools)
+       
+    }
     
   }, [])
  const render = () => canvas.current.render() 
@@ -278,7 +285,7 @@ const linechange =(a) => {
                                 {item.children.map((value, val) => {
                                 return <a title={value.name} draggable={true} onDragStart={e => onDrag(e, value)} key={val} className='aicon'>
                                   {
-                                        (value.icon.indexOf('sgcc') != - 1 || value.icon.indexOf('ltdx') != -1) ? <i className={value.icon}></i> : <i className={`iconfont ${value.icon}`}></i>
+                                    item.id == 'custimg' ?  (<img src={value.data.image} width={40} height={40} />)    :    (value.icon.indexOf('sgcc') != - 1 || value.icon.indexOf('ltdx') != -1) ? <i className={value.icon}></i> : <i className={`iconfont ${value.icon}`}></i>
                                   }
                                 </a>
                               })}

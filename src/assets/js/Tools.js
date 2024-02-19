@@ -1,3 +1,5 @@
+import car from './testimg/car.svg'
+import  charge from './testimg/charge.svg'
 const columns = [
     {
       title: 'Name',
@@ -126,11 +128,29 @@ export const custimg =[
             width: 100,
             height: 100
           },
-          name: 'ammeter',
-          image: require('../image/ammeter.png')
+          name: 'image',
+          image: car,
+          data: {
+            car: 1
+          }
         }
       },
-  
+      {
+        name: 'image',
+        icon: 'icon-image',
+        data: {
+          text: '',
+          rect: {
+            width: 100,
+            height: 100
+          },
+          name: 'image',
+          image: charge,
+          data: {
+            charge: 1
+          }
+        }
+      },
 
 ]
 export const basic = [
