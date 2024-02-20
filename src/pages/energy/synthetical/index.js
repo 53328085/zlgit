@@ -6,8 +6,8 @@ import {useOutletContext} from 'react-router-dom'
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+//import {useSelector} from 'react-redux'
+//import {selectProjectId} from '@redux/systemconfig.js'
 import {numberformat} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
@@ -202,7 +202,7 @@ const ElectricRight = styled.div`
 `
  
 export default function Index() {   
-  const projectId = useSelector(selectProjectId);
+  //const projectId = useSelector(selectProjectId);
   let {exparams} = useOutletContext()
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
@@ -512,7 +512,7 @@ const CoalStandard =({data={}, op}) => {
 
 
   const getData = async () => {    
-    const {areaId, date, type, shiftNo, view} = exparams
+    const {areaId, date, type, shiftNo, view, projectId} = exparams
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')
@@ -549,7 +549,7 @@ const CoalStandard =({data={}, op}) => {
   }
   useEffect(() => {
     let values = Object.values(exparams)
-    if(values.length == 5)   getData()
+    if(values.length >= 5)   getData()
   }, [tabvalue, exparams])
 
   const Title = ({ title, subtitle, jc }) => {

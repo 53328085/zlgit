@@ -15,7 +15,7 @@ const {QuerySpaceTrees} = energyShare
 const {LineManagerQuery} = Monitoring.LineManager // 线路查询
 const Treebox = styled.div`
        display: grid;
-       grid-template-rows: ${(props) => props.lineType == "3" ? '32px 636px' : '32px 32px 604px'};
+       grid-template-rows: ${(props) => props.lineType == "3" ? '32px 1fr' : '32px 32px minmax(auto, 556px)'};
        row-gap: 16px;
 `
  
@@ -107,7 +107,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
 
   
   useEffect(()=>{
-     if(!areaId) return;
+     if(isNaN(areaId)) return;
      // setTreeId([])
      getTreeData()
      
@@ -131,7 +131,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
   }
   return (
   
-        <Titlelayout key="line">
+        <Titlelayout key="line" layout="flex">
         <Treebox lineType={lineType}>
        { lineType!="3" && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
           <Radio value={0}>按网格</Radio>

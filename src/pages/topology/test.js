@@ -148,13 +148,19 @@ export default function Index() {
   locked: false
 })
   const registerHandler = () => {
+    try {
+    console.log(registerFlow)
     registerFlow();
-  //  registerActivity();
-    registerClass();
-    registerSequence();
-    registerChart();
-    registerNode('button', reactNodes(Button), null, null, null)
-     registerNode('antdtable', reactNodes(Table), null, null, null)
+      //  registerActivity();
+        registerClass();
+        registerSequence();
+        registerChart();
+        registerNode('button', reactNodes(Button), null, null, null)
+         registerNode('antdtable', reactNodes(Table), null, null, null)
+    } catch (error) {
+       console.log(error)
+    }
+  
   }
   
   let canvas = useRef()

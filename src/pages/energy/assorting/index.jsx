@@ -6,17 +6,17 @@ import { useSelector } from 'react-redux'
 import {useOutletContext} from 'react-router-dom' 
 import moment from 'moment'
 import { energyClassified } from '@api/api'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectOneLevel} from '@redux/systemconfig.js'
 import Pagecount from "@com/pagecontent";
 import {getTime} from '@com/usehandler'
 export default function Index() {
   let {exparams} = useOutletContext()
-  const projectId = useSelector(selectProjectId)
+ // const projectId = useSelector(selectProjectId)
   const oneLevel = useSelector(selectOneLevel)
   const [showData, setShowData] = useState()
   //查询分类能耗
   const getEnergyData = async () => {
-    let {view, areaId, date, type:dateType, shiftNo,} = exparams 
+    let {view, areaId, date, type:dateType, shiftNo, projectId} = exparams 
     try {
       
      
@@ -64,8 +64,8 @@ export default function Index() {
 
 
   useEffect(() => {
-    let values = Object.values(exparams)
-    if(values.length == 5)   getEnergyData()
+    let values = Object.values(exparams)  
+    if(values.length >= 5)   getEnergyData()
   }, [exparams])
   return (
     <Pagecount bgcolor="transparent" pd="0">

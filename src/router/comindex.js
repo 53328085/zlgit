@@ -11,12 +11,15 @@ export default function Index() {
    let {state={}} = location
    let {nested = '', primary} = state;
    let whole =['runtimeMonitor', 'runtimeSafe', 'runtimeEnergy']  // 需要显示搜索 ***（全部）的模块
+   let include = {
+    runtimeEnergy: ['report']    // 模块里不需要显示全部的
+   }
    const onelevel = useSelector(selectOneLevel)
    const varlabel = useSelector(levelDefaultLabel) 
  const [inpage, setInpage] = useState({
    runtimeMonitor: ['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'], // 运行监控
    runtimeSafe: ['summary', 'alarmDetail'], // 电气安全
-   runtimeEnergy: ['area', 'assorting', 'range', 'time'],  // 能源管理
+   runtimeEnergy: ['area', 'assorting', 'range', 'time', 'report'],  // 能源管理
 }) // 需要显示搜索的页面
 
  
@@ -24,8 +27,8 @@ export default function Index() {
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  
  const [exparams, setexparams] = useState({deviceStyle: 1})
- const [config, setConfig] = useState({
- })
+ const [config, setConfig] = useState({})
+ const [custview, setCustview] = useState(undefined)
  let showSerach =  inpage[primary]?.includes(nested) 
  let style = showSerach ? {
   flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px"
@@ -37,11 +40,13 @@ export default function Index() {
    setInpage,
    setShowroom,  
    setConfig,
-   exparams
+   exparams,
+   setCustview
  }
  const props = {
     config,
-    setexparams
+    setexparams,
+    custview
  }
 
 const sethandler = () => {
@@ -63,6 +68,9 @@ const sethandler = () => {
             case 'time':
               setConfig({ shiftNo: true, isdate: true})  // shiftNo: true 不显示
               break;
+            case 'report':
+              setConfig({ energytype: true, isdate: true, shiftNo: true,})
+              break;  
             default:
               break;
           }

@@ -1,16 +1,16 @@
-import React, { useState,useCallback,useRef } from 'react'
+import React, { useState,useCallback,useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import {useOutletContext} from 'react-router-dom'
 import {useAntdTable} from 'ahooks'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
-import UserSearch from "@com/useSerach";
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree"
 import { Form, message, Select, Space, DatePicker, Button, Divider } from 'antd'
 import moment from 'moment'
 import styled from 'styled-components'
 import {energyReport} from '@api/api'
-import {selectProjectId,  selectOneLevelDefaultId,levelDefaultLabel} from '@redux/systemconfig.js'
+import {levelDefaultLabel} from '@redux/systemconfig.js'
 import {  ExportExcel} from '@com/useButton'
 const {
   QueryByArea, 
@@ -212,18 +212,20 @@ const typecols =[  // 分类能耗
 ]
 
 export default function Index() {
-  const areaId = useSelector(selectOneLevelDefaultId)
+
+  let {exparams, setCustview} = useOutletContext() 
+ 
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState([])
+  let {areaId, projectId, type, date, energytype} = exparams
   conscols[0].title = levelname
   cols[0].title = levelname
   timecols[0].title = levelname
   const [concolumns, setConcolumns] = useState(conscols) 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
-  const tbref2 = useRef()
   const etabs = [
     { key: '0', label: '实时抄表' },
     { key: '1', label: '能耗报表' },
@@ -238,46 +240,40 @@ export default function Index() {
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
   const sheetName = tabs[index]?.label ?? 'sheet'
-  const [form]=Form.useForm()
-  const projectId = useSelector(selectProjectId)
- 
- 
   let columns = [cols, [], timecols, typecols][index] // 
-  
-  
-
-  const getTableData = ({ current, pageSize }, formData={}) => {
+  const getTableData = ({ current, pageSize }) => {
   //  const row = Number(value);
-     console.log(formData)
+     if(Object.values(exparams).length <5) return;
+    
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
       [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
       ][index][line] : QueryClassifyConsume
-     let {type, date, meterType} = formData
+    // let {type, date, meterType} = formData
      let time = getTime(date, type)
      let params = {
         projectId,
         type,
         date: time,
-        meterType,
+        meterType: energytype,
         pageNum: current,
         pageSize,
         areaId,
      }
      // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
-     if(meterType == 1) {
+     if(energytype == 1) {
       setTabs([...etabs])
-     }else if(meterType == 2) {
+     }else if(energytype == 2) {
       setTabs([...wtabs])
      }
    
      columns.forEach(c => {
              if(c.dataIndex == 'consume' && index == 0) { // 实时抄表
-                c.title = meterType == 1 ? '用能(kWh)' : '差值（m³）'
+                c.title = energytype == 1 ? '用能(kWh)' : '差值（m³）'
              }
              if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
-              c.title = meterType == 1 ? '用能(kWh)' : '用水量（m³）'
+              c.title = energytype == 1 ? '用能(kWh)' : '用水量（m³）'
              }
            })
        
@@ -285,7 +281,7 @@ export default function Index() {
     if(index == 1) {
       conscols.forEach(e => {
         if(e.dataIndex == 'total') {
-           e.title = meterType == 1 ? '能耗(kWh)' : '能耗（m³）'
+           e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
         }
       })
     }
@@ -327,83 +323,38 @@ export default function Index() {
 
 
   }
-  const {tableProps, search } = useAntdTable(getTableData, {
-    form,
+  const {tableProps} = useAntdTable(getTableData, {
     defaultParams: [{current: 1, pageSize: 14}],
-    refreshDeps: [areaId, treeId, value, line]
+    refreshDeps: [exparams, treeId, value, line]
   })
-  const { submit} = search;
- 
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
-  const picker= ['','date', 'month', 'year'][timetype];
-  const timechange = (e) => { 
-    setTimetype(e);
-    if(e==1) {
-      form.setFieldValue('date', moment(new Date(), 'YYYY-MM-DD'))
-    }
- }
-  const CustView = () => {
-    
-    return (
-      <Divbox>
-       <Space size={64} dashed split={<Divider type="vertical" style={{height: "100%"}}/>}>
-        <Item  label="能源类型"   initialValue={1} name="meterType">
-        <Select      
-        style={{width: "112px"}}
-        options={[
-          {
-            label: '电力',
-            value: 1,
-          },
-          {
-            label: '用水',
-            value: 2,
-          }]}
-         />
-        </Item>
-        <Space>
-        <Item  name="type" initialValue={1}>
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={timechange}
-           ></Select>
-        </Item>
 
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker}  style={{width: '160px'}}   />
-        </Item>  
-        </Space>     
-      </Space>
-      <Space size={16}>
-        <Button type="primary" onClick={submit}>查询</Button>
-        <ExportExcel tb={tbref} />
-      </Space>
-      </Divbox>
+  const CustView =(
+    <Space size={16}>
+      <ExportExcel tb={tbref} />
+     </Space>
     )
-  }
   const onExport =useCallback(() => {   
-    let formData = form.getFieldsValue()
-    return  getTableData({current: 1, pageSize: total}, formData)
+   
+    return  getTableData({current: 1, pageSize: total})
  }, [total, concolumns])
   
   let dataProps = {
     value,
     setvalue,
     tabs,
-    form,
-    custview: <CustView />,
+  //  form,
+  //  custview: <CustView />,
   }
- 
+ useEffect(() => {
+  setCustview(CustView);
+  return () => {
+    setCustview(undefined)
+  }
+ }, [])
 
 
   return (
       <CustContext.Provider value={dataProps} >
-          <Mainbox>
-          <UserSearch></UserSearch>
-
           <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
                 <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
@@ -420,7 +371,6 @@ export default function Index() {
                 } 
              </Contentbox>
           </Pagecount>
-          </Mainbox>
       </CustContext.Provider>
   )
 }

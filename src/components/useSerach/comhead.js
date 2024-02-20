@@ -204,13 +204,14 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   
   }, [projectId, AreaID, isSite])
  
-  const onValuesChange = (changedValues, allValues) => {   
+  const onValuesChange = (_, allValues) => {   
     props.setexparams({...allValues, projectId})
   }
   useEffect(() => {
+     console.log(form.getFieldsValue())
      props.setexparams({...form.getFieldsValue(true), projectId})
    
-  }, [props.config])
+  }, [props.config, projectId])
 
   useEffect(() => {
    form.setFieldsValue({
