@@ -16,6 +16,7 @@ import {getTime, numberformat} from "@com/usehandler"
 const {Search} = Input
 const {QuerySpaceTrees, queryArea, queryLine} = energyShare
 const {LineManagerQuery} = Monitoring.LineManager // 线路查询
+ 
 const Mainbox = styled.div`
   && {
     display: grid;
@@ -25,6 +26,9 @@ const Mainbox = styled.div`
        display: grid;
        grid-template-rows: 32px 32px 604px;
        row-gap: 32px;
+       .ant-tree {
+        overflow-y: auto;
+      }
     }
     .rightlayout {
       display: grid;

@@ -15,8 +15,11 @@ const {QuerySpaceTrees} = energyShare
 const {LineManagerQuery} = Monitoring.LineManager // 线路查询
 const Treebox = styled.div`
        display: grid;
-       grid-template-rows: ${(props) => props.lineType == "3" ? '32px 1fr' : '32px 32px minmax(auto, 556px)'};
+       grid-template-rows: ${(props) => props.lineType == "3" ? '32px 1fr' : '32px 32px 556px'};
        row-gap: 16px;
+       .ant-tree{
+        overflow-y: auto;
+       }
 `
  
 export default function Index({areaId, setTreeId,  setLine, lineType}) {
