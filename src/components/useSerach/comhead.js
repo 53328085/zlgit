@@ -41,8 +41,12 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, isAreaId=true, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
- 
+  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
+  const {config={}} = props
+
+
+
+  const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
@@ -113,7 +117,7 @@ const viewtype = (<Item name="view" initialValue={1} >
  )
  // 能源类型
 
- const energyoptions = [{
+ const energyoptions = gas ?  [{
   label: '电',
   value: 1
 }, {
@@ -122,6 +126,12 @@ const viewtype = (<Item name="view" initialValue={1} >
 }, {
   label: '燃气',
   value: 3
+}] : [{
+  label: '电',
+  value: 1
+}, {
+  label: '水',
+  value: 2
 }]
 const energytype = (
   <Item label="能源类型"  name="energytype" initialValue={1}>

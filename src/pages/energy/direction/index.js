@@ -1,14 +1,10 @@
 import React, { useState,  useEffect,memo, useRef } from "react";
-
-import { Form, Space, DatePicker, Select} from "antd";
-import styled from "styled-components";
-import moment from 'moment';
+import moment from "moment";
 import Pagecount from '@com/pagecontent' 
-import CustContext from "@com/content.js";
-import {useSearchParams} from 'react-router-dom'
+import {useSearchParams, useOutletContext} from 'react-router-dom'
 import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, currProject} from '@redux/systemconfig.js'
+import {selectOneLevel, currProject} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/useButton'
@@ -35,24 +31,15 @@ const Headcom = memo(() => {
  
  
 export default function Index() {   
-  const projectId = useSelector(selectProjectId);
+  let {exparams={}} = useOutletContext() || {}
+  
   const levelone = useSelector(selectOneLevel)
   const areaId = levelone.map(a => a.id);
- 
-  const [form] = Form.useForm();
-  const {Item} = Form
+
   let [searchParams] = useSearchParams()
   const isfull = searchParams.get('full')  
   
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-   
-  const [op, setOp] = useState(0)  
-  const picker= ['', 'date', 'month', 'year'][timetype];
-  const [params, setParams] = useState({
-      type: 1,
-      date: moment().format('yyyy-MM-DD'),
-      projectId
-  })
+
  const [options, setOptions] = useState({
   tooltip: {
     trigger: 'item',
@@ -83,9 +70,19 @@ export default function Index() {
 })
  
   const getData = async () => {
-    
+    let store={};
+    if(isfull) {
+     store = JSON.parse(window.localStorage.getItem('exparams'))
+    }
+    console.log(store)
+    let {type, date, projectId, energytype} =isfull ? store : exparams
+    let params  = {
+      projectId,
+      type,
+      date: getTime(moment(date), type)
+    }
      try {
-      let hander = [queryElectric, queryWater][op]    
+      let hander = ['', queryElectric, queryWater][energytype]    
       let {success, data} = await hander(params, areaId)
       if(success && data.constructor==Object) {
        
@@ -142,83 +139,15 @@ export default function Index() {
   }
  
   useEffect(() => {
+    if(Object.values(exparams).length <4 ) return
+    window.localStorage.setItem('exparams', JSON.stringify(exparams))
     getData()
-  }, [params, op])
- 
- 
- const datechange = (e) => {
-   console.log(e);
- }
- 
- 
- 
-  const timechange = (e) => {
-     setTimetype(e);
-     let date = getTime(moment(), e)
-     setParams({
-      ...params,
-      type: e,
-      date,
-     })
-  }
-  const opchange = (e) => {  
-    
-     setOp(e)     
-  }
-  const CustView = () => {
-   const viewstyle = {
-      display: 'flex',
-       justifyContent: "space-between",
-       flex: 1,
-   //    'marginLeft': '32px',
-   //   'paddingLeft': '32px',
-   //   'borderLeft': '1px dotted #d7d7d7',
-    }
-    return (
-      <div style={viewstyle}>
-       <Item  label="能源类型"   initialValue={0} name="energy">
-        <Select
-        style={{width: '112px'}}
-        onChange={opchange}   
-        value={op}    
-        options={[
-          {
-            label: '电',
-            value: 0,
-          },
-          {
-            label: '水',
-            value: 1,
-          }
-        ]}
-       
-         />
-        </Item>
-      <Space size={16}>
-        <Item label="日期选择" name="type" initialValue={1}>
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={timechange}
-           ></Select>
-        </Item>
- 
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{width: '160px'}} />
-        </Item>
-      </Space>
-      </div>
-    )
-  }
- 
-  const propsData = {
-    form,
-    custview: <CustView />,
-    isAreaId: false
-  }
-   
+  }, [exparams])
+  useEffect(()=> {
+     if(isfull) {
+      getData()
+     }
+  }, [isfull])
    const full = () => {
       window.open('/directionfull?full=full')
    }
@@ -227,7 +156,6 @@ export default function Index() {
    useEffect(() => {
      if(!mapref.current || !isfull) return
      let map = document.getElementsByClassName('ichartmap')[0];
-     console.log(mapref.current?.style?.height)
      window.onmousewheel = (event) => {
       
        let {x, y, deltaY } = event
@@ -265,8 +193,7 @@ export default function Index() {
      }
    }, [options, isfull])
     return (
-      <CustContext.Provider value={propsData}>
-      <Pagecount showserach={!isfull} pd="0px">   
+      <Pagecount  pd="0px">   
       <Titlelayout title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column">
           {isfull && <Headcom />}
           <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}} ref={mapref}>
@@ -274,6 +201,5 @@ export default function Index() {
           </div>
        </Titlelayout>
       </Pagecount>
-      </CustContext.Provider>
     )
 }

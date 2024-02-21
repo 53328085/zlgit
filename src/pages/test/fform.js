@@ -1,5 +1,5 @@
-import React, {useMemo} from 'react'
-import {useGetPostsQuery, useGetPostQuery, useParamPostMutation} from './apiSlice'
+import React, {useEffect, useMemo} from 'react'
+import {useGetPostsQuery, useGetPostQuery, useParamPostMutation} from './apiBasic'
 import {Spin, List, Space, Button} from 'antd'
 export default function Index() {
   const {
@@ -7,9 +7,21 @@ export default function Index() {
     isLoading,
     isSuccess,
     isError,
-    error
+    error,
+    refetch
   } = useGetPostQuery(2)
+  useEffect(() => {
+    refetch()
+  }, [])
   const [paramPost] = useParamPostMutation()
+ const getdata = async (id)=> {
+   try {
+    let data = await paramPost(id).unwrap()
+    console.log(data);
+   } catch (error) {
+    
+   }
+ }
  const [link, name] = useMemo(() => {
    if(!posts) return [[], []] ;
    let {link=[], name=[]} = posts.data || {}
@@ -32,9 +44,10 @@ export default function Index() {
   return (
       <div style={{flex: 1}}>
         <Space>
-           <Button onClick={()=> paramPost(2)}>2</Button>
-           <Button onClick={()=> paramPost(4)}>4</Button>
-           <Button onClick={()=> paramPost(8)}>8</Button>
+           <Button onClick={()=> getdata(2)}>2</Button>
+           <Button onClick={()=> getdata(4)}>4</Button>
+           <Button onClick={()=> getdata(8)}>8</Button>
+           <Button onClick={refetch}>refetch</Button>
         </Space>
           {content}
      </div>
