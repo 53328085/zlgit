@@ -18,7 +18,7 @@ import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 function App() {
   const dispatch = useDispatch()
-  const navgite = useNavigate()
+  // const navgite = useNavigate()
   const primaryColor = useSelector(themeColor)
   const config = {
     csp: {
