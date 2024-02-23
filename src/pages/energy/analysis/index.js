@@ -1,387 +1,108 @@
-import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
-import { useRequest } from 'ahooks';
-import style from './style.module.less';
-import { Select,DatePicker,Table,Button, message, Radio } from 'antd';
-import SearchTree from './searchTree'
+import React, {useState, useRef, useEffect, useCallback, memo} from 'react'
+import { useAntdTable } from 'ahooks';
+import styled from 'styled-components';
+import {  Space } from 'antd';
+
+import {useOutletContext} from 'react-router-dom' 
 import columns,  { onDesc} from './columns';
-import dayjs from 'dayjs'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { eneryShift, Monitoring, energyQuota, EnergyLossRuntime} from '@api/api.js'
-import {utils, writeFile} from 'xlsx'
-import dashLine from '@imgs/line.png'
-//dayjs bug
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+import UserTable from "@com/useTable";
+import { EnergyLossRuntime} from '@api/api.js'
+import Titlelayout from '@com/titlelayout' 
+import Pagecount from "@com/pagecontent";
+import UserTree from "@com/useTree"
+import {  ExportExcel} from '@com/useButton'
+import {getTime} from '@com/usehandler'
+const Mainbox = styled.div`
+   display: grid;
+   flex: 1;
+   grid-template-columns: 300px 1fr;
+   column-gap: 16px;
+   .tablebox {
+    flex: 1;
+    padding-top: 16px;
+    display: flex;
+   }
+`
 
 export default function Index() {
-  const tableRef = useRef()
-  const lineRef = useRef()
-  const { Option } = Select;
-  const [tableData, setTableData] = useState([])
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
+  const tbref = useRef()
+  
+  let {exparams, setCustview} = useOutletContext()
+  let {areaId, projectId, type, date, energytype, shiftNo} = exparams
+  const  pageTotal = useRef()
+ 
+ 
+  const [treeId, setTreeId] = useState(null)
+  const [line, setLine] = useState(null)
+  const {tree, setTree} =useState(null)
+  const { queryByLine, queryByBuilding } = EnergyLossRuntime 
+  const CustView =(
+    <Space size={16}>
+      <ExportExcel tb={tbref} />
+     </Space>
+    )
+    useEffect(() => {
+      setCustview(CustView);
+      return () => {
+        setCustview(undefined)
+      }
+     }, []) 
+  const getTableData = ({current, pageSize}) => {
+      // 0 建筑 1线路
+   
+    if(Object.values(exparams)?.length < 6) return;
+    if(!Array.isArray(treeId) || !isFinite(line)) return
+    console.log(treeId)
+    console.log(line)
+    let time = getTime(date, type)
+    let params = {
+      projectId,
+      areaId,
+      shiftId: shiftNo,
+      energyType:energytype ,
       type,
-      content,
-    })
-  }
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
-  const { queryShifts } = eneryShift
-  const { LineManager: { LineManagerQuery } } = Monitoring
-  const { querySpaceTrees } = energyQuota
-  const { queryByLine, queryByBuilding } = EnergyLossRuntime
-  //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-
-  const changeArea = (value) => {
-    setAreaId(value)
-  }
-  //能源类型
-  const [energyType, setEnergyType] = useState(1)
-  const changeEnergyType = val => {
-    setEnergyType(val)
-    if(value =='line'){
-      lineRef.current.reSet()
+      date: time,
+      selectIds: treeId
     }
-  }
-  //日期选择
-  const [type, setType] = useState('year')
-  let time = new Date()
-  let year = time.getFullYear()
-  let month = time.getMonth() + 1 
-  month = month > 9 ? month : '0' + month
-  let day = time.getDate()
-  day = day > 9 ? day : '0' + day
-  const [date, setDate] = useState(year.toString()+'-01-01')
-  const changeDateType = val => {
-    setType(val)
-    if(val == 'year') setDate(year.toString()+'-01-01')
-    if(val == 'month') setDate(year+'-'+month+'-01')
-    if(val == 'date') setDate(year+'-'+month+'-'+day)
-  }
-  const changeDate = (date, dateString) => {
-    if(type == 'year') setDate(dateString+'-01-01')
-    if(type == 'month') setDate(dateString+'-01')
-    if(type == 'date') setDate(dateString)
-  }
-  const PickerWithType = useCallback(({ type, onChange }) => {
-    if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
-    if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
-    if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
-  },[date])
-  //班次
-  const [shift, setShift] = useState(0)
-  const changeShift = val => {
-    setShift(val)
-  }
-  const [shiftList, setShiftList] = useState([])
-  const getShifts = () => {
-    return queryShifts(projectId).then(res => {
-      let { success, data } = res
+    const index = Number(line)
+    const handler = [queryByBuilding, queryByLine][index]
+    return handler(current, pageSize, params).then(res => {
+      let {success, data, total=0} = res 
+        pageTotal.current = total
       if(success){
-        setShiftList(data)
+         return {
+           list: Array.isArray(data) ? data : [],
+           total: Array.isArray(data) ? total : 0,
+         }
       }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const { data:shiftsData } = useRequest(getShifts,{
-    onSuccess:(result,params) => {}
-  })
-
-  //树
-  const options = [
-    {
-      label: '按回路',
-      value: 'line',
-    },
-    {
-      label: '按建筑',
-      value: 'building',
-    },
-  ];
-  const [value, setValue] = useState('line');
-  const onChange = ({target:{value}})=>{
-    setValue(value)
-    setPageNum(1)
-  }
-  //回路
-  const getLineTree = () => {
-    let params = {
-      projectId,
-      type: energyType,
-      areaId
-    }
-    return LineManagerQuery(params).then(res => {
-      let { success, data } = res
-      if(success){
-        if(!data){
-          messageContent('warning','当前园区不存在回路！')
-          setLineTreeData([])
-        }else{
-          setLineTreeData(data)
+        return {
+          list: [],
+          total: 0
         }
-      }else{
-        messageContent('error', res.errMsg)
+      
       }
     })
   }
-  const {run:runLine} = useRequest(getLineTree, {
-    manual:true
+  const {tableProps} = useAntdTable(getTableData, {
+    defaultParams: [{current: 1, pageSize: 20}],
+    refreshDeps: [exparams, treeId,   line]
   })
-  //建筑
-  const getBuildingTree = () => {
-    return querySpaceTrees(projectId, areaId, '').then(res => {
-      let { success, data } = res
-      if(success){
-        if(!data){
-          messageContent('warning','当前园区不存在建筑！')
-          setBuildTreeData([])
-        }else{
-          setBuildTreeData(data)
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const {run:runBuilding} = useRequest(getBuildingTree, {
-    manual:true
-  })
-
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
-      message.error('当前项目尚未配置园区!')
-      return;
-    }else{
-      if(!Number.isFinite(areaId)) {return;}
-      if(value == 'line'){
-        runLine()
-      }
-      if(value == 'building'){
-        runBuilding()
-      }
-    }
-  },[areaId, value, energyType])
-
-  //树数据
-  const[lineTreeData, setLineTreeData] = useState([])
-  const fieldLineNames = {
-    title:'name',
-    key: 'id',
-    children: 'nodes'
-  }
-  const[buildTreeData, setBuildTreeData] = useState([])
-  const fieldBuildNames = {
-    title:'name',
-    key: 'areaId',
-    level: 'level',
-    children: 'nodes'
-  }
-
-  //查询表格
-  const [pageNum, setPageNum] = useState(1)
-  const [total, setTotal] = useState(0)
-  const pageSize = 20
-  //按线路
-  const [lineParams, setLineParams] = useState([])
-  let lineList = []
-  const getLineFromChild = values => {
-    setPageNum(1)
-    setLineParams(values)
-  }
-  const getLineTable = () => {
-    let params = {
-      projectId,
-      areaId,
-      shiftId: shift,
-      energyType,
-      type: type == 'year'? 3 : type =='month' ? 2: 1,
-      date,
-      selectIds: lineParams
-    }
-    return queryByLine(pageNum, pageSize, params).then(res => {
-      let {success, data} = res 
-      if(success){
-        if(data){
-          setTableData(data)
-          setTotal(res.total)
-        }else{
-          setTableData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const {run:queryLineTable} = useRequest(getLineTable, {
-    manual: true
-  })
-  useEffect(()=> {
-    if(areaId == 0 || !areaId) return;
-    if(value == 'line'){
-      setSelectBuildIds([])
-      setPageNum(1)
-      queryLineTable()
-    }
-  },[value, lineParams, areaId, shift, energyType, type, date])
-
-  //按建筑
-  const [selectBuildIds, setSelectBuildIds] = useState([])
-  const getBuildFromChild = values => {
-    setPageNum(1)
-    setSelectBuildIds(values)
-  }
-  const getBuildTable = () => {
-    let params = {
-      projectId,
-      areaId,
-      shiftId: shift,
-      energyType,
-      type: type == 'year'? 3 : type =='month' ? 2 : 1,
-      date,
-      selectIds: selectBuildIds
-    }
-    return queryByBuilding(pageNum, pageSize, params).then(res => {
-      let {success, data} = res 
-      if(success){
-        if(data){
-          setTableData(data)
-          setTotal(res.total)
-        }else{
-          setTableData([])
-        }
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const {run:queryBuildTable} = useRequest(getBuildTable, {
-    manual: true
-  })
-  useEffect(()=> {
-    if(areaId == 0 || !areaId) return;
-    if(value == 'building'){
-      setLineParams([])
-      setPageNum(1)
-      queryBuildTable()
-    }
-  },[value, selectBuildIds, areaId, shift, energyType, type, date])
-
-  //导出数据
-  const exportData = () => {
-    const params = { raw: true };
-    const workbook = utils.book_new(); // 新建工作簿   
-    let table = tableRef.current  
-    const ws = utils.table_to_sheet(
-      // 新建工作表
-      table,
-      params
-    );
-    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file =  "xlsx";
-    writeFile(workbook, '损耗分析.xlsx', { bookType: file }); // 下载
-  }
-
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    showTotal: () => (
-      <span>总共{total}项</span>
-    ),
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-    if(value == 'line'){
-      queryLineTable()
-    }
-    if(value == 'building'){
-      queryBuildTable()
-    }
-  }
+ 
+  const onExport =useCallback(() => {   
+   
+    return  getTableData({current: 1, pageSize: pageTotal.current})
+ }, [exparams, treeId,   line])
 
   return (
-    <div>
-      {contextHolder}
-      <div className={style.header}>
-        <span style={{marginLeft: '16px',marginRight: 16}}>{areaName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={changeArea}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-        <div className={style.line}></div>
-        <span>能源类型</span>
-        <Select
-          placeholder="全部类型"
-          size="middle"
-          style={{width: '126px', marginLeft: '16px'}}
-          defaultValue={1}
-          onChange={changeEnergyType}
-        >
-          <Option value={1}>电</Option>
-          <Option value={2}>水</Option>
-          <Option value={3}>燃气</Option>
-        </Select> 
-        <div className={style.line}></div>
-        <Select
-          size="middle"
-          style={{width: '80px', marginLeft:16, marginRight: '16px'}}
-          defaultValue={"year"}
-          onChange={changeDateType}
-        >
-          <Option value="date">日</Option>
-          <Option value="month">月</Option>
-          <Option value="year">年</Option>
-        </Select>
-        <PickerWithType 
-          style={{width: '160px', marginRight: '16px'}} 
-          type={type} 
-          onChange={changeDate}
-        ></PickerWithType>
-        <Select
-          size="middle"
-          style={{width: '112px', marginLeft:16, marginRight: '16px'}}
-          defaultValue={0}
-          onChange={changeShift}
-        >
-          <Option value={0}>全部班次</Option>
-          {shiftList.map(item =>{
-            return <Option key={item.id} value={item.id}>{item.name}</Option>
-          })}
-        </Select> 
-        <Button style={{marginRight:12,marginLeft:'auto', borderRadius:4, width:96 }} size='middle' onClick={exportData}>导出</Button>
-      </div>
-      <div className={style.content}>
-        <div className={style.contentLeft}>
-          <Radio.Group className={style.radioCss} options={options} onChange={onChange} value={value} />
-          <img src={dashLine} className={style.radioLine}></img>
-          {value == 'line' ? <SearchTree ref={lineRef} treeData={lineTreeData} fieldNames={fieldLineNames} getValues={getLineFromChild}></SearchTree> : null}
-          {value == 'building' ? <SearchTree treeData={buildTreeData} fieldNames={fieldBuildNames} getValues={getBuildFromChild}></SearchTree> : null}
-        </div>
-        <div className={style.contentRight}>
-          <div className={style.rightTitle}>损耗分析</div>
-          <Table ref={tableRef} size='small' bordered style={{margin:'16px'}} dataSource={tableData} columns={columns} rowKey='Id' pagination={paginationProps}/>
-        </div>
-      </div>
-    </div>
+    <Pagecount pd="0">
+       <Mainbox>
+           <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}     /> 
+        <Titlelayout title="损耗分析" layout="flex">
+           <div className='tablebox'>
+              <UserTable ref={tbref} size='small'  {...tableProps}   sheetName="损耗分析表" onExport={onExport} columns={columns} rowKey='Id' />
+           </div>
+        </Titlelayout>
+        </Mainbox>
+    </Pagecount>
   )
 }

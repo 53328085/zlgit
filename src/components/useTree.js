@@ -1,4 +1,4 @@
-import React,{useEffect, useState,useRef,useMemo} from 'react'
+import React,{useEffect, useState,useRef,memo} from 'react'
 import {useSelector } from 'react-redux'
 
 import styled from 'styled-components'
@@ -22,7 +22,7 @@ const Treebox = styled.div`
        }
 `
  
-export default function Index({areaId, setTreeId,  setLine, lineType}) {
+export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
   
   const [treeData,setTreeData] =useState([])
   
@@ -73,11 +73,11 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
-         let areaId = data.map(i => i.areaId)
+         let ids = data.map(i => i.areaId)
          setTreeData(data)  
          if(name) {
-             setTreeId(areaId)
-             setCheckedKeys(areaId)
+             setTreeId(ids)
+             setCheckedKeys(id)
          }else {
           setTreeId([])
           setCheckedKeys([])
@@ -132,6 +132,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
   const onChange = (e) => {
     setKeyword(e.target.value)
   }
+  console.log('render')
   return (
   
         <Titlelayout key="line" layout="flex">
@@ -163,7 +164,7 @@ export default function Index({areaId, setTreeId,  setLine, lineType}) {
         </Titlelayout>
        
   )
-}
+})
 
 
 

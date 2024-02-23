@@ -19,7 +19,7 @@ export default function Index() {
  const [inpage, setInpage] = useState({
    runtimeMonitor: ['monitor', 'gateway', 'point', 'camera', 'remote', 'control', 'call'], // 运行监控
    runtimeSafe: ['summary', 'alarmDetail'], // 电气安全
-   runtimeEnergy: ['area', 'assorting', 'range', 'time', 'report', 'direction'],  // 能源管理
+   runtimeEnergy: ['area', 'assorting', 'range', 'time', 'report', 'direction', 'analysis', 'norm'],  // 能源管理
 }) // 需要显示搜索的页面
 
  
@@ -74,6 +74,12 @@ const sethandler = () => {
             case 'direction':
                 setConfig({ energytype: true, isdate: true, shiftNo: true,isAreaId: false, gas: false })
                 break; 
+            case 'analysis':
+                  setConfig({ energytype: true, isdate: true})
+                  break; 
+            case 'norm':
+                  setConfig({})
+                  break;             
             default:
               break;
           }

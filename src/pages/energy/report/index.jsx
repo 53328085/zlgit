@@ -6,8 +6,8 @@ import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree"
-import { Form, message, Select, Space, DatePicker, Button, Divider } from 'antd'
-import moment from 'moment'
+import { Space} from 'antd'
+import {getTime} from '@com/usehandler'
 import styled from 'styled-components'
 import {energyReport} from '@api/api'
 import {levelDefaultLabel} from '@redux/systemconfig.js'
@@ -21,40 +21,14 @@ const {
   QueryTimeConsumeByLine,
   QueryClassifyConsume
 } = energyReport
-const Divbox = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 32px;
-  padding-left: 32px;
-  border-left: 1px dotted #d7d7d7;
-  flex:1;
-`
-const Mainbox = styled.div`
-  display: grid;
-  grid-template-rows: 48px 1fr;
-  row-gap: 16px;
-  flex: 1;
-`
+ 
 const Contentbox = styled.div`
   display: grid;
   grid-template-columns: 296px 1334px;
   column-gap: 16px;
   flex: 1;
 `
-const {Item} = Form
-const getTime = (date, type)=> {
-  let time
-      if(type == 1) {
-        time=date.format('YYYY-MM-DD')
-    }else if(type == 2) {
-        time = date.startOf("month").format('YYYY-MM-DD')
-    }else if(type == 3) {
-        time = date.startOf("year").format('YYYY-MM-DD')
-    }
-  return time
-}
-
+ 
 const cols =[ // 实时抄表  
 {
   title: '名称',

@@ -74,7 +74,7 @@ export default function Index() {
     if(isfull) {
      store = JSON.parse(window.localStorage.getItem('exparams'))
     }
-    console.log(store)
+   
     let {type, date, projectId, energytype} =isfull ? store : exparams
     let params  = {
       projectId,
@@ -100,7 +100,7 @@ export default function Index() {
          })    
        
         let datas = Array.from(new Set([...arr])).map(name => ({name}))
-        console.log(datas)
+       
      /*    let source =  link.map(i => i.source)
         let target = link.map(i => i.target)
         let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
@@ -132,7 +132,7 @@ export default function Index() {
  
       } 
      } catch (error) {
-        console.log(error)
+         
      }
      
      
@@ -161,8 +161,7 @@ export default function Index() {
        let {x, y, deltaY } = event
        let {left, right, top, bottom} = mapref.current.getClientRects()[0]
       
-       if(x>left && x<right&& y>top && y<bottom) {
-        console.log(deltaY)
+       if(x>left && x<right&& y>top && y<bottom) {      
         if(deltaY > 0) {
           setOptions({
             ...options,

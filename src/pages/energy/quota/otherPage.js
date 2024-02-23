@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
+import styled from 'styled-components';
 import {Button, Progress, message, Empty } from 'antd';
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
@@ -8,7 +9,16 @@ import area from './img/area-1.png'
 import { useRequest } from 'ahooks';
 import { EnergyQuotaRuntime } from '@api/api.js'
 import kong from '@imgs/empty.png'
+const Mainbox = styled.div`
+   flex: 1;
+   display: grid;
+   grid-template-columns: 288px 1fr;
+   column-gap: 16px;
+   .left {
 
+   }
+
+`
 export default function Index(props){
     const { queryQuotaOverview } = EnergyQuotaRuntime
     const projectId = useSelector(selectProjectId);
@@ -22,16 +32,9 @@ export default function Index(props){
         buildingCount:0,
         roomCount: 0
     })
-    const [messageApi, contextHolder] = message.useMessage();
-    const messageContent = (type, content) => {
-        messageApi.open({
-        type,
-        content,
-        })
-    }
+ 
     const toMainPage = ()=>{
-        let display =false;
-        props.sendToIndex(display);
+        props.sendToIndex(false);
     }
     const getOverview = () => {
         return queryQuotaOverview(projectId, props.areaId).then(res => {
@@ -42,7 +45,7 @@ export default function Index(props){
                     setItemData(data)
                 }
             }else{
-                messageContent('error', res.errMsg)
+                message.error(es.errMsg || '数据出错')
             }
         })
     }
@@ -56,8 +59,6 @@ export default function Index(props){
     },[props.areaId])
 
     return (
-        <div>
-            {contextHolder}
             <div className={style.content}>
                 <div className={style.contentLeft}>
                     <div className={style.item}>
@@ -107,7 +108,7 @@ export default function Index(props){
                     </div>
                 </div>
             </div>
-        </div>
+       
         
     )
 }
