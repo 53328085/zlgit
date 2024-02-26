@@ -26,7 +26,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
   
   const [treeData,setTreeData] =useState([])
   
- 
+  
   const [checkedKeys, setCheckedKeys] = useState([])
  
   const [keyword, setKeyword] = useState('')
@@ -42,8 +42,21 @@ export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
     setTreeId([])
   }
   */
- 
+ let arr = []
+ const getId = (nodes, type) => {
+     if(Array.isArray(nodes)) {
+        for(let node of nodes) {
+           console.log(node[type])
+           arr.push(node[type])
+           if(node.nodes && Array.isArray(node.nodes)) {
+             getId(node.nodes, type)
+           }
+        }
+       
+        
+     }
 
+ }
   //获取树的数据， 1 线路 0 网格
  const getTreeData= async (name='')=>{
     console.log('name', name)
@@ -73,16 +86,26 @@ export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
-         let ids = data.map(i => i.areaId)
+
+        
+         if(typeTree == 1) { // 线路        
+           getId(data, 'id')
+         }else if(typeTree == 0) {
+           getId(data, 'areaId')
+         }
+       
          setTreeData(data)  
-         if(name) {
-             setTreeId(ids)
-             setCheckedKeys(id)
+         setCheckedKeys(arr);
+         setTreeId(arr);
+
+        /*  if(name) {
+             setTreeId(arr)
+             setCheckedKeys(arr)
          }else {
           setTreeId([])
           setCheckedKeys([])
          }
-      
+       */
       }else{
         setTreeData([]) 
         setCheckedKeys([])
@@ -154,6 +177,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
           treeData={treeData} 
           checkable 
           defaultExpandAll
+          
           onExpand={onExpand}
           expandedKeys={expandedKeys}
           checkedKeys={checkedKeys}

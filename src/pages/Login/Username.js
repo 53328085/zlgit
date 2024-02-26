@@ -28,8 +28,7 @@ export default memo(function({onSubmit}){
     const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])    
     const ckChange = (e) => {
       dispatch(memorizeName(e.target.checked));
-    };
-    console.log(password)
+    };   
     const keyvalue = useRef()
     const getCode = async () => {
       try {

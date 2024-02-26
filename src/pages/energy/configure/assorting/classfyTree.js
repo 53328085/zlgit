@@ -41,7 +41,7 @@ export default function Water (props) {
                     {item.parentId == 0 ? <Ptag   onClick={()=>addSon(item)}>新增子项</Ptag> : null}
                     <Ptag onClick={()=>edit(name, item.energyId)} wh="60px">编辑</Ptag>
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
-                  <Ptag onClick={()=>settings(name, item.energyId)} wh="60px">配置</Ptag>
+                  {item.parentId != 0 ? <Ptag onClick={()=>settings(name, item.energyId)} wh="60px">配置</Ptag> : null}
                    
                     <Wtag onClick={()=>deleteRecord(item)} wh="60px">删除</Wtag>
                 </Space> }

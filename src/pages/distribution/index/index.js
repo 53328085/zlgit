@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
 import Comhead from '../usehead/com'
@@ -6,7 +6,8 @@ import {useLocation} from 'react-router-dom'
 export default function Index() {
    const location = useLocation()
    let {state={}} = location
-   let {nested = ''} = state;
+   
+   let {nested = '', primary} = state;
    //let show = nested !== 'report'
 
  const [inpage, setInpage] = useState(['report'])
@@ -22,6 +23,16 @@ export default function Index() {
    setInpage,
    setShowroom
  }
+ const sethandler = () => {
+  if(primary == 'designerDistribution' && nested == 'room') {
+    setShowroom(false)
+   }else {
+    setShowroom(true)
+   } 
+}
+  useEffect(() => {
+    sethandler()
+}, [nested, primary])
  const {Content } = Layout;   
     return (  
       <Content className='page--main'>

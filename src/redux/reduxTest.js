@@ -1,9 +1,9 @@
-import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, nanoid, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import {Login, ProjectList} from '../axios/api'
 import zhCN from 'antd/es/locale/zh_CN'
- 
- 
-const initialState = {
+export const testAdapter = createEntityAdapter()
+console.dir(testAdapter);
+const initial = {
   
   componentSize: 'large',
   locale: zhCN,
@@ -16,7 +16,10 @@ const initialState = {
   zlmenus: [],
 
 }
-export const testthunk = (arg) => { // 同步 thunk
+const  initialState = testAdapter.getInitialState(initial)
+
+export const testthunk = (arg) => { // 创建自己的同步 thunk
+   console.log(1111)
    return (dispatch, getState) => {
      const initState = getState()
      console.log(initState)
@@ -64,30 +67,11 @@ const zlsilce = createSlice({
     name: 'zltest',
     initialState,
     reducers: {
-        setSys: (state, action) => {
-            return Object.assign({}, state, action.payload)
-        },
-        setzl: (state, action) => {
-             console.log(action)
-             state.zltest = action.payload
-        },
-        setMenu: (state, action) => {
-              state.zlmenus = action.payload
-        } ,
-        addname: {
-          reducer(state, action) {
-            console.log(state.names)
-             state.push({...action.payload, completed: false})
-          },
-          prepare(text) {
-            console.log(text)
-            return {payload: {name: text, id: nanoid()} }
-          }
-        }
+        remove: testAdapter.removeOne
     },
     extraReducers: {
       [asyncthunk.fulfilled]: (state, actions) => {
-       
+         console.log(actions)
       },
 
       [getpropject.fulfilled]: (state, actions) => {

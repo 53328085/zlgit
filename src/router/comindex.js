@@ -12,7 +12,7 @@ export default function Index() {
    let {nested = '', primary} = state;
    let whole =['runtimeMonitor', 'runtimeSafe', 'runtimeEnergy']  // 需要显示搜索 ***（全部）的模块
    let include = {
-    runtimeEnergy: ['report']    // 模块里不需要显示全部的
+    runtimeEnergy: ['area','report']    // 模块里不需要显示全部的
    }
    const onelevel = useSelector(selectOneLevel)
    const varlabel = useSelector(levelDefaultLabel) 
@@ -97,7 +97,7 @@ const sethandler = () => {
 
 
 useEffect(() => {   
-  if(whole.includes(primary)) {   
+  if(whole.includes(primary))  {   
     let  isin = onelevel.find(l => l.id == 0);   
       if(!isin) dispatch(getOnelevel([{name: `${varlabel}(全部)`, id: 0, levelName: varlabel}, ...onelevel]));
   }else {

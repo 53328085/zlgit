@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Space, Form, Input, message, Spin, Divider, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons' 
-import {useOutletContext} from 'react-router-dom'
+ 
 import styled from 'styled-components';
 import UseTable from '@com/useTable'
 import { distributionRoom } from '@api/api.js'
@@ -27,7 +27,7 @@ const Imgbox = styled.div`
  
 `
 export default function Index() {
-  const {setShowroom} = useOutletContext()
+ 
   const isPublish = useSelector(publishState)
   const areaId = useSelector(selectOneLevelDefaultId)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
@@ -327,9 +327,7 @@ export default function Index() {
     return Promise.reject(new Error('配电房图片必须上传'));
    
  }
- useEffect(() => {
-  setShowroom(false)
- }, [])
+ 
   return (
  <Cspin tip="图片数据加载中 ……" spinning={spinning}>
     <Pagecont showserach={false} custserach pd="0px" >

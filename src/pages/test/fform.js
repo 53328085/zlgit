@@ -1,27 +1,21 @@
 import React, {useEffect, useState, memo} from 'react'
-function Test() {
-  console.log('render: test')
-  return (
-    <div>测试</div>
-  )
-}
+import {useDispatch} from 'react-redux'
+import {testthunk, getpropject} from '@redux/reduxTest'
+import {FixedSizeList} from 'react-window' 
+
+// FixedSizeList 固定尺寸列表
+
+const Row = ({index, style}) => (<div style={style}>Row{index}</div>)
 export default function Index() {
-  const [id, setId] = useState(1);
-  const [name, setName] = useState(null);
-  const onchange = () => {
-    setId(id => id + 1);
-    setTimeout(() => {
-      console.log(id);
-    }, 0)
-  }
-  useEffect(() => {
-  }, [id, name])
+  
   return (
-    <div>
-      <button onClick={onchange}>change</button>
-       <pre>{id}</pre>
-       <pre>{name}</pre>
-       <Test />
-      </div>
+    <FixedSizeList
+      height={150} // 列表可视区域的高度
+      itemCount={10000} // 列表数据长度
+      itemSize={35} //
+    >
+      
+      
+    </FixedSizeList>
   )
 }
