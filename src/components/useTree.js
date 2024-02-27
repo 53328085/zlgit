@@ -57,7 +57,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, lineType}) {
      }
 
  }
-  //获取树的数据， 1 线路 0 网格
+  //获取树的数据，0 网格, 1 线路
  const getTreeData= async (name='')=>{
     console.log('name', name)
     try {

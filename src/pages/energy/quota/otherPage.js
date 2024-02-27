@@ -45,7 +45,7 @@ export default function Index(props){
                     setItemData(data)
                 }
             }else{
-                message.error(es.errMsg || '数据出错')
+                message.error(res.errMsg || '数据出错')
             }
         })
     }

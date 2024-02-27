@@ -121,13 +121,13 @@ export default function Index(props) {
         size="middle"
         onChange={onSearch}
         style={{
-          width: 256,
+          width: "100%",
         }}
       />
       <img src={dashLine} className={style.radioLine}></img>
       {props.treeData.length > 0 ? (
         <Tree
-          style={{ height: "636px", overflow: "auto", fontSize: 16 }}
+          style={{ height: "600px", overflow: "auto", fontSize: 16 }}
           checkable
           defaultExpandAll={true}
           onExpand={onExpand}

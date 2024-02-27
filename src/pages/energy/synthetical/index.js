@@ -6,8 +6,8 @@ import {useOutletContext} from 'react-router-dom'
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
-//import {useSelector} from 'react-redux'
-//import {selectProjectId} from '@redux/systemconfig.js'
+ import {useSelector} from 'react-redux'
+ import {selectOneLevel} from '@redux/systemconfig.js'
 import {numberformat} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
@@ -203,6 +203,8 @@ const ElectricRight = styled.div`
  
 export default function Index() {   
   //const projectId = useSelector(selectProjectId);
+  const areaIds = useSelector(selectOneLevel);
+  console.dir(areaIds)
   let {exparams} = useOutletContext()
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
@@ -513,6 +515,7 @@ const CoalStandard =({data={}, op}) => {
 
   const getData = async () => {    
     const {areaId, date, type, shiftNo, view, projectId} = exparams
+    let id = areaId == 0 ? areaIds?.filter(a => a.id!=0)?.map(a => a.id) : [areaId];
     let time;
     if (type == 1)  {
       time = date.format('YYYY-MM-DD')
@@ -528,12 +531,12 @@ const CoalStandard =({data={}, op}) => {
       projectId,
       date: time
    }
-    const param = [areaId]
+    
     let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
     let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
     let handler = ['', energy, cost][view][tabvalue]
     try {
-     let {success, data} =  await EnergyComprehensive[handler](querys, param)
+     let {success, data} =  await EnergyComprehensive[handler](querys, id)
    
      if(success) {
       setOverview({...qverview, ...data})

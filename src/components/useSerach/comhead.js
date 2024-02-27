@@ -2,7 +2,7 @@ import React, {useState, useContext,  useEffect, useMemo} from "react";
 
 import { Form, Select,  Space, DatePicker, message} from "antd";
 import styled from "styled-components";
- 
+import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
 import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
 import moment from "moment";
@@ -255,7 +255,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
            props.custview? props.custview : custview
         }
-   
+        {
+          props.config?.export ? <ExportExcel /> : null
+        }
     </Cform>
   
     

@@ -51,9 +51,7 @@ export default function Index() {
       // 0 建筑 1线路
    
     if(Object.values(exparams)?.length < 6) return;
-    if(!Array.isArray(treeId) || !isFinite(line)) return
-    console.log(treeId)
-    console.log(line)
+    if(!Array.isArray(treeId) || !isFinite(line)) return   
     let time = getTime(date, type)
     let params = {
       projectId,

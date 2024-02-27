@@ -94,11 +94,11 @@ export default function Index() {
   const addOk = async () => {
     try {
       const values = await form.validateFields();
-      console.log(values)
+      
       let params = {
         projectId,
         roomId,
-        name: encodeURIComponent(values.name)
+        name: values.name?.trim()
       };
       if(clickTag == 'edit'){
         updateLine(projectId, subId, encodeURIComponent(values.name)).then(res=> {
@@ -338,7 +338,11 @@ export default function Index() {
         <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal}  >
        
           <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
-            <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}]}>
+            <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}, {
+              type: 'string',
+              max: 64,
+              message: "名称最多为64个字符"
+            }]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
           </Form>
