@@ -15,6 +15,7 @@ import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout' 
 import Pagecount from "@com/pagecontent";
 import  Ichart from '@com/useEcharts/Ichart'
+import UserTree from "@com/useTree"
 const Mainbox = styled.div`
   display: grid;
   grid-template-columns: ${props => props.energy==`1` ?  '288px 1fr 400px' : '288px 1fr'};
@@ -98,9 +99,6 @@ export default function Index(props) {
         queryGasMonth,
         queryGasYear
     ]][energy][api]
-
-   
-
     return hander(projectId,areaId,getTime(date, type),shiftNo,treeIdList).then(res => {
        let {success, data, errMsg} = res;
        if(success) {
@@ -138,52 +136,20 @@ export default function Index(props) {
     refreshDeps: [treeIdList, exparams]
   });
  
-  const [treeData, setTreeData] = useState([]);
-  const fieldNames = {
-    title: "name",
-    key: "id",
-    children: "childs",
-  };
-  const getCategoryTree = () => {
-    if(!projectId || !isFinite(energytype)) return
-    return queryEnergyCategoryTree(projectId, energytype).then(
-      (res) => {
-        let { success, data } = res;
-        if (success) {
-          if (data) {
-            setTreeData(data);
-          } else {
-            setTreeData([]);
-          }
-        } else {
-          messageContent("error", res.errMsg);
-        }
-      }
-    );
-  };
-  useRequest(getCategoryTree, {
-    refreshDeps: [projectId, energytype]
-  });
-
-  const getSelcetedTree = (val) => {
-    //公共能耗分类选中id获取
-    const arr = val.map((item) => {
-      return item.node.id;
-    });
-    setTreeIdList(() => [...arr]);
-  };
  
   return (
     <Pagecount pd="0" bgcolor="transparent" >
      <Mainbox energy={energytype}>
   
       <Titlelayout title="公共能耗分类" layout="flex">
-        <Searchtree
+         <UserTree areaId={areaId}   setTreeId={setTreeIdList} energytype={energytype} showline={false}    datatype={2} /> 
+
+       {/*  <Searchtree
         
           fieldNames={fieldNames}
           treeData={treeData}
           getValues={getSelcetedTree}
-        ></Searchtree>
+        ></Searchtree> */}
        </Titlelayout>
        
           <Titlelayout title="公共能耗" layout="flex">

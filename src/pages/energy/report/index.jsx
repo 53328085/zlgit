@@ -331,7 +331,7 @@ export default function Index() {
       <CustContext.Provider value={dataProps} >
           <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
-                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   lineType={value} /> 
+                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN} /> 
                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,

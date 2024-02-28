@@ -1869,9 +1869,9 @@ export class EnergyQuotaRuntime {
 }
 //公共能耗
 export class EnergyPublicRuntime {
-  static queryEnergyCategoryTree = (projectId, categoryType) =>
+  static queryEnergyCategoryTree = ({projectId, categoryType, name}) =>
     server.post(
-      `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}`
+      `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`
     );
   static queryElectricYear = (projectId, areaId, date, shiftNo, data) =>
     server.post(
