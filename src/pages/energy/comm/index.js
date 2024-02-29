@@ -53,10 +53,8 @@ export default function Index(props) {
   //右下角 公共能耗同比  能耗数据展示
   const [energySub, setEnergySub] = useState([]);
   const [energyTotal, setEnergyTotal] = useState({});
-  //右上角环形
-  const [proportion, setProportionl] = useState([]);
-  //柱状图
-  const [detail, setDetail] = useState({});
+ 
+ 
 
   const [options, setOptions] = useState({
     series: [{ type: "bar",  seriesLayoutBy: 'row' }],  
@@ -71,13 +69,22 @@ export default function Index(props) {
       top: "0px",
       itemHeight: 4,
       itemWidth: 16,
-    },
-   
-  
-    
+    },   
   })
 
-
+  const [poptions, setPoptions] = useState({
+    type: 3,
+    pieData: { data: [], total: '100%', radius: ["55%",  "70%"] },
+    legend: {
+      top: 'auto',
+      bottom: "0px",
+    },
+    grid: {
+      containLabel: true,
+      left: 0,
+      right: 0,
+    }    
+  })
   //自定义调用方法
   const pageInfo = () => {
     if(Object.values(exparams)?.length < 6) return;
@@ -106,8 +113,7 @@ export default function Index(props) {
          let {x=[], y=[]} = detail
          setEnergySub(energySub);
          setEnergyTotal(energyTotal);
-         setProportionl(proportion);
-         setDetail(detail);
+        
          setOptions({
           ...options,
           dataset: {
@@ -120,13 +126,18 @@ export default function Index(props) {
             sourceHeader: false,
           },
          }) 
-
+         setPoptions({
+          ...poptions,
+          pieData: {
+            ...poptions.pieData,
+            data: proportion
+          }
+         })
 
         }else {
           setEnergySub([]);
           setEnergyTotal([]);
-          setProportionl([]);
-          setDetail({});
+         
           message.error(errMsg || '数据出错');
         }
 
@@ -141,9 +152,10 @@ export default function Index(props) {
     <Pagecount pd="0" bgcolor="transparent" >
      <Mainbox energy={energytype}>
   
-      <Titlelayout title="公共能耗分类" layout="flex">
-         <UserTree areaId={areaId}   setTreeId={setTreeIdList} energytype={energytype} showline={false}    datatype={2} /> 
-
+      <Titlelayout title="公共能耗分类" layout="flex" >
+         <div className="chart" style={{paddingTop: '16px'}}>
+         <UserTree areaId={areaId}   setTreeId={setTreeIdList} energytype={energytype} showline={false}    datatype={2} sty={{bordered: 'n', pv: '0'}} /> 
+         </div>
        {/*  <Searchtree
         
           fieldNames={fieldNames}
@@ -160,17 +172,17 @@ export default function Index(props) {
         
         {isElectric == 1 ? (
           <div className="energy">
-            <Titlelayout title="公共能耗占比"> 
-            
-             {/*    <Ringchart proportionGive={proportion}></Ringchart> */}
-             
+            <Titlelayout title="公共能耗占比" layout="flex"> 
+                <div className="chart">
+                   <Ichart {...poptions} />
+                </div>
             </Titlelayout> 
-            <Titlelayout title="公共能耗同比">
+            <Titlelayout title="公共能耗同比" layout="flex">
                <div className="chart rightBottom">
-             {/*  <Percent
+               <Percent
                   energySubGive={energySub}
                   energyTotalGive={energyTotal}
-                ></Percent> */}
+                ></Percent>
                </div>
             </Titlelayout> 
           </div>

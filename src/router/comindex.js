@@ -117,7 +117,7 @@ export default function Index() {
             setConfig({});
             break;
           case "public":
-            setConfig({ energytype: true, isdate: true, export: true });
+            setConfig({ energytype: true, isdate: true });
             break;
           default:
             break;

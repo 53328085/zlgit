@@ -1,5 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
-import style from "./style.module.less";
+import React  from "react";
+ 
 import totalPublic from "@imgs/totalPublic.png";
 import lighting from "@imgs/lighting.png";
 import airCondition from "@imgs/air-condition.png";
@@ -7,109 +7,108 @@ import power from "@imgs/power.png";
 import special from "@imgs/special.png";
 import up from "@imgs/up.png";
 import down from "@imgs/down.png";
+import styled from "styled-components";
+
+const imgset = {
+  '总用电':totalPublic,
+  '照明插座用电': lighting,
+  '空调用电': airCondition,
+  '动力用电': power,
+  '特殊用电': special,
+}
+const Itemlist = styled.div`
+  display: grid;
+  grid-template-rows: repeat(5, 48px);
+  row-gap: 12px;
+  flex:1;
+  padding-top: 28px;
+  .item {
+    display: flex;
+    border: 1px solid #d7d7d7;
+    font-size: 12px;
+    padding: 3px 14px 3px 3px;
+    align-items: center;
+    .icon {
+      width: 54px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #135abd;
+      img {
+         
+        height: 32px;
+      }
+    }
+    .type {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-left: 24px;
+      .sname {
+      color: #666;
+    }
+    .val {
+      color: #039;
+      font-size: 18px;
+    }
+    }
+    .yoy {
+      margin-left: auto;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      .percent {
+        display: inline-block;
+        width: 78px;
+        padding-left: 12px;
+      }
+      .up {
+        color: #f33;
+      
+      }
+      .down {
+        color: #039;
+        
+      }
+    }
+  }
+
+`
+const Item = (props) => {
+    let imgsrc = imgset[props.name]
+    let f = parseFloat(props.yoy) > 0
+    let updown = f ? up  : down
+    let pre = f ? 'up' : 'down'
+    return (
+      <div className="item">
+        <div className="icon">
+         <img src={imgsrc} alt="" /> 
+         </div>
+         <div className="type">
+            <span className="sname">{props.name}</span>
+            <span className="val">{props.periodValue}</span>
+         </div>
+         <div className="yoy">
+             <img src={updown}></img>
+            <span className={pre + " percent"}>{props.yoy}</span>
+         </div>
+      </div>
+    )
+}
+
+
+
 
 export default function Index(props) {
   const { energySubGive, energyTotalGive } = props;
   
+  let list = [];
+  list = [energyTotalGive, ...energySubGive]
   return (
-    // <div className={style.rightBottom}>
-     <div>
-      {/* <span className={style.title}>公共能耗同比</span> */}
-      <div className={style.items}>
-        <div className={style.itemIcon}>
-          <img className={style.itemImg} src={totalPublic}></img>
-        </div>
-        <div className={style.itemData}>
-          <span>{energyTotalGive.name}</span>
-          <span className={style.dataStyle} style={{ color: "#039" }}>
-            {energyTotalGive.periodValue}
-          </span>
-        </div>
-        {
-        parseFloat(energyTotalGive.yoy) > 0 ?  
-        <img className={style.upOrDown} src={up}></img>: 
-        <img className={style.upOrDown} src={down}></img>
-        }  
-       <span className={parseFloat(energyTotalGive.yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[0].yoy}</span>
-        
-      </div>
-
-      <div className={style.items}>
-        <div className={style.itemImgBg}>
-          <img className={style.lightingImg} src={lighting}></img>
-        </div>
-        <div className={style.itemData}>
-          <span>{energySubGive[0].name}</span>
-          <span className={style.dataStyle}>
-            {energySubGive[0].periodValue}
-          </span>
-        </div>
-        {
-        parseFloat(energySubGive[0].yoy) > 0 ?  
-        <img className={style.upOrDown} src={up}></img>: 
-        <img className={style.upOrDown} src={down}></img>
-        }  
-        <span className={parseFloat(energySubGive[0].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[0].yoy}</span>
-       
-      </div>
-
-      <div className={style.items}>
-        <div className={style.itemImgBg}>
-          <img className={style.airConditionImg} src={airCondition}></img>
-        </div>
-        <div className={style.itemData}>
-          <span>{energySubGive[1].name}</span>
-          <span className={style.dataStyle}>
-            {energySubGive[1].periodValue}
-          </span>
-        </div>
-        {
-        parseFloat(energySubGive[1].yoy) > 0 ?  
-        <img className={style.upOrDown} src={up}></img>: 
-        <img className={style.upOrDown} src={down}></img>
-        }  
-        <span className={parseFloat(energySubGive[1].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[1].yoy}</span>
+      <Itemlist>
+          {list.map(data => <Item {...data}/>)}
+      </Itemlist>
     
-      </div>
-
-      <div className={style.items}>
-        <div className={style.itemImgBg}>
-          <img className={style.powerImg} src={power}></img>
-        </div>
-        <div className={style.itemData}>
-          <span>{energySubGive[2].name}</span>
-          <span className={style.dataStyle}>
-            {energySubGive[2].periodValue}
-          </span>
-        </div>
-        {
-        parseFloat(energySubGive[2].yoy) > 0 ?  
-        <img className={style.upOrDown} src={up}></img>: 
-        <img className={style.upOrDown} src={down}></img>
-        }  
-        <span className={parseFloat(energySubGive[2].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[2].yoy}</span>
-      
-      </div>
-
-      <div className={style.items}>
-        <div className={style.itemImgBg}>
-          <img className={style.specialImg} src={special}></img>
-        </div>
-        <div className={style.itemData}>
-          <span>{energySubGive[3].name}</span>
-          <span className={style.dataStyle}>
-            {energySubGive[3].periodValue}
-          </span>
-        </div>
-        {
-        parseFloat(energySubGive[3].yoy) > 0 ?  
-        <img className={style.upOrDown} src={up}></img>: 
-        <img className={style.upOrDown} src={down}></img>
-        }  
-        
-        <span className={parseFloat(energySubGive[3].yoy) > 0  ? style.percentUp :   style.percentDown}>{energySubGive[3].yoy}</span>
-       
-      </div>
-    </div>
   );
 }

@@ -18,12 +18,13 @@ const Treebox = styled.div`
        display: grid;
        grid-template-rows: ${(props) => props.showline == "false" ? '32px 1fr' : '32px 32px 556px'};
        row-gap: 16px;
+       flex: 1;
        .ant-tree{
         overflow-y: auto;
        }
 `
  
-export default memo(function Index({areaId, setTreeId,  setLine, showline=true, datatype=NaN, energytype}) {
+export default memo(function Index({areaId, setTreeId,  setLine, showline=true, datatype=NaN, energytype, sty={bordered: 'y', pv: '16px'}}) {
   console.log(datatype)
   
   const [treeData,setTreeData] =useState([])
@@ -55,12 +56,13 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
         }
      }
  }
+
  const fieldNames=isNaN(datatype) ? {title:'name',key: treekey,children:'nodes'} : {title:'name',key: treekey,children:'childs'}
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
  const getTreeData= async (name='')=>{
     
-    let idx = isFinite(datatype) ? datatype : typeTree;
-
+  let idx = isFinite(datatype) ? datatype : typeTree;
+  if( isFinite(datatype) && !energytype) return
     try {
        if(name!=keyword) setKeyword(name)
       let params =[{
@@ -103,8 +105,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
             case 1:
               getId(data, 'id');
               break;
-            case 2:
-              console.log(idx);
+            case 2:              
               getId(data, 'id', 'childs')
               break;
             default:
@@ -152,7 +153,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
 
   
   useEffect(()=>{
-     if(isNaN(areaId) || !energytype) return;
+     if(isNaN(areaId)) return;
      // setTreeId([])
      getTreeData()
      
@@ -177,7 +178,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
   console.log('render')
   return (
   
-        <Titlelayout key="line" layout="flex">
+        <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv}>
         <Treebox showline={showline.toString()}>
        { showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
           <Radio value={0}>按网格</Radio>
