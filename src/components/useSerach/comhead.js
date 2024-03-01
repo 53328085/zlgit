@@ -1,12 +1,12 @@
 import React, {useState, useContext,  useEffect, useMemo} from "react";
 
-import { Form, Select,  Space, DatePicker, message} from "antd";
+import { Form, Select,  Space, DatePicker, message, ConfigProvider, Input} from "antd";
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor} from '@redux/systemconfig.js'
 import moment from "moment";
-
+import { SketchPicker } from 'react-color';
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 import CustContext from "@com/content";
@@ -43,11 +43,23 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   const {config={}} = props
-
-
-
+  const themcolor = useSelector(themeColor)
+  const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
+  const onColorChange = (e) => {
+    
+       let val = e.target.value
+      setColor(val)
+      dispatch(getThemeColor({primaryColor: val}))
+     /*  ConfigProvider.config({
+        theme: {
+          primaryColor: val
+        }
+      }) */
+  }
+
+
   const [form] =forms ? [forms] : Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)  
@@ -258,6 +270,10 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
           props.config?.export ? <ExportExcel /> : null
         }
+         <Input type="color" value={color}
+              style={{width: '80px'}}
+              onChange={onColorChange}
+            />
     </Cform>
   
     

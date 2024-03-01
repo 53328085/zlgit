@@ -1,1 +1,9 @@
- 
+ .main {
+    color: var(--main-bg-color);
+    --fts: 16px;
+ --ftc: #666;
+    .ar {
+        font-size: var(--fts);
+        color: var(--ftc, #23ea4f);
+    }
+ }

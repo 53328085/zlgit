@@ -4,7 +4,7 @@ import {Table, message} from 'antd'
 import styled from 'styled-components'
 import {utils, writeFile} from 'xlsx'
 import {nanoid} from '@reduxjs/toolkit'
-
+import Tablecom from './custTable'
 
 const Divbox = styled.div`
 display: flex;
@@ -12,7 +12,7 @@ flex: ${props => props.flex || 1};
 flex-direction: column;
 justify-content: space-between;
 `
-const Tablecom = styled(Table)`
+/* const Tablecom = styled(Table)`
 && {
 display: flex;
 flex: 1;
@@ -55,7 +55,7 @@ flex-direction: column;
 }
  
 }
-`
+` */
  function Index(props, ref) { 
   const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
@@ -160,4 +160,5 @@ const download = useCallback(() => {
     </Divbox>
   )
 }
+ 
 export default forwardRef(Index)

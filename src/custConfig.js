@@ -9,9 +9,10 @@ moment.locale('zhCN');
  
 import {ConfigProvider} from 'antd'
 import {themeColor} from "@redux/systemconfig";
-
+ 
 export default function CustConfig(props) {
-  const primaryColor = useSelector(themeColor)
+  const theme = useSelector(themeColor)
+  console.log(theme)
   const config = {
     csp: {
       nonce: 'YourNonceCode'
@@ -19,9 +20,7 @@ export default function CustConfig(props) {
     locale: zhCN,
   }
   ConfigProvider.config({
-    theme: {
-      primaryColor
-    }, 
+    theme , 
   }
   )
   

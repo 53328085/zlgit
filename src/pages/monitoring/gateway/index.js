@@ -280,7 +280,6 @@ export default function Index(props) {
                     placeholder="输入网关编号/安装地址"
                     style={{ width: "340px" }}
                     allowClear
-                    enterButton="查询"
                     onSearch={submit}
                   />
                 </Form.Item>

@@ -4,12 +4,14 @@ import { Button, Dropdown, Menu, Upload, Typography } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const {Link} = Typography
-const Custbtn = styled(Button)`
+const Custbtn = styled(Button).attrs({
+  type: "primary"
+})`
   && {
     width: ${props => props.wh || '96px'};
     height: 32px;
-    background: #237ae4;
-    border-color: #237ae4;
+   // background: #237ae4;
+  //  border-color: #237ae4;
     border-radius: 2px;
     color: #fff;
     padding: 8px;
@@ -19,19 +21,19 @@ const Custbtn = styled(Button)`
     justify-content: center;
   }
   &&:hover {
-    background-color: #4f95ea;
-    border-color: #4f95ea;
-    color: #fff;
+   // background-color: #4f95ea;
+  //  border-color: #4f95ea;
+  //  color: #fff;
   }
   &&:active,
   &&:focus {
-    background-color: #1c62b7;
-    border-color: #1c62b7;
-    color: #fff;
+  //  background-color: #1c62b7;
+  //  border-color: #1c62b7;
+  //  color: #fff;
   }
   &&[disabled] {
-    background-color: #C8C9CC;
-    border-color: #C8C9CC;
+   // background-color: #C8C9CC;
+   // border-color: #C8C9CC;
   }
   img {
     height: ${props => props.imgh || '16px'}; 

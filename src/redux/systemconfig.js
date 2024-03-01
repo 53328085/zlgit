@@ -59,7 +59,9 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
 const initialState = {
     siteConfig: antdconfig,
-    themeColor: '#237AE4',
+    themeColor:  {
+      primaryColor: '#237AE4'
+    },
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -228,7 +230,8 @@ const system = createSlice({
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
         getThemeColor(state, {payload}) {
-           state.themeColor = payload || "#237AE4";
+           console.log(payload)
+           state.themeColor = payload;
           
         },
         getRoomId(state,{payload}){

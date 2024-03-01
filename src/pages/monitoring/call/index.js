@@ -323,7 +323,7 @@ let dataProps = {
                         </Item>
                        
                         <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
-                            <Serach placeholder='请输入设备编号/安装地址' allowClear  size='middle' enterButton="查询" onSearch={submit} /> 
+                            <Serach placeholder='请输入设备编号/安装地址'  style={{width: '370px'}}  size='middle'   onSearch={submit} /> 
                              
                         </Item>
                         

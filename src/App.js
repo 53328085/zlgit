@@ -25,13 +25,13 @@ function App() {
   }
   ConfigProvider.config({
     theme: {
-      primaryColor: "#237ae4"
+      primaryColor: primaryColor || "#237ae4"
     }
   }
   )
  
   return   (
-    <CustConfig>
+ <CustConfig> 
     <ErrorBoundary>
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  
@@ -40,7 +40,7 @@ function App() {
     </Suspense>  
     </BrowserRouter>
     </ErrorBoundary>
-    </CustConfig>
+  </CustConfig> 
     ) 
   
 

@@ -403,8 +403,10 @@ export const Logbtn = styled(Button)`
   }
 `;
  
-
-export const Serach = styled(Input.Search)`   // 运行监控 运行态
+export const Serach =(props) => {
+  return <Input.Search {...props} allowClear enterButton={<Button style={{width: '80px'}}>查询</Button>} />
+}
+/* export const Serach = styled(Input.Search)`    
  && {
   border-radius: 4px;
   overflow: hidden;
@@ -460,7 +462,7 @@ export const Serach = styled(Input.Search)`   // 运行监控 运行态
     -webkit-text-fill-color: #999 !important;
 　　transition: background-color 5000s ease-in-out 0s !important;
   }
-`
+` */
  
   export const Cspin =  (props) => {
 

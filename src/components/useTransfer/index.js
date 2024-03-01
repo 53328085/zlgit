@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
 import { Table, Input, message, Descriptions, Divider} from "antd";
+ 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import Mask from '../mask'
@@ -339,7 +340,7 @@ export default function index (props) {
                     ></Search>
                 </div>
                 <div className={style.mainContent}>
-                    <Table bordered dataSource={unknownData} columns={columns}  rowKey='id' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
+                    <Table bordered dataSource={unknownData} columns={columns}  rowKey='id'  y={500} rowSelection={rowSelection}></Table>
                 </div>
             </div>
         </div>

@@ -310,7 +310,7 @@ week.forEach(w => {
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Serach placeholder='请输入策略名称'   allowClear onSearch={submit} enterButton="查询" />
+              <Serach placeholder='请输入策略名称' style={{width: '370px'}}   allowClear onSearch={submit} enterButton="查询" />
              </Item>
            </Space>
           
