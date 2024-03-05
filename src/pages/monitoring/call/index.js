@@ -8,7 +8,7 @@ import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
 import { selectProjectId, selectOneLevelDefaultId, deviceStyle } from '@redux/systemconfig.js'
- 
+import {CustButton} from '@com/useButton'
 import CModal from '@com/useModal'
 import {Serach, Cdivider} from "@com/comstyled"
 
@@ -328,7 +328,8 @@ let dataProps = {
                         </Item>
                         
                          <Item> 
-                        <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff',borderRadius:2 }} onClick={() => { changeReadout() }}>实时抄读</Button>
+                          <CustButton onClick={changeReadout}>实时抄读</CustButton>
+                       {/*  <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff',borderRadius:2 }} onClick={() => { changeReadout() }}>实时抄读</Button> */}
                          </Item>
                         </Space>
                     </Form>

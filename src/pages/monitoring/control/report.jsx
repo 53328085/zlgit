@@ -5,7 +5,7 @@ import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/titlelayout'
+ 
 import Usetable from '@com/useTable'
 import {RunAutoValve} from '@api/api'
 import {Serach, Cdivider} from "@com/comstyled"

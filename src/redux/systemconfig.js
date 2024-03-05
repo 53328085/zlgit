@@ -5,6 +5,7 @@ import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
  
+ 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
@@ -231,7 +232,7 @@ const system = createSlice({
          },
         getThemeColor(state, {payload}) {
            console.log(payload)
-           state.themeColor = payload;
+           state.themeColor =payload;
           
         },
         getRoomId(state,{payload}){

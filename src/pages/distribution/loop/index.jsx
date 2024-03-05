@@ -1,18 +1,22 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import style from './style.module.less'
-import { Select, Button, DatePicker, Form, Divider, message,Table } from 'antd'
+import { Typography, message,Space } from 'antd'
 import { SyncOutlined, UploadOutlined, RollbackOutlined, SearchOutlined } from '@ant-design/icons';
 import LoopSelect from './loopSelect'
 import ContentTable from './contentTable';
 import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
-import BlueColumn from '@com/bluecolumn'
+import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import { selectcurlRommid } from "@redux/systemconfig";
-import {Link} from 'react-router-dom'
-import {ExportExcel} from '@com/useButton'
+//import {Link} from 'react-router-dom'
+import {ExportExcel, RefreshButton} from '@com/useButton'
 import styled from 'styled-components';
+import Titlelayout from '@com/titlelayout'
 const WrapTable = styled.div`
+ display: flex;
+ flex: 1;
+ padding-top: 16px;
 .ant-table{
     .ant-table-scroll {
       .ant-table-hide-scrollbar {
@@ -22,6 +26,7 @@ const WrapTable = styled.div`
 }
    
 `
+const {Link} = Typography
 export default function Index() {
    
     
@@ -30,6 +35,7 @@ export default function Index() {
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()
+    const time = moment().format("YYYY-MM-DD hh:mm:ss")
     const columns = [
         {
             title: '回路名称',
@@ -46,7 +52,7 @@ export default function Index() {
             title:"设备编号",
             dataIndex:'sn',
             width:160,
-            render: (text, record) => <Link style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }} target="blank" to={`/deviceDetail?sn=${record.sn}`}>{text}</Link>
+            render: (text, record) => <Link underline  target="blank" href={`/deviceDetail?sn=${record.sn}`}>{text}</Link>
         },{
             title: '电压',
             children: [
@@ -160,17 +166,16 @@ export default function Index() {
         <div>
             <div className={style.content}>
                 <LoopSelect   projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
-                <div className={style.contentRight}>
-                    <div className={style.contentheader} key="d">
-                        <BlueColumn name="详细参数"/>
-                        <div className={style.buttonList}>
-                            <span style={{paddingRight:40,fontSize:16}}>参量采集时间 : 2020-09-03 09:35:21</span>
-                            <Button className='refresh' type='primary' icon={<SyncOutlined />} onClick={refresh}>刷新</Button>
-                            {/* <Button className='headerButton' type='primary' icon={<UploadOutlined />} >导出</Button> */}
-                            <ExportExcel tb={tableRef}/>
-                        </div>
-                    </div>
-                    <div style={{height:16}} key="e"></div>
+                <Titlelayout title={<div style={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
+                    <span>详细参数</span>
+                    <Space size={4}>
+                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 : {time}</span>
+                        <RefreshButton onClick={refresh}>刷新</RefreshButton>
+                        <ExportExcel tb={tableRef}/>
+                    </Space>
+                </div>}>
+                     
+                    
                     <WrapTable>
                     <ContentTable  
                     columns={columns} 
@@ -185,7 +190,7 @@ export default function Index() {
                     </WrapTable>
                    
                  
-                </div>
+                </Titlelayout>
             </div>
         </div>
     )

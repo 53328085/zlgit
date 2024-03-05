@@ -1,5 +1,5 @@
 import React, { useState, useRef ,useMemo, useEffect } from 'react'
-import { Select ,Form,Divider,DatePicker,Radio, Button, message } from 'antd'
+import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
 import { selectcurlRommid } from "@redux/systemconfig";
@@ -9,13 +9,13 @@ import UseTable from '@com/useTable'
 import { columns } from './columns'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { drawEcharts } from "@com/useEcharts"
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import  imgurl from '@imgs'
 import moment from 'moment'
 import {utils, writeFile} from 'xlsx'
- 
+import Titlelayout from '@com/titlelayout' 
 
 const MainDiv =styled.div`
 background-color: #fff;
@@ -254,7 +254,7 @@ export default function Index() {
           ...it,
         }
       })
-      console.log(data)
+     
       setTabs(data)
     }else{
       setTabs([])
@@ -276,7 +276,7 @@ export default function Index() {
         message.error('请选择日期！')
       }
      
-      console.log(startTime)
+     
    
    
     let params = {
@@ -464,35 +464,35 @@ export default function Index() {
              <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable>
              </div>
              <Divider dashed style={{borderColor:"#e4e4e4"}}></Divider>
-             <div className="datastyle">
-               <div className="filters">
-                 <div className='title'>
-                 <BlueColumn  name="数据趋势" styled={{fontSize: '16px'}}></BlueColumn>
-                 {
-                     pattern===1?<Select 
-                     style={{width:180,marginLeft:32}} 
-                     options={opts} 
-                     value={type} 
-                     onChange={setType}></Select>:null
-                 }
-                 </div>
-                 <div className='filterdate'>
-                   <DatePicker.RangePicker
-                   value={timeRanger} 
-                   format="YYYY-MM-DD" 
-                   onChange={changeTime}
-                   onCalendarChange={(time)=>{setDisableDate(time)}}
-                   onOpenChange={onOpenChange}
-                   disabledDate={disabledDate}
-                   ></DatePicker.RangePicker>
-                   <Button onClick={search}>查询</Button> 
-                   <Button onClick={exportData}>导出</Button>
-                       <Radio.Group defaultValue={pattern}   buttonStyle="solid" onChange={changeRadio}>
-                         <Radio.Button value={1}>趋势模式</Radio.Button>
-                         <Radio.Button value={2}>列表模式</Radio.Button>
-                       </Radio.Group>
-                 </div>
-               </div>
+             <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
+               <span>数据趋势</span>
+               <Space size={16}>
+                
+            {
+                pattern===1?<Select 
+                style={{width:180,marginLeft:32}} 
+                options={opts} 
+                value={type} 
+                onChange={setType}></Select>:null
+            }
+          
+              <DatePicker.RangePicker
+              value={timeRanger} 
+              format="YYYY-MM-DD" 
+              onChange={changeTime}
+              onCalendarChange={(time)=>{setDisableDate(time)}}
+              onOpenChange={onOpenChange}
+              disabledDate={disabledDate}
+              ></DatePicker.RangePicker>
+              <Button onClick={search}>查询</Button> 
+              <Button onClick={exportData}>导出</Button>
+                  <Radio.Group defaultValue={pattern}   buttonStyle="solid" onChange={changeRadio}>
+                    <Radio.Button value={1}>趋势模式</Radio.Button>
+                    <Radio.Button value={2}>列表模式</Radio.Button>
+                  </Radio.Group>
+          </Space>
+             </div>} layout="flex" pv="0" bordered="n">
+              <div style={{flex: 1, paddingTop: "16px", display: 'flex'}}>
                {
                  pattern===1?(<div ref={chartRef} style={{flex: 1}}></div>):
                  ( <UseTable 
@@ -505,7 +505,8 @@ export default function Index() {
                   ref={tableRef}
                   ></UseTable>)
                }
-             </div>
+               </div>
+             </Titlelayout>
             </MainDiv>
          </Pagecount>
          </CustContext.Provider>

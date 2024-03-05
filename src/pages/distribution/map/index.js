@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectcurlRommid } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
-import {Button, Select, message, Spin } from 'antd'
+import {Select, message, Spin, Space } from 'antd'
 import { useReactive } from "ahooks";
 import {useNavigate} from 'react-router-dom'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
@@ -26,6 +26,7 @@ import '../../../assets/css/font_g4v09lxfde/iconfont.css'
 import '../../../assets/css/font_bz4csze2alg/iconfont.css'
 
 const { Option } = Select;
+import {CustButton} from '@com/useButton'
 export default function Index() {
   const ChartItem = styled.div`
     position: absolute;
@@ -340,11 +341,12 @@ export default function Index() {
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
         <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
           <ChartItem>
+            <Space size={16}>
             {state.chartList.map((item, index) => {
-              return <div className={`chartitem ${state.activeChart == item.id ? 'activeItem' : ''}`} key={index} onClick={() => changeChart(item.id)}>{item.name}</div>
+              return <CustButton type={state.activeChart == item.id ? 'primary' : 'text'} wh="112px" style={{borderColor: "#fff"}} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
             })}
-          
-           {(state.chartList?.length > 0) && <Button type="primary" style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</Button>}
+           </Space>
+           {(state.chartList?.length > 0) && <CustButton   style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
           </ChartItem>
          
         </div>

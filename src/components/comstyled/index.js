@@ -5,8 +5,10 @@
  */
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
+
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
+const $color= '#237AE4'
 export const Ipticon = styled.span`
   display: inline-block;
   width: 32px;
@@ -263,7 +265,13 @@ export const Cradiogroup = styled(Radio.Group)`
  
  }
 `
-
+export const Borderleft = styled.div`
+   display: flex;
+   height: 32px;
+   align-items: center;
+   padding-left: 16px;
+   border-left: 4px solid ${props => props.theme.primaryColor};
+`
 export const Itembox = styled(Item)`
  
   .ant-input-affix-wrapper-lg {
@@ -281,12 +289,12 @@ export const Logipt = styled(Input)`
   }
   &:focus,
   &:hover {
-    border-color: #1f83fe !important;
+    border-color: ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #1f83fe;
+      color: ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};;
     }
   }
   && {
@@ -392,13 +400,12 @@ export const Logpsd = styled(Input.Password)`
 `;
 
 export const Logbtn = styled(Button)`
-  border-color: #0e2db3;
-  background-color: #0e2db3;
+  border-color: rgba(0,102,204,1);
+  background-color: rgba(0,51,255,0.6);
   font-size: 18px;
   color: #fff;
-  &:hover, &:active, &:focus {
-    border-color: #0728ae;
-    background-color: #0728ae;
+  &:hover, &:active, &:focus {   
+    background-color:  rgba(0,51,255,0.8);
     color: #fff;
   }
 `;

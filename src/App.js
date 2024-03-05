@@ -1,6 +1,7 @@
 import React, {Suspense} from 'react'
 import {BrowserRouter} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import {ThemeProvider} from 'styled-components'
 import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
@@ -16,7 +17,8 @@ import {ConfigProvider} from 'antd'
 import {themeColor} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 function App() {
-  const primaryColor = useSelector(themeColor)
+  const theme = useSelector(themeColor)
+  console.log(theme)
   const config = {
     csp: {
       nonce: 'YourNonceCode'
@@ -25,13 +27,14 @@ function App() {
   }
   ConfigProvider.config({
     theme: {
-      primaryColor: primaryColor || "#237ae4"
+      primaryColor: theme.primaryColor,
     }
   }
   )
  
   return   (
  <CustConfig> 
+    <ThemeProvider theme={theme}>
     <ErrorBoundary>
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  
@@ -40,6 +43,7 @@ function App() {
     </Suspense>  
     </BrowserRouter>
     </ErrorBoundary>
+    </ThemeProvider>
   </CustConfig> 
     ) 
   

@@ -90,7 +90,7 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
                enchtitle
             })
             dispatch(getSystemconfiginfo(data)) 
-            dispatch(getThemeColor(data.themeColor))
+           // dispatch(getThemeColor(data.themeColor)) 主题色不正确
        }else {
             dispatch(getSystemconfiginfo({}))
        }

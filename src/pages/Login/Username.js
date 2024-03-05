@@ -112,12 +112,14 @@ export default memo(function({onSubmit}){
             },  
           ]}
         >
-          <Logpsd
+
+       
+         <Logpsd
             prefix={<Ipticon />}
             url={imgurl.pwd}
             aurl={imgurl.pwda}
             placeholder="请输入密码"
-          />
+          />  
         </Itembox>
        
         

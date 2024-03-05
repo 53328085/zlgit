@@ -8,7 +8,7 @@ import { useAntdTable, usePagination } from 'ahooks'
 import BlueColumn from '@com/bluecolumn'
 import {warnDetail} from '@api/api'
 import moment from 'moment';
-
+import Titlelayout from '@com/titlelayout'
 const { Search } = Input;
 const {RangePicker } = DatePicker
 export default function Warncontent({ style,form, areaId }) {
@@ -134,10 +134,9 @@ export default function Warncontent({ style,form, areaId }) {
     },[areaId])
 
     return (
-        <div className={style.WarnContent}>
-            <div className={style.SearchContent}>
-                <BlueColumn name="告警信息" />
-                <Form 
+        <Titlelayout title={<div style={{display: 'flex', alignItems: 'center',justifyContent: 'space-between'}} layout="flex">
+            <span>告警信息</span>
+            <Form 
                  layout="inline"
                  colon={false}
                  form={warnform}
@@ -176,10 +175,9 @@ export default function Warncontent({ style,form, areaId }) {
                     <DatePicker  style={{width:160}} picker={type===0?'date':type===1?'month':'year'} onChange={changeDate}></DatePicker>
                     </Form.Item> */}
                 </Form>
-            </div>
-         
-            <div style={{ marginTop: 16,minHeight:650,display:'flex',flexDirection:'column' }}>
-            <Divider  dashed style={{borderColor:'#d7d7d7',margin:' 16px 0'}}></Divider>
+        </div>}>
+            <div style={{display:'flex', flex: 1, flexDirection:'column' }}>
+               <Divider  dashed style={{borderColor:'#d7d7d7',margin:' 16px 0'}}></Divider>
                 <UserTable 
                 columns={columns} 
                 dataSource ={tabledata}   
@@ -189,6 +187,6 @@ export default function Warncontent({ style,form, areaId }) {
                 ></UserTable>
             </div>
 
-        </div>
+        </Titlelayout>
     )
 }

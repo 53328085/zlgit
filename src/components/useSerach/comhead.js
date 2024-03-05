@@ -12,6 +12,7 @@ import {Cdivider, Radiogroup} from '@com/comstyled'
 import CustContext from "@com/content";
 
 import Enery from "./enery";
+
 const Cform = styled(Form)`
     background: #fff;
     padding: 7px 16px;
@@ -30,6 +31,11 @@ const Cform = styled(Form)`
 
 const { Item } = Form;
 
+
+
+
+
+
 export const AreaSelect = ({value, onChange, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
    return (
@@ -43,15 +49,17 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   const {config={}} = props
-  const themcolor = useSelector(themeColor)
+  const themcolor = useSelector(themeColor)   
+  console.log(themcolor)
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
   const onColorChange = (e) => {
+       let val = e.target.value;
+       setColor(val)
+       
+       dispatch(getThemeColor({primaryColor: val}))
     
-       let val = e.target.value
-      setColor(val)
-      dispatch(getThemeColor({primaryColor: val}))
      /*  ConfigProvider.config({
         theme: {
           primaryColor: val
