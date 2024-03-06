@@ -25,20 +25,20 @@ const CDrawer = styled(Drawer)`
   }
   .ant-drawer-title {
     padding-left: 16px;
-    border-left: 4px solid #2828a4 ;
+    border-left: 4px solid ${props => props.theme.primaryColor} ;
     color: #2a2f55;
     font-size: 16px;
   }
-  .ant-table-container .ant-table-content .ant-table-thead {
+ .ant-table-container .ant-table-content .ant-table-thead {
     
-     tr>th{
-        background-color: #237ae4;
-        color: #fff;
-        height: 32px;
-        padding: 0;
-      }
-     
-  }
+    tr>th{
+       background-color: ${props => props.theme.primaryColor};
+       color: #fff;
+       height: 32px;
+       padding: 0;
+     }
+    
+ }
 }`
 const Mainbox = styled.div`
     && {
@@ -86,69 +86,33 @@ const P = styled(Paragraph)`
 const controlcolumns = [
   {
       title: '序号',
-      dataIndex: 'index',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'index', 
       align: 'center',
       render: (text, recoder, index) => <span>{index + 1}</span>
   },
   {
       title: '设备编号',
-      dataIndex: 'sn',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'sn',     
       align: 'center'
   },
   {
     title: '设备名称',
-    dataIndex: 'name',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'name',   
     align: 'center'
    },
    {
     title: '设备型号',
-    dataIndex: 'category',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'category',   
     align: 'center'
    },
    {
     title: '安装地址',
-    dataIndex: 'address',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'address',   
     align: 'center'
    },
    {
     title: '设备状态',
-    dataIndex: 'status',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'status',   
     align: 'center',
     render: (text) => {     
       return  Number(text) === 1 ? "开闸" : "合闸"
@@ -157,13 +121,7 @@ const controlcolumns = [
   },
   {
     title: '策略是否启用',
-    dataIndex: 'enabled',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'enabled',   
     align: 'center',
     render: (text) => {
       console.log(text)
@@ -337,7 +295,7 @@ week.forEach(w => {
        >    
        <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
        <div style={{flex: 1, backgroundColor: "#fff"}}>
-       <Usetable columns={controlcolumns}  dataSource={viewtb}   rowKey={nanoid()}  scroll={{
+       <Usetable columns={controlcolumns}  dataSource={viewtb} istheme="y"  rowKey={nanoid()}  scroll={{
             y: 867
           }}   />  
        </div>

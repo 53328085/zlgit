@@ -41,6 +41,10 @@ const Boxdiv = styled(Card)`
   padding: 0;
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
+  & .flex {
+    display: flex;
+    flex: 1;
+  }
  }
 `
 Boxdiv.defaultProps = {

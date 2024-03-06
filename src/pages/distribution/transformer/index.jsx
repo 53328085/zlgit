@@ -14,7 +14,7 @@ import { drawEcharts } from "@com/useEcharts"
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import  imgurl from '@imgs'
 import moment from 'moment'
-import {utils, writeFile} from 'xlsx'
+ 
 import Titlelayout from '@com/titlelayout' 
 
 const MainDiv =styled.div`
@@ -360,17 +360,7 @@ export default function Index() {
       console.log(error)
     }
   }
-  //数据导出函数
- function exportExcelFile(array, sheetName = 'sheet1', fileName = 'example.xlsx') {
-  const jsonWorkSheet = utils.json_to_sheet(array);
-  const workBook = {
-    SheetNames: [sheetName],
-    Sheets: {
-      [sheetName]: jsonWorkSheet,
-    }
-  };
-  return writeFile(workBook, fileName);
-}
+ 
   //导出echarts
    //导出图片
   const Export = () => {

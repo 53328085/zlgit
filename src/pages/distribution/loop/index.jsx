@@ -13,6 +13,8 @@ import { selectcurlRommid } from "@redux/systemconfig";
 import {ExportExcel, RefreshButton} from '@com/useButton'
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout'
+import Pagecount from '@com/pagecontent' 
+import UseTable from '@com/useTable'
 const WrapTable = styled.div`
  display: flex;
  flex: 1;
@@ -155,7 +157,7 @@ export default function Index() {
         }
     }
     const refresh=()=>{
-        console.log(selectRef.current.selectedKeys)
+        
         getLinePoint(roomId,selectRef.current.selectedKeys)
     }
     useEffect(()=>{
@@ -163,35 +165,31 @@ export default function Index() {
     },[roomId])
 
     return (
-        <div>
+        <Pagecount bgcolor="transparent" pd="0">
             <div className={style.content}>
                 <LoopSelect   projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 <Titlelayout title={<div style={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>详细参数</span>
                     <Space size={4}>
-                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 : {time}</span>
+                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
                         <RefreshButton onClick={refresh}>刷新</RefreshButton>
                         <ExportExcel tb={tableRef}/>
                     </Space>
-                </div>}>
-                     
-                    
-                    <WrapTable>
-                    <ContentTable  
+                </div>} layout="flex">
+                     <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
+                    <UseTable  
                     columns={columns} 
-                    tableData={tableData} 
-                    tableRef={tableRef} 
+                    dataSource={tableData} 
+                    ref={tableRef} 
                     onExport={onExport}
-                    height={
-                      630
+                    scroll={{
+                        y:630
+                    }
                       }
-                    ></ContentTable>
-                 
-                    </WrapTable>
-                   
-                 
+                    ></UseTable>
+                 </div>                 
                 </Titlelayout>
             </div>
-        </div>
+        </Pagecount>
     )
 }

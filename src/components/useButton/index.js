@@ -154,9 +154,9 @@ export function SaveButton() {
     </Custbtn>
   );
 }
-export function SerachButton() {
+export function SerachButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.serach} />
       查询
     </Custbtn>

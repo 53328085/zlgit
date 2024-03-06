@@ -65,6 +65,11 @@ const PageContentMain = styled.div`
           
     }}; */
     overflow-y: auto;
+    & .flexcol {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
 `
 
 PageContentMain.defaultProps = {

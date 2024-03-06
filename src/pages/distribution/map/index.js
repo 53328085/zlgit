@@ -9,6 +9,7 @@ import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.
 import styled from 'styled-components';
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
+import {Cspin} from '@com/comstyled'
 import mqtt from 'mqtt'
 
 // 左侧工具栏图标
@@ -30,12 +31,12 @@ import {CustButton} from '@com/useButton'
 export default function Index() {
   const ChartItem = styled.div`
     position: absolute;
-    left: 32px;
+    
     top: 32px;
     display: flex;
     align-items: center;
-    width: 1616px;
-    padding-right: 32px;
+    width: 100%;
+    padding: 0 64px;
     .chartitem{
       width: 112px;
       height: 36px;
@@ -337,20 +338,20 @@ export default function Index() {
  }, [])
 
   return (
-    <Spin spinning={state.spining} tip="Loading...">
-      <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
-        <div id="topology-canvas" style={{ position: 'relative', width: 1680, height: 800, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
+    <Cspin spinning={state.spining} tip="Loading...">
+      <div  style={{backgroundColor: "#eeeff3", flex: 1, display: 'flex'}}>
+        <div id="topology-canvas" style={{ position: 'relative', flex:1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
           <ChartItem>
             <Space size={16}>
             {state.chartList.map((item, index) => {
-              return <CustButton type={state.activeChart == item.id ? 'primary' : 'text'} wh="112px" style={{borderColor: "#fff"}} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
+              return <CustButton ghost={state.activeChart == item.id ? false : true} wh="112px" style={{borderColor: "#fff"}} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
             })}
            </Space>
            {(state.chartList?.length > 0) && <CustButton   style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
           </ChartItem>
          
         </div>
-      </Pagecount>
-    </Spin>
+      </div>
+    </Cspin>
   )
 }

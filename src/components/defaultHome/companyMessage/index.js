@@ -2,28 +2,26 @@ import React, { useState,useEffect } from 'react'
  
 import styled from 'styled-components';
 import companyImg from './company.png'
+import Titlelayout from '@com/titlelayout' 
+import { Borderleft} from "@com/comstyled"
  
-import { message } from 'antd';
-
+ 
 const MainBox = styled.div`
-width: 450px;
-height: 200px;
-background-color: #fff;
-border-radius: 4px;
-padding: 16px;
-display: flex;
-align-items: center;
-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
+//width: 450px;
+//height: 200px;
+//background-color: #fff;
+//border-radius: 4px;
+//padding: 16px;
+display: grid;
+grid-template-columns: min-content 1fr;
+gap: 8px;
+align-items: stretch;
+ flex: 1;
+//box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
 .company{
   width: 188px;
   height: 100%;
-  .headerTitle{
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
-    padding-left: 16px;
-    border-left: 4px solid #237ae4;
-  }
+   
   .dataItem{
     display: flex;
     align-items: center;
@@ -41,11 +39,15 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
       margin-right: 16px;
     }
     .items{
-      width: 150px;
+      //width: 150px;
       line-height: 16px;
     }
   }
+  
 }
+.img {
+    width: 100%;
+  }
 `
 
 export default function DefaultHome(props) {
@@ -71,9 +73,10 @@ export default function DefaultHome(props) {
 }, [currproject, type])
  
   return (
+    <Titlelayout layout="flex" shadow="y" style={{height: "200px"}}>
     <MainBox>
       <div className='company'>
-        <div className='headerTitle'>{state.projectName}</div>
+        <Borderleft>{state.projectName}</Borderleft>
         <div className='dataItem'>
           <div className='square' style={{ backgroundColor: '#237ae4' }}></div>
           <div className='items'>测点数量： {state.deviceNum}</div>
@@ -91,9 +94,9 @@ export default function DefaultHome(props) {
           <div className='items'>{state.address}</div>
         </div>
       </div>
-      <img src={ state.projectImage ? state.projectImage : companyImg} style={{ width: 240, height: 168 }}></img>
+      <img src={ state.projectImage ? state.projectImage : companyImg}  className='img'></img>
     </MainBox>
-
+    </Titlelayout>
 
   )
 }

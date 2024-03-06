@@ -179,6 +179,7 @@ export default function Index(props) {
   })
   const getOverviewData = ({ current, pageSize }, formData) => {
     //设备统计
+    if(!(isFinite(areaId) && isFinite(projectId))) return;
     let { category, alike, state } = formData;
     params.current ={
       projectId,

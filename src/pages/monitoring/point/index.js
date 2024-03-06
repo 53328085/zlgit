@@ -155,6 +155,7 @@ export default function Index(props) {
   let initparams = useRef();
   console.log(initparams)
   const getOverviewData = ({ current, pageSize }, formData) => {
+    if(!(isFinite(areaId) && isFinite(projectId))) return
     initparams.current = {
       projectId,
       areaId,
@@ -282,7 +283,7 @@ export default function Index(props) {
   };
   return (
     <Pagecount>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div className="flexcol">
         <Form
           layout="line"
           form={form}
