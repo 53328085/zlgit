@@ -36,10 +36,10 @@ const Mainbox = styled.div`
   color: #515151;
   grid-template-rows: 48px 176px 304px 267px;
   row-gap: 16px;
-  justify-content: flex-end;
+   
+  flex: 1;
 
-  .header {
-    width: 1680px;
+  .header { 
     height: 48px;
     background-color: #fff;
     border-radius: 4px;
@@ -74,7 +74,7 @@ const Mainbox = styled.div`
       .imgBox {
         width: 144px;
         height: 88px;
-        background-color: #237ae4;
+        background-color: ${props => props.theme.primaryColor};
         display: flex;
         align-items: center;
         justify-content: center;

@@ -14,7 +14,7 @@ const Mainbox = styled.div`
   color: #515151;
   grid-template-rows: 184px 280px 304px;
   row-gap: 16px;
-  justify-content: flex-end;
+  flex: 1;
   .upper {
     display: grid;
     grid-template-columns: 332px 1348px;

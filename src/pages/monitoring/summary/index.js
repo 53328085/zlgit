@@ -12,6 +12,7 @@ import Titlelayout from '@com/titlelayout';
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
 const CardList = styled.div`
+   
      display: grid;
     grid-template-columns: repeat(4, 404px);
     grid-template-rows: repeat(2, 124px);

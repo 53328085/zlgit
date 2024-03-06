@@ -134,7 +134,7 @@ export default function Warncontent({ style,form, areaId }) {
     },[areaId])
 
     return (
-        <Titlelayout title={<div style={{display: 'flex', alignItems: 'center',justifyContent: 'space-between'}} layout="flex">
+        <Titlelayout layout="flex" title={<div style={{display: 'flex', alignItems: 'center',justifyContent: 'space-between'}} >
             <span>告警信息</span>
             <Form 
                  layout="inline"
@@ -184,6 +184,7 @@ export default function Warncontent({ style,form, areaId }) {
                 pagination={tableParams} 
                 onChange={changePage}
                 className={style.tbheight}
+                hbg="#f4f8ff"
                 ></UserTable>
             </div>
 

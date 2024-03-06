@@ -24,7 +24,7 @@ flex-direction: column;
     .ant-table-thead{
       .ant-table-cell {
         padding: 4px 4px;
-        background-color: ${props => props.istheme ? props.theme.primaryColor : ''};
+        background-color: ${props => props.istheme ? props.theme.primaryColor : props.hbg};
         color: ${props => props.istheme ? '#fff' : ''};
       }
     }

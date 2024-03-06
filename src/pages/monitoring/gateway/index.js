@@ -24,6 +24,7 @@ const Mainbxox = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
+    
   }
 
 `
@@ -256,7 +257,7 @@ export default function Index(props) {
  }
   return (
     <Pagecount>
-        <Mainbxox>
+        <div className="flexcol">
        
           <Form
             layout="line"
@@ -402,7 +403,7 @@ export default function Index(props) {
           </div>
         )}
      { isCard && <Pagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}  showTotal={showTotal}  {...tableProps.pagination} showSizeChanger={false}/>  }
-      </Mainbxox>
+      </div>
     </Pagecount>
   );
 }

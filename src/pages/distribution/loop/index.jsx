@@ -15,19 +15,7 @@ import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent' 
 import UseTable from '@com/useTable'
-const WrapTable = styled.div`
- display: flex;
- flex: 1;
- padding-top: 16px;
-.ant-table{
-    .ant-table-scroll {
-      .ant-table-hide-scrollbar {
-        overflow-y: auto !important;
-      }
-    }
-}
-   
-`
+ 
 const {Link} = Typography
 export default function Index() {
    
@@ -177,7 +165,8 @@ export default function Index() {
                     </Space>
                 </div>} layout="flex">
                      <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
-                    <UseTable  
+                    <UseTable 
+                    hbg="#f0f9ff" 
                     columns={columns} 
                     dataSource={tableData} 
                     ref={tableRef} 
