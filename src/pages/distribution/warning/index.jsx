@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import style from './style.module.less'
-import { Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions, Tag, Divider, message } from 'antd'
+import { Image, Form, Space, Button, Input, Select, DatePicker,   Divider, message } from 'antd'
 import { useAntdTable, useSetState } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
 import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
@@ -12,6 +12,8 @@ import { OperationLogRuntime, distributionRoom, DistributionRoomRuntime } from '
 import { ExportExcel } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useLocation,Link  } from 'react-router-dom'
+import {Serach, Cdivider, Borderleft} from "@com/comstyled"
+import Pagecount from "@com/pagecontent";
 const { Item } = Form
 const { RangePicker } = DatePicker;
 const Mainbox = styled.div`
@@ -34,11 +36,7 @@ const Mainbox = styled.div`
             align-items: center;
 
         }
-        .ant-table-thead {
-            tr:first-of-type th {
-              background-color: #f0f9ff;
-            }
-        }
+     
         .ant-form-inline {
           .ant-form-item {
             margin-right: 0;
@@ -204,7 +202,7 @@ export default  function Index() {
   }, [roomId,level,JSON.stringify(pageInfo) ])
 
   return (
-    <div>
+    <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>       
         <Titlelayout title="告警列表" layout="flex">
           <div className='content'>
@@ -212,7 +210,7 @@ export default  function Index() {
               type: 0,
               time: [moment().subtract(7, 'day'), moment()]
             }}>
-              <Space size={32}>               
+              <Space size={64} split={<Cdivider />}>               
                 <Item label="告警等级" name="type">
                   <Select options={[
                     { label: '全部告警', value: 0 },
@@ -225,7 +223,7 @@ export default  function Index() {
                     onChange={changeLevel}
                   ></Select>
                 </Item>
-                <Divider style={{ margin: '0', height: '32px' }} type="vertical" />
+                
                 <Item label="告警时间" name="time" >
                   <RangePicker onChange={changeTime} format="YYYY-MM-DD" style={{ width: '320px' }} disabledDate={disabledDate}/>
                 </Item>
@@ -235,8 +233,9 @@ export default  function Index() {
               </Item> */}
             </Form>
 
-            <Divider style={{ margin: '0px' }} />
+            <Cdivider type="h" margin="0" />
             <Usetable 
+            hbg="#f0f9ff"
             columns={columns} 
             ref={tableref} 
             rowKey={nanoid()} 
@@ -254,7 +253,7 @@ export default  function Index() {
           </div>
         </Titlelayout>
       </Mainbox>
-      </div>
+      </Pagecount>
   )
 }
  

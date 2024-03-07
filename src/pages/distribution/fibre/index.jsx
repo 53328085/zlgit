@@ -14,6 +14,8 @@ import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 
 import moment from 'moment';
+import Titlelayout from '@com/titlelayout'
+import Pagecount from "@com/pagecontent";
 const {Paragraph} = Typography
 
 const Pt = styled(Paragraph)`
@@ -22,9 +24,10 @@ const Pt = styled(Paragraph)`
   }
 `
 const WrapDiv = styled.div`
+ flex: 1;
   display: grid;
   gap: 16px;
-  grid-template-columns: 1336px 323px;
+  grid-template-columns: 1fr 323px;
   grid-template-rows: 352px 432px;
   grid-template-areas:
   "a c"
@@ -49,15 +52,13 @@ const WrapDiv = styled.div`
     .overy{
       height: 290px;
       overflow-y: auto;
+      padding-top: 16px;
       .fiberarea{
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(9,136px);
-      grid-auto-rows: 64px;
-    //  grid-template-rows: repeat(auto-fit,64px) ;
-       padding-top: 16px;
-       justify-content: center;
-       padding-bottom: 4px;
+    //  display: grid;
+    display: flex;
+    flex-wrap: wrap;
+       gap: 8px; 
+       padding: 4px ; 
       .box{
         background-color: #ecf5ff;
         color: #333;
@@ -67,6 +68,8 @@ const WrapDiv = styled.div`
         align-items: center;
         justify-content: center;         
         padding: 4px;
+        width: 136px;
+        height: 64px;
         cursor: pointer;
       }
       .normal {
@@ -106,7 +109,7 @@ const WrapDiv = styled.div`
         }
     }
     .content{
-      margin: 16px 0;
+      padding-top: 16px;
       display: flex;
       .status{
       border: 1px solid #d7d7d7;
@@ -457,7 +460,8 @@ export default function Index() {
     
   },[])
   return (
-    <div>
+    <Pagecount bgcolor="transparent" pd="0">
+    <div className='flexcol griditem1'>
      {/*  <UseHead 
       QueryFibreTempilPartitions={QueryFibreTempilPartitions} 
       active={active} 
@@ -469,8 +473,8 @@ export default function Index() {
       ref={headRef}
       /> */}
       <WrapDiv>
-        <div className='griditem griditem1'>
-          <BlueColumn name="光纤测温分区" />
+        <Titlelayout title="光纤测温分区" layout="flex" className="griditem1" >
+          
           <div className='overy'>
             <div className='fiberarea'>
             {
@@ -492,15 +496,14 @@ export default function Index() {
             </div>
           </div>
           
-        </div>
-        <div className='griditem griditem2'>
-          <div className='head'>
-            <BlueColumn name={activename} />
-            <div className='headtime'>
-              <span className='headtime time'><img src={time} alt="" /> 更新时间： </span>
+        </Titlelayout>
+        <Titlelayout className='griditem2' title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <span>{activename}</span>
+             <div className='headtime'>
+               <span className='headtime time'><img src={time} alt="" /> 更新时间： </span>
               <span>{channelInfo.info.updateTime}</span>
-            </div>
-          </div>
+             </div>
+          </div>}>          
           <div className='content'>
             <div className='status'>
               <h5>分区状态</h5>
@@ -549,14 +552,12 @@ export default function Index() {
             </div>
             <div className='chart' ref={chartRef}></div>
           </div>
-        </div>
-        <div className='griditem griditem3'>
-          <div className='warn'>
-            <BlueColumn name="报警信息" />
-            <div className='warntext' onClick={SeeDetail}>
-              查看详细
-            </div>
-          </div>
+        </Titlelayout>
+        <Titlelayout className='griditem3' layout="flex" title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <span>报警信息</span>
+           <Button type="link" onClick={SeeDetail}>查看详细</Button>
+        </div>}>
+           <div style={{flex: 1}}>
           <Timeline className='timeline'>
             {channelInfo.warnlist.length>0&&channelInfo.warnlist.map(it=>{
               return(
@@ -582,7 +583,8 @@ export default function Index() {
               
             })}
           </Timeline>
-        </div>
+          </div>
+        </Titlelayout>
       </WrapDiv>
       <ModalDiv>
         <UseModal mold='cust' ref={modalRef} width={1600} footer={null} getContainer={false} title="报警日志查看" closable>
@@ -629,6 +631,7 @@ export default function Index() {
         </UseModal>
       </ModalDiv>
     </div>
+    </Pagecount>
   )
 }
 const CusTable=forwardRef(({QueryFibreTempilWarningRecords},ref)=>{

@@ -4,13 +4,15 @@ import styled from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
-const theme =(type) =>   `4px solid ${custCorle[type]}`
-const custCorle = {
-  normal: "#337af0",
+//const theme =(type) =>   `4px solid ${custCorle[type]}`
+const theme = (props) => props.type == 'warn' ? `#ff4d4f` : props.theme.primaryColor
+const custCorle =(props) => {
+ return {
+  normal: props.theme.primaryColor,
   warn: "#ff4d4f",
- 
+  dark: "#fff"
+ }[props.type]
 }
-
 const CModal = styled(Modal)`
    .ant-modal-content {
      background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
@@ -21,9 +23,9 @@ const CModal = styled(Modal)`
     background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
     .ant-modal-title {
       font-size: 16px;
-      color: ${(props) => props.type=='dark' ? '#fff' : custCorle[props.type]};;
+      color: ${custCorle};;
       padding-left: ${(props) => props.type=='dark' ? '0px' : '16px'};
-      border-left:    ${(props) => theme(props.type)};
+      border-left:  4px solid  ${theme};
       height: 32px;
       line-height: 32px;
     }
@@ -47,8 +49,8 @@ const CModal = styled(Modal)`
       color: ${(props) => props.type=='dark' ? '#fff' : '#666'};
     }
     .ant-btn-primary {
-      border-color:   ${props => custCorle[props.type]};
-      background-color: ${props => custCorle[props.type]};
+      border-color:   ${custCorle};
+      background-color: ${custCorle};
     }
   }
   .ant-form-item:last-of-type {

@@ -20,13 +20,11 @@
     align-items: center;
     flex-direction: row;
 }
-.bottom {
-    width: 1680px;
-    height: 800px;
-    padding: 16px;
-    background-color: #fff;
-    border: 1px solid rgb(204, 204, 204);
-    border-radius: 4px;   
+.bottom { 
+  //  padding: 16px;
+   // background-color: #fff;
+   // border: 1px solid rgb(204, 204, 204);
+   // border-radius: 4px;   
     position: relative;
 
     .bottomTab {
@@ -247,22 +245,16 @@
     display: grid;
     grid-template-columns: repeat(3, 538px);
     grid-template-rows: repeat(4, 152px);
-    gap: 16px;
+    row-gap: 16px;
+    justify-content: space-between;
 }
 
 .pageNum {
     position: absolute;
     right: 0;
     margin-right: 16px;
-    bottom: 5px;
-
-    :global(.ant-pagination-item-active) {
-        background-color: #237ae4;
-
-        :global(a) {
-            color: #fff;
-        }
-    }
+    bottom: 0px;
+ 
 }
 
 .tableHead {

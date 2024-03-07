@@ -1,12 +1,13 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
  
 import style from './style.module.less'
-import Bluecolumn from '@com/bluecolumn';
-import { Divider,Tooltip  } from 'antd'
+
+import { Tooltip  } from 'antd'
 import {numberformat} from '@com/usehandler'
  
 import Titlelayout from '@com/titlelayout'
 import  Ichart from '@com/useEcharts/Ichart'
+import {Cdivider} from "@com/comstyled"
 /* import icon1 from './imgs/icon1.png'
 import icon2 from './imgs/icon2.png'
 import icon3 from './imgs/icon3.png'
@@ -160,25 +161,24 @@ export default function Energy({ showData, dateType,showType }) {
         </div>))
       }
       {
-        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div className={style.piestyle}>
-          <Bluecolumn name={showType===1?"分类能耗占比" :"分类能耗费用占比"}/>
-          <div style={{ width: 378, height: 360, marginTop: 16 }}>
+        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, rowGap: '16px' }}>
+        <Titlelayout title={showType===1?"分类能耗占比" :"分类能耗费用占比"} layout="flex">
+          
+          <div style={{ flex: 1, marginTop: 16 }}>
              <Ichart {...options} />
-         
 
           </div>
 
-        </div>
-        <div className={style.sorts}>
-          <Bluecolumn name={<span>{showType===1?'分类能耗':'分类能耗费用'}<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'':'(元)'}</span></span>} />
-          <Divider style={{ margin: "16px 0", borderColor: '#d7d7d7' }} dashed />
+        </Titlelayout>
+        <Titlelayout title={<div><span>{showType===1?'分类能耗':'分类能耗费用'}</span> <span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'':'(元)'}</span></div>} >
+        
+          <Cdivider type="h" margin="16px 0"  />
           <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             {
               consumeTotal?.map((it, index) => (<Card index={index} {...it} />))
             }
           </div>
-        </div>
+        </Titlelayout>
       </div>):null
       }
      

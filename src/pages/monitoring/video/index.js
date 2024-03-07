@@ -486,7 +486,6 @@ const playBackYun=()=>{
   }
  
  
-  const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
     if (Number.isFinite(areaId)) {
       getStatistics()
@@ -508,8 +507,8 @@ const playBackYun=()=>{
           <span>设备查询</span>
           <Serach size="middle"  placeholder='请输入设备编号/安装地址' 
           style={{ width: '340px', marginLeft: 16 }} 
-          allowClear
-          enterButton="查询"
+          
+          
         //  onChange={onChange}
           onSearch = {onSearchList}
            />

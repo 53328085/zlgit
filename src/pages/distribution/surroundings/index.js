@@ -2,11 +2,11 @@ import React, { useEffect ,useMemo, useState,useRef} from 'react'
 import {useSelector,useDispatch  } from 'react-redux'
 import style from './style.module.less'
 import {  Button, DatePicker,message,Space  } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
+ 
 import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout' 
 import ItemCard from './itemCard'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { selectcurlRommid } from "@redux/systemconfig";
 import styled from 'styled-components'
 import moment from 'moment';
@@ -23,6 +23,28 @@ const Mainbox = styled.div`
     display: grid;
     grid-template-rows: 1fr 1fr;
   }
+`
+const Cardlist = styled.div`
+   display: grid;
+   grid-template-columns: repeat(5,313px);
+   gap:16px;
+   padding-top: 16px ;
+  grid-auto-rows: 120px ;
+  & .card{
+                width: 313px;
+                height: 120px;
+                padding: 16px;
+                margin-right: 16px;
+                color: #000;
+                border: 1px solid rgb(215, 215,215);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow:2px  2px 2px rgba(0, 0, 0, 0.0784313725490196);
+                //background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);;
+             
+            }
 `
 const init ={
   door:"",
@@ -93,7 +115,7 @@ export default function Index() {
        type: 'inside'
      },
      xAxis: {
-       axisLabel: {
+      axisLabel: {
           formatter: (value, index) => {
               return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
           }
@@ -121,7 +143,7 @@ export default function Index() {
      type: 'inside'
    },
    xAxis: {
-     axisLabel: {
+    axisLabel: {
         formatter: (value, index) => {
             return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
         }
@@ -148,13 +170,13 @@ export default function Index() {
            <div className='chart'>
            
           
-          <div className={style.lineChart} ref={tempref}></div>
-          <div className={style.lineChart} ref={lineChartRef}></div>
+            <div className={style.lineChart} ref={tempref}></div>
+            <div className={style.lineChart} ref={lineChartRef}></div>
            </div>
-        </Titlelayout>
-        <div className={style.bottomContent}>
-          <BlueColumn name="环境监测" />
-          <div className={style.cardflex}>
+        </Titlelayout >
+        <Titlelayout title="环境监测" layout="flex" pv="0" bordered="n">
+          
+           <Cardlist>
           <ItemCard title={'环境温度'} desc={envlist.temperature?'正常':'异常'} value={envlist.temperature} img="temperature"></ItemCard>
           <ItemCard title={'环境湿度'} desc={envlist.humidness?'正常':'异常'} value={envlist.humidness} img="humidness"></ItemCard>
           <ItemCard title={'水浸监测'} desc={envlist.water?'正常':'异常'} value={envlist.water} img="water"></ItemCard>
@@ -162,9 +184,9 @@ export default function Index() {
           <ItemCard title={'噪音监测'} desc={envlist.noise?'正常':'异常'} value={envlist.noise} img="nosie"></ItemCard>
           <ItemCard title={'明火监测'} desc={envlist.fire?'正常':'异常'} value={envlist.fire} img="fire"></ItemCard>
           <ItemCard title={'门禁监控'} desc={envlist.door?'正常':'异常'} value={envlist.door} img="door"></ItemCard>
-          </div>
+          </Cardlist>
          
-        </div>
+        </Titlelayout>
       </Mainbox>
     </Pagecount>
   )
