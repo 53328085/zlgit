@@ -43,6 +43,7 @@ export default function Index() {
       "public",
       "air",
       "grading",
+      "light",
     ], // 能源管理
   }); // 需要显示搜索的页面
 
@@ -122,7 +123,8 @@ export default function Index() {
             setConfig({ energytype: true, isdate: true });
             break;
           case "air":
-          case "grading":   
+          case "grading":
+          case "light":     
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           default:

@@ -7,7 +7,7 @@ import Ichart  from '@com/useEcharts/Ichart';
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { useRequest } from "ahooks";
-import { drawEcharts } from "@com/useEcharts";
+ 
 import {CustButton} from '@com/useButton'
 import { energyDesigner } from '@api/api.js'
  
@@ -43,6 +43,24 @@ const Mainbox = styled.div`
           justify-content: space-between;
           column-gap: 16px;
           padding: 16px;
+          .imgborder {
+            margin-top: 16px;
+            height: 68px;
+            width: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid ${props => props.theme.primaryColor};
+            border-radius: 50%;
+          }
+          .imgbox {
+            border-radius: 50%;
+             width: 64px;
+             height: 64px;
+              background-color: ${props => props.theme.primaryColor};
+              
+              
+          }
           .airEnergyData {
             flex: 1;
             display: flex;
@@ -91,6 +109,7 @@ const Mainbox = styled.div`
           align-items: center;
           flex-direction: column;
           padding: 16px;
+        
           .title{
             color: #fff;
           }
@@ -128,19 +147,13 @@ const Mainbox = styled.div`
       }
     }
     }
-}
-    
-
-
+} 
 `
 export default function Index(props) {
   let {exparams} = useOutletContext()
   let {view, areaId, date, type:dateType,  projectId} = exparams 
   const [keyword, setKeyword] = useState('')
-  const toMainPage = () => {
-    let display = false;
-    props.sendToIndex(display);
-  }
+ 
   const [messageApi, contextHolder] = message.useMessage();
   
  
@@ -150,8 +163,7 @@ export default function Index(props) {
   const [loading, setLoading] = useState(false);
   let [numfirst, setnumfirst] = useState(0);
   let [numlast, setnumlast] = useState(9);
-  const [changeTag, setChangeTag] = useState('')
-  //let [airList, setairList] = useState([]);
+ 
  
   const [lightDate, setlightDate] = useState('');
   let title = lightDate.slice(0,2)
@@ -190,12 +202,8 @@ export default function Index(props) {
       if (success && Object.prototype.toString.call(data).slice(8,-1) =='Object') {
           let {total, detail  } = data
 
-          let {x=[], y=[], y1= []} = detail || {}
-          console.log(detail)
-          console.log(x)
-          setTotal(total)
-
-          // ['本日（kWh）', '昨日（kWh）'] : data.type == 'month' ? ['本月（kWh）', '上月（kWh）'] : ['本年（kWh）', '去年（kWh）']
+          let {x=[], y=[], y1= []} = detail || {}        
+          setTotal(total)    
           let cur = ['本日（kWh）','本日（kWh）', '本月（kWh）','本年（kWh）'][dateType]
           setlightDate(cur)
           let pre =['昨日（kWh）','昨日（kWh）', '上月（kWh）','去年（kWh）'][dateType]
@@ -234,7 +242,7 @@ export default function Index(props) {
     return queryStreetLights(projectId, keyword, areaId).then(res => {
       let { success, data } = res
       if (success && data) {
-        setairList(data)
+        setairList(Array.isArray(data) ?data : [])
         return Array.isArray(data) ?data : []
       } else {
         setairList([])
@@ -346,18 +354,17 @@ export default function Index(props) {
       <Cspin size="large" spinning={loading} tip="控制命令下发中，请稍候……">
         <Mainbox>
           <div className="maintop">
-            <div className="chart">
-              {/* <div ref={elref} style={{ width: '100%', height: '100%', padding: 16 }}>
-              </div> */}
-
+            <div className="chart"> 
               <Ichart {...options} />
             </div>
             <div className="right">
               <Titlelayout title={title + '路灯能耗 (kWh)'} layout="flex">
                 <div className="airEnergy"   >
-                 
-                  <div style={{ borderRadius: '50%', width: 64, height: 64, backgroundColor: '#237AE4', marginTop: 16 }}><Image src={imgurl.logo} preview={false} width={64} height={64}></Image></div>
-                  {/* </div> */}
+                 <div className='imgborder'>
+                  <div className='imgbox'>
+                    <Image src={imgurl.logo} preview={false} width={64} height={64} />
+                    </div>
+                    </div>
                   <div className="airEnergyData">
                     <div className='line'>
                     <p>{lightDate} :{total?.periodValue ? total?.periodValue : '0.00'}</p>
@@ -385,7 +392,7 @@ export default function Index(props) {
               <CustButton>全部关闭</CustButton>
               </Space>
             </Space>
-            {/* <Divider dashed style={{ marginTop: 16, marginBottom: 16 }} /> */}
+           
             <Cdivider type="h" margin="0" />  
             {airList?.length > 0 ? <div className="mainbottomcenter">
               <div className="boxList">
