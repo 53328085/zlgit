@@ -301,11 +301,8 @@ export default function Index(props) {
               style={{ marginBottom: 0 }}
             >
               <Serach
-                size="middle"
                 placeholder="输入设备名称/表计编号/安装地址"
                 style={{ width: "340px" }}
-                allowClear
-                enterButton="查询"
                 onSearch={submit}
               />
             </Form.Item>

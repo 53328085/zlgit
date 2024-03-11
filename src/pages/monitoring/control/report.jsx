@@ -23,6 +23,9 @@ const CDrawer = styled(Drawer)`
     display: flex;
     flex-direction: column;
   }
+  .ant-drawer-header {
+    border-bottom: none;
+  }
   .ant-drawer-title {
     padding-left: 16px;
     border-left: 4px solid ${props => props.theme.primaryColor} ;
@@ -268,13 +271,13 @@ week.forEach(w => {
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Serach placeholder='请输入策略名称' style={{width: '370px'}}   allowClear onSearch={submit} enterButton="查询" />
+              <Serach placeholder='请输入策略名称' style={{width: '370px'}}    onSearch={submit}   />
              </Item>
            </Space>
           
         </Form>
         
-         <Cdivider type="h" style={{margin: '0px'}}/>
+         <Cdivider type="h" style={{margin: '0px'}} />
         <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
        <CDrawer
         title="被控设备"
@@ -289,11 +292,9 @@ week.forEach(w => {
           backgroundColor: '#f2f2f2',
           padding: '32px 32px 0 32px'
         }}
-        
-
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
-       <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
+       <Cdivider  borderColor="#2a2f55" type="h" margin='0 0 16px 0' />
        <div style={{flex: 1, backgroundColor: "#fff"}}>
        <Usetable columns={controlcolumns}  dataSource={viewtb} istheme="y"  rowKey={nanoid()}  scroll={{
             y: 867

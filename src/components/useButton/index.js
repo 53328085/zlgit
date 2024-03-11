@@ -170,17 +170,17 @@ export function RefreshButton(props) {
     </Custbtn>
   );
 }
-export function NewButton() {
+export function NewButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.new} />
       新增
     </Custbtn>
   );
 }
-export function ChangeButton() {
+export function ChangeButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.change} />
       更换
     </Custbtn>

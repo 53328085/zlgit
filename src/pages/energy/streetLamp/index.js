@@ -11,6 +11,9 @@ import Custcard from '@com/titlelayout'
 import {drawEcharts} from '@com/useEcharts'
 import Custtable from '@com/useTable'
 import lingth from './icon/lingth.png'
+import {useOutletContext} from 'react-router-dom'  
+ 
+import {Cspin, Serach, Cdivider} from '@com/comstyled'
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
@@ -81,11 +84,13 @@ const CutSerachBt = styled(CustBtn)`
   } */
 `;
 export default function Index() {
-  const [form] = Form.useForm()
+  let {exparams} = useOutletContext()
+  let {view, areaId, date, type:dateType,  projectId} = exparams 
+ 
 
   //const [formparams, setFormparams] = useState(form.getFieldsValue())
  // const [value, setvalue] = useState('electric')
-  const projectId = useSelector(selectCurProject)?.id 
+ 
 
   const carddata = [
     {
@@ -182,11 +187,7 @@ export default function Index() {
         </Select>
     )
   }
-
-
-  const propsData ={   
-    form,
-  }
+ 
   const submit = () => {}
   const columns = [
     {
@@ -232,8 +233,7 @@ export default function Index() {
     onChange: onSelectChange,
   };
   return (
-    <CustContext.Provider value={propsData}>
-    <Pagecount showserach={true} bgcolor="transparent">   
+    <Pagecount   bgcolor="transparent">   
         <Mainbox>
             <div className='left'>
                 <div className="leftup">
@@ -245,23 +245,8 @@ export default function Index() {
             </div>
             <Custcard title="路灯批量控制" >
                 <Contrmain>
-                    <Input.Search placeholder='请输入设备编号/安装地址' size='middle' style={{width: '356px'}}
-                      allowClear
-                      onSearch={submit}
-                      enterButton={ <CutSerachBt
-                       width="98px"                  
-                       icon={
-                         <SearchOutlined
-                           style={{ fontSize: "18px", color: '#fff' }}
-                           
-                           mgl="8px"
-                         />  
-                       }
-                     >查询</CutSerachBt>}   
-
-
-                    ></Input.Search>
-                     <Divider style={{margin: '0'}} />
+                    <Serach placeholder='请输入设备编号/安装地址'   style={{width: '356px'}} />                      
+                     <Cdivider type="h" margin="16px 0" />
                      <div style={{display: 'flex', justifyContent: "space-between"}}>
                         <CustBtn width="124px">自动控制</CustBtn>
                         <div style={{display: "flex"}}>
@@ -276,6 +261,6 @@ export default function Index() {
         </Mainbox>
      
     </Pagecount>
-    </CustContext.Provider>
+     
   )
 }

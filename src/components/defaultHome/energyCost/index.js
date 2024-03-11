@@ -41,7 +41,7 @@ export default function DefaultHome(props){
       GetMonthEnergyTrends(projectId).then(res => {
         let { success, data } = res
         if (success) {
-          if (data.constructor == Object) {
+          if (Object.prototype.toString.call(data).slice(8,-1) == 'Object') {
             let {x, y, y1} = data           
             let dataset = {
               dimensions: [

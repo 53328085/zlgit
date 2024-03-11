@@ -1,4 +1,4 @@
-import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo} from 'react'
+import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo, useMemo} from 'react'
 import {createPortal,flushSync} from 'react-dom'
 import {Table, message} from 'antd'
 import styled from 'styled-components'
@@ -56,13 +56,48 @@ flex-direction: column;
  
 }
 ` */
+
+ // 生成表格模板 
+
+
+
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, ...otherprops} =props  
+  const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, tempcolums, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
   const [lists, setLists] =useState()
   const [total, setTotal] = useState(0)
+  const tempref = useRef();
+  
+  const TableTemp =memo(({lists=[]}) => {  
+  
+    return createPortal(
+       <Tablecom  bordered  size="small"  dataSource={lists}   columns={tempcolums} rowKey={otherprops.rowKey}  ref={tempref}   style={{position: "absolute", left: "-55000px"}}   />,
+       document.getElementById("root")
+    )
+  
+  }, [tempcolums])
+  
+
+  const downTemp = useCallback(() => {  // 下载模板
+    const params = { raw: true };
+    const workbook = utils.book_new(); // 新建工作簿      
+    let table = tempref.current  ;
+    const ws =  utils.table_to_sheet(
+      // 新建工作表
+      table,
+      params
+    );
+    utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+    let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
+    console.log(file)
+    let fileName = sheetName.split(".")[0]
+    writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
+      
+   }, [ecolumns])
+
+
 
 
 const Allupdate =memo(({lists, total}) => {
@@ -145,6 +180,7 @@ const download = useCallback(() => {
     downloadByData: dataExport,
     printContent: tableref.current,
     downloadAll, // 下载全部数据
+    downTemp,
   }))
  
   const paginationProp = pagination ? Object.assign( {}, {
@@ -157,6 +193,7 @@ const download = useCallback(() => {
     <Divbox flex={props.flex}>
         <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()} { ...otherprops}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
+      { props.istemp  &&      <TableTemp   />}
     </Divbox>
   )
 }

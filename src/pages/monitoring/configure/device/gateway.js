@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import style from './style.module.less'
 import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'

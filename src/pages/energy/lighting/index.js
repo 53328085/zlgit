@@ -11,6 +11,7 @@ import Custcard from '@com/titlelayout'
 import {drawEcharts} from '@com/useEcharts'
 import Custtable from '@com/useTable'
 import lingth from './icon/comlingth.png'
+import {Serach, Cdivider} from "@com/comstyled"
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
@@ -245,23 +246,9 @@ export default function Index() {
             </div>
             <Custcard title="公共照明批量控制" >
                 <Contrmain>
-                    <Input.Search placeholder='请输入设备编号/安装地址' size='middle' style={{width: '356px'}}
-                      allowClear
-                      onSearch={submit}
-                      enterButton={ <CutSerachBt
-                       width="98px"                  
-                       icon={
-                         <SearchOutlined
-                           style={{ fontSize: "18px", color: '#fff' }}
-                           
-                           mgl="8px"
-                         />  
-                       }
-                     >查询</CutSerachBt>}   
-
-
-                    ></Input.Search>
-                     <Divider style={{margin: '0'}} />
+                    <Serach placeholder='请输入设备编号/安装地址'   style={{width: '356px'}} onSearch={submit} />
+                   
+                    <Cdivider type="h" style={{margin: '0px'}} />
                      <div style={{display: 'flex', justifyContent: "space-between"}}>
                         <CustBtn width="124px">自动控制</CustBtn>
                         <div style={{display: "flex"}}>

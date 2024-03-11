@@ -146,7 +146,34 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 
   const limitlevle = allLevel.slice(0, level - 1);
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
-  
+  const currenName = allLevel?.find(item => item.level == level)?.name
+  const preName = level > 1 ? allLevel?.find(item => item.level == level - 1)?.name : null
+   
+  /* 
+{title: '名称', dataIndex: '名称', key: '名称'} 
+// 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
+
+*/
+
+  const tempcolums =  useMemo(() => {
+    let getcol = (name) => ({title: name, dataIndex: name, key: name});
+    let colums = [
+      getcol(currenName),
+      getcol('备注'),
+     
+    ];
+    if(preName) {
+      colums.push(getcol(preName));
+     }
+     if(Array.isArray(fields)) {
+        fields.forEach(f => {
+          colums.push(getcol(f.name))
+        })
+
+     }
+     console.log(colums)
+     return colums
+  }, [level, allLevel])
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
 
@@ -399,9 +426,20 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         console.log(e);
       });
   };
+  //   生成模板 start
+  const tableRef = useRef();
+  const createTemp = () => {  
+    tableRef.current.downTemp()
+  }
 
+
+
+ //   生成模板 end
   const [lngLat, setLnglat] = useState()
   const curlnglat = useLatest(lngLat)
+
+
+ 
   const add = () => {
     address.current = "";
     setLnglat(null);
@@ -409,7 +447,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     nref.current.onOpen();
     
   };
-
+ 
   const onOk = async () => {
     // 新增、编辑
      console.log(Record)
@@ -565,7 +603,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     }
   };
   const tableOnchange = (e) => {
-    console.log(e)
+   
     let {current} = e
       setPagination({
         ...pagination,
@@ -638,12 +676,15 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
          {!ispublish && <Form.Item>
             <CustButton style={{ justifyContent: "center" }} onClick={add}>
               +新增
-            </CustButton>
+            </CustButton>         
           </Form.Item>
          }
+         <Form.Item>
+             <CustButton onClick={createTemp}>生成模板</CustButton>
+         </Form.Item>
         </Space>
       </Form>
-      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
+      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
  

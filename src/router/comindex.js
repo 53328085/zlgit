@@ -41,6 +41,8 @@ export default function Index() {
       "analysis",
       "norm",
       "public",
+      "air",
+      "grading",
     ], // 能源管理
   }); // 需要显示搜索的页面
 
@@ -84,7 +86,7 @@ export default function Index() {
       if (primary == "runtimeEnergy") {
         switch (nested) {
           case "area":
-          case "assorting":
+          case "assorting":      
             setConfig({ isview: true, isdate: true });
             break;
           case "range":
@@ -118,6 +120,10 @@ export default function Index() {
             break;
           case "public":
             setConfig({ energytype: true, isdate: true });
+            break;
+          case "air":
+          case "grading":   
+            setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           default:
             break;

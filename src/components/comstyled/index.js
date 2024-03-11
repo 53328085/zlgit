@@ -411,7 +411,7 @@ export const Logbtn = styled(Button)`
 `;
  
 export const Serach =(props) => {
-  return <Input.Search {...props} allowClear enterButton={<Button style={{width: '80px'}}>查询</Button>} />
+  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}}>查询</Button>} {...props}  />
 }
 /* export const Serach = styled(Input.Search)`    
  && {
@@ -518,13 +518,13 @@ export const Cdivider = ({
   borderColor="#d7d7d7",
   height="32px",
    type="v", 
-  
-  } ={}) => {
+   ...rest
+  } ) => {
    if(type == 'v') {
-     return <Divider type="vertical" style={{ margin,borderColor, height}} dashed />
+     return <Divider type="vertical" style={{ margin,borderColor, height}} {...rest} dashed />
    }else if(type == 'h') {
 
-     return  <Divider type="horizontal" style={{ margin,borderColor }} dashed />
+     return  <Divider type="horizontal" style={{ margin,borderColor }} {...rest} dashed />
    }
  
 }
