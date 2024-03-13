@@ -14,7 +14,7 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary } = state;
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
   };
@@ -31,7 +31,7 @@ export default function Index() {
       "call",
     ], // 运行监控
     runtimeSafe: ["summary", "alarmDetail"], // 电气安全
-    runtimeEnergy: [
+    runtimeEnergy: [ // 能源管理
       "area",
       "assorting",
       "range",
@@ -44,7 +44,11 @@ export default function Index() {
       "air",
       "grading",
       "light",
-    ], // 能源管理
+      "region",
+    ], 
+    runtimeStorage: [ // 储能管理
+      "station"
+    ], 
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
@@ -127,9 +131,19 @@ export default function Index() {
           case "light":     
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
+           case "region":     
+            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, });
+            break;  
           default:
             break;
         }
+      }
+      if(primary == "runtimeStorage") {
+         switch(nested) {
+           case "station":
+            setConfig({ isSite: true });
+            break;
+         }
       }
     } catch (error) {}
   };

@@ -1,15 +1,15 @@
-import React, {useState, useContext,  useEffect, useMemo} from "react";
+import React, {useState,  useEffect} from "react";
 
-import { Form, Select,  Space, DatePicker, message, ConfigProvider, Input} from "antd";
+import { Form, Select,  Space, DatePicker, message,  Input} from "antd";
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
 import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor} from '@redux/systemconfig.js'
 import moment from "moment";
-import { SketchPicker } from 'react-color';
+
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
-import CustContext from "@com/content";
+
 
 import Enery from "./enery";
 
@@ -47,7 +47,6 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
   const {config={}} = props
   const themcolor = useSelector(themeColor)   
   console.log(themcolor)
@@ -68,7 +67,7 @@ export default function UseSerach(props) {
   }
 
 
-  const [form] =forms ? [forms] : Form.useForm()
+  const [form] = Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)  
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
@@ -188,7 +187,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        form.setFieldsValue({
         pcsId: null
        })
-       sitehandler && sitehandler({})
+     //  sitehandler && sitehandler({})
      }
     } catch (error) {
       console.log(error)
@@ -197,7 +196,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   }
   useEffect(() => { 
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
-  }, [])
+  }, [levelone])
  
  useEffect(() => {
     if(options?.length > 0 && AreaID && projectId) {
@@ -214,13 +213,13 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        form.setFieldsValue({
         stationName: data[0].name
        })
-       sitehandler &&  sitehandler(data[0])
+     //  sitehandler &&  sitehandler(data[0])
      }else {
       setOptions([])    
       form.setFieldsValue({
         stationName: ''
        })
-       sitehandler && sitehandler({})
+      // sitehandler && sitehandler({})
      }
     } catch (error) {
       console.log(error)
@@ -228,11 +227,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
    
   }
   useEffect(() => {
-      if(projectId && AreaID && isSite) {
+      if(projectId && AreaID) {
         getopti()
       }    
   
-  }, [projectId, AreaID, isSite])
+  }, [projectId, AreaID])
  
   const onValuesChange = (_, allValues) => {   
 
@@ -243,11 +242,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
    
   }, [props.config, projectId])
 
-  useEffect(() => {
-   form.setFieldsValue({
-    ...initialValue,
-   })
-  }, [initialValue])
+ 
   return (  
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
@@ -262,8 +257,8 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
      
          </Item>
           }
-        {isSite && site}
-        {isPcs && pcs}
+        {props.config?.isSite && site}
+        {props.config?.isPcs && pcs}
 
         {props.config?.isdevsty && deviceStyleNode}  
         {props.config?.isview && viewtype}  
@@ -273,7 +268,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
            props.config?.isdate && dateselect
          }
         {
-           props.custview? props.custview : custview
+           props.config?.custview
         }
         {
           props.config?.export ? <ExportExcel /> : null

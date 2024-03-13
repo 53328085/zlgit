@@ -170,7 +170,7 @@ export default function Index(props) {
   const [lightDateYesterday, setlightDateYesterday] = useState('');
  
   const aref = useRef()
-  const elref = useRef(null)
+   
   const sref = useRef()
   const {
     queryStreetLights,

@@ -1,30 +1,44 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { nanoid } from "@reduxjs/toolkit";
-import { Form, Radio, Button, Progress, Image, Space, DatePicker, Select, Tabs, Typography} from "antd";
+import React, { useState, useRef, useEffect,   } from "react";
+ 
+import {   Radio,   Image,   Typography} from "antd";
 import styled from "styled-components";
-import UserSearch from "@com/useSerach";
-import CustContext from "@com/content.js";
-import { drawEcharts } from "@com/useEcharts";
+ 
+ 
 import { EnergyArea} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
  
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import moment from 'moment';
+ 
 import imgurl from "./icon";
 import UseTable from "@com/useTable"
 import {numberformat } from "@com/usehandler"
+import {useOutletContext} from 'react-router-dom'  
+import Pagecount from "@com/pagecontent";
+ 
+import {getTime} from '@com/usehandler'
+import Ichart  from '@com/useEcharts/Ichart';
  const {QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear} = EnergyArea
 const {Text, Paragraph} = Typography
 const Laybox = styled.div`
-  display: grid;
+  display: flex;
   flex: 1;
-  grid-template-columns: 1240px 424px;
   column-gap: 16px;
+  .left {
+    flex: 1 1 1240px;
+    
+  }
   .right {
-    display: grid;
-    grid-template-rows: 512px 272px;
+    display: flex;
+    flex: 1 1 424px;
+    flex-direction: column;
+  
     row-gap: 16px;
+    .rup {
+       flex: 1 1 512px;
+    }
+    .rdown {
+      flex: 1 1 272px;
+      
+    }
   }
  
  
@@ -35,7 +49,7 @@ const CustTitle = styled.div`
   color: #515151;
   display: flex;
   justify-content: space-between;
-
+  align-items: center;
 `;
 
  
@@ -91,32 +105,48 @@ const Sdiv = styled.div`
  
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
-  const projectId = useSelector(selectProjectId);
+  let {exparams} = useOutletContext()
+  let {energytype, areaId, date, type:dateType,  projectId} = exparams 
   const [tableData, setTableData] = useState([])
-  const [form] = Form.useForm();
-  const {Item} = Form
- 
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1,2,3
- 
-  const [dataSet, setDataSet] = useState({
-    dimensions: [],
-    source: []
+  const [boptions, setOptions] = useState({
+    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      top: 0,  
+    },
+    dataset: {
+      dimensions: [],
+      source: []
+    }
   })
-  let length = dataSet.source?.length - 1
-  const piedata = tableData.map(t => ({value: t.e, name: t.name}))
+ let poptions= useRef({
+      pieData: { data: [], total: '100%'},
+      type: 3,
+      legend: {
+        type: "scroll",
+     
+        bottom: 0,
+        top: 'auto',
+        itemGap: 5
+      },
+      grid: {
+        bottom: 20
+      }
+  })
+ 
+  //let length = dataSet.source?.length - 1
+ 
+  poptions.current.pieData.data = tableData.map(t => ({value: t.e, name: t.name}))
   const sort = tableData.sort((a, b) => parseFloat(a.e) -parseFloat(b.e) < 0).slice(0, 3)
-  const barconfig = {
-    type: "bar",
-    stack: "count",
-    seriesLayoutBy: 'row',
-    
-  //  barWidth: 30, 
-  //  barCategoryGap: "5%"
-  // barGap: "30%", 
-  // barCategoryGap: "10%"
-  }
-  let series = Array.from({length}, () => barconfig)
-  const picker= ['', 'date', 'month', 'year'][timetype];
+ 
+   
+
    
 
   const columns = [
@@ -141,94 +171,66 @@ export default function Index() {
 
   ]
 
-  const getData = async () => {
-    try {
-    const {area, date, type, meterType} = form.getFieldsValue() || {}
-    if(isNaN(type)) return;
-    let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][type]
-    let time
-    if(type == 1) {
-        time=date.format('YYYY-MM-DD')
-    }else if(type == 2) {
-        time = date.startOf("month").format('YYYY-MM-DD')
-    }else if(type == 3) {
-        time = date.startOf("year").format('YYYY-MM-DD')
-    }
+  const getData = () => {
+   
+   // const {area, date, type, meterType} = form.getFieldsValue() || {}
+   // if(isNaN(type)) return;
+    if(Object.values(exparams)?.length < 5) return;
+    let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
+    let time = getTime(date, dateType)  
     const querys = {
-        areaId: area,
+        areaId,
         projectId,
-        meterType,
-        type,
+        meterType: energytype,
+        type: dateType,
         date: time
      }
-    const params = [area]
-    let {success, data} = await hander(querys, params)
+    const params = [areaId]
+    hander(querys, params).then(res => {
+      let {success, data} = res;
     if(success && Array.isArray(data) && data.length > 0) {
            setTableData(data.map(d => d.total))
-      let dimensions = data[0].detail.map(i => i.dot.toString())
-      console.log(dimensions)
-       let source =  data.map(item => {
+
+
+      let source = []
+      let dimensions = [
+         {name: '时间', type: 'time'}
+      ]
+      let x = data[0].detail.map(i => i.dot.toString())
+       source.push(x)
+       data.forEach(item => {
            let {detail, total} = item
-          
           let name = total.name
           let list = detail.map(i => i.e)
-            
-           
-          return [name, ...list]
+          source.push(list)
+          dimensions.push({name}) 
         })
-       setDataSet({
-        source: [ ["name", ...dimensions] , ...source]
-       })
+        console.log(dimensions)
+        console.log(source)
+        setOptions({
+          ...boptions,
+          dataset: {
+            dimensions,
+            source,
+           sourceHeader: false,
+          }
+        })
     }else {
-        setDataSet({
-          dimensions: [],
-          source: []
-        })
+      setTableData([])
+      setOptions({
+        ...boptions,
+        dataset: {
+          dimensions:[],
+          source:[],
+          sourceHeader: false,
+        }
+      })
     }
-    } catch (error) {
-        console.log(error)    
-    }
+    })
   }
  
 
  const [mode, setMode] = useState(1)
- const stack = useRef()
- const pieref = useRef()
-
-useEffect(() => {
-  drawEcharts(
-     stack.current, {
-      dataset: {
-       ...dataSet, 
-      },
-      legend: {
-        height: "30px"
-      },
-      grid: {
-        top: "60px",
-        
-      },
-      series: series,
-      tooltip: {
-       // formatter:  ' {a}'
-      }
-    }
-  )
-  drawEcharts(pieref.current, {
-    pieData: { data: piedata, total: 100 },
-    type: 3,
-    legend: {
-      type: "scroll",
-    //  orient: 'vertical',
-      bottom: 0,
-      top: 'auto',
-      itemGap: 5
-    },
-    grid: {
-      bottom: 20
-    }
-  });
-},[dataSet, mode] )
 
  const onChange = (e) => {
   setMode(e.target.value)
@@ -238,7 +240,7 @@ useEffect(() => {
 
  useEffect(() => {
    getData()
- }, [projectId]) 
+ }, [exparams]) 
  const Title =  (
       <CustTitle className="t">
         区域能耗趋势
@@ -260,93 +262,27 @@ useEffect(() => {
       </CustTitle>
     );
  
- 
-
-
-  const timechange = (e) => {
-     setTimetype(e);
-     getData()
-  }
-  const opchange = (e) => {   
-     console.log(typeof e.target.value) 
-     setOp(e.target.value)
-    // form.resetFields()
-     getData()
-  }
-  const CustView = () => {
-   const viewstyle = {
-      display: 'flex',
-       justifyContent: "space-between",
-       flex: 1,
-       'marginLeft': '32px',
-      'paddingLeft': '32px',
-      'borderLeft': '1px dotted #d7d7d7',
-    }
-    return (
-      <div style={viewstyle}>
-       <Item  label="能源类型"   initialValue={1} name="meterType">
-        <Select
-        onChange={getData}   
-        style={{width: "112px"}}
-        options={[
-          {
-            label: '电力',
-            value: 1,
-          },
-          {
-            label: '用水',
-            value: 2,
-          }]}
-         />
-        </Item>
-      <Space size={16}>
-        <Item  name="type" initialValue={1}>
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={timechange}
-           ></Select>
-        </Item>
-
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={getData} style={{width: '160px'}} />
-        </Item>       
-      </Space>
-      </div>
-    )
-  }
-  
- 
-
-
   return (
-    <CustContext.Provider
-      value={{
-        form,
-        custview: <CustView />,
-        handler: getData,
-       
-      }}
-    >
+ 
 
-      <div style={{display: 'grid', gridTemplateRows: '48px 1fr', rowGap: '16px', flex: 1}}>
-      <UserSearch></UserSearch>
+      <Pagecount bgcolor="transparent" pd="0">
+   
       <Laybox  >
-        <Titlelayout title={Title} key="up">
-           <div style={{paddingTop: "16px", height: "100%", display: "flex"}}>
+        <Titlelayout title={Title} key="up" layout="flex" className="left">
+           <div style={{paddingTop: "16px",  flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
              {
-              mode == 1 ? <div style={{flex: 1}} ref={stack} key="echart"></div> : <UseTable dataSource={tableData} columns={columns} key="table" />
+              mode == 1 ?  <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" />
              }  
            
            </div>
         </Titlelayout>
         <div className="right">
-           <Titlelayout title="今日能耗占比" key='pie'>
-              <div ref={pieref} style={{width: "392px", height: "432px"}}></div>
+           <Titlelayout title="今日能耗占比" key='pie' layout="flex" className="rup">
+              <div  style={{flex: 1, display: 'flex'}}>
+                  <Ichart {...poptions.current} /> 
+              </div>
            </Titlelayout>
-           <Titlelayout title="区域能耗排名" key='sort'>
+           <Titlelayout title="区域能耗排名" key='sort' className="rdown">
               <Sdiv>
               <div className="sort">
                     {sort[0] && <>
@@ -389,7 +325,6 @@ useEffect(() => {
         </div>
      
       </Laybox>
-      </div>
-    </CustContext.Provider>
+      </Pagecount>
   );
 }

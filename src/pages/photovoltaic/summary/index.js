@@ -10,14 +10,16 @@ import { Form, Image, Typography } from "antd";
 import { drawEcharts } from "@com/useEcharts";
 import imgurl from "./icon";
 const Mainbox = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   color: #515151;
-  grid-template-rows: 184px 280px 304px;
+ // grid-template-rows: 184px 280px 304px;
   row-gap: 16px;
   flex: 1;
   .upper {
+    flex: 1 1 184px;
     display: grid;
-    grid-template-columns: 332px 1348px;
+    grid-template-columns: 348px  minmax(1348px, 1fr) ;
     column-gap: 16px;
     .list {
       display: grid;
@@ -40,10 +42,12 @@ const Mainbox = styled.div`
     }
   }
   .middle {
+    flex: 1 1 280px;
     display: grid;
-    grid-template-columns: 400px 200px 200px 832px;
+    grid-template-columns: 400px repeat(2, minmax(200px, 1fr)) minmax(832px, 1fr);
     column-gap: 16px;
     #he-plugin-standard {
+      flex: auto;
       .wv-lt-refresh {
         display: none;
       }
@@ -81,8 +85,9 @@ const Mainbox = styled.div`
     }
   }
   .lower {
+    flex: 1 1 304px;
     display: grid;
-    grid-template-columns: repeat(2, 832px);
+    grid-template-columns: repeat(2, minmax(832px, 1fr));
     column-gap: 16px;
   }
   .rigth {

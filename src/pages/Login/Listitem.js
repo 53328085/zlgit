@@ -95,8 +95,7 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
             dispatch(getSystemconfiginfo({}))
        }
 
-     } catch (error) {
-          console.log(error)
+     } catch (error) {         
           dispatch(getSystemconfiginfo({}))
      }
     

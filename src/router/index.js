@@ -108,8 +108,8 @@ const loginrouter =  [{
   '0107': Distribution,
   '0108': Prepayment,
   '0109': Comindex,
-  '0110': Photovoltaic,
-  '0111': Storage,
+  '0110': Comindex,
+  '0111': Comindex,
   '0112': Carbon,
   '0113': Devops,
 } 

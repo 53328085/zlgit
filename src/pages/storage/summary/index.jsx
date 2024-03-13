@@ -1,17 +1,18 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext} from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
 import { message, Form, Select ,Typography} from 'antd'
-import CustContext from '@com/content.js'
+ 
 import { range } from 'lodash'
 import imgurl from './imgs'
  
 import styled from 'styled-components'
-
-import Pagecount from '@com/pagecontent'
+ 
+import Pagecount from "@com/pagecontent";
+import {Cspin, Serach, Cdivider} from '@com/comstyled'
 import Titlelayout from "@com/titlelayout";
 import { drawEcharts } from "@com/useEcharts";
 const {Link, Paragraph, Text} = Typography
@@ -163,6 +164,28 @@ const  Mainbox = styled.div`
      }
   }
 `
+const CircleDiv = styled.div`
+margin-top: 4px;
+margin-right: 16px;
+width: 16px;
+height: 16px;
+border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+.warningPoint {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+  }
+`
+const { querySiteInfo,
+  queryStorageIncome,
+  queryStorageWarning,
+  queryTopologyDiagramInfo,
+  queryChargeETrends } = SiteSummaryRuntime
 export default function Index() {
   const TransDiv = styled.div`
   padding-top: 18px;
@@ -188,41 +211,15 @@ export default function Index() {
 }
 `
 
-  const CircleDiv = styled.div`
-        margin-top: 4px;
-        margin-right: 16px;
-        width: 16px;
-        height: 16px;
-        border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .warningPoint {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
-          }
-  `
- 
-  const { querySiteInfo,
-    queryStorageIncome,
-    queryStorageWarning,
-    queryTopologyDiagramInfo,
-    queryChargeETrends } = SiteSummaryRuntime
+
  
 
-  const dispatch = useDispatch()
-  const projectId = useSelector(selectProjectId)
+ 
 
-  const areaId = useSelector(selectOneLevelDefaultId)
  
-  let [AreaID, setAreaid] = useState(areaId)
+  let {exparams} = useOutletContext()
  
-  const [site, setInitname] = useState({})
-  let sitename = site.name
-  
+  let {areaId, stationName,  projectId} = exparams
 
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
@@ -236,9 +233,9 @@ export default function Index() {
   }) //接线图数据
 
   useEffect(() => {
-    if(!areaId || !sitename) return
+    if(Object.values(exparams)?.length < 3 ) return
      
-    querySiteInfo(projectId, areaId, sitename).then(res => {
+    querySiteInfo(projectId, areaId, stationName).then(res => {
       if (res.success) {
         setCardData(res.data)
       } else {
@@ -246,7 +243,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryStorageIncome(projectId,  areaId, sitename).then(res => {
+    queryStorageIncome(projectId,  areaId, stationName).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -259,7 +256,7 @@ export default function Index() {
       }
     }).catch
 
-    queryStorageWarning(projectId,  areaId, sitename).then(res => {
+    queryStorageWarning(projectId,  areaId, stationName).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -272,7 +269,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryTopologyDiagramInfo(projectId,  areaId, sitename).then(res => {
+    queryTopologyDiagramInfo(projectId,  areaId, stationName).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
@@ -289,7 +286,7 @@ export default function Index() {
     }).catch()
 
 
-    queryChargeETrends(projectId,  areaId, sitename).then(res => {
+    queryChargeETrends(projectId,  areaId, stationName).then(res => {
       if (res.success) {
         if (res.data) {
           setLineData(res.data)
@@ -302,7 +299,7 @@ export default function Index() {
     }).catch()
 
 
-  }, [AreaID, site])
+  }, [exparams])
   const Tips = props => {
     return <div className="tips"style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
       <img src={props.imgUrl} className={style.tipImg}></img>
@@ -457,8 +454,7 @@ export default function Index() {
  
   }, [barData])
   return (
-    <CustContext.Provider value={{handler: setAreaid, sitehandler: setInitname,  isSite: true}}>
-    <Pagecount  showserach={true} pd={0} bgcolor='transparent'  >    
+    <Pagecount  pd={0} bgcolor='transparent'  >    
       <Mainbox>
         <div className="left">
           <Titlelayout title='站点信息' layout="flex">
@@ -595,6 +591,6 @@ export default function Index() {
         </div>
       </Mainbox>
     </Pagecount>
-    </CustContext.Provider>
+   
   )
 }

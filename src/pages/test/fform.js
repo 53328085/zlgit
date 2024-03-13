@@ -1,41 +1,33 @@
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Upload } from 'antd';
-import React from 'react';
-const props = {
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange({ file, fileList }) {
-    if (file.status !== 'uploading') {
-      console.log(file, fileList);
+import React from 'react'
+import styled from 'styled-components'
+import logo from './logo.png'
+const Mainbox = styled.div` 
+   .wrapper {
+    display: flex;
+    width: 320px;
+    input[type="text"] {
+      flex: 1 1 auto;
     }
-  },
-  defaultFileList: [
-    {
-      uid: '1',
-      name: 'xxx.png',
-      status: 'done',
-      response: 'Server Error 500',
-      // custom error message to show
-      url: 'http://www.baidu.com/xxx.png',
-    },
-    {
-      uid: '2',
-      name: 'yyy.png',
-      status: 'removed',
-      url: 'http://www.baidu.com/yyy.png',
-    },
-    {
-      uid: '3',
-      name: 'zzz.png',
-      status: 'error',
-      response: 'Server Error 500',
-      // custom error message to show
-      url: 'http://www.baidu.com/zzz.png',
-    },
-  ],
-};
-const App = () => (
-  <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Upload</Button>
-  </Upload>
-);
-export default App;
+    label {
+      background-color: tan;
+      color: #fff;
+      text-align: center;
+     
+      display: inline-block;
+    }
+   }
+  
+`
+ 
+export default function fform() {
+  let data =   Array.from({length:4}, (x,i) => i+1)
+  return (
+    <Mainbox>
+        <div className="wrapper">
+            <label for="age">年龄</label>
+            <input type="text" id="age"></input>
+            <button type='submit'>提交</button>
+        </div>
+    </Mainbox>
+  )
+}
