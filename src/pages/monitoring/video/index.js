@@ -15,7 +15,7 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring , GetCamerasoneInfo} from '@api/api.js'
 
 import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 import Pagecount from "@com/pagecontent";
@@ -315,8 +315,20 @@ export default function Index() {
     });
   }
  
-  const showCameraDialog = (record) => {
+  const showCameraDialog = async (record) => {
+    try {
+      
+    
     setrecordData(record)
+    let {serverAddress, id} = record
+    let {success, data} =    await GetCamerasoneInfo(projectId, id)
+    if (!success || !data) return
+    let {ip, channel,account, pwd } = data
+    let idx = serverAddress.indexOf(":")
+    let htp = serverAddress.slice(0, idx)
+    let url = htp =='http' ? serverAddress.replace('http', 'ws') : htp == 'https' ? serverAddress.replace('https', 'ws') : ''
+    console.log(url)
+    if(!url) return
     if (record.accessMode == 1) {
       showModal()
       getYsRealPlayUrl(record)
@@ -325,12 +337,16 @@ export default function Index() {
         setLocalModal(true);
         setCameraTitle(record.address)
         // setwsType('h264')
-        setWsUrl('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
-        chooseType('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
+        
+        setWsUrl(url  + '/video?ip=' +ip + '&type=real&user=' + account + '&pwd=' +pwd + '&channel=' + channel);
+        chooseType(url  + '/video?ip=' + ip + '&type=real&user=' + account + '&pwd=' + pwd + '&channel=' + channel);
       }
     }
+  } catch (error) {
+      
   }
-
+  }
+ // http: ws, https: wss
 
 
   const [changeType, setChangeType] = useState('')
@@ -352,6 +368,7 @@ export default function Index() {
     }
     if (value == 'right') {
       setChangeType('rightControl');
+      console.log(value)
       rightControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;

@@ -310,7 +310,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress: formvalue.serverAddress ? formvalue.serverAddress : "",
+        serverAddress: formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -346,7 +346,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress: formvalue.serverAddress ? formvalue.serverAddress : "",
+        serverAddress:formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -700,9 +700,9 @@ export const FormComp = (props) => {
           {
             camera === 2 ? <>
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true, message: '流媒体服务器地址必须' }]}>
-                <Input />
+                <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+             {/*  <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()
@@ -716,7 +716,7 @@ export const FormComp = (props) => {
                 }
               }]}>
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="设备IP地址" name="ip" rules={[{ required: true, message: '设备IP地址必须' }]}>
                 <Input />
               </Form.Item>
@@ -864,9 +864,9 @@ export const EditFormComp = (props) => {
           {
             camera === 2 ? <>
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
-                <Input />
+                <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+            {/*   <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()
@@ -880,7 +880,7 @@ export const EditFormComp = (props) => {
                 }
               }]}>
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
                 <Input />
               </Form.Item>

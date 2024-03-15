@@ -1195,11 +1195,14 @@ export class UserReportApi {
 }
 export const GetCamerasVideosByProjectId = (Id) =>
   server.get(`/Camera/GetCamerasByHouseId?houseId=${Id}`);
+
+  export const GetCamerasoneInfo = (projectId, id) =>
+  server.get(`/Monitor/RuntimeCamera/OneInfo?projectId=${projectId}&cameraId=${id}`);  
  
 export const leftControl = (params,url,projectId, id) =>
   
   server.post(
-    "http://" +
+  
     url +
     "/V1/Ptz/PtzLeft?projectId="+
     projectId +
@@ -1209,7 +1212,7 @@ export const leftControl = (params,url,projectId, id) =>
   );
 export const bottomControl = (params, url,projectId, id) =>
   server.post(
-    "http://" +
+    
     url +
     "/V1/Ptz/PtzDown?ip="+
     projectId +
@@ -1219,7 +1222,7 @@ export const bottomControl = (params, url,projectId, id) =>
   );
 export const rightControl = (params, url,projectId, id) =>
   server.post(
-    "http://" +
+   
     url +
     "/V1/Ptz/PtzRight?projectId="+
     projectId +
@@ -1229,7 +1232,7 @@ export const rightControl = (params, url,projectId, id) =>
   );
 export const topControl = (params, url,projectId, id) =>
   server.post(
-    "http://" +
+   
     url +
     "/V1/Ptz/PtzUp?projectId=" +
     projectId +
@@ -1239,7 +1242,6 @@ export const topControl = (params, url,projectId, id) =>
   );
 export const stopControl = (params, url,projectId, id) =>
   server.post(
-    "http://" +
     url +
     "/V1/Ptz/PtzStop?projectId="+
     projectId +
