@@ -36,8 +36,8 @@ export class Login {
     static CheckAuthorization = () => server.get(`/General/SystemConfig/CheckAuthorization`);
 
     static Registe = (params) => server.post(`/General/SystemConfig/Register`, params);
-   
-    
+    static ResetUserMobile = (params) => server.post(`/General/User/ResetUserMobile`, params); // 修改手机号码
+    static ResetUserPassword = (params) => server.post(`/General/User/ResetUserPassword`, params); // 修改用户密码
 }
  
 // 项目列表
@@ -185,8 +185,8 @@ export class User {
  
 // 公共模块---区域管理
 export class Area {
-  static AllLevel = (projectId) =>
-    server.get(`/General/Area/AllLevel?projectId=${projectId}`);
+  static AllLevel = (projectId) => server.get(`/General/Area/AllLevel?projectId=${projectId}`);
+  static Import = (params) => server.post(`/General/Area/Import`, params); // 批量导入
 
    static AreaList = (projectId) =>  // 配电管理模块
     server.get(
@@ -1196,74 +1196,55 @@ export class UserReportApi {
 export const GetCamerasVideosByProjectId = (Id) =>
   server.get(`/Camera/GetCamerasByHouseId?houseId=${Id}`);
  
-export const leftControl = (params, url, ip, channel, user, pwd) =>
+export const leftControl = (params,url,projectId, id) =>
+  
   server.post(
-    "https://" +
+    "http://" +
     url +
-    "/V1/Ptz/PtzLeft?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzLeft?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const bottomControl = (params, url, ip, channel, user, pwd) =>
+export const bottomControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+    "http://" +
     url +
-    "/V1/Ptz/PtzDown?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzDown?ip="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const rightControl = (params, url, ip, channel, user, pwd) =>
+export const rightControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+    "http://" +
     url +
-    "/V1/Ptz/PtzRight?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzRight?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const topControl = (params, url, ip, channel, user, pwd) =>
+export const topControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+    "http://" +
     url +
-    "/V1/Ptz/PtzUp?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzUp?projectId=" +
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const stopControl = (params, url, ip, channel, user, pwd) =>
+export const stopControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+    "http://" +
     url +
-    "/V1/Ptz/PtzStop?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzStop?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
  

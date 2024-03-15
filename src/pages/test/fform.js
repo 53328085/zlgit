@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import logo from './logo.png'
+import './index.css'
 const Mainbox = styled.div` 
    .wrapper {
     display: flex;
@@ -19,15 +20,37 @@ const Mainbox = styled.div`
   
 `
  
-export default function fform() {
+export default function Index() {
   let data =   Array.from({length:4}, (x,i) => i+1)
+  const [ratio, setRatio] = useState('')
+  
+  let mqstring = `(resolution: ${window.devicePixelRatio}dppx)`
+  const mediaQueryList = window.matchMedia("(orientation: portrait)");
+
+  const rationQuery = window.matchMedia(mqstring);
+
+  function handleOrientationChange(mql) {
+    console.log(mql)
+    // ...
+  }
+  
+  const updatePixelRatio = () => {
+    console.log(111111)
+    let pr = window.devicePixelRatio;
+    setRatio(pr);
+    let ratios = Math.round(pr*100);
+    console.log(ratios)
+   // let prString = (pr * 100).toFixed(0);
+    //pixelRatioBox.innerText = `${prString}% (${pr.toFixed(2)})`;
+  };
+  useEffect(() => {
+    updatePixelRatio()
+    rationQuery.addEventListener("change", updatePixelRatio);
+  }, [] )
   return (
-    <Mainbox>
-        <div className="wrapper">
-            <label for="age">年龄</label>
-            <input type="text" id="age"></input>
-            <button type='submit'>提交</button>
-        </div>
-    </Mainbox>
+    <div className='container'>
+        
+        <h1>{ratio}</h1>
+    </div>
   )
 }

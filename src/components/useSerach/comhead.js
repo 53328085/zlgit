@@ -273,10 +273,10 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
           props.config?.export ? <ExportExcel /> : null
         }
-         <Input type="color" value={color}
+        {/*  <Input type="color" value={color}
               style={{width: '80px'}}
               onChange={onColorChange}
-            />
+            /> */}
     </Cform>
   
     

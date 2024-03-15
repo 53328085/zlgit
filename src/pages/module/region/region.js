@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import {
   Input,
-  Button,
   Space,
   Form,
   message,
@@ -14,21 +13,23 @@ import {
   Select,
   InputNumber,
   Drawer,
-  Cascader
+  Cascader,
+  Upload,
+  Popconfirm 
 } from "antd";
-import { nanoid } from "@reduxjs/toolkit";
+ 
 import styled from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
-import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import upCloud from './upcloud.png'
 import { useAntdTable, useLatest } from "ahooks";
-import warningImg from "@imgs/warning.png";
+ 
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap/indexset";
-import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
+import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
-
+const { Dragger } = Upload;
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -139,6 +140,8 @@ const { Item } = Form;
 export default function Index({ projectId, level, CModal, name,  allLevel }) {
  
   const dispatch = useDispatch();
+  const {projectName} = useSelector(currProject)
+  
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState) 
@@ -148,14 +151,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
   const currenName = allLevel?.find(item => item.level == level)?.name
   const preName = level > 1 ? allLevel?.find(item => item.level == level - 1)?.name : null
-   
+  const sheetName = projectName+'_'+currenName
   /* 
 {title: '名称', dataIndex: '名称', key: '名称'} 
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
 
-  const tempcolums =  useMemo(() => {
+  const [tempcolums, tempdata] =  useMemo(() => {
     let getcol = (name) => ({title: name, dataIndex: name, key: name});
     let colums = [
       getcol(currenName),
@@ -171,8 +174,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         })
 
      }
-     console.log(colums)
-     return colums
+     let tbdata = colums.map(c => ({[c.title]:''}))
+     return [colums, tbdata]
   }, [level, allLevel])
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
@@ -255,8 +258,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         console.log(targetOption)
         targetOption.loading = true;
         let {id, level: curlevel} = targetOption // level:3 , curlevel: 2, 1
-        console.log(level)
-        console.log(curlevel)
+        
         if ((level - curlevel) == 1)  {
           targetOption.children = [];
           targetOption.isLeaf = true
@@ -426,15 +428,50 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
         console.log(e);
       });
   };
-  //   生成模板 start
+  //   生成模板 /批量导入start
+
   const tableRef = useRef();
+  const multref = useRef()
+  const upfile = useRef();
   const createTemp = () => {  
     tableRef.current.downTemp()
   }
 
+ const multimport = () => {
+    multref.current.onOpen();
+ }
 
-
- //   生成模板 end
+const okImport = async() => {
+   const formData = new FormData();
+   formData.append("file", upfile.current);
+   formData.append("projectId", projectId)
+   formData.append("level", level)
+   try {
+     const {data, success, errMsg} = await  Area.Import(formData)
+     if(success) {
+       let {success: suc, errMsg:err, data: info} = data;
+       if(!suc) {
+         let errs = info.map(i => <p>第{i.row}行:{i.cause}</p>)
+         const el = <div><strong>{err}</strong>{errs}</div>
+         message.warning(el)
+       }else {
+         message.success("上传成功");
+         multref.current.onCancel()
+         getTableData()
+       }
+       
+     }else {
+        message.warning(errMsg || '数据出错')
+     }
+   } catch (error) {
+    
+   }
+}
+const beforeUpload = (file, fileList) => { 
+   upfile.current = file;
+   return false
+}
+ //   生成模板/批量导入 end
   const [lngLat, setLnglat] = useState()
   const curlnglat = useLatest(lngLat)
 
@@ -680,11 +717,14 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           </Form.Item>
          }
          <Form.Item>
-             <CustButton onClick={createTemp}>生成模板</CustButton>
+           <Popconfirm title="创建的模板只适合当前项目的配置项,配置变动需要重新生成模板" onConfirm={createTemp}><CustButton>生成模板</CustButton></Popconfirm>
+         </Form.Item>
+         <Form.Item>
+             <CustButton onClick={multimport}>批量导入</CustButton>
          </Form.Item>
         </Space>
       </Form>
-      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} />
+      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
  
@@ -773,6 +813,14 @@ mold="cust"
       >
          <> 是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?</>
       </CModal>
+
+      <CModal mold='cust' ref={multref}  title='批量导入' onOk={okImport}>
+      
+      <Dragger  accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
+        <img src={upCloud}></img>
+        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>      
+      </Dragger>  
+    </CModal>
     </Mainbox>
   );
 }

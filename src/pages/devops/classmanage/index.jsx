@@ -126,7 +126,7 @@ const Custbtn = styled(Button)`
   const [isLoading,setIsLoading] = useState(true)
   const [key, setKey] = useState()
   const [tabledata, setTableData] = useState([])
-  const [areaId,setAreaId]=useState(null)
+  const [areaId,setAreaId]=useState(0)
   const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   // const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
@@ -173,28 +173,38 @@ const Custbtn = styled(Button)`
   //获取排班表
   const tabledataRef =useRef()
   const GetDutyUsers = async () => {
-    const res = await operationDesigin.GetDutyUsers(projectId,areaId)
-    if (res.success ) {
-      if(res.data){
-        setTableData([...res.data])
-        tabledataRef.current = [...res.data]
+    try {
+      const res = await operationDesigin.GetDutyUsers(projectId,areaId)
+      if (res.success ) {
+        if(res.data){
+          setTableData([...res.data])
+          tabledataRef.current = [...res.data]
+        }
+      } else {
+        message.error(res.errMsg)
       }
-    } else {
-      message.error(res.errMsg)
+    } catch (error) {
+       console.log(error)
     }
+   
   }
    //获取班次计划
    const getDuty =async ()=>{
-    const res = await operationDesigin.GetDuty(projectId,areaId)
-    if(res.success){
-      if(res.data){
-        reactive.plans = res.data
-       
+    try {
+      const res = await operationDesigin.GetDuty(projectId,areaId)
+      if(res.success){
+        if(res.data){
+          reactive.plans = res.data
+         
+        }
+        updateTable()
+      }else{
+        message.error(res.errMsg)
       }
-      updateTable()
-    }else{
-      message.error(res.errMsg)
+    } catch (error) {
+      console.log(error)
     }
+   
   }
   //更新表格视图
   const updateTable=()=>{
@@ -292,14 +302,14 @@ const Custbtn = styled(Button)`
       setIsLoading(false)
     }
   
-  },[])
+  },[oneLevel])
   useEffect(() => {
     async function func(){
       await GetDutyUsers()
       await getDuty()
       setIsLoading(false)
     }
-    areaId&&func()
+    isFinite(areaId)&&func()
   }, [areaId])
   return (
     <>

@@ -16,6 +16,7 @@ import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
 import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
+
 import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 import Pagecount from "@com/pagecontent";
 import Table from "@com/useTable";
@@ -192,7 +193,7 @@ export default function Index() {
   }
   //打开视频监控弹窗yun
   const showModal = () => {
-    setisModal(true)
+   
 
     //setLocalModal(true)
     // play.stop()
@@ -209,6 +210,7 @@ export default function Index() {
         })
         setbigplay(player)
       }, 0)
+      setisModal(true)
     }
   }
   //关闭视频监控弹窗
@@ -332,10 +334,15 @@ export default function Index() {
 
 
   const [changeType, setChangeType] = useState('')
+ 
   const changeControl = (value) => {
+    
+    let {serverAddress, port, id} = recordData
+     
+  
     if (value == 'left') {
       setChangeType('leftControl');
-      leftControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      leftControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else {
@@ -345,7 +352,7 @@ export default function Index() {
     }
     if (value == 'right') {
       setChangeType('rightControl');
-      rightControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      rightControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -353,7 +360,7 @@ export default function Index() {
     }
     if (value == 'top') {
       setChangeType('topControl');
-      topControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      topControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -361,7 +368,7 @@ export default function Index() {
     }
     if (value == 'bottom') {
       setChangeType('bottomControl');
-      bottomControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      bottomControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -371,7 +378,10 @@ export default function Index() {
 
   const cancelControl = () => {
     setChangeType('');
-    stopControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+     
+    let {serverAddress, port, id} = recordData
+    
+    stopControl({},serverAddress,projectId,id).then(res => {
       if (res.success) {
         return;
       } else { message.error(res.errMsg) }

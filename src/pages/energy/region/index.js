@@ -105,7 +105,7 @@ const Sdiv = styled.div`
  
 const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
-  let {exparams} = useOutletContext()
+  let {exparams} = useOutletContext() 
   let {energytype, areaId, date, type:dateType,  projectId} = exparams 
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({

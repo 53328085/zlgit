@@ -42,7 +42,7 @@ const Mainbox = styled.div`
           display: flex;
           justify-content: space-between;
           column-gap: 16px;
-          padding: 16px;
+          padding-left: 16px;
           .imgborder {
             margin-top: 16px;
             height: 68px;
@@ -70,7 +70,7 @@ const Mainbox = styled.div`
             justify-content: space-around;
             .line {
               display: inline-flex;
-              column-gap: 64px;
+              justify-content: space-between;
               .myoy { 
                 display: flex;
                 align-items: center;
@@ -204,9 +204,9 @@ export default function Index(props) {
 
           let {x=[], y=[], y1= []} = detail || {}        
           setTotal(total)    
-          let cur = ['本日（kWh）','本日（kWh）', '本月（kWh）','本年（kWh）'][dateType]
+          let cur = ['本日(kWh)','本日(kWh)', '本月(kWh)','本年(kWh)'][dateType]
           setlightDate(cur)
-          let pre =['昨日（kWh）','昨日（kWh）', '上月（kWh）','去年（kWh）'][dateType]
+          let pre =['昨日(kWh)','昨日(kWh)', '上月(kWh)','去年(kWh)'][dateType]
           setlightDateYesterday(pre)
           let dataset = {
             dimensions: [

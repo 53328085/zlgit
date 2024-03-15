@@ -62,7 +62,7 @@ flex-direction: column;
 
 
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx",  onExport=() => {}, tempcolums, ...otherprops} =props  
+  const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
@@ -70,14 +70,14 @@ flex-direction: column;
   const [total, setTotal] = useState(0)
   const tempref = useRef();
   
-  const TableTemp =memo(({lists=[]}) => {  
+  const TableTemp =memo(() => {  
   
     return createPortal(
-       <Tablecom  bordered  size="small"  dataSource={lists}   columns={tempcolums} rowKey={otherprops.rowKey}  ref={tempref}   style={{position: "absolute", left: "-55000px"}}   />,
+       <Tablecom  bordered  size="small" locale={{emptyText: undefined,}}  dataSource={tempdata}   columns={tempcolums} rowKey={otherprops.rowKey}  ref={tempref}   style={{position: "absolute", left: "-55000px"}}   />,
        document.getElementById("root")
     )
   
-  }, [tempcolums])
+  }, [tempcolums, tempdata])
   
 
   const downTemp = useCallback(() => {  // 下载模板
@@ -90,9 +90,9 @@ flex-direction: column;
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
-    let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
+    let file = tempName.split(".").length == 1 ? "xlsx"  : tempName.split(".")[1];
     console.log(file)
-    let fileName = sheetName.split(".")[0]
+    let fileName = tempName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
       
    }, [ecolumns])

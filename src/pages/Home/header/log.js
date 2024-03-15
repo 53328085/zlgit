@@ -1,16 +1,17 @@
-import React, {useState, useRef, useEffect, useMemo, useCallback} from "react";
-import { Dropdown, Menu, Form, Input, message } from "antd";
+import React, {useRef,  useCallback} from "react";
+import { Dropdown, Space, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, systemConfigRest} from "@redux/systemconfig";
-// import restStore from "@redux/rest";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, systemConfigRest, selectProjectId} from "@redux/systemconfig";
+ 
  import './log.less'
 import CModal from "@com/useModal"
 import imgurl from "./icon";
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
+import {CustButton} from '@com/useButton'
 const Cdiv = styled.div`
   display: flex;
   height: 62px;
@@ -105,13 +106,16 @@ export default function Log() {
   const store = useStore();
   const user = useRef()
   const navgite = useNavigate()
- 
+  const projectId = useSelector(selectProjectId)
   const  screenadr = useSelector(currentscreen)
   const  isgranary = useSelector(isGranary)
   const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
-  const {name, roleType} = useSelector(selectUser) || {};
- 
+  const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
+  
+  let strmob = mobile.toString()
+  const start = strmob.slice(0, 3).padEnd(7, '*')+strmob.slice(-4);
+  console.log(start)
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
 /*   const isconfig = store.getState()?.system.configState
@@ -123,6 +127,8 @@ export default function Log() {
   }) */
   const Item = Form.Item
   const [form] = Form.useForm()
+  const [mform] = Form.useForm()
+  const [pform] = Form.useForm()
   const onExit = async () => {
       try {
       await dispatch(userRest());
@@ -211,6 +217,71 @@ const onJump = useCallback(() => {
       unsubscribe()
     }
   }) */
+
+  // 修改手机号码 , 密码
+  const onmobile = () => {
+     mref.current.onOpen();
+  }
+  const onpass = () => {
+    pref.current.onOpen();
+ }
+  const mref = useRef();
+  const pref = useRef()
+  const monOk = async() => { 
+     try {
+      let {mobile} = await mform.validateFields()
+      console.log(mobile)
+      let  param= {
+         projectId,
+         userId ,
+         mobile ,
+         oldPwd: "",
+          pwd: ""
+      }
+       let {success} =  await Login.ResetUserMobile(param)
+       if(success) {
+        message.success("保存成功,重新登录后生效")
+        mref.current.onCancel()
+       }else {
+        message.warning(errMsg || '数据出错')
+       }
+ 
+     } catch (error) {
+        console.log(error)
+     }
+    }
+    const ponOk = async() => { 
+      try {
+       let {oldPwd, pwd} = await pform.validateFields()
+       console.log(mobile)
+       let  param= {
+          projectId,
+          userId ,
+          mobile:'' ,
+          oldPwd,
+           pwd,
+       }
+        let {success} =  await Login.ResetUserPassword(param)
+        if(success) {
+          message.success("保存成功,重新登录后生效")
+         pref.current.onCancel()
+        }else {
+         message.warning(errMsg || '数据出错')
+        }
+  
+      } catch (error) {
+         console.log(error)
+      }
+     }
+  const Custfoot =(<Space>
+    <CustButton type="primary" onClick={onmobile}>修改手机号码</CustButton>
+    <CustButton type="primary" onClick={onpass}>修改用户密码</CustButton>
+  </Space>)
+
+
+
+
+
   return (
     <Cdiv>
       <Triangle />
@@ -257,13 +328,15 @@ const onJump = useCallback(() => {
      
        
       </Ldiv>
-      <CModal  title="账户信息" mold="cust"  ref={user} width="440px" onOk={onOk}>
+     
+      <CModal  title="账户信息" mold="cust"  ref={user} width="440px" closable onOk={onOk}  footer={Custfoot}>
       <Form
         form={form}
         name="modalform"
         colon={false}
         initialValues={{
-          name: name
+          name: name,
+          mobile: start,
         }}
         size="middle"
         labelCol={{ flex: "7em" }}
@@ -277,18 +350,40 @@ const onJump = useCallback(() => {
     >
       <Cipt disabled />
     </Item>
-    <Item label="手机号" name="mobile"  rules={[
-        {
-          required: true,
-          message: '请输入手机号码',             
-        },
-       {
-            validator: phoneValidator
-        }, 
-     
-      ]}>
-      <Cipt placeholder="请输入手机号码" />
+    <Item label="手机号" name="mobile" >
+      <Cipt placeholder="" disabled />
     </Item>
+     
+    
+   
+  
+  
+  </Form>
+ 
+      </CModal>
+
+      <CModal  title="修改密码" mold="cust"  ref={pref} width="440px" closable onOk={ponOk}  >
+      <Form
+        form={pform}
+        name="modalform"
+        colon={false}
+        initialValues={{
+          name: name,
+          
+        }}
+        size="middle"
+        labelCol={{ flex: "7em" }}
+        labelAlign="left"
+        preserve={false}
+        requiredMark={false}
+      >
+    <Item
+      label="账户名"
+      name="name"
+    >
+      <Cipt disabled />
+    </Item>
+    
     <Item label="输入旧密码" name="oldPwd"  rules={
       [
         {
@@ -335,6 +430,43 @@ const onJump = useCallback(() => {
     </Item>
   
   
+  </Form>
+ 
+      </CModal>
+
+      <CModal  title="修改手机号码" mold="cust"  ref={mref} width="440px" closable onOk={monOk} >
+      <Form
+        form={mform}
+        name="modalform"
+        colon={false}
+        initialValues={{
+          name: name,
+          mobile:  '',
+        }}
+        size="middle"
+        labelCol={{ flex: "7em" }}
+        labelAlign="left"
+        preserve={false}
+        requiredMark={false}
+      >
+    <Item
+      label="账户名"
+      name="name"
+    >
+      <Cipt disabled />
+    </Item>
+    <Item label="手机号" name="mobile"   rules={[
+        {
+          required: true,
+          message: '请输入手机号码',             
+        },
+       {
+            validator: phoneValidator
+        }, 
+     
+      ]}>
+      <Cipt placeholder="请输入手机号码"  />
+    </Item>  
   </Form>
  
       </CModal>
