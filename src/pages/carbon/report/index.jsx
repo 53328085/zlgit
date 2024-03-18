@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState,useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
@@ -10,14 +10,14 @@ import { safeElectric } from '@api/api'
 import moment from 'moment'
 import { PieCharts, LineCharts } from './charts'
 import anaylse from './imgs/anaylse.svg'
-import {exportPDF} from './topdf.js'
+import { exportPDF } from './topdf.js'
 import imgurl from '@imgs/index'
-import ReactToPrint,{useReactToPrint} from 'react-to-print';
+import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import './index.less'
 import CusContext from '@com/content'
 import styled from 'styled-components'
-import backimg  from '@imgs/backimg.png'
-import { systemConfigInfo} from '@redux/systemconfig.js'
+import backimg from '@imgs/backimg.png'
+import { systemConfigInfo } from '@redux/systemconfig.js'
 const ContainerDiv = styled.div`
 
 .container{
@@ -36,13 +36,13 @@ const ContainerDiv = styled.div`
        border-radius: 2px;
        padding: 32px;
        .active{
-        background-color: #237ae4;
+        background-color: ${props => props.theme.primaryColor} ;
         color: #fff;
         }
         .btnscsss{
             width: 192px;
             height: 36px;
-            background-color: #237ae4;
+            background-color: ${props => props.theme.primaryColor} ;
             color: #fff;
             display: flex;
             align-items: center;
@@ -75,12 +75,21 @@ const ContainerDiv = styled.div`
                 
             }
         }
+        
+    .onePageInfo{
+      p{
+        line-height: 35px;
+        span{
+          margin-left:30px;
+        }
+      }
+    }
        
 
     }
 }
 `
-const RightDiv =styled.div`
+const RightDiv = styled.div`
             width: 562px;
             height: 806px;
             background-color: #fff;
@@ -94,7 +103,7 @@ const RightDiv =styled.div`
                 
             }
 `
-const GridDiv =styled.div`
+const GridDiv = styled.div`
       display: grid;
       grid-template-rows: repeat(4,32px);
       grid-template-columns: repeat(3,172px);  
@@ -129,8 +138,9 @@ export default function Index() {
   const [report, setReport] = useState()
   const [projectMes, setProjectMes] = useState([{ name: '项目名称', message: '', }, { name: '项目地址', message: '' }])  //项目情况
   const [elec, setElec] = useState([{ name: '最大电流发生时间', message: '', }, { name: '最大电流发生位置', message: '', }, { name: '最大电流值', message: '', }])  //电流监控  
- 
-  const {chineseTitle} = useSelector(systemConfigInfo)
+
+  const { chineseTitle } = useSelector(systemConfigInfo)
+
   const [voltage, setVoltage] = useState([{
     name: '最大电压发生时间',
     message: '',
@@ -143,7 +153,7 @@ export default function Index() {
     name: '最大电压值',
     message: '',
   },])  //电压监控
-  const [leaveElec,setLeaveElec]=useState([
+  const [leaveElec, setLeaveElec] = useState([
     {
       name: '最大剩余电流发生时间',
       message: '',
@@ -157,7 +167,7 @@ export default function Index() {
       message: '',
     },
   ])  //剩余电流
-  const [temperature,setTemperature]=useState([{
+  const [temperature, setTemperature] = useState([{
     name: '最高温度发生时间',
     message: '',
   },
@@ -173,8 +183,8 @@ export default function Index() {
     { title: '', dataIndex: 'name', width: 100, align: 'center' },
     { title: '', dataIndex: 'message', align: 'center' }
   ]
-  
-  const printRef =useRef()
+
+  const printRef = useRef()
   const reactToPrintContent = useCallback(() => {
     return printRef.current;
   }, [printRef.current])
@@ -222,42 +232,42 @@ export default function Index() {
       setVoltage(
         [{
           name: '最大电压发生时间',
-          message: data.uMaxSn?data.uMaxTime:'/',
+          message: data.uMaxSn ? data.uMaxTime : '/',
         },
         {
           name: '最大电压发生位置',
-          message: data.uMaxSn?data.uMaxAddress:'/'          ,
+          message: data.uMaxSn ? data.uMaxAddress : '/',
         },
         {
           name: '最大电压值',
-          message:data.uMaxSn?data.uMaxContent:'/',
+          message: data.uMaxSn ? data.uMaxContent : '/',
         },]
       )
       setLeaveElec([
         {
           name: '最大剩余电流发生时间',
-          message: data.irMaxSn?data.irMaxTime:'/',
+          message: data.irMaxSn ? data.irMaxTime : '/',
         },
         {
           name: '最大剩余电流发生位置',
-          message: data.irMaxSn?data.irMaxAddress:'/',
+          message: data.irMaxSn ? data.irMaxAddress : '/',
         },
         {
           name: '最大剩余电流值',
-          message: data.irMaxSn?data.irMaxContent:'/',
+          message: data.irMaxSn ? data.irMaxContent : '/',
         },
       ])
       setTemperature([{
         name: '最高温度发生时间',
-        message: data.tMaxSn?data.tMaxTime:'/',
+        message: data.tMaxSn ? data.tMaxTime : '/',
       },
       {
         name: '最高温度发生位置',
-        message: data.tMaxSn?data.tMaxAddress:'/',
+        message: data.tMaxSn ? data.tMaxAddress : '/',
       },
       {
         name: '最高温度值',
-        message: data.tMaxSn?data.tMaxContent:'/',
+        message: data.tMaxSn ? data.tMaxContent : '/',
       },])
     } else {
       message.error(res.errMsg)
@@ -296,122 +306,116 @@ export default function Index() {
       getYearReport(datevalue)
     }
   }
-  const disabledDate= (current) => {
-    const type =  active === 1 ? 'month' : 'year'
+  const disabledDate = (current) => {
+    const type = active === 1 ? 'month' : 'year'
     return current && current > moment().endOf(type);
   };
   useEffect(() => {
     console.log(printRef)
   }, [])
   return (
-    <CusContext.Provider value={{active,datevalue}}>
+    <CusContext.Provider value={{ active, datevalue }}>
       <ContainerDiv>
-      <div className='container'>
-      <div className='leftcss'>
-        <BlueColumn name="运行报告" />
-        <div style={{
-          width: 320,
-          display: 'flex',
-          margin: '32px 0',
-          borderRadius: 2,
-          cursor: 'pointer'
-        }}>
-          <div
-            onClick={() => { setActive(1); setIsshow(false);setReport(null)}}
-            className={active === 1 ? 'active' : ''}
-            style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', height: 40, lineHeight: '40px' }}
-          >月份报告
-          </div>
-          <div
-            onClick={() => { setActive(2);setIsshow(false);setReport(null) }}
-            className={active === 2 ? 'active' : ''}
-            style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', marginLeft: -1, height: 40, lineHeight: '40px' }}>
-            年度报告
-          </div>
-        </div>
-        <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate} disabledDate={disabledDate}/>
-        <Divider dashed style={{ borderColor: '#d7d7d7', margin: '48px 0' }} />
-        <div className='btnscsss' onClick={makeReport}>
-         <img src={imgurl.searchFile} alt="" style={{marginRight:8}}/> 生成报告
-        </div>
- 
-        <div className='btnscsss' onClick={handlePrint}>
-        <img src={imgurl.print} alt="" style={{marginRight:8}} /> 打印报告
-        </div>
-        <div className='btnscsss' onClick={()=>{exportPDF('pdf','pdfid')}}>
-        <img src={imgurl.export} alt="" style={{marginRight:8}}/> 导出报告
-        </div>
-      </div>
-      <div className='rightcss' >
-        <div id='pdfid' ref={printRef} className='printContet'>
-        <RightDiv>
-        <div style={{ padding: 16 }}>
-            <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
-            <span style={{ fontSize: 20 }}>{chineseTitle}</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',height:470 }}>
-            <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>用户分析报告</p>
+        <div className='container'>
+          <div className='leftcss'>
+            <BlueColumn name="运行报告" />
             <div style={{
-              width: 431,
-              height: 136,
-              background: '#f2f2f2',
-              border: '1px solid #ccc',
-              padding: '16px',
+              width: 320,
               display: 'flex',
-              flexDirection: 'column',
-              fontSize: 18
+              margin: '32px 0',
+              borderRadius: 2,
+              cursor: 'pointer'
             }}>
-              <p style={{ flex: 1 }}>项目名称:<span style={{ paddingLeft: 24 }}>{report?.project}</span></p>
-              <p style={{ flex: 1 }}>项目地址:<span style={{ paddingLeft: 24 }}>{report?.address}</span></p>
-              <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report?moment().format('YYYY-MM-DD'):''}</span></p>
+              <div
+                onClick={() => { setActive(1); setIsshow(false); setReport(null) }}
+                className={active === 1 ? 'active' : ''}
+                style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', height: 40, lineHeight: '40px' }}
+              >月份报告
+              </div>
+              <div
+                onClick={() => { setActive(2); setIsshow(false); setReport(null) }}
+                className={active === 2 ? 'active' : ''}
+                style={{ flex: 1, textAlign: 'center', border: '1px solid #d7d7d7', marginLeft: -1, height: 40, lineHeight: '40px' }}>
+                年度报告
+              </div>
             </div>
-          </div>
-          <div className='bgimage'>
-            <img src={backimg} alt="" style={{width:559}}/>
-          </div>
-        </RightDiv>
-        <div className="page-break" />
-        {isshow ? <>
-          <PageComp >
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>1.项目情况</p>
-              <UseTable columns={columns1} dataSource={projectMes} showHeader={false} />
+            <DatePicker picker={active === 1 ? 'month' : 'year'} style={{ width: '100%' }} defaultValue={moment()} onChange={changeDate} disabledDate={disabledDate} />
+            <Divider dashed style={{ borderColor: '#d7d7d7', margin: '48px 0' }} />
+            <div className='btnscsss' onClick={makeReport}>
+              <img src={imgurl.searchFile} alt="" style={{ marginRight: 8 }} /> 生成报告
+            </div>
 
+            <div className='btnscsss' onClick={handlePrint}>
+              <img src={imgurl.print} alt="" style={{ marginRight: 8 }} /> 打印报告
             </div>
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>2.电气安全详情</p>
-              <GridDiv>
-                  <div className='titlecolor divcss' >总报警次数</div>
-                <div className='titlecolor divcss' >最大电流</div>
-                <div className='titlecolor divcss' >最大电压</div>
-                <div className='divcss'>{report?.alarmCnt ? report.alarmCnt : '/'}</div>
-                <div className='divcss'>{report?.iMaxContent ? report?.iMaxContent : '/'}</div>
-                <div className='divcss'>{report?.uMaxContent ? report.uMaxContent : '/'}</div>
-                <div className='titlecolor divcss' >剩余电流</div>
-                <div className='titlecolor divcss' >最高温度</div>
-                <div className='titlecolor divcss' >烟雾报警</div>
-                <div className='divcss'>{report?.irMaxContent ? report.irMaxContent : '/'}</div>
-                <div className='divcss'>{report?.tMaxContent? report?.tMaxContent: '/'}</div>
-                <div className='divcss'>{report?.smokeAlarmCnt ? report?.smokeAlarmCnt : '/'}</div>
-              </GridDiv>
+            <div className='btnscsss' onClick={() => { exportPDF('pdf', 'pdfid') }}>
+              <img src={imgurl.export} alt="" style={{ marginRight: 8 }} /> 导出报告
             </div>
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ marginBottom: 6 }}>2.1告警类型分布</p>
-              <PieCharts data={report?.alarmTypeGroup} />
+          </div>
+          <div className='rightcss' >
+            <div id='pdfid' ref={printRef} className='printContet'>
+              <RightDiv>
+                <div style={{ padding: 16 }}>
+                  <img src={logo} alt="" style={{ width: 77, height: 58, marginRight: 16 }} />
+                  <span style={{ fontSize: 20 }}>{chineseTitle}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: 470 }}>
+                  <p style={{ fontSize: 32, color: '#515151', fontWeight: 'bold', marginBottom: 32 }}>碳排放分析报告</p>
+                  <div style={{
+                    width: 431,
+                    height: 136,
+                    background: '#f2f2f2',
+                    border: '1px solid #ccc',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: 18
+                  }}>
+                    <p style={{ flex: 1 }}>项目名称:<span style={{ paddingLeft: 24 }}>{report?.project}</span></p>
+                    <p style={{ flex: 1 }}>项目地址:<span style={{ paddingLeft: 24 }}>{report?.address}</span></p>
+                    <p style={{ flex: 1 }}>报告日期:<span style={{ paddingLeft: 24 }}>{report ? moment().format('YYYY-MM-DD') : ''}</span></p>
+                  </div>
+                </div>
+                <div className='bgimage'>
+                  <img src={backimg} alt="" style={{ width: 559 }} />
+                </div>
+              </RightDiv>
+              <div className="page-break" />
+              {isshow ? <>
+                <PageComp >
+                  <div style={{ marginBottom: 24 }} className="onePageInfo">
+                    <p style={{ textAlign: 'center' }}>中国食品、烟草及酒、饮料和精制茶企业温室气体排放报告</p>
+                    <p>报告主体（盖章）：</p>
+                    <p>报告年度：</p>
+                    <p>编制日期：<span>年</span><span>月</span><span>日</span></p>
+                    <p style={{ textIndent: '2em' }}>根据国家发展和改革委员会发布的《中国食品、烟草及酒、饮料和精制茶生产企业温室气体排放核算方法与报告指南（试行）》，本报告主体核算了年度温室气体排放量，并填写了相关数据表格。现将有关情况报告如下：</p>
+                    <p>一、企业基本情况</p>
+                    <p>二、温室气体排放情况</p>
+                    <p>三、活动水平数据及来源说明</p>
+                    <p>四、排放因子数据及来源说明</p>
+                    <p>本报告真实、可靠，如报告中的信息与实际情况不符，本企业将承担相应的法律责任。</p>
+                    <p>法人（签字）：</p>
+                    <p><span>年</span><span>月</span><span>日</span></p>
+
+                  </div>
+                </PageComp>
+                <PageComp >
+                 <p></p>
+                 <p></p>
+                 <p></p> 
+                </PageComp>
+                <div className="page-break" />
+
+              </> : null}
             </div>
-          </PageComp>
-          <div className="page-break" />
-    
-        </> : null}
+
+
+          </div>
         </div>
-       
-
-      </div>
-      </div>
       </ContainerDiv>
-    
+
     </CusContext.Provider>
-    
+
   )
 }
 
