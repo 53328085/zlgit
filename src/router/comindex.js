@@ -151,6 +151,16 @@ export default function Index() {
             break;
          }
       }
+      if(primary == "runtimeCarbon") {
+        switch(nested) {
+          case "examining":
+           setConfig({ dateY: true });
+           break;
+         case "analysis":
+           setConfig({ dateR: true });
+           break;
+        }
+      }
     } catch (error) {}
   };
 

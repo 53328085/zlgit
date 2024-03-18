@@ -7,7 +7,7 @@ import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
 import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor} from '@redux/systemconfig.js'
 import moment from "moment";
-
+const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 
@@ -126,6 +126,16 @@ const dateselect = (
 
 )
 
+const carbonDateY = (
+   <Item label="考核年度" name=""  >
+      <DatePicker   picker="year" />
+   </Item>
+)
+const carbonDateR = (
+  <Item label="" name="">
+     <RangePicker />
+  </Item>
+)
 const viewtype = (<Item name="view" initialValue={1} >
   <Radiogroup
         options={[
@@ -280,6 +290,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         }
         {
           props.config?.export ? <ExportExcel /> : null
+        }
+        {
+          props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
+        }
+        {
+          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
         }
         <Space>
        <Input type="color" value={color}
