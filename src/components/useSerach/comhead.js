@@ -1,6 +1,7 @@
 import React, {useState,  useEffect} from "react";
 
-import { Form, Select,  Space, DatePicker, message,  Input} from "antd";
+import { Form, Select,  Space, DatePicker, message,  Input, Button,Dropdown} from "antd";
+import {GlobalOutlined} from "@ant-design/icons"
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
@@ -31,8 +32,10 @@ const Cform = styled(Form)`
 
 const { Item } = Form;
 
-
-
+const langs = [
+   {label: "中文(简体)", key: ''},
+   {label: "English (US)", key: ''}
+]
 
 
 
@@ -49,7 +52,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   const {config={}} = props
   const themcolor = useSelector(themeColor)   
-  console.log(themcolor)
+  
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
@@ -79,6 +82,11 @@ export default function UseSerach(props) {
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
+
+  const swithcLang =(e) => {
+     console.log(e);
+  }
+
   const onChange = (e, option) => {  
       dispatch(setCurrentlevel(option))
       setAreaid(e)
@@ -273,10 +281,21 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
           props.config?.export ? <ExportExcel /> : null
         }
-        {/*  <Input type="color" value={color}
-              style={{width: '80px'}}
+        <Space>
+       <Input type="color" value={color}
+              style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
-            /> */}
+            /> 
+             <Dropdown
+      menu={{
+        items: langs,
+        onClick: swithcLang,
+      }}
+      
+    >
+       <GlobalOutlined />
+      </Dropdown>
+      </Space>
     </Cform>
   
     
