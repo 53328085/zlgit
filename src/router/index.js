@@ -110,7 +110,7 @@ const loginrouter =  [{
   '0109': Comindex,
   '0110': Comindex,
   '0111': Comindex,
-  '0112': Carbon,
+  '0112': Comindex,
   '0113': Devops,
 } 
 

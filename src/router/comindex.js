@@ -49,6 +49,12 @@ export default function Index() {
     runtimeStorage: [ // 储能管理
       "station"
     ], 
+    runtimeCarbon: [ // 碳排管理
+       "summary",
+       "examining",
+       "manager",
+       "analysis",
+    ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
