@@ -1,10 +1,11 @@
 /* 获取系统配置 */
  
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
- 
+
  
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
@@ -63,6 +64,7 @@ const initialState = {
     themeColor:  {
       primaryColor: '#237AE4'
     },
+    intl: zhCN,
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -249,7 +251,11 @@ const system = createSlice({
         systemConfigRest(state, actions) {
         
           return state = initialState;
-      },
+        },
+        setIntl(state, {payload}) { // 设置国际化
+          console.log(payload)
+          state.intl = payload
+        }
       
     },
      extraReducers: {
@@ -354,6 +360,7 @@ export const roomName = state =>  {
 } 
  
 export const deviceStyle = state => state.system.deviceStyle;
+export const intl = state => state.system.intl //国际化
 export const {
     configProject,
     getSetMenus,
@@ -379,6 +386,6 @@ export const {
     getisDistribution,
     getcurlRommid,
     getDiscurlevel,
-  
+    setIntl,
 } = actions
 export default system.reducer

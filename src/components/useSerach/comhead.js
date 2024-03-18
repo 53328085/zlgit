@@ -5,14 +5,20 @@ import {GlobalOutlined} from "@ant-design/icons"
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
 import moment from "moment";
+import enUS from 'antd/es/locale/en_US';
+import zhCN from 'antd/es/locale/zh_CN';
+ 
+import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 
 
 import Enery from "./enery";
+
+
 
 const Cform = styled(Form)`
     background: #fff;
@@ -33,11 +39,20 @@ const Cform = styled(Form)`
 const { Item } = Form;
 
 const langs = [
-   {label: "中文(简体)", key: ''},
-   {label: "English (US)", key: ''}
+   {label: "中文(简体)", key: 'zh-cn'},
+   {label: "English (US)", key: 'en'}
 ]
 
-
+const langpack = {
+  en: {
+    label: 'English (US)',
+    lang: enUS
+  },
+  'zh-cn': {
+    label: '中文(简体)',
+    lang: zhCN,
+  }
+}
 
 export const AreaSelect = ({value, onChange, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
@@ -51,6 +66,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 // 1.   状态中获取
 export default function UseSerach(props) {
   const {config={}} = props
+  const [langName, setLangName] = useState('中文(简体)')
   const themcolor = useSelector(themeColor)   
   
   const [color, setColor] = useState(themcolor.primaryColor)
@@ -84,7 +100,12 @@ export default function UseSerach(props) {
   const deviceStyles = useSelector(deviceStyle)
 
   const swithcLang =(e) => {
-     console.log(e);
+      let {key} = e;
+      console.log(key);
+      let {label, lang} = langpack[key]
+      setLangName(label)
+      moment(key)
+      dispatch(setIntl(lang))
   }
 
   const onChange = (e, option) => {  
@@ -309,7 +330,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
       }}
       
     >
-       <GlobalOutlined />
+       <span>{langName}<GlobalOutlined /></span> 
       </Dropdown>
       </Space>
     </Cform>
