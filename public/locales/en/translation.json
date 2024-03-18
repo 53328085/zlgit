@@ -1,5 +1,8 @@
 {
     "welcome": "china lot",
    "author": "Author is",
-   "currentTime": "current time is {{time, DD/MM/YY}}"
+   "currentTime": "current time is {{time, DD/MM/YY}}",
+   "login": {
+    
+   }
  }

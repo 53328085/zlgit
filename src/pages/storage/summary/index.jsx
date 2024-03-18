@@ -233,8 +233,9 @@ export default function Index() {
   }) //接线图数据
 
   useEffect(() => {
-    if(Object.values(exparams)?.length < 3 ) return
-     
+    
+    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && Number.isFinite(stationName))) return
+    console.log(exparams)
     querySiteInfo(projectId, areaId, stationName).then(res => {
       if (res.success) {
         setCardData(res.data)
