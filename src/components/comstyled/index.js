@@ -5,6 +5,7 @@
  */
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
+import { PropertySafetyTwoTone } from "@ant-design/icons";
 
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
@@ -531,7 +532,7 @@ export const Cdivider = ({
 export   const Radiogroup = styled(Radio.Group)`
   && {
     .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
-      width: 96px;
+      width: ${props => props.wh || '96px'};
       text-align: center;
       &:first-child {
         border-radius: 16px 0 0 16px;

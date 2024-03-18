@@ -14,11 +14,13 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor} from "@redux/systemconfig";
+import {themeColor, intl} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 function App() {
   const theme = useSelector(themeColor)
-  console.log(theme)
+/*   const theme = useSelector(themeColor)
+ 
+   
   const config = {
     csp: {
       nonce: 'YourNonceCode'
@@ -28,9 +30,10 @@ function App() {
   ConfigProvider.config({
     theme: {
       primaryColor: theme.primaryColor,
-    }
+    },
+   
   }
-  )
+  ) */
  
   return   (
  <CustConfig> 
