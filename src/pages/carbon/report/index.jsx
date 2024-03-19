@@ -228,7 +228,7 @@ export default function Index() {
     { title: '', dataIndex: 'message', align: 'center' }
   ]
   // 化石燃料燃烧
-  const combustionTable = [
+  const combustionTable1 = [
     { id: "0", name: "无烟煤", consume: "", heating: "" },
     { id: "1", name: "烟煤", consume: "", heating: "" },
     { id: "2", name: "褐煤", consume: "", heating: "" },
@@ -253,7 +253,7 @@ export default function Index() {
     { id: "21", name: "炼厂干气", consume: "", heating: "" },
   ]
   //工业生产过程**
-  const produceTable = [
+  const produceTable1 = [
     { id: "1", name: "碳酸盐的消耗量", data: "", unit: "t" },
     { id: "2", name: "工业生产的二氧化碳消耗量", data: "", unit: "t" },
   ]
@@ -265,6 +265,57 @@ export default function Index() {
     { id: "4", name: "厌氧处理系统出口废水中的化学需氧量浓度", data: "", unit: "kg COD/m3" },
     { id: "5", name: "以污泥方式清除掉的有机物总量", data: "", unit: "kg COD" },
     { id: "6", name: "甲烷回收量", data: "", unit: "kg" },
+  ]
+
+  //净闬右购入使用电力、热力
+  const purchaseTable = [
+    { id: "1", name: "电力净购入量", data: "", unit: "MWh" },
+    { id: "2", name: "热力净购入量", data: "", unit: "GJ" },
+  ]
+
+
+  // 化石燃料燃烧2
+  const combustionTable2 = [
+    { id: "0", name: "无烟煤", consume: "", heating: "" },
+    { id: "1", name: "烟煤", consume: "", heating: "" },
+    { id: "2", name: "褐煤", consume: "", heating: "" },
+    { id: "3", name: "洗精煤", consume: "", heating: "" },
+    { id: "4", name: "其他洗煤", consume: "", heating: "" },
+    { id: "5", name: "其他煤制品", consume: "", heating: "" },
+    { id: "6", name: "焦炭", consume: "", heating: "" },
+    { id: "7", name: "原油", consume: "", heating: "" },
+    { id: "8", name: "燃料油", consume: "", heating: "" },
+    { id: "9", name: "汽油", consume: "", heating: "" },
+    { id: "10", name: "柴油", consume: "", heating: "" },
+    { id: "11", name: "一般煤油", consume: "", heating: "" },
+    { id: "12", name: "液化天然气", consume: "", heating: "" },
+    { id: "13", name: "液化石油气", consume: "", heating: "" },
+    { id: "14", name: "焦油", consume: "", heating: "" },
+    { id: "15", name: "粗苯", consume: "", heating: "" },
+    { id: "16", name: "焦炉煤气", consume: "", heating: "" },
+    { id: "17", name: "高炉煤气", consume: "", heating: "" },
+    { id: "18", name: "转炉煤气", consume: "", heating: "" },
+    { id: "19", name: "其他煤气", consume: "", heating: "" },
+    { id: "20", name: "天然气", consume: "", heating: "" },
+    { id: "21", name: "炼厂干气", consume: "", heating: "" },
+  ]
+
+  //工业生产过程2
+  const produceTable2 = [
+    { id: "1", name: "碳酸盐的排放因子", data: "", unit: "tCO₂/t" },
+    { id: "", name: "二氧化碳的损耗比例", data: "", unit: "%" },
+  ]
+  
+  // 废水厌氧处理2
+  const wasteTable2 = [
+    { id: "1", name: "废水厌氧处理系统的甲烷最大生产能力", data: "", unit: "kg CH₄/kg COD" },
+    { id: "2", name: "甲烷修正因子", data: "", unit: "-" },
+  ]
+
+  //净闬右购入使用电力、热力2
+  const purchaseTable2 = [
+    { id: "1", name: "电力", data: "", unit: "tCO₂/MWh" },
+    { id: "2", name: "热力", data: "", unit: "tCO₂/GJ" },
   ]
   const printRef = useRef()
   const reactToPrintContent = useCallback(() => {
@@ -481,6 +532,7 @@ export default function Index() {
 
                   </div>
                 </PageComp>
+                <div className="page-break" />
                 <PageComp >
                   <div style={{ marginBottom: 24 }} className="onePageInfo">
                     <p>附表1 报告主体二氧化碳排放量报告</p>
@@ -493,7 +545,7 @@ export default function Index() {
                     <DesItem title="" bordered size='small' column={3} >
                       <DesItem.Item>源类别</DesItem.Item>
                       <DesItem.Item>温室气体本身质量(单位:吨)</DesItem.Item>
-                      <DesItem.Item>C01当量(单位:吨 CO2当量)</DesItem.Item>
+                      <DesItem.Item>CO₂当量(单位:吨 CO₂当量)</DesItem.Item>
                       <DesItem.Item>化石燃料燃烧二氧化碳排放量</DesItem.Item >
                       <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
                       <DesItem.Item>工业生产过程二氧化碳排放量</DesItem.Item>
@@ -512,21 +564,21 @@ export default function Index() {
                     </DesItem>
                   </div>
                 </PageComp>
+                <div className="page-break" />
                 <PageComp >
-                  <div className="onePageInfo"></div>
                   <p style={{
                     textAlign: 'center', marginBottom: 10, fontSize: 15, fontWeight: 700,
                     fontFamily: 'cursive'
                   }}>附表2 活动水平数据表</p>
                   <table border="1" align="center">
                     <tr align="center">
-                      <td rowspan="23">化石燃料燃烧*</td>
-                      <td></td>
-                      <th>净消耗量(t,万Nmm3)</th>
-                      <th>低位发热量GJIt，(GI/万Nm3)</th>
+                      <td width="120" rowspan="23">化石燃料燃烧*</td>
+                      <th width="150">燃料品种</th>
+                      <th width="120">净消耗量(t,万Nmm3)</th>
+                      <th width="120">低位发热量(GJ/t，(GJ/万Nm3)</th>
                     </tr>
 
-                    {combustionTable.map((item => {
+                    {combustionTable1.map((item => {
                       return <tr align="center" key={item.id}>
                         <td>{item.name}</td>
                         <td>{item.consume}</td>
@@ -535,12 +587,12 @@ export default function Index() {
                     })
                     )}
                     <tr align="center" >
-                      <td rowspan="3">工业生产过程**</td>
-                      <td></td>
-                      <th>数据</th>
-                      <th>单位</th>
+                      <td width="120" rowspan="3">工业生产过程**</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
                     </tr>
-                    {produceTable.map((item => {
+                    {produceTable1.map((item => {
                       return <tr align="center" key={item.id}>
                         <td>{item.name}</td>
                         <td>{item.data}</td>
@@ -550,15 +602,112 @@ export default function Index() {
                     )}
                   </table>
                 </PageComp>
+                <div className="page-break" />
                 <PageComp >
                   <table border="1" align="center">
-                    <tr>
-                      <td rowspan="7">废水厌氧处理</td>
-                      <td></td>
-                      <th>数据</th>
-                      <th>单位</th>
+                    <tr align="center">
+                      <td width="120" rowspan="7">废水厌氧处理</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
                     </tr>
                     {wasteTable.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+
+                    <tr align="center" >
+                      <td width="120" rowspan="3">净购入使用电力、热力</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
+                    </tr>
+                    {purchaseTable.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+                  </table>
+                  <p style={{
+                    fontSize: 15, fontWeight: 700,
+                    fontFamily: 'fangsong', marginTop: 15
+                  }}>*企业应自行添加未在表中列出但企业实际消耗的其他能源品种</p>
+
+                  <p style={{
+                    fontSize: 15, fontWeight: 700,
+                    fontFamily: 'fangsong'
+                  }}>** 企业应自行添加未在表中列出但企业实际消耗的其他碳酸盐原料品种</p>
+                </PageComp>
+                <div className="page-break" />
+                <PageComp >
+                  <p style={{
+                    textAlign: 'center', marginBottom: 10, fontSize: 15, fontWeight: 700,
+                    fontFamily: 'cursive'
+                  }}>附表3 排放因子和计算系数</p>
+                  <table border="1" align="center">
+                    <tr align="center">
+                      <td width="120" rowspan="23">化石燃料燃烧</td>
+                      <th width="150">燃料品种</th>
+                      <th width="120">单位热值含碳量(tC/GJ)</th>
+                      <th width="120">碳氧化率(%)</th>
+                    </tr>
+
+                    {combustionTable2.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.consume}</td>
+                        <td>{item.heating}</td>
+                      </tr>
+                    })
+                    )}
+                    <tr align="center" >
+                      <td width="120" rowspan="3">工业生产过程</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
+                    </tr>
+                    {produceTable2.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td width="120">{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+                  </table>
+                </PageComp>
+                <div className="page-break" />
+                <PageComp >
+                  <table border="1" align="center">
+                    <tr align="center">
+                      <td width="120" rowspan="3">废水厌氧处理</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
+                    </tr>
+                    {wasteTable2.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+
+                    <tr align="center" >
+                      <td width="120" rowspan="3">净购入使用电力、热力</td>
+                      <td width="150"></td>
+                      <th width="120">数据</th>
+                      <th width="120">单位</th>
+                    </tr>
+                    {purchaseTable2.map((item => {
                       return <tr align="center" key={item.id}>
                         <td>{item.name}</td>
                         <td>{item.data}</td>
