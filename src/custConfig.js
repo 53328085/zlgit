@@ -12,13 +12,13 @@ import {themeColor, intl} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
   const theme = useSelector(themeColor)
-  const locale = useSelector(intl)
-  console.log(locale)
+  const {lang} = useSelector(intl)
+  
   const config = {
     csp: {
       nonce: 'YourNonceCode'
     },
-    locale,
+    locale: lang,
   }
   ConfigProvider.config({
     theme , 

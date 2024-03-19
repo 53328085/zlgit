@@ -64,7 +64,10 @@ const initialState = {
     themeColor:  {
       primaryColor: '#237AE4'
     },
-    intl: zhCN,
+    intl: {
+      lang: zhCN,
+      locale: 'zh-cn'
+    },
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -232,8 +235,7 @@ const system = createSlice({
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
-        getThemeColor(state, {payload}) {
-           console.log(payload)
+        getThemeColor(state, {payload}) {         
            state.themeColor =payload;
           
         },
@@ -249,11 +251,12 @@ const system = createSlice({
            state.systemConfigInfo = payload ?? {}
         },
         systemConfigRest(state, actions) {
-        
-          return state = initialState;
+           let {themeColor, intl} = state;
+           console.log(themeColor)
+         //  state = {...initialState, themeColor, intl};
+           return {...initialState, themeColor, intl}
         },
-        setIntl(state, {payload}) { // 设置国际化
-          console.log(payload)
+        setIntl(state, {payload}) { // 设置国际化          
           state.intl = payload
         }
       

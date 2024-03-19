@@ -700,12 +700,12 @@ const closeModl = () => {
         
         width={488}
         mold="cust"
-        type="dark"
+       
       >
         <Space size={16} style={{paddingLeft: '32px'}}>
           <Circle
           />
-         <span style={{color: '#fff', fontSize: '18px'}}> 是否退出系统？</span>
+         <span style={{color: '#333', fontSize: '18px'}}> 是否退出系统？</span>
         </Space>
       </Custmodal>
       <Custmodal

@@ -1,5 +1,6 @@
 
 import { message } from "antd";
+import _ from 'lodash'
 import * as echarts from "echarts";
 import 'echarts-liquidfill'
 import store from '@redux/store'
@@ -286,8 +287,10 @@ export const drawEcharts = (
   
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
- // const bar = echarts.getInstanceByDom(dom);
-  const chart = echarts.init(dom, 'walden');
+  const {locale} =store.getState()?.system?.intl  // 国际化语言
+  console.log(locale)
+  let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
+  const chart = echarts.init(dom, 'walden', {locale: lang});
   // 对不同图表类型设置不同的格式
 
   let custSeries
@@ -435,7 +438,9 @@ export const drawEcharts = (
   }else {
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    
-  chart?.resize();
+   window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
+  
+   
   return chart
 };
 

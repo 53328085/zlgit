@@ -10,21 +10,21 @@ const custCorle =(props) => {
  return {
   normal: props.theme.primaryColor,
   warn: "#ff4d4f",
-  dark: "#fff"
+//  dark: "#fff"
  }[props.type]
 }
 const CModal = styled(Modal)`
    .ant-modal-content {
-     background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
+   //  background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
   }
   .ant-modal-header {
     padding: 32px;
     border-bottom: none;
-    background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
+  //  background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
     .ant-modal-title {
       font-size: 16px;
       color: ${custCorle};;
-      padding-left: ${(props) => props.type=='dark' ? '0px' : '16px'};
+      padding-left: 16px;
       border-left:  4px solid  ${theme};
       height: 32px;
       line-height: 32px;
@@ -46,7 +46,7 @@ const CModal = styled(Modal)`
     }
     .ant-btn-default {
       background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
-      color: ${(props) => props.type=='dark' ? '#fff' : '#666'};
+      color: #666;
     }
     .ant-btn-primary {
       border-color:   ${custCorle};

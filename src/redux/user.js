@@ -19,7 +19,7 @@ const initialState = {
 export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手机号
     'user/loginByName',
     async (params) => { 
-       console.log(params)
+    
       let {type, ...param} = params    
       let handler = ['LoginByName', 'LoginByPhone'][type]     
       const response =  await Login[handler](param)
@@ -46,8 +46,8 @@ const user = createSlice({
         userRest(state, actions) {  
             let name = state.memorize ? state.name : '';
             let mobile = state.memoPhone ? state.mobile : '';
-            state = {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
-            return state
+           // state = {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
+            return {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
         }
     },
     extraReducers: {

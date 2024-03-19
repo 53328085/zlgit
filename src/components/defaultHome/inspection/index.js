@@ -54,8 +54,7 @@ const fs = {
 }
 
 const rate = (all,p) => {
-     if(all == 0) return "0%"
-     console.log(p/all)
+     if(all == 0) return "0%"   
    return  Number.parseFloat(p/all*100).toFixed(1) + "%"
 }
 export default function DefaultHome(props) {

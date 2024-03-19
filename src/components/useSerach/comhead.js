@@ -67,9 +67,11 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 // 1.   状态中获取
 export default function UseSerach(props) {
   const {config={}} = props
-  const [langName, setLangName] = useState('中文(简体)')
+  let i18lang = localStorage.getItem('i18nextLng')
+  let packlng = i18lang== 'zh' ? 'zh-cn' : i18lang
+  const langName = langpack[packlng]?.label || '中文(简体)'
   const themcolor = useSelector(themeColor)   
-  
+  const {i18n} = useTranslation()
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
@@ -101,13 +103,17 @@ export default function UseSerach(props) {
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
-  const swithcLang =(e) => {
+  const swithcLang =(e) => {   // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
       let {key} = e;
       console.log(key);
       let {label, lang} = langpack[key]
-      setLangName(label)
       moment(key)
-      dispatch(setIntl(lang))
+      if(key == 'zh-cn')  {
+        i18n.changeLanguage('zh')
+      }else {
+        i18n.changeLanguage(key)
+      }
+      dispatch(setIntl({lang, locale: key}))
   }
 
   const onChange = (e, option) => {  
