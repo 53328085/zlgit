@@ -18,6 +18,8 @@ import CusContext from '@com/content'
 import styled from 'styled-components'
 import backimg from '@imgs/backimg.png'
 import { systemConfigInfo } from '@redux/systemconfig.js'
+import { Descriptions } from 'antd'
+
 const ContainerDiv = styled.div`
 
 .container{
@@ -84,7 +86,6 @@ const ContainerDiv = styled.div`
         }
       }
     }
-       
 
     }
 }
@@ -129,6 +130,49 @@ const GridDiv = styled.div`
         }
       }
 `
+const DesItem = styled(Descriptions)`
+&& {
+  margin-bottom: 32px;
+ .ant-descriptions-item-label {
+   height: 30px;
+   padding: 0 16px;
+  
+   text-align: center;
+   min-width: 120px;
+   background: transparent;
+ }
+ .ant-descriptions-item-content {
+   height: 30px;
+   color:#515151;
+   padding: 0 16px;
+ }
+ .ant-descriptions-header {
+  margin-bottom: 10px;
+ .ant-descriptions-title {
+   font-weight: normal;
+   color:#515151;
+   font-size: 14px;
+ }
+}
+}
+`
+const Main = styled.div`
+   && {
+    color: #515151;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .title {
+       font-size: 20px;
+       margin-bottom: 16px;
+    }
+    .text {
+      font-size: 16px;
+      text-indent: 2em;
+    }
+   }
+
+`
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   // const arealist = useSelector(state => state.system.onelevel)
@@ -136,7 +180,7 @@ export default function Index() {
   const [datevalue, setDatevalue] = useState()
   const [isshow, setIsshow] = useState(false)
   const [report, setReport] = useState()
-  const [projectMes, setProjectMes] = useState([{ name: '项目名称', message: '', }, { name: '项目地址', message: '' }])  //项目情况
+  const [projectMes, setProjectMes] = useState([{ name: '源类别', message: '', }, { name: '化石燃料燃烧二氧化碳排放量', message: '' }, { name: '工业生产过程二氧化碳排放量', message: '' }, { name: '废水厌氧处理过程产生的甲烷排放量', message: '' }, { name: '净购入使用的电力二氧化碳排放量', message: '' }, { name: '净购入使用的热力二氧化碳掉放量', message: '' }, { name: '企业二氧化碳排放总量(吨二氧化碳当量)', message: '' }])  //项目情况
   const [elec, setElec] = useState([{ name: '最大电流发生时间', message: '', }, { name: '最大电流发生位置', message: '', }, { name: '最大电流值', message: '', }])  //电流监控  
 
   const { chineseTitle } = useSelector(systemConfigInfo)
@@ -183,7 +227,45 @@ export default function Index() {
     { title: '', dataIndex: 'name', width: 100, align: 'center' },
     { title: '', dataIndex: 'message', align: 'center' }
   ]
-
+  // 化石燃料燃烧
+  const combustionTable = [
+    { id: "0", name: "无烟煤", consume: "", heating: "" },
+    { id: "1", name: "烟煤", consume: "", heating: "" },
+    { id: "2", name: "褐煤", consume: "", heating: "" },
+    { id: "3", name: "洗精煤", consume: "", heating: "" },
+    { id: "4", name: "其他洗煤", consume: "", heating: "" },
+    { id: "5", name: "其他煤制品", consume: "", heating: "" },
+    { id: "6", name: "焦炭", consume: "", heating: "" },
+    { id: "7", name: "原油", consume: "", heating: "" },
+    { id: "8", name: "燃料油", consume: "", heating: "" },
+    { id: "9", name: "汽油", consume: "", heating: "" },
+    { id: "10", name: "柴油", consume: "", heating: "" },
+    { id: "11", name: "一般煤油", consume: "", heating: "" },
+    { id: "12", name: "液化天然气", consume: "", heating: "" },
+    { id: "13", name: "液化石油气", consume: "", heating: "" },
+    { id: "14", name: "焦油", consume: "", heating: "" },
+    { id: "15", name: "粗苯", consume: "", heating: "" },
+    { id: "16", name: "焦炉煤气", consume: "", heating: "" },
+    { id: "17", name: "高炉煤气", consume: "", heating: "" },
+    { id: "18", name: "转炉煤气", consume: "", heating: "" },
+    { id: "19", name: "其他煤气", consume: "", heating: "" },
+    { id: "20", name: "天然气", consume: "", heating: "" },
+    { id: "21", name: "炼厂干气", consume: "", heating: "" },
+  ]
+  //工业生产过程**
+  const produceTable = [
+    { id: "1", name: "碳酸盐的消耗量", data: "", unit: "t" },
+    { id: "2", name: "工业生产的二氧化碳消耗量", data: "", unit: "t" },
+  ]
+  // 废水厌氧处理
+  const wasteTable = [
+    { id: "1", name: "废水厌氧处理去除的有机物总量", data: "", unit: "kg COD" },
+    { id: "2", name: "厌氧处理过程产生的废水量", data: "", unit: "m³" },
+    { id: "3", name: "厌氧处理系统进口废水中的化学需氧量浓度", data: "", unit: "kg COD/m3" },
+    { id: "4", name: "厌氧处理系统出口废水中的化学需氧量浓度", data: "", unit: "kg COD/m3" },
+    { id: "5", name: "以污泥方式清除掉的有机物总量", data: "", unit: "kg COD" },
+    { id: "6", name: "甲烷回收量", data: "", unit: "kg" },
+  ]
   const printRef = useRef()
   const reactToPrintContent = useCallback(() => {
     return printRef.current;
@@ -400,12 +482,93 @@ export default function Index() {
                   </div>
                 </PageComp>
                 <PageComp >
-                 <p></p>
-                 <p></p>
-                 <p></p> 
+                  <div style={{ marginBottom: 24 }} className="onePageInfo">
+                    <p>附表1 报告主体二氧化碳排放量报告</p>
+                    <p>附表2 报告主体活动水平数据</p>
+                    <p>附表3 报告主体排放因子和计算系数</p>
+                    <p style={{
+                      textAlign: 'center', marginTop: 50, marginBottom: 10, fontSize: 15, fontWeight: 700,
+                      fontFamily: 'cursive'
+                    }}>附表1 报告主体年二氧化碳排放报告</p>
+                    <DesItem title="" bordered size='small' column={3} >
+                      <DesItem.Item>源类别</DesItem.Item>
+                      <DesItem.Item>温室气体本身质量(单位:吨)</DesItem.Item>
+                      <DesItem.Item>C01当量(单位:吨 CO2当量)</DesItem.Item>
+                      <DesItem.Item>化石燃料燃烧二氧化碳排放量</DesItem.Item >
+                      <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
+                      <DesItem.Item>工业生产过程二氧化碳排放量</DesItem.Item>
+                      <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
+                      <DesItem.Item>废水厌氧处理过程产生的甲烷排放量</DesItem.Item>
+                      <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
+                      <DesItem.Item>净购入使用的电力二氧化碳排放量
+                      </DesItem.Item>
+                      <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
+                      <DesItem.Item>净购入使用的热力二氧化碳掉放量
+                      </DesItem.Item>
+                      <DesItem.Item> </DesItem.Item><DesItem.Item> </DesItem.Item>
+                      <DesItem.Item span='2'>企业二氧化碳排放总量(吨二氧化碳当量)
+                      </DesItem.Item>
+                      <DesItem.Item> </DesItem.Item>
+                    </DesItem>
+                  </div>
+                </PageComp>
+                <PageComp >
+                  <div className="onePageInfo"></div>
+                  <p style={{
+                    textAlign: 'center', marginBottom: 10, fontSize: 15, fontWeight: 700,
+                    fontFamily: 'cursive'
+                  }}>附表2 活动水平数据表</p>
+                  <table border="1" align="center">
+                    <tr align="center">
+                      <td rowspan="23">化石燃料燃烧*</td>
+                      <td></td>
+                      <th>净消耗量(t,万Nmm3)</th>
+                      <th>低位发热量GJIt，(GI/万Nm3)</th>
+                    </tr>
+
+                    {combustionTable.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.consume}</td>
+                        <td>{item.heating}</td>
+                      </tr>
+                    })
+                    )}
+                    <tr align="center" >
+                      <td rowspan="3">工业生产过程**</td>
+                      <td></td>
+                      <th>数据</th>
+                      <th>单位</th>
+                    </tr>
+                    {produceTable.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+                  </table>
+                </PageComp>
+                <PageComp >
+                  <table border="1" align="center">
+                    <tr>
+                      <td rowspan="7">废水厌氧处理</td>
+                      <td></td>
+                      <th>数据</th>
+                      <th>单位</th>
+                    </tr>
+                    {wasteTable.map((item => {
+                      return <tr align="center" key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.data}</td>
+                        <td>{item.unit}</td>
+                      </tr>
+                    })
+                    )}
+                  </table>
                 </PageComp>
                 <div className="page-break" />
-
               </> : null}
             </div>
 
