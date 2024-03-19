@@ -1,6 +1,6 @@
 import React from 'react'
 import BlueColumn from '@com/bluecolumn'
-import flower from '@imgs/flower.png'
+import leftBox from '@imgs/leftBox.png'
 import styled from 'styled-components'
 import { Progress } from 'antd';
 const Progressdiv =styled.progress`
@@ -47,21 +47,17 @@ const flexdiv ={
 const wrapdiv ={
     ...flexdiv,
     flex: 1,
-    marginTop:16
 }
 
   return (
     <div style={cardstyle}>
-       <BlueColumn name={name} bg={bg}></BlueColumn>
+       {/* <BlueColumn name={name} bg={bg}></BlueColumn> */}
        <div style={wrapdiv}>
-        <img src={flower} alt="" style={{width:42,height:42}}/>
+        <img src={leftBox} alt="" style={{width:96,height:112}}/>
         <div>
-            <p style={{fontSize:28,fontWeight:700,lineHeight:'30px',textAlign:'right'}}>{numberval.toFixed(2)}</p>
-            {compareval?<p style={{fontSize:16,...flexdiv}}>同比 <span style={{paddingLeft:16}}>{compareval}</span></p>:
-            <div style={{display:'flex',alignItems:'center'}}>
-                <span>80.0%</span><Progressdiv value="80" max="100" ></Progressdiv>
-            </div>
-            }
+            <p style={{fontSize:16,fontWeight:400,lineHeight:'30px',textAlign:'right'}}>{name}</p>
+            <p style={{fontSize:28,fontWeight:700,lineHeight:'50px',textAlign:'right'}}>{numberval.toFixed(2)}</p>
+            <p style={{fontSize:16,...flexdiv}}>同比 <span style={{paddingLeft:16}}>{compareval}</span></p>
         </div>
        </div>
     </div>

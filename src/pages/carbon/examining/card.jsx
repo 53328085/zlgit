@@ -41,27 +41,23 @@ const cardstyle={
 }
 const flexdiv ={
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    alignItems:'center'
    
 }
 const wrapdiv ={
     ...flexdiv,
     flex: 1,
-    marginTop:16
 }
 
   return (
     <div style={cardstyle}>
-       <BlueColumn name={name} bg={bg}></BlueColumn>
+       {/* <BlueColumn name={name} bg={bg}></BlueColumn> */}
        <div style={wrapdiv}>
         <img src={flower} alt="" style={{width:42,height:42}}/>
         <div>
-            <p style={{fontSize:28,fontWeight:700,lineHeight:'30px',textAlign:'right'}}>{numberval.toFixed(2)}</p>
-            {compareval?<p style={{fontSize:16,...flexdiv}}>同比 <span style={{paddingLeft:16}}>{compareval}</span></p>:
-            <div style={{display:'flex',alignItems:'center'}}>
-                <span>80.0%</span><Progressdiv value="80" max="100" ></Progressdiv>
-            </div>
-            }
+            <p style={{fontSize:16,fontWeight:400,lineHeight:'30px',textAlign:'right',width:210}}>{name}</p>
+            <p style={{fontSize:28,fontWeight:700,lineHeight:'50px',textAlign:'right',width:210}}>{numberval.toFixed(2)}</p>
         </div>
        </div>
     </div>
