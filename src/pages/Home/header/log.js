@@ -115,7 +115,7 @@ export default function Log() {
   
   let strmob = mobile.toString()
   const start = strmob.slice(0, 3).padEnd(7, '*')+strmob.slice(-4);
-  console.log(start)
+ 
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
 /*   const isconfig = store.getState()?.system.configState

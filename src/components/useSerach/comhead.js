@@ -5,14 +5,21 @@ import {GlobalOutlined} from "@ant-design/icons"
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
 import moment from "moment";
+import {useTranslation, Trans, Translation} from 'react-i18next';
+import enUS from 'antd/es/locale/en_US';
+import zhCN from 'antd/es/locale/zh_CN';
+ 
+import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 
 
 import Enery from "./enery";
+
+
 
 const Cform = styled(Form)`
     background: #fff;
@@ -33,11 +40,20 @@ const Cform = styled(Form)`
 const { Item } = Form;
 
 const langs = [
-   {label: "中文(简体)", key: ''},
-   {label: "English (US)", key: ''}
+   {label: "中文(简体)", key: 'zh-cn'},
+   {label: "English (US)", key: 'en'}
 ]
 
-
+const langpack = {
+  en: {
+    label: 'English (US)',
+    lang: enUS
+  },
+  'zh-cn': {
+    label: '中文(简体)',
+    lang: zhCN,
+  }
+}
 
 export const AreaSelect = ({value, onChange, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
@@ -51,6 +67,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 // 1.   状态中获取
 export default function UseSerach(props) {
   const {config={}} = props
+  const [langName, setLangName] = useState('中文(简体)')
   const themcolor = useSelector(themeColor)   
   
   const [color, setColor] = useState(themcolor.primaryColor)
@@ -80,11 +97,17 @@ export default function UseSerach(props) {
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
   const [options, setOptions] = useState([])
+  const [sitId, setSitId] = useState(null)
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
   const swithcLang =(e) => {
-     console.log(e);
+      let {key} = e;
+      console.log(key);
+      let {label, lang} = langpack[key]
+      setLangName(label)
+      moment(key)
+      dispatch(setIntl(lang))
   }
 
   const onChange = (e, option) => {  
@@ -182,7 +205,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
 // 站点选择
-  const site = (<Item name="stationName" label="站点选择" >
+  const site = (<Item name="stationName" label="站点选择" initialValue={sitId} >
               <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
              </Item>)
 // pcs选择
@@ -227,16 +250,19 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
     try {
      let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
      if(success&& Array.isArray(data) && data.length > 0) {
-       setOptions([...data])     
-       form.setFieldsValue({
-        stationName: data[0].name
+       setOptions([...data])   
+      let stationName = data[0].id
+     form.setFieldsValue({
+      stationName,
        })
+       props.setexparams({...form.getFieldsValue(true), projectId, stationName,})
      //  sitehandler &&  sitehandler(data[0])
      }else {
       setOptions([])    
       form.setFieldsValue({
-        stationName: ''
+        stationName: null
        })
+       props.setexparams({...form.getFieldsValue(true), projectId, stationName: null,})
       // sitehandler && sitehandler({})
      }
     } catch (error) {
@@ -245,14 +271,14 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
    
   }
   useEffect(() => {
-      if(projectId && AreaID) {
+      if(Number.isFinite(projectId) && Number.isFinite(AreaID)) {
         getopti()
       }    
   
   }, [projectId, AreaID])
  
   const onValuesChange = (_, allValues) => {   
-
+    console.log(allValues)
     props.setexparams({...allValues, projectId})
   }
   useEffect(() => {  
@@ -309,7 +335,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
       }}
       
     >
-       <GlobalOutlined />
+       <span>{langName}<GlobalOutlined /></span> 
       </Dropdown>
       </Space>
     </Cform>

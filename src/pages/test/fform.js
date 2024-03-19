@@ -1,56 +1,32 @@
-import React, {useEffect, useState} from 'react'
-import styled from 'styled-components'
-import logo from './logo.png'
-import './index.css'
-const Mainbox = styled.div` 
-   .wrapper {
-    display: flex;
-    width: 320px;
-    input[type="text"] {
-      flex: 1 1 auto;
-    }
-    label {
-      background-color: tan;
-      color: #fff;
-      text-align: center;
-     
-      display: inline-block;
-    }
-   }
-  
-`
- 
+import React from 'react'
+import moment from 'moment';
+import {useTranslation, Trans, Translation} from 'react-i18next';
 export default function Index() {
-  let data =   Array.from({length:4}, (x,i) => i+1)
-  const [ratio, setRatio] = useState('')
-  
-  let mqstring = `(resolution: ${window.devicePixelRatio}dppx)`
-  const mediaQueryList = window.matchMedia("(orientation: portrait)");
-
-  const rationQuery = window.matchMedia(mqstring);
-
-  function handleOrientationChange(mql) {
-    console.log(mql)
-    // ...
-  }
-  
-  const updatePixelRatio = () => {
-    console.log(111111)
-    let pr = window.devicePixelRatio;
-    setRatio(pr);
-    let ratios = Math.round(pr*100);
-    console.log(ratios)
-   // let prString = (pr * 100).toFixed(0);
-    //pixelRatioBox.innerText = `${prString}% (${pr.toFixed(2)})`;
+  const {t, i18n} = useTranslation();
+  const lngs = {
+    en: { nativeName: 'English' },
+    zh: { nativeName: '中文' }
   };
-  useEffect(() => {
-    updatePixelRatio()
-    rationQuery.addEventListener("change", updatePixelRatio);
-  }, [] )
   return (
-    <div className='container'>
-        
-        <h1>{ratio}</h1>
+    <div>
+      <header>
+      <select onChange={(evt) => {
+          i18n.changeLanguage(evt.target.value)
+        }}>
+          {Object.keys(lngs).map((lng) => (
+            <option key={lng} value={lng} label={lngs[lng].nativeName}
+              style={{ fontWeight: i18n.resolvedLanguage === lng ? 'bold' : 'normal' }} />
+          ))}
+        </select>
+      </header>
+      <main>
+
+        <p>{t('welcome')}</p>
+         <h1>{t('author')}</h1>
+         <h1>
+          {t('currentTime', {time: moment()})}
+         </h1>
+      </main>
     </div>
   )
 }
