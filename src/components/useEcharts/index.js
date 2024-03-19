@@ -2,8 +2,7 @@
 import { message } from "antd";
 import * as echarts from "echarts";
 import 'echarts-liquidfill'
-
-
+import store from '@redux/store'
 /**
  * @author zhenglin zhu
  * @description: type： 1 数据设置在 系列（series）中 type: 2 数据系列 3.饼图
@@ -18,7 +17,7 @@ echarts.registerTheme('walden', {
     "textColorShow": false,
     "textColor": "#333",
     "markTextColor": "#ffffff",
-    "color": [
+    /* "color": [
       "#237AE4",
       "#62D9AD",
       "#5472B1",
@@ -27,7 +26,7 @@ echarts.registerTheme('walden', {
       "#FED428",
       "#FF974C",
       "#E65A56",
-    ],
+    ], */
     "borderColor": "#ccc",
     "borderWidth": 0,
     "visualMapColor": [
@@ -320,9 +319,22 @@ export const drawEcharts = (
         }
     })
   }
-
+  const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
+ // const {primaryColor} = useSelector(themeColor)
+  //console.log(primaryColor);
+ const  color = [
+  primaryColor,
+  "#62D9AD",
+  "#5472B1",
+  "#23C2DB",
+  "#4A6FE2",
+  "#FED428",
+  "#FF974C",
+  "#E65A56",
+]
  let {axisTick, axisLine, axisLabel, ...restxAxis} = xAxis
   const comm = {
+    color,
     grid: {
       left: "80px",
       right: "40px",

@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment';
-import {useTranslation, Trans} from 'react-i18next';
+import {useTranslation, Trans, Translation} from 'react-i18next';
 export default function Index() {
   const {t, i18n} = useTranslation();
   const lngs = {
