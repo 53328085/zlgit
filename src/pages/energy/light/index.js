@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react' 
-import { SearchOutlined, QuestionCircleFilled, RightOutlined, LeftOutlined, CheckCircleFilled, WarningFilled } from '@ant-design/icons';
+import { QuestionCircleFilled, RightOutlined, LeftOutlined} from '@ant-design/icons';
 import {   Button, Image, Empty, message,Space } from 'antd';
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout'

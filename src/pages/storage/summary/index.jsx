@@ -1,11 +1,10 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
 import { useNavigate, useOutletContext} from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
-import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Form, Select ,Typography} from 'antd'
  
+import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
+import { message, Typography} from 'antd'
+import Ichart  from '@com/useEcharts/Ichart'; 
 import { range } from 'lodash'
 import imgurl from './imgs'
  
@@ -63,7 +62,7 @@ const  Mainbox = styled.div`
      }
      .rightdown {
        display: grid;
-       grid-template-columns: 752px 536px;
+       grid-template-columns: 752px minmax(536px, auto);
        column-gap: 16px;
        .topology {
          position: relative;
@@ -247,8 +246,35 @@ export default function Index() {
     queryStorageIncome(projectId,  areaId, stationName).then(res => {
       let { success, data } = res
       if (success) {
-        if (data) {
-          setBarData(data)
+        if (Object.prototype.toString.call(data).slice(8, -1) === 'Object') {
+          let {x, y, y1, y2} = data
+        setOptions({...options,  dataset: {
+            dimensions: [
+              {
+                name: 'x',
+                type: 'time'
+              },
+              {
+                name: 'y',
+                displayName: '充电金额(元)'
+              },
+              {
+                name: 'y1',
+                displayName: '放电金额(元)'
+              },
+              {
+               name: 'y2',
+               displayName: '收益(元)'
+             }
+            ],
+            source: [x, y, y1, y2],
+            sourceHeader: false,
+           },
+          }
+        )
+
+
+        //  setBarData(data)
         } else {
           setBarData({})
         }
@@ -386,6 +412,22 @@ export default function Index() {
   },[warningData.length])
   const barref = useRef();
   const lineref = useRef()
+  const [options, setOptions] = useState({
+    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' },  { type: "line", seriesLayoutBy: 'row' },],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      top: 0,  
+    },
+    dataset: {}
+  })
+
+
   useEffect(() => {   // lineData
      if(!lineData) return;
     
@@ -580,7 +622,12 @@ export default function Index() {
             </div>
             <div className="rightdownright">
               <Titlelayout title='能耗收益统计' layout="flex">
-                 <div ref={barref} style={{flex: 1}}></div>
+                {/*  <div ref={barref} style={{flex: 1}}>
+
+                 </div> */}
+                 <div   style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
+                    <Ichart {...options} />
+                 </div>
              
               </Titlelayout>
               <Titlelayout title='储能充放电趋势' layout="flex">
