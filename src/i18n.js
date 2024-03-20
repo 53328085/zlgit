@@ -9,7 +9,7 @@ i18n
     .use(initReactI18next)
     .init({
         debug: true,
-        fallbackLng: 'cn', // 默认当前环境的语言
+        fallbackLng: 'zh', // 默认当前环境的语言
         interpolation: {
             escapeValue: false,
         },

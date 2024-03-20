@@ -46,7 +46,7 @@ align-items: stretch;
   
 }
 .img {
-    width: 100%;
+    height: inherit;
   }
 `
 

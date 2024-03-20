@@ -130,13 +130,15 @@ export default function Log() {
   const [mform] = Form.useForm()
   const [pform] = Form.useForm()
   const onExit = async () => {
-      try {
-      await dispatch(userRest());
-       await dispatch(systemConfigRest())
+    navgite('/')
+    /*   try {
+     await dispatch(userRest());
+      await dispatch(systemConfigRest())
         return navgite('/')
       } catch (error) {
+        console.log(error);
         return navgite('/')
-      }
+      } */
   }
   const account = () => {
     user.current.onOpen()

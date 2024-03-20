@@ -222,7 +222,7 @@ export default function Index() {
 
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
-  const [barData, setBarData] = useState({}) //收益统计
+   
   const [lineData, setLineData] = useState({})//充放电趋势
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
@@ -272,11 +272,14 @@ export default function Index() {
            },
           }
         )
-
-
-        //  setBarData(data)
         } else {
-          setBarData({})
+          setOptions({...options,  dataset: {
+            dimensions: [],
+             source: [],
+            sourceHeader: false,
+           },
+          }
+        )
         }
       } else {
         message.error(res.errMsg)
@@ -314,11 +317,37 @@ export default function Index() {
 
 
     queryChargeETrends(projectId,  areaId, stationName).then(res => {
-      if (res.success) {
-        if (res.data) {
-          setLineData(res.data)
+      let {success, data} = res
+      if (success) {
+        if (Object.prototype.toString.call(data).slice(8,-1)=="Object") {
+           let {x, y, y1} = data
+
+           setLoptions({...loptions, dataset: {
+            dimensions: [
+              {
+                name: 'x',
+                type: 'time'
+              },
+              {
+                name: 'y',
+                displayName: '充电电量(kWh)'
+              },
+              {
+                name: 'y1',
+                displayName: '放电电量(kwh)'
+              }
+            ],
+            source: [x, y, y1],
+            sourceHeader: false,
+           
+           }})
         } else {
-          setLineData({})
+          setLoptions({...loptions, dataset: {
+            dimensions: [],
+            source: [],
+            sourceHeader: false,
+           
+           }})
         }
       } else {
         message.error(res.errMsg)
@@ -426,76 +455,21 @@ export default function Index() {
     },
     dataset: {}
   })
+  const [loptions, setLoptions] = useState({
+    series: [{ type: "line",  seriesLayoutBy: 'row' }, { type: "line",  seriesLayoutBy: 'row' }],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      icon: 'circle'
+     },
+    dataset: {}
+  })
 
-
-  useEffect(() => {   // lineData
-     if(!lineData) return;
-    
-     let {x=[], y=[], y1=[]} = lineData.constructor ===  Object ? lineData : {}
-     drawEcharts(lineref.current, {
-       dataset: {
-        dimensions: [
-          {
-            name: 'x',
-            type: 'time'
-          },
-          {
-            name: 'y',
-            displayName: '充电电量(kWh)'
-          },
-          {
-            name: 'y1',
-            displayName: '放电电量(kwh)'
-          }
-        ],
-        source: [x, y, y1],
-        sourceHeader: false,
-       
-       },
-       series: [
-        { type: "line", seriesLayoutBy: 'row' },
-        { type: "line", seriesLayoutBy: 'row' },
-      ],
-       legend: {
-        icon: 'circle'
-       }
-     })
-  }, [lineData])
-  useEffect(() => {
-    if(!barData) return
-    let {x=[], y=[], y1=[], y2=[]} = barData.constructor ===  Object ? barData : {}
-    drawEcharts(barref.current, {
-      dataset: {
-       dimensions: [
-         {
-           name: 'x',
-           type: 'time'
-         },
-         {
-           name: 'y',
-           displayName: '充电金额(元)'
-         },
-         {
-           name: 'y1',
-           displayName: '放电金额(元)'
-         },
-         {
-          name: 'y2',
-          displayName: '收益(元)'
-        }
-       ],
-       source: [x, y, y1, y2],
-       sourceHeader: false,
-      
-      },
-      series: [
-       { type: "bar", seriesLayoutBy: 'row' },
-       { type: "bar", seriesLayoutBy: 'row' },
-       { type: "line", seriesLayoutBy: 'row' },
-     ],
-    })
- 
-  }, [barData])
   return (
     <Pagecount  pd={0} bgcolor='transparent'  >    
       <Mainbox>
@@ -621,10 +595,7 @@ export default function Index() {
               <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
             <div className="rightdownright">
-              <Titlelayout title='能耗收益统计' layout="flex">
-                {/*  <div ref={barref} style={{flex: 1}}>
-
-                 </div> */}
+              <Titlelayout title='能耗收益统计' layout="flex">               
                  <div   style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
                     <Ichart {...options} />
                  </div>
@@ -632,7 +603,9 @@ export default function Index() {
               </Titlelayout>
               <Titlelayout title='储能充放电趋势' layout="flex">
              
-                <div ref={lineref} style={{flex: 1}}></div>
+                <div style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
+                       <Ichart {...loptions}/>
+                </div>
               </Titlelayout>
             </div>
           </div>

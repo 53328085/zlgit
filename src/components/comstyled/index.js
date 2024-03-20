@@ -5,7 +5,7 @@
  */
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
-import { PropertySafetyTwoTone } from "@ant-design/icons";
+ 
 
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
@@ -290,12 +290,12 @@ export const Logipt = styled(Input)`
   }
   &:focus,
   &:hover {
-    border-color: ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};
+    border-color:  #1f83fe !important; // ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};;
+      color:  #1f83fe !important; // ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};;
     }
   }
   && {
