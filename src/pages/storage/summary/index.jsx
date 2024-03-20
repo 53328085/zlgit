@@ -198,8 +198,7 @@ export default function Index() {
         transform: translateY(0);
     }
     to{
-        transform: translateY(-${props =>{
-          console.log(props.dmheight)
+        transform: translateY(-${props =>{        
           if(!props.dmheight || props.dmheight<445)return 0
           if(props.dmheight){
             return props.dmheight
@@ -219,11 +218,9 @@ export default function Index() {
   let {exparams} = useOutletContext()
  
   let {areaId, stationName,  projectId} = exparams
-
+  console.log(exparams)
   const navigate = useNavigate()
   const [cardData, setCardData] = useState({})//卡片数据
-   
-  const [lineData, setLineData] = useState({})//充放电趋势
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
     loadDevice: {},
@@ -233,8 +230,8 @@ export default function Index() {
 
   useEffect(() => {
     
-    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && Number.isFinite(stationName))) return
-    console.log(exparams)
+    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName && isFinite(stationName))) return
+   
     querySiteInfo(projectId, areaId, stationName).then(res => {
       if (res.success) {
         setCardData(res.data)
@@ -439,8 +436,7 @@ export default function Index() {
       setSpeed(warndom.getBoundingClientRect().height/60)
     }
   },[warningData.length])
-  const barref = useRef();
-  const lineref = useRef()
+ 
   const [options, setOptions] = useState({
     series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' },  { type: "line", seriesLayoutBy: 'row' },],  
     grid: { 

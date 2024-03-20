@@ -98,8 +98,9 @@ export default function UseSerach(props) {
   let shifts = useSelector(selectshifts)
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
-  const [options, setOptions] = useState([])
-  const [sitId, setSitId] = useState(null)
+  const [options, setOptions] = useState([]) // 
+  //const [sitId, setSitId] = useState(null) 
+  const sitId = options[0]?.id        // 站点选择
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
@@ -211,7 +212,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
 // 站点选择
-  const site = (<Item name="stationName" label="站点选择" initialValue={sitId} >
+  const site = (<Item name="stationName" label="站点选择"   >
               <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
              </Item>)
 // pcs选择
@@ -221,14 +222,13 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   const getpcs = async () => {
     try {
       let containerId = 0
-      let siteId = options[0]?.id
-     let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, siteId, containerId) 
+     let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, sitId, containerId) 
      if(success && Array.isArray(data) && data.length > 0) {
        setPcsoptions(data)
        form.setFieldsValue({
         pcsId: data[0].id
        })
-       pcshandler &&  pcshandler(data[0])
+       
      }else {
        setPcsoptions([])
        form.setFieldsValue({
@@ -246,22 +246,20 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   }, [levelone])
  
  useEffect(() => {
-    if(options?.length > 0 && AreaID && projectId) {
+    if(Number.isFinite(projectId) && Number.isFinite(AreaID) && Number.isFinite(sitId) && props.config?.isPcs) {
       getpcs()
     }
- }, [options, AreaID, projectId])  
+ }, [sitId, AreaID, projectId, props.config?.isPcs])  
 
 
-  const getopti = async() => {
+  const getopti = async() => { // 站点选择
     try {
      let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
      if(success&& Array.isArray(data) && data.length > 0) {
        setOptions([...data])   
-      let stationName = data[0].id
-     form.setFieldsValue({
-      stationName,
-       })
-       props.setexparams({...form.getFieldsValue(true), projectId, stationName,})
+      let stationName = data[0].name
+     form.setFieldValue('stationName', stationName)
+     props.setexparams({...form.getFieldsValue(true), projectId, stationName,})
      //  sitehandler &&  sitehandler(data[0])
      }else {
       setOptions([])    
@@ -277,16 +275,17 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
    
   }
   useEffect(() => {
-      if(Number.isFinite(projectId) && Number.isFinite(AreaID)) {
+     
+      if(Number.isFinite(projectId) && Number.isFinite(AreaID) && props.config?.isSite) {
         getopti()
       }    
   
-  }, [projectId, AreaID])
+  }, [projectId, AreaID, props.config?.isSite])
  
-  const onValuesChange = (_, allValues) => {   
-    console.log(allValues)
+  const onValuesChange = (_, allValues) => {      
     props.setexparams({...allValues, projectId})
   }
+ 
   useEffect(() => {  
      props.setexparams({...form.getFieldsValue(true), projectId})
    
@@ -297,7 +296,6 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
     onValuesChange={onValuesChange}  
-
     style={{displey: 'flex', justifyContent: 'space-between'}} >
       <Space size={64} split={ <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>

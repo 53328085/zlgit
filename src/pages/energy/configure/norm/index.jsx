@@ -44,7 +44,8 @@ export default function Index() {
     manual: true
   })
   useEffect(()=>{
-    if(areaId == 0 || !areaId){
+    
+    if(areaId == 0 || !Number.isFinite(areaId)){
       message.error('当前项目尚未配置园区!')
       return
     }else{
@@ -62,25 +63,26 @@ export default function Index() {
   const [params, setParams] = useState([])
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
+    console.log(values)
     setTreeValues(values)
     if(values.length == 0){
       setParams([{level: 1, id: areaId}])
     }else{
       let arr = []
       values.map(item => {
-        if(item.pos.length == 3){
+        if(item?.pos?.length === 3){
           arr.push({
             level: 1,
             id: item.node.areaId
           })
         }
-        if(item.pos.length == 5){
+        if(item?.pos?.length == 5){
           arr.push({
             level: 2,
             id: item.node.areaId
           })
         }
-        if(item.pos.length == 7){
+        if(item?.pos?.length == 7){
           arr.push({
             level: 3,
             id: item.node.areaId
