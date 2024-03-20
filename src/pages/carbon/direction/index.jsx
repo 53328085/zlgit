@@ -5,7 +5,8 @@ import BlueColumn from '@com/bluecolumn'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import * as echarts from 'echarts'
-import { useReactive  } from 'ahooks';
+import { useReactive } from 'ahooks';
+import { Cspin, Serach, Cdivider } from '@com/comstyled'
 const Tablediv = styled.div`
 border: 1px solid #d7d7d7;
 border-radius: 4px;
@@ -21,26 +22,35 @@ flex-direction: column;
 .sankey{
   flex: 1;
 }
+.sankeyInfo{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  width: 1335px;
+  margin-left: 35px;
+
+div{
+  width: 120px;
+ .name{
+  color: ${props => props.theme.primaryColor} ;
+  }
+  .triangle{
+    border-color: ${props => props.theme.primaryColor}  #fff #fff #fff;
+    border-style: solid;
+    border-width: 7px 7px 0 7px;
+    height: 0;
+    width: 0;
+    margin:5px auto 0px;
+  }
+}
+ 
+}
 `
 export default function Index() {
-  const [form] = Form.useForm()
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
-  const changeArea = () => {
-
-  }
-  const datelist = [{
-    label: '今日',
-    value: 1
-  }, {
-    label: '本月',
-    value: 2
-  }, {
-    label: '本年',
-    value: 3
-  }]
-  const sankeyref = useRef() 
+  const sankeyref = useRef()
   const chartsOpts = useReactive({
+
     series: {
       type: 'sankey',
       layout: 'none',
@@ -101,37 +111,35 @@ export default function Index() {
       ]
     }
   })
-  const initecharts =()=>{
+  const initecharts = () => {
 
-   const charts =  echarts.init(sankeyref.current)
-   chartsOpts && charts.setOption(chartsOpts);
+    const charts = echarts.init(sankeyref.current)
+    chartsOpts && charts.setOption(chartsOpts);
   }
-  useEffect(()=>{
+  useEffect(() => {
     initecharts()
-  },[])
+  }, [])
   return (
     <div style={{ flex: 1, display: "flex", justifyContent: 'center', alignContent: 'center' }}>
       <Pagecount bgcolor="#eeeff3" pd={0}>
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout='inline'
-          >
-            <Form.Item label={oneLevel[0]?.levelName} style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? 0 : null}></Select>
-            </Form.Item>
-          </Form>
-        </div>
-        <div>
 
-        </div>
         <Tablediv>
           <div className='header'>
-            <BlueColumn>碳排管理</BlueColumn>
+            <BlueColumn>碳排流向</BlueColumn>
+          </div>
+          <Cdivider type="h" margin="16px 0" />
+          <div className='sankeyInfo'>
             <div>
-              <span style={{ paddingRight: 16 }}>时间</span>
-              <Select options={datelist} style={{ width: 96 }} defaultValue={1}></Select>
+              <p className='name'>报告主体</p>
+              <p className='triangle'></p>
+            </div>
+            <div>
+              <p className='name'>核算单位</p>
+              <p className='triangle'></p>
+            </div>
+            <div>
+              <p className='name'>排放单位</p>
+              <p className='triangle'></p>
             </div>
           </div>
           <div ref={sankeyref} className='sankey'></div>

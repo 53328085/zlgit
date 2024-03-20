@@ -481,7 +481,7 @@ export default function Index() {
             <div className='btnscsss' onClick={handlePrint}>
               <img src={imgurl.print} alt="" style={{ marginRight: 8 }} /> 打印报告
             </div>
-            <div className='btnscsss' onClick={() => { exportPDF('pdf', 'pdfid') }}>
+            <div className='btnscsss' onClick={() => { exportPDF('碳排放分析报告', 'pdfid') }}>
               <img src={imgurl.export} alt="" style={{ marginRight: 8 }} /> 导出报告
             </div>
           </div>
