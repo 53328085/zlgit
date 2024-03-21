@@ -24,8 +24,8 @@ const CModal = styled(Modal)`
     .ant-modal-title {
       font-size: 16px;
       color: ${custCorle};;
-      padding-left: 16px;
-      border-left:  4px solid  ${theme};
+      padding-left: ${props => props.nolf ? 0 : '16px'} ;
+      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme}`};
       height: 32px;
       line-height: 32px;
     }

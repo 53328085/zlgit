@@ -1,17 +1,50 @@
-import React, {useRef,  useCallback} from "react";
-import { Dropdown, Space, Form, Input, message } from "antd";
+import React, {useRef,  useCallback, useState} from "react";
+import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
+import {GlobalOutlined } from  "@ant-design/icons"
 import styled from "styled-components";
-import { useSelector, useDispatch, useStore } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, systemConfigRest, selectProjectId} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId} from "@redux/systemconfig";
+import moment from "moment";
+import {useTranslation, Trans, Translation} from 'react-i18next';
+import enUS from 'antd/es/locale/en_US';
+import zhCN from 'antd/es/locale/zh_CN';
  
+import 'moment/locale/zh-cn';
  import './log.less'
 import CModal from "@com/useModal"
 import imgurl from "./icon";
+import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
 import {CustButton} from '@com/useButton'
+ 
+const Lngdiv = styled.div`
+  display: flex;
+  padding: 16px 0;
+  column-gap: 32px;
+  align-items: center;
+  border-top: 1px dotted #d7d7d7;
+  
+  span {
+    color: #515151;
+    font-size: 16px;
+  }
+`
+const Cradio = styled(Radio)`
+ && {
+  margin-left: auto;
+  .ant-radio-inner {
+    width: 28px;
+    height: 28px;
+    background-color: var(--ant-primary-color);
+    &:after {
+      background-color: #fff;
+    }
+  }
+ }
+`
 const Cdiv = styled.div`
   display: flex;
   height: 62px;
@@ -100,10 +133,15 @@ const Ciptpd = styled(Input.Password)`
     border-radius: 18px;
   }
 `
+const langpack = {
+  en: enUS,
+  zh: zhCN
+}
+
 export default function Log() {
   // const [user, setUser] = useState('')
+  const {i18n} = useTranslation()
  
-  const store = useStore();
   const user = useRef()
   const navgite = useNavigate()
   const projectId = useSelector(selectProjectId)
@@ -118,13 +156,7 @@ export default function Log() {
  
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
-/*   const isconfig = store.getState()?.system.configState
-  let [config , SetConfig] = useState(isconfig)
-  const unsubscribe = store.subscribe(() => {
-    
-    SetConfig(store.getState()?.system.configState)
  
-  }) */
   const Item = Form.Item
   const [form] = Form.useForm()
   const [mform] = Form.useForm()
@@ -160,8 +192,25 @@ const onJump = useCallback(() => {
 }, [screenadr, isgranary])
 
 
+ // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
+const lref = useRef();
+ 
+const [lngval, setLngval] = useState(localStorage.getItem('i18nextLng') )
+ 
+const langChange = (e) => {
+    setLngval(e.target.value)
+}
+const lngOk = () => {
+    const lang = langpack[lngval]
+    let key = lngval==='zh' ? 'zh-cn' : lngval
+    moment(key);
+    dispatch(setIntl({lang, locale: key}))
+    i18n.changeLanguage(lngval)
+    lref.current.onCancel();
+}
   const items = [
     {label: '账户管理', key:"mg"},
+    {label: '语言切换', key:"lng"},
     {label: '退出系统', key:"exit"},
   ]
   const onClick = ({key}) => {
@@ -169,6 +218,8 @@ const onJump = useCallback(() => {
         account()
       }else if(key == 'exit') {
         onExit()
+      }else if(key == 'lng') {
+         lref.current.onOpen()
       }
   
   }
@@ -279,8 +330,6 @@ const onJump = useCallback(() => {
     <CustButton type="primary" onClick={onmobile}>修改手机号码</CustButton>
     <CustButton type="primary" onClick={onpass}>修改用户密码</CustButton>
   </Space>)
-
-
 
 
 
@@ -471,6 +520,19 @@ const onJump = useCallback(() => {
     </Item>  
   </Form>
  
+      </CModal>
+
+
+      <CModal  nolf="no" title={<Space><img src={lg} title="" style={{verticalAlign: "-5px"}}  /> <span style={{color: "#515151"}}>语言切换</span></Space>} mold="cust"  ref={lref} width="440px"  onOk={lngOk} wrapClassName="wrap" >
+      <Radio.Group onChange={langChange} value={lngval} style={{display: 'flex', flexDirection: "column"}}>
+          <Lngdiv>
+             <img  src={imgurl['zh']} /> <span>中文</span> <Cradio value="zh"></Cradio>
+          </Lngdiv>
+          <Lngdiv>
+             <img  src={imgurl['en']}/> <span>English</span> <Cradio value="en"></Cradio>
+          </Lngdiv>
+          <div style={{height: "96px", borderBottom: "1px solid #d7d7d7"}} ></div>
+        </Radio.Group>
       </CModal>
     </Cdiv>
   );

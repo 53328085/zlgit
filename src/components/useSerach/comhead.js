@@ -1,16 +1,12 @@
 import React, {useState,  useEffect} from "react";
 
-import { Form, Select,  Space, DatePicker, message,  Input, Button,Dropdown} from "antd";
-import {GlobalOutlined} from "@ant-design/icons"
+import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
+ 
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
 import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
-import moment from "moment";
-import {useTranslation, Trans, Translation} from 'react-i18next';
-import enUS from 'antd/es/locale/en_US';
-import zhCN from 'antd/es/locale/zh_CN';
- 
+import moment from "moment"; 
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
@@ -38,23 +34,6 @@ const Cform = styled(Form)`
  
 
 const { Item } = Form;
-
-const langs = [
-   {label: "中文(简体)", key: 'zh-cn'},
-   {label: "English (US)", key: 'en'}
-]
-
-const langpack = {
-  en: {
-    label: 'English (US)',
-    lang: enUS
-  },
-  'zh-cn': {
-    label: '中文(简体)',
-    lang: zhCN,
-  }
-}
-
 export const AreaSelect = ({value, onChange, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
    return (
@@ -66,12 +45,8 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  const {config={}, custview=null} = props
-  let i18lang = localStorage.getItem('i18nextLng')
-  let packlng = i18lang== 'zh' ? 'zh-cn' : i18lang
-  const langName = langpack[packlng]?.label || '中文(简体)'
+  const {config={}, custview=null} = props  
   const themcolor = useSelector(themeColor)   
-  const {i18n} = useTranslation()
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
@@ -105,18 +80,7 @@ export default function UseSerach(props) {
   const [pcsoptions, setPcsoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
-  const swithcLang =(e) => {   // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
-      let {key} = e;
-      console.log(key);
-      let {label, lang} = langpack[key]
-      moment(key)
-      if(key == 'zh-cn')  {
-        i18n.changeLanguage('zh')
-      }else {
-        i18n.changeLanguage(key)
-      }
-      dispatch(setIntl({lang, locale: key}))
-  }
+ 
 
   const onChange = (e, option) => {  
       dispatch(setCurrentlevel(option))
@@ -334,16 +298,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        <Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
-            /> 
-             <Dropdown
-      menu={{
-        items: langs,
-        onClick: swithcLang,
-      }}
-      
-    >
-       <span>{langName}<GlobalOutlined /></span> 
-      </Dropdown>
+            />    
       </Space>
     </Cform>
   
