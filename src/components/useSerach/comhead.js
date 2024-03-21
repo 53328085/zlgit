@@ -66,7 +66,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  const {config={}} = props
+  const {config={}, custview=null} = props
   let i18lang = localStorage.getItem('i18nextLng')
   let packlng = i18lang== 'zh' ? 'zh-cn' : i18lang
   const langName = langpack[packlng]?.label || '中文(简体)'
@@ -95,6 +95,7 @@ export default function UseSerach(props) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
+  const areaName = levelone?.find(l => l.id == AreaID)?.name;
   let shifts = useSelector(selectshifts)
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
@@ -259,14 +260,14 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        setOptions([...data])   
       let stationName = data[0].name
      form.setFieldValue('stationName', stationName)
-     props.setexparams({...form.getFieldsValue(true), projectId, stationName,})
+     props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName,})
      //  sitehandler &&  sitehandler(data[0])
      }else {
       setOptions([])    
       form.setFieldsValue({
         stationName: null
        })
-       props.setexparams({...form.getFieldsValue(true), projectId, stationName: null,})
+       props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: null,})
       // sitehandler && sitehandler({})
      }
     } catch (error) {
@@ -283,11 +284,13 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   }, [projectId, AreaID, props.config?.isSite])
  
   const onValuesChange = (_, allValues) => {      
-    props.setexparams({...allValues, projectId})
+    console.log(allValues)
+    props.setexparams({...allValues, projectId, areaName})
   }
  
   useEffect(() => {  
-     props.setexparams({...form.getFieldsValue(true), projectId})
+     
+     props.setexparams({...form.getFieldsValue(true), projectId, areaName})
    
   }, [props.config, projectId])
 
@@ -316,7 +319,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
            props.config?.isdate && dateselect
          }
         {
-           props.config?.custview
+           props.config?.custview && custview
         }
         {
           props.config?.export ? <ExportExcel /> : null

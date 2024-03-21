@@ -2,7 +2,7 @@
     "welcome": "正泰物联",
    "author": "作者是",
    "currentTime": "当前时间 {{time, YYYY-MM-DD}}",
-   "login": {
-    
+   "public": {
+     "go": "公共能耗分类"
    }
  }

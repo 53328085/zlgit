@@ -20,7 +20,7 @@ const Carbon = lazy(() => import("@pages/carbon/configure/index"))
 const Solar = lazy(() => import("@pages/photovoltaic/configure/index")) //光伏发电
 
 const Storage = lazy(() => import("@pages/storage/configure/index"))
-
+const Comindex = lazy(() => import("../comindex"))
 import  {designerCommon} from './common'
 import  {designerMonitor} from './monitoring'
 import  {designerSafe} from './electric'
@@ -38,7 +38,7 @@ import  {maintenance} from './devops'
   '0204': Electric,
   '0205': Distribution,
   '0206': Prepayment,
-  '0207': Energy,
+  '0207': Comindex,
   '0208': Solar,
   '0209': Storage,
   '0210': Carbon,

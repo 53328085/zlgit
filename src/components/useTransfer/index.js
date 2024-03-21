@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
 import { Table, Input, message, Descriptions, Divider} from "antd";
- 
+import UsetTable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
+import {CustButton} from '@com/useButton'
 import Mask from '../mask'
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
@@ -305,23 +306,27 @@ export default function index (props) {
             <div className={style.actions}>
                 { props.transferTitle.mainTitle != ''? 
                 <div className={style.firstButton}>
-                    <span className={style.leftButton} onClick={()=>unknownToMain()}>
+                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToMain}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={MainToUnknown}></CustButton>
+                   {/*  <span className={style.leftButton} onClick={()=>unknownToMain()}>
                         <LeftOutlined />
                     </span>
                     <span className={style.rightButton} onClick={()=>MainToUnknown()}>
                         <RightOutlined />
-                    </span>
+                    </span> */}
                 </div> : null }
                 <div className={style.secondButton}>
-                    <span className={style.leftButton} onClick={() => unknownToSub() }>
+                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>
+                  {/*   <span className={style.leftButton} onClick={() => unknownToSub() }>
                         <LeftOutlined />
                     </span>
                     <span className={style.rightButton} onClick={() => subToUnknown() }>
                         <RightOutlined />
-                    </span>
+                    </span> */}
                 </div>
                 <div className={style.finalButton}>
-                    <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div>
+                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>保存</CustButton>
                     <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
                 </div>
             </div>
@@ -330,7 +335,7 @@ export default function index (props) {
                 <div className={style.searchInput}>
                     <span style={{marginRight: 16}}>设备搜索</span>
                     <Search 
-                    placeholder="请输入设备编号/安装地址" 
+                    placeholder="请输入设备编号/安装地址1" 
                     style={{width: 256}} 
                     enterButton 
                     onSearch={onSearchUnknown} 
@@ -340,7 +345,7 @@ export default function index (props) {
                     ></Search>
                 </div>
                 <div className={style.mainContent}>
-                    <Table bordered dataSource={unknownData} columns={columns}  rowKey='id'  y={500} rowSelection={rowSelection}></Table>
+                    <Table  dataSource={unknownData} columns={columns}  rowKey='id' scroll={{y:450}} rowSelection={rowSelection}></Table>
                 </div>
             </div>
         </div>
