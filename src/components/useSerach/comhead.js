@@ -173,69 +173,90 @@ const energytype = (
   </Item>
 )
 
+const gettank = async() => { // 初始化、 站点改变时
+  if(!props.config.isTank) return;
+  try {
+    const {areaId, stationName} = form.getFieldsValue();     
+    if(!(Number.isInteger(areaId) && stationName)) return
+     let {success, data, errMsg} = await  FindContainerList(projectId,areaId, stationName )
+     if(success && Array.isArray(data) ) {
+      setTankoptions(data)
+      form.setFieldValue('containerId', data[0]?.id)
+      if(data.length ==0) message.warning("储能柜暂无数据")
+      if(props.config?.isPcs && data.length > 0) getpcs()
+     }else {
+       message.warning(errMsg || '数据出错')
+      form.setFieldValue('containerId',null)
+      setTankoptions([])
+     }
+  } catch (error) {
+    
+  }
+   
+
+}
+
+
+const getpcs = async () => {
+  try {
+    let {areaId,stationName, containerId=0 } = form.getFieldsValue(true)
+    //let containerId = 0
+   let {success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName, containerId) 
+   if(success && Array.isArray(data)) {
+     setPcsoptions(data)
+     form.setFieldsValue({
+      pcsId: data[0].id
+     })
+     if(data.length==0) message.warning('当前站点不存在PCS!')
+   }else {
+     message.warning(errMsg || "数据出错")
+     setPcsoptions([])
+     form.setFieldsValue({
+      pcsId: null
+     })
+   //  sitehandler && sitehandler({})
+   }
+  } catch (error) {
+    console.log(error)
+  }
+ 
+}
+
+
 // 表计类型
 const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={1}>
 
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
 // 站点选择
-  const site = (<Item name="stationName" label="站点选择"   >
-              <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
+  const site = (<Item name="stationName" label="站点"   >
+              <Select options={options} onChange={gettank} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
              </Item>)
+             // 储能柜
+  const tank =  (<Item name="containerId" label="储能柜" >
+  <Select options={tankoptions} onChange={getpcs} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} ></Select>  
+</Item>)
 // pcs选择
-  const pcs = (<Item name="pcsId" label="PCS选择" >
+  const pcs = (<Item name="pcsId" label="PCS" >
               <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
              </Item>)
 
-// 储能柜
-  const tank =  (<Item name="pcsId" label="储能柜选择" >
-             <Select options={tankoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
- </Item>)
-const gettank = async() => { // 
-    try {
-      const {areaId, stationName} = form.getFieldsValue();
-      await  FindContainerList(projectId,areaId, stationName )
-    } catch (error) {
-      
-    }
-     
-
-}
 
 
 
 
-  const getpcs = async () => {
-    try {
-      let containerId = 0
-     let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, sitId, containerId) 
-     if(success && Array.isArray(data) && data.length > 0) {
-       setPcsoptions(data)
-       form.setFieldsValue({
-        pcsId: data[0].id
-       })
-       
-     }else {
-       setPcsoptions([])
-       form.setFieldsValue({
-        pcsId: null
-       })
-     //  sitehandler && sitehandler({})
-     }
-    } catch (error) {
-      console.log(error)
-    }
-   
-  }
+
+
+
   useEffect(() => { 
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [levelone])
  
- useEffect(() => {
+/*  useEffect(() => {
     if(Number.isFinite(projectId) && Number.isFinite(AreaID) && Number.isFinite(sitId) && props.config?.isPcs) {
       getpcs()
     }
- }, [sitId, AreaID, projectId, props.config?.isPcs])  
+ }, [sitId, AreaID, projectId, props.config?.isPcs])   */
 
 
   const getopti = async() => { // 站点选择
@@ -246,14 +267,14 @@ const gettank = async() => { //
       let stationName = data[0].name
      form.setFieldValue('stationName', stationName)
      props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName,})
-     //  sitehandler &&  sitehandler(data[0])
+     if(props.config.isTank) gettank();
      }else {
       setOptions([])    
       form.setFieldsValue({
         stationName: null
        })
        props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: null,})
-      // sitehandler && sitehandler({})
+      
      }
     } catch (error) {
       console.log(error)
@@ -297,9 +318,9 @@ const gettank = async() => { //
      
          </Item>
           }
-        {props.config?.isSite && site}
-        {props.config?.isPcs && pcs}
-
+        {props.config?.isSite && site}       
+         {props.config?.isTank && tank}
+         {props.config?.isPcs && pcs}
         {props.config?.isdevsty && deviceStyleNode}  
         {props.config?.isview && viewtype}  
         {props.config?.energytype && energytype}

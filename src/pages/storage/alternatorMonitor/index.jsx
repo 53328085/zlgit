@@ -7,15 +7,21 @@ import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
-
+import { useNavigate, useOutletContext} from 'react-router-dom'
 import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
 import offline from './imgs/offline.png'
 import error from './imgs/error.png'
- 
+import Pagecount from "@com/pagecontent";
+import Ichart  from '@com/useEcharts/Ichart'; 
+import Titlelayout from "@com/titlelayout"; 
 export default function Index() {
+
   const dispatch = useDispatch()
-  const projectId = useSelector(selectProjectId)
+  let {exparams} = useOutletContext()
+ 
+  let {areaId, stationName,  projectId, containerId, pcsId} = exparams
+ // const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
   const areaName = useSelector(levelDefaultLabel) || '园区'
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
@@ -297,8 +303,8 @@ export default function Index() {
   }
 
   return (
-    <div>
-      <div className={style.header}>
+    <Pagecount bgcolor='transparent' pd="0">
+     {/*  <div className={style.header}>
         <Form form={form} layout='inline'>
           <Item name='areaId' label={ areaName + '选择22'} style={{marginLeft:16}}>
             <Select
@@ -352,7 +358,7 @@ export default function Index() {
             </Select>
           </Item>
         </Form>
-      </div>
+      </div> */}
       <div className={style.pcsContent}>
         <div className={style.left}>
           <div className={style.title}>
@@ -416,6 +422,6 @@ export default function Index() {
           </div>
         </div>
       </div>
-    </div>
+    </Pagecount>
   )
 }
