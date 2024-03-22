@@ -70,7 +70,7 @@ export default function gateway({ deviceStyle, name }) {
   const [factorform] = Form.useForm()
   const content =useContext(cutContext)
   const levelname =useRef()
-  let delid;
+  let delid = useRef();
   let flies;
   const optcss = {
     color: '#237ae4',
@@ -251,13 +251,13 @@ export default function gateway({ deviceStyle, name }) {
    //打开删除窗口
    const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid=record.sn
+    delid.current=record.sn
   }
   //确认删除
   const delOk=async()=>{
     const {success,errMsg} = await DeleteElectric({
       projectId,
-      sn:delid
+      sn:encodeURIComponent(delid.current),
     })
     if(success){
       message.success('删除成功')

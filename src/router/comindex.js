@@ -183,6 +183,7 @@ export default function Index() {
   };
 
   useEffect(() => {
+    console.log(123)
     if (whole.includes(primary)) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin)

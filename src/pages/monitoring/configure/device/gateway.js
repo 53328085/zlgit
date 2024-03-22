@@ -361,7 +361,7 @@ export default function Gateway() {
   const delOk = async () => {
     let params = {
       projectId,
-      sn: delId
+      sn: encodeURIComponent(delId)
     }
     const resp = await GatewayDelete(params)
     if (resp.success) {

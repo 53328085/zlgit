@@ -53,7 +53,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname = useRef("")
-  let delid;
+  let delid = useRef();
   let flies;
   let edittag=false
   const optcss = {
@@ -235,14 +235,13 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.sn
+    delid.current = record.sn
   }
   //确认删除
-  const delOk = async () => {
-    console.log(delid)
+  const delOk = async () => {   
     const { success, errMsg } = await DeleteWater({
       projectId,
-      sn: delid
+      sn: encodeURIComponent(delid.current)
     })
     if (success) {
       message.success('删除成功')

@@ -1,7 +1,7 @@
 import React, {useState,  useEffect} from "react";
 
 import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
- 
+import {useRequest} from 'ahooks' 
 import styled from "styled-components";
 import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
@@ -9,13 +9,13 @@ import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId,
 import moment from "moment"; 
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
+import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 
 
 import Enery from "./enery";
 
-
+const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
     background: #fff;
@@ -45,6 +45,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
+  const isprodction =  process.env.NODE_ENV !== "production"
   const {config={}, custview=null} = props  
   const themcolor = useSelector(themeColor)   
   const [color, setColor] = useState(themcolor.primaryColor)
@@ -78,6 +79,7 @@ export default function UseSerach(props) {
   //const [sitId, setSitId] = useState(null) 
   const sitId = options[0]?.id        // 站点选择
   const [pcsoptions, setPcsoptions] = useState([])
+  const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
  
@@ -184,6 +186,25 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   const pcs = (<Item name="pcsId" label="PCS选择" >
               <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
              </Item>)
+
+// 储能柜
+  const tank =  (<Item name="pcsId" label="储能柜选择" >
+             <Select options={tankoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
+ </Item>)
+const gettank = async() => { // 
+    try {
+      const {areaId, stationName} = form.getFieldsValue();
+      await  FindContainerList(projectId,areaId, stationName )
+    } catch (error) {
+      
+    }
+     
+
+}
+
+
+
+
   const getpcs = async () => {
     try {
       let containerId = 0
@@ -251,7 +272,10 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
     console.log(allValues)
     props.setexparams({...allValues, projectId, areaName})
   }
- 
+  const onFieldsChange = (f, all) => {
+     console.log(f)
+     console.log(all)
+  }
   useEffect(() => {  
      
      props.setexparams({...form.getFieldsValue(true), projectId, areaName})
@@ -262,7 +286,8 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   return (  
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
-    onValuesChange={onValuesChange}  
+     onValuesChange={onValuesChange}  
+     onFieldsChange={onFieldsChange}
     style={{displey: 'flex', justifyContent: 'space-between'}} >
       <Space size={64} split={ <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
@@ -294,12 +319,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
           props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
         }
-        <Space>
-       <Input type="color" value={color}
+       {
+        isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
-            />    
-      </Space>
+            /> )   
+       }
     </Cform>
   
     

@@ -12,7 +12,7 @@ import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
 import offline from './imgs/offline.png'
 import error from './imgs/error.png'
-
+ 
 export default function Index() {
   const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
@@ -300,9 +300,9 @@ export default function Index() {
     <div>
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
+          <Item name='areaId' label={ areaName + '选择22'} style={{marginLeft:16}}>
             <Select
-              placeholder="请选择"
+              placeholder="请选择1231"
               size="middle"
               style={{marginLeft: 16, width: '200px'}}
               onChange={changeArea}
