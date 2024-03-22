@@ -104,32 +104,6 @@ const RightDiv = styled.div`
                 
             }
 `
-const GridDiv = styled.div`
-      display: grid;
-      grid-template-rows: repeat(4,32px);
-      grid-template-columns: repeat(3,172px);  
-      .titlecolor{
-        background: #ff6600;
-        color: #fff;
-      }
-      .divcss{
-        border: 1px solid #ccc; 
-        text-align: center;   
-        line-height: 32px;
-        &:nth-child(3n+1){
-          margin-bottom: -1px;
-          margin-right: -1px;
-        }
-        &:nth-child(3n+2){
-          margin-bottom: -1px;
-          margin-right: -1px;
-        }
-        &:nth-child(3n){
-          margin-bottom: -1px;
-          margin-right: -1px;
-        }
-      }
-`
 const DesItem = styled(Descriptions)`
 && {
   margin-bottom: 32px;
@@ -156,23 +130,6 @@ const DesItem = styled(Descriptions)`
 }
 }
 `
-const Main = styled.div`
-   && {
-    color: #515151;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    .title {
-       font-size: 20px;
-       margin-bottom: 16px;
-    }
-    .text {
-      font-size: 16px;
-      text-indent: 2em;
-    }
-   }
-
-`
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   // const arealist = useSelector(state => state.system.onelevel)
@@ -180,53 +137,9 @@ export default function Index() {
   const [datevalue, setDatevalue] = useState()
   const [isshow, setIsshow] = useState(false)
   const [report, setReport] = useState()
-  const [projectMes, setProjectMes] = useState([{ name: '源类别', message: '', }, { name: '化石燃料燃烧二氧化碳排放量', message: '' }, { name: '工业生产过程二氧化碳排放量', message: '' }, { name: '废水厌氧处理过程产生的甲烷排放量', message: '' }, { name: '净购入使用的电力二氧化碳排放量', message: '' }, { name: '净购入使用的热力二氧化碳掉放量', message: '' }, { name: '企业二氧化碳排放总量(吨二氧化碳当量)', message: '' }])  //项目情况
-  const [elec, setElec] = useState([{ name: '最大电流发生时间', message: '', }, { name: '最大电流发生位置', message: '', }, { name: '最大电流值', message: '', }])  //电流监控  
 
   const { chineseTitle } = useSelector(systemConfigInfo)
 
-  const [voltage, setVoltage] = useState([{
-    name: '最大电压发生时间',
-    message: '',
-  },
-  {
-    name: '最大电压发生位置',
-    message: '',
-  },
-  {
-    name: '最大电压值',
-    message: '',
-  },])  //电压监控
-  const [leaveElec, setLeaveElec] = useState([
-    {
-      name: '最大剩余电流发生时间',
-      message: '',
-    },
-    {
-      name: '最大剩余电流发生位置',
-      message: '',
-    },
-    {
-      name: '最大剩余电流值',
-      message: '',
-    },
-  ])  //剩余电流
-  const [temperature, setTemperature] = useState([{
-    name: '最高温度发生时间',
-    message: '',
-  },
-  {
-    name: '最高温度发生位置',
-    message: '',
-  },
-  {
-    name: '最高温度值',
-    message: '',
-  },])
-  const columns1 = [
-    { title: '', dataIndex: 'name', width: 100, align: 'center' },
-    { title: '', dataIndex: 'message', align: 'center' }
-  ]
   // 化石燃料燃烧
   const combustionTable1 = [
     { id: "0", name: "无烟煤", consume: "", heating: "" },

@@ -17,7 +17,7 @@ flex-direction: column;
   width: 558px;
   height:36px;
   margin:auto;
-  background-color:#237ae4;
+  background-color:${props => props.theme.primaryColor} ;
   margin-top: 1px;
   display:flex;
   justify-content:space-between;
