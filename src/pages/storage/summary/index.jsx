@@ -208,13 +208,6 @@ export default function Index() {
     }
 }
 `
-
-
- 
-
- 
-
- 
   let {exparams} = useOutletContext()
  
   let {areaId, stationName,  projectId} = exparams

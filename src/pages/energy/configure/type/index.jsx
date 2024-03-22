@@ -5,21 +5,21 @@ import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
 import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import {Ptag, Wtag} from '@com/comstyled'
-
+import {useOutletContext} from 'react-router-dom'  
+import Pagecount from "@com/pagecontent";
 export default function Index () {
+  let {exparams} = useOutletContext()
+  let {areaId, projectId} = exparams 
   const aref = useRef()
   const dref = useRef()
   const [form] = Form.useForm()
   const Item = Form.Item
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
+
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -34,17 +34,11 @@ export default function Index () {
     deleteEnergyStructure,
     configEnergyStructure,
     queryEnergyStructureConfig } = energyStructure
-  //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const changeArea = (value) => {
-    setAreaId(value)
-  }
-
   //树形结构
   const {TreeNode} = Tree;
   const [treeData, setTreeData] = useState([])
   const getTreeData = () => {
+    if(!(Number.isInteger(projectId) && Number.isInteger(areaId) && areaId > 0)) return
     return queryEnergyStructure(projectId, areaId, '').then(res => {
       if(res.success){
         setTreeData(res.data)
@@ -54,16 +48,9 @@ export default function Index () {
     })
   }
   const { run: queryRun } = useRequest(getTreeData,{
-    manual: true
+     refreshDeps: [areaId, projectId]
   })
-  useEffect(()=> {
-    if(areaId && areaId != 0){
-      queryRun()
-    }else{
-      message.error('当前项目尚未配置园区!')
-      return;
-    }
-  }, [areaId])
+ 
 
   const nodeTitle = {
     display: 'flex',
@@ -278,10 +265,10 @@ export default function Index () {
   }
 
   return (
-    <div>
+    <Pagecount>
       {contextHolder}
    
-     <div className={style.header}>
+   {/*   <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
@@ -295,7 +282,7 @@ export default function Index () {
             return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
           })}
         </Select>
-      </div>
+      </div> */}
       <div className={style.mainContent}>
         <div className={style.title}>
           <span>能源结构</span>
@@ -326,6 +313,6 @@ export default function Index () {
       <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={()=>onDelete()}>
         是否确认删除该能源节点? 
       </Custmodl>
-    </div>
+    </Pagecount>
   )
 }

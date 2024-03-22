@@ -18,16 +18,25 @@
       .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child:first-child {
         background-image: url('./icon/login.png');
         &:hover {
-            background-color: #237ae4 !important;
+            background-color: var(--ant-primary-color) !important;
             color: #ffffff;
             background-image: url('./icon/login_a.png');
+           
+          } 
+      }
+      .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child:nth-of-type(2) {
+        background-image: url('./icon/lg.svg');
+        &:hover {
+            background-color: var(--ant-primary-color) !important;
+            color: #ffffff;
+            background-image: url('./icon/lb.svg');
            
           } 
       }
       .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child:last-child {
         background-image: url('./icon/exit.png');
         &:hover {
-            background-color: #237ae4 !important;
+            background-color: var(--ant-primary-color) !important;
             background-image: url('./icon/exit_a.png');
             color: #ffffff;
           } 

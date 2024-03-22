@@ -402,7 +402,9 @@ export default function GatewayDetail(props) {
     const tdrawEcharts = (c, option) => {
         return drawEcharts(c, { ...option, type: 2 })
     }
-    const onTimeOk = (date=[], dataString) => {       
+    const onTimeOk = (date=[], dataString) => {   
+        let f = dataString.some(d => d); 
+        if(!f) return    
         setstartTime(dataString[0])
         setendTime(dataString[1])
         setValue(date)
@@ -426,8 +428,9 @@ export default function GatewayDetail(props) {
         }
     };
 
-    const onTimeOkAlarm = (date=[], dataString) => {
-        
+    const onTimeOkAlarm = (date=[], dataString) => { 
+        let f = dataString.some(d => d); 
+        if(!f) return
         setstartTimeAlarm(dataString[0])
         setendTimeAlarm(dataString[1])
     }//告警记录选择时间
@@ -447,8 +450,8 @@ export default function GatewayDetail(props) {
         //reportType=parseInt(e.target.value)
     }//切换日月年
 
-    const onChangeDate = (date, dateString) => {
-        console.log(date,dateString);
+    const onChangeDate = (date, dateString) => {       
+        if(!dateString) return;
         if (reportTypeTime == 1) {
             setdateValue(dateString)
             console.log(dateString);

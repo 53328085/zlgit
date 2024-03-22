@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { Table, Input, message, Select } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
-
+import {CustButton} from '@com/useButton'
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
@@ -206,15 +206,18 @@ export default function index (props) {
             <div className={style.actions}>
 
                 <div className={style.secondButton}>
-                    <span className={style.leftButton} onClick={() => unknownToSub() }>
+                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>
+                   {/*  <span className={style.leftButton} onClick={() => unknownToSub() }>
                         <LeftOutlined />
                     </span>
                     <span className={style.rightButton} onClick={() => subToUnknown() }>
                         <RightOutlined />
-                    </span>
+                    </span> */}
                 </div>
                 <div className={style.finalButton}>
-                    <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div>
+                <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>保存</CustButton>
+                   {/*  <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div> */}
                     <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
                 </div>
             </div>

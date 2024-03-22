@@ -17,6 +17,7 @@ export default function Index() {
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
+    designerEnergy: ''
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -54,6 +55,13 @@ export default function Index() {
        "examining",
        "manager",
        "analysis",
+    ],
+
+    // 设计态
+    designerEnergy: [ // 能源管理
+       "price",
+       "norm",
+       "type",
     ]
   }); // 需要显示搜索的页面
 
@@ -161,6 +169,16 @@ export default function Index() {
            break;
         }
       }
+      // 设计态
+      if(primary == "designerEnergy") {
+        switch(nested) {
+          case "norm":
+           setConfig({ custview: true });
+           break;
+        }
+         
+      }
+      // custview
     } catch (error) {}
   };
 
@@ -176,6 +194,7 @@ export default function Index() {
         );
     } else {
       let level = onelevel.filter((l) => l.id != 0);
+      console.log(level)
       dispatch(getOnelevel([...level]));
     }
   }, [primary]);

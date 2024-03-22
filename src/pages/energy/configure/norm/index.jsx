@@ -1,59 +1,60 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { Select, Button, Space, message, Form, Input, Table } from 'antd';
+ 
+import {   Space, message, Form, Input, Typography } from 'antd';
 import style from './style.module.less'
 import SearchTree from '@com/searchTree'
 import Custmodl from '@com/useModal'
 import dashed from '@imgs/dashed.png'
 import { energyQuota, Area } from '@api/api.js'
-import { useRequest } from 'ahooks';
-
+import { useRequest, useAntdTable } from 'ahooks';
+import {useOutletContext} from 'react-router-dom'  
+import Pagecount from "@com/pagecontent";
+import {Cspin, Serach, Cdivider} from '@com/comstyled'
+import {CustButton} from '@com/useButton'
+import UseTable from '@com/useTable'
+const {Link} = Typography
 export default function Index() {
+  let {exparams, setCustview} = useOutletContext()
+  let {areaId, projectId } = exparams 
   const setRef = useRef()
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm()
-  const Item = Form.Item
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
+  const Item = Form.Item  
+ 
   const { AllLevel } = Area
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
   //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const changeArea = (value) => {
-    setAreaId(value)
-  }
+ 
 
   const getTreeData = () => {
+    if(!Number.isFinite(areaId)) return;
     return querySpaceTrees(projectId, areaId, '').then(res => {
-      if(res.success){
-        setTreeData(res.data)
-      }else{
+      const {success, data} = res
+      if(success){
+        return Array.isArray(data) ? data : []
+       // setTreeData(res.data)
+      }else{       
         messageApi.open({
           type: 'error',
           content: res.errMsg
         })
+        return []
       }
     })
   }
   
-  const {run: treeRun} = useRequest(getTreeData, {
-    manual: true
+  const {data: treeData} = useRequest(getTreeData, {
+     refreshDeps: [projectId, areaId]
   })
-  useEffect(()=>{
-    
-    if(areaId == 0 || !Number.isFinite(areaId)){
-      message.error('当前项目尚未配置园区!')
-      return
-    }else{
+
+
+ useEffect(()=>{
+    if(areaId > 0  && Number.isInteger(areaId)){
       setParams([{id:areaId, level: 1}])
-      treeRun()
     }
-  },[areaId])
-  const [treeData, setTreeData] = useState([])
+  },[areaId]) 
+  //const [treeData, setTreeData] = useState([])
   const fieldNames = {
     title:'name',
     key: 'areaId',
@@ -63,7 +64,7 @@ export default function Index() {
   const [params, setParams] = useState([])
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
-    console.log(values)
+   
     setTreeValues(values)
     if(values.length == 0){
       setParams([{level: 1, id: areaId}])
@@ -168,6 +169,7 @@ export default function Index() {
   }
 ])
   useEffect(()=>{
+    if(!Number.isFinite(projectId)) return;
     AllLevel(projectId).then(res => {
       if(res.success){
         setColumns([
@@ -236,7 +238,7 @@ export default function Index() {
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <span style={{color:'#237ae4', textDecoration:'underline', cursor:'pointer'}} onClick={()=>setAll(record)}>修改</span>
+                <Link underline onClick={()=>setAll(record)}>修改</Link>
               </Space>)
           }
         ])
@@ -244,36 +246,42 @@ export default function Index() {
         message.error(res.errMsg)
       }
     })
-  },[])
-  const [dataSource, setDataSource] = useState([])
-
-  const [pageNum, setPageNum] = useState(1)
-  const [total, setTotal] = useState(0)
-  const pageSize = 20
-  const getTableData = () => {
-    return queryRoomQuotas(projectId, pageNum, pageSize, params).then(res => {
-      if(res.success){
-        setDataSource(res.data)
-        setTotal(res.total)
+  },[projectId])
+ 
+  const getTableData = ({current, pageSize}) => {    
+    if(!(Number.isInteger(projectId) && Number.isInteger(areaId) && params.length == 1)) return
+    return queryRoomQuotas(projectId, current, pageSize, params).then(res => {
+      const {success, data, total} = res
+      if(success){
         setSelectedKeys([])
+        let f = Array.isArray(data)
+        return {
+          list: f ? data : [],
+          total: f ? total : 0
+        }
       }else{
         messageApi.open({
           type:'error',
           content: res.errMsg
         })
+        return {
+          list: [],
+          total: 0,
+        }
       }
     } )
   }
-  const { run: runTable } = useRequest(getTableData,{
-    manual: true
+  const { run: runTable, tableProps } = useAntdTable(getTableData,{
+    refreshDeps: [projectId, areaId, params],
+    defaultPageSize: 20
   })
-  useEffect(()=>{
+/*   useEffect(()=>{
     if(params.length == 0){
       return
     }else{
       runTable()
     }
-  },[params, pageNum])
+  },[params, pageNum]) */
 
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [copyKeys, setCopyKeys] = useState([]);
@@ -358,7 +366,10 @@ export default function Index() {
     }catch(errorInfo){}
     
   }
-
+  const view =  (<CustButton style={{marginLeft: 'auto'}} onClick={setAll}>批量配置</CustButton>)
+  useEffect(() => {
+    setCustview(view)
+  }, [])
   const handelValidate = (rule, value, callback) => {
     if(!Number.isNaN(Number(value))){
       // callback()
@@ -369,46 +380,16 @@ export default function Index() {
     }
   }
 
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    // showTotal: () => (
-    //   <span>总共{total}项</span>
-    // ),
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-  }
+ 
+ 
 
   return (
-    <div>
+    <Pagecount bgcolor="transparent" pd="0">
       {contextHolder}
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={changeArea}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-        <Button type='primary' style={{ position:'absolute', right: 16,width: 96}} onClick={()=> setAll()}>批量配置</Button>
-      </div>
-
       <div className={style.mainContent}>
         <SearchTree treeData={treeData} fieldNames={fieldNames} getValues={getFromChild}></SearchTree>
         <div className={style.rightContent}>
-          <Table size='small' columns={columns} dataSource={dataSource} bordered rowKey='id' rowSelection={rowSelection} pagination={paginationProps}></Table>
+          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff"></UseTable>
         </div>
       </div>
       <Custmodl title='设置能耗定额' ref={setRef}  mold="cust" width={640} onOk={onOk}>
@@ -446,6 +427,6 @@ export default function Index() {
           </Item>
         </Form>      
       </Custmodl>
-    </div>
+    </Pagecount>
   )
 }

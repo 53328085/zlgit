@@ -53,6 +53,7 @@ export default function Index(props) {
      getValues(arr)
   }, [props.treeData])
   const generateList = (data) => {
+    if(!Array.isArray(data)) return;
     for (let i = 0; i < data.length; i++) {
       const node = data[i];
       dataList.push({
@@ -177,7 +178,7 @@ export default function Index(props) {
         }}
       />
       <img src={dashLine} className={style.radioLine}></img>
-      {props.treeData.length > 0 ? (
+      {(Array.isArray(props.treeData) && props.treeData?.length > 0) ? (
         <Tree
           style={{ height: "600px", overflow: "auto", fontSize: 16 }}
           checkable
