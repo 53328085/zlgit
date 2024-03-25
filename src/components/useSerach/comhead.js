@@ -82,7 +82,38 @@ export default function UseSerach(props) {
   const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
 
- 
+  const getopti = async() => { // 站点选择
+    try {
+     let {success, data, errMsg} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
+     if(success&& Array.isArray(data) && data.length > 0) {
+       setOptions([...data])   
+      let stationName = data[0].name
+     form.setFieldValue('stationName', {label:stationName, value: stationName})
+     props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: {name:stationName, value: stationName},})
+     if(props.config.isTank) getTank();
+     if(props.config.isPcs)  getPcs();
+     }else {
+       setOptions([])    
+      form.setFieldsValue({
+        stationName: null
+       })
+       props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: {},})
+       if(!success) return message.warning(errMsg)
+       if(data?.length) return message.warning("站点暂无数据")
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+ useEffect(() => {
+    if(!props.config?.isSite) return;
+    if(Number.isInteger(AreaID) && Number.isInteger(projectId)) {
+      getopti();
+    }
+   
+
+ }, [props.config?.isSite, AreaID, projectId])
 
   const onChange = (e, option) => {  
       dispatch(setCurrentlevel(option))
@@ -173,21 +204,26 @@ const energytype = (
   </Item>
 )
 
-const gettank = async() => { // 初始化、 站点改变时
+const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
   try {
-    const {areaId, stationName} = form.getFieldsValue();     
-    if(!(Number.isInteger(areaId) && stationName)) return
-     let {success, data, errMsg} = await  FindContainerList(projectId,areaId, stationName )
-     if(success && Array.isArray(data) ) {
-      setTankoptions(data)
-      form.setFieldValue('containerId', data[0]?.id)
-      if(data.length ==0) message.warning("储能柜暂无数据")
-      if(props.config?.isPcs && data.length > 0) getpcs()
+    const {areaId, stationName} = form.getFieldsValue();  
+    console.log(stationName)   
+    if(!(Number.isInteger(areaId) && stationName?.value)) return
+     let {success, data, errMsg} = await  FindContainerList(projectId,areaId, stationName?.value )
+     if(success && Array.isArray(data) && data.length > 0) {
+        setTankoptions(data)
+     
+        form.setFieldValue('containerId', {value: data[0].id, label: data[0].name})
+        props.setexparams({...form.getFieldsValue(true), projectId,areaName, containerId: {name:data[0].name, value: data[0].id},})
+        if(props.config?.isPcs) getPcs()
+       
      }else {
-       message.warning(errMsg || '数据出错')
-      form.setFieldValue('containerId',null)
+      form.setFieldValue('containerId', null)
+      props.setexparams({...form.getFieldsValue(true), projectId,areaName, containerId: {},})   
       setTankoptions([])
+      if(!success) return message.warning(errMsg || '数据出错')
+      if(data?.length==0) return message.warning("当前站点暂无储能柜数据")
      }
   } catch (error) {
     
@@ -197,24 +233,26 @@ const gettank = async() => { // 初始化、 站点改变时
 }
 
 
-const getpcs = async () => {
+const getPcs = async () => {
   try {
-    let {areaId,stationName, containerId=0 } = form.getFieldsValue(true)
+    let {areaId,stationName, containerId={value:0} } = form.getFieldsValue(true)
     //let containerId = 0
-   let {success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName, containerId) 
-   if(success && Array.isArray(data)) {
+   let {success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName?.value, containerId.value) 
+   if(success && Array.isArray(data) && data.length > 0) {
      setPcsoptions(data)
-     form.setFieldsValue({
-      pcsId: data[0].id
-     })
-     if(data.length==0) message.warning('当前站点不存在PCS!')
+     
+      form.setFieldsValue({
+        pcsId: {value: data[0].id, label: data[0].sn}
+       })
+       props.setexparams({...form.getFieldsValue(true), projectId,areaName, pcsId: {name:data[0].sn, value: data[0].id},})
    }else {
-     message.warning(errMsg || "数据出错")
-     setPcsoptions([])
+    setPcsoptions([])
      form.setFieldsValue({
       pcsId: null
      })
-   //  sitehandler && sitehandler({})
+     props.setexparams({...form.getFieldsValue(true), projectId,areaName, pcsId: {},})
+    if(!success) return message.warning(errMsg || "数据出错")
+    if(data?.length == 0) return message.warning('当前站点不存在PCS!')
    }
   } catch (error) {
     console.log(error)
@@ -230,11 +268,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
 </Item>)
 // 站点选择
   const site = (<Item name="stationName" label="站点"   >
-              <Select options={options} onChange={gettank} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
+              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} labelInValue></Select>  
              </Item>)
              // 储能柜
   const tank =  (<Item name="containerId" label="储能柜" >
-  <Select options={tankoptions} onChange={getpcs} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} ></Select>  
+  <Select options={tankoptions} onChange={getPcs} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
 </Item>)
 // pcs选择
   const pcs = (<Item name="pcsId" label="PCS" >
@@ -259,35 +297,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
  }, [sitId, AreaID, projectId, props.config?.isPcs])   */
 
 
-  const getopti = async() => { // 站点选择
-    try {
-     let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
-     if(success&& Array.isArray(data) && data.length > 0) {
-       setOptions([...data])   
-      let stationName = data[0].name
-     form.setFieldValue('stationName', stationName)
-     props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName,})
-     if(props.config.isTank) gettank();
-     }else {
-      setOptions([])    
-      form.setFieldsValue({
-        stationName: null
-       })
-       props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: null,})
-      
-     }
-    } catch (error) {
-      console.log(error)
-    }
-   
-  }
-  useEffect(() => {
-     
-      if(Number.isFinite(projectId) && Number.isFinite(AreaID) && props.config?.isSite) {
-        getopti()
-      }    
-  
-  }, [projectId, AreaID, props.config?.isSite])
+
  
   const onValuesChange = (_, allValues) => {      
     console.log(allValues)

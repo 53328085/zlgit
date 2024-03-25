@@ -9,7 +9,10 @@ import MainPage from './mainPage'
 import BatteryPage from './batteryPage'
 import BatteryPackPage from './batteryPackPage'
 import {StorageMonitorRuntime, SiteManagerDesigner, PCSMonitorRuntime} from '@api/api.js'
-
+ 
+import Pagecount from "@com/pagecontent";
+ 
+import Titlelayout from "@com/titlelayout";
 export default function Index() {
   const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
@@ -157,7 +160,7 @@ export default function Index() {
           showPage == 'mainPage' ?
           <div>
             <div className={style.border}>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backContainer()}>储能柜</span>
+              <span style={style.pot} onClick={()=> backContainer()}>储能柜</span>
               <span className={style.breadcrumb}> { '>' }</span>
               <span>电池堆</span>
             </div>
@@ -167,9 +170,9 @@ export default function Index() {
           showPage == 'batteryPage' ?
           <div>
             <div className={style.border}>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backContainer()}>储能柜</span>
+              <span style={style.pot} onClick={()=> backContainer()}>储能柜</span>
               <span className={style.breadcrumb}> { '>' }</span>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池堆</span>
+              <span style={style.pot} onClick={()=> backBMS()}>电池堆</span>
               <span className={style.breadcrumb}> { '>' }</span>
               <span>电池簇</span>
             </div>
@@ -179,11 +182,11 @@ export default function Index() {
           showPage == 'batteryPackPage' ?
           <div>
             <div className={style.border}>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backContainer()}>储能柜</span>
+              <span style={style.pot} onClick={()=> backContainer()}>储能柜</span>
               <span className={style.breadcrumb}> { '>' }</span>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBMS()}>电池堆</span>
+              <span style={style.pot} onClick={()=> backBMS()}>电池堆</span>
               <span className={style.breadcrumb}> { '>' }</span>
-              <span style={{color:'#237ae4', cursor:'pointer'}} onClick={()=> backBatteryCluster()}>电池簇</span>
+              <span style={style.pot} onClick={()=> backBatteryCluster()}>电池簇</span>
               <span className={style.breadcrumb}> { '>' }</span>
               <span>电池组</span>
             </div>

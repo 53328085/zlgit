@@ -49,8 +49,9 @@ export default function Index() {
     ], 
     runtimeStorage: [ // 储能管理
       "station",
-      "PCSMonitor", // pcs监控
-
+      "PCSMonitor", // pcs监控     
+     // "BMSMonitor",
+     "storageControl",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -162,6 +163,14 @@ export default function Index() {
            case "PCSMonitor":
             setConfig({ isSite: true, isTank: true,  isPcs: true});
             break; 
+           /*  case "BMSMonitor":
+              setConfig({ isSite: true});
+              break;   */
+           case "storageControl":
+            setConfig({ isSite: true, isPcs: true});
+            break; 
+            default:
+              setConfig({});
          }
       }
       if(primary == "runtimeCarbon") {

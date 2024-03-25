@@ -211,7 +211,7 @@ export default function Index() {
   let {exparams} = useOutletContext()
  
   let {areaId, stationName,  projectId} = exparams
-  console.log(exparams)
+ 
   const navigate = useNavigate()
   const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
@@ -223,9 +223,9 @@ export default function Index() {
 
   useEffect(() => {
     
-    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName && isFinite(stationName))) return
+    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName?.value && isFinite(stationName?.value))) return
    
-    querySiteInfo(projectId, areaId, stationName).then(res => {
+    querySiteInfo(projectId, areaId, stationName.value).then(res => {
       const {success, data} = res
       if (success && Object.prototype.toString.call(data).slice(8,-1)=="Object") {
         setCardData(res.data)
@@ -235,7 +235,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryStorageIncome(projectId,  areaId, stationName).then(res => {
+    queryStorageIncome(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
         if (Object.prototype.toString.call(data).slice(8, -1) === 'Object') {
@@ -285,7 +285,7 @@ export default function Index() {
       }
     }).catch
 
-    queryStorageWarning(projectId,  areaId, stationName).then(res => {
+    queryStorageWarning(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -298,7 +298,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryTopologyDiagramInfo(projectId,  areaId, stationName).then(res => {
+    queryTopologyDiagramInfo(projectId,  areaId, stationName.value).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
@@ -320,7 +320,7 @@ export default function Index() {
     }).catch()
 
 
-    queryChargeETrends(projectId,  areaId, stationName).then(res => {
+    queryChargeETrends(projectId,  areaId, stationName.value).then(res => {
       let {success, data} = res
       if (success) {
         if (Object.prototype.toString.call(data).slice(8,-1)=="Object") {

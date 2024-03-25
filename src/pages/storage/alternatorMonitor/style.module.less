@@ -1,38 +1,21 @@
-.header{
-    width: 1680px;
-    height: 48px;
-    background-color: #fff;
-    border-radius: 4px;
-    border: 1px solid #d7d7d7;
-    display: flex;
-    align-items: center;
-    .line{
-        width: 0;
-        height: 33px;
-        margin: 0 24px;
-        border-left: 1px dashed #d7d7d7;
-    }
-    :global{
-        .ant-form-item-label > label::after{
-            display: none;
-        }
-    }
-}
+ 
 
 .pcsContent{
     
     display: flex;
     flex: 1;
+    column-gap: 16px;
+    padding-bottom: 16px;
     .left{
+        flex: 1;
         width: 544px;
-        height: 800px;
         border-radius: 4px;
         background-color: rgb(0, 0, 51);
         padding: 16px;
         .title{
             padding-left: 16px;
             height: 32px;
-            border-left: 4px solid #237ae4;
+            border-left: 4px solid var(--ant-primary-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -46,7 +29,7 @@
                 text-align: center;
                 line-height: 20px;
                 font-size: 12px;
-                background-color: #237ae3;
+                background-color: var(--ant-primary-color);
             }
         }
         .firstValue{
@@ -167,7 +150,6 @@
         }
     }
     .right{
-        margin-left: 16px;
         .chartCard{
             margin-bottom: 16px;
             width: 1120px;
@@ -177,28 +159,13 @@
             border: 1px solid #d7d7d7;
             .chartTitle{
                 padding-left: 16px;
-                border-left: 4px solid #237ae4;
+                border-left: 4px solid var(--ant-primary-color);
                 height: 32px;
                 line-height: 32px;
                 font-size: 14px;
                 color: #333;
             }
         }
-        .tableList{
-            width: 1120px;
-            margin-bottom: 14px;
-            :global{
-                th{
-                    background-color: #036;
-                    color: #fff;
-                    width: 160px;
-                    height: 32px!important;
-                }
-                .ant-table-cell{
-                    height: 32px!important;
-                    padding: 0;
-                }
-            }
-        }
+         
     }
 }
