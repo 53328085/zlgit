@@ -52,6 +52,7 @@ export default function Index() {
       "PCSMonitor", // pcs监控     
      // "BMSMonitor",
      "storageControl",
+     "consumeStatistics",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -169,6 +170,9 @@ export default function Index() {
            case "storageControl":
             setConfig({ isSite: true, isPcs: true});
             break; 
+            case "consumeStatistics":
+              setConfig({ isSite: true});
+              break; 
             default:
               setConfig({});
          }

@@ -5,7 +5,7 @@ export default function Ichart(props={}) {
   const ref = useRef()
   let {dataset={}, type=2, pieData, custoption, tip=''} = props
   let typechart = custoption?.type || type
-  let info = `${tip}暂无数据` 
+  let info = `${tip}：暂无数据` 
   useEffect(() => {
     if(typechart == 2 && dataset?.source?.length > 0) {
      

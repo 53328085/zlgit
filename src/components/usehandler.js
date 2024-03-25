@@ -47,7 +47,8 @@ export function numberformat(n){
 
 }
 export function getTime(date, type){
-  let time
+  try {
+    let time
       if(type == 1) {
         time=date.format('YYYY-MM-DD')
     }else if(type == 2) {
@@ -56,6 +57,10 @@ export function getTime(date, type){
         time = date.startOf("year").format('YYYY-MM-DD')
     }
   return time
+  } catch (error) {
+    console.log(error)
+  }
+  
 }
 
 export function cipher(name, pwd){
