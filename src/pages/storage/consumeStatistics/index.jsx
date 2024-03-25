@@ -15,6 +15,9 @@ import {getTime} from "@com/usehandler"
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
+const disabledDate = (current) => {   
+  return current && current > moment().endOf('day');
+};
 const Mainbox = styled.div`
     && {
        display: grid;
@@ -383,7 +386,7 @@ const Formlayout = ({form, handler}) => {
        { ({getFieldValue}) => {  
            let type = getFieldValue('type')  
           let picker = ['', 'day', 'month', 'year'][type]
-           return <Item name="date"><DatePicker placeholder="请选择日期" picker={picker}   onChange={handler} style={{width: '160px'}} /></Item> 
+           return <Item name="date"><DatePicker placeholder="请选择日期" picker={picker}   onChange={handler} style={{width: '160px'}} disabledDate={disabledDate} /></Item> 
   
         }
       }
