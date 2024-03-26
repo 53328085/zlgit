@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions } from 'antd'
+import {Typography,  Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions } from 'antd'
  
  
-import { useNavigate, useOutletContext} from 'react-router-dom'
+import {  useOutletContext} from 'react-router-dom'
  import moment from 'moment'
  import {ConsumeStatisticsRuntime} from '@api/api'
  import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout'
-import { drawEcharts } from "@com/useEcharts";
+
 import Ichart  from '@com/useEcharts/Ichart'; 
 import {getTime} from "@com/usehandler"
  
-const {Text, Link, Title, Paragraph} = Typography
+const { Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {   

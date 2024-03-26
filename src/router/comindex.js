@@ -54,6 +54,7 @@ export default function Index() {
      "storageControl",
      "consumeStatistics",
      "earningsStatistics",
+     "chargingOrder",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -154,6 +155,7 @@ export default function Index() {
             setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, });
             break;  
           default:
+            setConfig({});
             break;
         }
       }
@@ -179,6 +181,7 @@ export default function Index() {
                 break;   
             default:
               setConfig({});
+              break;
          }
       }
       if(primary == "runtimeCarbon") {
