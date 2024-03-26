@@ -53,6 +53,7 @@ export default function Index() {
      // "BMSMonitor",
      "storageControl",
      "consumeStatistics",
+     "earningsStatistics",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -173,6 +174,9 @@ export default function Index() {
             case "consumeStatistics":
               setConfig({ isSite: true});
               break; 
+            case "earningsStatistics":
+                setConfig({ isSite: true});
+                break;   
             default:
               setConfig({});
          }
