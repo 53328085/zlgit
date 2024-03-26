@@ -71,13 +71,13 @@ export default function UseSerach(props) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
+   
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   let shifts = useSelector(selectshifts)
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
   const [options, setOptions] = useState([]) // 
-  //const [sitId, setSitId] = useState(null) 
-  const sitId = options[0]?.id        // 站点选择
+ 
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
@@ -89,15 +89,17 @@ export default function UseSerach(props) {
        setOptions([...data])   
       let stationName = data[0].name
      form.setFieldValue('stationName', {label:stationName, value: stationName})
-     props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: {name:stationName, value: stationName},})
+     
+     props.setexparams({...form.getFieldsValue(true), areaName})
+ 
      if(props.config.isTank) getTank();
-     if(props.config.isPcs)  getPcs();
+     if(props.config.isPcs && !props.config.isTank)  getPcs();
      }else {
        setOptions([])    
       form.setFieldsValue({
-        stationName: null
+        stationName: {label: null, value: null}
        })
-       props.setexparams({...form.getFieldsValue(true), projectId,areaName, stationName: {},})
+       props.setexparams({...form.getFieldsValue(true),areaName})
        if(!success) return message.warning(errMsg)
        if(data?.length) return message.warning("站点暂无数据")
      }
@@ -208,19 +210,19 @@ const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
   try {
     const {areaId, stationName} = form.getFieldsValue();  
-    console.log(stationName)   
+   
     if(!(Number.isInteger(areaId) && stationName?.value)) return
      let {success, data, errMsg} = await  FindContainerList(projectId,areaId, stationName?.value )
      if(success && Array.isArray(data) && data.length > 0) {
         setTankoptions(data)
      
         form.setFieldValue('containerId', {value: data[0].id, label: data[0].name})
-        props.setexparams({...form.getFieldsValue(true), projectId,areaName, containerId: {name:data[0].name, value: data[0].id},})
-        if(props.config?.isPcs) getPcs()
+        props.setexparams({...form.getFieldsValue(true), areaName})
+        if(props.config?.isPcs ) getPcs()
        
      }else {
-      form.setFieldValue('containerId', null)
-      props.setexparams({...form.getFieldsValue(true), projectId,areaName, containerId: {},})   
+      form.setFieldValue('containerId', {label: null, value: null})
+      props.setexparams({...form.getFieldsValue(true),areaName,})   
       setTankoptions([])
       if(!success) return message.warning(errMsg || '数据出错')
       if(data?.length==0) return message.warning("当前站点暂无储能柜数据")
@@ -236,7 +238,6 @@ const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
 const getPcs = async () => {
   try {
     let {areaId,stationName, containerId={value:0} } = form.getFieldsValue(true)
-    //let containerId = 0
    let {success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName?.value, containerId.value) 
    if(success && Array.isArray(data) && data.length > 0) {
      setPcsoptions(data)
@@ -244,13 +245,11 @@ const getPcs = async () => {
       form.setFieldsValue({
         pcsId: {value: data[0].id, label: data[0].sn}
        })
-       props.setexparams({...form.getFieldsValue(true), projectId,areaName, pcsId: {name:data[0].sn, value: data[0].id},})
+       props.setexparams({...form.getFieldsValue(true), areaName})
    }else {
     setPcsoptions([])
-     form.setFieldsValue({
-      pcsId: null
-     })
-     props.setexparams({...form.getFieldsValue(true), projectId,areaName, pcsId: {},})
+     form.setFieldValue('pcsId', {label: null, value: null})
+     props.setexparams({...form.getFieldsValue(true), areaName,})
     if(!success) return message.warning(errMsg || "数据出错")
     if(data?.length == 0) return message.warning('当前站点不存在PCS!')
    }
@@ -290,26 +289,13 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [levelone])
  
-/*  useEffect(() => {
-    if(Number.isFinite(projectId) && Number.isFinite(AreaID) && Number.isFinite(sitId) && props.config?.isPcs) {
-      getpcs()
-    }
- }, [sitId, AreaID, projectId, props.config?.isPcs])   */
-
-
-
- 
   const onValuesChange = (_, allValues) => {      
     console.log(allValues)
-    props.setexparams({...allValues, projectId, areaName})
+    props.setexparams({...allValues,  areaName})
   }
-  const onFieldsChange = (f, all) => {
-     console.log(f)
-     console.log(all)
-  }
+
   useEffect(() => {  
-     
-     props.setexparams({...form.getFieldsValue(true), projectId, areaName})
+     props.setexparams({...form.getFieldsValue(true), areaName})
    
   }, [props.config, projectId])
 
@@ -317,12 +303,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   return (  
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
-     onValuesChange={onValuesChange}  
-     onFieldsChange={onFieldsChange}
+     onValuesChange={onValuesChange}      
     style={{displey: 'flex', justifyContent: 'space-between'}} >
       <Space size={64} split={ <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
-        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone}  fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
      
@@ -334,6 +319,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {props.config?.isdevsty && deviceStyleNode}  
         {props.config?.isview && viewtype}  
         {props.config?.energytype && energytype}
+        
       </Space>
          {
            props.config?.isdate && dateselect
@@ -350,6 +336,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         {
           props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
         }
+        <Item noStyle name="projectId" initialValue={projectId}>
+           <Input hidden />
+        </Item>
        {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}

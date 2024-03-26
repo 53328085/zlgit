@@ -146,7 +146,7 @@ const Mainbox = styled.div`
   }
  
   useEffect(() => {
-    if (projectId && stationName?.name) {
+    if (projectId && stationName?.value) {
       getIncome()
     }
     
@@ -159,7 +159,7 @@ const Mainbox = styled.div`
       let time = getTime(date, type);
      
       
-      let {success, data, errMsg} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId,type, time, stationName.name)
+      let {success, data, errMsg} = await  ConsumeStatisticsRuntime.QueryIncomeTrends(projectId,type, time, stationName.value)
       let {x=[], y=[]} = data || {}
       if(success) {
          let dimensions = [
@@ -193,7 +193,7 @@ const Mainbox = styled.div`
     const { date, type} = sform.getFieldsValue() || {}
    
     let time = getTime(date, type);
-    let {success, data, errMsg} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId,type, time, stationName.name)
+    let {success, data, errMsg} = await  ConsumeStatisticsRuntime.QueryDisChargeETrends(projectId,type, time, stationName.value)
      let {x, y, y1} = data || {}
     if(success && Array.isArray(x) && Array.isArray(y) && Array.isArray(y1)) {
 
@@ -227,7 +227,7 @@ const Mainbox = styled.div`
     }
   }
   useEffect(() => {
-    if(projectId && stationName?.name) {
+    if(projectId && stationName?.value) {
       getchartData()
       queryDisChargeETrends()
     }

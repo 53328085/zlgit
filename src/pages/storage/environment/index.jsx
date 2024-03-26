@@ -1,43 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import style from './style.module.less'
-import { Button, DatePicker, message, Form, Select } from 'antd'
+ 
+import { Button, DatePicker, message, Form, Typography} from 'antd'
 import moment from 'moment'
 import { CaretLeftOutlined, CaretRightOutlined, SearchOutlined } from '@ant-design/icons'
 import CustModal from '@com/useModal'
+import {  useOutletContext} from 'react-router-dom'
 import * as echarts from 'echarts'
 import bgImg from './imgs/background.png'
 import icon from './imgs/icon.png'
 import iconHover from './imgs/icon_hover.png'
-import { StorageEnvironmentRuntime, SiteManagerDesigner } from '@api/api'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
+import { StorageEnvironmentRuntime } from '@api/api'
+ 
+ 
 import { useReactive } from 'ahooks'
-
-export default function Index() {
-
-  const TempRef = useRef()
-  const lineRef = useRef()
-  const { queryEnvironmentInfo, queryTrends } = StorageEnvironmentRuntime
-  let time = new Date()
-  let year = time.getFullYear()
-  let month = time.getMonth() + 1
-  month = month < 10 ? '0' + month : month
-  let day = time.getDate()
-  day = day < 10 ? '0' + day : day
-
-  const today = year + '-' + month + '-' + day
-  const [form] = Form.useForm()
-  const [headForm] = Form.useForm()
-  const Item = Form.Item
-
-  const { FindSiteList } = SiteManagerDesigner
-
-  const dispatch = useDispatch()
-  const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
+import Titlelayout from '@com/titlelayout'
+import Pagecount from "@com/pagecontent";
+import {Ichart} from '@com/useEcharts'
+import style from './style.module.less'
+const {Paragraph} = Typography
 
   //页面组件
   const CustomCss = styled.div`
@@ -55,7 +36,7 @@ export default function Index() {
       height: 20px;
       line-height: 20px;
       color: #fff;
-      background-color: #237ae4;
+      background-color:  ${props => props.theme.primaryColor};
     }
     .itemTitle{
       position: absolute;
@@ -87,6 +68,10 @@ export default function Index() {
           text-align: center;
           font-size:12px;
           color: #fff;
+        }
+        .primarycol {
+          background-color: ${props => props.theme.primaryColor};
+          border: 1px solid ${props => props.theme.primaryColor};
         }
         .leftIcon{
             width: 16px;
@@ -171,6 +156,30 @@ export default function Index() {
         color: #f2f2f2;
       }
   `
+export default function Index() {
+  let {exparams} = useOutletContext()
+  let {areaId,  projectId,stationName } = exparams
+  const TempRef = useRef()
+  const lineRef = useRef()
+  const { queryEnvironmentInfo, queryTrends } = StorageEnvironmentRuntime
+  let time = new Date()
+  let year = time.getFullYear()
+  let month = time.getMonth() + 1
+  month = month < 10 ? '0' + month : month
+  let day = time.getDate()
+  day = day < 10 ? '0' + day : day
+
+  const today = year + '-' + month + '-' + day
+  const [form] = Form.useForm()
+ 
+  const Item = Form.Item
+
+ 
+
+ 
+
+   const [storageData, setStorageData] = useState([])
+   let length = storageData?.length??0;
   const [count, setCount] = useState(0)
   const transLeft = () => {
     if ((count) <= 0) return;
@@ -257,7 +266,7 @@ export default function Index() {
       <div className='itemTitle'>环境监控</div>
       <div className='itemData'>
         <div className='item' style={{ cursor: 'pointer' }}>
-          <div className='monitorTitle' style={{ backgroundColor: '#237ae4', border: '1px solid #237ae4' }}>{air[state.airCount]?.name || '空调监控'}</div>
+          <div className='monitorTitle primarycol'>{air[state.airCount]?.name || '空调监控'}</div>
           <div className='temData'>
             {(air.length <= 1 || state.airCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('air')}></div>}
             <div className='tem' onClick={() => showChart(data.id)}>
@@ -277,7 +286,7 @@ export default function Index() {
           <div className='tempTime'> {air[state.airCount]?.reportTime || '/'}</div>
         </div>
         <div className='item' style={{ cursor: 'pointer' }}>
-          <div className='monitorTitle' style={{ backgroundColor: '#237ae4', border: '1px solid #237ae4' }}>{env[state.envCount]?.name || '环境温湿度'}</div>
+          <div className='monitorTitle primarycol'>{env[state.envCount]?.name || '环境温湿度'}</div>
           <div className='temData'>
             {(env.length <= 1 || state.envCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('env')}></div>}
             <div className='tem'>
@@ -318,64 +327,10 @@ export default function Index() {
       </div>
     </CustomCss>
   }
-
-
-
-
-  //页面数据
-  const [storageData, setStorageData] = useState([])
-
-  //siteList
-  const [siteName, setSiteName] = useState('')
-  const [siteList, setSiteList] = useState([])
-  const querySite = () => {
-    FindSiteList(projectId, headForm.getFieldValue('areaId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
-          setSiteList(res.data)
-          headForm.setFieldValue('siteId', res.data[0].id)
-          setSiteName(res.data[0].name)
-          getFromHeader()
-        } else {
-          setSiteList([])
-          setSiteName('')
-          message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
-          return;
-        }
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const changeSite = val => {
-    siteList.map(item => {
-      if (item.id == val) {
-        setSiteName(item.name)
-      }
-    })
-    getFromHeader()
-  }
-
-  useEffect(() => {
-    if (areaList.length == 0 || !areaList) {
-      message.error('当前项目尚未创建园区!')
-    } else {
-      headForm.setFieldValue('areaId', oneLevelDefaultId)
-      querySite()
-    }
-  }, [])
-  const changeArea = (val) => {
-    areaList.map(item => {
-      if (item.id == val) {
-        dispatch(setCurrentlevel(item))
-      }
-    })
-    headForm.setFieldValue('siteId', null)
-    querySite()
-  }
-
   const getFromHeader = () => {
-    queryEnvironmentInfo(projectId, headForm.getFieldValue('areaId'), headForm.getFieldValue('siteId')).then(res => {
+    if(!stationName?.value) return;
+    if(!(Number.isInteger(projectId) && Number.isInteger(areaId))) return 
+    queryEnvironmentInfo(projectId, areaId, stationName.value).then(res => {
       if (res.success) {
         if (res.data) {
           setStorageData(res.data)
@@ -383,11 +338,14 @@ export default function Index() {
           setStorageData([])
         }
       } else {
+        setStorageData([])
         message.error(res.errMsg)
       }
     })
   }
-
+  useEffect(() => {
+     getFromHeader();
+  }, [projectId, areaId, stationName])
   //弹窗
   const [roomId, setRoomId] = useState(0)
   const getTrends = (projectId, roomId, date) => {
@@ -492,38 +450,11 @@ export default function Index() {
 
   //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
-    <div>
-      <div className={style.header}>
-        <Form form={headForm} layout='inline'>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
-            <Select
-              placeholder="请选择"
-              size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
-              onChange={changeArea}
-            >
-              {areaList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          <div className={style.line}></div>
-          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
-            <Select
-              placeholder="请选择站点"
-              size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
-              onChange={changeSite}
-            >
-              {siteList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-        </Form>
-      </div>
+    <Pagecount pd="0">     
       <div className={style.mainContent}>
-        <div className={style.title}>{siteName}</div>
+        <div className={style.title}>
+            <Paragraph  style={{marginBottom: '0', color: "#fff"}}  ellipsis={{tooltip: stationName?.value}}>{stationName?.value}</Paragraph>  
+          </div>
         <div className={style.yaxis}></div>
         <div className={style.xaxis}></div>
         <div className={style.dataList}>
@@ -548,6 +479,6 @@ export default function Index() {
         </div>
         <div className={style.lineChart} ref={lineRef}></div>
       </CustModal>
-    </div>
+    </Pagecount>
   )
 }

@@ -95,7 +95,7 @@ export default function Index() {
   ]
   const getinfo = async () => {
     try {
-      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId?.id)
+      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId?.value)
 
       if (success) {
         let {runtimeMode, systemStatus} = data;
@@ -134,7 +134,7 @@ export default function Index() {
            </div>
            <div className='tabbox'>
                 <Tabsbox items={tabs} activeKey={tab} onChange={tabChange}></Tabsbox>
-              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} pcsId={pcsId}    areaId={areaId} {...infoData} getinfo={getinfo}   />   }
+              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} pcsId={pcsId?.value}    areaId={areaId} {...infoData} getinfo={getinfo}   />   }
            </div>
         </Contentbox>
     </Pagecount>

@@ -55,6 +55,7 @@ export default function Index() {
      "consumeStatistics",
      "earningsStatistics",
      "chargingOrder",
+     "environment"
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -161,9 +162,6 @@ export default function Index() {
       }
       if(primary == "runtimeStorage") {
          switch(nested) {
-           case "station":
-            setConfig({ isSite: true });
-            break;
            case "PCSMonitor":
             setConfig({ isSite: true, isTank: true,  isPcs: true});
             break; 
@@ -172,11 +170,11 @@ export default function Index() {
               break;   */
            case "storageControl":
             setConfig({ isSite: true, isPcs: true});
-            break; 
-            case "consumeStatistics":
-              setConfig({ isSite: true});
-              break; 
+            break;           
             case "earningsStatistics":
+            case "environment":
+            case "consumeStatistics":  
+            case "station":
                 setConfig({ isSite: true});
                 break;   
             default:

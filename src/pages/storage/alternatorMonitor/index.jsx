@@ -19,12 +19,10 @@ import styled from 'styled-components'
  
 import Usetable from '@com/useTable'
 export default function Index() {
-
-  const dispatch = useDispatch()
   let {exparams} = useOutletContext()
   console.log(exparams)
   let {areaId,  projectId,  pcsId} = exparams
-  let {pcs_id, pcs_name} = pcsId || {}
+  let {value: pcs_id, label} = pcsId || {}
 
   const { 
     queryPCSInfo,
@@ -215,7 +213,7 @@ export default function Index() {
         <div className={style.left}>
           <div className={style.title}>
             <span>储能交流器</span>
-            <span className={style.pcsName}>{pcs_name}</span>
+            <span className={style.pcsName}>{label}</span>
           </div>
           <div className={style.firstValue}>
             <div className={style.stateList}>
