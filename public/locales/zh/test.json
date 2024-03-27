@@ -1,0 +1,8 @@
+{
+    "welcome": "qq",
+   "author": "作者是aas",
+   "currentTime": "当前时间 {{time, YYYY-MM-DD}}",
+   "public": {
+     "go": "公共能耗分类"
+   }
+ }

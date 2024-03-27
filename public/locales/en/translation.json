@@ -4,5 +4,7 @@
    "currentTime": "current time is {{time, DD/MM/YY}}",
    "public": {
      "go": ""
-   }
+   },
+   "default": "Something went wrong.",
+   "key1_interval": "(1)[one item];(2-7)[a few items];(7-inf)[a lot of items]"
  }

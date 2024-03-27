@@ -1,8 +1,10 @@
 {
-    "welcome": "正泰物联",
+    "welcome": "willkommen",
    "author": "作者是",
    "currentTime": "当前时间 {{time, YYYY-MM-DD}}",
    "public": {
      "go": "公共能耗分类"
-   }
+   },
+   "default": "一些错误发生",
+   "key1_interval": "(1)[一条];(2-7)[一些条目];(7-inf)[许多条目]"
  }
