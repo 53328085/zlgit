@@ -288,7 +288,7 @@ export const drawEcharts = (
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
   const {locale} =store.getState()?.system?.intl  // 国际化语言
-  console.log(locale)
+ 
   let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
   const chart = echarts.init(dom, 'walden', {locale: lang});
   // 对不同图表类型设置不同的格式
@@ -434,7 +434,7 @@ export const drawEcharts = (
       ? pieOption({...pieData, grid, legend})
       : {};  */
       
-      console.log('option', setoption)
+      
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {
