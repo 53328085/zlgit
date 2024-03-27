@@ -325,7 +325,7 @@ const onExport = useCallback(() => {
             
           </Form>
           <Cdivider margin="0" type="h" />
-          <Usetable ref={tableRef} columns={columns}   rowKey={nanoid()}  {...tableProps} onExport={onExport} sheetName='收益统计.xlsx'/>
+          <Usetable ref={tableRef} columns={columns} hbc="#fff"  rowKey={nanoid()}  {...tableProps} onExport={onExport} sheetName='收益统计.xlsx'/>
       </Mainbox>
     </Titlelayout>
     </Pagecount>
