@@ -56,7 +56,8 @@ export default function Index() {
      "earningsStatistics",
      "chargingOrder",
      "environment",
-     "alarmMessage"
+     "alarmMessage",
+     "operationLog",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -177,6 +178,7 @@ export default function Index() {
             case "consumeStatistics":  
             case "station":
             case "alarmMessage":
+            case "operationLog":
                 setConfig({ isSite: true});
                 break;   
             default:
