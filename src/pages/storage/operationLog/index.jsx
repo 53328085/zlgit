@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, Select, DatePicker, Checkbox, Calendar, Descriptions,Tag, Divider } from 'antd'
+import {Typography,  Form, Space, Input, Select, DatePicker,  Divider } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import {  useOutletContext} from 'react-router-dom'
@@ -10,7 +10,7 @@ import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
 import {  ExportExcel} from '@com/useButton'
 import Pagecount from "@com/pagecontent";
-import { number } from 'echarts'
+ 
 const {Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -88,8 +88,7 @@ export default function Index() {
   let {stationName, areaId, projectId} = exparams
   const condition = Number.isInteger(areaId) && Number.isInteger(projectId) && stationName?.value
    const [form] = Form.useForm()
- 
-   const [keycode, setKeycode] = useState(0)
+  
    const [total, setTotal] = useState(0)
  
   const QueryReports =  ({current, pageSize}, form) => {   

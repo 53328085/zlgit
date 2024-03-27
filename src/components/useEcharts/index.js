@@ -363,7 +363,7 @@ export const drawEcharts = (
       },
       axisLabel: {
        
-        interval:0, // 显示所有x轴的label
+        interval:0, // 显示所有x轴的label, auto: 标签不重叠  
         ...axisLabel,
       },
       
@@ -424,6 +424,7 @@ export const drawEcharts = (
         },
     }
   }
+ 
   const setoption = ['', option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
   /*   type == 1
       ? option
@@ -432,7 +433,8 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-  
+      
+      console.log('option', setoption)
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

@@ -19,8 +19,7 @@ import styled from 'styled-components'
  
 import Usetable from '@com/useTable'
 export default function Index() {
-  let {exparams} = useOutletContext()
-  console.log(exparams)
+  let {exparams} = useOutletContext() 
   let {areaId,  projectId,  pcsId} = exparams
   let {value: pcs_id, label} = pcsId || {}
 

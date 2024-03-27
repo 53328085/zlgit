@@ -1,19 +1,49 @@
-import React from 'react'
-import CustContext from '@com/content.js'
-import Pagecount from '@com/pagecontent'
+import React, { useState, useCallback} from 'react'
+
+import {StorageRunReport} from '@api/api'
  
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
-import Report from './report'
+import Report from '@com/reportPrint'
+import Pagecom from './pagecomp' 
  
-export default function Index() {  
-  const projectId = useSelector(selectProjectId)
- 
+
+export default function Index() {
+  const [reportData, setData] = useState(null)
+  const  [params, setType] = useState(null)
+  const getData =useCallback(async (params) => {  
+    try {
+     console.log(params)
+     const {type, date, projectId} = params
+     let {success, data} = await  StorageRunReport.QueryRuntimeStatus(projectId, type-1, date)
+     if(success && data) {
+       let datas = data?.constructor == Object ? data : {}
+       setData({...datas})
+       setType(params)
+       return true
+     }else {
+      setData({})
+      setType(null)
+      return false
+     }
+    } catch (error) {
+        console.log(error)
+        setType(null)
+        return false
+    }
+    
+}, [params])
+
   return (
-    <CustContext.Provider value={{}}>
-    <Pagecount   bgcolor="transparent" pd="0px">   
-       <Report projectId={projectId}  />
-    </Pagecount>
-    </CustContext.Provider>
+    <div style={{display: "flex", flex: 1}}>
+           <Report  getReport={getData} params={params} reportName="储能管理分析报告" >
+              {
+                reportData && <Pagecom data={reportData}   params={params}  />
+              }
+           </Report>
+    </div>
   )
+
 }
+
+
+
+

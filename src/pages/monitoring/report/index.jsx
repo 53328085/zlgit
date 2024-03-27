@@ -11,25 +11,7 @@ export default function Index() {
   const [reportData, setData] = useState(null)
   const  [params, setType] = useState(null)
   const projectId = useSelector(selectProjectId)                      
-/*   const getReport = async (params) => {  
-    try {
-    
-      let {success, data} =  await  QueryReport(params)
-      if(success) {
-        setData(data)
-        setType(params)
-        return true
-      }else {
-        setType(null)
-        return false
-      }
-    } catch (error) {
-       setType(null)
-       return false
-    }
-  
-  }
- */
+
   const getData =useCallback(async (params) => { // 缺少 年， 月参数
     try {
      let {success, data} = await RuntimeStatus({projectId: projectId, areaId: 0})
