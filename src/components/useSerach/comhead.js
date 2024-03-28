@@ -101,7 +101,7 @@ export default function UseSerach(props) {
        })
        props.setexparams({...form.getFieldsValue(true),areaName})
        if(!success) return message.warning(errMsg)
-       if(data?.length) return message.warning("站点暂无数据")
+       if(data?.length < 1) return message.warning("站点暂无数据")
      }
     } catch (error) {
       console.log(error)
