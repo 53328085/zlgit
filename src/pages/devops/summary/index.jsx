@@ -1,13 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-
+import React, { useEffect, useState } from 'react'
 import Titlelayout from '@com/titlelayout'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
-import CustContext from '@com/content.js'
-import { Form, Image, message, Progress, Select } from 'antd'
-//import {Map, Marker, Circle, NavigationControl, InfoWindow, CityListControl, MapTypeControl, ScaleControl, ZoomControl} from 'react-bmapgl';
-import { drawEcharts } from "@com/useEcharts";
-import { useSelector } from 'react-redux'
+import {useOutletContext} from 'react-router-dom'
+import {  message} from 'antd'
 import Mapcom from '@com/useMap'
 import BlueColumn from '@com/bluecolumn'
 import first from './imgs/first.png'
@@ -15,8 +11,8 @@ import second from './imgs/second.png'
 import third from './imgs/third.png'
 import total from './imgs/total.png'
 import { operation } from '@api/api'
-import {EmptyMap} from './mapcomp'
 
+import Ichart from "@com/useEcharts/Ichart"
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
@@ -54,7 +50,8 @@ const Mainbox = styled.div`
       display: grid;
       grid-template-rows:20px 1fr;
       .chart {
-        min-height: 240px;
+         flex: 1;
+         display: flex;
       }
     }
   }
@@ -99,25 +96,25 @@ const Mainbox = styled.div`
 
 
 export default function Index() {
-  const [form] = Form.useForm()
-  const bref = useRef(null)
-  // const pref = useRef(null)
-  const lref = useRef(null)
-  const [areavalue, setAreavalue] = useState(0)
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+  let {exparams} = useOutletContext()
+ 
+  let {areaId, projectId} = exparams
+  const condition = Number.isInteger(areaId) && Number.isInteger(projectId)
+  let params = {
+    projectId,
+    areaId,
+  }
+ 
+
   const [warn, setWarn] = useState()//当前告警
   const [allwarn, setAllwarn] = useState() //本月告警
   const [order, setOrder] = useState() //工单
   const [task,setTask]=useState()//巡检任务
   const [datasetMonth,setDatasetMonth] =useState() //派单
+ 
   const [datasetMonthl,setDatasetMonthl]=useState()//告警事件
   const [alarmPosition,setAlarmPosition] =useState(null)
-  let params = {
-    projectId,
-    areaId: areavalue
-  }
+
   const imgcss = {
     width: 32,
     height: 32,
@@ -130,34 +127,8 @@ export default function Index() {
     bottom: "0px",
     containLabel: true,
   }
-  // const datasetMonth = {
-  //   dimensions: ["time", "派单数", "完成"],
-  //   source: [
-  //     { time: "1", "派单数": 5600, "完成": 9600 },
-  //     { time: "2", "派单数": 4600, "完成": 3644 },
-  //     { time: "3", "派单数": 3600, "完成": 4644 },
-  //     { time: "4", "派单数": 5611, "完成": 9655 },
-  //     { time: "5", "派单数": 5644, "完成": 3677 },
-  //     { time: "6", "派单数": 4677, "完成": 3633 },
-  //     { time: "7", "派单数": 3688, "完成": 4655 },
-  //     { time: "8", "派单数": 5088, "完成": 2644 },
-  //     { time: "9", "派单数": 6677, "完成": 2641 },
-  //     { time: "10", "派单数": 5866, "完成": 5641 },
-  //     { time: "11", "派单数": 4677, "完成": 7645 },
-  //     { time: "12", "派单数": 1877, "完成": 2645 },
-  //   ],
-  // };
-
-  // const pieData = [
-  //   { value: 30.4, name: "已完成" },
-  //   { value: 25.7, name: "未分派" },
-  //   { value: 25.6, name: "处理中" },
-  // ];
-  //改变区域
-  const changeArea = (v) => {
-    console.log(v)
-    setAreavalue(v)
-  }
+  
+ 
   //获取当前告警
   const getAlarmCurrent = async () => {
     try {
@@ -256,6 +227,7 @@ export default function Index() {
   }
   //获取当月告警
   const getAlarmMonth = async () => {
+
     try {
       const { data: { all, one, two, three, alarmPosition }, errMsg, success } = await operation.AlarmMonth(params)
       if (success) {
@@ -282,7 +254,9 @@ export default function Index() {
   }
   //获取巡检任务
   const getInspectionStatistics=async()=>{
+    
     try {
+      if(!condition) return
       const {data: { all, wait, process, finish}, errMsg, success} = await operation.InspectionStatistics(params)
       if (success) {
         setTask({all, wait, process, finish})
@@ -294,10 +268,27 @@ export default function Index() {
     }
   }
   //获取本月派单
+
+  const boption = {
+    dataset: datasetMonth,
+    series: [{ type: "bar" }, { type: "bar" }],
+    grid,
+    legend: {
+
+      icon: 'rect',
+      itemHeight: 8,
+      itemWidth: 8,
+      itemGap: 20,
+      padding: [15,0,0,0]
+    },
+}
   const getMonthOrderTrend =async()=>{
     const res =await operation.MonthOrderTrend(params)
     if(res.success){
-      const {all ,finish} =res.data
+      
+      const {all ,finish} =res.data || {}
+
+
       let data = all.map((item,index)=>{
         return {
           x:item.x,
@@ -305,17 +296,37 @@ export default function Index() {
           '完成':finish[index].y
         }
       })
-      setDatasetMonth({dimensions:['x','派单数','完成'],source:[...data]})
+      setDatasetMonth({dimensions:['x','派单数','完成'],source:[...data]})  
     }else{
       message.error(res.errMsg)
     }
   }
   //本月告警
+
+  const loption = {
+    dataset: datasetMonthl,
+    series: [{ type: "line" }, { type: "line" }],
+    grid: {
+      top: '20px',
+      left: 0,
+      right: 0,
+      bottom: '30px',
+      containLabel: true,
+    },
+    legend: {
+      top: 'auto',
+      bottom: 0,
+      icon: 'rect',
+      itemHeight: 2,
+      itemWidth: 12,
+      itemGap: 20,
+    }
+  }
   const getMonthAlarmTrend=async ()=>{
     
     const res =await operation.MonthAlarmTrend(params)
     if(res.success){
-      const {currentMonth ,lastMonth} =res.data
+      const {currentMonth=[] ,lastMonth=[]} =res.data || {}
       let arr=[]
       let arr1=[]
       let curmonth='本月'
@@ -355,7 +366,7 @@ export default function Index() {
   }
  
   useEffect(() => {
-    if(oneLevel.length>0){
+    if(condition){
       getAlarmCurrent()
       getAlarmMonth()
       getMonthOrderStatistics()
@@ -363,62 +374,10 @@ export default function Index() {
       getMonthOrderTrend()
       getMonthAlarmTrend()
     }
-  }, [areavalue])
-  useEffect(() => {
-    drawEcharts(bref.current, {
-      dataset: datasetMonth,
-      series: [{ type: "bar" }, { type: "bar" }],
-      grid,
-      legend: {
+  }, [areaId, projectId])
 
-        icon: 'rect',
-        itemHeight: 8,
-        itemWidth: 8,
-        itemGap: 20,
-        padding: [15,0,0,0]
-      }
-    })
-    // drawEcharts(pref.current, {
-    //   pieData: { data: pieData, radius: '65%' }, type: 3, legend: {
-    //     // Try 'horizontal'
-
-
-    //   },
-    // })
-    drawEcharts(lref.current, {
-      dataset: datasetMonthl,
-      series: [{ type: "line" }, { type: "line" }],
-      grid: {
-        top: '20px',
-        left: 0,
-        right: 0,
-        bottom: '30px',
-        containLabel: true,
-      },
-      legend: {
-        top: 'auto',
-        bottom: 0,
-        icon: 'rect',
-        itemHeight: 2,
-        itemWidth: 12,
-        itemGap: 20,
-      }
-    })
-  })
-  return (
-    <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="#eeeff3" pd={0}>
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length>0?0:null}></Select>
-            </Form.Item>
-          </Form>
-
-        </div>
+  return (  
+      <Pagecount bgcolor="#eeeff3" pd={0}>     
         <Mainbox>
           <div className='left'>
             <div style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', background: '#fff' }}>
@@ -505,21 +464,19 @@ export default function Index() {
               </div>
             </Titlelayout>
 
-            <Titlelayout className="mc" title="本月派单情况" pl="0px" bl="none" hv="20px">
+            <Titlelayout className="mc" title="本月派单情况" pl="0px" bl="none" hv="20px" layout="flex">
               <div className='chart'>
-                <div ref={bref}></div>
-                {/* <div ref={pref}></div> */}
+                   <Ichart  {...boption} tip="本月派单情况" />
               </div>
             </Titlelayout>
 
-            <Titlelayout className="down" title="本月告警事件" pl="0px" bl="none" hv="20px">
-              <div className='chart' ref={lref}>
-
+            <Titlelayout className="down" title="本月告警事件" pl="0px" bl="none" hv="20px" layout="flex">
+              <div className='chart' >
+                    <Ichart  {...loption} tip="本月告警事件" />
               </div>
             </Titlelayout>
           </div>
         </Mainbox>
       </Pagecount>
-    </CustContext.Provider>
   )
 }

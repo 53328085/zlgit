@@ -65,7 +65,9 @@ export default function Index() {
        "manager",
        "analysis",
     ],
-
+    runtimeMaintenance: [ // 运维管理
+      "summary"
+    ],
     // 设计态
     designerEnergy: [ // 能源管理
        "price",
@@ -186,6 +188,7 @@ export default function Index() {
               break;
          }
       }
+    
       if(primary == "runtimeCarbon") {
         switch(nested) {
           case "examining":
@@ -195,6 +198,10 @@ export default function Index() {
            setConfig({ dateR: true });
            break;
         }
+      }
+      if(primary == "runtimeMaintenance") {
+
+        setConfig({});
       }
       // 设计态
       if(primary == "designerEnergy") {

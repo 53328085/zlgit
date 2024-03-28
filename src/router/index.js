@@ -44,25 +44,10 @@ const Index = lazy(() => import("@pages/Home"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
 //const Module = lazy(() => import("../pages/module/index"))
-
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
-
-const Electric = lazy(() => import("../pages/electric/index"))
+ 
 
 const Distribution = lazy(() => import("../pages/distribution/index"))
-
-
-const Energy = lazy(() => import("../pages/energy/index"))
-
-const Devops = lazy(() => import("../pages/devops/index"))
-
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
-const Carbon = lazy(() => import("../pages/carbon/index"))
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
-
-const Storage = lazy(() => import("../pages/storage/index"))
-
-
+const Prepayment = lazy(() => import("../pages/prepayment/index")) 
 
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
@@ -111,7 +96,7 @@ const loginrouter =  [{
   '0110': Comindex,
   '0111': Comindex,
   '0112': Comindex,
-  '0113': Devops,
+  '0113': Comindex,
 } 
 
  
