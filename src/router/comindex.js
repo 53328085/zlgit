@@ -68,6 +68,7 @@ export default function Index() {
     runtimeMaintenance: [ // 运维管理
       "summary",
       "alarm",
+      "order",
     ],
     // 设计态
     designerEnergy: [ // 能源管理
