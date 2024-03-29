@@ -12,6 +12,7 @@ import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback} 
 import {useSelector} from 'react-redux'
 
 import {currProject} from '@redux/systemconfig'
+import {Fallack} from "@com/useError"
 import {message} from 'antd'
    let map = null;
   function Index(props, ref) {
@@ -20,9 +21,13 @@ import {message} from 'antd'
 
  let {lngLat: projectLnglat} = useSelector(currProject);
  let defaultpoint =projectLnglat || value || lngLat ;
-  let geocoder = new T.Geocoder();
+  let geocoder ;
  
-  
+  if(window.T) {
+    geocoder = new T.Geocoder()
+  }else {
+    return <Fallack custmsg={"地图加载出错，请检查网络是否断开"}/>
+  }
   const getlnglat = (str) => {
      const [lng, lat] =  str?.split(',') || []
      

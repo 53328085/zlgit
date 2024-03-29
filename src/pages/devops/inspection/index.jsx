@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline, Select, Divider, message, Form, Space } from 'antd';
-import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons'
+import { Input, Button, DatePicker, Modal, Timeline, Select,  message, Form, Space } from 'antd';
+ 
 import {useOutletContext} from 'react-router-dom'
-import { CompleteIcon, UnCompleteIcon, ResolveIcon, WaitIcon } from './completeicon'
+import { CompleteIcon, UnCompleteIcon  } from './completeicon'
 import UserTable from '@com/useTable'
 import BlueColumn from '@com/bluecolumn'
-import { useSelector } from 'react-redux'
+ 
 import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import { operation } from '@api/api'
@@ -97,7 +97,7 @@ export default function Warncontent() {
         refreshDeps: [areaId, projectId]
     })
      const { submit } = search
-     console.log(tableProps)
+   
     // 工单状态查询
     const getInspectionStatistics = async () => {
         let params = {

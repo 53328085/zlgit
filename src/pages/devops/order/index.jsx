@@ -13,7 +13,7 @@ import { useAntdTable, useRequest  } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
-import {  ExportExcel, CustButton,  SerachButton} from '@com/useButton'
+import {  ExportExcel, CustButton} from '@com/useButton'
 import { Cdivider } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'

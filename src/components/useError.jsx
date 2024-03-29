@@ -32,7 +32,7 @@ export default class ErrorBoundary extends Component {
       return <Empty image={imgurl.error}
          imageStyle={{width: '200px', height: '180px'}}
          style={style}
-         description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={() => window.location.reload(true)}>试下刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
+         description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={() => window.location.reload(true)}>尝试下重新加载</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
       /> ;
     }
 
@@ -40,12 +40,12 @@ export default class ErrorBoundary extends Component {
   }
 }
 
-export function Fallack({error}) {
+export function Fallack({error, custmsg}) {
    let location = useLocation
-   console.log(error.message)
+   console.log(error?.message)
    const {resetBoundary} = useErrorBoundary()
   // let error=props.error ?? '抱歉！页面出错'
-   let msg = "抱歉！页面出错"
+   let msg =custmsg || "抱歉！页面出错"
    useEffect(() => {
      if(error?.message) {
       resetBoundary()

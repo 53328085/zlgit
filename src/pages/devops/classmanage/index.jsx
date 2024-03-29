@@ -2,24 +2,23 @@ import React, { useEffect, useState, useRef, useMemo, Suspense } from 'react'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, message, Progress, Select, Button,Checkbox, Space  } from 'antd'
+import {useOutletContext} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import UserTable from '@com/useTable'
 import { useReactive } from 'ahooks';
-import { ExportExcel } from '@com/useButton'
+import { ExportExcel, CustButton } from '@com/useButton'
 import { operationDesigin } from '@api/api'
 import exportpng from './img/export.png'
 import Loading from '../../Loading'
+ 
+import Titlelayout from '@com/titlelayout'
 
 const MainBox = styled.div`
-  background-color: #fff;
-  padding:16px;
-  border: 1px solid #d7d7d7;
-  border-radius: 4px; 
+  display: flex;
   flex: 1;
-  --ant-primary-color:#237ae4;
-  --ant-primary-color-hover:#237ae4;
+  row-gap: 16px;  
   .title{
     display: flex;
     justify-content: space-between;
@@ -86,42 +85,9 @@ const MainBox = styled.div`
   }
   
 `
-const Custbtn = styled(Button)`
-  && {
-    width: ${props => props.wh || '96px'};
-    height: 32px;
-    background: #237ae4;
-    border-color: #237ae4;
-    border-radius: 2px;
-    color: #fff;
-    padding: 8px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  &&:hover {
-    background-color: #4f95ea;
-    border-color: #4f95ea;
-    color: #fff;
-  }
-  &&:active,
-  &&:focus {
-    background-color: #1c62b7;
-    border-color: #1c62b7;
-    color: #fff;
-  }
-  &&[disabled] {
-    background-color: #C8C9CC;
-    border-color: #C8C9CC;
-  }
-  img {
-    height: ${props => props.imgh || '16px'}; 
-    margin-right: 8px;
-  }
-`;
+ 
  export default function Index() {
-  const [form] = Form.useForm()
+  
   const tableRef =useRef()
   const [isLoading,setIsLoading] = useState(true)
   const [key, setKey] = useState()
@@ -156,13 +122,7 @@ const Custbtn = styled(Button)`
       }
     }
   ]
-  const changeArea = (id) => {
-    setAreaId(id)
-    setTableData([])
-   
-    reactive.plancount = 0
-    tabledataRef.current=[]
-  }
+ 
   
   const [columns,setColumns]=useState(initdata)
   const reactive  = useReactive({
@@ -295,14 +255,14 @@ const Custbtn = styled(Button)`
     console.log(exporttabledata.current)
     tableRef.current.downloadByData({data:exporttabledata.current})
   }
-  useEffect(()=>{
+/*   useEffect(()=>{
     if(oneLevel.length > 0){
       setAreaId(oneLevel[0]['id'])
     }else{
       setIsLoading(false)
     }
   
-  },[oneLevel])
+  },[oneLevel]) */
   useEffect(() => {
     async function func(){
       await GetDutyUsers()
@@ -312,12 +272,9 @@ const Custbtn = styled(Button)`
     isFinite(areaId)&&func()
   }, [areaId])
   return (
-    <>
-   {
-  
-    isLoading?<Loading/>:(<CustContext.Provider >
-      <Pagecount bgcolor="#eeeff3" pd={0}>
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
+   
+      <Pagecount pd="0">
+       {/*  <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
           <Form
             form={form}
             colon={false}
@@ -326,26 +283,15 @@ const Custbtn = styled(Button)`
               <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? oneLevel[0]['id'] : null}></Select>
             </Form.Item>
           </Form>
-        </div>
+        </div> */}
         <MainBox>
-          <div className='title'>
-            <BlueColumn name="排班信息"></BlueColumn>
-            {/* <div onClick={()=>{ tableRef.current.downloadByData({data:[
-  ['姓名', '年龄', '性别'],
-  ['王二', 35, '男'],
-  ['张三', 25, '男'],
-  ['李四', 30, '女'],
-  ['赵五', 40, '女'],
-]})}}>1111</div> */}
-            <Custbtn onClick={exportEvent}>
-              <img src={exportpng} />
-              导出
-            </Custbtn>
-          </div>
-         
-          <div className='mgt16'>
+          <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}><span>排班信息</span> <ExportExcel setKey={setKey} tb={tableRef}></ExportExcel></div>} layout="flex" >
+            <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
             <UserTable columns={columns} dataSource={tabledata} ref={tableRef}></UserTable>
-          </div>
+            </div>           
+          </Titlelayout>
+         
+     
         
           <div className='mgt16'>
             {reactive.plans?.name1?(<span className='pdr'>{reactive.plans.name1} : {reactive.plans.startTime1}~{reactive.plans.endTime1}</span>):null}
@@ -355,10 +301,7 @@ const Custbtn = styled(Button)`
           </div>
         </MainBox>
       </Pagecount>
-    </CustContext.Provider>)
-   }
-    
-    </>
+   
   )
 }
 

@@ -31,7 +31,7 @@ export default class ErrorBoundary extends Component {
       return <Empty image={imgurl.error}
          imageStyle={{width: '200px', height: '180px'}}
          style={style}
-         description={<Paragraph><Text strong type="warning">抱歉！页面出错点击</Text><Link  onClick={() => window.location.reload(true)}>刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
+         description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={() => window.location.reload(true)}>试下刷新</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
       /> ;
     }
 
