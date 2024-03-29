@@ -62,7 +62,7 @@ flex-direction: column;
 
 
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata, ...otherprops} =props  
+  const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata,scroll={}, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
@@ -191,7 +191,10 @@ const download = useCallback(() => {
 
   return (
     <Divbox flex={props.flex}>
-        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()} { ...otherprops}   />
+        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()}  { ...otherprops} scroll={{
+        scrollToFirstRowOnChange: true,
+      ...scroll,
+    }}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
       { props.istemp  &&      <TableTemp   />}
     </Divbox>

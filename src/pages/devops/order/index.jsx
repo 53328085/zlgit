@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo,useRef, useCallback } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message ,Image, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons'
-import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeicon'
+import React, { useState, useRef, useCallback } from 'react'
+import { Input, Button, DatePicker, Modal, Timeline,Select, message ,Image, Space } from 'antd';
+ 
+import { CompleteIcon, UnCompleteIcon} from './completeicon'
  
 import {useOutletContext} from 'react-router-dom'
  
@@ -199,9 +199,9 @@ export default function Warncontent() {
                 <div className='serach'>
                 <div className='date'>
                     <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} defaultValue={rangerTime} onChange={changeRange}/>
-                    <SerachButton onClick={search} /> 
+                  {/*   <SerachButton onClick={search} />  */}
                 </div>
-                <Space  span={64}   split={<Cdivider />}>
+                <Space  size={64}   split={<Cdivider />}>
                     <div>
                     <span style={{paddingRight:16}}>工单状态</span>
                     <Select style={{width:128}} defaultValue={status} options={stateopts} onChange={(v)=>{setStatus(v)}}></Select>
