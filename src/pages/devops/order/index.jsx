@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo,useRef } from 'react'
+import React, { useState, useEffect, useMemo,useRef, useCallback } from 'react'
 import { Input, Button, DatePicker, Modal, Timeline,Select,Divider, message ,Image, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 import { CompleteIcon, UnCompleteIcon,ResolveIcon, WaitIcon } from './completeicon'
@@ -7,9 +7,9 @@ import {useOutletContext} from 'react-router-dom'
  
 import UserTable from '@com/useTable'
 import BlueColumn from '@com/bluecolumn'
-import { useSelector } from 'react-redux'
+ 
 import { columns } from './columns'
-import { useAntdTable,   } from 'ahooks'
+import { useAntdTable, useRequest  } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
@@ -18,7 +18,7 @@ import { Cdivider } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'
 import Pagecount from '@com/pagecontent'
-const { Search } = Input;
+ 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const Mainbox = styled.div`
@@ -51,8 +51,7 @@ export default function Warncontent() {
     const [orderdetail,setOrderdetail]=useState()
     const [tableParams,setTableParams] = useState({current:1,pageSize:10})
     const [rangerTime,setRangerTime] = useState([moment().subtract(1, 'months'),moment()])
-    const [status,setStatus] = useState(0)
-    const [tableData,setTableData] = useState()
+    const [status,setStatus] = useState(0)   
     const [key,setKey] = useState()
     const [stateopts,setStateopts] = useState([{
         label:'全部',
@@ -81,7 +80,8 @@ export default function Warncontent() {
    })
 
     const getOrderPage = ({current, pageSize})=>{
-        let parmas={
+        if(!condition) return
+        params.current={
             projectId,
             pageSize,
             pageNum: current,
@@ -90,7 +90,7 @@ export default function Warncontent() {
             areaId,
             state:status
         }
-      return operation.OrderPage(parmas).then(res => {
+      return operation.OrderPage(params.current).then(res => {
           const {success, data, total=0, errMsg} = res
           setTotal(total)
           let f = Array.isArray(data);
@@ -108,7 +108,7 @@ export default function Warncontent() {
           }
       })   
     }
-    const {tableProps} = useAntdTable(getOrderPage, {
+    const {tableProps, run} = useAntdTable(getOrderPage, {
         refreshDeps: [projectId, areaId, status, rangerTime]
     })
     //工单状态查询
@@ -145,15 +145,19 @@ export default function Warncontent() {
             message.error(res.errMsg)
         }
     } 
-  
+    const {run: getStatistics} = useRequest(getOrderStatistics, {
+        refreshDeps: [areaId, projectId, rangerTime]
+    })
     //日期范围变化
     const changeRange=(dates)=>{
         setRangerTime([dates[0],dates[1]])
     }
     //查询
     const search =()=>{
-        getOrderPage()
-        getOrderStatistics()
+       // getOrderPage() 
+      // getOrderStatistics()
+      getStatistics()
+      run()
     }
     //工单详情
     const getOrderDetail= async(orderId)=>{
@@ -169,44 +173,26 @@ export default function Warncontent() {
         }
        
     }
-    const onExport=()=>{
-        return new Promise(async (resolve, reject) => {
-            let parmas={
-                projectId,
-                pageSize:key==1?tableParams.pageSize:tableParams.total,
-                pageNum:tableParams.current,
-                start:rangerTime[0].format('YYYY-MM-DD'),
-                end:rangerTime[1].format('YYYY-MM-DD'),
-                areaId,
-                state:status
-            }
-            const res = await operation.OrderPage(parmas)
-            if(res.success){
-                if(res.success){
-                    resolve({
-                      total:res.total,
-                      list:res.data?res.data:[]
-                    })
-                  }else{
-                    reject(res.errMsg)
-                  }
-            }
+    const onExport=useCallback(()=>{
+        params.current.pageSize = total
+        params.current.pageNum = 1
+        return  operation.OrderPage(params.current).then(res => {
+            let {success, data, total} = res
+            if (success) {
+                return {
+                  list: data.details || [],
+                  total,
+                };
+              } else {
+                message.error(res.errMsg);
+                return {
+                  list: [],
+                  total: 0,
+                };
+              }
         })
-    }
- /*    useEffect(()=>{
-        if(oneLevel.length>0){
-            getOrderPage()
-            getOrderStatistics()
-        }
-        
-    },[areavalue]) */
-/*     useEffect(()=>{
-        oneLevel.length>0&&getOrderPage()
-        
-    },[status]) */
-    // useEffect(()=>{
-    //     tableRef.current.downloadAll()
-    // },[key])
+    }, [total])
+ 
     return (
         <Pagecount>
             <Mainbox>
