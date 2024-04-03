@@ -155,8 +155,8 @@ const Dcheckbox = styled.div`
   }
   .ant-checkbox-wrapper.ant-checkbox-wrapper-checked {
     color:#fff;
-    background-color: #237ae4;
-    border-color: #237ae4;
+    background-color: ${props => props.theme.primaryColor};
+    border-color:${props => props.theme.primaryColor};
   }
    .ant-checkbox {
     opacity: 0;
@@ -191,8 +191,8 @@ const Ccheckbox = styled(Checkbox.Group)`
   }
   .ant-checkbox-wrapper-checked.ant-checkbox-group-item {
     color:#fff;
-    background-color: #237ae4;
-    border-color: #237ae4;
+    background-color: ${props => props.theme.primaryColor};
+    border-color: ${props => props.theme.primaryColor};
   }
    .ant-checkbox {
     opacity: 0;

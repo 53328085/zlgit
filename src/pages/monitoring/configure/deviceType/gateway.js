@@ -4,7 +4,7 @@ import style from './style.module.less'
 // import AllColumns from './columns'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Select, message, Upload, Image } from 'antd';
+import { Button, Form, Input, Row, Col, Select, message, Upload, Image, Typography, Space } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
@@ -12,6 +12,7 @@ import WarningPng from '@imgs/warning.png'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
+const {Link} = Typography
 export default function gateway() {
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
@@ -67,10 +68,10 @@ export default function gateway() {
   }else{
     AllColumns[3].render = (t, v) => {
       return (
-        <div>
-          <span style={{ marginRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
-          <span style={{ color: 'rgb(244,67,54)', cursor: 'pointer' }} onClick={() => { openDelModal(v) }}>删除</span>
-        </div>
+        <Space size={32}>
+          <Link onClick={() => { openEditModal(v) }}>编辑</Link>
+          <Link type="danger" onClick={() => { openDelModal(v) }}>删除</Link>
+        </Space>
       )
     }
   }

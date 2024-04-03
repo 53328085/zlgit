@@ -2,15 +2,18 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,use
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
+import { Button, Form, Space, message, Divider,Image, Typography } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
+
+const {Link} = Typography
+
 export default function Electric() {
   const publish = useSelector(publishState)
   const {value, tabs} =useContext(cusContext) 
@@ -168,10 +171,10 @@ let columns =  [
         align:'center',
         render:(text,record)=>{
           return(
-            <div>
-              <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
-              <span style={{...optionStyle,marginLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{openDel(record)}}>删除</span>
-            </div>
+            <Space>
+              <Link onClick={()=>{editOption(record)}}>编辑</Link>
+              <Link type="danger" onClick={()=>{openDel(record)}}>删除</Link>
+            </Space>
           )
         }
     }
