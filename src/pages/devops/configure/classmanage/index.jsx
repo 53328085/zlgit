@@ -19,8 +19,6 @@ const MainBox = styled.div`
   border: 1px solid #d7d7d7;
   border-radius: 4px; 
   flex: 1;
-  --ant-primary-color:#237ae4;
-  --ant-primary-color-hover:#237ae4;
   .title{
     display: flex;
     justify-content: space-between;

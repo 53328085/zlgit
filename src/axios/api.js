@@ -1,4 +1,3 @@
-import { data } from "browserslist";
 import server from "./index";
 // 测试 新技术
 export class Test {
@@ -7,7 +6,9 @@ export class Test {
 // zl api start
 // 登录
 
-
+export class I18N {
+  static GetsupportLanguages = () => server.get(`/Language/GetsupportLanguages`) // 
+}
 
 export class Login {
   static SystemConfig = (url) =>

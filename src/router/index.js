@@ -83,6 +83,7 @@ const loginrouter =  [{
  function RedirectIndex({Com}) { // 路由守卫
  // const {token} = useSelector(selectUser) || {}; 
   const islog =window.sessionStorage.getItem("chintwulian")
+  console.log(islog)
   return islog ? (<Com />) : (<Navigate to="/" />)  
  }
 

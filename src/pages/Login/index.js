@@ -5,13 +5,11 @@ import {
   loginByName, 
   clearToken, 
   getPassword,
+  getLang,
 } from "@redux/user";
-import {  getpublishState,   getJump, getdataScreen, getIsGranary, configProject,
-  getMenus,
-  getshifts,
-  getOnelevel,  setCurrentlevel, getSystemconfiginfo, getDisonlevel,   getWebsiteState, getWebsiteMenu} from "@redux/systemconfig";
+import {   getJump,  getIsGranary, configProject, getSystemconfiginfo,   getWebsiteState, getWebsiteMenu} from "@redux/systemconfig";
  
-import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Login as LoginApi } from "@api/api.js";
+import { Login as LoginApi, I18N } from "@api/api.js";
 import { message, Tabs, Form, Input } from "antd";
 import styled from "styled-components";
 import CModal from "@com/useModal"
@@ -190,12 +188,23 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
   
 
  }
-
+  const ongetLang = () => {
+    I18N.GetsupportLanguages().then(res => {
+       let {success,data} = res
+       if(success && Array.isArray(data)) {
+          let cdata = data.map(d => ({...d, name: d.name=='cn' ? 'zh' : d.name, }))
+          dispatch(getLang(cdata))
+       }else {
+          dispatch(getLang([]))
+       }
+    }).catch()
+  }
  
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
     window.sessionStorage.removeItem('chintwuliu')
     dispatch(getIsGranary(false))
+    ongetLang()
   }, []);
  
 

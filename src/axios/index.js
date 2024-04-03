@@ -13,9 +13,18 @@ const server = axios.create({
 server.interceptors.request.use(
     config => {     
        //const token = window.sessionStorage.getItem('token');
-      
+       let {url} = config
+       let getlang = localStorage.getItem("i18nextLng")
+       let lang =(getlang=='zh-CN' || !getlang) ? 'zh' : getlang
+
        const token = store.getState()?.user?.token
        config.headers['token'] = token
+        if(url.includes("?")) {
+            url=url+`&culture=${lang}`
+        }else {
+            url = url+`?culture=${lang}`
+        }
+        config.url = url;
         return config
     },
     error => {

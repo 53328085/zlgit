@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import UserTable from '@com/useTable'
 import { useReactive } from 'ahooks';
-import { ExportExcel, CustButton } from '@com/useButton'
+import { ExportExcel, CustButton, ExportButton } from '@com/useButton'
 import { operationDesigin } from '@api/api'
 import exportpng from './img/export.png'
 import Loading from '../../Loading'
@@ -18,7 +18,9 @@ import Titlelayout from '@com/titlelayout'
 const MainBox = styled.div`
   display: flex;
   flex: 1;
+  flex-direction: column;
   row-gap: 16px;  
+  padding-top: 16px;
   .title{
     display: flex;
     justify-content: space-between;
@@ -85,16 +87,27 @@ const MainBox = styled.div`
   }
   
 `
+const Checkboxs =  styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  && {
+    .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+      margin-left: 0;
+    }
+  }
+`
  
  export default function Index() {
-  
+  let {exparams} = useOutletContext()
+ 
+  let {areaId, projectId} = exparams
+  const condition = Number.isInteger(areaId) && Number.isInteger(projectId)
   const tableRef =useRef()
   const [isLoading,setIsLoading] = useState(true)
   const [key, setKey] = useState()
   const [tabledata, setTableData] = useState([])
-  const [areaId,setAreaId]=useState(0)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const projectId = useSelector(state => state.system.menus.projectId)
+ 
   // const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
   const initdata =[
     {
@@ -120,7 +133,26 @@ const MainBox = styled.div`
           </div>
         )
       }
-    }
+    },
+    ...Array.from({length: 31}, (_, i) => {
+       return {
+          title: i+1,
+          dataIndex: i,
+          render: (text, recoder, index) =>{
+           let options = []
+          for( let [label, value] of Object.entries(text)) {
+               options.push({label, value})
+            }
+           return (  
+            <Checkboxs>
+              { options.map(o =>  <Checkbox checked={o.value==1}></Checkbox>)} 
+            </Checkboxs>
+           )
+          }
+       }
+       
+
+    })
   ]
  
   
@@ -132,16 +164,29 @@ const MainBox = styled.div`
  const exporttabledata=useRef([])
   //获取排班表
   const tabledataRef =useRef()
-  const GetDutyUsers = async () => {
+  const GetDutyUsers = async (key) => {
     try {
-      const res = await operationDesigin.GetDutyUsers(projectId,areaId)
-      if (res.success ) {
-        if(res.data){
-          setTableData([...res.data])
-          tabledataRef.current = [...res.data]
+      const {success, data, errMsg} = await operationDesigin.GetDutyUsers(projectId,areaId)
+      if (success) {
+        console.log(key)
+        if(Array.isArray(data) && data?.length > 0){
+          let datas = data.map(d => {
+           
+            let nos = d.nos.map(d =>  {
+              delete d[key]
+              return d;
+            })
+             console.log(nos)
+             return  {userId: d.userId, plan: '', userName: d.userName, ...nos}
+          })
+          console.log(datas)
+          setTableData(datas)
+          //tabledataRef.current = [...res.data]
+        }else {
+
         }
       } else {
-        message.error(res.errMsg)
+        message.error(errMsg)
       }
     } catch (error) {
        console.log(error)
@@ -155,9 +200,11 @@ const MainBox = styled.div`
       if(res.success){
         if(res.data){
           reactive.plans = res.data
-         
+         let key =  ['no1','no2','no3', 'no4'].find(n => res.data[n]==0)
+         console.log(key)
+          GetDutyUsers(key)
         }
-        updateTable()
+     //   updateTable()
       }else{
         message.error(res.errMsg)
       }
@@ -263,14 +310,18 @@ const MainBox = styled.div`
     }
   
   },[oneLevel]) */
+ 
   useEffect(() => {
     async function func(){
-      await GetDutyUsers()
+    //  await GetDutyUsers()
       await getDuty()
       setIsLoading(false)
     }
-    isFinite(areaId)&&func()
-  }, [areaId])
+    if(condition) {
+      func()
+    }
+   
+  }, [areaId, projectId])
   return (
    
       <Pagecount pd="0">
@@ -284,22 +335,24 @@ const MainBox = styled.div`
             </Form.Item>
           </Form>
         </div> */}
-        <MainBox>
-          <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}><span>排班信息</span> <ExportExcel setKey={setKey} tb={tableRef}></ExportExcel></div>} layout="flex" >
-            <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
-            <UserTable columns={columns} dataSource={tabledata} ref={tableRef}></UserTable>
-            </div>           
-          </Titlelayout>
-         
-     
-        
-          <div className='mgt16'>
+       
+          <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}><span>排班信息</span> <ExportButton onClick={exporttabledata}  /></div>} layout="flex" >
+            <MainBox>
+            <UserTable columns={columns} dataSource={tabledata} ref={tableRef} ></UserTable>
+           
+            <div className='mgt16'>
             {reactive.plans?.name1?(<span className='pdr'>{reactive.plans.name1} : {reactive.plans.startTime1}~{reactive.plans.endTime1}</span>):null}
             {reactive.plans?.name2?(<span className='pdr'>{reactive.plans.name2} : {reactive.plans.startTime2}~{reactive.plans.endTime2}</span>):null}
             {reactive.plans?.name3?(<span className='pdr'>{reactive.plans.name3} : {reactive.plans.startTime3}~{reactive.plans.endTime3}</span>):null}
             {reactive.plans?.name4?(<span>{reactive.plans.name4} : {reactive.plans.startTime4}~{reactive.plans.endTime4}</span>):null}
-          </div>
-        </MainBox>
+          </div>  
+          </MainBox>        
+          </Titlelayout>
+         
+     
+        
+          
+        
       </Pagecount>
    
   )

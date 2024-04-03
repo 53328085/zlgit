@@ -1,10 +1,10 @@
 import React, {useRef,  useCallback, useState} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
-import {GlobalOutlined } from  "@ant-design/icons"
+ 
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
-import { clearToken, selectUser, userRest} from "@redux/user";
+import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
 import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
@@ -19,7 +19,7 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
 import {CustButton} from '@com/useButton'
- 
+const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
   padding: 16px 0;
@@ -156,7 +156,7 @@ export default function Log() {
  
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
- 
+  const Langes = useSelector(platformLang)
   const Item = Form.Item
   const [form] = Form.useForm()
   const [mform] = Form.useForm()
@@ -194,19 +194,23 @@ const onJump = useCallback(() => {
 
  // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
 const lref = useRef();
- 
-const [lngval, setLngval] = useState(localStorage.getItem('i18nextLng') )
+const zhcn = localStorage.getItem('i18nextLng')=='zh-CN' ? 'zh' : localStorage.getItem('i18nextLng')
+const [lngval, setLngval] = useState(zhcn)
  
 const langChange = (e) => {
+    console.log(e)
     setLngval(e.target.value)
 }
 const lngOk = () => {
+    
     const lang = langpack[lngval]
     let key = lngval==='zh' ? 'zh-cn' : lngval
     moment(key);
     dispatch(setIntl({lang, locale: key}))
     i18n.changeLanguage(lngval)
     lref.current.onCancel();
+    
+   // navgite('/')
 }
   const items = [
     {label: '账户管理', key:"mg"},
@@ -524,15 +528,20 @@ const lngOk = () => {
 
 
       <CModal  nolf="no" title={<Space><img src={lg} title="" style={{verticalAlign: "-5px"}}  /> <span style={{color: "#515151"}}>语言切换</span></Space>} mold="cust"  ref={lref} width="440px"  onOk={lngOk} wrapClassName="wrap" >
-      <Radio.Group onChange={langChange} value={lngval} style={{display: 'flex', flexDirection: "column"}}>
-          <Lngdiv>
-             <img  src={imgurl['zh']} /> <span>中文</span> <Cradio value="zh"></Cradio>
-          </Lngdiv>
-          <Lngdiv>
-             <img  src={imgurl['en']}/> <span>English</span> <Cradio value="en"></Cradio>
-          </Lngdiv>
+      {Langes?.length > 0 ?  (<Radio.Group onChange={langChange} value={lngval} style={{display: 'flex', flexDirection: "column"}}>
+         
+          {
+            Langes.map(l => (
+              <Lngdiv>
+                <img  src={imgurl[l.name]} /> <span>{l.text}</span> <Cradio value={l.name}></Cradio>
+             </Lngdiv>
+            ))
+          }
+          
           <div style={{height: "96px", borderBottom: "1px solid #d7d7d7"}} ></div>
-        </Radio.Group>
+        </Radio.Group>)
+          : <Text type="warning">没有设置国际语言</Text>
+        }
       </CModal>
     </Cdiv>
   );

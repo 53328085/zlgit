@@ -1,8 +1,16 @@
 {
-    "welcome": "qq",
-   "author": "作者是aas",
-   "currentTime": "当前时间 {{time, YYYY-MM-DD}}",
+    "welcome": "测试  qq",
+   "author": "测试 作者是aas",
+   "currentTime": "测试  当前时间 {{time, YYYY-MM-DD}}",
    "public": {
      "go": "公共能耗分类"
-   }
+   },
+   "friend": "一个朋友",
+    "friend_male": "一个男朋友",
+    "friend_female": "一个女朋友",
+    "key": "我的名字  {{p.name}}",
+    "keyEscaped": "no danger {{myVar}}",
+    "keyUnescaped": "dangerous {{- myVar}}",
+    "intlNumber": "Some {{val, number}}",
+  "intlNumberWithOptions": "Some {{val, number(minimumFractionDigits: 2)}}"
  }
