@@ -11,8 +11,10 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
 
-  const handlermenu = (data,  id) => {
- 
+  const handlermenu = (Meundata,  id) => {
+   
+    let lang =  window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
+    let data = Meundata.filter(d => d.languageName==lang);
     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
     const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
   //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 

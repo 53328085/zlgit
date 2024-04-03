@@ -14,8 +14,8 @@ server.interceptors.request.use(
     config => {     
        //const token = window.sessionStorage.getItem('token');
        let {url} = config
-       let getlang = localStorage.getItem("i18nextLng")
-       let lang =(getlang=='zh-CN' || !getlang) ? 'zh' : getlang
+       let getlang = localStorage.getItem("i18nextLng")?.slice(0,2)?.toLowerCase()
+       let lang =(getlang=='zh' || !getlang) ? 'zh' : getlang
 
        const token = store.getState()?.user?.token
        config.headers['token'] = token

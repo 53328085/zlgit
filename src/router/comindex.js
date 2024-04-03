@@ -71,6 +71,7 @@ export default function Index() {
       "order",
       "inspection",
       "class",
+      "chart"
     ],
     // 设计态
     designerEnergy: [ // 能源管理

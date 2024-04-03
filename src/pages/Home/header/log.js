@@ -192,7 +192,7 @@ const onJump = useCallback(() => {
 }, [screenadr, isgranary])
 
 
- // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
+ // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
 const zhcn = localStorage.getItem('i18nextLng')=='zh-CN' ? 'zh' : localStorage.getItem('i18nextLng')
 const [lngval, setLngval] = useState(zhcn)

@@ -5,7 +5,7 @@ import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import icon from "./icon";
 const {Link} = Typography
 const Custbtn = styled(Button).attrs((props) => ({
-  type: props.type || "primary"
+  type: props.type || "primary",
 }))`
   && {
     width: ${props => props.wh || '96px'};
@@ -146,9 +146,9 @@ export function CustButton(props) { // 通用方式
   )
 }
 
-export function SaveButton() {
+export function SaveButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.save} />
       保存
     </Custbtn>
@@ -202,7 +202,7 @@ export function ImportButton() {
     </Custbtn>
   );
 }
-export function ExportButton(props) {
+export function ExportButton(props) {  
   return (
     <Custbtn {...props}>
       <img src={icon.export}  />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, Suspense } from 'react'
+import React, { useEffect, useState, useRef, useMemo, Suspense, useCallback } from 'react'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, message, Progress, Select, Button,Checkbox, Space  } from 'antd'
@@ -91,13 +91,64 @@ const Checkboxs =  styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   && {
     .ant-checkbox-wrapper + .ant-checkbox-wrapper {
       margin-left: 0;
     }
   }
 `
- 
+const columns =[
+  {
+    title: "值班人员",
+    dataIndex: `userName`,
+    align: 'center',
+    width: 200,
+  }, {
+    title: "班次",
+    dataIndex: `plan`,
+    align: 'center',
+    onCell(record, rowIndex) {
+      return {
+        className: "pd0"
+      }
+    },
+    render(text, record, index) {
+      return (
+        <div className='gridrow3'>
+          <div className='planclass'>早班</div>
+          <div className='planclass'>中班</div>
+          <div className='planclass'>晚班</div>
+        </div>
+      )
+    }
+  },
+  ...Array.from({length: 31}, (_, i) => {
+     return {
+        title: i+1,
+        dataIndex: i,
+        render: (text) =>{
+         let options = []
+        for( let [label, value] of Object.entries(text)) {
+             options.push({label, value})
+          }
+         return (  
+          <Checkboxs>
+            { options.map(o =>  <Checkbox checked={o.value==1}></Checkbox>)} 
+          </Checkboxs>
+         )
+        }
+     }
+     
+
+  })
+]
+let dates = Array.from({length: 31}, (_,i) => (i+1).toString())
+const excolums = [
+  '值班人员',
+  '班次',
+ ...dates,
+]
  export default function Index() {
   let {exparams} = useOutletContext()
  
@@ -109,54 +160,9 @@ const Checkboxs =  styled.div`
   const [tabledata, setTableData] = useState([])
  
   // const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName + '(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
-  const initdata =[
-    {
-      title: "值班人员",
-      dataIndex: `userName`,
-      align: 'center',
-      width: 200,
-    }, {
-      title: "班次",
-      dataIndex: `plan`,
-      align: 'center',
-      onCell(record, rowIndex) {
-        return {
-          className: "pd0"
-        }
-      },
-      render(text, record, index) {
-        return (
-          <div className='gridrow3'>
-            <div className='planclass'>早班</div>
-            <div className='planclass'>中班</div>
-            <div className='planclass'>晚班</div>
-          </div>
-        )
-      }
-    },
-    ...Array.from({length: 31}, (_, i) => {
-       return {
-          title: i+1,
-          dataIndex: i,
-          render: (text, recoder, index) =>{
-           let options = []
-          for( let [label, value] of Object.entries(text)) {
-               options.push({label, value})
-            }
-           return (  
-            <Checkboxs>
-              { options.map(o =>  <Checkbox checked={o.value==1}></Checkbox>)} 
-            </Checkboxs>
-           )
-          }
-       }
-       
 
-    })
-  ]
- 
   
-  const [columns,setColumns]=useState(initdata)
+ 
   const reactive  = useReactive({
     plans:{},
     plancount:0,
@@ -168,7 +174,7 @@ const Checkboxs =  styled.div`
     try {
       const {success, data, errMsg} = await operationDesigin.GetDutyUsers(projectId,areaId)
       if (success) {
-        console.log(key)
+        
         if(Array.isArray(data) && data?.length > 0){
           let datas = data.map(d => {
            
@@ -176,14 +182,14 @@ const Checkboxs =  styled.div`
               delete d[key]
               return d;
             })
-             console.log(nos)
+             
              return  {userId: d.userId, plan: '', userName: d.userName, ...nos}
           })
-          console.log(datas)
+        
           setTableData(datas)
           //tabledataRef.current = [...res.data]
         }else {
-
+          setTableData([])
         }
       } else {
         message.error(errMsg)
@@ -201,11 +207,14 @@ const Checkboxs =  styled.div`
         if(res.data){
           reactive.plans = res.data
          let key =  ['no1','no2','no3', 'no4'].find(n => res.data[n]==0)
-         console.log(key)
+        
           GetDutyUsers(key)
+        }else {
+          setTableData([])
         }
      //   updateTable()
       }else{
+        setTableData([])
         message.error(res.errMsg)
       }
     } catch (error) {
@@ -213,103 +222,29 @@ const Checkboxs =  styled.div`
     }
    
   }
-  //更新表格视图
-  const updateTable=()=>{
-    const planvalue=[];
-    const columnmore=[]
-    for (const key in  reactive.plans ) {
-      if (key.indexOf('no')!==-1&&reactive.plans[key]) {
-        reactive.plancount++
-      }
-    } 
-    console.log(reactive,)
-    initdata[1].render = () => {
-      return (
-        <div className='gridrow3'>
-          {reactive.plans.name1 ? <div className='planclass'>{reactive.plans.name1}</div> : null}
-          {reactive.plans.name2 ? <div className='planclass'>{reactive.plans.name2}</div> : null}
-          {reactive.plans.name3 ? <div className='planclass'>{reactive.plans.name3}</div> : null}
-          {reactive.plans.name4 ? <div className='planclass'>{reactive.plans.name4}</div> : null}
-        </div>
-      )
-    }
-    for(let i=0;i<reactive.plancount;i++){
-      planvalue.push({label:null,value:`no${i+1}`})
-    }
-    for (let i = 1; i <= 31; i++) {
-      columnmore.push({
-        title: i,
-        dataIndex: `date${i}`,
-        align: 'center',
-        onCell(record, rowIndex) {
-        
-          return {
-            className: "pd0"
-          }
-        },
-        render(text,record,index){
-     
-          let cheeckvalue =[] 
-          for (const key in record.nos[i-1]) {
-            if (record.nos[i-1][key] ) {
-              cheeckvalue.push(key)
-            }
-          } 
-            return (
-              <>
-                <Checkbox.Group 
-                options={planvalue} 
-                className='checkGroup'
-                key={`${index}-${i}`}
-                value={cheeckvalue}></Checkbox.Group>
-              </>
-                   
-            )
-        }
-      })
-    } 
-    setColumns([...initdata,...columnmore]) 
-  }
+   
   //导出
-  const exportEvent = () => {
-    for(let i=0;i<tabledataRef.current.length;i++){
-      for(let j=0;j<reactive.plancount;j++){
-        let arr=[]
-        tabledataRef.current[i]['nos'].forEach(item=>{  
-          arr.push(item[`no${j+1}`]) 
-        })
-        exporttabledata.current.push([tabledataRef.current[i]['userName'],reactive.plans[`name${j+1}`],...arr],)
-      }
-    }
-    let head = ['值班人员','班次']
-    for(let i=1;i<=31;i++){
-      head.push(i)
-    }
-    
-    exporttabledata.current = exporttabledata.current.map(item=>{
-     return item.map(it=>{
-     
-        if(it==1){
-          return '是'
-        }else if(it==0){
-          return '否'
-        }else{
-          return it
-        }
-      })
-    })
-    exporttabledata.current =[head,...exporttabledata.current ]  
-    console.log(exporttabledata.current)
-    tableRef.current.downloadByData({data:exporttabledata.current})
-  }
-/*   useEffect(()=>{
-    if(oneLevel.length > 0){
-      setAreaId(oneLevel[0]['id'])
-    }else{
-      setIsLoading(false)
-    }
+  const onexprot =useCallback( () => {
+
+  let tbdata =  tabledata.map(t => {
+     let row = {
+      '值班人员': t.userName,
+      '班次': "早班 中班 晚班"
+     }
+     Array.from({length: 31}, (_, i) => {
+          let text1 = t[i].no1==1 ? reactive.plans.name1 : ''
+          let text2 = t[i].no2==1 ? reactive.plans.name2 : ''
+          let text3 = t[i].no3==1 ? reactive.plans.name3 : ''
+          let text4 = t[i]?.no4==1 ? reactive.plans.name4 : ''
+          row[i+1] = text1+text2 + text3 + text4;
+     }) 
+     return row
+   })
   
-  },[oneLevel]) */
+   tableRef.current.downloadByData({header: excolums, data: tbdata, skipHeader: false})
+  }, [tabledata])
+
+
  
   useEffect(() => {
     async function func(){
@@ -325,34 +260,18 @@ const Checkboxs =  styled.div`
   return (
    
       <Pagecount pd="0">
-       {/*  <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-          >
-            <Form.Item label={oneLevel[0]?.levelName} name="area" style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={oneLevel} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? oneLevel[0]['id'] : null}></Select>
-            </Form.Item>
-          </Form>
-        </div> */}
        
-          <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}><span>排班信息</span> <ExportButton onClick={exporttabledata}  /></div>} layout="flex" >
+          <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}><span>排班信息</span> <ExportButton onClick={onexprot}  /></div>} layout="flex" >
             <MainBox>
             <UserTable columns={columns} dataSource={tabledata} ref={tableRef} ></UserTable>
-           
-            <div className='mgt16'>
+            <div>
             {reactive.plans?.name1?(<span className='pdr'>{reactive.plans.name1} : {reactive.plans.startTime1}~{reactive.plans.endTime1}</span>):null}
             {reactive.plans?.name2?(<span className='pdr'>{reactive.plans.name2} : {reactive.plans.startTime2}~{reactive.plans.endTime2}</span>):null}
             {reactive.plans?.name3?(<span className='pdr'>{reactive.plans.name3} : {reactive.plans.startTime3}~{reactive.plans.endTime3}</span>):null}
             {reactive.plans?.name4?(<span>{reactive.plans.name4} : {reactive.plans.startTime4}~{reactive.plans.endTime4}</span>):null}
-          </div>  
+           </div>  
           </MainBox>        
           </Titlelayout>
-         
-     
-        
-          
-        
       </Pagecount>
    
   )

@@ -67,7 +67,7 @@ export default function index() {
   }
 
   const getData = getUrlParams(window.location.href)
-
+  
   let [searchParams] = useSearchParams()
   const type = searchParams.get('type')  
 
@@ -87,6 +87,9 @@ export default function index() {
     })
   }
   const getDeviceList = (projectId, areaId) => {
+    
+    if(!projectId) return message.warning("缺少项目ID")
+    if(!areaId && areaId !='0') return message.warning("缺少园区Id")
     getEquipmentList(projectId, areaId).then(res => {
       if(res.success && res.data){
         state.deviceList = res.data
@@ -519,7 +522,10 @@ export default function index() {
     newCanvas.data.gridColor = form.getFieldValue('gridColor')
     newCanvas.data.bkColor = form.getFieldValue('bkColor')
     newCanvas.data.locked = form.getFieldValue('locked')  == true ? 1 : 0
+   
+    if(!projectId) return message.warning("缺少项目Id")
     if (getData.type == 'add') {
+      if(!getData.roomId) return message.warning("缺少配电房Id")
       let param = {
         projectId,
         roomId: getData.roomId,
@@ -537,6 +543,7 @@ export default function index() {
         }
       }).catch()
     } else {
+      if(!state?.chartData?.roomId) return message.warning("缺少配电房Id")
       let param = {
         id: state.chartData.id,
         projectId,
