@@ -2,16 +2,16 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectdisOneLevel, getDiscurlevel, getcurlRommid, selectOneLevelDefaultId, selectdiscurlevel,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
+import { selectdisOneLevel, getDiscurlevel, getcurlRommid, selectOneLevelDefaultId,selectOneLevel, selectdiscurlevel,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   let {showRoom = true} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
-  const oneLevel = useSelector(selectdisOneLevel)
+ // const oneLevel = useSelector(selectdisOneLevel)
   const levelName = useSelector(levelDefaultLabel) || '园区'
-  const areaId = useSelector(selectdiscurlevel)
-  
- 
+ // const areaId = useSelector(selectdiscurlevel)
+ const oneLevel = useSelector(selectOneLevel)
+ const areaId = useSelector(selectOneLevelDefaultId)
   const [roomlist, setRoomList] = useState([])
   const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()

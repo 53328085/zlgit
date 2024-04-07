@@ -54,6 +54,6 @@ export function Fallack({error, custmsg}) {
    return (<Empty image={imgurl.error}
    imageStyle={{width: '200px', height: '180px'}}
    style={style}
-   description={<Paragraph><Text strong type="warning">{msg}</Text><Link  onClick={resetBoundary}>试下刷新</Link></Paragraph>}
+   description={<Paragraph><Text strong type="warning">{msg}</Text><Link  onClick={() => window.location.reload()}>试下刷新</Link></Paragraph>}
    />);
 }

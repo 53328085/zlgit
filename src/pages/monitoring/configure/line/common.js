@@ -185,7 +185,6 @@ export default function Common({ type }) {
         treelist
     }
     return (
-        <>
             <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Form form={selform}>
@@ -208,24 +207,24 @@ export default function Common({ type }) {
                     {publish ? null : <div className={commonstyle.divBtn} onClick={addMainLine}>新增主线</div>}
 
                 </div>
-                <Divider style={{ borderColor: '#d7d7d7', margin: '16px 0' }} dashed></Divider>
+                <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
                 <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
                     <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
                     <div style={{ ...titlelinecss, width: 48, margin: '0 16px' }}>设备数</div>
                     <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
                 </div>
+                
+                <div style={{height: "600px", overflow: "auto"}}>  
                 <Tree
                     className={commonstyle.treeclass}
                     selectable={false}
                     defaultExpandAll
                     treeData={tdata}
                 />
+                </div>
                 <AddMianMianModal {...addmianprops}></AddMianMianModal>
               <Mask task={open}> <SetLine {...setprops}></SetLine></Mask> 
             </div>
-
-        </>
-
     )
 }
 
