@@ -1,6 +1,7 @@
 /* 获取系统配置 */
  
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import {message} from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
@@ -13,8 +14,9 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
   const handlermenu = (Meundata,  id) => {
    
-    let lang =  window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
-    let data = Meundata.filter(d => d.languageName==lang);
+ let lang =  window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
+ let data = Meundata.filter(d => d.languageName==lang);     
+    if(data?.length ==0) return message.warning("没有设置相应的菜单栏，请联系管理员")
     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
     const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
   //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
@@ -117,7 +119,7 @@ export const getWebsiteState = createAsyncThunk(
        //   ProjectList.QueryMenus(id), 
           ProjectSetting.queryProjectPublishInfo(id),
           BigScreen.QueryBigScreen(id),
-          Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+        //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
           AllDeviceStyle(), // 表计类型
          ] 
         let results = await Promise.allSettled(promises)
@@ -133,7 +135,12 @@ export const getWebsiteMenu = createAsyncThunk(
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
       if(success) {
-         return handlermenu(data, id)
+         if(Array.isArray(data) && data.length > 0) {
+          return handlermenu(data, id)
+         }else {
+          return message.warning("没有设置相应的菜单栏,请联系管理员")
+         }
+        
          
       }else {
         rejectWithValue(errMsg)
@@ -276,15 +283,15 @@ const system = createSlice({
                index == 1 && ( state.shifts = Array.isArray(data) ? data : [])
                index == 2 && (state.publishState=data?.state)
                index == 3 && (state.datascreen = data || {})
-               index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
-               index == 5 && (state.deviceStyle = Array.isArray(data) ? data : [])
+          //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
+               index == 4 && (state.deviceStyle = Array.isArray(data) ? data : [])
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
                index == 1 && (state.shifts=[]);
                index == 3 &&  (state.datascreen = {})
-               index == 4 && (state.disonlevel = [])
-               index == 5 && (state.deviceStyle = [])
+              // index == 4 && (state.disonlevel = [])
+               index == 4 && (state.deviceStyle = [])
              }
           }
         })

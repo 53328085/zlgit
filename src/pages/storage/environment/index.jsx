@@ -453,7 +453,7 @@ export default function Index() {
     <Pagecount pd="0">     
       <div className={style.mainContent}>
         <div className={style.title}>
-            <Paragraph  style={{marginBottom: '0', color: "#fff"}}  ellipsis={{tooltip: stationName?.value}}>{stationName?.value}</Paragraph>  
+            <Paragraph  style={{marginBottom: '0', color: "#fff"}}  ellipsis={{tooltip: stationName?.value}}>{stationName?.label}</Paragraph>  
           </div>
         <div className={style.yaxis}></div>
         <div className={style.xaxis}></div>

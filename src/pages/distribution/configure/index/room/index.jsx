@@ -196,6 +196,7 @@ export default function Index() {
   const ref = useRef()
   const [loading, setLoading] = useState(false)
   const addOk = async () => {
+    console.log(modalTitle)
     try {
       const values = await form.validateFields();
       console.log(values)
@@ -213,7 +214,7 @@ export default function Index() {
       if(modalTitle == '新增配电房'){
         setLoading(true)
         try {
-          let {success} = await addRoom(post)
+          let {success, errMsg} = await addRoom(post)
           setLoading(false)
           if(success) {
             messageApi.open({
@@ -225,7 +226,7 @@ export default function Index() {
           }else {
             messageApi.open({
               type:'error',
-              content:res.errMsg || '新增失败,请重试！',
+              content: errMsg || '新增失败,请重试！',
             })
           }
         } catch (error) {
@@ -235,8 +236,9 @@ export default function Index() {
         }else if(modalTitle == '编辑配电房'){       
           try {
             setLoading(true)
-            params.id = editId
-            let {success} = updateRoom(params)
+            post.id = editId
+          //  post.imgBgKey = values.imgBgKey
+            let {success, errMsg} = await updateRoom(post)
             setLoading(false)
             if(success){
               messageApi.open({
@@ -248,11 +250,12 @@ export default function Index() {
             }else{
               messageApi.open({
                 type:'error',
-                content:res.errMsg || '配电房编辑失败,请重试！',
+                content: errMsg || '配电房编辑失败,请重试！',
               })
             }
            
           } catch (error) {
+            console.log(error)
             setLoading(false)
           }        
       }
@@ -330,7 +333,7 @@ export default function Index() {
  
   return (
  <Cspin tip="图片数据加载中 ……" spinning={spinning}>
-    <Pagecont showserach={false} custserach pd="0px" >
+    <Pagecont showserach={true}  pd="0px" >
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
          <Divider style={{margin: "16px 0"}} />
@@ -370,6 +373,9 @@ export default function Index() {
            </Item>
             <Item label='备注' name='remark'>
               <TextArea rows={4} style={{width:'400px'}}></TextArea>
+            </Item>
+            <Item name="imgBgKey" noStyle>
+                  <Input type="text" hidden />
             </Item>
           </Form>
         </div>

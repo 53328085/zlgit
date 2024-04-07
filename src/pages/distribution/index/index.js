@@ -10,7 +10,7 @@ export default function Index() {
    let {nested = '', primary} = state;
    //let show = nested !== 'report'
 
- const [inpage, setInpage] = useState(['report'])
+ const [inpage, setInpage] = useState(['report', 'room'])
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  let show = !inpage.includes(nested)
  let style = show ? {

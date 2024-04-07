@@ -236,6 +236,7 @@ export default  function Index() {
             <Cdivider type="h" margin="0" />
             <Usetable 
             hbg="#f0f9ff"
+            hbc="#515151"
             columns={columns} 
             ref={tableref} 
             rowKey={nanoid()} 

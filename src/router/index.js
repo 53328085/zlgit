@@ -53,7 +53,7 @@ const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Topology = lazy(() => import("../pages/topology"))
 
-const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
+//const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
@@ -148,10 +148,10 @@ const loginrouter =  [{
     path: '/devicedetail',
     element: <DeviceDetail />,
   },
-  {
+/*   {
     path: '/devicedtl',
     element: <Devicedetail />
-  },
+  }, */
   {
     path: '/gatewayDetail',
     element: <GatewayDetail />

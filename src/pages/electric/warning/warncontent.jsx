@@ -141,7 +141,7 @@ export default function Warncontent({ style,form, areaId }) {
                  colon={false}
                  form={warnform}
                  initialValues={{
-                    status:0,
+                    status:1,
                     warn:0,
                     datetype:[moment(),moment()]
               
@@ -185,6 +185,7 @@ export default function Warncontent({ style,form, areaId }) {
                 onChange={changePage}
                 className={style.tbheight}
                 hbg="#f4f8ff"
+                hbc="#515151"
                 ></UserTable>
             </div>
 

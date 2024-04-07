@@ -5,5 +5,7 @@
     "error": {
         "unspecific": "Something went wrong.",
         "404": "The page was not found."
-      }
+      },
+      "NoSetMenu":"No setup menu, please contact admin",
+      "DataError":"Data error, please try again"
 }

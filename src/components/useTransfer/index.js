@@ -248,7 +248,7 @@ export default function index (props) {
             setUnknownData([...arr]);
         }
     }
-   const [subserach, setSubserach] = useState('')
+   const [subserach, setSubserach] = useState('') 
     return (
    
      <Mask task={task}>
@@ -282,7 +282,7 @@ export default function index (props) {
                         <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:141}} rowSelection={subSelection}></Table>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:460}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>)

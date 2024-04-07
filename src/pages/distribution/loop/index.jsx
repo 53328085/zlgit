@@ -167,6 +167,7 @@ export default function Index() {
                      <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
                     <UseTable 
                     hbg="#f0f9ff" 
+                    hbc="#515151"
                     columns={columns} 
                     dataSource={tableData} 
                     ref={tableRef} 

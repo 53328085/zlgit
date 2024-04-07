@@ -11,6 +11,7 @@ import {   getJump,  getIsGranary, configProject, getSystemconfiginfo,   getWebs
  
 import { Login as LoginApi, I18N } from "@api/api.js";
 import { message, Tabs, Form, Input } from "antd";
+import {useTranslation, Trans, Translation} from 'react-i18next';
 import styled from "styled-components";
 import CModal from "@com/useModal"
 import {cipher} from "@com/usehandler"
@@ -75,7 +76,7 @@ const Logmain = styled.div`
 function UserLog() {
    
   const navigate = useNavigate();
- 
+  const {t, i18n} = useTranslation(["login", "comm"]);
  
   const dispatch = useDispatch();
  
@@ -110,7 +111,7 @@ function UserLog() {
           message.info(info)
           regRef.current.onCancel()
         }else if(code == 0 ) {
-            message.success(info || '注册成功')
+            message.success(info || t("RegistSuccess", {ns: 'login'}))
             regRef.current.onCancel()
          /*  message.success({
             content: info,
@@ -172,14 +173,14 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
          dispatch(configProject(false)) // 项目是否处于设计状态
          let {runMenus} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == '0104') || runMenus[0]  
-         if(!ismenu) return message.error({content: '没有设置菜单，请联系管理人员', duration: 0.5})
+         if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
          projectRun(ismenu)
        }
  
     }else {
       dispatch(getPassword(''))
       setLoading &&   setLoading(false) 
-     return message.warning(errMsg || "数据出错,请重试");
+     return message.warning(errMsg || t("comm:DataError"));
     }
    } catch (error) {
     setLoading &&   setLoading(false) 
@@ -210,12 +211,12 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
 
   const items = [
    {
-      label: "账户登录",
+      label:  t("login:Aclogin"), //"账户登录",
        key: '1',
        children:   <Username onSubmit={CheckAuthorization} />,
    },
    {
-      label: "手机登录",
+      label:  t("login:MoLogin"), //"手机登录",
        key: '2',
        children:   <Phonelog onSubmit={CheckAuthorization} />,
    }
@@ -250,7 +251,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
             ref={regRef}
             onOk={regOk}
             mold="cust"
-            title="系统授权申请"
+            title={ t("login:SysAuRe")}
           >
             <Form form={form} layout="vertical">
               <Form.Item label="服务器网站" name="url" rules={[

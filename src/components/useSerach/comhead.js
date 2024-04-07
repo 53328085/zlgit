@@ -87,8 +87,8 @@ export default function UseSerach(props) {
      let {success, data, errMsg} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
      if(success&& Array.isArray(data) && data.length > 0) {
        setOptions([...data])   
-      let stationName = data[0].name
-     form.setFieldValue('stationName', {label:stationName, value: stationName})
+      let {name: stationName, id} = data[0]
+     form.setFieldValue('stationName', {label:stationName, value: id,})
      
      props.setexparams({...form.getFieldsValue(true), areaName})
  
@@ -97,7 +97,7 @@ export default function UseSerach(props) {
      }else {
        setOptions([])    
       form.setFieldsValue({
-        stationName: {label: null, value: null}
+        stationName: {label: null, value: null, id: null}
        })
        props.setexparams({...form.getFieldsValue(true),areaName})
        if(!success) return message.warning(errMsg)
@@ -267,7 +267,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
 </Item>)
 // 站点选择
   const site = (<Item name="stationName" label="站点"   >
-              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} labelInValue></Select>  
+              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
              </Item>)
              // 储能柜
   const tank =  (<Item name="containerId" label="储能柜" >

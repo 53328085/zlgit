@@ -46,17 +46,23 @@ export default function Index() {
 
  })
     return queryPageSensor(projectId, roomId, current, pageSize).then(res => {
-      if(res.success){
-        if(Array.isArray(res.data)){
-         // setData(res.data)
-          setSubTable(res.data)
-        }else{
-         
-          setSubTable([])
-        }
-        setTotal(res.total)
+      let {success, data, total=0,errMsg} = res
+      setTotal(total)
+      if(success && Array.isArray(data) && data.length > 0){
+           return {
+             list: data,
+             total,
+
+           }
+        
+      
       }else {
-        setTotal(0)
+        if(!success) message.warning(errMsg || "数据出错")
+        return {
+          list: [],
+          total: 0,
+        }
+        
       }
     })
   }

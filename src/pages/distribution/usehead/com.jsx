@@ -1,53 +1,87 @@
 import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHandle, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
-import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectdisOneLevel, getDiscurlevel, getcurlRommid, selectOneLevelDefaultId,selectOneLevel, selectdiscurlevel,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
+import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   let {showRoom = true} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
- // const oneLevel = useSelector(selectdisOneLevel)
+
+  const [oneLevel, setOnelevel] = useState([]) 
+   
   const levelName = useSelector(levelDefaultLabel) || '园区'
- // const areaId = useSelector(selectdiscurlevel)
- const oneLevel = useSelector(selectOneLevel)
- const areaId = useSelector(selectOneLevelDefaultId)
+ 
   const [roomlist, setRoomList] = useState([])
-  const [roomId, setRoomId] = useState()
+ // const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
   const changeArea=(v, option)=>{  
      dispacth(setCurrentlevel(option))
-  //  getDiscurlevel(v)   
+  
      showRoom &&  getRoomList(v)
   }
   const changeRomme = (v) => {      
        dispacth(getcurlRommid(v))
   }
+  const  getOnelevel = async () => {
+        try {
+          let {success, data, errMsg} = await Area.AreaList(projectId)
+          if(success) {
+             if (Array.isArray(data) && data?.length) {
+                setOnelevel(data)             
+                form.setFieldValue("area", data[0].id)
+                getRoomList(data[0].id)
+             }else {
+               form.setFieldsValue({
+                 areaId: null,
+                 roomId: null
+               })
+               setOnelevel([])
+               setRoomList([])
+              
+               message.warning("没有设置园区")
+             }
+          }else {
+              message.warning(errMsg || "数据出错")
+             
+              form.setFieldsValue({
+                areaId: null,
+                roomId: null
+              })
+              setOnelevel([])
+              setRoomList([])
+           }
+        } catch (error) {
+          
+        }
+          
+  }  
   const getRoomList = async (id) => {
     const resp = await distributionRoom.RoomList(projectId, id)
     if (resp?.success) {
-      setRoomList(resp?.data)
-      dispacth(getRoomId(resp?.data))
+     
      // dispacth(getRoomList(resp?.data))
       if (Array.isArray(resp?.data) && resp.data.length > 0) {
+        setRoomList(resp?.data)
+        dispacth(getRoomId(resp?.data))
         let id = resp.data[0][['id']]
         form.setFieldValue('roomId', id)
-        setRoomId(id)
+      //  setRoomId(id)
         dispacth(getcurlRommid(id))
+       
       } else {
+        setRoomList([])
+        dispacth(getRoomId([]))
         form.setFieldValue('roomId', [])
-        setRoomId(null)  
+       // setRoomId(null)  
       }
     }
   }
+  useEffect(() => {
+    if(Number.isInteger(projectId))   getOnelevel()
+  }, [projectId])
  
- useEffect(() => {
-  if(oneLevel?.length < 1) return 
-  if(areaId) {
-    getRoomList(areaId)
-  }
- 
- }, [areaId, oneLevel])
+
 return (
   <div>
           <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -55,12 +89,6 @@ return (
                   form={form}
                   colon={false}
                   layout="inline"
-                  initialValues={
-                    {
-                      area: areaId,
-                      roomId: roomId
-                    }
-                  }
               >
                   <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
