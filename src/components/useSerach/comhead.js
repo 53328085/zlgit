@@ -295,6 +295,10 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   }
 
   useEffect(() => {  
+     if(!config.gas) {
+       let v = form.getFieldValue('energytype');
+       if(v==3) form.setFieldValue('energytype', 1)
+     }
      props.setexparams({...form.getFieldsValue(true), areaName})
    
   }, [props.config, projectId])

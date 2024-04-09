@@ -14,10 +14,10 @@ import Titlelayout from '@com/titlelayout'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
-import { selectProjectId, mixtitle, systemConfigInfo, currProject } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle, systemConfigInfo, currProject,} from '@redux/systemconfig.js'
 
 import { selectUser } from '@redux/user.js'
-
+import Ichart  from '@com/useEcharts/Ichart';
 import Table from '@com/useTable'
  
 import moment from "moment";
@@ -114,7 +114,8 @@ const Chartin = (props) => {
 
 }
 export default function GatewayDetail(props) {
-   
+    let devess = useSelector(state => state.system.deviceStyle);
+    console.log(devess);
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
     const sn = searchParams.get('sn')  
@@ -137,6 +138,43 @@ export default function GatewayDetail(props) {
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     const deviceStyle = detail?.deviceStyle;
+     // 能耗趋势文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
+     let  todayT =  ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本
+    
+     let  todayA =  ['用电量', '用电量', '用水量', '用气量', '', '用电量', '', '用水量'][deviceStyle] || '用电量'  // 日均， 月均， 年均， 累计
+
+     let  unit = ['(kWh)','(kWh)', '(m³)', '(m³)', '', '(kWh)', '', '(m³)'][deviceStyle] || '(kWh)'
+
+
+     const [boptions, setOptions] = useState({   //能耗趋势图表
+        series: [],  
+        grid: { 
+          left: "0px",
+          right: "0",
+          top: "30px",
+          bottom: "0px",
+          containLabel: true,
+        },
+        legend: {
+            top: 0,
+            icon: 'rect',
+            itemHeight: 2,
+            itemWidth: 12,
+            itemGap: 20,
+        },
+        dataset: {
+          dimensions: [],
+          source: []
+        },
+        xAxis: {
+            axisLabel: {
+                interval: "auto"
+            }
+        }
+      }) 
+
+
+    // 水，电 ， 气；
     const isclude = [2,7].includes(deviceStyle); // 是否是水表
     let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
    
@@ -174,13 +212,15 @@ export default function GatewayDetail(props) {
     const onchangeTab = val => {
         setstate(val)
         if(dtlkeys) return
+
         if (val == 3) {
-            setreportTypeTime(1)
+            setreportTypeTime(2)
             getEnergyReport()
         } else if (val == 2) {
             getHistoryTrend()
             getHistoryTable()
         }
+        setreportTypeTime(1)
     }//切换tab
     // const disabledDate = (current) => {
     //     return current && current > dayjs().endOf('day');
@@ -297,8 +337,35 @@ export default function GatewayDetail(props) {
        if([2, 7].includes(deviceStyle) && paramsReport.type == 1) return 
        
         return EnergyReport(paramsReport).then(res => {
-            let { success, data } = res
-            if (success) {
+            let { success, data, errMsg } = res
+            setEnergyReport(data)
+            if(success && Object.prototype.toString.call(data).slice(8,-1)==="Object") {
+                 let {Data=[], Header=[]} = data
+                 let dimensions = Header.map(h => ({name: h.Name, displayName: h.Display}))
+                 setOptions({
+                    ...boptions,
+                    series: Array.from({length: Header.length -1 }, () => ({ type: "line",  seriesLayoutBy: 'row' })),
+                    dataset: {
+                      dimensions,
+                      source: Data,
+                      sourceHeader: false,
+                    }
+                  })
+            }else {
+                setOptions({
+                    ...boptions,
+                    series: [],
+                    dataset: {
+                      dimensions: [],
+                      source: [],
+                      sourceHeader: false,
+                    }
+                  })
+                if(!success) message.warning(errMsg || "数据出错")
+            }  
+
+
+            /* if (success) {
                 setEnergyReport(data)
                 let x = []
                 let y = []
@@ -325,7 +392,7 @@ export default function GatewayDetail(props) {
                 
             } else {
                 message.error(res.errMsg)
-            }
+            } */
         })
     }
     const drawTrendCharts = () => {
@@ -717,31 +784,31 @@ export default function GatewayDetail(props) {
                             </div>  */ : state == 3 ? <div>
                                 <div className={style.energyHead}>
                                     <div className={style.dateData}>
-                                        <p><span>今日用电量 (kWh)</span><span>日环比{actuary?.e_DayRatio?.slice(0,1) !='-' ? <CaretUpOutlined
+                                        <p><span>今日{todayT} </span><span>日环比{actuary?.e_DayRatio?.slice(0,1) !='-' ? <CaretUpOutlined
                                             style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_DayRatio?.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_DayRatio}</span></p>
                                         <div>{actuary.e_DayUsage}</div>
-                                        <p>日均用电量 : {actuary.e_DayAvg}</p>
+                                        <p>日均{todayA}  : {actuary.e_DayAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本月用电量 (kWh)</span><span>月环比{actuary.e_MonthRatio?.slice(0,1) !='-'? <CaretUpOutlined
+                                        <p><span>本月{todayT}</span><span>月环比{actuary.e_MonthRatio?.slice(0,1) !='-'? <CaretUpOutlined
                                             style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_MonthRatio?.slice(0,1) =='-'? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_MonthRatio}</span></p>
                                         <div>{actuary.e_MonthUsage}</div>
-                                        <p>月均用电量 : {actuary.e_MonthAvg}</p>
+                                        <p>月均{todayA} : {actuary.e_MonthAvg}</p>
                                     </div>
                                     <div className={style.dateData}>
-                                        <p><span>本年用电量 (kWh)</span><span>年环比{actuary?.e_YearRatio?.slice(0,1) !='-' ? <CaretUpOutlined
+                                        <p><span>本年{todayT}</span><span>年环比{actuary?.e_YearRatio?.slice(0,1) !='-' ? <CaretUpOutlined
                                             style={{ color: 'rgb(255,0,0)', marginLeft: 3, marginRight: 3 }} /> : actuary?.e_YearRatio?.slice(0,1) =='-' ? <CaretDownOutlined
                                                 style={{ color: 'rgb(0,153,0)', marginLeft: 3, marginRight: 3 }} /> : ''}{actuary.e_YearRatio}</span></p>
                                         <div>{actuary.e_YearUsage}</div>
-                                        <p>年均用电量 : {actuary.e_YearAvg}</p>
+                                        <p>年均{todayA} : {actuary.e_YearAvg}</p>
                                     </div>
                                     <div className={style.dateDataLast}>
                                         <div>
                                             <div className={style.rightImg} ><img width={68} height={68} src={deviceDetail3}></img></div>
-                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.e_All}</span> kWh</p>
-                                            <p>累计用电量</p>
+                                            <p><span style={{ fontSize: 18, color: '#333' }}>{actuary.e_All}</span>{unit}</p>
+                                            <p>累计{todayA}</p>
                                         </div>
                                         <div>
                                             <div className={style.rightImg} ><img src={imgurl.deviceDetail2}></img></div>
@@ -779,7 +846,9 @@ export default function GatewayDetail(props) {
                                     </div>
 
                                 </div>
-                                {trend === 1 ? <div><div ref={energyref} style={{ width: 1536, height: 513, marginTop: 16 }}></div></div> : trend === 2 ? <div>
+                                {trend === 1 ? <div><div  style={{ width: 1536, height: 513, marginTop: 16, display: 'flex' }}> {/* ref={energyref}  */}
+                                      <Ichart {...boptions}/>
+                                    </div></div> : trend === 2 ? <div>
                                     <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
                                         rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable} hbc="#fff"></Table>
                                 </div> : ''}

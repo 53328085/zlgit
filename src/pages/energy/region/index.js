@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect,   } from "react";
  
-import {   Radio,   Image,   Typography} from "antd";
+import {   Radio,   Image,   Typography, message} from "antd";
 import styled from "styled-components";
  
  
@@ -109,7 +109,7 @@ export default function Index() {
   let {energytype, areaId, date, type:dateType,  projectId} = exparams 
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({
-    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }],  
+    series: [],  
     grid: { 
       left: "0px",
       right: "0",
@@ -143,12 +143,7 @@ export default function Index() {
   //let length = dataSet.source?.length - 1
  
   poptions.current.pieData.data = tableData.map(t => ({value: t.e, name: t.name}))
-  const sort = tableData.sort((a, b) => parseFloat(a.e) -parseFloat(b.e) < 0).slice(0, 3)
- 
-   
-
-   
-
+  const sort = tableData.sort((a, b) => parseFloat(b.e)-parseFloat(a.e)) 
   const columns = [
     {
       dataIndex: "name",
@@ -187,10 +182,11 @@ export default function Index() {
      }
     const params = [areaId]
     hander(querys, params).then(res => {
-      let {success, data} = res;
+      let {success, data, errMsg} = res;
+      
     if(success && Array.isArray(data) && data.length > 0) {
            setTableData(data.map(d => d.total))
-
+     
 
       let source = []
       let dimensions = [
@@ -209,10 +205,11 @@ export default function Index() {
         console.log(source)
         setOptions({
           ...boptions,
+          series: Array.from({length: data.length}, () => ({ type: "bar",  seriesLayoutBy: 'row',  stack: 'x' })),
           dataset: {
             dimensions,
             source,
-           sourceHeader: false,
+            sourceHeader: false,
           }
         })
     }else {
@@ -225,6 +222,7 @@ export default function Index() {
           sourceHeader: false,
         }
       })
+      if(!success) message.warning(errMsg || '数据出错')
     }
     })
   }
@@ -269,7 +267,7 @@ export default function Index() {
    
       <Laybox  >
         <Titlelayout title={Title} key="up" layout="flex" className="left">
-           <div style={{paddingTop: "16px",  flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
+           <div style={{paddingTop: "16px",  flex: 1, display: "flex",  justifyContent: "center"}}>
              {
               mode == 1 ?  <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" />
              }  

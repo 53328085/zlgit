@@ -217,7 +217,8 @@ export default function Index() {
   let columns = [cols, [], timecols, typecols][index] // 
   const getTableData = ({ current, pageSize }) => {
   //  const row = Number(value);
-     if(Object.values(exparams).length <5) return;
+     console.log(exparams)
+     if(Object.values(exparams).length <6) return;
     
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
