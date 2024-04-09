@@ -26,6 +26,7 @@ export default  memo(({onSubmit})=> {
     const [phoneform] = Form.useForm();
     let initPhone = useSelector(selectMemoPhone);
     let { mobile } = useSelector(selectUser);
+    let [loading, setLoading] = useState(false);
     const auto = useMemo(() => (initPhone ? "on" : "off"), [initPhone]);
     const initMobile = useMemo(() => (initPhone ? mobile : ""), [initPhone]);
     const ckchange = (e) => {
@@ -35,12 +36,18 @@ export default  memo(({onSubmit})=> {
     const [countdown] = useCountDown({
       targetDate,
     });
-    const { loading, run } = useRequest(GetVerification, {
+    const { run } = useRequest(GetVerification, {
       // 获取验证码
       manual: true,
       onSuccess: (res) => {
-        let { success, data } = res;
-        if (success) phoneform.setFieldValue("code", data.code);
+        let { success, data,  errMsg} = res;
+        if (success) {
+          phoneform.setFieldValue("code", data.code);
+        }else {
+           message.warning(errMsg)
+           setTargetDate(0)
+        }
+
       },
       onError: (error) => {
         console.log(error);
@@ -92,6 +99,9 @@ export default  memo(({onSubmit})=> {
          value: 240
       }
     ]
+    useEffect(() => {
+      return setLoading(false);
+    }, [])
     return (
       <Form
         layout="horizontal"
@@ -100,7 +110,7 @@ export default  memo(({onSubmit})=> {
         labelWrap
         form={phoneform}
         name="phonelogin"
-        onFinish={(e) => onSubmit(e, 1)}        
+        onFinish={(e) => onSubmit(e, 1, undefined, setLoading)}        
         initialValues={{
           mobile: initMobile,
           remember: initPhone,

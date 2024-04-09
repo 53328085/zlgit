@@ -95,8 +95,11 @@ const Chartin = (props) => {
              axisLabel: {
                 formatter: (value, index) => {
                     return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
-                }
-             }
+                },
+                interval: "auto"
+             },
+           
+
            }
         })
     }, [data])
@@ -151,7 +154,7 @@ export default function GatewayDetail(props) {
     let day = new Date().getDate()
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment().startOf('day');
-    console.log(today)
+  //  console.log(today)
   // const yesterday = date + ' ' + "00:00:00"
     const yesterday =moment()
     let [dataList, setdataList] = useState([])
@@ -198,6 +201,10 @@ export default function GatewayDetail(props) {
         return Detail(projectId, sn).then(res => {
             let { success, data } = res
             if (success) {
+                
+                if(data?.deviceStyle==2 || data?.deviceStyle==7) {
+                    setreportTypeTime(2)
+                };
                 setDetail(data || {})
                
             } else {
@@ -286,7 +293,9 @@ export default function GatewayDetail(props) {
         date: dateValue
     }
 
-    const getEnergyReport = () => {//
+    const getEnergyReport = () => {// 水表不展示日趋势线
+       if([2, 7].includes(deviceStyle) && paramsReport.type == 1) return 
+       
         return EnergyReport(paramsReport).then(res => {
             let { success, data } = res
             if (success) {
@@ -772,12 +781,12 @@ export default function GatewayDetail(props) {
                                 </div>
                                 {trend === 1 ? <div><div ref={energyref} style={{ width: 1536, height: 513, marginTop: 16 }}></div></div> : trend === 2 ? <div>
                                     <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
-                                        rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable}></Table>
+                                        rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable} hbc="#fff"></Table>
                                 </div> : ''}
                             </div> : state== 4 ? <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
-                                    <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable}></Table>
+                                    <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable} hbc="#fff"></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
                             </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>

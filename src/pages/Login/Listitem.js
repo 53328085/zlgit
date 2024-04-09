@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Login as Logapi } from "@api/api";
 import {useDispatch} from 'react-redux'
 import {  getThemeColor, getSystemconfiginfo} from "@redux/systemconfig";
+import {useTranslation, Trans, Translation} from 'react-i18next';
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,7 +63,11 @@ const List = styled.div`
     }
   }
 `;
-const items = [
+
+export default memo(function Listitem({logtitle, englishTitle, literal}) {   
+  const dispatch = useDispatch();
+  const [systitle, setTitle] = useState({})
+  const items = [
     "运行监控",
     "电气安全",
     "配电管理",
@@ -71,10 +76,6 @@ const items = [
     "碳排管理",
     "运维管理",
   ];
-export default memo(function Listitem({logtitle, englishTitle, literal}) {   
-  const dispatch = useDispatch();
-  const [systitle, setTitle] = useState({})
-  
   const getSysteminfo = async (hostname) => {
      try {
        let {data, success} =   await Logapi.SystemConfig(hostname)

@@ -143,6 +143,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const fields = allLevel?.find(item => item.level == level)?.fields || [];  
   const [form] = Form.useForm();
   const [sfrom] = Form.useForm();
+ 
   const boxref = useRef();
   const [Record, setRecord] = useState({});
   const [isAdd, setIsAdd] = useState(true);
@@ -587,7 +588,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         open={open}
        getContainer={() => boxref.current}
        
-        style={{ position: "absolute", top: "-16px", left: "-16px", zIndex: 1982}}
+        style={{ position: "absolute", top: "-16px", left: "-16px"}}
         closable={false}
         destroyOnClose
         height={760}
@@ -687,15 +688,15 @@ const getSelected = async ({areaId, type=devietype}) => {
           <Form
             form={sfrom}
             initialValues={{
-              type: "1",
+               type: "1"
             }}
           >
             <Space size={16}>
               <Item label="设备类型" name="type">
                 <Select
                   style={{ width: "112px" }}
-                  onChange={changeUnselected}
-                  options={[
+                 onChange={changeUnselected}
+                options={[
                     {
                       value: "1",
                       label: "电表",
@@ -709,7 +710,7 @@ const getSelected = async ({areaId, type=devietype}) => {
                       label: "燃气表",
                     },
                   ]}
-                ></Select>
+                />
               </Item>
               <Item name="alike" label="设备搜索">
                 <Inptserach

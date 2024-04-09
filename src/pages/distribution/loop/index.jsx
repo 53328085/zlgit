@@ -66,17 +66,17 @@ export default function Index() {
             title: '电流',
             children: [
                 {
-                    title: 'Ia(V)',
+                    title: 'Ia(A)',
                     dataIndex: 'Ia',
                     width: 96
                 },
                 {
-                    title: 'Ib(V)',
+                    title: 'Ib(A)',
                     dataIndex: 'Ib',
                     width: 96
                 },
                 {
-                    title: 'Ic(V)',
+                    title: 'Ic(A)',
                     dataIndex: 'Ic',
                     width: 96
                 },

@@ -335,7 +335,7 @@ export default function index (props) {
                 <div className={style.searchInput}>
                     <span style={{marginRight: 16}}>设备搜索</span>
                     <Search 
-                    placeholder="请输入设备编号/安装地址1" 
+                    placeholder="请输入设备编号/设备名称/安装地址" 
                     style={{width: 256}} 
                     enterButton 
                     onSearch={onSearchUnknown} 

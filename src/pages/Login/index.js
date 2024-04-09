@@ -35,6 +35,11 @@ const Loginpage =  styled.div`
 const CTabs = styled(Tabs)`
    && {
       width: 402px;
+      .ant-tabs-nav-list {
+         display: flex;
+         flex: 1;
+        justify-content: space-between;
+      }
       .ant-tabs-nav {
          margin-bottom: 32px;
          &::before {
@@ -231,9 +236,6 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
          <CTabs 
            defaultActiveKey="1"
            items={items}
-          
-           tabBarGutter={128}
-           
          >
          </CTabs>    
          <CModal
@@ -254,7 +256,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
             title={ t("login:SysAuRe")}
           >
             <Form form={form} layout="vertical">
-              <Form.Item label="服务器网站" name="url" rules={[
+              <Form.Item label={t("login:SerWbe")} name="url" rules={[
                  ...rules,
                  {
                   type: "url"
@@ -262,16 +264,16 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
               ]}>
                   <Input /> 
               </Form.Item>
-              <Form.Item label="公司名称" name="customer" rules={rules}>
+              <Form.Item label={t("login:ComName")} name="customer" rules={rules}>
                   <Input /> 
               </Form.Item>
-              <Form.Item label="公司地址" name="address" rules={rules}>
+              <Form.Item label={t("login:ComAdd")} name="address" rules={rules}>
                   <Input /> 
               </Form.Item>
-              <Form.Item label="申请人" name="user" rules={rules}>
+              <Form.Item label={t("login:Applicant")} name="user" rules={rules}>
                   <Input /> 
               </Form.Item>
-              <Form.Item label="手机号" name="mobile" rules={[
+              <Form.Item label={t("login:Mophonenum")} name="mobile" rules={[
                 ...rules,
                 {
                   validator: phoneValidator,
