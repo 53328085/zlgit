@@ -846,7 +846,7 @@ export default function GatewayDetail(props) {
                                     </div>
 
                                 </div>
-                                {trend === 1 ? <div><div  style={{ width: 1536, height: 513, marginTop: 16, display: 'flex' }}> {/* ref={energyref}  */}
+                                {trend === 1 ? <div><div  style={{ width: 1536, height: 480, paddingTop: 16}}> {/* ref={energyref}  */}
                                       <Ichart {...boptions}/>
                                     </div></div> : trend === 2 ? <div>
                                     <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
