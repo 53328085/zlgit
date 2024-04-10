@@ -69,13 +69,13 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
   const dispatch = useDispatch();
   const [systitle, setTitle] = useState({})
   const items = [
-    "运行监控",
-    "电气安全",
-    "配电管理",
-    "结算收费",
-    "光伏发电",
-    "碳排管理",
-    "运维管理",
+     t("OpMonitor"),
+     t("ElectrSafe"),
+    t("PowerManage"),
+    t("SettleCharge"),
+    t("Photovolatic"),
+    t("CarbonManage"),
+    t("OpManage"),
   ];
   const getSysteminfo = async (hostname) => {
      try {

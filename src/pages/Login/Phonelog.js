@@ -1,27 +1,23 @@
-import React, { useEffect, useState, useMemo, memo, forwardRef, useImperativeHandle, useRef } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import React, { useEffect, useState, useMemo, memo} from "react";
+import {  useSelector} from "react-redux";
 import {
-  loginByName,
-  selectLoading,
-  selectMemorize,
   selectMemoPhone,
-  clearToken,
-  memorizeName,
   memorizePhone,
   selectUser,
 } from "@redux/user";
  
-import { useBoolean, useCountDown, useRequest } from "ahooks";
+import {  useCountDown, useRequest } from "ahooks";
  
-import { Button, Checkbox, Form, Input, message, Space, Image, Select,Tabs } from "antd";
-import styled from "styled-components";
+import { Form,  message, Space, } from "antd";
+import {useTranslation, Trans, Translation} from 'react-i18next';
  
-import { pwdValidator, phoneValidator, codeValidator, imgcodeValidator } from "@pages/rule";
+import {  phoneValidator, codeValidator, } from "@pages/rule";
 import { Login as Logapi} from "@api/api";
 import {Logselect, Itembox, Ipticon, Logipt, Logck, Logbtn} from '@com/comstyled'
 import imgurl from "./icon";
 
 export default  memo(({onSubmit})=> {
+  const {t} = useTranslation('login')
     const { GetVerification } = Logapi;
     const [phoneform] = Form.useForm();
     let initPhone = useSelector(selectMemoPhone);
@@ -68,34 +64,34 @@ export default  memo(({onSubmit})=> {
     const Countdown = () => {
       return (
         <Logbtn
-          style={{ height: "42px", width: "112px", fontSize: "16px" }}
+          style={{ height: "42px", width: "112px", fontSize: "14px", padding: 0 }}
           onClick={() => getCode()}
           disabled={countdown !== 0}
         >
-          {countdown === 0 ? "获取验证码" : ` ${Math.round(countdown / 1000)}s`}
+          {countdown === 0 ?  t("GetVerCode") : ` ${Math.round(countdown / 1000)}s`}
         </Logbtn>
       );
     };
     
     let options = [
       {
-         label: "15分钟",
+         label: t("Time15m"),
          value: 15
       },
       {
-         label: "30分钟",
+         label: t("Time30m"),
          value: 30
       },
       {
-         label: "1小时",
+         label: t("Time1h"),
          value: 60
       },
       {
-         label: "2小时",
+         label: t("Time2h"),
          value: 120
       },
       {
-         label: "4小时",
+         label: t("Time4h"),
          value: 240
       }
     ]
@@ -122,7 +118,7 @@ export default  memo(({onSubmit})=> {
           rules={[
             {
               required: true,
-              message: "请输入手机号",
+              message:  t("Enphnum"),
             },
             {
               validator: phoneValidator,
@@ -133,7 +129,7 @@ export default  memo(({onSubmit})=> {
             prefix={<Ipticon />}
             url={imgurl.phone}
             aurl={imgurl.phonea}
-            placeholder="请输入手机号"
+            placeholder={ t("Enphnum")}
             autoComplete={auto}
           />
         </Itembox>
@@ -146,7 +142,7 @@ export default  memo(({onSubmit})=> {
              suffixIcon={<Ipticon />}
              w="402px"
              h="42px"
-             placeholder="请选择登录时长"
+             placeholder={t("Selogindur")}
             options={options}
           />
         </Itembox> 
@@ -158,7 +154,7 @@ export default  memo(({onSubmit})=> {
               rules={[
                 {
                   required: true,
-                  message: "请输入验证码",
+                  message: t("Envercode"),
                 },
                 {
                   validator: codeValidator,
@@ -170,7 +166,7 @@ export default  memo(({onSubmit})=> {
                 prefix={<Ipticon />}
                 url={imgurl.code}
                 aurl={imgurl.codea}
-                placeholder="请输入验证码"
+                placeholder={ t("Envercode")}
                 style={{ width: "275px" }}
               />
             </Form.Item>
@@ -180,7 +176,7 @@ export default  memo(({onSubmit})=> {
           </Space>
         </Itembox>
         <Itembox name="remember" valuePropName="checked">
-          <Logck onChange={ckchange}>记住手机号</Logck>
+          <Logck onChange={ckchange}>{t("EnUserName")}</Logck>
         </Itembox>
         <Itembox>
           <Logbtn
@@ -189,7 +185,7 @@ export default  memo(({onSubmit})=> {
             loading={loading}
             style={{ height: "56px" }}
           >
-            立即登录
+          {t("Login")}
           </Logbtn>
         </Itembox>
       </Form>

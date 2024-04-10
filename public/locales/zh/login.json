@@ -33,6 +33,7 @@
     "PhNumFormat":"请输入正确的手机号",
     "Enusername":"请输入用户名",
     "Enpassword":"请输入密码",
+    "isNumber": "验证码必须是数字",
     "ReUserPassword":"记住用户名和密码",
     "RePhoneNum":"记住手机号",
     "Login":"立即登录",
