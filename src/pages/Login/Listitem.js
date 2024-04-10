@@ -65,6 +65,7 @@ const List = styled.div`
 `;
 
 export default memo(function Listitem({logtitle, englishTitle, literal}) {   
+  const {t} = useTranslation('login')
   const dispatch = useDispatch();
   const [systitle, setTitle] = useState({})
   const items = [

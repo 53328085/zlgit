@@ -24,7 +24,8 @@ const Mainbox = styled.div`
     //    height: 840px;
         overflow-y: auto;
         display: grid;
-        grid-auto-rows:  806px;
+       // grid-auto-rows:  806px;
+        height: 840px;
         row-gap: 32px;
         .front {
           background-color: #fff;

@@ -14,7 +14,7 @@ export default function Index() {
  
   const [display, setDisplay] = useState(true);
  
-  const projectId = useSelector(selectProjectId);
+  //const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
   const areaName = areaList.find(a => a.id == areaId)?.name??''
  

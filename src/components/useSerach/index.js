@@ -52,7 +52,7 @@ export default function UseSerach(props) {
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)
   
-  console.log(oneLevelDefaultId)
+ 
   const [options, setOptions] = useState([])
   const [pcsoptions, setPcsoptions] = useState([])
 

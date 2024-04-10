@@ -363,11 +363,13 @@ const Energyitem = () => {
 
    )
 }
-const Electric = ({data, des}) => {
+const Electric = ({data, des, datetype}) => {
+  let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
+  let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
+      pieData: { data: proportion, total: '100%',  radius:["50%", "70%"] },
       type: 3,
       legend: {
         bottom: 0,
@@ -376,7 +378,9 @@ const Electric = ({data, des}) => {
       },
       grid: {
         bottom: 20
-      }
+      },
+     
+      
     });
   }, [])
   return (
@@ -398,7 +402,7 @@ const Electric = ({data, des}) => {
         </div>
         <div className="item">
           <span>{my}{type}：</span>
-          <span>{data.lastMonthPeriodValue}</span>
+          <span>{timetype}</span>
           <span>环比</span>
           
         
@@ -430,13 +434,13 @@ const Electric = ({data, des}) => {
 
 }
 const CoalStandard =({data={}, op, datetype}) => {
-  console.log(datetype)
+  
   let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
   let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
+      pieData: { data: proportion, total: '100%' },
       type: 3,
       legend: {
         bottom: 0,
@@ -445,7 +449,8 @@ const CoalStandard =({data={}, op, datetype}) => {
       },
       grid: {
         bottom: 20
-      }
+      },
+      radius:["50%", "70%"]
     });
   }, [])
   return (
@@ -580,7 +585,7 @@ const CoalStandard =({data={}, op, datetype}) => {
              </Tabsbox>
              <Chartbox  data={detail} op={exparams.view} type={type} my={my}  datetype={exparams.type} tabvalue={tabvalue} />
            </div>
-           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard}  datetype={exparams.type} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes} key="Electric" /> }
+           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard}  datetype={exparams.type} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes}  datetype={exparams.type}   key="Electric" /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">

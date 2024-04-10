@@ -107,6 +107,8 @@ const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   let {exparams} = useOutletContext() 
   let {energytype, areaId, date, type:dateType,  projectId} = exparams 
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)",'用水量 (m³)','用气量 (m³)'][energytype] || "用电量 (kWh)"
+  const unit = ["kWh", "kWh","m³"][energytype] || "kWh"
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({
     series: [],  
@@ -126,7 +128,7 @@ export default function Index() {
     }
   })
  let poptions= useRef({
-      pieData: { data: [], total: '100%'},
+      pieData: { data: [], total: '100%', radius: ["55%",  "70%"]},
       type: 3,
       legend: {
         type: "scroll",
@@ -151,7 +153,7 @@ export default function Index() {
     },
     {
       dataIndex: "e",
-      title: "用电量（kWh）",
+      title: chartTitle,
     },
     {
         dataIndex: "mom",
@@ -170,6 +172,7 @@ export default function Index() {
    
    // const {area, date, type, meterType} = form.getFieldsValue() || {}
    // if(isNaN(type)) return;
+    console.log(exparams)
     if(Object.values(exparams)?.length < 5) return;
     let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
     let time = getTime(date, dateType)  
@@ -287,7 +290,7 @@ export default function Index() {
                     <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
                      <div className="data">
                         <Text  ellipsis >{sort[0]?.name}</Text>
-                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>kWh</span></div>
+                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>{ sort[0]?.e && unit}</span></div>
                      </div>
                      </>
                      }
@@ -300,7 +303,7 @@ export default function Index() {
                    <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[1]?.name}</Text>
-                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>kWh</span> </div>
+                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>{ sort[1]?.e && unit}</span> </div>
                      </div>
                      </>
                     }
@@ -312,7 +315,7 @@ export default function Index() {
                     <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[2]?.name}</Text>
-                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>kWh</span> </div>
+                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>{ sort[2]?.e && unit}</span> </div>
                      </div>
                      </>
                      }

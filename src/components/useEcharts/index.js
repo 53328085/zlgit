@@ -218,7 +218,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
     
-  
+   
     
  return {
   // 饼图的设置 
@@ -363,7 +363,7 @@ export const drawEcharts = (
       },
       axisLabel: {
        
-        interval:0, // 显示所有x轴的label, auto: 标签不重叠  
+        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠  
         ...axisLabel,
       },
       

@@ -138,8 +138,8 @@ export default function GatewayDetail(props) {
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     const deviceStyle = detail?.deviceStyle;
-     // 能耗趋势文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
-     let  todayT =  ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本
+     // 能耗趋势 文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
+     let  todayT =  ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本， 数据表格中
     
      let  todayA =  ['用电量', '用电量', '用水量', '用气量', '', '用电量', '', '用水量'][deviceStyle] || '用电量'  // 日均， 月均， 年均， 累计
 
@@ -581,7 +581,7 @@ export default function GatewayDetail(props) {
             id: 'Time'
         },
         {
-            title: '用电量(kWh)',
+            title: todayT,
             dataIndex: 'E',
             key: 'E',
             id: 'E'

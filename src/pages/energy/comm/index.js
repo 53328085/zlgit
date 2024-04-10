@@ -48,6 +48,7 @@ export default function Index(props) {
    
   let {exparams} = useOutletContext()
   let {areaId, projectId, type, date, energytype, shiftNo} = exparams
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)",'用水量 (m³)','用气量 (m³)'][energytype] || "用电量 (kWh)"
   const isElectric = energytype===1;
   const [treeIdList, setTreeIdList] = useState([]);
   //右下角 公共能耗同比  能耗数据展示
@@ -119,7 +120,7 @@ export default function Index(props) {
           dataset: {
             dimensions: [
               {name: 'x', type: 'time'},
-              {name: 'y', displayName: '用电量(kWh)'},
+              {name: 'y', displayName: chartTitle},
               
             ],
             source: [x, y],

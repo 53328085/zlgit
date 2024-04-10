@@ -117,7 +117,7 @@ export default function Index() {
      xAxis: {
       axisLabel: {
           formatter: (value, index) => {
-              return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+              return moment(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
           }
        }
      },
@@ -145,7 +145,7 @@ export default function Index() {
    xAxis: {
     axisLabel: {
         formatter: (value, index) => {
-            return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+            return moment(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
         }
      }
    },

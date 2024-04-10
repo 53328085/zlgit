@@ -1,74 +1,73 @@
-import React, { useState } from 'react'
-import style from './style.module.less'
-import BlueColumn from '@com/bluecolumn'
-import {Select,Divider,DatePicker} from 'antd'
-import { useSelector } from 'react-redux'
-import { systemConfigInfo} from '@redux/systemconfig.js'
-import logo from '@imgs/chintlog.png'
-
+import React, { useState, useCallback} from 'react'
+import moment from 'moment'
+import { operation } from '@api/api'
+//import './index.less'
+import Report from '@com/reportPrint'
+import Pagecom from './pagecomp' 
+import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {useSelector} from 'react-redux'
+const { AlarmStatistics, OrderStatistics, InspectionStatistics, InspectionErrorCounter} = operation
 export default function Index() {
-  const {chineseTitle} = useSelector(systemConfigInfo)
-  const arealist = useSelector(state => state.system.onelevel)
-  const [active,setActive]=useState(1)
+  const [reportData, setData] = useState(null)
+  const  [params, setType] = useState(null)
+  const projectId = useSelector(selectProjectId)                      
+  
+  const getData =useCallback(async (params) => { // 
+   
+    let {date, projectId} = params
+    let today = moment().format("YYYY-MM-DD")
+    let datas = {
+      inspec: {},
+      order: {},
+      alarm: {},
+      error: {},
+    }
+    try {
+     let {success: d, data} = await InspectionStatistics({projectId: projectId, areaId: 0})
+     let {success: s, data: order} =  await OrderStatistics({...params, areaId: 0})
+     let {success: a, data: alarm} =  await AlarmStatistics({...params, areaId: 0})
+     let  {success: e, data: error} = await InspectionErrorCounter({projectId, areaId: 0})
+     if(d) {
+        datas.inspec =  data?.constructor == Object ? data : {}
+     }
+     if(s) {
+      datas.order =  order?.constructor == Object ? order : {}
+     }
+     if(s) {
+      datas.alarm =  alarm?.constructor == Object ? alarm : {}
+     }
+     if(e) {
+      datas.error =  typeof error =='number' ? error : 0
+     }
+     if(!d && !s && !a && !e){
+      setData({})
+      setType(null)
+      return false
+     }else {
+      setType(params)
+      setData(datas)
+      return true
+     }
+    } catch (error) {
+        console.log(error)
+        setType(null)
+        return false
+    }
+    
+}, [projectId])
+
   return (
-    <div className={style.container}>
-        <div className={style.leftcss}>
-        <BlueColumn name={arealist[0]?.levelName}/>
-        <Select 
-        options={arealist} 
-        style={{width:'100%',marginTop:32}}
-        fieldNames={{label:'name',value:'id'}}
-        ></Select>
-        <Divider dashed style={{borderColor: '#d7d7d7'}}/>
-        <BlueColumn name="运行报告"/>
-        <div style={{
-          width:320,
-          display:'flex',
-          margin:'32px 0',
-          borderRadius:2,
-          cursor:'pointer'
-          }}>
-          <div  onClick={()=>{setActive(1)}} className={active===1?style.active:''}  style={{flex:1,textAlign:'center',border:'1px solid #d7d7d7',height:40,lineHeight:'40px'}}>月份报告</div>
-          <div  onClick={()=>{setActive(2)}}  className={active===2?style.active:''}  style={{flex:1,textAlign:'center',border:'1px solid #d7d7d7',marginLeft:-1,height:40,lineHeight:'40px'}}>年度报告</div>
-        </div>
-        <DatePicker picker={active===1?'month':'year'} style={{width:'100%'}}/>
-        <Divider dashed style={{borderColor: '#d7d7d7',margin:'48px 0'}}/>
-        <div className={style.btnscsss}>
-          生成报告
-        </div>
-        <div className={style.btnscsss}>
-          打印报告
-        </div>
-        <div className={style.btnscsss}>
-          导出报告
-        </div>
-        </div>
-        <div className={style.rightcss}>
-            <div className={style.report}>
-              <div style={{padding:16}}>
-                <img src={logo} alt="" style={{width:77,height:58,marginRight:16}}/>
-                <span style={{fontSize:20}}>{chineseTitle}</span>
-              </div>
-              <div style={{display:'flex',flexDirection:'column',justifyContent: 'center',alignItems: 'center',}}>
-                <p style={{fontSize:32,color:'#515151',fontWeight:'bold',marginBottom:32}}>运维管理分析报告</p>
-                <div style={{
-                  width:431,
-                  height:136,
-                  background:'#f2f2f2',
-                  border:'1px solid #ccc',
-                  padding:'16px',
-                  display:'flex',
-                  flexDirection:'column',
-                  fontSize:18
-                  }}>
-                  <p style={{flex:1}}>项目名称:</p>
-                  <p style={{flex:1}}>项目地址:</p>
-                  <p style={{flex:1}}>报告日期:</p>
-                </div>
-              </div>
-              <div className={style.bgimage}></div>
-            </div>
-        </div>
+    <div style={{display: "flex", flex: 1}}>
+           <Report  getReport={getData} params={params} reportName="运维管理分析报告" >
+              {
+                reportData && <Pagecom data={reportData}   params={params}  />
+              }
+           </Report>
     </div>
   )
+
 }
+
+
+
+
