@@ -63,7 +63,7 @@ const Main =styled.div`
       width: 284px;
       height: 64px;
       align-items: center;
-      background: url(fine) #237ae4 ;
+      background: url(fine) var(--ant-primary-color);
       background-position: 32px center;
       font-size: 28px;
       padding-left: 32px;

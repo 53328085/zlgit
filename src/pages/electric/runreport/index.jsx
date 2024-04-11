@@ -1,7 +1,7 @@
 import React, { useState} from 'react'
 
 import { safeElectric } from '@api/api'
-import './index.less'
+ 
 import Report from '@com/reportPrint'
 import Pagecom from './pagecomp'
 export default function Index() {

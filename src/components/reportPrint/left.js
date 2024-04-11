@@ -97,7 +97,9 @@ const downloadReport = (id) => {
 }
 
 const handlePrint = useReactToPrint({
-  content: reactToPrintContent,
+    content: reactToPrintContent,
+    removeAfterPrint: true,
+    
 })
  
 const onPrint = () => {  

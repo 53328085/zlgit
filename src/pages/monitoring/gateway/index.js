@@ -274,8 +274,7 @@ export default function Index(props) {
               state: 0
             }}
           >
-            <Space size={64} split={<Cdivider />}  >
-              {isCard ? (
+            <Space size={64} split={<Cdivider />}  >             
                 <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
                   <Serach
                     size="middle"
@@ -285,7 +284,6 @@ export default function Index(props) {
                     onSearch={submit}
                   />
                 </Form.Item>
-              ) : null}  
               <Form.Item label="网关型号" name="category" style={{marginBottom: 0}}>
                 <Select
                   style={{
@@ -303,7 +301,7 @@ export default function Index(props) {
                   })}
                 </Select>
               </Form.Item>
-              {isCard ? (
+              
                 <Form.Item label="网关状态" name="state" style={{marginBottom: 0}}>
                   <Select
                     style={{
@@ -335,7 +333,7 @@ export default function Index(props) {
                     ]}
                   />
                 </Form.Item>
-              ) : null}
+              
             </Space>
             <Space size={16} style={{ marginLeft: "auto" }}>
               <Radio.Group

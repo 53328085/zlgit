@@ -1,5 +1,5 @@
-:root {
-    --print-margin: 2cm
+/* :root {
+    --print-margin: 1cm
 }
 @media all {
     .page-break {
@@ -9,13 +9,14 @@
  
   @media print {
     @page {
-      margin-top: var(--print-margin);
-       
+      margin: 3.7cm 2.6cm 3.5cm 2.6cm;
+       size: "auto";
      }
     html, body {
       height: initial !important;
       overflow: initial !important;
       -webkit-print-color-adjust: exact;
+       
     }
     body { break-inside: avoid; break-after: auto; }
    .printContet {
@@ -40,4 +41,16 @@
     display: block;
     page-break-after: page !important;
     break-after: page !important;
+  } */
+
+  @media print {
+    html, body {
+      height: initial !important;
+      overflow: initial !important;
+      -webkit-print-color-adjust: exact;
+    }
+  }
+  @page {
+    size: auto;
+    margin: 20mm;
   }

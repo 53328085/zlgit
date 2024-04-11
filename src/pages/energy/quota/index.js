@@ -14,7 +14,7 @@ export default function Index() {
  
   const [display, setDisplay] = useState(true);
  
-  //const projectId = useSelector(selectProjectId);
+  console.log(display)
   const areaList = useSelector(selectOneLevel)
   const areaName = areaList.find(a => a.id == areaId)?.name??''
  
@@ -23,16 +23,17 @@ export default function Index() {
     setDisplay(true)
   }
  
- const CustView =( <Space> {  display ? null : <CustButton onClick={goBack}>返回</CustButton> }</Space> )
-
+ const CustView =( <> {  display ? null : <CustButton onClick={goBack}>返回</CustButton> }</> )
+ //const CustView =( <Space>  <CustButton onClick={goBack}>返回</CustButton></Space> )
  
 
  useEffect(() => {
-  setCustview(CustView);
-  return () => {
-    setCustview(undefined)
-  }
+     setCustview(CustView);
+     return () => {
+      setCustview(null);
+     }
  }, [display])
+
   return (
     <Pagecount>  
      {display ? <OtherPage sendToIndex={setDisplay} areaId={areaId} areaName={areaName}></OtherPage>:<MainPage  areaId={areaId} areaName={areaName}></MainPage>} 

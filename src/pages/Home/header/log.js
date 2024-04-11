@@ -175,7 +175,7 @@ export default function Log() {
   const account = () => {
     user.current.onOpen()
   }
-const onJump = useCallback(() => {
+const onJump = useCallback(() => {  
    let {type, key, primary} = screenadr   
  
    if(type == 0) return ;

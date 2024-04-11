@@ -151,7 +151,7 @@ export default function Index() {
             setConfig({ energytype: true, isdate: true });
             break;
           case "norm":
-            setConfig({});
+            setConfig({custview: true});
             break;
           case "public":
             setConfig({ energytype: true, isdate: true });

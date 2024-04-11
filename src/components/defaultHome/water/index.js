@@ -59,7 +59,7 @@ export default function DefaultHome(props){
           if(success){
             if(data){
               state.x = data.x
-              state.y = data.y
+              state.y = data.y?.map(v => Math.abs(parseFloat(v)))
               tdrawEcharts(wref.current, option('用水量', ["#099c9c"]))
             }
           }else{

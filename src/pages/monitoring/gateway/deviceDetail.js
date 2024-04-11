@@ -192,6 +192,7 @@ export default function GatewayDetail(props) {
     let day = new Date().getDate()
     let date = year + '-' + (month > 9 ? month : '0' + month) + '-' + (day > 9 ? day : '0' + day)
     const today = moment().startOf('day');
+    const tmonth = moment().startOf('month')
   //  console.log(today)
   // const yesterday = date + ' ' + "00:00:00"
     const yesterday =moment()
@@ -211,16 +212,17 @@ export default function GatewayDetail(props) {
  
     const onchangeTab = val => {
         setstate(val)
+        setreportTypeTime(1)
         if(dtlkeys) return
-
+        
         if (val == 3) {
-            setreportTypeTime(2)
+           if(isclude)  setreportTypeTime(2)
             getEnergyReport()
         } else if (val == 2) {
             getHistoryTrend()
             getHistoryTable()
         }
-        setreportTypeTime(1)
+       
     }//切换tab
     // const disabledDate = (current) => {
     //     return current && current > dayjs().endOf('day');
@@ -832,7 +834,7 @@ export default function GatewayDetail(props) {
                                         </Radio.Group>
                                         {reportTypeTime == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)}
                                             style={{ marginLeft: 32 }} /> : reportTypeTime == 2 ? <DatePicker onChange={onChangeDate}
-                                                style={{ marginLeft: 32 }} picker='month' /> : <DatePicker onChange={onChangeDate}
+                                                style={{ marginLeft: 32 }} defaultValue={moment(tmonth)}  picker='month' /> : <DatePicker onChange={onChangeDate}
                                                     style={{ marginLeft: 32 }} picker='year' />
                                         }
                                     </div>

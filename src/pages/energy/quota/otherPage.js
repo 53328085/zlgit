@@ -1,25 +1,31 @@
 import React, {useState, useEffect} from 'react'
 import style from './style.module.less';
-import styled from 'styled-components';
-import {Button, Progress, message, Empty } from 'antd';
+
+import {Button, Progress, message } from 'antd';
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
-import RingChart from './ringChart'
+ 
+import Ichart  from '@com/useEcharts/Ichart';
 import area from './img/area-1.png'
 import { useRequest } from 'ahooks';
 import { EnergyQuotaRuntime } from '@api/api.js'
-import kong from '@imgs/empty.png'
-const Mainbox = styled.div`
-   flex: 1;
-   display: grid;
-   grid-template-columns: 288px 1fr;
-   column-gap: 16px;
-   .left {
+ 
 
-   }
-
-`
 export default function Index(props){
+    const [options, setOptions] = useState({
+        type: 3,
+        pieData: { data: [], total: '100%', radius: ["50%",  "65%"] },
+        legend: {
+          top: 16,
+          orient: 'vertical',
+          left: 'left'
+        },
+        grid: {
+          containLabel: true,
+          left: 0,
+          right: 0,
+        }
+      })
     const { queryQuotaOverview } = EnergyQuotaRuntime
     const projectId = useSelector(selectProjectId);
     const [itemData, setItemData] = useState({
@@ -41,10 +47,19 @@ export default function Index(props){
             let {success, data} = res
             if(success){
                 if(data){
+                    let {buildingConsumeDistribution} = data
                     data.areaYearQuotaLeavedPercent = parseFloat(data.areaYearQuotaLeavedPercent)
                     setItemData(data)
+                    setOptions({...options, pieData: {
+                        ...options.pieData,
+                        data: Array.isArray(buildingConsumeDistribution)?buildingConsumeDistribution : []
+                       }})
                 }
             }else{
+                setOptions({...options, pieData: {
+                    ...options.pieData,
+                    data: []
+                   }})
                 message.error(res.errMsg || '数据出错')
             }
         })
@@ -89,9 +104,8 @@ export default function Index(props){
                         <div className={style.itemTitle}>
                             <span>园区能耗分布</span>
                         </div>
-                        <div style={{width:288,height:256}}>
-                            {itemData.buildingConsumeDistribution.length > 0 ?<RingChart chartData={itemData.buildingConsumeDistribution}></RingChart>:
-                            <img src={kong} style={{width: 240, height: 240, marginLeft: 24,marginTop:8 }}></img>}
+                        <div style={{width:288,height:256, display: 'flex'}}>
+                           <Ichart {...options} />
                         </div>
                     </div>
                     <Button type='primary' style={{width: 288, height: 40}} onClick={toMainPage}>查看房间能耗详情</Button>

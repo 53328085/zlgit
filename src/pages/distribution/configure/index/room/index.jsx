@@ -293,7 +293,7 @@ export default function Index() {
   const delref = useRef()
   const deleteOk = async () => {
     try {
-      let {success} = await deleteRoom(projectId, deleteId)
+      let {success, errMsg} = await deleteRoom(projectId, deleteId)
       if(success) {
         messageApi.open({
           type:'success',
@@ -303,7 +303,7 @@ export default function Index() {
       }else {
         messageApi.open({
           type:'error',
-          content:res.errMsg || '删除失败,请重试！',
+          content: errMsg || '删除失败,请重试！',
         })
       }
       delref.current.onCancel()

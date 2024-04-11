@@ -51,6 +51,9 @@ export default function UseSerach(props) {
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
+
+  console.dir(config)
+  console.dir(custview)
   const onColorChange = (e) => {
        let val = e.target.value;
        setColor(val)
@@ -343,12 +346,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
-       {
+     {/*   {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
             /> )   
-       }
+       } */}
     </Cform>
   
     

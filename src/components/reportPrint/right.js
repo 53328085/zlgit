@@ -2,10 +2,11 @@ import React, {forwardRef } from 'react'
 import styled from 'styled-components'
 import {Image} from 'antd'
  
- 
+
 import {useSelector} from 'react-redux'
 import { systemConfigInfo, currProject} from '@redux/systemconfig.js'
 import moment from 'moment'
+ 
  import log from './log.png'
  import bg from './bg.png'
 // 2 在线， 3 告警， 其他：失联  //   a4纸大小210mm×297mm
@@ -14,6 +15,7 @@ const Mainbox = styled.div`
         @media  print {
           background-color: #fff;
           border: none;
+          width: 100%;
         }
         @media print {
           overflow: hidden;
@@ -24,8 +26,8 @@ const Mainbox = styled.div`
     //    height: 840px;
         overflow-y: auto;
         display: grid;
-       // grid-auto-rows:  806px;
-        height: 840px;
+        grid-auto-rows:  806px;
+      //  height: 840px;
         row-gap: 32px;
         .front {
           background-color: #fff;
@@ -92,7 +94,7 @@ export default  forwardRef(function Rightlayout(props, ref) {
   let reportDate = moment().format("yyyy-MM-DD")
   const {chineseTitle} = useSelector(systemConfigInfo)
   return (
-          <Mainbox ref={ref} id="printRef" className='printContet'>                         
+          <Mainbox ref={ref} id="printRef">                         
                <div className='front'>
                    <div className='title'>
                     <Image src={log} height={57} preview={false}></Image>
