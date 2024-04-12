@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
  
 import Ichart  from '@com/useEcharts/Ichart';
-import area from './img/area-1.png'
+import area from './img/wenzhou.jpg'
 import { useRequest } from 'ahooks';
 import { EnergyQuotaRuntime } from '@api/api.js'
  

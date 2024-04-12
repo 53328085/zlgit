@@ -17,7 +17,7 @@ export default function Index() {
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
-    designerEnergy: ''
+    designerDistribution: ['room']
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -234,7 +234,7 @@ export default function Index() {
         );
     } else {
       let level = onelevel.filter((l) => l.id != 0);
-      console.log(level)
+       
       dispatch(getOnelevel([...level]));
     }
   }, [primary]);

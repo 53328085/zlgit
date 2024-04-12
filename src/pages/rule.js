@@ -6,24 +6,24 @@ const mobilePhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|
 export const pwdValidator = (_, value)  => {
    if(!value?.trim()) return Promise.reject(new Error(''))
    
-   return  padRul.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('PasswordFormat', {name: "login"})))
+   return  padRul.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('PasswordFormat', {ns: "login"})))
 }
 
 export const phoneValidator = (_, value)  => {
    if(!value?.trim()) return Promise.reject(new Error(''))
    
-    return  mobilePhone.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('PhNumFormat', {name:"login"})))
+    return  mobilePhone.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('PhNumFormat', {ns:"login"})))
  }
  export const codeValidator = (_, value) => {
     
-    if( value?.length !== 4) return Promise.reject(new Error(i18.t('VercodeFormat', {name: "login"})))
+    if( value?.length !== 4) return Promise.reject(new Error(i18.t('VercodeFormat', {ns: "login"})))
    
-    if ( Number.isNaN(Number(value))) return Promise.reject(new Error(i18.t('isNumber', {name: "login"})))
+    if ( Number.isNaN(Number(value))) return Promise.reject(new Error(i18.t('isNumber', {ns: "login"})))
     return Promise.resolve()
  }
 
  export const imgcodeValidator = (_, value) => {
    
-   if( value?.trim().length !== 4) return Promise.reject(new Error(i18.t("VercodeFormat", {name: "login"})))
+   if( value?.trim().length !== 4) return Promise.reject(new Error(i18.t("VercodeFormat", {ns: "login"})))
    return Promise.resolve()
 }

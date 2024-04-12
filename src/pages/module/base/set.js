@@ -14,6 +14,7 @@ import styled from "styled-components";
 import moment from 'moment';
 
 import {ProjectSetting} from '@api/api.js'
+
 import Mapcom from "@com/useMap/indexset";
 //import useMap from "@com/useMap/useInitMap"
 //import useMap from "@com/useMap/indexset"
@@ -23,7 +24,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
 import {publishState, getCurrProjectInfo, currProject} from '@redux/systemconfig' // 布尔值 发布状态 
  
-import {CustButton} from "@com/useButton"
+import {SaveButton} from "@com/useButton"
 
  const Formbox = styled(Form)`
   display: grid;
@@ -410,7 +411,7 @@ useEffect(() => {
 }, [projectId])
 
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}><span>基础设置</span>  <CustButton onClick={onSave}>保存</CustButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}><span>基础设置</span>  <SaveButton onClick={onSave} isicon={false}>保存</SaveButton></div>}>
     <Formbox
       form={form}   
       labelAlign="left"

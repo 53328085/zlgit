@@ -346,12 +346,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
-     {/*   {
+     {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
             /> )   
-       } */}
+       } 
     </Cform>
   
     

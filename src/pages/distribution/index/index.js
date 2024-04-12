@@ -3,10 +3,13 @@ import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
 import Comhead from '../usehead/com'
 import {useLocation} from 'react-router-dom'
+import { useDispatch, useSelector } from "react-redux";
+import {  getOnelevel,  selectOneLevel, setCurrentlevel} from "@redux/systemconfig.js";
 export default function Index() {
    const location = useLocation()
+   const dispatch = useDispatch();
    let {state={}} = location
-   
+   const onelevels = useSelector(selectOneLevel)
    let {nested = '', primary} = state;
    //let show = nested !== 'report'
 
@@ -26,12 +29,16 @@ export default function Index() {
  const sethandler = () => {
   if(primary == 'designerDistribution' && nested == 'room') {
     setShowroom(false)
+    let level = onelevels.filter((l) => l.id != 0);
+    dispatch(getOnelevel([...level]));
+    dispatch(setCurrentlevel(level[0] || []))
    }else {
     setShowroom(true)
    } 
 }
   useEffect(() => {
     sethandler()
+   
 }, [nested, primary])
  const {Content } = Layout;   
     return (  

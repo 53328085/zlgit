@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Menu, Upload, Typography } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
+import i18 from '../../i18n'
 import icon from "./icon";
 const {Link} = Typography
 const Custbtn = styled(Button).attrs((props) => ({
@@ -147,10 +148,11 @@ export function CustButton(props) { // 通用方式
 }
 
 export function SaveButton(props) {
+  const {isicon=true} = props
   return (
     <Custbtn {...props}>
-      <img src={icon.save} />
-      保存
+      {isicon && <img src={icon.save} />}
+      {i18.t('save', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -158,7 +160,7 @@ export function SerachButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.serach} />
-      查询
+      {i18.t('search', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -166,7 +168,7 @@ export function RefreshButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.refresh} />
-      刷新
+      {i18.t('refresh', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -174,7 +176,7 @@ export function NewButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.new} />
-      新增
+      {i18.t('new', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -198,7 +200,7 @@ export function ImportButton() {
   return (
     <Custbtn>
       <img src={icon.import} />
-      导入
+      {i18.t('import', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -206,7 +208,7 @@ export function ExportButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.export}  />
-      导出
+      {i18.t('export', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -257,7 +259,7 @@ export function ExportExcel({tb, ...other}) {
     <Dropdown menu={{items, onClick}} {...other}>
         <Custbtn >
       <img src={icon.export}  />
-      导出
+      {i18.t('export', {ns: "button"})}
     </Custbtn>
     </Dropdown> 
   );
