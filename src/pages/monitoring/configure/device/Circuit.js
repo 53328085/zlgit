@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import {useTranslation} from 'react-i18next'
+import { Form, Row, Col, Select, Input, Divider, message, Typography, Space } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -11,7 +12,7 @@ import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageElectric,
@@ -29,7 +30,8 @@ const {
   }
 } = Monitoring
 
-export default function gateway({ deviceStyle, name }) {
+export default function Gateway({ deviceStyle, name }) {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -134,11 +136,11 @@ export default function gateway({ deviceStyle, name }) {
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={optcss} onClick={() => { onFactor(record) }}>倍率</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space  size={32}>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onFactor(record) }}>倍率</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -349,7 +351,7 @@ export default function gateway({ deviceStyle, name }) {
       const res = await AddElectric(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+       // modalFormRef?.current?.onCancel()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)

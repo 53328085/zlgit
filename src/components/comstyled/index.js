@@ -5,7 +5,7 @@
  */
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
- 
+import {useTranslation} from "react-i18next"
 
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
@@ -412,7 +412,8 @@ export const Logbtn = styled(Button)`
 `;
  
 export const Serach =(props) => {
-  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}}>查询</Button>} {...props}  />
+  const {t} = useTranslation('button')
+  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}}>{t("button:search")}</Button>} {...props}  />
 }
 /* export const Serach = styled(Input.Search)`    
  && {

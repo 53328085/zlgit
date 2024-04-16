@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+import {snValidator} from "@pages/rule"
 import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
 import style from './style.module.less'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [], levelname: { current: '' } })
@@ -83,8 +83,8 @@ export const FormComp = (props) => {
                 span: 6
             }}
         >
-            <Row className={style.customItem}>
-                <Col flex={1}>
+            <Row gutter={16}>
+                <Col span={10}>
                     <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {
                             area.length > 0 ? <Select
@@ -136,9 +136,9 @@ export const FormComp = (props) => {
                     </Form.Item>
                 </Col>
                 <Col>
-                    <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+                    <Divider type='vertical' style={{ height: '100%',  borderColor: '#bcbcbc' }} dashed />
                 </Col>
-                <Col flex={1}>
+                <Col span={10}>
                     <Form.Item label="所属网关" name="gatewayId" rules={rules}>
                         <Select
                             showSearch
@@ -163,7 +163,9 @@ export const FormComp = (props) => {
                             options={devicelist}
                         ></Select>
                     </Form.Item>
-                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                    <Form.Item label="设备编号" name="sn" rules={[{ required: true }, {
+                            validator:  snValidator
+                        }]}>
                         <Input />
                     </Form.Item>
                     <Form.Item label="设备名称" name="name" rules={rules}>
@@ -188,12 +190,12 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} footer={[
+        <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true} onOk={other.onOk} /* footer={[
             <Button onClick={other.onCancel}>取消</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
             <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-        ]}>
-            {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+        ]} */>
+           
             <FormComp >
             </FormComp>
         </Modal>
@@ -207,12 +209,7 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
     return (
-        <Modal mold='cust' ref={EditModalFormRef} {...other} title={other.name} footer={[
-            <Button onClick={other.onCancel}>取消</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-        ]}>
-            {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+        <Modal mold='cust' ref={EditModalFormRef} {...other} title={other.name} onOk={other.onOk} >
             <EditFormComp >
             </EditFormComp>
         </Modal>

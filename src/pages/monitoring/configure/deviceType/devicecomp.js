@@ -1,20 +1,22 @@
 import React,{useState , useRef, useMemo} from 'react'
 import {useSelector} from 'react-redux'
+import {useTranslation} from 'react-i18next'
 import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn' 
+ 
 import {publishState} from '@redux/systemconfig'
-import {Button} from 'antd'
-import {  ExportExcel} from '@com/useButton'
+import {Button, Space} from 'antd'
+import {  ExportExcel, NewButton} from '@com/useButton'
 export default function DeviceContent(props,ref) {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const {
     value,
     name='新增网关类型',
     AddModal,
-    cancelText='返回',
-    okText='保存',
+    cancelText=t("button:cancel"),
+    okText=t("button:save"),
     onOk,
     onSure,
     onCancel,
@@ -43,20 +45,20 @@ export default function DeviceContent(props,ref) {
     <div >
       <div className={style.optionBtn}>
           <div>{title}</div>
-          <div className={style.btns}>
-          {publish?null:(<div className={style.btn} onClick={openAdd}>+新增</div>)}  
+          <Space size={16}>
+          {publish?null:(<NewButton onClick={openAdd} /> )}  
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             {/* <div className={style.btn} onClick={exportExecel}>导出</div> */}
             <ExportExcel tb={other.tb}/>
-          </div>
+          </Space>
         </div>
         <div style={{display:'flex',height:700}}>
           {other.children}
         </div>
         <Modal ref={ModalRef} mold='cust' title={name}  onCancel={()=>{onCancel()}} {...modalProps} transitionName={transitionName} maskTransitionName={maskTransitionName} footer={[
-      <Button onClick={()=>{onCancel()}}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+      <Button onClick={()=>{onCancel()}}>{t("button:cancel")}</Button>,
+      <Button  type="primary" onClick={onOk}>{t("button:save")}</Button>,
+      <Button type="primary"
       onClick={
         async ()=>{
           const flag = await onSure()
@@ -66,7 +68,7 @@ export default function DeviceContent(props,ref) {
           }
                 
         }
-      }>应用</Button>,
+      }>{t("button:apply")}</Button>,
   ]}>
       {/* <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn> */}
       {AddModal}

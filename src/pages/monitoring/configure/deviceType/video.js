@@ -1,20 +1,23 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider ,Image} from 'antd';
+import { Button, Form, Input, Row, Space, Select,Typography, message, Divider ,Image} from 'antd';
+import {useTranslation} from 'react-i18next'
 import { useSelector } from 'react-redux'
 import DeviceContent from './devicecomp'
 import Table from '@com/useTable'
 import { Monitoring } from '@api/api.js'
-import Camera from '@imgs/camera1.png'
+ 
 import UploadImg from './upload.jsx'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import style from './style.module.less'
-import WarningPng from '@imgs/warning.png'
+ 
 import { MultImport } from  './modalCom'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+const {Link} = Typography
 const { DeviceTypeManager: { DeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, AddDeviceCategory, UpdateDeviceCategory, DeleteDeviceCategory } } = Monitoring;
-export default function video() {
+export default function Video() {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [selectOption, setSelectOption] = useState(null)
@@ -208,10 +211,10 @@ export default function video() {
       align:'center',
       render: (text, record) => {
         return (
-          <div>
-            <span style={optionStyle} onClick={() => { editOption(record) }}>编辑</span>
-            <span style={{ ...optionStyle, marginLeft: 32, color: `rgb(244,67,54)` }} onClick={() => { DelModalRef.current.onOpen(), categoryId = record.category }}>删除</span>
-          </div>
+          <Space size={32}>
+            <Link onClick={() => { editOption(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { DelModalRef.current.onOpen(), categoryId = record.category }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -318,8 +321,8 @@ export default function video() {
   let deviceProps = {
     value: 6,
     name: '新增视频监控类型',
-    cancelText: '取消',
-    okText: '确认',
+   // cancelText: '取消',
+   // okText: '确认',
     onOk,
     width: 512,
     open,
@@ -339,21 +342,15 @@ export default function video() {
     onOk: onOkEdit
   }
   let delModal = {
-    cancelText: '取消',
-    okText: '确认',
+  //  cancelText: '取消',
+  //  okText: '确认',
     value: 2,
     onOk: onOkDel,
     DelModalRef
   }
  
   const EditModalComp=useMemo(()=>{
-    return ( <Modal mold='cust'  {...editModalProps} title="编辑视频监控类型" footer={[
-      <Button onClick={()=>{EditModalRef.current?.onCancel()}}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEdit}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      onClick={ onSureEditModal}>应用</Button>,
-  ]}>
-    {/* <BlueColumn name='编辑视频监控类型' styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    return ( <Modal mold='cust'  {...editModalProps} title="编辑视频监控类型"  onOk={onOkEdit}>
     <EditModal {...editFormProps}></EditModal>
   </Modal>)
   },[])

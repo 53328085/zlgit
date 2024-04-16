@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
+import {useTranslation} from 'react-i18next'
+import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin, Typography, Space } from 'antd'
+import { useRequest,useLatest  } from 'ahooks';
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
- 
+import {snValidator} from "@pages/rule"
 import style from './style.module.less'
 import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'
-import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin } from 'antd'
+
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import imgurl from './imgs/index.js'
 import cutContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
-import { useRequest,useLatest  } from 'ahooks';
+const {Link} = Typography
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -24,6 +27,7 @@ const { DeviceManager:
     OneLevel,
     StartReboot, State, StartDownloadTask, DownloadTaskState } } = Monitoring
 export default function Gateway() {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
   const selectoptsRef = useRef()
@@ -112,15 +116,14 @@ export default function Gateway() {
     {
       title: '操作',
       dataIndex: 'option',
-      width: 304,
+      width: 320,
       render: (text, record, index) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-         {/*    { record.download == 0 && <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>} */}
-            { record.download == 0 && <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>}
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            { record.download == 0 && <Link onClick={() => { onKeyParam(record) }}>{t("button:parametersSentDown")}</Link>}
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       },
       key: 'sn'
@@ -706,8 +709,8 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
         labelAlign='left'
 
       >
-        <Row className={style.customItem}>
-          <Col flex={1}>
+        <Row gutter={16} className={style.customItem}>
+          <Col span={10}>
             <Form.Item label={levelname.current} name="area" rules={[rules]}>
               <Select
                 showSearch
@@ -735,16 +738,23 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
             </Form.Item>
           </Col>
           <Col>
-            <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+            <Divider type='vertical' style={{ height: '100%',  borderColor: '#bcbcbc' }} dashed />
           </Col>
-          <Col flex={1}>
+          <Col span={10}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
                 showSearch
                 options={usecategory}
               ></Select>
             </Form.Item>
-            <Form.Item label="网关编号" name="sn" rules={[rules]}>
+            <Form.Item label="网关编号" name="sn" rules={[
+              {
+              required: true
+              },
+              {
+                validator: snValidator
+              }
+            ]}>
               <Input />
             </Form.Item>
             <Form.Item label="网关密码" name="pwd" rules={[rules]}>
@@ -848,12 +858,8 @@ const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
 const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalEditRef} {...other}  title="编辑网关" footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-    ]}>
-      {/* <BlueColumn name="编辑网关" styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    <Modal mold='cust' ref={modalEditRef} {...other}  title="编辑网关" onOk={other.onOk}>
+     
       <Form
         form={editform}
         labelCol={{

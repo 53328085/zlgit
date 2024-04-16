@@ -1,4 +1,5 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef, memo} from "react";
+import {useTranslation} from 'react-i18next'
 import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
@@ -72,7 +73,7 @@ const CModal = styled(Modal)`
   loading=false,
   ...props
 } = {}, ref) { 
-
+  const {t} = useTranslation("button")
   const [open, setOpen] = useState(false)
   const [disabled, setDisabled] = useState(true)
   const [bounds, setBounds] = useState({
@@ -108,18 +109,18 @@ const CModal = styled(Modal)`
   const onGetvalue = () => formref.current.getValue()
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
-      <Button onClick={onCancel}>取消</Button>,
+      <Button onClick={onCancel}>{t('cancel')}</Button>,
        <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
         setCurrbtn(1)
         onOk()
-       }}>应用</Button> ,
+       }}>{t('apply')}</Button> ,
        <Button type="primary" loading={currbtn == 2 && loading} onClick={() => {
         setCurrbtn(2)
         onOk().then(() => {
           onCancel();
         });
         
-       }}>确定</Button>
+       }}>{t('ok')}</Button>
       ]
   
   useImperativeHandle(ref, ()=> ({

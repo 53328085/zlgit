@@ -7,5 +7,8 @@
         "404": "The page was not found."
       },
       "NoSetMenu":"No setup menu, please contact admin",
-      "DataError":"Data error, please try again"
+      "DataError":"Data error, please try again",
+      "rule": {
+        "deviceSn": "Must be 12-14 digits, including at least one item in English or numbers"
+    }
 }

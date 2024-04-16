@@ -325,7 +325,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddCDCW(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+      //  modalFormRef?.current?.onCancel()
         getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)

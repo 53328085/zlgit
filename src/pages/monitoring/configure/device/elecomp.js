@@ -3,7 +3,7 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import { Form, Row, Col, Select, Input, Divider, Upload, Button,Checkbox ,Space,InputNumber, message  } from 'antd'
-import { repeat } from 'lodash'
+import {snValidator} from "@pages/rule"
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
@@ -262,7 +262,14 @@ export const FormComp = (props) => {
                         ></Select>
                     </Form.Item>
 
-                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                    <Form.Item label="设备编号" name="sn" rules={[
+              {
+              required: true
+              },
+              {
+                validator: snValidator
+              }
+            ]}>
                         <Input />
                     </Form.Item>
                     {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
@@ -401,12 +408,7 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
                 <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
                   custft={true}
                   onOk={onOk}
-                /*  footer={[
-                    <Button onClick={other.onAddCancel}>取消</Button>,
-                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={() => { other.onSure(); }}>应用</Button>,
-                ]} */>
-                    {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+               >
                     <FormComp isfiber={isfiber} openarea={openarea}> </FormComp>
                 </Modal>
             }</>

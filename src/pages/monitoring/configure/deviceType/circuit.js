@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
+import {useTranslation} from "react-i18next"
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
@@ -15,6 +16,7 @@ const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQue
 const {Link} = Typography
 
 export default function Electric() {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const {value, tabs} =useContext(cusContext) 
   
@@ -172,8 +174,8 @@ let columns =  [
         render:(text,record)=>{
           return(
             <Space>
-              <Link onClick={()=>{editOption(record)}}>编辑</Link>
-              <Link type="danger" onClick={()=>{openDel(record)}}>删除</Link>
+              <Link onClick={()=>{editOption(record)}}>{t("button:edit")}</Link>
+              <Link type="danger" onClick={()=>{openDel(record)}}>{t("button:delete")}</Link>
             </Space>
           )
         }
@@ -356,7 +358,7 @@ const onSureEditModal=async()=>{
       points:tableData
     }
     const resp = await AddDeviceCategory(params)
-    console.log(resp)
+    
     if(resp.success){
       ModalRef.current.onCancel()
       message.success("新增成功")
@@ -442,8 +444,8 @@ const onSureEditModal=async()=>{
     value: 0,
     name: `新增${Label}`,
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
-    cancelText: '取消',
-    okText: '确认',
+  //  cancelText: '取消',
+  //  okText: '确认',
     onOk,
     width: 1032,
     open,
@@ -467,20 +469,14 @@ const onSureEditModal=async()=>{
   }
   let delModalProps={
     DelModalRef,
-    cancelText: '取消',
-    okText: '确认',
+  //  cancelText: '取消',
+  //  okText: '确认',
     content:`是否确认删除${Label}?`,
     name:`删除${Label}`,
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return (<Modal title={`编辑${Label}`}   mold='cust' {...editModalProps} footer={[
-      <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      onClick={ onSureEditModal}>应用</Button>,
-  ]}>
-    {/* <BlueColumn name={`编辑${Label}`}  styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    return (<Modal title={`编辑${Label}`}   mold='cust' {...editModalProps} onOk={onOkEditModal}>   
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])

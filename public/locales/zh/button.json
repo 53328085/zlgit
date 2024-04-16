@@ -5,5 +5,22 @@
     "new": "新增",
     "import": "导入",
     "export": "导出",
-    "print": "打印"
+    "print": "打印",
+    "change":"更换",
+    "unbind":"解绑",
+    "batchImport":"批量导入",
+    "exportCurPage":"导出当前页",
+    "exportAll":"导出全部",
+    "openAccount":"开户",
+    "configure":"配置",
+    "openAll":"全部开启",
+    "closeAll":"全部关闭",
+    "delete": "删除",
+    "apply":  "应用",
+    "ok": "确定",
+    "cancel": "取消",
+    "edit": "编辑",
+    "accompanyRate":"陪率",
+    "parametersSentDown":"参数下发",
+    "z": ""
 }

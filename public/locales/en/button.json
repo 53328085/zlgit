@@ -1,10 +1,28 @@
 {
-    "save": "save",
-    "search": "serach",
-    "refresh": "refresh",
-    "new": "new",
-    "import": "import",
-    "export": "export",
-    "print": "print"
+    "save": "Save",
+    "search": "Serach",
+    "refresh": "Refresh",
+    "new": "Add",
+    "import": "Import",
+    "export": "Export",
+    "print": "Print",
+    "change":"Change",
+     "unbind":"Unbind",
+     "batchImport":"Batch Import",
+     "exportCurPage":"Export current page",
+     "exportAll":"Export all",
+     "openAccount":"Open account",
+     "configure":"Configure",
+     "openAll":"Open all",
+     "closeAll":"Close all",
+     "delete": "Delete",
+     "apply":  "Apply",
+     "ok": "Ok",
+     "cancel": "Cancel",
+     "edit": "Edit",
+     "accompanyRate":"Accompany rate",
+     "parametersSentDown":"Parameters sent down",
+"z":""
+
 
 }

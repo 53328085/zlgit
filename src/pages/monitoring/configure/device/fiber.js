@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import { Form, Space, Typography, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -11,7 +11,7 @@ import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm,AreaOption} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageFibreTempil,
@@ -153,10 +153,10 @@ export default function gateway({ deviceStyle }) {
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            <Link onClick={() => { onEdit(record) }}>编辑</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>删除</Link>
+          </Space>
         )
       }
     },

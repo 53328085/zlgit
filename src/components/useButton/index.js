@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import styled from "styled-components";
 import { Button, Dropdown, Menu, Upload, Typography } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
+ 
 import i18 from '../../i18n'
 import icon from "./icon";
 const {Link} = Typography
@@ -138,7 +139,7 @@ const Menus = (print) => {
   </Cmenu>
 )}
 export function CustButton(props) { // 通用方式
-  let {src, ...other} = props
+  let {src, ...other} = props 
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}
@@ -184,7 +185,7 @@ export function ChangeButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.change} />
-      更换
+      {i18.t('change', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -192,7 +193,7 @@ export function UnbindingButton() {
   return (
     <Custbtn>
       <img src={icon.unbinding} />
-      解绑
+      {i18.t('unbind', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -214,9 +215,9 @@ export function ExportButton(props) {
 }
 export function AllExportButton() {
   return (
-    <Custbtn>
+    <Custbtn wh="auto">
       <img src={icon.export} />
-      批量导入
+      {i18.t('batchImport', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -225,7 +226,7 @@ export function PrintButton(props) {
     <Dropdown overlay={Menus(props.print)}>
       <Custbtn>
         <img src={icon.print} />
-        打印
+        {i18.t('print', {ns: "button"})}
         <CaretDownFilled/>
       </Custbtn>
     </Dropdown> 
@@ -245,13 +246,13 @@ export function ExportExcel({tb, ...other}) {
   const items = [
     {
       key: '1',
-      label:   <Link> 导出当前页</Link>,
+      label:   <Link> {i18.t('exportCurPage', {ns: "button"})}</Link>,
       
          
     },
     {
       key: '2',
-      label: <Link> 导出全部</Link>,
+      label: <Link> {i18.t('exportAll', {ns: "button"})}</Link>,
     
     },
   ]
@@ -269,7 +270,7 @@ export function AccountButton() {
   return (
     <Custbtn>
       <img src={icon.account} />
-      开户
+      {i18.t('openAccount', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -277,7 +278,7 @@ export function ConfigButton() {
   return (
     <Custbtn>
       <img src={icon.config} />
-      配置
+      {i18.t('configure', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -285,7 +286,7 @@ export function OpenButton() {
   return (
     <Custbtn>
       <img src={icon.open} />
-        全部开启
+      {i18.t('openAll', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -293,7 +294,7 @@ export function CloseButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.close} />
-        全部关闭
+      {i18.t('closeAll', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -301,7 +302,7 @@ export function DelButton(props) {
   return (
     <Deltbtn {...props}>
       <CloseOutlined style={{fontSize: '16px'}} />
-        删除
+      {i18.t('delete', {ns: "button"})}
     </Deltbtn>
   );
 }

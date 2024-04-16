@@ -2,16 +2,18 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,use
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
+import { Button, Form,  Space, Typography,   message, Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+import {useTranslation} from 'react-i18next'
 import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 import lodash from 'lodash';
+const {Link} = Typography
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
 export default function Electric() {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
@@ -158,10 +160,10 @@ let columns =  [
         align:'center',
         render:(text,record)=>{
           return(
-            <div>
-              <span style={optionStyle} onClick={()=>{editOption(record)}}>编辑</span>
-              <span style={{...optionStyle,marginLeft:32,color:`rgb(244,67,54)`}} onClick={()=>{openDel(record)}}>删除</span>
-            </div>
+            <Space>
+              <Link onClick={()=>{editOption(record)}}>{t("button:edit")}</Link>
+              <Link onClick={()=>{openDel(record)}}>{t("button:delete")}</Link>
+            </Space>
           )
         }
     }
@@ -429,8 +431,8 @@ const onSureEditModal=async()=>{
     value: 0,
     name: '新增储能类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
-    cancelText: '取消',
-    okText: '确认',
+   // cancelText: '取消',
+   // okText: '确认',
     onOk,
     width: 1032,
     open,
@@ -454,20 +456,14 @@ const onSureEditModal=async()=>{
   }
   let delModalProps={
     DelModalRef,
-    cancelText: '取消',
-    okText: '确认',
+   // cancelText: '取消',
+  //  okText: '确认',
     content:'是否确认删除储能类型?',
     name:'删除储能类型',
     onOk:delOK
   }
   const EditModalComp=useMemo(()=>{
-    return (<Modal title='编辑储能类型' mold='cust'  {...editModalProps} footer={[
-      <Button onClick={EditModalRef?.current?.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-      onClick={ onSureEditModal}>应用</Button>,
-  ]}>
-    {/* <BlueColumn name='编辑储能类型'  styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    return (<Modal title='编辑储能类型' mold='cust'  {...editModalProps}  onOk={onOkEditModal}>
     <EditModal {...editFormProps}></EditModal>
     </Modal>)
   },[editDefaultTableData])

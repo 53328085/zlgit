@@ -311,7 +311,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddTransformer(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+       // modalFormRef?.current?.onCancel()
         // getQueryByPageTransformer()
         getQueryByPageTransformer(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
@@ -809,12 +809,8 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
-      {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} onOk={other.onOk}>
+   
       <EditFormComp >
       </EditFormComp>
     </Modal>
