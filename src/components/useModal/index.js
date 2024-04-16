@@ -26,7 +26,7 @@ const CModal = styled(Modal)`
       font-size: 16px;
       color: ${custCorle};;
       padding-left: ${props => props.nolf ? 0 : '16px'} ;
-      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme}`};
+      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme(props)}`};
       height: 32px;
       line-height: 32px;
     }

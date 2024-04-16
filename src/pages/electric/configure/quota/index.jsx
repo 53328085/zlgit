@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
-import dashed from "@imgs/dashed.png";
+import {useTranslation} from 'react-i18next'
 import { PlusOutlined } from "@ant-design/icons";
  
 import {
@@ -27,6 +27,7 @@ import Usetable from '@com/useTable'
 const {Link} = Typography
 export default function Index() {
   const ispublish = useSelector(publishState);
+  const {t} = useTranslation(["button"])
   const {
     QueryAlarmPage,
     QueryAddAlarm,
@@ -133,14 +134,14 @@ export default function Index() {
           render: (_, record) => (
             <Space size="middle">
               <Link underline  className={style.editText} onClick={() => edit(record)}>
-                编辑
+                {t("button:edit")}
               </Link>
               <Link
                 type="danger"
                 underline
                 onClick={() => deleteRecord(record)}
               >
-                删除
+               {t("button:delete")}
               </Link>
             </Space>
           ),
@@ -362,13 +363,13 @@ export default function Index() {
             className={style.editText}
             onClick={() => editAlarmInfo(record)}
           >
-            编辑
+           {t("button:edit")}
           </span>
           <span
             className={style.deleteText}
             onClick={() => deleteAlarmInfo(record)}
           >
-            删除
+            {t("button:delete")}
           </span>
         </Space>
       ),
@@ -630,22 +631,19 @@ export default function Index() {
         >
  是否确认删除告警方案？
         </CModal>
-        <Modal
-          className={style.addModal}
+        <CModal
+          title="新增告警"
           open={addModal}
           onOk={addOk}
           onCancel={handleCancel}
           width={600}
-          cancelText={"取消"}
-          centered={true}
-          closable={false}
-          maskClosable={false}
-          okText={"下一步"}
+          closable
+          okText={t("button:next")}
           okType={"primary"}
+          mold="cust"
           // okButtonProps={{ primary: true }}
         >
-          <div className={style.addHeader}>新增告警</div>
-          <div className={style.addBody}>
+          
             <Form
               form={form}
               layout="vertical"
@@ -663,22 +661,21 @@ export default function Index() {
                 <Input />
               </Item>
             </Form>
-          </div>
-        </Modal>
-        <Modal
+          
+        </CModal>
+        <CModal
+          title={modalTitle}
           className={style.addModal}
           open={addAlarmModal}
           onOk={addAlarmOk}
           onCancel={handleCancel}
           width={1000}
-          centered={true}
-          closable={true}
-          maskClosable={false}
-          okText={"完成"}
+          okText={t("button:finish")}
           okType={"primary"}
+          closable
+          mold="cust"
           footer={editType === true ? undefined : null}
         >
-          <div className={style.addHeader}>{modalTitle}</div>
           <div className={style.addBody}>
             {editType === true ? (
               <Form
@@ -727,7 +724,7 @@ export default function Index() {
               新增系统告警类型
             </Button>
           </div>
-        </Modal>
+        </CModal>
         <AlarmEventModal
           AddAlarmEventGive={addAlarmEvent}
           callBack={changeAddAlarmEvent}
