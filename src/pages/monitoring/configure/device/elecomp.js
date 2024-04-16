@@ -3,7 +3,7 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
 import { Form, Row, Col, Select, Input, Divider, Upload, Button,Checkbox ,Space,InputNumber, message  } from 'antd'
-import {snValidator} from "@pages/rule"
+import {snValidator, snValidatorE} from "@pages/rule"
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
 
 //新增com
@@ -267,7 +267,7 @@ export const FormComp = (props) => {
               required: true
               },
               {
-                validator: snValidator
+                validator: deviceStyle!=7 ? snValidator : snValidatorE
               }
             ]}>
                         <Input />

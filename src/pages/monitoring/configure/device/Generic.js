@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
+import React, { useEffect, useRef, useState, useContext,  useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import { Form, Row, Col, Select, Input, Space, message, Typography } from 'antd'
+import {useTranslation} from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageElectric,
@@ -29,6 +30,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle, name }) {
+  const {t} =useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -133,11 +135,11 @@ export default function gateway({ deviceStyle, name }) {
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={optcss} onClick={() => { onFactor(record) }}>倍率</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },

@@ -18,7 +18,7 @@ const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monit
 
 export default function Index() {
   const [value, setvalue] = useState('0')
-
+  
   const [Coms,setComs]=useState([
     <GateWay/>,
   ])

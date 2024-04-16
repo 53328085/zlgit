@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext } from 'react'
 import Modal from '@com/useModal'
-import {snValidator} from "@pages/rule"
+import {snValidator, snValidatorE} from "@pages/rule"
 import { Form, Row, Col, Select, Input, Divider, Upload, Button } from 'antd'
 import style from './style.module.less'
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [], levelname: { current: '' } })
@@ -8,8 +8,9 @@ export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelis
 //新增com
 let coms = 0
 let Com = ({ form}) => {
-    const { type = 1 } = useContext(MyContext)
+    const { type = 1, deviceStyle } = useContext(MyContext)
     console.log(type)
+   
     let options = []
     const rules = [{
         required: true,
@@ -60,6 +61,7 @@ export const FormComp = (props) => {
     const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
     const [area, setArea] = useState([])
   //  const [coms, setComs] = useState(0)
+  console.log('deviceStyle:'+deviceStyle)
     const rules = [{
         required: true
     }]
@@ -164,7 +166,7 @@ export const FormComp = (props) => {
                         ></Select>
                     </Form.Item>
                     <Form.Item label="设备编号" name="sn" rules={[{ required: true }, {
-                            validator:  snValidator
+                            validator:  [2,7].includes(deviceStyle) ? snValidatorE : snValidator
                         }]}>
                         <Input />
                     </Form.Item>

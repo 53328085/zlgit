@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import {useTranslation} from 'react-i18next'
 import { Form, Space, Typography, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
@@ -29,6 +30,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -154,8 +156,8 @@ export default function gateway({ deviceStyle }) {
       render: (text, record) => {
         return (
           <Space size={16}>
-            <Link onClick={() => { onEdit(record) }}>编辑</Link>
-            <Link type="danger" onClick={() => { onDelete(record) }}>删除</Link>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
       }

@@ -197,9 +197,9 @@ export function UnbindingButton() {
     </Custbtn>
   );
 }
-export function ImportButton() {
+export function ImportButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.import} />
       {i18.t('import', {ns: "button"})}
     </Custbtn>
@@ -213,9 +213,9 @@ export function ExportButton(props) {
     </Custbtn>
   );
 }
-export function AllExportButton() {
+export function AllExportButton(props) {
   return (
-    <Custbtn wh="auto">
+    <Custbtn wh="auto" {...props}>
       <img src={icon.export} />
       {i18.t('batchImport', {ns: "button"})}
     </Custbtn>
