@@ -34,5 +34,12 @@
   "saveSet": "保存设置",
   "addEnergyConsumeCategory": "新增能耗分类",
   "addSubitem": "新增子项",
+  "batchConfiguration": "批量配置",
+  "addMasterNode": "新增主节点",
+  "keyEquipment": "重点设备",
+  "addKeyEquipment": "新增重点设备",
+  "deleteShiftPlan": "删除班次方案",
+  "editShift": "编辑班次",
+  "saveChart": "保存图表",
   "z": ""
 }

@@ -214,8 +214,9 @@ export default function index() {
   const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
     // console.log(event)
-    // console.log(data)
+     
     if (event == 'nodeRightClick') {
+      console.log(data)
       // console.log(data.evs)
       if (data.name == "text" || data.name == "rectangle") {
         setContextMenu({
@@ -616,6 +617,9 @@ export default function index() {
     if(selectedNode.tags.length > 1){
       bindForm.setFieldValue('deviceId', selectedNode.tags[0])
       bindForm.setFieldValue('pointId', selectedNode.tags[1])
+    }else {
+      bindForm.setFieldValue('deviceId', null)
+      bindForm.setFieldValue('pointId', null)
     }
     bindRef.current.onOpen()
   }

@@ -1,11 +1,8 @@
 import React, {  useState, useRef, useMemo, useEffect} from 'react'
-
-
-import {Button,  message, Form, Input, Typography, Space, Image } from 'antd';
-import style from './style.module.less'
-import { useRequest } from 'ahooks';
+import {Button,  message, Form, Input, Typography, Space, Image } from 'antd'; 
+import {useTranslation} from 'react-i18next'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import {  DesElectric} from '@api/api.js'
 import Cupload from "@com/useUpload.js" 
 import UseTransfer  from './transfer';
@@ -15,6 +12,7 @@ import UseTable from '@com/useTable'
  
 const {Link} = Typography
 export default function Index ({projectId, areaId}) {
+  const {t} = useTranslation(["button"])
   const aref = useRef()
   const dref = useRef()
   const [form] = Form.useForm()
@@ -46,8 +44,8 @@ export default function Index ({projectId, areaId}) {
     {
       dataIndex: "op",
       title: "操作",
-     render: (_,record) => (<Space size={32}><Link underline onClick={()=>settingClick(record.id, record.name)}>配置</Link><Link underline onClick={() =>edit(record)}>编辑</Link>
-        <Link underline type="danger" onClick={()=>deleteRecord(record.id)}>删除</Link>
+     render: (_,record) => (<Space size={32}><Link underline onClick={()=>settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() =>edit(record)}>{t("button:edit")}</Link>
+        <Link underline type="danger" onClick={()=>deleteRecord(record.id)}>{t("button:delete")}</Link>
         </Space>) 
     },
   ]

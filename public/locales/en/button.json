@@ -34,5 +34,12 @@
   "saveSet": "Save settings",
   "addEnergyConsumeCategory": "Added a new energy consumption category",
   "addSubitem": "Add subitem",
+  "batchConfiguration": "Batch configuration",
+  "addMasterNode": "Add master node",
+  "keyEquipment": "Key equipment",
+  "addKeyEquipment": "Added key equipment",
+  "deleteShiftPlan": "Delete shift plan",
+  "editShift": "Edit shift",
+  "saveChart": "Save chart",
   "z": ""
 }

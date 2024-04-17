@@ -389,7 +389,7 @@ export default function Index() {
       <div className={style.mainContent}>
         <SearchTree treeData={treeData} fieldNames={fieldNames} getValues={getFromChild}></SearchTree>
         <div className={style.rightContent}>
-          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff"></UseTable>
+          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff" hbc="#515151"></UseTable>
         </div>
       </div>
       <Custmodl title='设置能耗定额' ref={setRef}  mold="cust" width={640} onOk={onOk}>

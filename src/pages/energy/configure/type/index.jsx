@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import {useTranslation} from 'react-i18next'
 import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
@@ -11,8 +10,10 @@ import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import {Ptag, Wtag} from '@com/comstyled'
 import {useOutletContext} from 'react-router-dom'  
+import {CustButton} from "@com/useButton"
 import Pagecount from "@com/pagecontent";
 export default function Index () {
+  const {t} = useTranslation(["button"])
   let {exparams} = useOutletContext()
   let {areaId, projectId} = exparams 
   const aref = useRef()
@@ -78,10 +79,10 @@ export default function Index () {
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
                 <div style={nodeAction}>
-                    <Ptag onClick={()=>addSon(item.id)} wh="60px">新增</Ptag>
-                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">编辑</Ptag>
-                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="60px">配置</Ptag>
-                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">删除</Wtag>
+                    <Ptag onClick={()=>addSon(item.id)} wh="60px">{t("button:new")}</Ptag>
+                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">{t("button:edit")}</Ptag>
+                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="auto">{t("button:configure")}</Ptag>
+                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">{t("button:delete")}</Wtag>
                 </div>
             </div>
         )
@@ -286,7 +287,7 @@ export default function Index () {
       <div className={style.mainContent}>
         <div className={style.title}>
           <span>能源结构</span>
-          <Button type='primary' style={{width: 96}} onClick={() => addMain()}>新增主节点</Button>
+          <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
         </div>
         <div className={style.lineTree}>
           <div className={style.treeTitle}>

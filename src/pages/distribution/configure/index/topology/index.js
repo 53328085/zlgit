@@ -103,7 +103,7 @@ export default function Index() {
   const edit = (record) => {
     let { id } = record
     let type = 'edit'
-    window.open(`/topology?projectId=${projectId}&areaId=${roomId}&id=${id}&type=${type}`, '_blank')
+    window.open(`/topology?projectId=${projectId}&areaId=${areaId}&id=${id}&type=${type}`, '_blank')
   }
 
   const [deleteId, setDeleteId] = useState(null)

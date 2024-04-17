@@ -328,7 +328,7 @@ export default function Index() {
     let htp = serverAddress.slice(0, idx)
     let url = htp =='http' ? serverAddress.replace('http', 'ws') : htp == 'https' ? serverAddress.replace('https', 'ws') : ''
     console.log(url)
-    if(!url) return
+    if(!url) return message.warning("播放地址URL不存在")
     if (record.accessMode == 1) {
       showModal()
       getYsRealPlayUrl(record)

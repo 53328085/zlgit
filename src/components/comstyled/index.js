@@ -488,6 +488,7 @@ export const Serach =(props) => {
    font-size: 14px;
    border: 1px solid transparent;
    border-radius: 2px;
+   padding: 0 8px;
 `
 export  const Ptag = styled(Normal)`
    background-color: #ecf5ff;
