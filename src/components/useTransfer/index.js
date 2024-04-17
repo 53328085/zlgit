@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {useTranslation} from 'react-i18next'
 import style from './style.module.less'
 import { Table, Input, message, Descriptions, Divider} from "antd";
 import UsetTable from '@com/useTable'
@@ -7,6 +8,7 @@ import { cloneDeep } from "lodash";
 import {CustButton} from '@com/useButton'
 import Mask from '../mask'
 export default function index (props) {
+    const {t} = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const task = props.mask == "open"
     const { Search } = Input
@@ -326,8 +328,8 @@ export default function index (props) {
                     </span> */}
                 </div>
                 <div className={style.finalButton}>
-                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>保存</CustButton>
-                    <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
+                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>{t("button:save")}</CustButton>
+                    <div className={style.closeButton} onClick={ ()=> handleClose()}>{t("button:cancel")}</div>
                 </div>
             </div>
             <div className={style.rightTable}>

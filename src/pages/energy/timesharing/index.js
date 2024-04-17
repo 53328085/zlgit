@@ -61,8 +61,8 @@ export default function Index() {
   const [typeTree, setTypeTree] = useState(1)
   
   const treekey =  typeTree == 1 ? "id" : "areaId"
-  const selectedId = useRef([])
- 
+  //const selectedId = useRef([])
+   const [selectedId, setSelectedId] = useState()
    const [datas, setDatas] = useState({})
  
    const columns = [
@@ -115,12 +115,13 @@ export default function Index() {
       const {success, data} = await hander(params)
       if(success && Array.isArray(data)){
          setTreeData(data)
-         
+        
       }else{
         setTreeData([])
         // message.error(errMsg)
       }
-      getDataByLine()
+      setSelectedId([])
+      //getDataByLine()
     } catch (error) {
       console.log(error)
     }
@@ -128,8 +129,12 @@ export default function Index() {
     
   } 
  // 根据区域查询
- const getDataByLine = async () => {
-     let ids = selectedId.current
+ const getDataByLine = async () => {     
+    // let ids = selectedId.current
+   //  let node = e.map(n => n.toString())
+    
+   //  setSelectedId(node)
+  //   let ids = e;
     try {
       let time = getTime(date, type)
       
@@ -138,14 +143,14 @@ export default function Index() {
         shift: 0,
         type,
         date: time,
-        ids: ids,
+        ids: selectedId,
         
        } : {
         projectId,
         shift: 0,
         type,
         date: time,
-        ids: ids,
+        ids: selectedId,
        }
       let hander = ['', queryLine, queryArea][typeTree]
       let {success, data} = await hander(params)
@@ -218,18 +223,28 @@ momYoy
 
 }, [datas])
   useEffect(()=>{
-     if(!Number.isFinite(areaId) || !Number.isFinite(type) || !date) return;
-     selectedId.current = []
+     if(!Number.isFinite(areaId) || !Number.isFinite(type)) return;
+   //  selectedId.current = []
+  
+   
      getTreeData()
      
-  },[areaId, typeTree, date, type])
+  },[areaId, typeTree,  type])
  
- 
+ useEffect(() => {
+   
+   if(date && Array.isArray(selectedId))  {
+     getDataByLine()
+   
+   }
+
+ }, [date, selectedId])
   
  
  const onSelect = (e) => {  
-  selectedId.current = e;
-  getDataByLine()
+   setSelectedId(e)
+ // selectedId.current = e;
+ // getDataByLine(e)
  }
   
    const radiosty = {
@@ -264,7 +279,7 @@ momYoy
           defaultExpandParent
         //  expandedKeys={expandedKeys}
          // autoExpandParent={autoExpandParent}
-         selectedKeys={selectedId.current}
+         selectedKeys={selectedId}
           onSelect={onSelect}
           
           fieldNames={{title:'name',key: treekey,children:'nodes'}}

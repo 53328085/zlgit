@@ -192,7 +192,7 @@ export default function Index() {
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
-  const [treeId, setTreeId] = useState([])
+  const [treeId, setTreeId] = useState()
   let {areaId, projectId, type, date, energytype} = exparams
   conscols[0].title = levelname
   cols[0].title = levelname
@@ -218,8 +218,8 @@ export default function Index() {
   const getTableData = ({ current, pageSize }) => {
   //  const row = Number(value);
      console.log(exparams)
-     if(Object.values(exparams).length <6) return;
-    
+     if(Object.values(exparams).length <6 || !Array.isArray(treeId)) return;
+      
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],

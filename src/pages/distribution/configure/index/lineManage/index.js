@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {  Button,  Form, Input,  Tree, message, Divider} from 'antd';
+import {  Button,  Form, Input,  Tree, message, Divider, Space, Typography} from 'antd';
 import { cloneDeep, update } from "lodash";
+import {useTranslation} from 'react-i18next'
+import styled from 'styled-components';
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
@@ -11,8 +13,22 @@ import CModal from '@com/useModal'
  
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-
+const {Link} = Typography
+const NodeDevice =styled.div`
+  position: absolute;
+  right: 224px;
+  width: 48px;
+  height: 20px;
+  font-size:14px;
+  color:  ${props => props.theme.primaryColor};
+  background-color:rgba(35, 122, 228, 0.2);
+  border:1px solid #b3d8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const isPublish = useSelector(publishState)
   const roomId = useSelector(selectcurlRommid)
   const areaId = useSelector(selectOneLevelDefaultId)
@@ -165,7 +181,7 @@ export default function Index() {
     position: 'relative',
     cursor:'default',
   }
-  const nodeDevice = {
+/*   const nodeDevice = {
     position: 'absolute',
     right: 224,
     width: 48,
@@ -176,7 +192,7 @@ export default function Index() {
     border:'1px solid #b3d8ff',
     lineHeight:'20px',
     textAlign:'center'
-  }
+  } */
   const nodeAction = {
     position: 'absolute',
     right: 0,
@@ -193,12 +209,12 @@ export default function Index() {
         item.name = (
             <div style={nodeTitle}>
                 <span>{item.name}</span>
-                <div style={nodeDevice}>{item.deviceCount}</div>
+                <NodeDevice>{item.deviceCount}</NodeDevice>
                 { isPublish ? null : <div style={nodeAction}>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
-                    <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, item.deviceSummary, item.deviceSub)}>配置</span>
-                    <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
+                    <Link onClick={()=>addSon(item.id)}>{t("button:new")}</Link>
+                    <Link onClick={()=>edit(item.id, valName)}>{t("button:edit")}</Link>
+                    <Link onClick={()=>settingClick(item.id, item.deviceSummary, item.deviceSub)}>{t("button:configure")}</Link>
+                    <Link type="danger" onClick={()=>deleteRecord(item.id)}>{t("button:delete")}</Link>
                 </div>}
             </div>
         )
@@ -311,9 +327,9 @@ export default function Index() {
     unknownTitle:'未选中设备'
   }  
   const Title = (
-    <div style={{display: 'flex', justifyContent: "space-between"}}>
+    <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
        <span>配电房线路图</span>
-       { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={showAdd} style={{marginRight:0}}>新增主线</Button> }
+       { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={showAdd} style={{marginRight:0}}>{t("button:newMainLine")}</Button> }
     </div>
   )
   return (

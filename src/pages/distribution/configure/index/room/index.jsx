@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Space, Form, Input, message, Spin, Divider, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons' 
- 
+import {useTranslation} from "react-i18next"
 import styled from 'styled-components';
 import UseTable from '@com/useTable'
 import { distributionRoom } from '@api/api.js'
@@ -13,6 +13,7 @@ import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
 import Pagecont from "@com/pagecontent"
 import {Cspin} from "@com/comstyled"
+import {NewButton} from "@com/useButton"
 const {Link} = Typography
 const Info = styled.span`
   font-size: 12px;
@@ -27,7 +28,7 @@ const Imgbox = styled.div`
  
 `
 export default function Index() {
- 
+  const {t} =useTranslation(["button"])
   const isPublish = useSelector(publishState)
   const areaId = useSelector(selectOneLevelDefaultId)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
@@ -126,8 +127,8 @@ export default function Index() {
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          <Link type="primary" underline onClick={() => edit(record)}>编辑</Link>
-          <Link type="danger" underline  onClick={() => deleteRecord(record)}>删除</Link>
+          <Link type="primary" underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+          <Link type="danger" underline  onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
     },
@@ -337,7 +338,7 @@ export default function Index() {
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
          <Divider style={{margin: "16px 0"}} />
-        { isPublish ? null :<Button type="primary" style={{width: 96}}    icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
+        { isPublish ? null :<NewButton onClick={()=>showAdd()} />  }
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
       <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         
@@ -380,11 +381,8 @@ export default function Index() {
           </Form>
         </div>
       </Custmodal>
-      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'} key="del">
-        
-       
+      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512}     key="del">
           是否确认删除配电房？ 
-         
       </Custmodal>
      
       </Titlelayout>

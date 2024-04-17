@@ -11,7 +11,7 @@ const custCorle =(props) => {
  return {
   normal: props.theme.primaryColor,
   warn: "#ff4d4f",
-//  dark: "#fff"
+ // dark: "#fff"
  }[props.type]
 }
 const CModal = styled(Modal)`
@@ -49,10 +49,10 @@ const CModal = styled(Modal)`
       background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
       color: #666;
     }
-    .ant-btn-primary {
+ .ant-btn-primary {
       border-color:   ${custCorle};
       background-color: ${custCorle};
-    }
+    }  
   }
   .ant-form-item:last-of-type {
     margin-bottom: 0px;
@@ -142,7 +142,7 @@ const CModal = styled(Modal)`
       maskClosable={false}
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
-      type={type}
+      type={type}      
       confirmLoading={loading}
       bodyStyle= {
          type=="warn" ? {

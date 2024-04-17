@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
  
 import { Button, Space, message, Form, Input } from 'antd';
+import {useTranslation} from 'react-i18next'
 import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
@@ -9,6 +10,7 @@ import styled from 'styled-components';
 import {useOutletContext} from 'react-router-dom'  
 import Pagecount from "@com/pagecontent";
 import {Cspin, Serach, Cdivider} from '@com/comstyled'
+import {CustButton} from "@com/useButton"
 const Mainbox = styled.div`
   
   display: flex;
@@ -17,6 +19,7 @@ const Mainbox = styled.div`
   row-gap: 16px;
 `
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const aref = useRef()
   const eref = useRef()
   const dref = useRef()
@@ -40,9 +43,9 @@ export default function Index() {
   const Actions = (props) => {
     return <div className={style.actions}>
       {props.valueJson ? <Space>
-      <Button type='primary' style={{width: 96}} onClick={()=> editPrice(props.valueJson, props.title)}>编辑</Button>
-      <Button type='primary' style={{width: 96}} danger onClick={()=> deletePrice(props.valueJson.id, props.title)}>删除</Button>
-      </Space> : <Button type='primary' style={{width: 96, marginLeft:'auto'}} onClick={()=> addPrice(props.title)}>新建</Button>}
+      <CustButton onClick={()=> editPrice(props.valueJson, props.title)}>{t("button:edit")}</CustButton>
+      <CustButton danger onClick={()=> deletePrice(props.valueJson.id, props.title)}>{t("button:delete")}</CustButton>
+      </Space> : <CustButton style={{width: 96}} onClick={()=> addPrice(props.title)}>{t("button:new")}</CustButton>}
     </div>
   }
 
@@ -318,7 +321,7 @@ export default function Index() {
           </div>
         </div>
       </Mainbox>
-      <Custmodl title='新增价格' ref={aref}  mold="cust" width={592} onOk={onOk}>
+      <Custmodl title='新增价格' ref={aref}  mold="cust" width={592}  onOk={onOk}>
         { changeTag == 'electric' ?<div className={style.formStyle} >
           <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <div style={{display:"flex", alignItems: "center", justifyContent:'space-around'}}>
