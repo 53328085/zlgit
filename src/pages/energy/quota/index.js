@@ -9,14 +9,14 @@ import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemc
 import Pagecount from '@com/pagecontent'
 import {CustButton} from '@com/useButton'
 export default function Index() {
-  let {exparams, setCustview} = useOutletContext() 
+  let {exparams, setCustview, areaName} = useOutletContext() 
   let {areaId} = exparams;
  
   const [display, setDisplay] = useState(true);
  
-  console.log(display)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = areaList.find(a => a.id == areaId)?.name??''
+ // console.log(display)
+  //const areaList = useSelector(selectOneLevel)
+  //const areaName = areaList.find(a => a.id == areaId)?.name??''
  
  
   const goBack = () => {

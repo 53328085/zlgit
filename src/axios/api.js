@@ -1757,11 +1757,13 @@ export class DistributionRoomRuntime{
   static HistoryTrends=(data)=>{
     return server.post(`/Distribution/DistributionRoomRuntime/HistoryTrend`,data)
   }
-  static LineTree=(projectId,roomId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
+  static LineTree=(projectId,roomId=[])=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineTree?projectId=${projectId}${query}`)
   }
-  static LineRuntimePoints=(projectId,roomId,lineId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints`,{params:{projectId,roomId,lineId}})
+  static LineRuntimePoints=(projectId,roomId=[],lineId)=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints?projectId=${projectId}&lineId=${lineId}${query}`)
   }
   static CameraSummary=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/CameraSummary`,{params:{projectId,roomId}})

@@ -1,9 +1,17 @@
 import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHandle, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
+import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid} from "@redux/systemconfig";
 export default  memo(function Index(props) {
+  const location = useLocation()
+  let {state={}} = location
+  let {nested = '', primary} = state;
+  let isline = primary == "runtimeDistribution" && nested == "line"
+  const roomIds = useSelector(roomId)
+  const curid = useSelector(selectcurlRommid)
+  const [RommId, setRoomId] = useState(curid)
   let {showRoom = true} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -22,6 +30,7 @@ export default  memo(function Index(props) {
   }
   const changeRomme = (v) => {      
        dispacth(getcurlRommid(v))
+       setRoomId(v)
   }
   const  getOnelevel = async () => {
         try {
@@ -57,29 +66,26 @@ export default  memo(function Index(props) {
           
   }  
   const getRoomList = async (id) => {
-    const resp = await distributionRoom.RoomList(projectId, id)
-    if (resp?.success) {
-     
-     // dispacth(getRoomList(resp?.data))
-      if (Array.isArray(resp?.data) && resp.data.length > 0) {
-        setRoomList(resp?.data)
-        dispacth(getRoomId(resp?.data))
-        let id = resp.data[0][['id']]
-        form.setFieldValue('roomId', id)
-      //  setRoomId(id)
+    const {success, data, errMsg} = await distributionRoom.RoomList(projectId, id)
+    if (success && Array.isArray(data) && data.length > 0) {        
+        dispacth(getRoomId(isline ? [...data, {name: '全部配电房', id: 0}] : data))
+        let id  =  isline ? 0 : data[0].id
+        form.setFieldValue("roomId", id)
         dispacth(getcurlRommid(id))
-       
-      } else {
-        setRoomList([])
-        dispacth(getRoomId([]))
-        form.setFieldValue('roomId', [])
-       // setRoomId(null)  
+    }else {
+      dispacth(getRoomId([]))
+      form.setFieldValue('roomId', null)
+      dispacth(getcurlRommid(null))
+      if(!success) {
+        message.warning(errMsg || "数据出错")
+      }else {
+        message.warning("没有配电房")
       }
     }
   }
   useEffect(() => {
     if(Number.isInteger(projectId))   getOnelevel()
-  }, [projectId])
+  }, [projectId, nested])
  
 
 return (
@@ -88,7 +94,7 @@ return (
               <Form
                   form={form}
                   colon={false}
-                  layout="inline"
+                  layout="inline"                 
               >
                   <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
@@ -101,9 +107,9 @@ return (
                   {showRoom && <><Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
                   </Form.Item>
-                  <Form.Item name="roomId" >
+                  <Form.Item name="roomId" initialValue={RommId}>
                       <Select
-                          options={roomlist}
+                          options={roomIds}
                           fieldNames={{ label: 'name', value: 'id' }}
                           style={{ width: 240 }}
                           placeholder="请选择配电房"

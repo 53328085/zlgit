@@ -8,7 +8,7 @@ import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectcurlRommid } from "@redux/systemconfig";
+import { selectcurlRommid, roomId } from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'
 import {ExportExcel, RefreshButton} from '@com/useButton'
 import styled from 'styled-components';
@@ -21,7 +21,12 @@ export default function Index() {
    
     
     const projectId = useSelector(state => state.system.menus.projectId)
-    const roomId = useSelector(selectcurlRommid)
+    const curid = useSelector(selectcurlRommid)
+    const roomIds = useSelector(roomId)
+   //  const roomId = [curid]
+    const  RoomId = useMemo(() => {
+       return  curid==0 ? roomIds?.filter(r => r.id!=0).map(m => m.id) : [curid]
+    }, [curid])
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()
@@ -116,8 +121,8 @@ export default function Index() {
     ]
  
    
-    const getLinePoint=async(roomId,lineId)=>{
-       const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,roomId,lineId)
+    const getLinePoint=async(RoomId,lineId)=>{
+       const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,RoomId,lineId)
        if(res.success){
         if(res.data){
             const dataes = structuredClone(res.data)
@@ -146,16 +151,16 @@ export default function Index() {
     }
     const refresh=()=>{
         
-        getLinePoint(roomId,selectRef.current.selectedKeys)
+        getLinePoint(RoomId,selectRef.current.selectedKeys)
     }
     useEffect(()=>{
-         if(roomId)  getLinePoint(roomId,0);
-    },[roomId])
+         if(RoomId)  getLinePoint(RoomId,0);
+    },[RoomId])
 
     return (
         <Pagecount bgcolor="transparent" pd="0">
             <div className={style.content}>
-                <LoopSelect   projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
+                <LoopSelect   projectId={projectId} roomId={RoomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 <Titlelayout title={<div style={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
                     <span>详细参数</span>
                     <Space size={4}>

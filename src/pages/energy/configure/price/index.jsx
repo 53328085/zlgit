@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
  
 import { Button, Space, message, Form, Input } from 'antd';
 import {useTranslation} from 'react-i18next'
+
 import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
@@ -9,7 +10,7 @@ import Custmodl from '@com/useModal'
 import styled from 'styled-components';
 import {useOutletContext} from 'react-router-dom'  
 import Pagecount from "@com/pagecontent";
-import {Cspin, Serach, Cdivider} from '@com/comstyled'
+
 import {CustButton} from "@com/useButton"
 const Mainbox = styled.div`
   
@@ -20,6 +21,9 @@ const Mainbox = styled.div`
 `
 export default function Index() {
   const {t} = useTranslation(["button"])
+  //const areaName = useSelector(levelDefaultLabel)  
+   
+  
   const aref = useRef()
   const eref = useRef()
   const dref = useRef()
@@ -27,8 +31,8 @@ export default function Index() {
   const [form] = Form.useForm()
   const [editform] = Form.useForm()
   const Item = Form.Item
-  let {exparams} = useOutletContext()
-  let {areaId, projectId, areaName=''} = exparams 
+  let {exparams, areaName} = useOutletContext()
+  let {areaId, projectId} = exparams 
   const [messageApi, contextHolder] = message.useMessage();
   const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
   const [elecPrice, setElecPrice] = useState()

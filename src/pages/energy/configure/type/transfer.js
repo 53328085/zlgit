@@ -212,8 +212,8 @@ export default function index (props) {
                     <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>                 
                 </Space>
                 <Space size={16} direction="vertical">
-                <CustButton onClick={handleSave} style={{height:"46px"}} block>{t("button:save")}</CustButton>                  
-                    <CustButton block type="default" style={{height:"46px"}} onClick={ ()=> handleClose()}>关闭</CustButton>
+                <CustButton onClick={handleSave} style={{height:"46px", width: "100%"}} >{t("button:save")}</CustButton>                  
+                    <CustButton  type="default" style={{height:"46px", width: "100%"}} onClick={ ()=> handleClose()}>{t("button:cancel")}</CustButton>
                 </Space>
             </div>
             <div className={style.rightTable}>

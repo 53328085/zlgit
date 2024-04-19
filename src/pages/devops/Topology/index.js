@@ -199,34 +199,36 @@ export default function Topology() {
       console.log(e)
     }
  }
-const  index = useRef(0) // 
+const  [index, setIndex] = useState(0) // 
 const move =(type) => {
- 
-  console.log(index.current)
   if(type == 1) {
-    let  len = total-index.current
+    let  len = total-index
     if  (len >8 ) {
-      index.current+=8
+      setIndex(i => i+8)
     } else {
       message.warning('最后一屏了')
     }
     
      
   }else if(type == 2) {
-    let i = index.current - 8
+    let i = index - 8
     if(i >= 0) {
-      index.current-=8;
+      setIndex(i => i-8)
     }else {
       message.warning("已到第一屏")
     }
-  }
-   
-   items[index.current].scrollIntoView({
+  }  
+}
+ useEffect(() => {
+  
+  if(items?.length >0) {
+  items[index].scrollIntoView({
     behavior: 'smooth',
     block: 'nearest',
     inline: 'start'
   })
 }
+ }, [index, items, iscom])
 
   useEffect(() => {
     if(data.length < 1) return;
@@ -251,20 +253,20 @@ const move =(type) => {
     
   }
   return ( 
-    <Pagecount   pd="0px" bgcolor="transparent"> { iscom ?   <TitleLayout> 
+    <Pagecount   pd="0px" bgcolor="transparent">  <TitleLayout key="box" style={{display: iscom ? 'grid' : "none"}}> 
     <Mainbox count={count}>
-       <Fixed />
+       <Fixed key="img" />
        
-       <div className="box">
-       {total > 8 &&  < CaretLeftFilled style={{...icosty}} onClick={() =>move(1)} />}
-       <div className='bottom'>
+       <div className="box" key="scroll">
+       {total > 8 &&  < CaretLeftFilled style={{...icosty}} onClick={() =>move(2)} />}
+       <div className='bottom' key="scrollcontent">
         
            {
             data.map((d, index) =>  (
               <div className={index ==0 ? "item first" : index==count ? "item last" : "item"} key={d.sn} onClick={() => jumcomm(d)}>
                  <LineSty height="42px" />
                 <Image src={d.imageBase64 ? `data:image/png;base64,${d.imageBase64}` : gateway}   height={128} preview={false} /> 
-                <span>{d.name}</span>
+                <span style={{display: "inline-flex", padding: "0 1em", justifyContent: "center"}}>{d.name}</span>
                 <div className='info'>
                     <span>设备总数</span>
                     <span className='num blue'>{d.deviceCount}</span>
@@ -276,13 +278,12 @@ const move =(type) => {
            }
          
        </div>
-       {total > 8 &&  < CaretRightFilled style={{...icosty}} onClick={() => move(2)} />}
+       {total > 8 &&  < CaretRightFilled style={{...icosty}} onClick={() => move(1)} />}
        </div>
         
     </Mainbox>
     </TitleLayout>
-    : <Commport device={ids} projectId={projectId} gateway={gateway} back={setIscom}/> 
-          }
+{ !iscom && <Commport device={ids} projectId={projectId} gateway={gateway} back={setIscom} key="com" />    }
     </Pagecount>
   )
    

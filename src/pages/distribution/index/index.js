@@ -14,8 +14,11 @@ export default function Index() {
    //let show = nested !== 'report'
 
  const [inpage, setInpage] = useState(['report', 'room'])
+ const showroute = {
+  designerDistribution: ["line"]
+ }
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
- let show = !inpage.includes(nested)
+ let show = !inpage.includes(nested) || showroute[primary]?.includes(nested)
  let style = show ? {
   flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px"
  }: {

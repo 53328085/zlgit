@@ -223,13 +223,13 @@ momYoy
 
 }, [datas])
   useEffect(()=>{
-     if(!Number.isFinite(areaId) || !Number.isFinite(type)) return;
+     if(!Number.isFinite(areaId) || !Number.isFinite(typeTree)) return;
    //  selectedId.current = []
   
    
      getTreeData()
      
-  },[areaId, typeTree,  type])
+  },[areaId, typeTree])
  
  useEffect(() => {
    
@@ -238,7 +238,7 @@ momYoy
    
    }
 
- }, [date, selectedId])
+ }, [date, selectedId, type])
   
  
  const onSelect = (e) => {  

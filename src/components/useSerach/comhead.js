@@ -76,6 +76,7 @@ export default function UseSerach(props) {
   const levelone = useSelector(selectOneLevel)  
    
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
+  props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
@@ -93,7 +94,7 @@ export default function UseSerach(props) {
       let {name: stationName, id} = data[0]
      form.setFieldValue('stationName', {label:stationName, value: id,})
      
-     props.setexparams({...form.getFieldsValue(true), areaName})
+     props.setexparams({...form.getFieldsValue(true)})
  
      if(props.config.isTank) getTank();
      if(props.config.isPcs && !props.config.isTank)  getPcs();
@@ -102,7 +103,7 @@ export default function UseSerach(props) {
       form.setFieldsValue({
         stationName: {label: null, value: null, id: null}
        })
-       props.setexparams({...form.getFieldsValue(true),areaName})
+       props.setexparams({...form.getFieldsValue(true)})
        if(!success) return message.warning(errMsg)
        if(data?.length < 1) return message.warning("站点暂无数据")
      }
@@ -220,12 +221,12 @@ const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
         setTankoptions(data)
      
         form.setFieldValue('containerId', {value: data[0].id, label: data[0].name})
-        props.setexparams({...form.getFieldsValue(true), areaName})
+        props.setexparams({...form.getFieldsValue(true)})
         if(props.config?.isPcs ) getPcs()
        
      }else {
       form.setFieldValue('containerId', {label: null, value: null})
-      props.setexparams({...form.getFieldsValue(true),areaName,})   
+      props.setexparams({...form.getFieldsValue(true)})   
       setTankoptions([])
       if(!success) return message.warning(errMsg || '数据出错')
       if(data?.length==0) return message.warning("当前站点暂无储能柜数据")
@@ -248,11 +249,11 @@ const getPcs = async () => {
       form.setFieldsValue({
         pcsId: {value: data[0].id, label: data[0].sn}
        })
-       props.setexparams({...form.getFieldsValue(true), areaName})
+       props.setexparams({...form.getFieldsValue(true)})
    }else {
     setPcsoptions([])
      form.setFieldValue('pcsId', {label: null, value: null})
-     props.setexparams({...form.getFieldsValue(true), areaName,})
+     props.setexparams({...form.getFieldsValue(true)})
     if(!success) return message.warning(errMsg || "数据出错")
     if(data?.length == 0) return message.warning('当前站点不存在PCS!')
    }
@@ -294,7 +295,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
  
   const onValuesChange = (_, allValues) => {      
     console.log(allValues)
-    props.setexparams({...allValues,  areaName})
+    props.setexparams({...allValues})
   }
 
   useEffect(() => {  
@@ -302,7 +303,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        let v = form.getFieldValue('energytype');
        if(v==3) form.setFieldValue('energytype', 1)
      }
-     props.setexparams({...form.getFieldsValue(true), areaName})
+     props.setexparams({...form.getFieldsValue(true)})
    
   }, [props.config, projectId])
 

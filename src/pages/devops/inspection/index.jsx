@@ -13,7 +13,7 @@ import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
 import { useForm } from 'antd/lib/form/Form';
 import { ExportExcel, CustButton } from '@com/useButton'
-
+import  CModal from "@com/useModal"
 import { Cdivider } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'
@@ -169,6 +169,13 @@ export default function Warncontent() {
     //         tableRef.current.downloadAll()
     //     }
     // }, [key])
+
+    const Finsh = (
+        <>
+         
+        </>
+    )
+
     return (
         <Pagecount>
             <Mainbox>
@@ -201,16 +208,16 @@ export default function Warncontent() {
                     onExport={onExport}
                 ></UserTable>
             </div>
-            <Modal
-                title={(<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 16, padding: 16 }}>
-                    <BlueColumn name="工单详情" />
-                    <div>工单编号:{orderSn.current}</div>
+            <CModal
+                title={(<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 16, color: "#515151" }}>
+                      <span>工单详情</span>
+                      <div>工单编号:{orderSn.current}</div>
                     <CustButton onClick={() => { setOrder(false) }}>关闭</CustButton>
                 </div>)}
                 open={order}
                 width={960}
                 onCancel={() => { setOrder(false) }}
-                closable={false}
+               
                 bodyStyle={{ paddingLeft: 52 }}
                 footer={
                     null
@@ -218,6 +225,7 @@ export default function Warncontent() {
                     //     <Button style={{ width: 96, height: 36, padding: 0, borderRadius: 4 }} onClick={() => { setOrder(false) }}>关闭</Button>
                     // </div>
                 }
+                mold="cust"
             >
                 <Timeline mode='left' >
                     <Timeline.Item label={orderdetail?.createTime} dot={<CompleteIcon />} className={style.timeline}>
@@ -244,9 +252,7 @@ export default function Warncontent() {
                             })
                         }
                         {!orderdetail?.processImages && (<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
-                        {/* <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
-                        <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
-                        <img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img> */}
+                        
                         <div style={{ padding: '12px 0', color: orderdetail?.state > 3 ? '#000' : '#ccc' }}>处理详情描述:</div>
                         <div>
                             <TextArea rows={4} style={{ width: 528, height: 80 }} value={orderdetail?.description} />
@@ -258,7 +264,7 @@ export default function Warncontent() {
                 </Timeline>
 
 
-            </Modal>
+            </CModal>
             </Mainbox>
         </Pagecount>
     )
