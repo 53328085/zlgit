@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux'
 import {StorageContainerDesigner, SiteManagerDesigner} from '@api/api'
  
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/useButton'
+import {CustButtonT, CustLink} from '@com/useButton'
 import UseTabel from '@com/useTable'
 import imgurl from '@imgs'
 import {levelDefaultLabel,selectProjectId, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel} from '@redux/systemconfig.js'
@@ -152,7 +152,7 @@ const columns = [
   dataIndex: '',
   key: '',
   align: 'center',
-  render: (text, record) =>  (<Space size={32}><Link underline onClick={() => edit(record)}>编辑</Link><Link  type="danger" underline onClick={() =>del(record)}>删除</Link></Space>)
+  render: (text, record) =>  (<Space size={32}><CustLink  onClick={() => edit(record)} text="edit" /><CustLink  type="danger" text="delete" onClick={() =>del(record)} /></Space>)
   
 },
 
@@ -251,7 +251,7 @@ const onClose = () => {
   
  }
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems:"center"}}><span>储能柜管理</span><CustButton onClick={added}>新增</CustButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems:"center"}}><span>储能柜管理</span><CustButtonT text="new" src="new" onClick={added} /> </div>}>
           <Mainbox>
              <UseTabel columns={columns} {...tableProps}></UseTabel>          
             </Mainbox>

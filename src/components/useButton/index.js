@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Menu, Upload, Typography } from "antd";
+import { Button, Dropdown, Menu, Upload, Typography, } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
  
 import i18 from '../../i18n'
@@ -138,7 +138,24 @@ const Menus = (print) => {
     </CmenuItem>
   </Cmenu>
 )}
-export function CustButton(props) { // 通用方式
+export function CustLink(props) { // 通用方式
+  let {text, ...other} = props 
+  return (
+    <Link underline {...other}>
+     {i18.t(text, {ns: "button"})}
+    </Link>
+  )
+}
+export function CustButtonT(props) { // 通用方式按钮 通用翻译
+  let {src,text, ...other} = props 
+  return (
+    <Custbtn {...other}>
+     {src ? <img src={icon[src]} width={props.width} /> : null}
+     {i18.t(text, {ns: "button"})}
+    </Custbtn>
+  )
+}
+export function CustButton(props) { // 通用方式按钮
   let {src, ...other} = props 
   return (
     <Custbtn {...other}>
@@ -147,13 +164,21 @@ export function CustButton(props) { // 通用方式
     </Custbtn>
   )
 }
-
 export function SaveButton(props) {
   const {isicon=true} = props
   return (
     <Custbtn {...props}>
       {isicon && <img src={icon.save} />}
       {i18.t('save', {ns: "button"})}
+    </Custbtn>
+  );
+  }
+
+export function CancelButton(props) {
+  const {isicon=true} = props
+  return (
+    <Custbtn type="default" {...props}>      
+      {i18.t('Cancel', {ns: "button"})}
     </Custbtn>
   );
 }

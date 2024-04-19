@@ -6,10 +6,11 @@ import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefau
 import Usetable from '@com/useTable'
 import UseTransfer from './transfer'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+import {CustButton, CustLink} from "@com/useButton"
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
+import {Serach} from "@com/comstyled"
 import Mask from '@com/mask'
 export default function Index(props) {
   const [form] = Form.useForm()
@@ -157,7 +158,7 @@ export default function Index(props) {
       render: (_, record) => (
         <Space size="middle">
           {/* <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span> */}
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink type="danger" onClick={() => clickDel(record)} text="delete" /> 
         </Space>
       ),
     },
@@ -400,11 +401,10 @@ export default function Index(props) {
           </Item>
           <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
-            <Search
+            <Serach
               placeholder='请输入设备名称/设备编号/安装地址'
-              enterButton="查询"
               style={{ width: 400 }}
-              onSearch={onSearch}></Search>
+              onSearch={onSearch}></Serach>
           </Item>
         </Form>
         <Space>

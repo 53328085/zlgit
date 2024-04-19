@@ -24,6 +24,7 @@ import {Serach} from '@com/comstyled'
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 import Mask from '@com/mask.jsx'
+import {CustLink, CancelButton} from "@com/useButton"
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -448,9 +449,8 @@ const getSelected = async ({areaId, type=devietype}) => {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-               <Link underline onClick={() => config(record)}>
-                  配置
-                </Link>  
+               <CustLink text="configure" onClick={() => config(record)} />
+                   
                {/*  <Link underline onClick={() => edit(record)}>
                   编辑
                 </Link>
@@ -540,8 +540,6 @@ const getSelected = async ({areaId, type=devietype}) => {
             <Form.Item name="name" label={`${name}查询`}>
               <Serach
                   placeholder={`请输入${name}名称`}
-                  allowClear
-                  enterButton="查询"
                   style={{ width: "340px" }}
                   onSearch = {getTableData}
                 />
@@ -564,8 +562,6 @@ const getSelected = async ({areaId, type=devietype}) => {
               <Form.Item name="name" label={`${name}查询`}>                 
               <Serach
                   placeholder={`请输入${name}名称`}
-                  allowClear
-                  enterButton="查询"
                   style={{ width: "340px" }}
                   onSearch = {getTableData}
                 />
@@ -633,7 +629,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         <div className="optab">
           <div>
             <Paragraph>选中{name}总表</Paragraph>
-            <Space>
+            <Space size={16}>
               <Button
                 type="primary"
                 icon={<LeftOutlined style={{ fontSize: "18px" }} />}
@@ -648,7 +644,7 @@ const getSelected = async ({areaId, type=devietype}) => {
           </div>
           <div>
             <Paragraph>选择{name}分表</Paragraph>
-            <Space>
+            <Space size={16}>
               <Button
                 type="primary"
                 icon={
@@ -678,9 +674,8 @@ const getSelected = async ({areaId, type=devietype}) => {
             >
               保存
             </Button> */}
-            <Button block onClick={drawClose}>
-              关闭
-            </Button>
+            <CancelButton   onClick={drawClose} style={{height: "46px", width: "100%"}}/>
+             
           </div>
         </div>
         <div className="unselected">

@@ -5,11 +5,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks'
-
+import {CustButtonT, CustLink} from "@com/useButton"
 export default function Index(props) {
   const [form] = Form.useForm()
   const [addForm] = Form.useForm()
@@ -160,8 +160,8 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink onClick={() => setMulti(record)} text="edit" />
+          <CustLink type="danger"  onClick={() => clickDel(record)} text="delete" /> 
         </Space>
       ),
     },

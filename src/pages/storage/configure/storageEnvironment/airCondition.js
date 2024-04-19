@@ -8,9 +8,10 @@ import UseTable from '@com/useTable'
 import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import upload from '@imgs/upload.png'
-
+import { CustButtonT, CustLink } from '@com/useButton'
+import {Serach} from "@com/comstyled"
 export default function Index(props) {
   const tableRef = useRef()
   const dref = useRef()
@@ -19,7 +20,7 @@ export default function Index(props) {
   const [addForm] = Form.useForm()
   const Item = Form.Item
   const { Dragger } = Upload
-  const { Search, TextArea } = Input
+  const { TextArea } = Input
   let { projectId, areaList } = props
 
   const MainButton = styled(Button)`
@@ -169,8 +170,8 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink text="edit" onClick={() => setMulti(record)} /> 
+          <CustLink type="danger" text="delete" onClick={() => clickDel(record)} /> 
         </Space>
       ),
     },
@@ -452,12 +453,10 @@ export default function Index(props) {
           </Item>
           <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
           <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
-            <Search
+            <Serach
               placeholder="请输入设备名称/设备编号/安装地址"
-              allowClear
               style={{ width: '400px' }}
               onSearch={onSearch}
-              enterButton="查询"
             />
           </Item>
         </Form>

@@ -9,7 +9,7 @@ import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
 import UseTable from '@com/useTable'
- 
+import {CustButton} from '@com/useButton'
 const {Link} = Typography
 export default function Index ({projectId, areaId}) {
   const {t} = useTranslation(["button"])
@@ -282,7 +282,7 @@ export default function Index ({projectId, areaId}) {
       {contextHolder}
       <Titlelayout layout="flex" title={<div style={{display: 'flex',alignItems: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
-          <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
+          <CustButton  wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
         </div>}>
            <div style={{flex: 1, paddingTop: "16px"}}> 
            <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>

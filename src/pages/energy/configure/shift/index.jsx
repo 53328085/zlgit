@@ -11,7 +11,7 @@ import {selectProjectId, getshifts, selectshifts} from '@redux/systemconfig.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
-
+import {CustButtonT} from "@com/useButton"
 export default function Index() {
   const dref = useRef()
   const dispatch = useDispatch();
@@ -354,7 +354,7 @@ export default function Index() {
         <div className={style.flex}>
           <span className={style.headerTitle}>班次管理</span>
           { shiftList.length == 0 ? <Button type='primary' style={{width: 96, height: 36}} onClick={() => onAdd()}>新增班次</Button> : 
-          <Button type='primary' danger style={{width: 112, height: 36}} onClick={() => onDelete()}>删除班次方案</Button> }
+          <CustButtonT onClick={() => onDelete()} text="deleteShiftPlan" wh="auto" />  }
         </div>
       </div>
       { shiftList.length > 0 ? <div className={style.mainContent}>
@@ -363,7 +363,7 @@ export default function Index() {
         }) }
         <img src={dashed} style={{width:'100%', marginTop: 32,marginBottom: 16}}></img>
         <div style={{display: 'flex', marginTop: 0, justifyContent:'flex-end'}}>
-          <Button type='primary' style={{width: 112, height: 36}} onClick={() => onEdit()}>编辑班次</Button>
+          <CustButtonT onClick={() => onEdit()} text="editShift" /> 
         </div>
       </div> : null }
       <Modal className={style.addModal} open={addModal} onOk={toNext} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'下一步'} okType={'primary'} >
