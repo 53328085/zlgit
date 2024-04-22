@@ -13,6 +13,7 @@ import { operationDesigin } from '@api/api'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
+import {CustButtonT, CustLink} from "@com/useButton"
 const {Link} = Typography
 
 const DropstartDiv = styled.div`
@@ -65,8 +66,8 @@ export default function Index() {
       title: '操作', dataIndex: 'options', align: "center", width: 180, render: (v, text) => {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <Link  underline onClick={() => { editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</Link>
-            <Link type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</Link>
+            <CustLink onClick={() => { editform.setFieldsValue(text); editRef.current.onOpen() }} text="edit" /> 
+            <CustLink type="danger"  onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" /> 
           </div>
         )
       }
@@ -214,8 +215,6 @@ export default function Index() {
             <Form.Item  name="alike" label="检查项" style={{marginBottom: 0, marginRight: 0}}>
               <Serach
                   placeholder="检查项关键字查询"
-                  allowClear
-                  enterButton="查询"
                   onSearch = {submit}
                 /> 
             </Form.Item>
@@ -229,9 +228,9 @@ export default function Index() {
             </Form.Item>
             </Space>
             <Form.Item>
-              {publish ? null : <CustButton onClick={addDevice}>
-                新增
-              </CustButton>}
+              {publish ? null : <CustButtonT onClick={addDevice} text="new" />
+                
+              }
             </Form.Item>
           </Form>
           <Divider style={{ margin: '0px', borderColor: '#d7d7d7' }} dashed ></Divider>

@@ -46,5 +46,10 @@
   "enable": "启用",
   "enabled": "已启用",
   "editCoordinate": "编辑坐标",
+  "bBatchprtQRcode": "批量打印二维码",
+  "printqrcode":"打印二维码",
+  "clicktoget": "点击获取",
+  "clickts":"点击选择",
+  "viewingis": "查看巡检点",
   "z": ""
 }

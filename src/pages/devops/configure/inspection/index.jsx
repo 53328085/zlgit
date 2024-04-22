@@ -11,7 +11,7 @@ import moment from 'moment'
 import style from './style.module.less'
 import { publishState } from '@redux/systemconfig'
 import { SetLine } from './inspectcomp.jsx'
-import { ExportExcel, CustButton } from '@com/useButton'
+import { ExportExcel, CustButton, CustLink } from '@com/useButton'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
@@ -63,11 +63,11 @@ export default function Index() {
       title: '操作', dataIndex: '',export:false, render(text) {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <Link underline onClick={async () => {
+            <CustLink underline onClick={async () => {
               setPlanAddress(text.usedAddress)
               PlanAddresRef.current.onOpen();
-            }}>查看巡检点</Link>
-            <Link type="danger" underline onClick={() => openDel(text)}>删除</Link>
+            }} text="viewingis" /> 
+            <CustLink type="danger" underline onClick={() => openDel(text)} text="delete" /> 
           </div>
         )
       }
