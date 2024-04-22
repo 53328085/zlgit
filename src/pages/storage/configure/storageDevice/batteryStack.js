@@ -5,11 +5,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner, PCSMonitorRuntime, StorageContainerDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
-
+import {CustButtonT, CustLink} from "@com/useButton"
+import {Serach} from "@com/comstyled"
 export default function Index(props) {
   const [form] = Form.useForm()
   const [addForm] = Form.useForm()
@@ -169,14 +170,15 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink text="edit" onClick={() => setMulti(record)} /> 
+          <CustLink type="danger" onClick={() => clickDel(record)} /> 
         </Space>
       ),
     },
   ]
 
   const tableRef = useRef()
+  const addedit=useRef()
   const [tableData, setTableData] = useState([])
   const [pagination, setPagination] = useState({
     current: 1,
@@ -252,17 +254,20 @@ export default function Index(props) {
         let {success, data} = res.data
         if(success){
           message.success('批量导入成功!')
-          setAddModal(false)
+          addedit.current.onCancel()
+         // setAddModal(false)
           getFromHeader()
         }else{
           message.error(res.data.errMsg)
           setErrorData(data);
-          setAddModal(false)
+          addedit.current.onCancel()
+          //setAddModal(false)
           errRef.current.onOpen()
         }
       }else{
-        message.error(res.errMsg)
-        setAddModal(false)
+        message.error(res.errMsg || "数据出错")
+        addedit.current.onCancel()
+        //setAddModal(false)
       }
     })
   }
@@ -306,7 +311,8 @@ export default function Index(props) {
     setAddSiteList([])
     state.addContainerList = []
     state.addPcsList = []
-    setEditModal(true)
+    addedit.current.onOpen()
+   // setEditModal(true)
   }
   const [addSiteList, setAddSiteList] = useState([])
   const changeAddArea = val => {
@@ -393,7 +399,8 @@ export default function Index(props) {
         let {success, data} = res
         if(success){
           message.success('新增电池堆成功!')
-          setEditModal(false)
+         // addedit.current.onCancel()
+         // setEditModal(false)
           if(pagination.current != 1){
             tableOnchange({current: 1})
           }else{
@@ -411,7 +418,8 @@ export default function Index(props) {
         let {success, data} = res
         if(success){
           message.success('修改电池堆成功!')
-          setEditModal(false)
+          addedit.current.onCancel()
+         // setEditModal(false)
           getFromHeader()
         }else{
           message.error(res.errMsg)
@@ -460,7 +468,8 @@ export default function Index(props) {
       }
     })
     setModalTitle('编辑电池堆')
-    setEditModal(true)
+   //setEditModal(true)
+   addedit.current.onOpen()
   }
 
   return (
@@ -494,17 +503,16 @@ export default function Index(props) {
           </Item>
           <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
-            <Search
-              enterButton="查询"
+            <Serach
               placeholder='请输入设备名称/设备编号/安装地址'
               style={{ width: 400 }}
-              onSearch={onSearch}></Search>
+              onSearch={onSearch}></Serach>
           </Item>
         </Form>
         <Space>
-          <Button type='primary' style={{ width: 96 }}  onClick={() => addData()}>新增</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => { setAddModal(true) }}>批量导入</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => exportData()}>导出</Button>
+        <CustButtonT text="new" src="new" onClick={() => addData()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
         </Space>
       </div>
       <Divider />
@@ -512,8 +520,8 @@ export default function Index(props) {
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
          是否确认删除该电池堆？ 
       </Custmodl>
-      <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
-        <div className={style.addHeader}>批量导入</div>
+      <Custmodl className={style.addModal} title="批量导入" open={addModal} onOk={onUpload}  width={600} >
+       
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -525,14 +533,13 @@ export default function Index(props) {
             <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryStacks.xlsx' download>下载模板</a>
           </div>
         </div>
-      </Modal>
+      </Custmodl>
       <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Modal className={style.addModal} open={editModal}  width={782} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
-        <div className={style.addHeader}>{modalTitle}</div>
+      <Custmodl mold="cust" ref={addedit}  title={modalTitle} custft={modalTitle == '新增电池堆'} className={style.addModal} onOk={onAdd} width={782} >      
         <div className={style.addBody}>
           <Form form={addForm} colon={false} labelCol={{span:7}} labelAlign='left' requiredMark={false }>
             <div style={{display:'flex'}}>
@@ -649,13 +656,13 @@ export default function Index(props) {
               </div>
             </div>
           </Form>
-          <div style={{display:'flex', justifyContent:'flex-end',marginTop:32}}>
+         {/*  <div style={{display:'flex', justifyContent:'flex-end',marginTop:32}}>
             <Button style={{width: 96, marginLeft:'auto', marginRight: 0}} onClick={()=>closeModal()}>取消</Button>
             <Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onAdd()}>确认</Button>
             { modalTitle == '新增电池堆' ?<Button style={{width: 96, marginLeft: 16}} type='primary' onClick={()=>onApplication()}>应用</Button> : null }
-          </div>
+          </div> */}
         </div>
-      </Modal>
+      </Custmodl>
     </div>
   )
 }

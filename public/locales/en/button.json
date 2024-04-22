@@ -41,5 +41,10 @@
   "deleteShiftPlan": "Delete shift plan",
   "editShift": "Edit shift",
   "saveImage": "Save Image",
+  "policySetting": "Policy setting",
+  "policyPreview": "Policy preview",
+  "enable": "Enable",
+  "enabled": "Enabled",
+  "editCoordinate": "Edit coordinate",
   "z": ""
 }

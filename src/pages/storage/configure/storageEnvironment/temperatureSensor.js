@@ -8,9 +8,10 @@ import UseTable from '@com/useTable'
 import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner  } from '@api/api.js'
 import { useReactive } from 'ahooks'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import upload from '@imgs/upload.png'
-
+import {CustButtonT, CustLink} from "@com/useButton"
+import {Serach} from "@com/comstyled"
 export default function Index(props) {
   const tableRef = useRef()
   const dref = useRef()
@@ -49,7 +50,7 @@ export default function Index(props) {
     AddcategoryList:[], //传感器型号，
     selectId: 0, // 编辑 || 删除的id
   })
-
+ const addedit=useRef()
   useEffect(() => {
     if (props.areaList.length == 0 || !props.areaList) {
       message.error('当前项目尚未创建园区!')
@@ -169,8 +170,8 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+           <CustLink onClick={() => setMulti(record)} text="edit" />
+          <CustLink type="danger"  onClick={() => clickDel(record)} text="delete" /> 
         </Space>
       ),
     },
@@ -201,7 +202,8 @@ export default function Index(props) {
   const addData = () => {
     state.modalTitle = '新增传感器'
     addForm.resetFields()
-    state.editModal = true
+    addedit.current.onOpen()
+    //state.editModal = true
   }
   const changeAddArea = val => {
     addForm.setFieldValue('siteId', null)
@@ -260,7 +262,7 @@ export default function Index(props) {
         let {success, data} = res
         if(success){
           message.success('新增传感器成功!')
-          state.editModal = false
+        //  state.editModal = false
           if(pagination.current != 1){
             tableOnchange({current: 1})
           }else{
@@ -278,7 +280,8 @@ export default function Index(props) {
         let {success, data} = res
         if(success){
           message.success('修改传感器成功!')
-          state.editModal = false
+         // state.editModal = false
+         addedit.current.onCancel()
           getFromHeader()
         }else{
           message.error(res.errMsg)
@@ -319,7 +322,8 @@ export default function Index(props) {
     })
 
     state.modalTitle = '编辑传感器'
-    state.editModal = true
+   // state.editModal = true
+   addedit.current.onOpen()
   }
 
   //删除
@@ -365,6 +369,7 @@ export default function Index(props) {
     fileList,
   };
   const onUpload = () => {
+    if(!fileList[0]) return message.warning("请选择上传文件")
     let formData = new FormData()
     formData.append('projectId', projectId)
     formData.append('file',fileList[0])
@@ -449,28 +454,30 @@ export default function Index(props) {
           </Item>
           <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
           <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
-            <Search
+            <Serach
               placeholder="请输入设备名称/设备编号/安装地址"
               allowClear
               style={{ width: '400px' }}
               onSearch={onSearch}
-              enterButton="查询"
             />
           </Item>
         </Form>
-        <div>
-          <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
+        <Space size={16}>
+        <CustButtonT text="new" src="new" onClick={() => addData()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
+         {/*  <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
           <MainButton type='primary' onClick={() => { setAddModal(true) }}>批量导入</MainButton>
-          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton>
-        </div>
+          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton> */}
+        </Space>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
       <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜传感器.xlsx'></UseTable>
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除传感器？ 
       </Custmodl>
-      <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
-        <div className={style.addHeader}>批量导入</div>
+      <Custmodl title="批量导入" mold="cust" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600}>
+        
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -482,14 +489,13 @@ export default function Index(props) {
             <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/storageDevice.xlsx' download>下载模板</a>
           </div>
         </div>
-      </Modal>
+      </Custmodl>
       <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Modal className={style.addModal} open={state.editModal} width={544} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
-        <div className={style.addHeader}>{state.modalTitle}</div>
+      <Custmodl mold="cust" ref={addedit} title={state.modalTitle} className={style.addModal} onOk={onAdd}  width={544} custft={state.modalTitle == '新增传感器'} >       
         <div className={style.addBody}>
           <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
@@ -561,13 +567,13 @@ export default function Index(props) {
               <TextArea style={{ width: '320px' }} rows={4}></TextArea>
             </Item>
           </Form>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+         {/*  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
             <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
             <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
             {state.modalTitle == '新增传感器' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
-          </div>
+          </div> */}
         </div>
-      </Modal>
+      </Custmodl>
     </div>
   )
 }

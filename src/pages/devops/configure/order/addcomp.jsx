@@ -1,14 +1,14 @@
 
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button, Space} from 'antd'
 import { publishState } from '@redux/systemconfig'
 import BlueColumn from '@com/bluecolumn'
 import commonstyle from './commonstyle.module.less'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
 import {SetPosition} from './position'
-
+import {CustButton, CustButtonT} from "@com/useButton"
 //配置线路
 export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) => {
     const [open,setOpen] = useState(false)
@@ -346,21 +346,21 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
                 </div>
 
             </div>
-            <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
+            <div style={{ position: 'relative', flex: 1, padding: '64px 32px', display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
                 {publish ? null : <>
-                    <div style={{ marginTop: 150 }}>
+                    <div>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                            <CustButton style={{width: 68, height: 46}} icon={<LeftOutlined style={{ color: '#fff', fontSize: 20 }} />} onClick={subToLeft} /> 
+                            <CustButton style={{width: 68, height: 46}} icon={<RightOutlined style={{ color: '#fff', fontSize: 20 }} />} onClick={subToRight} /> 
                         </div>
                     </div>
                 </>}
 
-                <div>
-                    {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>}
-                    <div style={{ ...btnstyle, color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>关闭</div>
-                </div>
+                <Space direction="vertical" size={16}>
+                    {publish ? null : <CustButtonT style={{height: "40px", width: "146px"}} onClick={saveConfig} text="save" />}
+                    <CustButtonT onClick={close} style={{height: "40px", width: "146px"}} text="cancel"  /> 
+                </Space>
             </div>
             <div style={{ position: 'relative', width: 714 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>

@@ -9,7 +9,8 @@ import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks'
-
+import {CustButtonT, CustLink} from "@com/useButton"
+import {Serach} from "@com/comstyled"
 export default function Index(props) {
   const [form] = Form.useForm()
   const [addForm] = Form.useForm()
@@ -164,8 +165,8 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink onClick={() => setMulti(record)} text="edit" /> 
+          <CustLink onClick={() => clickDel(record)} text="delete" /> 
         </Space>
       ),
     },
@@ -239,6 +240,7 @@ export default function Index(props) {
     fileList,
   };
   const onUpload = () => {
+    if(!fileList[0]) return message.warning("请选择上传文件")
     let formData = new FormData()
     formData.append('projectId', projectId)
     formData.append('file', fileList[0])
@@ -302,7 +304,8 @@ export default function Index(props) {
     state.addContainerList = []
     state.addStackList = []
     state.addClusterList = []
-    setEditModal(true)
+    addedit.current.onOpen();
+   // setEditModal(true)
   }
   const [addSiteList, setAddSiteList] = useState([])
   const changeAddArea = val => {
@@ -373,7 +376,7 @@ export default function Index(props) {
       }
     })
   }
-
+  const addedit = useRef();
   const closeModal = () => {
     setEditModal(false)
   }
@@ -400,7 +403,7 @@ export default function Index(props) {
         let { success, data } = res
         if (success) {
           message.success('新增电池组成功!')
-          setEditModal(false)
+        //  setEditModal(false)
           if (pagination.current != 1) {
             tableOnchange({ current: 1 })
           } else {
@@ -418,7 +421,8 @@ export default function Index(props) {
         let { success, data } = res
         if (success) {
           message.success('修改电池组成功!')
-          setEditModal(false)
+          addedit.current.onCancel()
+         // setEditModal(false)
           getFromHeader()
         } else {
           message.error(res.errMsg)
@@ -477,7 +481,8 @@ export default function Index(props) {
       }
     })
     setModalTitle('编辑电池组')
-    setEditModal(true)
+    addedit.current.onOpen()
+    // setEditModal(true)
   }
 
   return (
@@ -511,17 +516,17 @@ export default function Index(props) {
           </Item>
           <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
-            <Search
-              enterButton="查询"
+            <Serach              
               placeholder='请输入设备名称/设备编号/安装地址'
               style={{ width: 400 }}
-              onSearch={onSearch}></Search>
+              onSearch={onSearch}></Serach>
           </Item>
         </Form>
         <Space>
-          <Button type='primary' style={{ width: 96 }} onClick={() => addData()}>新增</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => { setAddModal(true) }}>批量导入</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => exportData()}>导出</Button>
+
+        <CustButtonT text="new" src="new" onClick={() => addData()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
         </Space>
       </div>
       <Divider />
@@ -529,8 +534,8 @@ export default function Index(props) {
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除该电池组？ 
       </Custmodl>
-      <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
-        <div className={style.addHeader}>批量导入</div>
+      <Custmodl title="批量导入" mold="cust" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600}  >
+         
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -542,14 +547,13 @@ export default function Index(props) {
             <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/StorageBatteryPacks.xlsx' download>下载模板</a>
           </div>
         </div>
-      </Modal>
+      </Custmodl>
       <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Modal className={style.addModal} open={editModal} width={782} cancelText={'取消'} footer={null} closable={false} maskClosable={false}>
-        <div className={style.addHeader}>{modalTitle}</div>
+      <Custmodl title={modalTitle} ref={addedit}   className={style.addModal}  width={782}  mold="cust" custft={modalTitle == '新增电池组'} onOk={onAdd} >        
         <div className={style.addBody}>
           <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
             <div style={{ display: 'flex' }}>
@@ -666,13 +670,13 @@ export default function Index(props) {
               </div>
             </div>
           </Form>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+        {/*   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
             <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
             <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
             {modalTitle == '新增电池组' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
-          </div>
+          </div> */}
         </div>
-      </Modal>
+      </Custmodl>
     </div>
   )
 }

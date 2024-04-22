@@ -9,7 +9,7 @@ import { timeToValue, controlList, timeList, idToTime, timeToId } from './change
 import imgurl from './imgs'
 import firstwarn from './imgs/warning.svg'
 import { cloneDeep, range } from 'lodash'
-
+import {CustButtonT} from "@com/useButton"
 export default function Index() {
   let time = new Date()
   let curentTieStamp =time.getTime()
@@ -320,7 +320,7 @@ export default function Index() {
                     {(fields, {add, remove}) => (
                       <div style={{maxHeight:'320px', overflowY:'auto'}}>
                        {fields.map(({key, name, ...restField}, index)=>(
-                        <Space key={key} style={{display: 'flex', fontSize: 16,}} size={24} align='baseline'>
+                        <Space key={key} style={{display: 'flex', fontSize: 16,}} size={22} align='baseline'>
                           <Item   {...restField} name={[name, 'startTime']} rules={[{required:true, message:'请选择开始时间'}]}>
                             <Select style={{width: 196}}>
                               { timeList.map(item => {
@@ -351,11 +351,11 @@ export default function Index() {
                             {/*['strategyTime', name, 'controlType' ]  */}
                             <Input style={{width: 200}} disabled={(strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 3 || strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 4) ? true : false}></Input>
                           </Item>
-                          <Button danger onClick={()=> remove(name)}>删除</Button>
-                          {index == fields.length - 1 ? <Button onClick={()=> add() } type="primary" ghost>新增</Button> : null}  
+                          <CustButtonT danger onClick={()=> remove(name)} text="delete" /> 
+                          {index == fields.length - 1 ? <CustButtonT onClick={()=> add() } text="new" ghost />: null}  
                         </Space>
                        ))}
-                       { fields.length == 0 ? <Button onClick={()=> add() } type="primary" ghost>新增</Button> : null}  
+                       { fields.length == 0 ? <CustButtonT onClick={()=> add() } text="new" ghost /> : null}  
                       </div>
                     )}
                     
@@ -383,8 +383,8 @@ export default function Index() {
               </div>
             </div>
             <div className={style.bottom}>
-              <Button type='primary' danger style={{width: 96}} onClick={()=>onDelete()}>删除</Button>
-              <Button type='primary' style={{width: 96}} onClick={()=>onSave()}>保存</Button>
+              <CustButtonT   danger   onClick={()=>onDelete()} text="delete" /> 
+              <CustButtonT  onClick={()=>onSave()} text="save" /> 
             </div>
             <div></div>
           </div>
@@ -413,7 +413,7 @@ export default function Index() {
           <span style={{fontSize: 16, color: '#333'}}>策略保存成功!</span>
         </div>
         <div style={{marginTop: 32, display:'flex',justifyContent:'flex-end', alignItems:'center'}}>
-          <Button type='primary' style={{width: 96}} onClick={()=>onClose()}>关闭</Button>
+          <CustButtonT   onClick={()=>onClose()} text="cancel" /> 
         </div>
       </CustModal>
       <CustModal title='删除策略' ref={deleteRef}  mold="cust" type={'warn'} width={592}   maskClosable={false} onOk={()=>onConfirmDel()}>

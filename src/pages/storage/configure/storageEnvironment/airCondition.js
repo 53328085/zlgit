@@ -176,6 +176,7 @@ export default function Index(props) {
       ),
     },
   ]
+  const addedit = useRef()
   const [tableData, setTableData] = useState([])
   const [pagination, setPagination] = useState({
     current: 1,
@@ -460,11 +461,14 @@ export default function Index(props) {
             />
           </Item>
         </Form>
-        <div>
-          <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
+        <Space size={16}>
+        <CustButtonT text="new" src="new" onClick={() => addData()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
+         {/*  <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
           <MainButton type='primary' onClick={() => { setAddModal(true) }}>批量导入</MainButton>
-          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton>
-        </div>
+          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton> */}
+        </Space>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
       <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜空调.xlsx'></UseTable>
@@ -487,7 +491,7 @@ export default function Index(props) {
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Custmodl  title={state.modalTitle} custft={state.editModal}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
+      <Custmodl  title={state.modalTitle} custft={state.modalTitle == '新增空调'}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
           <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false} preserve={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
               <Select

@@ -413,7 +413,7 @@ export const Logbtn = styled(Button)`
  
 export const Serach =(props) => {
   const {t} = useTranslation('button')
-  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}}>{t("button:search")}</Button>} {...props}  />
+  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}} type="primary">{t("button:search")}</Button>} {...props}  />
 }
 /* export const Serach = styled(Input.Search)`    
  && {
