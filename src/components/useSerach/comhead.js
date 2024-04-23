@@ -52,8 +52,7 @@ export default function UseSerach(props) {
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
 
-  console.dir(config)
-  console.dir(custview)
+ 
   const onColorChange = (e) => {
        let val = e.target.value;
        setColor(val)

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -19,6 +19,7 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
 import {CustButton} from '@com/useButton'
+import {handlermenu} from "@com/usehandler"
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -147,6 +148,11 @@ export default function Log() {
   const projectId = useSelector(selectProjectId)
   const  screenadr = useSelector(currentscreen)
   const  isgranary = useSelector(isGranary)
+  const setmenus = useSelector(setMenus)
+  const allmenus = useSelector(menus)
+  let dataScreen =setmenus.find(i => i.key=='dataScreen')?.label //数据大屏
+  let projectSet = setmenus.find(i => i.key=='projectSet')?.label //项目设置
+  let systemSet = setmenus.find(i => i.key=='systemSet')?.label // 平台设置
   const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
@@ -198,20 +204,26 @@ const zhcn = localStorage.getItem('i18nextLng')=='zh-CN' ? 'zh' : localStorage.g
 const [lngval, setLngval] = useState(zhcn)
  
 const langChange = (e) => {
-    console.log(e)
+     
     setLngval(e.target.value)
 }
 const lngOk = () => {
-    
+    try {
     const lang = langpack[lngval]
     let key = lngval==='zh' ? 'zh-cn' : lngval
     moment(key);
     dispatch(setIntl({lang, locale: key}))
     i18n.changeLanguage(lngval)
+    console.log(allmenus)
+    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+     dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
-    
+  } catch (error) {
+      console.log(error)
+  }
    // navgite('/')
 }
+
   const items = [
     {label: '账户管理', key:"mg"},
     {label: '语言切换', key:"lng"},
@@ -286,8 +298,7 @@ const lngOk = () => {
   const pref = useRef()
   const monOk = async() => { 
      try {
-      let {mobile} = await mform.validateFields()
-      console.log(mobile)
+      let {mobile} = await mform.validateFields()     
       let  param= {
          projectId,
          userId ,
@@ -349,19 +360,19 @@ const lngOk = () => {
           :
         <>
       { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
-          <span> 数据大屏</span>
+          <span> {dataScreen}</span>
         </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
-          <span> 数据大屏</span>
+          <span> {dataScreen}</span>
         </Idiv1>
         }
  
  
  
         { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
-          <span>项目设置</span>
+          <span>{projectSet}</span>
         </Idiv4>):null}
         { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
-          <span>平台配置</span>
+          <span>{systemSet}</span>
         </Idiv2>):null}
         </>
         }

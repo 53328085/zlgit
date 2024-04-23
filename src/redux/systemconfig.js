@@ -14,7 +14,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
   const handlermenu = (Meundata,  id) => {
    
- let lang =  window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
+ let lang = window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
  let data = Meundata.filter(d => d.languageName==lang);     
     if(data?.length ==0) return message.warning("没有设置相应的菜单栏，请联系管理员")
     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
@@ -45,6 +45,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
      }   
     }) 
     const menus =  {
+     fullmenu: Meundata,
      designerMenus, 
      siderDesignerMenus,
      runMenus,
@@ -79,8 +80,9 @@ const initialState = {
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     roomId: [],    
     
-    curlRommid: '',
+    curlRommid: '',  
     menus: {
+        fullmenu: [], //全部菜单
         projectId: 0, // 项目ID
         runMenus: [], // 运行 top菜单栏 左边 选择的
         designerMenus: [], // 设计 top菜单栏
@@ -184,6 +186,7 @@ const system = createSlice({
             state.jump = payload     
            
         },
+      
         getMenus(state, {payload}) { 
             state.menus = payload
             
