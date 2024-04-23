@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
@@ -6,7 +6,7 @@ import Titlelayout from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { message } from 'antd';
 import { energyRanking } from '@api/api.js'
-
+import Ichart from "@com/useEcharts/Ichart"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -44,7 +44,44 @@ const Divorder = styled.div`
 export default function DefaultHome(props){
     const {type} = props
     const projectId = useSelector(selectProjectId)
-
+    const [option, setOption] = useState({
+        series: [{
+            type: "bar",
+             label: {
+                show: true,
+                align: "left",
+             },
+             itemStyle: {
+                borderRadius: 15
+             }
+            }],
+        grid: {
+            right: "16px",
+            top: "16px",
+            bottom: "0px",
+             show: false
+         },
+        legend: {
+            show: false
+        },
+        xAxis: {
+            type: 'value',
+            show: false,
+        },
+        yAxis: {
+            type: 'category',
+            axisLine: {
+                show: false,
+            },
+            axisTick: {
+                show: false,
+            }
+        },
+        dataset: {
+            dimensions: [],
+            source: []
+        }
+    })
     const state = useReactive({
         rankList:[
             {
@@ -88,10 +125,23 @@ export default function DefaultHome(props){
             date: year + '-' + month,
             energytype: 1,
             shiftId: 0,
-            type: 1
+            type: 2, // 1 改成 2。 1 日， 2月  来自毕工
           }).then(res => {
             if(res.success && res.data){
+                let {building} = res.data
                 state.rankList = res.data.building
+                if(Array.isArray(building) && building.length > 0) {
+                    let build = building.slice(0,3).reverse()
+                    setOption({
+                        ...option,
+                        dataset: {
+                            dimensions: ["name", {name: "value", displayName: "月能耗"}],
+                            source:build
+                        }
+                    })
+                }
+
+
             }else{
               message.error(res.errMsg)
             }
@@ -107,7 +157,9 @@ export default function DefaultHome(props){
   return (
          <Titlelayout title={'本月能耗排名'} {...fs} style={{height: "200px"}}>
             <Divorder>
-                { state.rankList.length > 0 ? <div className='rank_item'>
+
+                <Ichart {...option}/>
+              {/*   { state.rankList.length > 0 ? <div className='rank_item'>
                     <div className='item_name' title={state.rankList[0].name}>{ state.rankList[0].name }</div>
                     <div className='item_progress' style={{ width: '304px', backgroundColor:'#f03' }}>{ state.rankList[0].value + ' kWh' }</div>
                 </div> : null }
@@ -119,22 +171,7 @@ export default function DefaultHome(props){
                     <div className='item_name' title={state.rankList[2].name}>{ state.rankList[2].name }</div>
                     <div className='item_progress' style={{ width: '231px', backgroundColor:'#f90' }}>{ state.rankList[2].value + ' kWh' }</div>
                 </div> : null }
-              {/*    { state.rankList.length > 3 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[3].name}>{ state.rankList[3].name }</div>
-                    <div className='item_progress' style={{ width: '216px', backgroundColor:'#3c9' }}>{ state.rankList[3].value + ' kWh' }</div>
-                </div> : null }
-               { state.rankList.length > 4 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[4].name}>{ state.rankList[4].name }</div>
-                    <div className='item_progress' style={{ width: '197px', backgroundColor:'#399' }}>{ state.rankList[4].value + ' kWh' }</div>
-                </div> : null }
-                { state.rankList.length > 5 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[5].name}>{ state.rankList[5].name }</div>
-                    <div className='item_progress' style={{ width: '177px', backgroundColor:'#237ae4' }}>{ state.rankList[5].value + ' kWh' }</div>
-                </div> : null }
-                { state.rankList.length > 6 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[6].name}>{ state.rankList[6].name }</div>
-                    <div className='item_progress' style={{ width: '144px', backgroundColor:'#27d4ff' }}>{ state.rankList[6].value + ' kWh' }</div>
-                </div> : null } */}
+            */}
             </Divorder>
          </Titlelayout>      
     

@@ -96,12 +96,12 @@ export default function DefaultHome(props) {
         </div>
         <div className='list'>
           <div>
-            <span>未分派</span>
+            <span>未处理</span>
             <span>{state.unAssignNum}</span>
             <span>{state.unAssignRate + '%'}</span>
           </div>
           <div>
-            <span>已分派</span>
+            <span>处理中</span>
             <span>{state.assignNum}</span>
             <span>{state.assignRate + '%'}</span>
           </div>

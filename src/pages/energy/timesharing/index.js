@@ -113,14 +113,19 @@ export default function Index() {
       } : {}
       let hander = ['', LineManagerQuery, QuerySpaceTrees][typeTree]
       const {success, data} = await hander(params)
-      if(success && Array.isArray(data)){
+      if(success && Array.isArray(data) && data.length > 0){
          setTreeData(data)
-        
+        if(typeTree == 1) {
+          setSelectedId([data[0].id])
+        }else if(typeTree == 2) {
+          setSelectedId([data[0].areaId])
+        }
       }else{
         setTreeData([])
+        setSelectedId([])
         // message.error(errMsg)
       }
-      setSelectedId([])
+    
       //getDataByLine()
     } catch (error) {
       console.log(error)
@@ -193,6 +198,7 @@ export default function Index() {
 const [baropt, pieopt, momYoy] = useMemo(() => {
  let {detail={}, proportion = [], momYoy=[]} =  Object.prototype.toString.call(datas).slice(8,-1) === 'Object' ? datas : {}  
  const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
+ const total = proportion.map(p => parseFloat(p.value,2)).reduce((a, b) => a+b, 0)?.toFixed(2)
  return [
   {
     ...options,
@@ -207,7 +213,7 @@ const [baropt, pieopt, momYoy] = useMemo(() => {
     }
   },
   {
-    pieData: { data: proportion, total: 100 },
+    pieData: { data: proportion, total, radius:["45%", "65%"]},
     type: 3,
     legend: {
       bottom: 0,

@@ -162,7 +162,7 @@ export default function Index() {
       label:'总无功功率(kVar)'},
     {
       value:6,
-      label:'总视在功率(kVa)'},
+      label:'总视在功率(kVA)'},
     {
       value:7,
       label:'总功率因素'},

@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react'
  
 import styled from 'styled-components';
-import companyImg from './company.png'
+import companyImg from '@imgs/projectimg.png'
 import Titlelayout from '@com/titlelayout' 
 import { Borderleft} from "@com/comstyled"
  
@@ -46,7 +46,9 @@ align-items: stretch;
   
 }
 .img {
-    height: inherit;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `
 
@@ -94,7 +96,10 @@ export default function DefaultHome(props) {
           <div className='items'>{state.address}</div>
         </div>
       </div>
-      <img src={ state.projectImage ? state.projectImage : companyImg}  className='img'></img>
+      <div>
+       <img src={ state.projectImage ? state.projectImage : companyImg}  className='img' /> 
+      
+      </div>
     </MainBox>
     </Titlelayout>
 

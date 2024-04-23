@@ -39,8 +39,8 @@ const Divorder = styled.div`
        color: #009900;
     }
     span:not(:first-of-type) {
-      color: #515151;
-      font-size: 20px;
+    //  color: #515151;
+      font-size: 14px;
      // font-weight: bold;
     }
   }
@@ -97,12 +97,12 @@ export default function DefaultHome(props) {
         </div>
         <div className='list'>
           <div>
-            <span>未分派</span>
+            <span>未处理</span>
             <span>{idata.wait}</span>
             <span>{rate(idata.all, idata.wait)}</span>
           </div>
           <div>
-            <span>已分派</span>
+            <span>处理中</span>
             <span>{idata.process}</span>
             <span>{rate(idata.all, idata.process)}</span>
           </div>
