@@ -15,7 +15,7 @@ import { ExportExcel, CustButton, CustLink } from '@com/useButton'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
- 
+import {CustButtonT} from "@com/useButton"
 const DropstartDiv =styled.div`
 .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
   display: none;
@@ -34,7 +34,10 @@ export default function Index() {
 
  
   const onelevel = useSelector(state => state.system.onelevel);
-  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
+  const options = onelevel.length > 0 ? useMemo(() => {
+    let isall = onelevel.find(o => o.id==0)
+    return isall ? onelevel : ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel])
+  }, [onelevel]) : []
  
   const addmodalRef = useRef() //modal的ref
   const addformRef = useRef() //addform的ref
@@ -246,16 +249,14 @@ export default function Index() {
           <Form.Item name="alike" style={{marginRight: 0, marginBottom: 0}}>
             <Serach
                 placeholder="巡检点名称/具体位置"
-                allowClear
-                enterButton="查询"
                 onSearch = {submit}
               />
           </Form.Item>
           </Space>  
             <Space size={16}>
-            {publish ? null : <CustButton   onClick={openAdd}>
-            新增
-          </CustButton>}
+            {publish ? null : <CustButtonT   onClick={openAdd} text="new" src="new" />
+            
+          }
           <ExportExcel setKey={setKey} tb={tableRef}/>
             </Space>
         </Form>
