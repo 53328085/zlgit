@@ -1,0 +1,92 @@
+{
+    "Message_whether to log out of the system":"Whether to log out of the system",
+
+    "Message_enter project name":"Please enter project name",
+    "Query":"Query",
+    "NoDataAvailable":"No data available",
+
+    "All":"All",
+    "Published":"Published",
+    "Unpublished":"Unpublished",
+    "Expired":"Expired",
+    "Unexpired":"Unexpired",
+
+    "ProjectName":"Project Name",
+    "ProjectAddress":"Project Address",
+    "Status":"Status",
+    "ValidityPeriod":"Validity Period",
+    "Operation":"Operation",
+
+
+    "OperationsAdministratorManagement":"Operations Administrator Management",
+    "OperationAdministratorAccountManagement":"Operation Administrator Account Management",
+    "AccountInquiry":"Account Inquiry",
+    "Message_enter account name/mobile number":"Please enter account name/mobile number",
+
+    "+Add":"+Add",
+    "AddOperationAdministratorAccount":"Add Operation Administrator Account",
+    "LoginAccount":"Login Account",
+    "Message_user name cannot exceed 16 characters":"User name cannot exceed 16 characters",
+    "Message_login account cannot exceed 16 characters":"Login account cannot exceed 16 characters",
+    "UserName":"User Name",
+    "Message_no more than 32 characters":"No more than 32 characters",
+    "Message_username cannot exceed 32 characters":"User name cannot exceed 32 characters",
+    "AccountValidityPeriod":"Account Validity Period",
+    "Message_select date":"Please select a date",
+    "Password":"Password",
+    "Message_password format":"The password format must contain digits, upper and lower case letters, and special characters. Select three [6 to 18 characters]",
+    "ConfirmPassword":"Confirm password",
+    "Message_new password not match":"The new password entered twice does not match",
+    "MobileNumber":"Mobile Number",
+    "Message_enter correct mobile number":"Please enter the correct mobile number",
+    "WhetherApplicable":"Whether applicable",
+    "Yes":"Yes",
+    "No":"No",
+    "NoteInformation":"Note Information",
+    "Cancel":"Cancel",
+    "Confirm":"Confirm",
+
+    "Enable":"Enable",
+    "Note":"Note",
+
+    "Edit":"Edit",
+    "EditOperationAdministratorAccount":"Edit Operation Administrator Account",
+    "essage_login account required":"Login account required",
+    "Message_user name required":"User name required",
+    "Message_enter mobile number":"Please enter mobile number",
+    "Whether to enable":"Whether to enable",
+	
+    "ResetPassword":"Reset Password",
+    "Message_password will be reset to":"Password will be reset to",
+	
+    "Delete":"Delete",
+    "DeletePrompt":"Delete Prompt",
+    "Message_no confirm deletion":"No confirm deletion",
+    "Message_account number?":"Account number?",
+    "Total":"total",
+    "Record":"record",
+
+
+    "OperationRecord":"Operation Record",
+    "ProjectOperationHistory":"Project Operation History",
+    "Close":"Close",
+    "OperationTime":"Operation time",
+    "StartDate":"Start Date",
+    "EndDate":"End Date",
+    "ProjectID":"Project ID",
+    "Operator/Mobile Number":"Operator/Mobile Number",
+    "OperationType":"Operation Type",
+    "UserLogin":"User Login",
+    "Login person:, login role:, login time:, IP address:":"Login person:, login role:, login time:, IP address:",
+
+
+    "ProjectConfiguration":"Project Configuration",
+    "EnterProject":"Enter Project",
+
+
+    "Address_G107 Global Internet Cafe, Zhongyi 3rd Road, Tianxin District, Changsha City":"G107 Global Internet Cafe, Zhongyi 3rd Road, Tianxin District, Changsha City",
+    "Address_Changzhutan Tobacco Logistics":"Changzhutan Tobacco Logistics",
+    "Address_Changsha City Tianxin District Zhongyi Third Road G107 Changzhutan Tobacco Logistics Park":"Changsha City Tianxin District Zhongyi Third Road G107 Changzhutan Tobacco Logistics Park",
+    "Address_Zhengtai Road Changjiang Road Yueqing City Wenzhou City":"Zhengtai Road Changjiang Road Yueqing City Wenzhou City",
+    "Address_Wenzhou Park":"Wenzhou Park"
+}

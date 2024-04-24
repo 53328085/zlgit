@@ -15,7 +15,7 @@ i18n
         interpolation: {
             escapeValue: false,
         },
-        ns: ["translation", "login","comm", "button","test"],
+        ns: ["translation", "login","overview", "comm", "button","test"],
        
      /*    backend: {
             loadPath: '/locales/{{lng}}/{{ns}}.json'

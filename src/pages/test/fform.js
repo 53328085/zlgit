@@ -1,26 +1,23 @@
-import React, { useRef } from 'react';
-import { useReactToPrint, generateAndSavePDF } from 'react-to-print';
- 
-export  default function Index(){
-  const contentToPrint = useRef(null);
-  const handlePrint = useReactToPrint({
-    documentTitle: "Print This Document",
-    onBeforePrint: () => console.log("before printing..."),
-    onAfterPrint: () => console.log("after printing..."),
-    removeAfterPrint: true,
-    content: () => contentToPrint.current,
-    copyStyles: false,
-    
-  });
+import { message, Typography } from 'antd';
+import React from 'react';
+import { Trans, useTranslation } from 'react-i18next'
+const {Link} = Typography
+function MyComponent({person, messages}) {
+ const {name}=person;
+ const count = messages.length;
+ const {t}= useTranslation(["translation"])
+ console.dir(t)
+return <Trans i18nKey="userMessagesUnread" values={{name: 'zzl', count: 12}} components={['',<strong></strong>,'', '','',<a></a>]} >
 
+</Trans>
+}
+export default function Index() {
+  
+ 
   return (
-    <>
-      <div ref={contentToPrint} className='zl'>The default page size is usually A4. Most browsers do not allow JavaScript or CSS to set the page size. For the browsers that do, it is usually done using the CSS page size property. Check caniuse to see if the browsers you develop against support this</div>
-      <button onClick={() => {
-        handlePrint();
-      }}>
-        PRINT
-      </button>
-    </>
+    <div>
+      <h1>国际化</h1>      
+      <MyComponent person={{name: "author"}} messages={["浙江杭州市滨江区"]} />
+    </div>
   )
 }

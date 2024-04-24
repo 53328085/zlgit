@@ -57,9 +57,11 @@ export default function DefaultHome(props){
             }],
         grid: {
             right: "16px",
+            left: "16px",
             top: "16px",
             bottom: "0px",
-             show: false
+             show: false,
+             containLabel: true,
          },
         legend: {
             show: false

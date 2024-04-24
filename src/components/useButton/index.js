@@ -126,7 +126,16 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
-
+export function CustTransO(props) { // 项目概览
+  let {text} = props 
+  const {t} = useTranslation(["overview"]);
+  return (
+    <>
+     {t(text)}
+    </>
+  )
+}
+ 
 const Menus = (print) => {
   return (
   <Cmenu>

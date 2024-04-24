@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import companyImg from '@imgs/projectimg.png'
 import Titlelayout from '@com/titlelayout' 
 import { Borderleft} from "@com/comstyled"
- 
+import {CustTransO} from "@com/useButton"
  
 const MainBox = styled.div`
 //width: 450px;
@@ -53,7 +53,7 @@ align-items: stretch;
 `
 
 export default function DefaultHome(props) {
-   let {currproject, type} = props
+   let {currproject, type, Trans } = props
    const [state, setState] =useState({
     projectName: '项目名称',
     deviceNum: 0,
@@ -81,11 +81,11 @@ export default function DefaultHome(props) {
         <Borderleft>{state.projectName}</Borderleft>
         <div className='dataItem'>
           <div className='square' style={{ backgroundColor: '#237ae4' }}></div>
-          <div className='items'>测点数量： {state.deviceNum}</div>
+          <div className='items'><CustTransO text="NumberOfMeasuringPoints" /> {state.deviceNum}</div>
         </div>
         <div className='dataItem'>
           <div className='square' style={{ backgroundColor: '#237ae4' }}></div>
-          <div className='items'>网关数量： {state.gatewayNum}</div>
+          <div className='items'><CustTransO text="NumberOfGateways" /> {state.gatewayNum}</div>
         </div>
         <div className='dataItem'>
           <div className='square' style={{ backgroundColor: '#008000' }}></div>

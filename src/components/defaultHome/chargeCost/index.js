@@ -6,7 +6,7 @@ import imgUrl from '@imgs'
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {CustTransO} from "@com/useButton"
 const Mainbox = styled.div`
   width: 222px;
   height: 200px;
@@ -76,7 +76,7 @@ export default function DefaultHome(props){
   
   return (
          <Mainbox>
-            <div className='headerTitle'>总充电金额(元)</div>
+            <div className='headerTitle'><CustTransO text="TotalChargeAmount" /></div> {/* 货币单位中文是元，英文？ */}
             <div className='mainData'>
                 <img src={imgUrl.totalChargeCost} className='centerImg'></img>
                 <span className='data'>{state.chargeCost}</span>
