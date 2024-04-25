@@ -9,14 +9,14 @@ import system from './systemconfig' //根据IP或域名获取系统配置
 // import theme from './theme' // 配置 antd 
 // import params from './params' // 查询参数， 表格、列表显示模式等
 import zltest from './reduxTest' // 测试用
-import {api} from '../pages/test/apiBasic'
+ import {apiSlice} from './rtkquery'
 const reducers = combineReducers({
   user,
   system,
  // theme,
  // params,
   zltest,
-  [api.reducerPath]: api.reducer
+  [apiSlice.reducerPath]: apiSlice.reducer
 })
 const persistConfig = {
   key: 'redux_state',
@@ -28,16 +28,10 @@ export default configureStore({
   reducer: persistedReducer,
  
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: [thunk],
-  // middleware:  getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware).concat(thunk)
+ // middleware: [thunk],
+  middleware: getDefaultMiddleware =>
+  getDefaultMiddleware().concat(apiSlice.middleware)
   
 })
 
-/* export default configureStore({
-   reducer: {
-    user,
-    system,
-    theme
-   },
-  // middleware:[composeWithDevTools] 引用‘composeWithDevTools’导致异步action出错
-}) */
+ 

@@ -2,7 +2,6 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
 function useToke() {
    let token =  window.sessionStorage.getItem('useToken')
-   console.log(token)
    return token
 }
 export const api = createApi({
