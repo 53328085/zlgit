@@ -4,7 +4,7 @@ import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
 import { HomeRuntime } from '@api/api.js'
 import moment from 'moment';
-  
+import {CustTransO} from "@com/useButton" 
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
@@ -62,7 +62,7 @@ export default function DefaultHome(props){
   }, [projectId, type])
   
   return (
-         <Titlelayout title={'分类能耗'} {...fs} style={{height: "200px"}}>
+         <Titlelayout title={<CustTransO text="CategoryEnergyConsumption" />} {...fs} style={{height: "200px"}}>
          <div  style={{flex: 1, display: 'flex'}}>
              <Ichart {...options} />
          </div>

@@ -1,5 +1,7 @@
 import React, {useEffect, useRef} from 'react'
+import {useSelector} from "react-redux"
 import {drawEcharts} from './index'
+import {intl} from "@redux/systemconfig"
 import Cempty from '@com/useEmpty'
 const contidtion = (a) => {
    
@@ -19,6 +21,7 @@ const contidtion = (a) => {
 }
 export default function Ichart(props={}) {
   const ref = useRef()
+ // const langch = useSelector(intl)
   let {dataset={}, type=1, pieData, custoption, tip=''} = props
 
   let typechart = custoption?.type || type
@@ -35,7 +38,7 @@ export default function Ichart(props={}) {
     if(typechart == 5 && custoption?.series[0]?.data.length > 0) {         
         drawEcharts(ref.current, {...props})
     }
-  }, [props])
+  }, [props]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
     if(!contidtion(dataset?.source)) {
       return <Cempty tip={info} />

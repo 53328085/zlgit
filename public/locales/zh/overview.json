@@ -1,6 +1,9 @@
 {
-    "ProjectOverview":"项目概述",
-
+    "rate": "在线率",
+    "online": "在线",
+    "offline": "离线",
+    "total":"总数",
+    "ProjectOverview":"项目概述",     
     "BasicInformation":"基础信息",
     "ModuleName":"模块名称",
     "Query":"查询",
@@ -14,6 +17,10 @@
     "ElectricityConsumption":"用电量",
     "WaterConsumption":"用水量",
     "GatewayInformation":"网关信息",
+    "Gatewaytotal":"网关总数",
+    "Gatewayonline":"网关在线",
+    "Gatewayoffline":"网关离线",
+    "Gatewayrate":"在线率",
     "MeterInformation":"电表信息",
     "Metertotal": "电表总数",
     "Meteronline": "电表在线",
@@ -42,13 +49,17 @@
     "CToff":"触点测温离线",
     "CTrate":"在线率",
     "OpticalFiberTemperatureMeasurement":"光纤测温",
-
+    "Optotal": "光纤测温$t(total)",
+    "Oponline": "光纤测温$t(online)",
+    "Opoffline": "光纤测温$t(offline)",
+    "Oprate": "光纤测温$t(rate)",
     "EnergyConsumptionStatistics":"能耗统计",
     "ElectricityConsumptionOfToday":"今日用电量",
     "MonthlyEnergyConsumption":"月度能耗",
+    "Mecosttrand":"月度能耗费用趋势",
     "CategoryEnergyConsumption":"分类能耗",
     "EnergyConsumptionRanking":"能耗排名",
-
+    "EnergyConsumptionRankingthismonth": "本月能耗排名",
     "StorageManagement":"储能管理",
     "TotalCharge":"总充电量",
     "TotalDischarge":"总放电量",
@@ -76,7 +87,7 @@
     "SaveInterface":"保存界面",
     "Message_current layout saved successfully":"当前界面布局保存成功！",
     "Close":"关闭",
-
+ 
     "TotalCharge(kWh)":"总充电量(kWh)",
 
     "CarbonEmissions":"碳排放量",
@@ -85,6 +96,18 @@
     "NotConfirmed":"未确认",
     "Piece":"条",
     "Confirmed":"已确认",
+     "Workorderinformation":"工单信息",
+    "LatestAlarm":"最新告警",
+    "Monthlygascapacity":"月燃气量",
+    "loadrate": "负荷率%",
+    "Realtimeloadrate":"实时负荷率", 
+    "Monthlyworkorder": "本月工单数",  
+    "sitesoc": "站点SOC",  
+    "ChargeAmount":"充电金额(元)",
+    "DischargeAmount":"放电金额(元)",
+    "earnings":"收益（元）",
+    "Chargecapacity": "充电量(kwh)",
+    "dischargecapacity":"放电量(kwh)",
+    "Monthlyenergyconsumptiontrend": "月度能耗趋势"
 
-    "LatestAlarm":"最新告警"
 }

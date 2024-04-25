@@ -7,6 +7,7 @@ import { useReactive } from 'ahooks';
 import { message } from 'antd';
 import { energyRanking } from '@api/api.js'
 import Ichart from "@com/useEcharts/Ichart"
+import {CustTransO} from "@com/useButton"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -157,7 +158,7 @@ export default function DefaultHome(props){
   }, [type])
   
   return (
-         <Titlelayout title={'本月能耗排名'} {...fs} style={{height: "200px"}}>
+         <Titlelayout title={<CustTransO text="EnergyConsumptionRankingthismonth" />} {...fs} style={{height: "200px"}}>
             <Divorder>
 
                 <Ichart {...option}/>

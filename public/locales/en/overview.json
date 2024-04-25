@@ -1,6 +1,9 @@
 {
+    "rate": "rate",
+    "online": "online",
+    "offline": "offline",
+    "total":"total",
     "ProjectOverview":"Project Overview",
-
     "BasicInformation":"Basic Information",
     "ModuleName":"Module Name",
     "Query":"Query",
@@ -14,6 +17,10 @@
     "ElectricityConsumption":"Electricity Consumption",
     "WaterConsumption":"Water Consumption",
     "GatewayInformation":"Gateway Information",
+    "Gatewayonline":"online",
+    "Gatewayoffline":"offline",
+    "Gatewayrate":"rate",
+    "Gatewaytotal":"total",
     "MeterInformation":"Meter Information",
     "Metertotal": "total",
     "Meteronline": "online",
@@ -42,13 +49,17 @@
     "CToff":"offline",
     "CTrate":"rate",
     "OpticalFiberTemperatureMeasurement":"Optical Fiber Temperature Measurement",
-
+    "Optotal": "$t(total)",
+    "Oponline": "$t(online)",
+    "Opoffline": "$t(offline)",
+    "Oprate": "$t(rate)",
     "EnergyConsumptionStatistics":"Energy Consumption Statistics",
     "ElectricityConsumptionOfToday":"Electricity Consumption of Today",
     "MonthlyEnergyConsumption":"Monthly Energy Consumption",
+    "Mecosttrand":"Monthly Energy Consumption Cost Trand",
     "CategoryEnergyConsumption":"Category Energy Consumption",
     "EnergyConsumptionRanking":"Energy Consumption Ranking",
-
+    "EnergyConsumptionRankingthismonth":"Energy Consumption Ranking this month",
     "StorageManagement":"Storage Management",
     "TotalCharge":"Total Charge",
     "TotalDischarge":"Total Discharge",
@@ -85,6 +96,18 @@
     "NotConfirmed":"Not Confirmed",
     "Piece":"Piece",
     "Confirmed":"Confirmed",
-
-    "LatestAlarm":"Latest Alarm"
+    "Realtimeloadrate":"Real-time load rate",
+    "LatestAlarm":"Latest Alarm",
+    "Workorderinformation": "Work order information",
+    "loadrate": "load rate",
+    "Monthlyworkorder": "Monthly work order",
+    "Monthlygascapacity":"Monthly gas capacity {{unit}}",
+    "sitesoc": "Site SOC",
+    "Chargeamount":"Charge amount",
+    "ChargeAmount":"Charge amount",
+    "DischargeAmount":"Discharge amount",
+    "earnings":"earnings",
+    "Chargecapacity": "Charge capacity(kwh)",
+    "dischargecapacity":"discharge capacity(kwh)",
+    "Monthlyenergyconsumptiontrend": "Monthly energy consumption trend"
 }

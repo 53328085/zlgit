@@ -5,7 +5,8 @@ import Titlelayout from '@com/titlelayout';
  
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
- 
+import {CustTransO} from "@com/useButton"
+import {useTranslation} from "react-i18next"
 import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
   hv: '24px',
@@ -18,6 +19,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
+  const {t} = useTranslation(["overview", "comm"])
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{
@@ -50,8 +52,8 @@ export default function DefaultHome(props){
               let {x, y} = data
               let dataset = {
                 dimensions: [
-                  {name: '日期', type: 'time'},
-                  {name:  '用电量' },
+                  {name:  t("comm:date"), type: 'time'},
+                  {name:   t("overview:ElectricityConsumption") },
                   
                 ],
                 source: [x, y],
@@ -68,7 +70,7 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'用电量'} {...fs} layout="flex" style={{height: "200px"}}>
+         <Titlelayout title={<CustTransO text="ElectricityConsumption"  />} {...fs} layout="flex" style={{height: "200px"}}>
              <div   style={{flex: 1, display: 'flex'}}>
                  <Ichart {...options} />
              </div>

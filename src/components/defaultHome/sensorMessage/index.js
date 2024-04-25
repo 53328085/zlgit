@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
 
-
+import {useTranslation} from "react-i18next"
 import gatewayRuntime from '../sensor.svg'
 
 const Divorder = styled.div`
@@ -57,30 +57,31 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
+  const {t} = useTranslation("overview")
   let {state={}, type} = props
   if(type !=="runtTime") {
     state={}
   }
 
   return (
-    <Titlelayout title={'传感器信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={t("SensorInformation")} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>传感器总数</span>
+            <span className='count_title'>{t("total")}</span>
             <span className='count_val'>{ state.sensorCount }</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>传感器在线</span>
+                <span className='item_title'>{t("online")}</span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.sensorOnlineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>传感器离线</span>
+                <span className='item_title'>{t("offline")}</span>
                 <span className='item_value' style={{ color: '#f44336' }}>{ state.sensorOfflineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>在线率</span>
+                <span className='item_title'>{t("rate")}</span>
                 <span className='item_value'>{state.sensorOnlineRate}%</span>
             </div>
         </div>

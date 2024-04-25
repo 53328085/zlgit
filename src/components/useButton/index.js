@@ -127,8 +127,8 @@ const CmenuItem = styled(Menu.Item)`
 }
 `
 export function CustTransO(props) { // 项目概览
-  let {text} = props 
-  const {t} = useTranslation(["overview"]);
+  let {text, ns="overview"} = props 
+  const {t} = useTranslation([ns]);
   return (
     <>
      {t(text)}

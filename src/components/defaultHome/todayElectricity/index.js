@@ -4,7 +4,7 @@ import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
  
 import moment from 'moment';
- 
+import {useTranslation} from 'react-i18next'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
@@ -22,7 +22,7 @@ export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
 
   const { QueryElectricToday } = HomeRuntime
-
+  const {t} =useTranslation(["overview", "comm"])
 
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row', areaStyle: {color: "#d6e3fd"} }],  
@@ -59,8 +59,8 @@ export default function DefaultHome(props){
 
             let dataset = {
               dimensions: [
-                {name: '日期', type: 'time'},
-                {name: "用电量"},
+                {name: t("comm:date"), type: 'time'},
+                {name: t("overview:ElectricityConsumption")},
               ],
               source: [
                 x, 
@@ -83,7 +83,7 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'今日用电量'} {...fs} style={{height: '200px'}} layout="flex">
+         <Titlelayout title={t("overview:ElectricityConsumptionOfToday")} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex: 1, display: 'flex'}}>
               <Ichart {...options} />
          </div>
