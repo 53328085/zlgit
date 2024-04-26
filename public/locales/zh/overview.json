@@ -108,6 +108,9 @@
     "earnings":"收益（元）",
     "Chargecapacity": "充电量(kwh)",
     "dischargecapacity":"放电量(kwh)",
+    "Transformerinformation": "变压器信息",
+    "Numberoftransformers": "变压器数量",
+    "Realtimetotalload": "实时总负荷",
     "Monthlyenergyconsumptiontrend": "月度能耗趋势"
 
 }

@@ -73,6 +73,7 @@ const initialState = {
       lang: zhCN,
       locale: 'zh-cn'
     },
+    iszhCN: localStorage.getItem('i18nextLng')?.toLowerCase()?.slice(0,2) == 'zh',
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -270,8 +271,11 @@ const system = createSlice({
         },
         setIntl(state, {payload}) { // 设置国际化          
           state.intl = payload
+        },
+        setIszhCN(state, {payload}) {
+           console.log('iszhCN', payload)
+           state.iszhCN = payload
         }
-      
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -377,6 +381,7 @@ export const roomName = state =>  {
  
 export const deviceStyle = state => state.system.deviceStyle;
 export const intl = state => state.system.intl //国际化
+export const iszhCN = state => state.system.iszhCN // 是否中文
 export const {
     configProject,
     getSetMenus,
@@ -403,5 +408,6 @@ export const {
     getcurlRommid,
     getDiscurlevel,
     setIntl,
+    setIszhCN,
 } = actions
 export default system.reducer

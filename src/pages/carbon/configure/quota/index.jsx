@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input} from 'antd'
@@ -12,6 +12,7 @@ import {
   useSaveEnterpriseMutation,
   useSaveItemsMutation,} from "@redux/rtkquery"
 import Titlelayout from "@com/titlelayout"
+import {apiSlice} from "@redux/rtkquery"
 import {CustButtonT} from "@com/useButton"
 const {Item} = Form
 const Mainbox = styled.div`
@@ -42,11 +43,19 @@ export default function Index() {
   const {data: {data: industry}} = useIndustryListQuery();
   const  {data: province, refetch} = useProvinceListQuery()
   const provinceList = Array.isArray(province) ? province.map(p => ({label:p, value:p})) : []
-  const data = useSubIndustryListQuery(no)
- 
+  //const data = useSubIndustryListQuery(no)
+  console.log(apiSlice)
   const rules = [
     {required: true}
   ]
+  const onchange = (no) => {
+       setNo(no)
+    //apiSlice.endpoints.subIndustryList.useLazyQuery(no)
+  }
+  useEffect(() => {
+    if(!no) return
+    useSubIndustryListQuery(no)
+  }, [no])
   return (
     <Pagecount bgcolor="transparent" pd="0">
        <Mainbox>
@@ -54,7 +63,7 @@ export default function Index() {
             <div className='formbox'>
              <Form form={form} layout="vertical">
                  <Item label="所属行业" name="industryNo" rules={rules}  >
-                     <Select options={industry} fieldNames={{label: "industryName", value: "industryNo"}} onChange={setNo} /> 
+                     <Select options={industry} fieldNames={{label: "industryName", value: "industryNo"}} onChange={onchange} /> 
                  </Item>
                  <Item label="二级细分行业" name="subIndustryNo" rules={rules}  >
                      <Select options={industry} fieldNames={{label: "industryName", value: "industryNo"}} /> 

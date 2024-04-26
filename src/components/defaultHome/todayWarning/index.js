@@ -139,7 +139,7 @@ export default function DefaultHome(props){
   },[projectId, type])
   
   return (
-         <Titlelayout title={'今日告警'} {...fs} style={{height: "200px"}}>
+         <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{height: "200px"}}>
         <Mainbox>
           <div style={{width: '112px', height: '112px'}} ref={ref}>
               {/* <DemoLiquid></DemoLiquid> */}
@@ -147,12 +147,12 @@ export default function DefaultHome(props){
           </div>
           <div className='alarm'>
              <div>
-                 <span>未确认 {state.unconfirmPercent}%</span>
-                 <span>{state.unconfirmCount} 条</span>
+                 <span>{t("comm:NotConfirmed")} {state.unconfirmPercent}%</span>
+                 <span>{state.unconfirmCount} {t("comm:Piece")}</span>
              </div>
              <div>
-                 <span>已确认 {state.confirmPercent}%</span>
-                 <span>{state.confirmCount} 条</span>
+                 <span>{t("comm:Confirmed")} {state.confirmPercent}%</span>
+                 <span>{state.confirmCount} {t("comm:Piece")}</span>
              </div>
           </div>
         </Mainbox>

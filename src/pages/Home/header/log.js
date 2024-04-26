@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -211,10 +211,12 @@ const lngOk = () => {
     try {
     const lang = langpack[lngval]
     let key = lngval==='zh' ? 'zh-cn' : lngval
+    
     moment(key);
     dispatch(setIntl({lang, locale: key}))
+    dispatch(setIszhCN(lngval==='zh'))
     i18n.changeLanguage(lngval)
-    console.log(allmenus)
+     
     const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
      dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();

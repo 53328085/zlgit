@@ -109,5 +109,8 @@
     "earnings":"earnings",
     "Chargecapacity": "Charge capacity(kwh)",
     "dischargecapacity":"discharge capacity(kwh)",
+    "Transformerinformation": "Transformer information",
+    "Numberoftransformers": "Number of transformers",
+    "Realtimetotalload": "Real-time total load",
     "Monthlyenergyconsumptiontrend": "Monthly energy consumption trend"
 }

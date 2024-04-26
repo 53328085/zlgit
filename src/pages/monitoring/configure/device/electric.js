@@ -136,8 +136,8 @@ export default function gateway({ deviceStyle }) {
       render: (text, record) => {
         return (
           <Space size={16}>
-            <Link onClick={() => { onEdit(record) }}>{t("button:accompanyRate")}</Link>
-            <Link onClick={() => { onFactor(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link>
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
