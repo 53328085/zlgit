@@ -32,7 +32,7 @@ import {
 } from "@redux/systemconfig.js";
 
 import Table from "@com/useTable";
-import { Serach, Cdivider } from "@com/comstyled";
+import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
 export default function Index(props) {
   const tableLoadRef = useRef();
@@ -68,7 +68,7 @@ export default function Index(props) {
 
 
  
-  const showTotal = (total) => `共 ${total} 条记录`;
+  
  
   const columns = [
     {
@@ -441,11 +441,10 @@ export default function Index(props) {
           
         )}
         {isCard && (
-          <Pagination
+          <CPagination
             style={{ marginLeft: "auto" }}
             size="small"
-            onChange={changepage}
-            showTotal={showTotal}
+            onChange={changepage}          
             {...tableProps.pagination}
             showSizeChanger={false}
           />

@@ -2,6 +2,7 @@ import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, use
 import {createPortal,flushSync} from 'react-dom'
 import {Table, message} from 'antd'
 import styled from 'styled-components'
+import {useTranslation} from 'react-i18next'
 import {utils, writeFile} from 'xlsx'
 import {nanoid} from '@reduxjs/toolkit'
 import Tablecom from './custTable'
@@ -69,7 +70,7 @@ flex-direction: column;
   const [lists, setLists] =useState()
   const [total, setTotal] = useState(0)
   const tempref = useRef();
-  
+  const {t} = useTranslation("comm")
   const TableTemp =memo(() => {  
   
     return createPortal(
@@ -186,7 +187,7 @@ const download = useCallback(() => {
  
   const paginationProp = pagination ? Object.assign( {}, {
   //  hideOnSinglePage: true,
-    showTotal: (total) => `共${total}条记录`,
+    showTotal: (total) =>  t("totalpages", {count:total}),   
   }, pagination) : false
  
 

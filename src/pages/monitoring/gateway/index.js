@@ -15,19 +15,11 @@ import {
   selectOneLevelDefaultId,
 } from "@redux/systemconfig.js";
 import { ExportExcel } from "@com/useButton";
+ 
 import Table from "@com/useTable";
-import { Serach, Cdivider } from "@com/comstyled";
+import { Serach, Cdivider, CPagination } from "@com/comstyled";
 import Pagecount from '@com/pagecontent' 
-
-const Mainbxox = styled.div`
-  && {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    
-  }
-
-`
+ 
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -400,7 +392,7 @@ export default function Index(props) {
             ></Table>
           </div>
         )}
-     { isCard && <Pagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}  showTotal={showTotal}  {...tableProps.pagination} showSizeChanger={false}/>  }
+     { isCard && <CPagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}   {...tableProps.pagination} showSizeChanger={false}/>  }
       </div>
     </Pagecount>
   );

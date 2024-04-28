@@ -45,6 +45,7 @@
   "policyPreview": "Policy preview",
   "enable": "Enable",
   "enabled": "Enabled",
+  "disable": "disable",
   "editCoordinate": "Edit coordinate",
   "bBatchprtQRcode":"Batch printing QR code",
   "printqrcode":"Print QR code",
@@ -52,5 +53,6 @@
   "clickts":"Click to select",
   "viewingis": "Viewing inspection sites",
   "shiftmg":"Shift management",
+  "ResetPassword":"Reset Password",
   "z": ""
 }

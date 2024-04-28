@@ -2,10 +2,49 @@
     "button": {
         "save": "保存"
     },
+    "Yes":"是",
+    "No":"否",
+    "Dataloading": "数据加载……",
+    "useraccount": "账号",
+    "resetpasswords":"重置密码",
+    "successfullydelete": "删除成功",
+    "Passwordresetsucceeded": "密码重置成功",
+    "MobileNumber":"手机号码",
+    "Close":"关闭",
+    "newsuc":"新增成功",
+    "Editsuccessfully": "编辑成功",
+    "dataerr": "数据出错",
     "date": "日期",
+    "month": "月份",
     "NotConfirmed":"未确认",
     "Piece":"条",
     "Confirmed":"已确认",
+    "All":"全部",
+    "Published":"已发布",
+    "Unpublished":"未发布",
+    "Expired":"已过期",
+    "Unexpired":"未过期",
+    "Query":"查询",
+    "Message_enterprojectname":"请输入项目名称",   
+    "NoDataAvailable":"暂无数据",
+    "ProjectName":"项目名称",
+    "ProjectAddress":"项目地址",
+    "ProjectID":"项目ID",
+    "Projectlogo": "项目Logo",
+    "Projectpicture":"项目图片",
+    "Projectremark":"项目备注",
+    "Projectvalidityperiod" : "项目有效期",
+    "longitudeatitude":"经纬度",
+    "OperationTime":"操作时间",
+    "StartDate":"开始日期",
+    "EndDate":"结束日期",
+    "Status":"状态",
+    "ValidityPeriod":"有效期",
+    "Operation":"操作",
+    "remark": "备注",
+    "projectStatus": "项目状态",
+    "newproject":"新增项目",
+    "promptmessage":"提示信息",
     "error": {
         "unspecific": "页面错误",
         "404": "页面没找到"
@@ -20,5 +59,7 @@
     "rule": {
         "deviceSn": "必须是12-14位，包括英文或数字中的至少一项",
         "deviceSnE":"必须是8-14位，包括英文或数字中的至少一项"
-    }
+    },
+    "totalpages_one": "共{{total}}条记录",
+    "totalpages_other": "共{{total}}条记录"
 }

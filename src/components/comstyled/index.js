@@ -4,7 +4,7 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination} from 'antd'
 import {useTranslation} from "react-i18next"
 
 const {Search, Password, TextArea} = Input
@@ -48,6 +48,10 @@ const formMixin = css`
   }
   
 `
+export const CPagination = (props) => {
+  const {t} = useTranslation("comm")
+  return <Pagination {...props} showTotal={(total) =>  t("totalpages", {count:total})} />
+}
 export const Comtext = styled(TextArea)`
  && {
     ${formMixin}
@@ -158,6 +162,7 @@ export const Cselect = styled(Select)`
     border: 1px solid #8091b2;
     border-radius: 4px;
     overflow: hidden;
+    width: ${props => props.w || 'auto'};
     height: ${props => props.h || 'auto'} !important ;
     &:focus, &:hover {    
     border-color: #1f83fe !important;

@@ -3,12 +3,13 @@ import moment from 'moment';
 import {
   Form,
   Input,
-  Cascader,
-  message,
+  
   Row,
   Col,
-  Image
+  DatePicker,
+  
 } from "antd";
+import {useTranslation} from 'react-i18next'
 import styled from "styled-components";
 import Mapcom from "@com/useMap/indexset";
 import projectlog from "@imgs/chintlog.png";
@@ -27,18 +28,9 @@ const Formbox = styled(Form)`
     margin-bottom: 0px;
   }
   .ant-form-item-label {
-    flex-basis: 100px;
+   flex-basis: 100px;
     padding-right: 10px;
-    label {
-      color:#fff;
-    }
-    .ant-form-item-required::before {
-      content: ''
-    }
-    .ant-form-item-required::after {
-      content: "*";
-      color: #fff;
-    }
+  
   }
 
   .remark {
@@ -99,7 +91,7 @@ const Formbox = styled(Form)`
 `;
 const Info = styled.span`
   font-size: 12px;
-  color: #fff;
+  
 `
 
 const imgToBase = (url) => {
@@ -130,7 +122,7 @@ const imgToBase = (url) => {
  function Set(props, ref) {
   const [form] = Form.useForm();
   const { Item } = Form;
-  const { TextArea } = Input;
+  const {t} = useTranslation("comm")
   /* "validStageTime": "2023-02-01T00:14:31.889Z",
   "name": "string",
   "address": "string",
@@ -237,31 +229,30 @@ const imgToBase = (url) => {
       initialValues={params}
       labelAlign="left"
       size="middle"
-      requiredMark="optional"
       colon={false}
 
     >
-      <Item label="项目ID">
-        <Comipt placeholder="系统自增项目ID" disabled />
+      <Item label={t("ProjectID")}>
+        <Input placeholder="系统自增项目ID" disabled />
       </Item>
-      <Item label="项目名称" required name="name" rules={[
+      <Item label={t("ProjectName")} required name="name" rules={[
         {
           required: true 
         }
       ]}>
-        <Comipt placeholder="请输入项目名称"  autoComplete="off" />
+        <Input placeholder="请输入项目名称"  autoComplete="off" />
       </Item>
-      <Item label="项目有效期" required name="validStageTime" rules={[
+      <Item label={t("Projectvalidityperiod")} required name="validStageTime" rules={[
         {
           required: true 
         }
       ]}>
-        <CdatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" disabledDate={disabledDate} />
+        <DatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" disabledDate={disabledDate} />
       </Item>
       {/*  imgLogo: "",
     imgProject: '', */}
       <div className='upload'>
-         <Item label="项目logo" className="left" >
+         <Item label={t("Projectlogo")} className="left" >
            <div className="img">
            <Item nostyle name="imgLogo" rules={
             [
@@ -276,7 +267,7 @@ const imgToBase = (url) => {
            </div>
            <Info>（图片大小为: 212*32 png 格式)</Info>
          </Item>
-         <Item label="项目图片" required>
+         <Item label={t("Projectpicture")} labelCol={{flex:"auto"}} required>
            <div className="img">
             <Item nostyle  name="imgProject" rules={
               [
@@ -298,10 +289,10 @@ const imgToBase = (url) => {
            <Upload shpx={116} wpx={248} hpx={168}  />
         </div>
       </Item> */}
-      <Item label="项目备注" name="remark" className="remark">
-        <Comtext  placeholder="请输入备注0-99字" maxLength={99} h="140px" />
+      <Item label={t("Projectremark")} name="remark" className="remark">
+        <Input.TextArea   placeholder="请输入备注0-99字" maxLength={99} style={{height: "140px"}} />
       </Item>
-      <Item label="项目地址" className="address" name="address" tooltip="请从地图上点击获取">
+      <Item label={t("ProjectAddress")} labelCol={{flex:"166px"}} className="address" name="address" tooltip="请从地图上点击获取">
        {/*  <Item noStyle>
           <Cascader
             options={options}
@@ -315,9 +306,9 @@ const imgToBase = (url) => {
             }}
           />
         </Item> */} 
-          <Comipt placeholder="请输入项目的详细地址" onChange={onInput} /> 
+          <Input placeholder="请输入项目的详细地址" onChange={onInput} /> 
       </Item>
-      <Item label="经纬度"  className="lnglat" tooltip="请从地图上点击获取">
+      <Item label={t("longitudeatitude")} labelCol={{flex:"166px"}} className="lnglat" tooltip="请从地图上点击获取">
         <Row gutter={16}>
           <Col span={12}>
             <Item name="lng" rules={[
@@ -326,7 +317,7 @@ const imgToBase = (url) => {
           message: '请从地图上点击获取'
         }
       ]}>
-              <Comipt placeholder="经度" />
+              <Input placeholder="经度" />
             </Item>
           </Col>
           <Col span={12}>
@@ -336,7 +327,7 @@ const imgToBase = (url) => {
           message: '请从地图上点击获取'
         }
       ]}>
-              <Comipt placeholder="纬度" />
+              <Input placeholder="纬度" />
             </Item>
           </Col>
         </Row>

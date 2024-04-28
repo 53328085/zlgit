@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
  
 import { HomeRuntime } from '@api/api.js'
@@ -19,6 +19,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
+  const iszh = useSelector(iszhCN)
   const {t} = useTranslation(["overview", "comm"])
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
@@ -67,7 +68,7 @@ export default function DefaultHome(props){
           }
       }).catch()
    
-  }, [])
+  }, [iszh])
   
   return (
          <Titlelayout title={<CustTransO text="ElectricityConsumption"  />} {...fs} layout="flex" style={{height: "200px"}}>

@@ -1,80 +1,59 @@
 {
-    "Message_whether to log out of the system":"是否退出系统",
-
-    "Message_enter project name":"请输入项目名称",
-    "Query":"查询",
-    "NoDataAvailable":"暂无数据",
-
-    "All":"全部",
-    "Published":"已发布",
-    "Unpublished":"未发布",
-    "Expired":"已过期",
-    "Unexpired":"未过期",
-
-    "ProjectName":"项目名称",
-    "ProjectAddress":"项目地址",
-    "Status":"状态",
-    "ValidityPeriod":"有效期",
-    "Operation":"操作",
-
-
+    "system":"是否退出系统",
     "OperationsAdministratorManagement":"运营管理员管理",
     "OperationAdministratorAccountManagement":"运营管理员账号管理",
     "AccountInquiry":"账号查询",
-    "Message_enter account name/mobile number":"请输入账号名称/手机号",
-
-    "+Add":"+新增",
+    "msgap":"请输入账号名称/手机号",
+    "exdate": "请选择有效期",
+    "enterpas": "请输入密码",
+    "cfipassword": "请确认密码",
     "AddOperationAdministratorAccount":"新增运营管理员账号",
     "LoginAccount":"登录账号",
-    "Message_user name cannot exceed 16 characters":"用户名不能超过16个字符",
-    "Message_login account cannot exceed 16 characters":"登录账号不能超过16个字符",
+    "userrole":"用户角色",
+    "usercharacters":"用户名不能超过16个字符",
+    "Loginaccountrequired":"登录账号必填",
+    "accountcharacters":"登录账号不能超过16个字符",
     "UserName":"用户姓名",
-    "Message_no more than 32 characters":"不能超过32个字符",
-    "Message_username cannot exceed 32 characters":"用户姓名不能超过32个字符",
+    "usernamecharacters":"不能超过32个字符",
+    "user32characters":"用户姓名不能超过32个字符",
     "AccountValidityPeriod":"账号有效期",
     "Message_select date":"请选择日期",
     "Password":"密码",
     "Message_password format":"密码格式必须包含数字、大小写字母、特殊字符选其三[6~18位]",
     "ConfirmPassword":"确认密码",
-    "Message_new password not match":"两次输入的新密码不匹配",
-    "MobileNumber":"手机号码",
+    "passwordmatch":"两次输入的新密码不匹配",
+    
     "Message_enter correct mobile number":"请输入正确的手机号",
     "WhetherApplicable":"是否适用",
-    "Yes":"是",
-    "No":"否",
+    
     "NoteInformation":"备注信息",
     "Cancel":"取消",
     "Confirm":"确定",
 
-    "Enable":"启用",
+    
     "Note":"备注",
 
     "Edit":"编辑",
     "EditOperationAdministratorAccount":"编辑运营管理员账号",
     "Message_login account required":"登陆账号必填",
-    "Message_user name required":"用户姓名必填",
-    "Message_enter mobile number":"请输入手机号码",
-    "Whether to enable":"是否启用",
+    "usernamerequired":"用户姓名必填",
+    "entermobile":"请输入手机号码",
+    "isenable":"是否启用",
 	
-    "ResetPassword":"重置密码",
-    "Message_password will be reset to":"密码将被重置为",
+    
+    "pasrest":"密码将被重置为",
 	
     "Delete":"删除",
     "DeletePrompt":"删除提示",
-    "Message_no confirm deletion":"否确认删除",
+    "cofdeletion":"否确认删除",
     "Message_account number?":"账号？",
-    "Total":"共",
-    "Record":"条记录",
-
+    
 
     "OperationRecord":"操作记录",
     "ProjectOperationHistory":"项目操作历史",
-    "Close":"关闭",
-    "OperationTime":"操作时间",
-    "StartDate":"开始日期",
-    "EndDate":"结束日期",
-    "ProjectID":"项目ID",
-    "Operator/Mobile Number":"操作者/手机号",
+    
+ 
+    "OperatorMobileNumber":"操作者/手机号",
     "OperationType":"操作类型",
     "UserLogin":"用户登录",
     "Login person:, login role:, login time:, IP address:":"登录人:，登录角色：, 登录时间:, IP地址:",

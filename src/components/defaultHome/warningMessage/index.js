@@ -8,7 +8,7 @@ import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Cempty from '@com/useEmpty'
-
+import {useTranslation} from 'react-i18next'
 
 const fs = {
   hv: '24px',
@@ -54,6 +54,7 @@ export default function DefaultHome(props) {
    }
  }
 `
+  const {t} = useTranslation("overview")
   const projectId = useSelector(selectProjectId)
   const [dmheight,setDomHeight] =useState(0)
   const domRef =useRef()
@@ -104,7 +105,7 @@ export default function DefaultHome(props) {
      height: '200px' 
   }
   return (
-    <Titlelayout title={'最新告警'} {...fs} style={sty}>
+    <Titlelayout title={t("LatestAlarm")} {...fs} style={sty}>
       
       {  (state.alarmList?.length > 0) ? (
         <Timelinebox dmheight={dmheight} domht ={domRef.current} >
