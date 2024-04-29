@@ -1,4 +1,8 @@
 {
+    "Modulename":"模块名称",
+    "layoutsuccessfully": "当前界面保存成功",
+    "Saveinterface": "保存界面",
+    "resetlayout": "是否确认要重置当前页面布局？",
     "rate": "在线率",
     "online": "在线",
     "offline": "离线",

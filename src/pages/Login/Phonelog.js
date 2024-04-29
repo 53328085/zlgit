@@ -176,7 +176,7 @@ export default  memo(({onSubmit})=> {
           </Space>
         </Itembox>
         <Itembox name="remember" valuePropName="checked">
-          <Logck onChange={ckchange}>{t("EnUserName")}</Logck>
+          <Logck onChange={ckchange}>{t("RePhoneNum")}</Logck>
         </Itembox>
         <Itembox>
           <Logbtn

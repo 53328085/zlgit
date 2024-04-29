@@ -17,7 +17,8 @@
     "DistributionManagemet":"配电管理",
     "SettlementFee":"结算收费",
     "EnergyManagement":"能源管理",
-    "PhotovoltaicEnergyStorageManagement":"光伏发电储能管理",
+    "PhotovoltaicEnergy":"光伏发电",
+    "StorageManagement": "储能管理",
     "CarbonEmissionManagement":"碳排管理",
     "OperationMaintenanceManagement":"运维管理",
 	
@@ -30,7 +31,7 @@
     "Coal":"煤炭",
     "Fuel":"燃油",
 	
-    "Enable_DigitalCockpit ":"数字驾驶舱启用",
+    "Enable_DigitalCockpit":"数字驾驶舱启用",
 	"Yes":"是",
     "No":"否",
 	"Enable_AppFunction":"APP功能启用",
@@ -38,12 +39,12 @@
 	
     "ProjectLogo":"项目logo",
 	"ImageSize":"（图片大小为: 208*64 png 格式）",
-	"Message_projectLogo upload must":"项目logo必须上传",
+	"Logouploadmust":"项目logo必须上传",
 	"ProjectPicture":"项目图片",
-	"Message_projectPicture upload must":"项目图片必须上传",
+	"Pictureuploadmust":"项目图片必须上传",
 	"ProjectAddress":"项目地址",
-	"Message_click map to get":"请在地图上点击获取",
-	"Message_enter full ddress":"请输入详细地址",
+	"Message_clickmaptoget":"请在地图上点击获取",
+	"Message_enterfullddress":"请输入详细地址",
 	"Latitude and Longitude":"经纬度",
 	"Message_get latitude and longitude":"请从地图上获取经纬度",
 	"ProjectRemarks":"项目备注",
@@ -202,8 +203,7 @@
 
     "PowerDistributionMonitoring":"配电监控",
     "Load":"荷",
-    "Reserve":"储",
-    "StorageManagement":"储能管理",
+    "Reserve":"储",     
     "Charge":"充",
     "ChargingPile":"充电桩",
 

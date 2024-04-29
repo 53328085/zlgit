@@ -273,7 +273,7 @@ const system = createSlice({
           state.intl = payload
         },
         setIszhCN(state, {payload}) {
-           console.log('iszhCN', payload)
+           
            state.iszhCN = payload
         }
     },

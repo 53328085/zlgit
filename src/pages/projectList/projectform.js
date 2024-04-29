@@ -233,21 +233,21 @@ const imgToBase = (url) => {
 
     >
       <Item label={t("ProjectID")}>
-        <Input placeholder="系统自增项目ID" disabled />
+        <Input placeholder={t("systemID")} disabled />
       </Item>
       <Item label={t("ProjectName")} required name="name" rules={[
         {
           required: true 
         }
       ]}>
-        <Input placeholder="请输入项目名称"  autoComplete="off" />
+        <Input placeholder={t("enterprojectname")}  autoComplete="off" />
       </Item>
       <Item label={t("Projectvalidityperiod")} required name="validStageTime" rules={[
         {
           required: true 
         }
       ]}>
-        <DatePicker placeholder="请选择项目有效期" format="YYYY-MM-DD" disabledDate={disabledDate} />
+        <DatePicker placeholder={t("sevalidityperiod")} format="YYYY-MM-DD" disabledDate={disabledDate} style={{width: '260px'}} />
       </Item>
       {/*  imgLogo: "",
     imgProject: '', */}
@@ -258,29 +258,29 @@ const imgToBase = (url) => {
             [
              {
               required: true,
-              message: '请上传项目logo'
+              message: t("uploadprojectlog")
             }
             ]
            }>
             <Upload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={setImgLogo} /> 
             </Item>
            </div>
-           <Info>（图片大小为: 212*32 png 格式)</Info>
+           <Info>{t("sizeofpicture", {size: '212*32'})}</Info>
          </Item>
-         <Item label={t("Projectpicture")} labelCol={{flex:"auto"}} required>
+         <Item label={t("Projectpicture")}   required>
            <div className="img">
             <Item nostyle  name="imgProject" rules={
               [
               {
                 required: true,
-                message: '请上传项目图片'
+                message: t("longitudeatitude")
               }
              ]
            }>
             <Upload wpx={248} hpx={168} swpx={200} shpx={116} getfile={setImgProject} /> 
             </Item>
            </div>
-           <Info>（图片大小为: 248*168像素 png 格式)</Info>
+           <Info>{t("sizeofpicture", {size: '248*168'})}</Info>
          </Item>
       </div>
      {/*  <Item label="项目图片" className="upload">
@@ -290,9 +290,9 @@ const imgToBase = (url) => {
         </div>
       </Item> */}
       <Item label={t("Projectremark")} name="remark" className="remark">
-        <Input.TextArea   placeholder="请输入备注0-99字" maxLength={99} style={{height: "140px"}} />
+        <Input.TextArea   placeholder={t("99words")} maxLength={99} style={{height: "140px"}} />
       </Item>
-      <Item label={t("ProjectAddress")} labelCol={{flex:"166px"}} className="address" name="address" tooltip="请从地图上点击获取">
+      <Item label={t("ProjectAddress")} labelCol={{flex:"166px"}} className="address" name="address" tooltip={t("mapgetit")}>
        {/*  <Item noStyle>
           <Cascader
             options={options}
@@ -306,28 +306,28 @@ const imgToBase = (url) => {
             }}
           />
         </Item> */} 
-          <Input placeholder="请输入项目的详细地址" onChange={onInput} /> 
+          <Input placeholder={t("detailedaddress")} onChange={onInput} /> 
       </Item>
-      <Item label={t("longitudeatitude")} labelCol={{flex:"166px"}} className="lnglat" tooltip="请从地图上点击获取">
+      <Item label={t("longitudeatitude")} labelCol={{flex:"166px"}} className="lnglat" tooltip={t("mapgetit")}>
         <Row gutter={16}>
           <Col span={12}>
             <Item name="lng" rules={[
         {
           required: true,
-          message: '请从地图上点击获取'
+          message: t("mapgetit")
         }
       ]}>
-              <Input placeholder="经度" />
+              <Input placeholder={t("longitude")} />
             </Item>
           </Col>
           <Col span={12}>
             <Item name="lat" rules={[
         {
           required: true,
-          message: '请从地图上点击获取'
+          message: t("mapgetit")
         }
       ]}>
-              <Input placeholder="纬度" />
+              <Input placeholder={t("longitude")} />
             </Item>
           </Col>
         </Row>

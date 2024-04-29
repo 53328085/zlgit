@@ -21,8 +21,9 @@ import Mapcom from "@com/useMap/indexset";
 import Cupload from "@com/useUpload.js" 
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
+import {useTranslation} from 'react-i18next'
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo, currProject} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject, iszhCN} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton} from "@com/useButton"
 
@@ -128,14 +129,14 @@ const Info = styled.span`
 const Dcheckbox = styled.div`
  && {
   display: grid;
-  grid-template-columns: repeat(4, 96px);
+  grid-template-columns: repeat(${props => props.colum}, ${props => props.wh || "96px"});
   grid-auto-rows: auto;
   gap: 16px;
   .ant-checkbox-wrapper {
     margin: 0px;
     color: #999;
     font-size: 14px;
-    width: 96px;
+    width: ${props => props.wh || " 96px"};
     height: 32px;
     line-height: 32px;
     background-color: transparent;
@@ -167,47 +168,15 @@ const Dcheckbox = styled.div`
    }
  }
 `
-const Ccheckbox = styled(Checkbox.Group)`
+Dcheckbox.defaultProps = {
+  colum: 4
+}
 
- && {
-  display: grid;
-  grid-template-columns: repeat(4, 96px);
-  grid-auto-rows: auto;
-  gap: 16px;
-  .ant-checkbox-group-item {
-    margin: 0px;
-    color: #999;
-    font-size: 14px;
-    width: 96px;
-    height: 32px;
-    line-height: 32px;
-    background-color: transparent;
-    border: 1px solid #999;
-    transition: all 0.3s;
-    display: flex;
-    justify-content: center;
-  }
-  .ant-checkbox-disabled+span {
-    color: #fff;
-  }
-  .ant-checkbox-wrapper-checked.ant-checkbox-group-item {
-    color:#fff;
-    background-color: ${props => props.theme.primaryColor};
-    border-color: ${props => props.theme.primaryColor};
-  }
-   .ant-checkbox {
-    opacity: 0;
-   }
-   .ant-checkbox+span {
-    padding: 0 16px 0 0;
-   }
- }
-`
 export default function ProjectSet({projectId}) {
-  const dispatch = useDispatch();
-  const ismanager = useSelector(manager)
-  const ismaintenance = useSelector(maintenance)
+  const dispatch = useDispatch(); 
   const ispublish = useSelector(publishState)
+  const iszh = useSelector(iszhCN)
+  const {t} = useTranslation("comm","common")
 
   const CurrProject = useSelector(currProject)
 
@@ -240,23 +209,23 @@ export default function ProjectSet({projectId}) {
  
  
   const optionalProject = [
-    { label: '电气安全', value: 'safeEnabled' },
-    { label: '配电管理', value: 'distributionEnabled' },
-    { label: '结算收费', value: 'prepayEnabled' },
-    { label: '能源管理', value: 'energyEnabled' },
-    { label: '光伏发电', value: 'solarEnabled' },
-    { label: '储能管理', value: 'storageEnabled' },
-    { label: '碳排管理', value: 'carbonEnabled' },  
-    { label: '运维管理', value: 'maintenanceEnabled' },
+    { label: t("common:ElectricalSafety"), value: 'safeEnabled' },
+    { label: t("common:DistributionManagemet"), value: 'distributionEnabled' },
+    { label: t("common:SettlementFee"), value: 'prepayEnabled' },
+    { label: t("common:EnergyManagement"), value: 'energyEnabled' },
+    { label: t("common:PhotovoltaicEnergy"), value: 'solarEnabled' },
+    { label:  t("common:StorageManagement"), value: 'storageEnabled' },
+    { label: t("common:CarbonEmissionManagement"), value: 'carbonEnabled' },  
+    { label: t("common:OperationMaintenanceManagement"), value: 'maintenanceEnabled' },
   ]
   const energyType = [
-    { label: '电', value: 'electricEnabled' },
-    { label: '冷水', value: 'waterColdEnabled' },
-    { label: '热水', value: 'waterHotEnabled' },
-    { label: '蒸汽', value: 'steamEnabled' },
-    { label: '燃气', value: 'gasEnabled' },
-    { label: '煤炭', value: 'coalEnabled' },
-    { label: '燃油', value: 'oilEnabled' },   
+    { label: t("common:Electricity"), value: 'electricEnabled' },
+    { label: t("common:Coldwater"), value: 'waterColdEnabled' },
+    { label: t("common:Hotwater"), value: 'waterHotEnabled' },
+    { label: t("common:Steam"), value: 'steamEnabled' },
+    { label: t("common:Gas"), value: 'gasEnabled' },
+    { label: t("common:Coal"), value: 'coalEnabled' },
+    { label: t("common:Fuel"), value: 'oilEnabled' },   
   ]
   const { Item } = Form;
   const { TextArea } = Input;
@@ -279,16 +248,7 @@ export default function ProjectSet({projectId}) {
     projectImage: ''
 
   };  
-
  
-
-   
-const onSwitch = (f) => {
-  /* if(!f) {
-    form.setFieldValue('bigScreenUrl', '')
-  } */
-  setIsbig(f)
-}
 let initial = {} // 获取的接口项目信息
 const queryProjectInfo = async () => {
    try {
@@ -327,7 +287,7 @@ const config = {
     {
       type: 'object',
       required: true,
-      message: '请选择项目有效期',
+      message: t("comm:sevalidityperiod"),
     },
   ],
 };
@@ -335,14 +295,14 @@ const checkLog = (_, value) => {
    if (!!value) {
      return Promise.resolve();
    }
-   return Promise.reject(new Error('项目Log必须上传'));
+   return Promise.reject(new Error(t("common:Logouploadmust")));
   
 }
 const checkProject = (_, value) => { 
   if (!!value) {
     return Promise.resolve();
   }
-  return Promise.reject(new Error('项目图片必须上传'));
+  return Promise.reject(new Error(t("common:Pictureuploadmust")));
  
 }
 const setAaddress = (value) => {
@@ -393,9 +353,9 @@ const onFinish = async (values) => {
    
    if(success) {
     queryProjectInfo()
-    message.success('保存成功')
+    message.success(t("comm:savesuccessfully"))
    }else {
-    message.error(errMsg || '数据错误')
+    message.error(errMsg || t("comm:dataerr"))
    }
  
   } catch (error) {
@@ -411,7 +371,7 @@ useEffect(() => {
 }, [projectId])
 
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}><span>基础设置</span>  <SaveButton onClick={onSave} isicon={false}>保存</SaveButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}><span>{t("common:Infrastructure")}</span>  <SaveButton onClick={onSave} isicon={false} /></div>}>
     <Formbox
       form={form}   
       labelAlign="left"
@@ -425,76 +385,63 @@ useEffect(() => {
     >
       <div className="leftlayout">
         <div className="row">
-      <Item label="项目ID" name="id">
-        <Input placeholder="系统自增项目ID" disabled />
+      <Item label={t("comm:ProjectID")} name="id">
+        <Input placeholder={t("comm:systemID")} disabled />
       </Item>
-      <Item label="项目名称"  name="name" rules={[{
+      <Item label={t("comm:ProjectName")}  name="name" rules={[{
         required: true
       }]}>
-        <Input placeholder="请输入项目名称" />
+        <Input placeholder={t("comm:enterprojectname")} />
       </Item>
-      <Item label="项目有效期" required name="validStageTime" {...config}>
+      <Item label={t("comm:Projectvalidityperiod")} required name="validStageTime" {...config}>
         <DatePicker   format="YYYY-MM-DD" disabledDate={disabledDate} />
       </Item>
       </div>
       <Divider dashed  className="divider" />
-      <Item label="默认模块">
-          <Dcheckbox>
-            <Checkbox checked disabled>项目概述</Checkbox>
-            <Checkbox checked disabled>运行监控</Checkbox>
+      <Item label={t("common:DefaultModule")}>
+          <Dcheckbox colum={iszh ? 4 : 2} wh="auto">
+            <Checkbox checked disabled>{t("common:ProjectOverview")}</Checkbox>
+            <Checkbox checked disabled>{t("common:OperationMonitoring")}</Checkbox>
           </Dcheckbox>
-         {/*  <Ccheckbox options={defaultProject} defaultValue={['1', '2']}  disabled /> */}
+         
       </Item>
-      <Item label="可选模块" > {/* className='optional' */}
-           <Dcheckbox>
+      <Item label={t("common:OptionalModules")}> {/* className='optional' */}
+           <Dcheckbox colum={iszh ? 4 : 2} wh="auto">
              {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
      
       </Item>
       <Divider dashed  className="divider" />
-      <Item label="能源种类"  > {/* className="type" */}
+      <Item label={t("common:EnergyType")}  > {/* className="type" */}
           <Dcheckbox>
              {energyType.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
       </Item>
-      <Divider dashed  className="divider" />
-     {/*  <Item label="数据大屏启用">
+      <Divider dashed  className="divider" />    
+      <Item label={t("common:Enable_DigitalCockpit")} valuePropName="checked" name="dataCockpitEnabled" >
         <Switch
-          checkedChildren="是"
-          unCheckedChildren="否"
-          onChange={onSwitch}
-          style={{
-            width: "64px",
-          }}
-        />
-      </Item> */}
-    {/*   <Item label="数据大屏url" name="bigScreenUrl"  >
-        <Input placeholder="请输入数据大屏地址" disabled={!isbigurl}/>
-      </Item> */}
-      <Item label="数据驾驶舱启用" valuePropName="checked" name="dataCockpitEnabled" >
-        <Switch
-          checkedChildren="是"
-          unCheckedChildren="否"
+          checkedChildren={t("comm:Yes")}
+          unCheckedChildren={t("comm:No")}
           style={{
             width: "64px",
           }}
         />
       </Item>
       <Divider dashed  className="divider" />
-      <Item label="App 功能启用" valuePropName="checked" name="appEnabled">
+      <Item label={t("common:Enable_AppFunction")} valuePropName="checked" name="appEnabled">
         <Switch
-          checkedChildren="是"
-          unCheckedChildren="否"
+          checkedChildren={t("comm:Yes")}
+          unCheckedChildren={t("comm:No")}
           style={{
             width: "64px",
           }}
         />
       </Item>
       <Divider dashed  className="divider" />
-      <Item label="班次管理启用" valuePropName="checked" name="shiftEnabled">
+      <Item label={t("common:Enable_ShiftManagement")} valuePropName="checked" name="shiftEnabled">
         <Switch
-          checkedChildren="是"
-          unCheckedChildren="否"
+          checkedChildren={t("comm:Yes")}
+          unCheckedChildren={t("comm:No")}
           style={{
             width: "64px",
           }}
@@ -503,7 +450,7 @@ useEffect(() => {
       </div>
       <div className="rightlayout">
       <div className='upload'> 
-         <Item label="项目logo" className="left" required>
+         <Item label={t("comm:Projectlogo")} className="left" required>
            <div className="img">
             <Item noStyle name="logoImage" rules={[
               {
@@ -513,9 +460,9 @@ useEffect(() => {
               <Cupload wpx={208} hpx={64} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
-           <Info>（图片大小为: 208*64 png 格式）</Info>
+           <Info>{t("comm:sizeofpicture", {size: "208*64"})}</Info>
          </Item>
-         <Item label="项目图片" required> {/* 图片改变时传值，不改变时传空 */}
+         <Item label={t("comm:Projectpicture")}  required> {/* 图片改变时传值，不改变时传空 */}
            <div className="img">
             <Item noStyle name="projectImage" rules={[
               {
@@ -525,27 +472,27 @@ useEffect(() => {
             <Cupload wpx={248} hpx={168} swpx={200} shpx={114} isDel={ispublish} /> 
             </Item>
            </div>
-           <Info>（图片大小为: 248*168像素 png 格式)</Info>
+           <Info>{t("comm:sizeofpicture", {size: "248*168"})}</Info>
          </Item>
       </div>
       <Divider dashed  className="divider" style={{width: '624px',minWidth: '624px', marginLeft: '96px'}} />    
-      <Item label="项目地址" name="address"  rules={[  
+      <Item label={t("comm:ProjectAddress")} name="address" labelCol={iszh ? null : {flex: "160px"}}  rules={[  
               {
                 required: true,
-                message: '请输入详细地址',
+                message: t("common:Message_enterfullddress"),
               },
             ]}
-            tooltip="请在地图上点击获取"
+            tooltip={t("common:Message_clickmaptoget")}
             > 
-          <Input placeholder="请输入详细地址"  onBlur={onInput}  />         
+          <Input placeholder={t("common:Message_enterfullddress")}  onBlur={onInput}  />         
       </Item>
-      <Item label="经纬度"  name="lngLat" rules={[  
+      <Item label={t("comm:longitudeatitude")}  name="lngLat" labelCol={iszh ? null : {flex: "160px"}} rules={[  
               {
                 required: true,
-                message: '请从地图上获取经纬度',
+                message:  t("comm:mapgetit"),
               },
             ]}> 
-              <Input placeholder="经纬度" /> 
+              <Input placeholder={t("comm:longitude")} /> 
       </Item>
  
     
@@ -553,8 +500,8 @@ useEffect(() => {
          <Mapcom setAaddress={setAaddress}   ref={map} />         
       </div> 
       <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
-      <Item label="项目备注"   name="remark"> 
-        <TextArea placeholder="项目详细信息" maxLength={99} style={{height: '32px'}} />
+      <Item label={t("comm:Projectremark")}   name="remark"> 
+        <TextArea placeholder={t("common:ProjectDetails")} maxLength={99} style={{height: '32px'}} />
       </Item> 
     
       </div>

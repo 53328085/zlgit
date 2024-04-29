@@ -1,7 +1,7 @@
 {
     "PublicModule":"Public Module",
 
-    "Infrastructure":"Infrastructure",
+    "Infrastructure":"basic setting",
 	"ProjectID":"Project ID",
 	"ProjectName":"Project Name",
 	"Message_enter project name":"Please enter project name",
@@ -17,9 +17,11 @@
     "DistributionManagemet":"Distribution Management",
     "SettlementFee":"Settlement Fee",
     "EnergyManagement":"Energy Management",
-    "PhotovoltaicEnergyStorageManagement":"Photovoltaic Energy Storage Management",
-    "CarbonEmissionManagement":"Carbon Emission Management",
-    "OperationMaintenanceManagement":"Operation and Maintenance Management",
+    "PhotovoltaicEnergy":"Photovoltaic Energy",
+    "StorageManagement": "Storage Management",
+    
+    "CarbonEmissionManagement":"Carbon Emission",
+    "OperationMaintenanceManagement":"Operation and Maintenance",
 	
     "EnergyType":"Energy Type",
 	"Electricity":"Electricity",
@@ -38,12 +40,12 @@
 	
     "ProjectLogo":"Project logo",
 	"ImageSize":"(Image size: 208*64 png format)",
-	"Message_projectLogo upload must":"Project logo must be uploaded",
+	"Logouploadmust":"Project logo must be uploaded",
 	"ProjectPicture":"Project Picture",
-	"Message_projectPicture upload must":"Project picture must be uploaded",
+	"Pictureuploadmust":"Project picture must be uploaded",
 	"ProjectAddress":"Project Address",
-	"Message_click map to get":"Please click on the map to get",
-	"Message_enter full ddress":"Please enter full address",
+	"Message_clickmaptoget":"Please click on the map to get",
+	"Message_enterfullddress":"Please enter full address",
 	"Latitude and longitude":"Latitude and Longitude",
 	"Message_get latitude and longitude":"Please get latitude and longitude from the map",
 	"ProjectRemarks":"Project Remarks",
@@ -202,8 +204,7 @@
 
     "PowerDistributionMonitoring":"Power Distribution Monitoring",
     "Load":"Load",
-    "Reserve":"Reserve",
-    "StorageManagement":"Storage Management",
+    "Reserve":"Reserve",    
     "Charge":"Charge",
     "ChargingPile":"Charging pile",
 

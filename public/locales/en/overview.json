@@ -1,4 +1,8 @@
 {
+    "Modulename":"Module name",
+    "layoutsuccessfully": "The current layout is saved successfully!",
+    "Saveinterface": "Save interface",
+    "resetlayout": "Are you sure you want to reset the current page layout?",
     "rate": "rate",
     "online": "online",
     "offline": "offline",

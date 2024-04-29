@@ -52,7 +52,7 @@ import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerT
 import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
 
 import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
-
+import {useTranslation} from "react-i18next"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
 
 
@@ -103,6 +103,8 @@ import inspection from './itemImgs/inspection.svg' // 本月工单
 import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
 
 import { useRequest } from 'ahooks';
+import Cmodal from "@com/useModal"
+import {Serach} from "@com/comstyled"
 const CDrawer = styled(Drawer)`
   && {
     font-size: 14px;
@@ -132,6 +134,7 @@ const CDrawer = styled(Drawer)`
 
 `
 export default function Index() {
+  const {t} = useTranslation(["button","overview", "comm"])
   const { Search } = Input
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
@@ -155,7 +158,7 @@ export default function Index() {
   const [dragList, setDragList] = useState([])
   const [dragListCopy, setDragListCopy] = useState([])
   const basicItems = [
-    { img: company, itemName: '公司信息', draggable: true },
+    { img: company, itemName: "公司信息", draggable: true },
     { img: device, itemName: '设备信息', draggable: false },
     { img: safe, itemName: '安全运行天数', draggable: false },
     { img: weather, itemName: '天气信息', draggable: false },
@@ -513,33 +516,26 @@ export default function Index() {
         <SelectTab tabName={'能耗统计'}></SelectTab>
         <SelectTab tabName={'储能管理'}></SelectTab>
       </div>
-      <div className={style.reset} onClick={() => showResetModal()}>重置</div>
-      <div className={style.confirm} onClick={run}>保存</div>
+      <div className={style.reset} onClick={() => showResetModal()}>{t("button:reset")}</div>
+      <div className={style.confirm} onClick={run}>{t("button:save")}</div>
 
-      <Modal className={style.resetModal} open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'重置'} okType={'primary'} okButtonProps={{ danger: true }}>
-        <div className={style.resetHeader}>重置提示</div>
-        <div className={style.resetBody}>
-          <img className={style.warnIcon} src={firstwarn}></img>
-          <span>是否确认要重置当前页面布局？</span>
-        </div>
-      </Modal>
+      <Cmodal title={t("comm:Resetprompt")} mold="cust" type="warn" open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("button:reset")} >        
+           {t("overview:resetlayout")}
+      </Cmodal>
 
-      <Modal className={style.confirmModal} open={confirmModal} onOk={confirmOk} onCancel={handleCancel} width={512} centered={true} closable={false} maskClosable={false} okText={'关闭'} okType={'primary'} cancelButtonProps={{ style: { display: 'none' } }}>
-        <div className={style.confirmHeader}>保存界面</div>
+      <Cmodal title={t("overview:Saveinterface")} mold="cust" open={confirmModal} onOk={confirmOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("comm:Close")}   cancelButtonProps={{ style: { display: 'none' } }}>
+        
         <div className={style.confirmBody}>
           <img className={style.warnIcon} src={finished}></img>
-          <span >当前界面布局保存成功！</span>
+          <span >{t("overview:layoutsuccessfully")}</span>
         </div>
-      </Modal>
+      </Cmodal>
 
       <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} >
         <div className={style.searchInput}>
-          <Search
-            placeholder="模块名称"
-            allowClear
-            enterButton="查询"
+          <Serach
+            placeholder={t("overview:Modulename")}
             style={{ width: 240, backgroundColor: '#000', color: '#fff' }}
-            size="middle"
             onSearch={onSearch}
           />
         </div>
