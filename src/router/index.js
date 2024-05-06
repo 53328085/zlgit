@@ -16,7 +16,7 @@ import  {runtimeDistribution} from "./distribution"; // 配电管理
 import  {runtimePrepay} from "./prepayment"; // 结算收费
 import  {runtimeSolar} from "./photovoltaic"; // 光伏
 import  {designerCommon} from "./designer/common";
-import  {runtimeCarbon} from "./carbon" // 碳排管理
+import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
  
 
@@ -29,7 +29,7 @@ import  {runtimeStorage} from './storage' // 储能管理
   runtimePrepay,
   runtimeSolar,
   designerCommon,
-  runtimeCarbon,
+  runtimeCarbonEmissionManager,
   runtimeStorage,
  }
 
@@ -185,6 +185,8 @@ const loginrouter =  [{
 ];
  
 const getNestRout = (sider,routes) => {  
+  console.dir(sider)
+  console.dir(routes)
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {
@@ -207,12 +209,12 @@ function useRoute() { // 重写路由
   const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus) || {} // 登录页面时会报错
   const bigScreen = useSelector(currentscreen) || {}
    
-  runMenus?.forEach(r => {
+  runMenus?.forEach(r => {    
     let {no, key} = r;
+    console.log('key', key)
     let Com = components[no];
-    let nestroute = runRoutes[key]
-    let sider = siderRunMenus[key]
-
+    let nestroute = runRoutes[key]    
+    let sider = siderRunMenus[key]  // runtimeCarbonEmissionManager 碳排管理    
     if (Com) {
       no == '0104' ? RunRoute.push({
         path: key,

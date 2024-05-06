@@ -58,7 +58,7 @@ export default function Index() {
   }, [no]) */
   return (
     <Pagecount bgcolor="transparent" pd="0">
-      配额管理
+      企业设置
       {/*  <Mainbox>
           <Titlelayout title="企业基本信息" layout="flex">
             <div className='formbox'>

@@ -1,6 +1,6 @@
 /* 获取系统配置 */
  
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import {message} from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
@@ -341,6 +341,17 @@ export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMen
 export const siderRunMenus  = state => state.system.menus?.siderRunMenus
 export const setMenus  = state => state.system.menus?.setMenus
 export const comSetFirst  = state => state.system.menus?.comSet[0]
+
+//export const Selectmenus = (state, parentNo) => state.system.menus.fullmenu.filter(s => s.parentNo == parentNo)
+export const Selectmenus  =createSelector(
+ [menus, (state, parentNo) => parentNo],
+  (menus, parentNo) => {
+     console.log(menus)
+     console.log(parentNo)
+     return menus?.fullmenu.filter(f =>f.parentNo == parentNo)
+  }
+ )
+
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId

@@ -34,7 +34,7 @@ export default function Datagroupc({projectId, CModal}) {
    
  }
  const add =useCallback(() => {
-   setTitle('新增数据组') 
+   setTitle(t("AddDataGroup")) 
    setType(0)
    eref.current.onOpen();
  }, [type])

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useTransition} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
@@ -20,7 +20,7 @@ const fs = {
 
 export default function DefaultHome(props){
   let {type} = props
-  const {t} = useTransition("comm")
+  const {t} = useTranslation("comm")
   const projectId = useSelector(selectProjectId)
 
  
