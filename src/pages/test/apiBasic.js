@@ -14,12 +14,16 @@ export const apiSlice = createApi({
     tagTypes: ['energy'],
     endpoints: build => ({
         getPosts: build.query({
-            query: () => ({
-                url:'/Energy/EnergyFlowRunTime/QueryElectric?projectId=3&type=1&date=2024-04-29&culture=zh',
+            query: (lng) => ({
+                url:`/Energy/EnergyFlowRunTime/QueryElectric?projectId=3&type=1&date=2024-04-29&culture=${lng}`,
                 method: 'POST',
                 body: [0,1],
             }),
-            providesTags:["energy"]
+            providesTags:["energy"],
+            transformResponse: resp => {
+                console.dir(resp);
+                return resp;
+            }
            /*  providesTags:  (result=[], error, arg) => {
               let {link} = result
                console.log(error)

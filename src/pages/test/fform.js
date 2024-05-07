@@ -22,10 +22,23 @@ export default function Index() {
 
  const [trigger,result, lastPromiseInfo]= apiSlice.useLazyGetPostsQuery()
  
- console.log('result', result)
+ const selectResult = apiSlice.endpoints.getPosts.select();
+
+ console.log('selectResult', selectResult)
 
  console.log('lastPromiseInfo', lastPromiseInfo)
+ const thunkfn=(arg) => (dispatch,getState) => {
+     const startBeore = getState();
+     console.log(startBeore)
+     console.log('接受的参数',arg)
+     console.log('dispatch', dispatch)
+     console.log('getState', getState)
+ }
  const dispatch = useDispatch()
+ const testthunk =() =>   { //中间件函数
+  console.log('thunkfn')
+  dispatch(thunkfn('zhuzl'))
+ }
  const add = async () => {
    await dispatch(getWebsiteMenu(3))
  
@@ -34,9 +47,15 @@ export default function Index() {
   const all = selectAll(store.getState())
   console.dir(all);
  }
- 
+ const statefn = (state) => {
+   console.log(state)
+   return {name: 'zl'}
+ }
  const menus = useSelector(state =>Selectmenus(state, "0105"))
- console.dir(menus);
+ 
+ const person = useSelector(statefn);
+
+console.log(person);
 
  let {isLoading, isSuccess, isError, data: Posts, refetch} = {}
  const [parampost, {isLoading: isload, isError:error, isSuccess: scc}] = useParamPostMutation()
@@ -67,7 +86,12 @@ export default function Index() {
       <button onClick={refetch}>refetch</button>
       <button onClick={add}>Add</button>
       <button onClick={show}>Show</button>
-      <button onClick={trigger}>延迟获取</button>
+      <button onClick={() => {
+        trigger('en');
+        console.dir(result)
+        console.dir(lastPromiseInfo)
+        }}>延迟获取</button>
+        <button onClick={testthunk}>thunk</button>
       </Space>
       
     </div>

@@ -3,7 +3,7 @@ import { Navigate, useRoutes} from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 
-
+import Emptycom from "@com/useEmpty"
  
  
 import {menus as Menus, currentscreen} from "@redux/systemconfig";
@@ -184,14 +184,12 @@ const loginrouter =  [{
   
 ];
  
-const getNestRout = (sider,routes) => {  
-  console.dir(sider)
-  console.dir(routes)
+const getNestRout = (sider,routes) => {   
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {
       let {no, key, label} = r;
-      let Com = routes[no];     
+      let Com =routes ? routes[no] : Emptycom;     
       if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
      })
   } 
@@ -210,8 +208,7 @@ function useRoute() { // 重写路由
   const bigScreen = useSelector(currentscreen) || {}
    
   runMenus?.forEach(r => {    
-    let {no, key} = r;
-    console.log('key', key)
+    let {no, key} = r;   
     let Com = components[no];
     let nestroute = runRoutes[key]    
     let sider = siderRunMenus[key]  // runtimeCarbonEmissionManager 碳排管理    
