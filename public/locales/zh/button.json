@@ -20,6 +20,7 @@
   "apply": "应用",
   "ok": "确定",
   "cancel": "取消",
+  "Cancel": "取消",
   "edit": "编辑",
   "accompanyRate": "倍率",
   "parametersSentDown": "参数下发",
@@ -55,5 +56,6 @@
   "viewingis": "查看巡检点",
   "shiftmg":"班次管理",
   "ResetPassword":"重置密码",
+  "Modificationfactor": "修改因子",
   "z": ""
 }

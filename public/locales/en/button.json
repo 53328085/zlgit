@@ -20,6 +20,7 @@
   "apply": "Apply",
   "ok": "Ok",
   "cancel": "Cancel",
+  "Cancel": "Cancel",
   "edit": "Edit",
   "accompanyRate": "Accompany rate",
   "parametersSentDown": "Parameters sent down",
@@ -55,5 +56,6 @@
   "viewingis": "Viewing inspection sites",
   "shiftmg":"Shift management",
   "ResetPassword":"Reset Password",
+  "Modificationfactor":"Modification factor",
   "z": ""
 }

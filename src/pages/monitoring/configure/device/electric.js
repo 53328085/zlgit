@@ -137,7 +137,7 @@ export default function gateway({ deviceStyle }) {
         return (
           <Space size={16}>
             <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
-            <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link>
+          {/*   <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link> */}
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
@@ -345,7 +345,10 @@ export default function gateway({ deviceStyle }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor
+        factor: formvalue.factor,
+        ct: formvalue.ct,
+        pt:formvalue.pt
+
       }
       const res = await AddElectric(params)
       if (res.success) {

@@ -257,11 +257,11 @@ export default function Index() {
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
-    { label: t("platformcig:All"), value: 0 },
-    { label: t("platformcig:Published"), value: 1 },
-    { label: t("platformcig:Unpublished"), value: 2 },
-    { label: t("platformcig:Expired"), value: 3 },
-    { label: t("platformcig:Unexpired"), value: 4 },
+    { label: t("comm:All"), value: 0 },
+    { label: t("comm:Published"), value: 1 },
+    { label: t("comm:Unpublished"), value: 2 },
+    { label: t("comm:Expired"), value: 3 },
+    { label: t("comm:Unexpired"), value: 4 },
   ]);
   const onShow = () => {    
       modal.current.onOpen()
