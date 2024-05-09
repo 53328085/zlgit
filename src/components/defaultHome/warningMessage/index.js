@@ -78,7 +78,6 @@ export default function DefaultHome(props) {
         if (success) {
           if (data) {
             state.alarmList = data
-            console.log(data)
           }
         } else {
           message.error(res.errMsg)

@@ -37,5 +37,6 @@ const zltest = createSlice({
   }
 })
 export const {addMenu, showlist} = zltest.actions
+console.log(zltest.actions.addMenu())
 export default zltest.reducer
 export const { selectAll,selectById} = menusAdapter.getSelectors(state => state.zltest)

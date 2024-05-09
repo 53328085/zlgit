@@ -110,6 +110,7 @@ const initialState = {
   asider: true,
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
+  enterprise: {}, // 碳排 企业信息
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -275,7 +276,11 @@ const system = createSlice({
         setIszhCN(state, {payload}) {
           
            state.iszhCN = payload
+        },
+        getEnterprise(state, {payload}) {
+          state.enterprise = payload
         }
+
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -393,6 +398,7 @@ export const roomName = state =>  {
 export const deviceStyle = state => state.system.deviceStyle;
 export const intl = state => state.system.intl //国际化
 export const iszhCN = state => state.system.iszhCN // 是否中文
+export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const {
     configProject,
     getSetMenus,
@@ -420,5 +426,6 @@ export const {
     getDiscurlevel,
     setIntl,
     setIszhCN,
+    getEnterprise,
 } = actions
 export default system.reducer

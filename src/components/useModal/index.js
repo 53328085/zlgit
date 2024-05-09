@@ -109,12 +109,13 @@ const CModal = styled(Modal)`
   const onGetvalue = () => formref.current.getValue()
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
-      <Button onClick={onCancel}>{t('cancel')}</Button>,
+      <Button onClick={onCancel} key="cancel">{t('cancel')}</Button>,
        <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
+        
         setCurrbtn(1)
         onOk()
-       }}>{t('apply')}</Button> ,
-       <Button type="primary" loading={currbtn == 2 && loading} onClick={() => {
+       }} key="apply" >{t('apply')}</Button> ,
+       <Button type="primary" loading={currbtn == 2 && loading} key="ok" onClick={() => {
         setCurrbtn(2)
         onOk().then(() => {
           onCancel();

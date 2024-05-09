@@ -1,9 +1,9 @@
-import React, {useEffect, useState, useRef, useMemo} from 'react'
+import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input, message, Drawer} from 'antd'
-import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig'
+import {useSelector, useDispatch} from 'react-redux'
+import {selectProjectId, getEnterprise} from '@redux/systemconfig'
 import {
   useIndustryListQuery, 
   useSubIndustryListQuery, 
@@ -47,29 +47,41 @@ const Tablebox = styled.div`
   justify-content: flex-start;
   row-gap: 16px;
   padding-top: 16px;
+  overflow-y: auto;
 `
  
 export default function Index() { 
+  const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const projectId = useSelector(selectProjectId)
   const [emissions, setEmissions] = useState([])
-  const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
- // console.log(carbonSlice)
- // let [naturehander] =carbonSlice.useLazyEnterpriseQuery()
+  let saveData =useRef({})
+  let EnterpriseId = useRef()
+
+ // 保存企业信息
 
   const [SaveEnterprise, {isLoading}] =useSaveEnterpriseMutation()
+  
+  const [SaveItem, {isLoading: itemloading}] = useSaveItemsMutation()
 
-  const {data:subindustry} = result?.data || {}
   // 所属行业
+
   let industry = []; 
   const {data:industryData, isSuccess} = useIndustryListQuery();
   if(isSuccess) {
     industry= industryData?.data ?? []
+    
   }
    
+    // 二级行业
+
+    const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
+    const {data:subindustry} = result?.data || {}
+
   // 所属地区
+
   let provinceList = []
   const  {data: provinceData, isSuccess: prsuc}= useProvinceListQuery()
   if(prsuc) {
@@ -77,6 +89,7 @@ export default function Index() {
   }
  
  // 单位性质
+
   let natureList = []
   const  {data:natureData, isSuccess: nasuc}  = useNatureListQuery()  
   if(nasuc) {
@@ -93,11 +106,17 @@ export default function Index() {
 
   // 查询企业信息
   let enterprise
-  const {data:enterpriseData, isSuccess: ensuc} = useEnterpriseQuery(projectId, { // 查询企业信息
-    skip: !Number.isInteger(projectId),    
+  const {data:enterpriseData, isSuccess: ensuc, isError, refetch} = useEnterpriseQuery(projectId, { // 查询企业信息
+    skip: !Number.isInteger(projectId),   
+    refetchOnMountOrArgChange: true, 
   })
   if(ensuc) {
     enterprise = enterpriseData?.data
+    EnterpriseId.current = enterprise.id
+    dispatch(getEnterprise(enterprise))
+  }
+  if(isError) {
+    console.log(isError)
   }
  /*  const {data: {data:enterprise} } = useEnterpriseQuery(projectId, { // 查询企业信息
     skip: !Number.isInteger(projectId),    
@@ -105,40 +124,63 @@ export default function Index() {
  */
  
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
-/* {
-    carbonEmissionFactor: '数值',
-    subCategoryName: '排放类型',
-    unit: '单位',
-    enabled:'是否启用'
-  } */
-  
+ 
+  // 保存
+ const onSave =useCallback(async () => {
+     let params = [];
+     let comm = saveData.current.comm    
+     for(let [key, value] of Object.entries(saveData.current)) {
+        if(key !=='comm') {
+            value.forEach(v => {
+              params.push({...comm,...v})
+            })
+        }
+     }
+    let {success, errMsg} = await SaveItem(params).unwrap()
+    if(success) {
+      message.success("保存成功")
+      getEmission(EnterpriseId.current)
+    }else {
+      message.warning(errMsg || '数据出错')
+    }
+
+ }, [saveData])
+
   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
     <span>{title}</span>
-    <CustButtonT text="save" ns="button" /> 
+    <CustButtonT text="save" ns="button" loading={itemloading} onClick={onSave} /> 
   </div>), [title])
-  const saveE =async () => {  // 保存企业信息
+  const saveE =async () => {  // 保存企业信息 不需要 enterpriseId ?
       try {
-          let values = await form.validateFields()
-          let title = industry.find(i => i.industryNo == values.industryNo)?.industryName
+          let {id, ...rest} = await form.validateFields()
+          let params ={enterpriseId:id, ...rest}
+          let title = industry.find(i => i.industryNo == rest.industryNo)?.industryName
           setTitle(title)
           if(isLoading) return;
-          let {success, data, errMsg} = await  SaveEnterprise(values).unwrap()
+          let {success, data, errMsg} = await  SaveEnterprise(params).unwrap()
           if(success) {
-             let {id=1} = data;
-              
+             let {projectId,industryNo,subIndustryNo} = data;
+              saveData.current.comm = {
+                projectId,
+                enterpriseId: id,
+                CategoryId:industryNo,
+                subCategoryId: subIndustryNo || 0,
+              }
            let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
             if(suc) {
               setOpen(true)
               setEmissions([...emission])
-              console.log(emission)
+              emission.forEach(e => {
+                saveData.current[e.categoryName] =e.subCategory
+              })
             }else {
               message.warning(err || "数据出错")
             }
-          //  refetch()
+            refetch()
           }else {
              message.warning(errMsg || '数据出错')
           }
-          console.log(data)
+          dispatch(getEnterprise(data || {}))
       } catch (error) {
         console.log(error)
       }
@@ -190,14 +232,16 @@ export default function Index() {
                  <Item name="projectId" noStyle>
                     <Input type="hidden" />
                  </Item>
-              
+                 <Item name="id" noStyle>
+                     <Input type="hidden" />
+                 </Item>
              </Form>
              <CustButtonT text="ok" wh="100%" onClick={saveE} loading={isLoading} />
              </div>
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="value">
                        <Tablebox>
-                       {emissions.map((e,index) => <TableT tabledata={e} key={index} /> )}
+                       {emissions.map((e,index) => <TableT tabledata={e} key={e.categoryName} saveData={saveData.current} /> )}
                        </Tablebox>
           </Titlelayout>)
           }

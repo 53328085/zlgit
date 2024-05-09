@@ -6,6 +6,47 @@ import {useTranslation} from 'react-i18next'
 import i18 from '../../i18n'
 import icon from "./icon";
 const {Link} = Typography
+
+const Normal = styled.div`
+width: ${props => props.wh || "72px"};
+height: 24px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+border: 1px solid transparent;
+border-radius: 2px;
+padding: 0 8px;
+`
+export  const Ptag = styled(Normal)`
+   background-color: #ecf5ff;
+   color: #409eff;
+   border-color:#409eff;
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(64,158,255);
+    border-color:rgb(64,158,255) ;
+    color:#fff;
+   }
+
+`
+export  const Wtag = styled(Normal)`
+   background-color: rgba(254,240,240,1);
+   color: #f35656;
+   border-color:rgba(251,200,200,1);
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(240,60,60,1);
+    border-color:rgb(240,60,60,1) ;
+    color:#fff;
+   }
+
+`
+
+
+
 const Custbtn = styled(Button).attrs((props) => ({
   type: props.type || "primary",
 }))`
@@ -147,6 +188,21 @@ const Menus = (print) => {
     </CmenuItem>
   </Cmenu>
 )}
+export function TreeBtnN(props) {  // 树形按钮  普通
+  let {text, ns="button",...other} = props 
+  const {t} = useTranslation();
+   return <Ptag {...other}>
+            {t(text,{ns})}
+           </Ptag>
+}
+export function TreeBtnW(props) {  // 树形按钮 删除
+  let {text, ns="button",...other} = props 
+  const {t} = useTranslation();
+   return <Wtag {...other}>
+            {t(text,{ns})}
+           </Wtag>
+}
+
 export function CustLink(props) { // 通用方式
   let {text, ns="button",...other} = props 
   const {t} = useTranslation();

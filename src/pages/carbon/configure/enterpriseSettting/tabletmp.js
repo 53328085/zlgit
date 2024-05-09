@@ -40,8 +40,8 @@ const columns = [
     }
 
   ]
-export default function Index({tabledata}) { 
-  console.dir(tabledata)
+export default function Index({tabledata, setSaveData}) { 
+
   const {categoryName, subCategory} = tabledata
   columns[0].title = categoryName;
   columns[0].onCell= (_, index) => {
