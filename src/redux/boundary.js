@@ -21,12 +21,28 @@ export const boundarySlice = apiSlice.injectEndpoints({
             invalidatesTags: ["boundary"]
              
         }),
-        updateBoundary: build.mutation({ // 新增边界子项
+        updateBoundary: build.mutation({ // 更新边界子项名称
             query: ({id,name}) => ({
-                url: `/Carbon/CarbonEmissionBoundary/UpadteCarbonBoundary?id=${id}&name=${name}`,
+                url: `Carbon/CarbonEmissionBoundary/UpadteCarbonBoundary?id=${id}&name=${name}`,
                 method: 'POST',
             }),
-            invalidatesTags: ["boundary"]
+            invalidatesTags: ["boundary"],
+             
+        }),
+       deleteBoundary: build.mutation({ // 删除子项
+            query: (id) => ({
+                url: `Carbon/CarbonEmissionBoundary/DeleteCarbonBoundary?id=${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ["boundary"],
+             
+        }),
+        boundaryConfig: build.query({ // 查询排放边界配置结构
+            query: ({projectId,enterpriseId,carbonBoundaryId,subCategoryId}) => ({
+                url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?projectId=${projectId}&enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&subCategoryId=${subCategoryId}`,
+                method: 'GET',
+            }),
+            
              
         }),
     }),
@@ -38,4 +54,6 @@ export const {
      useBoundaryTreeQuery,
      useAddCarbonBoundaryMutation,
      useUpdateBoundaryMutation,
+     useDeleteBoundaryMutation,
+     useBoundaryConfigQuery
     } = boundarySlice

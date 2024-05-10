@@ -4,7 +4,15 @@ import styled from 'styled-components'
 import {Form, Space,Button, Tree, Input, message} from 'antd'
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
-import {useBoundaryTreeQuery, useAddCarbonBoundaryMutation, useUpdateBoundaryMutation} from "@redux/boundary"
+import {
+  useBoundaryTreeQuery, 
+  useAddCarbonBoundaryMutation, 
+  useUpdateBoundaryMutation,
+  useDeleteBoundaryMutation,
+  useBoundaryConfigQuery,
+  boundarySlice
+} from "@redux/boundary"
+
 import Titlelayout from "@com/titlelayout"
 import {TreeBtnN, TreeBtnW} from "@com/useButton"
 import {CustButtonT} from "@com/useButton"
@@ -79,7 +87,7 @@ export default function Index() {
   
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
-  const title = ''
+
   const [mTitle, setMtitle] =useState()
   // 查询树
 
@@ -98,6 +106,7 @@ export default function Index() {
   const [addedit, setAddedit] = useState(true)
   const [saveSubItem] =useAddCarbonBoundaryMutation() // 新增
   const [editSubItem] = useUpdateBoundaryMutation() // 编辑
+  const [deleteSubItme] = useDeleteBoundaryMutation() // 删除
   const parentIdRef = useRef({})
   const mref=useRef()
   const addSubitem = (item) => {
@@ -115,6 +124,14 @@ export default function Index() {
     setAddedit(false)
     mref.current.onOpen()
 
+ }
+ const onDelete = async (id) => {
+    let {success, errMsg} = await deleteSubItme(id).unwrap()
+   if(success) {
+      message.warning("删除成功")
+    }else {
+      message.warning(errMsg || "数据出错")
+    } 
  }
  const onOk = async () => {
     try {
@@ -137,8 +154,8 @@ export default function Index() {
           }
       }else {
         let post ={
-          id: encodeURIComponent(id),
-          name: encodeURIComponent(name)
+          id,
+          name,
         }
         let {success, errMsg} = await editSubItem(post)
         if(success) {
@@ -153,6 +170,23 @@ export default function Index() {
    
 
  }
+
+// 配置
+   const [queryconfig] = boundarySlice.useLazyBoundaryConfigQuery()
+   const  [title, setTitle]=useState();
+   const onConfig =(id) => {
+       let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
+       setTitle(txt)
+       setOpen(true)
+       
+   }
+   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+   <span>{title}</span>
+   <CustButtonT text="Completeconfiguration" ns="button"   /> 
+  </div>), [title,open])
+
+
+
   const custitem =(item) => {
     let {name, id, nodes,parentId} = item
     if(Array.isArray(nodes) && nodes.length >0) {
@@ -161,7 +195,12 @@ export default function Index() {
     return   (
       <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
         <Custtitle>{name}</Custtitle>
-        <Space size={16}><TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" /><TreeBtnN text="edit" key="edit" onClick={() => editSubitem(item)} />{parentId!==0 && <TreeBtnW text="delete" key="delete" />}<TreeBtnN text="configure" key="configure" /></Space>
+        <Space size={16}>
+        <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" />
+        <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(item)} />
+        {parentId!==0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
+        <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
+        </Space>
       </div>
     )
   }
@@ -179,7 +218,7 @@ export default function Index() {
    />
           
           </Titlelayout>
-         {open && (<Titlelayout   title={title} layout="flex"  key="right">
+         {open && (<Titlelayout   title={Title} layout="flex"  key="right">
                        <Tablebox>
                      
                        </Tablebox>
