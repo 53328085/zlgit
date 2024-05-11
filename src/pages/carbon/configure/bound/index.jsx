@@ -11,7 +11,7 @@ import {
   useDeleteBoundaryMutation,
   useBoundaryConfigQuery,
   boundarySlice
-} from "@redux/boundary"
+} from "./boundary"
 
 import Titlelayout from "@com/titlelayout"
 import {TreeBtnN, TreeBtnW} from "@com/useButton"
@@ -172,10 +172,11 @@ export default function Index() {
  }
 
 // 配置
-   const [queryconfig] = boundarySlice.useLazyBoundaryConfigQuery()
+   const [queryconfig] = boundarySlice.useLazyDataConfigQuery()
    const  [title, setTitle]=useState();
-   const onConfig =(id) => {
+   const onConfig = async ({id}) => {
        let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
+       let data = await queryconfig({enterpriseId, carbonBoundaryId:id});
        setTitle(txt)
        setOpen(true)
        

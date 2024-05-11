@@ -1,4 +1,4 @@
-import { apiSlice } from "./rtkquery"
+import { apiSlice } from "@redux/rtkquery"
  
 export const boundarySlice = apiSlice.injectEndpoints({   
     tagTypes: ['boundary'],     
@@ -42,8 +42,12 @@ export const boundarySlice = apiSlice.injectEndpoints({
                 url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?projectId=${projectId}&enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&subCategoryId=${subCategoryId}`,
                 method: 'GET',
             }),
-            
-             
+        }),
+        DataConfig: build.query({ // 获取边界数据资源配置
+            query: ({enterpriseId,carbonBoundaryId}) => ({
+                url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
+                method: 'GET',
+            }),
         }),
     }),
 
@@ -55,5 +59,6 @@ export const {
      useAddCarbonBoundaryMutation,
      useUpdateBoundaryMutation,
      useDeleteBoundaryMutation,
-     useBoundaryConfigQuery
+     useBoundaryConfigQuery,
+     useDataConfigQuery
     } = boundarySlice

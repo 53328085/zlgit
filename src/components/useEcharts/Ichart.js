@@ -23,7 +23,7 @@ export default function Ichart(props={}) {
   const ref = useRef()
  // const langch = useSelector(intl)
   let {dataset={}, type=1, pieData, custoption, tip=''} = props
-
+   console.log(dataset)
   let typechart = custoption?.type || type
   
   let info = `${tip} 暂无数据` 

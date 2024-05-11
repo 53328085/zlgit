@@ -78,6 +78,9 @@ export default function Index() {
        "price",
        "norm",
        "type",
+    ],
+    runtimeCarbonEmissionManager: [  //碳排管理
+        "runtimeCarbonData"
     ]
   }); // 需要显示搜索的页面
 
@@ -216,6 +219,14 @@ export default function Index() {
         switch(nested) {
           case "norm":
            setConfig({ custview: true });
+           break;
+        }
+         
+      }
+      if(primary == "runtimeCarbonEmissionManager") {
+        switch(nested) {
+          case "runtimeCarbonData":
+           setConfig({isAreaId: false, isdate:true, shiftNo: true});
            break;
         }
          
