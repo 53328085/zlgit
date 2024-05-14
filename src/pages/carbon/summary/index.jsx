@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Form, Image, message, Progress, Select } from 'antd'
 import Pagecount from '@com/pagecontent'
 import Card from './card'
- 
+import {isObject} from "@com/usehandler"
 import styled from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
@@ -69,7 +69,7 @@ export default function Index() {
  }
 
  // 实时碳排放
-  let roption ={
+  const [roption, setRoption] =useState({
     series: [{type: "line", seriesLayoutBy: 'row'}],
     grid: {
         right: 0,
@@ -83,27 +83,40 @@ export default function Index() {
     },
     dataset: { 
     }
-}
-  const {isSuccess: rsuc, data: realData} = useRealTimeQuery({enterpriseId, type: undefined}, {
-    skip: !Number.isInteger(enterpriseId)
-  })
+})
+ 
  const [getRealData] =SummarySlice.useLazyRealTimeQuery()
- if(rsuc) {
-  
-   let {x=[], y=[]} = realData?.data || {}
-    roption =Object.assign(roption, {
-     dataset: {  dimensions: [
-        {name: '日期', type: "time"},
-        {name: '碳排放'}
-       ],
-       source: [x, y]
-      }
-    })
-    
+ const onGetRealData =async (e) => {
+    let type = e ? e.target.value : 1;
+    let {success, data, errMsg} = await  getRealData({enterpriseId, type}).unwrap()
+    console.dir(data)
+    if(success && isObject(data)) {
+      let {x=[], y=[]} = data
+      setRoption({
+        ...roption,
+        dataset: { dimensions: [
+          {name: '日期', type: "time"},
+          {name: '碳排放'}
+         ],
+         source: [x, y]
+        }
+      })
+
+    }else {
+      setRoption({
+        ...roption,
+        dataset: { dimensions: [],
+         source: []
+        }
+      })
+      if(!success) message.warning(errMsg || '数据出错')
+    }
  }
 
+ 
+
 // 碳排放排名
-let dataSource=[] 
+const [dataSource, setDataSourc]=useState([])
  
 const columnstable = [
   {
@@ -116,12 +129,19 @@ const columnstable = [
   { title: '占比', dataIndex: 'proportion', key: 'proportion',align: "center", },
 ]
 
-const {isSuccess: rksuc, data: rankingData} = useRankingQuery({enterpriseId, type: 1}, {
-  skip: !Number.isInteger(enterpriseId)
-})
 const [getRankingData] =SummarySlice.useLazyRankingQuery() 
-if(rksuc) {
-   dataSource=rankingData?.data??[]
+
+const OnGetRankingData = async (e) => {
+   let type = e ? e.target.value : 1;
+   let {success, data,errMsg} = await getRankingData({enterpriseId, type}).unwrap()
+   if(success && Array.isArray(data)) {
+     setDataSourc(data)
+     
+   }else {
+     if(!success) message.warning(errMsg || '数据出错')
+    setDataSourc([])
+   }
+   
 }
 
  // 月度碳排放
@@ -129,14 +149,13 @@ const {isSuccess: msuc, data: monthData} =useMonthQuery(enterpriseId, {
   skip: !Number.isInteger(enterpriseId)
 })
 
-console.log(monthData)
 let moption ={
   color: ["#ff7345","#6a6e88"],
   series: [{type: "bar", stack:"total", seriesLayoutBy: 'row'},{type: "bar", stack:"total", seriesLayoutBy: 'row'}],
   grid: {
       right: 0,
       left: 0,
-      top: "16px",
+      top: "32px",
       bottom: 0,
        containLabel: true,
    },
@@ -161,23 +180,60 @@ if(msuc) {
 
 }
 // 碳排占比
-const {isSuccess: rasuc, data: ratioData} = useRatioQuery({enterpriseId, type: 1}, {
-   skip: !Number.isInteger(enterpriseId)
+const [poptions, setPoptions] = useState({
+  type: 3,
+  pieData: { data: [], total: "100%", radius: ["40%",  "50%"],  center: ['50%', '50%']},
+  legend: {
+    bottom: 5,
+    top: 'auto'
+  },
+ 
 })
 
+const  [getRationData] =  SummarySlice.useLazyRatioQuery()
+const onGetRationData = async (e) => {
+  let type = e ? e.target.value : 1;
+  let {success, data,errMsg} = await getRationData({enterpriseId, type}).unwrap()
+  console.log(data)
+  if(success && Array.isArray(data) && data.length > 0) {
+    setPoptions({
+      ...poptions,
+      pieData: {
+        ...poptions.pieData,
+        data,
+      }
+    })
+    
+  }else {
+    if(!success) message.warning(errMsg || '数据出错')
+    setPoptions({
+      ...poptions,
+      pieData: {
+        ...poptions.pieData,
+        data:[],
+      }
+    })
+  }
 
- 
- 
+}
+// 分类能耗
+const [getEnergy] =SummarySlice.useLazyEnergyQuery()
+const onGetEnergy = async (e) => {
+  let type = e ? e.target.value : 1;
+  let {success, data,errMsg} = await getEnergy({enterpriseId, type}).unwrap()
+  console.log(data)
+}
 
- 
- 
- 
- 
- 
 
- 
+useEffect(() => {
+  if(Number.isInteger(enterpriseId))  {
+    OnGetRankingData()  // 碳排放排名
+    onGetRealData() // 实时碳排放
+    onGetRationData() // 碳排占比
+    onGetEnergy() // 分类能耗
+  }
 
- 
+}, [enterpriseId]) 
 
  const Ctitle = (
   <div className='custTitle'>
@@ -185,7 +241,7 @@ const {isSuccess: rasuc, data: ratioData} = useRatioQuery({enterpriseId, type: 1
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={(e) => {
-                    getRealData({enterpriseId, type: e.target.value})
+                    onGetRealData(e)
                   }} 
                   optionType="button"
                   buttonStyle="solid" /> 
@@ -196,27 +252,36 @@ const {isSuccess: rasuc, data: ratioData} = useRatioQuery({enterpriseId, type: 1
      <span>碳排放排名</span>
      <Radiogroup options={options}
                   defaultValue={1}
-                  onChange={(e) => {
-                    getRankingData({enterpriseId, type: e.target.value})
-                  }} 
+                  onChange={(e) =>OnGetRankingData(e)} 
                   optionType="button"
                   buttonStyle="solid" /> 
   </div>
  )
-
+ 
  const Raitle = (
   <div className='custTitle'>
      <span>碳排占比</span>
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={(e) => {
-                    getRankingData({enterpriseId, type: e.target.value})
+                      onGetRationData(e)
                   }} 
                   optionType="button"
                   buttonStyle="solid" /> 
   </div>
  )
-
+ const CItitle = (
+  <div className='custTitle'>
+     <span>分类能耗占比</span>
+     <Radiogroup options={options}
+                  defaultValue={1}
+                  onChange={(e) => {
+                    onGetEnergy(e)
+                  }} 
+                  optionType="button"
+                  buttonStyle="solid" /> 
+  </div>
+ )
   return (
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox>
@@ -249,18 +314,14 @@ const {isSuccess: rasuc, data: ratioData} = useRatioQuery({enterpriseId, type: 1
             <div className='chart'>
               <Ichart {...moption}/>
             </div>
-          </Titlelayout>
-
-        
-          <Titlelayout title="碳排占比" >
+          </Titlelayout>        
+          <Titlelayout title={Raitle} layout="flex" >
             <div className='chart'>
-               
+              <Ichart {...poptions} />
             </div>
 
-          </Titlelayout>
-
-        
-          <Titlelayout title="分类能耗" >
+          </Titlelayout>        
+          <Titlelayout title={CItitle} >
           
           </Titlelayout>
 

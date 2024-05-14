@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
 import styled from 'styled-components'
-import {Switch,Form, InputNumber} from 'antd'
+import {Switch,Form, InputNumber, Radio, message} from 'antd'
 import Usetable from '@com/useTable'
 import {CustLink,} from '@com/useButton'
 import CModal from "@com/useModal"
@@ -15,27 +15,40 @@ const Tablebox = styled.div`
   padding-top: 16px;
   overflow-y: auto;
 `
-export default function Index({tabledata,saveData}) { 
+export default function Index({tabledata,saveData,projectId,enterpriseId,displaydraw}) { 
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
-  const {categoryName, subCategory} = tabledata
+  const {categoryName, dataSubCategoryVos,categoryId} = tabledata
+  const rowspan = Array.isArray(dataSubCategoryVos) ?dataSubCategoryVos.length + 1 : 1
   const title = `编辑${categoryName}因子数值`;
-  let fixedrow ={categoryName,subCategoryName:'排放类型', unit: '单位',carbonEmissionFactor: '数值', option: t("comm:Operation")}   
-  const [datas, setDatas] =useState([fixedrow,...subCategory.map((c) => ({categoryName, ...c}))])
+  let fixedrow ={categoryName,subCategoryName:'参数类型', dataSource: '',  option: '', categoryId}   
+  const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
 
-  
+ // 配置
 
+ 
+  const onConfig = async (record, index) => {     
+     let {categoryId,subCategoryId} = record
+     let params = {
+      projectId,
+      enterpriseId,
+      subCategoryId,
+      carbonBoundaryId:categoryId
+     }
+     displaydraw(params)
+
+  }
   const indexref = useRef()
-  const onChange = (record, index) => {
+/*   const onChange = (record, index) => {
      indexref.current = index
     form.setFieldValue('pre', record.carbonEmissionFactor);
     ref.current.onOpen()
-  }
-  const swichange = (v, index) => {
-     
+  } */
+  const radioChange = (v, index) => {
+     console.log(datas)
      let newDatas = datas.slice().map(d => ({...d}))
-     newDatas[index].enabled= Number(v);
+     newDatas[index].dataSource= Number(v);
      setDatas(newDatas)
      saveData[categoryName]=newDatas.slice(1)
   }
@@ -66,7 +79,7 @@ export default function Index({tabledata,saveData}) {
       key: 'categoryName',
       onCell: (_, index) => {      
       if(index == 0) {
-       return  ({ rowSpan: 2, style: {backgroundColor: "#e7effd"}})
+       return  ({ rowSpan: rowspan, style: {backgroundColor: "#e7effd"}})
       }else {
         return {rowSpan: 0}
       }
@@ -74,43 +87,32 @@ export default function Index({tabledata,saveData}) {
     }
     },
     {
-      title: '排放类型',
+      title: '参数类型',
       dataIndex: 'subCategoryName',
       key: 'subCategoryName',
       align: 'center',
       onCell: showOncell
     },
     {
-      title: '单位',
-      dataIndex: 'unit',
-      key: 'unit',
-      align: 'center',
-      onCell: showOncell
-    },
-    {
-      
-      title: '数值',
-      dataIndex: 'carbonEmissionFactor',
-      key: 'carbonEmissionFactor',
-      align: 'center',
-      onCell: showOncell
-    },
-    {
-      title: '是否启用',
-      dataIndex: 'enabled',
-      key: 'enabled',
+      title: '',
+      dataIndex: 'dataSource',
+      key: 'dataSource',
       align: 'center',
       onCell: showOncell,
-      render: (text, record,index) => {        
-        return  index> 0 ? <Switch checkedChildren={t("button:enable")} unCheckedChildren={t("button:disable")} defaultChecked={record.enabled==1} onChange={(v)=> swichange(v, index)} /> : '是否启用'
+      render: (text, record,index) => {
+        return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} value={text} style={{display: 'flex', justifyContent: "space-around"}}>
+        <Radio value={0}>自动采集</Radio>
+        <Radio value={1}>手动录入</Radio>
+        <Radio value={2}>无数据入</Radio>
+      </Radio.Group> : ''
       }
     },
     {
-      title: '操作',
+      title: '',
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
-      render: (_, record, index) => index>0 ? <CustLink text="Modificationfactor" onClick={() => onChange(record, index)} /> :  t("comm:Operation")
+      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==0} onClick={() => onConfig(record, index)} /> :  ''
     }
 
   ]

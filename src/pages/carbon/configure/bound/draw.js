@@ -1,12 +1,27 @@
 import React, {useState, forwardRef, useImperativeHandle, useRef, useEffect} from 'react'
-import {Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
+import {Drawer, Select, Button, Typography, Form, Input, message,  } from 'antd'
 import {   LeftOutlined, RightOutlined } from "@ant-design/icons";
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
-import {AutoValve} from '@api/api'
+import {boundarySlice, useConfigDeviceMutation,useApiDataMutation} from './boundary'
+import {isObject} from "@com/usehandler"
 import {CustButtonT} from "@com/useButton"
+import {Cdivider} from '@com/comstyled'
 const {Paragraph} = Typography
+
+const Apibox = styled.div`
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   row-gap: 16px;
+   padding-top: 16px;
+   .ant-form-item {
+    margin-bottom: 16px;
+   }
+`
+
+
 
 const Inptserach = styled(Input.Search)`
   && {
@@ -90,14 +105,14 @@ const Drawerbox = styled(Drawer)`
 const deviceColumns = [
     {
         title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
+        dataIndex: 'deviceSn',
+        key: 'deviceSn',
         align: 'center'
     },
     {
         title: '设备名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'deviceName',
+        key: 'deviceName',
         align: 'center'
     },
     {
@@ -106,29 +121,20 @@ const deviceColumns = [
         key: 'address',
         align: 'center'
     },
-    {
-        title: '是否启用',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
-          console.log(index)
-          record.enabled = Number(e)
-        }} />
-    },
+    
 ]
 
 const unselectdevice = [
   {
       title: '设备编号',
-      dataIndex: 'sn',
-      key: 'sn',
+      dataIndex: 'deviceSn', 
+      key: 'deviceSn',
      
   },
   {
       title: '设备名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'deviceName',
+      key: 'deviceName',
       
   },
   {
@@ -139,103 +145,115 @@ const unselectdevice = [
   }
 ]
 function Draw({params}, ref) {
+    
     const [open, setOpen] = useState(false)
     const [sfrom]= Form.useForm()
+    const [apiform] = Form.useForm()
     const {Item} = Form
-    let {projectId, planId} = params || {}
+  
    // let {used, unused} = tabledata
    const [usedtb, setusedtable] = useState([])
    const [unusedtb, setUnusedtb] = useState([])
    const unusedtbbk = useRef()
-   const deviceColumns = [
-    {
-        title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
-        align: 'center'
-    },
-    {
-        title: '设备名称',
-        dataIndex: 'name',
-        key: 'name',
-        align: 'center'
-    },
-    {
-        title: '安装位置',
-        dataIndex: 'address',
-        key: 'address',
-        align: 'center'
-    },
-    {
-        title: '是否启用',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
-          let arr = usedtb.map((el, i) => {
-              if(index == i) {
-                el.enabled = Number(e);
-                 return el
-              }else {
-                return el
-              }
-
-          })
-          setusedtable([...arr])
-        }} />
-    },
-]
-    const getData = async () =>{
-        try {
-        let {success, data, errMsg} =   await AutoValve.GetDeviceConfigure(params)
-        if(success) {
-           if(data?.constructor ==Object) {
-             let {unused, used} = data
-             setUnusedtb(unused)
-             setusedtable(used)
-             unusedtbbk.current = unused
-           }else {
-            setUnusedtb([])
-            setusedtable([])
-           }
-        }else {
-            setUnusedtb([])
-            setusedtable([])
-            message.warning(errMsg || "数据出错")
-        }
-        } catch (error) {
-            
-        }
-       
-    }
+  
   
     const devices = useRef([]);
     const undevices = useRef([])
+    const [type, setType] = useState(1)
+    const Ctitle=(
+      <Select value={type} onChange={(v) => setType(v)}>
+         <Select.Option value={1}>自动采集-表计采集</Select.Option>
+         <Select.Option value={2}>自动采集-数据对齐</Select.Option>
+      </Select>
+    )
+
+    const [getConfigData] = boundarySlice.useLazyBoundaryConfigQuery() // 查询排放边界配置结构
+    const getData = async () => {
+      let {success, data, errMsg} = await getConfigData(params).unwrap()
+      if(success && isObject(data)) {
+         let {relations, noRelations} = data
+  
+         setusedtable(Array.isArray(relations) ? relations : [])
+         setUnusedtb(Array.isArray(noRelations) ? noRelations : [])
+       
+      }else {
+        if(!success) message.warning(errMsg || "数据出错")
+        setusedtable([])
+        setUnusedtb([])
+      }
+    }
     useEffect(() => {
-      if(params)   getData()
+      if(params) {
+        getData()
+      }
+
+
     }, [params])
+
     const drawClose = () => {   
-        setOpen(false);
-        sfrom.resetFields()
-      };
+      setOpen(false);
+      sfrom.resetFields()
+      apiform.resetFields()
+    };
     const drawOpen = () => {
         setOpen(true)
     }
+
+
+    // 排放边界配置
+ 
+   
+    const [saveconfig, {isLoading}] = useConfigDeviceMutation()
     const onSave =async () => {
-        if(  !planId || !projectId) return
-        let post = {
-            planId,
-            projectId,
-            device:  usedtb.map(t => ({sn: t.sn, enabled: Number(t.enabled)}))
+        try {
+          if(Array.isArray(usedtb) && usedtb.length > 0) {
+
+            let {enterpriseId,subCategoryId,carbonBoundaryId } =params
+             let sns = usedtb.map(d => d.deviceSn)
+            let body = {
+               enterpriseId,
+               subCategoryId,
+               carbonBoundaryId,
+               sns,
+            }
+           let {success, errMsg} = await saveconfig(body).unwrap()
+           if(success) {
+              message.success('保存成功')
+              drawClose()
+           }else {
+             message.warning(errMsg || '数据出错')
+           }
+          }else {
+            message.warning('请选择设备')
+          }
+        } catch (error) {
+           console.log(error)
         }
-     let {success, errMsg} = await  AutoValve.ConfigureDevice(post)
-     if(success) {
-        message.success('保存成功')
-        getData()
-     }else {
-        message.warning(errMsg || "数据出错")
-     }
+       
     }
+ 
+   // 保存APi 
+   const [savApi, {isLoading: apiLoading}] = useApiDataMutation()
+   const onSaveApi =async () => {
+      try {
+        const post = await apiform.validateFields()
+        
+        const {success, errMsg} = await savApi({...params,post})
+        if(success) {
+          message.success('保存成功')
+          drawClose()
+        }else {
+          message.warning(errMsg || '数据出错')
+        }
+      } catch (error) {
+      
+      }
+
+   }
+ 
+ // end
+
+
     useImperativeHandle(ref, () => ({
         drawClose,
         drawOpen,
@@ -304,24 +322,26 @@ function Draw({params}, ref) {
       };
       const unselect = () => {
         if(!devices.current) return
-        let keys = devices.current.map(k => k.id)
+        let keys = devices.current.map(k => k.deviceSn)
         setUnusedtb([...unusedtb, ...devices.current])
-        let data = usedtb.filter(t => !keys.includes(t.id))
-        setusedtable([...data])
-        setUnselectedRowKeys([])
+        let data = usedtb.filter(t => !keys.includes(t.deviceSn))
+       setusedtable([...data])
+        setSelectedRowKeys([])
+      //  setUnselectedRowKeys([...unselectedRowKeys,...keys])
         devices.current = {}
         undevices.current={}
       }
       const selected = (f) => {
          if(!undevices.current) return
-         let keys = undevices.current.map(k => k.id)
+         let keys = undevices.current.map(k => k.deviceSn)
             
-           setusedtable([...usedtb, ...undevices.current])
-            let undata = unusedtb.filter(t => !keys.includes(t.id))
+            setusedtable([...usedtb, ...undevices.current])
+            let undata = unusedtb.filter(t => !keys.includes(t.deviceSn))
             setUnusedtb([...undata])
-            setSelectedRowKeys([])
+           // setSelectedRowKeys([...selectedRowKeys,...keys])
+            setUnselectedRowKeys([])
             devices.current = {}
-           undevices.current={}
+            undevices.current={}
       }
   return (
     <Drawerbox
@@ -331,28 +351,54 @@ function Draw({params}, ref) {
     closable={false}
     maskClosable={false}
     contentWrapperStyle={{margingRight: '16px'}}
-
+    title={Ctitle}
     destroyOnClose
   >
-    <Titlelayout title="选中设备">
+  {type==2 ? (<Titlelayout title="API接口" layout="flex" style={{height: '376px'}} >
+       <Apibox>
+          <Cdivider type="h" />
+           <Form form={apiform}>
+               <Form.Item name="httpUrl" normalize={value => value.trim()} rules={[ 
+                {
+                //  type: "url",
+                  required: true, 
+                }
+               ]}>
+                  <Input></Input>
+               </Form.Item>
+               <Form.Item name="script">
+                  <Input.TextArea  rows={6}></Input.TextArea>
+               </Form.Item>
+               <Form.Item>
+                  <CustButtonT text="ok" loading={apiLoading}    style={{marginLeft: "auto"}} onClick={onSaveApi} /> 
+               </Form.Item>
+            </Form>
+       </Apibox>
+ 
+      
+     
+   </Titlelayout>) 
+   :
+   <>
+    <Titlelayout title={''}>
        
         <UserTable
           columns={deviceColumns}
           rowSelection={rowSelection}
           dataSource={usedtb}
-          rowKey="id" 
+          rowKey="deviceSn" 
           ref= {setb}
           scroll={{
-            y: 696
+            y: 500
           }}
         />
      
       
     </Titlelayout> 
     <div className="optab">
-      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "0 16px"}}>
         <Paragraph>选择设备</Paragraph>
-        <div style={{display: 'flex', justifyContent:"space-between", padding: "0 16px"}}>
+        <div style={{display: 'flex', justifyContent:"space-between"}}>
           <Button
             type="primary"
             icon={<LeftOutlined style={{ fontSize: "18px",marginRight: "8px" }} />}
@@ -372,6 +418,7 @@ function Draw({params}, ref) {
           style={{ marginBottom: "16px", height: "40px" }}
           onClick={onSave}
           wh="100%"
+          loading={isLoading}
           text="save"
         />
           
@@ -389,31 +436,6 @@ function Draw({params}, ref) {
           type: "0",
         }}
       >
-        <Space size={16}>
-          <Item label="设备类型" name="type">
-            <Select
-              style={{ width: "112px" }}
-              onChange={changeUnselected}
-              options={[
-                {
-                  value: "0",
-                  label: "全部类型",
-                },
-                {
-                  value: "1",
-                  label: "电表",
-                },
-                {
-                  value: "2",
-                  label: "水表",
-                },
-                {
-                  value: "3",
-                  label: "燃气表",
-                },
-              ]}
-            ></Select>
-          </Item>
           <Item name="alike" label="设备搜索">
             <Inptserach
               allowClear
@@ -421,19 +443,19 @@ function Draw({params}, ref) {
               onSearch={onSerach}
             />
           </Item>
-        </Space>
       </Form>
       <UserTable
         columns={unselectdevice}
         rowSelection={unrowSelection}
         dataSource={unusedtb}
-        scroll={{y: 696}}
+        scroll={{y: 500}}
         ref={untb}
-        rowKey="id"
+        rowKey="deviceSn"
       />
       </div>
       </Titlelayout>
-     
+      </>
+}
   </Drawerbox>
   )
 }

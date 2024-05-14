@@ -66,6 +66,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
 
 
 })
+console.log(carbonSlice)
 export const {
     useIndustryListQuery,
      useSubIndustryListQuery, 

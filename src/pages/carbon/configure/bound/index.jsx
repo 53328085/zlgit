@@ -4,6 +4,14 @@ import styled from 'styled-components'
 import {Form, Space,Button, Tree, Input, message} from 'antd'
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
+
+
+import Titlelayout from "@com/titlelayout"
+import {TreeBtnN, TreeBtnW} from "@com/useButton"
+import {CustButtonT, CustButton} from "@com/useButton"
+import CModal from "@com/useModal"
+import TableT from  "./tabletmp"
+import CDraw from './draw'
 import {
   useBoundaryTreeQuery, 
   useAddCarbonBoundaryMutation, 
@@ -12,11 +20,6 @@ import {
   useBoundaryConfigQuery,
   boundarySlice
 } from "./boundary"
-
-import Titlelayout from "@com/titlelayout"
-import {TreeBtnN, TreeBtnW} from "@com/useButton"
-import {CustButtonT} from "@com/useButton"
-import CModal from "@com/useModal"
 const CTree = styled(Tree)`
   && {
     flex:1;
@@ -34,6 +37,12 @@ const CTree = styled(Tree)`
    .ant-tree-node-content-wrapper {
        display: block;
        flex: 1;
+    }
+    .ant-tree-show-line{
+      .ant-tree-indent-unit:before {
+        border-right: 4px solid ${props => props.theme.primaryColor};
+      }  
+       
     }
   }
 
@@ -84,25 +93,37 @@ const Tablebox = styled.div`
  
 export default function Index() { 
   const {id:enterpriseId} = useSelector(enterprise)
-  
+  const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
-
+  const [params, setParams] = useState(null)
+  let carbonBoundaryId = useRef()
   const [mTitle, setMtitle] =useState()
+  const drawref = useRef()
+  
+  const displaydraw=(params) => {
+     setParams({...params, carbonBoundaryId: carbonBoundaryId.current})
+     drawref.current.drawOpen()
+  } 
+
   // 查询树
 
   let treeData
   const {isSuccess,refetch, data:boundaryData  } = useBoundaryTreeQuery(enterpriseId, {
     skip: !Number.isInteger(enterpriseId),
-    refetchOnMountOrArgChange: true
+    
   })
   if(isSuccess) {
     treeData =Array.isArray(boundaryData?.data) ? boundaryData?.data : []
+    console.log('s')
   }else {
+     console.log('e',enterpriseId)
      treeData = []
   }
+ 
   
   // 新增 编辑 删除子项
+
   const [addedit, setAddedit] = useState(true)
   const [saveSubItem] =useAddCarbonBoundaryMutation() // 新增
   const [editSubItem] = useUpdateBoundaryMutation() // 编辑
@@ -172,13 +193,34 @@ export default function Index() {
  }
 
 // 配置
-   const [queryconfig] = boundarySlice.useLazyDataConfigQuery()
+   const [queryconfig] = boundarySlice.useLazyDataConfigQuery() // 碳排边界数据查询
    const  [title, setTitle]=useState();
-   const onConfig = async ({id}) => {
-       let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
-       let data = await queryconfig({enterpriseId, carbonBoundaryId:id});
-       setTitle(txt)
-       setOpen(true)
+   const [dataconfig, setDataConfig] =useState([])
+   const saveData = useRef({}) // 点击 完成配置 时需要传递的数据
+   const onConfig = async (item) => {
+       try {
+        let {id} = item
+        carbonBoundaryId.current = id;
+     //   setParams({...params,carbonBoundaryId:id})
+        let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
+        let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
+ 
+        if(success && Array.isArray(data)) {
+         setTitle(txt)
+         setOpen(true)
+         setDataConfig(data)       
+         data.forEach(e => {
+           saveData.current[e.categoryName] = e
+         })
+        }else {
+         saveData.current={}
+         message.warning(errMsg || '数据出错')
+        }
+       } catch (error) {
+         console.log(error)
+       }
+      
+      
        
    }
    const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
@@ -195,7 +237,7 @@ export default function Index() {
      }
     return   (
       <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
-        <Custtitle>{name}</Custtitle>
+        {parentId === 0 ? <CustButton wh="auto">{name}</CustButton> :  <Custtitle>{name}</Custtitle>}
         <Space size={16}>
         <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" />
         <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(item)} />
@@ -221,7 +263,7 @@ export default function Index() {
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="right">
                        <Tablebox>
-                     
+                       {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw} saveData={saveData.current} projectId={projectId} enterpriseId={enterpriseId} /> )}
                        </Tablebox>
           </Titlelayout>)
           }
@@ -240,6 +282,7 @@ export default function Index() {
         </Form>
 
      </CModal>
+     <CDraw ref={drawref} params={params} />
     </Pagecount>
   )
 }

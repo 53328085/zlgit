@@ -1,85 +1,74 @@
-import React from 'react';
-import { Tree, Button, Space } from 'antd';
-import {LayoutFilled} from '@ant-design/icons'
-const treeData = [
+import { Button, Table } from 'antd';
+import React, { useState } from 'react';
+const columns = [
   {
-    title: 'parent 1',
-    key: '0-0',
-    children: [
-      {
-        title:  '前端框架',
-        key: '0-0-0',
-        disabled: true,
-        children: [
-          {
-            title: 'react',
-            key: '0-0-0-0',
-            disableCheckbox: true,
-          },
-          {
-            title: 'vue',
-            key: '0-0-0-1',
-          },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [
-          {  
-            title: 'sss',
-          
-             key: '0-0-1-0',
-          },
-        ],
-      },
-    ],
+    title: 'Name',
+    dataIndex: 'name',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
   },
 ];
-const {DirectoryTree} = Tree
+const data = [];
+for (let i = 0; i < 46; i++) {
+  data.push({
+    key: i,
+    name: `Edward King ${i}`,
+    age: 32,
+    address: `London, Park Lane no. ${i}`,
+  });
+}
 const App = () => {
-  const onSelect = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const start = () => {
+    setLoading(true);
+    // ajax request after empty completing
+    setTimeout(() => {
+      setSelectedRowKeys([]);
+      setLoading(false);
+    }, 1000);
   };
-  const onCheck = (checkedKeys, info) => {
-    console.log('onCheck', checkedKeys, info);
+  const onSelectChange = (newSelectedRowKeys) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
   };
-
-  const fnitem =(item) => {
-    console.dir(item)
-    let {title, key, children} = item
-    
-    const custtitle =  <Space><Button>{title}</Button><Button>新增子项</Button><Button>编辑</Button><Button>删除</Button> </Space>
-    item.title = custtitle;
-
-    if(Array.isArray(children) && children.length >0) {
-      item.children = item.children.map(c => fnitem)
-      
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    onSelectAll: (record, selected, selectedRows, nativeEvent)=> {
+      console.log(record)
+      console.log(selected)
+      console.log(selectedRows)
     }
-  }
-  
-   
- 
-  const custitem =(item) => {
-    
-    let {title, key, children} = item
-    if(Array.isArray(children) && children.length >0) {
-       custitem(children)
-     }
-
-    return   <Space><Button>{title}</Button><Button>新增子项</Button><Button>编辑</Button><Button>删除</Button> </Space>
-    
-    
-    
-  }
+  };
+  const hasSelected = selectedRowKeys.length > 0;
   return (
-    <Tree
-     
-      onSelect={onSelect}
-      onCheck={onCheck}
-      treeData={treeData}
-      titleRender={item =>  custitem(item)} 
-    />
+    <div>
+      <div
+        style={{
+          marginBottom: 16,
+        }}
+      >
+        <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
+          Reload
+        </Button>
+        <Button onClick={() => setSelectedRowKeys([])}>reset</Button>
+        <span
+          style={{
+            marginLeft: 8,
+          }}
+        >
+          {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+        </span>
+      </div>
+      <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+    </div>
   );
 };
 export default App;

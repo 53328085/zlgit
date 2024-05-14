@@ -17,6 +17,7 @@ import Titlelayout from "@com/titlelayout"
 
 import {CustButtonT} from "@com/useButton"
 import TableT from "@com/tabletmp"
+import {isObject} from "@com/usehandler"
 const {Item} = Form
 const Mainbox = styled.div`
   flex: 1;
@@ -105,23 +106,28 @@ export default function Index() {
   }
 
   // 查询企业信息
-  let enterprise
-  const {data:enterpriseData, isSuccess: ensuc, isError, refetch} = useEnterpriseQuery(projectId, { // 查询企业信息
-    skip: !Number.isInteger(projectId),   
-    refetchOnMountOrArgChange: true, 
-  })
-  if(ensuc) {
-    enterprise = enterpriseData?.data
-    EnterpriseId.current = enterprise.id
-    dispatch(getEnterprise(enterprise))
+  const [enterprise, setEnterprise] = useState({})
+  const [getENterprise] = carbonSlice.useLazyEnterpriseQuery()
+  const onGetEnterprise = async () => {
+     let {success, data, errMsg} = await getENterprise(projectId).unwrap()
+      console.log(data)
+     if(success && isObject(data)) {
+       EnterpriseId.current = enterprise.id
+       setEnterprise(data);
+       dispatch(getEnterprise(data))
+     }else {
+      if(!success) message.warning(errMsg || '数据出错')
+      EnterpriseId.current = null;
+      setEnterprise({});
+      dispatch(getEnterprise({}))
+     }
   }
-  if(isError) {
-    console.log(isError)
-  }
- /*  const {data: {data:enterprise} } = useEnterpriseQuery(projectId, { // 查询企业信息
-    skip: !Number.isInteger(projectId),    
-  })
- */
+
+ useEffect(() => {
+   if(Number.isInteger(projectId)) {
+    onGetEnterprise()
+   }
+ }, [projectId])
  
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
  
@@ -176,7 +182,7 @@ export default function Index() {
             }else {
               message.warning(err || "数据出错")
             }
-            refetch()
+          
           }else {
              message.warning(errMsg || '数据出错')
           }

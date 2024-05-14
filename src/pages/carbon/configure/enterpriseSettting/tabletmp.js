@@ -43,10 +43,11 @@ const columns = [
 export default function Index({tabledata, setSaveData}) { 
 
   const {categoryName, subCategory} = tabledata
+  console.log(subCategory)
   columns[0].title = categoryName;
   columns[0].onCell= (_, index) => {
       return {
-        rowSpan: subCategory?.length ?? 1,
+        rowSpan: subCategory?.length ? subCategory?.length +1 : 1,
       };
     }
   const datas = subCategory.map((c) => ({categoryName, ...c}))

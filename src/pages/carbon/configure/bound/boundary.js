@@ -36,10 +36,10 @@ export const boundarySlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["boundary"],
              
-        }),
-        boundaryConfig: build.query({ // 查询排放边界配置结构
-            query: ({projectId,enterpriseId,carbonBoundaryId,subCategoryId}) => ({
-                url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?projectId=${projectId}&enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&subCategoryId=${subCategoryId}`,
+        }), 
+        configData: build.query({ // 查询排放边界配置结构
+            query: ({projectId,enterpriseId,carbonBoundaryId}) => ({
+                url: `Carbon/CarbonEmissionBoundary/ConfigDataCarbonBoundary?projectId=${projectId}&enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
                 method: 'GET',
             }),
         }),
@@ -47,6 +47,27 @@ export const boundarySlice = apiSlice.injectEndpoints({
             query: ({enterpriseId,carbonBoundaryId}) => ({
                 url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
                 method: 'GET',
+            }),
+        }),
+         BoundaryConfig: build.query({ // 查询排放边界配置结构
+            query: ({enterpriseId,carbonBoundaryId,subCategoryId,projectId}) => ({
+                url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&projectId=${projectId}&subCategoryId=${subCategoryId}`,
+                method: 'GET',
+            }),
+        }),
+
+        ConfigDevice: build.mutation({ // 排放边界配置
+            query: (body) => ({
+                url: `Carbon/CarbonEmissionBoundary/ConfigDeviceCaebonBoundary`,
+                method: 'POST',
+                body,
+            }),
+        }),
+        ApiData: build.mutation({ // 保存Api数据
+            query: ({enterpriseId,carbonBoundaryId,subCategoryId,post}) => ({
+                url: `Carbon/CarbonEmissionBoundary/SaveCarbonBoundaryApiData?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&subCategoryId=${subCategoryId}`,
+                method: 'POST',
+                body: post,
             }),
         }),
     }),
@@ -59,6 +80,9 @@ export const {
      useAddCarbonBoundaryMutation,
      useUpdateBoundaryMutation,
      useDeleteBoundaryMutation,
+     useDataConfigQuery,
+     useConfigDataQuery,
      useBoundaryConfigQuery,
-     useDataConfigQuery
+     useConfigDeviceMutation,
+     useApiDataMutation,
     } = boundarySlice

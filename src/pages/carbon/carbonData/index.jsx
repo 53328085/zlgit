@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react'
+import {useAntdTable} from 'ahooks'
+import {useSelector} from 'react-redux'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input} from 'antd'
@@ -6,7 +8,8 @@ import {useOutletContext} from 'react-router-dom'
 import {CustButtonT} from "@com/useButton"
 import Titlelayout from "@com/titlelayout"
 import UserTree from "@com/useTree"
-import {CarbonData} from './carbondataslice'
+import {enterprise} from "@redux/systemconfig"
+import {CarbonData, useBoundaryQuery} from './carbondataslice'
 const {Item} = Form
 const Mainbox = styled.div`
   display: grid;
@@ -17,10 +20,40 @@ const Mainbox = styled.div`
 `
 export default function Index() { 
   let {exparams} = useOutletContext() 
+  const {id: enterpriseId} =useSelector(enterprise)
   let {areaId, data, projectId, type} = exparams
   const [treeId, setTreeId] = useState()
   const [line, setLine] = useState(0)
+  const columns = [
+    {
+      title: '名称',
+      dataIndex: 'name',
+      width: 180
+    },
+    {
+      title: '开始日期',
+      dataIndex: 'name',
+      width: 180
+    },
+    {
+      title: '结束日期',
+      dataIndex: 'name',
+      width: 180
+    },
+    {
+      title: '碳排量(tCO₂)',
+      dataIndex: 'name',
+      width: 180
+    },
+  ]
+  // useLazyBoundaryQuery
+// useLazyEmissionQuery
+const can = useBoundaryQuery(enterpriseId,{
+  skip: !Number.isInteger(enterpriseId),
+  refetchOnFocus: true
+})
 
+console.log(can)
   // 获取数据
   /* "enterpriseId": "1",
     "type": "1",
@@ -30,7 +63,7 @@ export default function Index() {
         "2",
     ] */
 
-  const [getData, {isLoading}] =CarbonData.useLazyCarbonEmissionQuery() 
+ /*  const [getData, {isLoading}] =CarbonData.useLazyCarbonEmissionQuery() 
  useEffect(() => {
   getData({pageSize: 14, pageNum: 1},{
     enterpriseId: 1,
@@ -41,25 +74,8 @@ export default function Index() {
         "2",
     ]
   })
- }, [treeId])
-/*   const [form] = Form.useForm()
-  const [no, setNo] = useState()
-  const {data: {data: industry}} = useIndustryListQuery();
-  const  {data: province, refetch} = useProvinceListQuery()
-  const provinceList = Array.isArray(province) ? province.map(p => ({label:p, value:p})) : []
-   
-  console.log(apiSlice)
-  const rules = [
-    {required: true}
-  ]
-  const onchange = (no) => {
-       setNo(no)
-    
-  }
-  useEffect(() => {
-    if(!no) return
-    useSubIndustryListQuery(no)
-  }, [no]) */
+ }, [treeId]) */
+ 
   return (
     <Pagecount bgcolor="transparent" pd="0">
        <Mainbox>
