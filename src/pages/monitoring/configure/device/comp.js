@@ -1,11 +1,11 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useMemo, useContext, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { Input, Select, Button, Divider, Row, Col } from 'antd'
+import { Input, Select, Space, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import { publishState } from '@redux/systemconfig'
-import {  ExportExcel} from '@com/useButton'
-import {Serach} from '@com/comstyled'
+import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
+import {Serach, Cdivider} from '@com/comstyled'
 const { DeviceManager: { OneLevel } } = Monitoring
 
 export default forwardRef(function Comp(props, ref) {
@@ -26,7 +26,14 @@ export default forwardRef(function Comp(props, ref) {
     const publish = useSelector(publishState)
     const projectId = useSelector(state => state.system.menus.projectId)
     const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
+    const areaOptions = oneLevel.length > 0 ? useMemo(() =>{
+         let all = oneLevel.find(i => i.id ==0)
+        if(!all)   {
+           return  ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel])
+         }else {
+            return oneLevel
+         }
+    }, [oneLevel]) : []
     const [selvalue, setSelvalue] = useState()
     const [inpvalue, setInpvalue] = useState('')
     const [energyVal, setEnergyVal] = useState()
@@ -116,7 +123,6 @@ export default forwardRef(function Comp(props, ref) {
                            style={{ width: 321 }}
                             placeholder={placeholder}
                             allowClear
-                            enterButton="查询"
                             onChange={(e) => { 
                                 setInpvalue(e.target.value)
                              }}
@@ -140,18 +146,18 @@ export default forwardRef(function Comp(props, ref) {
                 </Row>
                 {
                     btnlist?( <Row>
-                        {publish ? null : <>
-                            <div className={style.divmgr16} onClick={addopen}>+新增</div>
-                            <div className={style.divmgr16} onClick={multExport}>批量导入</div>
-                        </>}
+                        {publish ? null : <Space size={16} style={{marginRight: '16px'}}>
+                            <NewButton onClick={addopen}></NewButton>
+                            <AllExportButton onClick={multExport} />
+                        </Space>}
                         
-                        {/* <div className={style.divmgr16} onClick={exportExecel}>导出</div> */}
+                      
                         <ExportExcel tb={tb}/>
-                    </Row>):<div className={style.divmgr16} onClick={addopen}>+新增</div>
+                    </Row>):<NewButton onClick={addopen} />
                 }
                
             </Row>
-            <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />
+            <Cdivider  style={{ margin: '16px 0' }} />
             <div style={{display:'flex',height:700}}>
             {props.children}
             </div>

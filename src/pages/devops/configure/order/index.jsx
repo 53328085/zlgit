@@ -16,7 +16,7 @@ import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
 import Mask from "@com/mask"
-import { CustButton } from '@com/useButton'
+import { CustButtonT, CustLink } from '@com/useButton'
 const {Item} = Form
 const {Link} = Typography
 const ContainerDiv = styled.div`
@@ -31,7 +31,10 @@ export default function Index() {
   const publish =useSelector(publishState)
   const onelevel = useSelector(state => state.system.onelevel);
   const projectId = useSelector(state => state.system.menus.projectId)
-  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName+'(全部)', id: 0 }, ...onelevel]), [onelevel]) : []  
+  const options = onelevel.length > 0 ? useMemo(() => {  
+    let isall = onelevel?.find(o => o.id ==0)
+     return !isall ?  ([{ name: onelevel[0]?.levelName+'(全部)', id: 0 }, ...onelevel]) : onelevel
+  }, [onelevel]) : []  
   const setlineRef =useRef()
   const editRef = useRef()
   const delModalRef=useRef()
@@ -52,8 +55,8 @@ export default function Index() {
     {title:'操作',dataIndex:'',width:180,render:(text)=>{
     return(
       <Space size={32}>
-       <Link underline onClick={()=>{editPosition(text)}}>编辑坐标</Link>
-       <Link type="danger" underline onClick={()=>{delId=text.sn;delModalRef.current.onOpen()}}>删除</Link>
+       <CustLink   onClick={()=>{editPosition(text)}} text="editCoordinate" /> 
+       <CustLink type="danger"   onClick={()=>{delId=text.sn;delModalRef.current.onOpen()}} text="delete" /> 
       </Space>
    )  
     }}
@@ -181,16 +184,14 @@ const {submit} = search
             
             <Serach
               placeholder="输入设备编号/安装地址"
-              allowClear
-              enterButton="查询"
               onSearch = {submit}
             />
             </Item>
            
             </Space>
-            {publish ? null : <CustButton onClick={addDevice}>
-              新增
-            </CustButton>}
+            {publish ? null : <CustButtonT onClick={addDevice} text="new" />
+               
+             }
         </Form>
 
        

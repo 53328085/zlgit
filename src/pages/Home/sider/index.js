@@ -77,6 +77,7 @@ export default function Sider() {
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
+   
   const dispatch = useDispatch()
   
   const [key, Setkey] = useState('')
@@ -93,6 +94,7 @@ export default function Sider() {
   }
 
   useEffect(() => {  
+    console.log('语言改变后。')
     try {
     
       let state = location.state || {}    
@@ -109,7 +111,7 @@ export default function Sider() {
       console.log(error);
     }
   
-  },[location, config])
+  },[location, config, siderDesignerMenu,siderRunMenu])
 
   const onSelect = ({key}) => {       
      let label = menus?.find(item => item.key == key)?.label

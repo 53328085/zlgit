@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import imgurl from './icon'
 import {useSelector} from 'react-redux'
 import { getSystemconfiginfo} from "@redux/systemconfig";
- 
+import {Typography} from 'antd'
+const {Link} = Typography
 const  Headcust = styled.div`
     display: flex;
   height: 130px;
@@ -20,7 +21,7 @@ export default memo(function Index() {
     <Headcust>
         { (systemLogoImage || imgurl.logo) && <img src={systemLogoImage ?  `data:image/png;base64,${systemLogoImage}` : imgurl.logo}  alt='' width={120} />}
         <div style={{display: 'flex', width: '402px', justifyContent: 'center'}}>
-         { imgurl.credentials &&  <img src={imgurl.credentials}   width={200} />}
+        <Link href='https://www.cmmiinstitute.com/pars/appraisals/69522' target="_blank"> { imgurl.credentials &&  <img src={imgurl.credentials}   width={200} />}</Link>
          </div>
     </Headcust>
     

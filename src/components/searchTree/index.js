@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useMemo } from "react";
 import style from "./style.module.less";
 import { Input, Tree, Empty } from "antd";
 import dashLine from "@imgs/line.png";
@@ -6,10 +6,54 @@ import { cloneDeep } from "lodash";
 
 export default function Index(props) {
   // const { getValues, getTreeKey} = props;
+  console.log(props.treeData)
   const { getValues } = props;
+  const [checkedKeys, setCheckedKeys] = useState([])
   const { Search } = Input;
   let dataList = [];
+
+  let arr = [], seracharr=[];
+  let stair = props.treeData?.map(t => t.id); // 一级id
+ 
+  const getId = (nodes, array) => {
+      console.log(array)
+      if(Array.isArray(nodes)) {
+         for(let node of nodes) {
+          array?.push(node.id)
+            if(node.childs && Array.isArray(node.childs) && node.childs.length >0) {
+              getId(node.childs)
+            }
+         }
+        
+         
+      }
+ 
+  }
+  const getbyname = (data, name) => {
+
+     if(Array.isArray(data) && data?.length >0) {
+        for(let node of data) {
+           let id = node.id
+           if(node.name.includes(name)) seracharr.push(id)
+           if(stair.includes(id)) {
+              let childs = data.find(d => d.id == id)?.childs
+              getId(childs, seracharr)
+           }else {
+             if(Array.isArray(node.childs) && node.childs?.length >0) getbyname(node.childs, name)
+           }
+          
+        }
+     }
+
+  }
+  useEffect(() => {
+     if(!Array.isArray(props.treeData)) return;
+     getId(props.treeData, arr);
+     setCheckedKeys(arr);
+     getValues(arr)
+  }, [props.treeData])
   const generateList = (data) => {
+    if(!Array.isArray(data)) return;
     for (let i = 0; i < data.length; i++) {
       const node = data[i];
       dataList.push({
@@ -56,8 +100,13 @@ export default function Index(props) {
     });
   };
 
-  const onSearch = (e) => {
-    const { value } = e.target;
+  const onSearch = (value) => {
+    setCheckedKeys([])
+    getbyname(props.treeData, value);
+   
+    
+    setCheckedKeys(seracharr);
+    getValues(seracharr)
     const expandedKeys = dataList
       .map((item) => {
         if (item[props.fieldNames.title].indexOf(value) > -1) {
@@ -66,6 +115,7 @@ export default function Index(props) {
         return null;
       })
       .filter((item, i, self) => item && self.indexOf(item) === i);
+    console.log(expandedKeys)   
     setstate({
       expandedKeys: expandedKeys,
       searchValue: value,
@@ -77,6 +127,7 @@ export default function Index(props) {
   //搜索结果重新渲染Treenode，存在一个问题，如果搜索功能和编辑树功能同时需要的话，树组件中
   //tree={loop(treeData)}会造成编辑树功能无法重新渲染树，node中input渲染不出来
   const loop = (data) =>
+     
     data.map((item) => {
       const index = item[props.fieldNames.title].indexOf(searchValue);
       const beforeStr = item[props.fieldNames.title].substr(0, index);
@@ -110,7 +161,9 @@ export default function Index(props) {
   const onCheck = (checkedKeys, info) => {
     // console.log(info,checkedKeys)
     // getTreeKey(checkedKeys)
-    getValues(info.checkedNodesPositions);
+    
+    setCheckedKeys(checkedKeys)
+    getValues(checkedKeys);
   };
 
   return (
@@ -119,15 +172,15 @@ export default function Index(props) {
       <Search
         placeholder="请输入关键字查询"
         size="middle"
-        onChange={onSearch}
+        onSearch={onSearch}
         style={{
-          width: 256,
+          width: "100%",
         }}
       />
       <img src={dashLine} className={style.radioLine}></img>
-      {props.treeData.length > 0 ? (
+      {(Array.isArray(props.treeData) && props.treeData?.length > 0) ? (
         <Tree
-          style={{ height: "636px", overflow: "auto", fontSize: 16 }}
+          style={{ height: "600px", overflow: "auto", fontSize: 16 }}
           checkable
           defaultExpandAll={true}
           onExpand={onExpand}
@@ -136,6 +189,7 @@ export default function Index(props) {
           treeData={loop(props.treeData)}
           onCheck={onCheck}
           fieldNames={props.fieldNames}
+          checkedKeys={checkedKeys}
         />
       ) : (
         <Empty style={{ marginTop: 120 }}></Empty>

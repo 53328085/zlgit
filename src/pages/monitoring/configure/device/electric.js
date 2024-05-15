@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
+import {useTranslation} from 'react-i18next'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message, Space, Typography } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageElectric,
@@ -29,6 +30,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -70,7 +72,7 @@ export default function gateway({ deviceStyle }) {
   const [factorform] = Form.useForm()
   const content =useContext(cutContext)
   const levelname =useRef()
-  let delid;
+  let delid = useRef();
   let flies;
   const optcss = {
     color: '#237ae4',
@@ -129,15 +131,15 @@ export default function gateway({ deviceStyle }) {
     {
       title: '操作',
       dataIndex: 'options',
-      width: 136,
+      width: 320,
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={optcss} onClick={() => { onFactor(record) }}>倍率</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+          {/*   <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link> */}
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -251,13 +253,13 @@ export default function gateway({ deviceStyle }) {
    //打开删除窗口
    const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid=record.sn
+    delid.current=record.sn
   }
   //确认删除
   const delOk=async()=>{
     const {success,errMsg} = await DeleteElectric({
       projectId,
-      sn:delid
+      sn: encodeURIComponent(delid.current)
     })
     if(success){
       message.success('删除成功')
@@ -343,7 +345,10 @@ export default function gateway({ deviceStyle }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor
+        factor: formvalue.factor,
+        ct: formvalue.ct,
+        pt:formvalue.pt
+
       }
       const res = await AddElectric(params)
       if (res.success) {

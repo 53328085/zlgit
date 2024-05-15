@@ -8,7 +8,7 @@ import { StoragePriceDesigner } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import finished from '@imgs/finished.png'
 import { CaretRightOutlined } from '@ant-design/icons';
-
+import {CustButtonT} from '@com/useButton'
 export default function Index() {
   const [pointedForm] = Form.useForm()
   const [peakForm] = Form.useForm()
@@ -510,7 +510,7 @@ export default function Index() {
         <div className={style.priceContent}>
         <div className={style.headerTitle}>
           <span>电价设置</span>
-          <Button type='primary' style={{ width: 96 }} onClick={()=>onSave()}>保存</Button>
+          <CustButtonT onClick={()=>onSave()} text="save" /> 
         </div>
         <CustomPrice title='尖' formName={pointedForm} imgs={imgurl.jian} disChange={[disPoint2, disPoint3]}></CustomPrice>
         <CustomPrice title='峰' formName={peakForm} imgs={imgurl.feng} disChange={[disPeak2, disPeak3]}></CustomPrice>

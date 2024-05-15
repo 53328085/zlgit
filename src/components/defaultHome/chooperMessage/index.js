@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
  
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
- 
+import {CustTransO} from "@com/useButton"
 
 import chooperRuntime from '@imgs/chooper_runtime.png'
 
@@ -63,24 +63,24 @@ export default function DefaultHome(props) {
   }
 
   return (
-    <Titlelayout title={'断路器信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={<CustTransO text="CircuitBreakerInformation" />} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ chooperRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>断路器总数</span>
+            <span className='count_title'><CustTransO text="CBtotal" /></span>
             <span className='count_val'>{ state.breakerCount }</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>断路器在线</span>
+                <span className='item_title'><CustTransO text="CBonline" /></span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.breakerOnlineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>断路器离线</span>
+                <span className='item_title'><CustTransO text="CBoffline" /></span>
                 <span className='item_value' style={{ color: '#f44336' }}>{ state.breakerOfflineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>在线率</span>
+                <span className='item_title'><CustTransO text="CBrate" /></span>
                 <span className='item_value'>{state.breakerOnlineRate}%</span>
             </div>
         </div>

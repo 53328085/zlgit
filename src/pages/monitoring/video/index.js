@@ -15,10 +15,13 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
-import {Serach, Cdivider} from "@com/comstyled"
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring , GetCamerasoneInfo} from '@api/api.js'
+
+import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 import Pagecount from "@com/pagecontent";
 import Table from "@com/useTable";
+import {CustButton} from '@com/useButton'
+import Titlelayout from '@com/titlelayout'
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 80px 1fr;
@@ -190,7 +193,7 @@ export default function Index() {
   }
   //打开视频监控弹窗yun
   const showModal = () => {
-    setisModal(true)
+   
 
     //setLocalModal(true)
     // play.stop()
@@ -207,6 +210,7 @@ export default function Index() {
         })
         setbigplay(player)
       }, 0)
+      setisModal(true)
     }
   }
   //关闭视频监控弹窗
@@ -311,8 +315,20 @@ export default function Index() {
     });
   }
  
-  const showCameraDialog = (record) => {
+  const showCameraDialog = async (record) => {
+    try {
+      
+    
     setrecordData(record)
+    let {serverAddress, id} = record
+    let {success, data} =    await GetCamerasoneInfo(projectId, id)
+    if (!success || !data) return
+    let {ip, channel,account, pwd } = data
+    let idx = serverAddress.indexOf(":")
+    let htp = serverAddress.slice(0, idx)
+    let url = htp =='http' ? serverAddress.replace('http', 'ws') : htp == 'https' ? serverAddress.replace('https', 'ws') : ''
+    console.log(url)
+    if(!url) return message.warning("播放地址URL不存在")
     if (record.accessMode == 1) {
       showModal()
       getYsRealPlayUrl(record)
@@ -321,19 +337,28 @@ export default function Index() {
         setLocalModal(true);
         setCameraTitle(record.address)
         // setwsType('h264')
-        setWsUrl('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
-        chooseType('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
+        
+        setWsUrl(url  + '/video?ip=' +ip + '&type=real&user=' + account + '&pwd=' +pwd + '&channel=' + channel);
+        chooseType(url  + '/video?ip=' + ip + '&type=real&user=' + account + '&pwd=' + pwd + '&channel=' + channel);
       }
     }
+  } catch (error) {
+      
   }
-
+  }
+ // http: ws, https: wss
 
 
   const [changeType, setChangeType] = useState('')
+ 
   const changeControl = (value) => {
+    
+    let {serverAddress, port, id} = recordData
+     
+  
     if (value == 'left') {
       setChangeType('leftControl');
-      leftControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      leftControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else {
@@ -343,7 +368,8 @@ export default function Index() {
     }
     if (value == 'right') {
       setChangeType('rightControl');
-      rightControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      console.log(value)
+      rightControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -351,7 +377,7 @@ export default function Index() {
     }
     if (value == 'top') {
       setChangeType('topControl');
-      topControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      topControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -359,7 +385,7 @@ export default function Index() {
     }
     if (value == 'bottom') {
       setChangeType('bottomControl');
-      bottomControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      bottomControl({},serverAddress,projectId,id).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -369,7 +395,10 @@ export default function Index() {
 
   const cancelControl = () => {
     setChangeType('');
-    stopControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+     
+    let {serverAddress, port, id} = recordData
+    
+    stopControl({},serverAddress,projectId,id).then(res => {
       if (res.success) {
         return;
       } else { message.error(res.errMsg) }
@@ -484,7 +513,6 @@ const playBackYun=()=>{
   }
  
  
-  const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
     if (Number.isFinite(areaId)) {
       getStatistics()
@@ -506,8 +534,8 @@ const playBackYun=()=>{
           <span>设备查询</span>
           <Serach size="middle"  placeholder='请输入设备编号/安装地址' 
           style={{ width: '340px', marginLeft: 16 }} 
-          allowClear
-          enterButton="查询"
+          
+          
         //  onChange={onChange}
           onSearch = {onSearchList}
            />
@@ -533,9 +561,7 @@ const playBackYun=()=>{
             height: '717px'
           }}></div>
           <div style={{ flex: "1", marginLeft: 32 }}>
-            <div >
-              <BlueColumn name="云台控制" styled={{ fontSize: 16 }} />
-              {/* <div style={controlStyle}></div> */}
+            <Titlelayout title="云台控制" bordered="n">              
               <div className={style.controlBackground} >
               <div className={style.slotDiv}>
                 <span className={style.leftClick } onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
@@ -544,7 +570,7 @@ const playBackYun=()=>{
                 <span className={style.bottomClick} onMouseDown={() => changeControlYun(1)} onMouseUp={cancelControlYun}></span>
               </div>
             </div>
-            </div>
+            </Titlelayout>
             <div style={{ marginTop: 32 }}>
               <Collapse
                 onChange={changeKey}
@@ -552,7 +578,7 @@ const playBackYun=()=>{
                 ghost
                 activeKey={activeCollapse}
                 expandIconPosition="end">
-                <Panel header={<BlueColumn name="视频回放" styled={{ fontSize: 16 }} />} key="1">
+                <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
                   <Form form={form} >
                     <Item style={{ width: '100%' }}>
                       <DatePicker
@@ -582,12 +608,12 @@ const playBackYun=()=>{
                     </Item>
                     <Item>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button htmlType="button" style={buttonstyle} onClick={() => changeActive()}>
+                        <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>
                           返回
-                        </Button>
-                        <Button htmlType="button" onClick={()=>{playBackYun()}} style={{ ...buttonstyle, display: 'inlineBlock', marginLeft: 'auto', marginRight: 0 }}>
+                        </CustButton>
+                        <CustButton  style={{width: '120px'}} onClick={()=>{playBackYun()}} >
                           回放
-                        </Button>
+                        </CustButton>
                       </div>
                     </Item>
                   </Form>
@@ -654,7 +680,7 @@ const playBackYun=()=>{
             }
           </div>
           <div className="bodyRight">
-            <div className="title">云台控制</div>
+          <Titlelayout title="云台控制" bordered="n"> 
             <div className="controlBackground" id="controlBackground" >
               <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>
                 <span className="clickButton leftClick" onMouseDown={() => changeControl('left')} onMouseUp={cancelControl}></span>
@@ -663,13 +689,14 @@ const playBackYun=()=>{
                 <span className="clickButton bottomClick" onMouseDown={() => changeControl('bottom')} onMouseUp={cancelControl}></span>
               </div>
             </div>
+            </Titlelayout>
             <div className="timeControl">
               <Collapse
                 onChange={changeKey}
                 ghost
                 activeKey={activeCollapse}
                 expandIconPosition="end">
-                <Panel header={<BlueColumn name="视频回放" styled={{ fontSize: 16 }} />} key="1">
+                <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
                   <DatePicker
                     showTime={{
                       defaultValue: moment('00:00:00', 'HH:mm:ss'),
@@ -689,8 +716,8 @@ const playBackYun=()=>{
                     disabledDate={disabledendDate}></DatePicker>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span className='footerButton backButton' onClick={() => changeActive()}>返回</span>
-                    <span className='footerButton replay' onClick={() => playBack()}>回放</span>
+                    <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>返回</CustButton>
+                    <CustButton   style={{width: '120px'}} onClick={() => playBack()}>回放</CustButton>
                   </div>
 
                 </Panel>

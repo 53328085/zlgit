@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import {selectCurProject} from '@redux/user.js'
 import Titlelayout from '@com/titlelayout';
 import {drawEcharts} from '@com/useEcharts'
-
+import {CustTransO} from "@com/useButton"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -41,11 +41,11 @@ export default function DefaultHome(){
   const curProject = useSelector(selectCurProject)
   const cref = useRef(null)
   useEffect(() => {
-    tdrawEcharts(cref.current, option('碳排放量', ["#5e92f9"], 'bar'))
+    tdrawEcharts(cref.current, option(<CustTransO text="CarbonEmissions"/>, ["#5e92f9"], 'bar'))
   }, [])
   
   return (
-    <Titlelayout title={'碳排放量'} {...fs} style={{height: "200px"}} layout="flex">
+    <Titlelayout title={<CustTransO text="CarbonEmissions"/>} {...fs} style={{height: "200px"}} layout="flex">
         <div ref={cref} style={{flex:1}}></div>
     </Titlelayout>
   )

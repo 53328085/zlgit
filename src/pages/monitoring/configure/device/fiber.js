@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import {useTranslation} from 'react-i18next'
+import { Form, Space, Typography, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -11,7 +12,7 @@ import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm,AreaOption} from './elecomp'
 import cutContext from  '@com/content'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageFibreTempil,
@@ -29,6 +30,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -89,7 +91,7 @@ export default function gateway({ deviceStyle }) {
    const flagref =useRef([true,true,true,true])
   const content =useContext(cutContext)
   const levelname =useRef()
-  let delid;
+  let delid = useRef();
   let flies;
   const optcss = {
     color: '#237ae4',
@@ -153,10 +155,10 @@ export default function gateway({ deviceStyle }) {
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -234,13 +236,13 @@ export default function gateway({ deviceStyle }) {
    const onDelete = (record) => {
     console.log(record)
     DelModalRef?.current?.onOpen()
-    delid=record.sn
+    delid.current=record.sn
   }
   //确认删除
   const delOk=async()=>{
     const {success,errMsg} = await DeleteFibreTempil({
       projectId,
-      sn:delid
+      sn:encodeURIComponent(delid.current)
     })
     if(success){
       message.success('删除成功')

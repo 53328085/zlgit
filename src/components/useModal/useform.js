@@ -1,13 +1,14 @@
 import React, {useImperativeHandle, forwardRef, useRef} from 'react'
 import {Form, Select, Input, Switch, DatePicker} from 'antd'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
+import {useTranslation} from "react-i18next"
 import moment from 'moment'
  const auto = "off"
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
   const {roletype, enable, password=true, ...rest} = props
-
+  const {t} = useTranslation("platformcig")
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
@@ -33,13 +34,14 @@ import moment from 'moment'
     name="modalform"
    // initialValues={initialValues}
     size="middle"
-    labelCol={{ flex: "7em" }}
+    labelCol={{ flex: "10em" }}
     labelAlign="left"
     preserve={false}
+    labelWrap={true}
     {...rest}
   >
     {roletype && (
-      <Item label="用户角色" name="RoleType">
+      <Item label={t("userrole")} name="RoleType">
         <Select>
           {roletype.map((r) => (
             <Select.Option key={r.id} value={r.id}>
@@ -50,43 +52,43 @@ import moment from 'moment'
       </Item>
     )}
     <Item
-      label="登录账号"
+      label={t("LoginAccount")}
       name="name"
-      tooltip="用户名不能超过16个字符"
+      tooltip={t("usercharacters")}
       rules={[
         {
           required: true,
-          message: "登录账号必填",
+          message: t("Loginaccountrequired"),
         },
         {
           min: 1,
           max: 16,
-          message: "登录账号不能超过16个字符"
+          message:  t("accountcharacters")
         }
       ]}
     >
       <Input autoComplete={auto} />
     </Item>
-    <Item label="用户姓名" name="nickName"      
-     tooltip="不能超过32个字符"
+    <Item label={t("UserName")} name="nickName"      
+     tooltip={t("usernamecharacters")}
      rules={[
       {
         required: true,
-        message: "用户姓名必填",
+        message: t("usernamerequired"),
       },
       {
         min: 1,
         max: 32,
-        message: "用户姓名不能超过32个字符"
+        message: t("user32characters")
       }
     ]}
      >
       <Input  autoComplete={auto}/>
     </Item>
-    <Item label="账号有效期" name="validStageTime" rules={[
+    <Item label={t("AccountValidityPeriod")} name="validStageTime" rules={[
                   {
                     required: true,
-                    message: '请选择有效期！',
+                    message: t("exdate"),
                   }]}
                   >
                  <DatePicker format="YYYY-MM-DD" style={{width: '100%'}} disabledDate={disabledDate} />
@@ -94,10 +96,10 @@ import moment from 'moment'
     {
       password &&
       <>
-    <Item label="密码" name="pwd" rules={[
+    <Item label={t("Password")} name="pwd" rules={[
                   {
                     required: true,
-                    message: '请输入密码',
+                    message: t("enterpas"),
                   },
                   {
                     validator: pwdValidator
@@ -106,17 +108,17 @@ import moment from 'moment'
                   ]}>
       <Input.Password autoComplete={auto} />
     </Item>
-    <Item label="确认密码" name="repwd" rules={[
+    <Item label={t("ConfirmPassword")} name="repwd" rules={[
                   {
                     required: true,
-                    message: '请确认密码',
+                    message: t("cfipassword"),
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (!value || getFieldValue('pwd') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('两次输入的新密码不匹配'));
+                      return Promise.reject(new Error(t("passwordmatch")));
                     },
                   }),
                   
@@ -125,10 +127,10 @@ import moment from 'moment'
     </Item>
     </>
     }
-    <Item label="手机号码" name="mobile" rules={[
+    <Item label={t("comm:MobileNumber")}  name="mobile" rules={[
                   {
                     required: true,
-                    message: '请输入手机号码',
+                    message: t("entermobile"),
                   },
                   {
                     validator: phoneValidator
@@ -138,11 +140,11 @@ import moment from 'moment'
       <Input autoComplete={auto} />
     </Item>
     {enable && (
-      <Item label="是否启用" name="enabled" valuePropName="checked">
-        <Switch checkedChildren="是" unCheckedChildren="否"   />
+      <Item label={t("isenable")} name="enabled" valuePropName="checked">
+        <Switch checkedChildren={t("comm:Yes")} unCheckedChildren={t("comm:No")}   />
       </Item>
     )}
-    <Item label="备注信息" name="remark">
+    <Item label={t("comm:remark")} name="remark">
       <Input.TextArea
         autoSize={{
           minRows: 2,

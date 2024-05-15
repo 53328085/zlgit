@@ -95,21 +95,16 @@
         }
     }
 }
-.goback{
-    width: 96px;
-    position: absolute;
-    right: 36px;
-    top: 88px;
-}
+ 
 .content{
-    margin-top: 16px;
-    width: 1680px;
-    height: 800px;
-    background-color: #fff;
-    padding: 16px;
-    display: flex;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 288px 1fr;
+    column-gap: 16px;
     .contentLeft{
-        width: 288px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         .item{
             border: 1px solid rgb(215, 215, 215);
             border-radius: 4px;
@@ -120,7 +115,7 @@
                 margin: 16px;
                 padding-left: 16px;
                 height: 32px;
-                border-left: 4px solid #237Ae4;
+                border-left: 4px solid var(--ant-primary-color);
                 display: flex;
                 align-items: center;
                 font-size: 14px;
@@ -153,13 +148,10 @@
         }
     }
     .contentRight{
-        width: 1344px;
-        height: 768px;
-        margin-left: 16px;
+      
         position: relative;
         .area{
-            width: 1344px;
-            height: 768px;
+           width: 100%;
         }
         .mask{
             background-color: #fff!important;
@@ -180,44 +172,6 @@
             span{
                 display: inline-block;
                 white-space:nowrap;
-            }
-        }
-    }
-}
-.mainContent{
-    margin-top: 16px;
-    width: 1680px;
-    height: 780px;
-    background-color: #fff;
-    padding: 16px;
-    .contentTitle{
-        border-left: 4px solid #237Ae4;
-        padding-left: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 14px;
-        color: #515151;
-    }
-    .roomSearch{
-        width: 900px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        :global{
-            .ant-btn{
-                width: 80px;
-                background-color: #f5f7fa;
-                border-color:#d7d7d7 ;
-                color: #515151;
-            }
-        }
-    }
-    .tableList{
-        margin-top: 16px;
-        :global{
-            th{
-                background-color: #ecf5ff;;
             }
         }
     }

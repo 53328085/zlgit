@@ -6,7 +6,6 @@ export default function Index() {
   const {Link, Text, Paragraph} = Typography
   const navigate = useNavigate()
   const {pathname} = useLocation()
-  console.log(location)
   const style = {
      flex: 1,
      display: 'flex',

@@ -32,7 +32,7 @@ import {
 } from "@redux/systemconfig.js";
 
 import Table from "@com/useTable";
-import { Serach, Cdivider } from "@com/comstyled";
+import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
 export default function Index(props) {
   const tableLoadRef = useRef();
@@ -68,7 +68,7 @@ export default function Index(props) {
 
 
  
-  const showTotal = (total) => `共 ${total} 条记录`;
+  
  
   const columns = [
     {
@@ -155,6 +155,7 @@ export default function Index(props) {
   let initparams = useRef();
   console.log(initparams)
   const getOverviewData = ({ current, pageSize }, formData) => {
+    if(!(isFinite(areaId) && isFinite(projectId))) return
     initparams.current = {
       projectId,
       areaId,
@@ -282,7 +283,7 @@ export default function Index(props) {
   };
   return (
     <Pagecount>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div className="flexcol">
         <Form
           layout="line"
           form={form}
@@ -300,11 +301,8 @@ export default function Index(props) {
               style={{ marginBottom: 0 }}
             >
               <Serach
-                size="middle"
                 placeholder="输入设备名称/表计编号/安装地址"
                 style={{ width: "340px" }}
-                allowClear
-                enterButton="查询"
                 onSearch={submit}
               />
             </Form.Item>
@@ -443,11 +441,10 @@ export default function Index(props) {
           
         )}
         {isCard && (
-          <Pagination
+          <CPagination
             style={{ marginLeft: "auto" }}
             size="small"
-            onChange={changepage}
-            showTotal={showTotal}
+            onChange={changepage}          
             {...tableProps.pagination}
             showSizeChanger={false}
           />

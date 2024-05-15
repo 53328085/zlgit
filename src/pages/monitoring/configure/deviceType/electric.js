@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
+import {useTranslation} from 'react-i18next'
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,Image } from 'antd';
+import { Button, Form,  Typography, message, Space,Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 import lodash from 'lodash';
+const {Link} = Typography
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [dataSource, setDataSource] = useState([])//modal框表格数据
@@ -159,10 +162,10 @@ export default function Electric() {
       align:'center',
       render: (text, record) => {
         return (
-          <div style={{display:'flex'}}>
-            <div style={optionStyle} onClick={() => { editOption(record) }}>编辑</div>
-            <div style={{ ...optionStyle,marginLeft:32,  color: `rgb(244,67,54)` }} onClick={() => { openDel(record) }}>删除</div>
-          </div>
+          <Space size={32}>
+            <Link onClick={() => { editOption(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { openDel(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     }
@@ -444,8 +447,8 @@ export default function Electric() {
     value: 0,
     name: '新增电表类型',
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
-    cancelText: '取消',
-    okText: '确认',
+  //  cancelText: '取消',
+  //  okText: '确认',
     onOk,
     width: 1032,
     open,
@@ -469,19 +472,14 @@ export default function Electric() {
   
   let delModalProps = {
     DelModalRef,
-    cancelText: '取消',
-    okText: '确认',
+   // cancelText: '取消',
+  //  okText: '确认',
     content: '是否确认删除电表类型?',
     name: '删除电表类型',
     onOk: delOK,
   }
   const EditComp=useMemo(()=>{
-    return (<Modal mold='cust' title="编辑电表类型"  {...editModalProps} footer={[
-      <Button onClick={EditModalRef.current?.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOkEditModal}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onSureEditModal}>应用</Button>,
-  ]}>
-    {/* <BlueColumn name='编辑电表类型' styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    return (<Modal mold='cust' title="编辑电表类型"  {...editModalProps} onOK={onSureEditModal} >
     <EditModal {...editFormProps}></EditModal>
   </Modal>)
   },[editDefaultTableData])

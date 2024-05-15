@@ -76,7 +76,7 @@ export const columns =[
         align:'center'
       },
       {
-        title: '功率因素',
+        title: '功率因数',
         dataIndex: 'TotPF',
         key: 'TotPF',
         align:'center'

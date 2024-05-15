@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Select, Button,  Space,  message, Typography, Form, Input, Divider} from 'antd';
-
+import {useTranslation} from 'react-i18next'
 import UseTransfer from '@com/useTransfer'
 import { useAntdTable} from 'ahooks';
 import {useSelector} from 'react-redux'
@@ -12,12 +12,13 @@ import CModal from '@com/useModal'
  
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-import {  ExportExcel} from '@com/useButton'
+import {  ExportExcel, CustButton} from '@com/useButton'
 import Usetable from '@com/useTable' 
  
 const {Link} = Typography
 
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const tableRef = useRef() 
   const { QueryPageFibreTempil,QueryUnusedFibreTempil,ConfigureFibreTempil, QueryGXCWBaseInfo, ConfigureGXCWInfo, DeleteGXCWInfo} = DistributionMeter
   const [messageApi, contextHolder] = message.useMessage();
@@ -114,10 +115,10 @@ export default function Index() {
       key: 'action',
       align:'center',
       render: (_, record) => (
-        <Space size="middle">
-          <Link underline onClick={() => settingClick(record)} >绑定设备</Link>
-          <Link underline onClick={() => onOpen(true, record)}>编辑分区</Link>
-          <Link underline type="danger"  onClick={() =>delopen(record)}>删除分区</Link>
+        <Space  size={16}>
+          <Link underline onClick={() => settingClick(record)} >{t("button:bindDevice")}</Link>
+          <Link underline onClick={() => onOpen(true, record)}>{t("button:editPartition")}</Link>
+          <Link underline type="danger"  onClick={() =>delopen(record)}>{t("button:deletePartition")}</Link>
         </Space>
       ),
     },
@@ -295,12 +296,12 @@ const rules = [{
     unknownTitle:'未选中的光纤测温设备'
   }  
   const Title = (
-    <div style={{display: 'flex',justifyContent: "space-between"}}>
+    <div style={{display: 'flex',justifyContent: "space-between", alignItems: "center"}}>
       <span>光纤测温</span>
             <Space size={32}>
-            <Button type="primary" onClick={() => onOpen(false)} >
-               创建测温分区
-            </Button>
+            <CustButton  wh="auto" onClick={() => onOpen(false)} >
+               {t("button:createTemperaturePartition")}
+            </CustButton>
             <ExportExcel tb={tableRef} />
         
             </Space>

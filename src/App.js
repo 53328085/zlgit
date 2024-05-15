@@ -1,6 +1,7 @@
-import React, {Suspense,useEffect} from 'react'
-import {BrowserRouter,useNavigate} from 'react-router-dom'
-import {useSelector,useDispatch} from 'react-redux'
+import React, {Suspense} from 'react'
+import {BrowserRouter} from 'react-router-dom'
+import {useSelector} from 'react-redux'
+import {ThemeProvider} from 'styled-components'
 import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
@@ -13,13 +14,14 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor} from "@redux/systemconfig";
+import {themeColor, intl} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 function App() {
-  const dispatch = useDispatch()
-  // const navgite = useNavigate()
-  const primaryColor = useSelector(themeColor)
+  const theme = useSelector(themeColor)
+/*   const theme = useSelector(themeColor)
+ 
+   
   const config = {
     csp: {
       nonce: 'YourNonceCode'
@@ -28,17 +30,15 @@ function App() {
   }
   ConfigProvider.config({
     theme: {
-      primaryColor: "#237ae4"
-    }
+      primaryColor: theme.primaryColor,
+    },
+   
   }
-  )
- useEffect(()=>{
-  return ()=>{
-    dispatch(clearToken()) 
-  }
- },[])
+  ) */
+ 
   return   (
-    <CustConfig>
+ <CustConfig> 
+    <ThemeProvider theme={theme}>
     <ErrorBoundary>
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  
@@ -47,7 +47,8 @@ function App() {
     </Suspense>  
     </BrowserRouter>
     </ErrorBoundary>
-    </CustConfig>
+    </ThemeProvider>
+  </CustConfig> 
     ) 
   
 

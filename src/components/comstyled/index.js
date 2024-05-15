@@ -4,9 +4,12 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination} from 'antd'
+import {useTranslation} from "react-i18next"
+
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
+const $color= '#237AE4'
 export const Ipticon = styled.span`
   display: inline-block;
   width: 32px;
@@ -45,6 +48,10 @@ const formMixin = css`
   }
   
 `
+export const CPagination = (props) => {
+  const {t} = useTranslation("comm")
+  return <Pagination {...props} showTotal={(total) =>  t("totalpages", {count:total})} />
+}
 export const Comtext = styled(TextArea)`
  && {
     ${formMixin}
@@ -155,6 +162,7 @@ export const Cselect = styled(Select)`
     border: 1px solid #8091b2;
     border-radius: 4px;
     overflow: hidden;
+    width: ${props => props.w || 'auto'};
     height: ${props => props.h || 'auto'} !important ;
     &:focus, &:hover {    
     border-color: #1f83fe !important;
@@ -263,7 +271,13 @@ export const Cradiogroup = styled(Radio.Group)`
  
  }
 `
-
+export const Borderleft = styled.div`
+   display: flex;
+   height: 32px;
+   align-items: center;
+   padding-left: 16px;
+   border-left: 4px solid ${props => props.theme.primaryColor};
+`
 export const Itembox = styled(Item)`
  
   .ant-input-affix-wrapper-lg {
@@ -281,12 +295,12 @@ export const Logipt = styled(Input)`
   }
   &:focus,
   &:hover {
-    border-color: #1f83fe !important;
+    border-color:  #1f83fe !important; // ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};
     ${Ipticon} {
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #1f83fe;
+      color:  #1f83fe !important; // ${props => props?.theme?.primaryColor?.toUpperCase()!=$color ? props.theme.primaryColor : '#1f83fe !important'};;
     }
   }
   && {
@@ -392,19 +406,21 @@ export const Logpsd = styled(Input.Password)`
 `;
 
 export const Logbtn = styled(Button)`
-  border-color: #0e2db3;
-  background-color: #0e2db3;
+  border-color: rgba(0,102,204,1);
+  background-color: rgba(0,51,255,0.6);
   font-size: 18px;
   color: #fff;
-  &:hover, &:active, &:focus {
-    border-color: #0728ae;
-    background-color: #0728ae;
+  &:hover, &:active, &:focus {   
+    background-color:  rgba(0,51,255,0.8);
     color: #fff;
   }
 `;
  
-
-export const Serach = styled(Input.Search)`   // 运行监控 运行态
+export const Serach =(props) => {
+  const {t} = useTranslation('button')
+  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}} type="primary">{t("button:search")}</Button>} {...props}  />
+}
+/* export const Serach = styled(Input.Search)`    
  && {
   border-radius: 4px;
   overflow: hidden;
@@ -460,7 +476,7 @@ export const Serach = styled(Input.Search)`   // 运行监控 运行态
     -webkit-text-fill-color: #999 !important;
 　　transition: background-color 5000s ease-in-out 0s !important;
   }
-`
+` */
  
   export const Cspin =  (props) => {
 
@@ -477,6 +493,7 @@ export const Serach = styled(Input.Search)`   // 运行监控 运行态
    font-size: 14px;
    border: 1px solid transparent;
    border-radius: 2px;
+   padding: 0 8px;
 `
 export  const Ptag = styled(Normal)`
    background-color: #ecf5ff;
@@ -509,20 +526,20 @@ export const Cdivider = ({
   borderColor="#d7d7d7",
   height="32px",
    type="v", 
-  
-  } ={}) => {
+   ...rest
+  } ) => {
    if(type == 'v') {
-     return <Divider type="vertical" style={{ margin,borderColor, height}} dashed />
+     return <Divider type="vertical" style={{ margin,borderColor, height}} {...rest} dashed />
    }else if(type == 'h') {
 
-     return  <Divider type="horizontal" style={{ margin,borderColor }} dashed />
+     return  <Divider type="horizontal" style={{ margin,borderColor }} {...rest} dashed />
    }
  
 }
 export   const Radiogroup = styled(Radio.Group)`
   && {
     .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
-      width: 96px;
+      width: ${props => props.wh || '96px'};
       text-align: center;
       &:first-child {
         border-radius: 16px 0 0 16px;

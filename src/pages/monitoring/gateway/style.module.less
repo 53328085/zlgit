@@ -98,7 +98,7 @@
                 width: 80px;
                 height: 24px;
                 font-size: 12px;
-                background-color: #237ae4;
+                background-color: var(--ant-primary-color);
                 color: #fff;
                 text-align: center;
                 line-height: 24px;
@@ -168,7 +168,8 @@
     display: grid;
     grid-template-columns: repeat(3, 538px);
     grid-template-rows: repeat(4, 156px);
-    gap: 16px;
+    row-gap: 16px;
+    justify-content: space-between;
 }
 
 .pageNum {
@@ -177,13 +178,7 @@
     margin-right: 16px;
     bottom: 16px;
 
-    :global(.ant-pagination-item-active) {
-        background-color: #237ae4;
-
-        :global(a) {
-            color: #fff;
-        }
-    }
+    
 }
 
 /* .tableHead {
@@ -222,7 +217,7 @@
         width: 80px;
         height: 24px;
         font-size: 12px;
-        background-color: #237ae4;
+        background-color: var(--ant-primary-color);
         color: #fff;
         text-align: center;
         line-height: 24px;
@@ -415,7 +410,7 @@
                 }
 
                 .tabBoxB {
-                    background-color: #237AE4;
+                    background-color: var(--ant-primary-color);
                     color: #fff;
                     border-top-left-radius: 4px;
                     border-top-right-radius: 4px;
@@ -451,7 +446,7 @@
                 .dataHeader{
                     width: 1536px;
                     height: 36px;
-                    background-color: #237AE4;
+                    background-color:var(--ant-primary-color);
                     padding: 0 16px;
                     color: #fff;
                     line-height: 36px;
@@ -498,7 +493,7 @@
                         .blueLine{
                             height: 32px;
                             width: 4px;
-                            background-color: #237AE4;
+                            background-color: var(--ant-primary-color);
                             margin-right: 16px;
                         }
                         p{
@@ -514,18 +509,7 @@
                 }
                 
             }
-            .pageNumD {
-                position: absolute;
-                bottom: 16px;
-                right: 16px;
-                :global(.ant-pagination-item-active) {
-                    background-color: #237ae4!important;
-            
-                    :global(a) {
-                        color: #fff!important;
-                    }
-                }
-            }
+             
         }
     }
 }

@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react'
-import CustContext from '@com/content.js'
+ 
 import Pagecount from '@com/pagecontent'
 import Runmode from './runmode'
 import Onoff from './onoff'
 import CModal from '@com/useModal'
 import {StorageControlRuntime} from '@api/api'
-import {useSelector} from 'react-redux'
-import {Tabs, Typography, Form, Select, Divider, Space} from 'antd'
-import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+ 
+import {Tabs, Typography } from 'antd'
+ 
 import styled from 'styled-components'
-
+import { useOutletContext} from 'react-router-dom'
 const {Text} = Typography
 const Contentbox = styled.div`
   display: grid;
@@ -79,13 +79,10 @@ const Tabsbox = styled(Tabs)`
   }
 }
 `
-const {Item} = Form
+ 
 export default function Index() {
-  const [form] = Form.useForm()
-  const projectId = useSelector(selectProjectId)
-  const areaId = useSelector(selectOneLevelDefaultId)
-  let [AreaID, setAreaid] = useState(areaId)
-  const [pcsId, setPcsId] = useState(null)
+  let {exparams} = useOutletContext()
+  let {areaId,   projectId, pcsId} = exparams
   const [infoData, setInfoData] = useState({})
   const [mode, setMode] = useState(1) // 运行模式
   const [tab, setTab] = useState(1)
@@ -98,7 +95,7 @@ export default function Index() {
   ]
   const getinfo = async () => {
     try {
-      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId?.id)
+      let {success, data} = await StorageControlRuntime.QueryStorageControlInfo(projectId, areaId, pcsId?.value)
 
       if (success) {
         let {runtimeMode, systemStatus} = data;
@@ -113,34 +110,20 @@ export default function Index() {
   }
 
  
-  const propsData ={
-  /*   tabs: [
-      {label: '自动模式', key: 'Automate'},
-      {label: '手动模式', key: 'Manual'},
-    ], */
-   /*  value,
-    setvalue, */
-    isSite: true,
-    isPcs: true,
-    handler: setAreaid,
-    pcshandler: setPcsId,
-    form,
-    
-  }
+ 
    const tabChange = (e) => {
      setTab(e)
    }
   
   useEffect(() => {
-    if(areaId && projectId && pcsId) {
+    if(Number.isInteger(areaId) && Number.isInteger(projectId) && pcsId?.value) {
       getinfo()
     }
     
   }, [areaId, projectId, pcsId])
   const ProjectCom = [Onoff, Onoff, Runmode][tab]
   return (
-    <CustContext.Provider value={propsData}>      
-    <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
+    <Pagecount  pd="0px" bgcolor="transparent">   
          <Contentbox>
            <div className='info'>
               <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.systemStatus == 1 ? '开机' : infoData.systemStatus == 2 ? '关机': null }</span></span>
@@ -151,10 +134,10 @@ export default function Index() {
            </div>
            <div className='tabbox'>
                 <Tabsbox items={tabs} activeKey={tab} onChange={tabChange}></Tabsbox>
-              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} pcsId={pcsId}    areaId={AreaID} {...infoData} getinfo={getinfo}   />   }
+              {  !isNaN(mode) &&  <ProjectCom projectId={projectId} mode={mode} CModal={CModal} pcsId={pcsId?.value}    areaId={areaId} {...infoData} getinfo={getinfo}   />   }
            </div>
         </Contentbox>
     </Pagecount>
-    </CustContext.Provider>
+    
   )
 }

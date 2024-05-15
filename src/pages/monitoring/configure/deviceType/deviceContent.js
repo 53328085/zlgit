@@ -1,12 +1,13 @@
 import React,{useState , useRef, useMemo} from 'react'
+import {useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
 import {publishState} from '@redux/systemconfig'
-import {Button,message} from 'antd'
-import {  ExportExcel} from '@com/useButton'
+import {Button,message, Space} from 'antd'
+import {  ExportExcel, NewButton} from '@com/useButton'
 export default function DeviceContent(props,ref) {
   const publish = useSelector(publishState)
   const projectId = useSelector(state => state.system.menus.projectId)
@@ -14,8 +15,8 @@ export default function DeviceContent(props,ref) {
     value,
     name='新增网关类型',
     AddModal,
-    cancelText='返回',
-    okText='保存',
+  //  cancelText='返回',
+  //  okText='保存',
     onOk,
     onSure,
     // onCancel,
@@ -48,15 +49,16 @@ export default function DeviceContent(props,ref) {
     ModalRef.current.onCancel()
   }
   const modalProps = {
-    cancelText,
-    okText,
+   // cancelText,
+ //   okText,
     width,
   }
   const AddModalComp=useMemo(()=>{
-    return ( <Modal ref={ModalRef} mold='cust' title={name}  {...modalProps} footer={[
-      <Button onClick={onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
+   
+    return ( <Modal ref={ModalRef} mold='cust' title={name}  {...modalProps} custft={true}  onOk={onOk}  /* footer={[
+      <Button onClick={onCancel}>{t("cancel")}</Button>,
+      <Button  type="primary" onClick={onOk}>{t("save")}</Button>,
+      <Button type="primary"
       onClick={
         (e)=>{
           onSure().then(resp=>{
@@ -72,9 +74,9 @@ export default function DeviceContent(props,ref) {
           });          
         }
       }
-      >应用</Button>,
-  ]}>
-      {/* <BlueColumn name={name} styled={{padding: '24px 0px'}}></BlueColumn> */}
+      >{t("apply")}</Button>,
+  ]} */>
+     
       <AddModal form={form} ref={addformRef}/>
   </Modal>)
   },[])
@@ -82,13 +84,13 @@ export default function DeviceContent(props,ref) {
     <div >
       <div className={style.optionBtn}>
           <div>{title}</div>
-          <div className={style.btns}>
-          {publish?null:(<div className={style.btn} onClick={openAdd}>+新增</div>)}  
+          <Space size={16}>
+          {publish?null:(<NewButton onClick={openAdd} />)}  
             {/* {value===6?<div className={style.btn} style={{marginRight:16}} onClick={multiImport}>批量导入</div>:null} */}
             {/* <div className={style.btn} onClick={exportExecel}>导出</div> */}
             {other.onExport?<ExportExcel tb={other.tb} onExport={other.onExport}/>:null}
 
-          </div>
+          </Space>
       </div>
       <div style={{display:'flex',height:700}}>
           {other.children}

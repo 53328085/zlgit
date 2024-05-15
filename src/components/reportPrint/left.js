@@ -15,12 +15,13 @@ import {CustButton} from '@com/useButton'
  
 const Left = styled.div`
   && {
-         padding: 32px;
+        padding: 32px;
+        margin-bottom: 16px;
          display: flex;
          flex-direction: column;
          background: #fff; 
          .content {
-          padding: 32px 0;
+          padding: 32px;
           display: grid;
           row-gap: 32px;
           .ant-radio-group.ant-radio-group-solid {
@@ -96,7 +97,9 @@ const downloadReport = (id) => {
 }
 
 const handlePrint = useReactToPrint({
-  content: reactToPrintContent,
+    content: reactToPrintContent,
+    removeAfterPrint: true,
+    
 })
  
 const onPrint = () => {  

@@ -113,9 +113,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
      
      
       try {
-        let {success, data, errMsg} = await Remote.BatchValveStatus(param)
-         console.log('step:'+step)
-         console.log('status:'+status)
+        let {success, data, errMsg} = await Remote.BatchValveStatus(param)       
         if(success && Array.isArray(data) && data.length >0) {          
            let item = data[0]
            if(status == 'Open') { // 合闸
@@ -272,7 +270,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
         form={form}
         style={{ padding: "32px", border: "1px solid #d7d7d7" }}
         colon={false}
-        
+        disabled
       >
         <Form.Item label="设备编号" name="sn">
           <Input />
@@ -295,9 +293,9 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
         <Form.Item label="当前状态">
          
           {status == "Close" ? (
-            <CustButton type="primary" key="close">合闸</CustButton>
+            <CustButton type="primary" key="close" >合闸</CustButton>
           ) : status == "Open" ? (
-            <CustButton type="primary" style={{backgroundColor: "#ff5757", border: "none"}} key="open" >
+            <CustButton type="primary" style={{backgroundColor: "#ff5757", border: "none", color: '#fff'}} key="open" >
               分闸
             </CustButton>
           ) : null}
@@ -331,17 +329,12 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
         okText={title?.slice(0, 2)}
         onOk={onOk}
       >
-        <div
-          style={{ display: "flex", alignItems: "center", padding: "0 32px" }}
-        >
-          <img src={redwarn} style={{ width: "48px" }}></img>
-          <p style={{ fontSize: "16px", paddingLeft: "16px" }}>
+          <>
             {optype == 0 ?
              '合闸后，该电表控制内的所有用电设备将恢复供电，请确认！'
              : '分闸后，将导致该电表控制内的所有用电设备断电，请谨慎操作！'
             } 
-          </p>
-        </div>
+          </>
       </Custmodal>
       <Custmodal
       key="info"

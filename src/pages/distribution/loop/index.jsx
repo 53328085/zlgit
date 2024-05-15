@@ -1,35 +1,36 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import style from './style.module.less'
-import { Select, Button, DatePicker, Form, Divider, message,Table } from 'antd'
+import { Typography, message,Space } from 'antd'
 import { SyncOutlined, UploadOutlined, RollbackOutlined, SearchOutlined } from '@ant-design/icons';
 import LoopSelect from './loopSelect'
 import ContentTable from './contentTable';
 import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
-import BlueColumn from '@com/bluecolumn'
+import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectcurlRommid } from "@redux/systemconfig";
-import {Link} from 'react-router-dom'
-import {ExportExcel} from '@com/useButton'
+import { selectcurlRommid, roomId } from "@redux/systemconfig";
+//import {Link} from 'react-router-dom'
+import {ExportExcel, RefreshButton} from '@com/useButton'
 import styled from 'styled-components';
-const WrapTable = styled.div`
-.ant-table{
-    .ant-table-scroll {
-      .ant-table-hide-scrollbar {
-        overflow-y: auto !important;
-      }
-    }
-}
-   
-`
+import Titlelayout from '@com/titlelayout'
+import Pagecount from '@com/pagecontent' 
+import UseTable from '@com/useTable'
+ 
+const {Link} = Typography
 export default function Index() {
    
     
     const projectId = useSelector(state => state.system.menus.projectId)
-    const roomId = useSelector(selectcurlRommid)
+    const curid = useSelector(selectcurlRommid)
+    const roomIds = useSelector(roomId)
+   //  const roomId = [curid]
+    const  RoomId = useMemo(() => {
+       return  curid==0 ? roomIds?.filter(r => r.id!=0).map(m => m.id) : [curid]
+    }, [curid])
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()
+    const time = moment().format("YYYY-MM-DD hh:mm:ss")
     const columns = [
         {
             title: '回路名称',
@@ -46,7 +47,7 @@ export default function Index() {
             title:"设备编号",
             dataIndex:'sn',
             width:160,
-            render: (text, record) => <Link style={{ color: '#237ae4', textDecoration: 'underline', cursor: 'pointer' }} target="blank" to={`/deviceDetail?sn=${record.sn}`}>{text}</Link>
+            render: (text, record) => <Link underline  target="blank" href={`/deviceDetail?sn=${record.sn}`}>{text}</Link>
         },{
             title: '电压',
             children: [
@@ -70,17 +71,17 @@ export default function Index() {
             title: '电流',
             children: [
                 {
-                    title: 'Ia(V)',
+                    title: 'Ia(A)',
                     dataIndex: 'Ia',
                     width: 96
                 },
                 {
-                    title: 'Ib(V)',
+                    title: 'Ib(A)',
                     dataIndex: 'Ib',
                     width: 96
                 },
                 {
-                    title: 'Ic(V)',
+                    title: 'Ic(A)',
                     dataIndex: 'Ic',
                     width: 96
                 },
@@ -120,8 +121,8 @@ export default function Index() {
     ]
  
    
-    const getLinePoint=async(roomId,lineId)=>{
-       const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,roomId,lineId)
+    const getLinePoint=async(RoomId,lineId)=>{
+       const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,RoomId,lineId)
        if(res.success){
         if(res.data){
             const dataes = structuredClone(res.data)
@@ -149,44 +150,41 @@ export default function Index() {
         }
     }
     const refresh=()=>{
-        console.log(selectRef.current.selectedKeys)
-        getLinePoint(roomId,selectRef.current.selectedKeys)
+        
+        getLinePoint(RoomId,selectRef.current.selectedKeys)
     }
     useEffect(()=>{
-         if(roomId)  getLinePoint(roomId,0);
-    },[roomId])
+         if(RoomId)  getLinePoint(RoomId,0);
+    },[RoomId])
 
     return (
-        <div>
+        <Pagecount bgcolor="transparent" pd="0">
             <div className={style.content}>
-                <LoopSelect   projectId={projectId} roomId={roomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
-                <div className={style.contentRight}>
-                    <div className={style.contentheader} key="d">
-                        <BlueColumn name="详细参数"/>
-                        <div className={style.buttonList}>
-                            <span style={{paddingRight:40,fontSize:16}}>参量采集时间 : 2020-09-03 09:35:21</span>
-                            <Button className='refresh' type='primary' icon={<SyncOutlined />} onClick={refresh}>刷新</Button>
-                            {/* <Button className='headerButton' type='primary' icon={<UploadOutlined />} >导出</Button> */}
-                            <ExportExcel tb={tableRef}/>
-                        </div>
-                    </div>
-                    <div style={{height:16}} key="e"></div>
-                    <WrapTable>
-                    <ContentTable  
+                <LoopSelect   projectId={projectId} roomId={RoomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
+                <Titlelayout title={<div style={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
+                    <span>详细参数</span>
+                    <Space size={4}>
+                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
+                        <RefreshButton onClick={refresh}>刷新</RefreshButton>
+                        <ExportExcel tb={tableRef}/>
+                    </Space>
+                </div>} layout="flex">
+                     <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
+                    <UseTable 
+                    hbg="#f0f9ff" 
+                    hbc="#515151"
                     columns={columns} 
-                    tableData={tableData} 
-                    tableRef={tableRef} 
+                    dataSource={tableData} 
+                    ref={tableRef} 
                     onExport={onExport}
-                    height={
-                      630
+                    scroll={{
+                        y:630
+                    }
                       }
-                    ></ContentTable>
-                 
-                    </WrapTable>
-                   
-                 
-                </div>
+                    ></UseTable>
+                 </div>                 
+                </Titlelayout>
             </div>
-        </div>
+        </Pagecount>
     )
 }

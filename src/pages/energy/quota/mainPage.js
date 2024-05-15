@@ -1,33 +1,29 @@
 import React, {useState, useEffect} from 'react'
-import style from './style.module.less';
-import { Input, Button, Table, message, Space } from 'antd';
+ 
+ 
+import {  Space} from 'antd';
 import { EnergyQuotaRuntime } from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import CustomProgress from '@com/useProgress'
 import { Link } from 'react-router-dom';
+import {useAntdTable} from 'ahooks'
+import UserTable from "@com/useTable";
+import Titlelayout from '@com/titlelayout';
+import {Serach} from '@com/comstyled'
+
 export default function MainPage(props){
-  const { Search } = Input;
+   
   const [searchData, setSearchData] = useState('')
+  
   const { queryRoomQuota } = EnergyQuotaRuntime
   const projectId = useSelector(selectProjectId);
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
-      type,
-      content,
-    })
-  }
-  const onSearch = values => {
-    if(props.areaId == 0 || !props.areaId){
-      return;
-    }
-    setSearchData(values)
-    getRoomTable(projectId, props.areaId, values)
+  const onSearch = values => { 
+    setSearchData(values) 
   }
 
   //表格数据
-  const [tableData, setTableData] = useState([])
+ 
   const columns = [
     {
       title:'园区',
@@ -51,10 +47,11 @@ export default function MainPage(props){
       render: (_, record) => (
         <Space size="middle">
           <Link 
+         
           to={{pathname:'/roomDetail', search:JSON.stringify({id:record.roomId,
             areaName:props.areaName, 
-            buildingName:record.buildingName, 
-            roomName:record.roomName,
+            buildingName: encodeURIComponent(record.buildingName), 
+            roomName: encodeURIComponent(record.roomName),
             comprehensiveQuota: record.comprehensiveQuota,
             comprehensiveQuotaLeaved: record.comprehensiveQuotaLeaved
           })}} 
@@ -123,58 +120,42 @@ export default function MainPage(props){
         </Space>)
     }
   ]
-  const [pageNum, setPageNum] = useState(1)
-  const [total, setTotal] = useState(0)
-  const pageSize = 20
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    showTotal: () => (
-      <span>总共{total}项</span>
-    ),
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-  }
+  
 
-  const getRoomTable = (projectId, areaId, search) => {
-    queryRoomQuota(projectId, areaId, search).then(res => {
+  const getRoomTable = () => {
+  if(!isFinite(props.areaId) || !isFinite(projectId)) return;
+   return  queryRoomQuota(projectId, props.areaId, searchData).then(res => {
       let {success, data} = res
       if(success){
-        if(data){
-          setTableData(data)
-        }
+         return {
+           list: Array.isArray(data) ? data : [],
+           total: Array.isArray(data) ? data.length : 0,
+         }
       }else{
-        messageContent('error', res.errMsg)
+        return {
+          list: [],
+          total: 0
+        }
       }
     })
   }
-
-  useEffect(()=> {
-    if(props.areaId == 0 || !props.areaId) return;
-    setSearchData('')
-    getRoomTable(projectId, props.areaId, '')
-  },[props.areaId])
+  const {tableProps} = useAntdTable(getRoomTable, {
+    refreshDeps: [projectId, props.areaId, searchData]
+  })
+ 
 
   return (
-    <div>
-      {contextHolder}
-      <div className={style.mainContent}>
-        <div className={style.contentTitle}>
-          <span>定额能耗</span>
-          <div className={style.roomSearch}>
-            <span style={{marginRight: 16,whiteSpace:'nowrap'}}>房间查询</span>
-            <Search placeholder="输入房间号查询" allowClear enterButton="查询" size="middle" onSearch={onSearch} style={{width: 370 }}/>
-          </div>
-        </div>
-        <div className={style.tableList}>
-          <Table size='small' bordered dataSource={tableData} columns={columns} rowKey='roomId' scroll={{y: 650}} pagination={false} />
-        </div>
+    <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}><span>房间查询</span><Serach
+    size="middle"
+    placeholder="输入房间号查询"
+    style={{ width: "340px" }}
+    allowClear
+    enterButton="查询"
+    onSearch={onSearch}    
+  /></div>} layout="flex" bordered="n" pv="0">
+      <div style={{display: 'flex', flex: 1, paddingTop: '16px'}}>
+          <UserTable {...tableProps} columns={columns} rowKey='roomId' scroll={{y: 650}} pagination={false} />
       </div>
-    </div>
+    </Titlelayout>
   )
 }

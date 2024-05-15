@@ -1,56 +1,20 @@
-import React, {useEffect, useMemo} from 'react'
-import {useGetPostsQuery, useGetPostQuery, useParamPostMutation} from './apiBasic'
-import {Spin, List, Space, Button} from 'antd'
+import React from 'react'
+import {useParamPostMutation, useGetPostQuery,selectUsersResult} from './apiSlice'
 export default function Index() {
-  const {
-    data: posts,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-    refetch
-  } = useGetPostQuery(2)
-  useEffect(() => {
-    refetch()
-  }, [])
-  const [paramPost] = useParamPostMutation()
- const getdata = async (id)=> {
-   try {
-    let data = await paramPost(id).unwrap()
-    console.log(data);
-   } catch (error) {
-    
-   }
- }
- const [link, name] = useMemo(() => {
-   if(!posts) return [[], []] ;
-   let {link=[], name=[]} = posts.data || {}
-   return [
-    link,
-    name
-   ]
- }, [posts])
- 
- let content
+   let objf = useGetPostQuery(2)
+  
 
-  if (isLoading) {
-    content = <Spin text="Loading..." />
-  } else if (isSuccess) {
-    content =  <List bordered dataSource={name} renderItem={(item) => <List.Item>{item}</List.Item>}></List>
-  } else if (isError) {
-    content = <div>{error.toString()}</div>
-  }
- 
+  let [onpost, data] = useParamPostMutation()
+   console.log(data)
+   const mutation = async() => {
+      
+    let   data =  await onpost(1).unwrap()
+      console.log(data)
+   }
   return (
-      <div style={{flex: 1}}>
-        <Space>
-           <Button onClick={()=> getdata(2)}>2</Button>
-           <Button onClick={()=> getdata(4)}>4</Button>
-           <Button onClick={()=> getdata(8)}>8</Button>
-           <Button onClick={refetch}>refetch</Button>
-        </Space>
-          {content}
-     </div>
-    
+    <div>
+      <button onClick={mutation}>mutation</button>
+     <button onClick={() => data.reset(2)}>reset</button>  
+    </div>
   )
 }

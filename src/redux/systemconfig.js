@@ -1,16 +1,22 @@
 /* 获取系统配置 */
  
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
+import {message} from 'antd'
+import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
+
  
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
 
-  const handlermenu = (data,  id) => {
- 
+  const handlermenu = (Meundata,  id) => {
+   
+ let lang = window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
+ let data = Meundata.filter(d => d.languageName==lang);     
+    if(data?.length ==0) return message.warning("没有设置相应的菜单栏，请联系管理员")
     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
     const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
   //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
@@ -39,6 +45,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
      }   
     }) 
     const menus =  {
+     fullmenu: Meundata,
      designerMenus, 
      siderDesignerMenus,
      runMenus,
@@ -59,7 +66,14 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
 const initialState = {
     siteConfig: antdconfig,
-    themeColor: '#237AE4',
+    themeColor:  {
+      primaryColor: '#237AE4'
+    },
+    intl: {
+      lang: zhCN,
+      locale: 'zh-cn'
+    },
+    iszhCN: localStorage.getItem('i18nextLng')?.toLowerCase()?.slice(0,2) == 'zh',
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -67,8 +81,9 @@ const initialState = {
     publishState: NaN, // 项目是否发布 1 发布， 0 未发布
     roomId: [],    
     
-    curlRommid: '',
+    curlRommid: '',  
     menus: {
+        fullmenu: [], //全部菜单
         projectId: 0, // 项目ID
         runMenus: [], // 运行 top菜单栏 左边 选择的
         designerMenus: [], // 设计 top菜单栏
@@ -95,6 +110,7 @@ const initialState = {
   asider: true,
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
+  enterprise: {}, // 碳排 企业信息
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -107,7 +123,7 @@ export const getWebsiteState = createAsyncThunk(
        //   ProjectList.QueryMenus(id), 
           ProjectSetting.queryProjectPublishInfo(id),
           BigScreen.QueryBigScreen(id),
-          Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+        //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
           AllDeviceStyle(), // 表计类型
          ] 
         let results = await Promise.allSettled(promises)
@@ -123,7 +139,12 @@ export const getWebsiteMenu = createAsyncThunk(
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
       if(success) {
-         return handlermenu(data, id)
+         if(Array.isArray(data) && data.length > 0) {
+          return handlermenu(data, id)
+         }else {
+          return message.warning("没有设置相应的菜单栏,请联系管理员")
+         }
+        
          
       }else {
         rejectWithValue(errMsg)
@@ -167,6 +188,7 @@ const system = createSlice({
             state.jump = payload     
            
         },
+      
         getMenus(state, {payload}) { 
             state.menus = payload
             
@@ -227,8 +249,8 @@ const system = createSlice({
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
-        getThemeColor(state, {payload}) {
-           state.themeColor = payload || "#237AE4";
+        getThemeColor(state, {payload}) {         
+           state.themeColor =payload;
           
         },
         getRoomId(state,{payload}){
@@ -243,10 +265,22 @@ const system = createSlice({
            state.systemConfigInfo = payload ?? {}
         },
         systemConfigRest(state, actions) {
-        
-          return state = initialState;
-      },
-      
+           let {themeColor, intl} = state;
+           console.log(themeColor)
+         //  state = {...initialState, themeColor, intl};
+           return {...initialState, themeColor, intl}
+        },
+        setIntl(state, {payload}) { // 设置国际化          
+          state.intl = payload
+        },
+        setIszhCN(state, {payload}) {
+          
+           state.iszhCN = payload
+        },
+        getEnterprise(state, {payload}) {
+          state.enterprise = payload
+        }
+
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -261,15 +295,15 @@ const system = createSlice({
                index == 1 && ( state.shifts = Array.isArray(data) ? data : [])
                index == 2 && (state.publishState=data?.state)
                index == 3 && (state.datascreen = data || {})
-               index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
-               index == 5 && (state.deviceStyle = Array.isArray(data) ? data : [])
+          //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
+               index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
                index == 1 && (state.shifts=[]);
                index == 3 &&  (state.datascreen = {})
-               index == 4 && (state.disonlevel = [])
-               index == 5 && (state.deviceStyle = [])
+              // index == 4 && (state.disonlevel = [])
+               index == 4 && (state.deviceStyle = [])
              }
           }
         })
@@ -312,11 +346,23 @@ export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMen
 export const siderRunMenus  = state => state.system.menus?.siderRunMenus
 export const setMenus  = state => state.system.menus?.setMenus
 export const comSetFirst  = state => state.system.menus?.comSet[0]
+
+//export const Selectmenus = (state, parentNo) => state.system.menus.fullmenu.filter(s => s.parentNo == parentNo)
+export const Selectmenus  =createSelector(
+ [menus, (state, parentNo) => parentNo],
+  (menus, parentNo) => {
+     console.log(menus)
+     console.log(parentNo)
+     return menus?.fullmenu.filter(f =>f.parentNo == parentNo)
+  }
+ )
+
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state =>  state.system.onelevel
 export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
+
 
 
 
@@ -350,6 +396,9 @@ export const roomName = state =>  {
 } 
  
 export const deviceStyle = state => state.system.deviceStyle;
+export const intl = state => state.system.intl //国际化
+export const iszhCN = state => state.system.iszhCN // 是否中文
+export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const {
     configProject,
     getSetMenus,
@@ -375,6 +424,8 @@ export const {
     getisDistribution,
     getcurlRommid,
     getDiscurlevel,
-  
+    setIntl,
+    setIszhCN,
+    getEnterprise,
 } = actions
 export default system.reducer

@@ -1,4 +1,3 @@
-import { data } from "browserslist";
 import server from "./index";
 // 测试 新技术
 export class Test {
@@ -7,7 +6,9 @@ export class Test {
 // zl api start
 // 登录
 
-
+export class I18N {
+  static GetsupportLanguages = () => server.get(`/Language/GetsupportLanguages`) // 
+}
 
 export class Login {
   static SystemConfig = (url) =>
@@ -36,8 +37,8 @@ export class Login {
     static CheckAuthorization = () => server.get(`/General/SystemConfig/CheckAuthorization`);
 
     static Registe = (params) => server.post(`/General/SystemConfig/Register`, params);
-   
-    
+    static ResetUserMobile = (params) => server.post(`/General/User/ResetUserMobile`, params); // 修改手机号码
+    static ResetUserPassword = (params) => server.post(`/General/User/ResetUserPassword`, params); // 修改用户密码
 }
  
 // 项目列表
@@ -185,8 +186,8 @@ export class User {
  
 // 公共模块---区域管理
 export class Area {
-  static AllLevel = (projectId) =>
-    server.get(`/General/Area/AllLevel?projectId=${projectId}`);
+  static AllLevel = (projectId) => server.get(`/General/Area/AllLevel?projectId=${projectId}`);
+  static Import = (params) => server.post(`/General/Area/Import`, params); // 批量导入
 
    static AreaList = (projectId) =>  // 配电管理模块
     server.get(
@@ -1195,75 +1196,58 @@ export class UserReportApi {
 }
 export const GetCamerasVideosByProjectId = (Id) =>
   server.get(`/Camera/GetCamerasByHouseId?houseId=${Id}`);
+
+  export const GetCamerasoneInfo = (projectId, id) =>
+  server.get(`/Monitor/RuntimeCamera/OneInfo?projectId=${projectId}&cameraId=${id}`);  
  
-export const leftControl = (params, url, ip, channel, user, pwd) =>
+export const leftControl = (params,url,projectId, id) =>
+  
   server.post(
-    "https://" +
+  
     url +
-    "/V1/Ptz/PtzLeft?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzLeft?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const bottomControl = (params, url, ip, channel, user, pwd) =>
+export const bottomControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+    
     url +
-    "/V1/Ptz/PtzDown?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzDown?ip="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const rightControl = (params, url, ip, channel, user, pwd) =>
+export const rightControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+   
     url +
-    "/V1/Ptz/PtzRight?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzRight?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const topControl = (params, url, ip, channel, user, pwd) =>
+export const topControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
+   
     url +
-    "/V1/Ptz/PtzUp?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzUp?projectId=" +
+    projectId +
+    "&id=" +
+    id,
     params
   );
-export const stopControl = (params, url, ip, channel, user, pwd) =>
+export const stopControl = (params, url,projectId, id) =>
   server.post(
-    "https://" +
     url +
-    "/V1/Ptz/PtzStop?ip=" +
-    ip +
-    "&channel=" +
-    channel +
-    "&user=" +
-    user +
-    "&pwd=" +
-    pwd,
+    "/V1/Ptz/PtzStop?projectId="+
+    projectId +
+    "&id=" +
+    id,
     params
   );
  
@@ -1440,7 +1424,10 @@ export class operation {
  static  OrderDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`,{params:data})//工单详情
  static  InspectionPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionPage`,data)//巡检
  static  InspectionDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`,{params:data})//巡检详细
- 
+ static  AlarmStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmStatistics`, data)//运行报告
+// static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//运行报告
+ static  InspectionStatistics=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  InspectionErrorCounter=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionErrorCounter?projectId=${projectId}&areaId=${areaId}`)//运行报告
 }
 //运维管理(设计)
 export class operationDesigin{
@@ -1770,11 +1757,13 @@ export class DistributionRoomRuntime{
   static HistoryTrends=(data)=>{
     return server.post(`/Distribution/DistributionRoomRuntime/HistoryTrend`,data)
   }
-  static LineTree=(projectId,roomId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
+  static LineTree=(projectId,roomId=[])=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineTree?projectId=${projectId}${query}`)
   }
-  static LineRuntimePoints=(projectId,roomId,lineId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints`,{params:{projectId,roomId,lineId}})
+  static LineRuntimePoints=(projectId,roomId=[],lineId)=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints?projectId=${projectId}&lineId=${lineId}${query}`)
   }
   static CameraSummary=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/CameraSummary`,{params:{projectId,roomId}})
@@ -1869,9 +1858,9 @@ export class EnergyQuotaRuntime {
 }
 //公共能耗
 export class EnergyPublicRuntime {
-  static queryEnergyCategoryTree = (projectId, categoryType) =>
+  static queryEnergyCategoryTree = ({projectId, categoryType, name}) =>
     server.post(
-      `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}`
+      `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`
     );
   static queryElectricYear = (projectId, areaId, date, shiftNo, data) =>
     server.post(

@@ -9,7 +9,7 @@ export const Circle = (props) => { // 圆形感叹号
       justify-content: center;
       align-items: center;
       color:#fff;
-      background-color: #03f;
+      background-color: ${props => props.theme.primaryColor};
       font-family: fangsong;
       font-weight: bold;
     `

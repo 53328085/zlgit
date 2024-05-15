@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Button,  Space, message, Typography, Divider} from 'antd';
- 
+import {useTranslation} from 'react-i18next'
 import UseTransfer from '@com/useTransfer'
 import { useAntdTable } from 'ahooks';
 import {useSelector} from 'react-redux'
@@ -13,10 +13,11 @@ import CModal from '@com/useModal'
  
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-import {  ExportExcel} from '@com/useButton'
+import {  ExportExcel, CustButton} from '@com/useButton'
 const {Link} = Typography
 
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const tableRef = useRef()
   const roomId = useSelector(selectcurlRommid)
   const areaId = useSelector(selectOneLevelDefaultId)
@@ -135,7 +136,7 @@ export default function Index() {
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          <Link type="danger" underline onClick={() => deleteRecord(record)}>删除</Link>
+          <Link type="danger" underline onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
     },
@@ -271,12 +272,12 @@ export default function Index() {
     return getTableData({current: 1, pageSize: total})
  }, [total, roomId])
  const Title = (
-    <div style={{display: 'flex',justifyContent: "space-between"}}>
+    <div style={{display: 'flex',justifyContent: "space-between", alignItems: "center"}}>
       <span>变压器管理</span>
             <Space size={32}>
-            <Button type="primary" onClick={()=> settingClick()} style={{ width: 96}}>
-                选择设备
-            </Button>
+            <CustButton onClick={()=> settingClick()}>
+                 {t("button:selectDevice")}
+            </CustButton>
             <ExportExcel tb={tableRef} />
         
             </Space>

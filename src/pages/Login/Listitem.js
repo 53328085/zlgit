@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Login as Logapi } from "@api/api";
 import {useDispatch} from 'react-redux'
 import {  getThemeColor, getSystemconfiginfo} from "@redux/systemconfig";
+import {useTranslation, Trans, Translation} from 'react-i18next';
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,19 +63,20 @@ const List = styled.div`
     }
   }
 `;
-const items = [
-    "运行监控",
-    "电气安全",
-    "配电管理",
-    "结算收费",
-    "光伏发电",
-    "碳排管理",
-    "运维管理",
-  ];
+
 export default memo(function Listitem({logtitle, englishTitle, literal}) {   
+  const {t} = useTranslation('login')
   const dispatch = useDispatch();
   const [systitle, setTitle] = useState({})
-  
+  const items = [
+     t("OpMonitor"),
+     t("ElectrSafe"),
+    t("PowerManage"),
+    t("SettleCharge"),
+    t("Photovolatic"),
+    t("CarbonManage"),
+    t("OpManage"),
+  ];
   const getSysteminfo = async (hostname) => {
      try {
        let {data, success} =   await Logapi.SystemConfig(hostname)
@@ -90,13 +92,12 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
                enchtitle
             })
             dispatch(getSystemconfiginfo(data)) 
-            dispatch(getThemeColor(data.themeColor))
+            dispatch(getThemeColor({primaryColor: data.themeColor || "#237ae4"})) 
        }else {
             dispatch(getSystemconfiginfo({}))
        }
 
-     } catch (error) {
-          console.log(error)
+     } catch (error) {         
           dispatch(getSystemconfiginfo({}))
      }
     

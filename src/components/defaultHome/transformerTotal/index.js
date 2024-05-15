@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
  
-import moment from 'moment';
+import {useTranslation} from 'react-i18next'
 import fuhe from '../fuhe.svg'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
@@ -19,7 +19,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
-
+  const {t} = useTranslation("overview")
   const [total, setTotal] = useState(0)
 
  
@@ -41,12 +41,12 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={'变压器总负荷'} {...fs} style={{height: '200px'}} layout="flex">
+         <Titlelayout title={t("TotalTransformerLoad")} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
                <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: "0 32px"}}>
                   <img src={fuhe} width={64} height={64} />
                   <div style={{display: "flex", flexDirection: "column", }}>
-                    <span style={{color: "#333"}}>实时总负荷</span>
+                    <span style={{color: "#333"}}>{t("Realtimetotalload")}</span>
                     <p style={{marginTop: "16px"}}>
                       <span style={{fontSize: "24px",color: "#515151"}}>{total}</span>
                       <span style={{paddingLeft: "32px", color:"#999", display: "inline-block"}}>kw</span>

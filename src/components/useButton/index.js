@@ -1,37 +1,64 @@
 import React, {useCallback} from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Menu, Upload, Typography } from "antd";
+import { Button, Dropdown, Menu, Upload, Typography, } from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
+import {useTranslation} from 'react-i18next' 
+import i18 from '../../i18n'
 import icon from "./icon";
 const {Link} = Typography
-const Custbtn = styled(Button)`
+
+const Normal = styled.div`
+width: ${props => props.wh || "72px"};
+height: 24px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+border: 1px solid transparent;
+border-radius: 2px;
+padding: 0 8px;
+`
+export  const Ptag = styled(Normal)`
+   background-color: #ecf5ff;
+   color: #409eff;
+   border-color:#409eff;
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(64,158,255);
+    border-color:rgb(64,158,255) ;
+    color:#fff;
+   }
+
+`
+export  const Wtag = styled(Normal)`
+   background-color: rgba(254,240,240,1);
+   color: #f35656;
+   border-color:rgba(251,200,200,1);
+   transition:  all 0.3s;
+   &:hover{
+    cursor: pointer;
+    background-color: rgb(240,60,60,1);
+    border-color:rgb(240,60,60,1) ;
+    color:#fff;
+   }
+
+`
+
+
+
+const Custbtn = styled(Button).attrs((props) => ({
+  type: props.type || "primary",
+}))`
   && {
     width: ${props => props.wh || '96px'};
-    height: 32px;
-    background: #237ae4;
-    border-color: #237ae4;
-    border-radius: 2px;
-    color: #fff;
+    height: 32px;  
+    border-radius: 2px; 
     padding: 8px;
     text-align: left;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  &&:hover {
-    background-color: #4f95ea;
-    border-color: #4f95ea;
-    color: #fff;
-  }
-  &&:active,
-  &&:focus {
-    background-color: #1c62b7;
-    border-color: #1c62b7;
-    color: #fff;
-  }
-  &&[disabled] {
-    background-color: #C8C9CC;
-    border-color: #C8C9CC;
   }
   img {
     height: ${props => props.imgh || '16px'}; 
@@ -140,7 +167,16 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
-
+export function CustTransO(props) { // 项目概览
+  let {text, ns="overview"} = props 
+  const {t} = useTranslation([ns]);
+  return (
+    <>
+     {t(text)}
+    </>
+  )
+}
+ 
 const Menus = (print) => {
   return (
   <Cmenu>
@@ -152,8 +188,42 @@ const Menus = (print) => {
     </CmenuItem>
   </Cmenu>
 )}
-export function CustButton(props) { // 通用方式
-  let {src, ...other} = props
+export function TreeBtnN(props) {  // 树形按钮  普通
+  let {text, ns="button",...other} = props 
+  const {t} = useTranslation();
+   return <Ptag {...other}>
+            {t(text,{ns})}
+           </Ptag>
+}
+export function TreeBtnW(props) {  // 树形按钮 删除
+  let {text, ns="button",...other} = props 
+  const {t} = useTranslation();
+   return <Wtag {...other}>
+            {t(text,{ns})}
+           </Wtag>
+}
+
+export function CustLink(props) { // 通用方式
+  let {text, ns="button",...other} = props 
+  const {t} = useTranslation();
+  return (
+    <Link underline {...other}>
+     {t(text, {ns})}
+    </Link>
+  )
+}
+export function CustButtonT(props) { // 通用方式按钮 通用翻译
+  let {src,text,ns="button", ...other} = props 
+  const {t} = useTranslation()
+  return (
+    <Custbtn {...other}>
+     {src ? <img src={icon[src]} width={props.width} /> : null}
+     {t(text, {ns})}
+    </Custbtn>
+  )
+}
+export function CustButton(props) { // 通用方式按钮
+  let {src, ...other} = props 
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}
@@ -161,44 +231,53 @@ export function CustButton(props) { // 通用方式
     </Custbtn>
   )
 }
+export function SaveButton(props) {
+  const {isicon=true} = props
+  return (
+    <Custbtn {...props}>
+      {isicon && <img src={icon.save} />}
+      {i18.t('save', {ns: "button"})}
+    </Custbtn>
+  );
+  }
 
-export function SaveButton() {
+export function CancelButton(props) {
+  const {isicon=true} = props
   return (
-    <Custbtn>
-      <img src={icon.save} />
-      保存
+    <Custbtn type="default" {...props}>      
+      {i18.t('Cancel', {ns: "button"})}
     </Custbtn>
   );
 }
-export function SerachButton() {
+export function SerachButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.serach} />
-      查询
+      {i18.t('search', {ns: "button"})}
     </Custbtn>
   );
 }
-export function RefreshButton() {
+export function RefreshButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.refresh} />
-      刷新
+      {i18.t('refresh', {ns: "button"})}
     </Custbtn>
   );
 }
-export function NewButton() {
+export function NewButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.new} />
-      新增
+      {i18.t('new', {ns: "button"})}
     </Custbtn>
   );
 }
-export function ChangeButton() {
+export function ChangeButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.change} />
-      更换
+      {i18.t('change', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -206,31 +285,31 @@ export function UnbindingButton() {
   return (
     <Custbtn>
       <img src={icon.unbinding} />
-      解绑
+      {i18.t('unbind', {ns: "button"})}
     </Custbtn>
   );
 }
-export function ImportButton() {
+export function ImportButton(props) {
   return (
-    <Custbtn>
+    <Custbtn {...props}>
       <img src={icon.import} />
-      导入
+      {i18.t('import', {ns: "button"})}
     </Custbtn>
   );
 }
-export function ExportButton(props) {
+export function ExportButton(props) {  
   return (
     <Custbtn {...props}>
       <img src={icon.export}  />
-      导出
+      {i18.t('export', {ns: "button"})}
     </Custbtn>
   );
 }
-export function AllExportButton() {
+export function AllExportButton(props) {
   return (
-    <Custbtn>
+    <Custbtn wh="auto" {...props}>
       <img src={icon.export} />
-      批量导入
+      {i18.t('batchImport', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -239,7 +318,7 @@ export function PrintButton(props) {
     <Dropdown overlay={Menus(props.print)}>
       <Custbtn>
         <img src={icon.print} />
-        打印
+        {i18.t('print', {ns: "button"})}
         <CaretDownFilled/>
       </Custbtn>
     </Dropdown> 
@@ -259,13 +338,13 @@ export function ExportExcel({tb, ...other}) {
   const items = [
     {
       key: '1',
-      label:   <Link> 导出当前页</Link>,
+      label:   <Link> {i18.t('exportCurPage', {ns: "button"})}</Link>,
       
          
     },
     {
       key: '2',
-      label: <Link> 导出全部</Link>,
+      label: <Link> {i18.t('exportAll', {ns: "button"})}</Link>,
     
     },
   ]
@@ -273,7 +352,7 @@ export function ExportExcel({tb, ...other}) {
     <Dropdown menu={{items, onClick}} {...other}>
         <Custbtn >
       <img src={icon.export}  />
-      导出
+      {i18.t('export', {ns: "button"})}
     </Custbtn>
     </Dropdown> 
   );
@@ -283,7 +362,7 @@ export function AccountButton() {
   return (
     <Custbtn>
       <img src={icon.account} />
-      开户
+      {i18.t('openAccount', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -291,7 +370,7 @@ export function ConfigButton() {
   return (
     <Custbtn>
       <img src={icon.config} />
-      配置
+      {i18.t('configure', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -299,7 +378,7 @@ export function OpenButton() {
   return (
     <Custbtn>
       <img src={icon.open} />
-        全部开启
+      {i18.t('openAll', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -307,7 +386,7 @@ export function CloseButton(props) {
   return (
     <Custbtn {...props}>
       <img src={icon.close} />
-        全部关闭
+      {i18.t('closeAll', {ns: "button"})}
     </Custbtn>
   );
 }
@@ -315,7 +394,7 @@ export function DelButton(props) {
   return (
     <Deltbtn {...props}>
       <CloseOutlined style={{fontSize: '16px'}} />
-        删除
+      {i18.t('delete', {ns: "button"})}
     </Deltbtn>
   );
 }

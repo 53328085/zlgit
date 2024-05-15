@@ -1,22 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './style.module.less';
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined, CheckCircleFilled, WarningFilled, RightOutlined, LeftOutlined } from '@ant-design/icons';
-import { Spin, Input, Button, Modal, Image, Divider, message } from 'antd';
-import UseHeader from '@com/useHeader'
-import { useSelector } from 'react-redux'
+import { Space, Button, Modal, Image,   message } from 'antd';
+ 
 import Titlelayout from '@com/titlelayout'
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { drawEcharts } from "@com/useEcharts";
-import { selectProjectId } from '@redux/systemconfig.js'
-import { data } from 'browserslist';
+ 
+import {useOutletContext} from 'react-router-dom'  
+import Pagecount from "@com/pagecontent";
+import {Cspin, Serach, Cdivider} from '@com/comstyled'
 // import { energyDesigner } from '@api/api.js'
 export default function Index(props) {
+  let {exparams} = useOutletContext()
+  let {view, areaId, date, type:dateType,  projectId} = exparams 
   const toMainPage = () => {
     let display = false;
     props.sendToIndex(display);
   }
-  const projectId = useSelector(selectProjectId)
+  //const projectId = useSelector(selectProjectId)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [state, setstate] = useState('open');
   const [modelChange, setmodal] = useState('cold');
@@ -265,10 +268,11 @@ export default function Index(props) {
     setlightDateYesterday(data.type == 'date' ? '昨日' : data.type == 'month' ? '上月' : '去年')
   }//head变化传值
   return (
-    <div>
+    <Pagecount>
+    
       {contextHolder}
-      <Spin size="large" spinning={loading} tip="控制命令下发中，请稍候……" delay={500}>
-        <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
+      <Cspin size="large" spinning={loading} tip="控制命令下发中，请稍候……" delay={500}>
+        
         <div className={style.content}>
           <div className={style.contentTop}>
             <div className={style.contentTopLeft}>
@@ -296,11 +300,10 @@ export default function Index(props) {
             </div>
           </div>
           <div className={style.contentBottom}>
-            <div className={style.contentBottomTop}>
-              <span>空调控制</span><Input size="middle" placeholder='请输入空调名称' style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue}/>
-              <Button style={{ width: 96 }} type='primary' size="middle" icon={<SearchOutlined />} onClick={() => { onSearchList() }}>查询</Button>
-            </div>
-            <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
+            <Space>
+              <span>空调控制</span><Serach placeholder='请输入空调名称' style={{width: "356px"}}  onSearch={onSearchList}/>
+            </Space>
+            <Cdivider type="h" margin="16px 0" />
             <div className={style.contentBottomBottom}>
               <div className={style.boxList}>
                 {airList.map((item, index) => {
@@ -314,7 +317,7 @@ export default function Index(props) {
                     </div>
                     <div style={{ marginTop: 16, marginBottom: 16, width: 137, borderTop: "1px dashed #fff" }} ></div>
                     {/* <Divider dashed style={{ color: '#fff', height: 2, marginTop: 16, marginBottom: 16 }} /> */}
-                    <Button className={style.airBtn} style={{ width: 136, height: 32, borderRadius: 800, color: "#237AE4" }} onClick={() => { onclickBtn(item) }}>远程控制</Button>
+                    <Button type='primary' ghost className={style.airBtn} style={{ width: 136, height: 32, borderRadius: 32}} onClick={() => { onclickBtn(item) }}>远程控制</Button>
 
                   </div>
                 }
@@ -378,8 +381,7 @@ export default function Index(props) {
             <p style={{ marginLeft: 32 }}>远程控制操作失败，请重试!</p>
           </div>}
         </Custmodl>
-      </Spin>
-    </div>
-
+      </Cspin>
+    </Pagecount>
   )
 }

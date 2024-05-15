@@ -2,8 +2,9 @@ import React, {useState, useRef, useEffect, useCallback, useImperativeHandle, us
 import {Form, Space, Input, Button, Select, message} from 'antd'
 import styled from 'styled-components'
 import {useSelector} from 'react-redux'
-import { publishState } from '@redux/systemconfig.js' 
-// import Custmodl from '@com/useModal'
+import { publishState,iszhCN } from '@redux/systemconfig.js' 
+import {useTranslation} from "react-i18next"
+import {CustLink, CustButtonT} from '@com/useButton' 
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
 import {useOneLevel} from '@hooks/usePublic'
@@ -17,29 +18,23 @@ const Boxitem = styled.div`
   border-bottom: 1px dotted #dedede;
   .iptbox {
     display: grid;
-    grid-template-columns: 320px 96px 96px 96px;
+    grid-template-columns: 320px ${props => props.wh} 96px 96px;
     column-gap: 16px;
   }
   .delbox {
     display: grid;
-    grid-template-columns: 120px 112px;
+    grid-template-columns: 220px 1fr;
     column-gap: 32px;
-    .ant-btn {
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 `
 
 const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields, InsertAreaLevelField, DeleteAreaLevelField} = AreaSetting 
 const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
   const [tableData, setTableData] = useState([])
- 
+  const {t} = useTranslation(["common","comm"])
  
   const [ffrom]= Form.useForm() 
- const onCancel = () => {
-   ref.current.onCancel()
- }
+
 
   const queyFiled = async ( ) => {
      try {
@@ -54,7 +49,7 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
      
       try {
         let {success, errMsg}  =  await DeleteAreaLevelField({projectId, fieldId: id}) 
-        if (!success) return message.warning(errMsg || '数据出错');
+        if (!success) return message.warning(errMsg || t("comm:dataerr"));
       
         success &&  queyFiled(level)
       } catch (error) {
@@ -72,7 +67,7 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
     if(!values) return 
      const params = {...values, projectId, level}
      let {success, errMsg} = await InsertAreaLevelField(params)
-     if(!success) return message.warning(errMsg || '数据出错')
+     if(!success) return message.warning(errMsg || t("comm:dataerr"))
      if (success) {
      //  console.log(type)
      //  type && onCancel()
@@ -89,19 +84,19 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
    const columns = [
      {
         dataIndex: "name",
-        title: "字段名称",  
+        title: t("common:FieldName"),  
         key: 'name'     
       },
       {
         dataIndex: "typeDescription",
-        title: "字段用途",
+        title: t("common:FieldPurpose"),
         key: 'typeDescription',
       },
       {
         dataIndex: '',
-        title: '操作',
+        title: t("common:Operation"),
         render: (_, data) =>{
-          return  <Button onClick={() => delFiled(data)} type="link">删除</Button>
+          return  <CustLink onClick={() => delFiled(data)}  text="delete" /> 
         },
         align: "center",
       }
@@ -113,22 +108,22 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
     return (
         <div style={{height: '350px', overflow: 'auto'}}>
          <UserTable columns={columns} dataSource={tableData} rowKey="id"    />
-         <CModal title="新增字段" ref={ref}  mold="cust" width={512}  onOk={onNewFiled}
+         <CModal title={t("common:Newfield")} ref={ref}  mold="cust" width={512}  onOk={onNewFiled}
            custft={true}
         >
       <Form name="modalform" form={ffrom}  preserve={false}>
-          <Item name="name" label="字段名称" rules={[{
+          <Item name="name" label={t("common:FieldName")} rules={[{
             required: true
           }]}>
               <Input/>
           </Item>
-          <Item name="type" label="字段用户" rules={[{
+          <Item name="type" label={t("common:FieldPurpose")} rules={[{
             required: true
           }]}>
                <Select>
-                  <Select.Option value={0}>无</Select.Option>
-                  <Select.Option value={1}>经纬度</Select.Option>
-                  <Select.Option value={2}>面积</Select.Option>
+                  <Select.Option value={0}>{t("common:None")}</Select.Option>
+                  <Select.Option value={1}>{t("common:LatitudeLongitude")}</Select.Option>
+                  <Select.Option value={2}>{t("common:Area")}</Select.Option>
                </Select>
           </Item>
       </Form>
@@ -143,10 +138,12 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
 
 function Region({projectId, CModal, Add}) {
  const ispublish = useSelector(publishState)
+ const iszh = useSelector(iszhCN)
  const mref = useRef()
  const dref = useRef()
  const emref = useRef()
- 
+ const {t} = useTranslation(["common","comm"])
+
  const [form] = Form.useForm()
  const [modalform] = Form.useForm() 
 
@@ -170,7 +167,7 @@ editId.current = curlevel?.id
        })
       setLevel(level);
       setHandler(2);
-     setTitle('修改区域')
+     setTitle(t("common:ModifyArea"))
      modalform.setFieldsValue({
        name,
        type,
@@ -181,7 +178,7 @@ editId.current = curlevel?.id
 
  const add = () => {
      setHandler(1);
-     setTitle('新增区域')
+     setTitle(t("common:newarea"))
    //  modalform.resetFields()
      mref.current.onOpen()
  }
@@ -193,13 +190,13 @@ editId.current = curlevel?.id
       if(success) {
         dref.current.onCancel()
         message.success({
-          content: '删除成功',
+          content: t("comm:successfullydelete"),
           duration: 0.3,
           onClose: () => queryarealevels(),
         })     
        
       } else {
-        message.warning(errMsg || '数据出错')
+        message.warning(errMsg || t("comm:dataerr"))
       }
    } catch (error) {
       
@@ -247,7 +244,7 @@ const queryarealevels = async () => {
       let {success,errMsg} =  await UpdateAreaLevel(params)
     
       success && message.success({
-         content: '修改成功',
+         content: t("comm:modifysuccessfully"),
          duration: 0.3,
          onClose: () => { 
          // setLevelid('')
@@ -255,7 +252,7 @@ const queryarealevels = async () => {
             queryarealevels().then(() => form.setFieldValue([editId.current.toString()+editlevel.current], name))
          },
       })
-      !success && message.warning(errMsg || '数据出错')
+      !success && message.warning(errMsg || t("comm:dataerr"))
       
    } catch (error) {
       console.log(error)
@@ -276,15 +273,15 @@ const queryarealevels = async () => {
 
       
       if(success) {
-        type && mref.current.onCancel()
+       // type && mref.current.onCancel()
         modalform.resetFields()
         message.success({
-          content: '保存成功',
+          content: t("comm:savesuccessfully"),
           duration: 0.3,
           onClose: () =>  queryarealevels() ,
        })
       } else {
-        message.warning(errMsg || '数据出错')
+        message.warning(errMsg || t("comm:dataerr"))
       }
       
    } catch (error) {
@@ -294,7 +291,7 @@ const queryarealevels = async () => {
 const closeArea = () => {
   mref.current.onCancel()
 }
-  const onOk = (type=true) => {  
+  const onOk = async (type=true) => {  
        handler == 1 && addArea(type);
        handler == 2 && editArea();
    
@@ -334,22 +331,23 @@ const closeArea = () => {
         >
          {
            datas?.map((d, index)=> (
-            <Boxitem style={{paddingTop: 0}} key={d.id}>
-               <span>{numberFormat(d.level)}级区域</span>
+            <Boxitem style={{paddingTop: 0}} key={d.id} wh={iszh ? "96px" : "auto"}>
+               <span>{ iszh ?  `${numberFormat(d.level)}级区域` : t("common:Area_level", {level: d.level})} </span>
                <div className='iptbox'>                
                    <Item name={d.id.toString() + d.level} label="" initialValue={d.name}>
                    <Input  disabled/>
                    </Item>
-                   <Button type='primary' ghost onClick={() => edit(d)} disabled={ispublish}>修改区域</Button>
-                   <Button type="primary" danger ghost disabled={index != datas?.length - 1 || ispublish} onClick={() => ondel(d)}>删除</Button>
-                   <Button type='primary' ghost onClick={() => editfiled(d)} disabled={ispublish}>编辑字段</Button>
+                   <Button type='primary' ghost onClick={() => edit(d)} disabled={ispublish}>{t("common:ModifyArea")}</Button>
+                   <Button type="primary" danger ghost disabled={index != datas?.length - 1 || ispublish} onClick={() => ondel(d)}>{t("common:Delete")}</Button>
+                   <Button type='primary' ghost onClick={() => editfiled(d)} disabled={ispublish}>{t("common:EditField")}</Button>
               </div>
             </Boxitem>
            ))
          }
          <Boxitem style={{borderBottom: 'none'}}>
              <div className='delbox'>
-             <Button type="primary" onClick={add} disabled={ispublish}>+新增下级区域</Button>
+              <CustButtonT onClick={add} disabled={ispublish} ns="common" text="AddSubordinateArea" wh="auto" />
+            {/*  <Button type="primary" onClick={add} disabled={ispublish}>+新增下级区域</Button> */}
            {/*   <Button type="primary" >保存</Button> */}
              </div>
           </Boxitem>
@@ -362,13 +360,13 @@ const closeArea = () => {
 
           
         
-        <CModal title='删除区域' ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
-              是否确认删除区域
+        <CModal title={t("common:DeleteArea")} ref={dref}  mold="cust" width={592}   onOk={del} type='warn'>
+              {t("common:todeletearea")}
         </CModal>
        
        
               
-        <CModal title='编辑字段' ref={emref}  mold="cust" width={874}   footer={[<Button type='primary' onClick={addfiled}>新增</Button>, <Button   ghost onClick={closefiled}>关闭</Button>]} >
+        <CModal title={t("common:EditField")} ref={emref}  mold="cust" width={874} okText={t("button:new")} onOk={addfiled}>
 
             
             <Editfiled ref={efref}  projectId={projectId} CModal={CModal} {...curlevel}  />     
@@ -378,30 +376,26 @@ const closeArea = () => {
 }
 
 const Add =React.forwardRef(({form,title, onOk, CModal, onCancel, newlevel}, ref) => {
-  const CustFooter =  (<Space>
-    <Button onClick={onCancel}>取消</Button>
-       <Button type="primary" onClick={() => onOk(false, newlevel)}>应用</Button> 
-     <Button type="primary" onClick={onOk}>确定</Button>
-     </Space>)
+   const {t} = useTranslation("common")
 
-  return  <CModal title={title} ref={ref}  mold="cust" width={512} okText="保存"   footer={CustFooter}>
+  return  <CModal title={title} ref={ref}  mold="cust" width={512}  onOk={onOk} custft>
    <Form name="modalform"   form={form} initialValues={{
     type: 0
    }} preserve={false}>
-       <Item name="name" label="区域名称" rules={[{required: true, message: '区域名称必须'}]}>
+       <Item name="name" label={t("common:RegionName")} rules={[{required: true, message: t("common:Message_areanamemust")}]}>
            <Input/>
        </Item>
-       <Item name="type" label="区域用途" rules={[
+       <Item name="type" label={t("common:AreaUse")} rules={[
         {
           required: true,
-          message: '选择区域用途'
+          message: t("common:AreaUse")
         }
        ]}>
             <Select>
-               <Select.Option value={0} >无</Select.Option>
-               <Select.Option value={1}>楼栋</Select.Option> 
-               <Select.Option value={2}>楼层</Select.Option>
-               <Select.Option value={3}>房间</Select.Option>
+               <Select.Option value={0} >{t("common:None")}</Select.Option>
+               <Select.Option value={1}>{t("common:Building")}</Select.Option> 
+               <Select.Option value={2}>{t("common:Floor")}</Select.Option>
+               <Select.Option value={3}>{t("common:Room")}</Select.Option>
             </Select>
        </Item>
    </Form>

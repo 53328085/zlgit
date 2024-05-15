@@ -1,0 +1,36 @@
+{
+    "ChintIntegratedEnergyServicePlatform":"Chint Integrated Energy Service Platform",
+    "COPYRIGHT Chint IOT Technology Co.ALL RIGHTS RESERVE":"COPYRIGHT Chint IOT Technology Co.ALL RIGHTS RESERVED",
+    "ZhejiangICP No.12033679":"Zhejiang ICP No.12033679",
+
+    "OperationMonitoring":"Operation Monitoring",
+    "ElectricalSafety":"Electrical Safety",
+    "DistributionManagement":"Distribution Management",
+    "SettlementCharges":"Settlement Charges",
+    "PhotovoltaicPowerGeneration":"Photovoltaic Power Generation",
+    "CarbonManagement":"Carbon Management",
+    "OperationAndMaintenanceManagement":"Operation and Maintenance Management",
+
+    "AccountLogin":"Account Login",
+    "Message_enter username":"Please enter your username",
+    "Message_username 2 to 20 strings":"User name 2 to 20 strings",
+    "Message_enter password":"Please enter password",
+    "Message_password format":"Password format must contain numbers, upper and lower case letters, special characters select three [6-18 characters]",
+    "Message_enter verification code":"Please enter verification code",
+    "Message_captcha must be 4 digits":"Captcha must be 4 digits",
+
+    "Message_remember username and password":"Remember username and password",
+    "Mobile Login":"Mobile Login",
+    "Message_enter phone number":"Please enter your phone number",
+    "Message_enter correct phone number":"Please enter the correct phone number",
+    "Message_select login duration":"Please select login duration",
+    "Minute":"Minute",
+    "Hour":"Hour",
+    "Message_captcha must be number":"Captcha must be a sequence of number",
+    "GetVerificationCode":"Get the verification Code",
+    "Message_check code error":"Check code error!",
+    "RememberPhoneNumber":"Remember the phone number",
+
+    "LoginNow":"Login Now",
+    "Message_Login failed":"Login failed 3 times in a row, the user has been locked chint, please wait 5 minutes"
+}

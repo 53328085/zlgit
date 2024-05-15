@@ -8,9 +8,10 @@ import UseTable from '@com/useTable'
 import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import upload from '@imgs/upload.png'
-
+import { CustButtonT, CustLink } from '@com/useButton'
+import {Serach} from "@com/comstyled"
 export default function Index(props) {
   const tableRef = useRef()
   const dref = useRef()
@@ -19,7 +20,7 @@ export default function Index(props) {
   const [addForm] = Form.useForm()
   const Item = Form.Item
   const { Dragger } = Upload
-  const { Search, TextArea } = Input
+  const { TextArea } = Input
   let { projectId, areaList } = props
 
   const MainButton = styled(Button)`
@@ -169,12 +170,13 @@ export default function Index(props) {
       width: '176px',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>编辑</span>
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink text="edit" onClick={() => setMulti(record)} /> 
+          <CustLink type="danger" text="delete" onClick={() => clickDel(record)} /> 
         </Space>
       ),
     },
   ]
+  const addedit = useRef()
   const [tableData, setTableData] = useState([])
   const [pagination, setPagination] = useState({
     current: 1,
@@ -452,20 +454,21 @@ export default function Index(props) {
           </Item>
           <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
           <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
-            <Search
+            <Serach
               placeholder="请输入设备名称/设备编号/安装地址"
-              allowClear
               style={{ width: '400px' }}
               onSearch={onSearch}
-              enterButton="查询"
             />
           </Item>
         </Form>
-        <div>
-          <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
+        <Space size={16}>
+        <CustButtonT text="new" src="new" onClick={() => addData()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
+         {/*  <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
           <MainButton type='primary' onClick={() => { setAddModal(true) }}>批量导入</MainButton>
-          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton>
-        </div>
+          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton> */}
+        </Space>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
       <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜空调.xlsx'></UseTable>
@@ -488,7 +491,7 @@ export default function Index(props) {
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Custmodl  title={state.modalTitle} custft={state.editModal}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
+      <Custmodl  title={state.modalTitle} custft={state.modalTitle == '新增空调'}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
           <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false} preserve={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
               <Select

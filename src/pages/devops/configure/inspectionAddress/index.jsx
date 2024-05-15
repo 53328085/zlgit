@@ -19,7 +19,7 @@ import ReactToPrint,{useReactToPrint} from 'react-to-print';
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import {Serach} from '@com/comstyled'
-import { CustButton } from '@com/useButton'
+import { CustButtonT, CustLink } from '@com/useButton'
  const {Link} = Typography
 // import UseMap from '@com/useMap/custom.js'
 const ContainerDiv = styled.div`
@@ -49,7 +49,10 @@ export default function Index() {
   const publish = useSelector(publishState)
   const projectId = useSelector(state => state.system.menus.projectId)
   const onelevel = useSelector(state => state.system.onelevel);
-  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
+  const options = onelevel.length > 0 ? useMemo(() => {
+    let isall = onelevel.find(o => o.id == 0)
+    return isall ? onelevel : ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel])
+  }, [onelevel]) : []
   const addoptiosn = onelevel.length > 0 ? useMemo(() => ([...onelevel]), [onelevel]) : []
   let delid;
   let printid;
@@ -66,11 +69,11 @@ export default function Index() {
     {
       title: '操作', dataIndex: 'options', align: "center", width: 240, render: (v, text) => {
         return (
-          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <Link underline onClick={async () => {printid = text.id;await getcode(text) }}>打印二维码</Link>
-            <Link underline onClick={() => {console.log(text);setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</Link>
-            <Link type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</Link>
-          </div>
+          <Space size="middle">
+            <CustLink onClick={async () => {printid = text.id;await getcode(text) }} text="printqrcode" />
+            <CustLink  onClick={() => {console.log(text);setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen() }} text="edit" />
+            <CustLink type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" /> 
+          </Space>
         )
       }
     }]
@@ -315,9 +318,7 @@ export default function Index() {
      
         <Form.Item name="alike">
         <Serach
-              placeholder="巡检点名称/具体位置"
-              allowClear
-              enterButton="查询"
+              placeholder="巡检点名称/具体位置"            
               onSearch = {submit}
             />
         </Form.Item>
@@ -325,12 +326,11 @@ export default function Index() {
         <Form.Item>
           {publish ? null : (
             <Space size={16}>
-              <CustButton onClick={printAll} style={{width: "122px"}}>
-                批量打印二维码
-              </CustButton>
-              <CustButton onClick={addDevice}>
-                新增
-              </CustButton>
+              <CustButtonT onClick={printAll}  wh="auto" text="bBatchprtQRcode" />
+               
+              <CustButtonT text="new"   onClick={addDevice} />
+                 
+               
             </Space>
           )}
         </Form.Item>
@@ -438,7 +438,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input placeholder="请输入巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
-          <CustButton onClick={()=>{positionRef.current.onOpen();}}>点击获取</CustButton>
+          <CustButtonT onClick={()=>{positionRef.current.onOpen();}} text="clicktoget"/> 
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true,message:'请点击获取巡检点地址' }]}>
           <Input disabled placeholder="请点击获取"></Input>
@@ -455,14 +455,14 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
-          <CustButton onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</CustButton>
+          <CustButtonT onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}} text="clickts" />
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input ></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项"  rules={[{ required: true }]}>
-          <CustButton onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</CustButton>
+          <CustButtonT onClick={()=>{checklistref.current.setOpen(true);getChecklist()}} text="clickts" />
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input ></Input>
@@ -553,7 +553,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input placeholder="巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
-          <CustButton onClick={()=>{positionRef.current.onOpen();}}>点击获取</CustButton>
+          <CustButtonT onClick={()=>{positionRef.current.onOpen();}} text="clicktoget" /> 
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true }]}>
           <Input disabled></Input>
@@ -562,14 +562,14 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
-          <CustButton onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</CustButton>
+          <CustButtonT onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项"  rules={[{ required: true }]}>
-          <CustButton onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</CustButton>
+          <CustButtonT onClick={()=>{checklistref.current.setOpen(true);getChecklist()}} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input disabled></Input>

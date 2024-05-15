@@ -1,0 +1,71 @@
+{
+    "system":"Whether to log out of the system",
+    "OperationsAdministratorManagement":"Operations Administrator Management",
+    "OperationAdministratorAccountManagement":"Operation Administrator Account Management",
+    "AccountInquiry":"Account Inquiry",
+    "msgap":"Please enter account name/mobile number",
+    "exdate": "Please select expiration date",
+    "enterpas": "Please enter password ",
+    "cfipassword": "Please confirm the password",
+    "AddOperationAdministratorAccount":"Add Operation Administrator Account",
+    "LoginAccount":"Login Account",
+    "usercharacters":"User name cannot exceed 16 characters",
+    "Loginaccountrequired":"Login account required",
+    "accountcharacters":"Login account cannot exceed 16 characters",
+    "UserName":"User Name",
+    "usernamecharacters":"No more than 32 characters",
+    "user32characters":"User name cannot exceed 32 characters",
+    "AccountValidityPeriod":"Account Validity Period",
+    "Message_select date":"Please select a date",
+    "Password":"Password",
+    "Message_password format":"The password format must contain digits, upper and lower case letters, and special characters. Select three [6 to 18 characters]",
+    "ConfirmPassword":"Confirm Password",
+    "passwordmatch":"The new password entered twice does not match",
+    
+    "Message_enter correct mobile number":"Please enter the correct mobile number",
+    "WhetherApplicable":"Whether applicable",
+  
+    "NoteInformation":"Note Information",
+    "Cancel":"Cancel",
+    "Confirm":"Confirm",
+    "userrole":"user role",
+    "Enable":"Enable",
+    "Note":"Note",
+
+    "Edit":"Edit",
+    "EditOperationAdministratorAccount":"Edit Operation Administrator Account",
+    "essage_login account required":"Login account required",
+    "usernamerequired":"User name required",
+    "entermobile":"Please enter mobile number",
+    "isenable":"Whether to enable",
+	
+    "ResetPassword":"Reset Password",
+    "pasrest":"Password will be reset to",
+	
+    "Delete":"Delete",
+    "DeletePrompt":"Delete Prompt",
+    "cofdeletion":"No confirm deletion",
+    "Message_account number?":"Account number?",
+  
+
+    "OperationRecord":"Operation Record",
+    "ProjectOperationHistory":"Project Operation History",
+    
+  
+    
+    "OperatorMobileNumber":"Operator/Mobile Number",
+    "OperationType":"Operation Type",
+    "UserLogin":"User Login",
+    "Login person:, login role:, login time:, IP address:":"Login person:, login role:, login time:, IP address:",
+
+
+    "ProjectConfiguration":"Project Configuration",
+    "EnterProject":"Enter Project",
+
+
+    "Address_G107 Global Internet Cafe, Zhongyi 3rd Road, Tianxin District, Changsha City":"G107 Global Internet Cafe, Zhongyi 3rd Road, Tianxin District, Changsha City",
+    "Address_Changzhutan Tobacco Logistics":"Changzhutan Tobacco Logistics",
+    "Address_Changsha City Tianxin District Zhongyi Third Road G107 Changzhutan Tobacco Logistics Park":"Changsha City Tianxin District Zhongyi Third Road G107 Changzhutan Tobacco Logistics Park",
+    "Address_Zhengtai Road Changjiang Road Yueqing City Wenzhou City":"Zhengtai Road Changjiang Road Yueqing City Wenzhou City",
+    "Address_Wenzhou Park":"Wenzhou Park"
+}

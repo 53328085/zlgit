@@ -1,9 +1,9 @@
 
 import { message } from "antd";
+import _ from 'lodash'
 import * as echarts from "echarts";
 import 'echarts-liquidfill'
-
-
+import store from '@redux/store'
 /**
  * @author zhenglin zhu
  * @description: type： 1 数据设置在 系列（series）中 type: 2 数据系列 3.饼图
@@ -18,7 +18,7 @@ echarts.registerTheme('walden', {
     "textColorShow": false,
     "textColor": "#333",
     "markTextColor": "#ffffff",
-    "color": [
+    /* "color": [
       "#237AE4",
       "#62D9AD",
       "#5472B1",
@@ -27,7 +27,7 @@ echarts.registerTheme('walden', {
       "#FED428",
       "#FF974C",
       "#E65A56",
-    ],
+    ], */
     "borderColor": "#ccc",
     "borderWidth": 0,
     "visualMapColor": [
@@ -218,7 +218,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
     
-  
+   
     
  return {
   // 饼图的设置 
@@ -287,8 +287,10 @@ export const drawEcharts = (
   
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
- // const bar = echarts.getInstanceByDom(dom);
-  const chart = echarts.init(dom, 'walden');
+  const {locale} =store.getState()?.system?.intl  // 国际化语言
+ 
+  let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
+  const chart = echarts.init(dom, 'walden', {locale: lang});
   // 对不同图表类型设置不同的格式
 
   let custSeries
@@ -320,9 +322,22 @@ export const drawEcharts = (
         }
     })
   }
-
+  const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
+ // const {primaryColor} = useSelector(themeColor)
+  //console.log(primaryColor);
+ const  color = [
+  primaryColor,
+  "#62D9AD",
+  "#5472B1",
+  "#23C2DB",
+  "#4A6FE2",
+  "#FED428",
+  "#FF974C",
+  "#E65A56",
+]
  let {axisTick, axisLine, axisLabel, ...restxAxis} = xAxis
   const comm = {
+    color,
     grid: {
       left: "80px",
       right: "40px",
@@ -348,7 +363,7 @@ export const drawEcharts = (
       },
       axisLabel: {
        
-        interval:0, // 显示所有x轴的label
+        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠  
         ...axisLabel,
       },
       
@@ -409,6 +424,7 @@ export const drawEcharts = (
         },
     }
   }
+ 
   const setoption = ['', option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
   /*   type == 1
       ? option
@@ -417,13 +433,16 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-  
+      
+      
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    
-  chart?.resize();
+   window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
+  
+   
   return chart
 };
 

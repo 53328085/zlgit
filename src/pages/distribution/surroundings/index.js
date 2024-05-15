@@ -1,61 +1,51 @@
 import React, { useEffect ,useMemo, useState,useRef} from 'react'
 import {useSelector,useDispatch  } from 'react-redux'
 import style from './style.module.less'
-import {  Button, DatePicker,message  } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
-import * as echarts from "echarts";
+import {  Button, DatePicker,message,Space  } from 'antd'
  
+import Pagecount from '@com/pagecontent'
+import Titlelayout from '@com/titlelayout' 
 import ItemCard from './itemCard'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { selectcurlRommid } from "@redux/systemconfig";
 import styled from 'styled-components'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import { drawEcharts } from "@com/useEcharts";
-const opt={
-  color:['#6395f9', '#62daab', '#657798'],
-  tooltip:{
-      trigger: "axis",
-      axisPointer: {
-          type: "line",
-      },
-  },
-  legend:{
-      show: true,
-      top: 10,
-      icon:'roundRect',
-      itemHeight:2,
-      itemWidth:16,
-  },
-  grid:{
-      left:10,
-      top:50,
-      right: 20,
-      bottom: 15,
-      containLabel: true
-  },
-  xAxis: {
-  type: 'category',
-  boundaryGap: false,
-  data: ['0:00',"2:00", '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00']
-  },
-  yAxis: {
-  type: 'value',
-  },
-  series: [
-    {
-      name: '温度',
-      type: 'line',
-      stack: 'Total',
-      lineStyle:{
-        width:1
-      },
-      symbol:'circle',
-      symbolSize: 6,
-      data: [],
+import {SerachButton} from '@com/useButton'
+const Mainbox = styled.div`
+  flex: 1;
+  display: grid;
+  grid-template-rows: 448px 1fr;
+  column-gap: 16px;
+  .chart {
+    flex: 1;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
   }
-]
-}
+`
+const Cardlist = styled.div`
+   display: grid;
+   grid-template-columns: repeat(5,313px);
+   gap:16px;
+   padding-top: 16px ;
+  grid-auto-rows: 120px ;
+  & .card{
+                width: 313px;
+                height: 120px;
+                padding: 16px;
+                margin-right: 16px;
+                color: #000;
+                border: 1px solid rgb(215, 215,215);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow:2px  2px 2px rgba(0, 0, 0, 0.0784313725490196);
+                //background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);;
+             
+            }
+`
 const init ={
   door:"",
   fire:"",
@@ -125,9 +115,9 @@ export default function Index() {
        type: 'inside'
      },
      xAxis: {
-       axisLabel: {
+      axisLabel: {
           formatter: (value, index) => {
-              return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+              return moment(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
           }
        }
      },
@@ -153,9 +143,9 @@ export default function Index() {
      type: 'inside'
    },
    xAxis: {
-     axisLabel: {
+    axisLabel: {
         formatter: (value, index) => {
-            return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+            return moment(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
         }
      }
    },
@@ -163,53 +153,30 @@ export default function Index() {
     
  }) 
 
-    /* let lineChart1 = echarts.init(document.getElementById('lineChart'));
-    let opt1 = structuredClone(opt)
-    const x1 =temperature.map(it=>it.x)
-    const y1 = temperature.map(it=>{
-     return parseFloat(it.y)
-    })
-    opt1.xAxis.data = [...x1]
-    opt1.series=[{
-      ...opt1.series[0],
-      name: '温度(℃)',
-      data:[...y1] ,
-  }]
-    lineChart1.setOption(opt1)
-    let lineChart2=echarts.init(lineChartRef.current)
-    let opt2 = structuredClone(opt)
-    const x2 =humidness.map(it=>it.x)
-    const y2 = humidness.map(it=>{
-     return parseFloat(it.y)
-    })
-    opt2.xAxis.data = [...x2]
-    opt2.series=[{
-      ...opt2.series[0],
-      name: '湿度(RH)',
-      data: [...y2],
-  }]
-    lineChart2.setOption(opt2) */
+   
 },[humidness,temperature] )
   return (
-    <div>    
-      <div className={style.content}>
-        <div className={style.topContent}>
-          {/* <div className={style.topTitle}>环境温湿度</div> */}
-          <div className={style.topheader}>
-          <BlueColumn name="环境温湿度" styled={{padding: '16px 0 0 16px'}}/>
-          <div className={style.searchDiv}>
-            <span >日期</span>
-            <DatePicker  size='middle' style={{marginLeft:16,marginRight:16}} value={dateval} onChange={changeTime}></DatePicker>
-            <Button size='middle' type='primary' icon={<SearchOutlined />} onClick={search}>查询</Button>
-          </div>
-          </div>
+    <Pagecount>    
+      <Mainbox>
+        <Titlelayout layout="flex" pv="0" bordered="n"  title={<div style={{display: 'flex',justifyContent: 'space-between', alignItems: 'center'}}>
+           <span>环境温湿度</span>
+           <Space>
+           <span >日期</span>
+            <DatePicker  size='middle'  value={dateval} onChange={changeTime}></DatePicker>
+            <SerachButton   onClick={search} /> 
+           </Space>
+        </div>}>
+        
+           <div className='chart'>
+           
           
-          <div className={style.lineChart} ref={tempref}></div>
-          <div className={style.lineChart} ref={lineChartRef}></div>
-        </div>
-        <div className={style.bottomContent}>
-          <BlueColumn name="环境监测" />
-          <div className={style.cardflex}>
+            <div className={style.lineChart} ref={tempref}></div>
+            <div className={style.lineChart} ref={lineChartRef}></div>
+           </div>
+        </Titlelayout >
+        <Titlelayout title="环境监测" layout="flex" pv="0" bordered="n">
+          
+           <Cardlist>
           <ItemCard title={'环境温度'} desc={envlist.temperature?'正常':'异常'} value={envlist.temperature} img="temperature"></ItemCard>
           <ItemCard title={'环境湿度'} desc={envlist.humidness?'正常':'异常'} value={envlist.humidness} img="humidness"></ItemCard>
           <ItemCard title={'水浸监测'} desc={envlist.water?'正常':'异常'} value={envlist.water} img="water"></ItemCard>
@@ -217,10 +184,10 @@ export default function Index() {
           <ItemCard title={'噪音监测'} desc={envlist.noise?'正常':'异常'} value={envlist.noise} img="nosie"></ItemCard>
           <ItemCard title={'明火监测'} desc={envlist.fire?'正常':'异常'} value={envlist.fire} img="fire"></ItemCard>
           <ItemCard title={'门禁监控'} desc={envlist.door?'正常':'异常'} value={envlist.door} img="door"></ItemCard>
-          </div>
+          </Cardlist>
          
-        </div>
-      </div>
-    </div>
+        </Titlelayout>
+      </Mainbox>
+    </Pagecount>
   )
 }

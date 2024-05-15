@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext,useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message } from 'antd'
+import {useTranslation} from 'react-i18next'
+import { Form,  Space, Typography, message } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import { MultImport, ErrorMessage } from './modalCom'
@@ -8,6 +9,7 @@ import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm } from './formcomp'
 import {publishState} from '@redux/systemconfig'
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageGas,
@@ -24,6 +26,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -52,7 +55,7 @@ export default function gateway({ deviceStyle }) {
   const errlistRef = useRef()
   const tableLoadRef = useRef()
   const levelname = useRef()
-  let delid;
+  let delid = useRef();
   let flies;
   let type = 2
   const optcss = {
@@ -115,10 +118,10 @@ export default function gateway({ deviceStyle }) {
       width: 136,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space>
+            <Link style={optcss} onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -232,13 +235,13 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.sn
+    delid.current = record.sn
   }
   //确认删除
   const delOk = async () => {
     const { success, errMsg } = await DeleteGas({
       projectId,
-      sn: delid
+      sn: encodeURIComponent(delid.current)
     })
     if (success) {
       message.success('删除成功')
@@ -307,7 +310,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddGas(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+     //   modalFormRef?.current?.onCancel()
         getQueryByPageGas(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(res.errMsg)

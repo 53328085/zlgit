@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import style from './style.module.less'
-import { Table, Input, message } from "antd";
+import { Table, Input, message, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { useReactive } from "ahooks";
-
+import  {CustButtonT, CustButton} from "@com/useButton"
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
@@ -273,7 +273,24 @@ export default function index (props) {
                 </div>
             </div>
             <div className={style.actions}>
-                <div className={style.firstButton}>
+                <Space size={16}>
+                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToMain}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={MainToUnknown}></CustButton>                 
+                </Space>
+                <Space size={16}>
+                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToLoad}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={LoadToUnknown}></CustButton>                 
+                </Space>
+                <Space size={16}>
+                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToGrid}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={GridToUnknown}></CustButton>                 
+                </Space>
+                <Space size={16} direction="vertical">
+                <CustButtonT onClick={handleSave} style={{height:"46px", width: "100%"}} text="save" />                 
+                    <CustButtonT  type="default" style={{height:"46px", width: "100%"}} onClick={ ()=> handleClose()} text="cancel" />
+                </Space>
+
+                {/* <div className={style.firstButton}>
                     <span className={style.leftButton} onClick={()=>unknownToMain()}>
                         <LeftOutlined />
                     </span>
@@ -300,7 +317,7 @@ export default function index (props) {
                 <div className={style.finalButton}>
                     <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div>
                     <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
-                </div>
+                </div> */}
             </div>
             <div className={style.rightTable}>
                 <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>

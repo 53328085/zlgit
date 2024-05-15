@@ -1,12 +1,13 @@
-import React, { useState, useEffect,useMemo } from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination,Select,Divider } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, } from 'react'
+import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
+import styled from 'styled-components'
+import {useAntdTable, useRequest} from 'ahooks'
 import { useSelector } from 'react-redux'
 import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
-// import Header from './header'
-import UseHeader from '@com/useHeader'
+import UseTable from '@com/useTable'
+import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 import style from './style.module.less'
-import BlueColumn from '@com/bluecolumn'
+ 
 import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
 import moment from 'moment';
@@ -17,7 +18,52 @@ import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
 import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-
+import Titlelayout from '@com/titlelayout'
+import Pagecount from '@com/pagecontent' 
+import {CustButton} from '@com/useButton'
+const Mainbox = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  .data {
+     flex:1;
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+  }
+  .serach {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .cameraData {
+    display: grid;
+    grid-template-columns: repeat(3, 256px);
+    column-gap: 16px;
+  }
+`
+const Info = styled.div`
+   flex:1;
+   display: flex;
+   .img{
+    width: 120px;
+    height: 74px;
+   }
+   .count {
+     color: #515151;
+     font-size: 16px;
+     display: flex;
+     flex-direction: column;
+    align-items: center;
+     column-gap: 16px;
+     width: 128px;
+     .num {
+        font-size: 32px;
+        padding-right: 10px;
+     }
+   }
+`
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
   const { token } = useSelector(selectUser);
@@ -57,29 +103,26 @@ export default function Index() {
   const buttonstyle = {
     width: '120px',
   }
-  let [statistics, setStatistics] = useState({ all: '', cloud: '', local: '' })
+  
   const getStatistics = () => {
+    if(!(isFinite(projectId)&& isFinite(roomId))) return
     return DistributionRoomRuntime.CameraSummary(projectId, roomId).then((res) => {
       let { success, data } = res
       if (success && data) {
-        setStatistics(data)
+       // setStatistics(data)
+       return data
       } else {
         message.error(res.errMsg)
+        return { all: '', cloud: '', local: '' }
       }
     })
   }//监控数量
-  let [pageNum, setpageNum] = useState(1)
-  let inputValue = ''
-  let params = {
-    pageNum: pageNum,
-    pageSize: 10,
-    projectId: projectId,
-    areaId: areaId,
-    alike: ''
-  }
-  let [overView, setoverView] = useState()
+  const {data:statistics} = useRequest(getStatistics, {
+    refreshDeps: [projectId, roomId]
+  })
+  console.log(statistics)
+  const [alike, setAlike] = useState('') 
   let [realPlayUrl, setrealPlayUrl] = useState()
-  let [total, settotal] = useState(0)
   const getYsRealPlayUrl = record => {
     return GetYsRealPlayUrl(record.sn, record.channel, 1, quality).then((res) => {
       let { success, data } = res
@@ -139,53 +182,40 @@ export default function Index() {
     })
   }//云监控云台控制
 
-  // const getOverview = () => {
-  //   return Overview(params).then((res) => {
-  //     let { success, data } = res
-  //     if (success && data) {
-  //       setoverView(data)
-  //       settotal(res.total)
-  //     } else {
-  //       message.error(res.errMsg)
-  //     }
-  //   })
-  // }
-  const getCameraPage =async ()=>{
-    try{
-      let p ={
+ 
+  const getCameraPage = ({current, pageSize})=>{
+      if(!(isFinite(projectId) && isFinite(roomId))) return
+      let params ={
         projectId,
-        pageNum:params.pageNum,
-        pageSize: 10,
+        pageNum:current,
+        pageSize,
         roomId,
-        alike:params.alike
+        alike: alike
       }
-      const resp = await DistributionRoomRuntime.CameraPage(p)
-      let { success, data } = resp
-      if(success){
-       Array.isArray(data)  ? setoverView(data) : setoverView([])
-        settotal(resp.total)
-      }else{
-        message.error(resp.errMsg)
-      }
-    }catch(e){
-      console.log(e)
-    }
-   
+      return DistributionRoomRuntime.CameraPage(params).then(res => {
+        let { success, data } = res
+        if(success) {
+          return {
+            list:  Array.isArray(data)  ? data : [],
+            total: Array.isArray(data)  ? data.length : 0
+          }
+        }else {
+          return {
+            list: [],
+            total: 0
+          }
+        }
+      })
+      
   }
-  
+  const {tableProps} = useAntdTable(getCameraPage, {
+    defaultPageSize: 10,
+    refreshDeps: [projectId, roomId, alike]
+  })
   //云监控
-  const onChangeValue = e => {
-    inputValue = e.target.value
-  }//输入框改变值
-  const onSearchList = () => {
-    params.alike = inputValue
-    console.log(params)
-    // getOverview()
-    getCameraPage()
-  }//点击查询按钮
-  const onChangePage = (page, pageSize) => {
-    setpageNum(page)
-  }//翻页
+ 
+ 
+  
   const disabledDate = current => current && current > moment().endOf('day')
 
   const changestartdate = (date, dateString) => {
@@ -230,13 +260,15 @@ export default function Index() {
   const CameraValue = (props) => {
     return (
 
-      <div className={style.dataItem}>
-        <img src={props.img} className={style.itemImg} alt={props.title}></img>
-        <div className={style.itemValue}>
+      <Titlelayout layout="flex" pv="0">
+        <Info>
+        <img src={props.img}  className='img' alt={props.title}></img>
+        <div className="count">
           <div>{props.title}</div>
-          <div><span style={{ fontSize: 32, marginRight: 10 }}>{props.value}</span>台</div>
+          <div><span  className='num'>{props.value}</span>台</div>
         </div>
-      </div>
+        </Info>
+      </Titlelayout>
     )
   }
 
@@ -494,49 +526,29 @@ const playBackYun=()=>{
   const preventJump = (e) => {
     e.preventDefault()
   }
-  const headerProps = {
-    isEnergy: false,//能耗类型
-    isDate: false,//日期
-    isShift: false,//班次
-    isTab: false,//能耗、费用radioButton
-    isSearch: false,//查询按钮
-    isExport: false,//导出按钮
-    //export: exportData //导出调用方法
-  }
  
-  const showTotal = (total) => `共 ${total} 条记录`;
-  useEffect(() => {
-     if(projectId && roomId) roomId&&getStatistics()
-  }, [projectId, roomId])
-  useEffect(() => {    
-    if(roomId){
-      getCameraPage()
-    }
-  
-    // if (areaId) {
-    //   getOverview()
-    // }
-  }, [projectId, roomId, params.alike, params.pageNum])
   return (
-    <div className={style.video}>     
-      <div id='cameraData' className={style.cameraData} key="h">
-        <CameraValue img={totalCamera} title={'监控总数'} value={statistics.all ? statistics.all : '0'}></CameraValue>
-        <CameraValue img={cloudCamera} title={'云监控'} value={statistics.cloud ? statistics.cloud : '0'}></CameraValue>
-        <CameraValue img={localCamera} title={'本地监控'} value={statistics.local ? statistics.local : '0'}></CameraValue>
+    <Pagecount bgcolor="transparent" pd="0"> 
+      <Mainbox>
+      <div id='cameraData' className="cameraData" key="h">
+        <CameraValue img={totalCamera} title={'监控总数'} value={statistics?.all ?? '0'}></CameraValue>
+        <CameraValue img={cloudCamera} title={'云监控'} value={statistics?.cloud ?? '0'}></CameraValue>
+        <CameraValue img={localCamera} title={'本地监控'} value={statistics?.local ?? '0'}></CameraValue>
       </div>
     
-      <div className={style.content} key="c">
-        <div className={style.contentTitle}>
+      <Titlelayout layout="flex">
+        <div  className='data'>
+        <div  className='serach'>
           <span>设备查询</span>
-          <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>
-          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }} onClick={() => { onSearchList() }}>查询</Button>
+           <Serach style={{width: '320px'}} placeholder='请输入设备编号/安装地址' onSearch={setAlike}></Serach>
+        
         </div>
-        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
-        <div className={style.tableList}>
-          <Table bordered columns={columns} dataSource={overView} rowKey='sn' size='small' pagination={false} />
+        <Cdivider type="h" style={{margin: "16px 0"}} /> 
+         
+          <UseTable   columns={columns}  {...tableProps} rowKey='sn'  />
         </div>
-        <Pagination className={style.pageNum} current={pageNum} size="small" total={total} showTotal={showTotal} defaultPageSize={10} onChange={onChangePage} />
-      </div>
+      </Titlelayout>
+      </Mainbox>
       <Modal
         title={recordData?.address}
         centered
@@ -551,9 +563,8 @@ const playBackYun=()=>{
             height: '717px'
           }}></div>
           <div style={{ flex: "1", marginLeft: 32 }}>
-            <div >
-              <BlueColumn name="云台控制" styled={{ fontSize: 16 }} />
-              {/* <div style={controlStyle}></div> */}
+            <Titlelayout title="云台控制" bordered="n">
+             
               <div className={style.controlBackground} >
               <div className={style.slotDiv}>
                 <span className={style.leftClick } onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
@@ -562,7 +573,7 @@ const playBackYun=()=>{
                 <span className={style.bottomClick} onMouseDown={() => changeControlYun(1)} onMouseUp={cancelControlYun}></span>
               </div>
             </div>
-            </div>
+            </Titlelayout>
             <div style={{ marginTop: 32 }}>
               <Collapse
                 onChange={changeKey}
@@ -570,7 +581,7 @@ const playBackYun=()=>{
                 ghost
                 activeKey={activeCollapse}
                 expandIconPosition="end">
-                <Panel header={<BlueColumn name="视频回放" styled={{ fontSize: 16 }} />} key="1">
+                <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
                   <Form form={form} >
                     <Item style={{ width: '100%' }}>
                       <DatePicker
@@ -600,12 +611,12 @@ const playBackYun=()=>{
                     </Item>
                     <Item>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button htmlType="button" style={buttonstyle} onClick={() => changeActive()}>
+                        <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>
                           返回
-                        </Button>
-                        <Button htmlType="button" onClick={()=>{playBackYun()}} style={{ ...buttonstyle, display: 'inlineBlock', marginLeft: 'auto', marginRight: 0 }}>
+                        </CustButton>
+                        <CustButton  style={{width: '120px'}} onClick={()=>{playBackYun()}}>
                           回放
-                        </Button>
+                        </CustButton>
                       </div>
                     </Item>
                   </Form>
@@ -672,7 +683,7 @@ const playBackYun=()=>{
             }
           </div>
           <div className="bodyRight">
-            <div className="title">云台控制</div>
+            <Titlelayout title="云台控制" bordered="n"> 
             <div className="controlBackground" id="controlBackground" >
               <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>
                 <span className="clickButton leftClick" onMouseDown={() => changeControl('left')} onMouseUp={cancelControl}></span>
@@ -681,13 +692,14 @@ const playBackYun=()=>{
                 <span className="clickButton bottomClick" onMouseDown={() => changeControl('bottom')} onMouseUp={cancelControl}></span>
               </div>
             </div>
+            </Titlelayout>
             <div className="timeControl">
               <Collapse
                 onChange={changeKey}
                 ghost
                 activeKey={activeCollapse}
                 expandIconPosition="end">
-                <Panel header={<BlueColumn name="视频回放" styled={{ fontSize: 16 }} />} key="1">
+                <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
                   <DatePicker
                     showTime={{
                       defaultValue: moment('00:00:00', 'HH:mm:ss'),
@@ -707,8 +719,8 @@ const playBackYun=()=>{
                     disabledDate={disabledendDate}></DatePicker>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span className='footerButton backButton' onClick={() => changeActive()}>返回</span>
-                    <span className='footerButton replay' onClick={() => playBack()}>回放</span>
+                    <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>返回</CustButton>
+                    <CustButton style={{width: '120px'}} onClick={() => playBack()}>回放</CustButton>
                   </div>
 
                 </Panel>
@@ -717,6 +729,6 @@ const playBackYun=()=>{
           </div>
         </div>
       </Modal>
-    </div>
+    </Pagecount>
   )
 }

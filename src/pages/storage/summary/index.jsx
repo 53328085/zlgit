@@ -1,19 +1,19 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
-import { useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
+import { useNavigate, useOutletContext} from 'react-router-dom'
+ 
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Form, Select ,Typography} from 'antd'
-import CustContext from '@com/content.js'
+import { message, Typography, Empty} from 'antd'
+import Ichart  from '@com/useEcharts/Ichart'; 
 import { range } from 'lodash'
 import imgurl from './imgs'
  
 import styled from 'styled-components'
-
-import Pagecount from '@com/pagecontent'
+ 
+import Pagecount from "@com/pagecontent";
+ 
 import Titlelayout from "@com/titlelayout";
-import { drawEcharts } from "@com/useEcharts";
+import Cempty from '@com/useEmpty'
 const {Link, Paragraph, Text} = Typography
 const  Mainbox = styled.div`
   display: grid;
@@ -62,7 +62,7 @@ const  Mainbox = styled.div`
      }
      .rightdown {
        display: grid;
-       grid-template-columns: 752px 536px;
+       grid-template-columns: 752px minmax(536px, auto);
        column-gap: 16px;
        .topology {
          position: relative;
@@ -163,6 +163,28 @@ const  Mainbox = styled.div`
      }
   }
 `
+const CircleDiv = styled.div`
+margin-top: 4px;
+margin-right: 16px;
+width: 16px;
+height: 16px;
+border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+.warningPoint {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
+  }
+`
+const { querySiteInfo,
+  queryStorageIncome,
+  queryStorageWarning,
+  queryTopologyDiagramInfo,
+  queryChargeETrends } = SiteSummaryRuntime
 export default function Index() {
   const TransDiv = styled.div`
   padding-top: 18px;
@@ -176,8 +198,7 @@ export default function Index() {
         transform: translateY(0);
     }
     to{
-        transform: translateY(-${props =>{
-          console.log(props.dmheight)
+        transform: translateY(-${props =>{        
           if(!props.dmheight || props.dmheight<445)return 0
           if(props.dmheight){
             return props.dmheight
@@ -187,47 +208,12 @@ export default function Index() {
     }
 }
 `
-
-  const CircleDiv = styled.div`
-        margin-top: 4px;
-        margin-right: 16px;
-        width: 16px;
-        height: 16px;
-        border: 1px solid ${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .warningPoint {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background-color:${props=>props.level===1?'#ff7070':props.level===2?'#ffb726':'#b07ef9'};
-          }
-  `
+  let {exparams} = useOutletContext()
  
-  const { querySiteInfo,
-    queryStorageIncome,
-    queryStorageWarning,
-    queryTopologyDiagramInfo,
-    queryChargeETrends } = SiteSummaryRuntime
+  let {areaId, stationName,  projectId} = exparams
  
-
-  const dispatch = useDispatch()
-  const projectId = useSelector(selectProjectId)
-
-  const areaId = useSelector(selectOneLevelDefaultId)
- 
-  let [AreaID, setAreaid] = useState(areaId)
- 
-  const [site, setInitname] = useState({})
-  let sitename = site.name
-  
-
   const navigate = useNavigate()
-  const [cardData, setCardData] = useState({})//卡片数据
-  const [barData, setBarData] = useState({}) //收益统计
-  const [lineData, setLineData] = useState({})//充放电趋势
+  const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
     loadDevice: {},
@@ -236,30 +222,70 @@ export default function Index() {
   }) //接线图数据
 
   useEffect(() => {
-    if(!areaId || !sitename) return
-     
-    querySiteInfo(projectId, areaId, sitename).then(res => {
-      if (res.success) {
+    
+    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName?.value && isFinite(stationName?.value))) return
+   
+    querySiteInfo(projectId, areaId, stationName.value).then(res => {
+      const {success, data} = res
+      if (success && Object.prototype.toString.call(data).slice(8,-1)=="Object") {
         setCardData(res.data)
       } else {
-        message.error(res.errMsg)
+        setCardData(null)
+       //message.error(res.errMsg)
       }
     }).catch()
 
-    queryStorageIncome(projectId,  areaId, sitename).then(res => {
+    queryStorageIncome(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
-        if (data) {
-          setBarData(data)
+        if (Object.prototype.toString.call(data).slice(8, -1) === 'Object') {
+          let {x, y, y1, y2} = data
+        setOptions({...options,  dataset: {
+            dimensions: [
+              {
+                name: 'x',
+                type: 'time'
+              },
+              {
+                name: 'y',
+                displayName: '充电金额(元)'
+              },
+              {
+                name: 'y1',
+                displayName: '放电金额(元)'
+              },
+              {
+               name: 'y2',
+               displayName: '收益(元)'
+             }
+            ],
+            source: [x, y, y1, y2],
+            sourceHeader: false,
+           },
+          }
+        )
         } else {
-          setBarData({})
+          setOptions({...options,  dataset: {
+            dimensions: [],
+             source: [],
+            sourceHeader: false,
+           },
+          }
+        )
         }
       } else {
+        setOptions({...options,  dataset: {
+          dimensions: [],
+           source: [],
+          sourceHeader: false,
+         },
+        }
+      )
         message.error(res.errMsg)
       }
     }).catch
 
-    queryStorageWarning(projectId,  areaId, sitename).then(res => {
+    queryStorageWarning(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -272,7 +298,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryTopologyDiagramInfo(projectId,  areaId, sitename).then(res => {
+    queryTopologyDiagramInfo(projectId,  areaId, stationName.value).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
@@ -284,25 +310,62 @@ export default function Index() {
           })
         }
       } else {
-        message.error(res.errMsg)
+        setTopologyData({
+          loadDevice: {},
+          onGridDevice: {},
+          storageDevice: {}
+        })
+        //message.error(res.errMsg)
       }
     }).catch()
 
 
-    queryChargeETrends(projectId,  areaId, sitename).then(res => {
-      if (res.success) {
-        if (res.data) {
-          setLineData(res.data)
+    queryChargeETrends(projectId,  areaId, stationName.value).then(res => {
+      let {success, data} = res
+      if (success) {
+        if (Object.prototype.toString.call(data).slice(8,-1)=="Object") {
+           let {x, y, y1} = data
+
+           setLoptions({...loptions, dataset: {
+            dimensions: [
+              {
+                name: 'x',
+                type: 'time'
+              },
+              {
+                name: 'y',
+                displayName: '充电电量(kWh)'
+              },
+              {
+                name: 'y1',
+                displayName: '放电电量(kwh)'
+              }
+            ],
+            source: [x, y, y1],
+            sourceHeader: false,
+           
+           }})
         } else {
-          setLineData({})
+          setLoptions({...loptions, dataset: {
+            dimensions: [],
+            source: [],
+            sourceHeader: false,
+           
+           }})
         }
       } else {
-        message.error(res.errMsg)
+        setLoptions({...loptions, dataset: {
+          dimensions: [],
+          source: [],
+          sourceHeader: false,
+         
+         }})
+       // message.error(res.errMsg)
       }
     }).catch()
 
 
-  }, [AreaID, site])
+  }, [exparams])
   const Tips = props => {
     return <div className="tips"style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
       <img src={props.imgUrl} className={style.tipImg}></img>
@@ -386,86 +449,44 @@ export default function Index() {
       setSpeed(warndom.getBoundingClientRect().height/60)
     }
   },[warningData.length])
-  const barref = useRef();
-  const lineref = useRef()
-  useEffect(() => {   // lineData
-     if(!lineData) return;
-    
-     let {x=[], y=[], y1=[]} = lineData.constructor ===  Object ? lineData : {}
-     drawEcharts(lineref.current, {
-       dataset: {
-        dimensions: [
-          {
-            name: 'x',
-            type: 'time'
-          },
-          {
-            name: 'y',
-            displayName: '充电电量(kWh)'
-          },
-          {
-            name: 'y1',
-            displayName: '放电电量(kwh)'
-          }
-        ],
-        source: [x, y, y1],
-        sourceHeader: false,
-       
-       },
-       series: [
-        { type: "line", seriesLayoutBy: 'row' },
-        { type: "line", seriesLayoutBy: 'row' },
-      ],
-       legend: {
-        icon: 'circle'
-       }
-     })
-  }, [lineData])
-  useEffect(() => {
-    if(!barData) return
-    let {x=[], y=[], y1=[], y2=[]} = barData.constructor ===  Object ? barData : {}
-    drawEcharts(barref.current, {
-      dataset: {
-       dimensions: [
-         {
-           name: 'x',
-           type: 'time'
-         },
-         {
-           name: 'y',
-           displayName: '充电金额(元)'
-         },
-         {
-           name: 'y1',
-           displayName: '放电金额(元)'
-         },
-         {
-          name: 'y2',
-          displayName: '收益(元)'
-        }
-       ],
-       source: [x, y, y1, y2],
-       sourceHeader: false,
-      
-      },
-      series: [
-       { type: "bar", seriesLayoutBy: 'row' },
-       { type: "bar", seriesLayoutBy: 'row' },
-       { type: "line", seriesLayoutBy: 'row' },
-     ],
-    })
  
-  }, [barData])
+  const [options, setOptions] = useState({
+    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' },  { type: "line", seriesLayoutBy: 'row' },],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      top: 0,  
+    },
+    dataset: {}
+  })
+  const [loptions, setLoptions] = useState({
+    series: [{ type: "line",  seriesLayoutBy: 'row' }, { type: "line",  seriesLayoutBy: 'row' }],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      icon: 'circle'
+     },
+    dataset: {}
+  })
+
   return (
-    <CustContext.Provider value={{handler: setAreaid, sitehandler: setInitname,  isSite: true}}>
-    <Pagecount  showserach={true} pd={0} bgcolor='transparent'  >    
+    <Pagecount  pd={0} bgcolor='transparent'  >    
       <Mainbox>
         <div className="left">
           <Titlelayout title='站点信息' layout="flex">
-            <div className="info">
-              {
-                cardData.image ? <img src={cardData.image} className='siteImg'></img> : <img src={imgurl.zhandian} className='siteImg'></img>
-              }
+          {cardData ? (<div className="info">
+              <img src={cardData.image || imgurl.zhandian} className='siteImg' /> 
+            
               <div className="dtl">
                    <div key="1">
                   <Text>站点容量</Text>
@@ -479,8 +500,12 @@ export default function Index() {
                   <Text>投运时间</Text>
                   <Text ellipsis={{ tooltip: cardData?.useDate}}>{cardData?.useDate}</Text>
                   </div>
-              </div>
-            </div>
+              </div> 
+            
+              </div>)
+              :  <Cempty tip="未查询到站点信息！" />
+           }
+           
           </Titlelayout>
           {/* <CardItem title='充放电统计' height='136px'>
             <div className={style.stateItems}>
@@ -582,19 +607,23 @@ export default function Index() {
               <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
             </div>
             <div className="rightdownright">
-              <Titlelayout title='能耗收益统计' layout="flex">
-                 <div ref={barref} style={{flex: 1}}></div>
+              <Titlelayout title='能耗收益统计' layout="flex">               
+                 <div   style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
+                    <Ichart {...options} />
+                 </div>
              
               </Titlelayout>
               <Titlelayout title='储能充放电趋势' layout="flex">
              
-                <div ref={lineref} style={{flex: 1}}></div>
+                <div style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
+                       <Ichart {...loptions}/>
+                </div>
               </Titlelayout>
             </div>
           </div>
         </div>
       </Mainbox>
     </Pagecount>
-    </CustContext.Provider>
+   
   )
 }

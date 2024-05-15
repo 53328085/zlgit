@@ -6,7 +6,7 @@ import Titlelayout from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {useTranslation} from 'react-i18next'
 const Divorder = styled.div`
   display: grid;
   grid-template-columns: 40% 1fr;
@@ -50,7 +50,7 @@ const fs = {
 
 export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)
-
+  const {t} = useTranslation(["comm", "overview"])
   const { GetOrderInfo } = HomeRuntime
 
   const state = useReactive({
@@ -88,25 +88,25 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title={'工单信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={t("overview:Workorderinformation")} {...fs} style={{height: "200px"}}>
       <Divorder>
         <div className='order'>
-          <p>本月工单数</p>
+          <p>{t("overview:Monthlyworkorder")}</p>
           <p>{state.orderCount}</p>
         </div>
         <div className='list'>
           <div>
-            <span>未分派</span>
+            <span>{t("comm:NotProcess")}</span>
             <span>{state.unAssignNum}</span>
             <span>{state.unAssignRate + '%'}</span>
           </div>
           <div>
-            <span>已分派</span>
+            <span>{t("comm:InProcess")}</span>
             <span>{state.assignNum}</span>
             <span>{state.assignRate + '%'}</span>
           </div>
           <div>
-            <span>已处理</span>
+            <span>{t("comm:AlreadyProcess")}</span>
             <span>{state.finishNum}</span>
             <span>{state.finishRate + '%'}</span>
           </div>

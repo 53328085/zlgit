@@ -2,14 +2,19 @@ import React, { useEffect, useRef, useState, useContext, createContext,useMemo, 
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import style from './style.module.less'
-import { Form, Row, Col, Select, Input, Divider, Upload, Button,Checkbox ,Space,InputNumber, message  } from 'antd'
-import { repeat } from 'lodash'
+import { Form, Row, Col, Select, Input, Divider, Upload, Button,Checkbox ,Space,InputNumber, message,Alert } from 'antd'
+import {snValidator, snValidatorE} from "@pages/rule"
 export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelist: [], alarmopts: [] })
+
 
 //新增com
 let coms = 0
+// 1 电表, 11 断路器
 let Com = ({ form, deviceStyle }) => {
-    console.log('coms', coms, )
+    const tip = (<div style={{marginBottom: '24px'}}>
+        <p>倍率=PT*CT！</p>
+       <p>修改倍率会影响结算金额，请设置准确！</p>
+       <p>添加完毕不允许修改</p></div>)
     const [isaddress, setIsaddress] = useState(true)
     let options = []
     const rules = [{
@@ -38,7 +43,7 @@ let Com = ({ form, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {(deviceStyle !== 13 && deviceStyle !== 14) ? (
+            {deviceStyle == 12 ? (
                 <Form.Item label="倍率" name="factor" rules={[...rules,
                 {
                     validator: (_, value) => {
@@ -52,10 +57,38 @@ let Com = ({ form, deviceStyle }) => {
                     }
                 },]}>
                     <Input />
-                    {/* 默认1 */}
+                   
+                </Form.Item>
+            ) : deviceStyle == 1 ?  (<Form.Item  noStyle   shouldUpdate={(prevValues, curValues) => prevValues.ct !== curValues.ct || prevValues.pt !== curValues.pt} > 
+                     {
+                        ({getFieldsValue, setFieldValue}) => {
+                            const {ct, pt} = getFieldsValue();
+                            setFieldValue("factor", ct*pt);
+                            return (
+                                <Form.Item label="倍率" name="factor" initialValue={1} rules={rules}>
+                                  <Input readOnly />
+                               </Form.Item>
+                            )
+                        }
+                     } 
                 </Form.Item>
             ) : null}
+             {
+                deviceStyle== 1 &&
+               (<>
+               <Form.Item label="Ct" name="ct" initialValue={1}>
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} />
+               </Form.Item>
+               <Form.Item label="Pt" name="pt" initialValue={1}>
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} />
+               </Form.Item>
+               <Form.Item noStyle>
+                      <Alert message={tip} type="error" />
+               </Form.Item>
+               </>)
 
+
+             }
             {form.getFieldValue('gatewayId') ?
                 <>
                     <Form.Item label="通讯端口" name="commPort" rules={rules}>
@@ -262,7 +295,14 @@ export const FormComp = (props) => {
                         ></Select>
                     </Form.Item>
 
-                    <Form.Item label="设备编号" name="sn" rules={rules}>
+                    <Form.Item label="设备编号" name="sn" rules={[
+              {
+              required: true
+              },
+              {
+                validator: deviceStyle!=7 ? snValidator : snValidatorE
+              }
+            ]}>
                         <Input />
                     </Form.Item>
                     {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
@@ -401,12 +441,7 @@ export let AddModalForm = ({ modalFormRef, transitionName, maskTransitionName,is
                 <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
                   custft={true}
                   onOk={onOk}
-                /*  footer={[
-                    <Button onClick={other.onAddCancel}>取消</Button>,
-                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-                    <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={() => { other.onSure(); }}>应用</Button>,
-                ]} */>
-                    {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+               >
                     <FormComp isfiber={isfiber} openarea={openarea}> </FormComp>
                 </Modal>
             }</>

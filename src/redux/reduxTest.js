@@ -1,130 +1,42 @@
-import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
-import {Login, ProjectList} from '../axios/api'
-import zhCN from 'antd/es/locale/zh_CN'
- 
- 
-const initialState = {
-  
-  componentSize: 'large',
-  locale: zhCN,
-  zltest: 'zjxszl',
-  sysinfo: {},
-  status: '加载中',
-  error: 'error',
-  names: [],
-  menus: [],
-  zlmenus: [],
-
-}
-export const testthunk = (arg) => { // 同步 thunk
-   return (dispatch, getState) => {
-     const initState = getState()
-     console.log(initState)
-   //  dispatch(setzl(arg))
-     
-   }
-
-}
-export const asyncthunk = createAsyncThunk('zltest/systeminfo', async (params) => { // 异步 thunk
-    
-   
-      let  response  = await Login.SystemConfig()  
-      return response.data
-   
-})
-
-export const getpropject = createAsyncThunk('zltest/menus', async (projectId=1, thunkApi) => { // 异步 thunk
-    console.log(thunkApi)
-    let  {rejectWithValue, dispatch} = thunkApi
+import {createAsyncThunk, createSlice, createEntityAdapter} from "@reduxjs/toolkit"
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
+const menusAdapter = createEntityAdapter()
+const initialState = menusAdapter.getInitialState()
+export const getWebsiteMenu = createAsyncThunk(
+  "zltest/getMenu",
+  async (id, {rejectWithValue}) => {
      try {
-      let  response  = await ProjectList.QueryMenus(projectId)  
-      dispatch(setMenu(response.data))
-      return response.data
-     } catch (error) {
+      let {data, success, errMsg} = await ProjectList.QueryMenus(id)
+      if(success) {
+         return data
         
-      return  rejectWithValue(error.response.data)
+         
+      }else {
+        rejectWithValue(errMsg)
+      }
+      } catch (error) {
+        //console.log(error)
+        return rejectWithValue(error)
      }
- },
-
- {
-  condition: (projectId, { getState, extra }) => {
-       const {zltest} = getState()
-       console.dir(zltest)
-   /*  const fetchStatus = users.requests[userId]
-    if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
-      
-      return false
-    } */
   }
-}
-
-
 )
-const zlsilce = createSlice({
-    name: 'zltest',
-    initialState,
-    reducers: {
-        setSys: (state, action) => {
-            return Object.assign({}, state, action.payload)
-        },
-        setzl: (state, action) => {
-             console.log(action)
-             state.zltest = action.payload
-        },
-        setMenu: (state, action) => {
-              state.zlmenus = action.payload
-        } ,
-        addname: {
-          reducer(state, action) {
-            console.log(state.names)
-             state.push({...action.payload, completed: false})
-          },
-          prepare(text) {
-            console.log(text)
-            return {payload: {name: text, id: nanoid()} }
-          }
-        }
-    },
-    extraReducers: {
-      [asyncthunk.fulfilled]: (state, actions) => {
-       
-      },
-
-      [getpropject.fulfilled]: (state, actions) => {
-        console.log(actions)
-        state.menus = actions.payload
-     },
-     [getpropject.rejected]: (state, actions) => {
-       state.menus = actions.payload
-        console.log(actions)
-   }
-
-
-      /*  console.log(builder)
-       builder
-       .addCase(asyncthunk.pending, (state,actions) => {
-        state.status='loading'
-       })
-       .addCase(asyncthunk.fulfilled, (state,actions) => {
-        state.status='fulfilled'
-        console.log(actions)
-        state.sysinfo = actions.payload.message
-       })
-       .addCase(asyncthunk.rejected, (state,actions) => {
-        state.status='failed'
-        console.log(actions)
-        state.sysinfo = actions.payload?.message
-       }) */
+const zltest = createSlice({
+  name: "zltest",
+  initialState,
+  reducers: {
+    addMenu: menusAdapter.addOne,
+    showlist: (state) => {
+      console.dir(state)
     }
-
+  },
+  extraReducers: {
+    [getWebsiteMenu.fulfilled]:  (state, {payload}) => {
+      console.log(payload)
+      menusAdapter.updateMany(payload)
+    }
+  }
 })
-
-const {actions, reducer} = zlsilce
-export const zltest = state => state.zltest.zltest
-export const status = state => state.zltest.status
-export const error = state => state.zltest.error
-export const sysinfo = state => state.zltest.sysinfo
-export const names = state => state.zltest.names
-export const zlmenus = state => state.zltest.zlmenus;
-export const {setSys, setz, addname, setMenu } =  actions
-export default reducer
+export const {addMenu, showlist} = zltest.actions
+console.log(zltest.actions.addMenu())
+export default zltest.reducer
+export const { selectAll,selectById} = menusAdapter.getSelectors(state => state.zltest)

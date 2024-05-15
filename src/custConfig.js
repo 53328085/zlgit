@@ -8,20 +8,20 @@ import 'moment/locale/zh-cn';
 moment.locale('zhCN');
  
 import {ConfigProvider} from 'antd'
-import {themeColor} from "@redux/systemconfig";
+import {themeColor, intl} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
-  const primaryColor = useSelector(themeColor)
+  const theme = useSelector(themeColor)
+  const {lang} = useSelector(intl)
+  
   const config = {
     csp: {
       nonce: 'YourNonceCode'
     },
-    locale: zhCN,
+    locale: lang,
   }
   ConfigProvider.config({
-    theme: {
-      primaryColor
-    }, 
+    theme , 
   }
   )
   

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react'
 import { useSelector, useStore, useDispatch } from 'react-redux'
-import UseHeader from '@com/useHeader'
+ 
 import { Input, Button, Select, Radio, Pagination, FormTable, message, Space, Divider, Form } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
+ 
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRequest } from "ahooks";
 import style from './style.module.less'
@@ -13,8 +13,8 @@ import { ExportExcel } from '@com/useButton'
 import { selectProjectId,selectcurlRommid} from '@redux/systemconfig.js'
 
 import Table from '@com/useTable'
-
-
+import Pagecount from '@com/pagecontent'
+import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 
 let inputValue = ''
 export default function Index(props) {
@@ -191,20 +191,11 @@ export default function Index(props) {
     })
   }
 
-
  
-  const handleChangeDevice = (value) => {
-    console.log(value);
-    setParams({
-      ...initparams,
-      deviceStyle: value,
-      pageNum: 1,
-    })
-  }
   const onChangeValue = e => {
     setParams({
       ...params,
-      alike: e.target.value
+      alike: e
     })
   }//输入框改变值
 
@@ -296,58 +287,13 @@ export default function Index(props) {
     })
   }
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-    
-     {/*  <div className={style.header}>
-    
-        <Form
-          form={form}
-          colon={false}
-          layout="inline"
-          initialValues={{
-            area: curlevel,
-            roomId: curromid
-          }}
-        >
-          <Item name="area" label='' style={{ marginLeft: "16px", }}>
-            <Select
-              placeholder=""
-              size="middle"
-              key={defaultArea}
-              defaultValue={defaultArea}
-              style={{ width: "200px"}}
-              onChange={changeArea}
-            >
-              {oneLevel.map((item) => {
-                return (
-                  <Select.Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Select.Option>
-                );
-              })}
-            </Select>
-          </Item>
-          <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-          <Item name="roomid">
-            <Select
-              value={roomId}
-              options={roomlist}
-              fieldNames={{ label: 'name', value: 'id' }}
-              style={{ width: 240, marginLeft: 12 }}
-              placeholder="请选择配电房"
-              onChange={(v) => {
-                dispatch(getcurlRommid(v))
-                setRoomId(v)
-              }}></Select>
-          </Item>
-        </Form>
-      </div> */}
+    <Pagecount>    
       <div className={style.bottom} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div className={style.bottomTab}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>触点查询</span><Input size="middle" placeholder='输入设备编号/安装地址' value={params.alike} style={{ width: '260px', marginLeft: 16 }} onChange={onChangeValue} />
-            <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', borderLeft: 'none' }} size="middle" onClick={getOverviewData}>查询</Button>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>触点查询</span><Serach placeholder='输入设备编号/安装地址'   style={{ width: '260px', marginLeft: 16 }}  onSearch={onChangeValue} />
+            
           </div>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><div style={{ marginLeft: 32, marginRight: 32, height: 32, borderLeft: "1px dashed #515151" }} ></div><span>测温状态</span>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>  <Cdivider   margin="0 32px" /><span>测温状态</span>
             <Select
               value={params.state}
               style={{
@@ -382,7 +328,7 @@ export default function Index(props) {
             {/* <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button> */}
           </Space>
         </div>
-        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151", }} ></div>
+        <Cdivider type="h" margin="16px 0" />
         {isCard ? <div className={style.cardBox}>
           {overView.details != null ? overView.details.map((item, index) => {
             let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
@@ -415,6 +361,7 @@ export default function Index(props) {
         {isCard && <Pagination className={style.pageNum} size="small" current={params.pageNum} total={total} showTotal={showTotal} defaultPageSize={12} onChange={onChangePage} showSizeChanger={false} />}
       </div>
 
-    </div >
+    
+    </Pagecount>
   )
 }

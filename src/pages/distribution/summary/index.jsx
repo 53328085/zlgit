@@ -7,7 +7,7 @@ import Pagecount from '@com/pagecontent'
 
 import {message  } from 'antd'
 
-import { drawEcharts } from "@com/useEcharts"
+ 
 import { DistributionRoomRuntime } from '@api/api.js'
 import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
@@ -18,6 +18,7 @@ import imgurl from '@imgs'
 const Mainbox = styled.div`
   flex: 1;
   position: relative;
+   
   .cardList{
     position: absolute;
     right: 32px;
@@ -113,7 +114,9 @@ export default function Index() {
   
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
         <Mainbox >
+          <div style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
           <img className='bgiamge' src={imgBg || dimg}></img>
+          </div>
           <div className='cardList'>
             <div className='card headtext'>
              {rname}环境监控

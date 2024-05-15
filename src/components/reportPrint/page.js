@@ -15,7 +15,7 @@ const Pagecont = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #237ae4;
+    background-color: var(--ant-primary-color);
     color: #fff;
     font-size: 14px;
     padding: 0 16px;

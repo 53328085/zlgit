@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
  
 import styled from "styled-components";
 import {useSelector} from "react-redux";
-import {CustButton} from '@com/useButton'
+import {CustButtonT} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
 import {selectProjectId} from '@redux/systemconfig.js'
 import { message, Spin } from 'antd';
@@ -102,7 +102,7 @@ export default function Index() {
      <Main>
         <div className='title'>
             <span className='text'>园区图片</span>
-            <CustButton onClick={onSave} loading={loading}>保存图片</CustButton>
+            <CustButtonT onClick={onSave} loading={loading} text="saveImage" />
         </div>
         <div>
            <div className='imgbox'>

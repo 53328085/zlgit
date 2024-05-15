@@ -11,34 +11,37 @@ import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js";
 import { useSelector } from "react-redux";
 import Ichart  from '@com/useEcharts/Ichart';
 import Ctip from './Ctip'
+import Pagecount from "@com/pagecontent";
+import {Cspin} from "@com/comstyled"
 import {
   selectProjectId,
   selectOneLevelDefaultId,
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
  
-const { Paragraph, Text, Title } = Typography;
+const { Paragraph, Text } = Typography;
  
-
-const Content = styled.div`
-  display: grid;
-  grid-template-rows: 48px 800px;
-  row-gap: 16px;
-  .title {
+const Title = styled.div`
+    &&{
      border: 1px solid #d7d7d7;
      padding: 10px 16px;
      border-radius: 4px;
      background-color: #fff;
+     height: 48px;
+     margin-bottom: 16px;
      .text {
       display: inline-block;
-      border-left: 4px solid #237ae4;
+      border-left: 4px solid ${props => props.theme.primaryColor};
       color: #515151;
       padding-left: 16px;
      }
     
-      
-  }
-  .main {
+      }
+   
+`
+const Content = styled.div` 
+  && {
+    flex: 1;
     display: grid;
     grid-template-columns: 1368px 292px;
     column-gap: 16px;
@@ -47,43 +50,10 @@ const Content = styled.div`
       grid-template-rows: repeat(3, 120px) 1fr;
       row-gap: 16px;
     }
-  }
+ }
 `
 
-const Mainbox = styled.div`
-  display: grid;
-  color: #515151;
-  grid-template-rows: 1fr 152px;
-  row-gap: 12px;
-  justify-content: flex-end;
-  .up {
-    display: grid;
-    grid-template-columns: 1fr 512px;
-    .right {
-      display: grid;
-      grid-template-rows: 208px 1fr;
-      row-gap: 32px;
-      .rup {
-        display: grid;
-        grid-template-columns: 248px 248px;
-        grid-template-rows: 96px 96px;
-        gap: 16px;
-      }
-      .rdown {
-        display: grid;
-        grid-template-columns: 248px 248px;
-        grid-template-rows: 96px 152px;
-        gap: 16px;
-      }
-    }
-  }
-  .down {
-    display: grid;
-    grid-template-columns: repeat(6, 248px);
-    grid-template-rows: 152px;
-    column-gap: 16px;
-  }
-`;
+
 const Itembox = styled.div`
   background-color: #f0f9ff;
   border-radius: 4px;
@@ -173,12 +143,12 @@ const Imgbg = memo(({projectId, areaVos}) => {
      queryimg()
   }, [projectId])
   return    (
-    <Spin spinning={spinning} tip="图片下载中……">
+    <Cspin spinning={spinning} tip="图片下载中……">
     <div style={{position: "relative"}}>
         <img src={energyImage || imgurl.engeryBg}   />
         <Ctip areaVos={areaVos} />
     </div>
-    </Spin>
+    </Cspin>
     )
 
 })
@@ -247,13 +217,13 @@ const getDataEnergy = async () => {
     getDataEnergy()
   }, [projectId]);
   return (
-    <CustContext.Provider >
+ /*    <CustContext.Provider > */
+       <Pagecount bgcolor="transparent" pd="0">
        
-        <Content>
-           <div className="title">
+           <Title>
                <span className="text">园区概述</span>
-           </div>
-           <div className="main">
+           </Title>
+           <Content>
               <Imgbg projectId={projectId} areaVos={areaVos} />
               <div className="right">
               <Itembox key="today">
@@ -318,10 +288,10 @@ const getDataEnergy = async () => {
                    <Ichart {...options} />
               </Titlelayout>
               </div>
-           </div>
-        </Content>
-      
+           </Content>
+        
+        </Pagecount>
        
-    </CustContext.Provider>
+  /*   </CustContext.Provider> */
   );
 }

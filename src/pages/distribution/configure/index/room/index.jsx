@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Space, Form, Input, message, Spin, Divider, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons' 
-import {useOutletContext} from 'react-router-dom'
+import {useTranslation} from "react-i18next"
 import styled from 'styled-components';
 import UseTable from '@com/useTable'
 import { distributionRoom } from '@api/api.js'
@@ -13,6 +13,7 @@ import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
 import Pagecont from "@com/pagecontent"
 import {Cspin} from "@com/comstyled"
+import {NewButton, CustButtonT, CustLink} from "@com/useButton"
 const {Link} = Typography
 const Info = styled.span`
   font-size: 12px;
@@ -27,7 +28,7 @@ const Imgbox = styled.div`
  
 `
 export default function Index() {
-  const {setShowroom} = useOutletContext()
+  const {t} =useTranslation(["button"])
   const isPublish = useSelector(publishState)
   const areaId = useSelector(selectOneLevelDefaultId)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
@@ -126,8 +127,9 @@ export default function Index() {
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          <Link type="primary" underline onClick={() => edit(record)}>编辑</Link>
-          <Link type="danger" underline  onClick={() => deleteRecord(record)}>删除</Link>
+          <Link type="primary" underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+          <CustLink type="danger" text="delete" onClick={() => deleteRecord(record)} />
+         {/*  <Link type="danger" underline  onClick={() => deleteRecord(record)}>{t("button:delete")}</Link> */}
         </Space>
       ),
     },
@@ -196,6 +198,7 @@ export default function Index() {
   const ref = useRef()
   const [loading, setLoading] = useState(false)
   const addOk = async () => {
+    console.log(modalTitle)
     try {
       const values = await form.validateFields();
       console.log(values)
@@ -213,7 +216,7 @@ export default function Index() {
       if(modalTitle == '新增配电房'){
         setLoading(true)
         try {
-          let {success} = await addRoom(post)
+          let {success, errMsg} = await addRoom(post)
           setLoading(false)
           if(success) {
             messageApi.open({
@@ -225,7 +228,7 @@ export default function Index() {
           }else {
             messageApi.open({
               type:'error',
-              content:res.errMsg || '新增失败,请重试！',
+              content: errMsg || '新增失败,请重试！',
             })
           }
         } catch (error) {
@@ -235,8 +238,9 @@ export default function Index() {
         }else if(modalTitle == '编辑配电房'){       
           try {
             setLoading(true)
-            params.id = editId
-            let {success} = updateRoom(params)
+            post.id = editId
+          //  post.imgBgKey = values.imgBgKey
+            let {success, errMsg} = await updateRoom(post)
             setLoading(false)
             if(success){
               messageApi.open({
@@ -248,11 +252,12 @@ export default function Index() {
             }else{
               messageApi.open({
                 type:'error',
-                content:res.errMsg || '配电房编辑失败,请重试！',
+                content: errMsg || '配电房编辑失败,请重试！',
               })
             }
            
           } catch (error) {
+            console.log(error)
             setLoading(false)
           }        
       }
@@ -290,7 +295,7 @@ export default function Index() {
   const delref = useRef()
   const deleteOk = async () => {
     try {
-      let {success} = await deleteRoom(projectId, deleteId)
+      let {success, errMsg} = await deleteRoom(projectId, deleteId)
       if(success) {
         messageApi.open({
           type:'success',
@@ -300,7 +305,7 @@ export default function Index() {
       }else {
         messageApi.open({
           type:'error',
-          content:res.errMsg || '删除失败,请重试！',
+          content: errMsg || '删除失败,请重试！',
         })
       }
       delref.current.onCancel()
@@ -327,16 +332,14 @@ export default function Index() {
     return Promise.reject(new Error('配电房图片必须上传'));
    
  }
- useEffect(() => {
-  setShowroom(false)
- }, [])
+ 
   return (
  <Cspin tip="图片数据加载中 ……" spinning={spinning}>
-    <Pagecont showserach={false} custserach pd="0px" >
+    <Pagecont showserach={true}  pd="0px" >
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
          <Divider style={{margin: "16px 0"}} />
-        { isPublish ? null :<Button type="primary" style={{width: 96}}    icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
+        { isPublish ? null : <CustButtonT text="new" onClick={()=>showAdd()} src="new" />   }
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
       <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         
@@ -373,14 +376,14 @@ export default function Index() {
             <Item label='备注' name='remark'>
               <TextArea rows={4} style={{width:'400px'}}></TextArea>
             </Item>
+            <Item name="imgBgKey" noStyle>
+                  <Input type="text" hidden />
+            </Item>
           </Form>
         </div>
       </Custmodal>
-      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'} key="del">
-        
-       
+      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512}     key="del">
           是否确认删除配电房？ 
-         
       </Custmodal>
      
       </Titlelayout>

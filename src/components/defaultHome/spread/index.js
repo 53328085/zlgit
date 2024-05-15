@@ -2,8 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
-import { drawEcharts } from '@com/useEcharts'
-import { useReactive } from 'ahooks';
+import {useTranslation} from "react-i18next"
 import { HomeRuntime } from '@api/api.js'
 import {  message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
@@ -18,7 +17,7 @@ const fs = {
 
 export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)
-  const wnref = useRef(null)
+  const {t} = useTranslation("overview")
 
   const { GetWarningDistribute } = HomeRuntime
 
@@ -68,7 +67,7 @@ export default function DefaultHome(props) {
     height: '200px' 
   }
   return (
-    <Titlelayout title={'告警分布'} {...fs} layout="flex" style={sty}>
+    <Titlelayout title={t("AlarmDistribution")} {...fs} layout="flex" style={sty}>
         <div  style={{flex: 1, display: 'flex'}}>
              <Ichart {...options} />
          </div>

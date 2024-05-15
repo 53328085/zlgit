@@ -6,7 +6,7 @@ import * as echarts from "echarts";
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {useTranslation} from "react-i18next"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -17,7 +17,7 @@ export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
   const lineRef = useRef()
   const { GetCFETrends } = HomeRuntime
-
+  const {t} = useTranslation("overview")
   const getConfig = (x, y, y1) => {
     echarts.dispose(lineRef.current)
     let lineChart = echarts.init(lineRef.current);
@@ -54,7 +54,7 @@ export default function DefaultHome(props){
       },
       series: [
         {
-          name: '充电量(kWh)',
+          name: t("Chargecapacity"),
           data: y,
           type: 'line',
           symbol:'none', 
@@ -63,7 +63,7 @@ export default function DefaultHome(props){
           }
         },
         {
-            name: '放电量(kWh)',
+            name: t("dischargecapacity"),
             data: y1,
             type: 'line',
             symbol:'none', 
@@ -96,7 +96,7 @@ export default function DefaultHome(props){
   },[])
   
   return (
-         <Titlelayout title={'充放电量趋势'} {...fs} style={{height: "200px"}} layout="flex">
+         <Titlelayout title={t("ChargeAndDischargeVolumeTrend")} {...fs} style={{height: "200px"}} layout="flex">
             <div style={{flex: 1}}  ref={lineRef}></div>
          </Titlelayout>
   )

@@ -1,12 +1,13 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
- 
+import moment from 'moment'
 import style from './style.module.less'
-import Bluecolumn from '@com/bluecolumn';
-import { Divider,Tooltip  } from 'antd'
+
+import { Tooltip  } from 'antd'
 import {numberformat} from '@com/usehandler'
  
 import Titlelayout from '@com/titlelayout'
 import  Ichart from '@com/useEcharts/Ichart'
+import {Cdivider} from "@com/comstyled"
 /* import icon1 from './imgs/icon1.png'
 import icon2 from './imgs/icon2.png'
 import icon3 from './imgs/icon3.png'
@@ -15,9 +16,10 @@ import uppng from './imgs/up.png'
 import downpng from './imgs/down.png'
  
 import imgurl from './imgs'
-
-const Boxchart = ({index, showType, data}) => {
-  let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
+import {getTime} from '@com/usehandler'
+const Boxchart = ({index, showType, data, date}) => {
+ let istoday = date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
+  let color = ['#bdd2fd', '#99adba', '#ffc299', '#173f17']
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{
@@ -35,7 +37,8 @@ const Boxchart = ({index, showType, data}) => {
     xAxis: {
       axisLabel:  {
         showMaxLabel: true,
-        hideOverlap: true
+        hideOverlap: true,
+        interval: "auto"
       }
     },
     dataset: {},
@@ -46,8 +49,11 @@ const Boxchart = ({index, showType, data}) => {
     if(data.constructor == Object) {
       let {x=[], y} = data
       let hours = new Date().getHours();
-      let xaxis = x.filter(h => parseInt(h)<=hours)
-      console.log(xaxis)
+      let today = new Date().getDate();
+      let ptoday = date.date()
+      console.log(ptoday)
+      let xaxis = istoday ?  x.filter(h => parseInt(h)<=hours)  : x
+    
       setOptions({
         ...options,
         dataset: {
@@ -71,7 +77,8 @@ const Boxchart = ({index, showType, data}) => {
    return <Ichart {...options} />
 }
 
-export default function Energy({ showData, dateType,showType }) {
+export default function Energy({ showData, dateType,showType, date }) {
+  
   const { bg1class, bg2class, bg3class } = style
   let consumeTotal 
   let consumeDetail 
@@ -79,7 +86,8 @@ export default function Energy({ showData, dateType,showType }) {
    
   
   if (showData) {
-    consumeTotal = showData.consumeTotal.sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))   
+
+    consumeTotal = [...showData.consumeTotal].sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))   
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
     
@@ -117,68 +125,70 @@ export default function Energy({ showData, dateType,showType }) {
 
   }, [proportion])
   return (
-
-
     <div className={style.gridstyle}>
       {
-        consumeTotal?.map((it, index) => (<div className={style.bdcolor} >
+        showData?.consumeTotal?.map((it, index) => {
+          let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue} = it;
+          let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][dateType]
+          return (<div className={style.bdcolor} key={index} >
           <div className={`${style.bgclass}  ${index === 0 ? "" : index === 1 ? bg1class : index === 2 ? bg2class : bg3class}`}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 4, height: 32, backgroundColor: '#237ae4' }}></div>
+              <div className={style.leftbd}></div>
               <div style={{ fontSize: 12, color: '#666' }}>
                 <span style={{ fontSize: 14, color: '#000', fontWeight: 'bold', padding: '0 16px' }}>{it?.name}</span>
-                {showType===1?'(kWh)':'(元)'}</div>
+                {showType==1?'(kWh)':'(元)'}</div>
             </div>
           </div>
           <div className={style.textstyle} style={{ backgroundColor: index % 2 === 0 ? '#a0cede' : '#afdb92' }} >
             <div style={overcss}>{dateType === 1 ? "今日:" : dateType === 2 ? "本月:" : "本年:"}
-            <Tooltip title={parseInt(it?.periodValue)}>
-            <span className={style.pdlf16}>{parseInt(it?.periodValue)}</span>
+            <Tooltip title={parseFloat(it?.periodValue)}>
+            <span className={style.pdlf16}>{parseFloat(it?.periodValue)}</span>
             </Tooltip>
             </div>
             <div style={{ display: 'flex', alignItems: 'center',...overcss }}>环比:<span className={style.pdlf16}>
-              {parseInt(it?.mom)}%
+              {parseFloat(it?.mom)}%
             </span>
             {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
-             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
+             <img src={Number(it.periodValue) - Number(timetype)>0?uppng:Number(it.periodValue) - Number(timetype)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
             <div style={overcss}>{dateType === 1 ? "昨日:" : dateType === 2 ? "上月:" : "上年:"}
-            <Tooltip title={parseInt(it?.lastMonthPeriodValue)}>
-            <span className={style.pdlf16}>{parseInt(it?.lastMonthPeriodValue) }</span>
+            <Tooltip title={parseFloat(timetype)}>
+            <span className={style.pdlf16}>{parseFloat(timetype) }</span>
             </Tooltip>
            </div>
-            <div style={{ display: 'flex', alignItems: 'center',...overcss }}>同比:<span className={style.pdlf16}>{parseInt(it?.yoy)}%</span>
-            {dateType==3?<img src={Number(it.periodValue) - Number(it.lastYearPeriodValue)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
-             <img src={Number(it.periodValue) - Number(it.lastMonthPeriodValue)>0?uppng:Number(it.periodValue) - Number(it.lastMonthPeriodValue)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
+            <div style={{ display: 'flex', alignItems: 'center',...overcss }}>同比:<span className={style.pdlf16}>{parseFloat(it?.yoy)}%</span>
+            {dateType==3?<img src={Number(it.periodValue) - Number(timetype)>0?uppng:downpng} style={{ width: 10, marginLeft: 2 }} />:
+             <img src={Number(it.periodValue) - Number(timetype)>0?uppng:Number(it.periodValue) - Number(timetype)<0?downpng:''} style={{ width: 10, marginLeft: 2 }} />
             }
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', padding: 16, flex: 1 }}>
-                <Boxchart index={index} data={consumeDetail[index]} showType={showType} />
+                <Boxchart index={index} data={consumeDetail[index]} showType={showType} date={date} />
           </div>
-        </div>))
+        </div>)
+        }
+        )
       }
       {
-        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div className={style.piestyle}>
-          <Bluecolumn name={showType===1?"分类能耗占比" :"分类能耗费用占比"}/>
-          <div style={{ width: 378, height: 360, marginTop: 16 }}>
+        consumeTotal?( <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, rowGap: '16px' }}>
+        <Titlelayout title={showType===1?"分类能耗占比" :"分类能耗费用占比"} layout="flex">
+          
+          <div style={{ flex: 1, marginTop: 16 }}>
              <Ichart {...options} />
-         
 
           </div>
 
-        </div>
-        <div className={style.sorts}>
-          <Bluecolumn name={<span>{showType===1?'分类能耗':'分类能耗费用'}<span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'':'(元)'}</span></span>} />
-          <Divider style={{ margin: "16px 0", borderColor: '#d7d7d7' }} dashed />
+        </Titlelayout>
+        <Titlelayout title={<div><span>{showType===1?'分类能耗':'分类能耗费用'}</span> <span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType===1?'':'(元)'}</span></div>} >
+        
+          <Cdivider type="h" margin="16px 0"  />
           <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             {
-              consumeTotal?.map((it, index) => (<Card index={index} {...it} />))
+              consumeTotal?.map((it, index) => (<Card index={index} {...it} showtype={showType} />))
             }
           </div>
-        </div>
+        </Titlelayout>
       </div>):null
       }
      
@@ -187,13 +197,13 @@ export default function Energy({ showData, dateType,showType }) {
 }
 
 
-let Card = ({ index, ...other }) => {
+let Card = ({ index,showtype, ...other }) => {
   return (
     <div style={{ border: '1px solid #d7d7d7', padding: 1, display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex' }}>
       <img src={imgurl[other.name]} alt="" style={{ width: 54, height: 42 }} />  
         <div style={{ marginLeft: 24 }}>
-          <div style={{ fontSize: 12, color: '#666', minHeight: 18 }}>{other.name ? other.name : ""}(kwh)</div>
+          <div style={{ fontSize: 12, color: '#666', minHeight: 18 }}>{other.name ? other.name : ""}  {showtype==1  ? '(kwh)' : '元'}</div>
           <div style={{ fontSize: 18, color: '#333', lineHeight: '18px' }}>{other.periodValue}</div>
         </div>
       </div>

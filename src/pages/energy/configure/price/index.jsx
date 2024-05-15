@@ -1,14 +1,29 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
-import { Select,Button, Space, message, Form, Input } from 'antd';
+ 
+import { Button, Space, message, Form, Input } from 'antd';
+import {useTranslation} from 'react-i18next'
+
 import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+import styled from 'styled-components';
+import {useOutletContext} from 'react-router-dom'  
+import Pagecount from "@com/pagecontent";
 
+import {CustButton} from "@com/useButton"
+const Mainbox = styled.div`
+  
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  row-gap: 16px;
+`
 export default function Index() {
+  const {t} = useTranslation(["button"])
+  //const areaName = useSelector(levelDefaultLabel)  
+   
+  
   const aref = useRef()
   const eref = useRef()
   const dref = useRef()
@@ -16,9 +31,8 @@ export default function Index() {
   const [form] = Form.useForm()
   const [editform] = Form.useForm()
   const Item = Form.Item
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
+  let {exparams, areaName} = useOutletContext()
+  let {areaId, projectId} = exparams 
   const [messageApi, contextHolder] = message.useMessage();
   const { queryPriceSolutions, insertPriceSolution, updatePriceSolution, deletePriceSolution } = energyPrice
   const [elecPrice, setElecPrice] = useState()
@@ -29,30 +43,20 @@ export default function Index() {
   const [changeTag, setChangeTag]= useState()
   const [editId, setEditId]= useState()
   const [solutionId, setSolutionId] = useState()
-
+  
   const Actions = (props) => {
     return <div className={style.actions}>
       {props.valueJson ? <Space>
-      <Button type='primary' style={{width: 96}} onClick={()=> editPrice(props.valueJson, props.title)}>编辑</Button>
-      <Button type='primary' style={{width: 96}} danger onClick={()=> deletePrice(props.valueJson.id, props.title)}>删除</Button>
-      </Space> : <Button type='primary' style={{width: 96, marginLeft:'auto'}} onClick={()=> addPrice(props.title)}>新建</Button>}
+      <CustButton onClick={()=> editPrice(props.valueJson, props.title)}>{t("button:edit")}</CustButton>
+      <CustButton danger onClick={()=> deletePrice(props.valueJson.id, props.title)}>{t("button:delete")}</CustButton>
+      </Space> : <CustButton style={{width: 96}} onClick={()=> addPrice(props.title)}>{t("button:new")}</CustButton>}
     </div>
   }
 
-  //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined )
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const [areaName, setAreaName] = useState(areaList[0]?.name || undefined)
-  const changeArea = (value) => {
-    setAreaId(value)
-    areaList.map(item => {
-      if(item.id == value){
-        setAreaName(item.name)
-      }
-    })
-  }
+  
 
   const getSolutions = () => {
+    if(!Number.isFinite(areaId)) return
     return queryPriceSolutions(projectId, areaId).then(res => {
       if(res.success){
         setElecPrice()
@@ -92,8 +96,8 @@ export default function Index() {
   }
 
   const {run: queryRun } = useRequest(getSolutions,{
-    manual: true,
-    onSuccess:(result, params) => {}
+     refreshDeps: [areaId, projectId]
+    
   })
 
   const addPrice = (title) => {
@@ -233,35 +237,12 @@ export default function Index() {
     })
   }
 
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
-      message.error('当前项目尚未配置园区!')
-      return;
-    }else{
-      queryRun()
-    }
-  },[areaId])
-
-
+ 
   return (
-    <div>
+    <Pagecount>
       {contextHolder}
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={changeArea}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div>
-      <div className={style.mainContent}>
+      
+      <Mainbox>
         <div className={style.card}>
           <div className={style.cardTitle}>{areaName}电价</div>
           <div className={style.cardContent}>
@@ -343,8 +324,8 @@ export default function Index() {
             <Actions valueJson={fuelPrice} title={'fuel'}></Actions>
           </div>
         </div>
-      </div>
-      <Custmodl title='新增价格' ref={aref}  mold="cust" width={592} onOk={onOk}>
+      </Mainbox>
+      <Custmodl title='新增价格' ref={aref}  mold="cust" width={592}  onOk={onOk}>
         { changeTag == 'electric' ?<div className={style.formStyle} >
           <Form name='addform' labelCol={{span:6}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <div style={{display:"flex", alignItems: "center", justifyContent:'space-around'}}>
@@ -537,6 +518,6 @@ export default function Index() {
       <Custmodl title='删除价格' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDelete()}>        
           <span> 是否删除{ changeTag == 'electric'? '电价' : changeTag == 'water'? '水价' : changeTag == 'gas'? '燃气价' : changeTag == 'coal'? '煤炭价' : changeTag == 'fuel'? '燃油价' : '' }? </span>       
       </Custmodl>
-    </div>
+    </Pagecount>
   )
 }

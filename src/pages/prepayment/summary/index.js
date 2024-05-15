@@ -36,10 +36,10 @@ const Mainbox = styled.div`
   color: #515151;
   grid-template-rows: 48px 176px 304px 267px;
   row-gap: 16px;
-  justify-content: flex-end;
+  grid-template-columns: 1fr;
+  flex: 1;
 
-  .header {
-    width: 1680px;
+  .header { 
     height: 48px;
     background-color: #fff;
     border-radius: 4px;
@@ -59,6 +59,7 @@ const Mainbox = styled.div`
     grid-template-columns: repeat(2, 360px) repeat(6, 140px);
     grid-template-rows: 176px;
     column-gap: 16px;
+    justify-content: space-between;
     .item {
       flex: 1;
       display: flex;
@@ -74,7 +75,7 @@ const Mainbox = styled.div`
       .imgBox {
         width: 144px;
         height: 88px;
-        background-color: #237ae4;
+        background-color: ${props => props.theme.primaryColor};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -96,11 +97,13 @@ const Mainbox = styled.div`
     display: grid;
     grid-template-columns: 808px 375px 464px;
     column-gap: 16px;
+    justify-content: space-between;
   }
   .lower {
     display: grid;
     grid-template-columns: repeat(3, 550px);
     column-gap: 16px;
+    justify-content: space-between;
   }
 `;
 

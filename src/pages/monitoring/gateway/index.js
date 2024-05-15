@@ -15,18 +15,11 @@ import {
   selectOneLevelDefaultId,
 } from "@redux/systemconfig.js";
 import { ExportExcel } from "@com/useButton";
+ 
 import Table from "@com/useTable";
-import { Serach, Cdivider } from "@com/comstyled";
+import { Serach, Cdivider, CPagination } from "@com/comstyled";
 import Pagecount from '@com/pagecontent' 
-
-const Mainbxox = styled.div`
-  && {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-`
+ 
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -179,6 +172,7 @@ export default function Index(props) {
   })
   const getOverviewData = ({ current, pageSize }, formData) => {
     //设备统计
+    if(!(isFinite(areaId) && isFinite(projectId))) return;
     let { category, alike, state } = formData;
     params.current ={
       projectId,
@@ -255,7 +249,7 @@ export default function Index(props) {
  }
   return (
     <Pagecount>
-        <Mainbxox>
+        <div className="flexcol">
        
           <Form
             layout="line"
@@ -272,19 +266,16 @@ export default function Index(props) {
               state: 0
             }}
           >
-            <Space size={64} split={<Cdivider />}  >
-              {isCard ? (
+            <Space size={64} split={<Cdivider />}  >             
                 <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
                   <Serach
                     size="middle"
                     placeholder="输入网关编号/安装地址"
                     style={{ width: "340px" }}
                     allowClear
-                    enterButton="查询"
                     onSearch={submit}
                   />
                 </Form.Item>
-              ) : null}  
               <Form.Item label="网关型号" name="category" style={{marginBottom: 0}}>
                 <Select
                   style={{
@@ -302,7 +293,7 @@ export default function Index(props) {
                   })}
                 </Select>
               </Form.Item>
-              {isCard ? (
+              
                 <Form.Item label="网关状态" name="state" style={{marginBottom: 0}}>
                   <Select
                     style={{
@@ -334,7 +325,7 @@ export default function Index(props) {
                     ]}
                   />
                 </Form.Item>
-              ) : null}
+              
             </Space>
             <Space size={16} style={{ marginLeft: "auto" }}>
               <Radio.Group
@@ -401,8 +392,8 @@ export default function Index(props) {
             ></Table>
           </div>
         )}
-     { isCard && <Pagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}  showTotal={showTotal}  {...tableProps.pagination} showSizeChanger={false}/>  }
-      </Mainbxox>
+     { isCard && <CPagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}   {...tableProps.pagination} showSizeChanger={false}/>  }
+      </div>
     </Pagecount>
   );
 }

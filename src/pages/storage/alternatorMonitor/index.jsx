@@ -7,101 +7,28 @@ import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
-
+import { useNavigate, useOutletContext} from 'react-router-dom'
 import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
 import offline from './imgs/offline.png'
 import error from './imgs/error.png'
-
+import Pagecount from "@com/pagecontent";
+import Ichart  from '@com/useEcharts/Ichart'; 
+import Titlelayout from "@com/titlelayout"; 
+import styled from 'styled-components'
+ 
+import Usetable from '@com/useTable'
 export default function Index() {
-  const dispatch = useDispatch()
-  const projectId = useSelector(selectProjectId)
-  const areaList = useSelector(selectOneLevel)
-  const areaName = useSelector(levelDefaultLabel) || '园区'
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-  const { queryPCSList, 
+  let {exparams} = useOutletContext() 
+  let {areaId,  projectId,  pcsId} = exparams
+  let {value: pcs_id, label} = pcsId || {}
+
+  const { 
     queryPCSInfo,
     queryPCSWarningInfo, 
     queryPowerTrends, 
     querySocTrends, 
     queryAcTable } = PCSMonitorRuntime
-  const { FindSiteList } = SiteManagerDesigner
-  const { FindContainerList } = StorageContainerDesigner
-  const [form] = Form.useForm()
-  const {Item}  = Form
-  //siteList
-  const [siteList, setSiteList] = useState([])
-  const querySite = () => {
-    FindSiteList(projectId, form.getFieldValue('areaId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
-          setSiteList(res.data)
-          form.setFieldValue('siteId', res.data[0].id)
-          queryContainer()
-        }else{
-          setSiteList([])
-          setContainerList([])
-          setPcsList([])
-          message.warning('当前'+ areaList[0]?.levelName + '不存在站点!')
-          return;
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const changeSite = val => {
-    form.setFieldValue('containerId', null)
-    form.setFieldValue('PCSId', null)
-    queryContainer()
-  }
-
-  //containerList
-  const [containerList, setContainerList] = useState([])
-  const queryContainer = () => {
-    FindContainerList(projectId, form.getFieldValue('areaId'), form.getFieldValue('siteId')).then(res => {
-      if (res.success) {
-        if (res.data && res.data.length > 0) {
-          setContainerList(res.data)
-          form.setFieldValue('containerId', res.data[0].id)
-          queryPCS()
-        } else {
-          setContainerList([])
-          setPcsList([])
-          message.warning('当前站点不存在储能柜!')
-        }
-      } else {
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const changeContainer = val => {
-    form.setFieldValue('PCSId', null)
-    queryPCS()
-  }
-
-  //PCS list
-  const [pcsList, setPcsList] = useState([])
-  const [selectPcs, setSelectPcs] = useState('')
-  const getPCSList = () => {
-    return queryPCSList (projectId, form.getFieldValue('areaId'),form.getFieldValue('siteId'), form.getFieldValue('containerId')).then(res => {
-      if(res.success){
-        if(res.data && res.data.length> 0){
-          setPcsList(res.data)
-          setSelectPcs(res.data[0].name)
-          form.setFieldValue('PCSId', res.data[0].id)
-          getContent()
-        }else{
-          setPcsList([])
-          message.warning('当前站点不存在PCS!')
-          return;
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-  }
-  const {run: queryPCS} = useRequest(getPCSList, {manual: true})
 
   //页面组件
   const Card = props => {
@@ -132,7 +59,7 @@ export default function Index() {
   })
   const getContent = () => {
     //左侧数据
-    queryPCSInfo(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+    queryPCSInfo(projectId, areaId, pcs_id).then(res => {
       if(res.success){
         if(res.data ){
           state.gridState = res.data[0]?.name || ''
@@ -153,7 +80,7 @@ export default function Index() {
         message.error(res.errMsg)
       }
     })
-    queryPCSWarningInfo(projectId, form.getFieldValue('PCSId')).then(res => {
+    queryPCSWarningInfo(projectId, pcs_id).then(res => {
       if(res.success){
         if(res.data){
           state.warningInfo = res.data
@@ -165,7 +92,7 @@ export default function Index() {
       }
     })
     //实时功率
-    queryPowerTrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+    queryPowerTrends(projectId, areaId, pcs_id).then(res => {
       if(res.success){
         if(res.data){
           let x= [];
@@ -186,7 +113,7 @@ export default function Index() {
       }
     })
     //soc
-    querySocTrends(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res => {
+    querySocTrends(projectId, areaId, pcs_id).then(res => {
       if(res.success){
         if(res.data){
           let x= [];
@@ -207,7 +134,7 @@ export default function Index() {
       }
     })
     //ac Table
-    queryAcTable(projectId, form.getFieldValue('areaId'), form.getFieldValue('PCSId')).then(res=> {
+    queryAcTable(projectId, areaId, pcs_id).then(res=> {
       if(res.success){
         if(res.data && res.data.length > 0){
           res.data[0].name = 'A'
@@ -222,7 +149,13 @@ export default function Index() {
       }
     })
   }
+  useEffect(() => {
+     if(!pcs_id) return;
+     if(Number.isInteger(areaId) && Number.isInteger(projectId)) {
+       getContent()
+     }
 
+  }, [areaId, projectId, pcs_id])
   const AcClomns = [
     {
       title:'AC',
@@ -262,32 +195,8 @@ export default function Index() {
     },
   ]
 
-  const changeArea = (val) => {
-    areaList.map(item => {
-      if(item.id == val){
-        dispatch(setCurrentlevel(item))
-      }
-    })
-    form.setFieldValue('siteId', null)
-    form.setFieldValue('PCSId', null)
-    querySite()
-  }
-  const changePCS = val => {
-    pcsList.map(item=> {
-      if(item.id == val){
-        setSelectPcs(item.name)
-      }
-    })
-    getContent()
-  }
-  useEffect(()=>{
-    if(areaList.length == 0|| !areaList){
-      message.error('当前项目尚未创建园区!')
-    }else{
-      form.setFieldValue('areaId', oneLevelDefaultId)
-      querySite()
-    }
-  },[])
+ 
+
 
   const rightStyle={
     borderRight: 'none'
@@ -297,67 +206,13 @@ export default function Index() {
   }
 
   return (
-    <div>
-      <div className={style.header}>
-        <Form form={form} layout='inline'>
-          <Item name='areaId' label={ areaName + '选择'} style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-              onChange={changeArea}
-            >
-              {areaList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          <div className={style.line}></div>
-          <Item name='siteId' label='站点选择' style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择站点"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-              onChange={changeSite}
-            >
-              {siteList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          <div className={style.line}></div>
-          <Item name='containerId' label='储能柜选择' style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择储能柜"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-              onChange={changeContainer}
-            >
-              {containerList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-          <div className={style.line}></div>
-          <Item name='PCSId' label='PCS选择' style={{marginLeft:16}}>
-            <Select
-              placeholder="请选择PCS"
-              size="middle"
-              style={{marginLeft: 16, width: '200px'}}
-              onChange={changePCS}
-            >
-              {pcsList.map(item => {
-                return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-              })}
-            </Select>
-          </Item>
-        </Form>
-      </div>
+    <Pagecount bgcolor='transparent' pd="0">
+   
       <div className={style.pcsContent}>
         <div className={style.left}>
           <div className={style.title}>
             <span>储能交流器</span>
-            <span className={style.pcsName}>{selectPcs}</span>
+            <span className={style.pcsName}>{label}</span>
           </div>
           <div className={style.firstValue}>
             <div className={style.stateList}>
@@ -411,11 +266,11 @@ export default function Index() {
             <div className={style.chartTitle}>SOC</div>
             <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
           </div>
-          <div className={style.tableList}>
-            <Table size='small' bordered dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} />
-          </div>
+         
+          <Usetable   dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} hbg="#036" />
+          
         </div>
       </div>
-    </div>
+    </Pagecount>
   )
 }

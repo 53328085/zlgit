@@ -1,11 +1,14 @@
-import React, {useRef, useEffect} from 'react'
+import React, {  useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
-import {drawEcharts} from '@com/useEcharts'
+ 
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-import { useReactive } from 'ahooks';
+ 
+import {useTranslation} from 'react-i18next'
+import Ichart  from '@com/useEcharts/Ichart';
+ 
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -15,19 +18,12 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
-  const wref = useRef(null)
-
-  const option = (name, color, type="line") =>  ({
-    xAxis: {   
-      data: state.x,
-    },
-    series: [
-      {
-        data: state.y,
-        type,
-        name 
-      }
-    ],
+ 
+  const {t} = useTranslation(["overview","comm"])
+  const iszh = useSelector(iszhCN)
+ 
+  const [option, setOption] = useState({
+    series: [{type: "line", seriesLayoutBy: 'row'}],
     grid:{
       // 图表 grid
       left: "0px",
@@ -39,16 +35,14 @@ export default function DefaultHome(props){
     legend: {
       top: "5px"
     },
-    color 
+    color:["#099c9c"],
+    dataset: {
+      dimensions:  [],
+      source:  []
+    } 
   });
-  
-  const tdrawEcharts = (c, option) => {
-    return drawEcharts(c, {...option, type:2 })
-  }
-  const state = useReactive({
-    x: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月','9月','10月','11月','12月'],
-    y: [150, 230, 224, 218, 135, 147, 460, 224, 218, 135, 147, 460],
-  })
+ 
+ 
 
   const { GetUseETrends_Water } = HomeRuntime
 
@@ -56,25 +50,47 @@ export default function DefaultHome(props){
     if (props.type == 'runtTime') {
       GetUseETrends_Water(projectId).then(res => {
         let {success, data} = res
-          if(success){
-            if(data){
-              state.x = data.x
-              state.y = data.y
-              tdrawEcharts(wref.current, option('用水量', ["#099c9c"]))
+          if(success && data){
+            console.log(111)
+            let {x=[], y=[]} = data
+
+            let dataset = {
+              dimensions: [
+                {name: t("comm:month")},
+                {name: t("overview:WaterConsumption")},
+              ],
+              source: [
+                x, 
+                y,
+              ],
+             sourceHeader: false,
             }
+
+
+            setOption({
+              ...option,
+               dataset,
+              })
           }else{
-            message.error(res.errMsg)
+            console.log(res.errMsg)
+           // message.error(res.errMsg)
           }
+      }).catch(e => {
+        alert(e)
+        console.log(e)
       })
     }else{
-      tdrawEcharts(wref.current, option('用水量', ["#099c9c"]))
+       
     }
-    // tdrawEcharts(wref.current, option('用水量', ["#099c9c"]))
-  }, [])
+    
+  }, [iszh])
   
   return (
-         <Titlelayout title={'用水量'} {...fs} style={{height: "200px"}} layout="flex">
-         <div ref={wref} style={{flex: 1}}></div>
+         <Titlelayout title={t("overview:WaterConsumption")} {...fs} style={{height: "200px"}} layout="flex">
+          <div  style={{flex: 1, display: 'flex'}}>
+           <Ichart  {...option}/>
+           </div>
+       
          </Titlelayout>
   )
 }

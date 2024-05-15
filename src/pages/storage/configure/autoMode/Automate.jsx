@@ -8,6 +8,7 @@ import {nanoid} from "@reduxjs/toolkit"
 import Titlelayout from '@com/titlelayout'
 import {StorageAutoModeDesigner, StorageControlRuntime} from '@api/api'   // StorageControlRuntime
 import {custMsg} from '@com/usehandler'
+import {CustButtonT} from "@com/useButton"
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -59,7 +60,7 @@ const Mainbox = styled.div`
                  }
                 }
             .plan.active {
-                background-color: #237ae4;
+                background-color: ${props => props.theme.primaryColor};
                 color: #fff;
                 position: relative;
                /*  &:after {
@@ -670,12 +671,12 @@ const getvalidate = (start, end, type, choosedate) => {
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
-                        <Normalbt type="primary" onClick={changeview} ghost={isView}>策略设置</Normalbt>
-                        <Normalbt type="primary" disabled={ isadd || !curplan?.id} ghost={!isView} onClick={changeview}>策略预览</Normalbt>
+                        <CustButtonT wh="auto" style={{height: '32px'}} onClick={changeview} ghost={isView} text="policySetting" />
+                        <CustButtonT wh="auto" disabled={ isadd || !curplan?.id} ghost={!isView} onClick={changeview} text="policyPreview" /> 
                     </Space>
                     <Space size={16}>
-                        <Normalbt  danger onClick={showDel} disabled={disabled}>删除</Normalbt>
-                        <Normalbt type="primary" disabled={disabled} ghost onClick={onSave}>保存</Normalbt>
+                        <CustButtonT  danger onClick={showDel} disabled={disabled} text="delete" /> 
+                        <CustButtonT  disabled={disabled} ghost onClick={onSave} text="save" /> 
                     </Space>
                 </div>
                 
@@ -685,7 +686,7 @@ const getvalidate = (start, end, type, choosedate) => {
         </div>
         <div className='foot'>
            
-            <Bigbutton type='primary' ghost={disabled}  onClick={UpdateEnable}>{disabled ? '已启用' : '启用'}</Bigbutton>
+            <CustButtonT   ghost={disabled}  onClick={UpdateEnable} text={disabled ? 'enabled' : 'enable'} style={{width: "200px", height: "72px"}} /> 
                
         </div>
         <CModal

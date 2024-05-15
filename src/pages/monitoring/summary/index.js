@@ -1,4 +1,5 @@
 import React, { useEffect, useState} from 'react'
+import styled from 'styled-components'
 import style from './style.module.less'
 import {message } from 'antd'
 import Icard from './card'
@@ -10,6 +11,14 @@ import Ichart  from '@com/useEcharts/Ichart';
 import Titlelayout from '@com/titlelayout';
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
+const CardList = styled.div`
+   
+     display: grid;
+    grid-template-columns: repeat(4, 404px);
+    grid-template-rows: repeat(2, 124px);
+    row-gap: 20px;
+    justify-content: space-between;
+`
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   let areaId = useSelector(selectOneLevelDefaultId)
@@ -120,12 +129,14 @@ export default function Index() {
       </div>
       <div className={style.content}>
         <Titlelayout title="月度用电量（kWh）" layout="flex" key="electric">
-            <Ichart {...eoptions} />
-
+            <div className='flex'>
+               <Ichart {...eoptions} />
+            </div>
         </Titlelayout>
         <Titlelayout title="月度用水量（(m³)）" layout="flex" key="water">
+           <div className='flex'>
             <Ichart {...woptions} />
-
+            </div>
         </Titlelayout>
       </div>
     </Pagecount>

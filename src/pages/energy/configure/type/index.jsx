@@ -1,25 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, levelDefaultLabel} from '@redux/systemconfig.js'
+import {useTranslation} from 'react-i18next'
 import { Select,Button, Space, message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
 import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import {Ptag, Wtag} from '@com/comstyled'
-
+import {useOutletContext} from 'react-router-dom'  
+import {CustButton} from "@com/useButton"
+import Pagecount from "@com/pagecontent";
 export default function Index () {
+  const {t} = useTranslation(["button"])
+  let {exparams} = useOutletContext()
+  let {areaId, projectId} = exparams 
   const aref = useRef()
   const dref = useRef()
   const [form] = Form.useForm()
   const Item = Form.Item
-  const projectId = useSelector(selectProjectId);
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
+
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -34,17 +35,11 @@ export default function Index () {
     deleteEnergyStructure,
     configEnergyStructure,
     queryEnergyStructureConfig } = energyStructure
-  //园区
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const changeArea = (value) => {
-    setAreaId(value)
-  }
-
   //树形结构
   const {TreeNode} = Tree;
   const [treeData, setTreeData] = useState([])
   const getTreeData = () => {
+    if(!(Number.isInteger(projectId) && Number.isInteger(areaId) && areaId > 0)) return
     return queryEnergyStructure(projectId, areaId, '').then(res => {
       if(res.success){
         setTreeData(res.data)
@@ -54,16 +49,9 @@ export default function Index () {
     })
   }
   const { run: queryRun } = useRequest(getTreeData,{
-    manual: true
+     refreshDeps: [areaId, projectId]
   })
-  useEffect(()=> {
-    if(areaId && areaId != 0){
-      queryRun()
-    }else{
-      message.error('当前项目尚未配置园区!')
-      return;
-    }
-  }, [areaId])
+ 
 
   const nodeTitle = {
     display: 'flex',
@@ -91,10 +79,10 @@ export default function Index () {
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
                 <div style={nodeAction}>
-                    <Ptag onClick={()=>addSon(item.id)} wh="60px">新增</Ptag>
-                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">编辑</Ptag>
-                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="60px">配置</Ptag>
-                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">删除</Wtag>
+                    <Ptag onClick={()=>addSon(item.id)} wh="60px">{t("button:new")}</Ptag>
+                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">{t("button:edit")}</Ptag>
+                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="auto">{t("button:configure")}</Ptag>
+                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">{t("button:delete")}</Wtag>
                 </div>
             </div>
         )
@@ -278,10 +266,10 @@ export default function Index () {
   }
 
   return (
-    <div>
+    <Pagecount>
       {contextHolder}
    
-     <div className={style.header}>
+   {/*   <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select
           placeholder="请选择园区"
@@ -295,11 +283,11 @@ export default function Index () {
             return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
           })}
         </Select>
-      </div>
+      </div> */}
       <div className={style.mainContent}>
         <div className={style.title}>
           <span>能源结构</span>
-          <Button type='primary' style={{width: 96}} onClick={() => addMain()}>新增主节点</Button>
+          <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
         </div>
         <div className={style.lineTree}>
           <div className={style.treeTitle}>
@@ -326,6 +314,6 @@ export default function Index () {
       <Custmodl title='删除能源节点' ref={dref}  mold="cust" width={592} type="warn" onOk={()=>onDelete()}>
         是否确认删除该能源节点? 
       </Custmodl>
-    </div>
+    </Pagecount>
   )
 }

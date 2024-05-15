@@ -55,7 +55,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname = useRef("")
-  let delid;
+  let delid =useRef();
   let flies;
   const optcss = {
     color: '#237ae4',
@@ -224,14 +224,17 @@ export default function gateway({ deviceStyle }) {
   }
   //打开删除窗口
   const onDelete = (record) => {
+    console.log(record)
     DelModalRef?.current?.onOpen()
-    delid = record.sn
+    delid.current = record.sn
   }
   //确认删除
   const delOk = async () => {
+    console.log(delid.current)
+    const sn =  delid.current
     const { success, errMsg } = await DeleteSensor({
       projectId,
-      sn: delid
+      sn: encodeURIComponent(sn),
     })
     if (success) {
       message.success('删除成功')
@@ -301,7 +304,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddSensor(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+      //  modalFormRef?.current?.onCancel()
         getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
@@ -744,12 +747,7 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-      <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-    ]}>
-      {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name}  custft={true} onOk={other.onOk}>      
       <FormComp >
       </FormComp>
     </Modal>

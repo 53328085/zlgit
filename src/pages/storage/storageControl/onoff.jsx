@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, message, InputNumber} from 'antd'
 import {ExclamationCircleFilled} from '@ant-design/icons'
 import {StorageControlRuntime} from '@api/api'
-import {custMsg}  from '@com/usehandler'
+ 
 import imgurl from './icon'
 const {Text, Link, Title} = Typography
 const {Item} = Form
@@ -32,6 +32,11 @@ const Mainbox = styled.div`
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                .iconsty {
+                    color: var(--ant-primary-color);
+                    margin-right: 12px;
+                    font-size: 22px;
+                }
                  .ant-typography{
                     font-size: 16px;
                  }
@@ -46,15 +51,15 @@ const Mainbox = styled.div`
                     transition: all 200ms;
                  }
                  .cotrl.on {
-                    border: 1px solid #237ae4;
-                    color: #237ae4;
+                    border: 1px solid var(--ant-primary-color);
+                    color: var(--ant-primary-color);
                     .ant-typography {
-                        color: #237ae4;
+                        color: var(--ant-primary-color);
                         font-size: 18px;
                     }
                  }
                  .cotrl.on.active { 
-                    background-color: #237ae4; 
+                    background-color: var(--ant-primary-color); 
                     .ant-typography {
                         color: #fff;
                         font-size: 18px;
@@ -141,6 +146,11 @@ const Pinfo = styled.p`
     align-items: center;
     font-size: 16px;
     margin-left: 32px;
+    .iconsty {
+                    color: var(--ant-primary-color);
+                    margin-right: 12px;
+                    font-size: 48px;
+                }
 `
 export default function Manual({projectId,   areaId, systemStatus,  pcsId, getinfo, CModal}) {
   
@@ -202,7 +212,7 @@ export default function Manual({projectId,   areaId, systemStatus,  pcsId, getin
                     </div>
                 </div>
                 <div className='item'>
-                    <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '22px'}}/>} {onoff== 1 ? 
+                    <Text>{(onoff==1 || onoff==2) && <ExclamationCircleFilled className="iconsty" />} {onoff== 1 ? 
                     '当前系统已开机。' : onoff == 2  ?  '当前系统已停机' : null
                 }</Text> 
                 </div>
@@ -215,7 +225,7 @@ export default function Manual({projectId,   areaId, systemStatus,  pcsId, getin
         </div>
      
       <CModal width={554} title={title} ref={rref} onOk={onOk}  mold='cust' >
-         <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><ExclamationCircleFilled style={{color: '#237ae4', marginRight: '12px', fontSize: '48px'}}/> {msg}</Pinfo>
+         <Pinfo style={{lineHeight: '48px', fontSize: '16px'}}><ExclamationCircleFilled  className='iconsty' /> {msg}</Pinfo>
          
      </CModal> 
     </Mainbox>

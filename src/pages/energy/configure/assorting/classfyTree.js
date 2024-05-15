@@ -1,14 +1,15 @@
 import React from "react";
 import style from './style.module.less'
 import { Button, Tree, Divider, Space } from "antd";
-
+import {useTranslation} from "react-i18next"
 import { cloneDeep } from "lodash";
 import {useSelector} from 'react-redux'
 import {publishState} from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout'
- 
+import {AllExportButton, CustButton} from "@com/useButton"
 import {Ptag, Wtag} from "@com/comstyled"
 export default function Water (props) {
+  const {t} = useTranslation(["button"])
   const isPublish = useSelector(publishState)
   console.log(isPublish)
   const { getValues } = props;
@@ -38,12 +39,12 @@ export default function Water (props) {
             <div style={nodeTitle}>
                 <span style={ item.parentId == 0 ? { fontSize: 16 }:{} }>{item.energyName}</span>
                 { isPublish ? null : <Space style={{position:"absolute", right: 0}}>
-                    {item.parentId == 0 ? <Ptag   onClick={()=>addSon(item)}>新增子项</Ptag> : null}
-                    <Ptag onClick={()=>edit(name, item.energyId)} wh="60px">编辑</Ptag>
+                    {item.parentId == 0 ? <Ptag   onClick={()=>addSon(item)} wh="auto" style={{padding: "0 8px"}}>{t("button:addSubitem")}</Ptag> : null}
+                    <Ptag onClick={()=>edit(name, item.energyId)} wh="60px">{t("button:edit")}</Ptag>
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
-                  <Ptag onClick={()=>settings(name, item.energyId)} wh="60px">配置</Ptag>
+                  {item.parentId != 0 ? <Ptag onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}}>{t("button:configure")}</Ptag> : null}
                    
-                    <Wtag onClick={()=>deleteRecord(item)} wh="60px">删除</Wtag>
+                    <Wtag onClick={()=>deleteRecord(item)} wh="60px">{t("button:delete")}</Wtag>
                 </Space> }
             </div>
         )
@@ -112,8 +113,8 @@ export default function Water (props) {
     <div style={{display: 'flex',justifyContent: "space-between", alignContent: "center"}}>
       <span style={{lineHeight: '36px'}}>{props.title}</span>
       { isPublish ? null : <Space size={16}>
-                    <Button type="primary" size="middle" style={{width: 112}} onClick={()=>addParent()}>新增能耗分类</Button>
-                    <Button type="primary" size="middle" style={{width: 112,  height: 36}} onClick ={()=> importData()}> 批量导入</Button>
+                    <CustButton wh="auto" onClick={()=>addParent()}>{t("button:addEnergyConsumeCategory")}</CustButton>
+                    <AllExportButton onClick ={()=> importData()} /> 
                 </Space> }
     </div>
   )

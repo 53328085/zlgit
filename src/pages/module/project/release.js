@@ -152,7 +152,7 @@ const onOk =async () => { // 发布 // 取消发布
    
   try {
     if (!code.current) {
-      return message.warning('请输入验证吗')
+      return message.warning('请输入验证码')
     }
     let state = parseInt(curProject.state) === 1 ? 0 : 1
     const {success} = await publishProject({projectId: curProject.id, state, code: code.current, moble: curProject.mobile})
@@ -188,7 +188,7 @@ const delProject = async () => {
 
  
   try {
-     if (!projectName.current.trim()) return message.warning('请输入短信验证吗')
+     if (!projectName.current.trim()) return message.warning('请输入短信验证码')
     const {success, errMsg}  = await  DeleteProject(curProject.id, logMobile, projectName.current);
     if (success) {
      
@@ -283,7 +283,7 @@ const publishing = (
                 publishing
                }
               <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}} disabled={!phone}>{phone}</Button><Countdown mobile={curProject.mobile} /></Space></Paragraph>
-              <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
+              <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证码</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证码' onChange={onCodeChange} /></Space></Paragraph>
               <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
               </div>
             
@@ -298,7 +298,7 @@ const publishing = (
                  <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
                  <Paragraph>该操作不可逆，一旦操作成功，应用内所有内容将被删除。</Paragraph>
                  <Paragraph> <Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>登录用户手机号</Text> <Button style={{width: '148px'}}>{loguerphone}</Button><Countdown mobile={logMobile} /></Space></Paragraph>
-                 <Paragraph><Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={projectNameChange} /></Space></Paragraph>
+                 <Paragraph><Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>短信验证码</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证码' onChange={projectNameChange} /></Space></Paragraph>
               {/*    <Paragraph>请在下方输入框中输入项目名称以确定操作</Paragraph>               
                  <Paragraph><Input style={{width: '422px'}}   onChange={projectNameChange} allowClear /></Paragraph> */}
                

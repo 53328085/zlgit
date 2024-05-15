@@ -1,1 +1,77 @@
+@media screen, print  {  /* 定位媒体类型 */
+   article {
+      font-size: 18px; 
+      line-height: 2;
+    }
+    .inner-container {
+       font-size: large;
+    }
+}
+@media (hover:hover) { /* 定位媒体特性 */
+   .inner-container {
+      font-size: 20px; 
+      line-height: 2;
+      color: #237ae4;
+    }
+}
+
+
+@media (max-width: 1024px) { /* 定位媒体特性 范围特性 */
+   .inner-container {
+      font-size: 20px; 
+      line-height: 2;
+      color: #dec23a;
+    }
+}
+@media (color) {
+   .ft {
+      font-weight: bolder;
+   }
+}
+@media screen and (min-width: 1024px) and (orientation:landscape){
+  .or {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+}
+@media screen, (min-width: 1024px), (orientation:landscape) {
+   .more {
+      font-weight: bolder;
+   }
+}
+@media not all and(monochrome) {
+   .mon {
+      color: #6789ab;
+   }
+}
+@media (width<=100em) {
+  .wm {
+   color: #123456;
+  }
+}
+.container {
+   top: 2em;
+   width: 22em;
+  
+   border: 2px solid #22d;
+   margin: 0 auto;
+   padding: 0;
+   background-color: #a9f;
+   position: relative;
+ }
+ 
+ .inner-container {
+   padding: 1em 2em;
+   text-align: justify;
+   text-justify: auto;
+ }
+ 
+ .pixel-ratio {
+   position: relative;
+   margin: auto;
+   height: 1.2em;
+   text-align: right;
+   bottom: 0;
+   right: 1em;
+   font-weight: bold;
+ }
  

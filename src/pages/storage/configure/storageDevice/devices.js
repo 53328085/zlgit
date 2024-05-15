@@ -6,16 +6,17 @@ import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefau
 import Usetable from '@com/useTable'
 import UseTransfer from './transfer'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+import {CustButtonT, CustLink} from "@com/useButton"
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
+import {Serach} from "@com/comstyled"
 import Mask from '@com/mask'
 export default function Index(props) {
   const [form] = Form.useForm()
   const [multiForm] = Form.useForm()
   const Item = Form.Item
-  const { Search } = Input
+
   const dref = useRef()
   const { Dragger } = Upload
   const errRef = useRef()
@@ -157,7 +158,7 @@ export default function Index(props) {
       render: (_, record) => (
         <Space size="middle">
           {/* <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span> */}
-          <span style={{ textDecoration: 'underline', color: '#f00', cursor: 'pointer' }} onClick={() => clickDel(record)}>删除</span>
+          <CustLink type="danger" onClick={() => clickDel(record)} text="delete" /> 
         </Space>
       ),
     },
@@ -321,6 +322,7 @@ export default function Index(props) {
     fileList,
   };
   const onUpload = () => {
+    if(!fileList[0]) return message.warning("请选择上传文件")
     let formData = new FormData()
     formData.append('projectId', projectId)
     formData.append('file', fileList[0])
@@ -400,18 +402,17 @@ export default function Index(props) {
           </Item>
           <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
-            <Search
+            <Serach
               placeholder='请输入设备名称/设备编号/安装地址'
-              enterButton="查询"
               style={{ width: 400 }}
-              onSearch={onSearch}></Search>
+              onSearch={onSearch}></Serach>
           </Item>
         </Form>
         <Space>
-          <Button type='primary' style={{ width: 96 }} onClick={() => settingClick()}>新增</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => { setAddModal(true) }}>批量导入</Button>
-          <Button type='primary' style={{ width: 96 }} onClick={() => exportData()}>导出</Button>
-        </Space>
+          <CustButtonT text="new" src="new" onClick={() => settingClick()} />
+          <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} /> 
+          </Space>
       </div>
       <Divider />
       <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 } : null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
@@ -431,8 +432,8 @@ export default function Index(props) {
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
          是否确认删除电表？ 
       </Custmodl>
-      <Modal className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确定'} okType={'primary'} >
-        <div className={style.addHeader}>批量导入</div>
+      <Custmodl title="批量导入" mold="cust" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} >
+       
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -444,7 +445,7 @@ export default function Index(props) {
             <a style={{ position: 'absolute', top: 180, left: 233, fontSize: 16, width: 70, textAlign: 'center', color: '#237ae4', textDecoration: 'underline', cursor: 'pointer', zIndex: 1000 }} href='/storageExcel/储能电表.xlsx' download>下载模板</a>
           </div>
         </div>
-      </Modal>
+      </Custmodl>
       <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>

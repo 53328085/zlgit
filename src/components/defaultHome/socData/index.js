@@ -6,7 +6,7 @@ import {Liquid} from "@ant-design/charts"
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {useTranslation} from 'react-i18next'
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -17,7 +17,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
-
+  const {t} = useTranslation("overview")
   const { GetSiteSoc } = HomeRuntime
 
   const DemoLiquid = (props) => {
@@ -79,7 +79,7 @@ export default function DefaultHome(props){
 
   
   return (
-    <Titlelayout title='站点SOC' {...fs}>
+    <Titlelayout title={t("sitesoc")} {...fs}>
         <div style={{width: '424px', height: '338px', marginTop: 20}}>
               <DemoLiquid data={Number(state.socData)}></DemoLiquid>
               

@@ -61,8 +61,8 @@ export default function Index() {
   const [typeTree, setTypeTree] = useState(1)
   
   const treekey =  typeTree == 1 ? "id" : "areaId"
-  const selectedId = useRef([])
- 
+  //const selectedId = useRef([])
+   const [selectedId, setSelectedId] = useState()
    const [datas, setDatas] = useState({})
  
    const columns = [
@@ -113,14 +113,20 @@ export default function Index() {
       } : {}
       let hander = ['', LineManagerQuery, QuerySpaceTrees][typeTree]
       const {success, data} = await hander(params)
-      if(success && Array.isArray(data)){
+      if(success && Array.isArray(data) && data.length > 0){
          setTreeData(data)
-         
+        if(typeTree == 1) {
+          setSelectedId([data[0].id])
+        }else if(typeTree == 2) {
+          setSelectedId([data[0].areaId])
+        }
       }else{
         setTreeData([])
+        setSelectedId([])
         // message.error(errMsg)
       }
-      getDataByLine()
+    
+      //getDataByLine()
     } catch (error) {
       console.log(error)
     }
@@ -128,8 +134,12 @@ export default function Index() {
     
   } 
  // 根据区域查询
- const getDataByLine = async () => {
-     let ids = selectedId.current
+ const getDataByLine = async () => {     
+    // let ids = selectedId.current
+   //  let node = e.map(n => n.toString())
+    
+   //  setSelectedId(node)
+  //   let ids = e;
     try {
       let time = getTime(date, type)
       
@@ -138,14 +148,14 @@ export default function Index() {
         shift: 0,
         type,
         date: time,
-        ids: ids,
+        ids: selectedId,
         
        } : {
         projectId,
         shift: 0,
         type,
         date: time,
-        ids: ids,
+        ids: selectedId,
        }
       let hander = ['', queryLine, queryArea][typeTree]
       let {success, data} = await hander(params)
@@ -188,6 +198,7 @@ export default function Index() {
 const [baropt, pieopt, momYoy] = useMemo(() => {
  let {detail={}, proportion = [], momYoy=[]} =  Object.prototype.toString.call(datas).slice(8,-1) === 'Object' ? datas : {}  
  const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
+ const total = proportion.map(p => parseFloat(p.value,2)).reduce((a, b) => a+b, 0)?.toFixed(2)
  return [
   {
     ...options,
@@ -202,7 +213,7 @@ const [baropt, pieopt, momYoy] = useMemo(() => {
     }
   },
   {
-    pieData: { data: proportion, total: 100 },
+    pieData: { data: proportion, total, radius:["45%", "65%"]},
     type: 3,
     legend: {
       bottom: 0,
@@ -218,18 +229,28 @@ momYoy
 
 }, [datas])
   useEffect(()=>{
-     if(!Number.isFinite(areaId) || !Number.isFinite(type) || !date) return;
-     selectedId.current = []
+     if(!Number.isFinite(areaId) || !Number.isFinite(typeTree)) return;
+   //  selectedId.current = []
+  
+   
      getTreeData()
      
-  },[areaId, typeTree, date, type])
+  },[areaId, typeTree])
  
- 
+ useEffect(() => {
+   
+   if(date && Array.isArray(selectedId))  {
+     getDataByLine()
+   
+   }
+
+ }, [date, selectedId, type])
   
  
  const onSelect = (e) => {  
-  selectedId.current = e;
-  getDataByLine()
+   setSelectedId(e)
+ // selectedId.current = e;
+ // getDataByLine(e)
  }
   
    const radiosty = {
@@ -264,7 +285,7 @@ momYoy
           defaultExpandParent
         //  expandedKeys={expandedKeys}
          // autoExpandParent={autoExpandParent}
-         selectedKeys={selectedId.current}
+         selectedKeys={selectedId}
           onSelect={onSelect}
           
           fieldNames={{title:'name',key: treekey,children:'nodes'}}

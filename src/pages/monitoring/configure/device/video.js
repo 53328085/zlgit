@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
+import React, { useEffect, useRef, useState, useContext,   useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message,Button } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message,Button, Space, Typography } from 'antd'
+import {useTranslation} from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { MultImport,ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageCamera,
@@ -28,6 +29,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -56,7 +58,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname =useRef("")
-  let delid;
+  let delid= useRef();
   let flies;
   let edittag=false
   const optcss = {
@@ -111,10 +113,10 @@ export default function gateway({ deviceStyle }) {
       dataIndex: 'options',
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -238,14 +240,14 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.sn
+    delid.current = record.sn
   }
   //确认删除
   const delOk = async () => {
 
     const { success, errMsg } = await DeleteCamera({
       projectId,
-      sn: delid
+      sn: encodeURIComponent(delid.current)
     })
     if (success) {
       message.success('删除成功')
@@ -310,7 +312,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress: formvalue.serverAddress ? formvalue.serverAddress : "",
+        serverAddress: formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -321,7 +323,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddCamera(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+      //  modalFormRef?.current?.onCancel()
         getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
@@ -346,7 +348,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress: formvalue.serverAddress ? formvalue.serverAddress : "",
+        serverAddress:formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -700,9 +702,9 @@ export const FormComp = (props) => {
           {
             camera === 2 ? <>
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true, message: '流媒体服务器地址必须' }]}>
-                <Input />
+                <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+             {/*  <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()
@@ -716,7 +718,7 @@ export const FormComp = (props) => {
                 }
               }]}>
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="设备IP地址" name="ip" rules={[{ required: true, message: '设备IP地址必须' }]}>
                 <Input />
               </Form.Item>
@@ -745,11 +747,7 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
+    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true}  onOk={other.onOk}>
       <FormComp >
       </FormComp>
     </Modal>
@@ -763,12 +761,7 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={EditModalFormRef} {...other} title={other.name} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
-      {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    <Modal mold='cust' ref={EditModalFormRef} {...other} title={other.name} onOk={other.onOk} >
       <EditFormComp >
       </EditFormComp>
     </Modal>
@@ -864,9 +857,9 @@ export const EditFormComp = (props) => {
           {
             camera === 2 ? <>
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
-                <Input />
+                <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-              <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+            {/*   <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()
@@ -880,7 +873,7 @@ export const EditFormComp = (props) => {
                 }
               }]}>
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="设备IP地址" name="ip" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
                 <Input />
               </Form.Item>

@@ -1,0 +1,71 @@
+{
+    "system":"是否退出系统",
+    "OperationsAdministratorManagement":"运营管理员管理",
+    "OperationAdministratorAccountManagement":"运营管理员账号管理",
+    "AccountInquiry":"账号查询",
+    "msgap":"请输入账号名称/手机号",
+    "exdate": "请选择有效期",
+    "enterpas": "请输入密码",
+    "cfipassword": "请确认密码",
+    "AddOperationAdministratorAccount":"新增运营管理员账号",
+    "LoginAccount":"登录账号",
+    "userrole":"用户角色",
+    "usercharacters":"用户名不能超过16个字符",
+    "Loginaccountrequired":"登录账号必填",
+    "accountcharacters":"登录账号不能超过16个字符",
+    "UserName":"用户姓名",
+    "usernamecharacters":"不能超过32个字符",
+    "user32characters":"用户姓名不能超过32个字符",
+    "AccountValidityPeriod":"账号有效期",
+    "Message_select date":"请选择日期",
+    "Password":"密码",
+    "Message_password format":"密码格式必须包含数字、大小写字母、特殊字符选其三[6~18位]",
+    "ConfirmPassword":"确认密码",
+    "passwordmatch":"两次输入的新密码不匹配",
+    
+    "Message_enter correct mobile number":"请输入正确的手机号",
+    "WhetherApplicable":"是否适用",
+    
+    "NoteInformation":"备注信息",
+    "Cancel":"取消",
+    "Confirm":"确定",
+
+    
+    "Note":"备注",
+
+    "Edit":"编辑",
+    "EditOperationAdministratorAccount":"编辑运营管理员账号",
+    "Message_login account required":"登陆账号必填",
+    "usernamerequired":"用户姓名必填",
+    "entermobile":"请输入手机号码",
+    "isenable":"是否启用",
+	
+    
+    "pasrest":"密码将被重置为",
+	
+    "Delete":"删除",
+    "DeletePrompt":"删除提示",
+    "cofdeletion":"否确认删除",
+    "Message_account number?":"账号？",
+    
+
+    "OperationRecord":"操作记录",
+    "ProjectOperationHistory":"项目操作历史",
+    
+ 
+    "OperatorMobileNumber":"操作者/手机号",
+    "OperationType":"操作类型",
+    "UserLogin":"用户登录",
+    "Login person:, login role:, login time:, IP address:":"登录人:，登录角色：, 登录时间:, IP地址:",
+
+
+    "ProjectConfiguration":"项目配置",
+    "EnterProject":"进入项目",
+
+
+    "Address_G107 Global Internet Cafe, Zhongyi 3rd Road, Tianxin District, Changsha City":"长沙市天心区中意三路G107环球网吧",
+    "Address_Changzhutan Tobacco Logistics":"长株潭烟草物流",
+    "Address_Changsha City Tianxin District Zhongyi Third Road G107 Changzhutan Tobacco Logistics Park":"长沙市天心区中意三路G107长株潭烟草物流园",
+    "Address_Zhengtai Road Changjiang Road Yueqing City Wenzhou City":"温州市乐清市正泰路长江路",
+    "Address_Wenzhou Park":"温州园区"
+}

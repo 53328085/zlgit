@@ -6,7 +6,7 @@ const Itembox =styled.div`
     grid-template-rows: 32px 1fr;
     box-shadow: 0px 1px 2px rgb(0 0 0 / 35%);
     .itemTitle {
-      background-color: #237AE4;
+      background-color: ${props => props.theme.primaryColor};
       padding: 0 16px;
       color: #fff;
       display: flex;

@@ -12,13 +12,13 @@ const Boxdiv = styled(Card)`
   box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
   .ant-card-head {
     padding-left: ${({pl}) => pl || '16px'};
-    border-left: ${({bl}) => bl || '4px solid #237ae4'};
+    border-left:  ${({bl, theme}) => bl || `4px solid ${theme.primaryColor}`};
     display: flex;
     align-items: center;
     border-bottom: none;
     min-height: ${(props) =>  props.hv || '32px'};
     /* height: ${(props) =>  props.hv || '32px'}; */
-    height: 32px;
+    height: ${(props) =>  props.hv || '32px'};;
     padding-right: 0px;
     background-color:${({bg}) => bg || '#fff'};
     z-index:${({zd}) => zd || 100};
@@ -41,6 +41,10 @@ const Boxdiv = styled(Card)`
   padding: 0;
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
+  & .flex {
+    display: flex;
+    flex: 1;
+  }
  }
 `
 Boxdiv.defaultProps = {

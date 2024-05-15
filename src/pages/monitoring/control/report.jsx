@@ -5,7 +5,7 @@ import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/titlelayout'
+ 
 import Usetable from '@com/useTable'
 import {RunAutoValve} from '@api/api'
 import {Serach, Cdivider} from "@com/comstyled"
@@ -23,22 +23,26 @@ const CDrawer = styled(Drawer)`
     display: flex;
     flex-direction: column;
   }
+  .ant-drawer-header {
+    border-bottom: none;
+  }
   .ant-drawer-title {
     padding-left: 16px;
-    border-left: 4px solid #2828a4 ;
+    border-left: 4px solid ${props => props.theme.primaryColor} ;
     color: #2a2f55;
     font-size: 16px;
+    line-height: 32px;
   }
-  .ant-table-container .ant-table-content .ant-table-thead {
+ .ant-table-container .ant-table-content .ant-table-thead {
     
-     tr>th{
-        background-color: #237ae4;
-        color: #fff;
-        height: 32px;
-        padding: 0;
-      }
-     
-  }
+    tr>th{
+       background-color: ${props => props.theme.primaryColor};
+       color: #fff;
+       height: 32px;
+       padding: 0;
+     }
+    
+ }
 }`
 const Mainbox = styled.div`
     && {
@@ -86,69 +90,33 @@ const P = styled(Paragraph)`
 const controlcolumns = [
   {
       title: '序号',
-      dataIndex: 'index',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'index', 
       align: 'center',
       render: (text, recoder, index) => <span>{index + 1}</span>
   },
   {
       title: '设备编号',
-      dataIndex: 'sn',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'sn',     
       align: 'center'
   },
   {
     title: '设备名称',
-    dataIndex: 'name',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'name',   
     align: 'center'
    },
    {
     title: '设备型号',
-    dataIndex: 'category',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'category',   
     align: 'center'
    },
    {
     title: '安装地址',
-    dataIndex: 'address',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'address',   
     align: 'center'
    },
    {
     title: '设备状态',
-    dataIndex: 'status',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'status',   
     align: 'center',
     render: (text) => {     
       return  Number(text) === 1 ? "开闸" : "合闸"
@@ -157,13 +125,7 @@ const controlcolumns = [
   },
   {
     title: '策略是否启用',
-    dataIndex: 'enabled',
-    onHeaderCell:() => ({
-      style: {
-        backgroundColor: '#237ae4',
-        color: "#fff"
-      }
-    }),
+    dataIndex: 'enabled',   
     align: 'center',
     render: (text) => {
       console.log(text)
@@ -310,13 +272,13 @@ week.forEach(w => {
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Serach placeholder='请输入策略名称'   allowClear onSearch={submit} enterButton="查询" />
+              <Serach placeholder='请输入策略名称' style={{width: '370px'}}    onSearch={submit}   />
              </Item>
            </Space>
           
         </Form>
         
-         <Cdivider type="h" style={{margin: '0px'}}/>
+         <Cdivider type="h" style={{margin: '0px'}} />
         <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
        <CDrawer
         title="被控设备"
@@ -331,13 +293,11 @@ week.forEach(w => {
           backgroundColor: '#f2f2f2',
           padding: '32px 32px 0 32px'
         }}
-        
-
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
-       <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
+       <Cdivider  borderColor="#2a2f55" type="h" margin='0 0 16px 0' />
        <div style={{flex: 1, backgroundColor: "#fff"}}>
-       <Usetable columns={controlcolumns}  dataSource={viewtb}   rowKey={nanoid()}  scroll={{
+       <Usetable columns={controlcolumns}  dataSource={viewtb} istheme="y"  rowKey={nanoid()}  scroll={{
             y: 867
           }}   />  
        </div>

@@ -6,7 +6,7 @@ import Titlelayout from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { message } from 'antd';
 import { Monitoring } from '@api/api.js'
-
+import {CustTransO} from "@com/useButton"
 import deviceRuntime from '@imgs/device_runtime.png'
 
 const Divorder = styled.div`
@@ -66,24 +66,24 @@ export default function DefaultHome(props) {
    }
 
   return (
-    <Titlelayout title={'电表信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={<CustTransO  text="MeterInformation" />} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ deviceRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>电表总数</span>
+            <span className='count_title'><CustTransO  text="Metertotal" /></span>
             <span className='count_val'>{ state.electricMeterCount }</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>电表在线</span>
+                <span className='item_title'><CustTransO  text="Meteronline" /></span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.electricMeterOnlineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>电表离线</span>
+                <span className='item_title'><CustTransO  text="Meteroffline" /></span>
                 <span className='item_value' style={{ color: '#f44336' }}>{ state.electricMeterOfflineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>在线率</span>
+                <span className='item_title'><CustTransO  text="Meterrate" /></span>
                 <span className='item_value'>{ state.electricMeterOnlineRate }%</span>
             </div>
         </div>

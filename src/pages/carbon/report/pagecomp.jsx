@@ -1,9 +1,11 @@
 import moment from 'moment'
-import React,{useContext} from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import CusContext from '@com/content'
+import { useSelector } from 'react-redux'
+import { systemConfigInfo } from '@redux/systemconfig.js'
 
-const PageDiv=styled.div`
+const PageDiv = styled.div`
 width:562px;
 height:802px;
 margin: 0 auto 24px;
@@ -15,7 +17,7 @@ flex-direction: column;
   width: 558px;
   height:36px;
   margin:auto;
-  background-color:#237ae4;
+  background-color:${props => props.theme.primaryColor} ;
   margin-top: 1px;
   display:flex;
   justify-content:space-between;
@@ -30,22 +32,24 @@ padding: 24px;
 flex:1
 }
 `
-export default function pagecomp({title="电气安全运行分析报告",time=moment().format('YYYY-MM月'),children}) {
+export default function pagecomp({
+  time = moment().format('YYYY-MM月'), children }) {
 
-  const {active,datevalue} = useContext(CusContext)
-  const dates = active===1?moment(datevalue).format('YYYY-MM月'):moment(datevalue).format('YYYY年')
+  const { active, datevalue } = useContext(CusContext)
+  const { chineseTitle } = useSelector(systemConfigInfo)
+  console.log(useSelector(systemConfigInfo))
+  const dates = active === 1 ? moment(datevalue).format('YYYY-MM月') : moment(datevalue).format('YYYY年')
   return (
     <PageDiv>
       <div className="headercss">
-        <div>{title}</div>
+        <div>{chineseTitle}</div>
         <div>本期报告分析周期为：{dates}</div>
       </div>
       <div className='contentcss'>
-      {children}
+        {children}
       </div>
-  
+
     </PageDiv>
   )
 }
- 
-   
+

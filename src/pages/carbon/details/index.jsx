@@ -1,118 +1,126 @@
-import React, { useEffect, useState, useRef, useMemo }  from 'react'
-import Pagecount from '@com/pagecontent'
-import { useSelector } from 'react-redux'
-import { Radio,DatePicker,Form,Select, message } from 'antd';
-import  Table from '@com/useTable'
-import BlueColumn from '@com/bluecolumn'
-import styled from 'styled-components'
-import {  ExportExcel} from '@com/useButton'
-const Tablediv = styled.div`
-border: 1px solid #d7d7d7;
-border-radius: 4px;
-padding: 16px;
-background-color: #fff;
-width: 1678px;
-flex: 1;
-.title{
-  display: flex;
-  justify-content: space-between;
-}
-.tableclass{
-  margin-top: 16px;
-  thead  .ant-table-cell{
-    background-color:  #237AE4;
-    color: #fff;
-  }
-}
-`
+import React, { useEffect, useState, useRef, useMemo } from 'react'
+import { DatePicker, Form, Select, message, Typography, Button, Space } from 'antd';
+import Table from '@com/useTable'
+import Titlelayout from '@com/titlelayout';
+const { Link } = Typography
 export default function Index() {
-  const [form] =Form.useForm()
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
-  const changeArea =()=>{
+  const columns = [
+    { title: '序号', dataIndex: 'key', align: "center", width: 96, fixed: 'left', },
+    { title: '企业名称', dataIndex: 'enterpriseName', align: "center", fixed: 'left', },
+    { title: '组织机构代码', dataIndex: 'code', align: "center", fixed: 'left', },
+    { title: '盘查年度', dataIndex: 'year', align: "center", fixed: 'left', },
+    { title: '填报时间', dataIndex: 'wtiteTime', align: "center", width: 160, fixed: 'left', },
+    { title: '最新一次填报时间', dataIndex: 'wtiteLatestTime', align: "center", width: 160, fixed: 'left', },
+    { title: '监测计划最新版本', dataIndex: 'version', align: "center", width: 160, fixed: 'left', },
+    { title: '填报人', dataIndex: 'user', align: "center", width: 96, fixed: 'left', },
+    {
+      title: '操作',
+      key: 'action',
+      align: 'center',
+      width: 200,
+      render: (_, record) => (
+        <Space size="middle">
+          {/* onClick={() => deleteRecord(record)} */}
+          <Link underline >编辑</Link>
+          <Link underline>生成报告</Link>
+          <Link type="danger" underline>删除</Link>
+        </Space>
+      ),
+    },
+  ];
+  const dataSource = [
+    {
+      key: '1',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
+    },
+    {
+      key: '2',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
+    },
+    {
+      key: '3',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
 
-  }
- 
-  const [datetype,setDateType]=useState(1)
-  const dateColumns=useMemo(()=>{
-    let len =30;
-    let unit ='日'
-    let arr=[]
-    if(datetype == 1){
-      const  date = new Date()
-      date.setMonth(date.getMonth()+1);
-      date.setDate(0);
-      len=date.getDate();
-      unit ='日'
-    }else if(datetype ==2){
-      len=12;
-      unit = '月'
-    }else{
-      message.error('日期类型错误')
-      return
-    }
-    
+    },
+    {
+      key: '4',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
+    },
+    {
+      key: '5',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
 
-    for(let i=0; i<len; i++){
-        arr.push({
-          title:(i+1)+unit,
-          dataIndex:i+1,
-          align:'center',
-          width: 100,
-        })
-      
-      
-    }
-    return arr
-  },[datetype])
-  const changeDate =(e)=>{
-    setDateType(e.target.value)
-  }
-  const columns =[
-    { title: '排放类型', dataIndex: 'name', align: "center", width:96, fixed: 'left', },
-    { title: '排放活动', dataIndex: 'name', align: "center", width:160, fixed: 'left', },
-    { title: '排放源', dataIndex: 'name', align: "center", width:96, fixed: 'left', },
-    { title: '单位名称', dataIndex: 'name', align: "center", width:96, fixed: 'left', },
-    { title: '年度碳排放量(tCO₂)', dataIndex: 'name', align: "center",width:160 , fixed: 'left', },
-    ...dateColumns
-  ]
-  const onExport=()=>{
+    },
+    {
+      key: '6',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
+    },
+    {
+      key: '7',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
 
-  }
+    },
+    {
+      key: '8',
+      enterpriseName: '正泰物联技术',
+      code: "440411234567",
+      year: '2023',
+      wtiteTime: '2023-07-01 14:52:25',
+      wtiteLatestTime: '2023-07-01 14:52:25',
+      version: 'V2023-2.6',
+      user: "Admin"
+    },
+  ];
   return (
-    <div style={{ flex: 1, display: "flex", justifyContent: 'center', alignContent: 'center' }}>
-      <Pagecount bgcolor="#eeeff3" pd={0}>
-        <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '8px 16px', marginBottom: 16, border: '1px solid #d7d7d7', borderRadius: 4 }}>
-          <Form
-            form={form}
-            colon={false}
-            layout='inline'
-            initialValues={{
-              report:1
-            }}
-          >
-            <Form.Item label={oneLevel[0]?.levelName}  style={{ marginBottom: 0 }}>
-              <Select style={{ width: 200 }} options={areaOptions} fieldNames={{ label: 'name', value: 'id' }} onChange={changeArea} defaultValue={oneLevel.length > 0 ? 0 : null}></Select>
-            </Form.Item>
-            <Form.Item style={{marginLeft:350}} name="report">
-              <Radio.Group onChange={changeDate}>
-                <Radio value={1}>月报表</Radio>
-                <Radio value={2}>年报表</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item label="时间选择" name="date">
-                <DatePicker picker={datetype===1?'month':'year'}></DatePicker>
-            </Form.Item>
-          </Form>
-        </div>
-        <Tablediv>
-           <div className='title'>
-              <BlueColumn>碳排放数据表</BlueColumn>
-              <ExportExcel/>
-           </div>
-            <Table columns ={columns} onExport={onExport} className='tableclass' scroll={ {x: 'max-content' }}></Table>
-        </Tablediv>
-      </Pagecount>
-    </div>
+    <Titlelayout title="碳排放数据表" layout="flex">
+      <Button type='primary' style={{ position: 'absolute', right: 16, top: 10, zIndex: 101 }}>+碳排放监测计划填报</Button>
+      <Table style={{ marginTop: 16 }} columns={columns} rowKey={(columns) => columns.key} dataSource={dataSource} className='tableclass'
+        pagination={{
+          pageSize: 5,
+        }}
+      ></Table>
+    </Titlelayout>
   )
 }

@@ -1,18 +1,20 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext, useMemo } from 'react'
+import {useTranslation} from 'react-i18next'
 import DeviceContent from './deviceContent'
 import style from './style.module.less'
 // import AllColumns from './columns'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Select, message, Upload, Image } from 'antd';
+import { Button, Form, Input, Row, Col, Select, message, Upload, Image, Typography, Space } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
-import WarningPng from '@imgs/warning.png'
+
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
-export default function gateway() {
+const {Link} = Typography
+export default function Gateway() {
+  const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
   const content =useContext(cusContext)
   const [form] = Form.useForm();
@@ -65,12 +67,12 @@ export default function gateway() {
   if(publish){
     AllColumns.pop()
   }else{
-    AllColumns[3].render = (t, v) => {
+    AllColumns[3].render = (_, v) => {
       return (
-        <div>
-          <span style={{ marginRight: 32, color: '#1890ff', cursor: 'pointer' }} onClick={() => { openEditModal(v) }}>编辑</span>
-          <span style={{ color: 'rgb(244,67,54)', cursor: 'pointer' }} onClick={() => { openDelModal(v) }}>删除</span>
-        </div>
+        <Space size={32}>
+          <Link onClick={() => { openEditModal(v) }}>{t('button:edit')}</Link>
+          <Link type="danger" onClick={() => { openDelModal(v) }}>{t('button:delete')}</Link>
+        </Space>
       )
     }
   }
@@ -116,7 +118,7 @@ export default function gateway() {
     const { success, errMsg } = res
     if (success) {
       message.success('新增网关设备成功')
-      ModalRef.current.onCancel()
+  //    ModalRef.current.onCancel()
       getTableData()
     } else {
       message.error(errMsg)
@@ -300,8 +302,8 @@ export default function gateway() {
     // open,
     AddModal,
     ModalRef,
-    cancelText: '返回',
-    okText: '保存',
+  //  cancelText: '返回',
+  //  okText: '保存',
     onOk,
     onSure,
     name: '新增网关类型',
@@ -316,8 +318,8 @@ export default function gateway() {
   };
 
   let editModal = {
-    cancelText: '返回',
-    okText: '保存',
+ //   cancelText: '返回',
+ //   okText: '保存',
     value: 1,
     // onOk: editOk
   }
@@ -325,8 +327,6 @@ export default function gateway() {
     editform,
   }
   let delModal = {
-    cancelText: '取消',
-    okText: '确认',
     value: 2,
     onOk: delOk,
   }
@@ -335,11 +335,7 @@ export default function gateway() {
   },[])
   const EditModalComp=useMemo(()=>{
     return (
-      <Modal mold='cust' ref={EditModalRef}  title="编辑网关类型" {...editModal}  footer={[
-        <Button onClick={()=>{ EditModalRef.current.onCancel()}}>取消</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={editOk}>保存</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onEditSure}>应用</Button>,
-    ]}>
+      <Modal mold='cust' ref={EditModalRef}  title="编辑网关类型" {...editModal} onOk={editOk}  >
       {/* <BlueColumn name='编辑网关类型' styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <EditModal {...editModalProps}></EditModal>
     </Modal>

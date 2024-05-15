@@ -1,17 +1,22 @@
-import React, {useState, useContext,  useEffect, useMemo} from "react";
+import React, {useState,  useEffect} from "react";
 
-import { Form, Select,  Space, DatePicker, message} from "antd";
+import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
+import {useRequest} from 'ahooks' 
 import styled from "styled-components";
- 
+import {  ExportExcel} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle} from '@redux/systemconfig.js'
-import moment from "moment";
-
-import {SiteManagerDesigner, PCSMonitorRuntime} from '@api/api'
+import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
+import moment from "moment"; 
+import 'moment/locale/zh-cn';
+const { RangePicker } = DatePicker;
+import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
-import CustContext from "@com/content";
+
 
 import Enery from "./enery";
+
+const { FindContainerList } = StorageContainerDesigner  //储能柜
+
 const Cform = styled(Form)`
     background: #fff;
     padding: 7px 16px;
@@ -29,7 +34,6 @@ const Cform = styled(Form)`
  
 
 const { Item } = Form;
-
 export const AreaSelect = ({value, onChange, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
    return (
@@ -41,25 +45,81 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  const {handler, sitehandler, form: forms,  isSite=false, isPcs=false, pcshandler, custview, isEngry=false, initialValue} = useContext(CustContext) || {}
-  const {config={}} = props
-
-
-
+  const isprodction =  process.env.NODE_ENV !== "production"
+  const {config={}, custview=null} = props  
+  const themcolor = useSelector(themeColor)   
+  const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
-  const [form] =forms ? [forms] : Form.useForm()
+
+ 
+  const onColorChange = (e) => {
+       let val = e.target.value;
+       setColor(val)
+       
+       dispatch(getThemeColor({primaryColor: val}))
+    
+     /*  ConfigProvider.config({
+        theme: {
+          primaryColor: val
+        }
+      }) */
+  }
+
+
+  const [form] = Form.useForm()
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)  
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
+   
+  const areaName = levelone?.find(l => l.id == AreaID)?.name;
+  props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
   
   const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState([]) // 
+ 
   const [pcsoptions, setPcsoptions] = useState([])
+  const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
+
+  const getopti = async() => { // 站点选择
+    try {
+     let {success, data, errMsg} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
+     if(success&& Array.isArray(data) && data.length > 0) {
+       setOptions([...data])   
+      let {name: stationName, id} = data[0]
+     form.setFieldValue('stationName', {label:stationName, value: id,})
+     
+     props.setexparams({...form.getFieldsValue(true)})
+ 
+     if(props.config.isTank) getTank();
+     if(props.config.isPcs && !props.config.isTank)  getPcs();
+     }else {
+       setOptions([])    
+      form.setFieldsValue({
+        stationName: {label: null, value: null, id: null}
+       })
+       props.setexparams({...form.getFieldsValue(true)})
+       if(!success) return message.warning(errMsg)
+       if(data?.length < 1) return message.warning("站点暂无数据")
+     }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+ useEffect(() => {
+    if(!props.config?.isSite) return;
+    if(Number.isInteger(AreaID) && Number.isInteger(projectId)) {
+      getopti();
+    }
+   
+
+ }, [props.config?.isSite, AreaID, projectId])
+
   const onChange = (e, option) => {  
       dispatch(setCurrentlevel(option))
       setAreaid(e)
@@ -99,6 +159,16 @@ const dateselect = (
 
 )
 
+const carbonDateY = (
+   <Item label="考核年度" name=""  >
+      <DatePicker   picker="year" />
+   </Item>
+)
+const carbonDateR = (
+  <Item label="" name="">
+     <RangePicker />
+  </Item>
+)
 const viewtype = (<Item name="view" initialValue={1} >
   <Radiogroup
         options={[
@@ -139,123 +209,149 @@ const energytype = (
   </Item>
 )
 
+const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
+  if(!props.config.isTank) return;
+  try {
+    const {areaId, stationName} = form.getFieldsValue();  
+   
+    if(!(Number.isInteger(areaId) && stationName?.value)) return
+     let {success, data, errMsg} = await  FindContainerList(projectId,areaId, stationName?.value )
+     if(success && Array.isArray(data) && data.length > 0) {
+        setTankoptions(data)
+     
+        form.setFieldValue('containerId', {value: data[0].id, label: data[0].name})
+        props.setexparams({...form.getFieldsValue(true)})
+        if(props.config?.isPcs ) getPcs()
+       
+     }else {
+      form.setFieldValue('containerId', {label: null, value: null})
+      props.setexparams({...form.getFieldsValue(true)})   
+      setTankoptions([])
+      if(!success) return message.warning(errMsg || '数据出错')
+      if(data?.length==0) return message.warning("当前站点暂无储能柜数据")
+     }
+  } catch (error) {
+    
+  }
+   
+
+}
+
+
+const getPcs = async () => {
+  try {
+    let {areaId,stationName, containerId={value:0} } = form.getFieldsValue(true)
+   let {success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName?.value, containerId.value) 
+   if(success && Array.isArray(data) && data.length > 0) {
+     setPcsoptions(data)
+     
+      form.setFieldsValue({
+        pcsId: {value: data[0].id, label: data[0].sn}
+       })
+       props.setexparams({...form.getFieldsValue(true)})
+   }else {
+    setPcsoptions([])
+     form.setFieldValue('pcsId', {label: null, value: null})
+     props.setexparams({...form.getFieldsValue(true)})
+    if(!success) return message.warning(errMsg || "数据出错")
+    if(data?.length == 0) return message.warning('当前站点不存在PCS!')
+   }
+  } catch (error) {
+    console.log(error)
+  }
+ 
+}
+
+
 // 表计类型
 const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={1}>
 
 <Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
 </Item>)
 // 站点选择
-  const site = (<Item name="stationName" label="站点选择" >
-              <Select options={options} fieldNames={{label: 'name', value: 'name'}} style={{width: '264px'}} ></Select>  
+  const site = (<Item name="stationName" label="站点"   >
+              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
              </Item>)
+             // 储能柜
+  const tank =  (<Item name="containerId" label="储能柜" >
+  <Select options={tankoptions} onChange={getPcs} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
+</Item>)
 // pcs选择
-  const pcs = (<Item name="pcsId" label="PCS选择" >
+  const pcs = (<Item name="pcsId" label="PCS" >
               <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
              </Item>)
-  const getpcs = async () => {
-    try {
-      let containerId = 0
-      let siteId = options[0]?.id
-     let {success, data} = await PCSMonitorRuntime.queryPCSList(projectId, AreaID, siteId, containerId) 
-     if(success && Array.isArray(data) && data.length > 0) {
-       setPcsoptions(data)
-       form.setFieldsValue({
-        pcsId: data[0].id
-       })
-       pcshandler &&  pcshandler(data[0])
-     }else {
-       setPcsoptions([])
-       form.setFieldsValue({
-        pcsId: null
-       })
-       sitehandler && sitehandler({})
-     }
-    } catch (error) {
-      console.log(error)
-    }
-   
-  }
+
+
+
+
+
+
+
+
   useEffect(() => { 
     if(levelone.length < 1) message.error('当前项目尚未创建园区!')
-  }, [])
+  }, [levelone])
  
- useEffect(() => {
-    if(options?.length > 0 && AreaID && projectId) {
-      getpcs()
-    }
- }, [options, AreaID, projectId])  
+  const onValuesChange = (_, allValues) => {      
+    console.log(allValues)
+    props.setexparams({...allValues})
+  }
 
-
-  const getopti = async() => {
-    try {
-     let {success, data} = await  SiteManagerDesigner.FindSiteList(projectId, AreaID)
-     if(success&& Array.isArray(data) && data.length > 0) {
-       setOptions([...data])     
-       form.setFieldsValue({
-        stationName: data[0].name
-       })
-       sitehandler &&  sitehandler(data[0])
-     }else {
-      setOptions([])    
-      form.setFieldsValue({
-        stationName: ''
-       })
-       sitehandler && sitehandler({})
+  useEffect(() => {  
+     if(!config.gas) {
+       let v = form.getFieldValue('energytype');
+       if(v==3) form.setFieldValue('energytype', 1)
      }
-    } catch (error) {
-      console.log(error)
-    }
-   
-  }
-  useEffect(() => {
-      if(projectId && AreaID && isSite) {
-        getopti()
-      }    
-  
-  }, [projectId, AreaID, isSite])
- 
-  const onValuesChange = (_, allValues) => {   
-    props.setexparams({...allValues, projectId})
-  }
-  useEffect(() => {
-     console.log(form.getFieldsValue())
-     props.setexparams({...form.getFieldsValue(true), projectId})
+     props.setexparams({...form.getFieldsValue(true)})
    
   }, [props.config, projectId])
 
-  useEffect(() => {
-   form.setFieldsValue({
-    ...initialValue,
-   })
-  }, [initialValue])
+ 
   return (  
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
-    onValuesChange={onValuesChange}  
-
+     onValuesChange={onValuesChange}      
     style={{displey: 'flex', justifyContent: 'space-between'}} >
       <Space size={64} split={ <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
-        <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+        <Select style={{ width: "200px" }} onChange={onChange} options={levelone}  fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
         </Select>
      
          </Item>
           }
-        {isSite && site}
-        {isPcs && pcs}
-
+        {props.config?.isSite && site}       
+         {props.config?.isTank && tank}
+         {props.config?.isPcs && pcs}
         {props.config?.isdevsty && deviceStyleNode}  
         {props.config?.isview && viewtype}  
         {props.config?.energytype && energytype}
+        
       </Space>
          {
            props.config?.isdate && dateselect
          }
         {
-           props.custview? props.custview : custview
+           props.config?.custview && custview
         }
-   
+        {
+          props.config?.export ? <ExportExcel /> : null
+        }
+        {
+          props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
+        }
+        {
+          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
+        }
+        <Item noStyle name="projectId" initialValue={projectId}>
+           <Input hidden />
+        </Item>
+     {
+        isprodction &&  (<Input type="color" value={color}
+              style={{width: '80px', marginLeft: 'auto'}}
+              onChange={onColorChange}
+            /> )   
+       } 
     </Cform>
   
     

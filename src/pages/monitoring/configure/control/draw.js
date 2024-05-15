@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
 import {AutoValve} from '@api/api'
+import {CustButtonT} from "@com/useButton"
 const {Paragraph} = Typography
 
 const Inptserach = styled(Input.Search)`
@@ -328,6 +329,9 @@ function Draw({params}, ref) {
      open={open}
      width={1688}
     closable={false}
+    maskClosable={false}
+    contentWrapperStyle={{margingRight: '16px'}}
+
     destroyOnClose
   >
     <Titlelayout title="选中设备">
@@ -346,12 +350,12 @@ function Draw({params}, ref) {
       
     </Titlelayout> 
     <div className="optab">
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
         <Paragraph>选择设备</Paragraph>
-        <Space>
+        <div style={{display: 'flex', justifyContent:"space-between", padding: "0 16px"}}>
           <Button
             type="primary"
-            icon={<LeftOutlined style={{ fontSize: "18px" }} />}
+            icon={<LeftOutlined style={{ fontSize: "18px",marginRight: "8px" }} />}
             onClick={selected}
           ></Button>
           <Button
@@ -359,21 +363,21 @@ function Draw({params}, ref) {
             icon={<RightOutlined style={{ fontSize: "18px" }} />}
             onClick={unselect}
           ></Button>
-        </Space>
+        </div>
       </div>
       
       <div>
-       <Button
-          type="primary"
+       <CustButtonT
           block
-          style={{ marginBottom: "16px" }}
+          style={{ marginBottom: "16px", height: "40px" }}
           onClick={onSave}
-        >
-          保存
-        </Button>
-        <Button block onClick={drawClose}  >
-          关闭
-        </Button>
+          wh="100%"
+          text="save"
+        />
+          
+       
+        <CustButtonT block onClick={drawClose}   text="Cancel" type="default" sylte={{height: '40px'}} wh="100%" />
+      
       </div>
     </div>
     <Titlelayout title="未选中的设备">

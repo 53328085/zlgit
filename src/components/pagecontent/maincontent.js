@@ -56,7 +56,8 @@ const PageContentMain = styled.div`
     flex-direction: column;
     position: relative;
     flex: 1;
-    max-height: 873px;
+     max-height: max-content; // 适配页面缩放
+     // max-height: 873px
   /*   height:  ${props => {
          let {showserach, beTabs, custserach} = props 
          if (showserach || custserach) return beTabs ? '764px' : '805px'
@@ -65,6 +66,11 @@ const PageContentMain = styled.div`
           
     }}; */
     overflow-y: auto;
+    & .flexcol {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
 `
 
 PageContentMain.defaultProps = {

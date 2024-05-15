@@ -1,12 +1,12 @@
 import React, { useEffect, useContext, forwardRef, useImperativeHandle, useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Input, Select, Button, Divider, Row, Col,message } from 'antd'
+import { Input, Select, Space, Divider, Row, Col,message } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
-import {  ExportExcel} from '@com/useButton'
-import {Serach} from '@com/comstyled'
+import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
+import {Serach, Cdivider} from '@com/comstyled'
 function Comp(props, ref) {
     const publish = useSelector(publishState)
     const context = useContext(CustContext)
@@ -17,7 +17,14 @@ function Comp(props, ref) {
     const inpRef = useRef(inpvalue)
     inpRef.current = inpvalue
     const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions = oneLevel.length > 0 ? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]) : []
+    const areaOptions = oneLevel.length > 0 ? useMemo(() => {
+         let isall = oneLevel.find(o => o.id ==0)
+        if (!isall) {
+             [{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]
+        }else {
+            return oneLevel
+        }
+    }, [oneLevel]) : []
 
     const {
         placeholder = '输入控制器编号/安装地址',
@@ -66,7 +73,7 @@ function Comp(props, ref) {
     return (
         <div>
             <Row justify='space-between'  >
-                <Row align='middle'>
+                <Row align='middle' gutter={16}>
                     <Col>
                         <Select
                             showSearch
@@ -90,8 +97,8 @@ function Comp(props, ref) {
                             onChange={changeSelect}
                         />
                     </Col>
-                    <Col style={{ margin: '0 20px' }}>
-                        <Divider type="vertical" dashed style={{ borderColor: ' #d7d7d7', height: 30 }} />
+                    <Col>
+                        <Cdivider    style={{height: 30 }} />
                     </Col>
                     <Col>
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
@@ -102,7 +109,6 @@ function Comp(props, ref) {
                                 placeholder={placeholder}
                                 allowClear
                                 onChange={changeInp}
-                                enterButton="查询"
                                 onSearch = {searchBtn}
                                 />
                       {/*   <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp} /> */}
@@ -112,28 +118,28 @@ function Comp(props, ref) {
                     </Col> */}
                     {
                         isenergy && (<>
-                            <Divider type="vertical" dashed style={{ margin: '0 16px', borderColor: ' #d7d7d7', height: 30 }} />
+                            <Cdivider     style={{ margin: '0 16px',   height: 30 }} />
                             <Col>
                                 <Select style={{ width: 128 }}></Select>
                             </Col>
                         </>)
                     }
                 </Row>
-                <Row>
+                <Space size={16}>
                     {publish ? null : <>
-                        <div className={style.divmgr16} onClick={()=>{
+                        <NewButton onClick={()=>{
                             if(oneLevel.length == 0){
                                 message.warning('请新增园区!')
                                 return 
                               }
                               addopen()
-                        }}>+新增</div>
-                        <div className={style.divmgr16} onClick={modalImport}>批量导入</div>
+                        }} /> 
+                        <AllExportButton onClick={modalImport} /> 
                     </>}
 
-                    {/* <div className={style.divmgr16} onClick={exportTable}>导出</div> */}
+                  
                     <ExportExcel tb={tb}/>
-                </Row>
+                </Space>
             </Row>
             <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />
             <div style={{display:'flex',height:700}}>

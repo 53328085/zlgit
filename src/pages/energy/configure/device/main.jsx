@@ -1,20 +1,18 @@
 import React, {  useState, useRef, useMemo, useEffect} from 'react'
-
-
-import {Button,  message, Form, Input, Typography, Space, Image } from 'antd';
-import style from './style.module.less'
-import { useRequest } from 'ahooks';
+import {Button,  message, Form, Input, Typography, Space, Image } from 'antd'; 
+import {useTranslation} from 'react-i18next'
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import {  DesElectric} from '@api/api.js'
 import Cupload from "@com/useUpload.js" 
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
 import UseTable from '@com/useTable'
- 
+import {CustButton} from '@com/useButton'
 const {Link} = Typography
 export default function Index ({projectId, areaId}) {
+  const {t} = useTranslation(["button"])
   const aref = useRef()
   const dref = useRef()
   const [form] = Form.useForm()
@@ -46,8 +44,8 @@ export default function Index ({projectId, areaId}) {
     {
       dataIndex: "op",
       title: "操作",
-     render: (_,record) => (<Space size={32}><Link underline onClick={()=>settingClick(record.id, record.name)}>配置</Link><Link underline onClick={() =>edit(record)}>编辑</Link>
-        <Link underline type="danger" onClick={()=>deleteRecord(record.id)}>删除</Link>
+     render: (_,record) => (<Space size={32}><Link underline onClick={()=>settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() =>edit(record)}>{t("button:edit")}</Link>
+        <Link underline type="danger" onClick={()=>deleteRecord(record.id)}>{t("button:delete")}</Link>
         </Space>) 
     },
   ]
@@ -284,7 +282,7 @@ export default function Index ({projectId, areaId}) {
       {contextHolder}
       <Titlelayout layout="flex" title={<div style={{display: 'flex',alignItems: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
-          <Button type='primary'  onClick={() => addMain()}>新增重点设备</Button>
+          <CustButton  wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
         </div>}>
            <div style={{flex: 1, paddingTop: "16px"}}> 
            <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>
