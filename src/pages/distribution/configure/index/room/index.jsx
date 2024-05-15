@@ -13,7 +13,7 @@ import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
 import Pagecont from "@com/pagecontent"
 import {Cspin} from "@com/comstyled"
-import {NewButton} from "@com/useButton"
+import {NewButton, CustButtonT, CustLink} from "@com/useButton"
 const {Link} = Typography
 const Info = styled.span`
   font-size: 12px;
@@ -128,7 +128,8 @@ export default function Index() {
       render: (_, record) => (
         <Space size="middle">
           <Link type="primary" underline onClick={() => edit(record)}>{t("button:edit")}</Link>
-          <Link type="danger" underline  onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
+          <CustLink type="danger" text="delete" onClick={() => deleteRecord(record)} />
+         {/*  <Link type="danger" underline  onClick={() => deleteRecord(record)}>{t("button:delete")}</Link> */}
         </Space>
       ),
     },
@@ -338,7 +339,7 @@ export default function Index() {
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
          <Divider style={{margin: "16px 0"}} />
-        { isPublish ? null :<NewButton onClick={()=>showAdd()} />  }
+        { isPublish ? null : <CustButtonT text="new" onClick={()=>showAdd()} src="new" />   }
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
       <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         

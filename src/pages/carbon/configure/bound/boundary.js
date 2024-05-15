@@ -1,7 +1,7 @@
 import { apiSlice } from "@redux/rtkquery"
  
 export const boundarySlice = apiSlice.injectEndpoints({   
-    tagTypes: ['boundary'],     
+    tagTypes: ['boundary','dataconfig'],     
     endpoints: build => ({
         BoundaryTree: build.query({   // 获取碳排边界树
             query: (enterpriseId=0) => ({
@@ -47,6 +47,7 @@ export const boundarySlice = apiSlice.injectEndpoints({
             query: ({enterpriseId,carbonBoundaryId}) => ({
                 url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
                 method: 'GET',
+                providesTags: ['dataconfig']
             }),
         }),
          BoundaryConfig: build.query({ // 查询排放边界配置结构
@@ -70,6 +71,14 @@ export const boundarySlice = apiSlice.injectEndpoints({
                 body: post,
             }),
         }),
+        SetConfigData: build.mutation({ // 碳排放边界数据设置
+            query: ({enterpriseId,carbonBoundaryId,post}) => ({
+                url: `Carbon/CarbonEmissionBoundary/ConfigDataCarbonBoundary?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
+                method: 'POST',
+                body: post,
+                invalidatesTags: ['dataconfig']
+            }),
+        }),
     }),
 
 
@@ -85,4 +94,5 @@ export const {
      useBoundaryConfigQuery,
      useConfigDeviceMutation,
      useApiDataMutation,
+     useSetConfigDataMutation,
     } = boundarySlice

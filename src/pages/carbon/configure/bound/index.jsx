@@ -18,6 +18,7 @@ import {
   useUpdateBoundaryMutation,
   useDeleteBoundaryMutation,
   useBoundaryConfigQuery,
+  useSetConfigDataMutation,
   boundarySlice
 } from "./boundary"
 const CTree = styled(Tree)`
@@ -193,6 +194,7 @@ export default function Index() {
  }
 
 // 配置
+
    const [queryconfig] = boundarySlice.useLazyDataConfigQuery() // 碳排边界数据查询
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
@@ -223,9 +225,43 @@ export default function Index() {
       
        
    }
+
+   // 完成配置
+
+   const [finshconfig, {isLoading: isfinsh}] =useSetConfigDataMutation()
+   
+   const onfinsh = async () => {
+    try {
+      let params = {
+        enterpriseId,
+        carbonBoundaryId:carbonBoundaryId.current,
+        post: []
+      }
+      for(let value of Object.values(saveData.current)) {
+        let {dataSubCategoryVos} = value
+        let keys = dataSubCategoryVos.map(d => ({subCategoryId:d.subCategoryId, dataSource: d.dataSource}))
+        params.post = [...params.post, ...keys]
+
+      }
+      let {success, errMsg} = await finshconfig(params).unwrap()
+      if(success) {
+        message.success('保存成功')
+      }else {
+        message.warning(errMsg || '数据出错')
+      }
+       
+    } catch (error) {
+      console.log(error)
+    }
+     
+
+   }
+
+   // end
+
    const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
    <span>{title}</span>
-   <CustButtonT text="Completeconfiguration" ns="button"   /> 
+   <CustButtonT text="Completeconfiguration" ns="button" loading={isfinsh} onClick={onfinsh} /> 
   </div>), [title,open])
 
 

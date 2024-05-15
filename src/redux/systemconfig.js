@@ -296,7 +296,7 @@ const system = createSlice({
                index == 2 && (state.publishState=data?.state)
                index == 3 && (state.datascreen = data || {})
           //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
-               index == 4 && (state.deviceStyle = Array.isArray(data) ? data : [])
+               index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)

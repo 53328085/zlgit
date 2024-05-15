@@ -235,8 +235,7 @@ export default function Index() {
     } catch (error) {}
   };
 
-  useEffect(() => {
-    console.log(123)
+  useEffect(() => {  
     if (whole.includes(primary)) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin)

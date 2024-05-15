@@ -4,7 +4,7 @@ function useToke() {
    let token =  window.sessionStorage.getItem('useToken')
    return token
 }
-export const apiSlice = createApi({
+export const apiTest= createApi({
     reducerPath: 'NESapi',
     baseQuery: fetchBaseQuery({baseUrl: '/api/V1', prepareHeaders: (headers, api) => {
       console.log(api);
@@ -47,8 +47,8 @@ export const apiSlice = createApi({
             invalidatesTags: ["energy"]
         })
     }),
-
+    overrideExisting: true
 
 })
-console.dir(apiSlice)
-export const {useGetPostsQuery, useGetPostQuery, useParamPostMutation} = apiSlice
+console.dir(apiTest)
+export const {useGetPostsQuery, useGetPostQuery, useParamPostMutation} = apiTest

@@ -47,16 +47,18 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   } */
   const radioChange = (v, index) => {
      console.log(datas)
+     console.log(index)
+
      let newDatas = datas.slice().map(d => ({...d}))
      newDatas[index].dataSource= Number(v);
      setDatas(newDatas)
+     console.log(categoryName);
      saveData[categoryName]=newDatas.slice(1)
   }
   const onOk = () => {
    
     try {
-      let value = form.getFieldValue('cur')
-     
+      let value = form.getFieldValue('cur')      
       let newDatas = datas.slice().map(d => ({...d}))
       newDatas[indexref.current].carbonEmissionFactor = value;
       setDatas(newDatas)
