@@ -1,22 +1,29 @@
-import React, { useState,  useEffect, } from "react";
-
-import { Form, Space, DatePicker, Select} from "antd";
-import moment from 'moment';
+import React, { useState,  useEffect,memo, useRef } from "react";
+import moment from "moment";
 import Pagecount from '@com/pagecontent' 
-import CustContext from "@com/content.js";
- 
+import {useSearchParams, useOutletContext} from 'react-router-dom'
 import {EnergyFlowRuntime} from "@api/api"
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectOneLevel, currProject} from '@redux/systemconfig.js'
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-
+import {CustButton} from '@com/useButton'
 import Ichart  from '@com/useEcharts/Ichart';
+ 
 
 const {queryElectric, queryWater} = EnergyFlowRuntime
  
  
- 
+const Headcom = memo(() => {
+  const {projectName,  logoImage  } = useSelector(currProject) 
+  return (
+    <div style={{height: "64px", display: 'flex', alignItems: "center", backgroundColor: "#036"}}>
+        <img src={logoImage} width={200} height={64} style={{marginRight: '16px'}}></img>
+        <span style={{fontSize: "22px", color: "#fff"}}>{projectName}综合能源服务平台</span>
+    </div>
+  )
+
+})
  
  
  
@@ -24,23 +31,15 @@ const {queryElectric, queryWater} = EnergyFlowRuntime
  
  
 export default function Index() {   
-  const projectId = useSelector(selectProjectId);
+  let {exparams={}} = useOutletContext() || {}
+  
   const levelone = useSelector(selectOneLevel)
   const areaId = levelone.map(a => a.id);
-   
-  const [form] = Form.useForm();
-  const {Item} = Form
- 
+
+  let [searchParams] = useSearchParams()
+  const isfull = searchParams.get('full')  
   
-  const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
-   
-  const [op, setOp] = useState(0)  
-  const picker= ['', 'date', 'month', 'year'][timetype];
-  const [params, setParams] = useState({
-      type: 1,
-      date: moment().format('yyyy-MM-DD'),
-      projectId
-  })
+
  const [options, setOptions] = useState({
   tooltip: {
     trigger: 'item',
@@ -54,37 +53,79 @@ export default function Index() {
       },
       data: [],
       links: [],
-      right: "5%",
       lineStyle: {
         color: 'gradient',
         curveness: 0.5
       },
-
+      left: 16,
+      top: 32,
+      bottom: 32,  
+      right: 200,
+      nodeGap: 8,
+     // layoutIterations: 0,
+    
     }
   ],
   type: 5,
 })
  
   const getData = async () => {
-    
+    let store={};
+    if(isfull) {
+     store = JSON.parse(window.localStorage.getItem('exparams'))
+    }
+    console.log(store)
+    let {type, date, projectId, energytype} =isfull ? store : exparams
+    let params  = {
+      projectId,
+      type,
+      date: getTime(moment(date), type)
+    }
      try {
-      let hander = [queryElectric, queryWater][op]    
+      let hander = ['', queryElectric, queryWater][energytype]    
       let {success, data} = await hander(params, areaId)
       if(success && data.constructor==Object) {
        
          const {link=[] } = data
+        let arr = []
+         let sources = Array.from(new Set([...link.map(i => i.source)]))
+
+      
        
-         let source =  link.map(i => i.source)
-         let target = link.map(i => i.target)
-         let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
-         let links = link.map(l =>({...l, value: parseFloat(l.value)}))
+        sources.forEach(s => {
+            let depth =link.filter(l => l.source == s).map(d =>  d.target)
+            
+             arr = [...arr, s, ...depth]
+
+         })    
+       
+        let datas = Array.from(new Set([...arr])).map(name => ({name}))
+        console.log(datas)
+     /*    let source =  link.map(i => i.source)
+        let target = link.map(i => i.target)
+        let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
+
+        console.log(nodes) */
+
+
+
+
+         let links = link.map(l =>({...l, value: parseFloat(l.value) }))
           setOptions({
             ...options,
             series: [
               {
                 ...options.series[0],
-                data: nodes,
+                data: datas,
                 links,
+                label: {
+                  fontSize: 10
+                },
+                nodeAlign: "left",
+                nodeGap: 12,
+                lineStyle: {
+                  color: "source"
+                }
               }
             ]
           })
@@ -98,93 +139,67 @@ export default function Index() {
   }
  
   useEffect(() => {
+    if(Object.values(exparams).length <4 ) return
+    window.localStorage.setItem('exparams', JSON.stringify(exparams))
     getData()
-  }, [params, op])
- 
- 
- const datechange = (e) => {
-   console.log(e);
- }
- 
- 
- 
-  const timechange = (e) => {
-     setTimetype(e);
-     let date = getTime(moment(), e)
-     setParams({
-      ...params,
-      type: e,
-      date,
-     })
-  }
-  const opchange = (e) => {  
-    
-     setOp(e)     
-  }
-  const CustView = () => {
-   const viewstyle = {
-      display: 'flex',
-       justifyContent: "space-between",
-       flex: 1,
-   //    'marginLeft': '32px',
-   //   'paddingLeft': '32px',
-   //   'borderLeft': '1px dotted #d7d7d7',
-    }
-    return (
-      <div style={viewstyle}>
-       <Item  label="能源类型"   initialValue={0} name="energy">
-        <Select
-        style={{width: '112px'}}
-        onChange={opchange}   
-        value={op}    
-        options={[
-          {
-            label: '电',
-            value: 0,
-          },
-          {
-            label: '水',
-            value: 1,
-          }
-        ]}
-       
-         />
-        </Item>
-      <Space size={16}>
-        <Item label="日期选择" name="type" initialValue={1}>
-           <Select style={{width: '80px'}}   options={[
-            {value: 1, label: '日'},
-            {value: 2, label: '月'},
-            {value: 3, label: '年'},
-           ]}
-           onChange={timechange}
-           ></Select>
-        </Item>
- 
-        <Item nostyle name="date"  initialValue={moment(new Date(), 'YYYY-MM-DD')}>
-          <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{width: '160px'}} />
-        </Item>
-      </Space>
-      </div>
-    )
-  }
- 
-  const propsData = {
-    form,
-    custview: <CustView />,
-    isAreaId: false
-  }
- 
+  }, [exparams])
+  useEffect(()=> {
+     if(isfull) {
+      getData()
+     }
+  }, [isfull])
+   const full = () => {
+      window.open('/directionfull?full=full')
+   }
+   const mapref = useRef()
 
+   useEffect(() => {
+     if(!mapref.current || !isfull) return
+     let map = document.getElementsByClassName('ichartmap')[0];
+     window.onmousewheel = (event) => {
+      
+       let {x, y, deltaY } = event
+       let {left, right, top, bottom} = mapref.current.getClientRects()[0]
+      
+       if(x>left && x<right&& y>top && y<bottom) {
+        console.log(deltaY)
+        if(deltaY > 0) {
+          setOptions({
+            ...options,
+            series: [
+              {
+                ...options.series[0],
+                nodeGap: options.series[0].nodeGap+=2,
+              }
+            ]
+          })
+          
+          mapref.current.style.height = mapref.current.style.height + 20 + 'px'
+        }else {
+          setOptions({
+            ...options,
+            series: [
+              {
+                ...options.series[0],
+                nodeGap: options.series[0].nodeGap<12 ? 10 : options.series[0].nodeGap - 2
+              }
+            ]
+          })
+          mapref.current.style.height = mapref.current.style.height - 20 + 'px'
+        }
+        
+
+       }
+     }
+   }, [options, isfull])
     return (
-      <CustContext.Provider value={propsData}>
-      <Pagecount showserach={true} pd="0px">   
-      <Titlelayout title="能源流向" layout="flex">
-          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}}>
+      <Pagecount  pd="0px">   
+      <Titlelayout title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column">
+          {isfull && <Headcom />}
+          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}} ref={mapref}>
                <Ichart  custoption={options}   />
           </div>
        </Titlelayout>
       </Pagecount>
-      </CustContext.Provider>
     )
 }

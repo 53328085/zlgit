@@ -1,8 +1,8 @@
 import React, {useState, useRef, useEffect, useCallback, useImperativeHandle, useMemo, } from 'react'
 import {Form, Space, Input, Button, Select, message} from 'antd'
 import styled from 'styled-components'
-import {useLatest } from 'ahooks'
-import {flushSync} from 'react-dom'
+import {useSelector} from 'react-redux'
+import { publishState } from '@redux/systemconfig.js' 
 // import Custmodl from '@com/useModal'
 import {AreaSetting} from '@api/api.js'
 import UserTable from '@com/useTable'
@@ -34,8 +34,8 @@ const Boxitem = styled.div`
 const {QueryAreaLevels, InsertAreaLevel, DeleteAreaLevel, UpdateAreaLevel, QueryAreaLevelFields, InsertAreaLevelField, DeleteAreaLevelField} = AreaSetting 
 const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
   const [tableData, setTableData] = useState([])
-  const nfref = useRef()
-  const fref = useRef()
+ 
+ 
   const [ffrom]= Form.useForm() 
  const onCancel = () => {
    ref.current.onCancel()
@@ -141,8 +141,8 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
  
  })
 
-  function Region({projectId, CModal, Add}) {
- 
+function Region({projectId, CModal, Add}) {
+ const ispublish = useSelector(publishState)
  const mref = useRef()
  const dref = useRef()
  const emref = useRef()
@@ -236,9 +236,7 @@ const queryarealevels = async () => {
   }
 
   const editArea = async () => {
-    console.log(curlevel)
-    //let {id, level} = curlevel
-    console.log(editlevel.current)
+   
    try {
       let values = await modalform.validateFields().then(res => res).catch(e => {
         console.log(e)
@@ -336,22 +334,22 @@ const closeArea = () => {
         >
          {
            datas?.map((d, index)=> (
-            <Boxitem style={{paddingTop: 0}}>
+            <Boxitem style={{paddingTop: 0}} key={d.id}>
                <span>{numberFormat(d.level)}级区域</span>
                <div className='iptbox'>                
                    <Item name={d.id.toString() + d.level} label="" initialValue={d.name}>
                    <Input  disabled/>
                    </Item>
-                   <Button type='primary' ghost onClick={() => edit(d)}>修改区域</Button>
-                   <Button type="primary" danger ghost disabled={index != datas?.length - 1} onClick={() => ondel(d)}>删除</Button>
-                   <Button type='primary' ghost onClick={() => editfiled(d)}>编辑字段</Button>
+                   <Button type='primary' ghost onClick={() => edit(d)} disabled={ispublish}>修改区域</Button>
+                   <Button type="primary" danger ghost disabled={index != datas?.length - 1 || ispublish} onClick={() => ondel(d)}>删除</Button>
+                   <Button type='primary' ghost onClick={() => editfiled(d)} disabled={ispublish}>编辑字段</Button>
               </div>
             </Boxitem>
            ))
          }
          <Boxitem style={{borderBottom: 'none'}}>
              <div className='delbox'>
-             <Button type="primary" onClick={add}>+新增下级区域</Button>
+             <Button type="primary" onClick={add} disabled={ispublish}>+新增下级区域</Button>
            {/*   <Button type="primary" >保存</Button> */}
              </div>
           </Boxitem>

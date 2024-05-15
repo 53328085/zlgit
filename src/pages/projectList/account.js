@@ -2,9 +2,9 @@ import React, {useState, useRef} from 'react'
 import {useAntdTable} from 'ahooks'
 import {flushSync} from 'react-dom'
 import {Typography, Space, Form, Input, Divider, message} from 'antd'
-import {WarningFilled} from '@ant-design/icons'
+ 
 import styled from 'styled-components'
-import moment, { duration } from 'moment';
+import moment from 'moment';
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
@@ -146,6 +146,8 @@ const showModl = () => {
    alike: ''
  }
  const getTableData = ({current, pageSize}, formData) => {  
+    let {alike} = formData
+    formData.alike = encodeURIComponent(alike)
     params = Object.assign({}, params, {pageNum: current, pageSize}, formData)
     return  QueryOperationManager(params).then(res => {
       let {success, data: {data, total}} = res 
@@ -175,8 +177,7 @@ const showModl = () => {
  const {submit} = search;
  const onOk = async () => {
   try {
-     let data = await mref.current.onGetvalue();
-     console.log(data)
+     let data = await mref.current.onGetvalue();    
     delete data.repwd
     let handler = isAdd ? AddOperationManager : Update;
     let content = isAdd ? '新增成功' : '编辑成功';
@@ -197,11 +198,13 @@ const showModl = () => {
     console.log(error)
   } 
 }
-
+  const normalize = (v) => {
+     return v.trim()
+  }
   return (
   <Mainbox> 
         <Form form={form} layout="inline" initialValues={{alike: ''}}>
-            <Form.Item name="alike" label="账号查询">
+            <Form.Item name="alike" label="账号查询" normalize={normalize}>
                 <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
             <Form.Item>
@@ -221,8 +224,7 @@ const showModl = () => {
          
      </CModal>
      <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>
-     <p style={{paddingLeft: '32px',color:"#333", display: 'flex', alignItems: 'center', fontSize: '18px'}}>
-        <WarningFilled style={{color: '#ff4d4f', fontSize: '38px', marginRight: '32px'}}/>是否确认删除 <Text type="danger">{Record.name}</Text>账号?</p>
+         否确认删除 <Text type="danger">{Record.name}</Text>账号?
      </CModal>
    
      </Mainbox>

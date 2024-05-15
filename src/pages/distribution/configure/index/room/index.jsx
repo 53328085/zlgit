@@ -1,16 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Select, Button, Table, Space, Form, Input, message, Spin } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
-import style from './style.module.less'
-import dashed from '@imgs/dashed.png'
+import { Button, Space, Form, Input, message, Spin, Divider, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons' 
+import {useOutletContext} from 'react-router-dom'
 import styled from 'styled-components';
- 
-import { AreaSetting, distributionRoom } from '@api/api.js'
-import { useRequest } from "ahooks";
+import UseTable from '@com/useTable'
+import { distributionRoom } from '@api/api.js'
+import { useAntdTable } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
+import {selectProjectId,   publishState, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import Titlelayout from '@com/titlelayout'
 import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
+import Pagecont from "@com/pagecontent"
+import {Cspin} from "@com/comstyled"
+const {Link} = Typography
 const Info = styled.span`
   font-size: 12px;
   color: rgba(0,0,0,0.85);
@@ -24,7 +27,9 @@ const Imgbox = styled.div`
  
 `
 export default function Index() {
+  const {setShowroom} = useOutletContext()
   const isPublish = useSelector(publishState)
+  const areaId = useSelector(selectOneLevelDefaultId)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
@@ -121,32 +126,44 @@ export default function Index() {
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          <span className={style.editText} onClick={() => edit(record)}>编辑</span>
-          <span className={style.deleteText} onClick={() => deleteRecord(record)}>删除</span>
+          <Link type="primary" underline onClick={() => edit(record)}>编辑</Link>
+          <Link type="danger" underline  onClick={() => deleteRecord(record)}>删除</Link>
         </Space>
       ),
     },
   ];
 
-  const [dataSource, setDataSource] = useState([])
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-
-  const handleChange = (values) => {
-    setPageNum(1)
-    setAreaId(values)
-  }
-
-  const [pageNum, setPageNum] = useState(1)
-  const [total, setTotal] = useState(0)
-  const pageSize = 10
-  const getRoomData = () => {
-    return queryPageRoom( projectId, areaId, pageNum, pageSize).then(res => {
+  const getRoomData = ({current, pageSize}) => {
+    if(!areaId) {
+      return new Promise((resolve) => {
+        resolve({
+          list: [],
+          total: 0
+        })
+      })
+    }
+    return queryPageRoom( projectId, areaId, current, pageSize).then(res => {
+      if(!projectId || !areaId) {
+        return new Promise((resolve) => {
+          resolve({
+            list: [],
+            total: 0
+          })
+        })
+      }
       if(res.success){
-        setDataSource(res.data)
-        setTotal(res.total)
+        if(Array.isArray(res.data) && res?.data?.length > 0) {
+          return {
+            list: res.data,
+            total: res.total
+          }
+        }else {
+          return {
+            list: [],
+            total: 0
+          }
+        }
+    
       }else{
         messageApi.open({
           type:'error',
@@ -156,10 +173,11 @@ export default function Index() {
     })
   }
 
-  const { run : queryRoom } = useRequest(getRoomData,{
-    manual: true,
+  const {tableProps, refresh:queryRoom} = useAntdTable(getRoomData,{
+     defaultPageSize: 14,
+     refreshDeps: [areaId]
   })
-
+  
   const { TextArea } = Input;
   const [addModal, setAddModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('')
@@ -181,7 +199,7 @@ export default function Index() {
     try {
       const values = await form.validateFields();
       console.log(values)
-      let params = {
+      let post = {
         projectId: projectId,
         areaId: areaId,
         name: values.name,
@@ -194,45 +212,49 @@ export default function Index() {
       }
       if(modalTitle == '新增配电房'){
         setLoading(true)
-        addRoom(params).then(res => {
-          if(res.success){
+        try {
+          let {success} = await addRoom(post)
+          setLoading(false)
+          if(success) {
             messageApi.open({
               type:'success',
               content:'配电房新增成功！',
-            })
-            form.resetFields()
+            })   
+          
             queryRoom()
-          }else{
+          }else {
             messageApi.open({
               type:'error',
               content:res.errMsg || '新增失败,请重试！',
             })
           }
+        } catch (error) {
           setLoading(false)
-        }).catch(e => {
-          setLoading(false)
-        })
-      }else if(modalTitle == '编辑配电房'){
-        params.id = editId
-        setLoading(true)
-        updateRoom(params).then(res => {
-          if(res.success){
-            messageApi.open({
-              type:'success',
-              content:'配电房编辑成功！',
-            })
-            ref.current.onCancel();
-            queryRoom()
-          }else{
-            messageApi.open({
-              type:'error',
-              content:res.errMsg || '配电房编辑失败,请重试！',
-            })
-          }
-          setLoading(false)
-        }).catch(e => {
-          setLoading(false)
-        })
+        }
+         
+        }else if(modalTitle == '编辑配电房'){       
+          try {
+            setLoading(true)
+            params.id = editId
+            let {success} = updateRoom(params)
+            setLoading(false)
+            if(success){
+              messageApi.open({
+                type:'success',
+                content:'配电房编辑成功！',
+              })
+              ref.current.onCancel();
+              queryRoom()
+            }else{
+              messageApi.open({
+                type:'error',
+                content:res.errMsg || '配电房编辑失败,请重试！',
+              })
+            }
+           
+          } catch (error) {
+            setLoading(false)
+          }        
       }
       // form.resetFields()
        //  setAddModal(false)
@@ -240,10 +262,7 @@ export default function Index() {
       console.log(errorInfo)
     }
   }
-  const handleCancel = () => {
-    console.log(111)
-    setAddModal(false)
-  }
+ 
   const [spinning, setSpinning] = useState(false)
   const [editId, setEditId] = useState()
   const edit = async (record) => {
@@ -268,66 +287,39 @@ export default function Index() {
    
   }
 
-  const [deleteModal, setDeleteModal] = useState(false)
-  const deleteOk = () => {
-    deleteRoom(projectId, deleteId).then(res=>{
-      if(res.success){
+  const delref = useRef()
+  const deleteOk = async () => {
+    try {
+      let {success} = await deleteRoom(projectId, deleteId)
+      if(success) {
         messageApi.open({
           type:'success',
           content:'配电房删除成功！',
         })
-        if(dataSource.length == 1 && pageNum > 1){
-          setPageNum(pageNum - 1)
-        }else{
-          queryRoom()
-        }
-        // queryRoom()
-      }else{
+
+      }else {
         messageApi.open({
           type:'error',
           content:res.errMsg || '删除失败,请重试！',
         })
       }
-    })
-    setDeleteModal(false)
+      delref.current.onCancel()
+      queryRoom()
+    } catch (error) {
+       console.log(error)
+    }
+   
   }
   const handleDelete = () => {
-    setDeleteModal(false)
+     delref.current.onCancel()
   }
   const [deleteId, setDeleteId] = useState()
   const deleteRecord = (record) => {
+    delref.current.onOpen()
     setDeleteId(record.id)
-    setDeleteModal(true)
+    
   }
-  // 只有当 areaId, pageNum 改变后才会重新创建订阅
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
-      message.error('当前项目尚未配置园区!')
-      return;
-    }else{
-      if(areaId == 0 || !areaId){
-        return
-      }else{
-        queryRoom()
-      }
-    }
-  },[areaId, pageNum])
-
-  //分页
-  const paginationProps = {
-    current: pageNum, //当前页码
-    pageSize, // 每页数据条数
-    // showTotal: () => (
-    //   <span>总共{total}项</span>
-    // ),
-    total, // 总条数
-    onChange: page => handlePageChange(page), //改变页码的函数
-    hideOnSinglePage: false,
-    showSizeChanger: false,
-  }
-  const handlePageChange = (page) => {
-    setPageNum(page)
-  }
+ 
   const checkLog = (_, value) => {   
     if (!!value) {
       return Promise.resolve();
@@ -335,34 +327,20 @@ export default function Index() {
     return Promise.reject(new Error('配电房图片必须上传'));
    
  }
+ useEffect(() => {
+  setShowroom(false)
+ }, [])
   return (
- <Spin tip="图片数据加载中 ……" spinning={spinning}>
-    <div>
+ <Cspin tip="图片数据加载中 ……" spinning={spinning}>
+    <Pagecont showserach={false} custserach pd="0px" >
       {contextHolder}
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={handleChange}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div>
-      <div className={style.mainContent}>
-        <div className={style.contentTitle}>配电房</div>
-        <div className={style.line}>
-          <img className={style.lineImg} src={dashed}></img>
-        </div>
-        { isPublish ? null :<Button type="primary" icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
-      <Table style={{marginTop:'16px'}} columns={columns} dataSource={dataSource} rowKey='id' bordered pagination={paginationProps} size='large'></Table>
-      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref}>
+      <Titlelayout title="配电房"   layout="flex" dr="column">
+         <Divider style={{margin: "16px 0"}} />
+        { isPublish ? null :<Button type="primary" style={{width: 96}}    icon={<PlusOutlined />} onClick={()=>showAdd()}>新增</Button> }
+      <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
+      <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         
-        <div className={style.addBody}>
+        <div>
           <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>
             <Item label='配电房名称' name='name' rules={[{required:true, message:'请输入配电房名称'}]}>
               <Input style={{width:'400px'}}></Input>
@@ -398,14 +376,15 @@ export default function Index() {
           </Form>
         </div>
       </Custmodal>
-      <Custmodal title="删除提示" mold="cust" type="warn" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'}>
+      <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512} cancelText={'取消'} centered={true} closable={false}   okText={'确认'} key="del">
         
        
           是否确认删除配电房？ 
          
       </Custmodal>
-      </div>
-    </div>
-    </Spin>
+     
+      </Titlelayout>
+    </Pagecont>
+    </Cspin>
   )
 }

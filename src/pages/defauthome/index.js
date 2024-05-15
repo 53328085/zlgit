@@ -3,7 +3,7 @@ import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
-import {selectProjectId,getCurrProjectInfo} from '@redux/systemconfig.js'
+import {selectProjectId,getCurrProjectInfo, getWebsiteState} from '@redux/systemconfig.js'
 import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 
@@ -94,7 +94,10 @@ export default function Index() {
        
   }
    useEffect(() => {
-     if(projectId) getData()
+     if(projectId) {
+      getData()
+     // dispatch(getWebsiteState(projectId))
+    }
    }, [projectId])
   //RGL布局
   const [defaultProps, setDefaultProps]  = useState({

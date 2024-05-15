@@ -1,73 +1,44 @@
 import React, { useEffect, useMemo, useState,useRef } from 'react'
 import styled from 'styled-components'
-import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message } from 'antd'
+ 
+import { Select, Divider, Input, Button, message, Form, Space, Typography} from 'antd'
 import { useSelector } from 'react-redux'
 import Table from '@com/useTable'
 import {operationDesigin} from '@api/api'
 import {SetLine} from './addcomp'
 import commonstyle from './commonstyle.module.less'
 import {SetPosition} from './position'
-import Modal from '@com/useModal'
-import WarningPng from '@imgs/warning.png'
+import Modal from '@com/useModal' 
 import {publishState} from '@redux/systemconfig'
 import CustContext from '@com/content.js'
-import { useLatest } from 'ahooks';
+import { useLatest, useAntdTable } from 'ahooks';
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
+import {Serach} from '@com/comstyled'
+import Mask from "@com/mask"
+import { CustButton } from '@com/useButton'
+const {Item} = Form
+const {Link} = Typography
 const ContainerDiv = styled.div`
-border: 1px solid #d7d7d7;
-background-color: #fff;
-height: 100%;
-padding: 16px;
-position: relative;
-overflow: hidden;
-.pdtop8{
-  padding-top: 8px;
-}
-.pdbottom12{
-  padding-bottom: 12px;
-}
-.searchbtn:hover,.searchbtn:focus{
-  border-color: #d9d9d9 !important;
-  color: #000;
-}
-.flexcss{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.btncss{
-   width: 96px;
-   height: 32px;
-   background-color: #237ae4;
-   border-radius: 2px;
-   color: #fff;
-   text-align: center;
-   line-height: 32px;
-   cursor: pointer;
-   &:hover{
-    opacity: .7;
-   }
-}
+ display: grid;
+ grid-template-rows: 32px 1px 1fr;
+ row-gap: 32px;
+ padding-top: 16px;
+ flex: 1;
 `
 export default function Index() {
-  const [tableParams,setTableParams]=useState({
-    current:1,
-    pageSize:10
-  }) 
+  const [form] = Form.useForm() 
   const publish =useSelector(publishState)
   const onelevel = useSelector(state => state.system.onelevel);
   const projectId = useSelector(state => state.system.menus.projectId)
-  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName+'(全部)', id: 0 }, ...onelevel]), [onelevel]) : []
-  const [alike,setAlike] =useState()
-  const [areaId,setAreaId] = useState(onelevel.length>0?0:null)
-  const [tableData,setTableData] = useState()
+  const options = onelevel.length > 0 ? useMemo(() => ([{ name: onelevel[0]?.levelName+'(全部)', id: 0 }, ...onelevel]), [onelevel]) : []  
   const setlineRef =useRef()
   const editRef = useRef()
   const delModalRef=useRef()
   let editRowData;
   let delId;
-  let inpval =useRef();
-  inpval.current=alike
+ 
+ 
   const lng = useLatest('0,0')
   let columns = [
     
@@ -80,10 +51,10 @@ export default function Index() {
     {title:'备注',dataIndex:'remark',render(text){return text?text:'/'}},
     {title:'操作',dataIndex:'',width:180,render:(text)=>{
     return(
-      <div style={{display:'flex',justifyContent:'space-around'}}>
-       <span style={{textDecoration:'underline',color:'#237ae4',cursor:'pointer'}} onClick={()=>{editPosition(text)}}>编辑坐标</span>
-       <span style={{textDecoration:'underline',color:'#ff0000',cursor:'pointer'}} onClick={()=>{delId=text.sn;delModalRef.current.onOpen()}}>删除</span>
-      </div>
+      <Space size={32}>
+       <Link underline onClick={()=>{editPosition(text)}}>编辑坐标</Link>
+       <Link type="danger" underline onClick={()=>{delId=text.sn;delModalRef.current.onOpen()}}>删除</Link>
+      </Space>
    )  
     }}
   ]
@@ -92,42 +63,48 @@ export default function Index() {
   if(publish){
     columns.pop()
   }
+  const [areaId, setAreaid] =useState(0)
+  const [targ, setTarg] = useState(false)
   //获取设备
-  const getQueryPageDevice=async (pageNum=0)=>{
-    console.log(inpval.current)
+  const getQueryPageDevice=({current, pageSize}, formData)=>{
+    let {areaId: id, alike} = formData
+    setAreaid(id)
     let params={
       projectId,
-      pageNum:pageNum?pageNum:tableParams.current,
-      pageSize:tableParams.pageSize,
-      areaId,
-      alike:inpval.current
+      pageNum: current,
+      pageSize,
+      areaId: id,
+      alike,
     } 
-  const res =   await operationDesigin.QueryPageDevice(params)
-  if(res.success){
-    setTableParams({
-      current:res.pageNum,
-      pageSize:res.pageSize,
-      total:res.total
-    })
-   if(res.data){
-    setTableData([...res.data])
- 
-   }else{
-    setTableData([])
-   }
+  return operationDesigin.QueryPageDevice(params).then(res => {
+    let {success, total, data} = res
+  if(success){
+     return {
+       list: Array.isArray(data) ? data : [],
+       total
+     }
    
-  }else{
-    message.error(res.errMsg)
-  }
-  }
- 
+   }else{
+    return {
+      list:   [],
+      total: 0
+    }
+    }
+  })
+}
+const {tableProps, refresh, search} = useAntdTable(getQueryPageDevice, {
+  form,
+  defaultPageSize: 14,
+})
+const {submit} = search
    //打开新增
   const addDevice=()=>{
     if(onelevel.length == 0){
       message.warning('请新增园区!')
       return 
     }
-    setlineRef.current.setOpen(true)
+  //  setlineRef.current.setOpen(true)
+    setTarg(true)
     setlineRef.current.getQueryDeviceList()
   }
   //打开编辑
@@ -152,23 +129,14 @@ export default function Index() {
     const res = await operationDesigin.ConfigureOneDevice(param)
     if(res.success){
       message.success('编辑成功')
-      getQueryPageDevice()
+      refresh()
       editRef.current.onCancel()
     }else{
       message.error(res.errMsg)
     }
   }
-  //input
-  const changInp=(e)=>{
-    console.log(e.target.value)
-    inpval.current=e.target.value
-
-  }
-  //搜索
-  const search = () => {
-    setAlike( inpval.current)
-    getQueryPageDevice(1)
-   }
+  
+  
    //确认删除
    const delOk =async ()=>{
        const res =  await operationDesigin.RemoveOne({
@@ -178,7 +146,7 @@ export default function Index() {
        if(res.success){
         delModalRef.current.onCancel()
         message.success('删除成功')
-        getQueryPageDevice(1)
+        refresh()
 
        }else{
         message.error(res.errMsg)
@@ -186,61 +154,61 @@ export default function Index() {
       
    }
    
-  useEffect(()=>{ 
-    console.log(areaId)
-    if(typeof areaId==='number'){
-      getQueryPageDevice(1)
-    }
-    
-  },[areaId])
+  
   return (
-    <ContainerDiv>
-      <BlueColumn name="设备管理" />
-      <div className='flexcss'>
-        <div className='flexcss'>
+    <Pagecont showserach={false}   pd="0px" >      
+      <Titlelayout title="设备管理" layout="flex" dr="column">
+       <ContainerDiv>
+        <Form form={form} layout='line' 
+        initialValues={{
+          areaId: 0,
+          alike: ''
+        }}
+        style={{display: 'flex', justifyContent: "space-between"}}
+        >
+          <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+          <Item name="areaId" style={{marginBottom: 0}} >
           <Select
             options={options}
             fieldNames={{ label: 'name', value: 'id' }}
-            style={{ width: 264 }}
-            className="pdtop8 pdbottom12"
-            defaultValue={onelevel.length > 0 ? 0 : null}
-            onChange={(v) => { setAreaId(v); console.log(inpval.current); setAlike(inpval.current) }}
-            value={areaId}
+            style={{ width: 264 }}           
+            onChange={submit}
+           
           ></Select>
-          <Divider style={{ margin: '0 24px', borderColor: '#d7d7d7',height:32 }} dashed type="vertical"></Divider>
-          <div>
-            <span style={{ paddingRight: 16, }} >设备查询</span>
-            <Input
-              style={{
-                width: 290,
-                margin: '16px 0'
-              }}
+          </Item>
+       
+            <Item label="设备查询" name="alike" style={{marginBottom: 0}}>
+            
+            <Serach
               placeholder="输入设备编号/安装地址"
-              onChange={changInp}
-              // onBlur={(v)=>{setAlike(v.target.value)}}
-              defaultValue={alike}
+              allowClear
+              enterButton="查询"
+              onSearch = {submit}
             />
-            <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-          </div>
+            </Item>
+           
+            </Space>
+            {publish ? null : <CustButton onClick={addDevice}>
+              新增
+            </CustButton>}
+        </Form>
 
-
-        </div>
-        {publish ? null : <div className='btncss' onClick={addDevice}>
-          新增
-        </div>}
-      </div>
-      <Divider style={{ margin: '12px 0 24px 0',borderColor: '#d7d7d7' }} dashed></Divider>
-      <div style={{height:673,display:'flex'}}> 
-      <Table columns={columns} dataSource={tableData} pagination={tableParams} onChange={(page)=>{getQueryPageDevice(page.current)}}></Table>
-      </div>
+       
+     
+      <Divider style={{ margin: 0,borderColor: '#d7d7d7' }} dashed></Divider>
+    
+      <Table columns={columns}  {...tableProps}></Table>
+     
       
-      <SetLine addDevice={addDevice} ref={setlineRef} areaId={areaId} getQueryPageDevice={getQueryPageDevice}/>
+     <Mask task={targ}><SetLine addDevice={addDevice} ref={setlineRef} areaId={areaId} getQueryPageDevice={refresh} setTarg={setTarg}/></Mask>
       <CustContext.Provider value={{lngLat:lng}}>
       <SetPosition positionRef={editRef} savePosition={saveEditPosition} />
       </CustContext.Provider>
       
       <DeleteModal delModalRef={delModalRef} name="删除提示" content="是否确认删除设备?" onOk={delOk}/>
-    </ContainerDiv>
+      </ContainerDiv>
+      </Titlelayout>
+    </Pagecont>
   )
 }
 

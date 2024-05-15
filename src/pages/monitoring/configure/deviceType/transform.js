@@ -126,15 +126,18 @@ export default function Electric() {
       title: '设备型号',
       dataIndex: 'category',
       align:'center',
+      key: 'category'
     },
     {
       title: '设备厂家',
       dataIndex: 'manufacturer',
       align:'center',
+      key: 'manufacturer'
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
+      key: 'imageBase64',
       align:'center',
       render: (text) => {
         return (<Image src={text} width={64} height={53}></Image>)

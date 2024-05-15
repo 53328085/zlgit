@@ -211,6 +211,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   }
 
   const  CascaderSct = () => {
+   // let levels =oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
+   // console.log(levels)
     const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
      // level = 2 显示前一级， = 3 显示前两两级, 依次类推
    

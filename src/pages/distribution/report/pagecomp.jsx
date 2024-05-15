@@ -31,20 +31,9 @@ const DesItem = styled(Descriptions)`
 }
 }
 `
-const Trans = styled(DesItem)`
-  && {
-    .ant-descriptions-item-label {
-       width: 200px
-    }
-  }
-`
-
- const Cont = styled.div`
-   && {
-     
-   }
  
- `
+
+ 
 const Transformer = ({data}) => {  // 1
  return (
   <DesItem bordered size='small' column={1} >

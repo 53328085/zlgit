@@ -116,7 +116,7 @@ export default function Gateway() {
       render: (text, record, index) => {
         return (
           <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            { record.download == 0 && <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>}
+         {/*    { record.download == 0 && <span style={optcss} onClick={() => { onRestart(record) }}>重启</span>} */}
             { record.download == 0 && <span style={optcss} onClick={() => { onKeyParam(record) }}>参数下发</span>}
             <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
             <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
@@ -143,10 +143,14 @@ export default function Gateway() {
       key: 'erros'
     },
   ]
+  const [restsn, setRestsn] = useState(null)
   //打开参数下发弹窗
   const onKeyParam = (record) => {
     setGatewaySn(record.sn)
     setGatewayCnt(record.cnt)
+    startsn = record.sn
+    setRestsn(record.sn)
+    startsnref.current = record.sn
     keyParamRef?.current?.onOpen()
   }
   //打开重启网关弹窗
@@ -423,25 +427,28 @@ export default function Gateway() {
   })
 
   const startOk = async () => {
-    modalReStartRef?.current?.onCancel()
+  //  modalReStartRef?.current?.onCancel()
     setspinLoading('正在重启网关……')
     setSpinShow(true)
-    const { data, success, errMsg } = await StartReboot(startsn)
+    const { data, success, errMsg } = await StartReboot(restsn)
     if (success) {
       if(data.code===1){
         setSpinShow(false)
        
         setgatewayRes(data.message)
         setisSuccess(false)
-        modalReStartResRef?.current?.onOpen()
+         message.warning("网关下发失败")
+      modalReStartResRef?.current?.onOpen()
+       seterrorList(data?.message)
       }
       else{
         // polloption.run()
         setSpinShow(false)
         
-        setgatewayRes("操作成功")
+      setgatewayRes("操作成功")
         setisSuccess(true)
-        modalReStartResRef?.current?.onOpen()
+       seterrorList(data?.message)
+       modalReStartResRef?.current?.onOpen()
        
       }
       
@@ -449,61 +456,7 @@ export default function Gateway() {
       message.error(errMsg)
     }
   }
-  //原确认重启(废弃)
-  const startOk1 = async () => {
-    modalReStartRef?.current?.onCancel()
-    setspinLoading('正在重启网关……')
-    setSpinShow(true)
-    const res = await StartReboot(startsn)
-    if (res.success) {
-      let data = JSON.parse(res.data)
-      if (data.code == 0) {
-        let list = []
-        let state = true
-        for (let i = 0; i < 10; i++) {
-          setTimeout(() => {
-            if (state) {
-              State(startsn).then(result => {
-                list.push(i)
-                if (result.success) {
-                  if (JSON.parse(result.data).code == 0) {
-                    state = false
-                    setisSuccess(true)
-                    modalReStartResRef?.current?.onOpen()
-                    setgatewayRes(JSON.parse(result.data).message)
-                    //message.success(JSON.parse(result.data).message)
-                    setSpinShow(false)
-                  }
-                } else {
-                  state = false
-                  setisSuccess(false)
-                  setSpinShow(false)
-                  // message.error('重启失败！')
-                  modalReStartResRef?.current?.onOpen()
-                  setgatewayRes(JSON.parse(result.data).message)
-                }
-                if (list.length == 10 && result.data.code == 1) {
-                  // message.error('任务超时，请重试！')
-                  modalReStartResRef?.current?.onOpen()
-                  setgatewayRes('任务超时，请重试！')
-                  setisSuccess(false)
-                  setSpinShow(false)
-                }
-              })
-            }
-          }, 3000 * i)
-        }
-      } else {
-        setSpinShow(false)
-        modalReStartResRef?.current?.onOpen()
-        setgatewayRes(data.message)
-        setisSuccess(false)
-      }
-    } else {
-      message.error(res.errMsg)
-    }
-  }
-
+ 
   const operateOk = () => {
     modalReStartResRef?.current?.onCancel()
   }
@@ -528,9 +481,10 @@ export default function Gateway() {
               setisSuccess(true)
               modalReStartResRef?.current?.onOpen()
               setgatewayRes('网关参数下发成功！')
-              setgatewayResTips('注意：重启网关后参数才生效')
+            //  setgatewayResTips('注意：重启网关后参数才生效')
               setSpinShow(false)
               resolve('break')
+              seterrorList(res.errMsg)
             }
           } else {
 
@@ -550,16 +504,20 @@ export default function Gateway() {
     setspinLoading("网关参数正在下发，请稍候")
     setSpinShow(true)
     let result = await  StartDownloadTask(projectId, gatewaySn) 
-    console.log(result)
+   
       if (result.success) {
         while (countnum < 15) {
           const resp = await poll()
           console.log(resp)
-          if (resp == 'break') break;
+          if (resp == 'break')  {
+            startOk();
+            break;
+          } 
           if (resp === 15) {
             setisSuccess(false)
-            modalReStartResRef?.current?.onOpen()
-            setgatewayRes('网关参数下发失败！')
+          modalReStartResRef?.current?.onOpen()
+          setgatewayRes('网关参数下发失败！')
+          
             setSpinShow(false)
           }
         }
@@ -568,93 +526,15 @@ export default function Gateway() {
         setisSuccess(false)
         setspinLoading('')
         setSpinShow(false)
-        modalReStartResRef?.current?.onOpen()
-        setgatewayRes(res.errMsg)
+      
+     modalReStartResRef?.current?.onOpen()
+       setgatewayRes(result.errMsg)
+      seterrorList(result.errMsg)
       }
        
     } catch (error) {
       
     }
-  }
-  //原参数下发(废弃)
-  const downloadOk1 = () => {
-    keyParamRef?.current?.onCancel()
-    let rebootNum = parseInt(gatewayCnt % 5 == 0 ? gatewayCnt / 5 : gatewayCnt / 5 < 1 ? 1 : gatewayCnt / 5 + 1)
-    let rebootTime = rebootNum < 2 ? 10 : rebootNum * 5
-    setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
-    setSpinShow(true)
-    for (let a = 0; a < (rebootNum < 2 ? 10 : rebootNum * 5); a++) {
-      setTimeout(() => {
-        if (rebootTime > 0) {
-          rebootTime--;
-          setspinLoading("网关参数正在下发，请稍候…… 预计" + rebootTime + "秒后完成")
-          console.log(rebootTime)
-        } else {
-          setSpinShow(false)
-        }
-      }, 1000 * a)
-    }
-    StartDownloadTask(projectId, gatewaySn).then(res => {
-      if (res.success) {
-        let list = []
-        let state = true
-        for (let i = 0; i < (rebootNum < 2 ? 2 : rebootNum); i++) {
-          setTimeout(() => {
-            if (state) {
-              DownloadTaskState(gatewaySn).then(result => {
-
-                if (result.success) {
-                  let data = JSON.parse(result.data)
-                  if (data.code == 1) {
-                    if (data.erros.length == 0) {
-                      state = false
-                      rebootTime = 0
-                      setisSuccess(true)
-                      modalReStartResRef?.current?.onOpen()
-                      setgatewayRes('网关参数下发成功！')
-                      setgatewayResTips('注意：重启网关后参数才生效')
-                      setSpinShow(false)
-
-                    } else {
-                      state = false
-                      rebootTime = 0
-                      setisSuccess(false)
-                      modalReStartResRef?.current?.onOpen()
-                      seterrorList(data.errors)
-                      setSpinShow(false)
-                    }
-                  } else {
-                    list.push(i)
-                    if (list.length == (rebootNum < 2 ? 2 : rebootNum)) {
-                      state = false
-                      rebootTime = 0
-                      setisSuccess(false)
-                      modalReStartResRef?.current?.onOpen()
-                      setgatewayRes('网关参数下发失败！')
-                      setSpinShow(false)
-                    }
-                  }
-                } else {
-                  state = false
-                  rebootTime = 0
-                  setisSuccess(false)
-                  modalReStartResRef?.current?.onOpen()
-                  setgatewayRes(JSON.parse(result.data).message)
-                  setSpinShow(false)
-                }
-              })
-            }
-          }, 5000 * i)
-        }
-      } else {
-        rebootTime = 0
-        setspinLoading('')
-        setSpinShow(false)
-        setisSuccess(false)
-        modalReStartResRef?.current?.onOpen()
-        setgatewayRes(res.errMsg)
-      }
-    })
   }
   //导出
   const exportExecel = () => {
@@ -797,7 +677,9 @@ export default function Gateway() {
         {/* <AddModalForm {...ModalFormProps}></AddModalForm> */}
         {AddFormComp}
         <MultImport {...ImportProps}></MultImport>
-        <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart>
+      {/*   <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart> */}
+
+      {/* 操作结果 */}
         <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
           errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips} ></ReStartRes>
         <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
@@ -939,7 +821,7 @@ let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorL
       <div style={{ margin: '16px 32px 0', display: 'flex', alignContent: 'center' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList.length>0?errorList:null || gatewayRes }</span>
+        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList?.length>0?errorList:null || gatewayRes }</span>
         <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
         </div>
       </div>  

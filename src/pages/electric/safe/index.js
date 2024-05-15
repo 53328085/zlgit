@@ -12,6 +12,7 @@ import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
 import { safeElectric } from '@api/api'
+import {  selectOneLevelDefaultId } from '@redux/systemconfig.js'
 import moment from 'moment'
 const Mainbox = styled.div`
   display: grid;
@@ -128,54 +129,6 @@ justify-items: center;
  
 }`
 
-const DemoLiquid = ({ warnData }) => {
-  const config = {
-    percent: 0.4,
-    outline: {
-      border: 2,
-      distance: 2,
-    },
-    wave: {
-      length: 128,
-    },
-
-    statistic: {
-      title: {
-        formatter: () => '今日告警',
-        style: {
-          fontSize: 14,
-          color: '#333',
-
-        }
-      },
-      content: {
-        style: {
-          fontSize: 26,
-          color: '#fff'
-        },
-        offsetY: 18,
-        customHtml: () => {
-          console.log(warnData?.todayWarningCnt)
-          return <span>{warnData?.todayWarningCnt}次</span>
-        }
-      }
-    }
-
-  };
-  return <Liquid {...config} />;
-};
-
-const headercss = {
-  background: '#fff ',
-  marginBottom: 16,
-  border: '1px solid #d7d7d7',
-  borderRadius: 4,
-  padding: '8px 16px'
-}
-const fs = {
-  hv: '24px',
-  fc: '#333'
-}
 export default function Index() {
   const Timelinebox = styled(Timeline)`
   height: 280px;
@@ -224,14 +177,13 @@ export default function Index() {
   const opref = useRef(null)
   const lref = useRef(null)
   const warnref = useRef();
-  const store = useStore();
+ 
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
-  const arealist = useSelector(state => state.system.onelevel)
-  const levellist =arealist[0]?.levelName?[{ name: arealist[0].levelName+'(全部)', id: 0 }, ...arealist]:[]
+
  
   const [warnData, setWarnData] = useState()
-  const [areaId, setAreaId] = useState(arealist&&arealist.length>0?0:'')
+  const areaId = useSelector(selectOneLevelDefaultId);  
   const [datasetMonthl, setDatasetMonthl] = useState()
   const [warnlist, setWarnlist] = useState([])//最新告警
   
@@ -242,7 +194,6 @@ export default function Index() {
   }
   const pageTotalRef = useRef()
   pageTotalRef.current = 0
-
   const grid = {
     // 图表 grid
     left: "0px",
@@ -377,7 +328,7 @@ export default function Index() {
         label: {
           normal: {
             formatter: function() {
-                return `今日告警\n\n\n${warnData?.todayWarningCnt?warnData?.todayWarningCnt:''}次`;
+                return `今日告警\n\n\n${warnData?.todayWarningCnt}次`;
             },
             textStyle: {
                 fontSize: 16,
@@ -395,14 +346,16 @@ export default function Index() {
 useEffect(() => {
     tdrawEcharts()
 },[warnData])
-  useEffect(() => {
-    if(arealist.length===0)return
+  useEffect(() => {    
     getQueryWarningDetails()
     getQueryMonthWarningTrends()
     // getWarningDetailsPage()
     getWarningDetailsList()
   }, [areaId])
-
+  const fs = {
+    hv: '24px',
+    fc: '#333'
+  }
   const [domheight,setDomHeight] =useState(0)
   const [speed,setSpeed]=useState(0)
   const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
@@ -418,22 +371,12 @@ useEffect(() => {
 
   return (
     <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="transparent" pd="0px">
-        <div style={headercss}>
-          <span style={{ paddingRight: 16 }}>{arealist[0]?.levelName}</span>
-          <Select
-            options={levellist}
-            style={{ width: 200 }}
-            fieldNames={{ label: 'name', value: 'id' }}
-            defaultValue={areaId}
-            onChange={(v) => { setAreaId(v);console.log(v) }}
-          ></Select>
-        </div>
+      <Pagecount bgcolor="transparent" pd="0px">       
         <Mainbox>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
               <div style={{ width: '148px', height: '148px' }} ref={warnref}>
-              {/*   <DemoLiquid warnData={warnData}></DemoLiquid> */}
+            
                 
               </div>
               <div className='alarm'>

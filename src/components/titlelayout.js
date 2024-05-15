@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Space} from 'antd'
+import {Card } from 'antd'
 import styled from 'styled-components'
 const Boxdiv = styled(Card)`
   padding: ${props => props.pv};
@@ -39,7 +39,8 @@ const Boxdiv = styled(Card)`
   }
  .ant-card-body {
   padding: 0;
-  display: ${props => props.layout || 'block'}
+  display: ${props => props.layout || 'block'};
+  flex-direction: ${props => props.dr || 'row'};
  }
 `
 Boxdiv.defaultProps = {

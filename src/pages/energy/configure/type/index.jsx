@@ -10,7 +10,7 @@ import { AreaSetting, energyStructure } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer  from './transfer';
 import Mask from '@com/mask.jsx'
-
+import {Ptag, Wtag} from '@com/comstyled'
 
 export default function Index () {
   const aref = useRef()
@@ -73,10 +73,10 @@ export default function Index () {
   const nodeAction = {
     position: 'absolute',
     right: 0,
-    width:'208px',
+    width:'265px',
     display:'flex',
-    justifyContent:'space-around',
-    fontSize:'14px',
+    justifyContent:'space-between',
+    
   }
   const mainStyle={
     fontSize: 16,
@@ -91,10 +91,10 @@ export default function Index () {
             <div style={nodeTitle}>
                 <span  style={item.parentId == 0? mainStyle : null}>{item.name}</span>
                 <div style={nodeAction}>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item.id)}>新增</span>
-                    <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline'}} onClick={()=>edit(item.id, valName)}>编辑</span>
-                    <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>settingClick(item.id, valName)}>配置</span>
-                    <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item.id)}>删除</span>
+                    <Ptag onClick={()=>addSon(item.id)} wh="60px">新增</Ptag>
+                    <Ptag onClick={()=>edit(item.id, valName)} wh="60px">编辑</Ptag>
+                    <Ptag onClick={()=>settingClick(item.id, valName)} wh="60px">配置</Ptag>
+                    <Wtag onClick={()=>deleteRecord(item.id)} wh="60px">删除</Wtag>
                 </div>
             </div>
         )
@@ -216,7 +216,7 @@ export default function Index () {
         key:'address'
     }
   ]
-  const [transTag, setTransTag] = useState('')
+  const [transTag, setTransTag] = useState(false)
   const [deleteDom, setDeleteDom] = useState(false)
   const [subTable, setSubTable] = useState([])
   const [transferTitle,setTransferTitle] = useState({})
@@ -247,7 +247,7 @@ export default function Index () {
           }
         }
         setDeleteDom(true)
-        setTransTag('open')
+        setTransTag(true)
       }else{
         messageContent('error',res.errMsg)
       }
@@ -265,7 +265,7 @@ export default function Index () {
     configEnergyStructure(projectId, params).then(res => {
       if(res.success){
         messageContent('success', '能源节点配置成功!')
-        setTransTag('close')
+        setTransTag(false)
         setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
         messageContent('error', res.errMsg)
@@ -273,14 +273,14 @@ export default function Index () {
     }) 
   }
   const getCloseValue = params => {
-    setTransTag(params)
+    setTransTag(false)
     setTimeout(()=> {setDeleteDom(false)}, 600)
   }
 
   return (
     <div>
       {contextHolder}
-      {transTag == 'open' ? Mask() : null}
+   
      <div className={style.header}>
         <span className={style.headerTitle}>{levelName}选择</span>
         <Select
@@ -310,9 +310,9 @@ export default function Index () {
           { treeData.length>0 ? <Tree  height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
           </div>
         </div>
-        {deleteDom ? <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-          <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
-        </div>  : null}
+      
+          <Mask task={transTag}> <UseTransfer  transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer></Mask>
+       
       </div>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
         <div style={{display:"flex", alignItems: "center"}}>

@@ -1,32 +1,38 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle,useMemo } from 'react'
-import { useSelector, useStore, useDispatch } from 'react-redux'
-import { nanoid } from '@reduxjs/toolkit'
-import { useRequest, useToggle, useAntdTable,useReactive  } from 'ahooks'
-import { GetLogOperation, Remote, Monitoring } from '@api/api.js'
-import { Form, DatePicker, Input, Button, Table, Pagination, Select, message, Modal, Spin, Divider, Space } from 'antd'
-import Bluecolumn from '@com/bluecolumn'
-import { flushSync } from 'react-dom'
-import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react'
+import { useSelector } from 'react-redux'
+ 
+import {useAntdTable} from 'ahooks'
+import {Remote} from '@api/api.js'
+import { Form, Button, Table, Select, message,  Divider, Space } from 'antd'
+ 
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
-import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
-import redwarn from '@imgs/redwarn.png'
-import imgurl from './images/index.js'
-import UseHeader from '@com/useHeader'
-import style from './style.module.less'
+import { selectProjectId, selectOneLevelDefaultId, deviceStyle} from '@redux/systemconfig.js'
+  
+import styled from 'styled-components'
+ 
 import CModal from '@com/useModal'
-import moment from 'moment'
-import { cloneDeep } from 'lodash'
+ 
 import { deepClone } from '@topology/core'
+import {Serach, Cdivider} from "@com/comstyled"
+ 
+ 
+ 
+const Mainbox = styled.div`
+   display: flex;
+   flex-direction: column;
+   flex: 1;
 
-const { RangePicker } = DatePicker;
-const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
+`
+
 export default function Index() {
     const [form] = Form.useForm()
     const {Item} = Form
     const projectId = useSelector(selectProjectId)
-    let [areaId, setAreaId] = useState(0)   
+    const deviceStyles = useSelector(deviceStyle)
+    const areaId = useSelector(selectOneLevelDefaultId);      
+    const [value, setvalue] = useState('1')
     const [DataSourceReadR, setDataSourceReadR] = useState()
     const [tabledata, setTabledata] = useState()
     const tabledataRef = useRef()
@@ -35,71 +41,19 @@ export default function Index() {
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
-    const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+  
     const [brake, setbrake] = useState(false)
     const [brakeC, setbrakeC] = useState(false)
-    const [brakeResult, setbrakeResult] = useState(false)
-    // const [selectTableList, setselectTableList] = useState([])
-    // const [selectTableListRadio, setselectTableListRadio] = useState()
-    const tableRefs= useRef()
-    const [devices, setDevies] = useState([])
-    const getType = async () => { // 获取设备类型
-        
-        try {
-          let {success, data} = await AllDeviceStyle();
-          if(success && Array.isArray(data)) {
-             setDevies(data);
-          }else {
-            setDevies([]);
-          }
-        } catch (error) {
-          setDevies([]);
-        }
-  }
-  useEffect(() => {
-    getType()
-  }, [])
-    // const selectTableListRadio = useReactive([])
-     
-    // const [selectTableListCheckbox, setselectTableListCheckbox] = useState([])
-
-    /* let params = {
-        pageNum: pageNum,
-        pageSize: 15,
-        projectId: projectId,
-        areaId: areaId,
-        gatewayId: 0,
-        deviceStyle: deviceStyle,
-        category: '',
-        alike: alike,
-        state: 0
-    }
-    const getData = () => {//设备统计
-        return Remote.AllMeter(params).then(res => {
-            let { success, data } = res
-            if (success) {
-                setdataSourceLog(data)
-                settotalalarm(res.total)
-            } else {
-                message.error(res.errMsg)
-            }
-        })
-    }
-    useEffect(() => {
-        if (areaId) {
-            getData()
-        }
-    }, [projectId, pageNum, areaId, deviceStyle, alike]) */
-    // let [dataSourceLog,setdataSourceLog]=useState()
+    const [brakeResult, setbrakeResult] = useState(false)  
+    const tableRefs= useRef() 
+   
     const getData = ({current, pageSize}, form={}) => {
        let {alike, deviceStyle} = form
-       console.log(form)
-       let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
+       
+       let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike: alike.trim()}
        return Remote.AllMeter(params).then(res => {
         let {success, data, total} = res
-        console.log(data)
-        console.log(success)
+        
         if(success && Array.isArray(data) && data.length > 0) {
             console.log('suceess')
            return {
@@ -123,34 +77,9 @@ export default function Index() {
     defaultParams:[{current: 1, pageSize: 18}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 1}],
     refreshDeps: [areaId,brakeResult]
    })
-   console.log(tableProps)
+
    const {submit} = search
 
-    const changeArea = (value) => {
-        setAreaId(value);
-    };
-  /*   const submit = e => {
-        setalike(e.target.value)
-    } */
-/*     const changeType = () => {
-        getData()
-    } */
-    let [state, setstate] = useState(1)
-    const changeTab = val => {
-        setstate(val)     
-        if (val == 2) {
-            setSelectionType("checkbox")
-            // setselectTableList(selectTableListCheckbox)
-            // tableRefs.current=selectTableListCheckbox
-        } else if (val == 1) {
-            setSelectionType("radio")
-            // let list = []
-            // list.push(tableRefs.current[0])
-            // setselectTableList(selectTableListCheckbox ? list : [])
-            // tableRefs.current=tableRefs.current ? list : []
-        }
-    }
-    const [selectionType, setSelectionType] = useState("radio");
     const columnsLog = [
         {
             title: '设备编号',
@@ -183,33 +112,7 @@ export default function Index() {
             key: 'sn',
             id: 'id'
         },
-    ];
-    const onChangePageLog = (page, pageSize) => {
-        console.log(page)
-        setpageNum(page)
-    }
-    const headerProps = {
-        isEnergy: false,//能耗类型
-        isDate: false,//日期
-        isShift: false,//班次
-        isTab: false,//能耗、费用radioButton
-        isSearch: false,//查询按钮
-        isExport: false,//导出按钮
-        allarea:areaOptions
-        //export: exportData //导出调用方法
-    }
-    const getFromChild = data => {
-        console.log(data.areaId)//园区id
-        if (data.areaId == undefined) {
-            return
-        } else {
-            setAreaId(data.areaId)
-        }
-    }
-    const handleChangeDevice = (value) => {
-        console.log(value)
-        setdeviceStyle(value)
-    }
+    ]; 
     const rowSelectionRadio = {
         tableRefs,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -236,7 +139,7 @@ export default function Index() {
         } else if (type == 'close') {
             setbrakeC(false)
         }
-        tableRefs.current=[]
+      //  tableRefs.current=[]
         //getData()
     }
     const [isComplate, setisComplate] = useState(false)
@@ -290,16 +193,29 @@ export default function Index() {
         }
 
     }
+    const tabs = [
+        {
+            label:"单表控制",
+            key: 1,
+
+        },
+        {
+            label:"批量控制",
+            key: 2,
+
+        }
+    ]
+    let dataProps = {
+        value,
+        setvalue,
+        tabs,
+      }
+        
     return (
-        <div className={style.main}>
-            <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
-            <div className={style.header}>
-                <Button className={state == 1 ? style.tabon : style.taboff} onClick={() => { changeTab(1) }}>单表控制</Button>
-                <Button className={state == 2 ? style.tabon : style.taboff} onClick={() => { changeTab(2) }}>批量控制</Button>
-            </div>
-            <div className={style.body}>
-                <div className={style.mainBox} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <Form form={form} className={style.bodyHeader} layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
+       <CustContext.Provider value={dataProps}>
+        <Pagecount>
+            <Mainbox>              
+                    <Form form={form}   layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
                         <Space size={32}>
                         <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
 
@@ -307,12 +223,12 @@ export default function Index() {
                            style={{width: "128px"}}
                             fieldNames={{label: "name", value: "deviceStyle"}}
                             onChange={submit}
-                            options={devices}
+                            options={deviceStyles}
                         />
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
                         <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
-                            <Input.Search placeholder='请输入设备编号/安装地址' allowClear style={{ width: '370px' }} size='middle' enterButton="查询" onSearch={submit} /> 
+                            <Serach placeholder='请输入设备编号/安装地址' allowClear   size='middle' enterButton="查询" onSearch={submit} /> 
                              
                         </Item>
                         <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
@@ -322,25 +238,25 @@ export default function Index() {
                         </Space>
                         </Space>
                     </Form>
-                    <img src={imgurl.line} className={style.timeline} ></img>
+                    <Cdivider type="h" margin="16px 0" />
 
                     
-             {selectionType == 'radio' ? <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
+             {value == 1 ? <div style={{display: 'flex', flex: 1}}>
+                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
                             type: 'radio',  
                             ...rowSelectionRadio,
                           
                         }} bordered></UserTable>
                    
                     </div> : <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} className={style.alarmTable} {...tableProps}  rowSelection={{
+                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
                             type: 'checkbox',
                             ...rowSelectionCheckbox,
                         }} bordered></UserTable>
                     
                     </div>}  
-                </div>
-            </div>
+               
+            </Mainbox>
           {/*   <Modal
                 title={<Bluecolumn name="分闸控制" />}
                 width={640}
@@ -373,43 +289,39 @@ export default function Index() {
                >
                   分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！
                </CModal>
-            <Modal
-                title={<Bluecolumn name="合闸控制" />}
+            <CModal
+                title= "合闸控制"
                 width={640}
                 open={brakeC}
                 centered={true}
                 closable={false}
-                className={style.readout}
-                footer={[
-                    <Button key="back" style={{ width: 96, height: 32, borderColor: 'rgb(204,204,204)', color: '#999' }} onClick={() => { handleCancel('close') }}>
-                        取消
-                    </Button>,
-                    <Button key="submit" style={{ backgroundColor: '#FF4D4F', color: '#fff', width: 96, height: 32 }} onClick={() => { openStatus('close') }}>
-                        确定
-                    </Button>,
-                ]}
+                type="warn"
+                mold="cust"
+                onOk={() => {  openStatus('close') }}
+                onCancel={() => {  handleCancel('close')}}
             >
-                <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>合闸后,该电表控制内的所有用电设备将恢复供电，请确认！</p></div>
-            </Modal>
-            <Modal
-                title={<Bluecolumn name="远程控制" />}
-                width={640}
-                className={style.readoutBule}
+               合闸后,该电表控制内的所有用电设备将恢复供电，请确认！
+            </CModal>
+            <CModal
+                title="远程控制"
+                width={640}               
                 open={brakeResult}
                 centered={true}
                 closable={false}
                 destroyOnClose
-                footer={[
-                    <Button key="submit" disabled={isComplate} style={{ backgroundColor: '#237AE4', color: '#fff', width: 96, height: 32 }} onClick={handleCancelResult}>
-                        完成
-                    </Button>,
-                ]}
+                mold="cust"
+                onCancel={() => {
+                    setbrakeResult(false)
+                }}
+                onOk={handleCancelResult}
             >
                 <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
-            </Modal>
+            </CModal>
 
-        </div>
+        
+        </Pagecount>
+        </CustContext.Provider>
     )
 }
 const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
@@ -603,7 +515,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
         }
     }, [snList])
     return (
-        <Table columns={columnsRead} dataSource={DataSourceRead} rowKey={columnsRead => columnsRead.sn} className={style.Table} pagination={false} bordered></Table>
+        <Table columns={columnsRead} dataSource={DataSourceRead} rowKey={columnsRead => columnsRead.sn}  pagination={false} bordered></Table>
     )
 }
 ) 

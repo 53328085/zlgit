@@ -30,7 +30,7 @@ const Itemsty = styled.div`
         text-align: center;
       }
       .itemtitle {
-        font-size: 24px;
+        font-size: 18px;
         color:#fff;
         margin-bottom: 16px;
       }

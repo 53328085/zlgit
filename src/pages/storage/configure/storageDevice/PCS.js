@@ -71,6 +71,8 @@ export default function Index(props) {
       } else {
         message.error(res.errMsg)
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
   const changeSite = val => {
@@ -308,9 +310,12 @@ export default function Index(props) {
       if (res.success) {
         if (res.data && res.data.length > 0) {
           setAddSiteList(res.data)
+          addForm.setFieldValue('siteId', null)
+          addForm.setFieldValue('containerId', null)
         } else {
           setAddSiteList([])
           addForm.setFieldValue('siteId', null)
+          addForm.setFieldValue('containerId', null)
           message.warning('当前' + areaList[0]?.levelName + '不存在站点!')
         }
       } else {

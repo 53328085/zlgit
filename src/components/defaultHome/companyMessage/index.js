@@ -6,7 +6,7 @@ import companyImg from './company.png'
 import { message } from 'antd';
 
 const MainBox = styled.div`
-width: 460px;
+width: 450px;
 height: 200px;
 background-color: #fff;
 border-radius: 4px;

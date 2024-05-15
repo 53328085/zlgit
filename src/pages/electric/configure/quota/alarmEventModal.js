@@ -827,7 +827,7 @@ export default function Index(props) {
                   </Item>
                 )}
                 <Item label="告警说明：" labelCol={{ flex: "85px" }}>
-                  <span style={{ color: "red", fontSize: 10 }}>
+                  <span style={{ color: "red", fontSize: 12 }}>
                     告警标识和消警标识二者至少要填写其中一个，且内容不能相同
                   </span>
                 </Item>

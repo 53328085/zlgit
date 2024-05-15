@@ -275,7 +275,7 @@ export default function Index() {
       series: [{ type: "line"  }, {type: "line"}],
       grid,
       legend: {
-        top: 0,
+        top: 10,
       },
     });
     drawEcharts(stref.current, {     
@@ -284,7 +284,7 @@ export default function Index() {
       series: [{ type: "bar", barGap: 0  }, {type: "bar", barGap: 0}],
       grid,
       legend: {
-        top: 0,
+        top: 10,
       },
     });
    

@@ -1,55 +1,31 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react'
-import { useReactive } from 'ahooks';
+import React, { useMemo,  useRef } from 'react'
+import {useAntdTable } from 'ahooks';
 import styled from 'styled-components'
-import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message, Form } from 'antd'
+ 
+import { Select, Divider, Input, Button, message, Form, Space, Typography} from 'antd'
 import Table from '@com/useTable'
 import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
 import Modal from '@com/useModal'
 import style from './style.module.less'
-
+import { CustButton } from '@com/useButton'
 import { operationDesigin } from '@api/api'
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
+import {Serach} from '@com/comstyled'
+const {Link} = Typography
+
 const DropstartDiv = styled.div`
  .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
         /* display: none; */
       }
 `
 const ContainerDiv = styled.div`
-      border: 1px solid #d7d7d7;
-      background-color: #fff;
-      height: 100%;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      .pdtop8{
-        padding-top: 8px;
-      }
-      .pdbottom12{
-        padding-bottom: 12px;
-      }
-      .searchbtn:hover,.searchbtn:focus{
-        border-color: #d9d9d9 !important;
-        color: #000;
-      }
-      .flexcss{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .btncss{
-         width: 96px;
-         height: 32px;
-         background-color: #237ae4;
-         border-radius: 2px;
-         color: #fff;
-         text-align: center;
-         line-height: 32px;
-         cursor: pointer;
-         &:hover{
-          opacity: .7;
-         }
-      }
+      display: grid;
+      grid-template-rows: 32px 1px 1fr;
+      row-gap: 32px;
+      padding-top: 16px;
+      flex: 1;
   `
 const { TextArea } = Input
 export default function Index() {
@@ -89,8 +65,8 @@ export default function Index() {
       title: '操作', dataIndex: 'options', align: "center", width: 180, render: (v, text) => {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => { editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</span>
-            <span style={{ textDecoration: 'underline', color: '#ff0000', cursor: 'pointer' }} onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</span>
+            <Link  underline onClick={() => { editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</Link>
+            <Link type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</Link>
           </div>
         )
       }
@@ -102,27 +78,16 @@ export default function Index() {
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
-  //input查询
-  const search = () => {
-    pageinfo.pageNum = 1
-    getPage()
-  }
-  const changeSelect = () => {
-    pageinfo.pageNum = 1
-    getPage()
-  }
+ 
+  const totalItem = useRef();
+  const curPage = useRef();
+  const PageSize = 14
   const addDevice = () => {
     addform.resetFields()
     addRef.current.onOpen()
   }
-  const pageinfo = useReactive({
-    pageNum: 1,
-    pageSize: 10,
-    total: 0
-  })
-  let tabledata = useReactive({
-    tablesource: []
-  })
+ 
+ 
   //新增检查项
   const addItems = async () => {
     addform.validateFields().then(async () => {
@@ -136,8 +101,7 @@ export default function Index() {
       const res = await operationDesigin.AddInspectionContent(params)
       if (res.success) {
         message.success('新增成功!')
-        pageinfo.pageNum = 1
-        getPage()
+        refresh()
         addform.resetFields()
       //  addRef.current.onCancel()
       } else {
@@ -161,7 +125,7 @@ export default function Index() {
       if (res.success) {
         message.success('编辑成功!')
         editRef.current.onCancel()
-        getPage()
+        refresh()
       } else {
         message.error(res.errMsg)
       }
@@ -176,131 +140,138 @@ export default function Index() {
 
     if (res.success) {
       message.success('删除成功!')
-      pageinfo.pageNum = 1
-      getPage()
-      delRef.current.onCancel()
+    
+      try {
+        let current = Math.ceil((totalItem.current - 1)  / 14) < curPage.current
+        
+        if(current) {
+          let values = form.getFieldsValue()
+          run({current: curPage.current - 1, pageSize: PageSize}, values)
+        }else {
+          refresh()
+        }
+      
+        delRef.current.onCancel()
+      } catch (error) {
+        
+      }
     } else {
       message.error(res.errMsg)
     }
   }
   //获取检查项数据
-  const getPage = async () => {
-    const info = form.getFieldsValue()
+  const getPage =   ({current, pageSize}, formData) => {
+    curPage.current = current
+    let {alike, typeical} = formData
     let params = {
       projectId,
-      pageNum: pageinfo.pageNum,
-      pageSize: pageinfo.pageSize,
-      alike: info.alike,
-      type: info.typeical
+      pageNum: current,
+      pageSize: pageSize,
+      alike:alike,
+      type:typeical
     }
-    const res = await operationDesigin.QueryPageInspectionContent(params)
-    if (res.success) {
-      tabledata.tablesource = res.data
-      pageinfo.total = res.total
-      console.log(tabledata)
-    } else {
-      message.error(res.errMsg)
-    }
+   return operationDesigin.QueryPageInspectionContent(params).then(res => {
+      let {success, data, total} = res
+      totalItem.current = total
+      if(success) {
+        return {
+          list: Array.isArray(data) ? data : [],
+          total,
+        }
+      }else {
+        return {
+          list: [],
+          total: 0,
+        }
+      }
+   })   
   }
-  //分页查询
-  const changePage = (page) => {
-
-    pageinfo.pageNum = page.current
-    pageinfo.pageSize = page.pageSize
-    getPage()
-  }
-  useEffect(() => { getPage() }, [])
+ const {tableProps, refresh, search, run} = useAntdTable(getPage, {
+   form,
+   defaultPageSize: 14,
+   refreshDeps: [projectId]
+ })
+ const {submit} =search
   return (
-    <ContainerDiv>
-      <BlueColumn name="检查项管理" />
-      <Form
-        layout="inline"
-        form={form}
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-        initialValues={{
-          typeical: 0,
-          alike: ''
-        }}
-      >
-        <Form.Item  >
-          <div >
-            <span style={{ paddingRight: 16, }} >检查项</span>
-            <Form.Item noStyle={true} name="alike">
-              <Input
-                style={{
-                  width: 290,
-                  margin: '16px 0'
-                }}
-                placeholder="检查项关键字查询"
-              />
+    <Pagecont showserach={false}   pd="0px" >  
+      <Titlelayout title="检查项管理" layout="flex" dr="column">
+        <ContainerDiv>
+        
+          <Form
+            layout="inline"
+            form={form}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+            initialValues={{
+              typeical: 0,
+              alike: ''
+            }}
+          >
+          <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+            <Form.Item  name="alike" label="检查项" style={{marginBottom: 0, marginRight: 0}}>
+              <Serach
+                  placeholder="检查项关键字查询"
+                  allowClear
+                  enterButton="查询"
+                  onSearch = {submit}
+                /> 
             </Form.Item>
-            <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-          </div>
-        </Form.Item>
+            <Form.Item name="typeical" label="类别" style={{marginBottom: 0}}>
+              <Select
+                  options={typeoptions}            
+                  style={{ width: 166 }}
+                 
+                  onChange={submit}
+                ></Select>
+            </Form.Item>
+            </Space>
+            <Form.Item>
+              {publish ? null : <CustButton onClick={addDevice}>
+                新增
+              </CustButton>}
+            </Form.Item>
+          </Form>
+          <Divider style={{ margin: '0px', borderColor: '#d7d7d7' }} dashed ></Divider>
+          
+            <Table columns={columns}  {...tableProps} ></Table>
+          
+        
+          <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={true}>
+        
+          <DropstartDiv>
+            <Form
+              form={addform}
+              labelCol={{ span: 5 }}
+              colon={false}
+              labelAlign="left"
+              initialValues={{ type: 1,name:'',remark:'' }}
+            >
+              <Form.Item label="检查项类别" name="type" >
+                <Select
+                  style={{ width: 160 }}
+                  options={addoptions}
 
-        <Divider style={{ margin: '0 32px', borderColor: '#999999', height: 32 }} dashed type="vertical"></Divider>
-        <Form.Item style={{ marginRight: 'auto' }} labelAlign="left">
-          <span style={{ paddingRight: 16, }} >类别</span>
-          <Form.Item name="typeical" noStyle={true}>
-            <Select
-              options={typeoptions}
-              // fieldNames={{ label: 'name', value: 'id' }}
-              style={{ width: 166 }}
-              className="pdtop8 pdbottom12"
-              onChange={changeSelect}
-            ></Select>
-          </Form.Item>
-        </Form.Item>
-        <Form.Item>
-          {publish ? null : <div className='btncss' onClick={addDevice}>
-            新增
-          </div>}
-        </Form.Item>
-
-      </Form>
-      <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
-      <div style={{ height: 673, display: 'flex' }}>
-        <Table columns={columns} dataSource={tabledata.tablesource}
-          pagination={{ current: pageinfo.pageNum, pageSize: pageinfo.pageSize, total: pageinfo.total }}
-          onChange={changePage}
-        ></Table>
-      </div>
-     
-      <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={true}>
-     
-      <DropstartDiv>
-        <Form
-          form={addform}
-          labelCol={{ span: 5 }}
-          colon={false}
-          labelAlign="left"
-          initialValues={{ type: 1,name:'',remark:'' }}
-        >
-          <Form.Item label="检查项类别" name="type" >
-            <Select
-              style={{ width: 160 }}
-              options={addoptions}
-
-            ></Select>
-          </Form.Item>
-          <Form.Item label="检查项名称" name="name" rules={[{ required: true }]}>
-            <Input placeholder="请输入检查项名称"></Input>
-          </Form.Item>
-          <Form.Item label="详细内容" name="remark">
-            <TextArea allowClear placeholder='请输入详细内容'/>
-          </Form.Item>
-        </Form>
-      </DropstartDiv>
-    </Modal>
+                ></Select>
+              </Form.Item>
+              <Form.Item label="检查项名称" name="name" rules={[{ required: true }]}>
+                <Input placeholder="请输入检查项名称"></Input>
+              </Form.Item>
+              <Form.Item label="详细内容" name="remark">
+                <TextArea allowClear placeholder='请输入详细内容'/>
+              </Form.Item>
+            </Form>
+          </DropstartDiv>
+        </Modal>
 
 
-      <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems} />
-      <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
-    </ContainerDiv>
+          <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems} />
+          <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
+        </ContainerDiv>
+    </Titlelayout>
+    </Pagecont>
   )
 }
  

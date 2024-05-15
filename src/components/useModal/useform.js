@@ -2,6 +2,7 @@ import React, {useImperativeHandle, forwardRef, useRef} from 'react'
 import {Form, Select, Input, Switch, DatePicker} from 'antd'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import moment from 'moment'
+ const auto = "off"
  function Useform(props, ref) {
   const [form] = Form.useForm()
   const {Item} = Form
@@ -64,7 +65,7 @@ import moment from 'moment'
         }
       ]}
     >
-      <Input />
+      <Input autoComplete={auto} />
     </Item>
     <Item label="用户姓名" name="nickName"      
      tooltip="不能超过32个字符"
@@ -80,7 +81,7 @@ import moment from 'moment'
       }
     ]}
      >
-      <Input />
+      <Input  autoComplete={auto}/>
     </Item>
     <Item label="账号有效期" name="validStageTime" rules={[
                   {
@@ -103,7 +104,7 @@ import moment from 'moment'
                    }, 
                   
                   ]}>
-      <Input.Password />
+      <Input.Password autoComplete={auto} />
     </Item>
     <Item label="确认密码" name="repwd" rules={[
                   {
@@ -120,7 +121,7 @@ import moment from 'moment'
                   }),
                   
                   ]}>
-      <Input.Password />
+      <Input.Password autoComplete={auto} />
     </Item>
     </>
     }
@@ -134,7 +135,7 @@ import moment from 'moment'
                    }, 
                   
                   ]}>
-      <Input />
+      <Input autoComplete={auto} />
     </Item>
     {enable && (
       <Item label="是否启用" name="enabled" valuePropName="checked">

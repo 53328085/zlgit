@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import {Typography, Image, Form, Space, Button, Input, message, InputNumber, Select, Switch, Alert} from 'antd'
+import {Typography, Form, Space, Button,   message, InputNumber, Select, Switch } from 'antd'
 import {CheckCircleFilled } from '@ant-design/icons'
 import {useRequest} from 'ahooks'
 import {StorageParameterSetupDesigner} from '@api/api'
@@ -60,11 +60,11 @@ export default function Manual({projectId,  areaId, CModal}) {
   // UpdateSiteOnOffGrid
   const queryruntimesetting = () => {
     return StorageParameterSetupDesigner.QuerySetup(projectId, areaId).then(res => {
-         let {success, data} = res
-         if (success && data) {
-            return data
+         let {success, data, errMsg} = res
+         if (success) {
+            return data || {}
          }else {
-            return {}
+            return  message.warning(errMsg)
          }
     }).catch(e => {
          return e
@@ -115,19 +115,21 @@ export default function Manual({projectId,  areaId, CModal}) {
         ...rest,
         id: pid.current, 
         areaId,
+        
     }
+    console.log(params)
     let {success, errMsg} = await StorageParameterSetupDesigner.Setup({projectId, params}) 
      if (success) {
         setSloading(false)
         rref.current.onOpen()
      }else {
         setSloading(false)
-        custMsg({success: false, content: errMsg || '数据出错'})
+        message.warning(errMsg ||'数据出错')
+       
      }
 
     }catch(e){
         setSloading(false)
-        custMsg({success: false, content: '请求出错'})
         console.log(e)
     }
   

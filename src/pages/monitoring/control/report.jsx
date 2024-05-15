@@ -3,15 +3,15 @@ import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input,   DatePicker,  Divider, Drawer } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
-import moment from 'moment'
+
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {RunAutoValve} from '@api/api'
- 
+import {Serach, Cdivider} from "@com/comstyled"
 const {Paragraph, Link} = Typography
 const {Item} = Form
-const { RangePicker } = DatePicker;
+
 const CDrawer = styled(Drawer)`
 && {
   .ant-drawer-content-wrapper {
@@ -200,12 +200,9 @@ week.forEach(w => {
       }
      let {success, data, errMsg} = await  RunAutoValve.QueryUsedDevice(params)
      if(success) {
-       if(Array.isArray(data)) {
-        setViewtb(data);
-       }else {
-        setViewtb([])
-       }
-       setOpen(true)
+        setViewtb(Array.isArray(data) ? data : [])
+      
+        setOpen(true)
      }else {
        message.warning(errMsg || '数据出错')
      }
@@ -313,13 +310,13 @@ week.forEach(w => {
         <Form form={form} className='top' layout='inline' >
           <Space size={32}>
              <Item   name="alike">
-              <Input.Search placeholder='请输入策略名称' style={{width: '320px'}} allowClear onSearch={submit} enterButton="查询" />
+              <Serach placeholder='请输入策略名称'   allowClear onSearch={submit} enterButton="查询" />
              </Item>
            </Space>
           
         </Form>
         
-         <Divider style={{margin: '0px'}}/>
+         <Cdivider type="h" style={{margin: '0px'}}/>
         <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
        <CDrawer
         title="被控设备"

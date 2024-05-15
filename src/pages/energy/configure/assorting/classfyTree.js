@@ -1,11 +1,13 @@
 import React from "react";
 import style from './style.module.less'
-import { Button, Tree } from "antd";
-import dashed from '@imgs/dashed.png'
+import { Button, Tree, Divider, Space } from "antd";
+
 import { cloneDeep } from "lodash";
 import {useSelector} from 'react-redux'
 import {publishState} from '@redux/systemconfig.js'
-
+import Titlelayout from '@com/titlelayout'
+ 
+import {Ptag, Wtag} from "@com/comstyled"
 export default function Water (props) {
   const isPublish = useSelector(publishState)
   console.log(isPublish)
@@ -35,14 +37,14 @@ export default function Water (props) {
         item.energyName = (
             <div style={nodeTitle}>
                 <span style={ item.parentId == 0 ? { fontSize: 16 }:{} }>{item.energyName}</span>
-                { isPublish ? null : <div style={nodeAction}>
-                    {item.parentId == 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline' }} onClick={()=>addSon(item)}>新增子项</span> : null}
-                    <span style={{ color:'#237ae4',  cursor:'pointer', textDecoration:'underline', marginLeft: 32, marginRight: 32}} onClick={()=>edit(name, item.energyId)}>编辑</span>
+                { isPublish ? null : <Space style={{position:"absolute", right: 0}}>
+                    {item.parentId == 0 ? <Ptag   onClick={()=>addSon(item)}>新增子项</Ptag> : null}
+                    <Ptag onClick={()=>edit(name, item.energyId)} wh="60px">编辑</Ptag>
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
-                  <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span>
+                  <Ptag onClick={()=>settings(name, item.energyId)} wh="60px">配置</Ptag>
                    
-                    <span style={{ color:'#f33', cursor:'pointer', textDecoration:'underline' }} onClick={()=>deleteRecord(item)}>删除</span>
-                </div> }
+                    <Wtag onClick={()=>deleteRecord(item)} wh="60px">删除</Wtag>
+                </Space> }
             </div>
         )
 
@@ -106,22 +108,23 @@ export default function Water (props) {
     }
     getValues(values)
   }
-    
-    return (
-        <div className={style.classfyContent}>
-            <div className={style.headerTitle}>
-                <span>{props.title}</span>
-                { isPublish ? null : <div className={style.headerButton}>
-                    <Button type="primary" size="middle" style={{width: 112, marginRight: 16, height: 36}} onClick={()=>addParent()}>新增能耗分类</Button>
+  const Title = (
+    <div style={{display: 'flex',justifyContent: "space-between", alignContent: "center"}}>
+      <span style={{lineHeight: '36px'}}>{props.title}</span>
+      { isPublish ? null : <Space size={16}>
+                    <Button type="primary" size="middle" style={{width: 112}} onClick={()=>addParent()}>新增能耗分类</Button>
                     <Button type="primary" size="middle" style={{width: 112,  height: 36}} onClick ={()=> importData()}> 批量导入</Button>
-                </div> }
-            </div>
-            <img className={style.dashedLine} src={dashed}></img>
+                </Space> }
+    </div>
+  )
+    return (
+        <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n">
+           <Divider style={{margin: "16px 0"}} />
             <div className={style.mainContent}>
                 <div className={style.classifyTree}>
                     { treeData.length>0 ? <Tree defaultExpandedKeys={[treeData[0].energyId.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
                 </div>
             </div>
-        </div>
+        </Titlelayout>
     )
 }

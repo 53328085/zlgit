@@ -224,7 +224,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 
   //新增设备类型
 export let AddModal = forwardRef(
-    ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData,  isShow=true }, ref) => {
+    ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData=[],  isShow=true }, ref) => {
       const tableRef = useRef(null)
       const [tabledatas,setTabledatas]=useState([...defaultTableData]) 
       const handleChange = async (option) => {

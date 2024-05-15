@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import moment from "moment";
 import {
   Space,
   Image,
@@ -32,11 +32,12 @@ import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"
 import Chintlog from "@imgs/chintlog.png";
+ 
 import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel, getDisonlevel } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel, getDisonlevel, getWebsiteState, getWebsiteMenu } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -230,39 +231,6 @@ const Mainbox = styled.div`
     }
   }
 `;
-const Modalbox = styled(Modal)`
-  .ant-modal-header,
-  .ant-modal-body,
-  .ant-modal-footer {
-    background-color: #1b1d23;
-    color: #ccc;
-  }
-  .ant-modal-body {
-    font-size: 18px;
-  }
-  .ant-modal-header {
-    .ant-modal-title {
-      color: #ccc;
-      font-size: 18px;
-    }
-  }
-  .ant-modal-footer {
-    .ant-btn {
-      width: 96px;
-      height: 36px;
-    }
-    .ant-btn + .ant-btn {
-      margin-left: 16px;
-    }
-    .ant-btn-default {
-      background-color: transparent;
-      color: #ccc;
-    }
-    .ant-btn-primary {
-      background-color: #0b2ba7;
-    }
-  }
-`;
 const Opbox = styled.div`
  display: grid;
  grid-template-rows: 32px 1fr;
@@ -322,91 +290,23 @@ export default function Index() {
     })
   }
 
-// 进入项目配置/项目 
-
- const handlermenu = (data, type, id) => {
- 
-  const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
-  const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
-//  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
-  const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
-
-  const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
-
-  let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
- 
-  const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
-  
-  const siderRunMenus = {}; // 运行功能 选择的子菜单
- // const allsinderRunMenus = {} ; //运行功能 所有的子菜单
-  runMenus.forEach(item => {
-   let {no, key, parentNo} = item 
-   if (!exclude.includes(item.no)) { 
-      siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1).sort((a, b) => a.index - b.index)
-      
-   }   
-  }) 
-  const siderDesignerMenus = {};
-  designerMenus.forEach(item => {
-   let {no, key, parentNo} = item 
-   if (!exclude.includes(item.no)) {
-     siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no).sort((a, b) => a.index - b.index)
-   }   
-  }) 
-  const menus =  {
-   designerMenus, 
-   siderDesignerMenus,
-   runMenus,
-   siderRunMenus, 
-   setMenus,  
-   comSet,      
-   projectId: id,
-  }
- 
-  dispatch(getMenus(menus));
-  dispatch(configProject(type === 1))
- 
-
-  if (type == 2) {
-    return runMenus?.find(item => item.no == '0104') || runMenus[0] 
-  }else if(type == 1) {
-    return designerMenus?.find(item => item.no == '0201')|| designerMenus[0]
-  }
-
- 
- }
-
-
- const enterProject = async ({id, type, publishState}) => {
+ const enterProject = async ({id, type, publishState}) => { // type 1是设计type 2是运行
    try {
-     dispatch(getpublishState(publishState)) 
-     let promises = [
-      Area.QueryAll({projectId: id,level: 1,parentId: 0}), 
-      eneryShift.queryShifts(id), 
-      ProjectList.QueryMenus(id), 
-      BigScreen.QueryBigScreen(id),
-      Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
-    ] 
-     let results = await Promise.allSettled(promises)   
-     let menu;
-     results.forEach((res, index) => {
-       let {status, value: {success, data}} = res
-       if (status ==='fulfilled') {
-          if(success) {
-            dispatch(setCurrentlevel({}))// 当前项目设置为空对象
-            index == 0 && dispatch(getOnelevel(data || []));
-            index == 1 && dispatch(getshifts(data || []))
-            index == 2 && (menu = handlermenu(data, type, id))           
-            index == 3 && dispatch(getdataScreen(data))
-            index == 4 && dispatch(getDisonlevel(data))
-          }else{
-            index== 0 && dispatch(getOnelevel([]));
-            index == 1 && dispatch(getshifts([]));
-            index == 3 && dispatch(getdataScreen({}));
-            index == 4 && dispatch(getDisonlevel([]))
-          }
-       }
-     })
+     dispatch(getWebsiteState(id))
+     dispatch(configProject(type === 1))
+     let {runMenus, designerMenus, siderDesignerMenus} = await dispatch(getWebsiteMenu(id)).unwrap()
+     let menu
+     if (type == 2) {
+      menu = runMenus?.find(item => item.no == '0104') || runMenus[0] 
+    }else if(type == 1) {  
+      let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]      
+      if(key) {
+        let {label, key: nested} = siderDesignerMenus[key][0]
+        menu = {label, key, nested}
+      } else {
+        menu = null
+      }
+    }
    
     if(!menu) return message.error({content: '没有设置菜单，请联系管理人员', duration: 0.5})
     type == 2  && projectRun(menu)
@@ -415,10 +315,7 @@ export default function Index() {
    } catch (error) {
      console.log(error)
    }
-     
-
-        
-
+      
  }
 
 
@@ -430,10 +327,12 @@ export default function Index() {
     })
   };
 
- const projectDesigner = ({key, label}) => { 
+ const projectDesigner = (menu) => { 
+     console.log(menu)
+     let {label, key, nested} = menu
       dispatch(getJump(false))
-      navigate(`/config/${key}/base`, {
-        state: { type: 'config', primary: key,  title: label, nested: 'base'  } 
+      navigate(`/config/${key}/${nested}`, {
+        state: { type: 'config', primary: key,  title: label, nested } 
       }) 
   }
   /* 新增项目  start*/
@@ -507,7 +406,8 @@ export default function Index() {
 
   const getTableData = ({ current, pageSize }, formData) => {
     //setFormParams((formParams) => ({ ...formParams, ...formData }));
-
+   let {name} = formData
+   formData.name = encodeURIComponent(name)
    const params = Object.assign(
       {},
      // params,
@@ -639,15 +539,17 @@ tableProps.pagination.size="default" // 页码大小默认
     form: opform,
   })
  let {submit} = search
+ const disabledDate = (current) => {
  
+  return current && current > moment() ;
+};
  return  <Opbox>
          
   <Form
     form={opform}
   >
-    
       <Item label="操作时间" name="date">
-         <RangePicker style={{width: '408px'}} onChange={submit} />
+         <RangePicker style={{width: '408px'}} onChange={submit} disabledDate={disabledDate} />
       </Item>
   </Form>
 <UseTabel
@@ -707,6 +609,7 @@ const closeModl = () => {
             layout="inline"
             className="serach"
             form={form}
+            autoComplete="off"
           >
             <Space size={64} split={ <Divider
                   dashed
@@ -714,12 +617,13 @@ const closeModl = () => {
                   type="vertical"
                 />} >
               
-              <Item name="name">
+              <Item name="name" normalize={(v) => v.trim() }>
               <Iptserach
                    placeholder="请输入项目名称"
                    style={{ width: "500px" }}
                    allowClear
                    onSearch={submit}
+                 
                    enterButton={ <CutSerachBt
                     width="98px"                  
                     icon={

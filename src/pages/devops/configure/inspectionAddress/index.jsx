@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState, useRef,useCallback, } from 'react'
-import { useReactive } from 'ahooks';
+import { useReactive, useAntdTable } from 'ahooks';
 import styled from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
-import { Select, Divider, Input, Button, message, Form ,Space} from 'antd'
+import { Select, Divider, Input, Button, message, Form ,Space, Typography} from 'antd'
 import Table from '@com/useTable'
 import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
 import Modal from '@com/useModal'
 import style from './style.module.less'
-import WarningPng from '@imgs/warning.png'
+ 
 import { operationDesigin } from '@api/api'
 import {SetPosition} from './position.jsx'
 import {SetLine} from './devicecomp'
@@ -16,59 +16,20 @@ import TransLine from './contentcomp'
 import CustContext from '@com/content.js'
 import Print from './print.jsx'
 import ReactToPrint,{useReactToPrint} from 'react-to-print';
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
+import {Serach} from '@com/comstyled'
+import { CustButton } from '@com/useButton'
+ const {Link} = Typography
 // import UseMap from '@com/useMap/custom.js'
 const ContainerDiv = styled.div`
-      border: 1px solid #d7d7d7;
-      background-color: #fff;
-      height: 100%;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      .pdtop8{
-        padding-top: 8px;
-      }
-      .pdbottom12{
-        padding-bottom: 12px;
-      }
-      .searchbtn:hover,.searchbtn:focus{
-        border-color: #d9d9d9 !important;
-        color: #000;
-      }
-      .flexcss{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .btncss{
-         min-width: 96px;
-         padding: 0 12px;
-         height: 32px;
-         background-color: #237ae4;
-         border-radius: 2px;
-         color: #fff;
-         text-align: center;
-         line-height: 32px;
-         margin-left: 16px;
-         cursor: pointer;
-         &:hover{
-          opacity: .7;
-         }
-      }
+      display: flex;
+      flex: 1;
+      padding-top: 16px;
+      flex-direction: column;
+      overflow: hidden;     
   `
 const AddDiv = styled(Form)`
-    .btncss{
-         width: 96px;
-         height: 32px;
-         background-color: #237ae4;
-         border-radius: 2px;
-         color: #fff;
-         text-align: center;
-         line-height: 32px;
-         cursor: pointer;
-         &:hover{
-          opacity: .7;
-         }
-      }
       .ant-form-item{
         margin-bottom: 14px;
       }
@@ -106,9 +67,9 @@ export default function Index() {
       title: '操作', dataIndex: 'options', align: "center", width: 240, render: (v, text) => {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={async () => {printid = text.id;await getcode(text) }}>打印二维码</span>
-            <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => {console.log(text);setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</span>
-            <span style={{ textDecoration: 'underline', color: '#ff0000', cursor: 'pointer' }} onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</span>
+            <Link underline onClick={async () => {printid = text.id;await getcode(text) }}>打印二维码</Link>
+            <Link underline onClick={() => {console.log(text);setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen() }}>编辑</Link>
+            <Link type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }}>删除</Link>
           </div>
         )
       }
@@ -122,17 +83,9 @@ export default function Index() {
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
-  //input查询
-  const search = () => {
-    pageinfo.pageNum = 1
-    getPage()
-  }
-
- 
-  const changeSelect = (v) => {
-    pageinfo.pageNum = 1
-    getPage()
-  }
+  const totalItem = useRef();
+  const curPage = useRef();
+  const PageSize = 14
   const addDevice = () => {
     if(onelevel.length == 0){
       message.warning('请新增园区!')
@@ -148,14 +101,8 @@ export default function Index() {
       addressSpan:""
     })
   }
-  const pageinfo = useReactive({
-    pageNum: 1,
-    pageSize: 10,
-    total: 0
-  })
-  let tabledata = useReactive({
-    tablesource: []
-  })
+ 
+ 
  
   //获取二维码
   const getcode =async (text)=>{
@@ -212,10 +159,9 @@ export default function Index() {
       const res = await operationDesigin.AddInspectionAddress(params)
     if (res.success) {
       message.success('新增成功!')
-      pageinfo.pageNum = 1
-      getPage()
-      addform.resetFields()
-    //  addRef.current.onCancel()
+      refresh()
+    //  addform.resetFields()
+    
     } else {
       message.error(res.errMsg)
     }
@@ -246,7 +192,7 @@ export default function Index() {
       if (res.success) {
         message.success('编辑成功!')
         editRef.current.onCancel()
-        getPage()
+        refresh()
       } else {
         message.error(res.errMsg)
       }
@@ -254,9 +200,8 @@ export default function Index() {
       console.log(err)
     })
 
-
-
   }
+
   //删除检查项
   const delItems = async () => {
     console.log({
@@ -270,44 +215,80 @@ export default function Index() {
 
     if (res.success) {
       message.success('删除成功!')
-      pageinfo.pageNum = 1
-      getPage()
-      delRef.current.onCancel()
+      try {
+        let current = Math.ceil((totalItem.current - 1)  / PageSize) < curPage.current
+        
+        if(current) {
+          let values = form.getFieldsValue()
+          run({current: curPage.current - 1, pageSize: PageSize}, values)
+        }else {
+          refresh()
+        }
+      
+        delRef.current.onCancel()
+      } catch (error) {
+        
+      }
+    
     } else {
       message.error(res.errMsg)
     }
   }
   //获取巡检项数据
-  const getPage = async () => {
-    const info = form.getFieldsValue()
+
+
+  const getPage = ({current, pageSize}, formData) => {
+     
+    curPage.current = current
+    const {alike, areaId} =formData
+    if(!Number.isInteger(areaId)) return new Promise((resolve) => {
+      resolve({
+        list: [],
+        total: 0
+      })
+    })
     let params = {
       projectId,
-      pageNum: pageinfo.pageNum,
-      pageSize: pageinfo.pageSize,
-      alike: info.alike,
-      areaId: info.areaId
+      pageNum: current,
+      pageSize,
+      alike,
+      areaId,
     }
-    const res = await operationDesigin.QueryInspectionAddressPage(params)
-    if (res.success) {
-      tabledata.tablesource = res.data
-      pageinfo.total = res.total
-      console.log(res.data)
-    } else {
-      message.error(res.errMsg)
-    }
-  }
-  //分页查询
-  const changePage = (page) => {
+   return operationDesigin.QueryInspectionAddressPage(params).then(res => {
+      let {success, data, total} = res
+      totalItem.current =Number.isInteger(total) ? total : 0
+    
+      if(success) {
+         return {
+          list: Array.isArray(data) ? data : [],
+          total
+         }
 
-    pageinfo.pageNum = page.current
-    pageinfo.pageSize = page.pageSize
-    getPage()
+      }else {
+        return {
+          list: [],
+          total: 0
+        }
+      }
+    }).catch(() => {
+      return {
+        list: [],
+        total: 0
+      }
+    })
+    
   }
-  
-  useEffect(() => { onelevel.length && getPage() }, [])
+  const {tableProps, refresh, search,  run} = useAntdTable(getPage, {
+    form,
+    defaultPageSize: PageSize,
+  })
+  const {submit} = search
+ 
   return (
+    <Pagecont showserach={false}   pd="0px" > 
+     <Titlelayout title="巡检点管理" layout="flex" dr="column" style={{overflow: "hidden"}}>
     <ContainerDiv>
-      <BlueColumn name="巡检点管理" />
+    
       <Form
         layout="inline"
         form={form}
@@ -321,51 +302,44 @@ export default function Index() {
           alike: ''
         }}
       >
-        <Form.Item name="areaId" noStyle={true} labelAlign="left">
+         <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+        <Form.Item name="areaId"  style={{marginRight: 0}}>
           <Select
             options={options}
             style={{ width: 264 }}
             fieldNames={{ label: 'name', value: 'id' }}
-            className="pdtop8 pdbottom12"
-            onChange={changeSelect}
+           
+            onChange={submit}
           ></Select>
         </Form.Item>
-        <Divider style={{ margin: '0 32px', borderColor: '#999999', height: 32 }} dashed type="vertical"></Divider>
-        <Form.Item style={{ marginRight: 'auto' }} >
-          <div >
-            <Form.Item noStyle={true} name="alike">
-              <Input
-                style={{
-                  width: 290,
-                  margin: '16px 0'
-                }}
-                placeholder="巡检点名称/具体位置"
-              />
-            </Form.Item>
-            <Button style={{ width: 80, borderLeft: 'none', background: '#f5f7fa' }} className='searchbtn' onClick={search}>查询</Button>
-          </div>
+     
+        <Form.Item name="alike">
+        <Serach
+              placeholder="巡检点名称/具体位置"
+              allowClear
+              enterButton="查询"
+              onSearch = {submit}
+            />
         </Form.Item>
+        </Space>
         <Form.Item>
           {publish ? null : (
-            <div style={{ display: 'flex' }}>
-              <div className='btncss' onClick={printAll}>
+            <Space size={16}>
+              <CustButton onClick={printAll} style={{width: "122px"}}>
                 批量打印二维码
-              </div>
-              <div className='btncss' onClick={addDevice}>
+              </CustButton>
+              <CustButton onClick={addDevice}>
                 新增
-              </div>
-            </div>
+              </CustButton>
+            </Space>
           )}
         </Form.Item>
 
       </Form>
-      <Divider style={{ margin: '0 0 24px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
-      <div style={{ height: 673, display: 'flex' }}>
-      <Table   columns={columns} dataSource={tabledata.tablesource}
-        pagination={{ current: pageinfo.pageNum, pageSize: pageinfo.pageSize, total: pageinfo.total }}
-        onChange={changePage}
-      ></Table>
-      </div>
+      <Divider style={{ margin: '32px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
+    
+      <Table   columns={columns} {...tableProps}></Table>
+      
       <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn}/>
 
       <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn}/>
@@ -382,10 +356,13 @@ export default function Index() {
         :null
       } */}
       <PrintAll ref={printallref}>
-            {tabledata.tablesource?.map((it,index)=><Print print={it} index={index}></Print>)}
+            {tableProps.dataSource?.map((it,index)=><Print print={it} index={index}></Print>)}
       </PrintAll>
         
     </ContainerDiv>
+    </Titlelayout >
+    </Pagecont>
+
   )
 }
 //新增
@@ -461,7 +438,7 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input placeholder="请输入巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
-          <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
+          <CustButton onClick={()=>{positionRef.current.onOpen();}}>点击获取</CustButton>
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true,message:'请点击获取巡检点地址' }]}>
           <Input disabled placeholder="请点击获取"></Input>
@@ -478,14 +455,14 @@ const AddItem = ({ addRef, addItems, addform,addoptiosn }) => {
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
-          <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
+          <CustButton onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</CustButton>
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input ></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项"  rules={[{ required: true }]}>
-          <div className='btncss' onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</div>
+          <CustButton onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</CustButton>
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input ></Input>
@@ -576,7 +553,7 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input placeholder="巡检点名称"></Input>
         </Form.Item>
         <Form.Item label="巡检点地址"  >
-          <div className='btncss' onClick={()=>{positionRef.current.onOpen();}}>点击获取</div>
+          <CustButton onClick={()=>{positionRef.current.onOpen();}}>点击获取</CustButton>
         </Form.Item>
         <Form.Item label=" " name="address" rules={[{ required: true }]}>
           <Input disabled></Input>
@@ -585,14 +562,14 @@ const EditItem = ({ editRef, editform, updateItems,addoptiosn }) => {
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备"  rules={[{ required: true }]}>
-          <div className='btncss' onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</div>
+          <CustButton onClick={()=>{devicelistref.current.setOpen(true);getDevicelist()}}>点击选择</CustButton>
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项"  rules={[{ required: true }]}>
-          <div className='btncss' onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</div>
+          <CustButton onClick={()=>{checklistref.current.setOpen(true);getChecklist()}}>点击选择</CustButton>
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input disabled></Input>

@@ -2,27 +2,29 @@ import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHan
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectdisOneLevel, getDiscurlevel, getcurlRommid,  selectdiscurlevel, selectcurlRommid,  getRoomId} from "@redux/systemconfig";
+import { selectdisOneLevel, getDiscurlevel, getcurlRommid, selectOneLevelDefaultId, selectdiscurlevel,setCurrentlevel, levelDefaultLabel,  getRoomId} from "@redux/systemconfig";
 export default  memo(function Index(props) {
+  let {showRoom = true} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
   const oneLevel = useSelector(selectdisOneLevel)
-  
+  const levelName = useSelector(levelDefaultLabel) || '园区'
   const areaId = useSelector(selectdiscurlevel)
+  
  
-  //const roomopts = useSelector(state => state.system.roomId)
   const [roomlist, setRoomList] = useState([])
   const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
-  const changeArea=(v)=>{  
-    getDiscurlevel(v)   
-    getRoomList(v)
+  const changeArea=(v, option)=>{  
+     dispacth(setCurrentlevel(option))
+  //  getDiscurlevel(v)   
+     showRoom &&  getRoomList(v)
   }
   const changeRomme = (v) => {      
        dispacth(getcurlRommid(v))
   }
-  const getRoomList = async (areaId) => {
-    const resp = await distributionRoom.RoomList(projectId, areaId)
+  const getRoomList = async (id) => {
+    const resp = await distributionRoom.RoomList(projectId, id)
     if (resp?.success) {
       setRoomList(resp?.data)
       dispacth(getRoomId(resp?.data))
@@ -40,11 +42,12 @@ export default  memo(function Index(props) {
   }
  
  useEffect(() => {
+  if(oneLevel?.length < 1) return 
   if(areaId) {
     getRoomList(areaId)
   }
  
- }, [areaId])
+ }, [areaId, oneLevel])
 return (
   <div>
           <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
@@ -59,7 +62,7 @@ return (
                     }
                   }
               >
-                  <Form.Item   name="area" style={{ marginBottom: 0 }}>
+                  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: 200 }} 
                       options={oneLevel} 
@@ -67,7 +70,7 @@ return (
                       onChange={changeArea}                      
                       ></Select>
                   </Form.Item>
-                  <Form.Item>
+                  {showRoom && <><Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
                   </Form.Item>
                   <Form.Item name="roomId" >
@@ -78,6 +81,8 @@ return (
                           placeholder="请选择配电房"
                           onChange={changeRomme}></Select>
                   </Form.Item>
+                  </>
+                  }
               </Form>
           </div>
   </div>

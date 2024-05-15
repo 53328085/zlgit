@@ -14,7 +14,7 @@ import Titlelayout from '@com/titlelayout'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
-import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle, systemConfigInfo, currProject } from '@redux/systemconfig.js'
 
 import { selectUser } from '@redux/user.js'
 
@@ -117,6 +117,9 @@ export default function GatewayDetail(props) {
     const sn = searchParams.get('sn')  
     const projectId = useSelector(selectProjectId)
     const enchtitle = useSelector(mixtitle)
+    const {projectName,  logoImage  } = useSelector(currProject)
+   
+   
     const {hostServer} = useSelector(selectUser)
     const channel="HMI_" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
 
@@ -135,7 +138,7 @@ export default function GatewayDetail(props) {
     let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
    
     let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true;
-    console.log(dtlkeys)
+     
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
@@ -605,8 +608,8 @@ export default function GatewayDetail(props) {
     return (
         <div className={style.main}>
             <div className={style.head}>
-                <img src={imgurl.logo} className={style.headImg} ></img>
-                <p>{chineseTitle}</p>
+                <img src={logoImage || imgurl.logo} className={style.headImg} ></img>
+                <p>{projectName}综合能源服务平台</p>
             </div>
             <div className={style.body}>
                 <div className={style.left}>

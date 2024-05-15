@@ -45,19 +45,25 @@ const Pagecontentbox = styled.div`
     flex-direction: column;
     flex: ${p => p.beTabs ? '41px 1' :  1};
 `
+/* 
+ // custserach 自定义搜索
+
+*/
 const PageContentMain = styled.div`  
     background-color: ${props => props.bgcolor};
     padding: ${props => props.pd};
     display: flex;
     flex-direction: column;
     position: relative;
-    height:  ${props => {
-         let {showserach, beTabs, custserach} = props  // custserach 自定义搜索
+    flex: 1;
+    max-height: 873px;
+  /*   height:  ${props => {
+         let {showserach, beTabs, custserach} = props 
          if (showserach || custserach) return beTabs ? '764px' : '805px'
          if (!showserach && !custserach) return beTabs ? '832px' : '873px'
        
           
-    }};
+    }}; */
     overflow-y: auto;
 `
 

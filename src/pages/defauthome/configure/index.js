@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less';
+import styled from 'styled-components';
 import configIcon from './configIcon.png'
 import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
@@ -102,6 +103,34 @@ import inspection from './itemImgs/inspection.svg' // 本月工单
 import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
 
 import { useRequest } from 'ahooks';
+const CDrawer = styled(Drawer)`
+  && {
+    font-size: 14px;
+    .ant-drawer-content-wrapper{
+        top: 80px!important;
+        width: 284px!important;
+        height: 848px!important;
+        // position: relative;
+        margin-left: 48px;
+        background: transparent;
+    }
+    .ant-drawer-header{
+        display: none;
+    }
+    .ant-drawer-content{
+        background: transparent;
+    }
+    .ant-drawer-wrapper-body{
+        background: transparent;
+    }
+    .ant-drawer-body{
+
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 16px!important;
+    }
+  }
+
+`
 export default function Index() {
   const { Search } = Input
   const [messageApi, contextHolder] = message.useMessage();
@@ -503,7 +532,7 @@ export default function Index() {
         </div>
       </Modal>
 
-      <Drawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} className={style.drawer}>
+      <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} >
         <div className={style.searchInput}>
           <Search
             placeholder="模块名称"
@@ -523,7 +552,7 @@ export default function Index() {
         <div className={style.closeDrawer}>
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
-      </Drawer>
+      </CDrawer>
     </div>
   )
 }

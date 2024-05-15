@@ -12,6 +12,7 @@ const PrintDom = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   position: absolute;
   z-index: -1;
   left: 50%;
@@ -50,11 +51,10 @@ export default forwardRef(function Print({print,index='index'}) {
       handlePrint()
     }
 
-  },[print])
-
+  },[print]) 
   return (
-        <>
-         <PrintDom id='printddom' ref={printRef} className='printcss' index={index}>
+      
+         <PrintDom id='printddom' ref={printRef} className={index==3  ? 'printcss page-break' : 'printcss'} index={index}>
         <div className='bgcss'>
             <div className='list'>
                 <p>
@@ -72,10 +72,9 @@ export default forwardRef(function Print({print,index='index'}) {
             </div>
             <QRCodeCanvas value={print.id.toString()} style={{padding:10,background:'#fff'}}/>
         </div> 
-        
         </PrintDom>
-        {index===3?(<div className='page-break '></div>):null}
-        </>
+       
+      
        
     
   )

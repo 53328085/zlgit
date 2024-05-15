@@ -1,0 +1,34 @@
+@media all {
+    .page-break {
+      display: none;
+    }
+  }
+  
+  @media print {
+    html, body {
+      height: initial !important;
+      overflow: initial !important; // 如果出现无法分页加入此属性
+      -webkit-print-color-adjust: exact;
+    }
+    .printContet {
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+       align-items: center;
+      }
+        .page-break {
+          margin-top: 1rem;
+          display: block;
+          page-break-after: always;
+        }
+  }
+  
+  
+  
+  
+  @page {
+    size: auto;
+    margin: 16px 0; // 打印页样式
+  }
+  

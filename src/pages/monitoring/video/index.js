@@ -1,10 +1,9 @@
 import React, { useState, useEffect,useMemo  } from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination } from 'antd'
-import { SearchOutlined } from '@ant-design/icons';
+import { Form, Modal, Collapse, DatePicker, Radio, Button,  Space, message,  } from 'antd'
+import styled from 'styled-components'
 import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
-// import Header from './header'
-import UseHeader from '@com/useHeader'
+import { selectProjectId, selectOneLevelDefaultId } from '@redux/systemconfig.js'
+import {useAntdTable} from 'ahooks'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import cameraBG from '@imgs/carmeraBG.png'
@@ -17,7 +16,15 @@ import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
 import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring } from '@api/api.js'
-
+import {Serach, Cdivider} from "@com/comstyled"
+import Pagecount from "@com/pagecontent";
+import Table from "@com/useTable";
+const Mainbox = styled.div`
+  display: grid;
+  grid-template-rows: 80px 1fr;
+  row-gap: 16px;
+  flex: 1;
+`
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
   const { token } = useSelector(selectUser);
@@ -35,9 +42,9 @@ export default function Index() {
   const [endTime, setEndTime] = useState(null)  
   const [startTimeHistory, setStartTimeHistory] = useState(null)
   const [endTimeHistory, setEndTimeHistory] = useState(null)
-  let [areaId, setAreaId] = useState(0)
-  const oneLevel = useSelector(state => state.system.onelevel)
-  const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
+  let areaId = useSelector(selectOneLevelDefaultId);
+
+
   const [cameraTitle, setCameraTitle] = useState('')
   const [wsType, setwsType] = useState('');
   const [wsUrl, setWsUrl] = useState('');
@@ -66,17 +73,8 @@ export default function Index() {
         message.error(res.errMsg)
       }
     })
-  }//监控数量
-  let [pageNum, setpageNum] = useState(1)
-  let inputValue = ''
-  let params = {
-    pageNum: pageNum,
-    pageSize: 10,
-    projectId: projectId,
-    areaId: areaId,
-    alike: ''
-  }
-  let [overView, setoverView] = useState()
+  }//监控数量 
+ 
   let [realPlayUrl, setrealPlayUrl] = useState()
   let [total, settotal] = useState(0)
   const getYsRealPlayUrl = record => {
@@ -136,23 +134,45 @@ export default function Index() {
       }
     })
   }//云监控云台控制
-  const getOverview = () => {
-    return Overview(params).then((res) => {
+
+
+  const [alike, setAlike] = useState('')
+  const getOverview = ({current, pageSize}) => {
+    let post = {
+      pageNum: current,
+      pageSize,
+      projectId,
+      areaId,
+      alike: alike.trim()
+    }
+    return Overview(post).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setoverView(data)
-        settotal(res.total)
+      settotal(Number.isFinite(total) ? total : 0)
+      if (success) {
+         return {
+           list: Array.isArray(data) ? data : [],
+           total: Number.isFinite(total) ? total : 0
+         }
       } else {
         message.error(res.errMsg)
+        return {
+           list: [],
+           total: 0
+        }
       }
     })
-  }//云监控
-  const onChangeValue = e => {
-    inputValue = e.target.value
-  }//输入框改变值
-  const onSearchList = () => {
-    params.alike = inputValue
-    getOverview()
+  }
+  const {tableProps} = useAntdTable(getOverview, {
+    defaultPageSize: 14,
+    refreshDeps: [projectId, areaId, alike]
+  })
+  
+  
+  
+  //云监控
+ 
+  const onSearchList = (e) => {
+      setAlike(e)
   }//点击查询按钮
   const onChangePage = (page, pageSize) => {
     setpageNum(page)
@@ -462,58 +482,43 @@ const playBackYun=()=>{
   const preventJump = (e) => {
     e.preventDefault()
   }
-  const headerProps = {
-    isEnergy: false,//能耗类型
-    isDate: false,//日期
-    isShift: false,//班次
-    isTab: false,//能耗、费用radioButton
-    isSearch: false,//查询按钮
-    isExport: false,//导出按钮
-    allarea:areaOptions
-    //export: exportData //导出调用方法
-  }
-  const getFromChild = data => {
-    console.log(data.areaId)//园区id
-    if (data.areaId == undefined) {
-      return
-    } else {
-      setAreaId(data.areaId)
-    }
-  }
+ 
+ 
   const showTotal = (total) => `共 ${total} 条记录`;
   useEffect(() => {
     if (Number.isFinite(areaId)) {
       getStatistics()
     }
   }, [projectId, areaId])
-  useEffect(() => {
-    if (Number.isFinite(areaId)) {
-      getOverview()
-    }
-  }, [projectId, areaId, params.alike, params.pageNum])
+ 
   return (
-    <div className={style.video}>
-      <UseHeader {...headerProps} getValues={getFromChild}></UseHeader>
+    <Pagecount bgcolor="transparent" pd="0">
+       <Mainbox>
+  
       <div id='cameraData' className={style.cameraData}>
         <CameraValue img={totalCamera} title={'监控总数'} value={statistics.cameraCount ? statistics.cameraCount : '0'}></CameraValue>
         <CameraValue img={cloudCamera} title={'云监控'} value={statistics.onlineCameras ? statistics.onlineCameras : '0'}></CameraValue>
         <CameraValue img={localCamera} title={'本地监控'} value={statistics.localCameras ? statistics.localCameras : '0'}></CameraValue>
       </div>
-      {/* <div className={style.container}>
-        <VideoList showModal={showModal} setplay={setplay}/>
-      </div> */}
-      <div className={style.content}>
+   
+      <Mainbox className={style.content}>
         <div className={style.contentTitle}>
           <span>设备查询</span>
-          <Input placeholder='请输入设备编号/安装地址' style={{ width: 240, marginLeft: 16 }} size='middle' onChange={onChangeValue}></Input>
-          <Button size='middle' style={{ width: 80, backgroundColor: 'rgb(245,247,250)' }} onClick={() => { onSearchList() }}>查询</Button>
+          <Serach size="middle"  placeholder='请输入设备编号/安装地址' 
+          style={{ width: '340px', marginLeft: 16 }} 
+          allowClear
+          enterButton="查询"
+        //  onChange={onChange}
+          onSearch = {onSearchList}
+           />
+      
         </div>
-        <div style={{ marginTop: 16, marginBottom: 16, width: 1649, borderTop: "1px dashed #515151" }} ></div>
-        <div className={style.tableList}>
-          <Table bordered columns={columns} dataSource={overView} rowKey='sn' size='small' pagination={false} />
-        </div>
-        <Pagination className={style.pageNum} current={pageNum} size="small" total={total} showTotal={showTotal} defaultPageSize={10} onChange={onChangePage} />
-      </div>
+        <Cdivider type="h" margin="16px 0" />
+      
+          <Table bordered columns={columns} {...tableProps} rowKey='sn' size='small' />
+        
+       
+      </Mainbox>
       <Modal
         title={recordData?.address}
         centered
@@ -694,6 +699,7 @@ const playBackYun=()=>{
           </div>
         </div>
       </Modal>
-    </div>
+      </Mainbox>
+    </Pagecount>
   )
 }

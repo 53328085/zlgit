@@ -72,9 +72,11 @@ const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedet
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
- 
+const Directionful = lazy(() => import("../pages/energy/direction"))
 const Notfound = lazy(() => import("./notfound"))
+const Comindex = lazy(() => import("./comindex"))
 
+const Topologytest = lazy(() => import("../pages/topology/test"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  
@@ -101,11 +103,11 @@ const loginrouter =  [{
 
  const components = {
   '0104': Defauthome,
-  '0105': Monitoring,
-  '0106': Electric,
+  '0105': Comindex,
+  '0106': Comindex,
   '0107': Distribution,
   '0108': Prepayment,
-  '0109': Energy,
+  '0109': Comindex,
   '0110': Photovoltaic,
   '0111': Storage,
   '0112': Carbon,
@@ -168,6 +170,10 @@ const loginrouter =  [{
     path: '/gatewayDetail',
     element: <GatewayDetail />
   },
+  {
+    path: '/directionfull',
+    element: <Directionful />
+  },
    {
      path: '/zltest',
      element: <Fform/>, 
@@ -181,6 +187,10 @@ const loginrouter =  [{
       path: "/front",
       element: <Navigate to="https://dmm.chint.com/front/development/view/c0766e737b554e6eab7196676f410c40$$0$$fd3e94c07c40492b907aea9af565528d" />
       },
+   {
+        path: "/topotest",
+        element: <Topologytest />
+    },
    {
     path: '*',
     element:   <Notfound />

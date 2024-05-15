@@ -55,7 +55,8 @@ const fs = {
 
 const rate = (all,p) => {
      if(all == 0) return "0%"
-   return  (p/all).toFixed(3)*100 + "%"
+     console.log(p/all)
+   return  Number.parseFloat(p/all*100).toFixed(1) + "%"
 }
 export default function DefaultHome(props) {
   const projectId = useSelector(selectProjectId)

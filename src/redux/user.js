@@ -20,10 +20,8 @@ export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手�
     'user/loginByName',
     async (params) => { 
        console.log(params)
-      let {type, ...param} = params  
-    //  password = params.passowrd   
-      let handler = ['LoginByName', 'LoginByPhone'][type] 
-      console.log(handler)
+      let {type, ...param} = params    
+      let handler = ['LoginByName', 'LoginByPhone'][type]     
       const response =  await Login[handler](param)
       return response
     }
@@ -60,6 +58,7 @@ const user = createSlice({
            let {success, errMsg, data} = payload
            if (success) {
                window.sessionStorage.setItem("chintwulian", 's')
+               window.sessionStorage.setItem('useToken', data.token)
               // state = {...data, loading: false, password}
               return Object.assign({}, state, data, {loading: false},   )
            }else {

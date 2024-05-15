@@ -1,19 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Select, Button, Table, Space, Form, Input, Modal, Tree, message } from 'antd';
+import {  Button,  Form, Input,  Tree, message, Divider} from 'antd';
 import { cloneDeep, update } from "lodash";
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
-import {selectProjectId, selectOneLevel, publishState, levelDefaultLabel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevelDefaultId, publishState, selectcurlRommid} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
 import CModal from '@com/useModal'
-import dashed from '@imgs/dashed.png'
-
+ 
+import Pagecont from "@com/pagecontent"
+import Titlelayout from '@com/titlelayout'
 
 export default function Index() {
   const isPublish = useSelector(publishState)
-  const { queryPageRoom, queryLine, addLine, updateLine, deleteLine, queryUnusedLineMeter, configLineMeter } = distributionRoom
+  const roomId = useSelector(selectcurlRommid)
+  const areaId = useSelector(selectOneLevelDefaultId)
+  const {  queryLine, addLine, updateLine, deleteLine, queryUnusedLineMeter, configLineMeter } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
     messageApi.open({
@@ -27,70 +30,13 @@ export default function Index() {
   const [form] = Form.useForm()
   const Item = Form.Item
 
-  const areaList = useSelector(selectOneLevel)
-  const levelName = useSelector(levelDefaultLabel) || '园区'
-  const [defaultArea, setDefaultArea] = useState(areaList[0]?.id || undefined)
-  const [areaId,setAreaId] = useState(areaList[0]?.id || undefined)
-  const handleChange = (values) => {
-    setAreaId(values)
-  }
+ 
+
   const addref = useRef();
   //配电房下拉框
-  const [roomList, setRoomList] = useState([])
-  const [defaultRoom, setDefaultRoom] = useState()
-  const [roomId, setRoomId] = useState()
-  const getRoomData = () => {
-    return queryPageRoom( projectId, areaId, 0, 0).then(res => {
-      if(res.success){
-        if(Array.isArray(res.data)) {
-          setRoomList(res.data)
-          setDefaultRoom(res.data.length > 0 ? res.data[0].id : null)
-          setRoomId(res.data.length > 0  ? res.data[0].id : null)
-          if(res.data.length == 0){
-            messageApi.open({
-              type: 'warning',
-              content:"当前园区没有配电房"
-            })
-            setTreeData([])
-          }
-        } else {
-          setRoomList([])
-          setDefaultRoom(null)
-          setRoomId(null)
-          messageApi.open({
-            type: 'warning',
-            content:"当前园区没有配电房"
-          })
-        }
-       
-      }else{
-        messageApi.open({
-          type:'error',
-          content:res.errMsg
-        })
-      }
-    }).catch(e => {
-      console.log(e)
-    })
-  }
-  const { run : queryRoom } = useRequest(getRoomData,{
-    manual: true,
-  })
-  useEffect(()=>{
-    if(areaList.length == 0 || !areaList){
-      message.error('当前项目尚未配置园区!')
-      return;
-    }
-    if(areaId == 0 || !areaId){
-      return
-    }else{
-      queryRoom()
-    }
-  },[areaId])
-  const ChangeRoom = values => {
-    setDefaultRoom(values)
-    setRoomId(values)
-  }
+
+
+
 
   //查询线路
   const getLine = () => {
@@ -122,10 +68,7 @@ export default function Index() {
   const [clickTag, setClickTag] = useState('')
   const [subId, setSubId] = useState(null)
   const showAdd = () => {
-    if(areaId == 0 || !areaId){
-      message.warning('请先选择园区!')
-      return;
-    }
+     
     setModalTitle('新增线路')
     setAddModal(true)
     setClickTag('addMain')
@@ -155,10 +98,10 @@ export default function Index() {
       let params = {
         projectId,
         roomId,
-        name: values.name
+        name: encodeURIComponent(values.name)
       };
       if(clickTag == 'edit'){
-        updateLine(projectId, subId, values.name).then(res=> {
+        updateLine(projectId, subId, encodeURIComponent(values.name)).then(res=> {
           if(res.success){
             messageContent('success', '线路名称修改成功!')
             lineQuery()
@@ -187,10 +130,7 @@ export default function Index() {
      
     }catch(errorInfo){}
   }
-  const handleCancel = () => {
-    setAddModal(false)
-  }
-  
+ 
 
   const [deleteModal, setDeleteModal] = useState(false)
   const [deleteId, setDeleteId] = useState(null)
@@ -370,48 +310,17 @@ export default function Index() {
     subTitle:'线路分表',
     unknownTitle:'未选中设备'
   }  
-
+  const Title = (
+    <div style={{display: 'flex', justifyContent: "space-between"}}>
+       <span>配电房线路图</span>
+       { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={showAdd} style={{marginRight:0}}>新增主线</Button> }
+    </div>
+  )
   return (
-    <div>
+    <Pagecont showserach={false} custserach pd="0px" >   
       {contextHolder}
-      {transTag =='open' ? <div className={style.mask}></div> : null }
-      <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={handleChange}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-        <div className={style.division}></div>
-        <Select
-          placeholder="请选择配电房"
-          size="middle"
-          // key={defaultRoom}
-          // defaultValue={defaultRoom}
-          value={defaultRoom}
-          style={{width: '200px'}}
-          onChange={ChangeRoom}
-        >
-          {roomList?.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div>
-      <div className={style.mainContent}>
-        <div className={style.contentTitle}>
-            <span>配电房线路图</span>
-            { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={()=>showAdd()} style={{marginRight:0}}>新增主线</Button> }
-        </div>
-        <div className={style.line}>
-          <img className={style.lineImg} src={dashed}></img>
-        </div>
+      <Titlelayout title= {Title}  layout="flex" dr="column">  
+        <Divider style={{margin: "16px 0"}} />
         <div className={style.lineTree}>
             <div className={style.treeTitle}>
                 <span className={style.treeItem}>线路图</span>
@@ -423,9 +332,9 @@ export default function Index() {
                 <Tree defaultExpandAll blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree>
             </div>
         </div>
-        <div className={`${style.transferPage} ${transTag =='open' ? style.startAnimation : transTag =='close' ? style.endAnimation :''}`} >
-          <UseTransfer transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
-        </div>
+       
+      <UseTransfer  mask={transTag} transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
+       
         <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal}  >
        
           <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
@@ -438,7 +347,8 @@ export default function Index() {
         <CModal  title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} mold="cust" type="warn">
            是否确认删除选中线路？
         </CModal>
-      </div>
-    </div>
+      
+      </Titlelayout>
+    </Pagecont>
   )
 }

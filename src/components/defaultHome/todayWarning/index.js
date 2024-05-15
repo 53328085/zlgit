@@ -124,8 +124,8 @@ export default function DefaultHome(props){
               state.alarmCount = data.alarmCount // 总的告警数
               state.confirmCount = data.confirmCount // 已确认
               state.unconfirmCount = data.unconfirmCount // 没确认
-              state.confirmPercent = ((data.confirmCount / data.alarmCount)* 100).toFixed(1)
-              state.unconfirmPercent =  ((data.unconfirmCount / data.alarmCount)* 100).toFixed(1)          
+              state.confirmPercent = data.alarmCount > 0 ?   ((data.confirmCount / data.alarmCount)* 100).toFixed(1) : 0
+              state.unconfirmPercent =  data.alarmCount > 0 ? ((data.unconfirmCount / data.alarmCount)* 100).toFixed(1) : 0         
               tdrawEcharts()
             }
           }else{

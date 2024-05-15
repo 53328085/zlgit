@@ -11,20 +11,16 @@ import {
   message,
   Typography,
   Select,
-  InputNumber,
   Drawer,
-  Cascader
 } from "antd";
-import { nanoid } from "@reduxjs/toolkit";
+ 
 import styled from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { useAntdTable } from "ahooks";
-import warningImg from "@imgs/warning.png";
-import { CustButton } from "@com/useButton";
  
-import Mapcom from "@com/useMap";
+import {Serach} from '@com/comstyled'
+ 
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 import Mask from '@com/mask.jsx'
@@ -316,17 +312,47 @@ const getSelected = async ({areaId, type=devietype}) => {
       console.log(error);
     }
   };
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows, info) => {
-      devices.current.selected = selectedRows;
+ const [rowSelectionData, setRowSelection] = useState([])
+ const [maindata, setMaindata] = useState([])
+  const rowSelection = {   // 总表
+    selectedRowKeys:rowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => {     
+      setRowSelection(selectedRowKeys)
+       setMaindata([...selectedRows]);
     },
   };
+  const [subrowSelectionData, setSubRowSelection] = useState([])
+  const [subdata, setSubdata] = useState([])
+  const subrowSelection = {   // 分表
+    selectedRowKeys:subrowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => { 
+      setSubRowSelection(selectedRowKeys)
+      setSubdata([...selectedRows]);
+    },
+  };
+   
+  const [unrowSelectionData, setUnRowSelection] = useState([])
+  const [undata, setUndata] = useState([])
+  const unrowSelection = {   // 分表
+    selectedRowKeys:unrowSelectionData ,
+    onChange: (selectedRowKeys, selectedRows, info) => { 
+      setUnRowSelection(selectedRowKeys)
+      setUndata([...selectedRows]);
+    },
+  };
+
+
 
   const onMove = async (type) => { 
     
     let {areaId} = Record 
-    let selected = devices.current.selected;
+    let selected = [[], undata,maindata, undata, subdata][type]
+   // let selected = devices.current.selected; 
+      
     if (selected.length < 1) return message.warning('请选择设备', 2)
+    if(type == 2 || type == 4) setUnRowSelection([])
+    if(type == 1) setRowSelection([])
+    if(type == 3) setSubRowSelection([])
     let params = selected.map(s => s.sn);
     let handler = ['', 'AddSummaryDevice', 'RemoveSummaryDevice', 'AddSubDevice', 'RemoveSubDevice'][type]
      let {success, errMsg} =  await Area[handler](projectId, areaId, params)
@@ -506,18 +532,18 @@ const getSelected = async ({areaId, type=devietype}) => {
   
   return (
     <Mainbox ref={boxref}>
-      {open ? Mask() : null }
+     
       <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}查询`}>
-              <Input.Search
-                placeholder={`请输入${name}名称`}
-                allowClear
-                enterButton="查询"
-                style={{ width: "550px" }}
-                onSearch={getTableData}
-              />
+              <Serach
+                  placeholder={`请输入${name}名称`}
+                  allowClear
+                  enterButton="查询"
+                  style={{ width: "340px" }}
+                  onSearch = {getTableData}
+                />
             </Form.Item>
           )}
           {level > 1 && (
@@ -534,13 +560,13 @@ const getSelected = async ({areaId, type=devietype}) => {
                   onChange={getTableData}
                 ></Select>
               </Item>
-              <Form.Item name="name" label={`${name}查询`}>
-                <Input.Search
+              <Form.Item name="name" label={`${name}查询`}>                 
+              <Serach
                   placeholder={`请输入${name}名称`}
                   allowClear
                   enterButton="查询"
-                  style={{ width: "550px" }}
-                  onSearch={getTableData}
+                  style={{ width: "340px" }}
+                  onSearch = {getTableData}
                 />
               </Form.Item>
             </>
@@ -555,12 +581,13 @@ const getSelected = async ({areaId, type=devietype}) => {
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
+      <Mask task={open} >
       <Drawerbox
-        placement="bottom"
         onClose={drawClose}
         open={open}
-        getContainer={() => boxref.current}
-        style={{ position: "absolute", top: "0px"}}
+       getContainer={() => boxref.current}
+       
+        style={{ position: "absolute", top: "-16px", left: "-16px", zIndex: 1982}}
         closable={false}
         destroyOnClose
         height={760}
@@ -592,7 +619,7 @@ const getSelected = async ({areaId, type=devietype}) => {
             </Space>
             <UserTable
               columns={deviceColumns}
-              rowSelection={rowSelection}
+              rowSelection={subrowSelection}
               dataSource={deviceSub}
               scroll={{
                 y: 248
@@ -695,13 +722,14 @@ const getSelected = async ({areaId, type=devietype}) => {
           </Form>
           <UserTable
             columns={deviceColumns}
-            rowSelection={rowSelection}
+            rowSelection={unrowSelection}
             dataSource={Unselected}
-            scroll={{y: 616}}
+            scroll={{y: 556}}
             rowKey="id"
           />
         </div>
       </Drawerbox>
+      </Mask>
     </Mainbox>
   );
 }

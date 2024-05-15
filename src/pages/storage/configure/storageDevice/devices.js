@@ -10,7 +10,7 @@ import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
-
+import Mask from '@com/mask'
 export default function Index(props) {
   const [form] = Form.useForm()
   const [multiForm] = Form.useForm()
@@ -191,7 +191,7 @@ export default function Index(props) {
   }
 
   //穿梭框
-  const [transTag, setTransTag] = useState('')
+  const [transTag, setTransTag] = useState(false)
   const settingClick = () => {
     GetDeviceInfo(projectId, form.getFieldValue('siteId'), '').then(res => {
       if (res.success) {
@@ -218,7 +218,7 @@ export default function Index(props) {
         state.gridTable = [item]
       }
     })
-    setTransTag('open');
+    setTransTag(true);
   }
 
   const state = useReactive({
@@ -269,7 +269,7 @@ export default function Index(props) {
     Config(projectId, form.getFieldValue('siteId'), group).then(res => {
       if (res.success) {
         message.success('新增设备成功!')
-        setTransTag('close')
+        setTransTag(false)
         getFromHeader()
       } else {
         message.error(res.errMsg || "数据出错")
@@ -278,7 +278,7 @@ export default function Index(props) {
   }
 
   const getCloseValue = params => {
-    setTransTag(params)
+    setTransTag(false)
   }
 
   //删除
@@ -370,7 +370,7 @@ export default function Index(props) {
 
   return (
     <div className={style.mainContainer}>
-      {transTag == 'open' ? <div className={style.mask}></div> : null}
+   {/*    {transTag == 'open' ? <div className={style.mask}></div> : null} */}
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
           <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
@@ -415,8 +415,8 @@ export default function Index(props) {
       </div>
       <Divider />
       <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 } : null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
-      <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} >
-        <UseTransfer
+     {/*  <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} > */}
+      <Mask task={transTag}>  <UseTransfer
           transferTitle={transferTitle}
           saveValue={getSaveValue}
           columns={transferColumns}
@@ -425,7 +425,9 @@ export default function Index(props) {
           gridTable={state.gridTable}
           unknownTable={unknownTable}
           closeValue={getCloseValue}></UseTransfer>
-      </div>
+          </Mask>
+     
+     {/*  </div> */}
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
          是否确认删除电表？ 
       </Custmodl>

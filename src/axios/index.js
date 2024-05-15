@@ -6,7 +6,8 @@ const server = axios.create({
     baseURL: process.env.NODE_ENV === "production" ? '/V1' :  '/api/V1',
     timeout: 50000,
     headers: {      
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Cache-Control': 'no-cache',
     }
 })
 server.interceptors.request.use(
@@ -40,12 +41,16 @@ server.interceptors.response.use(
             })
         }
         if (state == 401)  {
-          return  message.warning({          
+           console.log(401)
+           message.warning({          
             content: '登录状态发生改变,请重新登录',
-            onClose: () => window.location.href="/",
+            onClose: () => {
+                window.location.href="/"
+            },
             duration: 0.5,
-           
-        })
+          })
+          
+         // message.destroy()
         }
         if (state >= 500)   message.error(msg || '数据出错')
         return Promise.reject(error)

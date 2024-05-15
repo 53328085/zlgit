@@ -5,6 +5,7 @@ import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import { publishState } from '@redux/systemconfig'
 import {  ExportExcel} from '@com/useButton'
+import {Serach} from '@com/comstyled'
 const { DeviceManager: { OneLevel } } = Monitoring
 
 export default forwardRef(function Comp(props, ref) {
@@ -51,12 +52,12 @@ export default forwardRef(function Comp(props, ref) {
         getList && getList(1, page.pageSize, value, inpvalue, energyVal)
         // getList && getList(value, inpvalue,energyVal)
     }
-    const getDeviceSearch = () => {
+    const getDeviceSearch = (v) => {
         setPage(() => ({
             ...page,
             current: 1,
         }))
-        getList && getList(1, page.pageSize, selvalue, inpvalue, energyVal)
+        getList && getList(1, page.pageSize, selvalue, v, energyVal)
     }
     const changeEnergy = (v) => {
         console.log(v)
@@ -111,11 +112,23 @@ export default forwardRef(function Comp(props, ref) {
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
-                        <Input style={{ width: 321 }} placeholder={placeholder} onChange={(e) => { setInpvalue(e.target.value) }} />
+                    <Serach
+                           style={{ width: 321 }}
+                            placeholder={placeholder}
+                            allowClear
+                            enterButton="查询"
+                            onChange={(e) => { 
+                                setInpvalue(e.target.value)
+                             }}
+                            onSearch = {getDeviceSearch}
+                            />
+
+
+                       {/*  <Input style={{ width: 321 }} placeholder={placeholder} onChange={(e) => { setInpvalue(e.target.value) }} /> */}
                     </Col>
-                    <Col>
+                    {/* <Col>
                         <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={getDeviceSearch}>查询</Button>
-                    </Col>
+                    </Col> */}
                     {
                         isenergy && (<>
                             <Divider type="vertical" dashed style={{ margin: '0 16px', borderColor: ' #d7d7d7', height: 30 }} />

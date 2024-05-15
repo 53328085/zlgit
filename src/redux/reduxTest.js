@@ -12,14 +12,15 @@ const initialState = {
   status: '加载中',
   error: 'error',
   names: [],
-  menus: []
+  menus: [],
+  zlmenus: [],
 
 }
 export const testthunk = (arg) => { // 同步 thunk
    return (dispatch, getState) => {
      const initState = getState()
      console.log(initState)
-     dispatch(setzl(arg))
+   //  dispatch(setzl(arg))
      
    }
 
@@ -32,10 +33,12 @@ export const asyncthunk = createAsyncThunk('zltest/systeminfo', async (params) =
    
 })
 
-export const getpropject = createAsyncThunk('zltest/menus', async (projectId=1, {rejectWithValue}) => { // 异步 thunk
-  
+export const getpropject = createAsyncThunk('zltest/menus', async (projectId=1, thunkApi) => { // 异步 thunk
+    console.log(thunkApi)
+    let  {rejectWithValue, dispatch} = thunkApi
      try {
       let  response  = await ProjectList.QueryMenus(projectId)  
+      dispatch(setMenu(response.data))
       return response.data
      } catch (error) {
         
@@ -68,6 +71,9 @@ const zlsilce = createSlice({
              console.log(action)
              state.zltest = action.payload
         },
+        setMenu: (state, action) => {
+              state.zlmenus = action.payload
+        } ,
         addname: {
           reducer(state, action) {
             console.log(state.names)
@@ -85,7 +91,7 @@ const zlsilce = createSlice({
       },
 
       [getpropject.fulfilled]: (state, actions) => {
-      
+        console.log(actions)
         state.menus = actions.payload
      },
      [getpropject.rejected]: (state, actions) => {
@@ -119,5 +125,6 @@ export const status = state => state.zltest.status
 export const error = state => state.zltest.error
 export const sysinfo = state => state.zltest.sysinfo
 export const names = state => state.zltest.names
-export const {setSys, setz, addname } =  actions
+export const zlmenus = state => state.zltest.zlmenus;
+export const {setSys, setz, addname, setMenu } =  actions
 export default reducer

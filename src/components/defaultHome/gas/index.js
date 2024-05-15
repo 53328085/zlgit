@@ -20,13 +20,17 @@ export default function DefaultHome(props){
  
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
-    grid:{
-      // 图表 grid
+   grid:{
       left: "0px",
       right: "0",
       top: "30px",
       bottom: "0px",
       containLabel: true,
+    },  
+    legend: {
+      top: "5px",
+      itemHeight: 4,
+      itemWidth: 16,
     },
     color: ['#ff6803'],
     dataset: {},
@@ -66,7 +70,7 @@ export default function DefaultHome(props){
 }, [projectId, type])
   
   return (
-    <Titlelayout title={'用燃气量'} {...fs} style={{height: '200px'}}>
+    <Titlelayout title={'用燃气量'} {...fs} style={{height: '200px'}} layout="flex">
         <div style={{flex:1, display: 'flex'}}>
         <Ichart {...options} />
         </div>
