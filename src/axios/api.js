@@ -2093,3 +2093,16 @@ export class HomeRuntime {
  
 
 }
+// 碳排 
+export class Carbon {
+  static DownloadTemplate = ({year,month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/DownloadTemplate?year=${year}&month=${month}&enterpriseId=${enterpriseId}`, 
+  {
+     headers: {
+      // "Content-Type": "application/json;charset=UTF-8;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Type":"application/json;charset=UTF-8;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        
+    },
+    responseType: "blob",
+  })  // 碳排管理 下载模板
+  static OnImport = (body) => server.post('Carbon/CarbonEnterpriseDataInput/ImportData', body)
+}

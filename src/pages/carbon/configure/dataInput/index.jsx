@@ -1,12 +1,19 @@
-import React, {useEffect, useState} from 'react'
-import Pagecount from '@com/pagecontent'
+import React, {useEffect, useState, useRef} from 'react'
 import styled from 'styled-components'
-import {Form,  Space, DatePicker, Tooltip} from 'antd'
+import moment from 'moment'
+import {Form,  Space, DatePicker, Tooltip, Upload, Typography, message} from 'antd'
+import Pagecount from '@com/pagecontent'
+import Modal from '@com/useModal'
+
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
-import {DataSlice, useEmissionUnitQuery} from "./dataslice"
+import upload from "@imgs/upload.png"
+import {DataSlice, useEmissionUnitQuery,useImportDataMutation} from "./dataslice"
+import {Carbon} from "@api/api.js"
 import {CustButtonT} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
+const { Dragger } = Upload;
+const {Link} = Typography
 const Mainbox = styled.div`
   margin-top: 16px;
     padding-top: 16px;
@@ -49,39 +56,73 @@ const columns = [
 ]
 export default function Index() { 
   const [form] = Form.useForm()
-
+  const ref = useRef()
+  console.log(upload)
   let unitDatas
-  const {data:unidata, isSuccess, refetch  } =useEmissionUnitQuery({year: 2024, month: 3, enterpriseId: 1})
+  const {data:unidata, isSuccess, refetch  } =useEmissionUnitQuery({year: 2024, month: 4, enterpriseId: 1})
 
   if(isSuccess) {
     console.dir(unidata)
     unitDatas = unidata?.data
   }
 
-  const [downloadTemp] = DataSlice.useLazyDownloadTempQuery()
+  // 下载模板
 
   const onDownload =async () => {
-    refetch();
-    let res = await    downloadTemp({year: 2024, month: 4, enterpriseId: 1})  
-    let blob = new Blob([res], {
-      type: "application/x-msdownload",
-    }); //你需要的类型 转化为blob对象
-    console.log(blob, 1353);
-    let url = window.URL.createObjectURL(blob); //将对象转化为链接
-    let a = document.createElement("a");
-    // 下载链接
-    a.href = url;
-    a.download = "集体户模板.xlsx";
-    document.body.appendChild(a);
-    // 点击a标签，进行下载
-    a.click();
-    // 移除元素
-    document.body.removeChild(a);
+    try {
+      let month = form.getFieldValue('month').month() + 1
+      let res = await Carbon.DownloadTemplate({year: 2024, month: 4, enterpriseId: 1})     
+      let blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }); 
+     
+      let url = window.URL.createObjectURL(blob); 
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = `${month}月份数据录入.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+     
+      document.body.removeChild(a);
+    } catch (error) {
+      console.log(error)
+    }
+
   }
+
+  // 数据导入
+  let flies
+  const beforeUpload = (file, fileList) =>{
+    console.log(file, fileList)
+    flies = [...fileList]
+    return false
+  }
+ //  const [onupload] = useImportDataMutation()
+  const onImport =() => {
+    ref.current.onOpen()
+
+  }
+  const uploadOk = async () => {
+    try {
+      let formData = new FormData()
+      formData.append("file", flies[0])
+      let {success,errMsg} = await Carbon.OnImport(formData)
+      if(success) {
+        message.success("文件导入成功")
+      } else{
+        message.warning(errMsg || '数据出错')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+
+  // end
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
         <span>手动数据录入</span>
-        <Space><Tooltip title="下载模板"><CustButtonT text="download" onClick={onDownload} /></Tooltip><CustButtonT text="import" src='import' /> <CustButtonT text="save" src='save' /></Space>
+        <Space><Tooltip title="下载模板后录入数据，可以直接导入上传数据"><CustButtonT text="download" onClick={onDownload} /></Tooltip><CustButtonT text="import" src='import' onClick={onImport} /> <CustButtonT text="save" src='save' /></Space>
     </div>
   )
  
@@ -89,9 +130,13 @@ export default function Index() {
     <Pagecount bgcolor="transparent" pd="0">
      
     
-          <Titlelayout title={CTitle} layout="flex">
+          <Titlelayout title={CTitle} layout="flex" >
             <Mainbox>
-               <Form form={form} layout="inline" colon={false} labelCol={{flex: '2.5em'}}>
+               <Form form={form} layout="inline" colon={false} labelCol={{flex: '2.5em'}} 
+               initialValues={{
+            year: moment(),
+            month: moment()
+          }}>
                   <Form.Item name="year" label="年度">
                      <DatePicker   picker="year" />
                   </Form.Item>
@@ -105,7 +150,14 @@ export default function Index() {
              </Mainbox>
 
           </Titlelayout>
-        
+          <Modal mold='cust' ref={ref}   title='数据模板导入' onOk={uploadOk}>
+      {/* <BlueColumn name={name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+      <Dragger accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
+        <img src={upload}></img>
+        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<Link>点击上传</Link></p>
+       
+      </Dragger>  
+    </Modal>
     </Pagecount>
   )
 }

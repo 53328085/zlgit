@@ -11,6 +11,7 @@ import system from './systemconfig' //根据IP或域名获取系统配置
 import zltest from './reduxTest' // 测试用
 import {apiSlice} from './rtkquery'
 //import {apiSlice} from '../pages/test/apiBasic'
+import {ProjectList} from "@api/api"
 const reducers = combineReducers({
   user,
   system,
@@ -31,8 +32,11 @@ export default configureStore({
  
   devTools: process.env.NODE_ENV !== 'production',
  // middleware: [thunk],
- middleware: getDefaultMiddleware =>
-  getDefaultMiddleware().concat(apiSlice.middleware)
+ middleware: getDefaultMiddleware => {
+  return getDefaultMiddleware().concat(apiSlice.middleware)
+ }
+  
+  
   
 })
 

@@ -277,7 +277,7 @@ const system = createSlice({
           
            state.iszhCN = payload
         },
-        getEnterprise(state, {payload}) {
+        getEnterprise(state, {payload}) {        
           state.enterprise = payload
         }
 

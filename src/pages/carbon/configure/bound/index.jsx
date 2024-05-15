@@ -93,7 +93,9 @@ const Tablebox = styled.div`
 `
  
 export default function Index() { 
-  const {id:enterpriseId} = useSelector(enterprise)
+  // const {id:enterpriseId} = useSelector(enterprise)
+  const  {enterpriseId} = useSelector(enterprise)
+  console.log(enterpriseId)
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
