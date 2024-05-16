@@ -94,7 +94,7 @@ const Tablebox = styled.div`
  
 export default function Index() { 
   // const {id:enterpriseId} = useSelector(enterprise)
-  const  {enterpriseId} = useSelector(enterprise)
+  const  {id:enterpriseId} = useSelector(enterprise)
   console.log(enterpriseId)
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
@@ -216,6 +216,7 @@ export default function Index() {
          data.forEach(e => {
            saveData.current[e.categoryName] = e
          })
+         console.log(saveData.current)
         }else {
          saveData.current={}
          message.warning(errMsg || '数据出错')
@@ -239,6 +240,7 @@ export default function Index() {
         carbonBoundaryId:carbonBoundaryId.current,
         post: []
       }
+     
       for(let value of Object.values(saveData.current)) {
         let {dataSubCategoryVos} = value
         let keys = dataSubCategoryVos.map(d => ({subCategoryId:d.subCategoryId, dataSource: d.dataSource}))

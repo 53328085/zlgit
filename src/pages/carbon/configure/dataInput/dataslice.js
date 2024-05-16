@@ -12,7 +12,7 @@ export const DataSlice = apiSlice.injectEndpoints({
             })             
         }),
         saveData: build.mutation({ // 保存数据
-            query: ({year,month, enterpriseId}, body) => ({
+            query: ({year,month, enterpriseId,body}) => ({
                 url: `Carbon/CarbonEnterpriseDataInput/SaveInputData?year=${year}&month=${month}&enterpriseId=${enterpriseId}`,
                 method: 'POST',
                 body
@@ -35,6 +35,6 @@ export const DataSlice = apiSlice.injectEndpoints({
 console.dir(DataSlice)
 export const {
     useEmissionUnitQuery,
-    useImportDataMutation
-
+    useImportDataMutation,
+    useSaveDataMutation,
     } = DataSlice
