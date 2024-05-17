@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import {Form,  Space, DatePicker, Tooltip, InputNumber, message} from 'antd'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
-import {QutoSlice,  useQuotaQuery,
+import {QutoSlice,  useQuotaQuery, useEmissionQuery,
   useSaveQuotaMutation} from "./quotaslice"
 import {CustButtonT} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
@@ -64,11 +64,16 @@ const columns = [
 ]
 export default function Index() { 
   const [form] = Form.useForm()
-  const {id} = useSelector(enterprise)
- 
-  const {isSuccess, data} = useQuotaQuery(id)
-  let tableData = []
+  const {id:enterpriseId} = useSelector(enterprise)
   const year = new Date().getFullYear()
+  const {data: lastyear} = useEmissionQuery(enterpriseId, { // 当年
+    skip: !Number.isInteger(enterpriseId)
+  })
+  const {isSuccess, data} = useQuotaQuery({enterpriseId, year: year}, {
+    skip: !Number.isInteger(enterpriseId)
+  }) //去年
+  let tableData = []
+ 
   if(isSuccess && Array.isArray(data?.data)) {
      let obj = {},curyear = {}
     data?.data?.forEach(d => {
@@ -117,6 +122,13 @@ export default function Index() {
     </div>
   )
  
+  const CTitleC = (
+    <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
+        <span>园区目标分解测算</span>
+        <Space>{/* <CustButtonT text="import" src='import' /><CustButtonT text="export" src='export' /> */}<CustButtonT loading={isLoading} text="save" onClick={onSave}  /></Space>
+    </div>
+  )
+
   return (
     <Pagecount bgcolor="transparent" pd="0">
           <Titlelayout title={CTitle} layout="flex">

@@ -30,33 +30,78 @@ const Mainbox = styled.div`
     }
    } 
 `
+//  查询获得的数据组装
+const splitarr = (arr) => {  
+  if( Array.isArray(arr) && arr.length > 0) {
+  // 先获取当前的月份
+   let date =moment(arr[0].date, "YYYY-MM-DD hh:mm:ss") 
+   let days = date.daysInMonth()  //数组最后一项为总计
+   let month= date.month()
+   let year = date.year()
+  
+ 
+  let obj = {}
+  arr.forEach(u => {
+   let key = `${u.carbonUnitName}${u.subCategoryName}`
+   if(!obj[key]) {
+     obj[key]= []
+     obj[key].push(u)
+   }else {
+     obj[key].push(u)
+   }
+  })
+  let tableData = []
+  for(let arrs of Object.values(obj)) {
+      let consumption = Array.from({length: days}, (_, i) => i).fill(0)
+      let {carbonUnitName, subCategoryName} = arrs[0]
+      let unit = {
+        carbonUnitName,
+        subCategoryName,
+        day: days,
+        consumption,
+      }
+      arrs.forEach(item => {
+        let index =  moment(item.date, "YYYY-MM-DD hh:mm:ss").day() -1
+        if(item.consumption!==0)  unit.consumption.splice(index, 1, item.consumption)
+      })
+      let total = unit.consumption.reduce((a, b) => a+b, 0);
+      unit.consumption.push(total);
+      tableData.push(unit)
+  }
+  
+  return  [tableData, year, month]
+  }else {
+    return [[], null, null]
+  }
+ }
+ const Ctd = ({record,i,text,saveData,index}) => {
+ 
+  let {carbonUnitName, subCategoryName} = record;
+  const form = Form.useFormInstance();
+  form.setFieldValue([`${carbonUnitName}-${subCategoryName}`, i], text)
+  const onChange = (v) => {
+  
+    try {
+      saveData[index]?.consumption.splice(i,1,v)
+    } catch (error) {
+      console.log(error)
+    }
+      
+  }
+  return (<Form.Item   initialValue={text} name={[`${carbonUnitName}-${subCategoryName}`, i]} >
+      <InputNumber min={0} onChange={onChange} />
+   </Form.Item>)
+}
 
 export default function Index() { 
   const {id:enterpriseId} = useSelector(enterprise)
   const [form] = Form.useForm()
   const [tbform] = Form.useForm()
   const ref = useRef()
-   
+  const saveData = useRef();
   const [tableData, setTableData] = useState([])
-  const Ctd = ({record,i,text,saveData,index}) => {
-    let {carbonUnitName, subCategoryName} = record;
-   
-    const onChange = (v) => {
-      
-      try {
-        saveData[index]?.consumption.splice(i,1,v)
-      } catch (error) {
-        console.log(error)
-      }
-        
-    }
-    return (<Form.Item   initialValue={text} name={[`${carbonUnitName}-${subCategoryName}`, i]} >
-        <InputNumber min={0} onChange={onChange} />
-     </Form.Item>)
-  }
-  const curdays = moment().get('date')
-  
-  console.dir(curdays)
+
+ 
   const [columns, setColumns] =useState([
       {
           title: '排放单元',
@@ -93,23 +138,115 @@ export default function Index() {
         fixed: 'right',
      }]
  )
-  let unitDatas
-  const {data:unidata, isSuccess, refetch  } =useEmissionUnitQuery({year: 2024, month:3, enterpriseId}, {
-    skip: !Number.isInteger(enterpriseId)
-  })
 
+// 表格列设置函数
+const formartcol = (data) => {
+  try {
+    
+ 
+  if(Array.isArray(data) && data.length > 0) {
+    saveData.current = _.cloneDeep(data)
+    
+    data.forEach(d => {
+       let {consumption} = d
+        for(let [index, value] of consumption.entries()){
+            d[index] = value
+        }
+     })
+    let day = data[0]?.day
+    let col =  columns.slice(0,2)
+
+    let cols = Array.from({length: day}, ( v,i) => ({
+      title: i+1,
+      dataIndex: i,
+      key: i,
+      width:98,
+      align: 'center',
+      render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} /> 
+   }))
+   let endcol = {
+     title: "月总计",
+    dataIndex: day,
+      key: day,
+      align: 'center',
+      width: 80,
+      fixed: 'right',
+      ellipsis: true,
+      render: (_, record) => {
+
+         return <Form.Item noStyle shouldUpdate>{
+          ({getFieldValue}) => {
+              let {carbonUnitName, subCategoryName} = record;
+              let values = getFieldValue(`${carbonUnitName}-${subCategoryName}`)
+
+            return values?.reduce((a, b) => a+b, 0)
+          }
+         }</Form.Item>
+      }
+   }
+    setColumns([...col,...cols,endcol])
+    setTableData([...data])
+  } else{
+     setTableData([])
+  }
+} catch (error) {
+  console.log(error)
+}
+}
+
+
+ // 查询   实时查询和延迟查询冲突 解决方案1： 添加条件
+
+ /*  const [init, setInit] = useState(false)
+  let unitDatas
+  let yvalue = moment().year()-1
+  let mvalue = moment().month()+1
+  const {data:unidata, isSuccess} =useEmissionUnitQuery({year: yvalue, month:mvalue, enterpriseId}, {
+    skip: !Number.isInteger(enterpriseId) || init,
+    refetchOnMountOrArgChange: true
+  })   
   if(isSuccess) {
-    unitDatas = unidata?.data
+    unitDatas = unidata?.data    
+    let [tableData] = splitarr(unitDatas)
+    formartcol(tableData)
+    setInit(true)
   }else {
     console.log('error')
   }
+  const [queryEmission, result] = DataSlice.useLazyEmissionUnitQuery() rtk query 暂时不用 */
+ 
+
+const onQuery = async () => { 
+    let month = form.getFieldValue('month').month() + 1
+    let year = form.getFieldValue('year').year()
+     let {data, success,errMsg} = await  Carbon.onQueryEmission({year,month, enterpriseId})
+     if(success && Array.isArray(data) && data.length > 0) {
+        let [tableData] = splitarr(data)
+         
+        formartcol(tableData)
+     }else {
+       setTableData([])
+        if(!success) {
+          message.warning(errMsg)
+        }
+     }
+  }
+
+ useEffect(() => {
+   if(Number.isInteger(enterpriseId)) {
+      onQuery()
+   }
+
+ }, [enterpriseId])
+
 
   // 下载模板
 
-  const onDownload =async () => {
+  const onDownload =async () => { 
     try {
       let month = form.getFieldValue('month').month() + 1
-      let res = await Carbon.DownloadTemplate({year: 2024, month, enterpriseId})     
+      let year = form.getFieldValue('year').year()
+      let res = await Carbon.DownloadTemplate({year, month, enterpriseId})     
       let blob = new Blob([res.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }); 
@@ -129,7 +266,7 @@ export default function Index() {
   }
 
   // 数据导入
-  const saveData = useRef();
+
   let flies
   const beforeUpload = (file, fileList) =>{
     flies = [...fileList]
@@ -147,54 +284,12 @@ export default function Index() {
       let {success,errMsg, data} = await Carbon.OnImport(formData)
 
       if(success && Array.isArray(data) && data.length > 0) {
-        saveData.current = _.cloneDeep(data)
-        
-        data.forEach(d => {
-           let {consumption} = d
-            for(let [index, value] of consumption.entries()){
-                d[index] = value
-            }
-         })
-        let day = data[0]?.consumption.length ?? 30
-        let col =  columns.slice(0,2)
-
-        let cols = Array.from({length: day-1}, ( v,i) => ({
-          title: i+1,
-          dataIndex: i,
-          key: i,
-          width:98,
-          align: 'center',
-          render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} /> 
-       }))
-       let endcol = {
-         title: "月总计",
-        dataIndex: day-1,
-          key: day-1,
-          align: 'center',
-          width: 80,
-          fixed: 'right',
-          ellipsis: true,
-          render: (_, record) => {
-
-             return <Form.Item noStyle shouldUpdate>{
-              ({getFieldValue}) => {
-                  let {carbonUnitName, subCategoryName} = record;
-                  let values = getFieldValue(`${carbonUnitName}-${subCategoryName}`)
-
-                return values?.reduce((a, b) => a+b, 0)
-              }
-             }</Form.Item>
-          }
-       }
-        setColumns([...col,...cols,endcol])
-        setTableData([...data])
+        formartcol(data)      
         message.success("文件导入成功")
         ref.current.onCancel()
       } else{
         if(!success) message.warning(errMsg || '数据出错')
-         
          setTableData([])
-        message.warning(errMsg || '数据出错')
       }
     } catch (error) {
       console.log(error)
@@ -202,7 +297,6 @@ export default function Index() {
    
   }
 
-  // end
 
   //  保存
 
@@ -219,9 +313,11 @@ export default function Index() {
           body: saveData.current
 
        }
-       let {success,errMsg} = await onSaveData(params)
+       let {data: {success, errMsg}} = await onSaveData(params)
        if(success) {
         message.success("保存成功")
+     //   saveData.current ={}
+        onQuery()
        }else {
         message.warning(errMsg || '数据出错')
        }
@@ -239,7 +335,7 @@ export default function Index() {
           <Tooltip title="下载模板后录入数据，可以直接导入上传数据">
           <CustButtonT text="download" onClick={onDownload} /></Tooltip>
           <CustButtonT text="import" src='import' onClick={onImport} /> 
-          <CustButtonT text="save" src='save' onClick={onSave} />
+          <CustButtonT text="save" src='save' onClick={onSave} loading={isLoading} />
           </Space>
     </div>
   )
@@ -261,10 +357,10 @@ export default function Index() {
             month: moment()
           }}>
                   <Form.Item name="year" label="年度">
-                     <DatePicker   picker="year" />
+                     <DatePicker   picker="year" onChange={onQuery} />
                   </Form.Item>
                   <Form.Item name="month" label="月份">
-                    <DatePicker   picker="month" />
+                    <DatePicker   picker="month" onChange={onQuery} />
                   </Form.Item>
                </Form>
                <Cdivider type="h" />

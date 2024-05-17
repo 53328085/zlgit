@@ -3,8 +3,8 @@ import { apiSlice } from "@redux/rtkquery"
 export const QutoSlice = apiSlice.injectEndpoints({   
    // tagTypes: ['boundary'],     
     endpoints: build => ({
-        Quota: build.query({   // 获取碳排配额 去年
-            query: (enterpriseId,year) => ({
+        Quota: build.query({   // 获取碳排配额  去年
+            query: ({enterpriseId,year}) => ({
                 url:`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`,
                 method: "GET",
                 transformResponse: responseData => responseData,
@@ -33,5 +33,6 @@ export const QutoSlice = apiSlice.injectEndpoints({
 console.dir(QutoSlice)
 export const {
     useQuotaQuery,
+    useEmissionQuery,  
     useSaveQuotaMutation    
     } = QutoSlice

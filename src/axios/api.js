@@ -2105,4 +2105,6 @@ export class Carbon {
     responseType: "blob",
   })  // 碳排管理 下载模板
   static OnImport = (body) => server.post('Carbon/CarbonEnterpriseDataInput/ImportData', body)
+  static onQueryEmission = ({year, month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/QueryCarbonEmissionUnit?year=${year}&month=${month}&enterpriseId=${enterpriseId}`)
 }
+ 
