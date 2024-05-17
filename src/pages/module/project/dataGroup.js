@@ -93,23 +93,23 @@ export default function Datagroupc({projectId, CModal}) {
     { 
     
       dataIndex: "sn",
-      title: "序号",  
+      title: t("common:SerialNumber"),  
       render: (text, record, index) => <span>{index + 1}</span>   
     },
     {
    
       dataIndex: "name",
-      title: "数据组名称",
+      title:  t("common:DataGroupName"),
       key: 'name',
     },
     {
       dataIndex: "updateTime", // status 1: 离线 2：在线
-      title: "更新时间",
+      title:t("common:UpdateTime"),
       key: 'updateTime',
     },
     {
       dataIndex: "op",
-      title: "操作",
+      title:t("common:Operation") ,
       render: (_,{id,name}) => (<Space size={32}><CustLink  onClick={() => edit({id,name})} text="edit" /> <CustLink  type="danger" onClick={() => del(id)} text="delete" /> </Space>),
       align: 'center'
     },

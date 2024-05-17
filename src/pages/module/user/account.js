@@ -11,6 +11,7 @@ import {selectUser} from "@redux/user";
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
+import {useTranslation} from "react-i18next"
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
@@ -31,6 +32,7 @@ export default function Account({projectId, CModal}) {
  const {roleType} = useSelector(selectUser) || {};
  const showview = roleType == 1 || roleType == 2
  const title = isAdd ? '新增账号' : '编辑账号';
+ const {t} =useTranslation("common","button")
  let initvalue = {
   password: true,
   enable: true,
@@ -236,7 +238,7 @@ const showModl = () => {
                 <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
             <Form.Item>
-                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+新增</CustButton>
+                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+{t("button:new")}</CustButton>
             </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>
