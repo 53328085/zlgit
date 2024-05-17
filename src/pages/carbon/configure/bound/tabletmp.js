@@ -26,7 +26,8 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
 
  // 配置
-
+  console.log(saveData)
+  console.log(tabledata)
  
   const onConfig = async (record, index) => {     
      let {categoryId,subCategoryId} = record
@@ -46,14 +47,21 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
     ref.current.onOpen()
   } */
   const radioChange = (v, index) => {
-     console.log(datas)
-     console.log(index)
-
-     let newDatas = datas.slice().map(d => ({...d}))
-     newDatas[index].dataSource= Number(v);
-     setDatas(newDatas)
-     console.log(categoryName);
-     saveData[categoryName]=newDatas.slice(1)
+     try {
+      let newDatas = datas.slice().map(d => ({...d}))
+      newDatas[index].dataSource= Number(v);
+      setDatas(newDatas)
+      console.log(newDatas)
+      let arr = newDatas.slice(1).map(d => ({subCategoryId: d.subCategoryId, subCategoryName: d.subCategoryName, dataSource: d.dataSource}))
+      saveData[categoryName]= {
+       dataSubCategoryVos: arr,
+       categoryId, 
+       categoryName,
+      }
+     } catch (error) {
+       console.log(error)
+     }
+    
   }
   const onOk = () => {
    

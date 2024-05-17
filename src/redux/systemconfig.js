@@ -73,7 +73,7 @@ const initialState = {
       lang: zhCN,
       locale: 'zh-cn'
     },
-    iszhCN: localStorage.getItem('i18nextLng')?.toLowerCase()?.slice(0,2) == 'zh',
+    iszhCN: localStorage.getItem('i18nextLng')?.toLowerCase()?.slice(0,2) == 'zh',  // 此处逻辑有问题
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -277,7 +277,7 @@ const system = createSlice({
           
            state.iszhCN = payload
         },
-        getEnterprise(state, {payload}) {
+        getEnterprise(state, {payload}) {        
           state.enterprise = payload
         }
 

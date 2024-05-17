@@ -1,10 +1,12 @@
 import {createAsyncThunk, createSlice, createEntityAdapter} from "@reduxjs/toolkit"
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
-const menusAdapter = createEntityAdapter()
-const initialState = menusAdapter.getInitialState()
+//const menusAdapter = createEntityAdapter()
+//const initialState = menusAdapter.getInitialState()
 export const getWebsiteMenu = createAsyncThunk(
   "zltest/getMenu",
-  async (id, {rejectWithValue}) => {
+  async (id, obj) => {
+    console.log(obj)
+    let {rejectWithValue} = obj;
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
       if(success) {
@@ -12,31 +14,36 @@ export const getWebsiteMenu = createAsyncThunk(
         
          
       }else {
-        rejectWithValue(errMsg)
+        console.log(errMsg)
+        rejectWithValue({error: '你错了'})
       }
       } catch (error) {
+        console.log(error)
         //console.log(error)
-        return rejectWithValue(error)
+        return rejectWithValue({error: 'catch里的你错了'})
      }
   }
 )
 const zltest = createSlice({
   name: "zltest",
-  initialState,
-  reducers: {
-    addMenu: menusAdapter.addOne,
-    showlist: (state) => {
-      console.dir(state)
-    }
+  initialState: {
+      menus: []
   },
+  reducers: {
+    
+  },
+ 
   extraReducers: {
     [getWebsiteMenu.fulfilled]:  (state, {payload}) => {
       console.log(payload)
       menusAdapter.updateMany(payload)
+    },
+    [getWebsiteMenu.rejected]:  (state, {payload}) => {
+      console.log(payload)
+     // menusAdapter.updateMany(payload)
     }
   }
 })
 export const {addMenu, showlist} = zltest.actions
-console.log(zltest.actions.addMenu())
+
 export default zltest.reducer
-export const { selectAll,selectById} = menusAdapter.getSelectors(state => state.zltest)

@@ -112,7 +112,8 @@ export default function Index() {
      let {success, data, errMsg} = await getENterprise(projectId).unwrap()
       console.log(data)
      if(success && isObject(data)) {
-       EnterpriseId.current = enterprise.id
+       EnterpriseId.current = data.id
+
        setEnterprise(data);
        dispatch(getEnterprise(data))
      }else {
@@ -134,11 +135,12 @@ export default function Index() {
   // 保存
  const onSave =useCallback(async () => {
      let params = [];
+     console.log(saveData.current)
      let comm = saveData.current.comm    
      for(let [key, value] of Object.entries(saveData.current)) {
         if(key !=='comm') {
             value.forEach(v => {
-              params.push({...comm,...v})
+              params.push({...comm,...v,categoryName:key})
             })
         }
      }
@@ -169,7 +171,7 @@ export default function Index() {
               saveData.current.comm = {
                 projectId,
                 enterpriseId: id,
-                CategoryId:industryNo,
+                categoryId:industryNo,
                 subCategoryId: subIndustryNo || 0,
               }
            let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
@@ -186,6 +188,7 @@ export default function Index() {
           }else {
              message.warning(errMsg || '数据出错')
           }
+          console.log(data)
           dispatch(getEnterprise(data || {}))
       } catch (error) {
         console.log(error)
@@ -223,7 +226,7 @@ export default function Index() {
                  <Item label="单位性质" name="nature" rules={rules}  >
                      <Select options={natureList}></Select>
                  </Item>
-                 <Item label="组织机构代码" name="creditcode"  >
+                 <Item label="组织机构代码" name="creditCode"  >
                      <Input></Input>
                  </Item>
                  <Item label="法定代表人" name="legalRepresentative"  >

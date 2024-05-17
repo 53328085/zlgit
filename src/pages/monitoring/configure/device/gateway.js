@@ -817,8 +817,7 @@ let ReStart = ({ modalReStartRef, startOk }) => {
 }
 //重启结果
 let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
-  console.log(gatewayRes)
-  console.log(errorList)
+  
   return (
     <Modal mold='cust' ref={modalReStartResRef} title="操作提示" footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
      

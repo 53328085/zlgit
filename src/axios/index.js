@@ -35,7 +35,10 @@ server.interceptors.request.use(
     }
 )
 server.interceptors.response.use(
-    response => {   
+    response => { 
+      if(response.config.responseType ==='blob') {
+        return Promise.resolve(response)
+      }
       const data = response.data || {}
       return data
     },
