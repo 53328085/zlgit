@@ -61,14 +61,16 @@ const splitarr = (arr) => {
         consumption,
       }
       arrs.forEach(item => {
-        let index =  moment(item.date, "YYYY-MM-DD hh:mm:ss").day() -1
+       
+        let index =  moment(item.date, "YYYY-MM-DD hh:mm:ss").date() -1
+        
         if(item.consumption!==0)  unit.consumption.splice(index, 1, item.consumption)
       })
       let total = unit.consumption.reduce((a, b) => a+b, 0);
       unit.consumption.push(total);
       tableData.push(unit)
   }
-  
+ 
   return  [tableData, year, month]
   }else {
     return [[], null, null]
@@ -80,7 +82,7 @@ const splitarr = (arr) => {
   const form = Form.useFormInstance();
   form.setFieldValue([`${carbonUnitName}-${subCategoryName}`, i], text)
   const onChange = (v) => {
-  
+   
     try {
       saveData[index]?.consumption.splice(i,1,v)
     } catch (error) {

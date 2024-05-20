@@ -83,7 +83,7 @@ export const boundarySlice = apiSlice.injectEndpoints({
 
 
 })
-console.dir(boundarySlice)
+ 
 export const {
      useBoundaryTreeQuery,
      useAddCarbonBoundaryMutation,
