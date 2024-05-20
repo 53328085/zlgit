@@ -29,6 +29,7 @@ import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap/indexset";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
+import {useTranslation} from "react-i18next"
 const { Dragger } = Upload;
 const Mainbox = styled.div`
   position: relative;
@@ -157,7 +158,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
-
+  const {t} =useTranslation("common","comm")
   const [tempcolums, tempdata] =  useMemo(() => {
     let getcol = (name) => ({title: name, dataIndex: name, key: name});
     let colums = [
@@ -375,17 +376,17 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
-            title: "操作",
+            title: t("common:Operation"),
             key: "action",
             align: "center",
             render: (_, record) => (
               <Space size={32}>
               
                 <Link underline onClick={() => edit(record)}>
-                  编辑
+                  {t("common:Edit")}
                 </Link>
                 <Link underline type="danger" onClick={() => del(record)}>
-                  删除
+                  {t("common:Delete")}
                 </Link>
               </Space>
             ),
@@ -674,11 +675,11 @@ const beforeUpload = (file, fileList) => {
       <Form form={form} layout="inline" initialValues={{name: ""}}>
         <Space size={16}>
           {level == 1 && (
-            <Form.Item name="name" label={`${name}查询`}>
+            <Form.Item name="name" label={`${name}${t("common:Query")}`}>
               <Input.Search
                 placeholder={`请输入${name}名称`}
                 allowClear
-                enterButton="查询"
+                enterButton={t("common:Query")}
                 style={{ width: "550px" }}
                 onSearch={getTableData}
               />
@@ -686,7 +687,7 @@ const beforeUpload = (file, fileList) => {
           )}
           {level > 1 && (
             <>
-              <Item label={`${levelone.name}名称`} name="topAreaId">
+              <Item label={`${levelone.name}${t("common:name")}`} name="topAreaId">
                 <Select
                 options={[...oneLevel, {name: '全部', id: 0}]}
                 
@@ -699,11 +700,11 @@ const beforeUpload = (file, fileList) => {
                   onChange={getTableData}
                 ></Select>
               </Item>
-              <Form.Item name="name" label={`${name}查询`}>
+              <Form.Item name="name" label={`${name}${t("common:Query")}`}>
                 <Input.Search
                   placeholder={`请输入${name}名称`}
                   allowClear
-                  enterButton="查询"
+                  enterButton={t("common:Query")}
                   style={{ width: "550px" }}
                   onSearch={getTableData}
                 />
@@ -712,15 +713,15 @@ const beforeUpload = (file, fileList) => {
           )}
          {!ispublish && <Form.Item>
             <CustButton style={{ justifyContent: "center" }} onClick={add}>
-              +新增
+              +{t("common:Add")}
             </CustButton>         
           </Form.Item>
          }
          <Form.Item>
-           <Popconfirm title="创建的模板只适合当前项目的配置项,配置变动需要重新生成模板" onConfirm={createTemp}><CustButton>生成模板</CustButton></Popconfirm>
+           <Popconfirm title={t("common:CreateGenerateTemplate")} onConfirm={createTemp}><CustButton  style={{ width:"auto"}} >{t("common:GenerateTemplate")}</CustButton></Popconfirm>
          </Form.Item>
          <Form.Item>
-             <CustButton onClick={multimport}>批量导入</CustButton>
+             <CustButton onClick={multimport}>{t("common:BatchImport")}</CustButton>
          </Form.Item>
         </Space>
       </Form>

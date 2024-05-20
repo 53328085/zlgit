@@ -33,6 +33,7 @@ import { custMsg } from "@com/usehandler";
 //import Drawerdata from './drawerdata'
 import Dataset from "./dataSet.jsx";
 import Menuset from "./menuSet.jsx";
+import {useTranslation} from "react-i18next"
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
 const { Item } = Form;
@@ -70,7 +71,7 @@ const Mainbox = styled.div`
     }
     .title {
       font-size: 14px;
-      width: 336px;
+      width: auto;
     }
     .park {
       display: flex;
@@ -101,17 +102,18 @@ const Pbutton = styled(Button).attrs({
   ghost: true,
 })`
   && {
-    width: 96px;
+    width: 'auto',;
   }
 `;
 /* CustButton type="default" onClick={addOperation} style={{padding: '0px', width: '112px'} */
 
 const Abutton = styled(CustButton).attrs({
   type: "default",
+  
 })`
   && {
     padding: 0px;
-    width: 112px;
+    width: auto;
   }
 `;
 export default function Account({ projectId, CModal }) {
@@ -144,6 +146,8 @@ export default function Account({ projectId, CModal }) {
   const edituerinfo = useRef(); // 编辑的账号数据
   const newpwd = useRef(); // 重置密码
   const rref = useRef();
+  const {t} =useTranslation("common","comm")
+
   const menufn = (id, type, role) => {
     flushSync(() => {
       setUserId(id);
@@ -308,7 +312,7 @@ export default function Account({ projectId, CModal }) {
 
   const onDeleteMsg = (type, userId) => {
     try {
-      const msg = ["运营管理员", "项目管理员", "运维人员"][type];
+      const msg = [t("common:OperationsAdministrator"),t("common:ProjectManager"),t("common:O&MPersonnel")][type];
       setDelinfo(msg);
       setDeltype(type);
       setUserId(userId);
@@ -323,7 +327,7 @@ export default function Account({ projectId, CModal }) {
   const useEdit = (item, type) => {
     editType.current = type;
     edituerinfo.current = item;
-    let title = ["", "", "编辑运营管理员", "编辑项目管理员", "编辑运维人员"][
+    let title = ["", "", t("common:EditOperationsAdministrator"),t("common:EditProjectManager"), t( "common:EditO&MPersonnel")][
       type
     ];
     let name = ["", "", "运营管理员", "项目管理员", "运维人员"][type];
@@ -445,11 +449,11 @@ export default function Account({ projectId, CModal }) {
           </Item>
           <Item noStyle>
             <Space size={16} style={{ marginLeft: "auto" }}>
-              <Pbutton onClick={() => menufn(field.id, 2, 4)}>数据权限</Pbutton>
-              <Pbutton onClick={() => menufn(field.id, 1, 4)}>菜单权限</Pbutton>
-              <Pbutton onClick={() => useEdit(field, 4)}>编辑</Pbutton>
-              <Pbutton onClick={() => reset(field)}>重置密码</Pbutton>
-              <Dbutton onClick={() => onDeleteMsg(2, field.id)}>删除</Dbutton>
+              <Pbutton onClick={() => menufn(field.id, 2, 4)}>{t("common:DataPermissions")}</Pbutton>
+              <Pbutton onClick={() => menufn(field.id, 1, 4)}>{t("common:MenuPermissions")}</Pbutton>
+              <Pbutton onClick={() => useEdit(field, 4)}> {t("common:Edit")}</Pbutton>
+              <Pbutton onClick={() => reset(field)}> {t("common:ResetPassword")}</Pbutton>
+              <Dbutton onClick={() => onDeleteMsg(2, field.id)}>  {t("common:Delete")}</Dbutton>
             </Space>
 
             {/*  <Button danger  onClick={() => onDeleteMsg(2, field.id)} style={{padding: '0px', width: '96px'}}>删除</Button> */}
@@ -480,7 +484,7 @@ export default function Account({ projectId, CModal }) {
       {roleType == 1 ? (
         <div className="admin">
           <Title level={5} className="title">
-            运营管理员（支持添加多位运营管理员）
+           {t("common:OperationAdministrator")}
           </Title>
           <div className="item">
             <Select
@@ -494,15 +498,15 @@ export default function Account({ projectId, CModal }) {
                 disabled: "disabled",
               }}
               options={operate}
-              placeholder="请选择运营管理员"
+              placeholder={t("common:SelectAdministrator")}
             ></Select>
 
             {/*   <Button size="middle" style={addstyl} onClick={addOperation} type="primary" ghost >+&nbsp;添加</Button> */}
-            <Abutton onClick={addOperation}>添加运营管理员</Abutton>
+            <Abutton onClick={addOperation}>{t("common:AddAdministrator")}</Abutton>
           </div>
           <div className="item">
-            <Text type="">用户名</Text> <Text>姓名</Text>
-            <Text>手机号</Text> <Text>有效期</Text>
+            <Text type="">{t("common:Username")}</Text> <Text>{t("common:Name")}</Text>
+            <Text>{t("common:MobileNumber")}</Text> <Text>{t("common:ValidityPeriod")}</Text>
           </div>
           {oplist?.map((item) => (
             <div className="item" key={nanoid()}>
@@ -518,9 +522,9 @@ export default function Account({ projectId, CModal }) {
                 ).format("YYYY/MM/DD")}
               />
               <Space size={16} style={{ marginLeft: "auto" }}>
-                <Pbutton onClick={() => useEdit(item, 2)}>编辑</Pbutton>
-                <Pbutton onClick={() => reset(item)}>重置密码</Pbutton>
-                <Dbutton onClick={() => onDeleteMsg(0, item.id)}>删除</Dbutton>
+                <Pbutton onClick={() => useEdit(item, 2)}>{t("common:Edit")}</Pbutton>
+                <Pbutton onClick={() => reset(item)}>{t("common:ResetPassword")}</Pbutton>
+                <Dbutton onClick={() => onDeleteMsg(0, item.id)}>{t("common:Delete")}</Dbutton>
               </Space>
             </div>
           ))}
@@ -530,17 +534,17 @@ export default function Account({ projectId, CModal }) {
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
-              项目管理员（仅支持添加一位项目管理员）
+              {t("common:ProjectAdministrator")}
             </Title>
             <Abutton onClick={addProjectadmin.bind(null, 0)} disabled={manager}>
-              添加项目管理员
+              {t("common:AddProjectAdministrator")}
             </Abutton>
           </Space>
           <div className="item">
-            <Text type="">用户名</Text>
-            <Text>姓名</Text>
-            <Text>手机号</Text>
-            <Text>有效期</Text>
+            <Text type="">{t("common:Username")}</Text>
+            <Text>{t("common:Name")}</Text>
+            <Text>{t("common:MobileNumber")}</Text>
+            <Text>{t("common:ValidityPeriod")}</Text>
           </div>
 
           {manager && (
@@ -565,19 +569,19 @@ export default function Account({ projectId, CModal }) {
                         <Pbutton
                           onClick={() => menufn(getFieldValue("id"), 1, 3)}
                         >
-                          菜单权限
+                          {t("common:MenuPermissions")}
                         </Pbutton>
 
                         <Pbutton onClick={() => useEdit(managerdata, 3)}>
-                          编辑
+                          {t("common:Edit")}
                         </Pbutton>
                         <Pbutton onClick={() => reset(managerdata)}>
-                          重置密码
+                          {t("common:ResetPassword")}
                         </Pbutton>
                         <Dbutton
                           onClick={() => onDeleteMsg(1, getFieldValue("id"))}
                         >
-                          删除
+                          {t("common:Delete")}
                         </Dbutton>
                       </Space>
                     );
@@ -586,7 +590,7 @@ export default function Account({ projectId, CModal }) {
               </Form>
 
               <Space size={8} wrap>
-                <Text>{defaultLabel}权限</Text>{" "}
+                <Text>{defaultLabel}{t("common:Permissions")}</Text>{" "}
                 {areas.map((item) => (
                   <Ctag key={nanoid()}>{item.name}</Ctag>
                 ))}
@@ -599,17 +603,17 @@ export default function Account({ projectId, CModal }) {
         <div className="admin">
           <Space size={16}>
             <Title level={5} className="title">
-              运维人员（支持添加多位运维人员）
+             {t("common:OperationAndMaintenancePersonnel")}
             </Title>
             <Abutton onClick={addProjectadmin.bind(null, 1)}>
-              添加运维人员
+            {t("common:AddOperationAndMaintenancePersonnel")}
             </Abutton>
           </Space>
           <div className="item">
-            <Text>用户名</Text>
-            <Text>姓名</Text>
-            <Text>手机号</Text>
-            <Text>有效期</Text>
+            <Text type="">{t("common:Username")}</Text>
+            <Text>{t("common:Name")}</Text>
+            <Text>{t("common:MobileNumber")}</Text>
+            <Text>{t("common:ValidityPeriod")}</Text>
           </div>
 
           <Form layout="inline" readOnly>
@@ -631,17 +635,17 @@ export default function Account({ projectId, CModal }) {
       {addcmodal}
       <Custmodl
         mold="cust"
-        title="删除账号"
+        title={t("common:DeleteAccount")}
         type="warn"
         onOk={onDeletehandle}
         ref={mref}
       >
-          是否确认删除{delinfo}?
+      {t("common:ConfirmDelete")} {delinfo}?
       </Custmodl>
 
-      <CModal width={554} title="重置密码" ref={rref} onOk={restOk} mold="cust">
+      <CModal width={554} title={t("common:ResetPassword")} ref={rref} onOk={restOk} mold="cust">
         <p>
-          账号： <Link>{username.name}</Link>， 密码将被重置为
+          {t("comm:useraccount")}： <Link>{username.name}</Link>， {t("common:ResetPasswordTo")}
           <Link>{newpwd.current}</Link>
         </p>
       </CModal>

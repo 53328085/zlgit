@@ -29,7 +29,8 @@ export default function Index() {
   const propsData ={
     tabs,
     value,
-    setvalue
+    setvalue,
+    tabwidth:'auto'
   }
   const userCom = {
     account: Account ,
