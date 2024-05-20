@@ -2126,5 +2126,8 @@ export class Carbon {
 
    static QueryCarbonQuota= (enterpriseId) =>
    server.get(`Carbon/CarbonQuotaManagement/QueryCarbonEmission?enterpriseId=${enterpriseId}`) // 获取碳排配额 历年
+
+   static QueryCarbonTarget= (enterpriseId, year) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonTarget?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排目标值
 }
  
