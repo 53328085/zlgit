@@ -5,7 +5,7 @@ import {message} from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
-import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon} from "@api/api.js"; 
 
  
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
@@ -73,7 +73,7 @@ const initialState = {
       lang: zhCN,
       locale: 'zh-cn'
     },
-    iszhCN: localStorage.getItem('i18nextLng')?.toLowerCase()?.slice(0,2) == 'zh',  // 此处逻辑有问题
+    iszhCN: localStorage.getItem('i18nextLng') ? localStorage.getItem('i18nextLng').toLowerCase()?.slice(0,2) == 'zh' : true,  // 此处逻辑有问题
     systemConfigInfo: {},
     currProject: {}, //当前项目信息
     configState: false, // 项目是否处于设计状态   
@@ -125,6 +125,7 @@ export const getWebsiteState = createAsyncThunk(
           BigScreen.QueryBigScreen(id),
         //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
           AllDeviceStyle(), // 表计类型
+          Carbon.QueryCarbonEnterprise(id) // 获取碳排企业信息
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -297,6 +298,7 @@ const system = createSlice({
                index == 3 && (state.datascreen = data || {})
           //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
                index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
+               index == 5 && (state.enterprise = data || {})
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
@@ -304,6 +306,7 @@ const system = createSlice({
                index == 3 &&  (state.datascreen = {})
               // index == 4 && (state.disonlevel = [])
                index == 4 && (state.deviceStyle = [])
+               index == 5 && (state.enterprise = {})
              }
           }
         })

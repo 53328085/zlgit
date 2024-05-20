@@ -5,7 +5,7 @@ import {Form, Space,Button, Tree, Input, message} from 'antd'
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 
-
+import {Carbon} from '@api/api'
 import Titlelayout from "@com/titlelayout"
 import {TreeBtnN, TreeBtnW} from "@com/useButton"
 import {CustButtonT, CustButton} from "@com/useButton"
@@ -94,8 +94,9 @@ const Tablebox = styled.div`
  
 export default function Index() { 
   // const {id:enterpriseId} = useSelector(enterprise)
-  const  {id:enterpriseId} = useSelector(enterprise)
-  console.log(enterpriseId)
+  const  enterpriseData = useSelector(enterprise)
+  let  {id:enterpriseId} = enterpriseData
+  console.log(enterpriseData)
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
@@ -111,7 +112,32 @@ export default function Index() {
 
   // 查询树
 
-  let treeData
+ const [treeData, setTreeData] = useState([]) 
+const getTreeData = async () => {
+  try {
+   let {success, data, errMsg} = await  Carbon.QueryCarbonBoundary(enterpriseId)
+   if(success && Array.isArray(data) && data.length) {
+      setTreeData(data)
+   }else {
+    if(!success) message.warning(errMsg || '数据出错')
+     setTreeData([])
+   }
+
+  } catch (error) {
+    
+  }
+
+
+}
+
+useEffect(() => {
+  if(Number.isInteger(enterpriseId)) {
+    getTreeData()
+  }
+
+}, [enterpriseId])
+
+/*   let treeData
   const {isSuccess,refetch, data:boundaryData  } = useBoundaryTreeQuery(enterpriseId, {
     skip: !Number.isInteger(enterpriseId),
     
@@ -123,7 +149,7 @@ export default function Index() {
      console.log('e',enterpriseId)
      treeData = []
   }
- 
+  */
   
   // 新增 编辑 删除子项
 

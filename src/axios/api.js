@@ -2095,6 +2095,18 @@ export class HomeRuntime {
 }
 // 碳排 
 export class Carbon {
+
+  // 企业设置
+
+  static QueryCarbonEnterprise= (projectId) =>
+  server.get(`/Carbon/CarbonEnterpriseSetting/QueryCarbonEnterprise?projectId=${projectId}`) // 获取企业信息
+
+  // 排放边界
+  
+  static QueryCarbonBoundary= (enterpriseId) =>
+  server.get(`/Carbon/CarbonEmissionBoundary/QueryCarbonBoundary?enterpriseId=${enterpriseId}`) // 获取碳排边界树
+
+
   static DownloadTemplate = ({year,month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/DownloadTemplate?year=${year}&month=${month}&enterpriseId=${enterpriseId}`, 
   {
      headers: {
@@ -2105,4 +2117,14 @@ export class Carbon {
     responseType: "blob",
   })  // 碳排管理 下载模板
   static OnImport = (body) => server.post('Carbon/CarbonEnterpriseDataInput/ImportData', body)
+  static onQueryEmission = ({year, month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/QueryCarbonEmissionUnit?year=${year}&month=${month}&enterpriseId=${enterpriseId}`)
+
+  
+  // 配额管理
+  static QueryCarbonQuotaCurYear = ({year,enterpriseId}) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排配额 当年
+
+   static QueryCarbonQuota= (enterpriseId) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonEmission?enterpriseId=${enterpriseId}`) // 获取碳排配额 历年
 }
+ 

@@ -3,7 +3,7 @@ import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input, message, Drawer} from 'antd'
 import {useSelector, useDispatch} from 'react-redux'
-import {selectProjectId, getEnterprise} from '@redux/systemconfig'
+import {selectProjectId, getEnterprise,enterprise} from '@redux/systemconfig'
 import {
   useIndustryListQuery, 
   useSubIndustryListQuery, 
@@ -106,7 +106,10 @@ export default function Index() {
   }
 
   // 查询企业信息
-  const [enterprise, setEnterprise] = useState({})
+
+  const Enterprise = useSelector(enterprise)
+
+/*   const [enterprise, setEnterprise] = useState({})
   const [getENterprise] = carbonSlice.useLazyEnterpriseQuery()
   const onGetEnterprise = async () => {
      let {success, data, errMsg} = await getENterprise(projectId).unwrap()
@@ -128,7 +131,7 @@ export default function Index() {
    if(Number.isInteger(projectId)) {
     onGetEnterprise()
    }
- }, [projectId])
+ }, [projectId]) */
  
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
  
@@ -147,12 +150,12 @@ export default function Index() {
     let {success, errMsg} = await SaveItem(params).unwrap()
     if(success) {
       message.success("保存成功")
-      getEmission(EnterpriseId.current)
+      getEmission(Enterprise.id)
     }else {
       message.warning(errMsg || '数据出错')
     }
 
- }, [saveData])
+ }, [saveData,Enterprise])
 
   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
     <span>{title}</span>
@@ -166,7 +169,7 @@ export default function Index() {
           setTitle(title)
           if(isLoading) return;
           let {success, data, errMsg} = await  SaveEnterprise(params).unwrap()
-          if(success) {
+          if(success && isObject(data)) {
              let {projectId,industryNo,subIndustryNo} = data;
               saveData.current.comm = {
                 projectId,
@@ -174,7 +177,9 @@ export default function Index() {
                 categoryId:industryNo,
                 subCategoryId: subIndustryNo || 0,
               }
-           let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
+              let {enterpriseId, ...post} = data 
+              dispatch(getEnterprise({id:enterpriseId, ...post}))
+            let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
             if(suc) {
               setOpen(true)
               setEmissions([...emission])
@@ -186,24 +191,24 @@ export default function Index() {
             }
           
           }else {
+            dispatch(getEnterprise({}))
              message.warning(errMsg || '数据出错')
           }
-          console.log(data)
-          dispatch(getEnterprise(data || {}))
+         
       } catch (error) {
         console.log(error)
       }
   }
  
     useEffect(() => {
-    if(enterprise) {
-       let {industryNo,subIndustryNo} = enterprise 
+    if(Enterprise) {
+       let {industryNo,subIndustryNo} = Enterprise 
        if(Boolean(subIndustryNo)) trigger(industryNo)
-       form.setFieldsValue({...enterprise})
+       form.setFieldsValue({...Enterprise})
        
     }
        
-    }, [enterprise]) 
+    }, [Enterprise]) 
   return (
     <Pagecount bgcolor="transparent" pd="0">
     
