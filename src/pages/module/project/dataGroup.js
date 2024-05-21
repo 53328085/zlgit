@@ -1,8 +1,10 @@
 import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
 import {Form, Space, Input, Button, Typography,Row, Col, message} from 'antd'
 import styled from 'styled-components'
+import {useTranslation} from "react-i18next"
 import Custtable from '@com/useTable'
 import {DataGroups} from '@api/api.js'
+import {CustButtonT, CustLink} from "@com/useButton"
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 32px 1fr;
@@ -12,6 +14,7 @@ const Mainbox = styled.div`
 export default function Datagroupc({projectId, CModal}) {
  const {QueryDataGroups, InsertDataGroup, DeleteDataGroup, UpdateDataGroup} = DataGroups
  let {Text, Link} = Typography
+ const {t} =useTranslation("common")
  const eref = useRef()
  const dref = useRef();
  const [form] = Form.useForm();
@@ -31,7 +34,7 @@ export default function Datagroupc({projectId, CModal}) {
    
  }
  const add =useCallback(() => {
-   setTitle('新增数据组') 
+   setTitle(t("AddDataGroup")) 
    setType(0)
    eref.current.onOpen();
  }, [type])
@@ -90,24 +93,24 @@ export default function Datagroupc({projectId, CModal}) {
     { 
     
       dataIndex: "sn",
-      title: "序号",  
+      title: t("common:SerialNumber"),  
       render: (text, record, index) => <span>{index + 1}</span>   
     },
     {
    
       dataIndex: "name",
-      title: "数据组名称",
+      title:  t("common:DataGroupName"),
       key: 'name',
     },
     {
       dataIndex: "updateTime", // status 1: 离线 2：在线
-      title: "更新时间",
+      title:t("common:UpdateTime"),
       key: 'updateTime',
     },
     {
       dataIndex: "op",
-      title: "操作",
-      render: (_,{id,name}) => (<Space size={32}><Link underline  onClick={() => edit({id,name})}>编辑</Link><Link underline type="danger" onClick={() => del(id)}>删除</Link></Space>),
+      title:t("common:Operation") ,
+      render: (_,{id,name}) => (<Space size={32}><CustLink  onClick={() => edit({id,name})} text="edit" /> <CustLink  type="danger" onClick={() => del(id)} text="delete" /> </Space>),
       align: 'center'
     },
     
@@ -118,11 +121,11 @@ export default function Datagroupc({projectId, CModal}) {
   const addmodal = useMemo(() =>   <CModal title={title} ref={eref}  mold="cust" width={592} onOk={onOk} custft={type == 0}>
   <Form style={{display:"flex", height: '48px'}} form={form}  labelAlign="left" preserve={false}>   
     
-     <Form.Item label="数据组名称" name="name" rules={
+     <Form.Item label={t("DataGroupName")} name="name" rules={
          [
            {
              required: true,
-             message: '请输入数据组名称'
+             message: t("titlegroupname")
            }
          ]
       }>
@@ -136,12 +139,12 @@ export default function Datagroupc({projectId, CModal}) {
   return (
     <Mainbox>
        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-          <Button type="primary" style={{width: '96px'}} onClick={add}>+&nbsp;新增</Button>
+          <CustButtonT   onClick={add} text="new" src="new" /> 
        </div>
        <Custtable columns={columns} rowKey="id" dataSource={tableData}></Custtable> 
         {addmodal}
-        <CModal title='删除提示' ref={dref}  mold="cust" width={512} type="warn" onOk={onOkDel} >
-              是否确认删除数据组名称？
+        <CModal title={t("common:Deleteprompt")} ref={dref}  mold="cust" width={512} type="warn" onOk={onOkDel} >
+             {t("common:deletedata")}
         </CModal>
     </Mainbox>
   )

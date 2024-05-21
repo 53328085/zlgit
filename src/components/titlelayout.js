@@ -18,7 +18,7 @@ const Boxdiv = styled(Card)`
     border-bottom: none;
     min-height: ${(props) =>  props.hv || '32px'};
     /* height: ${(props) =>  props.hv || '32px'}; */
-    height: 32px;
+    height: ${(props) =>  props.hv || '32px'};;
     padding-right: 0px;
     background-color:${({bg}) => bg || '#fff'};
     z-index:${({zd}) => zd || 100};

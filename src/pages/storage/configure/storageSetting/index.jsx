@@ -26,7 +26,7 @@ import { SiteManagerDesigner } from '@api/api.js'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
-import { CustButton } from '@com/useButton'
+import { CustButtonT, CustLink } from '@com/useButton'
 const {Link} = Typography
 export default function Index() {
   const tableRef = useRef();
@@ -213,19 +213,17 @@ export default function Index() {
         align: "center",
         render: (_, record) => (
           <Space size="middle">
-            <Link
-              underline
+            <CustLink
+              text="edit"
               onClick={() => editRecord(record)}
-            >
-              编辑
-            </Link>
-            <Link
+              />
+             
+            <CustLink
               type="danger"
-              underline
+              text="delete"
               onClick={() => deleteRecord(record)}
-            >
-              删除
-            </Link>
+            />
+              
           </Space>
         ),
       },
@@ -379,11 +377,13 @@ export default function Index() {
   <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
    <span>站点管理</span>
   {ispublish ? null : (
-    <CustButton
+    <CustButtonT
+      text="new"
+      src="new"
       onClick={showAdd}
     >
-      新增
-    </CustButton>
+       
+    </CustButtonT>
   )}
 </div>
  )

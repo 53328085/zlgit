@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, iszhCN} from '@redux/systemconfig.js'
 
 import Pagecount from '@com/pagecontent'
-
+import {useTranslation} from "react-i18next"
 import CustContext from '@com/content.js'
 import styled from 'styled-components'
 import Release from './release'
@@ -12,18 +12,21 @@ import Region from './area'
 import Datagroup from './dataGroup'
 import CModal from '@com/useModal'
 export default function Index() {
-  const [value, setvalue] = useState('area')
+  const [value, setvalue] = useState('area');
+  const {t} = useTranslation("common")
+  const iszh = useSelector(iszhCN)
   const projectId = useSelector(selectProjectId);
   const tabs = [
    /*  {label: '项目基础设置', key: 'set'}, */
-    {label: '区域设置', key: 'area'},
-    {label: '数据组管理', key: 'datagroup'},
-    {label: '项目发布', key: 'release'},
+    {label: t("RegionSettings"), key: 'area'},
+    {label:  t("DataGroupManagement"), key: 'datagroup'},
+    {label: t("ProjectRelease"), key: 'release'},
   ]
  const propsData ={
   tabs,
   value,
-  setvalue
+  setvalue,
+  tabwidth: iszh ? null : "192px"
 }
  const ProjectCom = {
   release: Release ,

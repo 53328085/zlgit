@@ -7,7 +7,8 @@ import {
   selectUser,
 } from "@redux/user";
  
-import { Button, Checkbox, Form, Input, message, Space, Image, Select,Tabs } from "antd"; 
+import { Form, Input,  Image } from "antd"; 
+import {useTranslation, Trans, Translation} from 'react-i18next';
 import { pwdValidator, imgcodeValidator } from "@pages/rule";
 import { Login as Logapi, } from "@api/api";
 import {Ipticon, Itembox, Logipt, Logpsd, Logck, Logbtn} from '@com/comstyled'
@@ -17,6 +18,7 @@ import imgurl from "./icon";
 
  
 export default memo(function({onSubmit}){
+    const {t} =useTranslation("login")
     const [userform] = Form.useForm();
     const dispatch = useDispatch()
     let initmemorize = useSelector(selectMemorize);
@@ -79,13 +81,13 @@ export default memo(function({onSubmit}){
           rules={[
             {
               required: true,
-              message: "请输入用户姓名",
+              message: t('EnUserName'),
             },
             {
               type: "string",
               min: 2,
               max: 20,
-              message: "用户名2至20个字符串",
+              message: t("UserNameFormat"),
             },
           ]}
         >
@@ -93,7 +95,7 @@ export default memo(function({onSubmit}){
             prefix={<Ipticon />}
             url={imgurl.user}
             aurl={imgurl.usera}
-            placeholder="请输入用户名"
+            placeholder={t("Enusername")}
             allowClear
             autoComplete={auto}
           />
@@ -105,7 +107,7 @@ export default memo(function({onSubmit}){
           rules={[
             {
               required: true,
-              message: "请输入密码",
+              message: t("Enpassword"),
             },
              {
             validator: pwdValidator
@@ -118,7 +120,7 @@ export default memo(function({onSubmit}){
             prefix={<Ipticon />}
             url={imgurl.pwd}
             aurl={imgurl.pwda}
-            placeholder="请输入密码"
+            placeholder={t("Enpassword")}
           />  
         </Itembox>
        
@@ -132,7 +134,7 @@ export default memo(function({onSubmit}){
           <Form.Item  name="code" noStyle  rules={[
            {
              required: true,
-             message: "请输入验证码",
+             message: t("Envercode"),
            },
             {
            validator: imgcodeValidator
@@ -144,7 +146,7 @@ export default memo(function({onSubmit}){
             url={imgurl.pwd}
             aurl={imgurl.pwda}
             autoComplete="off"
-            placeholder="请输入验证码"
+            placeholder={t("Envercode")}
           />
           </Form.Item>
           <div style={{display: "inline-block", marginLeft: 'auto'}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px", border: '1px solid #9c9ea4'}} preview={false} onClick={getCode} />} </div>
@@ -156,7 +158,7 @@ export default memo(function({onSubmit}){
        
         <Itembox valuePropName="checked">
           <Logck onChange={ckChange} defaultChecked={initmemorize}>
-            记住用户名和密码
+           {t("ReUserPassword")}
           </Logck>
         </Itembox>
         <Itembox>
@@ -166,7 +168,7 @@ export default memo(function({onSubmit}){
             loading={loading}
             style={{ height: "56px" }}
           >
-            立即登录
+            {t("Login")}
           </Logbtn>
         </Itembox>
       </Form>

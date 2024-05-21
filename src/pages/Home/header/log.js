@@ -1,11 +1,11 @@
 import React, {useRef,  useCallback, useState} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
-import {GlobalOutlined } from  "@ant-design/icons"
+ 
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
-import { clearToken, selectUser, userRest} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl, selectProjectId} from "@redux/systemconfig";
+import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -19,7 +19,8 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login} from '@api/api' 
 import {CustButton} from '@com/useButton'
- 
+import {handlermenu} from "@com/usehandler"
+const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
   padding: 16px 0;
@@ -147,6 +148,11 @@ export default function Log() {
   const projectId = useSelector(selectProjectId)
   const  screenadr = useSelector(currentscreen)
   const  isgranary = useSelector(isGranary)
+  const setmenus = useSelector(setMenus)
+  const allmenus = useSelector(menus)
+  let dataScreen =setmenus.find(i => i.key=='dataScreen')?.label //数据大屏
+  let projectSet = setmenus.find(i => i.key=='projectSet')?.label //项目设置
+  let systemSet = setmenus.find(i => i.key=='systemSet')?.label // 平台设置
   const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
@@ -156,7 +162,7 @@ export default function Log() {
  
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
- 
+  const Langes = useSelector(platformLang)
   const Item = Form.Item
   const [form] = Form.useForm()
   const [mform] = Form.useForm()
@@ -175,7 +181,7 @@ export default function Log() {
   const account = () => {
     user.current.onOpen()
   }
-const onJump = useCallback(() => {
+const onJump = useCallback(() => {  
    let {type, key, primary} = screenadr   
  
    if(type == 0) return ;
@@ -192,22 +198,34 @@ const onJump = useCallback(() => {
 }, [screenadr, isgranary])
 
 
- // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh, 英文 en 
+ // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
- 
-const [lngval, setLngval] = useState(localStorage.getItem('i18nextLng') )
+const zhcn = localStorage.getItem('i18nextLng')=='zh-CN' ? 'zh' : localStorage.getItem('i18nextLng')
+const [lngval, setLngval] = useState(zhcn)
  
 const langChange = (e) => {
+     
     setLngval(e.target.value)
 }
 const lngOk = () => {
+    try {
     const lang = langpack[lngval]
     let key = lngval==='zh' ? 'zh-cn' : lngval
+    
     moment(key);
     dispatch(setIntl({lang, locale: key}))
+    dispatch(setIszhCN(lngval==='zh'))
     i18n.changeLanguage(lngval)
+     
+    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+     dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
+  } catch (error) {
+      console.log(error)
+  }
+   // navgite('/')
 }
+
   const items = [
     {label: '账户管理', key:"mg"},
     {label: '语言切换', key:"lng"},
@@ -282,8 +300,7 @@ const lngOk = () => {
   const pref = useRef()
   const monOk = async() => { 
      try {
-      let {mobile} = await mform.validateFields()
-      console.log(mobile)
+      let {mobile} = await mform.validateFields()     
       let  param= {
          projectId,
          userId ,
@@ -345,19 +362,19 @@ const lngOk = () => {
           :
         <>
       { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
-          <span> 数据大屏</span>
+          <span> {dataScreen}</span>
         </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
-          <span> 数据大屏</span>
+          <span> {dataScreen}</span>
         </Idiv1>
         }
  
  
  
         { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
-          <span>项目设置</span>
+          <span>{projectSet}</span>
         </Idiv4>):null}
         { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
-          <span>平台配置</span>
+          <span>{systemSet}</span>
         </Idiv2>):null}
         </>
         }
@@ -524,15 +541,20 @@ const lngOk = () => {
 
 
       <CModal  nolf="no" title={<Space><img src={lg} title="" style={{verticalAlign: "-5px"}}  /> <span style={{color: "#515151"}}>语言切换</span></Space>} mold="cust"  ref={lref} width="440px"  onOk={lngOk} wrapClassName="wrap" >
-      <Radio.Group onChange={langChange} value={lngval} style={{display: 'flex', flexDirection: "column"}}>
-          <Lngdiv>
-             <img  src={imgurl['zh']} /> <span>中文</span> <Cradio value="zh"></Cradio>
-          </Lngdiv>
-          <Lngdiv>
-             <img  src={imgurl['en']}/> <span>English</span> <Cradio value="en"></Cradio>
-          </Lngdiv>
+      {Langes?.length > 0 ?  (<Radio.Group onChange={langChange} value={lngval} style={{display: 'flex', flexDirection: "column"}}>
+         
+          {
+            Langes.map(l => (
+              <Lngdiv>
+                <img  src={imgurl[l.name]} /> <span>{l.text}</span> <Cradio value={l.name}></Cradio>
+             </Lngdiv>
+            ))
+          }
+          
           <div style={{height: "96px", borderBottom: "1px solid #d7d7d7"}} ></div>
-        </Radio.Group>
+        </Radio.Group>)
+          : <Text type="warning">没有设置国际语言</Text>
+        }
       </CModal>
     </Cdiv>
   );

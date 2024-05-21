@@ -14,10 +14,10 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary } = state;
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
-    designerEnergy: ''
+    designerDistribution: ['room']
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -48,7 +48,16 @@ export default function Index() {
       "region",
     ], 
     runtimeStorage: [ // 储能管理
-      "station"
+      "station",
+      "PCSMonitor", // pcs监控     
+     // "BMSMonitor",
+     "storageControl",
+     "consumeStatistics",
+     "earningsStatistics",
+     "chargingOrder",
+     "environment",
+     "alarmMessage",
+     "operationLog",
     ], 
     runtimeCarbon: [ // 碳排管理
        "summary",
@@ -56,18 +65,29 @@ export default function Index() {
        "manager",
        "analysis",
     ],
-
+    runtimeMaintenance: [ // 运维管理
+      "summary",
+      "alarm",
+      "order",
+      "inspection",
+      "class",
+      "chart"
+    ],
     // 设计态
     designerEnergy: [ // 能源管理
        "price",
        "norm",
        "type",
+    ],
+    runtimeCarbonEmissionManager: [  //碳排管理
+        "runtimeCarbonData"
     ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
 
   const [exparams, setexparams] = useState({ deviceStyle: 1 });
+  const [areaName, setAreaName] = useState()
   const [config, setConfig] = useState({});
   const [custview, setCustview] = useState(undefined);
   let showSerach = inpage[primary]?.includes(nested);
@@ -88,11 +108,13 @@ export default function Index() {
     setConfig,
     exparams,
     setCustview,
+    areaName,
   };
   const props = {
     config,
     setexparams,
     custview,
+    setAreaName
   };
 
   const sethandler = () => {
@@ -135,7 +157,7 @@ export default function Index() {
             setConfig({ energytype: true, isdate: true });
             break;
           case "norm":
-            setConfig({});
+            setConfig({custview: true});
             break;
           case "public":
             setConfig({ energytype: true, isdate: true });
@@ -149,16 +171,35 @@ export default function Index() {
             setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, });
             break;  
           default:
+            setConfig({});
             break;
         }
       }
       if(primary == "runtimeStorage") {
          switch(nested) {
-           case "station":
-            setConfig({ isSite: true });
-            break;
+           case "PCSMonitor":
+            setConfig({ isSite: true, isTank: true,  isPcs: true});
+            break; 
+           /*  case "BMSMonitor":
+              setConfig({ isSite: true});
+              break;   */
+           case "storageControl":
+            setConfig({ isSite: true, isPcs: true});
+            break;           
+            case "earningsStatistics":
+            case "environment":
+            case "consumeStatistics":  
+            case "station":
+            case "alarmMessage":
+            case "operationLog":
+                setConfig({ isSite: true});
+                break;   
+            default:
+              setConfig({});
+              break;
          }
       }
+    
       if(primary == "runtimeCarbon") {
         switch(nested) {
           case "examining":
@@ -169,6 +210,10 @@ export default function Index() {
            break;
         }
       }
+      if(primary == "runtimeMaintenance") {
+
+        setConfig({});
+      }
       // 设计态
       if(primary == "designerEnergy") {
         switch(nested) {
@@ -178,11 +223,19 @@ export default function Index() {
         }
          
       }
+      if(primary == "runtimeCarbonEmissionManager") {
+        switch(nested) {
+          case "runtimeCarbonData":
+           setConfig({isAreaId: false, isdate:true, shiftNo: true});
+           break;
+        }
+         
+      }
       // custview
     } catch (error) {}
   };
 
-  useEffect(() => {
+  useEffect(() => {  
     if (whole.includes(primary)) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin)
@@ -194,7 +247,7 @@ export default function Index() {
         );
     } else {
       let level = onelevel.filter((l) => l.id != 0);
-      console.log(level)
+       
       dispatch(getOnelevel([...level]));
     }
   }, [primary]);

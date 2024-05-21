@@ -12,8 +12,7 @@ import {themeColor, intl} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
   const theme = useSelector(themeColor)
-  const {lang} = useSelector(intl)
-  
+  const {lang} = useSelector(state => state.system.intl)
   const config = {
     csp: {
       nonce: 'YourNonceCode'

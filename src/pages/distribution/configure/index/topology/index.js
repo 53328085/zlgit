@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useAntdTable } from 'ahooks';
 import { Button,  Space,  message, Divider, Typography } from 'antd';
+import {useTranslation} from 'react-i18next'
 import { PlusOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { selectProjectId,  publishState,selectcurlRommid, selectOneLevelDefaultId } from '@redux/systemconfig.js'
@@ -9,8 +10,10 @@ import Usetable from '@com/useTable'
 import CustModal from '@com/useModal'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
+import {NewButton} from '@com/useButton'
 const {Link} = Typography
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const roomId = useSelector(selectcurlRommid)
   const areaId = useSelector(selectOneLevelDefaultId)
   const isPublish = useSelector(publishState)
@@ -53,8 +56,8 @@ export default function Index() {
       width: 280,
       render: (_, record) => (
         <Space size="middle">
-          <Link type='primary' underline onClick={() => edit(record)}>编辑</Link>
-          <Link type="danger" underline onClick={() => deleteRecord(record)}>删除</Link>
+          <Link type='primary' underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+          <Link type="danger" underline onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
     },
@@ -100,7 +103,7 @@ export default function Index() {
   const edit = (record) => {
     let { id } = record
     let type = 'edit'
-    window.open(`/topology?projectId=${projectId}&areaId=${roomId}&id=${id}&type=${type}`, '_blank')
+    window.open(`/topology?projectId=${projectId}&areaId=${areaId}&id=${id}&type=${type}`, '_blank')
   }
 
   const [deleteId, setDeleteId] = useState(null)
@@ -125,7 +128,7 @@ export default function Index() {
     <Pagecont showserach={false} custserach pd="0px" >     
      <Titlelayout title="配电系统图"   layout="flex" dr="column">         
       <Divider style={{margin: "16px 0"}} />
-        {isPublish ? null : <Button style={{width: 96}} type="primary" icon={<PlusOutlined />} onClick={() => showAdd('add')}>新增</Button>}
+        {isPublish ? null : <NewButton onClick={() => showAdd('add')} />}
         <Usetable style={{marginTop: 16}} ref={tableRef} columns={columns}   rowKey='id'  {...tableProps} />
         <CustModal title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>        
           是否确认删除配电系统图？ 

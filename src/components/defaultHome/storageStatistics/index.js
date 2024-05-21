@@ -2,7 +2,7 @@ import React, {  useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
- 
+import {useTranslation} from 'react-i18next'
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
@@ -28,7 +28,7 @@ export default function DefaultHome(props){
 
   const { GetStorageProfitTrends } = HomeRuntime
  
-
+  const {t} = useTranslation(['comm','overview'])
   const state = useReactive({
     x: ['03/15', '03/16', '03/17', '03/18', '03/19', '03/20', '03/21'],
     y: ['523.23', '418.58', '306.98', '489.32', '874.59', '742.63', '684.25'],
@@ -52,15 +52,15 @@ export default function DefaultHome(props){
       left: 'center',
       data:[
         {
-          name: "充电金额(元)",
+          name:  t("overview:ChargeAmount"),
           icon: 'rect'
         },
         {
-          name: "放电金额(元)",
+          name: t("overview:DischargeAmount"),
           icon: "rect"
         },
         {
-          name: "收益(元)",
+          name: t("overview:earnings"),
           icon: 'diamond',
         }
       ]
@@ -81,10 +81,10 @@ export default function DefaultHome(props){
                let {x, y, y1, y2} = data
                let dataset = {
                 dimensions: [
-                  {name: '日期', type: 'time'},
-                  {name:  "充电金额(元)" },
-                  {name: "放电金额(元)" },
-                  {name: "收益(元)" },
+                  {name:  t("comm:date"), type: 'time'},
+                  {name:  t("overview:ChargeAmount") },
+                  {name: t("overview:DischargeAmount") },
+                  {name: t("overview:earnings") },
                 ],
                 source: [
                   x, 
@@ -106,7 +106,7 @@ export default function DefaultHome(props){
 
   return (
          <Mainbox>
-            <div className='headerTitle'>储能收益统计</div>
+            <div className='headerTitle'>{t("overview:EnergyStorageRevenueStatistics")}</div>
             <div style={{width:896,height:338, display: 'flex'}} id='barChart'  >
             <Ichart {...options} />
 

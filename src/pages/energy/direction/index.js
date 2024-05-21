@@ -110,7 +110,7 @@ export default function Index() {
 
 
 
-         let links = link.map(l =>({...l, value: parseFloat(l.value) }))
+         let links = link.map(l =>({...l, value: parseFloat(l.value)}))
           setOptions({
             ...options,
             series: [

@@ -1,6 +1,6 @@
-import {api} from './apiBasic'
-console.dir(api);
-export const apiSlice = api.injectEndpoints({
+import {apiTest} from './apiBasic'
+console.dir(apiTest);
+export const apiSlice = apiTest.injectEndpoints({
     endpoints: build => ({
         getPosts: build.query({
             query: () => ({
@@ -24,6 +24,7 @@ export const apiSlice = api.injectEndpoints({
             })
         })
     }),
-    overrideExisting: false,
+    
 })
 export const {useGetPostsQuery, useGetPostQuery, useParamPostMutation} = apiSlice
+export const selectUsersResult = apiSlice.endpoints.getPost.select()

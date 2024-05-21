@@ -2,6 +2,7 @@ import React, { useState,  useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next"
 import styled from "styled-components";
 import moment from "moment";
 import {
@@ -27,7 +28,7 @@ import {
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
  
-import { ProjectList, eneryShift, BigScreen, Area,HomeRuntime } from "@api/api.js";
+import { ProjectList} from "@api/api.js";
 import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"
@@ -37,7 +38,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, getdataScreen, setCurrentlevel, getDisonlevel, getWebsiteState, getWebsiteMenu } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu } from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -243,8 +244,8 @@ const Opbox = styled.div`
 `
 const { RangePicker } = DatePicker
 export default function Index() {
- 
-
+ const {t} = useTranslation(["comm","platformcig"])
+  const iszh = useSelector(iszhCN)
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
@@ -256,11 +257,11 @@ export default function Index() {
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
-    { label: "全部", value: 0 },
-    { label: "已发布", value: 1 },
-    { label: "未发布", value: 2 },
-    { label: "已过期", value: 3 },
-    { label: "未过期", value: 4 },
+    { label: t("comm:All"), value: 0 },
+    { label: t("comm:Published"), value: 1 },
+    { label: t("comm:Unpublished"), value: 2 },
+    { label: t("comm:Expired"), value: 3 },
+    { label: t("comm:Unexpired"), value: 4 },
   ]);
   const onShow = () => {    
       modal.current.onOpen()
@@ -281,9 +282,9 @@ export default function Index() {
        if(success) {
         formmodal.current.onCancel()
         refresh()
-        message.success('新增成功')
+        message.success(t("comm:newsuc"))
        } else {
-        message.error(errMsg || '数据出错')
+        message.error(errMsg || t("comm:dataerr"))
        }
     }).catch(e => {
       console.log(e);
@@ -308,7 +309,7 @@ export default function Index() {
       }
     }
    
-    if(!menu) return message.error({content: '没有设置菜单，请联系管理人员', duration: 0.5})
+    if(!menu) return message.error({content: t("comm:NoSetMenu"), duration: 0.5})
     type == 2  && projectRun(menu)
     type == 1 && projectDesigner(menu)
 
@@ -348,21 +349,21 @@ export default function Index() {
       render: (text, record, index) => `${index + 1}`,
     },
     {
-      title: "项目名称",
+      title: t("comm:ProjectName"),
       dataIndex: "name",
       key: "name",
      // width: 420,
       ellipsis: true,
     },
     {
-      title: "项目地址",
+      title: t("comm:ProjectAddress"),
       dataIndex: "address",
       key: "address",
     //  with: 620,
       ellipsis: true,
     },
     {
-      title: "状态",
+      title: t("comm:Status"),
       dataIndex: "publishStateStr",
       key: "publishStateStr",
       align: "center",
@@ -372,7 +373,7 @@ export default function Index() {
       // },
     },
     {
-      title: "有效期",
+      title: t("comm:ValidityPeriod"),
       key: "validStageTime",
       dataIndex: "validStageTime",
       align: "center",
@@ -380,15 +381,15 @@ export default function Index() {
      // render: (text) => moment(text).format("YYYY-MM-DD"),
     },
     {
-      title: "操作",
+      title: t("comm:Operation"),
       key: "custop",
       dataIndex: "custop",
       align: "center",
       render: (text, record) => (
         <Space size={32}>
-          <CustBtn icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
+          <CustBtn  width={iszh ? null : "auto"}  icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
 })}>
-            项目配置
+            {t("platformcig:ProjectConfiguration")}
           </CustBtn>
           <CustBtn
             icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
@@ -397,7 +398,7 @@ export default function Index() {
               })
             }
           >
-            进入项目
+            {t("platformcig:EnterProject")}
           </CustBtn>
         </Space>
       ),
@@ -464,38 +465,38 @@ tableProps.pagination.size="default" // 页码大小默认
   const opcolumns = [ 
     {
       dataIndex: "projectId",
-      title: '项目ID',
+      title: t("comm:ProjectID"),
       key: "projectId",
       align: "center",
     },
     {
       dataIndex: "projectName",
-      title: '项目名称',
+      title: t("comm:ProjectName"),
       key: "projectName",
       align: "center",
     },
     {
       dataIndex: "creatorInfo",
-      title: '操作者/手机号',
+      title: t("platformcig:OperatorMobileNumber"),
       key: "creatorInfo",
       align: "center",
     },
     {
       dataIndex: "operate",
-      title: '操作类型',
+      title: t("platformcig:OperationType"),
       key: "operate",
       align: "center",
     },
     {
       dataIndex: "detail",
-      title: '备注',
+      title: t("comm:remark"),
       key: "detail",
       align: "center",
       width: 546
     },
     {
       dataIndex: "operationTime",
-      title: '操作时间',
+      title: t("comm:OperationTime"),
       key: "operationTime",
       align: "center",
     },
@@ -548,7 +549,7 @@ tableProps.pagination.size="default" // 页码大小默认
   <Form
     form={opform}
   >
-      <Item label="操作时间" name="date">
+      <Item label={t("comm:OperationTime")} name="date">
          <RangePicker style={{width: '408px'}} onChange={submit} disabledDate={disabledDate} />
       </Item>
   </Form>
@@ -619,7 +620,7 @@ const closeModl = () => {
               
               <Item name="name" normalize={(v) => v.trim() }>
               <Iptserach
-                   placeholder="请输入项目名称"
+                   placeholder={t("comm:Message_enterprojectname")}
                    style={{ width: "500px" }}
                    allowClear
                    onSearch={submit}
@@ -633,13 +634,13 @@ const closeModl = () => {
                         mgl="8px"
                       />  
                     }
-                  >查询</CutSerachBt>}
+                  >{t("comm:Query")}</CutSerachBt>}
                 >
                 </Iptserach>       
               </Item>
               <Item name="state">
                 <Cselect
-                  placeholder="项目状态"
+                  placeholder={t("comm:projectStatus")}
                   w="200px"
                   h="42px"
                   onChange={submit}
@@ -663,13 +664,13 @@ const closeModl = () => {
                     />
                   }
                 >
-                  新增项目
+                 {t("comm:newproject")}
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn 
+                 {  roleType == 1 &&    <CustBtn width={iszh ? null : "auto"}
                   onClick={devOps}
                 >
-                  运营管理员管理
+                   {t("platformcig:OperationsAdministratorManagement")}
                 </CustBtn>
                }
               </Item>
@@ -678,7 +679,7 @@ const closeModl = () => {
                   onClick={opRecord}
                    
                    >
-                  操作记录
+                  {t("platformcig:OperationRecord")}
                 </CustBtn>
               </Item>
             </Space>
@@ -694,7 +695,7 @@ const closeModl = () => {
           </CustTable>
         </div>
         <Custmodal
-        title="提示信息"
+        title={t("comm:promptmessage")}
          ref={modal}
          onOk={onOk}
         
@@ -705,23 +706,23 @@ const closeModl = () => {
         <Space size={16} style={{paddingLeft: '32px'}}>
           <Circle
           />
-         <span style={{color: '#333', fontSize: '18px'}}> 是否退出系统？</span>
+         <span style={{color: '#333', fontSize: '18px'}}>{t("platformcig:system")}</span>
         </Space>
       </Custmodal>
       <Custmodal
-        title="新增项目"
+        title={t("comm:newproject")}
         ref={formmodal}
         onOk={onSubmit}        
         width={1366} 
         mold="cust"     
-        type="dark"
+        
       >
         <Projectform ref={projectform} />
       </Custmodal>
 
 
       <Custmodal
-        title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>项目操作历史</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>关闭</Button></div>}
+        title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
         ref={opref} 
         width={1424} 
         mold="cust"   
@@ -733,11 +734,12 @@ const closeModl = () => {
 
 
       <Custmodal
-        title="运营管理员账号管理"
+        title={t("platformcig:OperationAdministratorAccountManagement")}
         ref={operRef} 
         width={1080} 
+        onOk={closeModl}
         mold="cust"  
-        footer={<Space><Button onClick={closeModl}>取消</Button><Button type="primary" onClick={closeModl}>确认</Button></Space>}
+      //  footer={<Space><Button onClick={closeModl}>取消</Button><Button type="primary" onClick={closeModl}>确认</Button></Space>}
       >
          <Account />
          

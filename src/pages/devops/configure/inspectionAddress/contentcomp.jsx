@@ -7,6 +7,7 @@ import BlueColumn from '@com/bluecolumn'
 import commonstyle from './commonstyle.module.less'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
+import {CustButton, CustButtonT} from "@com/useButton"
 import {SetPosition} from './position'
 
 //配置线路
@@ -43,25 +44,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
         } },
 
     ]
-    const btncss = {
-        width: 68,
-        height: 46,
-        background: "#237ae4",
-        textAlign: 'center',
-        lineHeight: '46px',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
-    const btnstyle = {
-        width: 146,
-        height: 40,
-        background: '#237ae4',
-        textAlign: 'center',
-        lineHeight: '40px',
-        color: '#fff',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
+ 
      //获取已选和未选设备
   const getQueryDeviceList=async(deviceStyle=0,alike="")=>{
     let params={
@@ -268,7 +251,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
                 </div>
 
             </div>
-            <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
+            <div style={{ position: 'relative', flex: 1, padding: '64px 32px' ,display: "flex", flexDirection: "column", justifyContent: "space-evenly"}}>
                 {publish ? null : <>
                     {/* <div style={{ marginTop: 21 }}>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择设备</div>
@@ -277,19 +260,18 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform }, ref) => {
                             <div style={btncss} className={commonstyle.btnhover} onClick={summaryToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
                         </div>
                     </div> */}
-                    <div style={{ marginTop: 150 }}>
+                    <div>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择巡检项</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                            <CustButton onClick={subToLeft} icon={<LeftOutlined style={{ color: '#fff', fontSize: 20 }} />} style={{height: 46, width: 68}} /> 
+                            <CustButton onClick={subToRight} icon={<RightOutlined style={{ color: '#fff', fontSize: 20 }} />} style={{height: 46, width: 68}} />
                         </div>
                     </div>
                 </>}
 
-                <div>
-                    {/* {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>} */}
-                    <div style={{ ...btnstyle,marginTop: 200, color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>关闭</div>
-                </div>
+                
+                    <CustButtonT text="cancel" onClick={close} style={{width: 146, height: 40}} /> 
+                
             </div>
             <div style={{ position: 'relative', width: 714 }}>
                 <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>

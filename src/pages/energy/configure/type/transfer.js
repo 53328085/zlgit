@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import {useTranslation} from "react-i18next"
 import style from './style.module.less'
-import { Table, Input, message, Select } from "antd";
+import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import {CustButton} from '@com/useButton'
 export default function index (props) {
+    const {t} = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
@@ -205,21 +207,14 @@ export default function index (props) {
             </div>
             <div className={style.actions}>
 
-                <div className={style.secondButton}>
+                <Space size={16}>
                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>
-                   {/*  <span className={style.leftButton} onClick={() => unknownToSub() }>
-                        <LeftOutlined />
-                    </span>
-                    <span className={style.rightButton} onClick={() => subToUnknown() }>
-                        <RightOutlined />
-                    </span> */}
-                </div>
-                <div className={style.finalButton}>
-                <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>保存</CustButton>
-                   {/*  <div className={style.saveButton} onClick={ ()=> handleSave()}>保存</div> */}
-                    <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
-                </div>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>                 
+                </Space>
+                <Space size={16} direction="vertical">
+                <CustButton onClick={handleSave} style={{height:"46px", width: "100%"}} >{t("button:save")}</CustButton>                  
+                    <CustButton  type="default" style={{height:"46px", width: "100%"}} onClick={ ()=> handleClose()}>{t("button:cancel")}</CustButton>
+                </Space>
             </div>
             <div className={style.rightTable}>
                 <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>

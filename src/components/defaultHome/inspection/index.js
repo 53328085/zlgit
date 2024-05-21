@@ -6,7 +6,7 @@ import Titlelayout from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {useTranslation} from 'react-i18next'
 const Divorder = styled.div`
   display: grid;
   grid-template-columns: 40% 1fr;
@@ -39,8 +39,8 @@ const Divorder = styled.div`
        color: #009900;
     }
     span:not(:first-of-type) {
-      color: #515151;
-      font-size: 20px;
+    //  color: #515151;
+      font-size: 14px;
      // font-weight: bold;
     }
   }
@@ -68,6 +68,7 @@ export default function DefaultHome(props) {
     process: 0,
     wait: 0,
   })
+  const {t} = useTranslation(["comm","overview"])
   useEffect(() => {
     if (props.type == 'runtTime') {
       InspectionStatistics(projectId).then(res => {
@@ -90,24 +91,24 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title="本月巡检" {...fs} style={{height: '200px'}}>
+    <Titlelayout title={t("overview:InspectionOfThisMonth")} {...fs} style={{height: '200px'}}>
       <Divorder>
         <div className='order'>
           <p>{idata.all}</p>
         </div>
         <div className='list'>
           <div>
-            <span>未分派</span>
+            <span>{t("comm:NotProcess")}</span>
             <span>{idata.wait}</span>
             <span>{rate(idata.all, idata.wait)}</span>
           </div>
           <div>
-            <span>已分派</span>
+            <span>{t("comm:InProcess")}</span>
             <span>{idata.process}</span>
             <span>{rate(idata.all, idata.process)}</span>
           </div>
           <div>
-            <span>已处理</span>
+            <span>{t("comm:AlreadyProcess")}</span>
             <span>{idata.finish}</span>
             <span>{rate(idata.all, idata.finish)}</span>
           </div>

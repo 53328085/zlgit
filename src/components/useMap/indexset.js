@@ -21,7 +21,13 @@ import {message} from 'antd'
  
  let {lngLat: projectLnglat, address} = useSelector(currProject);
  let defaultpoint =  value || lngLat || projectLnglat;
-  let geocoder = window.T  ?    new T.Geocoder() : null;
+ let geocoder ;
+ 
+ if(window.T) {
+   geocoder = new T.Geocoder()
+ }else {
+   return <Fallack custmsg={"地图加载出错，请检查网络是否断开"}/>
+ }
    
  
  
@@ -94,7 +100,7 @@ import {message} from 'antd'
    //  console.log(map)
     try {
     //  map &&  map.clearOverLays();
-      geocoder.getPoint(value, searchResult)
+      geocoder?.getPoint(value, searchResult)
     } catch (error) {
       console.log(error)
     }
@@ -149,11 +155,11 @@ import {message} from 'antd'
           addInfo(lnglat, text)
         })
        } else {
-         geocoder.getLocation(latlng,mapClick)
+         geocoder?.getLocation(latlng,mapClick)
        }    
       map.addEventListener("click", (e) => {
         if(isck) return;
-        geocoder.getLocation(e.lnglat,mapClick)
+        geocoder?.getLocation(e.lnglat,mapClick)
        });
       }
      
@@ -166,9 +172,6 @@ import {message} from 'antd'
   }, [defaultpoint])
   return (
     <div style={{width: "100%", height: '100%',  touchAction: "none"}} id="tmap">
-         
-            { !window.T  && <Fallack error="地图出错，请检查网络是否断开" />}
-           
     </div>
   /*   <div style={{flex: 1, height: '100%'}} ref={(node) => setMapref(node)} id="mapBox"  >
 

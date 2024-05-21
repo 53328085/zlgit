@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
  
  
-import {  Space } from 'antd';
+import {  Space} from 'antd';
 import { EnergyQuotaRuntime } from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
@@ -11,6 +11,7 @@ import {useAntdTable} from 'ahooks'
 import UserTable from "@com/useTable";
 import Titlelayout from '@com/titlelayout';
 import {Serach} from '@com/comstyled'
+
 export default function MainPage(props){
    
   const [searchData, setSearchData] = useState('')
@@ -46,10 +47,11 @@ export default function MainPage(props){
       render: (_, record) => (
         <Space size="middle">
           <Link 
+         
           to={{pathname:'/roomDetail', search:JSON.stringify({id:record.roomId,
             areaName:props.areaName, 
-            buildingName:record.buildingName, 
-            roomName:record.roomName,
+            buildingName: encodeURIComponent(record.buildingName), 
+            roomName: encodeURIComponent(record.roomName),
             comprehensiveQuota: record.comprehensiveQuota,
             comprehensiveQuotaLeaved: record.comprehensiveQuotaLeaved
           })}} 

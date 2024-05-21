@@ -1,4 +1,5 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef, memo} from "react";
+import {useTranslation} from 'react-i18next'
 import { Button, Modal, Space} from "antd";
 import styled from "styled-components";
 import Draggable  from "react-draggable";
@@ -10,7 +11,7 @@ const custCorle =(props) => {
  return {
   normal: props.theme.primaryColor,
   warn: "#ff4d4f",
-//  dark: "#fff"
+ // dark: "#fff"
  }[props.type]
 }
 const CModal = styled(Modal)`
@@ -25,7 +26,7 @@ const CModal = styled(Modal)`
       font-size: 16px;
       color: ${custCorle};;
       padding-left: ${props => props.nolf ? 0 : '16px'} ;
-      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme}`};
+      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme(props)}`};
       height: 32px;
       line-height: 32px;
     }
@@ -48,10 +49,10 @@ const CModal = styled(Modal)`
       background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
       color: #666;
     }
-    .ant-btn-primary {
+ .ant-btn-primary {
       border-color:   ${custCorle};
       background-color: ${custCorle};
-    }
+    }  
   }
   .ant-form-item:last-of-type {
     margin-bottom: 0px;
@@ -72,7 +73,7 @@ const CModal = styled(Modal)`
   loading=false,
   ...props
 } = {}, ref) { 
-
+  const {t} = useTranslation("button")
   const [open, setOpen] = useState(false)
   const [disabled, setDisabled] = useState(true)
   const [bounds, setBounds] = useState({
@@ -108,18 +109,19 @@ const CModal = styled(Modal)`
   const onGetvalue = () => formref.current.getValue()
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
-      <Button onClick={onCancel}>取消</Button>,
+      <Button onClick={onCancel} key="cancel">{t('cancel')}</Button>,
        <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
+        
         setCurrbtn(1)
         onOk()
-       }}>应用</Button> ,
-       <Button type="primary" loading={currbtn == 2 && loading} onClick={() => {
+       }} key="apply" >{t('apply')}</Button> ,
+       <Button type="primary" loading={currbtn == 2 && loading} key="ok" onClick={() => {
         setCurrbtn(2)
         onOk().then(() => {
           onCancel();
         });
         
-       }}>确定</Button>
+       }}>{t('ok')}</Button>
       ]
   
   useImperativeHandle(ref, ()=> ({
@@ -141,7 +143,7 @@ const CModal = styled(Modal)`
       maskClosable={false}
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
-      type={type}
+      type={type}      
       confirmLoading={loading}
       bodyStyle= {
          type=="warn" ? {

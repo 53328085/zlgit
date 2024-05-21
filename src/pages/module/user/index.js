@@ -11,15 +11,17 @@ import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js' 
 import {selectUser} from '@redux/user'  
 import CModal from '@com/useModal'
+import {useTranslation} from "react-i18next"
 export default function Index() {
   const projectId = useSelector(selectProjectId);
 
 
   const {roleType} = useSelector(selectUser)
+  const {t} = useTranslation("common")
   console.log(roleType)
   const tabs = roleType ==1 ?  [
-    {label: '账号管理', key: 'account'},
-    {label: '权限管理', key: 'power'},
+    {label:t("common:AccountManagement"), key: 'account'},
+    {label:t("common:PermissionsManagement"), key: 'power'},
   ] : [
     {label: '权限管理', key: 'power'},
   ]
@@ -27,7 +29,8 @@ export default function Index() {
   const propsData ={
     tabs,
     value,
-    setvalue
+    setvalue,
+    tabwidth:'auto'
   }
   const userCom = {
     account: Account ,

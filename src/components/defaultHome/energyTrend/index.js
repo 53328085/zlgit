@@ -4,7 +4,8 @@ import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
  
 import moment from 'moment';
- 
+import {CustTransO} from "@com/useButton"
+import {useTranslation} from "react-i18next"
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
@@ -19,6 +20,7 @@ const fs = {
 
 export default function DefaultHome(props){
   let {type} = props
+  const {t} = useTranslation("comm")
   const projectId = useSelector(selectProjectId)
 
  
@@ -49,7 +51,7 @@ export default function DefaultHome(props){
             let {x, y, y1} = data           
             let dataset = {
               dimensions: [
-                {name: '日期', type: 'time'},
+                {name: t("date"), type: 'time'},
                 {name: moment().format('yyyy') },
                 {name: moment().subtract(1, 'y').format('yyyy') },
               ],
@@ -76,7 +78,7 @@ export default function DefaultHome(props){
   }, [projectId, type])
   
   return (
-         <Titlelayout title={'月度能耗趋势'} {...fs} style={{height: '200px'}} layout="flex">
+         <Titlelayout title={<CustTransO text="Monthlyenergyconsumptiontrend" />} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
               <Ichart {...options} />
          </div>

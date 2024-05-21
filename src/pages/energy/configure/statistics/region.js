@@ -24,6 +24,7 @@ import {Serach} from '@com/comstyled'
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 import Mask from '@com/mask.jsx'
+import {CustLink, CancelButton} from "@com/useButton"
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -143,6 +144,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const fields = allLevel?.find(item => item.level == level)?.fields || [];  
   const [form] = Form.useForm();
   const [sfrom] = Form.useForm();
+ 
   const boxref = useRef();
   const [Record, setRecord] = useState({});
   const [isAdd, setIsAdd] = useState(true);
@@ -447,9 +449,8 @@ const getSelected = async ({areaId, type=devietype}) => {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-               <Link underline onClick={() => config(record)}>
-                  配置
-                </Link>  
+               <CustLink text="configure" onClick={() => config(record)} />
+                   
                {/*  <Link underline onClick={() => edit(record)}>
                   编辑
                 </Link>
@@ -539,8 +540,6 @@ const getSelected = async ({areaId, type=devietype}) => {
             <Form.Item name="name" label={`${name}查询`}>
               <Serach
                   placeholder={`请输入${name}名称`}
-                  allowClear
-                  enterButton="查询"
                   style={{ width: "340px" }}
                   onSearch = {getTableData}
                 />
@@ -563,8 +562,6 @@ const getSelected = async ({areaId, type=devietype}) => {
               <Form.Item name="name" label={`${name}查询`}>                 
               <Serach
                   placeholder={`请输入${name}名称`}
-                  allowClear
-                  enterButton="查询"
                   style={{ width: "340px" }}
                   onSearch = {getTableData}
                 />
@@ -587,7 +584,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         open={open}
        getContainer={() => boxref.current}
        
-        style={{ position: "absolute", top: "-16px", left: "-16px", zIndex: 1982}}
+        style={{ position: "absolute", top: "-16px", left: "-16px"}}
         closable={false}
         destroyOnClose
         height={760}
@@ -632,7 +629,7 @@ const getSelected = async ({areaId, type=devietype}) => {
         <div className="optab">
           <div>
             <Paragraph>选中{name}总表</Paragraph>
-            <Space>
+            <Space size={16}>
               <Button
                 type="primary"
                 icon={<LeftOutlined style={{ fontSize: "18px" }} />}
@@ -647,7 +644,7 @@ const getSelected = async ({areaId, type=devietype}) => {
           </div>
           <div>
             <Paragraph>选择{name}分表</Paragraph>
-            <Space>
+            <Space size={16}>
               <Button
                 type="primary"
                 icon={
@@ -677,9 +674,8 @@ const getSelected = async ({areaId, type=devietype}) => {
             >
               保存
             </Button> */}
-            <Button block onClick={drawClose}>
-              关闭
-            </Button>
+            <CancelButton   onClick={drawClose} style={{height: "46px", width: "100%"}}/>
+             
           </div>
         </div>
         <div className="unselected">
@@ -687,15 +683,15 @@ const getSelected = async ({areaId, type=devietype}) => {
           <Form
             form={sfrom}
             initialValues={{
-              type: "1",
+               type: "1"
             }}
           >
             <Space size={16}>
               <Item label="设备类型" name="type">
                 <Select
                   style={{ width: "112px" }}
-                  onChange={changeUnselected}
-                  options={[
+                 onChange={changeUnselected}
+                options={[
                     {
                       value: "1",
                       label: "电表",
@@ -709,7 +705,7 @@ const getSelected = async ({areaId, type=devietype}) => {
                       label: "燃气表",
                     },
                   ]}
-                ></Select>
+                />
               </Item>
               <Item name="alike" label="设备搜索">
                 <Inptserach

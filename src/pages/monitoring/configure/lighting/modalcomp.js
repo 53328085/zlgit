@@ -11,8 +11,7 @@ const {TextArea}=Input
 const {Dragger}=Upload
 //新增Modal
 export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",title,levelname,...other}) => {
-  const [transitionName,setTransition]=useState(undefined)
-  const [maskTransitionName,setMaskTransitionName]=useState(undefined)
+  
    const areas = areaList?.filter(it=>it.id!==0)
    let list=[]
    for (let i=0; i<Array(6).length; i++){
@@ -22,13 +21,8 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
     })
    }
     return (
-        <Modal mold="cust" ref={addModalRef} {...other} transitionName={transitionName} maskTransitionName={maskTransitionName} title={title} footer={[
-          <Button onClick={()=>{addModalRef.current.onCancel()}}>取消</Button>,
-          <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-          <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-          onClick={()=>{other.onSure();setTransition("");setMaskTransitionName("")}}>应用</Button>,
-      ]} >
-            {/* <BlueColumn name={title} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+        <Modal mold="cust" ref={addModalRef} {...other}   title={title} custft onOk={other.onOk} >
+         
             <Form
              colon={false}
              form={addform}
@@ -100,12 +94,7 @@ export const EditModal=(props)=>{
      })
     }
     const MemoModal=useMemo(()=>{
-      return( <Modal mold="cust" ref={editModalRef} {...other} title="编辑园区路灯" footer={[
-        <Button onClick={()=>{editModalRef.current?.onCancel()}}>取消</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={onOk}>保存</Button>,
-        <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} 
-        onClick={ other.onSureEditModal}>应用</Button>,
-    ]}>
+      return( <Modal mold="cust" ref={editModalRef} {...other} title="编辑园区路灯"  onOk={onOk}>
       {/* <BlueColumn name="编辑园区路灯" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
        colon={false}

@@ -6,7 +6,7 @@ import {useRequest} from 'ahooks'
 import {StorageParameterSetupDesigner} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/useButton'
+import {CustButtonT} from '@com/useButton'
 const {Text, Link, Title} = Typography
 const {Item} = Form
 const Mainbox = styled.div`
@@ -149,7 +149,7 @@ export default function Manual({projectId,  areaId, CModal}) {
   }
  
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>参数设置</span><Space size={16}><CustButton  type='primary' onClick={run} loading={loading}>刷新</CustButton><CustButton onClick={Updatedata} type='primary' loading={sLoading}>设置</CustButton></Space></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>参数设置</span><Space size={16}><CustButtonT    onClick={run} loading={loading} text="refresh"  /><CustButtonT onClick={Updatedata}  text="configure"  loading={sLoading} /></Space></div>}>
         <Mainbox>
              
             <Formbox layout="inline" form={form} validateMessages={{required: "'${label}' 数据是必须的",}} colon={false} >

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, forwardRef, useImperativeHandle } from 'react'
-import WarningPng from '@imgs/warning.png'
+ 
 import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
+ 
 import { Form, Row, Col, Select, Input, Divider, Upload } from 'antd'
 import upCloud from './imgs/upcloud.png'
 import style from './style.module.less'

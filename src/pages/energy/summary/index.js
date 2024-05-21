@@ -217,7 +217,7 @@ const getDataEnergy = async () => {
     getDataEnergy()
   }, [projectId]);
   return (
-    <CustContext.Provider >
+ /*    <CustContext.Provider > */
        <Pagecount bgcolor="transparent" pd="0">
        
            <Title>
@@ -292,6 +292,6 @@ const getDataEnergy = async () => {
         
         </Pagecount>
        
-    </CustContext.Provider>
+  /*   </CustContext.Provider> */
   );
 }

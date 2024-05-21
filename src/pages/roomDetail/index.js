@@ -16,7 +16,7 @@ export default function Index(){
     let search = location.search.substr(1, location.search.length)
     const searchObj = JSON.parse(decodeURI(search))
     let roomId = searchObj.id
-    const address = searchObj.areaName + '-' +searchObj.buildingName + '-' + searchObj.roomName
+    const address = searchObj.areaName + '-' + decodeURIComponent(searchObj.buildingName) + '-' + decodeURIComponent(searchObj.roomName)
     const comprehensiveQuota = searchObj.comprehensiveQuota || 0
     const comprehensiveQuotaLeaved = searchObj.comprehensiveQuotaLeaved || 0
     const comprehensiveQuotaUsed = parseFloat(comprehensiveQuota) - parseFloat(comprehensiveQuotaLeaved)

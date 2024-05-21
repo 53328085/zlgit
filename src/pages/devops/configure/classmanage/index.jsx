@@ -12,6 +12,7 @@ import BuildPlan,{EditUser,DeleteModal} from './buildplan'
 import editpng from "./imgs/edit.png"
 import deletepng from "./imgs/delete.png"
 import { operationDesigin } from '@api/api'
+import {CustButtonT} from "@com/useButton"
 import Loading from '../../../Loading'
 const MainBox = styled.div`
   background-color: #fff;
@@ -19,8 +20,6 @@ const MainBox = styled.div`
   border: 1px solid #d7d7d7;
   border-radius: 4px; 
   flex: 1;
-  --ant-primary-color:#237ae4;
-  --ant-primary-color-hover:#237ae4;
   .title{
     display: flex;
     justify-content: space-between;
@@ -461,7 +460,7 @@ export default function Index() {
      setIsLoading(false)
      console.log(areaId)
     }
-    areaId&&func()   
+    if(Number.isInteger(areaId)) func();
   }, [areaId])
 
   return (
@@ -484,11 +483,9 @@ export default function Index() {
               <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
               <div className='mgt16'>
                 <div className='title'>
+                    <CustButtonT onClick={() => {if(!areaId){message.warning('请新增园区');return}; planRef.current.onOpen() }} text="shiftmg" wh="auto" /> 
                   <div className='wd96'>
-                    <Button type="primary" block onClick={() => {if(!areaId){message.warning('请新增园区');return}; planRef.current.onOpen() }}>班次管理</Button>
-                  </div>
-                  <div className='wd96'>
-                    <Button type="primary" block onClick={completeEvent}>完成</Button>
+                    <CustButtonT onClick={completeEvent} text="finish" /> 
                   </div>
                 </div>
               </div>

@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import styled from 'styled-components'
+import {useTranslation} from 'react-i18next'
 import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer, Checkbox, message} from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
-import {CustButton, ExportExcel} from '@com/useButton'
+import {CustButton, ExportExcel, NewButton, AllExportButton} from '@com/useButton'
 import UseSerach, {AreaSelect} from '@com/useSerach'
 import Usetable from '@com/useTable'
 import {AutoValve} from '@api/api'
@@ -113,69 +114,33 @@ const P = styled(Paragraph)`
 const controlcolumns = [
     {
         title: '序号',
-        dataIndex: 'index',
-        onHeaderCell:() => ({
-          style: {
-            backgroundColor: '#237ae4',
-            color: "#fff"
-          }
-        }),
+        dataIndex: 'index',       
         align: 'center',
         render: (text, recoder, index) => <span>{index + 1}</span>
     },
     {
         title: '设备编号',
-        dataIndex: 'sn',
-        onHeaderCell:() => ({
-          style: {
-            backgroundColor: '#237ae4',
-            color: "#fff"
-          }
-        }),
+        dataIndex: 'sn',       
         align: 'center'
     },
     {
       title: '设备名称',
-      dataIndex: 'name',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'name',     
       align: 'center'
      },
      {
       title: '设备型号',
-      dataIndex: 'category',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'category',     
       align: 'center'
      },
      {
       title: '安装地址',
-      dataIndex: 'address',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'address',     
       align: 'center'
      },
      {
       title: '启用策略',
-      dataIndex: 'status',
-      onHeaderCell:() => ({
-        style: {
-          backgroundColor: '#237ae4',
-          color: "#fff"
-        }
-      }),
+      dataIndex: 'status',     
       align: 'center',
       render: (text) => text ? <span>启用</span> : <span style={{color: "f00"}}>停用</span>
 
@@ -282,6 +247,7 @@ const controlcolumns = [
 
 
  function Main({projectId, areaId}) {
+   const {t} = useTranslation(["button"])
    const [form] = Form.useForm()
  
    
@@ -407,7 +373,7 @@ const controlcolumns = [
       dataIndex: 'device',
       key: 'device',
       align: 'center',
-      render: (_, record) => <Link underline onClick={() => view(record.id)}>查看详细</Link>
+      render: (_, record) => <Link underline onClick={() => view(record.id)}>{t("button:viewDetails")}</Link>
      },
      {
       title: '操作',
@@ -416,9 +382,9 @@ const controlcolumns = [
       align: 'center',
       render: (_, record) => {
         return <Space size={32}>
-          <Link underline onClick={() => config(record.id)}>配置</Link>
-          <Link underline onClick={() => edit(record)}>编辑</Link>
-          <Link underline type="danger" onClick={() => del(record.id)}>删除</Link>
+          <Link underline onClick={() => config(record.id)}>{t("button:configure")}</Link>
+          <Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+          <Link underline type="danger" onClick={() => del(record.id)}>{t("button:delete")}</Link>
           </Space>
       }
      },
@@ -506,7 +472,7 @@ const controlcolumns = [
       let content = isAdd ? '新增成功' : '编辑成功';
       if(success) {
         message.success(content);
-        if(isAdd) form.resetFields();
+      //  if(isAdd) form.resetFields();
         if(!isAdd)   modal.current.onCancel();
         refresh()
       }else {
@@ -539,8 +505,8 @@ const controlcolumns = [
         <UseSerach 
         style={{padding: '0 0 16px 0', borderTop: "none"}}
         custview={ <Space size={16} style={{marginLeft: 'auto'}} >
-              <CustButton key="add" onClick={add}>新增</CustButton>
-              <CustButton key="export" onClick={onExport}>批量导入</CustButton>
+              <NewButton key="add" onClick={add} /> 
+             {/*  <AllExportButton key="export" onClick={onExport} /> 此处缺少接口暂时隐藏 */}
              <ExportExcel tb={tableref} />
           </Space>}  />
        
@@ -565,7 +531,7 @@ const controlcolumns = [
        >    
        <Divider  style={{margin: '0 0 16px 0', color: "#2a2f55", borderWidth: "1px"}} dashed />
           <div style={{flex: 1, backgroundColor: "#fff"}}>
-          <Usetable columns={controlcolumns}  dataSource={viewtb}   rowKey={nanoid()} scroll={{
+          <Usetable columns={controlcolumns}  dataSource={viewtb} istheme={true}  rowKey={nanoid()} scroll={{
             y: 867
           }} 
        

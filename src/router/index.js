@@ -3,7 +3,7 @@ import { Navigate, useRoutes} from "react-router-dom";
 import {useSelector} from 'react-redux'
 import {selectUser} from '@redux/user'
 
-
+import Emptycom from "@com/useEmpty"
  
  
 import {menus as Menus, currentscreen} from "@redux/systemconfig";
@@ -16,7 +16,7 @@ import  {runtimeDistribution} from "./distribution"; // 配电管理
 import  {runtimePrepay} from "./prepayment"; // 结算收费
 import  {runtimeSolar} from "./photovoltaic"; // 光伏
 import  {designerCommon} from "./designer/common";
-import  {runtimeCarbon} from "./carbon" // 碳排管理
+import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
  
 
@@ -29,7 +29,7 @@ import  {runtimeStorage} from './storage' // 储能管理
   runtimePrepay,
   runtimeSolar,
   designerCommon,
-  runtimeCarbon,
+  runtimeCarbonEmissionManager,
   runtimeStorage,
  }
 
@@ -44,31 +44,16 @@ const Index = lazy(() => import("@pages/Home"))
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
 //const Module = lazy(() => import("../pages/module/index"))
-
-const Monitoring = lazy(() => import("../pages/monitoring/index"))
-
-const Electric = lazy(() => import("../pages/electric/index"))
+ 
 
 const Distribution = lazy(() => import("../pages/distribution/index"))
-
-
-const Energy = lazy(() => import("../pages/energy/index"))
-
-const Devops = lazy(() => import("../pages/devops/index"))
-
-const Prepayment = lazy(() => import("../pages/prepayment/index"))
-const Carbon = lazy(() => import("../pages/carbon/index"))
-const Photovoltaic = lazy(() => import("../pages/photovoltaic/index"))
-
-const Storage = lazy(() => import("../pages/storage/index"))
-
-
+const Prepayment = lazy(() => import("../pages/prepayment/index")) 
 
 const RoomDetail = lazy(() => import("../pages/roomDetail"))
 
 const Topology = lazy(() => import("../pages/topology"))
 
-const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
+//const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
 const Fform = lazy(() => import("../pages/test/fform.js"))
@@ -98,6 +83,7 @@ const loginrouter =  [{
  function RedirectIndex({Com}) { // 路由守卫
  // const {token} = useSelector(selectUser) || {}; 
   const islog =window.sessionStorage.getItem("chintwulian")
+  console.log(islog)
   return islog ? (<Com />) : (<Navigate to="/" />)  
  }
 
@@ -111,7 +97,7 @@ const loginrouter =  [{
   '0110': Comindex,
   '0111': Comindex,
   '0112': Comindex,
-  '0113': Devops,
+  '0113': Comindex,
 } 
 
  
@@ -162,10 +148,10 @@ const loginrouter =  [{
     path: '/devicedetail',
     element: <DeviceDetail />,
   },
-  {
+/*   {
     path: '/devicedtl',
     element: <Devicedetail />
-  },
+  }, */
   {
     path: '/gatewayDetail',
     element: <GatewayDetail />
@@ -198,12 +184,12 @@ const loginrouter =  [{
   
 ];
  
-const getNestRout = (sider,routes) => {  
+const getNestRout = (sider,routes) => {   
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {
       let {no, key, label} = r;
-      let Com = routes[no];     
+      let Com =routes ? routes[no] : Emptycom;     
       if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
      })
   } 
@@ -221,12 +207,11 @@ function useRoute() { // 重写路由
   const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus) || {} // 登录页面时会报错
   const bigScreen = useSelector(currentscreen) || {}
    
-  runMenus?.forEach(r => {
-    let {no, key} = r;
+  runMenus?.forEach(r => {    
+    let {no, key} = r;   
     let Com = components[no];
-    let nestroute = runRoutes[key]
-    let sider = siderRunMenus[key]
-
+    let nestroute = runRoutes[key]    
+    let sider = siderRunMenus[key]  // runtimeCarbonEmissionManager 碳排管理    
     if (Com) {
       no == '0104' ? RunRoute.push({
         path: key,

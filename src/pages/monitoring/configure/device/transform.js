@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useCallback,useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message,Button } from 'antd'
+import {useTranslation} from 'react-i18next'
+import { Form, Row, Col, Select, Input, Divider, message,Space, Typography } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -11,7 +12,7 @@ import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
 import {publishState} from '@redux/systemconfig'
-
+const {Link} = Typography
 const {
   DeviceManager: {
     QueryByPageTransformer,
@@ -28,6 +29,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+  const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -56,7 +58,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname =useRef("")
-  let delid;
+  let delid=useRef();
   let flies
 
   const optcss = {
@@ -111,10 +113,10 @@ export default function gateway({ deviceStyle }) {
       export:false,
       render: (text, record) => {
         return (
-          <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-            <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-          </p>
+          <Space size={16}>
+            <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+          </Space>
         )
       }
     },
@@ -234,13 +236,13 @@ export default function gateway({ deviceStyle }) {
   //打开删除窗口
   const onDelete = (record) => {
     DelModalRef?.current?.onOpen()
-    delid = record.sn
+    delid.current = record.sn
   }
   //确认删除
   const delOk = async () => {
     const { success, errMsg } = await DeleteTransformer({
       projectId,
-      sn: delid
+      sn: encodeURIComponent(delid.current)
     })
     if (success) {
       message.success('删除成功')
@@ -311,7 +313,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddTransformer(params)
       if (res.success) {
         message.success('新增成功!')
-        modalFormRef?.current?.onCancel()
+       // modalFormRef?.current?.onCancel()
         // getQueryByPageTransformer()
         getQueryByPageTransformer(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
@@ -790,12 +792,8 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
-      {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }} ></BlueColumn> */}
+    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true}  onOk={other.onOk}>
+     
       <FormComp >
       </FormComp>
     </Modal>
@@ -809,12 +807,8 @@ export let AddModalForm = ({ modalFormRef, ...other }) => {
 //编辑设备
 export const EditModalForm = ({ EditModalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} footer={[
-      <Button onClick={other.onCancel}>取消</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onOk}>保存</Button>,
-      <Button style={{backgroundColor:'#237ae4',color:'#fff',borderColor:"#237ae4"}} onClick={other.onSure}>应用</Button>,
-  ]}>
-      {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
+    <Modal mold='cust' ref={EditModalFormRef} title={other.name} {...other} onOk={other.onOk}>
+   
       <EditFormComp >
       </EditFormComp>
     </Modal>

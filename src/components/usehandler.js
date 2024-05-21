@@ -47,7 +47,8 @@ export function numberformat(n){
 
 }
 export function getTime(date, type){
-  let time
+  try {
+    let time
       if(type == 1) {
         time=date.format('YYYY-MM-DD')
     }else if(type == 2) {
@@ -56,6 +57,10 @@ export function getTime(date, type){
         time = date.startOf("year").format('YYYY-MM-DD')
     }
   return time
+  } catch (error) {
+    console.log(error)
+  }
+  
 }
 
 export function cipher(name, pwd){
@@ -78,3 +83,51 @@ export  const Statebox = styled.div`
   font-size: 14px;
 `
  
+ export  function handlermenu(Meundata,  lang){
+   
+   
+  let data = Meundata.filter(d => d.languageName==lang);     
+     if(data?.length ==0) return message.warning("没有设置相应的菜单栏，请联系管理员")
+     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
+     const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+   //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
+     const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
+   
+     const comSet = data.filter(m => m.parentNo=="0201") // 公共设置
+   
+     let exclude = ['01','02','0101','0102', '0103', '0104'] // 排除  项目概述, 数据大屏， 项目设置， 平台配置,
+    
+     const sidermenu = data.filter(m => m.parentNo !='01').filter(m => m.parentNo !='02').filter(m => !exclude.includes(m.no));    
+     
+     const siderRunMenus = {}; // 运行功能 选择的子菜单
+    
+     runMenus.forEach(item => {
+      let {no, key, parentNo} = item 
+      if (!exclude.includes(item.no)) { 
+         siderRunMenus[key] = sidermenu.filter(m => m.parentNo == no && m.select == 1).sort((a, b) => a.index - b.index)
+        
+      }   
+     }) 
+     const siderDesignerMenus = {};
+     designerMenus.forEach(item => {
+      let {no, key, parentNo} = item 
+      if (!exclude.includes(item.no)) {
+        siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)?.sort((a, b) => a.index - b.index)
+      }   
+     }) 
+     const menus =  {
+      fullmenu: Meundata,
+      designerMenus, 
+      siderDesignerMenus,
+      runMenus,
+      siderRunMenus, 
+      setMenus,  
+      comSet,   
+     }
+     return menus
+    }
+ 
+
+    export const isObject = (obj) => {
+       return Object.prototype.toString.call(obj).slice(8,-1) === 'Object'
+    }

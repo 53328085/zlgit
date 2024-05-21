@@ -12,10 +12,12 @@ import {
   InputNumber,
   message,
 } from "antd";
-
+import {useTranslation} from 'react-i18next'
+import CModal from '@com/useModal'
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 export default function Index(props) {
+  const {t} = useTranslation(["button"])
   const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =
     props;
   const projectId = useSelector(selectProjectId);
@@ -318,20 +320,18 @@ export default function Index(props) {
   }, [giveFormType, giveChildForm, AddAlarmEventGive]);
   return (
     <div>
-      <Modal
+      <CModal
+        title={giveModalTitle}
         className={style.addModal}
         open={AddAlarmEventGive}
         onOk={addAlarmOk}
         onCancel={handleCancel}
-        width={600}
-        centered={true}
-        closable={true}
-        maskClosable={false}
-        okText={"完成"}
+        width={600}        
+        okText={t("button:finish")}
         okType={"primary"}
-        destroyOnClose //关闭时销毁子元素
-      >
-        <div className={style.addHeader}>{giveModalTitle}</div>
+        closable
+        mold="cust"
+      >        
         <div className={style.addBody}>
           <p className={style.titleModal}>基础配置</p>
           <Form
@@ -350,7 +350,7 @@ export default function Index(props) {
                   name="Name"
                   label="告警事件名称："
                   rules={[{ required: true, message: "请输入告警事件名称" }]}
-                  style={{ width: 415 }}
+                  style={{ width: 415, marginBottom: 24 }}
                 >
                   <Input
                     style={{ width: 290 }}
@@ -360,7 +360,7 @@ export default function Index(props) {
                 <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
               </Space>
             ) : (
-              <Item name="Name" label="告警事件名称：" style={{ width: 415 }}>
+              <Item name="Name" label="告警事件名称：" style={{ width: 415, marginBottom: 24 }}>
                 <Input
                   style={{ width: 290, border: "none" }}
                   disabled
@@ -373,7 +373,7 @@ export default function Index(props) {
                 <Item
                   label="数据标识："
                   rules={[{ required: true, message: "请输入数据标识" }]}
-                  style={{ width: 415 }}
+                  style={{ width: 415, marginBottom: 24 }}
                   name="PointIdentifier"
                 >
                   <Input
@@ -843,7 +843,7 @@ export default function Index(props) {
             )}
           </Form>
         </div>
-      </Modal>
+      </CModal>
     </div>
   );
 }

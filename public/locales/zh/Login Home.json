@@ -1,0 +1,36 @@
+{
+    "ChintIntegratedEnergyServicePlatform":"正泰综合能源服务平台",
+    "COPYRIGHT Chint IOT Technology Co.ALL RIGHTS RESERVE":"COPYRIGHT 正泰物联技术有限公司 ALL RIGHTS RESERVEDD",
+    "ZhejiangICP No.12033679":"浙ICP备12033679号",
+
+    "OperationMonitoring":"运行监控",
+    "ElectricalSafety":"电气安全",
+    "DistributionManagement":"配电管理",
+    "SettlementCharges":"结算收费",
+    "PhotovoltaicPowerGeneration":"光伏发电",
+    "CarbonManagement":"碳排管理",
+    "OperationAndMaintenanceManagement":"运维管理",
+
+    "AccountLogin":"账户登录",
+    "Message_enter username":"请输入用户名",
+    "Message_username 2 to 20 strings":"用户名2至20个字符串",
+    "Message_enter password":"请输入密码",
+    "Message_password format":"密码格式必须包含数字、大小写字母、特殊字符选其三[6~18位]",
+    "Message_enter verification code":"请输入验证码",
+    "Message_captcha must be 4 digits":"验证码必须是4位",
+
+    "Message_remember username and password":"记住用户名和密码",
+    "Mobile Login":"手机登录",
+    "Message_enter phone number":"请输入手机号",
+    "Message_enter correct phone number":"请输入正确的手机号",
+    "Message_select login duration":"请选择登录时长",
+    "Minute":"分钟",
+    "Hour":"小时",
+    "Message_captcha must be number":"验证码必须是数字",
+    "GetVerificationCode":"获取验证码",
+    "Message_check code error":"校验码错误!",
+    "RememberPhoneNumber":"记住手机号",
+
+    "LoginNow":"立即登录",
+    "Message_Login failed":"连续登录失败3次,用户已经被锁定chint,请耐心等待5分钟"
+}

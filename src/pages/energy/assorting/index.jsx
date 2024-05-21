@@ -69,7 +69,7 @@ export default function Index() {
   }, [exparams])
   return (
     <Pagecount bgcolor="transparent" pd="0">
-      <Energy showData={showData} dateType={exparams.type} showType={exparams.view}/> 
+      <Energy showData={showData} date={exparams.date} dateType={exparams.type} showType={exparams.view}/> 
     </Pagecount>
 
   )

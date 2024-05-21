@@ -1,12 +1,12 @@
 import React, {useRef, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
+import {useTranslation} from "react-i18next"
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
-import {drawEcharts} from '@com/useEcharts'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-import { useReactive } from 'ahooks';
 import Ichart  from '@com/useEcharts/Ichart';
+import {CustTransO} from "@com/useButton"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -17,7 +17,7 @@ const fs = {
 export default function DefaultHome(props){
   let {type} =props
   const projectId = useSelector(selectProjectId)
- 
+  const {t} = useTranslation(["comm","overview"])
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
    grid:{
@@ -47,8 +47,8 @@ export default function DefaultHome(props){
               let {x=[], y=[]} = data
               let dataset = {
                 dimensions: [
-                  {name: '日期', type: 'time'},
-                  {name: '用燃气量（m³）'},
+                  {name: t("comm:date"), type: 'time'},
+                  {name: t("overview:Monthlygascapacity", {unit: "（m³）"})},
                   
                 ],
                 source: [
@@ -70,7 +70,7 @@ export default function DefaultHome(props){
 }, [projectId, type])
   
   return (
-    <Titlelayout title={'用燃气量'} {...fs} style={{height: '200px'}} layout="flex">
+    <Titlelayout title={<CustTransO text="Monthlygascapacity" />} {...fs} style={{height: '200px'}} layout="flex">
         <div style={{flex:1, display: 'flex'}}>
         <Ichart {...options} />
         </div>

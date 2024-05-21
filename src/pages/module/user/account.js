@@ -11,6 +11,7 @@ import {selectUser} from "@redux/user";
 import UserTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
+import {useTranslation} from "react-i18next"
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 65px 1fr;
@@ -31,6 +32,7 @@ export default function Account({projectId, CModal}) {
  const {roleType} = useSelector(selectUser) || {};
  const showview = roleType == 1 || roleType == 2
  const title = isAdd ? '新增账号' : '编辑账号';
+ const {t} =useTranslation("common","button")
  let initvalue = {
   password: true,
   enable: true,
@@ -129,38 +131,38 @@ const showModl = () => {
  const columns = [  
         {
           dataIndex: "name",
-          title: "用户名", 
+          title: t("common:Username"), 
           key: 'name',     
         },
         {
           dataIndex: "nickName",
-          title: "用户姓名",
+          title: t("common:UserName"),
           key: "nickName",
         },
         
         {
           dataIndex: "mobile",
-          title: "手机号码",
+          title: t("common:MobileNumber"),
           key: 'mobile'
         },
         {
           dataIndex: "enabled",
-          title: "状态",
+          title: t("common:Status"),
           key: 'enabled',
-          render: (text) => <span>{text===1 ? '启用' : '停用' }</span>
+          render: (text) => <span>{text===1 ? t("common:Enable") :t("common:Deactivated")}</span>
         },
         {
           dataIndex: "remark",
           key: 'remark',
-          title: "备注",
+          title:t("common:Note"),
         },
         {
           dataIndex: "op",
-          title: "操作",
+          title: t("common:Operation"),
           render: (_,record) => <Space size={16}>
-            <Link underline onClick={edit.bind(null, record)}>编辑</Link>
-            <Link underline onClick={reset.bind(null, record)}>重置密码</Link>
-            <Link underline type="danger" onClick={del.bind(null, record)}>删除</Link>
+            <Link underline onClick={edit.bind(null, record)}>{ t("common:Edit")}</Link>
+            <Link underline onClick={reset.bind(null, record)}>{ t("common:ResetPassword")}</Link>
+            <Link underline type="danger" onClick={del.bind(null, record)}>{ t("common:Delete")}</Link>
           </Space>
         }
      
@@ -232,11 +234,11 @@ const showModl = () => {
      {  showview ? 
         <>
         <Form form={form} layout="inline" initialValues={{alike: ''}}>
-            <Form.Item name="alike" label="账号查询">
-                <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
+            <Form.Item name="alike" label={t("common:AccountInquiry")}>
+                <Input.Search placeholder={t("common:NameOrMobile")} allowClear enterButton={t("common:Query")} style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
             <Form.Item>
-                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+新增</CustButton>
+                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+{t("button:new")}</CustButton>
             </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>

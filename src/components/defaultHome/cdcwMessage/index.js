@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
  
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
- 
+import {CustTransO} from "@com/useButton"
  
 
 import gatewayRuntime from '../cdcw.svg'
@@ -64,24 +64,24 @@ export default function DefaultHome(props) {
   }
  
   return (
-    <Titlelayout title={'触点测温信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={<CustTransO text="ContactTemperatureMeasurement" />} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>触点测温总数</span>
+            <span className='count_title'><CustTransO text="CTtotal" /></span>
             <span className='count_val'>{ state.cdcwCount }</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>触点测温在线</span>
+                <span className='item_title'><CustTransO text="CTon" /></span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.cdcwOnlineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>触点测温离线</span>
+                <span className='item_title'><CustTransO text="CToff" /></span>
                 <span className='item_value' style={{ color: '#f44336' }}>{ state.cdcwOfflineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>在线率</span>
+                <span className='item_title'><CustTransO text="CTrate" /></span>
                 <span className='item_value'>{ state.cdcwOnlineRate}%</span>
             </div>
         </div>

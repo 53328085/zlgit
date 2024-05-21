@@ -48,8 +48,9 @@ export default function Index(props) {
    
   let {exparams} = useOutletContext()
   let {areaId, projectId, type, date, energytype, shiftNo} = exparams
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)",'用水量 (m³)','用气量 (m³)'][energytype] || "用电量 (kWh)"
   const isElectric = energytype===1;
-  const [treeIdList, setTreeIdList] = useState([]);
+  const [treeIdList, setTreeIdList] = useState(null);
   //右下角 公共能耗同比  能耗数据展示
   const [energySub, setEnergySub] = useState([]);
   const [energyTotal, setEnergyTotal] = useState({});
@@ -87,7 +88,8 @@ export default function Index(props) {
   })
   //自定义调用方法
   const pageInfo = () => {
-    if(Object.values(exparams)?.length < 6) return;
+    console.log(exparams)
+    if(Object.values(exparams)?.length < 6 || !Array.isArray(treeIdList)) return;
     let energy =  Number(energytype) - 1;
     let api = Number(type) - 1
     let hander = [ 
@@ -119,7 +121,7 @@ export default function Index(props) {
           dataset: {
             dimensions: [
               {name: 'x', type: 'time'},
-              {name: 'y', displayName: '用电量(kWh)'},
+              {name: 'y', displayName: chartTitle},
               
             ],
             source: [x, y],

@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import styled from 'styled-components'
+import {useTranslation} from 'react-i18next'
 import Titlelayout from '@com/titlelayout'
 import {Button, Typography, Space, Input, Form, Radio, message} from 'antd'
 import {PrepayConfig} from '@api/api'
@@ -8,7 +9,7 @@ import {useSelector} from 'react-redux'
 import UseTable from "@com/useTable"
 import Custmodal from "@com/useModal"
 import {cipher} from '@com/usehandler'
-import redwarn from "@imgs/redwarn.png"
+import {CustButton} from "@com/useButton"
 const {Title, Link} = Typography
 let {QueryPrepayServerUrl, SaveUrl, QueryUsers, SavePreapyUser, DeletePreapyUser} = PrepayConfig
 const Mainbox = styled.div`
@@ -37,7 +38,8 @@ const Mainbox = styled.div`
 
 
 export default function Index() {
-  const [url, setUrl] = useState('')
+  const {t} = useTranslation(["button"])
+   
   const [data, setData] = useState([])
   const ref = useRef()
   const dref=useRef()
@@ -46,7 +48,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const id = useRef()
   const [state, setState] = useState(1)
-  let title = ['', '新增', '编辑'][state]
+  
+  let title = ['', t("button:new"), t("button:edit")][state]
   const add =(obj, type) => {
     let {prepayUserName, userId, enabled} = obj
     id.current = userId
@@ -93,7 +96,7 @@ export default function Index() {
       dataIndex: "op",
       title: "操作",
        render: (_, record) => (<Space size={32}>
-        {record.prepayUserName ? <><Link underline onClick={() => add(record, 2)}>编辑</Link><Link underline type="danger" onClick={() => del(record)}>删除</Link></> : <Link underline onClick={() => add(record, 1)}>新增</Link>}   
+        {record.prepayUserName ? <><Link underline onClick={() => add(record, 2)}>{t("button:edit")}</Link><Link underline type="danger" onClick={() => del(record)}>{t("button:delete")}</Link></> : <Link underline onClick={() => add(record, 1)}>{t("button:new")}</Link>}   
        </Space>)
   },
   
@@ -158,7 +161,7 @@ export default function Index() {
       let {success, errMsg} =await SavePreapyUser(params)
       if(success) {
         message.success(msg);
-        ref.current.onCancel();
+       // ref.current.onCancel();
         getUser();
       }else {
         message.warning(errMsg || '数据出错')
@@ -198,7 +201,7 @@ export default function Index() {
                     ]}>
                        <Input placeholder='输入跳转连接的地址' allowClear  style={{width: "320px", marginBottom: "0px"}}></Input>
                     </Form.Item>
-                    <Button type="primary" onClick={saveurl}>保存设置</Button>
+                    <CustButton wh="auto" onClick={saveurl}>{t("button:saveSet")}</CustButton>
                     </Space>
                  </Form>
             </div>
@@ -207,7 +210,7 @@ export default function Index() {
                <UseTable columns={columns} dataSource={data} size="small" style={{width: "680px"}} onRow={onRow}></UseTable>
             </div>
           </Mainbox>  
-          <Custmodal title={title} width={540} ref={ref} mold="cust" onOk={onOk} >
+          <Custmodal title={title} width={540} ref={ref} mold="cust" custft onOk={onOk} >
                  <Form form={forms} preserve={false} validateMessages={validateMessages} labelCol={{span: 6}} labelAlign='left' initialValues={{enabled: "1"}}>
                      <Form.Item name="prepayUserName" label="控制台对应用户" rules={rules}><Input /></Form.Item>
                      <Form.Item name="prepayUserPassword" label="控制台密码" rules={rules}>
@@ -221,9 +224,7 @@ export default function Index() {
                  </Form>
           </Custmodal>
           <Custmodal title="删除" width={540} ref={dref} mold="cust" onOk={delonOk} type="warn">
-                  <div style={{paddingLeft: "16px"}}>
-                    <Space size={32}><img src={redwarn} alt="" width="48px" /><span style={{fontSize: "16px", color: "#333"}}>是否确认删除对应用户？</span></Space>
-                  </div>
+             是否确认删除对应用户？
           </Custmodal>
     </Titlelayout>
   )

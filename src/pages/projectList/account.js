@@ -2,15 +2,16 @@ import React, {useState, useRef} from 'react'
 import {useAntdTable} from 'ahooks'
 import {flushSync} from 'react-dom'
 import {Typography, Space, Form, Input, Divider, message} from 'antd'
- 
+import {useTranslation} from 'react-i18next'
 import styled from 'styled-components'
 import moment from 'moment';
 import {User} from '@api/api.js'
 import UserTable from '@com/useTable'
-import {CustButton} from '@com/useButton'
+import {CustButtonT, CustLink} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
+import {Serach} from "@com/comstyled"
 import CModal from "@com/useModal";
-
+ 
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 32px 2px 1fr;
@@ -19,6 +20,7 @@ const Mainbox = styled.div`
 `
 export default function Account() {
  const {Text, Link} = Typography
+ const {t} = useTranslation(["button","platformcig","comm"])
  const {QueryOperationManager, AddOperationManager, DeleteAccount, ResetPassword, Update} = User 
  const [form] = Form.useForm()
  const mref = useRef(null)
@@ -27,7 +29,7 @@ export default function Account() {
  const newpwd = useRef(null)
  const [Record, setRecord] = useState({})
  const [isAdd, setIsAdd] = useState(true) 
- const title = isAdd ? '新增运营管理员账号' : '编辑运营管理员账号';
+ const title = isAdd ? t("platformcig:AddOperationAdministratorAccount") : t("platformcig:EditOperationAdministratorAccount");
  let initvalue ={
   password: true,
   enable: true,
@@ -53,7 +55,7 @@ const showModl = () => {
   try {
     let {success, errMsg} =  await DeleteAccount(id)
 
-   success && custMsg({ content: '删除成功',  onClose: () => {     
+   success && custMsg({ content: t("comm:successfullydelete"),  onClose: () => {     
       dref.current.onCancel()
       refresh()
     }})
@@ -73,7 +75,7 @@ const showModl = () => {
     const {id} = Record
     const {success, errMsg} =  await ResetPassword({id, pwd: newpwd.current})
   
-    success && custMsg({success, content: '密码重置成功',  onClose: () => {
+    success && custMsg({success, content: t("comm:Passwordresetsucceeded"),  onClose: () => {
      
       rref.current.onCancel()
       refresh()
@@ -103,39 +105,39 @@ const showModl = () => {
  const columns = [  
         {
           dataIndex: "name",
-          title: "登录账号", 
+          title: t("platformcig:LoginAccount"), 
           key: 'name',     
         },
         {
           dataIndex: "nickName",
-          title: "用户姓名",
+          title: t("platformcig:UserName"),
           key: "nickName",
         },
         
         {
           dataIndex: "mobile",
-          title: "手机号码",
+          title: t("comm:MobileNumber"),
           key: 'mobile'
         },
         {
           dataIndex: "enabled",
-          title: "状态",
+          title: t("comm:Status"),
           key: 'enabled',
-          render: (text) => <span>{text===1 ? '启用' : '停用' }</span>
+          render: (text) => <span>{text===1 ? t("button:enable") : t("button:disable") }</span>
         },
         {
           dataIndex: "remark",
           key: 'remark',
-          title: "备注",
+          title: t("comm:remark"),
         },
         {
           dataIndex: "op",
-          title: "操作",
+          title: t("comm:Operation"),
           render: (_,record) => <Space size={16}>
-            <Link underline onClick={edit.bind(null, record)}>编辑</Link>
-            <Link underline onClick={reset.bind(null, record)}>重置密码</Link>
-            <Link underline type="danger" onClick={del.bind(null, record)}>删除</Link>
-          </Space>
+            <CustLink onClick={edit.bind(null, record)}  text="edit"  /> 
+            <CustLink   onClick={reset.bind(null, record)} text="ResetPassword" /> 
+            <CustLink  type="danger" onClick={del.bind(null, record)} text="delete" /> 
+            </Space>
         }
      
  ]
@@ -180,7 +182,7 @@ const showModl = () => {
      let data = await mref.current.onGetvalue();    
     delete data.repwd
     let handler = isAdd ? AddOperationManager : Update;
-    let content = isAdd ? '新增成功' : '编辑成功';
+    let content = isAdd ? t("comm:newsuc") : t("comm:Editsuccessfully");
     let params = isAdd ? {...data, enabled: data.enabled ? 1 : 0, validStageTime: data.validStageTime.format('YYYY-MM-DD')} : {...data, enabled: data.enabled ? 1 : 0, id: Record.id, validStageTime: data.validStageTime.format('YYYY-MM-DD')};
     
     let {success, errMsg} = await handler(params)
@@ -190,7 +192,7 @@ const showModl = () => {
         refresh()
       }})
     } 
-    !success &&   message.error({content: errMsg || '数据出错', duration: 1})
+    !success &&   message.error({content: errMsg || t("comm:dataerr"), duration: 1})
 
   
    
@@ -204,11 +206,11 @@ const showModl = () => {
   return (
   <Mainbox> 
         <Form form={form} layout="inline" initialValues={{alike: ''}}>
-            <Form.Item name="alike" label="账号查询" normalize={normalize}>
-                <Input.Search placeholder='请输入账号名称/手机号' allowClear enterButton="查询" style={{width: '550px'}} onSearch={submit}/>
+            <Form.Item name="alike" label={t("platformcig:AccountInquiry")} normalize={normalize}>
+                <Serach placeholder={t("platformcig:msgap")}   style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
             <Form.Item>
-                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+新增</CustButton>
+                <CustButtonT  onClick={showModl} text="new" src="new" />  
             </Form.Item>
         </Form>
         <Divider style={{margin: 0}} /> 
@@ -219,12 +221,12 @@ const showModl = () => {
 
        </CModal>
 
-     <CModal width={554} title="重置密码" ref={rref} onOk={restOk}  mold='cust' >
-         <p>账号： <Link>{Record.name}</Link>， 密码将被重置为<Link>{newpwd.current}</Link></p>
+     <CModal width={554} title={t("comm:resetpasswords")} ref={rref} onOk={restOk}  mold='cust' >
+         <p>{t("comm:useraccount")}： <Link>{Record.name}</Link>，  {t("platformcig:pasrest")} <Link>{newpwd.current}</Link></p>
          
      </CModal>
-     <CModal width={554} title="删除提示" ref={dref} onOk={delOk} type="warn" mold='cust'>
-         否确认删除 <Text type="danger">{Record.name}</Text>账号?
+     <CModal width={554} title={t("platformcig:DeletePrompt")} ref={dref} onOk={delOk} type="warn" mold='cust'>
+         {t("platformcig:cofdeletion")} <Text type="danger">{Record.name}</Text> {t("comm:useraccount")}?
      </CModal>
    
      </Mainbox>

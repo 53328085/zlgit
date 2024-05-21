@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect,   } from "react";
  
-import {   Radio,   Image,   Typography} from "antd";
+import {   Radio,   Image,   Typography, message} from "antd";
 import styled from "styled-components";
  
  
@@ -107,9 +107,11 @@ const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   let {exparams} = useOutletContext() 
   let {energytype, areaId, date, type:dateType,  projectId} = exparams 
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)",'用水量 (m³)','用气量 (m³)'][energytype] || "用电量 (kWh)"
+  const unit = ["kWh", "kWh","m³"][energytype] || "kWh"
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({
-    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' }],  
+    series: [],  
     grid: { 
       left: "0px",
       right: "0",
@@ -126,7 +128,7 @@ export default function Index() {
     }
   })
  let poptions= useRef({
-      pieData: { data: [], total: '100%'},
+      pieData: { data: [], total: '100%', radius: ["55%",  "70%"]},
       type: 3,
       legend: {
         type: "scroll",
@@ -143,12 +145,7 @@ export default function Index() {
   //let length = dataSet.source?.length - 1
  
   poptions.current.pieData.data = tableData.map(t => ({value: t.e, name: t.name}))
-  const sort = tableData.sort((a, b) => parseFloat(a.e) -parseFloat(b.e) < 0).slice(0, 3)
- 
-   
-
-   
-
+  const sort = tableData.sort((a, b) => parseFloat(b.e)-parseFloat(a.e)) 
   const columns = [
     {
       dataIndex: "name",
@@ -156,7 +153,7 @@ export default function Index() {
     },
     {
       dataIndex: "e",
-      title: "用电量（kWh）",
+      title: chartTitle,
     },
     {
         dataIndex: "mom",
@@ -175,6 +172,7 @@ export default function Index() {
    
    // const {area, date, type, meterType} = form.getFieldsValue() || {}
    // if(isNaN(type)) return;
+    console.log(exparams)
     if(Object.values(exparams)?.length < 5) return;
     let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
     let time = getTime(date, dateType)  
@@ -187,10 +185,11 @@ export default function Index() {
      }
     const params = [areaId]
     hander(querys, params).then(res => {
-      let {success, data} = res;
+      let {success, data, errMsg} = res;
+      
     if(success && Array.isArray(data) && data.length > 0) {
            setTableData(data.map(d => d.total))
-
+     
 
       let source = []
       let dimensions = [
@@ -209,10 +208,11 @@ export default function Index() {
         console.log(source)
         setOptions({
           ...boptions,
+          series: Array.from({length: data.length}, () => ({ type: "bar",  seriesLayoutBy: 'row',  stack: 'x' })),
           dataset: {
             dimensions,
             source,
-           sourceHeader: false,
+            sourceHeader: false,
           }
         })
     }else {
@@ -225,6 +225,7 @@ export default function Index() {
           sourceHeader: false,
         }
       })
+      if(!success) message.warning(errMsg || '数据出错')
     }
     })
   }
@@ -269,7 +270,7 @@ export default function Index() {
    
       <Laybox  >
         <Titlelayout title={Title} key="up" layout="flex" className="left">
-           <div style={{paddingTop: "16px",  flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
+           <div style={{paddingTop: "16px",  flex: 1, display: "flex",  justifyContent: "center"}}>
              {
               mode == 1 ?  <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" />
              }  
@@ -289,7 +290,7 @@ export default function Index() {
                     <Image style={{width: "40px"}} src={imgurl.a01} preview={false}></Image>
                      <div className="data">
                         <Text  ellipsis >{sort[0]?.name}</Text>
-                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>kWh</span></div>
+                        <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[0]?.e)}</Text>&nbsp;<span>{ sort[0]?.e && unit}</span></div>
                      </div>
                      </>
                      }
@@ -302,7 +303,7 @@ export default function Index() {
                    <Image style={{width: "40px"}} src={imgurl.a02} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[1]?.name}</Text>
-                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>kWh</span> </div>
+                        <div><Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[1]?.e)}</Text>&nbsp;<span>{ sort[1]?.e && unit}</span> </div>
                      </div>
                      </>
                     }
@@ -314,7 +315,7 @@ export default function Index() {
                     <Image style={{width: "40px"}} src={imgurl.a03} preview={false}></Image>
                      <div className="data">
                         <Text ellipsis>{sort[2]?.name}</Text>
-                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>kWh</span> </div>
+                       <div> <Text style={{fontSize: "16px"}} ellipsis>{nf.format(sort[2]?.e)}</Text>&nbsp;<span>{ sort[2]?.e && unit}</span> </div>
                      </div>
                      </>
                      }

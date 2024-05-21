@@ -4,5 +4,30 @@
    "currentTime": "current time is {{time, DD/MM/YY}}",
    "public": {
      "go": ""
-   }
+   },
+   "default": "Something went wrong.",
+   "key1_interval": "(1)[one item];(2-7)[a few items];(7-inf)[a lot of items]",
+   "nameTitle": "This is your name",
+    "userMessagesUnread_one": "Hello <1>{{name}}</1>, 你有 {{count}} unread message. <5>Go to message</5>.",
+    "userMessagesUnread_other": "Hello <1>{{name}}</1>, you have {{count}} unread messages.  <5>Go to messages</5>.",
+    "error": {
+      "unspecific": "Something went wrong.",
+      "404": "The page was not found."
+    },
+    "key_one": "{{count}}个关键字",
+    "key_other": "{{count}}关键字",
+    "friend": "A friend",
+      "friend_male": "A boyfriend",
+      "friend_female": "A girlfriend",
+      "friend_male_one": "A boyfriend",
+      "friend_female_one": "A girlfriend",
+      "friend_male_other": "{{count}} boyfriends",
+      "friend_female_other": "{{count}} girlfriends",
+      "person": "{{name}} is {{age}}",
+      "Mang": "he is {{Manger.name}} ",
+      "mvar": "tr is {{myvar}}",
+      "keyEscaped": "no danger {{myar}}",
+    "keyUnescaped": "dangerous {{- myVar}}",
+    "intlNumber": "Some {{val, number}}",
+  "intlNumberWithOptions": "Some {{val, number(minimumFractionDigits: 2)}}"
  }

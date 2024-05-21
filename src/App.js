@@ -16,6 +16,7 @@ import ErrorBoundary from './ErrorBoundary';
 import {ConfigProvider} from 'antd'
 import {themeColor, intl} from "@redux/systemconfig";
 import CustConfig from './custConfig';
+import { clearToken} from "@redux/user";
 function App() {
   const theme = useSelector(themeColor)
 /*   const theme = useSelector(themeColor)

@@ -7,7 +7,7 @@ export default function Index(props) {
     <div style={{flex: 1,display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <Empty 
           image={img}
-          description={`${tip}暂无数据`}
+          description={tip}
         />
     </div>
   )

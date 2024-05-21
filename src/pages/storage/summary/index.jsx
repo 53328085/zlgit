@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { useNavigate, useOutletContext} from 'react-router-dom'
  
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Typography} from 'antd'
+import { message, Typography, Empty} from 'antd'
 import Ichart  from '@com/useEcharts/Ichart'; 
 import { range } from 'lodash'
 import imgurl from './imgs'
@@ -11,9 +11,9 @@ import imgurl from './imgs'
 import styled from 'styled-components'
  
 import Pagecount from "@com/pagecontent";
-import {Cspin, Serach, Cdivider} from '@com/comstyled'
+ 
 import Titlelayout from "@com/titlelayout";
-import { drawEcharts } from "@com/useEcharts";
+import Cempty from '@com/useEmpty'
 const {Link, Paragraph, Text} = Typography
 const  Mainbox = styled.div`
   display: grid;
@@ -211,9 +211,9 @@ export default function Index() {
   let {exparams} = useOutletContext()
  
   let {areaId, stationName,  projectId} = exparams
-  console.log(exparams)
+ 
   const navigate = useNavigate()
-  const [cardData, setCardData] = useState({})//卡片数据
+  const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
     loadDevice: {},
@@ -223,17 +223,19 @@ export default function Index() {
 
   useEffect(() => {
     
-    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName && isFinite(stationName))) return
+    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName?.value && isFinite(stationName?.value))) return
    
-    querySiteInfo(projectId, areaId, stationName).then(res => {
-      if (res.success) {
+    querySiteInfo(projectId, areaId, stationName.value).then(res => {
+      const {success, data} = res
+      if (success && Object.prototype.toString.call(data).slice(8,-1)=="Object") {
         setCardData(res.data)
       } else {
-        message.error(res.errMsg)
+        setCardData(null)
+       //message.error(res.errMsg)
       }
     }).catch()
 
-    queryStorageIncome(projectId,  areaId, stationName).then(res => {
+    queryStorageIncome(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
         if (Object.prototype.toString.call(data).slice(8, -1) === 'Object') {
@@ -272,11 +274,18 @@ export default function Index() {
         )
         }
       } else {
+        setOptions({...options,  dataset: {
+          dimensions: [],
+           source: [],
+          sourceHeader: false,
+         },
+        }
+      )
         message.error(res.errMsg)
       }
     }).catch
 
-    queryStorageWarning(projectId,  areaId, stationName).then(res => {
+    queryStorageWarning(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
       if (success) {
         if (data) {
@@ -289,7 +298,7 @@ export default function Index() {
       }
     }).catch()
 
-    queryTopologyDiagramInfo(projectId,  areaId, stationName).then(res => {
+    queryTopologyDiagramInfo(projectId,  areaId, stationName.value).then(res => {
       if (res.success) {
         if (res.data) {
           setTopologyData(res.data)
@@ -301,12 +310,17 @@ export default function Index() {
           })
         }
       } else {
-        message.error(res.errMsg)
+        setTopologyData({
+          loadDevice: {},
+          onGridDevice: {},
+          storageDevice: {}
+        })
+        //message.error(res.errMsg)
       }
     }).catch()
 
 
-    queryChargeETrends(projectId,  areaId, stationName).then(res => {
+    queryChargeETrends(projectId,  areaId, stationName.value).then(res => {
       let {success, data} = res
       if (success) {
         if (Object.prototype.toString.call(data).slice(8,-1)=="Object") {
@@ -340,7 +354,13 @@ export default function Index() {
            }})
         }
       } else {
-        message.error(res.errMsg)
+        setLoptions({...loptions, dataset: {
+          dimensions: [],
+          source: [],
+          sourceHeader: false,
+         
+         }})
+       // message.error(res.errMsg)
       }
     }).catch()
 
@@ -464,10 +484,9 @@ export default function Index() {
       <Mainbox>
         <div className="left">
           <Titlelayout title='站点信息' layout="flex">
-            <div className="info">
-              {
-                cardData.image ? <img src={cardData.image} className='siteImg'></img> : <img src={imgurl.zhandian} className='siteImg'></img>
-              }
+          {cardData ? (<div className="info">
+              <img src={cardData.image || imgurl.zhandian} className='siteImg' /> 
+            
               <div className="dtl">
                    <div key="1">
                   <Text>站点容量</Text>
@@ -481,8 +500,12 @@ export default function Index() {
                   <Text>投运时间</Text>
                   <Text ellipsis={{ tooltip: cardData?.useDate}}>{cardData?.useDate}</Text>
                   </div>
-              </div>
-            </div>
+              </div> 
+            
+              </div>)
+              :  <Cempty tip="未查询到站点信息！" />
+           }
+           
           </Titlelayout>
           {/* <CardItem title='充放电统计' height='136px'>
             <div className={style.stateItems}>

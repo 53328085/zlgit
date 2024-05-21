@@ -218,7 +218,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
     
-  
+   
     
  return {
   // 饼图的设置 
@@ -288,7 +288,7 @@ export const drawEcharts = (
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
   const {locale} =store.getState()?.system?.intl  // 国际化语言
-  console.log(locale)
+ 
   let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
   const chart = echarts.init(dom, 'walden', {locale: lang});
   // 对不同图表类型设置不同的格式
@@ -363,7 +363,7 @@ export const drawEcharts = (
       },
       axisLabel: {
        
-        interval:0, // 显示所有x轴的label
+        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠  
         ...axisLabel,
       },
       
@@ -424,6 +424,7 @@ export const drawEcharts = (
         },
     }
   }
+ 
   const setoption = ['', option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
   /*   type == 1
       ? option
@@ -432,7 +433,8 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-  
+      
+      
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

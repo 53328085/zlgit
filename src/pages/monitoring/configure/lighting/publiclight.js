@@ -1,13 +1,16 @@
 import React, { useContext,useEffect,useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import {useTranslation} from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
 import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
-import { Form, message } from 'antd'
+import { Form, message, Space, Typography } from 'antd'
 import {Monitoring} from '@api/api'
 import { publishState } from '@redux/systemconfig'
+const {Link} = Typography
 const {PubliclightManager:{PublicLightAdd,PublicLightQueryByPage,PublicLightUpdate,PublicLightDelete,PublicLightImport}}=Monitoring
-export default function parkstreet({areaList,levelname}) {
+export default function Parkstreet({areaList,levelname}) {
+  const {t} = useTranslation(["button"])
   const [tableParams,setTableParams]=useState({
     current:1,
     pageSize:10,
@@ -74,10 +77,10 @@ export default function parkstreet({areaList,levelname}) {
     export:false,
     render:(text,record,index)=>{
       return (
-        <p style={{ display: 'flex', justifyContent: 'space-around' }}>
-        <span style={optcss} onClick={() => { onEdit(record) }}>编辑</span>
-        <span style={{ ...optcss, color: '#FF0000' }} onClick={() => { onDelete(record) }}>删除</span>
-      </p>
+        <Space size={32}>
+        <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+        <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+      </Space>
       )
     }
   }]
@@ -200,7 +203,7 @@ export default function parkstreet({areaList,levelname}) {
     const res = await PublicLightAdd(params)
     if(res.success) {
       message.success("新增成功")
-      addModalRef.current.onCancel()
+    //  addModalRef.current.onCancel()
       getPublicLightQueryByPage({pageNum:tableParams.current,pageSize:tableParams.pageSize,areaId,alike})
     }else{
       message.error(res.errMsg)

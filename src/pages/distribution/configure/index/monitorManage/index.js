@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react'
 import { Button, Space, message, Typography, Divider } from 'antd';
- 
+import {useTranslation} from 'react-i18next'
 import UseTransfer from '@com/useTransfer'
 import { useAntdTable } from 'ahooks';
 import {useSelector} from 'react-redux'
@@ -12,9 +12,10 @@ import CModal from '@com/useModal'
 import Usetable from "@com/useTable"
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-import {  ExportExcel} from '@com/useButton'
+import {  ExportExcel, CustButton} from '@com/useButton'
 const {Link} = Typography
 export default function Index() {
+  const {t} = useTranslation(["button"])
   const tableRef = useRef()
   const roomId = useSelector(selectcurlRommid)
   const { queryPageCamera,  queryUnusedCamera, configureCamera } = DistributionMeter
@@ -127,7 +128,7 @@ export default function Index() {
       align:'center',
       render: (_, record) => (
         <Space size="middle">
-          <Link  type="danger" underline onClick={() => deleteRecord(record)}>删除</Link>
+          <Link  type="danger" underline onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
     },
@@ -261,12 +262,12 @@ export default function Index() {
 }, [total, roomId, projectId])
   
   const Title = (
-     <div style={{display: "flex", justifyContent: "space-between"}}>
+     <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
          <span>配电房视频监控</span>
             <Space size={16}>
-            <Button type="primary" onClick={()=> settingClick()}style={{ width: 96}}>
-                选择设备
-            </Button>
+            <CustButton  onClick={()=> settingClick()}>
+                {t("button:selectDevice")}
+            </CustButton>
             <ExportExcel tb={tableRef} />
             </Space>
      </div>

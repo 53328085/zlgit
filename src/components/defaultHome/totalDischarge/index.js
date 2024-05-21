@@ -6,7 +6,7 @@ import imgUrl from '@imgs'
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
-
+import {useTranslation} from 'react-i18next'
 const Mainbox = styled.div`
   width: 222px;
   height: 200px;
@@ -49,7 +49,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
-
+  const {t} =useTranslation("overview")
   const { GetCnFdUncharge } = HomeRuntime
 
   const state = useReactive({
@@ -76,7 +76,7 @@ export default function DefaultHome(props){
   
   return (
          <Mainbox>
-            <div className='headerTitle'>总放电量(kWh)</div>
+            <div className='headerTitle'>{t("TotalDischarge")}(kWh)</div>
             <div className='mainData'>
                 <img src={imgUrl.totalDischarge} className='centerImg'></img>
                 <span className='data'>{state.totalDischarge}</span>

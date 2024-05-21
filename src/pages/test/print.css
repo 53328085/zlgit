@@ -1,21 +1,34 @@
-@page {
-    size: 8.5in 9in; 
-    
-   }
-   @page :first {
-    margin-left: 50%;
-    margin-top: 50%;
-  } 
-  @media print {
-    main {
-        font-size: 24px;
-    }
-    button {
-        display: none;
-      }
-      section {
-        page-break-after: always;
-        break-after: page;
-      }  
+@media all {
+  .page-break {
+    display: none;
   }
-  
+}
+
+@media print {
+  html, body {
+    height: initial !important;
+    overflow: initial !important;  
+    -webkit-print-color-adjust: exact;
+    font-size: 24px;
+    .zl {
+      font-style: italic;
+      font-size: 36px;
+    }
+    
+  }
+}
+
+@media print {
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: auto;
+  }
+  @page {
+    size:"auto"
+    
+  }
+}
+
+ 
+ 

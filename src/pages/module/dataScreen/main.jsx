@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import {BigScreen} from '@api/api'
 
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/useButton'
+import {SaveButton} from '@com/useButton'
  
 import {  getdataScreen } from "@redux/systemconfig";
 import Citem from './Citem'
@@ -112,7 +112,7 @@ export default function Main({projectId}) {
  })
 
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>数据大屏设置</span><CustButton  type='primary' loading={loading} onClick={onSave} >保存</CustButton></div>}>
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>数据大屏设置</span><SaveButton    loading={loading} onClick={onSave} isicon={false} /></div>}>
         <Mainbox>
              
             <Formbox layout="inline" form={form}  colon={false} labelCol={{ span: 3 }} labelAlign='left'>

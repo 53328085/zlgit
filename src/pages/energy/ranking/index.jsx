@@ -26,7 +26,7 @@ export default function Index() {
   const getQuery =  () => {
    
     let {areaId, date, energytype, type, shiftNo,} = exparams;
-   
+    console.log(energytype)
     let f = [areaId, date, energytype, type, shiftNo].some(key => isFinite(key)) && date 
     if(!f) return;
     let params = {
@@ -76,7 +76,7 @@ export default function Index() {
  const dataset= {
     dimensions: [
       {name: 'name'},
-      {name:  'value', displayName: '用电量(kWh)' },
+      {name:  'value', displayName: ['','用电量(kWh)', 'm³', 'm³'][exparams?.energytype] },
       
     ]
   }

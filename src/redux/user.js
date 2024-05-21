@@ -13,6 +13,7 @@ const initialState = {
     errMsg: '',
     functions: [],
     projects: [],   
+    platformLang: [],
     hostServer: '', // ws
 }
 //let password = ''
@@ -32,13 +33,14 @@ const user = createSlice({
     initialState,
     reducers: {
         clearToken(state) {
-          return Object.assign({}, state, {token: ''})
+           state.token=''
         },
-        memorizeName(state, actions) {          
-            return Object.assign({}, state, {memorize: actions.payload})
+        memorizeName(state, {payload}) {   
+            state.memorize = payload       
+           
         },
-        memorizePhone(state, actions) {           
-            return Object.assign({}, state, {memoPhone: actions.payload})
+        memorizePhone(state, {payload}) {      
+             state.memoPhone = payload    
         },
         getPassword(state, {payload}) {
             state.password = payload
@@ -48,6 +50,9 @@ const user = createSlice({
             let mobile = state.memoPhone ? state.mobile : '';
            // state = {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
             return {...initialState, memorize: state.memorize, name, memoPhone: state.memoPhone, mobile};
+        },
+        getLang(state, {payload=[]}) {
+            state.platformLang= payload
         }
     },
     extraReducers: {
@@ -85,7 +90,8 @@ export const manager = state => state.user?.roleType == 3 // 是否是项目管�
 export const maintenance = state => state.user?.roleType == 4 // 是否是运维人员
 export const selectMemorize = state => state.user.memorize
 export const selectMemoPhone = state => state.user.memoPhone
-export const {clearToken, memorizeName, memorizePhone, userRest, getPassword} = actions
+export const platformLang = state => state.user.platformLang
+export const {clearToken, memorizeName, memorizePhone, userRest, getPassword, getLang} = actions
 
 
 

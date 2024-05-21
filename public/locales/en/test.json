@@ -1,0 +1,16 @@
+{
+    "welcome": "TEST -qq",
+   "author": "TEST Author isfwfd",
+   "currentTime": "current time is {{time, DD/MM/YY}}",
+   "public": {
+     "go": "public go"
+   },
+    "friend": "A {{male}}friend",
+    "friend_male": "A boyfriend",
+    "friend_female": "A girlfriend",
+    "key": "my name {{p.name}}",
+    "keyEscaped": "no danger {{myVar}}",
+    "keyUnescaped": "dangerous {{- myVar}}",
+    "intlNumber": "{{val, number}}",
+  "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}"
+ }

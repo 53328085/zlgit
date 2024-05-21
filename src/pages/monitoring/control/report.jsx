@@ -31,6 +31,7 @@ const CDrawer = styled(Drawer)`
     border-left: 4px solid ${props => props.theme.primaryColor} ;
     color: #2a2f55;
     font-size: 16px;
+    line-height: 32px;
   }
  .ant-table-container .ant-table-content .ant-table-thead {
     

@@ -1,14 +1,11 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+ 
 import styled from 'styled-components';
 import Titlelayout from '@com/titlelayout';
-import { useReactive } from 'ahooks';
-import { message } from 'antd';
-import { Monitoring } from '@api/api.js'
+ 
 
 import gatewayRuntime from '../transformer.svg'
-
+import {useTranslation} from 'react-i18next'
 const Divorder = styled.div`
   display: flex;
   align-items: center;
@@ -61,26 +58,26 @@ const fs = {
 
 export default function DefaultHome(props) {
   let {state={}} = props
-
+  const {t} = useTranslation("overview")
   return (
-    <Titlelayout title={'变压器信息'} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={t("Transformerinformation")} {...fs} style={{height: "200px"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>
-            <span className='count_title'>变压器总数</span>
+            <span className='count_title'>{t("total")}</span>
             <span className='count_val'>{ state.transformerCount}</span>
         </div>
         <div className='details'>
             <div className='detail_item'>
-                <span className='item_title'>变压器在线</span>
+                <span className='item_title'>{t("online")}</span>
                 <span className='item_value' style={{ color: '#096' }}>{ state.transformerOnlineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>变压器离线</span>
+                <span className='item_title'>{t("offline")}</span>
                 <span className='item_value' style={{ color: '#f44336' }}>{ state.transformerOfflineCount }</span>
             </div>
             <div className='detail_item'>
-                <span className='item_title'>在线率</span>
+                <span className='item_title'>{t("rate")}</span>
                 <span className='item_value'>{ state.transformerOnlineRate + '%' }</span>
             </div>
         </div>

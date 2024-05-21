@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {useTranslation} from 'react-i18next'
 import style from './style.module.less'
 import { Table, Input, message, Descriptions, Divider} from "antd";
 import UsetTable from '@com/useTable'
@@ -7,6 +8,7 @@ import { cloneDeep } from "lodash";
 import {CustButton} from '@com/useButton'
 import Mask from '../mask'
 export default function index (props) {
+    const {t} = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const task = props.mask == "open"
     const { Search } = Input
@@ -248,7 +250,7 @@ export default function index (props) {
             setUnknownData([...arr]);
         }
     }
-   const [subserach, setSubserach] = useState('')
+   const [subserach, setSubserach] = useState('') 
     return (
    
      <Mask task={task}>
@@ -282,7 +284,7 @@ export default function index (props) {
                         <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:141}} rowSelection={subSelection}></Table>
+                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:460}} rowSelection={subSelection}></Table>
                     </div>
                 </div>
             </div>)
@@ -326,8 +328,8 @@ export default function index (props) {
                     </span> */}
                 </div>
                 <div className={style.finalButton}>
-                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>保存</CustButton>
-                    <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
+                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>{t("button:save")}</CustButton>
+                    <div className={style.closeButton} onClick={ ()=> handleClose()}>{t("button:cancel")}</div>
                 </div>
             </div>
             <div className={style.rightTable}>
@@ -335,7 +337,7 @@ export default function index (props) {
                 <div className={style.searchInput}>
                     <span style={{marginRight: 16}}>设备搜索</span>
                     <Search 
-                    placeholder="请输入设备编号/安装地址1" 
+                    placeholder="请输入设备编号/设备名称/安装地址" 
                     style={{width: 256}} 
                     enterButton 
                     onSearch={onSearchUnknown} 

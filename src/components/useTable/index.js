@@ -2,6 +2,7 @@ import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, use
 import {createPortal,flushSync} from 'react-dom'
 import {Table, message} from 'antd'
 import styled from 'styled-components'
+import {useTranslation} from 'react-i18next'
 import {utils, writeFile} from 'xlsx'
 import {nanoid} from '@reduxjs/toolkit'
 import Tablecom from './custTable'
@@ -62,14 +63,14 @@ flex-direction: column;
 
 
  function Index(props, ref) { 
-  const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata, ...otherprops} =props  
+  const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata,scroll={}, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   const allref = useRef()
   const [lists, setLists] =useState()
   const [total, setTotal] = useState(0)
   const tempref = useRef();
-  
+  const {t} = useTranslation("comm")
   const TableTemp =memo(() => {  
   
     return createPortal(
@@ -91,7 +92,7 @@ flex-direction: column;
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
     let file = tempName.split(".").length == 1 ? "xlsx"  : tempName.split(".")[1];
-    console.log(file)
+   
     let fileName = tempName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
       
@@ -120,7 +121,7 @@ const Allupdate =memo(({lists, total}) => {
       download()
     } catch (error) {
       message.warning('导出出错！')
-      console.log(error)
+      
     }
   
 
@@ -137,7 +138,7 @@ const download = useCallback(() => {
   );
   utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
   let file = sheetName.split(".").length == 1 ? "xlsx"  : sheetName.split(".")[1];
-  console.log(file)
+ 
   let fileName = sheetName.split(".")[0]
   writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
     
@@ -159,11 +160,12 @@ const download = useCallback(() => {
     let fileName = sheetName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
-  const dataExport = ({header, data, sheetName='sheet1', option={}} ={}) => {
+  const dataExport = ({header, data, skipHeader=true, sheetName='sheet1', option={}} ={}) => {
+    
     const workbook = utils.book_new(); // 新建工作簿
    // var ws = utils.aoa_to_sheet([header]); // 添加标题到工作表
     //utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
-    let ws = utils.json_to_sheet(data, {header, skipHeader: true})
+    let ws = utils.json_to_sheet(data, {header, skipHeader})
   
      let {rowinfo, colinfo} = option
      rowinfo ?  ws["!rows"] = rowinfo : ''
@@ -185,13 +187,16 @@ const download = useCallback(() => {
  
   const paginationProp = pagination ? Object.assign( {}, {
   //  hideOnSinglePage: true,
-    showTotal: (total) => `共${total}条记录`,
+    showTotal: (total) =>  t("totalpages", {count:total}),   
   }, pagination) : false
  
 
   return (
     <Divbox flex={props.flex}>
-        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()} { ...otherprops}   />
+        <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()}  { ...otherprops} scroll={{
+        scrollToFirstRowOnChange: true,
+      ...scroll,
+    }}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
       { props.istemp  &&      <TableTemp   />}
     </Divbox>

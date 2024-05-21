@@ -1,4 +1,3 @@
-import { data } from "browserslist";
 import server from "./index";
 // 测试 新技术
 export class Test {
@@ -7,7 +6,9 @@ export class Test {
 // zl api start
 // 登录
 
-
+export class I18N {
+  static GetsupportLanguages = () => server.get(`/Language/GetsupportLanguages`) // 
+}
 
 export class Login {
   static SystemConfig = (url) =>
@@ -1423,7 +1424,10 @@ export class operation {
  static  OrderDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`,{params:data})//工单详情
  static  InspectionPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionPage`,data)//巡检
  static  InspectionDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`,{params:data})//巡检详细
- 
+ static  AlarmStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmStatistics`, data)//运行报告
+// static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//运行报告
+ static  InspectionStatistics=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  InspectionErrorCounter=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionErrorCounter?projectId=${projectId}&areaId=${areaId}`)//运行报告
 }
 //运维管理(设计)
 export class operationDesigin{
@@ -1753,11 +1757,13 @@ export class DistributionRoomRuntime{
   static HistoryTrends=(data)=>{
     return server.post(`/Distribution/DistributionRoomRuntime/HistoryTrend`,data)
   }
-  static LineTree=(projectId,roomId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineTree`,{params:{projectId,roomId}})
+  static LineTree=(projectId,roomId=[])=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineTree?projectId=${projectId}${query}`)
   }
-  static LineRuntimePoints=(projectId,roomId,lineId)=>{
-    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints`,{params:{projectId,roomId,lineId}})
+  static LineRuntimePoints=(projectId,roomId=[],lineId)=>{
+    let query = roomId.map(r => `&roomId=${r}`).join('')
+    return server.get(`/Distribution/DistributionRoomRuntime/LineRuntimePoints?projectId=${projectId}&lineId=${lineId}${query}`)
   }
   static CameraSummary=(projectId,roomId)=>{
     return server.get(`/Distribution/DistributionRoomRuntime/CameraSummary`,{params:{projectId,roomId}})
@@ -2087,3 +2093,41 @@ export class HomeRuntime {
  
 
 }
+// 碳排 
+export class Carbon {
+
+  // 企业设置
+
+  static QueryCarbonEnterprise= (projectId) =>
+  server.get(`/Carbon/CarbonEnterpriseSetting/QueryCarbonEnterprise?projectId=${projectId}`) // 获取企业信息
+
+  // 排放边界
+  
+  static QueryCarbonBoundary= (enterpriseId) =>
+  server.get(`/Carbon/CarbonEmissionBoundary/QueryCarbonBoundary?enterpriseId=${enterpriseId}`) // 获取碳排边界树
+
+
+  static DownloadTemplate = ({year,month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/DownloadTemplate?year=${year}&month=${month}&enterpriseId=${enterpriseId}`, 
+  {
+     headers: {
+      // "Content-Type": "application/json;charset=UTF-8;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Type":"application/json;charset=UTF-8;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        
+    },
+    responseType: "blob",
+  })  // 碳排管理 下载模板
+  static OnImport = (body) => server.post('Carbon/CarbonEnterpriseDataInput/ImportData', body)
+  static onQueryEmission = ({year, month,enterpriseId}) => server.get(`Carbon/CarbonEnterpriseDataInput/QueryCarbonEmissionUnit?year=${year}&month=${month}&enterpriseId=${enterpriseId}`)
+
+  
+  // 配额管理
+  static QueryCarbonQuotaCurYear = ({year,enterpriseId}) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排配额 当年
+
+   static QueryCarbonQuota= (enterpriseId) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonEmission?enterpriseId=${enterpriseId}`) // 获取碳排配额 历年
+
+   static QueryCarbonTarget= (enterpriseId, year) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonTarget?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排目标值
+}
+ 

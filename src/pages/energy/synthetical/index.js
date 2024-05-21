@@ -204,7 +204,7 @@ const ElectricRight = styled.div`
 export default function Index() {   
   //const projectId = useSelector(selectProjectId);
   const areaIds = useSelector(selectOneLevel);
-  console.dir(areaIds)
+  
   let {exparams} = useOutletContext()
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
@@ -213,7 +213,8 @@ export default function Index() {
   let my = ['', '昨', '上', '去'][exparams.type]
 
  
-  const Chartbox = ({data, op, type, my, tabvalue}) => {
+  const Chartbox = ({data, op, type, my, tabvalue, datetype}) => {
+    console.log(datetype)
     if(!op || !type || !my || data?.length < 1 ) return
     const ref = useRef()
     const charw = () => {
@@ -231,7 +232,7 @@ export default function Index() {
       ["time", `本${type}(元)`, `${my}${type}(元)`],
     ]
       let energy = ['',
-      ["time", `本${type}能耗(吨标煤)`, `${my}${type}能耗(吨标煤)`],
+      ["time",   datetype==1 ?  `本${type}能耗(千克标煤)` : `本${type}能耗(吨标煤)`, datetype==1 ?  `${my}${type}能耗(千克标煤)` : `${my}${type}能耗(吨标煤)`],
       ["time", `本${type}(kWh)`, `${my}${type}(kWh)`],
       ["time", `今${type}(m³)`, `${my}${type}(m³)`],
       ["time", `今${type}(m³)`, `${my}${type}(m³)`],
@@ -261,8 +262,10 @@ export default function Index() {
     )
 }
 
-const EngItem = ({name, unit, periodValue, lastMonthPeriodValue, lastYearPeriodValue, mom, yoy
-}) => {
+const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue, mom, yoy, datetype}) => {
+  let type = ['', '日', '月', '年'][datetype]
+  let my = ['', '昨', '上', '去'][datetype] 
+  let lasttime = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
   let icon = unit.indexOf("kWh")>-1 ? 'electric' : unit.indexOf("m")>-1  ? 'water' : '';
   return (
    <Titlelayout
@@ -283,7 +286,7 @@ const EngItem = ({name, unit, periodValue, lastMonthPeriodValue, lastYearPeriodV
        </div>
        <div className="item">
          <span>{my}{type}</span>
-         <span>{lastMonthPeriodValue}</span>
+         <span>{lasttime}</span>
        </div>
        <div className="item">
          <span>环比</span>
@@ -353,18 +356,20 @@ const Energyitem = () => {
    return (
     <>
       {
-       [...consumes,...extra].map(item => <EngItem  {...item} key={nanoid()}/>)
+       [...consumes,...extra].map(item => <EngItem  {...item} key={nanoid()} datetype={exparams.type}/>)
       }
     </>
   
 
    )
 }
-const Electric = ({data, des}) => {
+const Electric = ({data, des, datetype}) => {
+  let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
+  let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
+      pieData: { data: proportion, total: '100%',  radius:["50%", "70%"] },
       type: 3,
       legend: {
         bottom: 0,
@@ -373,7 +378,9 @@ const Electric = ({data, des}) => {
       },
       grid: {
         bottom: 20
-      }
+      },
+     
+      
     });
   }, [])
   return (
@@ -395,7 +402,7 @@ const Electric = ({data, des}) => {
         </div>
         <div className="item">
           <span>{my}{type}：</span>
-          <span>{data.lastMonthPeriodValue}</span>
+          <span>{timetype}</span>
           <span>环比</span>
           
         
@@ -426,11 +433,14 @@ const Electric = ({data, des}) => {
 
 
 }
-const CoalStandard =({data={}, op}) => {
+const CoalStandard =({data={}, op, datetype}) => {
+  
+  let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
+  let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
-      pieData: { data: proportion, total: 100 },
+      pieData: { data: proportion, total: '100%' },
       type: 3,
       legend: {
         bottom: 0,
@@ -439,7 +449,8 @@ const CoalStandard =({data={}, op}) => {
       },
       grid: {
         bottom: 20
-      }
+      },
+      radius:["50%", "70%"]
     });
   }, [])
   return (
@@ -460,7 +471,7 @@ const CoalStandard =({data={}, op}) => {
           height={64}
         />
         <span style={{ color: "#999", marginTop: "10px" }}>
-         {op ==1 ? <>（吨标煤）</> : <>（万）</>}
+         {op ==1 ? <> （吨标煤）</> : <>（万）</>}
         </span>
       </div>
 
@@ -471,7 +482,7 @@ const CoalStandard =({data={}, op}) => {
         </div>
         <div className="item">
           <span>{my}{type}能耗：</span>
-          <span>{data.lastMonthPeriodValue}</span>
+          <span>{timetype}</span>
         </div>
         <div className="item">
           <span>同比</span>
@@ -514,7 +525,7 @@ const CoalStandard =({data={}, op}) => {
 
 
   const getData = async () => {    
-    const {areaId, date, type, shiftNo, view, projectId} = exparams
+    const {areaId, date, type, shiftNo, view, projectId} = exparams  
     let id = areaId == 0 ? areaIds?.filter(a => a.id!=0)?.map(a => a.id) : [areaId];
     let time;
     if (type == 1)  {
@@ -572,9 +583,9 @@ const CoalStandard =({data={}, op}) => {
           <div className="upleft">
              <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange}>
              </Tabsbox>
-             <Chartbox  data={detail} op={exparams.view} type={type} my={my} tabvalue={tabvalue} />
+             <Chartbox  data={detail} op={exparams.view} type={type} my={my}  datetype={exparams.type} tabvalue={tabvalue} />
            </div>
-           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes} key="Electric" /> }
+           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard}  datetype={exparams.type} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes}  datetype={exparams.type}   key="Electric" /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">

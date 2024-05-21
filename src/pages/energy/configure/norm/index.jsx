@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
- 
+import {useTranslation} from 'react-i18next'
 import {   Space, message, Form, Input, Typography } from 'antd';
 import style from './style.module.less'
 import SearchTree from '@com/searchTree'
@@ -14,6 +14,7 @@ import {CustButton} from '@com/useButton'
 import UseTable from '@com/useTable'
 const {Link} = Typography
 export default function Index() {
+  const {t} = useTranslation(["button"])
   let {exparams, setCustview} = useOutletContext()
   let {areaId, projectId } = exparams 
   const setRef = useRef()
@@ -164,7 +165,7 @@ export default function Index() {
     width: '128px',
     render: (_, record) => (
       <Space size="middle">
-        <span style={{color:'#237ae4', textDecoration:'underline', cursor:'pointer'}} onClick={()=>setAll(record)}>修改</span>
+        <Link onClick={()=>setAll(record)}>{t("button:edit")}</Link>
       </Space>)
   }
 ])
@@ -238,7 +239,7 @@ export default function Index() {
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <Link underline onClick={()=>setAll(record)}>修改</Link>
+                <Link underline onClick={()=>setAll(record)}>{t("button:edit")}</Link>
               </Space>)
           }
         ])
@@ -366,7 +367,7 @@ export default function Index() {
     }catch(errorInfo){}
     
   }
-  const view =  (<CustButton style={{marginLeft: 'auto'}} onClick={setAll}>批量配置</CustButton>)
+  const view =  (<CustButton style={{marginLeft: 'auto'}} wh="auto" onClick={setAll}>{t("button:batchConfiguration")}</CustButton>)
   useEffect(() => {
     setCustview(view)
   }, [])
@@ -389,7 +390,7 @@ export default function Index() {
       <div className={style.mainContent}>
         <SearchTree treeData={treeData} fieldNames={fieldNames} getValues={getFromChild}></SearchTree>
         <div className={style.rightContent}>
-          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff"></UseTable>
+          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff" hbc="#515151"></UseTable>
         </div>
       </div>
       <Custmodl title='设置能耗定额' ref={setRef}  mold="cust" width={640} onOk={onOk}>

@@ -9,7 +9,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {manager } from '@redux/user'  
 import { getpublishState, publishState, systemConfigRest} from '@redux/systemconfig.js'  
 import log from '@imgs/log.png'
- 
+import {useTranslation} from "react-i18next"
  
 const { Title, Text, Paragraph, Link } = Typography;
 const Maibox = styled.div`
@@ -31,7 +31,7 @@ const Itembox = styled.div`
           justify-content: space-between;
          .left {
             display: grid;
-            grid-template-columns: repeat(5, 120px) 2px 180px;
+            grid-template-columns: repeat(5, auto) 2px auto;
             grid-template-rows: 32px;
             column-gap: 16px;
          }
@@ -40,6 +40,9 @@ const Itembox = styled.div`
             display: flex;
            justify-content: space-between;
            align-items: center;
+         }
+         .wd200{
+            width: 200px;
          }
        }
        .lower {
@@ -60,6 +63,7 @@ const Tagbox = styled(Tag)`
   font-size: 14px;
 `
 export default function Release({CModal, projectId}) { 
+  const {t} =useTranslation("common","comm")
   const dispatch = useDispatch()
   const modal = useRef(null)
   const delmodal = useRef(null)
@@ -73,6 +77,8 @@ export default function Release({CModal, projectId}) {
  const [loguerphone, setLoguerphoe] = useState('') 
  const [mobile, setMobile] = useState()
  const ismanager = useSelector(manager)
+ const  locale =useSelector(state => state.system.iszhCN)
+
   const code =useRef();
   const stateV = useRef('');
   
@@ -139,8 +145,8 @@ export default function Release({CModal, projectId}) {
   })  
  
   return (
-     <Button style={{width: '112px'}} onClick={() => getCode()} disabled={countdown !== 0}>        
-           {countdown === 0 ? '获取验证码' : ` ${Math.round(countdown / 1000)}s`}
+     <Button style={{width: 'auto'}} onClick={() => getCode()} disabled={countdown !== 0}>        
+           {countdown === 0 ? t("common:ObtainCode") : ` ${Math.round(countdown / 1000)}s`}
      </Button>
      )
 }
@@ -152,7 +158,7 @@ const onOk =async () => { // 发布 // 取消发布
    
   try {
     if (!code.current) {
-      return message.warning('请输入验证吗')
+      return message.warning('请输入验证码')
     }
     let state = parseInt(curProject.state) === 1 ? 0 : 1
     const {success} = await publishProject({projectId: curProject.id, state, code: code.current, moble: curProject.mobile})
@@ -188,7 +194,7 @@ const delProject = async () => {
 
  
   try {
-     if (!projectName.current.trim()) return message.warning('请输入短信验证吗')
+     if (!projectName.current.trim()) return message.warning('请输入短信验证码')
     const {success, errMsg}  = await  DeleteProject(curProject.id, logMobile, projectName.current);
     if (success) {
      
@@ -226,16 +232,16 @@ const publishing = (
   {
   curProject.state == 1 ? 
     <>
-  <Title level={4}>取消发布项目时 用户需知</Title>
-  <Paragraph>1、项目取消发布后，项目管理中的各项设置将处于可编辑状态</Paragraph>
-  <Paragraph>2、项目取消发布后，设备及网关档案将处于可编辑状态</Paragraph>
+  <Title level={4}>{t("common:UnpublishUser")}</Title>
+  <Paragraph>1、{t("common:UnpublishEditable")}</Paragraph>
+  <Paragraph>2、{t("common:UnpublishInEditable")}</Paragraph>
 
   </>
    :
    <>
-  <Title level={4}>发布项目时 用户需知</Title>
-  <Paragraph>1、项目发布后，将锁定项目管理中的各项设置</Paragraph>
-  <Paragraph>2、项目发布后，将锁定设备及网关档案</Paragraph>
+  <Title level={4}>{t("common:PublishingProject")}</Title>
+  <Paragraph>{t("common:ManagementSettings")}</Paragraph>
+  <Paragraph>{t("common:MessageLock")}</Paragraph>
   </>
   }
    </>
@@ -248,57 +254,57 @@ const publishing = (
             <div className="upper">
                 <div className='left'>
                  <Tagbox><Text ellipsis={{tooltip: (<span>{item.name}</span>)}}>{item.name}</Text></Tagbox>
-                 <Tagbox>应用模块({item.templateCnt})</Tagbox>
-                 <Tagbox>设备数量({item.meterCnt})</Tagbox>
-                 <Tagbox>网关数量({item.gatewayCnt})</Tagbox>
-                 <Tagbox>能源种类({item.gatewayCnt})</Tagbox>
+                 <Tagbox>{t("common:ApplicationModule")}({item.templateCnt})</Tagbox>
+                 <Tagbox>{t("common:DevicesNumber")}({item.meterCnt})</Tagbox>
+                 <Tagbox>{t("common:GatewaysNumber")}({item.gatewayCnt})</Tagbox>
+                 <Tagbox>{t("common:EnergyType")}({item.gatewayCnt})</Tagbox>
                  <Divider type='vertical' style={{margin: 0, height: '36px', borderLeftStyle: 'dotted', borderLeftWidth: '2px'}}></Divider>
-                 <Tagbox>项目有效期&nbsp;{item.validStageTime?.slice(0,10)}</Tagbox>
+                 <Tagbox>{t("common:ProjectValidityPeriod")}&nbsp;{item.validStageTime?.slice(0,10)}</Tagbox>
                  </div>
-                 <div className='right'>
-                 <Switch key={stateV.current}  checkedChildren="发布"  unCheckedChildren="未发布" style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
-                 {(!ismanager && !publish) && <Link underline type="danger" onClick={() => onDel(item)}>删除项目</Link>}
+                 <div className={locale?'right':'right wd200'} >
+                 <Switch key={stateV.current}  checkedChildren={t("comm:Published")}  unCheckedChildren={t("comm:Unpublished")} style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
+                 {(!ismanager && !publish) && <Link underline type="danger" onClick={() => onDel(item)}>{t("common:DeleteItem")}</Link>}
                  </div>
             </div>
             <div className="lower">
-               <Text type='secondary'>创建时间：</Text>
-               <Text type='secondary'>创建人：</Text> 
-               <Text type='secondary' >项目管理员:</Text>  
-               <Text type='secondary'>项目地址：</Text>
-               <Text type='secondary'>项目状态：</Text>
+               <Text type='secondary'>{t("common:CreationTime")}：</Text>
+               <Text type='secondary'>{t("common:Founder")}：</Text> 
+               <Text type='secondary' >{t("common:ProjectManager")}:</Text>  
+               <Text type='secondary'>{t("common:ProjectAddress")}：</Text>
+               <Text type='secondary'>{t("common:ProjectStatus")}：</Text>
                <Text type='secondary' ellipsis>{item.createTime}</Text>
                <Text type='secondary' ellipsis>{item.creator}</Text>
                <Text type='secondary' ellipsis>{item.manager}/{item.mobile}</Text>
                <Text type='secondary' ellipsis>{item.address}</Text>              
-               <Text type='secondary' ellipsis style={{color: item.state == 1 ? '#1890FF' : ''}}>&#9679;&nbsp;{item.state == 1 ? '已发布' : '未发布'}</Text>
+               <Text type='secondary' ellipsis style={{color: item.state == 1 ? '#1890FF' : ''}}>&#9679;&nbsp;{item.state == 1 ? t("comm:Published") : t("comm:Unpublished")}</Text>
             </div>    
         </div>
     </Itembox>
   )
   return  <Maibox>
            {data?.list.map(item => <Item item={item} key={item.id} />)} 
-           <CModal ref={modal} title={curProject.title} mold='cust' onOk={onOk}>
+           <CModal ref={modal} title={curProject.title} mold='cust' onOk={onOk} width={640}>
            <div>
                { 
                 publishing
                }
-              <Paragraph> <Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>管理员手机号</Text> <Button style={{width: '148px'}} disabled={!phone}>{phone}</Button><Countdown mobile={curProject.mobile} /></Space></Paragraph>
-              <Paragraph><Space size={16}><Text style={{width: '90px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={onCodeChange} /></Space></Paragraph>
-              <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
+              <Paragraph> <Space size={16}><Text style={{width: 'auto', display: 'inline-block'}}>{t("common:AdministratorMobileNumber")}</Text> <Button style={{width: '148px'}} disabled={!phone}>{phone}</Button><Countdown mobile={curProject.mobile} /></Space></Paragraph>
+              <Paragraph><Space size={16}><Text style={{width: 'auto', display: 'inline-block'}}>{t("common:SMSVerificationCode")}</Text> <Input style={{width: '148px'}} placeholder={t("common:EnterCode")} onChange={onCodeChange} /></Space></Paragraph>
+              <Paragraph> <Text type="danger" strong>{t("common:caution")}</Text></Paragraph>
               </div>
             
            </CModal>
 
-           <CModal ref={delmodal} title='删除项目' mold='cust' onOk={delProject} width={640} type="warn" warnimg={false} bodyStyle={{padding: "32px"}}>
+           <CModal ref={delmodal} title={t("common:DeleteItem")} mold='cust' onOk={delProject} width={640} type="warn" warnimg={false} bodyStyle={{padding: "32px"}}>
                <div>
-                 <Title level={4}>删除项目时 用户需知：</Title>
-                 <Paragraph>1、删除项目后会同步删除所有项目下员工及管理员账号；</Paragraph>
-                 <Paragraph>2、删除项目后会同步删除项目下所有区域、设备、网关档案；</Paragraph>
-                 <Paragraph>3、删除项目后将清除所有设备历史数据；</Paragraph>
-                 <Paragraph> <Text type="danger" strong>请谨慎操作！</Text></Paragraph>
-                 <Paragraph>该操作不可逆，一旦操作成功，应用内所有内容将被删除。</Paragraph>
-                 <Paragraph> <Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>登录用户手机号</Text> <Button style={{width: '148px'}}>{loguerphone}</Button><Countdown mobile={logMobile} /></Space></Paragraph>
-                 <Paragraph><Space size={16}><Text style={{width: '120px', display: 'inline-block'}}>短信验证吗</Text> <Input style={{width: '148px'}} placeholder='请输入短信验证吗' onChange={projectNameChange} /></Space></Paragraph>
+                 <Title level={4}>{t("common:Noticeproject")}</Title>
+                 <Paragraph>{t("common:delaccounts")}</Paragraph>
+                 <Paragraph>{t("common:delfiles")}</Paragraph>
+                 <Paragraph>{t("common:deldata")}</Paragraph>
+                 <Paragraph> <Text type="danger" strong>{t("common:caution")}</Text></Paragraph>
+                 <Paragraph>{t("common:delcontent")}</Paragraph>
+                 <Paragraph> <Space size={16}><Text style={{width: 'auto', display: 'inline-block'}}>{t("common:LoginMoblie")}</Text> <Button style={{width: '148px'}}>{loguerphone}</Button><Countdown mobile={logMobile} /></Space></Paragraph>
+                 <Paragraph><Space size={16}><Text style={{width: 'auto', display: 'inline-block'}}>{t("common:SMSVerificationCode")}</Text> <Input style={{width: 'auto'}} placeholder={t("common:EnterCode")} onChange={projectNameChange} /></Space></Paragraph>
               {/*    <Paragraph>请在下方输入框中输入项目名称以确定操作</Paragraph>               
                  <Paragraph><Input style={{width: '422px'}}   onChange={projectNameChange} allowClear /></Paragraph> */}
                

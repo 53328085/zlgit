@@ -29,7 +29,7 @@ import  {designerPrepay} from './prepayment'
 import {designerEnergy} from './energy'
 import  {designerSolar} from './photovoltaic'
 import  {storage} from './storage'
-import {carbon} from './carbon'
+import {designCarbonEmissionManage} from './carbon'
 import  {maintenance} from './devops'
  export const designerComponents = { 
   '0201': Common,
@@ -53,7 +53,7 @@ export const designerRoutes = {
   designerEnergy,
   designerSolar,
   storage,
-  carbon,
+  designCarbonEmissionManage,
   maintenance,
 }
 
