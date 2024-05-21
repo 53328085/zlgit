@@ -2121,6 +2121,7 @@ export class Carbon {
 
   
   // 配额管理
+
   static QueryCarbonQuotaCurYear = ({year,enterpriseId}) =>
    server.get(`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排配额 当年
 
@@ -2129,5 +2130,11 @@ export class Carbon {
 
    static QueryCarbonTarget= (enterpriseId, year) =>
    server.get(`Carbon/CarbonQuotaManagement/QueryCarbonTarget?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排目标值
+
+   // 预警配置
+   
+   static QueryStrategyAll= (enterpriseId, year) =>   
+   server.get(`Carbon/CarbonWarningStrategy/QueryStrategyAll`)  // 查询预警策略配置
+
 }
  

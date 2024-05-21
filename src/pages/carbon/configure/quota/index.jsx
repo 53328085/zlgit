@@ -12,7 +12,7 @@ import {Cdivider} from "@com/comstyled"
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 import {Carbon} from '@api/api'
-
+import {isObject} from '@com/usehandler'
 const Mainbox = styled.div`
     margin-top: 16px;
     padding-top: 16px;
@@ -66,7 +66,7 @@ const columns = [
         return <Form.Item noStyle shouldUpdate >
           {({getFieldsValue}) => {
              let values = getFieldsValue()             
-               return Object.values(values).reduce((cur,pur) => cur+pur, 0)
+               return Object.values(values).reduce((cur,pur) => cur+pur, 0)?.toFixed(2)
                
               
           }}
@@ -128,14 +128,68 @@ export default function Index() {
   const [pretal, setPretal] = useState(0)
    
   const rate = pretal != 0 ? ((curtal - pretal)/pretal*100).toFixed(2)  : 0
-  const arrow =  (curtal-pretal) > 0  ? <b style={{color: "#f00"}}>&#x25B2;</b> : <b style={{color: "#080"}}>&#x25BC;</b>
+  const arrow =  (curtal-pretal) > 0  ? <b style={{color: "#f00"}}>&#x25B2;</b> : (curtal-pretal) < 0 ? <b style={{color: "#080"}}>&#x25BC;</b> : null
   const onValuesChange = (_, allvalue) => {
      let total = Object.values(allvalue).reduce((a, b) => a+b, 0);
      setCurtal(total)
   }
 
   const getCarbonQuotal = async () => {   
-    let {success, data, errMsg} = await  Carbon.QueryCarbonQuota(enterpriseId)
+   // let {success, data, errMsg} = await  Carbon.QueryCarbonQuota(enterpriseId)
+    try {
+  
+    let promise = [Carbon.QueryCarbonQuota(enterpriseId), Carbon.QueryCarbonQuotaCurYear({year:curyear, enterpriseId})]
+
+    let [{value: {success: suc, data, errMsg: err}}, {value: {success: cursuc, data: curyearData, errMsg: cerr}}] = await Promise.allSettled(promise)
+    let arrdata = [];
+    let lastyearData =Array.isArray(data) ? data[0] : undefined ;
+    if(suc && isObject(lastyearData)) {
+         let dataobj ={}
+          for(let [key, value] of Object.entries(lastyearData)) {
+             if(key !== 'monthVos') {
+              dataobj[key] = value
+
+             }else{
+                 value.forEach(v => {
+                   let {month, carbonMonthlyEmission} = v
+                   dataobj[month] = carbonMonthlyEmission;
+                 })
+             }
+          }        
+        arrdata.push(dataobj)
+    }else {
+       if(!suc) message.warning(err || '数据出错')
+       if(!lastyearData) message.warning(`${lastyear}年无数据`)
+       setPretal(lastyearData?.carbonAnnualEmission??0)
+    }
+    
+   if(cursuc && Array.isArray(curyearData) && curyearData?.length >0) {
+       let curobj = {}
+       curyearData.forEach(c => {
+          if(!curobj['year']) {
+            curobj.year = c.year
+          }else {
+            curobj[c.month] = c.carbonMonthlyQuota
+          }
+
+
+       })
+       arrdata.push(curobj) 
+       let total = curyearData.map(a => a.carbonMonthlyQuota).reduce((x,y) => parseFloat(x)+parseFloat(y), 0)
+       console.log(total)
+       setCurtal(total)
+   }else {
+    if(!cursuc) message.warning(cerr || '数据出错')
+    if(!curyearData) message.warning(`${curyear}年无数据`)
+    setCurtal(0)
+   }
+    setTableData(arrdata)
+       
+  } catch (error) {
+      console.log(error)
+  }
+
+    return 
     if(success && Array.isArray(data) && data.length > 0) {
         let lastyearData = data.find(d => d.year == lastyear)
         let curyearData = data.find(d => d.year == curyear)
