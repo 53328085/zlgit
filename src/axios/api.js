@@ -2136,5 +2136,18 @@ export class Carbon {
    static QueryStrategyAll= (enterpriseId, year) =>   
    server.get(`Carbon/CarbonWarningStrategy/QueryStrategyAll`)  // 查询预警策略配置
 
+   // 运行态
+
+   // 碳排考核跟踪
+
+   static QueryAnnualData= (enterpriseId, year) =>    
+   server.get(`Carbon/CarbonTrackRuntime/QueryAnnualData?enterpriseId=${enterpriseId}&year=${year}`) // 碳排年度数据
+
+   static QueryMonthlyAnalysis= (enterpriseId, year) =>   
+   server.get(`Carbon/CarbonTrackRuntime/QueryMonthlyAnalysis?enterpriseId=${enterpriseId}&year=${year}`) // 碳排月度考核分析
+
+   static QueryEmissionData= (params) =>   
+   server.get(`Carbon/CarbonTrackRuntime/QueryEmissionData`, {params}) // 碳排放数据
+
 }
  

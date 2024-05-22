@@ -29,8 +29,9 @@ const Mainbox = styled.div`
 
 const Ctd = ({i,text,index}) => {
   if(index == 1) {
+   console.log(i, text);
    const form = Form.useFormInstance(); 
-   form.setFieldValue(`${i}`, (typeof text == 'number') ? text : 0)
+   form.setFieldValue(`${i}`, (typeof text == 'number') ? text : parseFloat(text))
     return (<Form.Item   initialValue={text} name={`${i}`} style={{marginBottom: '0px'}} >
         <InputNumber min={0}    />
     </Form.Item>)
@@ -52,7 +53,7 @@ const columns = [
     key: i+1,
     width: 80,
     align: 'center',
-    render: (text,_, index) => <Ctd text={text} index={index} i={i} />
+    render: (text,_, index) => <Ctd text={text} index={index} i={i+1} />
  })),
  {
   title: "合计",
@@ -127,6 +128,11 @@ export default function Index() {
   const [curtal, setCurtal] = useState(0)
   const [pretal, setPretal] = useState(0)
    
+ console.log(curtal)
+
+ console.log(pretal)
+
+
   const rate = pretal != 0 ? ((curtal - pretal)/pretal*100).toFixed(2)  : 0
   const arrow =  (curtal-pretal) > 0  ? <b style={{color: "#f00"}}>&#x25B2;</b> : (curtal-pretal) < 0 ? <b style={{color: "#080"}}>&#x25BC;</b> : null
   const onValuesChange = (_, allvalue) => {
@@ -143,6 +149,7 @@ export default function Index() {
     let [{value: {success: suc, data, errMsg: err}}, {value: {success: cursuc, data: curyearData, errMsg: cerr}}] = await Promise.allSettled(promise)
     let arrdata = [];
     let lastyearData =Array.isArray(data) ? data[0] : undefined ;
+    setPretal(lastyearData?.carbonAnnualEmission??0)
     if(suc && isObject(lastyearData)) {
          let dataobj ={}
           for(let [key, value] of Object.entries(lastyearData)) {
@@ -160,7 +167,7 @@ export default function Index() {
     }else {
        if(!suc) message.warning(err || '数据出错')
        if(!lastyearData) message.warning(`${lastyear}年无数据`)
-       setPretal(lastyearData?.carbonAnnualEmission??0)
+       
     }
     
    if(cursuc && Array.isArray(curyearData) && curyearData?.length >0) {
@@ -168,10 +175,8 @@ export default function Index() {
        curyearData.forEach(c => {
           if(!curobj['year']) {
             curobj.year = c.year
-          }else {
-            curobj[c.month] = c.carbonMonthlyQuota
           }
-
+          curobj[c.month] = c.carbonMonthlyQuota
 
        })
        arrdata.push(curobj) 
@@ -183,6 +188,7 @@ export default function Index() {
     if(!curyearData) message.warning(`${curyear}年无数据`)
     setCurtal(0)
    }
+    console.log(arrdata)
     setTableData(arrdata)
        
   } catch (error) {
@@ -271,8 +277,8 @@ export default function Index() {
          params.push({
           enterpriseId:enterpriseId,
           year: curyear,
-           month: parseInt(key)+1,
-           carbonEmissionAmount: value
+           month: parseInt(key),
+           carbonMonthlyQuota: value
          })
       }
       console.log(params)

@@ -8,6 +8,7 @@ import {
   levelDefaultLabel,
   selectOneLevel,
   getOnelevel,
+  enterprise
 } from "@redux/systemconfig.js";
 export default function Index() {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ export default function Index() {
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
+  const {id: enterpriseId} = useSelector(enterprise)
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
       "monitor",
@@ -58,13 +60,7 @@ export default function Index() {
      "environment",
      "alarmMessage",
      "operationLog",
-    ], 
-    runtimeCarbon: [ // 碳排管理
-       "summary",
-       "examining",
-       "manager",
-       "analysis",
-    ],
+    ],  
     runtimeMaintenance: [ // 运维管理
       "summary",
       "alarm",
@@ -80,7 +76,8 @@ export default function Index() {
        "type",
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
-        "runtimeCarbonData"
+        "runtimeCarbonData",
+        "runtimeCarbonExamine",
     ]
   }); // 需要显示搜索的页面
 
@@ -91,6 +88,7 @@ export default function Index() {
   const [config, setConfig] = useState({});
   const [custview, setCustview] = useState(undefined);
   let showSerach = inpage[primary]?.includes(nested);
+
   let style = showSerach
     ? {
         flex: 1,
@@ -109,6 +107,8 @@ export default function Index() {
     exparams,
     setCustview,
     areaName,
+    enterpriseId,
+
   };
   const props = {
     config,
@@ -117,7 +117,7 @@ export default function Index() {
     setAreaName
   };
 
-  const sethandler = () => {
+  const sethandler = () => {  
     try {
       if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true });
@@ -200,14 +200,14 @@ export default function Index() {
          }
       }
     
-      if(primary == "runtimeCarbon") {
+      if(primary == "runtimeCarbonEmissionManager") {
         switch(nested) {
-          case "examining":
-           setConfig({ dateY: true });
-           break;
-         case "analysis":
-           setConfig({ dateR: true });
-           break;
+          case "runtimeCarbonExamine":
+           setConfig({isAreaId: false, dateY: true });
+           break;     
+         case "runtimeCarbonData":
+            setConfig({isAreaId: false, isdate:true, shiftNo: true});
+            break;
         }
       }
       if(primary == "runtimeMaintenance") {
@@ -223,14 +223,7 @@ export default function Index() {
         }
          
       }
-      if(primary == "runtimeCarbonEmissionManager") {
-        switch(nested) {
-          case "runtimeCarbonData":
-           setConfig({isAreaId: false, isdate:true, shiftNo: true});
-           break;
-        }
-         
-      }
+
       // custview
     } catch (error) {}
   };

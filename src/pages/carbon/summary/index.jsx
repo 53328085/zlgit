@@ -74,7 +74,7 @@ export default function Index() {
     grid: {
         right: 0,
         left: 0,
-        top: 0,
+        top: '16px',
         bottom: 0,
          containLabel: true,
      },

@@ -160,7 +160,7 @@ const dateselect = (
 )
 
 const carbonDateY = (
-   <Item label="考核年度" name=""  >
+   <Item label="考核年度" name="carbonY" initialValue={moment()} >
       <DatePicker   picker="year" />
    </Item>
 )
