@@ -2155,11 +2155,36 @@ export class Carbon {
    static QueryEmissionDataPost= (pageNum, pageSize, params) =>   
    server.post(`Carbon/CarbonEmissionDataRuntime/QueryCarbonEmissionData?pageNum=${pageNum}&pageSize=${pageSize}`,params) // 碳排放数据
    static ExportDataPost= (params) =>   
-   server.get(`Carbon/CarbonEmissionDataRuntime/Export`,params) 
+   server.post(`Carbon/CarbonEmissionDataRuntime/Export`,params) 
 
    // 碳排查管理
 
     static QueryCarbonManagePlan= ({projectId, pageNum, pageSize}) =>   
      server.get(`Carbon/CarbonManageRuntime/QueryCarbonManagePlan?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`) // 分页查询碳排监测计划
+
+     static DownloadTemplateCarbon= () =>   
+     server.get(`Carbon/CarbonManageRuntime/DownloadTemplate`,  {
+      headers: {
+         "Content-Type":"application/json;charset=UTF-8;application/msword",
+         
+     },
+     responseType: "blob",
+   }) 
+
+   static PostCarbonManagePlan= ({projectId,year,latestTime,latestVersion,applicant}, body) =>   
+     server.post(`Carbon/CarbonManageRuntime/PostCarbonManagePlan?projectId=${projectId}&year=${year}&latestTime=${latestTime}&latestVersion=${latestVersion}&applicant=${applicant}`,  body)
+     static DownloadCarbonManagePlan= (projectId, year) =>   
+     server.get(`Carbon/CarbonManageRuntime/DownloadCarbonManagePlan?projectId=${projectId}&year=${year}`,  {
+      headers: {
+         "Content-Type":"application/json;charset=UTF-8;application/msword",
+         
+     },
+     responseType: "blob",
+   }) // 下载碳排监测计划报告
+
+   static DeleteCarbonManagePlan= (projectId, year) =>   
+   server.delete(`Carbon/CarbonManageRuntime/DeleteCarbonManagePlan?projectId=${projectId}&year=${year}`) // 删除碳排监测计划
+
+   
 }
  

@@ -145,7 +145,7 @@ const OnGetRankingData = async (e) => {
 }
 
  // 月度碳排放
-const {isSuccess: msuc, data: monthData} =useMonthQuery(enterpriseId, {
+const {isSuccess: msuc, data: monthData} =useMonthQuery({enterpriseId, type: 1}, {
   skip: !Number.isInteger(enterpriseId)
 })
 

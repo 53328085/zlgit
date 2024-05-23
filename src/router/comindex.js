@@ -8,7 +8,8 @@ import {
   levelDefaultLabel,
   selectOneLevel,
   getOnelevel,
-  enterprise
+  enterprise,
+  selectProjectId
 } from "@redux/systemconfig.js";
 export default function Index() {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export default function Index() {
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
+  const projectId = useSelector(selectProjectId)
   const {id: enterpriseId} = useSelector(enterprise)
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
@@ -108,7 +110,7 @@ export default function Index() {
     setCustview,
     areaName,
     enterpriseId,
-
+    projectId,
   };
   const props = {
     config,

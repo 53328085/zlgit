@@ -59,7 +59,7 @@ export default function Index() {
   
   let {  date,   type} = exparams
 
-  const [treeId, setTreeId] = useState([])
+  const [treeId, setTreeId] = useState(null)
  
   const params = useRef({})
   const getTabledata =({current, pageSize}) => {

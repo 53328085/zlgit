@@ -293,7 +293,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
   }, [levelone])
  
   const onValuesChange = (_, allValues) => {      
-    console.log(allValues)
+    
     props.setexparams({...allValues})
   }
 
@@ -302,6 +302,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        let v = form.getFieldValue('energytype');
        if(v==3) form.setFieldValue('energytype', 1)
      }
+   
      props.setexparams({...form.getFieldsValue(true)})
    
   }, [props.config, projectId])
