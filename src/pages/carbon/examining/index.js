@@ -212,7 +212,7 @@ export default function Index() {
      
        
           <Titlelayout title="月度碳排考核分析(tCO₂)" layout="flex" bgcolor="#043665" bg="#043665" fc="#fff"  key="chart">
-              <div  className='chartbox' style={{  background: 'linear-gradient(to top right, rgb(16,32,61), rgb(4,53,102))' }}>
+              <div  className='chartbox' style={{background: 'linear-gradient(to top right, rgb(16,32,61), rgb(4,53,102))' }}>
                 <Ichart {...roption} />
               </div>
           </Titlelayout>
@@ -232,7 +232,6 @@ export default function Index() {
                     <span>月度排放量(超预配值)</span>
                   </p>
                 </div>
-              {/* <div ref={linedom} style={{ width: '100%', height: '100%' ,background: 'linear-gradient(to right, rgb(16,32,61), rgb(3,60,95))'}}></div> */}
             </div>
           </Titlelayout>
 

@@ -2149,5 +2149,17 @@ export class Carbon {
    static QueryEmissionData= (params) =>   
    server.get(`Carbon/CarbonTrackRuntime/QueryEmissionData`, {params}) // 碳排放数据
 
+
+   // 碳排查数据
+   
+   static QueryEmissionDataPost= (pageNum, pageSize, params) =>   
+   server.post(`Carbon/CarbonEmissionDataRuntime/QueryCarbonEmissionData?pageNum=${pageNum}&pageSize=${pageSize}`,params) // 碳排放数据
+   static ExportDataPost= (params) =>   
+   server.get(`Carbon/CarbonEmissionDataRuntime/Export`,params) 
+
+   // 碳排查管理
+
+    static QueryCarbonManagePlan= ({projectId, pageNum, pageSize}) =>   
+     server.get(`Carbon/CarbonManageRuntime/QueryCarbonManagePlan?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`) // 分页查询碳排监测计划
 }
  
