@@ -2185,6 +2185,9 @@ export class Carbon {
    static DeleteCarbonManagePlan= (projectId, year) =>   
    server.delete(`Carbon/CarbonManageRuntime/DeleteCarbonManagePlan?projectId=${projectId}&year=${year}`) // 删除碳排监测计划
 
+   // 
+   static QueryFlow= ({enterpriseId, startTime,endTime}) =>   
+   server.get(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
    
 }
  
