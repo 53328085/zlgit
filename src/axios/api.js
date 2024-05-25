@@ -2187,7 +2187,7 @@ export class Carbon {
 
    // 
    static QueryFlow= ({enterpriseId, startTime,endTime}) =>   
-   server.get(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
+   server.post(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
    
 }
  
