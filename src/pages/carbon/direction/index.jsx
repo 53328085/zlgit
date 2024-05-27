@@ -1,151 +1,132 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { Radio, DatePicker, Form, Select, message } from 'antd';
-import { useSelector } from 'react-redux'
-import BlueColumn from '@com/bluecolumn'
-import Pagecount from '@com/pagecontent'
-import styled from 'styled-components'
-import * as echarts from 'echarts'
-import { useReactive } from 'ahooks';
-import { Cspin, Serach, Cdivider } from '@com/comstyled'
-const Tablediv = styled.div`
-border: 1px solid #d7d7d7;
-border-radius: 4px;
-padding: 16px;
-background-color: #fff;
-flex: 1;
-display: flex;
-flex-direction: column;
-.header{
-  display: flex;
-  justify-content: space-between;
-}
-.sankey{
-  flex: 1;
-}
-.sankeyInfo{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  width: 1335px;
-  margin-left: 35px;
+import React, { useState,  useEffect,memo, useRef } from "react";
+import moment from "moment";
+import {Space, DatePicker} from 'antd'
+import Pagecount from '@com/pagecontent' 
 
-div{
-  width: 120px;
- .name{
-  color: ${props => props.theme.primaryColor} ;
-  }
-  .triangle{
-    border-color: ${props => props.theme.primaryColor}  #fff #fff #fff;
-    border-style: solid;
-    border-width: 7px 7px 0 7px;
-    height: 0;
-    width: 0;
-    margin:5px auto 0px;
-  }
-}
+import { useOutletContext} from 'react-router-dom'
+import { Carbon} from "@api/api"
+import {getTime} from '@com/usehandler'
+import Titlelayout from '@com/titlelayout'
+import {CustButton} from '@com/useButton'
+import Ichart  from '@com/useEcharts/Ichart';
+import {ComDatePicker} from "@com/comstyled" 
+const {RangePicker} = DatePicker
+export default function Index() {   
+  let {enterpriseId} = useOutletContext() || {}
  
-}
-`
-export default function Index() {
-  const sankeyref = useRef()
-  const chartsOpts = useReactive({
+  const [dateRang, setDateRang] = useState([moment().subtract(1, 'month'), moment()])
 
-    series: {
+ const [options, setOptions] = useState({
+  tooltip: {
+    trigger: 'item',
+    triggerOn: 'mousemove'
+  },
+  series: [
+    {
       type: 'sankey',
-      layout: 'none',
+      layout: "none",
       emphasis: {
-        focus: 'adjacency'
       },
-      data: [
-        {
-          name: 'a'
-        },
-        {
-          name: 'b'
-        },
-        {
-          name: 'a1'
-        },
-        {
-          name: 'a2'
-        },
-        {
-          name: 'b1'
-        },
-        {
-          name: 'c'
-        }
-      ],
-      links: [
-        {
-          source: 'a',
-          target: 'a1',
-          value: 5
-        },
-        {
-          source: 'a',
-          target: 'a2',
-          value: 3
-        },
-        {
-          source: 'b',
-          target: 'b1',
-          value: 8
-        },
-        {
-          source: 'a',
-          target: 'b1',
-          value: 3
-        },
-        {
-          source: 'b1',
-          target: 'a1',
-          value: 1
-        },
-        {
-          source: 'b1',
-          target: 'c',
-          value: 2
-        }
-      ]
+      data: [],
+      links: [],
+      lineStyle: {
+        color: 'gradient',
+        curveness: 0.5
+      },
+   left: 16,
+   top: 32,
+   bottom: 32,  
+   right: 200,
+      nodeGap: 8,
+    
+    
     }
-  })
-  const initecharts = () => {
+  ],
+  type: 5,
+})
+ 
+  const getData = async () => {
+    
+     let [startTime, endTime] = dateRang
+    
+    let params  = {
+      enterpriseId,
+      startTime:   startTime.format("YYYY-MM-DD hh:mm"),
+      endTime:  endTime.format("YYYY-MM-DD hh:mm")
+    }
+     try {
+      let {success, data} = await Carbon.QueryFlow(params)
+      if(success && data.constructor==Object) {       
+         const {link=[] } = data
+        let arr = []
+         let sources = Array.from(new Set([...link.map(i => i.source)]))
+        sources.forEach(s => {
+            let depth =link.filter(l => l.source == s).map(d =>  d.target)
+            
+             arr = [...arr, s, ...depth]
 
-    const charts = echarts.init(sankeyref.current)
-    chartsOpts && charts.setOption(chartsOpts);
+         })    
+       
+        let datas = Array.from(new Set([...arr])).map(name => ({name}))
+         let links = link.map(l =>({...l, value: parseFloat(l.value)}))
+          setOptions({
+            ...options,
+            series: [
+              {
+                ...options.series[0],
+                data: datas,
+                links,
+                label: {
+                  fontSize: 10
+                },
+                nodeAlign: "left",
+                nodeGap: 12,
+                lineStyle: {
+                  color: "source"
+                }
+              }
+            ]
+          })
+ 
+      } 
+     } catch (error) {
+         
+     }
+     
+     
   }
   useEffect(() => {
-    initecharts()
-  }, [])
-  return (
-    <div style={{ flex: 1, display: "flex", justifyContent: 'center', alignContent: 'center' }}>
-      <Pagecount bgcolor="#eeeff3" pd={0}>
+    if(Number.isInteger(enterpriseId)) {
+      getData()
+    }
 
-        <Tablediv>
-          <div className='header'>
-            <BlueColumn>碳排流向</BlueColumn>
-          </div>
-          <Cdivider type="h" margin="16px 0" />
-          <div className='sankeyInfo'>
-            <div>
-              <p className='name'>报告主体</p>
-              <p className='triangle'></p>
-            </div>
-            <div>
-              <p className='name'>核算单位</p>
-              <p className='triangle'></p>
-            </div>
-            <div>
-              <p className='name'>排放单位</p>
-              <p className='triangle'></p>
-            </div>
-          </div>
-          <div ref={sankeyref} className='sankey'></div>
-        </Tablediv>
-
-      </Pagecount>
+  }, [enterpriseId, dateRang])
+  const disabledDate = (current) => {
+     
+    return current && current > moment().endOf('day');
+  };
+  const  onChange=(datas, dateStrings) => {
+    setDateRang(datas)
+    console.log(datas)
+    console.log(dateStrings)
+  }
+   const CTitle = (
+    <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
+        <span>碳排流向</span>
+        <Space size={16}>
+         <RangePicker defaultValue={dateRang} showTime disabledDate={disabledDate} onChange={onChange}  />  
+         
+        </Space>
     </div>
   )
+   
+    return (
+      <Pagecount  pd="0px">   
+      <Titlelayout title={CTitle} layout="flex">
+          <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center', padding: "64px"}}>
+               <Ichart  custoption={options}   />
+          </div>
+       </Titlelayout>
+      </Pagecount>
+    )
 }

@@ -12,7 +12,7 @@ export const WarningSlice = apiSlice.injectEndpoints({
         }),
       
         EnableStrategy: build.mutation({ // 启用/禁用预警策略
-            query: (ruleId,enabled) => ({
+            query: ({ruleId,enabled}) => ({
                 url: `Carbon/CarbonWarningStrategy/EnableStrategy?ruleId=${ruleId}&enabled=${enabled}`,
                 method: 'POST',
                 
@@ -32,11 +32,10 @@ export const WarningSlice = apiSlice.injectEndpoints({
                 body
             })             
         }),
-        DeleteStrategy: build.mutation({ // 编辑预警策略
+        DeleteStrategy: build.mutation({ // 删除预警策略
             query: (ruleId) => ({
                 url: `Carbon/CarbonWarningStrategy/DeleteStrategy?ruleId=${ruleId}`,
                 method: 'DELETE',
-                body
             })             
         }),
     }),

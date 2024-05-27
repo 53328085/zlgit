@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react'
 import Pagecount from '@com/pagecontent'
-import styled from 'styled-components'
+import styled, {createGlobalStyle} from 'styled-components'
 import {Form, Space,Button, Tree, Input, message} from 'antd'
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
-
+import { cloneDeep } from 'lodash';
 import {Carbon} from '@api/api'
 import Titlelayout from "@com/titlelayout"
 import {TreeBtnN, TreeBtnW} from "@com/useButton"
@@ -12,6 +12,7 @@ import {CustButtonT, CustButton} from "@com/useButton"
 import CModal from "@com/useModal"
 import TableT from  "./tabletmp"
 import CDraw from './draw'
+const {TreeNode} = Tree;
 import {
   useBoundaryTreeQuery, 
   useAddCarbonBoundaryMutation, 
@@ -21,6 +22,12 @@ import {
   useSetConfigDataMutation,
   boundarySlice
 } from "./boundary"
+
+const GlobalStyles = createGlobalStyle`
+     .ant-tree-switcher-leaf-line:before {
+     // border: 4px solid var(--ant-primary-color);
+    }
+`;
 const CTree = styled(Tree)`
   && {
     flex:1;
@@ -58,6 +65,9 @@ const Custtitle = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 16px;
+    .ant-tree-switcher-leaf-line:before {
+      border-color: #237ae4;
+    }
 
 `
 const Mainbox = styled.div`
@@ -96,13 +106,15 @@ export default function Index() {
   // const {id:enterpriseId} = useSelector(enterprise)
   const  enterpriseData = useSelector(enterprise)
   let  {id:enterpriseId} = enterpriseData
-  console.log(enterpriseData)
+ 
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [params, setParams] = useState(null)
   let carbonBoundaryId = useRef()
   const [mTitle, setMtitle] =useState()
+  const [expandedKeys, setExpandedKeys] = useState([])
+ 
   const drawref = useRef()
   
   const displaydraw=(params) => {
@@ -111,6 +123,24 @@ export default function Index() {
   } 
 
   // 查询树
+const expandkeys = []
+const getKeys = (data) => {
+   if(Array.isArray(data) && data.length > 0) {
+      data.forEach((d) => {
+        expandkeys.push(d.id.toString())
+       
+        if(d.nodes) {
+          getKeys(d.nodes)
+        }
+
+
+      })
+
+
+
+   }
+
+}
 
  const [treeData, setTreeData] = useState([]) 
 const getTreeData = async () => {
@@ -118,9 +148,12 @@ const getTreeData = async () => {
    let {success, data, errMsg} = await  Carbon.QueryCarbonBoundary(enterpriseId)
    if(success && Array.isArray(data) && data.length) {
       setTreeData(data)
+      getKeys(data)
+      setExpandedKeys([...expandkeys])
    }else {
     if(!success) message.warning(errMsg || '数据出错')
      setTreeData([])
+     setExpandedKeys([])
    }
 
   } catch (error) {
@@ -152,23 +185,23 @@ useEffect(() => {
   */
   
   // 新增 编辑 删除子项
-
+ 
   const [addedit, setAddedit] = useState(true)
   const [saveSubItem] =useAddCarbonBoundaryMutation() // 新增
   const [editSubItem] = useUpdateBoundaryMutation() // 编辑
   const [deleteSubItme] = useDeleteBoundaryMutation() // 删除
   const parentIdRef = useRef({})
   const mref=useRef()
-  const addSubitem = (item) => {
-     parentIdRef.current = item
+  const addSubitem = (id) => {
+     parentIdRef.current = id
      setMtitle('新增碳排放边界分类子项')
      setAddedit(true)
      mref.current.onOpen()
 
   }
-  const editSubitem = (item) => {
-    let {name} = item
-    parentIdRef.current = item
+  const editSubitem = (id,name) => {
+   
+    parentIdRef.current = id
     form.setFieldValue('name',name);
     setMtitle('编辑碳排放边界分类子项')
     setAddedit(false)
@@ -179,6 +212,7 @@ useEffect(() => {
     let {success, errMsg} = await deleteSubItme(id).unwrap()
    if(success) {
       message.warning("删除成功")
+      getTreeData()
     }else {
       message.warning(errMsg || "数据出错")
     } 
@@ -186,7 +220,7 @@ useEffect(() => {
  const onOk = async () => {
     try {
       let {name} = await form.validateFields()
-      let {id} = parentIdRef.current
+      let id= parentIdRef.current
    
       if(addedit) {
         let params ={
@@ -197,6 +231,7 @@ useEffect(() => {
          let {success, errMsg} = await saveSubItem(params).unwrap()
           if(success) {
             //refetch()
+            getTreeData()
             message.success("保存成功")
            
           }else {
@@ -210,6 +245,7 @@ useEffect(() => {
         let {success, errMsg} = await editSubItem(post)
         if(success) {
           message.success("修改成功")
+          getTreeData()
         }else {
           message.warning(errMsg || '数据出错')
         }
@@ -294,15 +330,42 @@ useEffect(() => {
    <CustButtonT text="Completeconfiguration" ns="button" loading={isfinsh} onClick={onfinsh} /> 
   </div>), [title,open])
 
-
+const renderTreeNodes = (data) => {
+  data = cloneDeep(data);
+  let nodeArr = data.map((item) => {
+    let valName = cloneDeep(item.name);
+    let {name, id, nodes,parentId} = item   
+   
+      item.name = (
+        <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
+        {parentId === 0 ? <CustButton wh="auto">{item.name}</CustButton> :  <Custtitle>{item.name}</Custtitle>}
+        <Space size={16}>
+        <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(id,valName)} key="add" />
+        <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(id,valName)} />
+        {parentId!==0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
+        <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
+        </Space>
+      </div>
+      )
+      if(item.nodes){
+          return (
+              <TreeNode title={item.name} key={item.id} dataRef={item}>
+                  {renderTreeNodes(item.nodes)}
+              </TreeNode>
+          )
+      }
+      return <TreeNode title={item.name} key={item.id}></TreeNode>
+  })
+  return nodeArr;
+}
 
   const custitem =(item) => {
-    let {name, id, nodes,parentId} = item
+    let {name, id, nodes,parentId} = item   
     if(Array.isArray(nodes) && nodes.length >0) {
        custitem(nodes)
      }
     return   (
-      <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}} key={id}>
         {parentId === 0 ? <CustButton wh="auto">{name}</CustButton> :  <Custtitle>{name}</Custtitle>}
         <Space size={16}>
         <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" />
@@ -317,14 +380,10 @@ useEffect(() => {
     <Pagecount bgcolor="transparent" pd="0">
     
     <Mainbox >
+      <GlobalStyles/>
          <Titlelayout title="排放单元结构" layout="flex" key="left">
-         <CTree
-         fieldNames={{title: 'name', key: 'id', children: 'nodes'}}
-          treeData={treeData}
-          titleRender={item =>  custitem(item)} 
-          defaultExpandAll
-          showLine
-   />
+       {treeData?.length > 0 ?   (<CTree  height={654} defaultExpandedKeys={expandedKeys} showLine blockNode selectable={false}>{renderTreeNodes(treeData)}</CTree>): null
+       }
           
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="right">

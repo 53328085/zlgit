@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
-import {Form,  Space, DatePicker, Tooltip} from 'antd'
+import {Form,  Space, DatePicker, Tooltip, InputNumber, Input, Select, message, Switch} from 'antd'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
  import {  useDeleteStrategyMutation,
@@ -13,6 +13,12 @@ import {CustButtonT,CustLink} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
+import CModal from "@com/useModal"
+import {Carbon} from '@api/api'
+ 
+
+
+
 const Mainbox = styled.div`
   margin-top: 16px;
     padding-top: 16px;
@@ -25,67 +31,244 @@ const Mainbox = styled.div`
 
 export default function Index() { 
 
-  const columns = [
-    {
-        title: '序号',
-        dataIndex: 'year',
-         key: ''
-    },
-   
-      {
-        title: '规则名称',
-        dataIndex: 'ruleName',
-         key: 'ruleName'
-     },
-     {
-      title: '预期周期',
-      dataIndex: 'expectedPeriod',
-       key: 'expectedPeriod'
-   },
-   {
-    title: '预期限制计算方法',
-    dataIndex: 'Calculation',
-     key: 'Calculation'
- }, 
- {
-  title: '限值及等级',
-  dataIndex: 'LimitsAndLevels',
-   key: 'LimitsAndLevels'
-}, 
-{
-  title: '是否启用',
-  dataIndex: 'Enabled',
-   key: 'Enabled'
-}, 
-   {
-    title: "操作",
-    dataIndex: 'total',
-      key: 'total',
-      align: 'center',
-      render: (text,record) => {
-        return <Space><CustLink text="edit" /></Space>
-      }
-   }
-  ]
-  console.log('render')
+
+  
   const [form] = Form.useForm()
   const {id} = useSelector(enterprise)
- 
-  const {isSuccess, data} = useStrategyAllQuery()
+
+  const [title, setTitle] = useState('')
+  const isadd = useRef()
+  const [tableData, setTableData] = useState([])
+  const ref= useRef()
+/*   const {isSuccess, data} = useStrategyAllQuery()
   let tableData = []
   if(isSuccess && Array.isArray(data?.data)) {
      console.log(data?.data)
   }else {
     tableData = []
   }  
+  */
+const enableAdd = useRef()
+const disabledId = useRef()
+const getData = async () => {
+   let {success, errMsg, data} = await  Carbon.QueryStrategyAll()
+   if(success && Array.isArray(data) && data.length >0) {
+     setTableData(data)
+     enableAdd.current = data.length >= 2
+     if(data.length == 1) {
+       disabledId.current = data[0].expectedPeriod
+     }
+   }else {
+     if(!success) message.warning(errMsg || '数据层出错')
+     setTableData([])
+    if(success && data?.length ==0) disabledId.current=NaN
+   }
+}
+useEffect(() => {
+  getData()
+}, [])
+
+const SwitchC =({text, ruleId}) => {
  
+  const [changeEnable] =  useEnableStrategyMutation()
+  const onChange = async (checked) => {    
+    let {success, errMsg} = await  changeEnable({ruleId, enabled: Number(checked)}).unwrap()
+    if(success) {
+       let msg = checked ? '启用成功' : '停用成功'
+       getData()
+       message.success(msg)
+    }else {
+      message.warning(errMsg || '数据出错')
+    }
+  }
+
+  return  <Switch defaultChecked={text==1} checkedChildren="启用" unCheckedChildren="停用" onChange={onChange} />
+}
+const columns = [
+  {
+      title: '序号',
+      dataIndex: 'index',
+       key: 'index',
+       render: (text, record, index) => <>{index +1}</>
+  },
+ 
+    {
+      title: '规则名称',
+      dataIndex: 'ruleName',
+       key: 'ruleName'
+   },
+   {
+    title: '预期周期',
+    dataIndex: 'expectedPeriod',
+     key: 'expectedPeriod',
+     render: (text) => <>{['月','年'][text]??''}</>
+ },
+ {
+  title: '预警限值计算方法',
+  dataIndex: 'calculation',
+   key: 'calculation',
+   render: (text) => <>{text==0 ? '百分比' : null}</>
+}, 
+{
+title: '限值及等级',
+dataIndex: 'limitsAndLevels',
+ key: 'limitsAndLevels',
+ render: (text) => {    
+   if(Array.isArray(text)) {
+     let level1 = text.find(t => t.level == 1)
+     let level2 = text.find(t => t.level == 2)
+     let level3 = text.find(t => t.level == 3)
+     return (<div>
+       <span>紧急: ≥{level1?.limitValueMin}%</span>&nbsp;
+       <span>严重：{level2?.limitValueMin}%</span>-<span>{level2?.limitValueMax}%</span>&nbsp;
+       <span>一般：≤0-{level3?.limitValueMax}%</span>
+     </div>)
+
+   }else {
+    return null
+   }
+
+ }
+}, 
+{
+title: '是否启用',
+dataIndex: 'enabled',
+ key: 'enabled',
+ render: (text, record) => <SwitchC text={text} ruleId={record.ruleId}  />
+}, 
+ {
+  title: "操作",
+  dataIndex: 'total',
+    key: 'total',
+    align: 'center',
+    render: (text,record) => {
+      return <Space><CustLink text="edit" onClick={() => onedit(record) } /><CustLink text="delete" onClick={() => ondel(record) } /></Space>
+    }
+ }
+]
+
+// 删除 
+
+const [DeleteStrategy] = useDeleteStrategyMutation()
+
+const ondel = async (record) => {
+    try {
+      let {success, errMsg} = await DeleteStrategy(record.ruleId).unwrap()
+      if(success) {
+        message.success('删除成功')
+        getData()
+      }else {
+        message.warning(errMsg || '数据出错')
+      }
+    } catch (error) {
+      
+    }
+   
+
+}
+
+
+
+//  编辑, 新增
+const ruleIdRef = useRef({})
+const onedit =(record) => {
+    ruleIdRef.current = record.ruleId
+    isadd.current=false
+   let {ruleName,expectedPeriod, limitsAndLevels} = record;
+   let arg =new Map()
+   console.log(limitsAndLevels)
+   limitsAndLevels.forEach(data => {
+
+     arg.set([data.level.toString(), 'LimitValueMin'], data.limitValueMin)
+     arg.set([data.level.toString(), 'LimitValueMax'], data.limitValueMax)
+
+   })
+  
+  for(let [key, value] of arg) {
+    console.log(key)
+    form.setFieldValue(key, value)
+  }
+
+  setTitle(`编辑${ruleName}`)
+
+  form.setFieldsValue({
+    expectedPeriod: {label:ruleName, value: expectedPeriod },
+   
+  })
+  ref.current.onOpen()
+}
+
+
+
+
+
+
+ const onAdd =() => {
+  isadd.current=true
+  setTitle('新增预警策略配置')
+   ref.current.onOpen()
+ }
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
         <span>预警策略配置</span>
-        <Space><CustButtonT text="new"   /></Space>
+        <Space><CustButtonT text="new" onClick={onAdd} disabled={enableAdd.current}   /></Space>
     </div>
   )
  
+  let [insertStrategy] = useInsertStrategyMutation()
+  let [updateStrategy] = useUpdateStrategyMutation()
+
+  const onOk = async () => {
+      try {
+        let values =  await form.validateFields()
+        let {expectedPeriod: obj, ...rest} = values
+        let {label,value} = obj;
+         let limitsAndLevels = []
+         for(let [key, values] of Object.entries(rest)) {
+           let {LimitValueMin,LimitValueMax} = values
+           let obj = {
+             level: parseInt(key),
+             limitValueMin: parseFloat(LimitValueMin),
+             limitValueMax: parseFloat(LimitValueMax)
+           }
+           limitsAndLevels.push(obj)
+
+         }
+        let params =isadd.current ? {
+          ruleName: label,
+          expectedPeriod: value,
+          enabled: 1,
+          calculation: 0,
+          limitsAndLevels,
+        } : {
+          ruleId: ruleIdRef.current,
+          limitsAndLevels
+        }
+        let handler = [updateStrategy, insertStrategy][Number(isadd.current)]
+        let {success, errMsg} = await handler(params).unwrap()
+        if(success) {
+          getData()
+          ref.current.onCancel()
+        }else {
+          message.warning(errMsg || '数据出错')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
+  const rules = [
+    {
+      required: true
+    }
+  ]
+  const onChange = (v) => {
+    let max = (v-0.01).toFixed(2)
+    form.setFieldValue(['2', 'LimitValueMax'],max)
+  }
+  const onChangel = (v) => {
+    let max = (v+0.01).toFixed(2)
+    form.setFieldValue(['2', 'LimitValueMin'],max)
+  }
   return (
     <Pagecount bgcolor="transparent" pd="0">
      
@@ -97,7 +280,66 @@ export default function Index() {
              </Mainbox>
 
           </Titlelayout>
-        
+    <CModal title={title} ref={ref} mold="cust" onOk={onOk} width={424} >
+        <Form form={form}   preserve={false} labelCol={{span: 5}} labelAlign='left'>
+          <Form.Item label="预警类型" name="expectedPeriod"  initialValue={{label: '月度碳排放预警', value: disabledId.current == 0 ? 1 : 0}}>
+              <Select labelInValue>
+                 <Select.Option value={0} disabled={disabledId.current == 0}>月度碳排放预警</Select.Option>
+                 <Select.Option value={1} disabled={disabledId.current == 1}>年度碳排放预警</Select.Option>
+              </Select>
+          </Form.Item>
+           <Form.Item label="紧急  ≥" >
+              <Space>
+                <Form.Item name={['1', 'LimitValueMin']} rules={rules}>
+                   <InputNumber min={0} style={{width: '100px'}} max={99.99} step={0.01} onChange={onChange} />
+                </Form.Item>
+                <strong>%</strong>
+                <Form.Item name={['1', 'LimitValueMax']} noStyle initialValue={100}>
+                   <InputNumber   type="hidden" style={{border: "none"}} />
+                </Form.Item>
+              </Space>  
+           </Form.Item>
+           <Form.Item label="严重"   >
+                      <Space>
+                         <Form.Item name={['2', 'LimitValueMin']} rules={rules}>
+                             <InputNumber  style={{width: '100px'}} step={0.01} disabled />
+                         </Form.Item>
+                         <p>% ~</p>
+                         <Form.Item name={['2', 'LimitValueMax']} >
+                             <InputNumber  style={{width: '100px'}} step={0.01} disabled />
+                         </Form.Item>
+                      </Space>
+           </Form.Item>
+           <Form.Item label="一般  ≤" shouldUpdate>
+            {
+             ({getFieldValue}) => {
+              let init = (getFieldValue(['2', 'LimitValueMax']) -0.02).toFixed(2)
+               
+               return (
+                <Space>
+                <Form.Item name={['3', 'LimitValueMax']} noStyle>
+                     <InputNumber   style={{width: '100px'}} min={0.01} max={init} onChange={onChangel} />
+                 </Form.Item>
+                 <strong>%</strong>
+                 <Form.Item name={['3', 'LimitValueMin']} noStyle initialValue={0}>
+                     <InputNumber type="hidden" style={{border: "none"}} />
+                 </Form.Item>                        
+                </Space>
+               )
+
+
+             }
+
+
+            }
+                     
+           </Form.Item>
+           <Form.Item >
+              <p style={{color: "#f00"}}>注：输入的值为已排放量占配额的百分比</p>
+           </Form.Item>
+        </Form>
+
+     </CModal>
     </Pagecount>
   )
 }

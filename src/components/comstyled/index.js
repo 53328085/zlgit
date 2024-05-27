@@ -6,7 +6,7 @@
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination} from 'antd'
 import {useTranslation} from "react-i18next"
-
+import moment from "moment";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 const $color= '#237AE4'
@@ -87,6 +87,14 @@ export const CdatePicker = styled(DatePicker)`
   }
 }
 `
+
+export const ComDatePicker = (props) => {
+  const disabledDate = (current) => {
+    return current && current < moment().endOf('day');
+  };
+  return (<DatePicker 
+    disabledDate={disabledDate} {...props} />)
+}
 export const Iptserach = styled(Search)`
 && {
   border-radius: 4px;

@@ -29,8 +29,8 @@ export const SummarySlice = apiSlice.injectEndpoints({
             }),
         }),    
         Month: build.query({   // 获取月度碳排
-            query: (enterpriseId) =>({
-                url:`Carbon/CarbonOverviewRuntime/QueryMonthlyCarbonEmission?enterpriseId=${enterpriseId}`,
+            query: ({enterpriseId, type}) =>({
+                url:`Carbon/CarbonOverviewRuntime/QueryMonthlyCarbonEmission?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
                
             }),

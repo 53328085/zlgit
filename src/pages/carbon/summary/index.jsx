@@ -74,7 +74,7 @@ export default function Index() {
     grid: {
         right: 0,
         left: 0,
-        top: 0,
+        top: '16px',
         bottom: 0,
          containLabel: true,
      },
@@ -145,7 +145,7 @@ const OnGetRankingData = async (e) => {
 }
 
  // 月度碳排放
-const {isSuccess: msuc, data: monthData} =useMonthQuery(enterpriseId, {
+const {isSuccess: msuc, data: monthData} =useMonthQuery({enterpriseId, type: 1}, {
   skip: !Number.isInteger(enterpriseId)
 })
 

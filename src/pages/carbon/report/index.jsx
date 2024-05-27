@@ -140,6 +140,15 @@ export default function Index() {
 
   const { chineseTitle } = useSelector(systemConfigInfo)
 
+  // 二氧化碳排放报告
+  const co2Table = [
+    { id: "1", name: "化石燃料燃烧二氧化碳排放量", ton: "", co2: "" },
+    { id: "2", name: "工业生产过程二氧化碳排放量", ton: "", co2: "" },
+    { id: "3", name: "废水厌氧处理过程产生的甲烷排放量", ton: "", co2: "" },
+    { id: "4", name: "净购入使用的电力二氧化碳掉放量", ton: "", co2: "" },
+    { id: "5", name: "净购入使用的热力二氧化碳掉放量", ton: "", co2: "" },
+    { id: "6", name: "企业二氧化碳排放总量(吨二氧化碳当量)", co2: "" },
+  ]
   // 化石燃料燃烧
   const combustionTable1 = [
     { id: "0", name: "无烟煤", consume: "", heating: "" },
@@ -218,7 +227,7 @@ export default function Index() {
     { id: "1", name: "碳酸盐的排放因子", data: "", unit: "tCO₂/t" },
     { id: "", name: "二氧化碳的损耗比例", data: "", unit: "%" },
   ]
-  
+
   // 废水厌氧处理2
   const wasteTable2 = [
     { id: "1", name: "废水厌氧处理系统的甲烷最大生产能力", data: "", unit: "kg CH₄/kg COD" },
@@ -455,7 +464,7 @@ export default function Index() {
                       textAlign: 'center', marginTop: 50, marginBottom: 10, fontSize: 15, fontWeight: 700,
                       fontFamily: 'cursive'
                     }}>附表1 报告主体年二氧化碳排放报告</p>
-                    <DesItem title="" bordered size='small' column={3} >
+                    {/* <DesItem title="" bordered size='small' column={3} >
                       <DesItem.Item>源类别</DesItem.Item>
                       <DesItem.Item>温室气体本身质量(单位:吨)</DesItem.Item>
                       <DesItem.Item>CO₂当量(单位:吨 CO₂当量)</DesItem.Item>
@@ -474,7 +483,26 @@ export default function Index() {
                       <DesItem.Item span='2'>企业二氧化碳排放总量(吨二氧化碳当量)
                       </DesItem.Item>
                       <DesItem.Item> </DesItem.Item>
-                    </DesItem>
+                    </DesItem> */}
+
+                    <table border="1" align="center">
+                      <tr align="center">
+                        <th>源类别</th>
+                        <th>温室气体本身质量(单位:吨)</th>
+                        <th>CO₂当量(单位:吨 CO₂当量)</th>
+                      </tr>
+                      {co2Table.map((item => {
+                        return <tr align="center" key={item.id}>
+                          {item.name == "企业二氧化碳排放总量(吨二氧化碳当量)" ?
+                            <td align="left" colspan="2">{item.name}</td> : <td>{item.name}</td>}
+                          {item.name == "企业二氧化碳排放总量(吨二氧化碳当量)" ?
+                            null : <td>{item.ton}</td>}
+                          <td>{item.co2}</td>
+                        </tr>
+                      })
+                      )}
+
+                    </table>
                   </div>
                 </PageComp>
                 <div className="page-break" />

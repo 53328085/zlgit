@@ -8,7 +8,7 @@ const CarbonData = lazy(() => import("@pages/carbon/carbonData")) // 碳排查�
 const Details = lazy(() => import("@pages/carbon/details")) // 碳排查管理
 const Direction = lazy(() => import("@pages/carbon/direction")) // 碳排流向
 
-const Market = lazy(() => import("@pages/carbon/market")) // 碳排流向
+const Market = lazy(() => import("@pages/carbon/market")) // 碳排市场
 const Report = lazy(() => import("@pages/carbon/report"))
 
 export let runtimeCarbonEmissionManager = {

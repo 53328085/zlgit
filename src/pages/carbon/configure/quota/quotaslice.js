@@ -25,7 +25,13 @@ export const QutoSlice = apiSlice.injectEndpoints({
             })             
         }),
         
-       
+        SaveTarget: build.mutation({ // 保存碳排目标值
+            query: (body) => ({
+                url: `Carbon/CarbonQuotaManagement/SaveCarbonTarget`,
+                method: 'POST',
+                body,
+            })             
+        }),
     }),
 
 
@@ -34,5 +40,6 @@ console.dir(QutoSlice)
 export const {
     useQuotaQuery,
     useEmissionQuery,  
-    useSaveQuotaMutation    
+    useSaveQuotaMutation,
+    useSaveTargetMutation     
     } = QutoSlice

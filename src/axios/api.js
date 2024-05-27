@@ -2121,10 +2121,73 @@ export class Carbon {
 
   
   // 配额管理
+
   static QueryCarbonQuotaCurYear = ({year,enterpriseId}) =>
    server.get(`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排配额 当年
 
    static QueryCarbonQuota= (enterpriseId) =>
    server.get(`Carbon/CarbonQuotaManagement/QueryCarbonEmission?enterpriseId=${enterpriseId}`) // 获取碳排配额 历年
+
+   static QueryCarbonTarget= (enterpriseId, year) =>
+   server.get(`Carbon/CarbonQuotaManagement/QueryCarbonTarget?enterpriseId=${enterpriseId}&year=${year}`) // 获取碳排目标值
+
+   // 预警配置
+   
+   static QueryStrategyAll= (enterpriseId, year) =>   
+   server.get(`Carbon/CarbonWarningStrategy/QueryStrategyAll`)  // 查询预警策略配置
+
+   // 运行态
+
+   // 碳排考核跟踪
+
+   static QueryAnnualData= (enterpriseId, year) =>    
+   server.get(`Carbon/CarbonTrackRuntime/QueryAnnualData?enterpriseId=${enterpriseId}&year=${year}`) // 碳排年度数据
+
+   static QueryMonthlyAnalysis= (enterpriseId, year) =>   
+   server.get(`Carbon/CarbonTrackRuntime/QueryMonthlyAnalysis?enterpriseId=${enterpriseId}&year=${year}`) // 碳排月度考核分析
+
+   static QueryEmissionData= (params) =>   
+   server.get(`Carbon/CarbonTrackRuntime/QueryEmissionData`, {params}) // 碳排放数据
+
+
+   // 碳排查数据
+   
+   static QueryEmissionDataPost= (pageNum, pageSize, params) =>   
+   server.post(`Carbon/CarbonEmissionDataRuntime/QueryCarbonEmissionData?pageNum=${pageNum}&pageSize=${pageSize}`,params) // 碳排放数据
+   static ExportDataPost= (params) =>   
+   server.post(`Carbon/CarbonEmissionDataRuntime/Export`,params) 
+
+   // 碳排查管理
+
+    static QueryCarbonManagePlan= ({projectId, pageNum, pageSize}) =>   
+     server.get(`Carbon/CarbonManageRuntime/QueryCarbonManagePlan?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`) // 分页查询碳排监测计划
+
+     static DownloadTemplateCarbon= () =>   
+     server.get(`Carbon/CarbonManageRuntime/DownloadTemplate`,  {
+      headers: {
+         "Content-Type":"application/json;charset=UTF-8;application/msword",
+         
+     },
+     responseType: "blob",
+   }) 
+
+   static PostCarbonManagePlan= ({projectId,year,latestTime,latestVersion,applicant}, body) =>   
+     server.post(`Carbon/CarbonManageRuntime/PostCarbonManagePlan?projectId=${projectId}&year=${year}&latestTime=${latestTime}&latestVersion=${latestVersion}&applicant=${applicant}`,  body)
+     static DownloadCarbonManagePlan= (projectId, year) =>   
+     server.get(`Carbon/CarbonManageRuntime/DownloadCarbonManagePlan?projectId=${projectId}&year=${year}`,  {
+      headers: {
+         "Content-Type":"application/json;charset=UTF-8;application/msword",
+         
+     },
+     responseType: "blob",
+   }) // 下载碳排监测计划报告
+
+   static DeleteCarbonManagePlan= (projectId, year) =>   
+   server.delete(`Carbon/CarbonManageRuntime/DeleteCarbonManagePlan?projectId=${projectId}&year=${year}`) // 删除碳排监测计划
+
+   // 
+   static QueryFlow= ({enterpriseId, startTime,endTime}) =>   
+   server.post(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
+   
 }
  
