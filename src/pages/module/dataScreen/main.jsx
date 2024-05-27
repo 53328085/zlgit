@@ -10,7 +10,7 @@ import {SaveButton} from '@com/useButton'
  
 import {  getdataScreen } from "@redux/systemconfig";
 import Citem from './Citem'
-
+import {useTranslation} from "react-i18next"
 const Mainbox = styled.div`
     && {
        flex: 1; 
@@ -43,22 +43,24 @@ const Formbox = styled(Form)`
 
 
 
-const screens = [
-    {label: "项目综合大屏", name1: 'bigScreenEnabled', name2: 'bigScreenUrl'},
-    {label: "运行监控", name1: 'monitorBigScreenEnabled', name2: 'monitorBigScreenUrl'},
-    {label: "电气安全", name1: 'safeBigScreenEnabled', name2: 'safeBigScreenUrl'},
-    {label: "配电管理", name1: 'distributionEnabled', name2: 'distributionScreenUrl'},
-    {label: "结算收费", name1: 'prepayEnabled', name2: 'prepayScreenUrl'},
-    {label: "能源管理", name1: 'energyEnabled', name2: 'energyScreenUrl'},
-    {label: "光伏发电", name1: 'solarEnabled', name2: 'solarScreenUrl'},
-    {label: "储能管理", name1: 'storageEnabled', name2: 'storageScreenUrl'},
-    {label: "碳排管理", name1: 'carbonEnabled', name2: 'carbonScreenUrl'},
-    {label: "运维管理", name1: 'maintenanceEnabled', name2: 'maintenanceScreenUrl'},
 
-]
 export default function Main({projectId}) {
     const dispath = useDispatch()
     const [form] = Form.useForm()
+    const {t} =useTranslation("common","comm")
+    const screens = [
+        {label: t("common:ProjectComprehensiveScreen"), name1: 'bigScreenEnabled', name2: 'bigScreenUrl'},
+        {label: t("common:OperationMonitoring"), name1: 'monitorBigScreenEnabled', name2: 'monitorBigScreenUrl'},
+        {label: t("common:ElectricalSafety"), name1: 'safeBigScreenEnabled', name2: 'safeBigScreenUrl'},
+        {label: t("common:DistributionManagemet"), name1: 'distributionEnabled', name2: 'distributionScreenUrl'},
+        {label: t("common:SettlementFee"), name1: 'prepayEnabled', name2: 'prepayScreenUrl'},
+        {label: t("common:EnergyManagement"), name1: 'energyEnabled', name2: 'energyScreenUrl'},
+        {label: t("common:PhotovoltaicEnergy"), name1: 'solarEnabled', name2: 'solarScreenUrl'},
+        {label: t("common:StorageManagement"), name1: 'storageEnabled', name2: 'storageScreenUrl'},
+        {label: t("common:CarbonEmissionManagement"), name1: 'carbonEnabled', name2: 'carbonScreenUrl'},
+        {label: t("common:OperationMaintenanceManagement"), name1: 'maintenanceEnabled', name2: 'maintenanceScreenUrl'},
+    
+    ]
   // UpdateSiteOnOffGrid
   const QueryBigScreen = () => {
     return BigScreen.QueryBigScreen(projectId).then(res => {
@@ -115,7 +117,7 @@ export default function Main({projectId}) {
     <Titlelayout title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}><span>数据大屏设置</span><SaveButton    loading={loading} onClick={onSave} isicon={false} /></div>}>
         <Mainbox>
              
-            <Formbox layout="inline" form={form}  colon={false} labelCol={{ span: 3 }} labelAlign='left'>
+            <Formbox layout="inline" form={form}  colon={false} labelCol={{ span: 4 }} labelAlign='left'>
             {screens.map(s => <Citem label={s.label} name1={s.name1} name2={s.name2} key={s.name2} form={form} /> )}
            </Formbox> 
                 

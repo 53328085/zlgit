@@ -47,7 +47,6 @@ export default function Hmenu() {
    danger: true,
    nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
   }))
-
   const menus = isconfig ? designer : run
 
 
@@ -98,6 +97,7 @@ export default function Hmenu() {
        navigate(url, {state})
     }  
    },[state]) 
+
   return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 
 

@@ -73,6 +73,11 @@ export default function Index() {
       "class",
       "chart"
     ],
+    runtimeQuota:[
+      "runtimeParkQuota",
+      "runtimeQuotaDetailed",
+      "runtimeQuotaAlarms"
+    ],
     // 设计态
     designerEnergy: [ // 能源管理
        "price",

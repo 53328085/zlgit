@@ -18,7 +18,7 @@ import  {runtimeSolar} from "./photovoltaic"; // 光伏
 import  {designerCommon} from "./designer/common";
 import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
- 
+import  {runtimeQuota} from './quota'
 
  let runRoutes = {
   runtimeMonitor,
@@ -31,6 +31,7 @@ import  {runtimeStorage} from './storage' // 储能管理
   designerCommon,
   runtimeCarbonEmissionManager,
   runtimeStorage,
+  runtimeQuota
  }
 
 
@@ -98,6 +99,7 @@ const loginrouter =  [{
   '0111': Comindex,
   '0112': Comindex,
   '0113': Comindex,
+  '0114': Comindex
 } 
 
  
@@ -188,6 +190,7 @@ const getNestRout = (sider,routes) => {
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {
+      // /console.log(r,routes)
       let {no, key, label} = r;
       let Com =routes ? routes[no] : Emptycom;     
       if (Com) menus.push({path: key, element: <Com pagename={label} />}) 
@@ -225,9 +228,9 @@ function useRoute() { // 重写路由
       })
     }
   })
-  
+  console.log(designerMenus)
   designerMenus?.forEach(r => {
-    let {no, key} = r;
+    let {no, key} = r;//0212 quota 
     let Com = designerComponents[no];
     let nestroute = designerRoutes[key]
     let sider = siderDesignerMenus[key]
@@ -264,7 +267,6 @@ function useRoute() { // 重写路由
       routes.push(nav)
   }
 }
-
 
 const EL = () => {
  useRoute()

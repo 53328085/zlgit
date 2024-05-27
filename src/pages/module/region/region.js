@@ -30,6 +30,7 @@ import Mapcom from "@com/useMap/indexset";
 import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject} from '@redux/systemconfig.js'
 import {useSelector, useDispatch} from 'react-redux'
 import {useTranslation} from "react-i18next"
+
 const { Dragger } = Upload;
 const Mainbox = styled.div`
   position: relative;
@@ -153,12 +154,13 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const currenName = allLevel?.find(item => item.level == level)?.name
   const preName = level > 1 ? allLevel?.find(item => item.level == level - 1)?.name : null
   const sheetName = projectName+'_'+currenName
+  const {t} =useTranslation("common","comm")
   /* 
 {title: '名称', dataIndex: '名称', key: '名称'} 
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
-  const {t} =useTranslation("common","comm")
+
   const [tempcolums, tempdata] =  useMemo(() => {
     let getcol = (name) => ({title: name, dataIndex: name, key: name});
     let colums = [
@@ -209,7 +211,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
  
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
-  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
+  const title = isAdd ? `${t("common:add")}${name}` : `${t("common:Edit")}${name}`; // 当前层级名称  defaultParams
  
   let params = {
     //查询
@@ -763,7 +765,7 @@ mold="cust"
       })}
 
   <Item
-    label={`${name}名称`}
+    label={`${name}${t("common:name")}`}
     name="name"
     rules={[
       {
@@ -776,7 +778,7 @@ mold="cust"
 
   {fields?.map((f, index) => inputType(f.name, f.type))}
   <Item
-    label="备注"
+    label={t("common:Note")}
     name="remark"
   >
     <Input />
@@ -806,7 +808,7 @@ mold="cust"
       {/* 删除 */}
       <CModal
         width={554}
-        title={`删除${name}`}
+        title={`${t("common:Delete")}${name}`}
         ref={dref}
         onOk={delOk}
         type="warn"

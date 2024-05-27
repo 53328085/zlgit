@@ -1,6 +1,7 @@
 import React from 'react'
 import {Form, Space, Select, Input} from 'antd'
 import screenes from '../../screen'
+import {useTranslation} from "react-i18next"
 const {Item} = Form
 
 
@@ -23,6 +24,7 @@ const {Item} = Form
     )
   }
 export default function Citem({label, name1, name2, form}) { 
+  const {t} =useTranslation("common","comm")
     const opChange = (e, filed) => {
       if(e == 0) {
         form.setFieldValue(filed, '')
@@ -30,13 +32,13 @@ export default function Citem({label, name1, name2, form}) {
     }
     return (
         <Item label={label}>
-        <Space  size={16} align='start'>
+        <Space  size={16} align='start' styles={{width: 'auto'}}>
 
         <Item name={name1} noStyle >
             <Select options={[
-                {value: 0, label: "禁用"},
-                {value: 1, label: "标准", disabled: screenes[name2] == 0},
-                {value: 2, label: "高级"}
+                {value: 0, label:t("common:Disable")},
+                {value: 1, label:t("common:Standard"), disabled: screenes[name2] == 0},
+                {value: 2, label: t("common:Advanced")}
             ]} style={{width: "130px"}} onChange={(e) => opChange(e, name2)}></Select>
          </Item>
          <Item  noStyle shouldUpdate={(pre, cur) => pre[name1]!=cur[name1]}>
