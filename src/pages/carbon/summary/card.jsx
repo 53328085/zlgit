@@ -18,7 +18,7 @@ const Mainbox = styled.div`
   display: flex;
   flex: 1;
   justify-content: space-between;
-  align-items: stretch;
+//  align-items: stretch;
   padding: 0 8px;
   color: #fff;
   
@@ -37,8 +37,10 @@ const Mainbox = styled.div`
     flex-direction: column;
     justify-content: space-between;
     min-width: 120px;
+    height: 80px;
     p {
         color: #fff;
+        line-height: 1;
     }
    
     .yoy {
@@ -77,21 +79,19 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
     content = (
         <>
           <div className='imgbox' key="img">
-          <Image src={leftBox} preview={false} width={96} height={100}  />
+          <Image src={leftBox} preview={false} width={96} height={94}  />
           </div>
           <div className='right' key="right">
              <p>{name}</p>
-             <div>
              <p style={{textAlign: "right"}} key="a"><Text className='num' ellipsis={value} >{value}</Text></p>
              <p style={{textAlign: "right"}} key="b">同比<Text  ellipsis={value} style={{paddingLeft:"10px", fontSize: "16px", color: "#fff"}}>{yoy}</Text></p>
-             </div>
           </div>
         </>
         )
  }
 
   return (
-    <Titlelayout title={title} bgcolor={bgcolor} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '128px'}}>
+    <Titlelayout title={title} bgcolor={bgcolor} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '112px'}}>
         <Mainbox>
             {content}
         </Mainbox>

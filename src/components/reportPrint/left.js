@@ -75,7 +75,7 @@ const create = async () => {
      let suc =  await  getReport(params)
      setLoading(suc)
     } catch (error) {
-        
+        console.log(error)
     }
    
     

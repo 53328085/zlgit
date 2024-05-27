@@ -1,25 +1,27 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Image, message, Progress, Select } from 'antd'
+import { Form, Image, message, Progress, Select, Typography } from 'antd'
 import Pagecount from '@com/pagecontent'
 import Card from './card'
 import {isObject} from "@com/usehandler"
 import styled from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
-import {enterprise} from "@redux/systemconfig"
+import {enterprise,selectProjectId} from "@redux/systemconfig"
 import Titlelayout from '@com/titlelayout';
  
 import Ichart from '@com/useEcharts/Ichart'
  
 import Table from '@com/useTable'
-import {SummarySlice,useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery} from './summaryslice'
+import {SummarySlice,useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from './summaryslice'
  
+const {Text} = Typography
 const Mainbox =styled.div`
   flex:1;
   display: grid;
-  grid-template-rows: 128px 386px 318px;
+  grid-template-rows: 112px 400px 320px;
   row-gap: 16px;
+  overflow: hidden;
   .custTitle {
     display: flex;
     align-items: center;
@@ -37,13 +39,45 @@ const Mainbox =styled.div`
   }
   .center {
      display: grid;
-     grid-template-columns:1200px 464px;
+     grid-template-columns:656px 544px 448px;
      column-gap: 16px;
   }
   .down {
     display: grid;
-    grid-template-columns: 769px 415px 464px;
+    grid-template-columns: 1216px 448px;
     column-gap: 16px;
+    height: 320px;
+      .wrap {
+        margin-top: 16px;
+        height: 254px;
+         width: 100%;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        .content {
+         min-height:254px;
+         display: flex;
+         flex-direction: column;
+         justify-content: flex-start;
+         p {
+        background-color: #E4F4FF;
+        display: grid;
+        height: 50px;
+        grid-template-columns: repeat(4, 1fr);
+        justify-items: center;
+        align-items: center;
+        &:nth-of-type(2n) {
+          background-color: #f4f7ff;
+        }
+      }
+
+       }
+
+      }
+      .wrap::-webkit-scrollbar {
+      display: none;
+      
+      }
   }
 `  
 const options = [
@@ -56,6 +90,11 @@ const options = [
     value: 2,
   },
 ];
+
+
+
+
+
 /* 月，年。没有日 */
 export default function Index() {
   const {id:enterpriseId} = useSelector(enterprise)
@@ -68,8 +107,20 @@ export default function Index() {
   Quota = quotaData?.data ?? {}
  }
 
+
+ // 获取园区图片
+
+const projectId =useSelector(selectProjectId)
+let projectImg =useRef()
+
+const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
+  skip: !Number.isInteger(projectId)
+ })
+ if(imgsuc) {
+  projectImg.current = imgData?.data ?? null
+ }
  // 实时碳排放
-  const [roption, setRoption] =useState({
+  /* const [roption, setRoption] =useState({
     series: [{type: "line", seriesLayoutBy: 'row'}],
     grid: {
         right: 0,
@@ -111,7 +162,7 @@ export default function Index() {
       })
       if(!success) message.warning(errMsg || '数据出错')
     }
- }
+ } */
 
  
 
@@ -144,9 +195,21 @@ const OnGetRankingData = async (e) => {
    
 }
 
+
  // 月度碳排放
-const {isSuccess: msuc, data: monthData} =useMonthQuery({enterpriseId, type: 1}, {
-  skip: !Number.isInteger(enterpriseId)
+const [montharg, setMontharg] = useState({
+  enterpriseId,
+  type: 1,
+})
+
+const monthchange =(e) => {
+   setMontharg({
+   ...montharg,
+   type: e.target.value
+   })
+}
+const {isSuccess: msuc, data: monthData} =useMonthQuery(montharg, {
+  skip: !Number.isInteger(montharg.enterpriseId)
 })
 
 let moption ={
@@ -182,7 +245,7 @@ if(msuc) {
 // 碳排占比
 const [poptions, setPoptions] = useState({
   type: 3,
-  pieData: { data: [], total: "100%", radius: ["40%",  "50%"],  center: ['50%', '50%']},
+  pieData: { data: [], total: "100%", radius: ["50%",  "65%"],  center: ['50%', '50%']},
   legend: {
     bottom: 5,
     top: 'auto'
@@ -194,7 +257,7 @@ const  [getRationData] =  SummarySlice.useLazyRatioQuery()
 const onGetRationData = async (e) => {
   let type = e ? e.target.value : 1;
   let {success, data,errMsg} = await getRationData({enterpriseId, type}).unwrap()
-  console.log(data)
+   
   if(success && Array.isArray(data) && data.length > 0) {
     setPoptions({
       ...poptions,
@@ -217,25 +280,42 @@ const onGetRationData = async (e) => {
 
 }
 // 分类能耗
-const [getEnergy] =SummarySlice.useLazyEnergyQuery()
-const onGetEnergy = async (e) => {
+const [classarg, setClassarg] = useState({
+  enterpriseId,
+  type: 1,
+})
+let ClassEData =[]
+const classChange = (e) => {
+  setClassarg({
+    ...classarg,
+    type: e.target.value
+  })
+}
+const  {isSuccess: classSuc, data: classData} =useEnergyQuery(classarg, {
+  skip: !Number.isInteger(classarg.enterpriseId)
+})
+if(classSuc) {
+  console.log(classData)
+  ClassEData = classData?.data ?? []
+}
+/* const onGetEnergy = async (e) => {
   let type = e ? e.target.value : 1;
   let {success, data,errMsg} = await getEnergy({enterpriseId, type}).unwrap()
   console.log(data)
-}
+} */
 
 
 useEffect(() => {
   if(Number.isInteger(enterpriseId))  {
     OnGetRankingData()  // 碳排放排名
-    onGetRealData() // 实时碳排放
+ //   onGetRealData() // 实时碳排放
     onGetRationData() // 碳排占比
-    onGetEnergy() // 分类能耗
+   // onGetEnergy() // 分类能耗
   }
 
 }, [enterpriseId]) 
 
- const Ctitle = (
+/*  const Ctitle = (
   <div className='custTitle'>
      <span>实时碳排放(tCO₂)</span>
      <Radiogroup options={options}
@@ -246,7 +326,7 @@ useEffect(() => {
                   optionType="button"
                   buttonStyle="solid" /> 
   </div>
- )
+ ) */
  const Rtitle = (
   <div className='custTitle'>
      <span>碳排放排名</span>
@@ -275,17 +355,60 @@ useEffect(() => {
      <span>分类能耗占比</span>
      <Radiogroup options={options}
                   defaultValue={1}
-                  onChange={(e) => {
-                    onGetEnergy(e)
-                  }} 
+                  onChange={classChange} 
                   optionType="button"
                   buttonStyle="solid" /> 
   </div>
  )
+
+ const Mtitle = (
+  <div className='custTitle'>
+     <span>实时碳排放(tCO₂)</span>
+     <Radiogroup options={options}
+                  defaultValue={1}
+                  onChange={monthchange} 
+                  optionType="button"
+                  buttonStyle="solid" /> 
+  </div>
+ )
+
+ // 文字滚动
+ const [isScrolle, setIsScrolle] = useState(true);
+ const speed = 30;
+ const contentref= useRef()
+ const contentref2= useRef()
+ const wrapref = useRef()
+ const hoverHandler = (flag) => setIsScrolle(flag);
+
+
+ useEffect(() => {
+  console.log(ClassEData)
+  if(ClassEData?.length < 6) {
+   
+    return 
+  }  
+  contentref2.current.style.display="flex"
+  contentref2.current.innerHTML = contentref.current.innerHTML;
+  let timer;
+  if (isScrolle) {
+    timer = setInterval(
+      () => wrapref.current.scrollTop >= contentref.current.scrollHeight ? (wrapref.current.scrollTop = 0) : wrapref.current.scrollTop++
+      ,
+      speed
+    );
+    }
+  return () => {
+    wrapref.current.scrollTop = 0
+    contentref2.current.style.display="none"
+    contentref2.current.innerHTML =''
+    clearInterval(timer)
+  }
+
+ }, [isScrolle, ClassEData])
   return (
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox>
-      <div className='up' key="up">
+      <div className='up' key="up" >
            <Card name="年度配额 (tCO₂)" bgcolor='#333399'  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
            <Card name="年度排放当量(tCO₂)" bgcolor='#0066CC'  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
            <Card title="年度剩余碳排放额(tCO₂)" bgcolor='#006699'  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
@@ -294,12 +417,12 @@ useEffect(() => {
            <Card title="间接排放(tCO₂)" bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
-        
-          <Titlelayout title={Ctitle} layout="flex" key="real">
+         <Image src={projectImg.current} height={400} preview={false} />
+        {/*   <Titlelayout title={Ctitle} layout="flex" key="real">
             <div className='chart'>
                 <Ichart {...roption} /> 
             </div>
-          </Titlelayout>        
+          </Titlelayout>    */}     
           <Titlelayout title={Rtitle}  key="rank">
             <div className='chart'>  
                 <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={dataSource} scroll={{
@@ -308,21 +431,29 @@ useEffect(() => {
             </div>
 
           </Titlelayout>
-      </div>
-      <div className='down' key="down">
-          <Titlelayout title="月度碳排放(tCO₂)" layout="flex" >
-            <div className='chart'>
-              <Ichart {...moption}/>
-            </div>
-          </Titlelayout>        
           <Titlelayout title={Raitle} layout="flex" >
             <div className='chart'>
               <Ichart {...poptions} />
             </div>
 
+          </Titlelayout>    
+      </div>
+      <div className='down' key="down">
+          <Titlelayout title={Mtitle} layout="flex" >
+            <div className='chart'>
+              <Ichart {...moption}/>
+            </div>
           </Titlelayout>        
-          <Titlelayout title={CItitle} >
-          
+             
+          <Titlelayout title={CItitle} layout="flex">
+                <div className='wrap' ref={wrapref}>
+                  <div className="content" ref={contentref}>
+                     {ClassEData?.map(d => (<p onMouseOver={() => hoverHandler(false)}
+                        onMouseLeave={() => hoverHandler(true)}><Text ellipsis={{tooltip: d.name}}>{d.name}</Text><Text ellipsis={{tooltip:d.value}}>{d.value}</Text><Text ellipsis={{tooltip:d.unit}}>{d.unit}</Text><Text ellipsis={{tooltip:d.proportion}}>{d.proportion}</Text></p>))}
+                 </div>
+                 <div className='content' ref={contentref2}></div>
+              </div>
+              
           </Titlelayout>
 
       </div>

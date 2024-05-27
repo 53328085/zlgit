@@ -2138,6 +2138,8 @@ export class Carbon {
 
    // 运行态
 
+   
+
    // 碳排考核跟踪
 
    static QueryAnnualData= (enterpriseId, year) =>    
@@ -2185,9 +2187,13 @@ export class Carbon {
    static DeleteCarbonManagePlan= (projectId, year) =>   
    server.delete(`Carbon/CarbonManageRuntime/DeleteCarbonManagePlan?projectId=${projectId}&year=${year}`) // 删除碳排监测计划
 
-   // 
+   // 碳排流向
    static QueryFlow= ({enterpriseId, startTime,endTime}) =>   
    server.post(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
+
+      // 碳排报告
+      static QueryCarbonReport= (body) =>   
+      server.post(`Carbon/CarbonReportRuntime/QueryCarbonReport`, body) // 碳排报告
    
 }
  

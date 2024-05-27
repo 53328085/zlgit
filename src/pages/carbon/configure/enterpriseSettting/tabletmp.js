@@ -43,15 +43,21 @@ const columns = [
 export default function Index({tabledata, setSaveData}) { 
 
   const {categoryName, subCategory} = tabledata
-  console.log(subCategory)
+  const rowspan = Array.isArray(subCategory) ?subCategory.length + 1 : 1
   columns[0].title = categoryName;
   columns[0].onCell= (_, index) => {
-      return {
+
+    if(index == 0) {
+      return  ({ rowSpan: rowspan, style: {backgroundColor: "#e7effd"}})
+     }else {
+       return {rowSpan: 0}
+     }
+    /*   return {
         rowSpan: subCategory?.length ? subCategory?.length +1 : 1,
-      };
+      }; */
     }
   const datas = subCategory.map((c) => ({categoryName, ...c}))
-  console.log(datas)
+   
   return (
     <Usetable columns={columns} dataSource={datas} />  
   )
