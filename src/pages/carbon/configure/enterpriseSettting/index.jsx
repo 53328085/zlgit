@@ -79,7 +79,11 @@ export default function Index() {
     // 二级行业
 
     const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
-    const {data:subindustry} = result?.data || {}
+    
+    const {data:subindustry, success} = result?.data || {}
+    if(success && Array.isArray(subindustry) && subindustry.length >0) {
+      form.setFieldValue('subIndustryNo', subindustry[0].subIndustryNo)
+    }
 
   // 所属地区
 

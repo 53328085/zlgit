@@ -6,7 +6,7 @@ import { useAntdTable } from 'ahooks';
 import Titlelayout from '@com/titlelayout';
 import { drawEcharts } from '@com/useEcharts'
 import Ichart from '@com/useEcharts/Ichart';
-import Table from '@com/useTable'
+import UseTable from '@com/useTable'
 import {Carbon} from '@api/api'
 import {useOutletContext} from 'react-router-dom'
 import {isObject} from "@com/usehandler"
@@ -16,7 +16,7 @@ const Mainbox = styled.div`
   && {
     flex: 1;
     display: grid;
-    grid-template-rows: 92px 325px 355px;
+    grid-template-rows: 92px 472px 208px;
     row-gap: 16px;
     .flexuse {
       display: grid;
@@ -26,11 +26,15 @@ const Mainbox = styled.div`
     .chartbox {
       flex: 1;
       display: flex;
+      margin-top: 16px;
     }
     .tablebox {
       display: flex;
        padding-top: 16px;
        flex-direction: column;
+       .ant-table.ant-table-small .ant-table-container .ant-table-tbody .ant-table-row .ant-table-cell {
+         padding: 0;
+       }
        .tip {
         display: flex;
         column-gap: 64px;
@@ -161,6 +165,7 @@ export default function Index() {
   
    
   }
+  const [tableData, setTableData] = useState([])
   const getTableData = async ({current, pageSize }) => {
      if(Number.isInteger(enterpriseId) && carbonY) {
       let params = {
@@ -174,30 +179,35 @@ export default function Index() {
          if(success && isObject(data)) {
            let {carbonEmissionDataTable} = data
            if(Array.isArray(carbonEmissionDataTable) && carbonEmissionDataTable.length > 0) {
+          
             carbonEmissionDataTable.forEach(car => {
-               let  {monthlyEmission} = car
-               if(Array.isArray(monthlyEmission)) {
-                monthlyEmission.forEach(m => {
+               let  {carbonMonthlyDataList} = car
+               if(Array.isArray(carbonMonthlyDataList)) {
+                carbonMonthlyDataList.forEach(m => {
                    car[m.month] = m.carbonMonthlyEmission
                 })
                }
             })
+            setTableData(carbonEmissionDataTable)
             return  {
               list: carbonEmissionDataTable,
               total: 0
-            }
+            }  
            }else {
+            carbonEmissionDataTable([])
             return {
               list: [],
               total: 0
-            }
+            }  
            }
 
          }else {
-            return {
+          if(!success) message.warning(errMsg || "数据出错")
+          carbonEmissionDataTable([])
+          /*   return {
               list: [],
               total: 0
-            }
+            } */
 
          }
 
@@ -217,7 +227,12 @@ export default function Index() {
 
   }, [carbonY, enterpriseId])
  
- 
+  const Custcul =({text,record, i}) => {
+    console.log(record)
+    const {carbonMonthlyQuota, carbonMonthlyTarget, carbonMonthlyEmission} = record?.['carbonMonthlyDataList']?.[i]
+    const bg = parseFloat(text) > carbonMonthlyQuota ? {backgroundColor: "#ff5f60", color: "#fff", padding: '4px'} : parseFloat(text) > carbonMonthlyTarget ? {backgroundColor:"#fc3", color: "#515151", padding: '4px'} : {padding: '4px'};
+    return <div style={bg}>{text}</div>
+  }
   const columnstable = [
     { title: '序号', dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
     { title: '碳配额项', dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
@@ -232,7 +247,9 @@ export default function Index() {
          dataIndex: i+1,
          key: i+1,
          width: 76,
-         ellipsis: true
+         ellipsis: true,
+         render: (text, record, index) =>  <Custcul record={record} text={text} i={i} />
+
       }
  
  
@@ -245,9 +262,9 @@ export default function Index() {
         <div className='flexuse'>
           <Card title="年度总配额 (tCO₂)" numberval={annualData.totalAnnualQuota} key="quota"/>
           <Card title="年度总目标值 (tCO₂)" numberval={annualData.totalAnnualTarget} key="target"/>
-          <Card title="累计排放当量 (tCO₂)" numberval={annualData.cumEmissionEquivalent} key="cum"/>
-          <Card title="距总预配额剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionQuota} key="cum"/>
-          <Card title="距总目标剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionTarget} key="cum"/>
+          <Card title="累计排放当量 (tCO₂)" numberval={annualData.cumEmissionEquivalent} key="equ"/>
+          <Card title="距总预配额剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionQuota} key="remain"/>
+          <Card title="距总目标剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionTarget} key="remainTarget"/>
         </div>
      
      
@@ -262,7 +279,7 @@ export default function Index() {
         
           <Titlelayout title="碳排放数据(tCO₂)" layout="flex" key="table">
             <div className='chartBox tablebox'>
-              <Table columns={columnstable} istheme hc="#fff" {...tableProps} />
+            <UseTable columns={columnstable} istheme hc="#fff" dataSource={tableData} /> 
                 <div className='tip'>
                   <p>
                     <span style={{backgroundColor:'#FFCC33',width:'24px',height:'10px',color:'#FFCC33',marginRight:'16px'}}>123456</span>

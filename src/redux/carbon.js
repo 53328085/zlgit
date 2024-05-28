@@ -14,6 +14,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: (id) => ({
                 url: `/Carbon/CarbonEnterpriseSetting/QueryCarbonSubIndustryList?industryNo=${id}`,
                 method: 'GET',
+                keepUnusedDataFor:5,
                 
             })
         }),

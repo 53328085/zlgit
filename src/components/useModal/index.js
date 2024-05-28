@@ -109,7 +109,7 @@ const CModal = styled(Modal)`
   const onGetvalue = () => formref.current.getValue()
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
-      <Button onClick={onCancel} key="cancel">{t('cancel')}</Button>,
+      <Button onClick={onCancel} key="cancel"  danger={type=="warn"}>{t('cancel')}</Button>,
        <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
         
         setCurrbtn(1)
@@ -140,6 +140,7 @@ const CModal = styled(Modal)`
       onCancel={close || onCancel}
       closable={false}    
       centered  
+      cancelButtonProps={{danger: type=="warn"}}
       maskClosable={false}
       footer={custft ? CustFooter : undefined }
       onOk={onOk}
