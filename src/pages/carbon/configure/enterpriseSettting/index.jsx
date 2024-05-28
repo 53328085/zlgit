@@ -59,7 +59,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const [emissions, setEmissions] = useState([])
   let saveData =useRef({})
-  let EnterpriseId = useRef()
+ 
 
  // 保存企业信息
 
@@ -109,29 +109,7 @@ export default function Index() {
 
   const Enterprise = useSelector(enterprise)
 
-/*   const [enterprise, setEnterprise] = useState({})
-  const [getENterprise] = carbonSlice.useLazyEnterpriseQuery()
-  const onGetEnterprise = async () => {
-     let {success, data, errMsg} = await getENterprise(projectId).unwrap()
-      console.log(data)
-     if(success && isObject(data)) {
-       EnterpriseId.current = data.id
-
-       setEnterprise(data);
-       dispatch(getEnterprise(data))
-     }else {
-      if(!success) message.warning(errMsg || '数据出错')
-      EnterpriseId.current = null;
-      setEnterprise({});
-      dispatch(getEnterprise({}))
-     }
-  }
-
- useEffect(() => {
-   if(Number.isInteger(projectId)) {
-    onGetEnterprise()
-   }
- }, [projectId]) */
+ 
  
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
  
@@ -175,7 +153,7 @@ export default function Index() {
                 projectId,
                 enterpriseId: id,
                 categoryId:industryNo,
-                subCategoryId: subIndustryNo || 0,
+               // subCategoryId: subIndustryNo || 0,
               }
               let {enterpriseId, ...post} = data 
               dispatch(getEnterprise({id:enterpriseId, ...post}))

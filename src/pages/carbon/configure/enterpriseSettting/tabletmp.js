@@ -41,7 +41,7 @@ const columns = [
 
   ]
 export default function Index({tabledata, setSaveData}) { 
-
+ 
   const {categoryName, subCategory} = tabledata
   const rowspan = Array.isArray(subCategory) ?subCategory.length + 1 : 1
   columns[0].title = categoryName;
@@ -57,7 +57,7 @@ export default function Index({tabledata, setSaveData}) {
       }; */
     }
   const datas = subCategory.map((c) => ({categoryName, ...c}))
-   
+  console.log(datas)
   return (
     <Usetable columns={columns} dataSource={datas} />  
   )

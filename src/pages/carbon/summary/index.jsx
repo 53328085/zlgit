@@ -384,7 +384,9 @@ useEffect(() => {
  useEffect(() => {
   console.log(ClassEData)
   if(ClassEData?.length < 6) {
-   
+    wrapref.current.scrollTop = 0
+    contentref2.current.style.display="none"
+    contentref2.current.innerHTML =''
     return 
   }  
   contentref2.current.style.display="flex"
@@ -397,14 +399,12 @@ useEffect(() => {
       speed
     );
     }
-  return () => {
-    wrapref.current.scrollTop = 0
-    contentref2.current.style.display="none"
-    contentref2.current.innerHTML =''
+  return () => {    
     clearInterval(timer)
   }
 
  }, [isScrolle, ClassEData])
+
   return (
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox>

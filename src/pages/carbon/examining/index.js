@@ -46,10 +46,26 @@ export default function Index() {
   const [annualData, setAnnualData] = useState({})
 
   const [roption, setRoption] =useState({
-    series: [{type: "line", seriesLayoutBy: 'row'},{type: "line", seriesLayoutBy: 'row'},{type: "bar", seriesLayoutBy: 'row'}],
+    series: [{type: "line", seriesLayoutBy: 'row', areaStyle: null, showSymbol: true, itemStyle: {
+      color: "#63d98a"
+    }},
+     {type: "line", seriesLayoutBy: 'row',  areaStyle: null,showSymbol: true, itemStyle: {
+      color: "#248fff"
+     }},
+     {type: "bar", seriesLayoutBy: 'row', itemStyle: {
+      color: "#6fe392",
+      
+     }},
+     {type: "bar", seriesLayoutBy: 'row', itemStyle: {
+      color: "#f3cd61"
+     }}, 
+     {type: "bar", seriesLayoutBy: 'row', itemStyle: {
+      color: "#ff6061"
+     }}
+    ],
     xAxis: {
       axisLabel: {
-        interval: 'auto',
+     //   interval: 'auto',
         textStyle: {
           color: '#fff'
         }
@@ -68,19 +84,26 @@ export default function Index() {
         top: "32px",
         bottom: "32px",
          containLabel: true,
+         
      },
      legend: {
-      icon:'rect',
+     // icon:'rect',
       bottom: "0px",
+     itemWidth:36,
+     itemHeight: 16,
+   
+     data: [
+     {name:'月度配额', icon: "circle"},
+     {name: '月度目标值',icon: "circle"},
+      {name: '月度排放量', icon: 'roundRect'},
+      {name:'月度排放量(超目标)', icon: 'roundRect'},
+      {name:'月度排放量(超预配额)',icon: 'roundRect'}
+     ],
       textStyle: {
         color: "#fff"
       },
-      data: [
-        {
-
-        }
-      ]
     },
+
     dataset: { 
     }
 })
@@ -98,24 +121,42 @@ export default function Index() {
         setAnnualData({})
       }
       if(msuc && isObject(monthlyData)) {
-         let {x, y, y1, y2} = monthlyData
+         let {x=[], y=[], y1=[], y2=[]} = monthlyData;
+         console.log(y)
+         console.log(y1)
+         let len = x.length
+         let y3 =new Array(len).fill('-'),  y4 = new Array(len).fill('-');  // y4 超配额， y3超目标
+         for(let [index, value] of y2.entries()) {
+            if(parseFloat(value) > parseFloat(y[index])) {
+              y4.splice(index, 1, value)
+              y2.splice(index, 1, '-')
+              continue
+            }else if(parseFloat(value) >parseFloat(y1[index])) {
+               y3.splice(index, 1, value)
+               y2.splice(index, 1, '-')
+            }
+         }
+        
          setRoption({
           ...roption,
           dataset: {
             dimensions: [
-              {name: '日期', type: "time"},
-              {name: '月度配额'},
-              {name: '月度目标值'},
-              {name: '月度排放量'}
+              {name: '日期', displayName: '日期', type: "time"},
+              {name: '月度配额', displayName: '月度配额',},
+              {name: '月度目标值', displayName: '月度目标值',},
+              {name: '月度排放量', displayName: '月度排放量',},
+              {name: '月度排放量(超目标)', displayName: '月度排放量(超目标)',},
+              {name: '月度排放量(超预配额)', displayName: '月度排放量(超预配额)',},
             ],
-            source: [x, y, y1, y2],
-            sourceHeade: false
+            source: [x, y, y1, y2, y3, y4],
+            sourceHeade: true,
+          //  
           }
          })
       }
 
     } catch (error) {
-      
+      console.log(error)
     }
   
    
@@ -180,9 +221,9 @@ export default function Index() {
   const columnstable = [
     { title: '序号', dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
     { title: '碳配额项', dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
-    { title: '年度总预配额', dataIndex: 'cumEmissionEquivalent',width: 96, key: 'cumEmissionEquivalent',align: "center", },
+    { title: '年度总预配额', dataIndex: 'totalAnnualQuota',width: 96, key: 'totalAnnualQuota',align: "center", },
     { title: '年度总目标值', dataIndex: 'totalAnnualTarget',width: 96,key: 'totalAnnualTarget', align: "center", },
-    { title: '累计排放量', dataIndex: 'totalAnnualQuota',key: 'totalAnnualQuota', align: "center", },
+    { title: '累计排放量', dataIndex: 'cumEmissionEquivalent',key: 'cumEmissionEquivalent', align: "center", },
     { title: '距预配剩余', dataIndex: 'remainEmissionQuota', key: 'remainEmissionQuota', align: "center", },
     { title: '距目标剩余', dataIndex: 'remainEmissionTarget',key: 'remainEmissionTarget', align: "center", },
      ...Array.from({length: 12}, (v, i) => {
@@ -212,7 +253,7 @@ export default function Index() {
      
        
           <Titlelayout title="月度碳排考核分析(tCO₂)" layout="flex" bgcolor="#043665" bg="#043665" fc="#fff"  key="chart">
-              <div  className='chartbox' style={{background: 'linear-gradient(to top right, rgb(16,32,61), rgb(4,53,102))' }}>
+              <div  className='chartbox' style={{background: 'linear-gradient(to right, rgb(16,32,61), rgb(4,53,102)),rgb(16,32,61)' }}>
                 <Ichart {...roption} />
               </div>
           </Titlelayout>
