@@ -4,7 +4,7 @@ import Card from './card'
 import styled from 'styled-components'
 import { useAntdTable } from 'ahooks';
 import Titlelayout from '@com/titlelayout';
-import { drawEcharts } from '@com/useEcharts'
+ 
 import Ichart from '@com/useEcharts/Ichart';
 import UseTable from '@com/useTable'
 import {Carbon} from '@api/api'
@@ -43,7 +43,12 @@ const Mainbox = styled.div`
   }
 
 `
-
+const Custcul =({text,record, i}) => {
+  console.log(record)
+  const {carbonMonthlyQuota, carbonMonthlyTarget} = record?.['carbonMonthlyDataList']?.[i]
+  const bg = parseFloat(text) > carbonMonthlyQuota ? {backgroundColor: "#ff5f60", color: "#fff", padding: '4px'} : parseFloat(text) > carbonMonthlyTarget ? {backgroundColor:"#fc3", color: "#515151", padding: '4px'} : {padding: '4px'};
+  return <div style={bg}>{text}</div>
+}
 export default function Index() {
   let {exparams, enterpriseId} = useOutletContext()   
   let {carbonY} = exparams
@@ -227,12 +232,7 @@ export default function Index() {
 
   }, [carbonY, enterpriseId])
  
-  const Custcul =({text,record, i}) => {
-    console.log(record)
-    const {carbonMonthlyQuota, carbonMonthlyTarget, carbonMonthlyEmission} = record?.['carbonMonthlyDataList']?.[i]
-    const bg = parseFloat(text) > carbonMonthlyQuota ? {backgroundColor: "#ff5f60", color: "#fff", padding: '4px'} : parseFloat(text) > carbonMonthlyTarget ? {backgroundColor:"#fc3", color: "#515151", padding: '4px'} : {padding: '4px'};
-    return <div style={bg}>{text}</div>
-  }
+
   const columnstable = [
     { title: '序号', dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
     { title: '碳配额项', dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
