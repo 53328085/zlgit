@@ -45,7 +45,7 @@ import {quota} from './quota'
   '0207': Comindex,
   '0208': Solar,
   '0209': Storage,
-  '0210': Carbon,
+  '0210': Comindex,
   '0211': Devops,
   '0212': Quota
 } 

@@ -13,7 +13,7 @@ import Titlelayout from '@com/titlelayout';
 import Ichart from '@com/useEcharts/Ichart'
  
 import Table from '@com/useTable'
-import {SummarySlice,useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from './summaryslice'
+import {carbonSlice, SummarySlice,useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from '@redux/carbon'
  
 const {Text} = Typography
 const Mainbox =styled.div`
@@ -180,7 +180,7 @@ const columnstable = [
   { title: '占比', dataIndex: 'proportion', key: 'proportion',align: "center", },
 ]
 
-const [getRankingData] =SummarySlice.useLazyRankingQuery() 
+const [getRankingData] =carbonSlice.useLazyRankingQuery() 
 
 const OnGetRankingData = async (e) => {
    let type = e ? e.target.value : 1;
@@ -253,7 +253,7 @@ const [poptions, setPoptions] = useState({
  
 })
 
-const  [getRationData] =  SummarySlice.useLazyRatioQuery()
+const  [getRationData] =  carbonSlice.useLazyRatioQuery()
 const onGetRationData = async (e) => {
   let type = e ? e.target.value : 1;
   let {success, data,errMsg} = await getRationData({enterpriseId, type}).unwrap()

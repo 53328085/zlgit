@@ -5,13 +5,14 @@ import {lazy} from 'react'
  const DataInput = lazy(() => import("@pages/carbon/configure/dataInput"))  // 数据录入
  const Quota = lazy(() => import("@pages/carbon/configure/quota"))  // 配额管理
  const WarningSetting = lazy(() => import("@pages/carbon/configure/warningSetting"))  // 预警配置
-
+const Picture = lazy(() => import("@pages/carbon/configure/picture")) // 园区图片
 export let designCarbonEmissionManage = {
     '021001': EnterpriseSettting, 
     '021002': Bound, 
     '021003': DataInput, 
     '021004': Quota, 
     '021005': WarningSetting, 
+    '021006': Picture,
 }
 
  

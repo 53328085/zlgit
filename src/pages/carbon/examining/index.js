@@ -26,9 +26,8 @@ const Mainbox = styled.div`
     .chartbox {
       flex: 1;
       display: flex;
-      margin-top: 16px;
-    }
-    .tablebox {
+      margin: 16px -16px -16px -16px;
+      background-image: linear-gradient(to right, rgb(16,32,61), rgb(4,53,102),rgb(16,32,61)); 
       display: flex;
        padding-top: 16px;
        flex-direction: column;
@@ -43,8 +42,7 @@ const Mainbox = styled.div`
   }
 
 `
-const Custcul =({text,record, i}) => {
-  console.log(record)
+const Custcul =({text,record, i}) => { 
   const {carbonMonthlyQuota, carbonMonthlyTarget} = record?.['carbonMonthlyDataList']?.[i]
   const bg = parseFloat(text) > carbonMonthlyQuota ? {backgroundColor: "#ff5f60", color: "#fff", padding: '4px'} : parseFloat(text) > carbonMonthlyTarget ? {backgroundColor:"#fc3", color: "#515151", padding: '4px'} : {padding: '4px'};
   return <div style={bg}>{text}</div>
@@ -74,7 +72,7 @@ export default function Index() {
     ],
     xAxis: {
       axisLabel: {
-     //   interval: 'auto',
+       interval: 0,
         textStyle: {
           color: '#fff'
         }
@@ -89,7 +87,7 @@ export default function Index() {
     },
     grid: {
         right: 0,
-        left: 0,
+        left: 16,
         top: "32px",
         bottom: "32px",
          containLabel: true,
@@ -97,7 +95,7 @@ export default function Index() {
      },
      legend: {
      // icon:'rect',
-      bottom: "0px",
+      bottom: "8px",
      itemWidth:36,
      itemHeight: 16,
    
@@ -131,10 +129,12 @@ export default function Index() {
       }
       if(msuc && isObject(monthlyData)) {
          let {x=[], y=[], y1=[], y2=[]} = monthlyData;
+         console.log(x)
          console.log(y)
          console.log(y1)
+         console.log(y2)
          let len = x.length
-         let y3 =new Array(len).fill('-'),  y4 = new Array(len).fill('-');  // y4 超配额， y3超目标
+         let y3 =new Array(len).fill(0),  y4 = new Array(len).fill(0);  // y4 超配额， y3超目标
          for(let [index, value] of y2.entries()) {
             if(parseFloat(value) > parseFloat(y[index])) {
               y4.splice(index, 1, value)
@@ -145,10 +145,12 @@ export default function Index() {
                y2.splice(index, 1, '-')
             }
          }
-        
+         console.log(y3)
+         console.log(y4)
          setRoption({
           ...roption,
           dataset: {
+            ...roption.dataset,
             dimensions: [
               {name: '日期', displayName: '日期', type: "time"},
               {name: '月度配额', displayName: '月度配额',},
@@ -158,7 +160,7 @@ export default function Index() {
               {name: '月度排放量(超预配额)', displayName: '月度排放量(超预配额)',},
             ],
             source: [x, y, y1, y2, y3, y4],
-            sourceHeade: true,
+            sourceHeade: false,
           //  
           }
          })
@@ -269,8 +271,8 @@ export default function Index() {
      
      
        
-          <Titlelayout title="月度碳排考核分析(tCO₂)" layout="flex" bgcolor="#043665" bg="#043665" fc="#fff"  key="chart">
-              <div  className='chartbox' style={{background: 'linear-gradient(to right, rgb(16,32,61), rgb(4,53,102)),rgb(16,32,61)' }}>
+          <Titlelayout title="月度碳排考核分析(tCO₂)" layout="flex" bgcolor="#14223e" bg="#14223e" fc="#fff"  key="chart">
+              <div  className='chartbox'>
                 <Ichart {...roption} />
               </div>
           </Titlelayout>
