@@ -62,25 +62,27 @@ export default function Index() {
        energyImage.current = e;
      //setEnergyImage(e)
   }
+  const [uploadImg, {isLoading}] = useUpdateImgMutation()
   const onSave =async () => {
     try {
         if(!energyImage.current) return message.warning("请选择图片")
      let params = {
         projectId,
-        energyImage: energyImage.current,
+        body: {
+         parkImage: energyImage.current,
+        } 
      }
-     setLoading(true)
-     let {success,errMsg} = await UpdateEnergyImage.update(params)
+     
+     let {success,errMsg} = await uploadImg(params).unwrap()
      if(success) {
         message.success('保存成功')
-        setLoading(false)
-        //query()
+        energyImage.current = null
      }else {
         message.warning(errMsg || '数据出错')
-       // setLoading(false)
+        energyImage.current = null
      }
     } catch (error) {
-      //  setLoading(false)
+      
     }
     
   }
@@ -90,7 +92,7 @@ const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projec
    skip: !Number.isInteger(projectId)
   })
   if(imgsuc) {
-    console.dir(imgData)
+    
     energyImage.current = imgData.data;
     spinning.current = false
   // setEnergyImage(data)
@@ -128,7 +130,7 @@ const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projec
      <Main>
         <div className='title'>
             <span className='text'>园区图片</span>
-            <CustButtonT onClick={onSave} loading={loading} text="saveImage" />
+            <CustButtonT onClick={onSave} loading={isLoading} text="saveImage" />
         </div>
         <div>
            <div className='imgbox'>

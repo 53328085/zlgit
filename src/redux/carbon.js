@@ -67,7 +67,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
 
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
-            query: ({body,projectId}) => ({
+            query: ({body, projectId}) => ({
                 url:`Carbon/CarbonParkPhoto/PostParkPhoto?projectId=${projectId}`,
                 method: 'POST',
                 body,
