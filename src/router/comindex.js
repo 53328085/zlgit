@@ -16,7 +16,7 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary } = state;
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance","runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
     designerDistribution: ['room']

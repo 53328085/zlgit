@@ -1,0 +1,359 @@
+.parkQuotaContent {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 464px;
+    column-gap: 16px;
+    box-sizing: border-box;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(204, 204, 204, 1);
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 1);
+
+    .contentLeft {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .backgroundImg {
+            width: 100%;
+        }
+
+        .imgData {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            width: 465px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            // justify-content: space-around;
+            color: #000;
+            font-size: 16px;
+        }
+    }
+
+    .contentRight {
+
+        padding: 16px;
+
+        .totalquota {
+            padding: 16px;
+            height: 172px;
+            width: 432px;
+
+            .totalNum {
+                span {
+                    font-family: '微软雅黑';
+                    font-weight: 400;
+                    font-size: 28px;
+                    color: #1B1B1B;
+                    margin-left: 16px;
+                }
+
+            }
+
+            .totalInfo {
+                margin-top: 16px;
+                margin-left: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .totalProgress {
+                margin-left: 16px;
+            }
+        }
+
+        .quotaRanking {
+            padding: 16px;
+            height: 580px;
+            width: 432px;
+            margin-top: 16px;
+
+            .residueInfo {
+                margin-top: 16px;
+
+                .residueInfo {
+                    margin-top: 16px;
+                    margin-left: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                .residueProgress {
+                    margin-left: 16px;
+                }
+            }
+
+            .showImg {
+                margin-top: 24px;
+            }
+        }
+    }
+}
+
+// 定额详细
+.quotaDetailContent {
+    .cardData {
+        width: 100%;
+        display: grid;
+        align-items: center;
+        grid-template-columns: repeat(3, 550px);
+        grid-template-rows: repeat(4, 176px);
+        row-gap: 16px;
+        justify-content: space-between;
+
+        .cardBox {
+            // width: 550px;
+            // height: 176px;
+            background: inherit;
+            background-color: rgba(255, 255, 255, 1);
+            border: none;
+            border-radius: 4px;
+            padding: 16px 24px;
+
+            .cardTop {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: #1B1B1B;
+
+                .normalStatus {
+                    width: 112px;
+                    height: 28px;
+                    line-height: 28px;
+                    border: 1px solid #339900;
+                    color: #339900;
+                    background-color: #ccffb3;
+                    text-align: center;
+                    display: inline-block;
+                    border-radius: 2px;
+                }
+
+                .LowStatus {
+                    width: 112px;
+                    height: 28px;
+                    line-height: 28px;
+                    border: 1px solid #FF3333;
+                    color: #FF3333;
+                    background-color: #ffcccc;
+                    text-align: center;
+                    display: inline-block;
+                    border-radius: 2px;
+                }
+            }
+
+            .cardCenter {
+                margin-top: 16px;
+                display: flex;
+                align-items: center;
+                color: #606266;
+
+                .energyImg {
+                    width: 72px;
+                    height: 72px;
+                }
+
+                .cardCInfo {
+                    margin-left: 32px;
+                    width: 398px;
+
+                    .name,
+                    .num {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
+                    .num {
+                        font-family: '微软雅黑';
+                        font-weight: 400;
+                        font-style: normal;
+                        font-size: 24px;
+                        margin: 12px 0px;
+                    }
+
+                    .percent {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
+
+                }
+
+            }
+        }
+    }
+
+    .listData {
+        height: 752px;
+    }
+}
+
+// 定额告警
+.quotaAlarmsContent {
+    .AlarmsContent {
+        display: flex;
+        justify-content: space-between;
+
+        .AlarmsContentLeft {
+            width: 516px;
+            height: 800px;
+            background: inherit;
+            background-color: rgba(255, 255, 255, 1);
+            box-sizing: border-box;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(204, 204, 204, 1);
+            border-radius: 4px;
+            padding: 16px;
+            position: relative;
+
+            .Alarmsitem {
+                width: 484px;
+                height: 60px;
+                margin: auto;
+                box-sizing: border-box;
+                border-width: 1px;
+                border-style: solid;
+                border-color: rgba(204, 204, 204, 1);
+                border-radius: 2px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0px 32px 0px 16px;
+                margin-bottom: 16px;
+
+                .alarmIcon {
+                    margin-right: 16px;
+                    width: 35px;
+                    height: 35px;
+                }
+
+                .Alarmsnum {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 150px;
+
+                    .num {
+                        font-family: '微软雅黑';
+                        font-weight: 400;
+                        font-style: normal;
+                        font-size: 20px;
+                    }
+                }
+
+                .rightIcon {
+                    color: #ccc;
+                }
+            }
+
+        }
+
+        .AlarmsContentLeft::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -24px;
+            bottom: 0;
+            width: 1px;
+            /* 边框宽度 */
+            background: rgba(204, 204, 204, 1);
+            /* 边框颜色 */
+        }
+
+        .AlarmsContentRight {
+            width: 1116px;
+
+            .cardData {
+                display: grid;
+                align-items: center;
+                grid-template-columns: repeat(2, 550px);
+                grid-template-rows: repeat(4, 176px);
+                row-gap: 16px;
+                justify-content: space-between;
+
+                .cardBox {
+                    // width: 550px;
+                    // height: 176px;
+                    background: inherit;
+                    background-color: rgba(255, 255, 255, 1);
+                    border: none;
+                    border-radius: 4px;
+                    padding: 16px 24px;
+
+                    .cardTop {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        color: #1B1B1B;
+
+                        .LowStatus {
+                            width: 112px;
+                            height: 28px;
+                            line-height: 28px;
+                            border: 1px solid #FF3333;
+                            color: #FF3333;
+                            background-color: #ffcccc;
+                            text-align: center;
+                            display: inline-block;
+                            border-radius: 2px;
+                        }
+                    }
+
+                    .cardCenter {
+                        margin-top: 16px;
+                        display: flex;
+                        align-items: center;
+                        color: #606266;
+
+                        .energyImg {
+                            width: 72px;
+                            height: 72px;
+                        }
+
+                        .cardCInfo {
+                            margin-left: 32px;
+                            width: 398px;
+
+                            .name,
+                            .num {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                            }
+
+                            .num {
+                                font-family: '微软雅黑';
+                                font-weight: 400;
+                                font-style: normal;
+                                font-size: 24px;
+                                margin: 12px 0px;
+                            }
+
+                            .percent {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                            }
+
+
+                        }
+
+                    }
+                }
+            }
+
+            .listData {
+                height: 752px;
+            }
+        }
+    }
+}

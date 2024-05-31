@@ -9,8 +9,8 @@ const QuotaDetail= lazy(() => import("../pages/quota/quotaDetail.jsx"))
 
 export let runtimeQuota = {
   '011401': ParkQuota,
-  '011402': QuotaAlarms,
-  '011403': QuotaDetail,
+  '011402': QuotaDetail,
+  '011403': QuotaAlarms,
 
 }
 
