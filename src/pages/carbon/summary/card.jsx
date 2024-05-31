@@ -4,6 +4,7 @@ import flower from '@imgs/flower.png'
 import styled from 'styled-components'
 import { Progress ,Image, Typography} from 'antd';
 import Titlelayout from '@com/titlelayout';
+import {CustTransO} from "@com/useButton"
 const {Paragraph,Text} =Typography
 const CProgress = styled(Progress)`
 && {
@@ -84,7 +85,7 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
           <div className='right' key="right">
              <p>{name}</p>
              <p style={{textAlign: "right"}} key="a"><Text className='num' ellipsis={value} >{value}</Text></p>
-             <p style={{textAlign: "right"}} key="b">同比<Text  ellipsis={value} style={{paddingLeft:"10px", fontSize: "16px", color: "#fff"}}>{yoy}</Text></p>
+             <p style={{textAlign: "right"}} key="b"> <CustTransO ns="comm" text="yoy" /><Text  ellipsis={value} style={{paddingLeft:"10px", fontSize: "16px", color: "#fff"}}>{yoy}</Text></p>
           </div>
         </>
         )

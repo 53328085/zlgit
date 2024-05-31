@@ -1,0 +1,12 @@
+{
+  "annualquota": "年度配额 {{param}}",
+  "Annualee": "年度排放当量 {{param}}",
+  "Annualce":"年度剩余碳排放额 {{param}}",
+  "directe":"直接排放 {{param}}",
+  "indirecte": "间接排放 {{param}}",
+  "Carboner": "碳排放排名",
+  "Carbonratio": "碳排放占比",
+  "Classificationratio": "分类能耗占比",
+  "Realtimecemission":"实时碳排放",
+  "z": ""
+}
