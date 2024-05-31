@@ -63,6 +63,7 @@ const Notfound = lazy(() => import("./notfound"))
 const Comindex = lazy(() => import("./comindex"))
 
 const Topologytest = lazy(() => import("../pages/topology/test"))
+const DetailIndicators = lazy(() => import("../pages/quota/detailIndicators/index.jsx"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  
@@ -178,6 +179,10 @@ const loginrouter =  [{
    {
         path: "/topotest",
         element: <Topologytest />
+    },
+    {
+      path:"/detailIndicators",
+      element:<DetailIndicators/>
     },
    {
     path: '*',

@@ -61,6 +61,7 @@ export default function Hmenu() {
         dispath(getJump(false))
       } */
    //   SetCurrent(key)  
+   console.log(nested, label, no)
       let url, state;
       if(isconfig) {
          url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
