@@ -9,6 +9,7 @@ import showImg from '../quota/icon/showImg.gif'
 import { EnergyOverView } from "@api/api.js";
 import { useOutletContext } from 'react-router-dom'
 import Titlelayout from '@com/titlelayout';
+import { CustTransO } from "@com/useButton"
 import {
   selectProjectId,
 } from "@redux/systemconfig.js";
@@ -182,10 +183,10 @@ export default function ParkQuota() {
         </Box>
         <div className={style.imgData}>
           <span style={{ width: 200, paddingLeft: 16, borderRight: '1px solid #f5f1f1' }}>{areaName}</span>
-          <span style={{ width: 80, paddingLeft: 16 }}>建筑物</span>
-          <span style={{ width: 60, borderRight: '1px solid #f5f1f1' }}>1 幢</span>
-          <span style={{ width: 60, paddingLeft: 16 }}>房间</span>
-          <span>4 间</span>
+          <span style={{ width: 80, paddingLeft: 16 }}><CustTransO text="Buildings" /> </span>
+          <span style={{ width: 60, marginLeft: 16, borderRight: '1px solid #f5f1f1' }}>1 幢</span>
+          <span style={{ width: 60, paddingLeft: 16 }}><CustTransO text="Rooms" /> </span>
+          <span style={{ width: 60, marginLeft: 16}}>4 间</span>
         </div>
       </div>
       <div className={style.contentRight}>
