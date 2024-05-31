@@ -226,28 +226,6 @@ export default function QuotaDetail() {
   }, [, projectId, pageLog, paramsLog.pageSize])
   return (
     <div className={style.quotaDetailContent}>
-      <Space size={16} style={{ marginLeft: "auto", marginTop: -100 }}>
-        <Radio.Group
-          onChange={changeTab}
-          defaultValue="card"
-          buttonStyle="solid"
-        >
-          <Radio.Button
-            style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
-            value="card"
-          >
-            卡片模式
-          </Radio.Button>
-          <Radio.Button
-            style={{ width: "96px", textAlign: "center" }}
-            value="list"
-          >
-            列表模式
-          </Radio.Button>
-        </Radio.Group>
-
-        {/* <ExportExcel disabled={isCard} tb={tableLoadRef} /> */}
-      </Space>
       {isCard ? (
         <div className={style.cardData}>
           {
