@@ -140,12 +140,45 @@ export default function QuotaDetail() {
       residueQuota: "1400",
       percent: 80
     }]
-  const CustView = (
-    <Space size={16} style={{ marginLeft: "auto" }}>
-
-      {/* <ExportExcel disabled={isCard} tb={tbref} /> */}
-    </Space>
-  )
+    const opts=[{name:'全部',id:1},{name:'1号楼',id:2},{name:'2号楼',id:3}]
+    const tbref =useRef()
+    const CustView =()=> (
+      <>
+      <Form layout="inline">
+        <Form.Item name="build">
+        <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
+        </Form.Item>
+        <Form.Item name="percent">
+        <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
+        </Form.Item>
+      </Form>
+      {/* <Item  name='areaId' >
+          <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
+      </Item> */}
+      <Space size={16} style={{ marginLeft: "auto" }}>
+        <Radio.Group
+          onChange={changeTab}
+          defaultValue="card"
+          buttonStyle="solid"
+        >
+          <Radio.Button
+            style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+            value="card"
+          >
+            卡片模式
+          </Radio.Button>
+          <Radio.Button
+            style={{ width: "96px", textAlign: "center" }}
+            value="list"
+          >
+            列表模式
+          </Radio.Button>
+        </Radio.Group>
+        <ExportExcel disabled={isCard} tb={tbref} />
+      </Space>
+      </>
+      
+    )
   let paramsLog = {
     projectId: projectId,
     pageNum: pageLog,
@@ -181,7 +214,7 @@ export default function QuotaDetail() {
     window.open('/detailIndicators', '_blank')
   }
   useEffect(() => {
-    setCustview(CustView);
+    setCustview(<CustView/>);
     return () => {
       setCustview(undefined)
     }
