@@ -16,7 +16,7 @@ import {
 import Titlelayout from "@com/titlelayout"
 
 import {CustButtonT} from "@com/useButton"
-import TableT from "@com/tabletmp"
+import TableT from "./tabletmp"
 import {isObject} from "@com/usehandler"
 const {Item} = Form
 const Mainbox = styled.div`
@@ -59,8 +59,8 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const [emissions, setEmissions] = useState([])
   let saveData =useRef({})
-  let EnterpriseId = useRef()
 
+  
  // 保存企业信息
 
   const [SaveEnterprise, {isLoading}] =useSaveEnterpriseMutation()
@@ -79,7 +79,14 @@ export default function Index() {
     // 二级行业
 
     const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
-    const {data:subindustry} = result?.data || {}
+    
+    const {data:subindustry, success} = result?.data || {}
+ 
+    useEffect(() => {
+      if(success && Array.isArray(subindustry) && subindustry.length >0) {
+        form.setFieldValue('subIndustryNo', subindustry[0].subIndustryNo)
+      }
+    }, [subindustry])
 
   // 所属地区
 
@@ -101,6 +108,8 @@ export default function Index() {
     {required: true}
   ]
   const onchange = (no) => {
+    setOpen(false)
+    setEmissions([])
     trigger(no)
     
   }
@@ -109,53 +118,43 @@ export default function Index() {
 
   const Enterprise = useSelector(enterprise)
 
-/*   const [enterprise, setEnterprise] = useState({})
-  const [getENterprise] = carbonSlice.useLazyEnterpriseQuery()
-  const onGetEnterprise = async () => {
-     let {success, data, errMsg} = await getENterprise(projectId).unwrap()
-      console.log(data)
-     if(success && isObject(data)) {
-       EnterpriseId.current = data.id
-
-       setEnterprise(data);
-       dispatch(getEnterprise(data))
-     }else {
-      if(!success) message.warning(errMsg || '数据出错')
-      EnterpriseId.current = null;
-      setEnterprise({});
-      dispatch(getEnterprise({}))
-     }
-  }
-
- useEffect(() => {
-   if(Number.isInteger(projectId)) {
-    onGetEnterprise()
-   }
- }, [projectId]) */
  
+  //  获取企业碳排项信息
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
+
+  const updateEmission = async () => {
+    let {success: suc, data: emission, errMsg:err}  = await getEmission(Enterprise.id).unwrap();
+    if(suc) {
+    //  setOpen(true)
+      setEmissions([...emission])
+      emission.forEach(e => {
+        saveData.current[e.categoryName] = e.subCategory.map(s => ({...s,categoryId:e.categoryId}))           
+      })
+       
+    }else {
+      message.warning(err || "数据出错")
+    }
+    return suc
+  }
  
   // 保存
- const onSave =useCallback(async () => {
+ const onSave =async () => {
      let params = [];
-     console.log(saveData.current)
-     let comm = saveData.current.comm    
+     
      for(let [key, value] of Object.entries(saveData.current)) {
-        if(key !=='comm') {
             value.forEach(v => {
-              params.push({...comm,...v,categoryName:key})
+              params.push({ ...v,categoryName:key, enterpriseId: Enterprise.id})
             })
-        }
      }
     let {success, errMsg} = await SaveItem(params).unwrap()
     if(success) {
       message.success("保存成功")
-      getEmission(Enterprise.id)
+      updateEmission()
     }else {
       message.warning(errMsg || '数据出错')
     }
 
- }, [saveData,Enterprise])
+ }
 
   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
     <span>{title}</span>
@@ -170,25 +169,22 @@ export default function Index() {
           if(isLoading) return;
           let {success, data, errMsg} = await  SaveEnterprise(params).unwrap()
           if(success && isObject(data)) {
-             let {projectId,industryNo,subIndustryNo} = data;
-              saveData.current.comm = {
-                projectId,
-                enterpriseId: id,
-                categoryId:industryNo,
-                subCategoryId: subIndustryNo || 0,
-              }
+     
               let {enterpriseId, ...post} = data 
-              dispatch(getEnterprise({id:enterpriseId, ...post}))
-            let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
+              dispatch(getEnterprise({id:enterpriseId, ...post})) // 更新企业信息
+              let open = await  updateEmission()
+              setOpen(open)
+           /*  let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
             if(suc) {
               setOpen(true)
               setEmissions([...emission])
               emission.forEach(e => {
-                saveData.current[e.categoryName] =e.subCategory
+                saveData.current[e.categoryName] = e.subCategory.map(s => ({...s,categoryId:e.categoryId}))           
               })
+               
             }else {
               message.warning(err || "数据出错")
-            }
+            } */
           
           }else {
             dispatch(getEnterprise({}))
@@ -255,7 +251,7 @@ export default function Index() {
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="value">
                        <Tablebox>
-                       {emissions.map((e,index) => <TableT tabledata={e} key={e.categoryName} saveData={saveData.current} /> )}
+                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} /> )}
                        </Tablebox>
           </Titlelayout>)
           }

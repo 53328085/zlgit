@@ -12,6 +12,7 @@ import {CustButtonT, CustButton} from "@com/useButton"
 import CModal from "@com/useModal"
 import TableT from  "./tabletmp"
 import CDraw from './draw'
+
 const {TreeNode} = Tree;
 import {
   useBoundaryTreeQuery, 
@@ -24,8 +25,12 @@ import {
 } from "./boundary"
 
 const GlobalStyles = createGlobalStyle`
-     .ant-tree-switcher-leaf-line:before {
-     // border: 4px solid var(--ant-primary-color);
+     .ant-tree-switcher-leaf-line:after {
+       border-bottom: 1px solid ${props => props.theme.primaryColor};
+    }
+   
+    .ant-tree-switcher-leaf-line:before, .ant-tree-show-line .ant-tree-indent-unit:before{
+      border-right: 2px solid ${props => props.theme.primaryColor};
     }
 `;
 const CTree = styled(Tree)`
@@ -65,9 +70,7 @@ const Custtitle = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 16px;
-    .ant-tree-switcher-leaf-line:before {
-      border-color: #237ae4;
-    }
+   
 
 `
 const Mainbox = styled.div`
@@ -101,7 +104,21 @@ const Tablebox = styled.div`
   padding-top: 16px;
   overflow-y: auto;
 `
- 
+
+// 三角型
+
+const Triangled = styled.div`
+  width: 0;
+  height: 0;
+  border: 6px solid  transparent;
+  border-top-color: ${props => props.theme.primaryColor} ;
+`
+const Triangler= styled.div`
+width: 0;
+height: 0;
+border: 6px solid  transparent;
+border-left-color: ${props => props.theme.primaryColor} ;
+`
 export default function Index() { 
   // const {id:enterpriseId} = useSelector(enterprise)
   const  enterpriseData = useSelector(enterprise)
@@ -208,15 +225,31 @@ useEffect(() => {
     mref.current.onOpen()
 
  }
+
+ const idRef = useRef()
+ const wref = useRef()
  const onDelete = async (id) => {
-    let {success, errMsg} = await deleteSubItme(id).unwrap()
-   if(success) {
-      message.warning("删除成功")
-      getTreeData()
-    }else {
-      message.warning(errMsg || "数据出错")
-    } 
+     idRef.current = id
+     wref.current.onOpen()
+  
  }
+
+const onDelOK = async() => {
+   try {
+    let {success, errMsg} = await deleteSubItme(idRef.current).unwrap()
+    if(success) {
+       message.warning("删除成功")
+       getTreeData()
+       wref.current.onCancel()
+     }else {
+       message.warning(errMsg || "数据出错")
+     } 
+   } catch (error) {
+     console.log(error)
+   }
+
+}
+
  const onOk = async () => {
     try {
       let {name} = await form.validateFields()
@@ -382,7 +415,10 @@ const renderTreeNodes = (data) => {
     <Mainbox >
       <GlobalStyles/>
          <Titlelayout title="排放单元结构" layout="flex" key="left">
-       {treeData?.length > 0 ?   (<CTree  height={654} defaultExpandedKeys={expandedKeys} showLine blockNode selectable={false}>{renderTreeNodes(treeData)}</CTree>): null
+       {treeData?.length > 0 ?   (<CTree showIcon switcherIcon={(AntTreeNodeProps) => {
+        let {expanded} = AntTreeNodeProps
+        return  expanded ? <Triangled/> : <Triangler/>
+       }} height={654} defaultExpandedKeys={expandedKeys} showLine blockNode selectable={false}>{renderTreeNodes(treeData)}</CTree>): null
        }
           
           </Titlelayout>
@@ -406,6 +442,9 @@ const renderTreeNodes = (data) => {
             
         </Form>
 
+     </CModal>
+     <CModal title="删除碳排放边界名称" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
+         是否要删除选中的碳排放边界名称？
      </CModal>
      <CDraw ref={drawref} params={params} />
     </Pagecount>

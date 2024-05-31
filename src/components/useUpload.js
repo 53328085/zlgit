@@ -304,13 +304,11 @@ const cref = useRef()
 }
 
 
-export  const imgToBase64 = (url)  => {
-  console.log(url)
+export  const imgToBase64 = (url)  => { 
 	return new Promise((resolve, reject) => {
 		const image = new Image()
 		image.src = url
-		image.onload = () => {
-      console.log(111)
+		image.onload = () => {     
 			const canvas = document.createElement('canvas')
 			canvas.width = image.naturalWidth  
 			canvas.height = image.naturalHeight

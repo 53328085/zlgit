@@ -5,6 +5,14 @@ const initialState = summaryApapter.getInitialState()
 export const SummarySlice = apiSlice.injectEndpoints({   
    // tagTypes: ['boundary'],     
     endpoints: build => ({
+        ProjectPhoto: build.query({   // 获取园区图片
+            query: (projectId) => ({
+                url:`Carbon/CarbonOverviewRuntime/QueryProjectPhoto?projectId=${projectId}`,
+                method: "GET",
+                transformResponse: responseData => responseData?.data?.data || {}
+            }),
+        }),
+          
         Overview: build.query({   // 获取碳排概述
             query: (enterpriseId) => ({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonOverview?enterpriseId=${enterpriseId}`,
@@ -30,7 +38,7 @@ export const SummarySlice = apiSlice.injectEndpoints({
         }),    
         Month: build.query({   // 获取月度碳排
             query: ({enterpriseId, type}) =>({
-                url:`Carbon/CarbonOverviewRuntime/QueryMonthlyCarbonEmission?enterpriseId=${enterpriseId}&type=${type}`,
+                url:`Carbon/CarbonOverviewRuntime/QueryCarbonEmission?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
                
             }),
@@ -56,6 +64,7 @@ export const SummarySlice = apiSlice.injectEndpoints({
 console.dir(SummarySlice)
 export const {
     useOverviewQuery,
+    useProjectPhotoQuery,
     useRealTimeQuery,
     useRankingQuery,
     useMonthQuery,
