@@ -45,7 +45,9 @@ export  const Wtag = styled(Normal)`
 
 `
 
-
+export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
+  return i18.t(text, {ns, ...params})
+}
 
 const Custbtn = styled(Button).attrs((props) => ({
   type: props.type || "primary",
@@ -168,11 +170,11 @@ const CmenuItem = styled(Menu.Item)`
 }
 `
 export function CustTransO(props) { // 项目概览
-  let {text, ns="overview"} = props 
+  let {text, ns="overview", param} = props 
   const {t} = useTranslation([ns]);
   return (
     <>
-     {t(text)}
+     {t(text, {param})}
     </>
   )
 }

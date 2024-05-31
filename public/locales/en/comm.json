@@ -1,4 +1,5 @@
 {   
+    "yoy":"year-on-year",
     "rest": "Reset",
     "Resetprompt": "Reset prompt",
     "Yes":"Yes",
@@ -80,5 +81,7 @@
         "deviceSn": "Must be 12-14 digits, including at least one item in English or numbers",
         "deviceSnE": "Must be 8-14 digits, including at least one item in English or numbers"
     },
-    "loading": "Loading…"
+    "loading": "Loading…",
+     "index": "index",
+    "":""
 }

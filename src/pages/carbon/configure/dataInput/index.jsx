@@ -114,7 +114,7 @@ export default function Index() {
           dataIndex: 'carbonUnitName',
           key: 'carbonUnitName',
           align: 'center',
-          width: 180,
+          width: 160,
           fixed: 'left',
           ellipsis: true,
       },
@@ -123,7 +123,7 @@ export default function Index() {
         dataIndex: 'subCategoryName',
         key: 'subCategoryName',
         align: 'center',
-        width: 180,
+        width: 160,
         fixed: 'left',
         ellipsis: true,
      },
@@ -190,7 +190,17 @@ const formartcol = (data, month) => {
          }</Form.Item>
       }
    }
-    setColumns([...col,...cols,endcol])
+   let unit = {
+      title: '单位',
+      dataIndex: 'unit',
+      key: 'unit',
+      align: 'center',
+      width: 80,
+      fixed: 'right',
+      ellipsis: true,
+   }
+  
+    setColumns([...col,...cols,endcol, unit])
     setTableData([...data])
   } else{
      setTableData([])

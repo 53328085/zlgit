@@ -1,0 +1,12 @@
+{ 
+  "annualquota": "annual quota {{param}}",
+  "Annualee": "Annual emission equivalent {{param}}",
+  "Annualce":"Annual residual carbon emissions {{param}}",
+  "directe":"direct emission {{param}}",
+  "indirecte": "indirect emission {{param}}",
+   "Carboner": "Carbon emission ranking",
+   "Carbonratio": "Carbon emission ratio",
+   "Classificationratio": "Classification of energy consumption ratio",
+   "Realtimecemission":"Real-time carbon emission",
+  "z": ""
+}

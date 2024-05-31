@@ -4,6 +4,7 @@ import { Form, Image, message, Progress, Select, Typography } from 'antd'
 import Pagecount from '@com/pagecontent'
 import Card from './card'
 import {isObject} from "@com/usehandler"
+import {CustTransO, i18t} from "@com/useButton"
 import styled from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
@@ -82,11 +83,11 @@ const Mainbox =styled.div`
 `  
 const options = [
   {
-    label: '月',
+    label: i18t("comm","month"),
     value: 1,
   },
   {
-    label: '年',
+    label: i18t("comm","year"),
     value: 2,
   },
 ];
@@ -171,7 +172,7 @@ const [dataSource, setDataSourc]=useState([])
  
 const columnstable = [
   {
-    title: '序号',    
+    title: i18t("com", "index"),    
     width:80,
     render:(text,record,index)=>`${index+1}`
   },
@@ -295,7 +296,6 @@ const  {isSuccess: classSuc, data: classData} =useEnergyQuery(classarg, {
   skip: !Number.isInteger(classarg.enterpriseId)
 })
 if(classSuc) {
-  console.log(classData)
   ClassEData = classData?.data ?? []
 }
 /* const onGetEnergy = async (e) => {
@@ -329,7 +329,7 @@ useEffect(() => {
  ) */
  const Rtitle = (
   <div className='custTitle'>
-     <span>碳排放排名</span>
+     <span><CustTransO text="Carboner" ns="carbon" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={(e) =>OnGetRankingData(e)} 
@@ -340,7 +340,7 @@ useEffect(() => {
  
  const Raitle = (
   <div className='custTitle'>
-     <span>碳排占比</span>
+     <span><CustTransO text="Carbonratio" ns="carbon" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={(e) => {
@@ -352,7 +352,7 @@ useEffect(() => {
  )
  const CItitle = (
   <div className='custTitle'>
-     <span>分类能耗占比</span>
+     <span><CustTransO text="Classificationratio" ns="carbon" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={classChange} 
@@ -363,7 +363,7 @@ useEffect(() => {
 
  const Mtitle = (
   <div className='custTitle'>
-     <span>实时碳排放(tCO₂)</span>
+     <span><CustTransO text="Classificationratio" ns="carbon" param="(tCO₂)" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
                   onChange={monthchange} 
@@ -409,12 +409,12 @@ useEffect(() => {
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox>
       <div className='up' key="up" >
-           <Card name="年度配额 (tCO₂)" bgcolor='#333399'  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
-           <Card name="年度排放当量(tCO₂)" bgcolor='#0066CC'  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
-           <Card title="年度剩余碳排放额(tCO₂)" bgcolor='#006699'  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
+           <Card name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />}  bgcolor='#333399'  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
+           <Card name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} bgcolor='#0066CC'  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
+           <Card title={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} bgcolor='#006699'  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
            <Cdivider type="h" borderColor="#bcbcbc" />
-           <Card title="直接排放(tCO₂)" bgcolor='#6633CC'   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
-           <Card title="间接排放(tCO₂)" bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
+           <Card title={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} bgcolor='#6633CC'   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
+           <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
          <Image src={projectImg.current} height={400} preview={false} />

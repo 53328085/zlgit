@@ -2,10 +2,19 @@ import {createAsyncThunk, createSlice, createEntityAdapter} from "@reduxjs/toolk
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
 //const menusAdapter = createEntityAdapter()
 //const initialState = menusAdapter.getInitialState()
+const menuAdapter = createEntityAdapter({
+   selectId: (menu) => { 
+    if (menu.languageName=='cn'){
+       return menu.no
+    }
+  },
+  sortComparer: (a, b) => a.key.localeCompare(b.key)
+})
+
 export const getWebsiteMenu = createAsyncThunk(
   "zltest/getMenu",
   async (id, obj) => {
-    console.log(obj)
+     
     let {rejectWithValue} = obj;
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
@@ -26,17 +35,18 @@ export const getWebsiteMenu = createAsyncThunk(
 )
 const zltest = createSlice({
   name: "zltest",
-  initialState: {
-      menus: []
-  },
+  initialState: menuAdapter.getInitialState() ,
   reducers: {
-    
+    menuAdd: menuAdapter.addOne,
+    addMany: menuAdapter.addMany,
+    removeOne: menuAdapter.removeOne
+
   },
  
   extraReducers: {
     [getWebsiteMenu.fulfilled]:  (state, {payload}) => {
       console.log(payload)
-      menusAdapter.updateMany(payload)
+      menuAdapter.setAll(state, payload)
     },
     [getWebsiteMenu.rejected]:  (state, {payload}) => {
       console.log(payload)
@@ -44,6 +54,7 @@ const zltest = createSlice({
     }
   }
 })
-export const {addMenu, showlist} = zltest.actions
+export const  {selectIds} =menuAdapter.getSelectors(state => state.zltest)
+export const {menuAdd, addMany, removeOne} = zltest.actions
 
 export default zltest.reducer
