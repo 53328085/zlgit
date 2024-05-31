@@ -221,6 +221,9 @@ export default function Index() {
 
         setConfig({});
       }
+      if(primary =="runtimeQuota"){
+        setConfig({custview: true});
+      }
       // 设计态
       if(primary == "designerEnergy") {
         switch(nested) {

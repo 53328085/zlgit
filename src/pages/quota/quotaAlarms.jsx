@@ -153,9 +153,23 @@ export default function QuotaAlarms() {
       num: 1
     },
   ]
-  const CustView = (
+  const opts=[{name:'全部',id:1},{name:'1号楼',id:2},{name:'2号楼',id:3}]
+  const tbref =useRef()
+  const CustView =()=> (
+    <>
+    <Form layout="inline">
+      <Form.Item name="build">
+      <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
+      </Form.Item>
+      <Form.Item name="percent">
+      <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
+      </Form.Item>
+    </Form>
+    {/* <Item  name='areaId' >
+        <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
+    </Item> */}
     <Space size={16} style={{ marginLeft: "auto" }}>
-      {/* <Radio.Group
+      <Radio.Group
         onChange={changeTab}
         defaultValue="card"
         buttonStyle="solid"
@@ -172,9 +186,11 @@ export default function QuotaAlarms() {
         >
           列表模式
         </Radio.Button>
-      </Radio.Group> */}
-      {/* <ExportExcel disabled={isCard} tb={tbref} /> */}
+      </Radio.Group>
+      <ExportExcel disabled={isCard} tb={tbref} />
     </Space>
+    </>
+    
   )
   const changeAlarm = values => {
     if (activeTab == values.id) return;
@@ -218,16 +234,16 @@ export default function QuotaAlarms() {
     window.open('/detailIndicators', '_blank')
   }
   useEffect(() => {
-    setCustview(CustView);
-    return () => {
-      setCustview(undefined)
-    }
+    setCustview(<CustView/>);
+    // return () => {
+    //   setCustview(undefined)
+    // }
   }, [])
   useEffect(() => {
   }, [, projectId, pageLog, paramsLog.pageSize])
   return (
     <div className={style.quotaAlarmsContent}>
-      <Space size={16} style={{ marginLeft: "auto", marginTop: -100 }}>
+      {/* <Space size={16} style={{ marginLeft: "auto", marginTop: -100 }}>
         <Radio.Group
           onChange={changeTab}
           defaultValue="card"
@@ -247,8 +263,8 @@ export default function QuotaAlarms() {
           </Radio.Button>
         </Radio.Group>
 
-        {/* <ExportExcel disabled={isCard} tb={tableLoadRef} /> */}
-      </Space>
+        <ExportExcel disabled={isCard} tb={tableLoadRef} />
+      </Space> */}
       <div className={style.AlarmsContent}>
         <div className={style.AlarmsContentLeft}>
           {alarmAllData.map((item, index) => (
