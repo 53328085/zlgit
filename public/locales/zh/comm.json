@@ -1,4 +1,5 @@
 {
+    "yoy":"同比",
     "rest": "重置",
     "Resetprompt": "重置提示",
     "Yes":"是",
@@ -74,5 +75,8 @@
     },
     "totalpages_one": "共{{count}}条记录",
     "totalpages_other": "共{{count}}条记录",
-    "loading": "数据加载中…"
+    "loading": "数据加载中…",
+    "index": "序号",
+    
+    "": ""
 }

@@ -5,6 +5,7 @@ function useToke() {
 }
 export const apiSlice = createApi({
     reducerPath: 'NESapi',
+    refetchOnReconnect: true,
     baseQuery: fetchBaseQuery({baseUrl: '/api/V1', prepareHeaders: (headers, api) => {     
       headers.set('Token', useToke())
       headers.set('content-type', 'application/json')
