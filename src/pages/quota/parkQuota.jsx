@@ -10,6 +10,7 @@ import { EnergyOverView } from "@api/api.js";
 import { useOutletContext } from 'react-router-dom'
 import Titlelayout from '@com/titlelayout';
 import { CustTransO } from "@com/useButton"
+import { useTranslation } from "react-i18next"
 import {
   selectProjectId,
 } from "@redux/systemconfig.js";
@@ -50,6 +51,8 @@ const Itemsty = styled.div`
         font-size: 14px;
         color: #333333;
         margin-left:10px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
       }
   
        .ant-typography{
@@ -84,6 +87,7 @@ export default function ParkQuota() {
   const [areaVos, setAreaVos] = useState([]);
   const projectId = useSelector(selectProjectId);
   let { areaName } = useOutletContext();
+  const { t } = useTranslation("quota")
   const quotarRankingData = [
     {
       name: '联合工房',
@@ -111,19 +115,19 @@ export default function ParkQuota() {
     return (
       <Itemsty>
         <p className='itemtitle' style={{ backgroundColor: `${data.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{data.areaName}</p>
-        <p className='sub'>用能定额 (kWh)</p>
+        <p className='sub'>{t("EnergyConsumptionQuota")} (kWh)</p>
         <p className='num'><Text ellipsis={{ tooltip: data.todayElectricConsume }}>{data.todayElectricConsume}</Text></p>
-        <p className='sub'>累计能耗 (kWh)</p>
+        <p className='sub'>{t("AccumulatedEnergyConsumption")} (kWh)</p>
         <p className='num'><Text ellipsis={{ tooltip: data.curMonthElectricConsume }}>{data.curMonthElectricConsume}</Text></p>
-        <p className='sub'>剩余额度 (kWh)</p>
+        <p className='sub'>{t("RemainingQuota")} (kWh)</p>
         <p className='num'><Text ellipsis={{ tooltip: data.curMonthElectricConsume }}>{data.curMonthElectricConsume}</Text></p>
-        <p className='sub'>剩余额度</p>
+        <p className='sub'>{t("RemainingQuota")}</p>
         <Progress
           percent={data.percent}
           className={`${data.percent > 20 ? '' : 'progressColor'}`}
           trailColor='#ebeef5'
           strokeColor={`${data.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-          style={{ marginLeft: 10, width: 95 }} />
+          style={{ marginLeft: 10, width: 100 }} />
       </Itemsty>
 
     )
@@ -186,21 +190,21 @@ export default function ParkQuota() {
           <span style={{ width: 80, paddingLeft: 16 }}><CustTransO text="Buildings" /> </span>
           <span style={{ width: 60, marginLeft: 16, borderRight: '1px solid #f5f1f1' }}>1 幢</span>
           <span style={{ width: 60, paddingLeft: 16 }}><CustTransO text="Rooms" /> </span>
-          <span style={{ width: 60, marginLeft: 16}}>4 间</span>
+          <span style={{ width: 60, marginLeft: 16 }}>4 间</span>
         </div>
       </div>
       <div className={style.contentRight}>
-        <Titlelayout title="园区年度总定额" className={style.totalquota}>
+        <Titlelayout title={t("TotalAnnualQuota")} className={style.totalquota}>
           <div className={style.totalNum}><span>1800,000</span> (kWh)</div>
-          <div className={style.totalInfo}><span>正泰物联</span><span>800,000kWh</span> </div>
+          <div className={style.totalInfo}><span>正泰物联</span><span>800,000 kWh</span> </div>
           <Progress style={{ width: '370px' }} percent={50}
             strokeColor='rgba(0, 204, 51, 1)' trailColor='#ebeef5' strokeWidth={15} className={style.totalProgress} />
         </Titlelayout>
-        <Titlelayout title="定额剩余量排名" className={style.quotaRanking}>
+        <Titlelayout title={t("QuotaSurplusRanking")} className={style.quotaRanking}>
           {
             quotarRankingData.map((item, index) => (
               <div className={style.residueInfo} key={index}>
-                <div className={style.residueInfo}><span>{item.name}</span><span>{item.num}kWh</span> </div>
+                <div className={style.residueInfo}><span>{item.name}</span><span>{item.num} kWh</span> </div>
                 <Progress style={{ width: '370px' }} percent={item.percent}
                   strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`} trailColor='#ebeef5' strokeWidth={15} className={style.residueProgress} />
               </div>

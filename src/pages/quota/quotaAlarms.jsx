@@ -5,16 +5,18 @@ import { useAntdTable } from "ahooks";
 import { ExportExcel } from '@com/useButton'
 import style from './style.module.less'
 import Usetable from '@com/useTable'
-import { CustButton } from '@com/useButton'
 import energyImg from '../quota/icon/energyImg.svg'
 import alarmIcon from '../quota/icon/alarmIcon.png'
 import alarmSelectedIcon from '../quota/icon/alarmSelectedIcon.svg'
 
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
-import { Serach, Cdivider, CPagination } from "@com/comstyled";
+import { CPagination } from "@com/comstyled";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
+import { selectProjectId } from '@redux/systemconfig.js'
+
+import { useTranslation } from "react-i18next"
+
 const ProgressBoX = styled.div`
 .progressColor{
   .ant-progress-text{
@@ -34,9 +36,10 @@ export default function QuotaAlarms() {
   const [pageLog, setpageLog] = useState(1)
   let [totalLog, setTotalLog] = useState(0)
   const [form] = Form.useForm();
+  const { t } = useTranslation("quota")
   const columns = [
     {
-      title: '房间名称',
+      title: t("RoomName"),
       dataIndex: 'address',
       key: 'address',
       align: 'center',
@@ -45,25 +48,25 @@ export default function QuotaAlarms() {
       ),
     },
     {
-      title: '能耗定额 (kWh)',
+      title: t("EnergyConsumptionQuota")+' (kWh)',
       dataIndex: 'quota',
       key: 'quota',
       align: 'center',
     },
     {
-      title: '已用能耗 (kWh)',
+      title: t("UsedEnergyConsumption")+' (kWh)',
       dataIndex: 'useQuota',
       key: 'useQuota',
       align: 'center'
     },
     {
-      title: '剩余能耗 (kWh)',
+      title: t("RemainingEnergyConsumption")+' (kWh)',
       dataIndex: 'residueQuota',
       key: 'residueQuota',
       align: 'center'
     },
     {
-      title: '能耗剩余量比例',
+      title:  t("RatioOfRemainingEnergyConsumption"),
       dataIndex: 'percent',
       key: 'percent',
       align: 'center',
@@ -256,10 +259,10 @@ export default function QuotaAlarms() {
               <div className={style.Alarmsadress}>
                 {activeTab == item.id ? <img src={alarmSelectedIcon} className={style.alarmIcon} /> :
                   <img src={alarmIcon} className={style.alarmIcon} />}
-                {item.address}
+                {item.id == 0 ? t("AllAlarms") : item.address}
               </div>
               <div className={style.Alarmsnum}>
-                定额告警 <span className={style.num}>{item.num}</span>
+                {t("QuotaAlarm")} <span className={style.num}>{item.num}</span>
                 <CaretRightOutlined className={style.rightIcon} style={{ color: activeTab == item.id ? '#fff' : '#ccc' }} />
               </div>
 
@@ -274,15 +277,15 @@ export default function QuotaAlarms() {
                   <div className={style.cardBox} key={index} onClick={() => toDetailIndicators()}>
                     <div className={style.cardTop}>
                       <span>{item.address}  {item.floor}  {item.house}</span>
-                      <span className={style.LowStatus} >余量不足</span>
+                      <span className={style.LowStatus} >{t("InsufficientMargin")}</span>
                     </div>
                     <div className={style.cardCenter}>
                       <img src={energyImg} className={style.energyImg} />
                       <div className={style.cardCInfo}>
                         <div className={style.name}>
-                          <span>定额 (kWh)</span>
-                          <span>已用 (kWh)</span>
-                          <span>剩余 (kWh)</span>
+                          <span>{t("Quota")} (kWh)</span>
+                          <span>{t("Used")} (kWh)</span>
+                          <span>{t("Surplus")} (kWh)</span>
                         </div>
                         <div className={style.num}>
                           <span>{item.quota}</span>
@@ -290,14 +293,14 @@ export default function QuotaAlarms() {
                           <span>{item.residueQuota}</span>
                         </div>
                         <div className={style.percent}>
-                          <span>能耗剩余量</span>
+                          <span>{t("RemainingEnergyConsumption")}</span>
                           <ProgressBoX>
                             <Progress
                               percent={item.percent}
                               className={`${item.percent > 20 ? '' : 'progressColor'}`}
                               trailColor='#ebeef5'
                               strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-                              style={{ marginLeft: 10, width: 300 }}
+                              style={{ marginLeft: 10, width: 170 }}
                               strokeWidth={15} /></ProgressBoX>
                         </div> </div>
                     </div>

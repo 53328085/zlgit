@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import { CPagination } from "@com/comstyled";
 import { selectProjectId } from '@redux/systemconfig.js'
+import { useTranslation } from "react-i18next"
 const ProgressBoX = styled.div`
 .progressColor{
   .ant-progress-text{
@@ -18,7 +19,6 @@ const ProgressBoX = styled.div`
   
 }
 `
-
 export default function QuotaDetail() {
   const tableLoadRef = useRef();
 
@@ -28,9 +28,10 @@ export default function QuotaDetail() {
   const [pageLog, setpageLog] = useState(1)
   let [totalLog, setTotalLog] = useState(0)
   const [form] = Form.useForm();
+  const { t } = useTranslation("quota")
   const columns = [
     {
-      title: '房间名称',
+      title: t("RoomName"),
       dataIndex: 'address',
       key: 'address',
       align: 'center',
@@ -39,25 +40,25 @@ export default function QuotaDetail() {
       ),
     },
     {
-      title: '能耗定额 (kWh)',
+      title: t("EnergyConsumptionQuota")+' (kWh)',
       dataIndex: 'quota',
       key: 'quota',
       align: 'center',
     },
     {
-      title: '已用能耗 (kWh)',
+      title: t("UsedEnergyConsumption")+' (kWh)',
       dataIndex: 'useQuota',
       key: 'useQuota',
       align: 'center'
     },
     {
-      title: '剩余能耗 (kWh)',
+      title: t("RemainingEnergyConsumption")+' (kWh)',
       dataIndex: 'residueQuota',
       key: 'residueQuota',
       align: 'center'
     },
     {
-      title: '能耗剩余量比例',
+      title: t("RatioOfRemainingEnergyConsumption"),
       dataIndex: 'percent',
       key: 'percent',
       align: 'center',
@@ -68,13 +69,13 @@ export default function QuotaDetail() {
         style={{ width: 200 }} />
     },
     {
-      title: '状态',
+      title: t("EnergyConsumptionStatus"),
       dataIndex: 'status',
       key: 'status',
       align: 'center',
       render: (status) => <div>
         <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
-        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? '正常' : '告警'}</span>
+        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? t("Normal") :  t("Alarm")}</span>
       </div>
     },
   ]
@@ -221,15 +222,15 @@ export default function QuotaDetail() {
               <div className={style.cardBox} key={index} onClick={() => toDetailIndicators()}>
                 <div className={style.cardTop}>
                   <span>{item.address}  {item.floor}  {item.house}</span>
-                  <span className={`${item.status == 1 ? style.normalStatus : style.LowStatus}`} >{item.status == 1 ? '能耗正常' : '余量不足'}</span>
+                  <span className={`${item.status == 1 ? style.normalStatus : style.LowStatus}`} >{item.status == 1 ? t("NormalEnergyConsumption") : t("InsufficientMargin")}</span>
                 </div>
                 <div className={style.cardCenter}>
                   <img src={energyImg} className={style.energyImg} />
                   <div className={style.cardCInfo}>
                     <div className={style.name}>
-                      <span>定额 (kWh)</span>
-                      <span>已用 (kWh)</span>
-                      <span>剩余 (kWh)</span>
+                      <span>{t("Quota")} (kWh)</span>
+                      <span>{t("Used")} (kWh)</span>
+                      <span>{t("Surplus")} (kWh)</span>
                     </div>
                     <div className={style.num}>
                       <span>{item.quota}</span>
@@ -237,14 +238,14 @@ export default function QuotaDetail() {
                       <span>{item.residueQuota}</span>
                     </div>
                     <div className={style.percent}>
-                      <span>能耗剩余量</span>
+                      <span>{t("RemainingEnergyConsumption")}</span>
                       <ProgressBoX>
                         <Progress
                           percent={item.percent}
                           className={`${item.percent > 20 ? '' : 'progressColor'}`}
                           trailColor='#ebeef5'
                           strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-                          style={{ marginLeft: 10, width: 300 }}
+                          style={{ marginLeft: 40, width: 170 }}
                           strokeWidth={15} /></ProgressBoX>
                     </div> </div>
                 </div>
