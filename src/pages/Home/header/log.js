@@ -344,8 +344,8 @@ const lngOk = () => {
       }
      }
   const Custfoot =(<Space>
-    <CustButton type="primary" onClick={onmobile}>修改手机号码</CustButton>
-    <CustButton type="primary" onClick={onpass}>修改用户密码</CustButton>
+    <CustButton type="primary" onClick={onmobile} key="phone">修改手机号码</CustButton>
+    <CustButton type="primary" onClick={onpass} key="user">修改用户密码</CustButton>
   </Space>)
 
 

@@ -11,7 +11,8 @@ export const SummarySlice = apiSlice.injectEndpoints({
                 method: "GET",
                 transformResponse: responseData => responseData?.data?.data || {}
             }),
-        }),  
+        }),
+          
         Overview: build.query({   // 获取碳排概述
             query: (enterpriseId) => ({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonOverview?enterpriseId=${enterpriseId}`,

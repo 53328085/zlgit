@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -107,7 +107,7 @@ export default function Index() {
         display: "flex",
         flex: 1,
       };
-  const context = {
+  const context =useMemo(() => ({
     setInpage,
     setShowroom,
     setConfig,
@@ -116,7 +116,7 @@ export default function Index() {
     areaName,
     enterpriseId,
     projectId,
-  };
+  }), [exparams, areaName,enterpriseId,projectId]);
   const props = {
     config,
     setexparams,

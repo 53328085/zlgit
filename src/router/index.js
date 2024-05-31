@@ -227,8 +227,8 @@ function useRoute() { // 重写路由
         children: getNestRout(sider, nestroute)
       })
     }
-  })
-  console.log(designerMenus)
+  }) 
+  
   designerMenus?.forEach(r => {
     let {no, key} = r;//0212 quota 
     let Com = designerComponents[no];

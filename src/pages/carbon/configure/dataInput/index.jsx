@@ -76,11 +76,10 @@ const splitarr = (arr) => {
     return [[], null, null]
   }
  }
- const Ctd = ({record,i,text,saveData,index}) => {
- 
+ const Ctd = ({record,i,text,saveData,index, month}) => { 
   let {carbonUnitName, subCategoryName} = record;
   const form = Form.useFormInstance();
-  form.setFieldValue([`${carbonUnitName}-${subCategoryName}`, i], text)
+ 
   const onChange = (v) => {
    
     try {
@@ -90,7 +89,12 @@ const splitarr = (arr) => {
     }
       
   }
-  return (<Form.Item   initialValue={text} name={[`${carbonUnitName}-${subCategoryName}`, i]} >
+  useEffect(() => {
+     if(record && text) {
+      form.setFieldValue([`${carbonUnitName}-${subCategoryName}-${month}`, i], text)
+     }
+  }, [record, text])
+  return (<Form.Item   initialValue={text} name={[`${carbonUnitName}-${subCategoryName}-${month}`, i]} >
       <InputNumber min={0} onChange={onChange} />
    </Form.Item>)
 }
@@ -123,7 +127,7 @@ export default function Index() {
         fixed: 'left',
         ellipsis: true,
      },
-    ...Array.from({length: 30}, ( v,i) => ({
+    /* ...Array.from({length: 30}, ( v,i) => ({
         title: i+1,
         dataIndex: i,
         key: i,
@@ -138,11 +142,11 @@ export default function Index() {
         align: 'center',
         width: 80,
         fixed: 'right',
-     }]
+     } */]
  )
 
 // 表格列设置函数
-const formartcol = (data) => {
+const formartcol = (data, month) => {
   try {
     
  
@@ -164,7 +168,7 @@ const formartcol = (data) => {
       key: i,
       width:98,
       align: 'center',
-      render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} /> 
+      render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} month={month} /> 
    }))
    let endcol = {
      title: "月总计",
@@ -179,8 +183,8 @@ const formartcol = (data) => {
          return <Form.Item noStyle shouldUpdate>{
           ({getFieldValue}) => {
               let {carbonUnitName, subCategoryName} = record;
-              let values = getFieldValue(`${carbonUnitName}-${subCategoryName}`)
-
+              let values = getFieldValue(`${carbonUnitName}-${subCategoryName}-${month}`)
+              console.log(values)
             return values?.reduce((a, b) => a+b, 0)
           }
          }</Form.Item>
@@ -223,9 +227,10 @@ const onQuery = async () => {
     let year = form.getFieldValue('year').year()
      let {data, success,errMsg} = await  Carbon.onQueryEmission({year,month, enterpriseId})
      if(success && Array.isArray(data) && data.length > 0) {
+      //  form.resetFields();
         let [tableData] = splitarr(data)
-         
-        formartcol(tableData)
+        console.log(tableData)
+        formartcol(tableData, month)
      }else {
        setTableData([])
         if(!success) {
@@ -248,9 +253,9 @@ const onQuery = async () => {
     try {
       let month = form.getFieldValue('month').month() + 1
       let year = form.getFieldValue('year').year()
-      let res = await Carbon.DownloadTemplate({year, month, enterpriseId})     
+      let res = await Carbon.DownloadTemplate({year, month, enterpriseId})        
       let blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/x-msdownload",
       }); 
      
       let url = window.URL.createObjectURL(blob); 
@@ -335,9 +340,9 @@ const onQuery = async () => {
         <span>手动数据录入</span>
         <Space>
           <Tooltip title="下载模板后录入数据，可以直接导入上传数据">
-          <CustButtonT text="download" onClick={onDownload} /></Tooltip>
-          <CustButtonT text="import" src='import' onClick={onImport} /> 
-          <CustButtonT text="save" src='save' onClick={onSave} loading={isLoading} />
+          <CustButtonT text="download" onClick={onDownload} key="download" /></Tooltip>
+          <CustButtonT text="import" src='import' onClick={onImport} key="import" /> 
+          <CustButtonT text="save" src='save' onClick={onSave} loading={isLoading} key="save" />
           </Space>
     </div>
   )

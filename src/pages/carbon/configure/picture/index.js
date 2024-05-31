@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react'
  
 import styled from "styled-components";
+import {useOutletContext} from 'react-router-dom' 
 import {useSelector} from "react-redux";
 import {CustButtonT} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
@@ -8,6 +9,7 @@ import {selectProjectId} from '@redux/systemconfig.js'
 import { message  } from 'antd';
 import {UpdateEnergyImage} from '@api/api.js'
 import {Cspin} from "@com/comstyled"
+import {useProjectPhotoQuery, useUpdateImgMutation} from "@redux/carbon"
 const Main = styled.div`
    display: grid;
    grid-template-rows: 64px 1fr;
@@ -48,37 +50,60 @@ const Main = styled.div`
    }
 `
 export default function Index() {
-   const projectId = useSelector(selectProjectId)  
-   const [energyImage, setEnergyImage]= useState('')
+   const {projectId} = useOutletContext()  
    const [loading, setLoading] = useState(false)
-   const [spinning, setSpinning] = useState(false)
-  const onChnage = (e) => {
-     setEnergyImage(e)
+
+   
+   const energyImage = useRef()
+
+   const spinning = useRef(false)
+
+  const onChnage = (e) => {      
+       energyImage.current = e;
+     //setEnergyImage(e)
   }
+  const [uploadImg, {isLoading}] = useUpdateImgMutation()
   const onSave =async () => {
     try {
-        if(!energyImage) return message.warning("请选择图片")
+        if(!energyImage.current) return message.warning("请选择图片")
      let params = {
         projectId,
-        energyImage,
+        body: {
+         parkImage: energyImage.current,
+        } 
      }
-     setLoading(true)
-     let {success,errMsg} = await UpdateEnergyImage.update(params)
+     
+     let {success,errMsg} = await uploadImg(params).unwrap()
      if(success) {
         message.success('保存成功')
-        setLoading(false)
-        query()
+        energyImage.current = null
      }else {
         message.warning(errMsg || '数据出错')
-        setLoading(false)
+        energyImage.current = null
      }
     } catch (error) {
-        setLoading(false)
+      
     }
     
   }
 
-  const query =async () => {
+// 获取图片
+const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
+   skip: !Number.isInteger(projectId)
+  })
+  if(imgsuc) {
+    
+    energyImage.current = imgData.data;
+    spinning.current = false
+  // setEnergyImage(data)
+ //  setSpinning(false)
+  }else {
+ //  setEnergyImage('')
+ //  setSpinning(false)
+  }
+
+
+/*   const query =async () => {
        try {
          setSpinning(true)
         let {success, data} = await  UpdateEnergyImage.query(projectId)
@@ -99,17 +124,17 @@ export default function Index() {
   useEffect(() => {
     if(!projectId) return
      query()
-  }, [projectId])
+  }, [projectId]) */
   return (
-     <Cspin spinning={spinning} tip="图片下载中……">
+     <Cspin spinning={spinning.current} tip="图片下载中……">
      <Main>
         <div className='title'>
             <span className='text'>园区图片</span>
-            <CustButtonT onClick={onSave} loading={loading} text="saveImage" />
+            <CustButtonT onClick={onSave} loading={isLoading} text="saveImage" />
         </div>
         <div>
            <div className='imgbox'>
-                <Cupload wpx={1368} hpx={800} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={energyImage}  /> 
+                <Cupload wpx={1368} hpx={800} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={energyImage.current}  /> 
            </div>
            <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
         </div>
