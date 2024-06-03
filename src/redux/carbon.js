@@ -105,7 +105,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: ({enterpriseId, type}) =>({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonEmissionRanking?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
-               
+                transformResponse: (response, meta, arg) => response.data,
             }),
         }),    
         Month: build.query({   // 获取月度碳排
@@ -119,7 +119,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: ({enterpriseId, type=1}) =>({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonEmissionRatio?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
-               
+                transformResponse: (response, meta, arg) => response.data,
             }),
         }), 
         Energy: build.query({   // 分类能耗
@@ -128,8 +128,35 @@ export const carbonSlice = apiSlice.injectEndpoints({
                 method: "GET",
                
             }),
-        }),    
+        }), 
+        
+      //  碳排考核跟踪
+
+      Annual: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryAnnualData?enterpriseId=${enterpriseId}&year=${year}`, //  碳排年度数据
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+      
+      Analysis: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryMonthlyAnalysis?enterpriseId=${enterpriseId}&year=${year}`, //  碳排月度考核分析
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+      EmissionData: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryEmissionData?enterpriseId=${enterpriseId}&year=${year}`, //  碳排放数据
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+     
     }),
+ 
 
 
 })
@@ -151,4 +178,7 @@ export const {
      useRatioQuery,
      useEnergyQuery,
      useUpdateImgMutation,
+     useAnnualQuery,
+     useAnalysisQuery,
+     useEmissionDataQuery,
     } = carbonSlice

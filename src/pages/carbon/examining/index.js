@@ -4,14 +4,20 @@ import Card from './card'
 import styled from 'styled-components'
 import { useAntdTable } from 'ahooks';
 import Titlelayout from '@com/titlelayout';
- 
+import {cloneDeep} from 'lodash' 
 import Ichart from '@com/useEcharts/Ichart';
 import UseTable from '@com/useTable'
 import {Carbon} from '@api/api'
 import {useOutletContext} from 'react-router-dom'
 import {isObject} from "@com/usehandler"
 import { message } from 'antd';
+import {CustTransO, i18warning, i18t} from "@com/useButton"
+import { 
+  useAnnualQuery,
+  useAnalysisQuery,
+  useEmissionDataQuery,} from '@redux/carbon'
 const {QueryAnnualData, QueryMonthlyAnalysis, QueryEmissionData} = Carbon
+
 const Mainbox = styled.div`
   && {
     flex: 1;
@@ -34,7 +40,15 @@ const Mainbox = styled.div`
        .ant-table.ant-table-small .ant-table-container .ant-table-tbody .ant-table-row .ant-table-cell {
          padding: 0;
        }
-       .tip {
+      
+    }
+    .tablebox {
+      flex: 1;
+      display: flex;
+      padding-top: 16px;
+      flex-direction: column;
+      justify-content: space-between;
+      .tip {
         display: flex;
         column-gap: 64px;
        }
@@ -48,11 +62,11 @@ const Custcul =({text,record, i}) => {
   return <div style={bg}>{text}</div>
 }
 export default function Index() {
-  let {exparams, enterpriseId} = useOutletContext()   
+  let {exparams, enterpriseId, iszh} = useOutletContext()   
   let {carbonY} = exparams
-  const [annualData, setAnnualData] = useState({})
+  //const [annualData, setAnnualData] = useState({})
 
-  const [roption, setRoption] =useState({
+  const  roption= useRef({
     series: [{type: "line", seriesLayoutBy: 'row', areaStyle: null, showSymbol: true, itemStyle: {
       color: "#63d98a"
     }},
@@ -100,11 +114,11 @@ export default function Index() {
      itemHeight: 16,
    
      data: [
-     {name:'月度配额', icon: "circle"},
-     {name: '月度目标值',icon: "circle"},
-      {name: '月度排放量', icon: 'roundRect'},
-      {name:'月度排放量(超目标)', icon: 'roundRect'},
-      {name:'月度排放量(超预配额)',icon: 'roundRect'}
+     {name:  i18t('carbon','Monthlyquota') , icon: "circle"},
+     {name: i18t('carbon','Monthlytargetvalue'),icon: "circle"},
+      {name: i18t('carbon','Monthlyemissions'), icon: 'roundRect'},
+      {name: i18t('carbon','abovetarget'), icon: 'roundRect'},
+      {name:i18t('carbon','overquota'),icon: 'roundRect'}
      ],
       textStyle: {
         color: "#fff"
@@ -115,7 +129,108 @@ export default function Index() {
     }
 })
  
-  const getAnnual = async () => {
+// 碳排年度数据
+let annualData = useRef({})
+let year = carbonY?.year()
+let comparam = {
+  enterpriseId,
+  year
+}
+const {isSuccess: anusuc, data: anuData} = useAnnualQuery(comparam, {
+  skip: !(Number.isInteger(comparam.enterpriseId) && comparam.year)
+})
+if(anusuc) {
+  let {success, data, errMsg} = anuData
+ 
+  if(success && isObject(data) ) {
+    annualData.current = data
+  }else {
+    if(!success) i18warning(errMsg)
+    annualData.current ={}
+  }
+}else {
+  annualData.current ={}
+}
+
+
+// 碳排月度数据
+
+const {isSuccess: monsuc, data: monData} = useAnalysisQuery(comparam, {
+  skip: !(Number.isInteger(comparam.enterpriseId) && comparam.year)
+})
+
+const getMonthData = () =>{
+  try {
+
+ let {success, data, errMsg} = monData
+
+ if(success && isObject(data)) {
+   
+   let {x=[], y: yy=[], y1=[], y2=[]} = cloneDeep(data);  
+   let len = x.length
+   let y3 =new Array(len).fill(0),  y4 = new Array(len).fill(0);  // y4 超配额， y3超目标
+   y2.forEach((value,index) => {   
+    if(parseFloat(value) > parseFloat(yy[index])) {
+      y4[index] =value
+       y2[index] =0
+     //  y2.splice(index, 1, 0)
+      return
+    }else if(parseFloat(value) >parseFloat(y1[index])) {      
+       y3[index] =value
+       y2[index] =0
+    }
+
+   })
+/*    for(let [index, value] of y2.entries()) {
+    console.log(index)
+      if(parseFloat(value) > parseFloat(yy[index])) {
+        y4.splice(index, 1, value)
+       
+        y2.splice(index, 0, 0)
+        continue
+      }else if(parseFloat(value) >parseFloat(y1[index])) {
+         console.log(index)
+         y3.splice(index, 1, value)
+         y2.splice(index, 0, 0)
+      }
+   } */
+  /*   {name:  i18t('carbon','Monthlyquota') , icon: "circle"},
+     {name: i18t('carbon','Monthlytargetvalue'),icon: "circle"},
+      {name: i18t('carbon','Monthlyemissions'), icon: 'roundRect'},
+      {name: i18t('carbon','abovetarget'), icon: 'roundRect'},
+      {name:i18t('carbon','overquota'),icon: 'roundRect'} */
+   roption.current = ({
+    ...roption.current,
+    dataset: {
+      ...roption.current.dataset,
+      dimensions: [
+        {name: '日期', displayName: '日期', type: "time"},
+        {name: '月度配额', displayName: i18t('carbon','Monthlyquota'),},
+        {name: '月度目标值', displayName: i18t('carbon','Monthlytargetvalue'),},
+        {name: '月度排放量', displayName: i18t('carbon','Monthlyemissions'),},
+        {name: '月度排放量(超目标)', displayName: i18t('carbon','abovetarget'),},
+        {name: '月度排放量(超预配额)', displayName: i18t('carbon','overquota'),},
+      ],
+      source: [x, yy, y1, y2, y3, y4],
+      sourceHeade: false,
+    }
+   })
+}else {
+  if(!success) i18warning(errMsg)
+}
+    
+} catch (error) {
+   console.log(error)
+}
+}
+useEffect(() => {
+   if(monsuc && monData) {
+    getMonthData()
+   }
+
+}, [monsuc, monData])
+
+ /*  const getAnnual = async () => {
     try {
       let year = carbonY.year()
       let promise =[QueryAnnualData(enterpriseId, year),  QueryMonthlyAnalysis(enterpriseId, year)] 
@@ -171,7 +286,7 @@ export default function Index() {
     }
   
    
-  }
+  } */
   const [tableData, setTableData] = useState([])
   const getTableData = async ({current, pageSize }) => {
      if(Number.isInteger(enterpriseId) && carbonY) {
@@ -209,7 +324,7 @@ export default function Index() {
            }
 
          }else {
-          if(!success) message.warning(errMsg || "数据出错")
+          if(!success) i18warning(errMsg)
           carbonEmissionDataTable([])
           /*   return {
               list: [],
@@ -228,7 +343,7 @@ export default function Index() {
   })
   useEffect(() => {
     if(carbonY && Number.isInteger(enterpriseId)) {
-      getAnnual()
+     // getAnnual()
 
     }
 
@@ -236,16 +351,16 @@ export default function Index() {
  
 
   const columnstable = [
-    { title: '序号', dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
-    { title: '碳配额项', dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
-    { title: '年度总预配额', dataIndex: 'totalAnnualQuota',width: 96, key: 'totalAnnualQuota',align: "center", },
-    { title: '年度总目标值', dataIndex: 'totalAnnualTarget',width: 96,key: 'totalAnnualTarget', align: "center", },
-    { title: '累计排放量', dataIndex: 'cumEmissionEquivalent',key: 'cumEmissionEquivalent', align: "center", },
-    { title: '距预配剩余', dataIndex: 'remainEmissionQuota', key: 'remainEmissionQuota', align: "center", },
-    { title: '距目标剩余', dataIndex: 'remainEmissionTarget',key: 'remainEmissionTarget', align: "center", },
+    { title: i18t("comm", 'index'), dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
+    { title: i18t("carbon", "carbonquota"), dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
+    { title: i18t("carbon", "totalAnnualQuota"), dataIndex: 'totalAnnualQuota',width: 96, key: 'totalAnnualQuota',ellipsis: true,align: "center", },
+    { title: i18t("carbon", "totalAnnualTarget"), dataIndex: 'totalAnnualTarget',width: 96,key: 'totalAnnualTarget',ellipsis: true, align: "center", },
+    { title: i18t("carbon", "cumEmissionEquivalent"), dataIndex: 'cumEmissionEquivalent',key: 'cumEmissionEquivalent',ellipsis: true, align: "center", },
+    { title: i18t("carbon", "remainEmissionQuota"), dataIndex: 'remainEmissionQuota', key: 'remainEmissionQuota',ellipsis: true, align: "center", },
+    { title: i18t("carbon", "remainEmissionTarget"), dataIndex: 'remainEmissionTarget',key: 'remainEmissionTarget',ellipsis: true, align: "center", },
      ...Array.from({length: 12}, (v, i) => {
       return {
-         title: `${i+1}月`,
+         title:  i18t("comm", (i+1).toString()),
          dataIndex: i+1,
          key: i+1,
          width: 76,
@@ -262,34 +377,34 @@ export default function Index() {
     <Pagecount bgcolor="#eeeff3" pd={0}>
         <Mainbox>
         <div className='flexuse'>
-          <Card title="年度总配额 (tCO₂)" numberval={annualData.totalAnnualQuota} key="quota"/>
-          <Card title="年度总目标值 (tCO₂)" numberval={annualData.totalAnnualTarget} key="target"/>
-          <Card title="累计排放当量 (tCO₂)" numberval={annualData.cumEmissionEquivalent} key="equ"/>
-          <Card title="距总预配额剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionQuota} key="remain"/>
-          <Card title="距总目标剩余排放量 (tCO₂)" bgcolor='#333399' numberval={annualData.remainEmissionTarget} key="remainTarget"/>
+          <Card title={<CustTransO ns="carbon" text="totalAnnualQuota" param="(tCO₂)" />} numberval={annualData.current.totalAnnualQuota} key="quota"/>
+          <Card title={<CustTransO ns="carbon" text="totalAnnualTarget" param="(tCO₂)" />} numberval={annualData.current.totalAnnualTarget} key="target"/>
+          <Card title={<CustTransO ns="carbon" text="cumEmissionEquivalent" param="(tCO₂)" />} numberval={annualData.current.cumEmissionEquivalent} key="equ"/>
+          <Card title={<CustTransO ns="carbon" text="Remainingemissionsfromthetotalpre-quota" param="(tCO₂)" />} bgcolor='#333399' numberval={annualData.current.remainEmissionQuota} key="remain"/>
+          <Card title={<CustTransO ns="carbon" text="Remainingemissionsfromtotaltarget" param="(tCO₂)" />} bgcolor='#333399' numberval={annualData.current.remainEmissionTarget} key="remainTarget"/>
         </div>
      
      
        
-          <Titlelayout title="月度碳排考核分析(tCO₂)" layout="flex" bgcolor="#14223e" bg="#14223e" fc="#fff"  key="chart">
+          <Titlelayout title={<CustTransO ns="carbon" text="Monthlyanalysis" param="(tCO₂)" />} layout="flex" bgcolor="#14223e" bg="#14223e" fc="#fff"  key="chart">
               <div  className='chartbox'>
-                <Ichart {...roption} />
+                <Ichart {...roption.current} />
               </div>
           </Titlelayout>
 
         
         
-          <Titlelayout title="碳排放数据(tCO₂)" layout="flex" key="table">
-            <div className='chartBox tablebox'>
+          <Titlelayout title={<CustTransO ns="carbon" text="Carbonemissiondata" param="(tCO₂)" />} layout="flex" key="table">
+            <div className='tablebox'>
             <UseTable columns={columnstable} istheme hc="#fff" dataSource={tableData} /> 
                 <div className='tip'>
                   <p>
                     <span style={{backgroundColor:'#FFCC33',width:'24px',height:'10px',color:'#FFCC33',marginRight:'16px'}}>123456</span>
-                    <span>月度排放量(超标值)</span>
+                    <span><CustTransO ns="carbon" text="superscalar"   /></span>
                   </p>
                   <p>
                     <span style={{backgroundColor:'#FF5F60',width:'24px',height:'10px',color:'#FF5F60',marginRight:'16px'}}>123456</span>
-                    <span>月度排放量(超预配值)</span>
+                    <span><CustTransO ns="carbon" text="superpreconfiguration"   /></span>
                   </p>
                 </div>
             </div>

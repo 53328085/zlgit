@@ -4,14 +4,13 @@ function useToke() {
    return token
 }
 export const apiSlice = createApi({
-    reducerPath: 'NESapi',
-    refetchOnReconnect: true,
+    reducerPath: 'NESapi',  
     baseQuery: fetchBaseQuery({baseUrl: '/api/V1', prepareHeaders: (headers, api) => {     
       headers.set('Token', useToke())
       headers.set('content-type', 'application/json')
       return headers;
     }}),
-    tagTypes: ['updateE', 'boundary'],  
+    tagTypes: ['updateE', 'carbon'],   
     endpoints: build => ({
        
         

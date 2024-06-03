@@ -4,6 +4,7 @@ import _ from 'lodash'
 import * as echarts from "echarts";
 import 'echarts-liquidfill'
 import store from '@redux/store'
+import {i18t} from "@com/useButton"
 /**
  * @author zhenglin zhu
  * @description: type： 1 数据设置在 系列（series）中 type: 2 数据系列 3.饼图
@@ -240,7 +241,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},l
     left: "center",
     top: "center",
     style: {
-      text:  total ? ["总计", "", total].join("\n") : "",
+      text:  total ? [i18t("comm","total"), "", total].join("\n") : "",
     },
   },
   series: [
