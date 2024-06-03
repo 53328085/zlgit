@@ -21,10 +21,10 @@ i18n
             loadPath: '/locales/{{lng}}/{{ns}}.json'
         } */
     })
-i18n.services.formatter.add('DD/MM/YY', (value, lng, options) => {
+/* i18n.services.formatter.add('DD/MM/YY', (value, lng, options) => {
    return moment(value).format('DD/MM/YY')
 })
 i18n.services.formatter.add('YYYY-MM-DD', (value, lng, options) => {
     return moment(value).format('YYYY-MM-DD')
- })
+ }) 采用默认格式 */
 export default i18n;

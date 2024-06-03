@@ -8,8 +8,7 @@
     "latitude":"纬度",
     "Dataloading": "数据加载……",
     "useraccount": "账号",
-    "resetpasswords":"重置密码",
-    "successfullydelete": "删除成功",
+    "resetpasswords":"重置密码",   
     "Passwordresetsucceeded": "密码重置成功",
     "MobileNumber":"手机号码",
     "Close":"关闭",
@@ -17,6 +16,7 @@
     "Editsuccessfully": "编辑成功",
     "savesuccessfully":"保存成功",
     "modifysuccessfully": "修改成功",
+    "successfullydelete": "删除成功",
     "dataerr": "数据出错",
     "time": "时间",
     "date": "日期",
@@ -99,5 +99,6 @@
     "12":"十二月",
     "intlNumber": "{{val, number}}",
     "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}",
+    "intlDateTime": "{{val, datetime}}",
     "": ""
 }

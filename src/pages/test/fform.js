@@ -5,13 +5,12 @@ import {useParamPostMutation, useGetPostQuery,selectUsersResult} from './apiSlic
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
 import {getWebsiteMenu, menuAdd, addMany, removeOne,selectIds } from "@redux/reduxTest"
 import {useSubIndustryListQuery, carbonSlice} from "@redux/carbon.js"
+import {CustTransO, i18warning, i18t} from "@com/useButton"
+
 const Com1 =() => {
     
   const dispatch = useDispatch()
-  const menus = useSelector(state => state.zltest);
-  console.log(selectIds)
-  const ids = selectIds(menus);
-  console.log(ids)
+ 
   const mual = async () => {
     try {
        dispatch(getWebsiteMenu(1))
@@ -26,7 +25,7 @@ const Com1 =() => {
   }
   return <div>
     <h1>Com1</h1>
-     
+      <CustTransO ns="comm" text="intlNumber" val={100000} />
     <button onClick={mual}>手动更新</button>
     <button onClick={add}>增加多条数据</button>
     </div>

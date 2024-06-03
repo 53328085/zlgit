@@ -105,5 +105,6 @@
     "12":"Dec.",
     "intlNumber": "{{val, number}}",
     "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}",
+    "intlDateTime": "{{val, datetime}}",
     "":""
 }

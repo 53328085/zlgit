@@ -45,12 +45,23 @@ export  const Wtag = styled(Normal)`
 
 `
 
-export const i18warning = (text) => {  // 保存出错提示
+export const i18warning = (text) => {  //  出错提示
     let msg = text || i18.t("comm","dataerr")
     message.warning(msg)
   
 }
+export const i18success = (type) => {  //  成功提示
+  
+  let text = {
+    save: "savesuccessfully",
+    edit: "Editsuccessfully",
+    modify: "modifysuccessfully",
+    delete: "successfullydelete"
+  }[type]
+  let msg = i18t("comm", text)
+  message.warning(msg)
 
+}
 export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
   try {
     return i18.t(text, {ns, ...params})
@@ -181,12 +192,12 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
-export function CustTransO(props) {   //通用 纯文字翻译
-  let {text, ns="overview", param} = props 
+export function CustTransO(props) {   //通用  文字/数字翻译
+  let {text, ns="overview", param, val} = props 
   const {t} = useTranslation([ns]);
   return (
     <>
-     {t(text, {param})}
+     {t(text, {param,val})}
     </>
   )
 }

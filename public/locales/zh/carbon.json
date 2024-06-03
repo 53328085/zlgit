@@ -25,5 +25,7 @@
   "Remainingemissionsfromtotaltarget": "距总目标剩余排放量 {{param}}",
   "Monthlyanalysis": "月度碳排考核分析 {{param}}",
   "Carbonemissiondata": "碳排放数据 {{param}}",
+  "carbonemission":"碳排放 {{param}}",
+  "Carbonemissionl": "碳排量 {{param}}",
   "z": ""
 }

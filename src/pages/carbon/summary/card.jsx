@@ -67,7 +67,7 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
         <div className='content'>
            <Image src={flower} preview={false} width={42}   />
            <div style={{flex: 1,paddingLeft: "16px"}}>
-               <p style={{textAlign:"right"}}><Text className='num' ellipsis={value} >{value}</Text></p>
+               <p style={{textAlign:"right"}}><Text className='num' ellipsis={value} ><CustTransO ns="comm" text="intlNumberWithOptions" val={value} /></Text></p>
               <div style={{display: "flex", rowGap: '16px'}}>
                 <span style={{fontSize: '12px', paddingRight: '8px'}}>{yoy}</span>
                 <CProgress percent={parseFloat(yoy)} showInfo={false} size="small" trailColor={bgcolor} strokeColor="#ff9" />
@@ -84,7 +84,7 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
           </div>
           <div className='right' key="right">
              <p>{name}</p>
-             <p style={{textAlign: "right"}} key="a"><Text className='num' ellipsis={value} >{value}</Text></p>
+             <p style={{textAlign: "right"}} key="a"><Text className='num' ellipsis={value} ><CustTransO ns="comm" text="intlNumberWithOptions" val={value} /></Text></p>
              <p style={{textAlign: "right"}} key="b"> <CustTransO ns="comm" text="yoy" /><Text  ellipsis={value} style={{paddingLeft:"10px", fontSize: "16px", color: "#fff"}}>{yoy}</Text></p>
           </div>
         </>

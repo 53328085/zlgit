@@ -5,7 +5,7 @@ import {useOutletContext} from 'react-router-dom'
 import Table from '@com/useTable'
 import Titlelayout from '@com/titlelayout';
 import Pagecount from '@com/pagecontent'
-import {CustLink, CustButtonT} from "@com/useButton"
+import {CustLink, CustButtonT, CustTransO,i18t, i18warning, i18success} from "@com/useButton"  
 import {Carbon} from '@api/api'
 import CModal from "@com/useModal"
 import {ComDatePicker} from "@com/comstyled"
@@ -25,7 +25,7 @@ export default function Index() {
                   total,
                 }
             }else {
-              if(!success) message.warning(errMsg || "数据出错")
+              if(!success) i18warning(errMsg)
                return {
                 list: [],
                 total: 0
@@ -68,17 +68,17 @@ export default function Index() {
     try {
       let {success,errMsg} = await  Carbon.DeleteCarbonManagePlan(projectId, year)
       if(success) {
-        message.success('删除成功')
+        i18success("delete")
         refresh()
       }else {
-      message.warning(errMsg || "数据出错")
+       i18warning(errMsg)
       }
     } catch (error) {
       
     }
  }
   const columns = [
-    { title: '序号', dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
+    { title: i18t("comm","indx"), dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
     { title: '企业名称', dataIndex: 'enterpriseName', align: "center",  },
     { title: '组织机构代码', dataIndex: 'creditCode', align: "center",  },
     { title: '盘查年度', dataIndex: 'year', align: "center",  },
@@ -93,7 +93,7 @@ export default function Index() {
       render: (_, record) => (
         <Space size="middle">
           <CustLink text ="Viewreport" onClick={() => DownloadCarbonManagePlan(record.year)} />
-          <CustLink type="danger" text="delete" onClick={() => DeleteCarbonManagePlan(record.year)}>删除</CustLink>
+          <CustLink type="danger" text="delete" onClick={() => DeleteCarbonManagePlan(record.year)} /> 
         </Space>
       ),
     },
