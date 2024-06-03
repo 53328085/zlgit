@@ -8,6 +8,8 @@ import Month from '../../../assets/svg/month.svg'
 import Year from '../../../assets/svg/year.svg'
 import CO2 from '../../../assets/svg/CO2.svg'
 import { drawEcharts } from "@com/useEcharts"
+
+import { useTranslation } from "react-i18next"
 const WrapDiv = styled.div`
     background-color:#135abd;
     padding:16px;
@@ -62,7 +64,7 @@ const WrapDiv = styled.div`
                 align-items: center;
                 margin-top:16px;
                 .normal{
-                    width: 112px;
+                    padding: 0px 5px;
                     height:28px;
                     line-height:28px;
                     text-align:center;
@@ -161,33 +163,35 @@ justify-content:${(props) => props.content};
         text-align:center;
     }
 `
-const Card1 = ({ t1 = "今日用电量", t2 = "", value = 0.00, percent = 0, dateimg = '', unit = "kWh" }) => {
 
-    return (
-        <CardWrap order={'column'} content={'space-between'}>
-            <div className="t1">{t1} &nbsp;({unit})</div>
-            <div className="flexval">
-                <img src={dateimg} alt="" />
-                <span>{value}</span>
-            </div>
-            <div className="t2" style={{ opacity: t2 ? 1 : 0 }}>{t2} <CaretDownOutlined style={{ color: "#f5222d" }} /> {percent}%</div>
-        </CardWrap>
-    )
-}
-
-const options = [
-    { label: '日', value: 1 },
-    { label: '月', value: 2 },
-    { label: '年', value: 3 },
-];
 export default function Index() {
+    const { t } = useTranslation("quota")
     const chart = useRef()
     const [value, setValue] = useState(1);
+    const Card1 = ({ t1 = t("ElectricityConsumptionToday"), t2 = "", value = 0.00, percent = 0, dateimg = '', unit = "kWh" }) => {
+
+        return (
+            <CardWrap order={'column'} content={'space-between'}>
+                <div className="t1">{t1} &nbsp;({unit})</div>
+                <div className="flexval">
+                    <img src={dateimg} alt="" />
+                    <span>{value}</span>
+                </div>
+                <div className="t2" style={{ opacity: t2 ? 1 : 0 }}>{t2} <CaretDownOutlined style={{ color: "#f5222d" }} /> {percent}%</div>
+            </CardWrap>
+        )
+    }
+
+    const options = [
+        { label: t("Day"), value: 1 },
+        { label: t("Month"), value: 2 },
+        { label: t("Year"), value: 3 },
+    ];
     const onChange = ({ target: { value } }) => {
         console.log(value)
         setValue(value);
     }
-    useEffect(()=>{
+    useEffect(() => {
         drawEcharts(chart.current, {
             xAxis: {
                 type: 'category'
@@ -199,49 +203,49 @@ export default function Index() {
             ],
             series: [
                 {
-                  name: '本日能耗(kWh)',
-                  type: 'bar',
-                  barGap: 0,
-                  emphasis: {
-                    focus: 'series'
-                  },
-                  data: [320, 332, 301, 334, 390]
+                    name: t("Today'sEnergyConsumption") + ' (kWh)',
+                    type: 'bar',
+                    barGap: 0,
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    data: [320, 332, 301, 334, 390]
                 },
                 {
-                  name: '昨日能耗(kWh)',
-                  type: 'bar',
-                  emphasis: {
-                    focus: 'series'
-                  },
-                  data: [220, 182, 191, 234, 290]
+                    name: t("Yesterday'sEnergyConsumption") + ' (kWh)',
+                    type: 'bar',
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    data: [220, 182, 191, 234, 290]
                 },
-               
-              ]
+
+            ]
         })
-    },[])
-   
+    }, [])
+
     return (
         <WrapDiv>
-            <div className="hd">房间能耗定额</div>
+            <div className="hd">{t("RoomEnergyConsumptionQuota")}</div>
             <div className="title">正泰物联 1号楼 105</div>
             <div className="gridlayout">
-                <div className="item item1"><Bluecolumn name="定额能耗" fontSize={16} />
-                    <div className="card1title">剩余能耗比例</div>
+                <div className="item item1"><Bluecolumn name={t("RatedEnergyConsumption")} fontSize={16} />
+                    <div className="card1title">{t("RemainingEnergyConsumptionRatio")}</div>
                     <Progress strokeColor='#21cf54' trailColor="#ebeef5" percent={80}></Progress>
                     <div className="fl">
-                        <Cycle text="额度" value={2000}></Cycle>
-                        <div className="normal">能耗正常</div>
+                        <Cycle text={t("Quota")} value={2000}></Cycle>
+                        <div className="normal">{t("NormalEnergyConsumption")}</div>
                     </div>
                     <div className="fl">
-                        <Cycle text="已用" value={400}></Cycle>
-                        <Cycle text="剩余" value={1600}></Cycle>
+                        <Cycle text={t("Used")} value={400}></Cycle>
+                        <Cycle text={t("Surplus")} value={1600}></Cycle>
                     </div>
                     <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
-                    <div className="fl" >负责人:张三</div>
-                    <div className="fl" >手机号:18909897678</div>
+                    <div className="fl" >{t("ResponsiblePerson")}:张三</div>
+                    <div className="fl" >{t("cellPhoneNumber")}:18909897678</div>
                 </div>
                 <div className="item item2">
-                    <Bluecolumn name="能耗趋势" fontSize={16} >
+                    <Bluecolumn name={t("EnergyConsumptionTrendb")} fontSize={16} >
                         <div style={{ marginLeft: 'auto' }}>
                             <Radio.Group
                                 options={options}
@@ -253,14 +257,14 @@ export default function Index() {
                             />
                         </div>
                     </Bluecolumn>
-                    <div ref={chart} style={{width: 1336,height: 700,marginTop:35}}></div>
+                    <div ref={chart} style={{ width: 1336, height: 700, marginTop: 35 }}></div>
                 </div>
-                <div className="item item3"><Bluecolumn name="能耗情况" fontSize={16} />
+                <div className="item item3"><Bluecolumn name={t("EnergyConsumptionSituation")} fontSize={16} />
                     <div className="grid4">
-                        <Card1 dateimg={DaySvg} value={18.45} percent={14} t2="日环比" />
-                        <Card1 dateimg={Month} t1="本月用电量" t2="月环比" value={100.14} percent={15} />
-                        <Card1 dateimg={Year} value="1043.78" t1="年累计用电量" />
-                        <Card1 dateimg={CO2} value="2412.28" t1="年累计二氧化碳排放量" unit="kg" />
+                        <Card1 dateimg={DaySvg} value={18.45} percent={14} t2={t("DayOnMonthRatio")} />
+                        <Card1 dateimg={Month} t1={t("ElectricityConsumptionThisMonth")} t2={t("MonthOnMonthRatio")} value={100.14} percent={15} />
+                        <Card1 dateimg={Year} value="1043.78" t1={t("AnnualElectricityConsumption")} />
+                        <Card1 dateimg={CO2} value="2412.28" t1={t("AnnualCarbonDioxideEmissions")} unit="kg" />
                     </div>
                 </div>
 
