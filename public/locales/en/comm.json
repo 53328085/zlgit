@@ -1,5 +1,7 @@
 {   
-    "yoy":"year-on-year",
+  "thenameoffirm": "enterprise name",
+  "organizingcode": "organizing institution bar code",
+   "yoy":"year-on-year",
     "rest": "Reset",
     "Resetprompt": "Reset prompt",
     "Yes":"Yes",

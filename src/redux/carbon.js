@@ -64,7 +64,34 @@ export const carbonSlice = apiSlice.injectEndpoints({
                 body,
             })
         }),
+        CalcFactor: build.query({ // 获取企业计算因子
+            query: (enterpriseId) => ({
+                url: `Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId=${enterpriseId}`,
+                method: 'GET', 
+            }), 
+            transformErrorResponse: (response, meta, arg) => {
+                 console.log(response)
+                return  response.status
+            },
+            providesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
 
+        SaveCalculationFactorValue: build.mutation({  //保存企业计算因子
+            query: (body) => ({
+                url:'Carbon/CarbonEmissionCalculationFactor/SaveCarbonEmissionCalculationFactorValue',
+                method: 'POST',
+                body,
+            }),
+           invalidatesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
+        
+        DeleteCalculationFactor: build.mutation({  //保存企业计算因子
+            query: (id) => ({
+                url:`Carbon/CarbonEmissionCalculationFactor/DeleteCarbonEmissionCalculationFactor?id=${id}`,
+                method: 'DELETE',
+            }),
+           invalidatesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
             query: ({body, projectId}) => ({
@@ -181,4 +208,7 @@ export const {
      useAnnualQuery,
      useAnalysisQuery,
      useEmissionDataQuery,
+     useCalcFactorQuery,
+     useSaveCalculationFactorValueMutation,
+     useDeleteCalculationFactorMutation
     } = carbonSlice

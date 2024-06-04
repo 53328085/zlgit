@@ -27,5 +27,7 @@
    "Carbonemissiondata": "Carbon emission data {{param}}",
    "carbonemission":"carbon emission {{param}}",
    "Carbonemissionl": "carbon emission {{param}}",
+   "Carbonemissiondirection": "Carbon emission direction",
+   "Inventoryyear": "Inventory year",
   "z": ""
 }

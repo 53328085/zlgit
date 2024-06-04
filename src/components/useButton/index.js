@@ -46,7 +46,7 @@ export  const Wtag = styled(Normal)`
 `
 
 export const i18warning = (text) => {  //  出错提示
-    let msg = text || i18.t("comm","dataerr")
+    let msg = text || i18.t("dataerr", {ns: "comm"})
     message.warning(msg)
   
 }
@@ -58,8 +58,8 @@ export const i18success = (type) => {  //  成功提示
     modify: "modifysuccessfully",
     delete: "successfullydelete"
   }[type]
-  let msg = i18t("comm", text)
-  message.warning(msg)
+  let msg =  i18.t(text, {ns: "comm"})
+  message.success(msg)
 
 }
 export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数

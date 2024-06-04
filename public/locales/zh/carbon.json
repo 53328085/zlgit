@@ -27,5 +27,7 @@
   "Carbonemissiondata": "碳排放数据 {{param}}",
   "carbonemission":"碳排放 {{param}}",
   "Carbonemissionl": "碳排量 {{param}}",
+  "Carbonemissiondirection": "碳排流向",
+  "Inventoryyear": "盘查年度",
   "z": ""
 }

@@ -2192,8 +2192,9 @@ export class Carbon {
    server.post(`Carbon/CarbonFlowRuntime/QueryFlow?enterpriseId=${enterpriseId}&startTime=${startTime}&endTime=${endTime}`) // 碳排流向
 
       // 碳排报告
-      static QueryCarbonReport= (body) =>   
+static QueryCarbonReport= (body) =>   
       server.post(`Carbon/CarbonReportRuntime/QueryCarbonReport`, body) // 碳排报告
-   
+static QueryCarbonEmissionCalculationFactor= (enterpriseId) =>   
+      server.get(`Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId=${enterpriseId}`)   
 }
- 
+ /* Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId */

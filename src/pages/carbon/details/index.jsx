@@ -78,16 +78,16 @@ export default function Index() {
     }
  }
   const columns = [
-    { title: i18t("comm","indx"), dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
-    { title: '企业名称', dataIndex: 'enterpriseName', align: "center",  },
-    { title: '组织机构代码', dataIndex: 'creditCode', align: "center",  },
-    { title: '盘查年度', dataIndex: 'year', align: "center",  },
+    { title:  <CustTransO ns="comm"  text="index" />, dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
+    { title:  <CustTransO ns="comm"  text="thenameoffirm" />, dataIndex: 'enterpriseName', align: "center",  },
+    { title: <CustTransO ns="comm"  text="organizingcode" />, dataIndex: 'creditCode', align: "center",  },
+    { title: <CustTransO ns="carbon"  text="Inventoryyear" />, dataIndex: 'year', align: "center",  },
     { title: '填报时间', dataIndex: 'createTime', align: "center", width: 160,   },
     { title: '最新一次填报时间', dataIndex: 'latestTime', align: "center", width: 160,  },
     { title: '监测计划最新版本', dataIndex: 'latestVersion', align: "center", width: 160,  },
     { title: '填报人', dataIndex: 'applicant', align: "center", width: 96,  },
     {
-      title: '操作',
+      title:  <CustTransO ns="comm"  text="Operation" />,
       key: 'action',
       align: 'center',
       render: (_, record) => (
@@ -159,7 +159,7 @@ export default function Index() {
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
         <span>碳排放数据表</span>
         <Space size={16}>
-          <CustButtonT text="Templatedownload" type="default" onClick={download}   /> 
+          <CustButtonT text="Templatedownload" wh="auto" type="default" onClick={download}   /> 
           <CustButtonT text="carbonplan"  wh="auto" src="new" onClick={onAdd}  />
         </Space>
     </div>
