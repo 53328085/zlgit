@@ -1,21 +1,15 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
 import styled from 'styled-components'
-import {Space,Form, InputNumber, Table} from 'antd'
+import {Space,Form, InputNumber, Table, Checkbox, Input, Typography} from 'antd'
 import Usetable from '@com/useTable'
-import {CustLink,i18success, i18warning} from '@com/useButton'
+import {CustLink,i18success, i18warning, CustButton} from '@com/useButton'
 import CModal from "@com/useModal"
-import {useSaveCalculationFactorValueMutation, useDeleteCalculationFactorMutation} from "@redux/carbon"
-const Tablebox = styled.div`
-  flex:1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  row-gap: 16px;
-  padding-top: 16px;
-  overflow-y: auto;
-`
-export default function Index({tabledata={},refetch}) { 
+import {Carbon} from "@api/api.js"
+import {isObject} from "@com/usehandler"
+import {useSaveCalculationFactorValueMutation, useDeleteCalculationFactorMutation, useFactorListQuery, useAddFactorMutation} from "@redux/carbon"
+const {Text} = Typography;
+export default function Index({tabledata={},enterpriseId}) { 
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
@@ -94,8 +88,19 @@ export default function Index({tabledata={},refetch}) {
       wref.current.onOpen()
   }
    const onDelOK =  async () => {
-      let data = await deleteCalcu(delIdRef.current);
-      console.log(data)
+      try {
+        let {data:{success, errMsg}} = await deleteCalcu(delIdRef.current);
+       if(success) {
+         wref.current.onCancel()
+         i18success('delete')
+       
+       }else {
+         i18warning(errMsg)
+       }
+      } catch (error) {
+        console.log(error)
+      }
+      
    }
 
 
@@ -104,6 +109,79 @@ export default function Index({tabledata={},refetch}) {
       return  ({style: {backgroundColor: "#e7effd"}})
      }
   }
+
+// 新增因子
+const [nform] = Form.useForm()
+const nwref = useRef()
+ 
+const [listItem ,setlistItem] = useState([])
+/*  const {isSuccess, data:listData} = useFactorListQuery(params, {
+   skip: !(Number.isInteger(params.enterpriseId) && params.categoryNo)
+ }) */
+
+const params = useRef()
+const getListData = async (categoryNo ) => {
+ params.current = {
+  enterpriseId, 
+  categoryNo,
+  
+ } 
+ try {
+  let {success, data,errMsg} = await  Carbon.QueryAddCarbonCalculationFactor(params.current)
+  if(success && isObject(data)) {
+    let {calculationFactors} = data;
+    if(Array.isArray(calculationFactors)) {
+      setlistItem(calculationFactors)
+    }else {
+      setlistItem([])
+    }
+   
+    nwref.current.onOpen()
+  }else {
+   if(!success) i18warning(errMsg)
+   setlistItem([])
+  }
+ } catch (error) {
+   console.log(error)
+ }
+
+
+}
+
+ 
+
+const [addfactor] = useAddFactorMutation()
+const onAddOk = async () => {
+    try {
+      const calculationFactors = [];
+      const {subCategoryName, ...rest} = await nform.validateFields();
+      for(let [key, obj] of Object.entries(rest)) {
+         let {factorName, parameterValue} = obj
+         if(factorName && parameterValue) {
+           calculationFactors.push({factorName: key, parameterValue})
+         }
+      }
+      if(calculationFactors.length <1) return i18warning('请选择计算因子类型并输入值')
+      let body = {
+        ...params.current,
+        subCategoryName,
+        calculationFactors,
+      }
+      let {data: {success, errMsg}} = await addfactor(body)
+      if(success) {
+         i18success("new")
+       //  nwref.current.onCancel();
+      }else {
+        i18warning(errMsg)
+      }
+    } catch (err) {
+      
+    }
+ // addfactor()
+}
+
+ 
+
   const columns = [
     {
       title:categoryName,
@@ -183,12 +261,17 @@ export default function Index({tabledata={},refetch}) {
   
   return (
     <div>
-    <Usetable columns={columns} dataSource={formartData} showHeader={false}  summary={(pageData) =>{ 
-      console.log(pageData)
+    <Usetable columns={columns} dataSource={formartData} showHeader={false}  summary={(pageData) =>{       
+      let {subCategoryName, categoryNo } = (Array.isArray(pageData) && pageData.length > 0) ? pageData[0] : {}
       return (
         <Table.Summary >
           <Table.Summary.Row>
-            <Table.Summary.Cell index={0} colSpan={6}>This is a summary content</Table.Summary.Cell>
+            <Table.Summary.Cell index={0} colSpan={6}>
+                <div style={{display: 'flex', justifyContent: "center"}}>
+                <CustButton src="new"   wh="auto" onClick={() => getListData(categoryNo, subCategoryName)}   >{subCategoryName}</CustButton>
+                </div>
+              
+          </Table.Summary.Cell>
           </Table.Summary.Row>
         </Table.Summary>
       )}} />  
@@ -200,6 +283,33 @@ export default function Index({tabledata={},refetch}) {
         </Form>
 
      </CModal>
+
+     <CModal title="新增排放类型" ref={nwref} mold="cust" onOk={onAddOk} width={480} custft >
+        <Form form={nform}   preserve={false} layout="vertical">
+           <Form.Item label="生产过程排放类型名称" name="subCategoryName" rules={[{required: true}]}>
+                <Input   style={{width: '100%'}}   />
+           </Form.Item>
+           <Form.Item label="选择计算因子类型">
+                {
+                listItem.length> 0  ? listItem.map(item => {
+                    const {factorName, unit} = item
+                    return (<div style={{display: 'flex', justifyContent: "space-between", marginBottom: "22px"}}>
+                         <Form.Item name={[`${factorName}`, 'factorName']} valuePropName="checked" noStyle>
+                             <Checkbox  >{factorName}</Checkbox>
+                         </Form.Item>
+                         <div style={{flexBasis: "250px"}}>
+                         <Form.Item name={[`${factorName}`, 'parameterValue']} noStyle>
+                              <InputNumber min={0}   addonAfter={unit} style={{width: "100%"}} />
+                         </Form.Item>
+                         </div>
+                      </div>)
+                  }) :  <Text type="warning">没有计算因子类型</Text>
+                }
+           </Form.Item>
+        </Form>
+
+     </CModal>
+
      <CModal title="删除" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
      确认删除该类型计算因子？
      </CModal>

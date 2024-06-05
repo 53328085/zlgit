@@ -290,7 +290,7 @@ getFactorData(fsuc, factorData);
                        <Tablebox>
                        {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} /> )}
 
-                       {factorRef.current?.length > 0 && factorRef.current.map((f,index) => <TableC key={f.categoryId}  tabledata={f} refetch={refetch}  /> ) }
+                       {factorRef.current?.length > 0 && factorRef.current.map((f,index) => <TableC key={f.categoryId}  tabledata={f} enterpriseId={enterpriseId}  /> ) }
                        </Tablebox>
           </Titlelayout>)
           }

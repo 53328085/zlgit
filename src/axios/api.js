@@ -2101,6 +2101,14 @@ export class Carbon {
   static QueryCarbonEnterprise= (projectId) =>
   server.get(`/Carbon/CarbonEnterpriseSetting/QueryCarbonEnterprise?projectId=${projectId}`) // 获取企业信息
 
+  static QueryAddCarbonCalculationFactor= ({enterpriseId, categoryNo}) =>
+  server.get(`Carbon/CarbonEmissionCalculationFactor/QueryAddCarbonCalculationFactor?enterpriseId=${enterpriseId}&categoryNo=${categoryNo}`) // 获取添加因子列表
+
+  static AddCarbonEmissionCalculationFactor= (body) =>
+  server.post(`Carbon/CarbonEmissionCalculationFactor/AddCarbonEmissionCalculationFactor`, body) // 添加计算因子列表
+
+  
+
   // 排放边界
   
   static QueryCarbonBoundary= (enterpriseId) =>

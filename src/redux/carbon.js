@@ -75,6 +75,23 @@ export const carbonSlice = apiSlice.injectEndpoints({
             },
             providesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
         }),
+        
+        FactorList: build.query({ // 获取企业计算因子列表
+            query: ({enterpriseId,categoryNo}) => ({
+                url: `Carbon/CarbonEmissionCalculationFactor/QueryAddCarbonCalculationFactor?enterpriseId=${enterpriseId}&categoryNo=${categoryNo}`,
+                method: 'GET', 
+            }), 
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+
+        AddFactor: build.mutation({  //添加企业计算因子
+            query: (body) => ({
+                url:'Carbon/CarbonEmissionCalculationFactor/AddCarbonEmissionCalculationFactor',
+                method: 'POST',
+                body,
+            }),
+           invalidatesTags: () => [{type: "carbon", id: `QueryCarbonEmissionCalculationFactor`}]
+        }),
 
         SaveCalculationFactorValue: build.mutation({  //保存企业计算因子
             query: (body) => ({
@@ -85,7 +102,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
            invalidatesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
         }),
         
-        DeleteCalculationFactor: build.mutation({  //保存企业计算因子
+        DeleteCalculationFactor: build.mutation({  //删除企业计算因子
             query: (id) => ({
                 url:`Carbon/CarbonEmissionCalculationFactor/DeleteCarbonEmissionCalculationFactor?id=${id}`,
                 method: 'DELETE',
@@ -210,5 +227,8 @@ export const {
      useEmissionDataQuery,
      useCalcFactorQuery,
      useSaveCalculationFactorValueMutation,
-     useDeleteCalculationFactorMutation
+     useDeleteCalculationFactorMutation,
+     useFactorListQuery,
+     useAddFactorMutation,
+
     } = carbonSlice
