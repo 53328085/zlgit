@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import { Radiogroup, Cdivider } from "@com/comstyled"
 import {enterprise,selectProjectId} from "@redux/systemconfig"
 import Titlelayout from '@com/titlelayout';
- 
+import imgsrcs from "@imgs"
 import Ichart from '@com/useEcharts/Ichart'
  
 import Table from '@com/useTable'
@@ -370,7 +370,7 @@ if(classSuc) {
            <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
-         <Image src={projectImg.current} height={400} preview={false} />
+         <Image src={projectImg.current} height={400} preview={false} fallback={imgsrcs['carbon']}  />
         {/*   <Titlelayout title={Ctitle} layout="flex" key="real">
             <div className='chart'>
                 <Ichart {...roption} /> 
