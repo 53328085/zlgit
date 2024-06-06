@@ -112,10 +112,11 @@ export const carbonSlice = apiSlice.injectEndpoints({
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
             query: ({body, projectId}) => ({
-                url:`Carbon/CarbonParkPhoto/PostParkPhoto?projectId=${projectId}`,
+                url:`Carbon/CarbonParkImage/PostParkImage?projectId=${projectId}`,
                 method: 'POST',
                 body,
-            })
+            }),
+            invalidatesTags: () => [{type: "carbon", id: 'UploadParkImage'}]
         }),
       
         // 运行态******
@@ -125,8 +126,9 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: (projectId) => ({
                 url:`Carbon/CarbonOverviewRuntime/QueryProjectPhoto?projectId=${projectId}`,
                 method: "GET",
-                transformResponse: responseData => responseData?.data?.data || {}
             }),
+            transformResponse: responseData => responseData.data,
+            providesTags: () => [{type: "carbon", id: 'UploadParkImage'}]
         }),
           
         Overview: build.query({   // 获取碳排概述

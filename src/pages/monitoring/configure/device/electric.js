@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import {useTranslation} from 'react-i18next'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message, Space, Typography } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message, Space, Typography, InputNumber } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -137,7 +137,7 @@ export default function gateway({ deviceStyle }) {
         return (
           <Space size={16}>
             <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
-          {/*   <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link> */}
+          <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link> 
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
@@ -285,12 +285,16 @@ export default function gateway({ deviceStyle }) {
   }
   //确认倍率修改
   const factorOk=async()=>{
+    try {
    
-    const formvalue = factorform.getFieldValue()
+    const {id, pt, ct} = await factorform.validateFields()
+    console.log(id)
     const res =  await  UpdateFactor({
       projectId,
-      id: formvalue.id,
-      factor:formvalue.factor
+      id,
+      pt,
+      ct
+      // factor:formvalue.factor
     })
     if(res.success){
       message.success('修改成功')
@@ -298,6 +302,10 @@ export default function gateway({ deviceStyle }) {
       getQueryByPageElectric(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
     }else{
       message.error(res.errMsg)
+    }
+       
+    } catch (error) {
+      
     }
   }
   //打开新增窗口
@@ -320,7 +328,9 @@ export default function gateway({ deviceStyle }) {
       commPort: '',
       commProtocol: '',
       commAddress: '',
-      factor: 1
+     // factor: 1,
+       pt: 1,
+      ct: 1,
     })
     modalFormRef?.current?.onOpen()
 
@@ -345,7 +355,7 @@ export default function gateway({ deviceStyle }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor,
+      //  factor: formvalue.factor,
         ct: formvalue.ct,
         pt:formvalue.pt
 
@@ -677,8 +687,14 @@ let SetFactor=({FactorRef,name,factorform,...other})=>{
           <Form.Item label="设备名称" name="name" >
             <Input style={{width:240}} disabled/>
           </Form.Item>
-          <Form.Item label="倍率" name="factor">
-           <Input style={{width:240}}/>
+          <Form.Item label="CT" name="ct">
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: 240}} />
+               </Form.Item>
+               <Form.Item label="PT" name="pt">
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: 240}} />
+               </Form.Item>
+          <Form.Item   name="id" noStyle >
+               <InputNumber   type='hidden' style={{border: 'none'}} />
           </Form.Item>
           <Form.Item label="  ">
             <Row style={{color:'#ff0000',fontSize:12}}>

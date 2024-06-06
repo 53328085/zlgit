@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import styled from 'styled-components'
 import {useTranslation} from 'react-i18next'
-import {Typography, Image, Form, Space, Button, Input,  Select, DatePicker, TimePicker, Divider, Drawer, Checkbox, message} from 'antd'
+import {Typography, Image, Form, Space, Button, Input, InputNumber, Select, DatePicker, TimePicker, Divider, Drawer, Checkbox, message} from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import moment from 'moment'
@@ -197,10 +197,11 @@ const controlcolumns = [
      labelCol={{span: 5}}
      colon={false}
      labelAlign='left'
+     preserve={false}
      style={{width: "496px"}}
    >
      <Form.Item label="选择园区" name="areaId" rules={rules}>
-        <AreaSelect />
+        <AreaSelect disabled={!isAdd} />
      </Form.Item>
      <Form.Item label="策略名称" name="name" rules={rules}>
         <Input />
@@ -263,7 +264,9 @@ const controlcolumns = [
    const [isAdd, setIsAdd] = useState(true)
    
    const title = isAdd ? '新增自动策略控制' : '编辑自动策略控制'
+   const editId = useRef()
    const edit = (record) => {
+    editId.current = record.id
     setIsAdd(false)
      let {autoCloseTime, autoOpenTime, ...rest} = record
     form.setFieldsValue({
@@ -461,11 +464,17 @@ const controlcolumns = [
      try {
       let {autoCloseTime, autoOpenTime, ...rest} = await  form.validateFields();
      
-      let params = {
+      let params =isAdd ? {
         ...rest,
         autoCloseTime: autoCloseTime.format("HH:mm"),
         autoOpenTime: autoOpenTime.format('HH:mm'),
         projectId,
+      }: {
+        ...rest,
+        autoCloseTime: autoCloseTime.format("HH:mm"),
+        autoOpenTime: autoOpenTime.format('HH:mm'),
+        projectId,
+        id: editId.current
       }
       let handler = isAdd ? 'Add' : 'Update'
       let {success, errMsg} = await  AutoValve[handler](params)

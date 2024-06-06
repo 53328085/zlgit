@@ -115,10 +115,12 @@ const projectId =useSelector(selectProjectId)
 let projectImg =useRef()
 
 const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
-  skip: !Number.isInteger(projectId)
+  skip: !Number.isInteger(projectId),
+  refetchOnMountOrArgChange: true,
  })
+ 
  if(imgsuc) {
-  projectImg.current = imgData?.data ?? null
+  projectImg.current = imgData ?? null
  }
 
   

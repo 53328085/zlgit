@@ -1288,11 +1288,12 @@ export const Monitoring = {
     QueryUsedDeviceCategory: (data) => server.get(`/Monitor/DeviceCategory/QueryUsed?projectId=${data.projectId}&deviceStyle=${data.deviceStyle}`),//获取设备类型
     GatewayAdd: (data) => server.post(`/Monitor/Gateway/Add`, data),//新增网关
     GatewayUpdate: (data) => server.post(`/Monitor/Gateway/Update`, data),//更新网关
+    ChangeDevicesParent: (data) => server.post(`/Monitor/Gateway/ChangeDevicesParent`, data),//更新网关
     GatewayDelete: (data) => server.delete(`/Monitor/Gateway/Delete?projectId=${data.projectId}&sn=${data.sn}`),//删除网关
     QueryPlanList: (projectId) => server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`),//告警计划
     AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data),//新增电表
     UpdateElectric: (data) => server.post(`/Monitor/Device/UpdateElectric`, data),//更新电表
-    UpdateFactor: (data) => server.get(`/Monitor/Device/UpdateFactor?projectId=${data.projectId}&id=${data.id}&factor=${data.factor}`),//更新倍率
+    UpdateFactor: (data) => server.post(`/Monitor/Device/UpdateFactor`, data),//更新倍率
     DeleteElectric: (data) => server.delete(`/Monitor/Device/DeleteElectric?projectId=${data.projectId}&sn=${data.sn}`),//删除电表
     QueryByPageWater: (data) => server.post(`/Monitor/Device/QueryByPageWater`, data),//查询水表
     AddWater: (data) => server.post(`/Monitor/Device/AddWater`, data),//新增水表

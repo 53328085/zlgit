@@ -69,7 +69,7 @@ export default function Index() {
      let params = {
         projectId,
         body: {
-         parkImage: energyImage.current,
+         image: energyImage.current,
         } 
      }
      
@@ -91,9 +91,10 @@ export default function Index() {
 const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
    skip: !Number.isInteger(projectId)
   })
+ 
   if(imgsuc) {
     
-    energyImage.current = imgData.data;
+    energyImage.current = imgData;
     spinning.current = false
   // setEnergyImage(data)
  //  setSpinning(false)
@@ -129,7 +130,7 @@ const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projec
      <Cspin spinning={spinning.current} tip="图片下载中……">
      <Main>
         <div className='title'>
-            <span className='text'>园区图片</span>
+            <span className='text' onClick={refetch}>园区图片</span>
             <CustButtonT onClick={onSave} loading={isLoading} text="saveImage" />
         </div>
         <div>

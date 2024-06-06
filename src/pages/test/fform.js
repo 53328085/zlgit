@@ -1,14 +1,14 @@
  
- import React from 'react'
+ import React, { useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {useParamPostMutation, useGetPostQuery,selectUsersResult} from './apiSlice'
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
-import {getWebsiteMenu, menuAdd, addMany, removeOne,selectIds } from "@redux/reduxTest"
+import {getWebsiteMenu, menuAdd, addMany, removeOne,selectIds,selectAll, selectById, allmenus} from "@redux/reduxTest"
 import {useSubIndustryListQuery, carbonSlice} from "@redux/carbon.js"
 import {CustTransO, i18warning, i18t} from "@com/useButton"
 
 const Com1 =() => {
-    
+  let {data} = useSubIndustryListQuery('0010', {refetchOnMountOrArgChange: 5}) 
   const dispatch = useDispatch()
  
   const mual = async () => {
@@ -59,10 +59,18 @@ const Com4 =() => {
   return <div><h1>Com4</h1></div>
 }
 export default function Index() {
- 
+   const [iscom1, setIscom1] = useState(true)
+   const ids =  useSelector(selectIds)
+   
+   const all = useSelector(selectAll)
+   const id = useSelector(state => selectById(state, '011007'))
+
+   const menuses = useSelector(allmenus)
+   console.log(menuses)
   return (
     <div>
-        <Com1 /> 
+       <button >selectIds</button>
+      {  iscom1 && <Com1 /> }
         <Com2 />
         <Com3 />
         <Com4 />

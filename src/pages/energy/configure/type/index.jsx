@@ -299,7 +299,9 @@ export default function Index () {
           </div>
         </div>
       
-          <Mask task={transTag}> <UseTransfer  transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer></Mask>
+          <Mask task={transTag}> 
+            { transTag &&  <UseTransfer  transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue} /> }
+          </Mask>
        
       </div>
       <Custmodl title={modalTitle} ref={aref}  mold="cust" width={512} onOk={onOk}>
