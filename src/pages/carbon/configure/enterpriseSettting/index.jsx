@@ -225,7 +225,8 @@ getFactorData(fsuc, factorData);
           
           }else {
             dispatch(getEnterprise({}))
-             message.warning(errMsg || '数据出错')
+            i18warning(errMsg)
+             // message.warning(errMsg || '数据出错')
           }
          
       } catch (error) {
@@ -288,7 +289,7 @@ getFactorData(fsuc, factorData);
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="value" style={{height: "833px", overflowY: "auto"}}>
                        <Tablebox>
-                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} /> )}
+                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} enterpriseId={enterpriseId}  /> )}
 
                        {factorRef.current?.length > 0 && factorRef.current.map((f,index) => <TableC key={f.categoryId}  tabledata={f} enterpriseId={enterpriseId}  /> ) }
                        </Tablebox>

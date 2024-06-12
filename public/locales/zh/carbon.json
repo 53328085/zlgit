@@ -29,5 +29,7 @@
   "Carbonemissionl": "碳排量 {{param}}",
   "Carbonemissiondirection": "碳排流向",
   "Inventoryyear": "盘查年度",
+  "carbonUnit": "排放单元",
+  "energyconsumption" : "能源消耗量",
   "z": ""
 }

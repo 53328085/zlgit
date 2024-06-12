@@ -1,18 +1,18 @@
 import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled, {createGlobalStyle} from 'styled-components'
-import {Form, Space,Button, Tree, Input, message} from 'antd'
+import {Form, Space,Button, Tree, Input, Typography, Empty} from 'antd'
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 import { cloneDeep } from 'lodash';
 import {Carbon} from '@api/api'
 import Titlelayout from "@com/titlelayout"
 import {TreeBtnN, TreeBtnW} from "@com/useButton"
-import {CustButtonT, CustButton} from "@com/useButton"
+import {CustButtonT, CustButton, i18warning, i18success, CustTransO} from "@com/useButton"
 import CModal from "@com/useModal"
 import TableT from  "./tabletmp"
 import CDraw from './draw'
-
+const {Text} = Typography
 const {TreeNode} = Tree;
 import {
   useBoundaryTreeQuery, 
@@ -21,8 +21,9 @@ import {
   useDeleteBoundaryMutation,
   useBoundaryConfigQuery,
   useSetConfigDataMutation,
-  boundarySlice
-} from "./boundary"
+  carbonSlice
+} from "@redux/carbon"
+ 
 
 const GlobalStyles = createGlobalStyle`
      .ant-tree-switcher-leaf-line:after {
@@ -62,7 +63,8 @@ const CTree = styled(Tree)`
 `
 const Custtitle = styled.div`
     display: flex;
-    padding: 2px 32px;
+    padding: 2px;
+    min-width: 114px;
     height: 22px;
     border-radius: 4px;
     color: var(--ant-primary-color);
@@ -160,7 +162,7 @@ const getKeys = (data) => {
 }
 
  const [treeData, setTreeData] = useState([]) 
-const getTreeData = async () => {
+/* const getTreeData = async () => {
   try {
    let {success, data, errMsg} = await  Carbon.QueryCarbonBoundary(enterpriseId)
    if(success && Array.isArray(data) && data.length) {
@@ -185,21 +187,28 @@ useEffect(() => {
     getTreeData()
   }
 
-}, [enterpriseId])
-
-/*   let treeData
+}, [enterpriseId]) */
+ 
   const {isSuccess,refetch, data:boundaryData  } = useBoundaryTreeQuery(enterpriseId, {
     skip: !Number.isInteger(enterpriseId),
     
   })
-  if(isSuccess) {
-    treeData =Array.isArray(boundaryData?.data) ? boundaryData?.data : []
-    console.log('s')
-  }else {
-     console.log('e',enterpriseId)
-     treeData = []
-  }
-  */
+ 
+  useEffect(() => {
+    if(boundaryData) {
+      let {success, errMsg, data} = boundaryData
+      if(success && Array.isArray(data) && data.length) {
+        setTreeData(data)
+        getKeys(data)
+        setExpandedKeys([...expandkeys])
+     }else {
+      if(!success) i18warning(errMsg)
+       setTreeData([])
+       setExpandedKeys([])
+     }
+    }
+    
+  }, [boundaryData])
   
   // 新增 编辑 删除子项
  
@@ -238,11 +247,13 @@ const onDelOK = async() => {
    try {
     let {success, errMsg} = await deleteSubItme(idRef.current).unwrap()
     if(success) {
-       message.warning("删除成功")
-       getTreeData()
+      i18success('delete')
+       //message.warning("删除成功")
+     //  getTreeData()
        wref.current.onCancel()
      }else {
-       message.warning(errMsg || "数据出错")
+      i18warning(errMsg)
+      // message.warning(errMsg || "数据出错")
      } 
    } catch (error) {
      console.log(error)
@@ -263,24 +274,31 @@ const onDelOK = async() => {
         }
          let {success, errMsg} = await saveSubItem(params).unwrap()
           if(success) {
-            //refetch()
-            getTreeData()
-            message.success("保存成功")
+          
+          //  getTreeData()
+          //  message.success("保存成功")
+          i18success('save')
            
           }else {
-            message.warning(errMsg || '数据出错')
+            i18warning(errMsg)
+            //message.warning(errMsg || '数据出错')
           }
       }else {
         let post ={
           id,
-          name,
+          name: encodeURIComponent(name),
+          enterpriseId,
         }
-        let {success, errMsg} = await editSubItem(post)
+       
+        let {success, errMsg} = await editSubItem(post).unwrap()
         if(success) {
-          message.success("修改成功")
-          getTreeData()
+          i18success('modify')
+          mref.current.onCancel()
+        //  message.success("修改成功")
+        //  getTreeData()
         }else {
-          message.warning(errMsg || '数据出错')
+          i18warning(errMsg)
+          // message.warning(errMsg || '数据出错')
         }
       }
     } catch (error) {
@@ -292,7 +310,7 @@ const onDelOK = async() => {
 
 // 配置
 
-   const [queryconfig] = boundarySlice.useLazyDataConfigQuery() // 碳排边界数据查询
+   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 碳排边界数据查询
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
    const saveData = useRef({}) // 点击 完成配置 时需要传递的数据
@@ -303,18 +321,20 @@ const onDelOK = async() => {
      //   setParams({...params,carbonBoundaryId:id})
         let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
         let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
- 
-        if(success && Array.isArray(data)) {
-         setTitle(txt)
-         setOpen(true)
+        setTitle(txt)
+        setOpen(true)
+        if(success && Array.isArray(data) && data.length > 0) {
+        
          setDataConfig(data)       
          data.forEach(e => {
            saveData.current[e.categoryName] = e
          })
-         console.log(saveData.current)
+         
         }else {
+         setDataConfig([])
          saveData.current={}
-         message.warning(errMsg || '数据出错')
+         if(!success) i18warning(errMsg)
+         // message.warning(errMsg || '数据出错')
         }
        } catch (error) {
          console.log(error)
@@ -330,12 +350,16 @@ const onDelOK = async() => {
    
    const onfinsh = async () => {
     try {
+      if( Object.values(saveData.current).length == 0) {
+        setOpen(false)
+        return
+      }
       let params = {
         enterpriseId,
         carbonBoundaryId:carbonBoundaryId.current,
         post: []
       }
-     
+    
       for(let value of Object.values(saveData.current)) {
         let {dataSubCategoryVos} = value
         let keys = dataSubCategoryVos.map(d => ({subCategoryId:d.subCategoryId, dataSource: d.dataSource}))
@@ -344,11 +368,15 @@ const onDelOK = async() => {
       }
       let {success, errMsg} = await finshconfig(params).unwrap()
       if(success) {
-        message.success('保存成功')
+        i18success('save')
+       // message.success('保存成功')
       }else {
-        message.warning(errMsg || '数据出错')
+        i18warning(errMsg)
+       // message.warning(errMsg || '数据出错')
       }
-       
+      saveData.current={};
+      setOpen(false)
+
     } catch (error) {
       console.log(error)
     }
@@ -360,7 +388,7 @@ const onDelOK = async() => {
 
    const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
    <span>{title}</span>
-   <CustButtonT text="Completeconfiguration" ns="button" loading={isfinsh} onClick={onfinsh} /> 
+   <CustButtonT text="Completeconfiguration" ns="button" wh="auto" loading={isfinsh} onClick={onfinsh} /> 
   </div>), [title,open])
 
 const renderTreeNodes = (data) => {
@@ -371,7 +399,7 @@ const renderTreeNodes = (data) => {
    
       item.name = (
         <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
-        {parentId === 0 ? <CustButton wh="auto">{item.name}</CustButton> :  <Custtitle>{item.name}</Custtitle>}
+        {parentId === 0 ? <CustButton wh="auto"  style={{borderRadius: '4px'}}>{item.name}</CustButton> :  <Custtitle>{item.name}</Custtitle>}
         <Space size={16}>
         <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(id,valName)} key="add" />
         <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(id,valName)} />
@@ -424,20 +452,20 @@ const renderTreeNodes = (data) => {
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="right">
                        <Tablebox>
-                       {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw} saveData={saveData.current} projectId={projectId} enterpriseId={enterpriseId} /> )}
+                       {dataconfig.length > 0 ? dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw} saveData={saveData.current} projectId={projectId} enterpriseId={enterpriseId} /> ) 
+                       : <Empty />}
                        </Tablebox>
           </Titlelayout>)
           }
        </Mainbox>  
-       <CModal title={mTitle} ref={mref} mold="cust" onOk={onOk} width={480} custft>
+       <CModal title={mTitle} ref={mref} mold="cust" onOk={onOk} width={480} custft={addedit}>
         <Form form={form}   preserve={false}>
            <Form.Item label="边界子项名称" name="name"
            normalize={value => value.trim()}
             rules={[{
               required: true,
-              message: '名称不能为空'
            }]}>
-                 <Input placeholder='请输入碳排子项名称' allowClear />
+                 <Input  allowClear />
            </Form.Item>
             
         </Form>

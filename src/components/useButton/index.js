@@ -46,7 +46,7 @@ export  const Wtag = styled(Normal)`
 `
 
 export const i18warning = (text) => {  //  出错提示
-    let msg = text || i18.t("dataerr", {ns: "comm"})
+    let msg = text || i18.t("dataerr", {ns: "comm"})  
     message.warning(msg)
   
 }

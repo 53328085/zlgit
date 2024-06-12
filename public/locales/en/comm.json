@@ -108,5 +108,14 @@
     "intlNumber": "{{val, number}}",
     "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}",
     "intlDateTime": "{{val, datetime}}",
+    "Pleaseselectdevice": "Please select device",
+    "Unselecteddevices":"Unselected devices",
+    "SearchDevice": "Search Device",
+    "pedna": "Please enter device number/address",
+    "nodata": "no data",
+    "deviceSn": "device sn",
+    "deviceName": "device name",
+    "address": "address",
+    "APIinterface": "API interface",
     "":""
 }

@@ -1,4 +1,4 @@
-import React, {useRef,  useCallback, useState} from "react";
+import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
  
 import styled from "styled-components";
@@ -150,9 +150,9 @@ export default function Log() {
   const  isgranary = useSelector(isGranary)
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
-  let dataScreen =setmenus.find(i => i.key=='dataScreen')?.label //数据大屏
-  let projectSet = setmenus.find(i => i.key=='projectSet')?.label //项目设置
-  let systemSet = setmenus.find(i => i.key=='systemSet')?.label // 平台设置
+  let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
+  let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
+  let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
   const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
@@ -200,7 +200,7 @@ const onJump = useCallback(() => {
 
  // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
-const zhcn = localStorage.getItem('i18nextLng')=='zh-CN' ? 'zh' : localStorage.getItem('i18nextLng')
+const zhcn = localStorage.getItem('i18nextLng')?.slice(0,2)?.toLowerCase()?? 'zh'
 const [lngval, setLngval] = useState(zhcn)
  
 const langChange = (e) => {
@@ -217,8 +217,8 @@ const lngOk = () => {
     dispatch(setIszhCN(lngval==='zh'))
     i18n.changeLanguage(lngval)
      
-    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
-     dispatch(getMenus({...lngmenus,projectId}))
+   const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+   dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
   } catch (error) {
       console.log(error)
@@ -226,6 +226,7 @@ const lngOk = () => {
    // navgite('/')
 }
 
+ 
   const items = [
     {label: '账户管理', key:"mg"},
     {label: '语言切换', key:"lng"},

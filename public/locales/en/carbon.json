@@ -29,5 +29,7 @@
    "Carbonemissionl": "carbon emission {{param}}",
    "Carbonemissiondirection": "Carbon emission direction",
    "Inventoryyear": "Inventory year",
+   "carbonUnit": "Carbon unit",
+   "energyconsumption" : "Energy consumption",
   "z": ""
 }
