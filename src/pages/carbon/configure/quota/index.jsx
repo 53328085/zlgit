@@ -271,7 +271,7 @@ export default function Index() {
   const onSave = async () => {
     try {
       let values =await form.validateFields();
-      console.log(values)
+      if(Object.values(values).length < 1) return;
       let params = []
       for(let [key, value] of Object.entries(values)) {       
          params.push({

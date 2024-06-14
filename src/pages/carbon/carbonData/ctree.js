@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Tree, message, Spin} from 'antd'
+import {Tree, message, Spin, Empty} from 'antd'
 import styled from 'styled-components'
 import {Carbon} from '@api/api'
 import Titlelayout from "@com/titlelayout"
@@ -47,7 +47,10 @@ export default function Index({enterpriseId, setTreeId}) {
     <Titlelayout layout="flex">
         <div style={{flex: 1}}>
          { loading  ?   <Spin />
-           : <CTree checkable checkedKeys={checkedId}  onCheck={onCheck} defaultExpandedKeys={[data[0]?.id]} treeData={data} fieldNames={{title: 'name', key: 'id',children: 'nodes'}} height={654} />
+           : (Array.isArray(data) && data?.length > 0) 
+           ?  
+           <CTree checkable checkedKeys={checkedId}  onCheck={onCheck} defaultExpandedKeys={[data?.[0]?.id]} treeData={data} fieldNames={{title: 'name', key: 'id',children: 'nodes'}} height={654} />
+           : <Empty />
            }
        </div>
     </Titlelayout>
