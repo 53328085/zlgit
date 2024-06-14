@@ -5,13 +5,13 @@ import {selectcurlRommid, selectProjectId, roomName } from "@redux/systemconfig"
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 
-import {message  } from 'antd'
+import {message ,Image } from 'antd'
 
  
 import { DistributionRoomRuntime } from '@api/api.js'
 import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
-
+import {Cspin} from "@com/comstyled"
  
 
 
@@ -87,35 +87,40 @@ export default function Index() {
   const [imgBg, setImgBg] = useState()
   const [envlist,setEnvList]=useState(init)
  
-
+  const [spinning, setSpinging] = useState(true)
   const getEnvironment = async (roomId) => {
      try {
+      setSpinging(true)
       const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
       if (res.success) {
         setEnvList(res.data)
         setImgBg(res?.data?.imgBg)
-        
+       
       } else {
         setImgBg(null)
         message.error(res.errMsg)
       }
      } catch (error) {
        console.log(error)
+     } finally {
+       setSpinging(false)
      }
-   
+    
   }
  
   
   useEffect(() => {
-   if(roomId)  getEnvironment(roomId)
+   if(Number.isInteger(roomId))  getEnvironment(roomId)
    
   }, [roomId])
   return (
   
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">
+        <Cspin spinning={spinning} tip="图片下载中……">
         <Mainbox >
           <div style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
-          <img className='bgiamge' src={imgBg || dimg}></img>
+        {/*   <img className='bgiamge' src={imgBg || dimg}></img> */}
+        <Image src={imgBg} preview={false} fallback={dimg} />
           </div>
           <div className='cardList'>
             <div className='card headtext'>
@@ -184,6 +189,7 @@ export default function Index() {
             </div>
           </div>
         </Mainbox>
+        </Cspin>
       </Pagecount>
     
   )

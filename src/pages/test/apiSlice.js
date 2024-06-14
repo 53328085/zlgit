@@ -22,9 +22,16 @@ export const apiSlice = apiTest.injectEndpoints({
                 method: 'POST',
                 body: [id],
             })
-        })
+        }),
+        getArea: build.query({
+            query: (projectId) => ({
+                url:`/General/Area/QueryAll?projectId=${projectId}&level=1`,
+                method: 'GET',
+                
+            })
+        }),
     }),
     
 })
-export const {useGetPostsQuery, useGetPostQuery, useParamPostMutation} = apiSlice
+export const {useGetPostsQuery, useGetPostQuery, useParamPostMutation, useGetAreaQuery,} = apiSlice
 export const selectUsersResult = apiSlice.endpoints.getPost.select()

@@ -5,7 +5,7 @@ import {useOutletContext} from 'react-router-dom'
 import Table from '@com/useTable'
 import Titlelayout from '@com/titlelayout';
 import Pagecount from '@com/pagecontent'
-import {CustLink, CustButtonT} from "@com/useButton"
+import {CustLink, CustButtonT, CustTransO,i18t, i18warning, i18success} from "@com/useButton"  
 import {Carbon} from '@api/api'
 import CModal from "@com/useModal"
 import {ComDatePicker} from "@com/comstyled"
@@ -25,7 +25,7 @@ export default function Index() {
                   total,
                 }
             }else {
-              if(!success) message.warning(errMsg || "数据出错")
+              if(!success) i18warning(errMsg)
                return {
                 list: [],
                 total: 0
@@ -68,32 +68,32 @@ export default function Index() {
     try {
       let {success,errMsg} = await  Carbon.DeleteCarbonManagePlan(projectId, year)
       if(success) {
-        message.success('删除成功')
+        i18success("delete")
         refresh()
       }else {
-      message.warning(errMsg || "数据出错")
+       i18warning(errMsg)
       }
     } catch (error) {
       
     }
  }
   const columns = [
-    { title: '序号', dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
-    { title: '企业名称', dataIndex: 'enterpriseName', align: "center",  },
-    { title: '组织机构代码', dataIndex: 'creditCode', align: "center",  },
-    { title: '盘查年度', dataIndex: 'year', align: "center",  },
+    { title:  <CustTransO ns="comm"  text="index" />, dataIndex: 'key', align: "center", width: 48, render: (text, _, index) => <>{index + 1}</>  },
+    { title:  <CustTransO ns="comm"  text="thenameoffirm" />, dataIndex: 'enterpriseName', align: "center",  },
+    { title: <CustTransO ns="comm"  text="organizingcode" />, dataIndex: 'creditCode', align: "center",  },
+    { title: <CustTransO ns="carbon"  text="Inventoryyear" />, dataIndex: 'year', align: "center",  },
     { title: '填报时间', dataIndex: 'createTime', align: "center", width: 160,   },
     { title: '最新一次填报时间', dataIndex: 'latestTime', align: "center", width: 160,  },
     { title: '监测计划最新版本', dataIndex: 'latestVersion', align: "center", width: 160,  },
     { title: '填报人', dataIndex: 'applicant', align: "center", width: 96,  },
     {
-      title: '操作',
+      title:  <CustTransO ns="comm"  text="Operation" />,
       key: 'action',
       align: 'center',
       render: (_, record) => (
         <Space size="middle">
           <CustLink text ="Viewreport" onClick={() => DownloadCarbonManagePlan(record.year)} />
-          <CustLink type="danger" text="delete" onClick={() => DeleteCarbonManagePlan(record.year)}>删除</CustLink>
+          <CustLink type="danger" text="delete" onClick={() => DeleteCarbonManagePlan(record.year)} /> 
         </Space>
       ),
     },
@@ -159,7 +159,7 @@ export default function Index() {
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
         <span>碳排放数据表</span>
         <Space size={16}>
-          <CustButtonT text="Templatedownload" type="default" onClick={download}   /> 
+          <CustButtonT text="Templatedownload" wh="auto" type="default" onClick={download}   /> 
           <CustButtonT text="carbonplan"  wh="auto" src="new" onClick={onAdd}  />
         </Space>
     </div>

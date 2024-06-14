@@ -5,13 +5,14 @@ import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {  message, Space} from 'antd'
 import {useOutletContext} from 'react-router-dom'
-import {CustButtonT} from "@com/useButton"
+import {CustButtonT, CustTransO,i18t, i18warning, i18success} from "@com/useButton"
 import Titlelayout from "@com/titlelayout"
  
 import {Carbon} from '@api/api'
 import CTree from './ctree'
 import Usetable from '@com/useTable'
 import {getTime} from "@com/usehandler"
+
  
 const Mainbox = styled.div`
   display: grid;
@@ -30,28 +31,38 @@ const Mainbox = styled.div`
 `
 const columns = [
   {
-    title: '名称',
+    title: i18t("comm","name"),
     dataIndex: 'name',
     key: 'name',
     width: 180
   },
   {
-    title: '开始日期',
+    title: i18t("comm","StartDate"),
     dataIndex: 'startDate',
     key: 'startDate',
-    width: 180
+    width: 180,
+    render: (text) => {
+      return <CustTransO ns="comm" text="intlDateTime" val={new Date(Date.parse(text))} />
+    }
+
   },
   {
-    title: '结束日期',
+    title: i18t("comm","EndDate"),
     dataIndex: 'endDate',
     key: 'endDate',
-    width: 180
+    width: 180,
+    render: (text) => {
+      return <CustTransO ns="comm" text="intlDateTime" val={new Date(Date.parse(text))} />
+    }
   },
   {
-    title: '碳排量(tCO₂)',
+    title: i18t("comm","Carbonemissionl", {param: '(tCO₂)'}),
     dataIndex: 'value',
     key: 'value',
-    width: 180
+    width: 180,
+    render: (text) => {
+      return <CustTransO ns="comm" text="intlNumberWithOptions" val={parseFloat(text)} />
+    }
   },
 ]
 export default function Index() { 
@@ -78,7 +89,7 @@ export default function Index() {
               total,
             }
           }else {
-            if(!success) message.warning(errMsg || "数据出错")
+            if(!success) i18warning(errMsg)
              return {
               list: [],
               total: 0
@@ -111,7 +122,7 @@ export default function Index() {
   
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span>碳排放(tCO₂)</span>
+        <span><CustTransO ns="carbon" text="carbonemission" param="(tCO₂)" /></span>
         <Space>
           <CustButtonT text="export" src='export' onClick={onExport} /> 
         </Space>

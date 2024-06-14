@@ -6,7 +6,7 @@ import {useSelector} from "react-redux";
 import {CustButtonT} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
 import {selectProjectId} from '@redux/systemconfig.js'
-import { message  } from 'antd';
+import { message , Image } from 'antd';
 import {UpdateEnergyImage} from '@api/api.js'
 import {Cspin} from "@com/comstyled"
 import {useProjectPhotoQuery, useUpdateImgMutation} from "@redux/carbon"
@@ -51,35 +51,35 @@ const Main = styled.div`
 `
 export default function Index() {
    const {projectId} = useOutletContext()  
-   const [loading, setLoading] = useState(false)
+    
 
    
    const energyImage = useRef()
 
-   const spinning = useRef(false)
+   const updateImage = useRef() 
 
-  const onChnage = (e) => {      
-       energyImage.current = e;
+  const onChnage = (e) => {         
+      updateImage.current = e;
      //setEnergyImage(e)
   }
   const [uploadImg, {isLoading}] = useUpdateImgMutation()
   const onSave =async () => {
     try {
-        if(!energyImage.current) return message.warning("请选择图片")
+        if(!updateImage.current) return message.warning("请选择图片")
      let params = {
         projectId,
-        body: {
-         parkImage: energyImage.current,
-        } 
+        image: updateImage.current,
      }
      
      let {success,errMsg} = await uploadImg(params).unwrap()
      if(success) {
+        console.log('suc1')
         message.success('保存成功')
-        energyImage.current = null
+        refetch()
+        updateImage.current = null
      }else {
         message.warning(errMsg || '数据出错')
-        energyImage.current = null
+       // energyImage.current = null
      }
     } catch (error) {
       
@@ -88,16 +88,19 @@ export default function Index() {
   }
 
 // 获取图片
-const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
+
+const {isSuccess: imgsuc, data: imgData, refetch, isLoading:loading } = useProjectPhotoQuery(projectId, {
    skip: !Number.isInteger(projectId)
   })
+ 
   if(imgsuc) {
-    
-    energyImage.current = imgData.data;
-    spinning.current = false
+   
+    energyImage.current = imgData;
+   
   // setEnergyImage(data)
  //  setSpinning(false)
   }else {
+   energyImage.current = null
  //  setEnergyImage('')
  //  setSpinning(false)
   }
@@ -126,10 +129,10 @@ const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projec
      query()
   }, [projectId]) */
   return (
-     <Cspin spinning={spinning.current} tip="图片下载中……">
+     <Cspin spinning={loading} tip="图片下载中……">
      <Main>
         <div className='title'>
-            <span className='text'>园区图片</span>
+            <span className='text' onClick={refetch}>园区图片</span>
             <CustButtonT onClick={onSave} loading={isLoading} text="saveImage" />
         </div>
         <div>
@@ -138,6 +141,7 @@ const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projec
            </div>
            <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
         </div>
+        <Image src={energyImage.current} />
      </Main>
      </Cspin>
   )

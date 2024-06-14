@@ -11,7 +11,7 @@ import Titlelayout from "@com/titlelayout"
 import upload from "@imgs/upload.png"
 import {DataSlice, useEmissionUnitQuery,useImportDataMutation, useSaveDataMutation} from "./dataslice"
 import {Carbon} from "@api/api.js"
-import {CustButtonT} from "@com/useButton"
+import {CustButtonT, CustTransO, i18warning, i18success} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
 import { enterprise} from '@redux/systemconfig'
 const { Dragger } = Upload;
@@ -53,12 +53,13 @@ const splitarr = (arr) => {
   let tableData = []
   for(let arrs of Object.values(obj)) {
       let consumption = Array.from({length: days}, (_, i) => i).fill(0)
-      let {carbonUnitName, subCategoryName} = arrs[0]
+      let {carbonUnitName, subCategoryName,unit: unittext} = arrs[0]
       let unit = {
         carbonUnitName,
         subCategoryName,
         day: days,
         consumption,
+        unit: unittext
       }
       arrs.forEach(item => {
        
@@ -110,7 +111,7 @@ export default function Index() {
  
   const [columns, setColumns] =useState([
       {
-          title: '排放单元',
+          title:  <CustTransO  text="carbonUnit" ns="carbon" />,
           dataIndex: 'carbonUnitName',
           key: 'carbonUnitName',
           align: 'center',
@@ -119,7 +120,7 @@ export default function Index() {
           ellipsis: true,
       },
       {
-        title: '能源消耗量',
+        title: <CustTransO  text="energyconsumption" ns="carbon" />,
         dataIndex: 'subCategoryName',
         key: 'subCategoryName',
         align: 'center',
@@ -233,7 +234,8 @@ const formartcol = (data, month) => {
  
 
 const onQuery = async () => { 
-    let month = form.getFieldValue('month').month() + 1
+    try {
+      let month = form.getFieldValue('month').month() + 1
     let year = form.getFieldValue('year').year()
      let {data, success,errMsg} = await  Carbon.onQueryEmission({year,month, enterpriseId})
      if(success && Array.isArray(data) && data.length > 0) {
@@ -247,6 +249,10 @@ const onQuery = async () => {
           message.warning(errMsg)
         }
      }
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
 
  useEffect(() => {
@@ -305,7 +311,7 @@ const onQuery = async () => {
         message.success("文件导入成功")
         ref.current.onCancel()
       } else{
-        if(!success) message.warning(errMsg || '数据出错')
+        if(!success) i18warning(errMsg)
          setTableData([])
       }
     } catch (error) {
@@ -332,11 +338,12 @@ const onQuery = async () => {
        }
        let {data: {success, errMsg}} = await onSaveData(params)
        if(success) {
-        message.success("保存成功")
+        i18success('save')
+       // message.success("保存成功")
      //   saveData.current ={}
         onQuery()
        }else {
-        message.warning(errMsg || '数据出错')
+        i18warning(errMsg)
        }
       
     } catch (error) {
@@ -368,15 +375,15 @@ const onQuery = async () => {
     
           <Titlelayout title={CTitle} layout="flex" >
             <Mainbox>
-               <Form form={form} layout="inline" colon={false} labelCol={{flex: '2.5em'}} 
+               <Form form={form} layout="inline" colon={false} labelCol={{flex: 'auto'}} 
                initialValues={{
             year: moment(),
             month: moment()
           }}>
-                  <Form.Item name="year" label="年度">
+                  <Form.Item name="year" label={<CustTransO ns="comm" text="year" param="度" />} >
                      <DatePicker   picker="year" onChange={onQuery} />
                   </Form.Item>
-                  <Form.Item name="month" label="月份">
+                  <Form.Item name="month" label={<CustTransO ns="comm" text="month" param="份" />} >
                     <DatePicker   picker="month" onChange={onQuery} />
                   </Form.Item>
                </Form>

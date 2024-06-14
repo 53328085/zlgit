@@ -3,6 +3,7 @@ import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input, message, Drawer} from 'antd'
 import {useSelector, useDispatch} from 'react-redux'
+import {useOutletContext} from 'react-router-dom'
 import {selectProjectId, getEnterprise,enterprise} from '@redux/systemconfig'
 import {
   useIndustryListQuery, 
@@ -12,11 +13,14 @@ import {
   useEnterpriseQuery,
   useEmissionItemsQuery,
   useSaveEnterpriseMutation,
-  useSaveItemsMutation, carbonSlice} from "@redux/carbon"
+  useSaveItemsMutation, 
+  useCalcFactorQuery,
+  carbonSlice} from "@redux/carbon"
 import Titlelayout from "@com/titlelayout"
-
-import {CustButtonT} from "@com/useButton"
+import {Carbon} from "@api/api.js"
+import {CustButtonT, i18warning, i18success} from "@com/useButton"
 import TableT from "./tabletmp"
+import TableC from './tablecalc'
 import {isObject} from "@com/usehandler"
 const {Item} = Form
 const Mainbox = styled.div`
@@ -58,6 +62,7 @@ export default function Index() {
   const [title, setTitle] = useState('')
   const projectId = useSelector(selectProjectId)
   const [emissions, setEmissions] = useState([])
+  const {enterpriseId} = useOutletContext()
   let saveData =useRef({})
 
   
@@ -123,7 +128,7 @@ export default function Index() {
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
 
   const updateEmission = async () => {
-    let {success: suc, data: emission, errMsg:err}  = await getEmission(Enterprise.id).unwrap();
+    let {success: suc, data: emission, errMsg:err}  = await getEmission(enterpriseId).unwrap();
     if(suc) {
     //  setOpen(true)
       setEmissions([...emission])
@@ -132,10 +137,39 @@ export default function Index() {
       })
        
     }else {
-      message.warning(err || "数据出错")
+      i18warning(err)
     }
     return suc
   }
+
+// 获取企业计算因子
+
+const factorRef = useRef([])
+let {isSuccess: fsuc,  data: factorData, refetch}  = useCalcFactorQuery(enterpriseId, {
+   skip: !Number.isInteger(enterpriseId)
+})
+ 
+ 
+ 
+ 
+const getFactorData = (sucs, factorData) =>  {
+    try {
+      if(sucs && isObject(factorData)) {
+        let {success, data, errMsg} = factorData
+        if(success && Array.isArray(data) && data.length >0) {
+           factorRef.current = data;
+        }else {
+           if(!success) i18warning(errMsg);
+           factorRef.current = data;
+        }
+
+      }
+    } catch (error) {
+      
+    }
+}
+
+getFactorData(fsuc, factorData);
  
   // 保存
  const onSave =async () => {
@@ -143,15 +177,16 @@ export default function Index() {
      
      for(let [key, value] of Object.entries(saveData.current)) {
             value.forEach(v => {
-              params.push({ ...v,categoryName:key, enterpriseId: Enterprise.id})
+              params.push({ ...v,categoryName:key, enterpriseId})
             })
      }
     let {success, errMsg} = await SaveItem(params).unwrap()
     if(success) {
-      message.success("保存成功")
+      i18success('save')
+     // message.success("保存成功")
       updateEmission()
     }else {
-      message.warning(errMsg || '数据出错')
+      i18warning(errMsg)
     }
 
  }
@@ -161,7 +196,9 @@ export default function Index() {
     <CustButtonT text="save" ns="button" loading={itemloading} onClick={onSave} /> 
   </div>), [title])
   const saveE =async () => {  // 保存企业信息 不需要 enterpriseId ?
+    
       try {
+     
           let {id, ...rest} = await form.validateFields()
           let params ={enterpriseId:id, ...rest}
           let title = industry.find(i => i.industryNo == rest.industryNo)?.industryName
@@ -188,7 +225,8 @@ export default function Index() {
           
           }else {
             dispatch(getEnterprise({}))
-             message.warning(errMsg || '数据出错')
+            i18warning(errMsg)
+             // message.warning(errMsg || '数据出错')
           }
          
       } catch (error) {
@@ -249,9 +287,11 @@ export default function Index() {
              <CustButtonT text="ok" wh="100%" onClick={saveE} loading={isLoading} />
              </div>
           </Titlelayout>
-         {open && (<Titlelayout   title={Title} layout="flex"  key="value">
+         {open && (<Titlelayout   title={Title} layout="flex"  key="value" style={{height: "833px", overflowY: "auto"}}>
                        <Tablebox>
-                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} /> )}
+                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} enterpriseId={enterpriseId}  /> )}
+
+                       {factorRef.current?.length > 0 && factorRef.current.map((f,index) => <TableC key={f.categoryId}  tabledata={f} enterpriseId={enterpriseId}  /> ) }
                        </Tablebox>
           </Titlelayout>)
           }

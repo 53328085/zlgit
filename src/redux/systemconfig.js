@@ -347,7 +347,7 @@ export const designerMenus  = state => state.system.menus?.designerMenus
 export const siderDesignerMenus  = state => state.system.menus?.siderDesignerMenus
 export const siderRunMenus  = state => state.system.menus?.siderRunMenus
 export const setMenus  = state => state.system.menus?.setMenus
-export const comSetFirst  = state => state.system.menus?.comSet[0]
+export const comSetFirst  = state => state.system.menus?.comSet?.length > 0 ? state.system.menus?.comSet[0] : {}
 
 //export const Selectmenus = (state, parentNo) => state.system.menus.fullmenu.filter(s => s.parentNo == parentNo)
 export const Selectmenus  =createSelector(

@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import styled from "styled-components";
-import { Button, Dropdown, Menu, Upload, Typography, } from "antd";
+import { Button, Dropdown, Menu, Upload, Typography, message} from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
 import i18 from '../../i18n'
@@ -45,9 +45,33 @@ export  const Wtag = styled(Normal)`
 
 `
 
-export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
-  return i18.t(text, {ns, ...params})
+export const i18warning = (text) => {  //  出错提示
+    let msg = text || i18.t("dataerr", {ns: "comm"})  
+    message.warning(msg)
+  
 }
+export const i18success = (type) => {  //  成功提示
+  
+  let text = {
+    save: "savesuccessfully",
+    edit: "Editsuccessfully",
+    modify: "modifysuccessfully",
+    delete: "successfullydelete",
+    new:"newsuc"
+  }[type]
+  let msg =  i18.t(text, {ns: "comm"})
+  message.success(msg)
+
+}
+export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
+  try {
+    return i18.t(text, {ns, ...params})
+  } catch (error) {
+    console.log(error)
+  }
+ 
+}
+
 
 const Custbtn = styled(Button).attrs((props) => ({
   type: props.type || "primary",
@@ -169,12 +193,12 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
-export function CustTransO(props) { // 项目概览
-  let {text, ns="overview", param} = props 
+export function CustTransO(props) {   //通用  文字/数字翻译
+  let {text, ns="overview", param, val} = props 
   const {t} = useTranslation([ns]);
   return (
     <>
-     {t(text, {param})}
+     {t(text, {param,val})}
     </>
   )
 }

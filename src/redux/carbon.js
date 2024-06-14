@@ -1,7 +1,7 @@
 import { apiSlice } from "./rtkquery"
  
 export const carbonSlice = apiSlice.injectEndpoints({   
-       
+    overrideExisting: false,
     endpoints: build => ({
         // 设计态        
         // 企业设置
@@ -40,22 +40,39 @@ export const carbonSlice = apiSlice.injectEndpoints({
                 method: 'GET',
             }),
             transformResponse: responseData => responseData,
-            providesTags: ['updateE']
+            providesTags:  () => [{type: "carbon", id: "QueryCarbonEnterprise"}]
         }),
         emissionItems: build.query({ // 获取企业碳排项信息
             query: (enterpriseId) => ({
                 url: `Carbon/CarbonEnterpriseSetting/QueryCarbonEnterpriseEmissionItems?enterpriseId=${enterpriseId}`,
                 method: 'GET',
             }),
-            
+            providesTags: () => [{type: "carbon", id: "QueryCarbonEnterpriseEmissionItems"}]
         }),
+        
+        enableCarbon: build.mutation({ // 启用/禁用碳排项
+            query: ({enterpriseId,categoryId,SubCategoryId,enabled}) => ({
+                url: `Carbon/CarbonEnterpriseSetting/EnableCarbonEnterpriseEmissionItem?enterpriseId=${enterpriseId}&categoryId=${categoryId}&SubCategoryId=${SubCategoryId}&enabled=${enabled}`,
+                method: 'POST',
+            }),         
+            invalidatesTags: (result, error, arg) =>  [{type: "carbon", id: "QueryCarbonEnterpriseEmissionItems"}]
+        }),
+        
+        UpdateFactor: build.mutation({ // 修改碳排因子数值
+            query: ({enterpriseId,categoryId,SubCategoryId,carbonEmissionFactor}) => ({
+                url: ` Carbon/CarbonEnterpriseSetting/UpdateCarbonEmissionFactorValue?enterpriseId=${enterpriseId}&categoryId=${categoryId}&SubCategoryId=${SubCategoryId}&carbonEmissionFactor=${carbonEmissionFactor}`,
+                method: 'POST',
+            }),         
+            invalidatesTags: (result, error, arg) =>  [{type: "carbon", id: "QueryCarbonEnterpriseEmissionItems"}]
+        }),
+         
         saveEnterprise: build.mutation({ // 保存碳排企业信息
             query: (body) => ({
                 url: `/Carbon/CarbonEnterpriseSetting/SaveEnterprise`,
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: ['updateE']
+            invalidatesTags: () => [{type: "carbon", id: "QueryCarbonEnterprise"}]
         }),
         saveItems: build.mutation({  //保存企业碳排项信息
             query: (body) => ({
@@ -64,16 +81,147 @@ export const carbonSlice = apiSlice.injectEndpoints({
                 body,
             })
         }),
+        CalcFactor: build.query({ // 获取企业计算因子
+            query: (enterpriseId) => ({
+                url: `Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId=${enterpriseId}`,
+                method: 'GET', 
+            }), 
+            transformErrorResponse: (response, meta, arg) => {
+                 console.log(response)
+                return  response.status
+            },
+            providesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
+        
+        FactorList: build.query({ // 获取企业计算因子列表
+            query: ({enterpriseId,categoryNo}) => ({
+                url: `Carbon/CarbonEmissionCalculationFactor/QueryAddCarbonCalculationFactor?enterpriseId=${enterpriseId}&categoryNo=${categoryNo}`,
+                method: 'GET', 
+            }), 
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+
+        AddFactor: build.mutation({  //添加企业计算因子
+            query: (body) => ({
+                url:'Carbon/CarbonEmissionCalculationFactor/AddCarbonEmissionCalculationFactor',
+                method: 'POST',
+                body,
+            }),
+           invalidatesTags: () => [{type: "carbon", id: `QueryCarbonEmissionCalculationFactor`}]
+        }),
+
+        SaveCalculationFactorValue: build.mutation({  //保存企业计算因子
+            query: (body) => ({
+                url:'Carbon/CarbonEmissionCalculationFactor/SaveCarbonEmissionCalculationFactorValue',
+                method: 'POST',
+                body,
+            }),
+           invalidatesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
+        
+        DeleteCalculationFactor: build.mutation({  //删除企业计算因子
+            query: (id) => ({
+                url:`Carbon/CarbonEmissionCalculationFactor/DeleteCarbonEmissionCalculationFactor?id=${id}`,
+                method: 'DELETE',
+            }),
+           invalidatesTags: () => [{type: "carbon", id: 'QueryCarbonEmissionCalculationFactor'}]
+        }),
+
+       // 边界
+       BoundaryTree: build.query({   // 获取碳排边界树
+        query: (enterpriseId=0) => ({
+            url:`/Carbon/CarbonEmissionBoundary/QueryCarbonBoundary?enterpriseId=${enterpriseId}`,
+            method: "GET",
+        }),
+       // transformResponse: responseData => responseData.post,
+       providesTags: () =>[{type: 'carbon', id: 'QueryCarbonBoundary'}]
+    }),
+  
+    AddCarbonBoundary: build.mutation({ // 新增边界子项
+        query: (body) => ({
+            url: `/Carbon/CarbonEmissionBoundary/AddCarbonBoundary`,
+            method: 'POST',
+            body,
+        }),
+        invalidatesTags: (result, error, arg) => [{type: 'carbon', id: 'QueryCarbonBoundary'}]
+         
+    }),
+    updateBoundary: build.mutation({ // 更新边界子项名称
+        query: ({id,name, enterpriseId}) => ({
+            url: `Carbon/CarbonEmissionBoundary/UpadteCarbonBoundary?id=${id}&name=${name}&enterpriseId=${enterpriseId}`,
+            method: 'POST',
+        }),
+        invalidatesTags: () => [{type: 'carbon', id: 'QueryCarbonBoundary'}],
+         
+    }),
+   deleteBoundary: build.mutation({ // 删除子项
+        query: (id) => ({
+            url: `Carbon/CarbonEmissionBoundary/DeleteCarbonBoundary?id=${id}`,
+            method: 'DELETE',
+        }),
+        invalidatesTags: () => [{type: 'carbon', id: 'QueryCarbonBoundary'}],
+         
+    }), 
+    configData: build.query({ // 查询排放边界配置结构
+        query: ({projectId,enterpriseId,carbonBoundaryId}) => ({
+            url: `Carbon/CarbonEmissionBoundary/ConfigDataCarbonBoundary?projectId=${projectId}&enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
+            method: 'GET',
+        }),
+    }),
+    DataConfig: build.query({ // 获取边界数据资源配置
+        query: ({enterpriseId,carbonBoundaryId}) => ({
+            url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
+            method: 'GET',
+            providesTags: (result, error, arg) => result ? [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}] : null   // ['dataconfig']
+        }),
+    }),
+     BoundaryConfig: build.query({ // 查询排放边界配置结构
+        query: ({enterpriseId,carbonBoundaryId,subCategoryId,projectId}) => ({
+            url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&projectId=${projectId}&subCategoryId=${subCategoryId}`,
+            method: 'GET',
+        }),
+       // transformResponse: (responseData) => responseData.data
+    }),
+
+    ConfigDevice: build.mutation({ // 排放边界配置
+        query: (body) => ({
+            url: `Carbon/CarbonEmissionBoundary/ConfigDeviceCaebonBoundary`,
+            method: 'POST',
+            body,
+        }),
+    }),
+    ApiData: build.mutation({ // 保存Api数据
+        query: ({enterpriseId,carbonBoundaryId,subCategoryId,post}) => ({
+            url: `Carbon/CarbonEmissionBoundary/SaveCarbonBoundaryApiData?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&subCategoryId=${subCategoryId}`,
+            method: 'POST',
+            body: post,
+        }),
+    }),
+    SetConfigData: build.mutation({ // 碳排放边界数据设置
+        query: ({enterpriseId,carbonBoundaryId,post}) => ({
+            url: `Carbon/CarbonEmissionBoundary/ConfigDataCarbonBoundary?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
+            method: 'POST',
+            body: post,
+            invalidatesTags: [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}]
+        }),
+    }),
+   
+
 
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
-            query: ({body, projectId}) => ({
-                url:`Carbon/CarbonParkPhoto/PostParkPhoto?projectId=${projectId}`,
+            query: (body) => ({
+                url:`Carbon/CarbonParkImage/PostParkImage`,
                 method: 'POST',
                 body,
-            })
+            }),
+           invalidatesTags: (result, error, arg) => [{type: "carbon", id: 'QueryProjectPhoto'}]
         }),
       
+       
+
+
+
         // 运行态******
         // 碳排概述
 
@@ -81,8 +229,9 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: (projectId) => ({
                 url:`Carbon/CarbonOverviewRuntime/QueryProjectPhoto?projectId=${projectId}`,
                 method: "GET",
-                transformResponse: responseData => responseData?.data?.data || {}
             }),
+            transformResponse: responseData => responseData.data,
+          providesTags: (result, error, page) =>[{type: "carbon", id: 'QueryProjectPhoto'}]
         }),
           
         Overview: build.query({   // 获取碳排概述
@@ -105,7 +254,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: ({enterpriseId, type}) =>({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonEmissionRanking?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
-               
+                transformResponse: (response, meta, arg) => response.data,
             }),
         }),    
         Month: build.query({   // 获取月度碳排
@@ -119,7 +268,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             query: ({enterpriseId, type=1}) =>({
                 url:`Carbon/CarbonOverviewRuntime/QueryCarbonEmissionRatio?enterpriseId=${enterpriseId}&type=${type}`,
                 method: "GET",
-               
+                transformResponse: (response, meta, arg) => response.data,
             }),
         }), 
         Energy: build.query({   // 分类能耗
@@ -128,8 +277,35 @@ export const carbonSlice = apiSlice.injectEndpoints({
                 method: "GET",
                
             }),
-        }),    
+        }), 
+        
+      //  碳排考核跟踪
+
+      Annual: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryAnnualData?enterpriseId=${enterpriseId}&year=${year}`, //  碳排年度数据
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+      
+      Analysis: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryMonthlyAnalysis?enterpriseId=${enterpriseId}&year=${year}`, //  碳排月度考核分析
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+      EmissionData: build.query({    
+        query: ({enterpriseId, year}) =>({
+            url:`Carbon/CarbonTrackRuntime/QueryEmissionData?enterpriseId=${enterpriseId}&year=${year}`, //  碳排放数据
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+      }), 
+     
     }),
+ 
 
 
 })
@@ -151,4 +327,24 @@ export const {
      useRatioQuery,
      useEnergyQuery,
      useUpdateImgMutation,
+     useAnnualQuery,
+     useAnalysisQuery,
+     useEmissionDataQuery,
+     useCalcFactorQuery,
+     useSaveCalculationFactorValueMutation,
+     useDeleteCalculationFactorMutation,
+     useFactorListQuery,
+     useAddFactorMutation,
+     useEnableCarbonMutation,
+     useUpdateFactorMutation,
+     useBoundaryTreeQuery,
+     useAddCarbonBoundaryMutation,
+     useUpdateBoundaryMutation,
+     useDeleteBoundaryMutation,
+     useDataConfigQuery,
+     useConfigDataQuery,
+     useBoundaryConfigQuery,
+     useConfigDeviceMutation,
+     useApiDataMutation,
+     useSetConfigDataMutation,
     } = carbonSlice

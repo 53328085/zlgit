@@ -4,17 +4,17 @@ import { Form, Image, message, Progress, Select, Typography } from 'antd'
 import Pagecount from '@com/pagecontent'
 import Card from './card'
 import {isObject} from "@com/usehandler"
-import {CustTransO, i18t} from "@com/useButton"
+import {CustTransO, i18t, i18warning} from "@com/useButton"
 import styled from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
 import {enterprise,selectProjectId} from "@redux/systemconfig"
 import Titlelayout from '@com/titlelayout';
- 
+import imgsrcs from "@imgs"
 import Ichart from '@com/useEcharts/Ichart'
  
 import Table from '@com/useTable'
-import {carbonSlice, SummarySlice,useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from '@redux/carbon'
+import {carbonSlice, useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from '@redux/carbon'
  
 const {Text} = Typography
 const Mainbox =styled.div`
@@ -115,86 +115,51 @@ const projectId =useSelector(selectProjectId)
 let projectImg =useRef()
 
 const {isSuccess: imgsuc, data: imgData, refetch } = useProjectPhotoQuery(projectId, {
-  skip: !Number.isInteger(projectId)
+  skip: !Number.isInteger(projectId),
+  refetchOnMountOrArgChange: true,
  })
- if(imgsuc) {
-  projectImg.current = imgData?.data ?? null
- }
- // 实时碳排放
-  /* const [roption, setRoption] =useState({
-    series: [{type: "line", seriesLayoutBy: 'row'}],
-    grid: {
-        right: 0,
-        left: 0,
-        top: '16px',
-        bottom: 0,
-         containLabel: true,
-     },
-     legend: {
-      show: false
-    },
-    dataset: { 
-    }
-})
  
- const [getRealData] =SummarySlice.useLazyRealTimeQuery()
- const onGetRealData =async (e) => {
-    let type = e ? e.target.value : 1;
-    let {success, data, errMsg} = await  getRealData({enterpriseId, type}).unwrap()
-    console.dir(data)
-    if(success && isObject(data)) {
-      let {x=[], y=[]} = data
-      setRoption({
-        ...roption,
-        dataset: { dimensions: [
-          {name: '日期', type: "time"},
-          {name: '碳排放'}
-         ],
-         source: [x, y]
-        }
-      })
+ if(imgsuc) {
+  projectImg.current = imgData ?? null
+ }
 
-    }else {
-      setRoption({
-        ...roption,
-        dataset: { dimensions: [],
-         source: []
-        }
-      })
-      if(!success) message.warning(errMsg || '数据出错')
-    }
- } */
+  
 
  
 
 // 碳排放排名
-const [dataSource, setDataSourc]=useState([])
+const  dataSource = useRef([])
  
 const columnstable = [
   {
-    title: i18t("com", "index"),    
+    title: i18t("comm", "index"),    
     width:80,
     render:(text,record,index)=>`${index+1}`
   },
-  { title: '名称', dataIndex: 'name', key: 'name', align: "center", },
-  { title: '碳排放(tCO₂)', dataIndex: 'value',key: 'value', align: "center", },
-  { title: '占比', dataIndex: 'proportion', key: 'proportion',align: "center", },
+  { title: i18t("comm", "name"), dataIndex: 'name', key: 'name', align: "center", },
+  { title: i18t("carbon", "Carbonratio", {param: '(tCO₂)'}), dataIndex: 'value',key: 'value', align: "center", },
+  { title: i18t("comm", "ratio"), dataIndex: 'proportion', key: 'proportion',align: "center", },
 ]
 
-const [getRankingData] =carbonSlice.useLazyRankingQuery() 
+const [rankparam, setRankParam] = useState({enterpriseId, type: 1})
+const  {isSuccess: ranksuc, data: rankData} =useRankingQuery(rankparam, {
+  skip: !Number.isInteger(rankparam.enterpriseId)
+}) 
+ 
+ if(ranksuc) {
+  let {success, data,errMsg} =  rankData
+  if(success && Array.isArray(data)) {
+    dataSource.current = data
+    
+  }else {
+    if(!success) i18warning(errMsg)
+    dataSource.current = data
+  }
 
-const OnGetRankingData = async (e) => {
-   let type = e ? e.target.value : 1;
-   let {success, data,errMsg} = await getRankingData({enterpriseId, type}).unwrap()
-   if(success && Array.isArray(data)) {
-     setDataSourc(data)
-     
-   }else {
-     if(!success) message.warning(errMsg || '数据出错')
-    setDataSourc([])
-   }
-   
-}
+ }else {
+  dataSource.current = []
+ }
+ 
 
 
  // 月度碳排放
@@ -235,16 +200,16 @@ if(msuc) {
   let {x=[], y=[], y1=[]} = monthData?.data ?? {}
   moption.dataset = {
     dimensions: [
-      {name: '时间', type: "time"},
-      {name: '间接排放'},
-      {name: '直接排放'}
+      {name: i18t("comm","time"), type: "time"},
+      {name: i18t("carbon","indirecte", {param: ''})},
+      {name: i18t("carbon","directe", {param: ''})}
      ],
      source: [x, y, y1]
   }
 
 }
 // 碳排占比
-const [poptions, setPoptions] = useState({
+const poptions = useRef({
   type: 3,
   pieData: { data: [], total: "100%", radius: ["50%",  "65%"],  center: ['50%', '50%']},
   legend: {
@@ -253,33 +218,37 @@ const [poptions, setPoptions] = useState({
   },
  
 })
+const [ratioparm, setRatioparm] = useState({enterpriseId, type: 1})
 
-const  [getRationData] =  carbonSlice.useLazyRatioQuery()
-const onGetRationData = async (e) => {
-  let type = e ? e.target.value : 1;
-  let {success, data,errMsg} = await getRationData({enterpriseId, type}).unwrap()
-   
+const {isSuccess:ratiosuc, data:ratiodata} = useRatioQuery(ratioparm, {
+  skip:!Number.isInteger(ratioparm.enterpriseId),
+})
+ 
+if(ratiosuc) {
+  let {success, data,errMsg} = ratiodata
   if(success && Array.isArray(data) && data.length > 0) {
-    setPoptions({
-      ...poptions,
+    poptions.current = ({
+     ...poptions.current,
       pieData: {
-        ...poptions.pieData,
+        ...poptions.current.pieData,
         data,
       }
     })
     
   }else {
-    if(!success) message.warning(errMsg || '数据出错')
-    setPoptions({
-      ...poptions,
-      pieData: {
-        ...poptions.pieData,
-        data:[],
-      }
-    })
+    if(!success) i18warning(errMsg)
+    poptions.current = ({
+      ...poptions.current,
+       pieData: {
+         ...poptions.current.pieData,
+         data: [],
+       }
+     })
   }
 
 }
+ 
+ 
 // 分类能耗
 const [classarg, setClassarg] = useState({
   enterpriseId,
@@ -298,22 +267,9 @@ const  {isSuccess: classSuc, data: classData} =useEnergyQuery(classarg, {
 if(classSuc) {
   ClassEData = classData?.data ?? []
 }
-/* const onGetEnergy = async (e) => {
-  let type = e ? e.target.value : 1;
-  let {success, data,errMsg} = await getEnergy({enterpriseId, type}).unwrap()
-  console.log(data)
-} */
+ 
 
-
-useEffect(() => {
-  if(Number.isInteger(enterpriseId))  {
-    OnGetRankingData()  // 碳排放排名
- //   onGetRealData() // 实时碳排放
-    onGetRationData() // 碳排占比
-   // onGetEnergy() // 分类能耗
-  }
-
-}, [enterpriseId]) 
+ 
 
 /*  const Ctitle = (
   <div className='custTitle'>
@@ -332,7 +288,7 @@ useEffect(() => {
      <span><CustTransO text="Carboner" ns="carbon" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
-                  onChange={(e) =>OnGetRankingData(e)} 
+                  onChange={(e) => setRankParam({...rankparam, type: e.target.value})} 
                   optionType="button"
                   buttonStyle="solid" /> 
   </div>
@@ -343,8 +299,8 @@ useEffect(() => {
      <span><CustTransO text="Carbonratio" ns="carbon" /></span>
      <Radiogroup options={options}
                   defaultValue={1}
-                  onChange={(e) => {
-                      onGetRationData(e)
+                  onChange={(e) => {                   
+                    setRatioparm({...ratioparm, type: e.target.value})
                   }} 
                   optionType="button"
                   buttonStyle="solid" /> 
@@ -381,8 +337,7 @@ useEffect(() => {
  const hoverHandler = (flag) => setIsScrolle(flag);
 
 
- useEffect(() => {
-  console.log(ClassEData)
+ useEffect(() => {   
   if(ClassEData?.length < 6) {
     wrapref.current.scrollTop = 0
     contentref2.current.style.display="none"
@@ -417,7 +372,7 @@ useEffect(() => {
            <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
-         <Image src={projectImg.current} height={400} preview={false} />
+         <Image src={projectImg.current} height={400} preview={false} fallback={imgsrcs['carbon']}  />
         {/*   <Titlelayout title={Ctitle} layout="flex" key="real">
             <div className='chart'>
                 <Ichart {...roption} /> 
@@ -425,7 +380,7 @@ useEffect(() => {
           </Titlelayout>    */}     
           <Titlelayout title={Rtitle}  key="rank">
             <div className='chart'>  
-                <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={dataSource} scroll={{
+                <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={dataSource.current} scroll={{
                   y: 300,
                 }} />
             </div>
@@ -433,7 +388,7 @@ useEffect(() => {
           </Titlelayout>
           <Titlelayout title={Raitle} layout="flex" >
             <div className='chart'>
-              <Ichart {...poptions} />
+              <Ichart {...poptions.current} />
             </div>
 
           </Titlelayout>    

@@ -5,7 +5,7 @@ function useToke() {
    return token
 }
 export const apiTest= createApi({
-    reducerPath: 'NESapi',
+    reducerPath: 'testrqtQuery',
     baseQuery: fetchBaseQuery({baseUrl: '/api/V1', prepareHeaders: (headers, api) => {
       console.log(api);
       headers.set('Token', useToke())
@@ -38,6 +38,8 @@ export const apiTest= createApi({
                 body: [id],
             })
         }),
+        // `/General/Area/QueryAll?projectId=${projectId}&level=1
+  
         paramPost: build.mutation({
             query: (id) => ({
                 url:'/Energy/EnergyFlowRunTime/QueryWater?projectId=2&type=1&date=2024-02-19',

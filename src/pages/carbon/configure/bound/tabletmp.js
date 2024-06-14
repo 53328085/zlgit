@@ -26,8 +26,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
 
  // 配置
-  console.log(saveData)
-  console.log(tabledata)
+ 
  
   const onConfig = async (record, index) => {     
      let {categoryId,subCategoryId} = record
