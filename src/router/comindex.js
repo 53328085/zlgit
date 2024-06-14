@@ -126,6 +126,7 @@ export default function Index() {
 
   const sethandler = () => {  
     try {
+      console.log(nested)
       if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true });
       } else {
@@ -222,7 +223,15 @@ export default function Index() {
         setConfig({});
       }
       if(primary =="runtimeQuota"){
-        setConfig({custview: true});
+        switch(nested){
+          case "runtimeQuotaDetailed":
+          setConfig({custview: true});
+          break;     
+          case "runtimeQuotaAlarms":
+          setConfig({custview: true});
+          break;  
+        }
+        
       }
       // 设计态
       if(primary == "designerEnergy") {
