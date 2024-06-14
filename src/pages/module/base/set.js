@@ -176,6 +176,8 @@ export default function ProjectSet({projectId}) {
   const dispatch = useDispatch(); 
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
+
+  console.log(iszh)
   const {t} = useTranslation("comm","common")
 
   const CurrProject = useSelector(currProject)

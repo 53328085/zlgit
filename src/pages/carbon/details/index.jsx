@@ -64,10 +64,21 @@ export default function Index() {
       }
  }
 
- const DeleteCarbonManagePlan = async (year) => {
+ // 删除
+ const wref = useRef()
+ const recordRef = useRef()
+ 
+ const ondel = (record) => {
+    recordRef.current = record;
+    wref.current.onOpen();
+ }
+
+
+ const onDelOK = async ( ) => {
     try {
-      let {success,errMsg} = await  Carbon.DeleteCarbonManagePlan(projectId, year)
+      let {success,errMsg} = await  Carbon.DeleteCarbonManagePlan(projectId, recordRef.current)
       if(success) {
+        wref.current.onCancel();
         i18success("delete")
         refresh()
       }else {
@@ -93,7 +104,7 @@ export default function Index() {
       render: (_, record) => (
         <Space size="middle">
           <CustLink text ="Viewreport" onClick={() => DownloadCarbonManagePlan(record.year)} />
-          <CustLink type="danger" text="delete" onClick={() => DeleteCarbonManagePlan(record.year)} /> 
+          <CustLink type="danger" text="delete" onClick={() => ondel(record.year)} /> 
         </Space>
       ),
     },
@@ -201,6 +212,9 @@ export default function Index() {
            </Form.Item>
         </Form>
 
+     </CModal>
+     <CModal title="删除计划" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
+     是否要删除碳排放监测计划？
      </CModal>
     </Pagecount>
   )

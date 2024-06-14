@@ -2166,7 +2166,13 @@ export class Carbon {
    static QueryEmissionDataPost= (pageNum, pageSize, params) =>   
    server.post(`Carbon/CarbonEmissionDataRuntime/QueryCarbonEmissionData?pageNum=${pageNum}&pageSize=${pageSize}`,params) // 碳排放数据
    static ExportDataPost= (params) =>   
-   server.post(`Carbon/CarbonEmissionDataRuntime/Export`,params) 
+   server.post(`Carbon/CarbonEmissionDataRuntime/Export`, params, {
+    headers: {
+       "Content-Type":"application/json;charset=UTF-8;application/msword",
+       
+   },
+   responseType: "arraybuffer",
+ }) 
 
    // 碳排查管理
 

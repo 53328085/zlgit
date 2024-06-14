@@ -1,5 +1,55 @@
- 
- import React, { useEffect, useState } from 'react'
+import React from 'react';
+import { Translation, useTranslation, Trans } from 'react-i18next';
+
+export   function MyComponent() {
+  return (
+    <Translation ns={["comm", "button"]}>
+      {
+        (t, { i18n }) =>  <div>
+
+           <p>{t('Passwordresetsucceeded')}</p>
+           <p>{t('button:viewDetails')}</p>
+           <button onClick={() => i18n.changeLanguage("en-US")}>en-us</button>
+           <button onClick={() => i18n.changeLanguage("zh")}>zh</button>
+           </div>
+      }
+    </Translation>
+  )
+}
+
+function Tranocom({person={}, messages}) {
+  const { name } = person;
+  const count = messages.length;
+  const {t} = useTranslation()
+  return (
+    <Trans i18nKey="userMessagesUnread" count={count} ns="test">
+      Hello <h1 title={t('nameTitle')}>{{name}}</h1>, you have {{count}} unread message. <a to="/msgs">Go to messages</a>.
+    </Trans>
+  );
+}
+function Rendercom(props) {
+  let obj= {
+    name: 'zl',
+    age: 42,
+  }
+  return <>
+
+     {props.children(obj)}
+  </>
+}
+
+export default function Index() {
+   let msg = Array.from({length: 10}, (i, v) => i)
+   return (
+    <div>
+       <MyComponent />
+        <Tranocom  person={{name: 'zhuzl'}} messages={msg}/>
+    </div>
+   )
+}
+
+
+/*  import React, { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {useParamPostMutation, useGetPostQuery,selectUsersResult, useGetAreaQuery} from './apiSlice'
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
@@ -54,4 +104,4 @@ export default function Index() {
     </div>
   )
 }
- 
+  */

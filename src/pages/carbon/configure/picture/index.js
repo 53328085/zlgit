@@ -141,7 +141,7 @@ const {isSuccess: imgsuc, data: imgData, refetch, isLoading:loading } = useProje
            </div>
            <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
         </div>
-        <Image src={energyImage.current} />
+        
      </Main>
      </Cspin>
   )

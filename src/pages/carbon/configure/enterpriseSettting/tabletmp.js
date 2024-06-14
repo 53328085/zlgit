@@ -36,11 +36,11 @@ export default function Index({tabledata,saveData, enterpriseId}) {
   const [onEanble] =useEnableCarbonMutation()
   const swichange = async (v, index,record) => {
     try {
-      let {categoryId, subCategoryId,enabled} = record
+      let {categoryId, subCategoryId} = record
       let params = {
         categoryId,
         SubCategoryId: subCategoryId,
-        enabled,
+        enabled:Number(v),
         enterpriseId:enterpriseId
       }
       let {success, errMsg} = await  onEanble(params).unwrap()
@@ -117,14 +117,14 @@ export default function Index({tabledata,saveData, enterpriseId}) {
       align: 'center',
       onCell: showOncell
     },
-    {
+   /*  {
       
       title: '数值',
       dataIndex: 'carbonEmissionFactor',
       key: 'carbonEmissionFactor',
       align: 'center',
       onCell: showOncell
-    },
+    }, */
     {
       title: '是否启用',
       dataIndex: 'enabled',
@@ -135,13 +135,13 @@ export default function Index({tabledata,saveData, enterpriseId}) {
         return  index> 0 ? <Switch checkedChildren={t("button:enable")} unCheckedChildren={t("button:disable")} defaultChecked={record.enabled==1} onChange={(v)=> swichange(v, index, record)} /> : '是否启用'
       }
     },
-    {
+   /*  {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
       render: (_, record, index) => index>0 ? <CustLink text="Modificationfactor" onClick={() => onChange(record, index)} /> :  t("comm:Operation")
-    }
+    } */
 
   ]
  

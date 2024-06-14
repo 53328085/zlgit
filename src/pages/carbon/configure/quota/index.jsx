@@ -6,16 +6,16 @@ import {Form,  Space, DatePicker, Tooltip, InputNumber, message} from 'antd'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
 import {QutoSlice,  useQuotaQuery, useEmissionQuery,useSaveTargetMutation,
-  useSaveQuotaMutation} from "./quotaslice"
-import {CustButtonT} from "@com/useButton"
+  useSaveQuotaMutation} from "@redux/carbon"
+import {CustButtonT, CustTransO,i18warning, i18success} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 import {Carbon} from '@api/api'
 import {isObject} from '@com/usehandler'
 const Mainbox = styled.div`
-    margin-top: 16px;
-    padding-top: 16px;
+  //  margin-top: 16px;
+  //  padding-top: 16px;
   
     display: flex;
     flex-direction: column;
@@ -42,13 +42,13 @@ const Ctd = ({i,text,index}) => {
 }
 const columns = [
   {
-      title: '年份',
+      title:  <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
-      render: (text) => <>{text}碳排放量(tCo2)</>
+      render: (text) => <>{text} <CustTransO ns="carbon" text="Carbonemissionl" param="(tCo2)" /></>
   },
  ...Array.from({length: 12}, ( index,i) => ({
-    title: i+1+'月',
+    title: <CustTransO ns="comm" text={i+1}   />,     // i+1+'月',
     dataIndex: i+1,
     key: i+1,
     width: 80,
@@ -88,13 +88,13 @@ const Ctdt = ({i,text,index}) => {
 }
 const columnsT = [
   {
-      title: '年份',
+      title: <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
       render: (text) => <>{text}碳排放目标值(tCo2)</>
   },
  ...Array.from({length: 12}, ( index,i) => ({
-    title: i+1+'月',
+    title: <CustTransO ns="comm" text={i+1}   />,  // i+1+'月',
     dataIndex: i+1,
     key: i+1,
     width: 80,

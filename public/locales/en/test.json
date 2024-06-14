@@ -12,5 +12,8 @@
     "keyEscaped": "no danger {{myVar}}",
     "keyUnescaped": "dangerous {{- myVar}}",
     "intlNumber": "{{val, number}}",
-  "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}"
+  "intlNumberWithOptions": "{{val, number(minimumFractionDigits: 2)}}",
+  "nameTitle": "This is your name",
+"userMessagesUnread_one": "Hello <1>{{name}}</1>, you have {{count}} unread message. <5>Go to message</5>.",
+"userMessagesUnread_other": "Hello <1>{{name}}</1>, you have {{count}} unread messages.  <5>Go to messages</5>."
  }

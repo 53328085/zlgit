@@ -1,8 +1,8 @@
 import {message} from 'antd'
-import {i18warning} from '@com/useButton'
+ 
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 const baseQuery = fetchBaseQuery({
-   baseUrl: '/api/V1', 
+   baseUrl: process.env.NODE_ENV === "production" ? '/V1' :  '/api/V1', 
    prepareHeaders: (headers, {getState}) => {    
     
      const Token = getState().user?.token 
@@ -31,8 +31,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
   }
   args.url = url
   
-   let result = await baseQuery(args,api, extraOptions)
-   console.log(result)
+   let result = await baseQuery(args,api, extraOptions)  
    if(result.error ) {
      const {originalStatus: status, data} = result.error
      const {response} = result.meta
@@ -53,7 +52,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
        })
      }
      if(status >=500) {
-       return    i18warning(response.statusText)   // message.warning(response.statusText || '数据出错')
+       return    message.warning(response.statusText)   // message.warning(response.statusText || '数据出错')
      }
   
    }

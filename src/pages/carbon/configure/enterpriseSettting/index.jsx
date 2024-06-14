@@ -171,9 +171,10 @@ const getFactorData = (sucs, factorData) =>  {
 
 getFactorData(fsuc, factorData);
  
-  // 保存
+  // 保存=>关闭
  const onSave =async () => {
-     let params = [];
+    setOpen(false)
+    /*  let params = [];
      
      for(let [key, value] of Object.entries(saveData.current)) {
             value.forEach(v => {
@@ -183,17 +184,17 @@ getFactorData(fsuc, factorData);
     let {success, errMsg} = await SaveItem(params).unwrap()
     if(success) {
       i18success('save')
-     // message.success("保存成功")
+    
       updateEmission()
     }else {
       i18warning(errMsg)
-    }
+    } */
 
  }
 
   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
     <span>{title}</span>
-    <CustButtonT text="save" ns="button" loading={itemloading} onClick={onSave} /> 
+    <CustButtonT text="cancel" ns="button"   onClick={onSave} /> 
   </div>), [title])
   const saveE =async () => {  // 保存企业信息 不需要 enterpriseId ?
     

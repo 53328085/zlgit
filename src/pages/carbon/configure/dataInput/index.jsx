@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import moment from 'moment'
 import {Form,  Space, DatePicker, Tooltip, Upload, Typography, message,InputNumber} from 'antd'
 import {useSelector} from 'react-redux'
+import {useTranslation, Trans} from 'react-i18next'
 import Pagecount from '@com/pagecontent'
 import Modal from '@com/useModal'
 import _ from 'lodash'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
 import upload from "@imgs/upload.png"
-import {DataSlice, useEmissionUnitQuery,useImportDataMutation, useSaveDataMutation} from "./dataslice"
+import {DataSlice, useEmissionUnitQuery,useImportDataMutation, useSaveDataMutation} from "@redux/carbon"
 import {Carbon} from "@api/api.js"
 import {CustButtonT, CustTransO, i18warning, i18success} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
@@ -102,6 +103,7 @@ const splitarr = (arr) => {
 
 export default function Index() { 
   const {id:enterpriseId} = useSelector(enterprise)
+  const {t} = useTranslation()
   const [form] = Form.useForm()
   const [tbform] = Form.useForm()
   const ref = useRef()
@@ -172,11 +174,11 @@ const formartcol = (data, month) => {
       render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} month={month} /> 
    }))
    let endcol = {
-     title: "月总计",
+     title:  <CustTransO  ns="comm" text="monthlytotal"/>,
     dataIndex: day,
       key: day,
       align: 'center',
-      width: 80,
+      width: 120,
       fixed: 'right',
       ellipsis: true,
       render: (_, record) => {
@@ -192,7 +194,7 @@ const formartcol = (data, month) => {
       }
    }
    let unit = {
-      title: '单位',
+      title: <CustTransO  ns="comm" text="unit"/>,
       dataIndex: 'unit',
       key: 'unit',
       align: 'center',
@@ -308,7 +310,7 @@ const onQuery = async () => {
 
       if(success && Array.isArray(data) && data.length > 0) {
         formartcol(data)      
-        message.success("文件导入成功")
+        message.success(t("comm:Fileimportsuccessful"))
         ref.current.onCancel()
       } else{
         if(!success) i18warning(errMsg)
@@ -354,20 +356,27 @@ const onQuery = async () => {
 
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span>手动数据录入</span>
+        <span> <CustTransO  ns="comm" text="Manualdataentry"/></span>
         <Space>
-          <Tooltip title="下载模板后录入数据，可以直接导入上传数据">
+          <Tooltip title={t("carbon:importtip")}>
           <CustButtonT text="download" onClick={onDownload} key="download" /></Tooltip>
           <CustButtonT text="import" src='import' onClick={onImport} key="import" /> 
           <CustButtonT text="save" src='save' onClick={onSave} loading={isLoading} key="save" />
           </Space>
     </div>
   )
-
+   const Ctitle = () => {
+    let month = form.getFieldValue('month').month()+1
+    return <><span style={{color: "#f00"}}>{t(month, {ns: "comm"})}</span>{t("carbon:modalTitle")}</>
+  }  
+/* 
   const Ctitle = () => {
-    let month = form.getFieldValue('month').month()
-    return <><span style={{color: "#f00"}}>{month+1}月份</span>数据模板导入</>
-  }
+    let month = form.getFieldValue('month').month()+1
+    return <Trans ns="carbon" i18nKey='modalTitle'>
+<span style={{color: "#f00"}}>{{month}}月份</span>数据模板导入
+    </Trans>
+
+  } */
  
   return (
     <Pagecount bgcolor="transparent" pd="0">
@@ -398,7 +407,11 @@ const onQuery = async () => {
      
       <Dragger accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
         <img src={upload}></img>
-        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<Link>点击上传</Link></p>
+        <p style={{ margin: '32px 0', fontSize: 16 }}>
+          <Trans ns="carbon" i18nKey="uploadtip">
+           将文件拖到此处，或<Link>点击上传</Link>
+          </Trans>
+          </p>
        
       </Dragger>  
     </Modal>

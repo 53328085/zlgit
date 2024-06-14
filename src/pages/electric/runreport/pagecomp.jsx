@@ -127,7 +127,7 @@ export default function pagecomp({data, params}) {
         <p  className='title'>2.电气安全详情</p> 
         <DesItem title=""  bordered size='small' layout="vertical" column={3} className="bgsty">
           <DesItem.Item label="总报警次数" labelStyle={labsty}>{data.alarmCnt}</DesItem.Item>
-          <DesItem.Item label="最大电量">{data.iMaxContent}</DesItem.Item>
+          <DesItem.Item label="最大电流">{data.iMaxContent}</DesItem.Item>
           <DesItem.Item label="最大电压">{data.uMaxContent}</DesItem.Item>
           <DesItem.Item label="剩余电流">{data.irMaxContent}</DesItem.Item>
           <DesItem.Item label="最高温度">{data.tMaxContent}</DesItem.Item>

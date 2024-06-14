@@ -111,5 +111,9 @@
     "deviceName": "设备名称",
     "address": "安装位置",
     "APIinterface": "API接口",
+    "unit": "单位",
+    "monthlytotal": "月总计",
+    "Manualdataentry":"手动数据录入",
+    "Fileimportsuccessful": "文件导入成功",
     "": ""
 }

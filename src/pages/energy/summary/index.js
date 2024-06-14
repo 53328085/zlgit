@@ -234,7 +234,7 @@ const getDataEnergy = async () => {
                   height={56}
                 />
                 <div className="desc">
-                  <span>今日用电量(kwh)</span>
+                  <span>今日用电量(kWh)</span>
                   <Text className="num" ellipsis>
                     {energyValue.todayElectricConsume}
                   </Text>
@@ -253,11 +253,11 @@ const getDataEnergy = async () => {
                   height={56}
                 />
                 <div className="desc">
-                  <Text>本月用电量（kWh）</Text>
+                  <Text>本月用电量(kWh)</Text>
                   <Text className="num" ellipsis>
                     {energyValue.curMonthElectricConsume}
                   </Text>
-                  <Text>本月累计电费（元）</Text>
+                  <Text>本月累计电费(元)</Text>
 
                   <Cp ellipsis className="num">
                     {energyValue.curMonthElectricConsumePay}

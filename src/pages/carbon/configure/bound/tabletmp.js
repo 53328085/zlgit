@@ -110,9 +110,9 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       onCell: showOncell,
       render: (text, record,index) => {
         return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} value={text} style={{display: 'flex', justifyContent: "space-around"}}>
-        <Radio value={0}>自动采集</Radio>
+        <Radio value={2}>自动采集</Radio>
         <Radio value={1}>手动录入</Radio>
-        <Radio value={2}>无数据入</Radio>
+        <Radio value={0}>无数据入</Radio>
       </Radio.Group> : ''
       }
     },

@@ -31,5 +31,9 @@
   "Inventoryyear": "盘查年度",
   "carbonUnit": "排放单元",
   "energyconsumption" : "能源消耗量",
+  "Manualdataentry":"手动数据录入",
+  "importtip": "下载模板后录入数据，再导入上传数据",
+  "modalTitle":"数据模板导入",
+  "uploadtip": "将文件拖到此处，或<1>点击上传</1>",
   "z": ""
 }

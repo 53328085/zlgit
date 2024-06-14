@@ -64,8 +64,11 @@ export const i18success = (type) => {  //  成功提示
 
 }
 export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
+  let {param='', ...rest} = params;
   try {
-    return i18.t(text, {ns, ...params})
+     
+      return i18.t(text, {ns,param, ...rest})
+   
   } catch (error) {
     console.log(error)
   }
@@ -194,7 +197,7 @@ const CmenuItem = styled(Menu.Item)`
 }
 `
 export function CustTransO(props) {   //通用  文字/数字翻译
-  let {text, ns="overview", param, val} = props 
+  let {text, ns="overview", param='', val} = props 
   const {t} = useTranslation([ns]);
   return (
     <>

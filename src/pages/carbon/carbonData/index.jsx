@@ -113,13 +113,26 @@ export default function Index() {
         date: getTime(date, type),
         FacilityIds:  treeId
       }
-       let {success} = await Carbon.ExportDataPost(params)
+       let data = await Carbon.ExportDataPost(params)
+       console.log(data)
+       let blob = new Blob([data], {
+        type: "application/x-msdownload",
+      }); 
+     
+      let url = window.URL.createObjectURL(blob); 
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = `碳排查数据.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+     
+      document.body.removeChild(a);
     } catch (error) {
-      
+      console.log(error)
     }
    
   }
-  
+ 
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
         <span><CustTransO ns="carbon" text="carbonemission" param="(tCO₂)" /></span>

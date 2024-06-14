@@ -206,7 +206,61 @@ export const carbonSlice = apiSlice.injectEndpoints({
         }),
     }),
    
+     //  数据录入
+     importData: build.mutation({ // 文件导入  二进制文件作为参数 报错？？
+        query: (body) => ({
+            url: `/Carbon/CarbonEnterpriseDataInput/ImportData`,
+            method: 'POST',
+            body,
+        })             
+    }),
+    saveData: build.mutation({ // 保存数据
+        query: ({year,month, enterpriseId,body}) => ({
+            url: `Carbon/CarbonEnterpriseDataInput/SaveInputData?year=${year}&month=${month}&enterpriseId=${enterpriseId}`,
+            method: 'POST',
+            body
+        }),
+       
+         
+    }),
 
+    emissionUnit: build.query({   // 查询排放单元
+        query: ({year, month,enterpriseId}) => ({
+            url:`Carbon/CarbonEnterpriseDataInput/QueryCarbonEmissionUnit?year=${year}&month=${month}&enterpriseId=${enterpriseId}`,
+            method: "GET",
+        }),
+    }),
+
+    // 配额管理
+    Quota: build.query({   // 获取碳排配额  去年
+        query: ({enterpriseId,year}) => ({
+            url:`Carbon/CarbonQuotaManagement/QueryCarbonQuota?enterpriseId=${enterpriseId}&year=${year}`,
+            method: "GET",
+            transformResponse: responseData => responseData,
+        }),
+    }),
+    Emission: build.query({   // 获取碳排配额 当年
+        query: (enterpriseId) => ({
+            url:`Carbon/CarbonQuotaManagement/QueryCarbonEmission?enterpriseId=${enterpriseId}`,
+            method: "GET",
+            transformResponse: responseData => responseData,
+        }),
+    }),
+    SaveQuota: build.mutation({ // 保存碳排配额
+        query: (body) => ({
+            url: `Carbon/CarbonQuotaManagement/SaveCarbonQuota`,
+            method: 'POST',
+            body,
+        })             
+    }),
+    
+    SaveTarget: build.mutation({ // 保存碳排目标值
+        query: (body) => ({
+            url: `Carbon/CarbonQuotaManagement/SaveCarbonTarget`,
+            method: 'POST',
+            body,
+        })             
+    }),
 
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
@@ -347,4 +401,12 @@ export const {
      useConfigDeviceMutation,
      useApiDataMutation,
      useSetConfigDataMutation,
+     useEmissionUnitQuery,   
+     useImportDataMutation,
+     useSaveDataMutation,
+     useQuotaQuery,
+     useEmissionQuery,  
+     useSaveQuotaMutation,
+     useSaveTargetMutation, 
+     
     } = carbonSlice

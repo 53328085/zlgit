@@ -142,20 +142,28 @@ dataIndex: 'enabled',
     key: 'total',
     align: 'center',
     render: (text,record) => {
-      return <Space><CustLink text="edit" onClick={() => onedit(record) } /><CustLink text="delete" onClick={() => ondel(record) } /></Space>
+      return <Space size={32}><CustLink text="edit" onClick={() => onedit(record) } /><CustLink text="delete" type="danger" onClick={() => ondel(record) } /></Space>
     }
  }
 ]
 
 // 删除 
-
+const wref = useRef()
+const recordRef = useRef()
+const [ruleName, setRuleName] = useState()
 const [DeleteStrategy] = useDeleteStrategyMutation()
-
-const ondel = async (record) => {
+const ondel = (record) => {
+   recordRef.current = record;
+   setRuleName(record.ruleName)
+   wref.current.onOpen();
+   
+}
+const onDelOK = async () => {
     try {
-      let {success, errMsg} = await DeleteStrategy(record.ruleId).unwrap()
+      let {success, errMsg} = await DeleteStrategy(recordRef.current.ruleId).unwrap()
       if(success) {
         message.success('删除成功')
+        wref.current.onCancel();
         getData()
       }else {
         message.warning(errMsg || '数据出错')
@@ -282,12 +290,12 @@ const onedit =(record) => {
           </Titlelayout>
     <CModal title={title} ref={ref} mold="cust" onOk={onOk} width={424} >
         <Form form={form}   preserve={false} labelCol={{span: 5}} labelAlign='left'>
-          <Form.Item label="预警类型" name="expectedPeriod"  initialValue={{label: disabledId.current == 0 ? '年度碳排放预警' : '月度碳排放预警', value: disabledId.current == 0 ? 1 : 0}}>
-              <Select labelInValue>
+        {isadd.current &&  <Form.Item label="预警类型" name="expectedPeriod"  initialValue={{label: disabledId.current == 0 ? '年度碳排放预警' : '月度碳排放预警', value: disabledId.current == 0 ? 1 : 0}}>
+            <Select labelInValue>
                  <Select.Option value={0} disabled={disabledId.current == 0}>月度碳排放预警</Select.Option>
                  <Select.Option value={1} disabled={disabledId.current == 1}>年度碳排放预警</Select.Option>
               </Select>
-          </Form.Item>
+          </Form.Item> }
            <Form.Item label="紧急  ≥" >
               <Space>
                 <Form.Item name={['1', 'LimitValueMin']} rules={rules}>
@@ -339,6 +347,9 @@ const onedit =(record) => {
            </Form.Item>
         </Form>
 
+     </CModal>
+     <CModal title="删除预警策略" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
+     是否要删除{ruleName}策略？
      </CModal>
     </Pagecount>
   )
