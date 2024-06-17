@@ -178,7 +178,7 @@ export default function GatewayDetail(props) {
     const isclude = [2,7].includes(deviceStyle); // 是否是水表
     let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
    
-    let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true;
+    let dtlkeys = Number.isFinite(detail.state) ? ![2, 3, 0].includes(detail.state) : true; // 0 离线
      
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})

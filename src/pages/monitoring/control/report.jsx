@@ -189,8 +189,8 @@ week.forEach(w => {
         render: (_, record) => {
           let {cycle, cycleTime} = record
           if(cycle == 1) return <span>每日</span>
-          if(cycle == 2) return  cycleTime.map(t =>  getweek.get(t)).join()
-          if(cycle == 3) return  cycleTime.map(d => `${d}号`).join()
+          if(cycle == 2) return  cycleTime?.map(t =>  getweek.get(t)).join()
+          if(cycle == 3) return  cycleTime?.map(d => `${d}号`).join()
         }
     },
     {

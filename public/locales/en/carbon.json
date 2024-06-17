@@ -34,5 +34,13 @@
    "importtip": "After downloading the template, enter the data and then import and upload the data",
    "modalTitle":"Data template import",
    "uploadtip": "Drag the file here, or <1>click upload</1>",
-  "z": ""
+   "Carbontarget": "{{text}} Carbon emission target value (tCo2)",
+   "total": "Total",
+   "yearnodata": "No data available in {{year}}",
+   "parkobjectives": "<0>Decomposition and calculation of park objectives</0>",
+   "yearyearrate":"<0>Park quotas are pre-allocated</0><1>Total pre-quota：{{curtal}}tCO2 Compared with carbon emissions in {{lastyear}}:</1><2>{{rate}}%</2><3></3",
+   "rulename": "Rule name",
+   "Expectedcycle": "Expected cycle",
+   "Mlimits": "Method for calculating warning limits",
+   "z": ""
 }

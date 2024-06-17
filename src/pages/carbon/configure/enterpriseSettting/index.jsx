@@ -65,12 +65,17 @@ export default function Index() {
   const {enterpriseId} = useOutletContext()
   let saveData =useRef({})
 
+ 
+
+ 
   
  // 保存企业信息
 
   const [SaveEnterprise, {isLoading}] =useSaveEnterpriseMutation()
   
   const [SaveItem, {isLoading: itemloading}] = useSaveItemsMutation()
+
+  
 
   // 所属行业
 
@@ -127,7 +132,7 @@ export default function Index() {
   //  获取企业碳排项信息
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
 
-  const updateEmission = async () => {
+  const updateEmission = async (enterpriseId) => {
     let {success: suc, data: emission, errMsg:err}  = await getEmission(enterpriseId).unwrap();
     if(suc) {
     //  setOpen(true)
@@ -199,19 +204,26 @@ getFactorData(fsuc, factorData);
   const saveE =async () => {  // 保存企业信息 不需要 enterpriseId ?
     
       try {
-     
-          let {id, ...rest} = await form.validateFields()
-          let params ={enterpriseId:id, ...rest}
+          
+          let {id,...rest} = await form.validateFields()
+          let params ={enterpriseId:id,projectId,  ...rest}
+         
           let title = industry.find(i => i.industryNo == rest.industryNo)?.industryName
           setTitle(title)
           if(isLoading) return;
+          console.log(params)
           let {success, data, errMsg} = await  SaveEnterprise(params).unwrap()
-          if(success && isObject(data)) {
-     
-              let {enterpriseId, ...post} = data 
-              dispatch(getEnterprise({id:enterpriseId, ...post})) // 更新企业信息
-              let open = await  updateEmission()
-              setOpen(open)
+        
+          if(success) {
+                let {success, data,errMsg} = await Carbon.QueryCarbonEnterprise(projectId) // 更新企业信息
+                if(success && isObject(data)) {
+                  dispatch(getEnterprise(data))
+                  let open = await  updateEmission(data.enterpriseId)
+                  setOpen(open)
+                }
+        
+              
+             
            /*  let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
             if(suc) {
               setOpen(true)
@@ -278,9 +290,7 @@ getFactorData(fsuc, factorData);
                  <Item label="联系人" name="contacts"  >
                      <Input></Input>
                  </Item>
-                 <Item name="projectId" noStyle>
-                    <Input type="hidden" />
-                 </Item>
+               
                  <Item name="id" noStyle>
                      <Input type="hidden" />
                  </Item>

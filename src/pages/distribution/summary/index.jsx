@@ -5,7 +5,7 @@ import {selectcurlRommid, selectProjectId, roomName } from "@redux/systemconfig"
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 
-import {message ,Image } from 'antd'
+import {message ,Image, Typography } from 'antd'
 
  
 import { DistributionRoomRuntime } from '@api/api.js'
@@ -13,7 +13,7 @@ import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
 import {Cspin} from "@com/comstyled"
  
-
+const {Text} = Typography
 
 const Mainbox = styled.div`
   flex: 1;
@@ -25,7 +25,8 @@ const Mainbox = styled.div`
     top: 32px;
     color: #fff;
     border-radius: 4px;
-    overflow: hidden;
+    height: 732px;
+   overflow-y: auto;
     .card{
       width: 256px;
       height: 48px;
@@ -37,6 +38,14 @@ const Mainbox = styled.div`
       justify-content: space-between;
       span{
         padding-left: 12px;
+        display: inline-block;
+        color: #fff;
+        width: 130px;
+      }
+      .imgtip{
+        display: flex;
+        align-items: center;
+      
       }
       .cardval{
         color: #00ff00;
@@ -74,19 +83,22 @@ export default function Index() {
 
   const roomId = useSelector(selectcurlRommid)
   const rname = useSelector(roomName)
-  console.log(rname)
+  
   const init = {
     door:"",
     fire:"",
-    humidness:"",
+    ht: [], // 温湿度
+    sF6: [], // 有害气体
+    water:[], // 水浸
+  //  humidness:"",
     noise:"",
     smoke:"",
-    temperature:"",
+   // temperature:"",
     water:""
   }
   const [imgBg, setImgBg] = useState()
   const [envlist,setEnvList]=useState(init)
- 
+  const {ht, sF6, water} = envlist
   const [spinning, setSpinging] = useState(true)
   const getEnvironment = async (roomId) => {
      try {
@@ -98,6 +110,7 @@ export default function Index() {
        
       } else {
         setImgBg(null)
+        setEnvList(init)
         message.error(res.errMsg)
       }
      } catch (error) {
@@ -108,7 +121,17 @@ export default function Index() {
     
   }
  
-  
+  const Custcard = ({src, value, name}) => {
+  return(
+    <div className='card'>
+    <div className='imgtip'>
+      <img src={src} alt="" />
+      <Text ellipsis={{tooltip: name}}>{name}</Text>
+    </div>
+  <div className='cardval'>{value}</div> 
+  </div>
+  )
+  }
   useEffect(() => {
    if(Number.isInteger(roomId))  getEnvironment(roomId)
    
@@ -126,24 +149,30 @@ export default function Index() {
             <div className='card headtext'>
              {rname}环境监控
             </div>
-            <div className='card'>
+             {
+              (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.temperature} name={t.name}  value={t.tValue}   />)  : null
+             }
+              {
+              (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.humidness} name={t.name}  value={t.hValue}   />)  : null
+             }
+            {/* <div className='card'>
               <div>
                 <img src={imgurl.temperature} alt="" />
                 <span>温度</span>
               </div>
-              <div className='cardval'>
-                {envlist.temperature}
-              </div>
-            </div>
-            <div className='card'>
+             {(ht && Array.isArray(ht)) ? ht.map(t => <div className='cardval' key={t.tValue}>
+                {t.tValue}
+              </div>) : <div className='cardval'></div> }  
+            </div> */}
+     {/*        <div className='card'>
               <div>
                 <img src={imgurl.humidness} alt="" />
                 <span>湿度</span>
               </div>
-              <div className='cardval'>
-                {envlist.humidness}
-              </div>
-            </div>
+              {(ht && Array.isArray(ht)) ? ht.map(t => <div className='cardval'>
+                {t.hValue}
+              </div> ) : <div className='cardval'></div> } 
+            </div> */}
             <div className='card'>
               <div>
                 <img src={imgurl.nosie} alt="" />
@@ -153,15 +182,28 @@ export default function Index() {
               {envlist.noise}
               </div>
             </div>
-            <div className='card'>
+
+            {(water && Array.isArray(water)) ? water.map(w =><Custcard src={imgurl.water} name={w.name}  value={w.value}   /> ) : null}
+          {/*   <div className='card'>
               <div>
                 <img src={imgurl.water} alt="" />
                 <span>水浸</span>
               </div>
-              <div className='cardval'>
-              {envlist.water}
+              {(water && Array.isArray(water)) ? water.map(t => <div className='cardval'>
+                {t.value}
+              </div> ) : <div className='cardval'></div> } 
+            </div> */}
+
+          {(sF6 && Array.isArray(sF6)) ? sF6.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
+     {/*        <div className='card'>
+              <div>
+                <img src={imgurl.water} alt="" />
+                <span>有害气体</span>
               </div>
-            </div>
+              {(sF6 && Array.isArray(sF6)) ? sF6.map(t => <div className='cardval'>
+                {t.value}
+              </div> ) : <div className='cardval'></div> } 
+            </div> */}
             <div className='card'>
               <div> <img src={imgurl.smook} alt="" />
                 <span>烟感</span>

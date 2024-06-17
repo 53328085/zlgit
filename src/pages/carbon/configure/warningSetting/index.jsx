@@ -8,8 +8,9 @@ import Titlelayout from "@com/titlelayout"
   useEnableStrategyMutation,
   useInsertStrategyMutation,
   useStrategyAllQuery,
-  useUpdateStrategyMutation,} from "./warningslice"
-import {CustButtonT,CustLink} from "@com/useButton"
+  useUpdateStrategyMutation,} from "@redux/carbon"
+import {CustButtonT,CustLink,CustTransO,i18warning, i18success} from "@com/useButton"
+ 
 import {Cdivider} from "@com/comstyled"
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
@@ -59,7 +60,7 @@ const getData = async () => {
        disabledId.current = data[0].expectedPeriod
      }
    }else {
-     if(!success) message.warning(errMsg || '数据层出错')
+     if(!success)  i18warning(errMsg)
      setTableData([])
     if(success && data?.length ==0) disabledId.current=NaN
    }
@@ -74,37 +75,38 @@ const SwitchC =({text, ruleId}) => {
   const onChange = async (checked) => {    
     let {success, errMsg} = await  changeEnable({ruleId, enabled: Number(checked)}).unwrap()
     if(success) {
-       let msg = checked ? '启用成功' : '停用成功'
+       let msg = checked ? 'enable' : 'stop'
        getData()
-       message.success(msg)
+       i18success(msg)
     }else {
-      message.warning(errMsg || '数据出错')
+      i18warning(errMsg)
+      //message.warning(errMsg || '数据出错')
     }
   }
 
-  return  <Switch defaultChecked={text==1} checkedChildren="启用" unCheckedChildren="停用" onChange={onChange} />
+  return  <Switch defaultChecked={text==1} checkedChildren={<CustTransO ns="button" text="enable" />}  unCheckedChildren={<CustTransO ns="button" text="disable" />} onChange={onChange} />
 }
 const columns = [
   {
-      title: '序号',
+      title: <CustTransO ns="comm" text="index" />,
       dataIndex: 'index',
        key: 'index',
        render: (text, record, index) => <>{index +1}</>
   },
  
     {
-      title: '规则名称',
+      title: <CustTransO ns="carbon" text="rulename" />,
       dataIndex: 'ruleName',
        key: 'ruleName'
    },
    {
-    title: '预期周期',
+    title:  <CustTransO ns="carbon" text="Expectedcycle" />,
     dataIndex: 'expectedPeriod',
      key: 'expectedPeriod',
      render: (text) => <>{['月','年'][text]??''}</>
  },
  {
-  title: '预警限值计算方法',
+  title: <CustTransO ns="carbon" text="Mlimits" />,
   dataIndex: 'calculation',
    key: 'calculation',
    render: (text) => <>{text==0 ? '百分比' : null}</>

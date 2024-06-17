@@ -19,6 +19,8 @@
     "Editsuccessfully": "Edit successfully",
     "savesuccessfully":"Save successfully",
     "modifysuccessfully": "Modify successfully",
+    "Enabledsuccessfully": "Enabled successfully",
+    "Deactivatedsuccessfully": "Deactivated successfully",
     "dataerr": "Data error",
     "date": "date",
     "time": "time",

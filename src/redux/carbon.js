@@ -262,6 +262,44 @@ export const carbonSlice = apiSlice.injectEndpoints({
         })             
     }),
 
+    // 预警策略配置
+
+    StrategyAll: build.query({   // 查询预警策略配置
+        query: () => ({
+            url:`Carbon/CarbonWarningStrategy/QueryStrategyAll`,
+            method: "GET",
+            transformResponse: responseData => responseData,
+        }),
+    }),
+  
+    EnableStrategy: build.mutation({ // 启用/禁用预警策略
+        query: ({ruleId,enabled}) => ({
+            url: `Carbon/CarbonWarningStrategy/EnableStrategy?ruleId=${ruleId}&enabled=${enabled}`,
+            method: 'POST',
+            
+        })             
+    }),        
+    InsertStrategy: build.mutation({ // 添加预警策略
+        query: (body) => ({
+            url: `Carbon/CarbonWarningStrategy/InsertStrategy`,
+            method: 'POST',
+            body
+        })             
+    }),
+    UpdateStrategy: build.mutation({ // 编辑预警策略
+        query: (body) => ({
+            url: `Carbon/CarbonWarningStrategy/UpdateStrategy`,
+            method: 'POST',
+            body
+        })             
+    }),
+    DeleteStrategy: build.mutation({ // 删除预警策略
+        query: (ruleId) => ({
+            url: `Carbon/CarbonWarningStrategy/DeleteStrategy?ruleId=${ruleId}`,
+            method: 'DELETE',
+        })             
+    }),
+
         // 园区图片 
         updateImg: build.mutation({  // 上传园区图片
             query: (body) => ({
@@ -408,5 +446,9 @@ export const {
      useEmissionQuery,  
      useSaveQuotaMutation,
      useSaveTargetMutation, 
-     
+     useDeleteStrategyMutation,
+     useEnableStrategyMutation,
+     useInsertStrategyMutation,
+     useStrategyAllQuery,
+     useUpdateStrategyMutation,
     } = carbonSlice
