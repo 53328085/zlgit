@@ -26,6 +26,7 @@ export default function index (props) {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const onSelectChange = (newSelectedRowKeys) => {
+        console.log(newSelectedRowKeys)
         setSelectedRowKeys(newSelectedRowKeys);
     };
     const rowSelection = {
@@ -206,10 +207,9 @@ export default function index (props) {
                 </div>
             </div>
             <div className={style.actions}>
-
                 <Space size={16}>
-                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>                 
+                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}>1</CustButton>
+                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}>2</CustButton>                 
                 </Space>
                 <Space size={16} direction="vertical">
                 <CustButton onClick={handleSave} style={{height:"46px", width: "100%"}} >{t("button:save")}</CustButton>                  

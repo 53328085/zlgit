@@ -89,7 +89,7 @@ export default function Index() {
     // 二级行业
 
     const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
-    
+    console.log(result)
     const {data:subindustry, success} = result?.data || {}
  
     useEffect(() => {
@@ -150,11 +150,11 @@ export default function Index() {
 // 获取企业计算因子
 
 const factorRef = useRef([])
-let {isSuccess: fsuc,  data: factorData, refetch}  = useCalcFactorQuery(enterpriseId, {
+let {isSuccess: fsuc,  data: factorData, refetch, error}  = useCalcFactorQuery(enterpriseId, {
    skip: !Number.isInteger(enterpriseId)
 })
- 
- 
+
+
  
  
 const getFactorData = (sucs, factorData) =>  {
@@ -205,9 +205,10 @@ getFactorData(fsuc, factorData);
     
       try {
           
-          let {id,...rest} = await form.validateFields()
-          let params ={enterpriseId:id,projectId,  ...rest}
-         
+           let rest = await form.validateFields()
+           console.log(rest)
+          let params ={projectId,  ...rest}
+          console.log(params)
           let title = industry.find(i => i.industryNo == rest.industryNo)?.industryName
           setTitle(title)
           if(isLoading) return;
@@ -278,20 +279,20 @@ getFactorData(fsuc, factorData);
                  <Item label="单位性质" name="nature" rules={rules}  >
                      <Select options={natureList}></Select>
                  </Item>
-                 <Item label="组织机构代码" name="creditCode"  >
+                 <Item label="组织机构代码" name="creditCode" rules={rules}  >
                      <Input></Input>
                  </Item>
-                 <Item label="法定代表人" name="legalRepresentative"  >
+                 <Item label="法定代表人" name="legalRepresentative" rules={rules} >
                      <Input></Input>
                  </Item>
-                 <Item label="填报负责人" name="responsiblePerson"  >
+                 <Item label="填报负责人" name="responsiblePerson" rules={rules} >
                      <Input></Input>
                  </Item>
-                 <Item label="联系人" name="contacts"  >
+                 <Item label="联系人" name="contacts" rules={rules} >
                      <Input></Input>
                  </Item>
                
-                 <Item name="id" noStyle>
+                 <Item name="enterpriseId" noStyle>
                      <Input type="hidden" />
                  </Item>
              </Form>

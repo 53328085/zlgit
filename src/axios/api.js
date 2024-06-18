@@ -1393,8 +1393,8 @@ export const Monitoring = {
   //视频监控
   RuntimeCamera:{
     Statistics: (projectId,areaId) => server.get(`/Monitor/RuntimeCamera/Statistics?projectId=${projectId}&areaId=${areaId}`),//
-    GetYsRealPlayUrl: (cameraSn,channelNo,protocol,quality) => server.get(`/Monitor/RuntimeCamera/GetYsRealPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&protocol=${protocol}&quality=${quality}`),//
-    GetYsHisPlayUrl: (cameraSn,channelNo,quality,startTime,stopTime) => server.get(`/Monitor/RuntimeCamera/GetYsHisPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&quality=${quality}&startTime=${startTime}&stopTime=${stopTime}`),//
+    GetYsRealPlayUrl: (cameraSn,channelNo,protocol,quality,projectId) => server.get(`/Monitor/RuntimeCamera/GetYsRealPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&protocol=${protocol}&quality=${quality}&projectId=${projectId}`),//
+    GetYsHisPlayUrl: (cameraSn,channelNo,quality,startTime,stopTime, projectId) => server.get(`/Monitor/RuntimeCamera/GetYsHisPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&quality=${quality}&startTime=${startTime}&stopTime=${stopTime}&projectId=${projectId}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
     StartYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StartYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}&speed=${data.speed}`),//
     StopYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StopYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}`),//
@@ -1951,6 +1951,7 @@ export class BMSRuntime {
 export class AlarmManagement {
   static QueryAlarmPage = (projectId, pageNum, pageSize) => server.get(`Safe/Alarm/QueryPlanPage?projectId=${projectId}&pageNum=${pageNum}&pageSize=${pageSize}`)
   static QueryAddAlarm = (data) => server.post(`Safe/Alarm/AddPlan`,data)
+  static CopyPlan = (data) => server.post(`Safe/Alarm/CopyPlan`,data)
   static DeletePlanAlarm = (projectId,planId) => server.delete(`Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`)
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`,data)
   static QueryAlarmEvents = (planId) => server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`)

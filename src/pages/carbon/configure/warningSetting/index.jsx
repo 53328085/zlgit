@@ -35,7 +35,7 @@ export default function Index() {
 
   
   const [form] = Form.useForm()
-  const {id} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
 
   const [title, setTitle] = useState('')
   const isadd = useRef()

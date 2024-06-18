@@ -178,8 +178,8 @@ export default function GatewayDetail(props) {
     const isclude = [2,7].includes(deviceStyle); // 是否是水表
     let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
    
-    let dtlkeys = Number.isFinite(detail.state) ? ![2, 3, 0].includes(detail.state) : true; // 0 离线
-     
+    //let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true; // 0 离线
+    let dtlkeys = false // 禅道任务 设备离线时能够查询历史数据 
     let [historyTable, setHistoryTable] = useState()
     let [current, setCurrent] = useState({})
     const elref = useRef(null)
@@ -513,13 +513,14 @@ export default function GatewayDetail(props) {
         setendTimeAlarm(dataString[1])
     }//告警记录选择时间
     const onSearch = () => {
-        if(dtlkeys) return
+       
+       // if(dtlkeys) return
         getHistoryTrend()
         getHistoryTable()
         
     }//监控趋势更改时间
     const onSearchAlarm = () => {
-        if(dtlkeys) return
+       // if(dtlkeys) return
         getAlarmPage()
     }
     const changeTime = (e) => {

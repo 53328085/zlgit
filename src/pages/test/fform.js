@@ -37,7 +37,11 @@ function Rendercom(props) {
      {props.children(obj)}
   </>
 }
-
+let n = null
+let fn =() => {
+  console.log('null')
+}
+console.log(Array.isArray(n) &&  fn())
 export default function Index() {
    let msg = Array.from({length: 10}, (i, v) => i)
    return (

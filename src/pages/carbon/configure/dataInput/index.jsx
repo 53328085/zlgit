@@ -102,7 +102,7 @@ const splitarr = (arr) => {
 }
 
 export default function Index() { 
-  const {id:enterpriseId} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
   const {t} = useTranslation()
   const [form] = Form.useForm()
   const [tbform] = Form.useForm()

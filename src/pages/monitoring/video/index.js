@@ -81,7 +81,7 @@ export default function Index() {
   let [realPlayUrl, setrealPlayUrl] = useState()
   let [total, settotal] = useState(0)
   const getYsRealPlayUrl = record => {
-    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality).then((res) => {
+    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality, projectId).then((res) => {
       let { success, data } = res
       if (success && data) {
         setrealPlayUrl(data)
@@ -92,7 +92,7 @@ export default function Index() {
     })
   }//云监控token、URL
   const getYsHisPlayUrl = (start,end) => {
-    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality,start,end).then((res) => {
+    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality,start,end, projectId).then((res) => {
       let { success, data } = res
       if (success && data) {
         setrealPlayUrl(data)

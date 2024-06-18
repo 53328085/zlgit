@@ -32,6 +32,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
   args.url = url
   
    let result = await baseQuery(args,api, extraOptions)  
+   console.log(result)
    if(result.error ) {
      const {originalStatus: status, data} = result.error
      const {response} = result.meta

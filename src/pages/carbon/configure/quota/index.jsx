@@ -122,7 +122,7 @@ export default function Index() {
   const [form] = Form.useForm()
   const [formt] = Form.useForm()
   const {t} = useTranslation()
-  const {id:enterpriseId} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
   const [tableData, setTableData] = useState([])
   const [targetData, setTargetData] = useState([])
   const lastyear =moment().subtract(1, 'year').year()

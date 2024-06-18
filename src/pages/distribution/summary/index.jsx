@@ -12,7 +12,7 @@ import { DistributionRoomRuntime } from '@api/api.js'
 import dimg from './icon/3dimg.png'
 import imgurl from '@imgs'
 import {Cspin} from "@com/comstyled"
- 
+import {isObject} from "@com/usehandler"
 const {Text} = Typography
 
 const Mainbox = styled.div`
@@ -85,20 +85,20 @@ export default function Index() {
   const rname = useSelector(roomName)
   
   const init = {
-    door:"",
-    fire:"",
+    door:[],
+    fire:[],
     ht: [], // 温湿度
     sF6: [], // 有害气体
     water:[], // 水浸
   //  humidness:"",
-    noise:"",
-    smoke:"",
+    noise:[],
+    smoke:[],
    // temperature:"",
-    water:""
+    water:[]
   }
   const [imgBg, setImgBg] = useState()
   const [envlist,setEnvList]=useState(init)
-  const {ht, sF6, water} = envlist
+  const {door, fire, ht, noise, sF6, smoke, water} = isObject(envlist) ? envlist : {}
   const [spinning, setSpinging] = useState(true)
   const getEnvironment = async (roomId) => {
      try {
@@ -143,92 +143,39 @@ export default function Index() {
         <Mainbox >
           <div style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
         {/*   <img className='bgiamge' src={imgBg || dimg}></img> */}
+
+
+        {/* door, fire, ht, noise, sF6, smoke, water */}
         <Image src={imgBg} preview={false} fallback={dimg} />
           </div>
           <div className='cardList'>
             <div className='card headtext'>
              {rname}环境监控
             </div>
+             
+
              {
               (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.temperature} name={t.name}  value={t.tValue}   />)  : null
              }
               {
               (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.humidness} name={t.name}  value={t.hValue}   />)  : null
              }
-            {/* <div className='card'>
-              <div>
-                <img src={imgurl.temperature} alt="" />
-                <span>温度</span>
-              </div>
-             {(ht && Array.isArray(ht)) ? ht.map(t => <div className='cardval' key={t.tValue}>
-                {t.tValue}
-              </div>) : <div className='cardval'></div> }  
-            </div> */}
-     {/*        <div className='card'>
-              <div>
-                <img src={imgurl.humidness} alt="" />
-                <span>湿度</span>
-              </div>
-              {(ht && Array.isArray(ht)) ? ht.map(t => <div className='cardval'>
-                {t.hValue}
-              </div> ) : <div className='cardval'></div> } 
-            </div> */}
-            <div className='card'>
-              <div>
-                <img src={imgurl.nosie} alt="" />
-                <span>噪音</span>
-              </div>
-              <div className='cardval'>
-              {envlist.noise}
-              </div>
-            </div>
+             {
+               (noise && Array.isArray(noise)) ?  noise.map(t =>  <Custcard src={imgurl.nosie} name={t.name}  value={t.value}   />)  : null
+             }
+       
 
             {(water && Array.isArray(water)) ? water.map(w =><Custcard src={imgurl.water} name={w.name}  value={w.value}   /> ) : null}
-          {/*   <div className='card'>
-              <div>
-                <img src={imgurl.water} alt="" />
-                <span>水浸</span>
-              </div>
-              {(water && Array.isArray(water)) ? water.map(t => <div className='cardval'>
-                {t.value}
-              </div> ) : <div className='cardval'></div> } 
-            </div> */}
+        
 
           {(sF6 && Array.isArray(sF6)) ? sF6.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
-     {/*        <div className='card'>
-              <div>
-                <img src={imgurl.water} alt="" />
-                <span>有害气体</span>
-              </div>
-              {(sF6 && Array.isArray(sF6)) ? sF6.map(t => <div className='cardval'>
-                {t.value}
-              </div> ) : <div className='cardval'></div> } 
-            </div> */}
-            <div className='card'>
-              <div> <img src={imgurl.smook} alt="" />
-                <span>烟感</span>
-              </div>
-                <div className='cardval'>
-                {envlist.smoke}
-              </div>
-            </div>
-            <div className='card'>
-              <div> <img src={imgurl.fire} alt="" />
-                <span>明火</span>
-                </div>
-                <div className='cardval'>
-                {envlist.fire}
-              </div>
-            </div>
-            <div className='card'>
-              <div>
-                <img src={imgurl.door} alt="" />
-                <span>门禁</span>
-              </div>
-              <div className='cardval'>
-              {envlist.door}
-              </div>
-            </div>
+
+          {(smoke && Array.isArray(smoke)) ? smoke.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
+   
+          {(fire && Array.isArray(fire)) ? fire.map(w =><Custcard src={imgurl.fire} name={w.name}  value={w.value}   /> ) : null}  
+         
+          {(door && Array.isArray(door)) ? door.map(w =><Custcard src={imgurl.door} name={w.name}  value={w.value}   /> ) : null}  
+            
           </div>
         </Mainbox>
         </Cspin>

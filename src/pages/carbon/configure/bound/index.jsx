@@ -124,8 +124,8 @@ border-left-color: ${props => props.theme.primaryColor} ;
 export default function Index() { 
   // const {id:enterpriseId} = useSelector(enterprise)
   const  enterpriseData = useSelector(enterprise)
-  let  {id:enterpriseId} = enterpriseData
- 
+  let  {enterpriseId } = enterpriseData
+  console.log(enterpriseData)
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
