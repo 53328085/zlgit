@@ -89,7 +89,7 @@ export default function Index() {
     // 二级行业
 
     const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
-    console.log(result)
+ 
     const {data:subindustry, success} = result?.data || {}
  
     useEffect(() => {
