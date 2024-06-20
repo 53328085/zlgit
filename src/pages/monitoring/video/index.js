@@ -16,7 +16,7 @@ import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
 import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring , GetCamerasoneInfo} from '@api/api.js'
-
+import {isObject} from '@com/usehandler'
 import {Serach, Cdivider, Borderleft} from "@com/comstyled"
 import Pagecount from "@com/pagecontent";
 import Table from "@com/useTable";
@@ -80,24 +80,40 @@ export default function Index() {
  
   let [realPlayUrl, setrealPlayUrl] = useState()
   let [total, settotal] = useState(0)
-  const getYsRealPlayUrl = record => {
-    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality, projectId).then((res) => {
+  const getYsRealPlayUrl = async (record) => {
+    
+    try {
+      let {success, data} = await GetYsRealPlayUrl(record.sn, record.channel, 1, quality, projectId)
+      
+      if(success && isObject(data)) {
+           let {token, url} = data;
+           if(!url) return message.warning("url不存在");
+           if(!token) return message.warning("token不存在")         
+           showModal({token, url:'ezopen://open.ys7.com/K07186629/6.rec?begin=20240602000000&end=20240602102246'})
+      }
+    } catch (error) {
+      console.log(error)
+    }
+   /*   GetYsRealPlayUrl(record.sn, record.channel, 1, quality, projectId).then((res) => {
       let { success, data } = res
       if (success && data) {
         setrealPlayUrl(data)
-        console.log(realPlayUrl)
+        
       } else {
         message.error(res.errMsg)
-      }
-    })
+      } 
+    }) */
   }//云监控token、URL
   const getYsHisPlayUrl = (start,end) => {
     return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality,start,end, projectId).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setrealPlayUrl(data)
+      if (success && isObject(data)) {    
+        let {token, url} = data;
+        if(!url) return message.warning("url不存在");
+        if(!token) return message.warning("token不存在")   
+        showModal(data)
       } else {
-        message.error(res.errMsg)
+        if(!success) message.error(res.errMsg)
       }
     })
   }//云监控回放
@@ -105,7 +121,8 @@ export default function Index() {
     cameraSn:recordData?.sn,
     channelNo:recordData?.channel,
     direction:'',
-    speed:1
+    speed:1,
+    projectId,
   }
   const changeControlYun=val=>{
     StartYsPtzData.direction=val
@@ -116,6 +133,7 @@ export default function Index() {
     cameraSn:recordData?.sn,
     channelNo:recordData?.channel,
     direction:'',
+    projectId,
   }
   const cancelControlYun=()=>{
     return StopYsPtz(StopYsPtzData).then((res) => {
@@ -128,7 +146,7 @@ export default function Index() {
     })
   }
   const startYsPtz = () => {
-    return StartYsPtz(StartYsPtzData).then((res) => {
+    return StartYsPtz({...StartYsPtzData}).then((res) => {
       let { success, data } = res
       if (success && data) {
         // setrealPlayUrl(data)
@@ -192,18 +210,18 @@ export default function Index() {
     setEndTimeHistory(dateString)
   }
   //打开视频监控弹窗yun
-  const showModal = () => {
+  const showModal = ({url, token}) => {
    
 
     //setLocalModal(true)
     // play.stop()
     let player
-    if(realPlayUrl){
+   
       setTimeout(() => {
         player = new EZUIKit.EZUIKitPlayer({
           id: 'replay',
-          accessToken: realPlayUrl?.token,//
-          url: realPlayUrl?.url,
+          accessToken: token,//
+          url: url,
           width: 1280,
           height: 717,
           themeData: themeData,
@@ -211,7 +229,7 @@ export default function Index() {
         setbigplay(player)
       }, 0)
       setisModal(true)
-    }
+   
   }
   //关闭视频监控弹窗
   const handleCancel = () => {
@@ -320,20 +338,21 @@ export default function Index() {
       
     
     setrecordData(record)
-    let {serverAddress, id} = record
-    let {success, data} =    await GetCamerasoneInfo(projectId, id)
-    if (!success || !data) return
-    let {ip, channel,account, pwd } = data
-    let idx = serverAddress.indexOf(":")
-    let htp = serverAddress.slice(0, idx)
-    let url = htp =='http' ? serverAddress.replace('http', 'ws') : htp == 'https' ? serverAddress.replace('https', 'ws') : ''
-    console.log(url)
-    if(!url) return message.warning("播放地址URL不存在")
+
     if (record.accessMode == 1) {
-      showModal()
+    //  showModal()
       getYsRealPlayUrl(record)
     } else {
       if (record.accessMode == 2) {
+        let {serverAddress, id} = record
+        let {success, data} =    await GetCamerasoneInfo(projectId, id)
+        if (!success || !data) return
+        let {ip, channel,account, pwd } = data
+        let idx = serverAddress.indexOf(":")
+        let htp = serverAddress.slice(0, idx)
+        let url = htp =='http' ? serverAddress.replace('http', 'ws') : htp == 'https' ? serverAddress.replace('https', 'ws') : ''
+        console.log(url)
+        if(!url) return message.warning("播放地址URL不存在")
         setLocalModal(true);
         setCameraTitle(record.address)
         // setwsType('h264')

@@ -44,6 +44,7 @@ server.interceptors.response.use(
     },
     error => {       
         let msg = error?.response?.statusText
+       
         let state = error?.response?.status       
         if (state >= 400 && state < 500 && state != 401 )  {
             return  message.warning({          

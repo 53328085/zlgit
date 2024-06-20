@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react'
+import React, {Suspense, useEffect} from 'react'
 import {BrowserRouter} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import {ThemeProvider} from 'styled-components'
@@ -18,6 +18,7 @@ import {themeColor, intl} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 function App() {
+   
   const theme = useSelector(themeColor)
 /*   const theme = useSelector(themeColor)
  
@@ -35,6 +36,7 @@ function App() {
    
   }
   ) */
+
  
   return   (
  <CustConfig> 

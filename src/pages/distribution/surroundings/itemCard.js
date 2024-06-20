@@ -1,8 +1,10 @@
 import React from "react";
-import { Divider, Image } from 'antd'
+import { Divider, Image, Typography } from 'antd'
+
 import Titlelayout from '@com/titlelayout' 
 import imgurl from '@imgs'
 import styled from "styled-components";
+const {Text} = Typography
 const Mainbox = styled.div`
    flex: 1;
    display: flex;
@@ -30,7 +32,7 @@ export default function Index(props) {
 
    
     return (
-    <Titlelayout layout="flex" shadow="y" pl="0px" bl="none" title={<strong>{props.title}</strong>}>
+    <Titlelayout layout="flex" shadow="y" pl="0px" bl="none" title={<Text strong ellipsis={{tooltip: props.title}}>{props.title}</Text>}>
             <Mainbox>
                 <div className="val">
                     {

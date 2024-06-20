@@ -142,7 +142,7 @@ export default function Index() {
       })
        
     }else {
-      i18warning(err)
+       i18warning(err)
     }
     return suc
   }
@@ -155,7 +155,7 @@ let {isSuccess: fsuc,  data: factorData, refetch, error}  = useCalcFactorQuery(e
 })
 
 
- 
+console.log(error)
  
 const getFactorData = (sucs, factorData) =>  {
     try {
@@ -170,7 +170,7 @@ const getFactorData = (sucs, factorData) =>  {
 
       }
     } catch (error) {
-      
+      console.log(error)
     }
 }
 

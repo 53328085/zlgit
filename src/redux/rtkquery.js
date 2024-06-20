@@ -30,13 +30,17 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
       url = url+`?culture=${lang}`
   }
   args.url = url
-  
+   
    let result = await baseQuery(args,api, extraOptions)  
-   console.log(result)
+   
    if(result.error ) {
      const {originalStatus: status, data} = result.error
      const {response} = result.meta
+     if(status == 200) {
+      console.log(response.statusText)
+     }
      if (status >= 400 && status < 500 && status != 401 )  {
+      console.log(response.statusText)
       return  message.warning({          
           content:  data || '请求参数出错',
           duration: 2,
@@ -44,6 +48,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
       })
   }
      if(status==401) {
+      console.log(response.statusText)
       return  message.warning({          
          content:  data || '登录状态发生改变,请重新登录',
          onClose: () => {
@@ -53,7 +58,8 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
        })
      }
      if(status >=500) {
-       return    message.warning(response.statusText)   // message.warning(response.statusText || '数据出错')
+       console.log(response.statusText)
+       return    // message.warning(response.statusText)   // message.warning(response.statusText || '数据出错')
      }
   
    }

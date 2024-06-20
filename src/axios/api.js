@@ -250,7 +250,12 @@ export class Area {
     static QueryBigScreen = (projectId) => server.get(`/General/BigScreen/Query?projectId=${projectId}`) 
     static SetBigScreen = (projectId, params={}) => server.post(`/General/BigScreen/Set?projectId=${projectId}`, params)
   }
+//公共模块---萤石云配置
 
+export class Yingshi {
+  static SaveProjectYinShiYun = ({projectId, appKey, appSecret}) => server.post(`/Monitor/ProjectYinShiYun/SaveProjectYinShiYun?projectId=${projectId}&appKey=${appKey}&appSecret=${appSecret}`) 
+  static QueryProjectYinShiYun = (projectId) => server.get(`Monitor/ProjectYinShiYun/QueryProjectYinShiYun?projectId=${projectId}`) 
+}
 // 能源管理--重点设备 -- 运行态
 export class QueryElectric {
   static query = (params) =>
@@ -1314,7 +1319,7 @@ export const Monitoring = {
     QueryByPageCamera: (data) => server.post(`/Monitor/Device/QueryByPageCamera`, data),//查询视频监控
     AddCamera: (data) => server.post(`/Monitor/Device/AddCamera`, data),//新增视频监控
     UpdateCamera: (data) => server.post(`/Monitor/Device/UpdateCamera`, data),//更新视频监控
-    DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&sn=${data.sn}`),//删除视频监控
+    DeleteCamera: (data) => server.delete(`/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`),//删除视频监控
     StartReboot: (sn) => server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`),//重启网关
     StartDownloadTask: (projectId,sn) => server.get(`/Monitor/Gateway/StartDownloadTask?projectId=${projectId}&sn=${sn}`),//参数下发
     DownloadTaskState: (sn) => server.get(`/Monitor/Gateway/DownloadTaskState?sn=${sn}`),//参数下发
@@ -1396,8 +1401,8 @@ export const Monitoring = {
     GetYsRealPlayUrl: (cameraSn,channelNo,protocol,quality,projectId) => server.get(`/Monitor/RuntimeCamera/GetYsRealPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&protocol=${protocol}&quality=${quality}&projectId=${projectId}`),//
     GetYsHisPlayUrl: (cameraSn,channelNo,quality,startTime,stopTime, projectId) => server.get(`/Monitor/RuntimeCamera/GetYsHisPlayUrl?cameraSn=${cameraSn}&channelNo=${channelNo}&quality=${quality}&startTime=${startTime}&stopTime=${stopTime}&projectId=${projectId}`),//
     Overview: (data) => server.post(`/Monitor/RuntimeCamera/Overview`, data),//
-    StartYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StartYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}&speed=${data.speed}`),//
-    StopYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StopYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}`),//
+    StartYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StartYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}&speed=${data.speed}&projectId=${data.projectId}`),//
+    StopYsPtz: (data) => server.get(`/Monitor/RuntimeCamera/StopYsPtz?cameraSn=${data.cameraSn}&channelNo=${data.channelNo}&direction=${data.direction}&projectId=${data.projectId}`),//
   },
   //系统日志
   RuntimeLog:{
