@@ -89,7 +89,7 @@ export default function Index() {
            let {token, url} = data;
            if(!url) return message.warning("url不存在");
            if(!token) return message.warning("token不存在")         
-           showModal({token, url:'ezopen://open.ys7.com/K07186629/6.rec?begin=20240602000000&end=20240602102246'})
+           showModal({token, url})
       }
     } catch (error) {
       console.log(error)
@@ -141,7 +141,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+        message.error("当前设备不支持控制功能")
       }
     })
   }
@@ -151,7 +151,8 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+
+        message.error("当前设备不支持控制功能")
       }
     })
   }//云监控云台控制
@@ -225,6 +226,9 @@ export default function Index() {
           width: 1280,
           height: 717,
           themeData: themeData,
+          handleError: (err)=> {
+            console.log(err)
+          }
         })
         setbigplay(player)
       }, 0)

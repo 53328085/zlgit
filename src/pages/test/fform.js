@@ -2,18 +2,13 @@ import React from 'react';
 import { Translation, useTranslation, Trans } from 'react-i18next';
 
 export   function MyComponent() {
+  const {i18n} = useTranslation()
+ 
   return (
-    <Translation ns={["comm", "button"]}>
-      {
-        (t, { i18n }) =>  <div>
-
-           <p>{t('Passwordresetsucceeded')}</p>
-           <p>{t('button:viewDetails')}</p>
-           <button onClick={() => i18n.changeLanguage("en-US")}>en-us</button>
-           <button onClick={() => i18n.changeLanguage("zh")}>zh</button>
-           </div>
-      }
-    </Translation>
+    <div>
+     
+   
+    </div>
   )
 }
 

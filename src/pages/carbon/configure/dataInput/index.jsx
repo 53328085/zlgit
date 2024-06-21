@@ -187,7 +187,7 @@ const formartcol = (data, month) => {
           ({getFieldValue}) => {
               let {carbonUnitName, subCategoryName} = record;
               let values = getFieldValue(`${carbonUnitName}-${subCategoryName}-${month}`)
-              console.log(values)
+            
             return values?.reduce((a, b) => a+b, 0)
           }
          }</Form.Item>
@@ -243,7 +243,7 @@ const onQuery = async () => {
      if(success && Array.isArray(data) && data.length > 0) {
       //  form.resetFields();
         let [tableData] = splitarr(data)
-        console.log(tableData)
+        
         formartcol(tableData, month)
      }else {
        setTableData([])

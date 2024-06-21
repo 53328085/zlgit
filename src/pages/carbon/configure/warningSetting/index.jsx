@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form,  Space, DatePicker, Tooltip, InputNumber, Input, Select, message, Switch} from 'antd'
+import {Trans, useTranslation} from 'react-i18next'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
  import {  useDeleteStrategyMutation,
@@ -11,7 +12,7 @@ import Titlelayout from "@com/titlelayout"
   useUpdateStrategyMutation,} from "@redux/carbon"
 import {CustButtonT,CustLink,CustTransO,i18warning, i18success} from "@com/useButton"
  
-import {Cdivider} from "@com/comstyled"
+ 
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 import CModal from "@com/useModal"
@@ -33,7 +34,7 @@ const Mainbox = styled.div`
 export default function Index() { 
 
 
-  
+  const {t} = useTranslation()
   const [form] = Form.useForm()
   const {enterpriseId} = useSelector(enterprise)
 
@@ -112,7 +113,7 @@ const columns = [
    render: (text) => <>{text==0 ? '百分比' : null}</>
 }, 
 {
-title: '限值及等级',
+title: <CustTransO ns="carbon" text="Limitsandlevels" />,
 dataIndex: 'limitsAndLevels',
  key: 'limitsAndLevels',
  render: (text) => {    
@@ -121,9 +122,9 @@ dataIndex: 'limitsAndLevels',
      let level2 = text.find(t => t.level == 2)
      let level3 = text.find(t => t.level == 3)
      return (<div>
-       <span>紧急: ≥{level1?.limitValueMin}%</span>&nbsp;
-       <span>严重：{level2?.limitValueMin}%</span>-<span>{level2?.limitValueMax}%</span>&nbsp;
-       <span>一般：≤0-{level3?.limitValueMax}%</span>
+       <span><CustTransO ns="carbon" text="urgent" />: ≥{level1?.limitValueMin}%</span>&nbsp;
+       <span><CustTransO ns="carbon" text="serious" />：{level2?.limitValueMin}%</span>-<span>{level2?.limitValueMax}%</span>&nbsp;
+       <span><CustTransO ns="carbon" text="commonly" />：≤0-{level3?.limitValueMax}%</span>
      </div>)
 
    }else {
@@ -133,13 +134,13 @@ dataIndex: 'limitsAndLevels',
  }
 }, 
 {
-title: '是否启用',
+title: <CustTransO ns="carbon" text="Isitenabled" />,
 dataIndex: 'enabled',
  key: 'enabled',
  render: (text, record) => <SwitchC text={text} ruleId={record.ruleId}  />
 }, 
  {
-  title: "操作",
+  title: <CustTransO ns="carbon" text="operation" />,
   dataIndex: 'total',
     key: 'total',
     align: 'center',
@@ -164,11 +165,12 @@ const onDelOK = async () => {
     try {
       let {success, errMsg} = await DeleteStrategy(recordRef.current.ruleId).unwrap()
       if(success) {
-        message.success('删除成功')
+        i18success("delete")
         wref.current.onCancel();
         getData()
       }else {
-        message.warning(errMsg || '数据出错')
+        i18warning(errMsg)
+        //message.warning(errMsg || '数据出错')
       }
     } catch (error) {
       
@@ -199,7 +201,7 @@ const onedit =(record) => {
     form.setFieldValue(key, value)
   }
 
-  setTitle(`编辑${ruleName}`)
+  setTitle(t("button:edit", {param: ruleName}))
 
   form.setFieldsValue({
     expectedPeriod: {label:ruleName, value: expectedPeriod },
@@ -215,7 +217,7 @@ const onedit =(record) => {
 
  const onAdd =() => {
   isadd.current=true
-  setTitle('新增预警策略配置')
+  setTitle(t("carbon:Addconfiguration"))
    ref.current.onOpen()
  }
   const CTitle = (
@@ -260,7 +262,8 @@ const onedit =(record) => {
           getData()
           ref.current.onCancel()
         }else {
-          message.warning(errMsg || '数据出错')
+          i18warning(errMsg)
+          //message.warning(errMsg || '数据出错')
         }
       } catch (error) {
         console.log(error)
@@ -291,14 +294,14 @@ const onedit =(record) => {
 
           </Titlelayout>
     <CModal title={title} ref={ref} mold="cust" onOk={onOk} width={424} >
-        <Form form={form}   preserve={false} labelCol={{span: 5}} labelAlign='left'>
-        {isadd.current &&  <Form.Item label="预警类型" name="expectedPeriod"  initialValue={{label: disabledId.current == 0 ? '年度碳排放预警' : '月度碳排放预警', value: disabledId.current == 0 ? 1 : 0}}>
+        <Form form={form}   preserve={false} labelCol={{span: 6}} labelAlign='left' >
+        {isadd.current &&  <Form.Item label={<CustTransO ns="carbon" text="Warningtype"   />} name="expectedPeriod"  initialValue={{label: disabledId.current == 0 ? '年度碳排放预警' : '月度碳排放预警', value: disabledId.current == 0 ? 1 : 0}}>
             <Select labelInValue>
                  <Select.Option value={0} disabled={disabledId.current == 0}>月度碳排放预警</Select.Option>
                  <Select.Option value={1} disabled={disabledId.current == 1}>年度碳排放预警</Select.Option>
               </Select>
           </Form.Item> }
-           <Form.Item label="紧急  ≥" >
+           <Form.Item label={<CustTransO ns="carbon" text="urgent" param="≥" />} >
               <Space>
                 <Form.Item name={['1', 'LimitValueMin']} rules={rules}>
                    <InputNumber min={0} style={{width: '100px'}} max={99.99} step={0.01} onChange={onChange} />
@@ -309,7 +312,7 @@ const onedit =(record) => {
                 </Form.Item>
               </Space>  
            </Form.Item>
-           <Form.Item label="严重"   >
+           <Form.Item label={<CustTransO ns="carbon" text="serious"   />}   >
                       <Space>
                          <Form.Item name={['2', 'LimitValueMin']} rules={rules}>
                              <InputNumber  style={{width: '100px'}} step={0.01} disabled />
@@ -320,7 +323,7 @@ const onedit =(record) => {
                          </Form.Item>
                       </Space>
            </Form.Item>
-           <Form.Item label="一般  ≤" shouldUpdate>
+           <Form.Item label={<CustTransO ns="carbon" text="commonly" param="≤"  />}  shouldUpdate>
             {
              ({getFieldValue}) => {
               let init = (getFieldValue(['2', 'LimitValueMax']) -0.02).toFixed(2)
@@ -345,13 +348,13 @@ const onedit =(record) => {
                      
            </Form.Item>
            <Form.Item >
-              <p style={{color: "#f00"}}>注：输入的值为已排放量占配额的百分比</p>
+              <Trans ns="carbon" i18nKey="note"><p style={{color: "#f00"}}>注：输入的值为已排放量占配额的百分比</p></Trans>
            </Form.Item>
         </Form>
 
      </CModal>
      <CModal title="删除预警策略" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
-     是否要删除{ruleName}策略？
+     <Trans ns="carbon" i18nKey="deltewarn">是否要删除{{ruleName}}策略？</Trans>
      </CModal>
     </Pagecount>
   )

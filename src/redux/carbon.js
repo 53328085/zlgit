@@ -180,6 +180,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&projectId=${projectId}&subCategoryId=${subCategoryId}`,
             method: 'GET',
         }),
+        providesTags:() => [{type: "carbon", id: "QueryCarbonBoundaryConfig"}]
        // transformResponse: (responseData) => responseData.data
     }),
 
@@ -189,6 +190,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             method: 'POST',
             body,
         }),
+        invalidatesTags: () => [{type: "carbon", id: "QueryCarbonBoundaryConfig"}]
     }),
     ApiData: build.mutation({ // 保存Api数据
         query: ({enterpriseId,carbonBoundaryId,subCategoryId,post}) => ({

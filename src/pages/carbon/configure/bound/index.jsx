@@ -189,11 +189,11 @@ useEffect(() => {
 
 }, [enterpriseId]) */
  
-  const {isSuccess,refetch, data:boundaryData  } = useBoundaryTreeQuery(enterpriseId, {
+  const {isSuccess,refetch, data:boundaryData, error } = useBoundaryTreeQuery(enterpriseId, {
     skip: !Number.isInteger(enterpriseId),
     
   })
- 
+  console.log(error)
   useEffect(() => {
     if(boundaryData) {
       let {success, errMsg, data} = boundaryData

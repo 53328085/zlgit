@@ -114,10 +114,10 @@ const Itembox = styled.div`
  
 export default function Item(props) {
   let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4,} = props
-  // 0，1，2正常，离线，告警
+  // 1，2，3 离线,正常，告警
   let index = states[0];
-  const state = typeof index == "number" ? (['正常', '失联', '告警'][index] || '') : '';
-  const bgColor = typeof index == "number" ? (['#096', '#666', '#ff4d4f'][index] || '') : '';
+  const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
+  const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';
   return (
     <Itembox>
        <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox>
@@ -148,7 +148,7 @@ export default function Item(props) {
            <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
 
-           <div className='green' key={nanoid()}>平能耗</div>
+           <div className='green' key={nanoid()}>谷能耗</div>
            <div className='com bold' key={nanoid()}>{e4}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE4)}</div>

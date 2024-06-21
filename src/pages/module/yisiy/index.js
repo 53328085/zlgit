@@ -3,7 +3,8 @@ import {Form, Input, message} from 'antd'
 import {useSelector} from 'react-redux'
 import styled from 'styled-components';
 import Pagecount from "@com/pagecontent";
-import {CustButtonT, i18warning, i18success} from "@com/useButton"
+import {useTranslation} from 'react-i18next' 
+import {CustButtonT, i18warning, i18success, CustTransO} from "@com/useButton"
 import Titlelayout from '@com/titlelayout'
 import {Cdivider} from "@com/comstyled"
 import {selectProjectId} from "@redux/systemconfig"
@@ -17,7 +18,7 @@ const Mainbox = styled.div`
 `
 export default function Index() {
   const projectId = useSelector(selectProjectId)
- 
+  const {t} = useTranslation()
   const [form] = Form.useForm()
   const rules = [
     {required: true}
@@ -53,7 +54,7 @@ export default function Index() {
   }, [projectId])
   return (
     <Pagecount>
-      <Titlelayout style={{width:"578px", flex: "0 0 384px", boxShadow:'0px 2px 2px rgba(0, 0, 0, 0.349019607843137)'}} title="萤石云配置" >
+      <Titlelayout style={{width:"578px", flex: "0 0 384px", boxShadow:'0px 2px 2px rgba(0, 0, 0, 0.349019607843137)'}} title={<CustTransO ns="common" text="yishiy"  />} >
         <Mainbox>
         <Cdivider type="h" style={{marginBottom: '32px'}} />
           <Form form={form} layout="vertical" requiredMark="optional">

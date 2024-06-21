@@ -42,5 +42,15 @@
    "rulename": "Rule name",
    "Expectedcycle": "Expected cycle",
    "Mlimits": "Method for calculating warning limits",
+   "Limitsandlevels": "Limits and levels",
+   "Isitenabled": "Is it enabled",
+   "operation": "operation",
+   "urgent":"urgent {{param}}",
+   "serious": "serious {{param}}",
+   "commonly": "commonly {{param}}",
+   "note": "<0>Note：The input value is the percentage of emitted emissions to the quota</0>",
+   "deltewarn": "Do you want to delete the {{ruleName}} strategy",
+   "Warningtype": "Warning type",
+   "Addconfiguration":"Add warning strategy configuration",
    "z": ""
 }

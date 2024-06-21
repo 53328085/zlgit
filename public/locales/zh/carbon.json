@@ -43,7 +43,15 @@
    "rulename": "规则名称",
    "Expectedcycle": "预期周期",
    "Mlimits": "预警限值计算方法",
-   "Limitsandlevels": "限制及等级",
+   "Limitsandlevels": "限值及等级",
    "Isitenabled": "是否启用",
+   "operation": "操作",
+   "urgent":"紧急 {{param}}",
+   "serious": "严重 {{param}}",
+   "commonly": "一般 {{param}}",
+   "note": "<0>注：输入的值为已排放量占配额的百分比</0>",
+    "deltewarn": "是否要删除{{ruleName}}策略？",
+    "Warningtype": "预警类型",
+    "Addconfiguration":"新增预警策略配置",
   "z": ""
 }
