@@ -68,7 +68,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) =>{
 export const apiSlice = createApi({
     reducerPath: 'NESapi',  
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['carbon'],   
+    tagTypes: ['carbon','test'],   
     endpoints: build => ({
        
         

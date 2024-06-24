@@ -295,10 +295,10 @@ export default function Index() {
    try {
      dispatch(getWebsiteState(id))
      dispatch(configProject(type === 1))
-     let {runMenus, designerMenus, siderDesignerMenus} = await dispatch(getWebsiteMenu(id)).unwrap()
+     let {runMenus, designerMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
      let menu
      if (type == 2) {
-      menu = runMenus?.find(item => item.no == '0104') || runMenus[0] 
+      menu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0] 
     }else if(type == 1) {  
       let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]      
       if(key) {

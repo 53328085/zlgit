@@ -310,7 +310,7 @@ const onDelOK = async() => {
 
 // 配置
 
-   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 碳排边界数据查询
+   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
    const saveData = useRef({}) // 点击 完成配置 时需要传递的数据

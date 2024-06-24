@@ -148,10 +148,10 @@ export default function Index() {
   }
 
 // 获取企业计算因子
-
+const [after, setAfter] = useState(true) // 在企业保存后调用
 const factorRef = useRef([])
 let {isSuccess: fsuc,  data: factorData, refetch, error}  = useCalcFactorQuery(enterpriseId, {
-   skip: !Number.isInteger(enterpriseId)
+   skip: !Number.isInteger(enterpriseId) || after
 })
 
 
@@ -220,7 +220,9 @@ getFactorData(fsuc, factorData);
                 if(success && isObject(data)) {
                   dispatch(getEnterprise(data))
                   let open = await  updateEmission(data.enterpriseId)
+                  setAfter(false)
                   setOpen(open)
+
                 }
         
               

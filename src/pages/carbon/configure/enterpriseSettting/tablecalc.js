@@ -13,7 +13,7 @@ export default function Index({tabledata={},enterpriseId}) {
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
-  const {categoryName, categoryNo,    subCategoryFactor=[]} = tabledata
+  const {categoryName, categoryNo,    subCategoryFactor=[], mark} = tabledata
   
   let fixedrow ={categoryName,categoryNo,subCategoryName: `${categoryName}排放类型`,factorName: '计算因子类型',parameterValue: '数值', unit: '单位', option: t("comm:Operation")}  
   let formartData = [fixedrow]

@@ -6,11 +6,12 @@ import {  Pagination,message, Typography} from 'antd'
 import { useLocation } from 'react-router';
 import { Monitoring } from '@api/api.js'
 import {Link, useNavigate } from 'react-router-dom'
-import { selectProjectId, mixtitle, systemConfigInfo } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle, systemConfigInfo,currProject } from '@redux/systemconfig.js'
  
 import Table from '@com/useTable'
 const {Text} = Typography
 export default function GatewayDetail(props) {
+  const {projectName,  logoImage  } = useSelector(currProject)
     let location = useLocation()
     let qs=require('query-string')
     let search=qs.parse(location.search)
@@ -185,7 +186,7 @@ export default function GatewayDetail(props) {
     return (
         <div className={style.main}>
             <div className={style.head}>
-                <img src={imgurl.logo} className={style.headImg} ></img>
+               {logoImage ? <img src={logoImage} className={style.headImg} ></img> : null}  
                 <p>{chineseTitle}</p>
             </div>
             <div className={style.body}>

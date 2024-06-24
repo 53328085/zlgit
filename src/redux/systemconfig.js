@@ -5,14 +5,14 @@ import {message} from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
-import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon} from "@api/api.js"; 
-
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime} from "@api/api.js"; 
+import {isObject} from '@com/usehandler'
  
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
 
-  const handlermenu = (Meundata,  id) => {
+  const handlermenu = (Meundata,  id, homeMenuNO) => {
    
  let lang = window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
  let data = Meundata.filter(d => d.languageName==lang);     
@@ -52,6 +52,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
      setMenus,  
      comSet,      
      projectId: id,
+     homeMenuNO,
     }
   
    /*  dispatch(getMenus(menus));
@@ -90,6 +91,7 @@ const initialState = {
         siderDesignerMenus: [], // 设计 sider
         setMenus: [], // 项目top菜单栏 右边
         comSet: [], //公共设置
+        homeMenuNO: '',// 运行态 默认跳转的主页
       //  allRunMenus: [],
       //  allsinderRunMenus: {},
     },
@@ -124,7 +126,8 @@ export const getWebsiteState = createAsyncThunk(
           BigScreen.QueryBigScreen(id),
         //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
           AllDeviceStyle(), // 表计类型
-          Carbon.QueryCarbonEnterprise(id) // 获取碳排企业信息
+          Carbon.QueryCarbonEnterprise(id), // 获取碳排企业信息
+          HomeRuntime.GetProjectInfo(id)
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -135,12 +138,18 @@ export const getWebsiteState = createAsyncThunk(
 )
 export const getWebsiteMenu = createAsyncThunk(
   "system/getMenu",
-  async (id, {rejectWithValue}) => {
+  async (id, {rejectWithValue, dispatch}) => {
      try {
       let {data, success, errMsg} = await ProjectList.QueryMenus(id)
       if(success) {
-         if(Array.isArray(data) && data.length > 0) {
-          return handlermenu(data, id)
+         if(isObject(data)) {
+          let {menus, homeMenuNO} = data;
+          if(Array.isArray(menus) && menus.length) {
+            return handlermenu(menus, id, homeMenuNO)
+          }else {
+            return message.warning("没有设置相应的菜单栏,请联系管理员")
+          }
+         
          }else {
           return message.warning("没有设置相应的菜单栏,请联系管理员")
          }
@@ -262,6 +271,7 @@ const system = createSlice({
           state.curlRommid = payload
         },
         getSystemconfiginfo(state, {payload}) {
+           console.log(payload)
            state.systemConfigInfo = payload ?? {}
         },
         systemConfigRest(state, actions) {
@@ -298,6 +308,7 @@ const system = createSlice({
           //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
                index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
                index == 5 && (state.enterprise = data || {})
+               index == 6 && (state.currProject = data || {})  //  获取项目当前信息
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
@@ -306,6 +317,7 @@ const system = createSlice({
               // index == 4 && (state.disonlevel = [])
                index == 4 && (state.deviceStyle = [])
                index == 5 && (state.enterprise = {})
+               index == 6 && (state.currProject = {})
              }
           }
         })

@@ -420,7 +420,7 @@ export default function gateway({ deviceStyle }) {
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
-        setDevicelist([])
+        setDevicelist([{ sn: '(无)直连设备', id: 0 }])
       }
     } catch (e) { console.log(e) }
 
@@ -626,7 +626,7 @@ export const FormComp = (props) => {
     required: true
   }]
   console.log(583,levelname)
-  const channelList = Array(1, 2, 3, 4, 5, 6, 7, 8).map((item, index) => ({ label: index + 1, value: index + 1 }))
+  const channelList = Array.from({length: 16},(item, index) => ({ label: index + 1, value: index + 1 })) // 需求： 通道号由8个改成16个。提出者： 毕工， 理由： 有些设备可以有16个设备。存在问题： 无法判断设备可以新建8个还是16个
   const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
 
   const changeCameraType = (v, option) => {

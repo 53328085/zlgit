@@ -113,8 +113,9 @@ const Itembox = styled.div`
 
  
 export default function Item(props) {
-  let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4,} = props
+  let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4, image} = props
   // 1，2，3 离线,正常，告警
+  console.log(image)
   let index = states[0];
   const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
   const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';
@@ -123,7 +124,7 @@ export default function Item(props) {
        <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox>
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>
-              <Image src={imgurl[`a${1}`]} preview={false} ></Image>
+              <Image src={image} preview={false} ></Image>
            </div>
            <div className='info' key={nanoid()}>
              <Paragraph ellipsis={{tooltip: name}}>{name}</Paragraph>
@@ -134,21 +135,21 @@ export default function Item(props) {
        <div className='below' key={nanoid()}>
            {["分类", "能耗(kwh)","同比", "环比"].map(e => <div className='title'>{e}</div>)}
 
-           <div className='back' key={nanoid()}>总能耗</div>
+           <div className='back' key={nanoid()}>总有功功率</div>
            <div className='com bold' key={nanoid()}>{e}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE)}</div>
-           <div className='red' key={nanoid()}>峰能耗</div>
+           <div className='red' key={nanoid()}>A相电流</div>
            <div className='com bold' key={nanoid()}>{e2}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE2)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE2)}</div>
 
-           <div className='yellow' key={nanoid()}>平能耗</div>
+           <div className='yellow' key={nanoid()}>B相电流</div>
            <div className='com bold' key={nanoid()}>{e3}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
 
-           <div className='green' key={nanoid()}>谷能耗</div>
+           <div className='green' key={nanoid()}>C相电流</div>
            <div className='com bold' key={nanoid()}>{e4}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE4)}</div>

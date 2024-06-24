@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { Translation, useTranslation, Trans } from 'react-i18next';
 
 export   function MyComponent() {
@@ -45,45 +45,63 @@ export default function Index() {
         <Tranocom  person={{name: 'zhuzl'}} messages={msg}/>
     </div>
    )
-}
+} */
 
-
-/*  import React, { useEffect, useState } from 'react'
+  import React, { useEffect, useState,useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {useParamPostMutation, useGetPostQuery,selectUsersResult, useGetAreaQuery} from './apiSlice'
+ 
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
 import {getWebsiteMenu, menuAdd, addMany, removeOne,selectIds,selectAll, selectById, allmenus} from "@redux/reduxTest"
-import {useSubIndustryListQuery, useSaveItemsMutation, carbonSlice} from "@redux/carbon.js"
+import {useSubIndustryListQuery, useSaveItemsMutation,   useTestqQuery,
+  useTestmMutation, carbonSlice} from "@redux/carbon.js"
 import {CustTransO, i18warning, i18t} from "@com/useButton"
 
+const Sign =({id, name}) => {
+  return (
+    <div>
+      <h1>id: {id}</h1>
+      <h2>name: {name}</h2>
+    </div>
+  )
+}
 const Com1 =() => {
-  let {data, isFetching, isLoading,error, isError} = useGetAreaQuery(2, {
-    refetchOnMountOrArgChange: true,
-    
-    skip: false,
+  const [getline, {isLoading: loading}] = useTestmMutation();
 
-
-  }) 
-  useEffect(() => {
-    if(data) console.log(data)
-    console.log('isEorror',isError)
-    console.log('error', error)
-    console.log('data',data)
-  }, [data])
-  const  [save, {error: saveerror}] = useSaveItemsMutation()
-  const onSave =() => {
-     save().unwrap().then(res => {
-      console.log(res)
-     }).catch(e => {
-      console.log(JSON.stringify(e))
-     })
+  let {data, isSuccess, isFetching, isLoading,error, isError, refetch} = useTestqQuery() 
+   
+  let selectdata =  carbonSlice.endpoints.Testq.select()
+  
+ 
+  let content;
+  if(isLoading) {
+    content = <div>isLoading</div>
+  }else if(isFetching) {
+   // content =<div>isFetching</div>
+  }else if(isError) {
+    content =<div>{JSON.stringify(error)}</div>
+  }else if(isSuccess) {
+    content = data.data?.map(d => <Sign {...d} key={d.id}/>)
   }
-  return <div>
-       <button onClick={onSave}>save</button>
-        {JSON.stringify(saveerror)}
+
+ 
+  let name = `zhuzl${Math.random()}`;
+  return <div style={{height: "400px", overflowY: "auto"}}>
+        <button onClick={() => getline(name)}>添加数据</button>
+        <button onClick={() => refetch('zhuzl')}>刷新数据</button>
+       <h2>请求的数据</h2>
+       <div >
+        {content}
+        </div>
     </div>
 }
 
+const Com2=() => {
+ 
+ 
+  return <div>
+       com2
+    </div>
+}
 export default function Index() {
    const [iscom1, setIscom1] = useState(true)
    const ids =  useSelector(selectIds)
@@ -93,14 +111,36 @@ export default function Index() {
 
    const menuses = useSelector(allmenus)
    const [skip, setSkip] = useState(true)
-  
+   let {data, isSuccess, isFetching, isLoading,error, isError} = useSubIndustryListQuery('0002', {    
+    skip: false,
+  }) 
+  const sortedData = useMemo(() => {
+    if(!Array.isArray(data.data)) return []
+    const sorted = data.data.slice()
+    sorted.sort((a, b) => a.subIndustryName.localeCompare(b.subIndustryName))
+    return sorted
+  }, [data])
+  let content;
+  if(isLoading) {
+    content = <div>isLoading</div>
+  }else if(isFetching) {
+    content =<div>isFetching</div>
+  }else if(isError) {
+    content =<div>{JSON.stringify(error)}</div>
+  }else if(isSuccess) {
+    content =<ul> 
+      {sortedData.map(s => <li>{s.subIndustryName}</li>)}
+    </ul>
+  }
  
   return (
     <div>
-       <button onClick={() => setIscom1((is) =>!is )}>{String(iscom1)}</button>
-       {iscom1 && <Com1 />}
-       
+       <button onClick={() => setIscom1(!iscom1)}>{JSON.stringify(iscom1)}</button>
+      
+  
+       {!iscom1 && <Com1 />}
+       {content}
     </div>
   )
 }
-  */
+  
