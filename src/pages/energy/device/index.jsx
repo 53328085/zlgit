@@ -318,7 +318,7 @@ export default function Index() {
                  mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />
              }  
            
-             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}} onChange={pagechange}></Pagination>
+             <Pagination showTotal={showTotal}  defaultPageSize={12} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}} onChange={pagechange}></Pagination>
            </Laybox>
         </Titlelayout>
     

@@ -45,16 +45,14 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  console.log(props)
+  
   const isprodction =  process.env.NODE_ENV !== "production"
   const {config={}, custview=null} = props  
   const themcolor = useSelector(themeColor)   
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
-
-  console.dir(config)
-  console.log(custview)
+ 
   const onColorChange = (e) => {
        let val = e.target.value;
        setColor(val)
