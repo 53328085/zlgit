@@ -37,6 +37,7 @@ export default function QuotaAlarms() {
   let [totalLog, setTotalLog] = useState(0)
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
+  const [quotaWarning,setQuotaWarning]=useState(20);
   const columns = [
     {
       title: t("RoomName"),
@@ -73,7 +74,7 @@ export default function QuotaAlarms() {
       render: (percent) => <Progress
         percent={percent}
         trailColor='#ebeef5'
-        strokeColor={`${percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+        strokeColor={`${percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
         style={{ width: 200 }} />
     },
   ]
@@ -86,7 +87,7 @@ export default function QuotaAlarms() {
       quota: "2000",
       useQuota: "400",
       residueQuota: "1600",
-      percent: 20
+      percent: quotaWarning
     },
     {
       address: "正泰物联",
@@ -156,45 +157,41 @@ export default function QuotaAlarms() {
       num: 1
     },
   ]
-  const opts = [{ name: '全部', id: 1 }, { name: '1号楼', id: 2 }, { name: '2号楼', id: 3 }]
-  const tbref = useRef()
-  const CustView = () => (
-    <>
-      <Form layout="inline">
-        <Form.Item name="build">
-          <Select options={opts} defaultValue={1} fieldNames={{ label: 'name', value: 'id' }} style={{ width: 188, marginLeft: 16 }}></Select>
-        </Form.Item>
-        <Form.Item name="percent">
-          <Select options={opts} defaultValue={1} fieldNames={{ label: 'name', value: 'id' }} style={{ width: 188, marginLeft: 16 }}></Select>
-        </Form.Item>
-      </Form>
-      {/* <Item  name='areaId' >
+  const buildOptions = [{ value: 0, label: t('Whole') }, { value: 1, label: '1号楼' }, { value: 2, label: '2号楼' }]
+
+  const showSortOptions = [{ value: 1, label: t('PercentageOrder') }, { value: 2, label: t('PercentageReverseOrder') }, { value: 3, label: t('Order') }, { value: 4, label: t('ReverseOrder') }]
+  const [modeltype, setModelType] = useState('card')
+  const [buildSelected, setBuildSelected] = useState(0)
+  const [showSortSelected, setShowSortSelected] = useState(1)
+  const CustView = ({ isCard }) => {
+    return (
+      <>
+        <Form layout="inline">
+          <Form.Item name="build">
+            <Select options={buildOptions} defaultValue={buildSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleBuildChange}></Select>
+          </Form.Item>
+          <Form.Item name="percent">
+            <Select options={showSortOptions} defaultValue={showSortSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleShowSortChange}></Select>
+          </Form.Item>
+        </Form>
+        {/* <Item  name='areaId' >
         <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
     </Item> */}
-      <Space size={16} style={{ marginLeft: "auto" }}>
-        <Radio.Group
-          onChange={changeTab}
-          defaultValue="card"
-          buttonStyle="solid"
-        >
-          <Radio.Button
-            style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
-            value="card"
+        <Space size={16} style={{ marginLeft: "auto" }}>
+          <Radio.Group
+            onChange={changeTab}
+            buttonStyle="solid"
+            options={[{ label: t("CardMode"), value: 'card' }, { label: t("ListMode"), value: 'list' }]}
+            value={modeltype}
+            optionType="button"
           >
-            卡片模式
-          </Radio.Button>
-          <Radio.Button
-            style={{ width: "96px", textAlign: "center" }}
-            value="list"
-          >
-            列表模式
-          </Radio.Button>
-        </Radio.Group>
-        <ExportExcel disabled={isCard} tb={tbref} />
-      </Space>
-    </>
+          </Radio.Group>
+          <ExportExcel disabled={isCard} tb={tableLoadRef} />
+        </Space>
+      </>
 
-  )
+    )
+  }
   const changeAlarm = values => {
     if (activeTab == values.id) return;
     setActiveTab(values.id)
@@ -214,14 +211,18 @@ export default function QuotaAlarms() {
   });
 
   const { submit } = hanlder;
-  const onChangePageLog = (page, pageSize) => {
-    setpageLog(page)
-  }
   const changeTab = (val) => {
-    setisCard(val.target.value == "card" ? true : false);
-
+    setModelType(val.target.value)
+    setisCard(val.target.value == 'card' ? true : false);
     //  getOverviewData()
   }; //切换卡片列表模式
+
+  const handleBuildChange = (val) => {
+    setBuildSelected(val)
+  }
+  const handleShowSortChange = (val) => {
+    setShowSortSelected(val)
+  }
   const changepage = (current, pageSize) => {
     try {
       let values = form.getFieldsValue();
@@ -237,11 +238,11 @@ export default function QuotaAlarms() {
     window.open('/detailIndicators', '_blank')
   }
   useEffect(() => {
-    setCustview(<CustView />);
-    // return () => {
-    //   setCustview(undefined)
-    // }
-  }, [])
+    setCustview(<CustView isCard={isCard} />);
+    return () => {
+      setCustview(undefined)
+    }
+  }, [isCard])
   useEffect(() => {
   }, [, projectId, pageLog, paramsLog.pageSize])
   return (
@@ -291,9 +292,9 @@ export default function QuotaAlarms() {
                           <ProgressBoX>
                             <Progress
                               percent={item.percent}
-                              className={`${item.percent > 20 ? '' : 'progressColor'}`}
+                              className={`${item.percent > quotaWarning ? '' : 'progressColor'}`}
                               trailColor='#ebeef5'
-                              strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+                              strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
                               style={{ marginLeft: 10, width: 170 }}
                               strokeWidth={15} /></ProgressBoX>
                         </div> </div>

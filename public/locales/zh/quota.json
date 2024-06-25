@@ -37,5 +37,12 @@
     "Month": "月",
     "Year": "年",
     "DayOnMonthRatio": "日环比",
-    "MonthOnMonthRatio": "月环比"
+    "MonthOnMonthRatio": "月环比",
+    "Whole": "全部",
+    "PercentageOrder": "按剩余量百分比顺序",
+    "PercentageReverseOrder": "按剩余量百分比倒序",
+    "Order": "按剩余量顺序",
+    "ReverseOrder": "按剩余量倒序",
+    "CardMode":"卡片模式",
+    "ListMode":"列表模式"
 }

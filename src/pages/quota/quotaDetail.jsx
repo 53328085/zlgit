@@ -21,7 +21,6 @@ const ProgressBoX = styled.div`
 `
 export default function QuotaDetail() {
   const tableLoadRef = useRef();
-
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   const projectId = useSelector(selectProjectId)
   let { setCustview } = useOutletContext()
@@ -29,6 +28,7 @@ export default function QuotaDetail() {
   let [totalLog, setTotalLog] = useState(0)
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
+  const [quotaWarning,setQuotaWarning]=useState(20);
   const columns = [
     {
       title: t("RoomName"),
@@ -40,19 +40,19 @@ export default function QuotaDetail() {
       ),
     },
     {
-      title: t("EnergyConsumptionQuota")+' (kWh)',
+      title: t("EnergyConsumptionQuota") + ' (kWh)',
       dataIndex: 'quota',
       key: 'quota',
       align: 'center',
     },
     {
-      title: t("UsedEnergyConsumption")+' (kWh)',
+      title: t("UsedEnergyConsumption") + ' (kWh)',
       dataIndex: 'useQuota',
       key: 'useQuota',
       align: 'center'
     },
     {
-      title: t("RemainingEnergyConsumption")+' (kWh)',
+      title: t("RemainingEnergyConsumption") + ' (kWh)',
       dataIndex: 'residueQuota',
       key: 'residueQuota',
       align: 'center'
@@ -65,7 +65,7 @@ export default function QuotaDetail() {
       render: (percent) => <Progress
         percent={percent}
         trailColor='#ebeef5'
-        strokeColor={`${percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+        strokeColor={`${percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
         style={{ width: 200 }} />
     },
     {
@@ -75,13 +75,14 @@ export default function QuotaDetail() {
       align: 'center',
       render: (status) => <div>
         <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
-        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? t("Normal") :  t("Alarm")}</span>
+        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? t("Normal") : t("Alarm")}</span>
       </div>
     },
   ]
 
   const quotaDetailed = [
     {
+      id: 1,
       address: "正泰物联",
       floor: "",
       house: "105",
@@ -92,6 +93,7 @@ export default function QuotaDetail() {
       percent: 80
     },
     {
+      id: 2,
       address: "正泰物联",
       floor: "2号楼",
       house: "102",
@@ -102,6 +104,7 @@ export default function QuotaDetail() {
       percent: 10
     },
     {
+      id: 3,
       address: "正泰物联",
       floor: "1号楼",
       house: "105",
@@ -112,6 +115,7 @@ export default function QuotaDetail() {
       percent: 80
     },
     {
+      id: 4,
       address: "正泰物联",
       floor: "2号楼",
       house: "102",
@@ -122,6 +126,7 @@ export default function QuotaDetail() {
       percent: 80
     },
     {
+      id: 5,
       address: "正泰物联",
       floor: "2号楼",
       house: "102",
@@ -132,6 +137,7 @@ export default function QuotaDetail() {
       percent: 7
     },
     {
+      id: 6,
       address: "正泰物联",
       floor: "2号楼",
       house: "102",
@@ -141,53 +147,49 @@ export default function QuotaDetail() {
       residueQuota: "1400",
       percent: 80
     }]
-    const opts=[{name:'全部',id:1},{name:'1号楼',id:2},{name:'2号楼',id:3}]
-    const tbref =useRef()
-    const CustView =()=> (
+  const buildOptions = [{ value: 0, label: t('Whole') }, { value: 1, label: '1号楼' }, { value: 2, label: '2号楼' }]
+
+  const showSortOptions = [{ value: 1, label: t('PercentageOrder') }, { value: 2, label:  t('PercentageReverseOrder') }, { value: 3, label:  t('Order') }, { value: 4, label:  t('ReverseOrder') }]
+  const [modeltype, setModelType] = useState('card')
+  const [buildSelected, setBuildSelected] = useState(0)
+  const [showSortSelected, setShowSortSelected] = useState(1)
+  const CustView = ({ isCard }) => {
+    return (
       <>
-      <Form layout="inline">
-        <Form.Item name="build">
-        <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
-        </Form.Item>
-        <Form.Item name="percent">
-        <Select  options={opts} defaultValue={1} fieldNames={{label: 'name', value: 'id'}} style={{width: 188,marginLeft: 16}}></Select>
-        </Form.Item>
-      </Form>
-      {/* <Item  name='areaId' >
-          <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
-      </Item> */}
-      <Space size={16} style={{ marginLeft: "auto" }}>
-        <Radio.Group
-          onChange={changeTab}
-          defaultValue="card"
-          buttonStyle="solid"
-        >
-          <Radio.Button
-            style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
-            value="card"
+        <Form layout="inline">
+          <Form.Item name="build">
+            <Select options={buildOptions} defaultValue={buildSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleBuildChange}></Select>
+          </Form.Item>
+          <Form.Item name="percent">
+            <Select options={showSortOptions} defaultValue={showSortSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleShowSortChange}></Select>
+          </Form.Item>
+        </Form>
+        {/* <Item  name='areaId' >
+        <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
+    </Item> */}
+        <Space size={16} style={{ marginLeft: "auto" }}>
+          <Radio.Group
+            onChange={changeTab}
+            buttonStyle="solid"
+            options={[{ label: t("CardMode"), value: 'card' }, { label: t("ListMode"), value: 'list' }]}
+            value={modeltype}
+            optionType="button"
           >
-            卡片模式
-          </Radio.Button>
-          <Radio.Button
-            style={{ width: "96px", textAlign: "center" }}
-            value="list"
-          >
-            列表模式
-          </Radio.Button>
-        </Radio.Group>
-        <ExportExcel disabled={isCard} tb={tbref} />
-      </Space>
+          </Radio.Group>
+          <ExportExcel disabled={isCard} tb={tableLoadRef} />
+        </Space>
       </>
-      
+
     )
+  }
   let paramsLog = {
     projectId: projectId,
     pageNum: pageLog,
     pageSize: 3,
   }
+
   const getOverviewData = ({ current, pageSize }, formData) => {
   }
-
   const { tableProps, search: hanlder, run } = useAntdTable(getOverviewData, {
     form,
     defaultPageSize: 3,
@@ -196,10 +198,17 @@ export default function QuotaDetail() {
 
   const { submit } = hanlder;
   const changeTab = (val) => {
-    setisCard(val.target.value == "card" ? true : false);
-
+    setModelType(val.target.value)
+    setisCard(val.target.value == 'card' ? true : false);
     //  getOverviewData()
   }; //切换卡片列表模式
+
+  const handleBuildChange = (val) => {
+    setBuildSelected(val)
+  }
+  const handleShowSortChange = (val) => {
+    setShowSortSelected(val)
+  }
   const changepage = (current, pageSize) => {
     try {
       let values = form.getFieldsValue();
@@ -215,15 +224,16 @@ export default function QuotaDetail() {
     window.open('/detailIndicators', '_blank')
   }
   useEffect(() => {
-    setCustview(<CustView/>);
+    setCustview(<CustView isCard={isCard} />);
     return () => {
       setCustview(undefined)
     }
-  }, [])
+  }, [isCard])
   useEffect(() => {
     // getData();
 
   }, [, projectId, pageLog, paramsLog.pageSize])
+
   return (
     <div className={style.quotaDetailContent}>
       {isCard ? (
@@ -253,9 +263,9 @@ export default function QuotaDetail() {
                       <ProgressBoX>
                         <Progress
                           percent={item.percent}
-                          className={`${item.percent > 20 ? '' : 'progressColor'}`}
+                          className={`${item.percent > quotaWarning ? '' : 'progressColor'}`}
                           trailColor='#ebeef5'
-                          strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+                          strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
                           style={{ marginLeft: 40, width: 170 }}
                           strokeWidth={15} /></ProgressBoX>
                     </div> </div>
@@ -266,7 +276,7 @@ export default function QuotaDetail() {
       ) : (
         <div className={style.listData}>
           {/* {...tableProps} */}
-          <Usetable columns={columns} ref={tableLoadRef} dataSource={quotaDetailed} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.title} />
+          <Usetable columns={columns} ref={tableLoadRef} dataSource={quotaDetailed} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.id} />
         </div>
       )}
       <CPagination style={{ marginLeft: 'auto', width: 'fit-content' }} size="small" onChange={changepage}   {...tableProps.pagination} showSizeChanger={false} />
