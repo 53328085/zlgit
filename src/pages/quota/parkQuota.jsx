@@ -9,7 +9,6 @@ import showImg from '../quota/icon/showImg.gif'
 import { EnergyOverView } from "@api/api.js";
 import { useOutletContext } from 'react-router-dom'
 import Titlelayout from '@com/titlelayout';
-import { CustTransO } from "@com/useButton"
 import { useTranslation } from "react-i18next"
 import {
   selectProjectId,
@@ -76,8 +75,9 @@ const Itemsty = styled.div`
     transform: translateX(-50%);
   }
   100% {
-    transform: translateX(-100%); /* 加上一些额外的空白，以便滚动到最后一个元素时不会立即切换 */
+    transform: translateX(-100%);
   }
+}
 
 `
 
@@ -88,6 +88,7 @@ export default function ParkQuota() {
   const projectId = useSelector(selectProjectId);
   let { areaName } = useOutletContext();
   const { t } = useTranslation("quota")
+  const [quotaWarning, setQuotaWarning] = useState(20);
   const quotarRankingData = [
     {
       name: '联合工房',
@@ -114,7 +115,7 @@ export default function ParkQuota() {
   const Item = ({ data }) => {
     return (
       <Itemsty>
-        <p className='itemtitle' style={{ backgroundColor: `${data.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{data.areaName}</p>
+        <p className='itemtitle' style={{ backgroundColor: `${data.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{data.areaName}</p>
         <p className='sub'>{t("EnergyConsumptionQuota")} (kWh)</p>
         <p className='num'><Text ellipsis={{ tooltip: data.todayElectricConsume }}>{data.todayElectricConsume}</Text></p>
         <p className='sub'>{t("AccumulatedEnergyConsumption")} (kWh)</p>
@@ -124,9 +125,9 @@ export default function ParkQuota() {
         <p className='sub'>{t("RemainingQuota")}</p>
         <Progress
           percent={data.percent}
-          className={`${data.percent > 20 ? '' : 'progressColor'}`}
+          className={`${data.percent > quotaWarning ? '' : 'progressColor'}`}
           trailColor='#ebeef5'
-          strokeColor={`${data.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+          strokeColor={`${data.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
           style={{ marginLeft: 10, width: 100 }} />
       </Itemsty>
 
@@ -187,9 +188,9 @@ export default function ParkQuota() {
         </Box>
         <div className={style.imgData}>
           <span style={{ width: 200, paddingLeft: 16, borderRight: '1px solid #f5f1f1' }}>{areaName}</span>
-          <span style={{ width: 80, paddingLeft: 16 }}><CustTransO text="Buildings" /> </span>
+          <span style={{ width: 80, paddingLeft: 16 }}>{t("Buildings")}</span>
           <span style={{ width: 60, marginLeft: 16, borderRight: '1px solid #f5f1f1' }}>1 幢</span>
-          <span style={{ width: 60, paddingLeft: 16 }}><CustTransO text="Rooms" /> </span>
+          <span style={{ width: 60, paddingLeft: 16 }}>{t("Rooms")}</span>
           <span style={{ width: 60, marginLeft: 16 }}>4 间</span>
         </div>
       </div>
@@ -206,7 +207,7 @@ export default function ParkQuota() {
               <div className={style.residueInfo} key={index}>
                 <div className={style.residueInfo}><span>{item.name}</span><span>{item.num} kWh</span> </div>
                 <Progress style={{ width: '370px' }} percent={item.percent}
-                  strokeColor={`${item.percent > 20 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`} trailColor='#ebeef5' strokeWidth={15} className={style.residueProgress} />
+                  strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`} trailColor='#ebeef5' strokeWidth={15} className={style.residueProgress} />
               </div>
             ))}
           <img className={style.showImg} src={showImg} />

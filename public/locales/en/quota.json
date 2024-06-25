@@ -22,7 +22,7 @@
     "Alarm": "Alarm",
     "RoomEnergyConsumptionQuota": "Room energy consumption quota",
     "RatedEnergyConsumption": "Rated energy consumption",
-    "RemainingEnergyConsumptionRatio":"Remaining energy consumption ratio",
+    "RemainingEnergyConsumptionRatio": "Remaining energy consumption ratio",
     "ResponsiblePerson": "Responsible person",
     "cellPhoneNumber": "cell-phone number",
     "EnergyConsumptionSituation": "Energy consumption situation",
@@ -37,5 +37,12 @@
     "Month": "Month",
     "Year": "Year",
     "DayOnMonthRatio": "Day on month ratio",
-    "MonthOnMonthRatio": "Month on month ratio"
+    "MonthOnMonthRatio": "Month on month ratio",
+    "Whole": "Whole",
+    "PercentageOrder": "Remaining quantity percentage order",
+    "PercentageReverseOrder": "Reverse order of remaining quantity percentage",
+    "Order": "Remaining quantity order",
+    "ReverseOrder": "Remaining quantity in reverse order",
+    "CardMode":"Card Mode",
+    "ListMode":"List Mode"
 }
