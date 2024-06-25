@@ -61,7 +61,7 @@ export default  memo(function Index(props) {
               setRoomList([])
            }
         } catch (error) {
-          
+          console.log(error)
         }
           
   }  

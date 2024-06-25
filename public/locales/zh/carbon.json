@@ -21,7 +21,7 @@
   "cumEmissionEquivalent": "累计排放量 {{param}}",
   "remainEmissionQuota":"距预配剩余",
   "remainEmissionTarget":"距目标剩余",
-  "Remainingemissionsfromthetotalpre-quota":"距总预配额剩余排放量 {{param}",
+  "Remainingemissionsfromthetotalpre-quota":"距总预配额剩余排放量 {{param}}",
   "Remainingemissionsfromtotaltarget": "距总目标剩余排放量 {{param}}",
   "Monthlyanalysis": "月度碳排考核分析 {{param}}",
   "Carbonemissiondata": "碳排放数据 {{param}}",

@@ -296,14 +296,23 @@ export default function Index() {
      dispatch(getWebsiteState(id))
      dispatch(configProject(type === 1))
      let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
-     console.log(siderRunMenus)
-     console.log(runMenus)
+    
      let menu;
-     let  jumpath;
+     let  jumpath, substate;
      if (type == 2) {
       menu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0] 
-      let subpath = siderRunMenus?.[menu.key]?.key
-      jumpath = `/index/${menu.key}/${subpath}`
+      if(!menu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
+      let sider = siderRunMenus?.[menu.key]?.[0] 
+      if(sider) { 
+        let {key, label} = sider
+        jumpath = `/index/${menu.key}/${key}`
+        substate = {
+          nested: key,
+          title: label,
+          primary: menu.key
+        }
+
+      }
     }else if(type == 1) {  
       let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]      
       if(key) {
@@ -315,7 +324,7 @@ export default function Index() {
     }
    
     if(!menu) return message.error({content: t("comm:NoSetMenu"), duration: 0.5})
-    type == 2  && projectRun(menu, jumpath)
+    type == 2  && projectRun(menu, jumpath, substate)
     type == 1 && projectDesigner(menu)
 
    } catch (error) {
@@ -326,10 +335,10 @@ export default function Index() {
 
 
   // 数据需要动态获取
-  const projectRun = ({key, label}, jumpath) => { 
+  const projectRun = ({key, label}, jumpath, substate) => { 
     dispatch(getJump(true))
     navigate(`/index/${key}`, {
-      state: { type: 'index',  primary: key,  index: true, title: label, jumpath }
+      state: { type: 'index',  primary: key,  index: true, title: label, jumpath, substate }
     })
   };
 
