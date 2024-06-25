@@ -95,9 +95,11 @@ export default function Sider() {
 
   useEffect(() => {  
     console.log('语言改变后。')
+    console.log(config)
     try {
     
       let state = location.state || {}    
+      console.log(state)
       let {nested, primary } = state;
     //  console.log(state,location)
       dispatch(getisDistribution(primary === 'runtimeDistribution'))

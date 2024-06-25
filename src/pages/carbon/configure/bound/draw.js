@@ -217,10 +217,10 @@ function Draw({params}, ref) {
     const [saveconfig, {isLoading}] = useConfigDeviceMutation()
     const onSave =async () => {
         try {
-          if(Array.isArray(usedtb) && usedtb.length > 0) {
+         
 
             let {enterpriseId,subCategoryId,carbonBoundaryId } =params
-             let sns = usedtb.map(d => d.deviceSn)
+             let sns = Array.isArray(usedtb) ? usedtb.map(d => d.deviceSn) : [];
             let body = {
                enterpriseId,
                subCategoryId,
@@ -234,9 +234,7 @@ function Draw({params}, ref) {
            }else {
               i18warning(errMsg)
            }
-          }else {
-            message.warning(<CustTransO text="Pleaseselectdevice" ns="comm"/>)
-          }
+         
         } catch (error) {
            console.log(error)
         }

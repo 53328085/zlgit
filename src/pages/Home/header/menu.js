@@ -16,7 +16,9 @@ export default function Hmenu() {
   const navigate = useNavigate()
   const {state} = useLocation()
   let path = useResolvedPath()
+  console.log(path)
   let paths = path.pathname.slice(1).split('/')
+  console.log(paths)
  // const [current, SetCurrent] = useState(state.primary)
 
   const current = useMemo(() => state?.primary, [state])
@@ -76,8 +78,11 @@ export default function Hmenu() {
   }
  useEffect(() => {    
     if(state) {
+      console.log(state)
       let {primary} = state
       dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
+       
+
     } else {
        let url, state
        let primary = paths[1];

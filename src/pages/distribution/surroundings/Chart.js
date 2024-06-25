@@ -69,11 +69,11 @@ export default function Chart({EnvironmentTrend, data}) {
   return (
     <Titlelayout layout="flex" style={{flexBasis: '296px'}} title={<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
     <span>{name}</span>
-    <Space>
+   {/*  <Space>
     <span >日期</span>
      <DatePicker  size='middle'  value={dateval} onChange={changeTime}></DatePicker>
      <SerachButton   onClick={search} /> 
-    </Space>
+    </Space> */}
  </div>}>
  
     <div style={{display: 'flex', flex: 1}}>

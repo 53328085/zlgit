@@ -295,10 +295,15 @@ export default function Index() {
    try {
      dispatch(getWebsiteState(id))
      dispatch(configProject(type === 1))
-     let {runMenus, designerMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
-     let menu
+     let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
+     console.log(siderRunMenus)
+     console.log(runMenus)
+     let menu;
+     let  jumpath;
      if (type == 2) {
       menu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0] 
+      let subpath = siderRunMenus?.[menu.key]?.key
+      jumpath = `/index/${menu.key}/${subpath}`
     }else if(type == 1) {  
       let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]      
       if(key) {
@@ -310,7 +315,7 @@ export default function Index() {
     }
    
     if(!menu) return message.error({content: t("comm:NoSetMenu"), duration: 0.5})
-    type == 2  && projectRun(menu)
+    type == 2  && projectRun(menu, jumpath)
     type == 1 && projectDesigner(menu)
 
    } catch (error) {
@@ -321,10 +326,10 @@ export default function Index() {
 
 
   // 数据需要动态获取
-  const projectRun = ({key, label}) => { 
+  const projectRun = ({key, label}, jumpath) => { 
     dispatch(getJump(true))
     navigate(`/index/${key}`, {
-      state: { type: 'index',  primary: key,  index: true, title: label }
+      state: { type: 'index',  primary: key,  index: true, title: label, jumpath }
     })
   };
 

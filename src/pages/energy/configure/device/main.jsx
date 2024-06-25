@@ -139,7 +139,7 @@ export default function Index ({projectId, areaId}) {
          // aref.current.onCancel()
         })
       }else {
-        updateDrive({projectId, id: updateId, name, address}, {image:imageKey}).then(res => {
+        updateDrive({projectId, id: updateId, name: encodeURIComponent(name), address}, {image:imageKey}).then(res => {
           if(res.success){
             messageContent('success','修改重点设备成功!')
           }else{
