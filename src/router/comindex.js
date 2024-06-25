@@ -9,7 +9,8 @@ import {
   selectOneLevel,
   getOnelevel,
   enterprise,
-  selectProjectId
+  selectProjectId,
+  iszhCN
 } from "@redux/systemconfig.js";
 export default function Index() {
   const dispatch = useDispatch();
@@ -24,7 +25,8 @@ export default function Index() {
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId)
-  const {id: enterpriseId} = useSelector(enterprise)
+  const iszh = useSelector(iszhCN)
+  const {enterpriseId} = useSelector(enterprise)
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
       "monitor",
@@ -116,7 +118,8 @@ export default function Index() {
     areaName,
     enterpriseId,
     projectId,
-  }), [exparams, areaName,enterpriseId,projectId]);
+    iszh,
+  }), [exparams, areaName,enterpriseId,projectId, iszh]);
   const props = {
     config,
     setexparams,
@@ -126,6 +129,7 @@ export default function Index() {
 
   const sethandler = () => {  
     try {
+      console.log(nested)
       if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true });
       } else {
@@ -149,6 +153,7 @@ export default function Index() {
               isdate: true,
               shiftNo: true,
               gas: false,
+              custview: true,
             });
             break;
           case "direction":
@@ -158,6 +163,7 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
+             
             });
             break;
           case "analysis":
@@ -222,7 +228,15 @@ export default function Index() {
         setConfig({});
       }
       if(primary =="runtimeQuota"){
-        setConfig({custview: true});
+        switch(nested){
+          case "runtimeQuotaDetailed":
+          setConfig({custview: true});
+          break;     
+          case "runtimeQuotaAlarms":
+          setConfig({custview: true});
+          break;  
+        }
+        
       }
       // 设计态
       if(primary == "designerEnergy") {

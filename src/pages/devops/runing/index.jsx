@@ -6,7 +6,7 @@ import Report from '@com/reportPrint'
 import Pagecom from './pagecomp' 
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {useSelector} from 'react-redux'
-const { AlarmStatistics, OrderStatistics, InspectionStatistics, InspectionErrorCounter} = operation
+const { AlarmStatistics, OrderStatistics, InspectionStatistics, InspectionErrorCounter, InspectionStatisticsTime} = operation
 export default function Index() {
   const [reportData, setData] = useState(null)
   const  [params, setType] = useState(null)
@@ -14,8 +14,16 @@ export default function Index() {
   
   const getData =useCallback(async (params) => { // 
    
+    console.log(params)
+
     let {date, projectId} = params
     let today = moment().format("YYYY-MM-DD")
+
+    let post = {
+      start: date,
+      end: today,
+      projectId
+    }
     let datas = {
       inspec: {},
       order: {},
@@ -23,9 +31,10 @@ export default function Index() {
       error: {},
     }
     try {
-     let {success: d, data} = await InspectionStatistics({projectId: projectId, areaId: 0})
-     let {success: s, data: order} =  await OrderStatistics({...params, areaId: 0})
-     let {success: a, data: alarm} =  await AlarmStatistics({...params, areaId: 0})
+     //let {success: d, data} = await InspectionStatistics({projectId: projectId, areaId: 0})
+     let {success: d, data} = await InspectionStatisticsTime({...post, areaId: 0}) // 巡检任务统计
+     let {success: s, data: order} =  await OrderStatistics({...post, areaId: 0}) // 工单事件统计
+     let {success: a, data: alarm} =  await AlarmStatistics({...post, areaId: 0}) // 告警事件统计
      let  {success: e, data: error} = await InspectionErrorCounter({projectId, areaId: 0})
      if(d) {
         datas.inspec =  data?.constructor == Object ? data : {}
@@ -33,7 +42,7 @@ export default function Index() {
      if(s) {
       datas.order =  order?.constructor == Object ? order : {}
      }
-     if(s) {
+     if(a) {
       datas.alarm =  alarm?.constructor == Object ? alarm : {}
      }
      if(e) {
@@ -45,7 +54,7 @@ export default function Index() {
       return false
      }else {
       setType(params)
-      setData(datas)
+      setData({...datas})
       return true
      }
     } catch (error) {

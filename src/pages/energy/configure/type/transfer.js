@@ -26,6 +26,7 @@ export default function index (props) {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const onSelectChange = (newSelectedRowKeys) => {
+     //   console.log(newSelectedRowKeys)
         setSelectedRowKeys(newSelectedRowKeys);
     };
     const rowSelection = {
@@ -44,7 +45,18 @@ export default function index (props) {
             let arr = [...unknownData];
             let arr2 = [];
             let copyArr = [...unknownCopy];
-            for(let i =0;i< arr.length;i++){
+
+            console.log(selectedRowKeys)
+            selectedRowKeys.forEach(id => {
+               let idx = arr.findIndex(a => a.id == id);
+               if(idx >-1) {
+                 let item = arr.splice(idx, 1);
+                 copyArr.splice(idx,1)
+                 arr2.push(...item)
+               }
+            })
+
+           /*  for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedRowKeys.length;j++){
                     if(arr[i].id == selectedRowKeys[j]){
                         for(let x = 0;x< copyArr.length;x++){
@@ -57,11 +69,14 @@ export default function index (props) {
                         
                     }
                 }
-            }
-            setSubData(subData.concat(arr2));
-            setSubCopy(subCopy.concat(arr2));
-            setUnknownData(arr);
-            setUnknownCopy(copyArr);
+            } */
+            console.log(arr2);
+          //  setSubData(subData.concat(arr2));
+           // setSubCopy(subCopy.concat(arr2));
+            setSubData([...arr2, ...subData])
+            setSubCopy([...arr2, ...subCopy])
+            setUnknownData([...arr]);
+            setUnknownCopy([...copyArr]);
             setSelectedRowKeys([])
         }
     }
@@ -85,7 +100,16 @@ export default function index (props) {
             let arr = [...subData];
             let arr2 = [];
             let copyArr = [...subCopy]
-            for(let i =0;i< arr.length;i++){
+            console.log(selectedSubKeys)
+            selectedSubKeys.forEach(id => {
+                let idx = arr.findIndex(a => a.id == id);
+                if(idx >-1) {
+                  let item = arr.splice(idx, 1);
+                  copyArr.splice(idx,1)
+                  arr2.push(...item)
+                }
+             })
+           /*  for(let i =0;i< arr.length;i++){
                 for(let j = 0;j<selectedSubKeys.length;j++){
                     if(arr[i].id == selectedSubKeys[j]){
                         for(let x = 0;x< copyArr.length;x++){
@@ -98,12 +122,14 @@ export default function index (props) {
                         arr.splice(i,1)
                     }
                 }
-            }
-            setUnknownData(unknownData.concat(arr2));
-            setUnknownCopy(unknownCopy.concat(arr2));
-            setSubData(arr)
-            setSubCopy(copyArr)
-            // setSelectedSubKeys([])
+            } */
+          //  setUnknownData(unknownData.concat(arr2));
+          //  setUnknownCopy(unknownCopy.concat(arr2));
+          setUnknownData([...arr2, ...unknownData]);
+         setUnknownCopy([...arr2, ...unknownCopy]);
+            setSubData([...arr])
+            setSubCopy([...copyArr])
+           setSelectedSubKeys([])
         }
     }
 
@@ -206,7 +232,6 @@ export default function index (props) {
                 </div>
             </div>
             <div className={style.actions}>
-
                 <Space size={16}>
                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
                     <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>                 

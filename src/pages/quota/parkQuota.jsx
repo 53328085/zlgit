@@ -78,7 +78,6 @@ const Itemsty = styled.div`
     transform: translateX(-100%);
   }
 }
-
 `
 
 

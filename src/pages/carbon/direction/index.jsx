@@ -7,7 +7,7 @@ import { useOutletContext} from 'react-router-dom'
 import { Carbon} from "@api/api"
 import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-import {CustButton} from '@com/useButton'
+import {CustButton, CustTransO} from '@com/useButton'
 import Ichart  from '@com/useEcharts/Ichart';
 import {ComDatePicker} from "@com/comstyled" 
 const {RangePicker} = DatePicker
@@ -112,7 +112,7 @@ export default function Index() {
   }
    const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span>碳排流向</span>
+        <span><CustTransO ns="carbon" text="Carbonemissiondirection" /></span>
         <Space size={16}>
          <RangePicker defaultValue={dateRang} showTime disabledDate={disabledDate} onChange={onChange}  />  
          

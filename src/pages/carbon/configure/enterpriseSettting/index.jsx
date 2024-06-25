@@ -3,6 +3,7 @@ import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import {Form, Select, Input, message, Drawer} from 'antd'
 import {useSelector, useDispatch} from 'react-redux'
+import {useOutletContext} from 'react-router-dom'
 import {selectProjectId, getEnterprise,enterprise} from '@redux/systemconfig'
 import {
   useIndustryListQuery, 
@@ -12,11 +13,14 @@ import {
   useEnterpriseQuery,
   useEmissionItemsQuery,
   useSaveEnterpriseMutation,
-  useSaveItemsMutation, carbonSlice} from "@redux/carbon"
+  useSaveItemsMutation, 
+  useCalcFactorQuery,
+  carbonSlice} from "@redux/carbon"
 import Titlelayout from "@com/titlelayout"
-
-import {CustButtonT} from "@com/useButton"
+import {Carbon} from "@api/api.js"
+import {CustButtonT, i18warning, i18success} from "@com/useButton"
 import TableT from "./tabletmp"
+import TableC from './tablecalc'
 import {isObject} from "@com/usehandler"
 const {Item} = Form
 const Mainbox = styled.div`
@@ -58,14 +62,20 @@ export default function Index() {
   const [title, setTitle] = useState('')
   const projectId = useSelector(selectProjectId)
   const [emissions, setEmissions] = useState([])
+  const {enterpriseId} = useOutletContext()
   let saveData =useRef({})
 
+ 
+
+ 
   
  // 保存企业信息
 
   const [SaveEnterprise, {isLoading}] =useSaveEnterpriseMutation()
   
   const [SaveItem, {isLoading: itemloading}] = useSaveItemsMutation()
+
+  
 
   // 所属行业
 
@@ -79,7 +89,7 @@ export default function Index() {
     // 二级行业
 
     const [trigger, result, lastPromiseInfo] =carbonSlice.useLazySubIndustryListQuery()
-    
+ 
     const {data:subindustry, success} = result?.data || {}
  
     useEffect(() => {
@@ -122,8 +132,8 @@ export default function Index() {
   //  获取企业碳排项信息
   const [getEmission] = carbonSlice.useLazyEmissionItemsQuery()
 
-  const updateEmission = async () => {
-    let {success: suc, data: emission, errMsg:err}  = await getEmission(Enterprise.id).unwrap();
+  const updateEmission = async (enterpriseId) => {
+    let {success: suc, data: emission, errMsg:err}  = await getEmission(enterpriseId).unwrap();
     if(suc) {
     //  setOpen(true)
       setEmissions([...emission])
@@ -132,48 +142,91 @@ export default function Index() {
       })
        
     }else {
-      message.warning(err || "数据出错")
+       i18warning(err)
     }
     return suc
   }
+
+// 获取企业计算因子
+const [after, setAfter] = useState(true) // 在企业保存后调用
+const factorRef = useRef([])
+let {isSuccess: fsuc,  data: factorData, refetch, error}  = useCalcFactorQuery(enterpriseId, {
+   skip: !Number.isInteger(enterpriseId) || after
+})
+
+
+console.log(error)
  
-  // 保存
+const getFactorData = (sucs, factorData) =>  {
+    try {
+      if(sucs && isObject(factorData)) {
+        let {success, data, errMsg} = factorData
+        if(success && Array.isArray(data) && data.length >0) {
+           factorRef.current = data;
+        }else {
+           if(!success) i18warning(errMsg);
+           factorRef.current = data;
+        }
+
+      }
+    } catch (error) {
+      console.log(error)
+    }
+}
+
+getFactorData(fsuc, factorData);
+ 
+  // 保存=>关闭
  const onSave =async () => {
-     let params = [];
+    setOpen(false)
+    /*  let params = [];
      
      for(let [key, value] of Object.entries(saveData.current)) {
             value.forEach(v => {
-              params.push({ ...v,categoryName:key, enterpriseId: Enterprise.id})
+              params.push({ ...v,categoryName:key, enterpriseId})
             })
      }
     let {success, errMsg} = await SaveItem(params).unwrap()
     if(success) {
-      message.success("保存成功")
+      i18success('save')
+    
       updateEmission()
     }else {
-      message.warning(errMsg || '数据出错')
-    }
+      i18warning(errMsg)
+    } */
 
  }
 
   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
     <span>{title}</span>
-    <CustButtonT text="save" ns="button" loading={itemloading} onClick={onSave} /> 
+    <CustButtonT text="cancel" ns="button"   onClick={onSave} /> 
   </div>), [title])
   const saveE =async () => {  // 保存企业信息 不需要 enterpriseId ?
+    
       try {
-          let {id, ...rest} = await form.validateFields()
-          let params ={enterpriseId:id, ...rest}
+          
+           let rest = await form.validateFields()
+           console.log(rest)
+          let params ={projectId,  ...rest}
+          console.log(params)
           let title = industry.find(i => i.industryNo == rest.industryNo)?.industryName
           setTitle(title)
           if(isLoading) return;
+          console.log(params)
           let {success, data, errMsg} = await  SaveEnterprise(params).unwrap()
-          if(success && isObject(data)) {
-     
-              let {enterpriseId, ...post} = data 
-              dispatch(getEnterprise({id:enterpriseId, ...post})) // 更新企业信息
-              let open = await  updateEmission()
-              setOpen(open)
+        
+          if(success) {
+                let {success, data,errMsg} = await Carbon.QueryCarbonEnterprise(projectId) // 更新企业信息
+                if(success && isObject(data)) {
+                  dispatch(getEnterprise(data))
+                  let open = await  updateEmission(data.enterpriseId)
+                  setAfter(false)
+                  setOpen(open)
+
+                }
+        
+              
+             
            /*  let {success: suc, data: emission, errMsg:err}  = await getEmission(id).unwrap();
             if(suc) {
               setOpen(true)
@@ -188,7 +241,8 @@ export default function Index() {
           
           }else {
             dispatch(getEnterprise({}))
-             message.warning(errMsg || '数据出错')
+            i18warning(errMsg)
+             // message.warning(errMsg || '数据出错')
           }
          
       } catch (error) {
@@ -227,31 +281,31 @@ export default function Index() {
                  <Item label="单位性质" name="nature" rules={rules}  >
                      <Select options={natureList}></Select>
                  </Item>
-                 <Item label="组织机构代码" name="creditCode"  >
+                 <Item label="组织机构代码" name="creditCode" rules={rules}  >
                      <Input></Input>
                  </Item>
-                 <Item label="法定代表人" name="legalRepresentative"  >
+                 <Item label="法定代表人" name="legalRepresentative" rules={rules} >
                      <Input></Input>
                  </Item>
-                 <Item label="填报负责人" name="responsiblePerson"  >
+                 <Item label="填报负责人" name="responsiblePerson" rules={rules} >
                      <Input></Input>
                  </Item>
-                 <Item label="联系人" name="contacts"  >
+                 <Item label="联系人" name="contacts" rules={rules} >
                      <Input></Input>
                  </Item>
-                 <Item name="projectId" noStyle>
-                    <Input type="hidden" />
-                 </Item>
-                 <Item name="id" noStyle>
+               
+                 <Item name="enterpriseId" noStyle>
                      <Input type="hidden" />
                  </Item>
              </Form>
              <CustButtonT text="ok" wh="100%" onClick={saveE} loading={isLoading} />
              </div>
           </Titlelayout>
-         {open && (<Titlelayout   title={Title} layout="flex"  key="value">
+         {open && (<Titlelayout   title={Title} layout="flex"  key="value" style={{height: "833px", overflowY: "auto"}}>
                        <Tablebox>
-                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} /> )}
+                       {emissions?.length > 0 && emissions.map((e,index) => <TableT tabledata={e} key={e.categoryId} saveData={saveData.current} enterpriseId={enterpriseId}  /> )}
+
+                       {factorRef.current?.length > 0 && factorRef.current.map((f,index) => <TableC key={f.categoryId}  tabledata={f} enterpriseId={enterpriseId}  /> ) }
                        </Tablebox>
           </Titlelayout>)
           }

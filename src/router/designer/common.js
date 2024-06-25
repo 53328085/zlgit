@@ -9,7 +9,7 @@ const Base = lazy(() => import("@pages/module/base"))
 // const Pricing= lazy(() => import("@pages/module/pricing"))
 const Cockpit= lazy(() => import("@pages/module/cockpit"))
 const DataScreen = lazy(() => import("@pages/module/dataScreen"))
-
+const Yinsi = lazy(() => import("@pages/module/yisiy"))
 export let designerCommon = {
     '020101': Base,
     '020102': Project,
@@ -17,4 +17,5 @@ export let designerCommon = {
     '020104': Region,
     '020105': Cockpit,
     '020106': DataScreen,
+    '020107': Yinsi,
 }

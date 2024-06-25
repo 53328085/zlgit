@@ -59,7 +59,7 @@ let Com = ({ form, deviceStyle }) => {
                     <Input />
                    
                 </Form.Item>
-            ) : deviceStyle == 1 ?  (<Form.Item  noStyle   shouldUpdate={(prevValues, curValues) => prevValues.ct !== curValues.ct || prevValues.pt !== curValues.pt} > 
+            ) : /* deviceStyle == 1 ?  (<Form.Item  noStyle   shouldUpdate={(prevValues, curValues) => prevValues.ct !== curValues.ct || prevValues.pt !== curValues.pt} > 
                      {
                         ({getFieldsValue, setFieldValue}) => {
                             const {ct, pt} = getFieldsValue();
@@ -72,19 +72,17 @@ let Com = ({ form, deviceStyle }) => {
                         }
                      } 
                 </Form.Item>
-            ) : null}
+            ) : */ null}
              {
                 deviceStyle== 1 &&
                (<>
-               <Form.Item label="Ct" name="ct" initialValue={1}>
+               <Form.Item label="CT" name="ct" initialValue={1}>
                   <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} />
                </Form.Item>
-               <Form.Item label="Pt" name="pt" initialValue={1}>
+               <Form.Item label="PT" name="pt" initialValue={1}>
                   <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} />
                </Form.Item>
-               <Form.Item noStyle>
-                      <Alert message={tip} type="error" />
-               </Form.Item>
+              
                </>)
 
 
@@ -130,6 +128,11 @@ let Com = ({ form, deviceStyle }) => {
                     }
 
                 </> : null}
+                {
+                    deviceStyle == 1 &&  <Form.Item noStyle>
+                     <Alert message={tip} type="error" />
+                  </Form.Item>
+                }
         </>
     )
 }
@@ -494,10 +497,15 @@ let EditCom = ({ form, coms, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {deviceStyle !== 13 && deviceStyle !== 14 ? (<Form.Item label="倍率" name="factor" rules={rules}>
+            {deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 1 ? (<Form.Item label="倍率" name="factor" rules={rules}>
                 <Input disabled />
-                {/* 默认1 */}
-            </Form.Item>) : null}
+                
+            </Form.Item>) : deviceStyle == 1 ? <> <Form.Item label="CT" name="ct" initialValue={1}>
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} disabled />
+               </Form.Item>
+               <Form.Item label="PT" name="pt" initialValue={1}>
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} disabled />
+               </Form.Item></> : null }
 
             {form.getFieldValue('gatewayId') ?
                 <>

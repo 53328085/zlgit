@@ -243,5 +243,9 @@
     "Message_photovoltaic power data is must":"Photovoltaic power data is a must",
     "Message_storage management data is must":"Storage management data is a must",
     "Message_carbon management data is must":"Carbon management data is a must",
-    "Message_operation management data is must":"Operation management data is a must"
+    "Message_operation management data is must":"Operation management data is a must",
+    "yishiy":"Ezuikit configure",
+    "homepage": "Default Home Page",
+    "":""
+
 }

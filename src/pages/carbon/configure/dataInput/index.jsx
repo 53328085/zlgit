@@ -3,15 +3,16 @@ import styled from 'styled-components'
 import moment from 'moment'
 import {Form,  Space, DatePicker, Tooltip, Upload, Typography, message,InputNumber} from 'antd'
 import {useSelector} from 'react-redux'
+import {useTranslation, Trans} from 'react-i18next'
 import Pagecount from '@com/pagecontent'
 import Modal from '@com/useModal'
 import _ from 'lodash'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
 import upload from "@imgs/upload.png"
-import {DataSlice, useEmissionUnitQuery,useImportDataMutation, useSaveDataMutation} from "./dataslice"
+import {DataSlice, useEmissionUnitQuery,useImportDataMutation, useSaveDataMutation} from "@redux/carbon"
 import {Carbon} from "@api/api.js"
-import {CustButtonT} from "@com/useButton"
+import {CustButtonT, CustTransO, i18warning, i18success} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
 import { enterprise} from '@redux/systemconfig'
 const { Dragger } = Upload;
@@ -53,12 +54,13 @@ const splitarr = (arr) => {
   let tableData = []
   for(let arrs of Object.values(obj)) {
       let consumption = Array.from({length: days}, (_, i) => i).fill(0)
-      let {carbonUnitName, subCategoryName} = arrs[0]
+      let {carbonUnitName, subCategoryName,unit: unittext} = arrs[0]
       let unit = {
         carbonUnitName,
         subCategoryName,
         day: days,
         consumption,
+        unit: unittext
       }
       arrs.forEach(item => {
        
@@ -100,7 +102,8 @@ const splitarr = (arr) => {
 }
 
 export default function Index() { 
-  const {id:enterpriseId} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
+  const {t} = useTranslation()
   const [form] = Form.useForm()
   const [tbform] = Form.useForm()
   const ref = useRef()
@@ -110,7 +113,7 @@ export default function Index() {
  
   const [columns, setColumns] =useState([
       {
-          title: '排放单元',
+          title:  <CustTransO  text="carbonUnit" ns="carbon" />,
           dataIndex: 'carbonUnitName',
           key: 'carbonUnitName',
           align: 'center',
@@ -119,7 +122,7 @@ export default function Index() {
           ellipsis: true,
       },
       {
-        title: '能源消耗量',
+        title: <CustTransO  text="energyconsumption" ns="carbon" />,
         dataIndex: 'subCategoryName',
         key: 'subCategoryName',
         align: 'center',
@@ -171,11 +174,11 @@ const formartcol = (data, month) => {
       render: (text, record, index) =><Ctd record={record} i={i} text={text} index={index} saveData={saveData.current} month={month} /> 
    }))
    let endcol = {
-     title: "月总计",
+     title:  <CustTransO  ns="comm" text="monthlytotal"/>,
     dataIndex: day,
       key: day,
       align: 'center',
-      width: 80,
+      width: 120,
       fixed: 'right',
       ellipsis: true,
       render: (_, record) => {
@@ -184,14 +187,14 @@ const formartcol = (data, month) => {
           ({getFieldValue}) => {
               let {carbonUnitName, subCategoryName} = record;
               let values = getFieldValue(`${carbonUnitName}-${subCategoryName}-${month}`)
-              console.log(values)
+            
             return values?.reduce((a, b) => a+b, 0)
           }
          }</Form.Item>
       }
    }
    let unit = {
-      title: '单位',
+      title: <CustTransO  ns="comm" text="unit"/>,
       dataIndex: 'unit',
       key: 'unit',
       align: 'center',
@@ -233,13 +236,14 @@ const formartcol = (data, month) => {
  
 
 const onQuery = async () => { 
-    let month = form.getFieldValue('month').month() + 1
+    try {
+      let month = form.getFieldValue('month').month() + 1
     let year = form.getFieldValue('year').year()
      let {data, success,errMsg} = await  Carbon.onQueryEmission({year,month, enterpriseId})
      if(success && Array.isArray(data) && data.length > 0) {
       //  form.resetFields();
         let [tableData] = splitarr(data)
-        console.log(tableData)
+        
         formartcol(tableData, month)
      }else {
        setTableData([])
@@ -247,6 +251,10 @@ const onQuery = async () => {
           message.warning(errMsg)
         }
      }
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
 
  useEffect(() => {
@@ -302,10 +310,10 @@ const onQuery = async () => {
 
       if(success && Array.isArray(data) && data.length > 0) {
         formartcol(data)      
-        message.success("文件导入成功")
+        message.success(t("comm:Fileimportsuccessful"))
         ref.current.onCancel()
       } else{
-        if(!success) message.warning(errMsg || '数据出错')
+        if(!success) i18warning(errMsg)
          setTableData([])
       }
     } catch (error) {
@@ -332,11 +340,12 @@ const onQuery = async () => {
        }
        let {data: {success, errMsg}} = await onSaveData(params)
        if(success) {
-        message.success("保存成功")
+        i18success('save')
+       // message.success("保存成功")
      //   saveData.current ={}
         onQuery()
        }else {
-        message.warning(errMsg || '数据出错')
+        i18warning(errMsg)
        }
       
     } catch (error) {
@@ -347,20 +356,27 @@ const onQuery = async () => {
 
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span>手动数据录入</span>
+        <span> <CustTransO  ns="comm" text="Manualdataentry"/></span>
         <Space>
-          <Tooltip title="下载模板后录入数据，可以直接导入上传数据">
+          <Tooltip title={t("carbon:importtip")}>
           <CustButtonT text="download" onClick={onDownload} key="download" /></Tooltip>
           <CustButtonT text="import" src='import' onClick={onImport} key="import" /> 
           <CustButtonT text="save" src='save' onClick={onSave} loading={isLoading} key="save" />
           </Space>
     </div>
   )
-
+   const Ctitle = () => {
+    let month = form.getFieldValue('month').month()+1
+    return <><span style={{color: "#f00"}}>{t(month, {ns: "comm"})}</span>{t("carbon:modalTitle")}</>
+  }  
+/* 
   const Ctitle = () => {
-    let month = form.getFieldValue('month').month()
-    return <><span style={{color: "#f00"}}>{month+1}月份</span>数据模板导入</>
-  }
+    let month = form.getFieldValue('month').month()+1
+    return <Trans ns="carbon" i18nKey='modalTitle'>
+<span style={{color: "#f00"}}>{{month}}月份</span>数据模板导入
+    </Trans>
+
+  } */
  
   return (
     <Pagecount bgcolor="transparent" pd="0">
@@ -368,15 +384,15 @@ const onQuery = async () => {
     
           <Titlelayout title={CTitle} layout="flex" >
             <Mainbox>
-               <Form form={form} layout="inline" colon={false} labelCol={{flex: '2.5em'}} 
+               <Form form={form} layout="inline" colon={false} labelCol={{flex: 'auto'}} 
                initialValues={{
             year: moment(),
             month: moment()
           }}>
-                  <Form.Item name="year" label="年度">
+                  <Form.Item name="year" label={<CustTransO ns="comm" text="year" param="度" />} >
                      <DatePicker   picker="year" onChange={onQuery} />
                   </Form.Item>
-                  <Form.Item name="month" label="月份">
+                  <Form.Item name="month" label={<CustTransO ns="comm" text="month" param="份" />} >
                     <DatePicker   picker="month" onChange={onQuery} />
                   </Form.Item>
                </Form>
@@ -391,7 +407,11 @@ const onQuery = async () => {
      
       <Dragger accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
         <img src={upload}></img>
-        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<Link>点击上传</Link></p>
+        <p style={{ margin: '32px 0', fontSize: 16 }}>
+          <Trans ns="carbon" i18nKey="uploadtip">
+           将文件拖到此处，或<Link>点击上传</Link>
+          </Trans>
+          </p>
        
       </Dragger>  
     </Modal>

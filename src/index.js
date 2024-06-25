@@ -14,6 +14,7 @@ import App from './App'
 let persistor = persistStore(store)
  
 const root = createRoot(document.getElementById('root'));
+
  
 root.render(
   <Provider store={store}>

@@ -210,8 +210,8 @@ export default function Warncontent() {
             </div>
             <CModal
                 title={(<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 16, color: "#515151" }}>
-                      <span>工单详情</span>
-                      <div>工单编号:{orderSn.current}</div>
+                      <span>巡检详情</span>
+                      <div>巡检单号:{orderSn.current}</div>
                     <CustButton onClick={() => { setOrder(false) }}>关闭</CustButton>
                 </div>)}
                 open={order}

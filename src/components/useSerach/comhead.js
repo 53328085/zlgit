@@ -3,7 +3,7 @@ import React, {useState,  useEffect} from "react";
 import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
 import {useRequest} from 'ahooks' 
 import styled from "styled-components";
-import {  ExportExcel} from '@com/useButton'
+import {  ExportExcel,i18t, CustTransO} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
 import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
 import moment from "moment"; 
@@ -45,14 +45,13 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
-  console.log(props)
+  
   const isprodction =  process.env.NODE_ENV !== "production"
   const {config={}, custview=null} = props  
   const themcolor = useSelector(themeColor)   
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
   const dispatch = useDispatch()
-
  
   const onColorChange = (e) => {
        let val = e.target.value;
@@ -79,7 +78,7 @@ export default function UseSerach(props) {
   props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
   
-  const [allshifts] = useState( [...shifts, {id: 0, name: "全部班次", startTime: "", endTime: ""}]) 
+  const [allshifts] = useState( [...shifts, {id: 0, name: i18t("comm", "Allflights"), startTime: "", endTime: ""}]) 
   const [options, setOptions] = useState([]) // 
  
   const [pcsoptions, setPcsoptions] = useState([])
@@ -130,9 +129,9 @@ const dateselect = (
   <Space size={16}>
   <Item   name="type" initialValue={1}>
      <Select style={{width: '80px'}}   options={[
-      {value: 1, label: '日'},
-      {value: 2, label: '月'},
-      {value: 3, label: '年'},
+      {value: 1, label: i18t("comm","day")},
+      {value: 2, label: i18t("comm","month")},
+      {value: 3, label: i18t("comm","year")},
      ]}
     
      ></Select>
@@ -144,7 +143,7 @@ const dateselect = (
           let type = ['date', 'date', 'month', 'year'][getFieldValue('type')] 
          return (
           <Item name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}> 
-             <DatePicker placeholder="请选择日期" picker={type}   style={{width: '160px'}} />
+             <DatePicker  picker={type}   style={{width: '160px'}} />
          </Item>
          )
       }
@@ -161,7 +160,7 @@ const dateselect = (
 )
 
 const carbonDateY = (
-   <Item label="考核年度" name="carbonY" initialValue={moment()} >
+   <Item label={<CustTransO  ns="comm" text="Assessmentyear" />} name="carbonY" initialValue={moment()} >
       <DatePicker   picker="year" />
    </Item>
 )

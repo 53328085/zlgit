@@ -120,7 +120,7 @@ let columns3= [
  
 export default function pagecomp({data}) {
   const {alarm={}, inspec={}, order={}, error=0} = data || {}
-  console.dir(data);
+  
   const {address, projectName} = useSelector(currProject)  
  
  

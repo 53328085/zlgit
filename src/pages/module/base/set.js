@@ -4,7 +4,7 @@ import {
   Form,
   Input,
   DatePicker,
-  Button,
+  Select,
   Switch, 
   Divider,
   Checkbox,
@@ -172,10 +172,33 @@ Dcheckbox.defaultProps = {
   colum: 4
 }
 
+const getVal = (key) => {
+  switch(key) {
+    case  'safeEnabled':
+     return 2;
+    case  'distributionEnabled':
+      return 3;
+    case  'prepayEnabled':
+        return 4;  
+    case  'energyEnabled':
+          return 5; 
+     case  'solarEnabled':
+       return 6;  
+       case  'storageEnabled':
+        return 7;   
+        case  'carbonEnabled':
+          return 8; 
+          case  'maintenanceEnabled':
+          return 9;       
+  }
+}
+
 export default function ProjectSet({projectId}) {
   const dispatch = useDispatch(); 
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
+
+  console.log(iszh)
   const {t} = useTranslation("comm","common")
 
   const CurrProject = useSelector(currProject)
@@ -183,8 +206,11 @@ export default function ProjectSet({projectId}) {
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
   const map = useRef();
-  const [isbigurl, setIsbig] = useState(false)
-  const [addressDtl, setAddressDtl] = useState(null)
+ 
+  let defaultpage = [{label: t("common:ProjectOverview"), value: 0}, {label: t("common:OperationMonitoring"), value: 1}]
+  const [homepage, setHomePage] =useState(defaultpage)
+
+  console.log(homepage);
   const module = new Set([ // 布尔值转换成0, 1
      'safeEnabled',
     'distributionEnabled',
@@ -207,7 +233,18 @@ export default function ProjectSet({projectId}) {
    'oilEnabled',
   ])
  
- 
+  let bkmenus = [
+    { label: t("common:ElectricalSafety"), key: 'safeEnabled', value: 0 },
+    { label: t("common:DistributionManagemet"), key: 'distributionEnabled', value: 0 },
+    { label: t("common:SettlementFee"), key: 'prepayEnabled', value: 0 },
+    { label: t("common:EnergyManagement"), key: 'energyEnabled', value: 0 },
+    { label: t("common:PhotovoltaicEnergy"), key: 'solarEnabled', value: 0 },
+    { label:  t("common:StorageManagement"), key: 'storageEnabled', value: 0 },
+    { label: t("common:CarbonEmissionManagement"), key: 'carbonEnabled', value: 0 },  
+    { label: t("common:OperationMaintenanceManagement"), key: 'maintenanceEnabled', value: 0 },
+  ]
+
+
   const optionalProject = [
     { label: t("common:ElectricalSafety"), value: 'safeEnabled' },
     { label: t("common:DistributionManagemet"), value: 'distributionEnabled' },
@@ -227,6 +264,23 @@ export default function ProjectSet({projectId}) {
     { label: t("common:Coal"), value: 'coalEnabled' },
     { label: t("common:Fuel"), value: 'oilEnabled' },   
   ]
+
+  const chChnage =(value) => {
+    let {target: {checked, id}} = value
+    console.log(checked)
+    console.log(homepage)
+    if(checked) {
+      let item = bkmenus.find(item => item.key == id);
+      setHomePage([...homepage, item])
+    }else {
+      let items = homepage.filter(item => item.key!=id);
+      setHomePage([...items])
+    }
+   
+  }
+
+
+
   const { Item } = Form;
   const { TextArea } = Input;
 
@@ -245,8 +299,8 @@ export default function ProjectSet({projectId}) {
     logoImage: '',
 
     //imgProject: '',
-    projectImage: ''
-
+    projectImage: '',
+    homeMenu: 0,
   };  
  
 let initial = {} // 获取的接口项目信息
@@ -256,6 +310,17 @@ const queryProjectInfo = async () => {
     if(!success)  return dispatch(getCurrProjectInfo({})) ;  
       dispatch(getCurrProjectInfo({...CurrProject, ...data} || {}))
      initial = data;
+     let homemenus = []
+     bkmenus.forEach(item => {
+        if (data[item.key] ==1) {
+
+
+          item.value =getVal(item.key);
+          homemenus.push(item)
+        }
+     })
+    setHomePage([...defaultpage, ...homemenus])  
+ 
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
          params[key] = moment(data[key]);
@@ -306,7 +371,7 @@ const checkProject = (_, value) => {
  
 }
 const setAaddress = (value) => {
-  console.log(value)
+ 
   if (ispublish) return;
   try {    
   let {lng, lat, address} = value
@@ -314,7 +379,7 @@ const setAaddress = (value) => {
    lng && lat && form.setFieldValue('lngLat', `${lng},${lat}`)
   
   address && form.setFieldValue('address', address);
- //province && setAddressDtl([province, city, district])
+  
 } catch (error) {
     console.log(error)
 }
@@ -326,9 +391,7 @@ const setAaddress = (value) => {
  
 
 const onInput = (e) =>  {
-   console.log(address)
    const value = e.target.value?.trim()
-   console.log(value)
    if(value) {
     // valueref.current = value
      map.current?.serachMap(value)
@@ -403,13 +466,16 @@ useEffect(() => {
             <Checkbox checked disabled>{t("common:ProjectOverview")}</Checkbox>
             <Checkbox checked disabled>{t("common:OperationMonitoring")}</Checkbox>
           </Dcheckbox>
-         
       </Item>
       <Item label={t("common:OptionalModules")}> {/* className='optional' */}
-           <Dcheckbox colum={iszh ? 4 : 2} wh="auto">
-             {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox>{o.label}</Checkbox></Item>)}
+           <Dcheckbox colum={iszh ? 4 : 2} wh="auto" >
+             {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox onChange={chChnage}>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
      
+      </Item>
+      <Item label={t("common:homepage")}  name="homeMenu">
+                <Select options={homepage}>
+                </Select>
       </Item>
       <Divider dashed  className="divider" />
       <Item label={t("common:EnergyType")}  > {/* className="type" */}

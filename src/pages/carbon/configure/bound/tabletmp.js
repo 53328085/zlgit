@@ -26,8 +26,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
 
  // 配置
-  console.log(saveData)
-  console.log(tabledata)
+ 
  
   const onConfig = async (record, index) => {     
      let {categoryId,subCategoryId} = record
@@ -111,9 +110,9 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       onCell: showOncell,
       render: (text, record,index) => {
         return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} value={text} style={{display: 'flex', justifyContent: "space-around"}}>
-        <Radio value={0}>自动采集</Radio>
+        <Radio value={2}>自动采集</Radio>
         <Radio value={1}>手动录入</Radio>
-        <Radio value={2}>无数据入</Radio>
+        <Radio value={0}>无数据入</Radio>
       </Radio.Group> : ''
       }
     },
@@ -122,7 +121,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
-      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==0} onClick={() => onConfig(record, index)} /> :  ''
+      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==2} onClick={() => onConfig(record, index)} /> :  ''
     }
 
   ]

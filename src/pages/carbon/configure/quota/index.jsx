@@ -2,20 +2,21 @@ import React, {useEffect, useState} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import moment from 'moment'
+import {Trans,Translation, useTranslation} from 'react-i18next'
 import {Form,  Space, DatePicker, Tooltip, InputNumber, message} from 'antd'
 import Usetable from "@com/useTable"
 import Titlelayout from "@com/titlelayout"
 import {QutoSlice,  useQuotaQuery, useEmissionQuery,useSaveTargetMutation,
-  useSaveQuotaMutation} from "./quotaslice"
-import {CustButtonT} from "@com/useButton"
+  useSaveQuotaMutation} from "@redux/carbon"
+import {CustButtonT, CustTransO,i18warning, i18success} from "@com/useButton"
 import {Cdivider} from "@com/comstyled"
 import {useSelector} from 'react-redux'
 import {selectProjectId, enterprise} from '@redux/systemconfig'
 import {Carbon} from '@api/api'
 import {isObject} from '@com/usehandler'
 const Mainbox = styled.div`
-    margin-top: 16px;
-    padding-top: 16px;
+  //  margin-top: 16px;
+  //  padding-top: 16px;
   
     display: flex;
     flex-direction: column;
@@ -42,13 +43,13 @@ const Ctd = ({i,text,index}) => {
 }
 const columns = [
   {
-      title: '年份',
+      title:  <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
-      render: (text) => <>{text}碳排放量(tCo2)</>
+      render: (text) => <>{text} <CustTransO ns="carbon" text="Carbonemissionl" param="(tCo2)" /></>
   },
  ...Array.from({length: 12}, ( index,i) => ({
-    title: i+1+'月',
+    title: <CustTransO ns="comm" text={i+1}   />,     // i+1+'月',
     dataIndex: i+1,
     key: i+1,
     width: 80,
@@ -56,7 +57,7 @@ const columns = [
     render: (text,_, index) => <Ctd text={text} index={index} i={i+1} />
  })),
  {
-  title: "合计",
+  title: <CustTransO text="total" ns="carbon"></CustTransO>,
   dataIndex: 'carbonAnnualEmission',
     key: 'carbonAnnualEmission',
     align: 'center',
@@ -88,13 +89,13 @@ const Ctdt = ({i,text,index}) => {
 }
 const columnsT = [
   {
-      title: '年份',
+      title: <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
-      render: (text) => <>{text}碳排放目标值(tCo2)</>
+      render: (text) => <Trans ns="carbon"  i18nKey="Carbontarget" >{{text}}碳排放目标值(tCo2)</Trans>
   },
  ...Array.from({length: 12}, ( index,i) => ({
-    title: i+1+'月',
+    title: <CustTransO ns="comm" text={i+1}   />,  // i+1+'月',
     dataIndex: i+1,
     key: i+1,
     width: 80,
@@ -102,7 +103,7 @@ const columnsT = [
     render: (text,_, index) => <Ctdt text={text} index={index} i={i}/>
  })),
  {
-  title: "合计",
+  title: <CustTransO text="total" ns="carbon"></CustTransO>,
   dataIndex: 'carbonAnnualEmission',
     key: 'carbonAnnualEmission',
     align: 'center',
@@ -120,7 +121,8 @@ const columnsT = [
 export default function Index() { 
   const [form] = Form.useForm()
   const [formt] = Form.useForm()
-  const {id:enterpriseId} = useSelector(enterprise)
+  const {t} = useTranslation()
+  const {enterpriseId} = useSelector(enterprise)
   const [tableData, setTableData] = useState([])
   const [targetData, setTargetData] = useState([])
   const lastyear =moment().subtract(1, 'year').year()
@@ -128,9 +130,7 @@ export default function Index() {
   const [curtal, setCurtal] = useState(0)
   const [pretal, setPretal] = useState(0)
    
- console.log(curtal)
-
- console.log(pretal)
+ 
 
 
   const rate = pretal != 0 ? ((curtal - pretal)/pretal*100).toFixed(2)  : 0
@@ -165,8 +165,9 @@ export default function Index() {
           }        
         arrdata.push(dataobj)
     }else {
-       if(!suc) message.warning(err || '数据出错')
-       if(!lastyearData) message.warning(`${lastyear}年无数据`)
+       if(!suc)  i18warning(err)
+       const errmsg = useTranslation("carbon: yearnodata", {year: lastyear})
+       if(!lastyearData) message.warning(errmsg)
        
     }
     
@@ -184,8 +185,9 @@ export default function Index() {
        console.log(total)
        setCurtal(total)
    }else {
-    if(!cursuc) message.warning(cerr || '数据出错')
-    if(!curyearData) message.warning(`${curyear}年无数据`)
+    if(!cursuc) i18warning(cerr)
+    const errmsg = useTranslation("carbon: yearnodata", {year: lastyear})
+    if(!curyearData) message.warning(errmsg)
     setCurtal(0)
    }
     console.log(arrdata)
@@ -238,6 +240,8 @@ export default function Index() {
    
   }
   const  getTarget = async () => {
+    try {
+   
     let {success, data, errMsg} = await Carbon.QueryCarbonTarget(enterpriseId, curyear)
     if(success && Array.isArray(data) && data.length > 0) {
        let target = {}
@@ -250,10 +254,13 @@ export default function Index() {
        })
        setTargetData([target])
     }else {
-      if(!success) message.warning(errMsg || '数据出错')
+      if(!success)   i18warning(errMsg) // message.warning(errMsg || '数据出错')
       setTargetData([])
     }
-
+      
+  } catch (error) {
+      console.log(error)
+  }
   } 
   useEffect(() => {
     if(Number.isInteger(enterpriseId)) {
@@ -271,7 +278,7 @@ export default function Index() {
   const onSave = async () => {
     try {
       let values =await form.validateFields();
-      console.log(values)
+      if(Object.values(values).length < 1) return;
       let params = []
       for(let [key, value] of Object.entries(values)) {       
          params.push({
@@ -284,10 +291,10 @@ export default function Index() {
       console.log(params)
       let {success,errMsg} = await saveQuota(params).unwrap()
       if(success) {
-        message.success('保存成功')
+         i18success("save")   //  message.success('保存成功')
         getCarbonQuotal()
       }else {
-        message.warning(errMsg || '数据出错')
+          i18warning(errMsg)  // message.warning(errMsg || '数据出错')
       }
 
     } catch (error) {
@@ -313,10 +320,10 @@ export default function Index() {
       console.log(params)
       let {success,errMsg} = await saveTarget(params).unwrap()
       if(success) {
-        message.success('保存成功')
+          i18success('save') // message.success('保存成功')
         getTarget()
       }else {
-        message.warning(errMsg || '数据出错')
+          i18warning(errMsg) // message.warning(errMsg || '数据出错')
       }
 
     } catch (error) {
@@ -327,14 +334,19 @@ export default function Index() {
   }
   const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <Space size={64}><span>园区配额预分配</span><span>总预配额：{curtal} tCO2 与  {lastyear}年度碳排放量对比:&nbsp;<span>{rate}%</span>{arrow}</span></Space>
+        <Space>
+
+         <Trans ns="carbon" i18nKey="yearyearrate">
+          <span style={{paddingRight: "64px"}}>园区配额预分配</span><span>总预配额：{{curtal}}tCO2 与  {{lastyear}}年度碳排放量对比: </span><span>{{rate}}%</span>
+          </Trans><span>{arrow}</span>{/* <span>园区配额预分配</span><span>总预配额：{curtal}tCO2 与  {lastyear}年度碳排放量对比:&nbsp;<span>{rate}%</span>{arrow}</span> */}
+        </Space>
         <Space> <CustButtonT   text="save" onClick={onSave} loading={isLoading} /></Space>
     </div>
   )
  
   const CTitleC = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span>园区目标分解测算</span>
+        <Trans ns="carbon" i18nKey="parkobjectives"><span>园区目标分解测算</span></Trans>
         <Space><CustButtonT   text="save" onClick={onSavetarget} loading={targetloading}  /></Space>
     </div>
   )

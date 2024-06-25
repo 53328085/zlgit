@@ -70,7 +70,7 @@ export const columns =[
         align:'center'
       },
       {
-        title: <div ><div>负荷率</div><div>(kW)</div></div>,
+        title: <div ><div>负荷率</div><div>(%)</div></div>,
         dataIndex: 'LoadPer',
         key: 'LoadPer',
         align:'center'

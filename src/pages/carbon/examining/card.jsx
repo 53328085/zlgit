@@ -2,6 +2,7 @@ import React from 'react'
 import Titlelayout from '@com/titlelayout';
 import flower from '@imgs/flower.png'
 import styled from 'styled-components'
+import {CustTransO} from "@com/useButton"
 import { Progress } from 'antd';
 const Progressdiv =styled.progress`
 
@@ -66,7 +67,7 @@ export default function card({title,bgcolor='#043665',numberval=0.00}) {
           <img src={flower} alt="" style={{width:42,height:42}}/>
           <div className='content'>
              <p className='title'>{title}</p>
-             <p className='number'>{numberval}</p>
+             <p className='number'><CustTransO ns="comm" text="intlNumberWithOptions" val={numberval} /></p>  
            </div> 
        </Mainbox>
  </Titlelayout>

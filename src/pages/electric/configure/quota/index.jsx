@@ -45,6 +45,7 @@ export default function Index() {
     UpdateAlarmEventDeflection,
     UpdateAlarmEventSOE,
     UpdateAlarmEventCommunication,
+    CopyPlan
   } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
   const [messageApi] = message.useMessage();
@@ -97,7 +98,26 @@ export default function Index() {
     defaultPageSize: 14,
     refreshDeps: [projectId]
   });
- 
+  
+  const copyRecord = async (record) => {
+    try {
+      let {id} = record
+      let {success, data=NaN}  = await CopyPlan({projectId, id})
+      if(success && parseInt(data) > 0) {
+        refresh()
+        message.success("复制成功")
+
+      }else {
+        message.warning(errMsg || "数据错误")
+      }
+      
+
+    } catch (error) {
+      
+    }
+    
+
+  }
 
   const columns = ispublish
     ? [
@@ -135,6 +155,12 @@ export default function Index() {
             <Space size="middle">
               <Link underline  className={style.editText} onClick={() => edit(record)}>
                 {t("button:edit")}
+              </Link>
+              <Link
+                underline
+                onClick={() =>copyRecord(record)}
+              >
+               复制
               </Link>
               <Link
                 type="danger"

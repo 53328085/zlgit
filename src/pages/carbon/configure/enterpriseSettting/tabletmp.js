@@ -3,9 +3,9 @@ import {useTranslation} from 'react-i18next'
 import styled from 'styled-components'
 import {Switch,Form, InputNumber} from 'antd'
 import Usetable from '@com/useTable'
-import {CustLink,} from '@com/useButton'
+import {CustLink, i18success, i18warning} from '@com/useButton'
 import CModal from "@com/useModal"
-
+import {useEnableCarbonMutation, useUpdateFactorMutation} from "@redux/carbon"
 const Tablebox = styled.div`
   flex:1;
   display: flex;
@@ -15,7 +15,7 @@ const Tablebox = styled.div`
   padding-top: 16px;
   overflow-y: auto;
 `
-export default function Index({tabledata,saveData}) { 
+export default function Index({tabledata,saveData, enterpriseId}) { 
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
@@ -25,25 +25,55 @@ export default function Index({tabledata,saveData}) {
   const [datas, setDatas] =useState([fixedrow,...subCategory.map((c) => ({categoryName,categoryId, ...c}))])
 
   
-
+  const recordRef = useRef()
   const indexref = useRef()
   const onChange = (record, index) => {
+     recordRef.current = record
      indexref.current = index
     form.setFieldValue('pre', record.carbonEmissionFactor);
     ref.current.onOpen()
   }
-  const swichange = (v, index) => {
+  const [onEanble] =useEnableCarbonMutation()
+  const swichange = async (v, index,record) => {
+    try {
+      let {categoryId, subCategoryId} = record
+      let params = {
+        categoryId,
+        SubCategoryId: subCategoryId,
+        enabled:Number(v),
+        enterpriseId:enterpriseId
+      }
+      let {success, errMsg} = await  onEanble(params).unwrap()
+    
+      if(success) {
+           i18success("modify")
+      }else {
+        i18warning(errMsg)
+      }
+      let newDatas = datas.slice().map(d => ({...d}))
+      newDatas[index].enabled= Number(v);
+      setDatas(newDatas)
+      saveData[categoryName]=newDatas.slice(1)
+    } catch (error) {
+      
+    }
      
-     let newDatas = datas.slice().map(d => ({...d}))
-     newDatas[index].enabled= Number(v);
-     setDatas(newDatas)
-     saveData[categoryName]=newDatas.slice(1)
   }
-  const onOk = () => {
+
+  const [onUpdateFactor] = useUpdateFactorMutation()
+  const onOk = async () => {
    
     try {
       let value = form.getFieldValue('cur')
-     
+      let {categoryId, subCategoryId} = recordRef.current
+      let params = {
+        categoryId,
+        SubCategoryId: subCategoryId,
+        carbonEmissionFactor:value,
+        enterpriseId:enterpriseId
+      }
+    //  let data = await onUpdateFactor(params).unwrap() 没有发布
+       
       let newDatas = datas.slice().map(d => ({...d}))
       newDatas[indexref.current].carbonEmissionFactor = value;
       setDatas(newDatas)
@@ -87,14 +117,14 @@ export default function Index({tabledata,saveData}) {
       align: 'center',
       onCell: showOncell
     },
-    {
+   /*  {
       
       title: '数值',
       dataIndex: 'carbonEmissionFactor',
       key: 'carbonEmissionFactor',
       align: 'center',
       onCell: showOncell
-    },
+    }, */
     {
       title: '是否启用',
       dataIndex: 'enabled',
@@ -102,16 +132,16 @@ export default function Index({tabledata,saveData}) {
       align: 'center',
       onCell: showOncell,
       render: (text, record,index) => {        
-        return  index> 0 ? <Switch checkedChildren={t("button:enable")} unCheckedChildren={t("button:disable")} defaultChecked={record.enabled==1} onChange={(v)=> swichange(v, index)} /> : '是否启用'
+        return  index> 0 ? <Switch checkedChildren={t("button:enable")} unCheckedChildren={t("button:disable")} defaultChecked={record.enabled==1} onChange={(v)=> swichange(v, index, record)} /> : '是否启用'
       }
     },
-    {
+   /*  {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
       render: (_, record, index) => index>0 ? <CustLink text="Modificationfactor" onClick={() => onChange(record, index)} /> :  t("comm:Operation")
-    }
+    } */
 
   ]
  

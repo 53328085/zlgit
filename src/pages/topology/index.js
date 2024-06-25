@@ -5,7 +5,7 @@ import { register as registerFlow } from '@topology/flow-diagram'
 import { Collapse, Switch, Form, Input, Select, Space, InputNumber, Card, Dropdown, message, Spin, Typography } from "antd";
 import { basic, flows, sgcc, ltdx, normal } from "../../assets/js/Menu";
 import CustModal from '@com/useModal'
-import { selectProjectId, mixtitle } from '@redux/systemconfig.js'
+import { selectProjectId, mixtitle ,currProject} from '@redux/systemconfig.js'
 import { useSelector } from 'react-redux'
 import {useSearchParams, useLocation} from 'react-router-dom'
 import logo from './topologyLogo.png'
@@ -32,6 +32,7 @@ import { useReactive } from "ahooks";
 const {Text} = Typography
 export default function index() {
   let location = useLocation()
+  const {projectName,  logoImage  } = useSelector(currProject)
   const { TextArea } = Input;
   const [form] = Form.useForm()
   const [nodeForm] = Form.useForm()
@@ -663,7 +664,7 @@ export default function index() {
   return (
     <Spin spinning={state.spining} tip="Loading...">
       <div className={style.header}>
-        <img className={style.logo} src={logo}></img>
+       {logoImage ? <img className={style.logo} src={logoImage}></img> : null}  
         <span className={style.headerTitle}>{cnmixtitle}</span>
       </div>
       <div className={style.titleMenu}>

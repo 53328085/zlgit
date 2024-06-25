@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
 import {useTranslation} from 'react-i18next'
-import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin, Typography, Space } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin, Typography, Space,Checkbox } from 'antd'
 import { useRequest,useLatest  } from 'ahooks';
 import Comp from './comp'
 import Table from '@com/useTable'
@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux'
 import imgurl from './imgs/index.js'
 import cutContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
-const {Link} = Typography
+const {Link, Text} = Typography
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -25,7 +25,7 @@ const { DeviceManager:
     GatewayDelete,
     GatewayImport,
     OneLevel,
-    StartReboot, State, StartDownloadTask, DownloadTaskState } } = Monitoring
+    StartReboot, State, StartDownloadTask, DownloadTaskState, QueryListGateWay, ChangeDevicesParent } } = Monitoring
 export default function Gateway() {
   const {t} = useTranslation(["button"])
   const publish = useSelector(publishState)
@@ -122,6 +122,7 @@ export default function Gateway() {
           <Space size={16}>
             { record.download == 0 && <Link onClick={() => { onKeyParam(record) }}>{t("button:parametersSentDown")}</Link>}
             <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
+            <Link onClick={() => { onChange(record) }}>{t("button:change")}</Link>
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
@@ -146,6 +147,12 @@ export default function Gateway() {
       key: 'erros'
     },
   ]
+
+
+
+
+
+
   const [restsn, setRestsn] = useState(null)
   //打开参数下发弹窗
   const onKeyParam = (record) => {
@@ -163,6 +170,68 @@ export default function Gateway() {
     startsn = record.sn
     startsnref.current = record.sn
   }
+
+  // 更换网关接口
+ 
+  
+  const [gatewaylist, setGatewaylist] = useState()
+  const getQueryListGateWay = async () => {   //获取网关
+    try {
+      const resp = await QueryListGateWay(projectId)
+      if (resp.success && Array.isArray(resp.data)) {
+        
+        const arr = resp.data.map(it => ({ ...it }))
+        setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
+      } else {
+        setDevicelist([])
+      }
+    } catch (e) { console.log(e) }
+
+  }
+
+ const changRef = useRef()
+ const [changeform] = Form.useForm()
+ const onChange =(record) => {
+      let {sn} = record
+      changeform.setFieldValue('preGatewaySN', sn)
+      changRef.current.onOpen();
+
+ }
+ const onchangeOk = async() => {
+  try {
+    let {checked, ...values} = await changeform.validateFields()
+    console.log(values)
+    let params = {
+      ...values,
+      projectId
+    }
+    let {success, errMsg} = await ChangeDevicesParent(params)
+    if(success ) {
+      changRef.current.onCancel();
+      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+      if(checked) {
+        onKeyParam({sn: values.curGatewaySN})  
+      }else {
+        message.success("更换成功")
+      }
+    }else {
+      message.warning(errMsg)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+useEffect(() => {
+if(Number.isInteger(projectId)) {
+  getQueryListGateWay()
+}
+
+}, [projectId])
+
+
+
+
   //打开编辑网关窗口
   const onEdit = (record) => {
     modalEditRef?.current?.onOpen()
@@ -689,7 +758,51 @@ export default function Gateway() {
         <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
         {EditFormComp}
         <ErrorMessage {...ErrModalProps}></ErrorMessage>
-
+        <Modal mold='cust' ref={changRef}   title="更换网关编号" onOk={onchangeOk}>
+      <Form
+        form={changeform}
+        preserve={false}
+        labelCol={{
+          span: 6
+        }}
+        labelAlign='left'
+        colon={false}
+      >
+          <Form.Item label="当前网关编号" name="preGatewaySN"   >
+              <Input  disabled />
+            </Form.Item>
+            <Form.Item label="更换网关编号" name="curGatewaySN" rules={[{required: true}]}>
+                        <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.sn.includes(val)) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }}
+                            fieldNames={{
+                                label: 'sn',
+                                value: 'sn',
+                            }}                           
+                            options={gatewaylist}
+                        ></Select>
+                    </Form.Item>
+                    <Form.Item label="是否直接下发"  name="checked" initialValue={false} valuePropName="checked">
+                    <Checkbox >更换成功后直接下发参数</Checkbox>
+              </Form.Item>
+              <Form.Item noStyle shouldUpdate>
+                   {
+                    ({getFieldsValue}) => {
+                      let {preGatewaySN, curGatewaySN} = getFieldsValue();
+                      return <Text type="danger">{curGatewaySN &&`${preGatewaySN}网关下的所有设备即将转移到${curGatewaySN}网关下`}</Text>
+                    }
+                   }
+              </Form.Item>
+            
+          
+      </Form>
+    </Modal>
       </div>
     </Spin>
   )

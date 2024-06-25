@@ -12,5 +12,10 @@
     "keyEscaped": "no danger {{myVar}}",
     "keyUnescaped": "dangerous {{- myVar}}",
     "intlNumber": "Some {{val, number}}",
-  "intlNumberWithOptions": "Some {{val, number(minimumFractionDigits: 2)}}"
+  "intlNumberWithOptions": "Some {{val, number(minimumFractionDigits: 2)}}",
+  "nameTitle": "这是你的名字",
+"userMessagesUnread_one": "你好 <1>{{name}}</1>, 你有 {{count}} 未读信息. <5>去查看消息</5>.",
+"userMessagesUnread_other":"你好 <1>{{name}}</1>, 你有 {{count}} 未读信息. <5>去查看消息</5>.",
+"interpolateSample": "you <strong>can</strong> interpolate {{value}} or {{component}} via interpolate component!"
+ 
  }

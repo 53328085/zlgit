@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice, createEntityAdapter} from "@reduxjs/toolkit"
+import {createAsyncThunk, createSlice, createEntityAdapter, createSelector} from "@reduxjs/toolkit"
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
 //const menusAdapter = createEntityAdapter()
 //const initialState = menusAdapter.getInitialState()
@@ -54,7 +54,15 @@ const zltest = createSlice({
     }
   }
 })
-export const  {selectIds} =menuAdapter.getSelectors(state => state.zltest)
+export const  {selectIds, selectAll,selectById} =menuAdapter.getSelectors(state => state.zltest)
+
+export const allmenus = state => state.zltest.entities
+export const selectByNo = state =>(no) =>   state.zltest.enties.find()
+export const selectMenuById = createSelector(
+  [allmenus, (state, no) => no],
+  (menus, no) => menus.find(m => m.no)
+)
+
 export const {menuAdd, addMany, removeOne} = zltest.actions
 
 export default zltest.reducer

@@ -1,13 +1,15 @@
 import React, {useState, forwardRef, useImperativeHandle, useRef, useEffect} from 'react'
 import {Drawer, Select, Button, Typography, Form, Input, message,  } from 'antd'
 import {   LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {useTranslation} from "react-i18next"
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
-import {boundarySlice, useConfigDeviceMutation,useApiDataMutation} from './boundary'
+import {  useConfigDeviceMutation,useApiDataMutation, useBoundaryConfigQuery} from '@redux/carbon'
 import {isObject} from "@com/usehandler"
-import {CustButtonT} from "@com/useButton"
-import {Cdivider} from '@com/comstyled'
+import {CustButtonT, i18warning, i18success, CustTransO} from "@com/useButton"
+import {Cdivider, Serach} from '@com/comstyled'
+
 const {Paragraph} = Typography
 
 const Apibox = styled.div`
@@ -38,6 +40,7 @@ const Drawerbox = styled(Drawer)`
     .ant-drawer-content-wrapper {
       height:min-content;
       top: 80px;
+      right: 16px;
     }
     .ant-drawer-wrapper-body {
       background-color: #003366;
@@ -104,19 +107,19 @@ const Drawerbox = styled(Drawer)`
 `;
 const deviceColumns = [
     {
-        title: '设备编号',
+        title: <CustTransO ns="comm" text="deviceSn" />,
         dataIndex: 'deviceSn',
         key: 'deviceSn',
         align: 'center'
     },
     {
-        title: '设备名称',
+        title:  <CustTransO ns="comm" text="deviceName" />,
         dataIndex: 'deviceName',
         key: 'deviceName',
         align: 'center'
     },
     {
-        title: '安装位置',
+        title:  <CustTransO ns="comm" text="address" />,
         dataIndex: 'address',
         key: 'address',
         align: 'center'
@@ -126,26 +129,26 @@ const deviceColumns = [
 
 const unselectdevice = [
   {
-      title: '设备编号',
+      title: <CustTransO ns="comm" text="deviceSn" />,
       dataIndex: 'deviceSn', 
       key: 'deviceSn',
      
   },
   {
-      title: '设备名称',
+      title: <CustTransO ns="comm" text="deviceName" />,
       dataIndex: 'deviceName',
       key: 'deviceName',
       
   },
   {
-      title: '安装位置',
+      title: <CustTransO ns="comm" text="address" />,
       dataIndex: 'address',
       key: 'address',
      
   }
 ]
 function Draw({params}, ref) {
-    
+    const {t} = useTranslation(["comm"])
     const [open, setOpen] = useState(false)
     const [sfrom]= Form.useForm()
     const [apiform] = Form.useForm()
@@ -166,29 +169,37 @@ function Draw({params}, ref) {
          <Select.Option value={2}>自动采集-数据对齐</Select.Option>
       </Select>
     )
-
-    const [getConfigData] = boundarySlice.useLazyBoundaryConfigQuery() // 查询排放边界配置结构
-    const getData = async () => {
-      let {success, data, errMsg} = await getConfigData(params).unwrap()
-      if(success && isObject(data)) {
-         let {relations, noRelations} = data
+    console.log(params)
+    const  {configData, isError, error } = useBoundaryConfigQuery(params, {  // 查询排放边界配置结构
+       skip: !params,
+       selectFromResult: ({data}) => ({
+        
+         configData: data?.data ?? null
+       })
+     }
+    ) 
   
-         setusedtable(Array.isArray(relations) ? relations : [])
-         setUnusedtb(Array.isArray(noRelations) ? noRelations : [])
-       
-      }else {
-        if(!success) message.warning(errMsg || "数据出错")
+   useEffect(() => {
+     if(isError) return i18warning(error)
+     if(configData && isObject(configData)) {
+      let {relations, noRelations} = configData
+        setusedtable(Array.isArray(relations) ? relations : [])
+        setUnusedtb(Array.isArray(noRelations) ? noRelations : [])
+        unusedtbbk.current = Array.isArray(noRelations) ? noRelations : [];
+     }else {
         setusedtable([])
         setUnusedtb([])
-      }
-    }
-    useEffect(() => {
+     }
+   }, [configData])
+
+
+/*     useEffect(() => {
       if(params) {
         getData()
       }
 
 
-    }, [params])
+    }, [params]) */
 
     const drawClose = () => {   
       setOpen(false);
@@ -206,10 +217,10 @@ function Draw({params}, ref) {
     const [saveconfig, {isLoading}] = useConfigDeviceMutation()
     const onSave =async () => {
         try {
-          if(Array.isArray(usedtb) && usedtb.length > 0) {
+         
 
             let {enterpriseId,subCategoryId,carbonBoundaryId } =params
-             let sns = usedtb.map(d => d.deviceSn)
+             let sns = Array.isArray(usedtb) ? usedtb.map(d => d.deviceSn) : [];
             let body = {
                enterpriseId,
                subCategoryId,
@@ -218,14 +229,12 @@ function Draw({params}, ref) {
             }
            let {success, errMsg} = await saveconfig(body).unwrap()
            if(success) {
-              message.success('保存成功')
+              i18success('save')
               drawClose()
            }else {
-             message.warning(errMsg || '数据出错')
+              i18warning(errMsg)
            }
-          }else {
-            message.warning('请选择设备')
-          }
+         
         } catch (error) {
            console.log(error)
         }
@@ -240,10 +249,11 @@ function Draw({params}, ref) {
         
         const {success, errMsg} = await savApi({...params,post})
         if(success) {
-          message.success('保存成功')
+          i18success('save')
           drawClose()
         }else {
-          message.warning(errMsg || '数据出错')
+          i18warning(errMsg)
+           
         }
       } catch (error) {
       
@@ -259,7 +269,7 @@ function Draw({params}, ref) {
         drawOpen,
     }))
    
-    const changeUnselected = (v) => {
+/*     const changeUnselected = (v) => {
        try {
         if (v != 0) {
           let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle ) || []
@@ -271,10 +281,10 @@ function Draw({params}, ref) {
         
        }
      
-      };
-      let keys = unselectdevice.map(i => i.key)
+      }; */
+     let keys = unselectdevice.map(i => i.key)
      const onSerach = (v) => {
-
+       console.log(v)
        try {
         if(v) {
           let value = v.trim().toLowerCase()
@@ -293,7 +303,7 @@ function Draw({params}, ref) {
         setUnusedtb(unusedtbbk.current || [])
        }
        } catch (error) {
-          
+          console.log(error)
        }
        
 
@@ -301,6 +311,8 @@ function Draw({params}, ref) {
     }
       const setb = useRef()
       const untb = useRef()
+
+    
       const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 已选中的设备
       const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 未选中的设备
       const rowSelection = { // 已选中的设备
@@ -314,6 +326,7 @@ function Draw({params}, ref) {
       const unrowSelection = { // 未选中的设备
         selectedRowKeys: unselectedRowKeys,
         onChange: (selectedRowKeys, selectedRows, info) => {
+           console.log(selectedRows)
            undevices.current = selectedRows;
            setUnselectedRowKeys([...selectedRowKeys])
            
@@ -324,6 +337,7 @@ function Draw({params}, ref) {
         if(!devices.current) return
         let keys = devices.current.map(k => k.deviceSn)
         setUnusedtb([...unusedtb, ...devices.current])
+        unusedtbbk.current =[...unusedtb, ...devices.current]
         let data = usedtb.filter(t => !keys.includes(t.deviceSn))
        setusedtable([...data])
         setSelectedRowKeys([])
@@ -338,6 +352,7 @@ function Draw({params}, ref) {
             setusedtable([...usedtb, ...undevices.current])
             let undata = unusedtb.filter(t => !keys.includes(t.deviceSn))
             setUnusedtb([...undata])
+            unusedtbbk.current = undata
            // setSelectedRowKeys([...selectedRowKeys,...keys])
             setUnselectedRowKeys([])
             devices.current = {}
@@ -354,7 +369,7 @@ function Draw({params}, ref) {
     title={Ctitle}
     destroyOnClose
   >
-  {type==2 ? (<Titlelayout title="API接口" layout="flex" style={{height: '376px'}} >
+  {type==2 ? (<Titlelayout title={t("comm:APIinterface")} layout="flex" style={{height: '376px'}} >
        <Apibox>
           <Cdivider type="h" />
            <Form form={apiform}>
@@ -397,7 +412,7 @@ function Draw({params}, ref) {
     </Titlelayout> 
     <div className="optab">
       <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "0 16px"}}>
-        <Paragraph>选择设备</Paragraph>
+        <Paragraph> <CustTransO ns="comm" text="Pleaseselectdevice" /></Paragraph>
         <div style={{display: 'flex', justifyContent:"space-between"}}>
           <Button
             type="primary"
@@ -427,7 +442,7 @@ function Draw({params}, ref) {
       
       </div>
     </div>
-    <Titlelayout title="未选中的设备">
+    <Titlelayout title={<CustTransO ns="comm" text="Unselecteddevices" />}>
     <div className="unselected">
       
       <Form
@@ -436,10 +451,11 @@ function Draw({params}, ref) {
           type: "0",
         }}
       >
-          <Item name="alike" label="设备搜索">
-            <Inptserach
+          <Item name="alike" label={<CustTransO ns="comm" text="SearchDevice" />}>
+            <Serach
               allowClear
-              placeholder="请输入设备编号/安装地址"
+              style={{width: "256px"}}
+              placeholder={t("comm:pedna")}
               onSearch={onSerach}
             />
           </Item>

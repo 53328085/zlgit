@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, } from "react";
+import React, { useState, useRef, useEffect,useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { Image, Space, Tabs, Typography} from "antd";
 import styled from "styled-components";
@@ -56,16 +56,19 @@ const Laybox = styled.div`
  
 `;
 const Custspan = styled(Text)`
+&& {
   font-size: 14px;
    width: 142px;
   color: #515151;
   display: flex;
-// justify-content: ${(props) => (props.jc ? "flex-start" : "space-between")};
-justify-content: space-between;
+  justify-content: ${(props) => (props.jc==1 ? "flex-start" : "space-between")};
+ 
   span {
     color: #999;
     padding-left: 1em;
   }
+}
+
 `;
 
 const Divbox = styled.div`
@@ -206,6 +209,7 @@ export default function Index() {
   const areaIds = useSelector(selectOneLevel);
   
   let {exparams} = useOutletContext()
+  console.log(exparams)
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;  
@@ -266,10 +270,11 @@ const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodVa
   let type = ['', '日', '月', '年'][datetype]
   let my = ['', '昨', '上', '去'][datetype] 
   let lasttime = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-  let icon = unit.indexOf("kWh")>-1 ? 'electric' : unit.indexOf("m")>-1  ? 'water' : '';
+  let icon = name.indexOf("电")>-1 ? 'electric' : name.indexOf("水")>-1  ? 'water' : '';
+  console.log(icon)
   return (
    <Titlelayout
-   title={<Title title={name} subtitle={unit} />}
+   title={<Title title={name} subtitle={unit} jc={exparams.view} />}
    key={nanoid()}
  >
    <UDbox>
@@ -306,24 +311,25 @@ const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodVa
  </Titlelayout>
   )
   }
-const Energyitem = () => {
-   const getsub = (type) => {
+const Energyitem = ({op}) => {
+  
+ /*   const getsub =useCallback((type) => {
      switch(type) {
        case 'electric':
-       return '(kWh)'
+       return  op==1 ? '(kWh)' : '元'
        case 'waterCold':
        case 'waterHot':
        case 'steam':
        case 'gas':
-       return '(m³)'
+       return op==1 ? '(m³)' : '元'
        case 'oil':
-        return '(吨)'
+        return op==1 ? '(吨)' : '元'
        default:
         return '(/)'
      }
 
 
-   }
+   }, [op])
    let items = []
    for(let [key, value] of Object.entries(energyitem)) {
       let obj = {
@@ -332,14 +338,14 @@ const Energyitem = () => {
          sub: getsub(key)
       }
       items.push(obj)
-   }
+   } */
    let extra = [{
     lastMonthPeriodValue: "0.00",
     lastYearPeriodValue: "0.00",
     mom: "100.00%",
     name: "公共服务用水",
     periodValue: "0.00",
-    unit: "(m³)",
+    unit: op==1 ? "(m³)" : '元',
     yoy: "100.00%",
    },
    {
@@ -348,7 +354,7 @@ const Energyitem = () => {
     mom: "100.00%",
     name: "消费及其他特殊用水(m³)",
     periodValue: "0.00",
-    unit: "(m³)",
+    unit: op==1 ? "(m³)" : '元',
     yoy: "100.00%",
    }
   ]
@@ -356,7 +362,7 @@ const Energyitem = () => {
    return (
     <>
       {
-       [...consumes,...extra].map(item => <EngItem  {...item} key={nanoid()} datetype={exparams.type}/>)
+       [...consumes,...extra].map(item => <EngItem  {...item} key={nanoid()} datetype={exparams.type} op={op} />)
       }
     </>
   
@@ -471,7 +477,7 @@ const CoalStandard =({data={}, op, datetype}) => {
           height={64}
         />
         <span style={{ color: "#999", marginTop: "10px" }}>
-         {op ==1 ? <> （吨标煤）</> : <>（万）</>}
+         {op ==1 ? <> （吨标煤）</> : <>（万元）</>}
         </span>
       </div>
 
@@ -500,7 +506,7 @@ const CoalStandard =({data={}, op, datetype}) => {
     </Divbox>
     <Titlelayout
       type="inner"
-      title={<Title title="能耗占比" />}
+      title={<Title title={op==1 ? "能耗占比" :  "能耗费用占比"} />}
       style={{ padding: "0px", border: "none" }}
     >
       <div
@@ -589,7 +595,7 @@ const CoalStandard =({data={}, op, datetype}) => {
          </div>  
         
        {tabvalue == 1 && <div className="down">
-             <Energyitem key="12" /> 
+             <Energyitem key="12" op={exparams.view} /> 
         </div>
        }
      
