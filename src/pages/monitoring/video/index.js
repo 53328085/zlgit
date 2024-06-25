@@ -238,7 +238,7 @@ export default function Index() {
         }
       })
       setbigplay(player)
-    }, 0)
+    }, 100)
     setisModal(true)
 
   }

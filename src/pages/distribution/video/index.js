@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useEffect, useRef} from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
 import styled from 'styled-components'
 import { useAntdTable, useRequest, useReactive } from 'ahooks'
@@ -166,7 +166,8 @@ export default function Index() {
     cameraSn: recordData?.sn,
     channelNo: recordData?.channel,
     direction: '',
-    speed: 1
+    speed: 1,
+    projectId
   }
   const changeControlYun = val => {
     StartYsPtzData.direction = val
@@ -177,6 +178,7 @@ export default function Index() {
     cameraSn: recordData?.sn,
     channelNo: recordData?.channel,
     direction: '',
+    projectId,
   }
   const cancelControlYun = () => {
     return StopYsPtz(StopYsPtzData).then((res) => {
@@ -184,7 +186,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+        message.error("当前设备不支持控制功能")
       }
     })
   }
@@ -195,7 +197,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+        message.error("当前设备不支持控制功能")
       }
     })
   }//云监控云台控制
@@ -245,15 +247,17 @@ export default function Index() {
     setEndTime(date);
     setEndTimeHistory(dateString)
   }
+  const player = useRef()
   //打开视频监控弹窗yun
-  const showModal = ({ url, token }) => {
+  const showModal =async ({ url, token }) => {
   
 
     //setLocalModal(true)
     // play.stop()
-    let player
-      setTimeout(() => {
-        player = new EZUIKit.EZUIKitPlayer({
+    // let player
+    setisModal(true)
+      setTimeout(async () => {    
+        player.current =await new EZUIKit.EZUIKitPlayer({
           id: 'replay',
           accessToken: token,//
           url: url,
@@ -264,13 +268,17 @@ export default function Index() {
             console.log(err)
           }
         })
-        setbigplay(player)
-      }, 0)
-       setisModal(true)
+        setbigplay(player.current)
+        }, 100)
+       
   }
+
   //关闭视频监控弹窗
   const handleCancel = () => {
     setisModal(false)
+    // player.current.stop()
+    // player.current.destroy()
+    // player.current=null
     //  setLocalModal(false)
     bigplay.stop()
     // play.play()
