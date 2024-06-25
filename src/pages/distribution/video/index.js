@@ -17,7 +17,7 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring, DistributionRoomRuntime, distributionRoom } from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring, GetCamerasoneInfo, DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent'
 import { CustButton } from '@com/useButton'
