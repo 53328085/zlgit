@@ -30,7 +30,7 @@ export default function useJump(primary, isconfig) {
       const onChoose = () => {
         if(isconfig) return;   
         switch (primary) {
-          case  'runtimeProject':        
+          case  'designerCommon':        
            console.log(bigScreenEnabled) 
            dispatch(getCurrentScreen({type: bigScreenEnabled, key: bigScreenUrl, primary}));
            break;

@@ -3,7 +3,7 @@ import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
-import {selectProjectId,getCurrProjectInfo, getWebsiteState, intl} from '@redux/systemconfig.js'
+import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl} from '@redux/systemconfig.js'
 import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 import {CustTransO} from "@com/useButton"
@@ -66,13 +66,13 @@ import { message } from 'antd';
 
 export default function Index() {
   const lang = useSelector(intl)
-
+  const currproject = useSelector(currProject)
   const dispatch=useDispatch()
 
   const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
   const [data, setData] = useState({})
-  const [currproject, setCurrproject] = useState({})
+  // const [currproject, setCurrproject] = useState({})
   const state = useReactive({
     statusData:{},
   })
@@ -193,7 +193,7 @@ export default function Index() {
     )
   }
   
-  const GetProjectInfo=async()=>{
+/*   const GetProjectInfo=async()=>{
    
     try {
   
@@ -208,7 +208,7 @@ export default function Index() {
   }
   useEffect(() => {
     GetProjectInfo()
-  }, [])
+  }, []) */
   
 
 

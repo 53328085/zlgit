@@ -7,7 +7,7 @@ import Ringchart from './ringchart';
 import LineChart from './linechart';
 import { useLocation } from 'react-router';
 import {useSelector} from 'react-redux'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId, currProject} from '@redux/systemconfig.js'
 import { EnergyQuotaRuntime } from '@api/api.js'
 import { useRequest } from 'ahooks';
 
@@ -21,6 +21,7 @@ export default function Index(){
     const comprehensiveQuotaLeaved = searchObj.comprehensiveQuotaLeaved || 0
     const comprehensiveQuotaUsed = parseFloat(comprehensiveQuota) - parseFloat(comprehensiveQuotaLeaved)
     const projectId = useSelector(selectProjectId);
+    const {projectName,  logoImage  } = useSelector(currProject)
     const { queryQueryRoomDetail } = EnergyQuotaRuntime
     const [type, setType] = useState(1)
     const onChange = val=>{
@@ -93,7 +94,7 @@ export default function Index(){
 
     return <div className={style.roomDetail}>
         <div className={style.header}>
-            <img className={style.logo} src={logo}></img>
+            {logoImage ?  <img className={style.logo} src={logoImage}></img> : null}           
             <span className={style.mainTitle}>智慧能源服务管理平台</span>
             <span className={style.subTitle}>房间能耗</span>
         </div>

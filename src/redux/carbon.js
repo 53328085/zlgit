@@ -172,23 +172,33 @@ export const carbonSlice = apiSlice.injectEndpoints({
         query: ({enterpriseId,carbonBoundaryId}) => ({
             url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
             method: 'GET',
-            providesTags: (result, error, arg) => result ? [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}] : null   // ['dataconfig']
         }),
+        providesTags: (result, error, arg) => [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'+arg.carbonBoundaryId+arg.subCategoryId}] // ['dataconfig']
     }),
      BoundaryConfig: build.query({ // 查询排放边界配置结构
         query: ({enterpriseId,carbonBoundaryId,subCategoryId,projectId}) => ({
             url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}&projectId=${projectId}&subCategoryId=${subCategoryId}`,
             method: 'GET',
         }),
+        providesTags:(result, error, arg) => [{type: "carbon", id: {
+            type: 'QueryCarbonBoundaryConfig',
+            carbonBoundaryId: arg.carbonBoundaryId,
+            subCategoryId: arg.subCategoryId,
+        }}]
        // transformResponse: (responseData) => responseData.data
     }),
 
-    ConfigDevice: build.mutation({ // 排放边界配置
+    ConfigDevice: build.mutation({ // 排放边界配置   设备界面 保存
         query: (body) => ({
             url: `Carbon/CarbonEmissionBoundary/ConfigDeviceCaebonBoundary`,
             method: 'POST',
             body,
         }),
+        invalidatesTags: (result, error, arg) => [{type: "carbon", id: {
+            type: 'QueryCarbonBoundaryConfig',
+            carbonBoundaryId: arg.carbonBoundaryId,
+            subCategoryId: arg.subCategoryId,
+        }}]
     }),
     ApiData: build.mutation({ // 保存Api数据
         query: ({enterpriseId,carbonBoundaryId,subCategoryId,post}) => ({
@@ -202,8 +212,9 @@ export const carbonSlice = apiSlice.injectEndpoints({
             url: `Carbon/CarbonEmissionBoundary/ConfigDataCarbonBoundary?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
             method: 'POST',
             body: post,
-            invalidatesTags: [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}]
+            
         }),
+        invalidatesTags: (result, error, arg) =>  [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'+arg.carbonBoundaryId+arg.subCategoryId}]
     }),
    
      //  数据录入
@@ -259,6 +270,44 @@ export const carbonSlice = apiSlice.injectEndpoints({
             url: `Carbon/CarbonQuotaManagement/SaveCarbonTarget`,
             method: 'POST',
             body,
+        })             
+    }),
+
+    // 预警策略配置
+
+    StrategyAll: build.query({   // 查询预警策略配置
+        query: () => ({
+            url:`Carbon/CarbonWarningStrategy/QueryStrategyAll`,
+            method: "GET",
+            transformResponse: responseData => responseData,
+        }),
+    }),
+  
+    EnableStrategy: build.mutation({ // 启用/禁用预警策略
+        query: ({ruleId,enabled}) => ({
+            url: `Carbon/CarbonWarningStrategy/EnableStrategy?ruleId=${ruleId}&enabled=${enabled}`,
+            method: 'POST',
+            
+        })             
+    }),        
+    InsertStrategy: build.mutation({ // 添加预警策略
+        query: (body) => ({
+            url: `Carbon/CarbonWarningStrategy/InsertStrategy`,
+            method: 'POST',
+            body
+        })             
+    }),
+    UpdateStrategy: build.mutation({ // 编辑预警策略
+        query: (body) => ({
+            url: `Carbon/CarbonWarningStrategy/UpdateStrategy`,
+            method: 'POST',
+            body
+        })             
+    }),
+    DeleteStrategy: build.mutation({ // 删除预警策略
+        query: (ruleId) => ({
+            url: `Carbon/CarbonWarningStrategy/DeleteStrategy?ruleId=${ruleId}`,
+            method: 'DELETE',
         })             
     }),
 
@@ -357,6 +406,39 @@ export const carbonSlice = apiSlice.injectEndpoints({
             transformResponse: (response, meta, arg) => response.data,
         }),
       }), 
+
+      // 测试用
+      Testq: build.query({    
+        query: (name='') =>({
+            url:`/Monitor/LineManager/Query?projectId=1&type=1&areaId=1&lineName=${name}&culture=zh`,  
+            method: "GET",
+            transformResponse: (response, meta, arg) => response.data,
+        }),
+        providesTags: (result=[])=> ["test", ...result.map(r => ({type: 'test', id: r.id}))],
+       }), 
+       Testm: build.mutation({  //  
+        query: (content) => ({
+            url:`/Monitor/LineManager/Add?culture=zh`,
+            method: 'POST',
+            body: {
+                areaId: 1,
+                id:0,  
+                lineType: 1,
+                name: content,
+                projectId: 1
+            },
+        }),
+        invalidatesTags: ["test"]
+        
+      }),
+      Testu: build.mutation({  //  
+        query: ({name,id}) => ({
+            url:`/Monitor/LineManager/Update?projectId=1&id=25&name=${name}&culture=zh`,
+            method: 'get',
+        }),
+        invalidatesTags:(result, error, arg) => [{type: "test", id: arg.id}]
+        
+      }),
      
     }),
  
@@ -408,5 +490,11 @@ export const {
      useEmissionQuery,  
      useSaveQuotaMutation,
      useSaveTargetMutation, 
-     
+     useDeleteStrategyMutation,
+     useEnableStrategyMutation,
+     useInsertStrategyMutation,
+     useStrategyAllQuery,
+     useUpdateStrategyMutation,
+     useTestqQuery,
+     useTestmMutation,
     } = carbonSlice

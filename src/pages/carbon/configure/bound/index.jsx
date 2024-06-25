@@ -124,8 +124,8 @@ border-left-color: ${props => props.theme.primaryColor} ;
 export default function Index() { 
   // const {id:enterpriseId} = useSelector(enterprise)
   const  enterpriseData = useSelector(enterprise)
-  let  {id:enterpriseId} = enterpriseData
- 
+  let  {enterpriseId } = enterpriseData
+  console.log(enterpriseData)
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
@@ -189,11 +189,11 @@ useEffect(() => {
 
 }, [enterpriseId]) */
  
-  const {isSuccess,refetch, data:boundaryData  } = useBoundaryTreeQuery(enterpriseId, {
+  const {isSuccess,refetch, data:boundaryData, error } = useBoundaryTreeQuery(enterpriseId, {
     skip: !Number.isInteger(enterpriseId),
     
   })
- 
+  console.log(error)
   useEffect(() => {
     if(boundaryData) {
       let {success, errMsg, data} = boundaryData
@@ -310,7 +310,7 @@ const onDelOK = async() => {
 
 // 配置
 
-   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 碳排边界数据查询
+   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
    const saveData = useRef({}) // 点击 完成配置 时需要传递的数据

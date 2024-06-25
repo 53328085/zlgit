@@ -44,6 +44,7 @@ server.interceptors.response.use(
     },
     error => {       
         let msg = error?.response?.statusText
+       
         let state = error?.response?.status       
         if (state >= 400 && state < 500 && state != 401 )  {
             return  message.warning({          
@@ -64,7 +65,10 @@ server.interceptors.response.use(
           
          // message.destroy()
         }
-        if (state >= 500)   message.error(msg || '数据出错')
+        if (state >= 500)   {
+            console.log(msg)
+            message.error(msg || '数据出错')
+        }
         return Promise.reject(error)
     })
 export default server

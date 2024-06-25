@@ -78,7 +78,7 @@ const Itemsty = styled.div`
   100% {
     transform: translateX(-100%); /* 加上一些额外的空白，以便滚动到最后一个元素时不会立即切换 */
   }
-
+}
 `
 
 

@@ -57,7 +57,9 @@ export const i18success = (type) => {  //  成功提示
     edit: "Editsuccessfully",
     modify: "modifysuccessfully",
     delete: "successfullydelete",
-    new:"newsuc"
+    new:"newsuc",
+    stop:  "Deactivatedsuccessfully",
+    enable: "Enabledsuccessfully",
   }[type]
   let msg =  i18.t(text, {ns: "comm"})
   message.success(msg)

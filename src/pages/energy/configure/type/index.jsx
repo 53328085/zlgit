@@ -223,12 +223,12 @@ export default function Index () {
           setSubTable([])
           setUnknownTable([])
         }else{
-          if(data.relations){
+          if(Array.isArray(data.relations)){
             setSubTable(data.relations)
           }else{
             setSubTable([])
           }
-          if(data.noRelations){
+          if(Array.isArray(data.noRelations)){
             setUnknownTable(data.noRelations)
           }else{
             setUnknownTable([])

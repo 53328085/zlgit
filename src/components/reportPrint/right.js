@@ -80,7 +80,9 @@ const Mainbox = styled.div`
             }
            
           }
-
+         .imgbox {
+           background-color: var(--ant-primary-color);
+         }
         }
       
        }
@@ -90,14 +92,15 @@ const Mainbox = styled.div`
  
 export default  forwardRef(function Rightlayout(props, ref) { 
   const {reportName='', params} = props
-  const {address, projectName} = useSelector(currProject)  
+  const {address, projectName, logoImage} = useSelector(currProject)  
   let reportDate = moment().format("yyyy-MM-DD")
-  const {chineseTitle} = useSelector(systemConfigInfo)
+  const {chineseTitle, systemLogoImage} = useSelector(systemConfigInfo)
   return (
           <Mainbox ref={ref} id="printRef">                         
                <div className='front'>
                    <div className='title'>
-                    <Image src={log} height={57} preview={false}></Image>
+                    {logoImage ? <Image src={logoImage} preview={false}  /> : null}
+                   {/*  <div className='imgbox'> <Image src={systemLogoImage ?  `data:image/png;base64,${systemLogoImage}` :log} height={57} preview={false}></Image></div> */}
                     <span className='name' style={{fontSize: '20px', color:"#666"}}>{chineseTitle}</span>
                    </div>
                    <div className="frontcont">

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
 import styled from 'styled-components'
-import {useAntdTable, useRequest} from 'ahooks'
+import { useAntdTable, useRequest, useReactive } from 'ahooks'
 import { useSelector } from 'react-redux'
 import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 import UseTable from '@com/useTable'
-import {Serach, Cdivider, Borderleft} from "@com/comstyled"
+import { Serach, Cdivider, Borderleft } from "@com/comstyled"
 import style from './style.module.less'
- 
+
 import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
 import moment from 'moment';
@@ -17,10 +17,11 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,GetCamerasoneInfo, DistributionRoomRuntime, distributionRoom } from '@api/api.js'
+import { isObject } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
-import Pagecount from '@com/pagecontent' 
-import {CustButton} from '@com/useButton'
+import Pagecount from '@com/pagecontent'
+import { CustButton } from '@com/useButton'
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
@@ -78,7 +79,7 @@ export default function Index() {
   const [bigplay, setbigplay] = useState('')
   const [disabledendDate, setdisabledendDate] = useState(() => (current => current && current > moment().endOf('day')))
   const [startTime, setStartTime] = useState(null)
-  const [endTime, setEndTime] = useState(null)  
+  const [endTime, setEndTime] = useState(null)
   const [startTimeHistory, setStartTimeHistory] = useState(null)
   const [endTimeHistory, setEndTimeHistory] = useState(null)
   let [areaId, setAreaId] = useState('')
@@ -89,7 +90,15 @@ export default function Index() {
   const [recordData, setrecordData] = useState()
   const roomId = useSelector(selectcurlRommid)
   // const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
- 
+
+  const state = useReactive({
+    id: new Uint32Array(1),
+    webrtc: null,
+    videoPlayer: null,
+    videoData: {},
+  })
+
+
   const controlStyle = {
     width: 256,
     height: 256,
@@ -103,64 +112,73 @@ export default function Index() {
   const buttonstyle = {
     width: '120px',
   }
-  
+
   const getStatistics = () => {
-    if(!(isFinite(projectId)&& isFinite(roomId))) return
+    if (!(isFinite(projectId) && isFinite(roomId))) return
     return DistributionRoomRuntime.CameraSummary(projectId, roomId).then((res) => {
       let { success, data } = res
       if (success && data) {
-       // setStatistics(data)
-       return data
+        // setStatistics(data)
+        return data
       } else {
         message.error(res.errMsg)
         return { all: '', cloud: '', local: '' }
       }
     })
   }//监控数量
-  const {data:statistics} = useRequest(getStatistics, {
+  const { data: statistics } = useRequest(getStatistics, {
     refreshDeps: [projectId, roomId]
   })
   console.log(statistics)
-  const [alike, setAlike] = useState('') 
+  const [alike, setAlike] = useState('')
   let [realPlayUrl, setrealPlayUrl] = useState()
   const getYsRealPlayUrl = record => {
-    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality).then((res) => {
+    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality,projectId).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setrealPlayUrl(data)
-        console.log(realPlayUrl)
+      if (success &&  isObject(data)) {
+        // setrealPlayUrl(data)
+        // console.log(realPlayUrl)
+        let { token, url } = data;
+        console.log(data)
+        if (!url) return message.warning("url不存在");
+        if (!token) return message.warning("token不存在")
+        showModal({ token, url })
       } else {
         message.error(res.errMsg)
       }
     })
   }//云监控token、URL
-  const getYsHisPlayUrl = (start,end) => {
-    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality,start,end).then((res) => {
+  const getYsHisPlayUrl = (start, end) => {
+    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality, start, end,projectId).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setrealPlayUrl(data)
+      if (success && isObject(data)) {
+        let { token, url } = data;
+        if (!url) return message.warning("url不存在");
+        if (!token) return message.warning("token不存在")
+        showModal(data)
+        // setrealPlayUrl(data)
       } else {
         message.error(res.errMsg)
       }
     })
   }//云监控回放
-  let StartYsPtzData={
-    cameraSn:recordData?.sn,
-    channelNo:recordData?.channel,
-    direction:'',
-    speed:1
+  let StartYsPtzData = {
+    cameraSn: recordData?.sn,
+    channelNo: recordData?.channel,
+    direction: '',
+    speed: 1
   }
-  const changeControlYun=val=>{
-    StartYsPtzData.direction=val
-    StopYsPtzData.direction=val
+  const changeControlYun = val => {
+    StartYsPtzData.direction = val
+    StopYsPtzData.direction = val
     startYsPtz()
   }
-  let StopYsPtzData={
-    cameraSn:recordData?.sn,
-    channelNo:recordData?.channel,
-    direction:'',
+  let StopYsPtzData = {
+    cameraSn: recordData?.sn,
+    channelNo: recordData?.channel,
+    direction: '',
   }
-  const cancelControlYun=()=>{
+  const cancelControlYun = () => {
     return StopYsPtz(StopYsPtzData).then((res) => {
       let { success, data } = res
       if (success && data) {
@@ -182,40 +200,40 @@ export default function Index() {
     })
   }//云监控云台控制
 
- 
-  const getCameraPage = ({current, pageSize})=>{
-      if(!(isFinite(projectId) && isFinite(roomId))) return
-      let params ={
-        projectId,
-        pageNum:current,
-        pageSize,
-        roomId,
-        alike: alike
-      }
-      return DistributionRoomRuntime.CameraPage(params).then(res => {
-        let { success, data } = res
-        if(success) {
-          return {
-            list:  Array.isArray(data)  ? data : [],
-            total: Array.isArray(data)  ? data.length : 0
-          }
-        }else {
-          return {
-            list: [],
-            total: 0
-          }
+
+  const getCameraPage = ({ current, pageSize }) => {
+    if (!(isFinite(projectId) && isFinite(roomId))) return
+    let params = {
+      projectId,
+      pageNum: current,
+      pageSize,
+      roomId,
+      alike: alike
+    }
+    return DistributionRoomRuntime.CameraPage(params).then(res => {
+      let { success, data } = res
+      if (success) {
+        return {
+          list: Array.isArray(data) ? data : [],
+          total: Array.isArray(data) ? data.length : 0
         }
-      })
-      
+      } else {
+        return {
+          list: [],
+          total: 0
+        }
+      }
+    })
+
   }
-  const {tableProps} = useAntdTable(getCameraPage, {
+  const { tableProps } = useAntdTable(getCameraPage, {
     defaultPageSize: 10,
     refreshDeps: [projectId, roomId, alike]
   })
   //云监控
- 
- 
-  
+
+
+
   const disabledDate = current => current && current > moment().endOf('day')
 
   const changestartdate = (date, dateString) => {
@@ -228,25 +246,27 @@ export default function Index() {
     setEndTimeHistory(dateString)
   }
   //打开视频监控弹窗yun
-  const showModal = () => {
-    setisModal(true)
+  const showModal = ({ url, token }) => {
+  
 
     //setLocalModal(true)
     // play.stop()
     let player
-    if(realPlayUrl){
       setTimeout(() => {
         player = new EZUIKit.EZUIKitPlayer({
           id: 'replay',
-          accessToken: realPlayUrl?.token,//
-          url: realPlayUrl?.url,
+          accessToken: token,//
+          url: url,
           width: 1280,
           height: 717,
           themeData: themeData,
+          handleError: (err) => {
+            console.log(err)
+          }
         })
         setbigplay(player)
       }, 0)
-    }
+       setisModal(true)
   }
   //关闭视频监控弹窗
   const handleCancel = () => {
@@ -262,11 +282,11 @@ export default function Index() {
 
       <Titlelayout layout="flex" pv="0">
         <Info>
-        <img src={props.img}  className='img' alt={props.title}></img>
-        <div className="count">
-          <div>{props.title}</div>
-          <div><span  className='num'>{props.value}</span>台</div>
-        </div>
+          <img src={props.img} className='img' alt={props.title}></img>
+          <div className="count">
+            <div>{props.title}</div>
+            <div><span className='num'>{props.value}</span>台</div>
+          </div>
         </Info>
       </Titlelayout>
     )
@@ -313,71 +333,134 @@ export default function Index() {
       )
     }]
 
-  const chooseType = (url) => {
-    console.log(url);
-    let config = {
-      type: 'raw265',
-      player: "glplayer",
-      width: '1278',
-      height: '717.75',
-      token: "base64:QXV0aG9yOmNoYW5neWFubG9uZ3xudW1iZXJ3b2xmLEdpdGh1YjpodHRwczovL2dpdGh1Yi5jb20vbnVtYmVyd29sZixFbWFpbDpwb3JzY2hlZ3QyM0Bmb3htYWlsLmNvbSxRUTo1MzEzNjU4NzIsSG9tZVBhZ2U6aHR0cDovL3h2aWRlby52aWRlbyxEaXNjb3JkOm51bWJlcndvbGYjODY5NCx3ZWNoYXI6bnVtYmVyd29sZjExLEJlaWppbmcsV29ya0luOkJhaWR1",
-      extInfo: {
-        rawFps: 30,
-        autoPlay: true,
-        ignoreAudio: 1,
-      }
-    };
+  const chooseType = async (url, rtsp, channel, account, pwd) => {
+    // console.log(url);
+    state.videoPlayer = document.getElementById('player')
+    state.id = window.crypto.getRandomValues(state.id)
 
-    // setwebsocket(new WebSocket(url));
-    let ws = new WebSocket(url);
-    console.log(ws)
-    ws.binaryType = 'arraybuffer';
-    ws.addEventListener('open', function (event) {  });
-    ws.addEventListener('message', function (event) {
-      let data = new Uint8Array(event.data);
-      if (data.length == 1) {
-        ws.close();
-        if (data[0] == 1) {
-          setwsType('h265');
-          setTimeout(() => {
-            makeH265webjsRawLIVE(url, config);
-          }, 500);
-        } else {
-          setwsType('h264')
-          setTimeout(() => { getwebConnect(url) }, 500);
-        }
-      } else {
-        ws.close();
-      }
-    });
-  }
- 
-  const showCameraDialog = (record) => {
-    console.log(record,location.protocol)
 
-    setrecordData(record)
-    if (record.accessMode == 1) {
-      showModal()
-      getYsRealPlayUrl(record)
-    } else {
-      if (record.accessMode == 2) {
-        setLocalModal(true);
-        setCameraTitle(record.address)
-        // setwsType('h264')
-        
-        setWsUrl('ws://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
-        chooseType('wss://' + record.serverAddress + ':' + record.port + '/video?ip=' + record.ip + '&type=real&user=' + record.account + '&pwd=' + record.pwd + '&channel=' + record.channel);
+    let setAnswerUrl = `${url}/VideoWebrtcServer/V1/WebRtc/SetAnswer?id=${state.id}`;
+    let setIceCandidateUrl = `${url}/VideoWebrtcServer/V1/WebRtc/AddIceCandidate?id=${state.id}`;
+    let getOfferUrl = `${url}/VideoWebrtcServer/V1/WebRtc/GetOffer?id=${state.id}&url=${encodeURIComponent(rtsp)}&userName=${account}&password=${pwd}`;
+
+
+
+    state.webrtc = new RTCPeerConnection()
+
+    state.webrtc.ontrack = event => {
+      state.videoPlayer.srcObject = event.streams[0];
+    }
+
+    state.webrtc.onicecandidate = event => {
+      if (event.candidate) {
+        // AddIceCandidate(state.id, url, JSON.stringify(event.candidate))
+        fetch(setIceCandidateUrl, {
+          method: "POST",
+          body: JSON.stringify(event.candidate),
+          headers: { "Content-Type": "application/json" }
+        });
       }
     }
+
+    let offerResponse = await fetch(getOfferUrl);
+    let offer = await offerResponse.json();
+    if (!offer.success) {
+      message.error(offer.errMsg)
+      return;
+    }
+    offer.data.type = "offer";
+
+    await state.webrtc.setRemoteDescription(offer.data);
+
+    state.webrtc.createAnswer().then(function (answer) {
+      return state.webrtc.setLocalDescription(answer);
+    }).then(async function () {
+      // console.log("Sending answer SDP.");
+      // console.log("SDP: " + state.webrtc.localDescription.sdp);
+      await fetch(setAnswerUrl, {
+        method: 'POST',
+        body: JSON.stringify(state.webrtc.localDescription),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      // SetAnswerUrl(state.id, url, JSON.stringify(state.webrtc.localDescription))
+    });
+
+  }
+
+  const showCameraDialog = async (record) => {
+  try {
+   
+    setrecordData(record)
+    if (record.accessMode == 1) {
+      getYsRealPlayUrl(record)
+    } else {
+    
+      if (record.accessMode == 2) {
+        console.log('jinlaile',record.accessMode)
+        let { serverAddress, id } = record
+        let { success, data } = await GetCamerasoneInfo(projectId, id)
+        if (!success || !data) return
+        let { ip, channel, account, pwd } = data
+
+        state.videoData = data
+
+        console.log(record, data)
+        let url = 'http://' + serverAddress
+        console.log(url)
+        if (!serverAddress) return message.warning("播放地址URL不存在")
+          setLocalModal(true);
+        setCameraTitle(record.address)
+        // setwsType('h264')
+        let cha = record.channel + 100
+
+        let rtsp = 'rtsp://' + ip + '/Streaming/Channels/' + cha
+
+        setWsUrl(url);
+        setTimeout(() => {
+          chooseType(url, rtsp, channel, account, pwd);
+        }, 500)
+      }
+    }
+    
+
+    // if (record.accessMode == 1) {
+    //   showModal()
+    //   getYsRealPlayUrl(record)
+    // } else {
+    //   if (record.accessMode == 2) {
+    //     setLocalModal(true);
+    //     setCameraTitle(record.address)
+    //     // setwsType('h264')
+    //     let cha = record.channel + 100
+
+    //     let rtsp = 'rtsp://' + ip + '/Streaming/Channels/' + cha
+
+    //     setWsUrl(url);
+    //     setTimeout(() => {
+    //       chooseType(url, rtsp, channel, account, pwd);
+    //     }, 500)
+    //   }
+    // }
+  } catch (error) {
+    
+  }
+
+    
   }
 
 
 
   const [changeType, setChangeType] = useState('')
   const changeControl = (value) => {
+    let { serverAddress, port, id, channel } = recordData
+
+    let url = 'http://' + serverAddress
+
+    let ip = state.videoData.ip
+
     if (value == 'left') {
       setChangeType('leftControl');
-      leftControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      leftControl(url, ip, channel, state.videoData.account, state.videoData.pwd).then(res => {
         if (res.success) {
           return;
         } else {
@@ -387,7 +470,8 @@ export default function Index() {
     }
     if (value == 'right') {
       setChangeType('rightControl');
-      rightControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      console.log(value)
+      rightControl(url, ip, channel, state.videoData.account, state.videoData.pwd).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -395,7 +479,7 @@ export default function Index() {
     }
     if (value == 'top') {
       setChangeType('topControl');
-      topControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      topControl(url, ip, channel, state.videoData.account, state.videoData.pwd).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -403,7 +487,7 @@ export default function Index() {
     }
     if (value == 'bottom') {
       setChangeType('bottomControl');
-      bottomControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+      bottomControl(url, ip, channel, state.videoData.account, state.videoData.pwd).then(res => {
         if (res.success) {
           return;
         } else { message.error(res.errMsg) }
@@ -413,48 +497,24 @@ export default function Index() {
 
   const cancelControl = () => {
     setChangeType('');
-    stopControl({}, recordData.serverAddress + ':' + recordData.port, recordData.ip, recordData.channel, recordData.account, recordData.pwd).then(res => {
+
+    let { serverAddress, port, id, channel } = recordData
+    let url = 'http://' + serverAddress
+
+    let ip = state.videoData.ip
+
+    stopControl(url, ip, channel, state.videoData.account, state.videoData.pwd).then(res => {
       if (res.success) {
         return;
       } else { message.error(res.errMsg) }
     })
   }
 
-  const getwebConnect = (url) => {
-    var jmuxer;
-    jmuxer = new JMuxer({
-      node: 'player',
-      mode: 'video',
-      flushingTime: 1000,
-      clearBuffer: false,
-      fps: 25,
-      debug: true,
-    });
-    // setwebsocket(new WebSocket(url));
-    let ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
 
-    setwebsocket(ws);
-
-    ws.addEventListener('open', function (event) { });
-    ws.addEventListener('message', function (event) {
-      let data = new Uint8Array(event.data);
-      if (data.length == 1) {
-      } else {
-        jmuxer.feed({
-          video: new Uint8Array(event.data),
-        });
-      }
-    });
-  }
 
   const closeWS = () => {
+    state.webrtc.close()
     setLocalModal(false);
-    if (wsType == 'h264') {
-      wsocket.close();
-    } else {
-      //closeWeb();
-    }
   }
 
 
@@ -463,8 +523,8 @@ export default function Index() {
   const changeActive = () => {
     setActiveCollapse([]);
   }
-  let [quality,setquality]=useState(2)
-  const changeWatchS=val=>{
+  let [quality, setquality] = useState(2)
+  const changeWatchS = val => {
     setquality(val.target.value)
   }
   const changeKey = (key) => {
@@ -476,41 +536,33 @@ export default function Index() {
       message.error('请选择正确的时间段！');
       return;
     }
-    if (wsType == 'h264') {
-      wsocket.close();
-    } else {
-      // closeWeb();
-    }
+    state.webrtc.close();
+    state.webrtc = null;
+    let { serverAddress } = recordData
     let start = changeUTC(startTime);
     let end = changeUTC(endTime);
-    console.log(start, end,wsType);
+
+    let url = 'http://' + serverAddress
+
+    let rtsp = 'rtsp://' + state.videoData.ip + '/Streaming/tracks/101?startTime=' + start + '&endTime=' + end;
+
     setTimeout(() => {
-      if (wsType == 'h265') {
-        let playerContainer = document.getElementById("player-container");
-        let glplayer = document.getElementById('glplayer');
-        console.log(playerContainer);
-        playerContainer.removeChild(glplayer);
-        let div = document.createElement('div');
-        div.setAttribute('class', 'glplayer');
-        div.setAttribute('id', 'glplayer');
-        playerContainer.appendChild(div);
-      }
-      let backURL = 'wss://' + recordData.serverAddress + ':' + recordData.port + '/video?ip=' + recordData.ip + '&type=track&user=' + recordData.account + '&pwd=' + recordData.pwd + '&channel=' + recordData.channel + '&startTime=' + start + '&endTime=' + end;
-      setWsUrl(backURL);
-      chooseType(backURL);
-    }, 1000)
+      chooseType(url, rtsp, state.videoData.channel, state.videoData.account, state.videoData.pwd);
+    }, 500)
+
+
   }
-const playBackYun=()=>{
-  if (!startTime || !endTime) {
-    message.error('请选择正确的时间段！');
-    return;
+  const playBackYun = () => {
+    if (!startTime || !endTime) {
+      message.error('请选择正确的时间段！');
+      return;
+    }
+    getYsHisPlayUrl(startTimeHistory, endTimeHistory)
   }
-  getYsHisPlayUrl(startTimeHistory,endTimeHistory)
-}
   const changeUTC = (time) => {
     let date = new Date(time);
     let year = date.getFullYear().toString();
-    let month = date.getMonth() + 1;``
+    let month = date.getMonth() + 1; ``
     month = month < 10 ? '0' + month : month.toString();
     let day = date.getDate();
     day = day < 10 ? '0' + day : day.toString();
@@ -526,28 +578,28 @@ const playBackYun=()=>{
   const preventJump = (e) => {
     e.preventDefault()
   }
- 
+
   return (
-    <Pagecount bgcolor="transparent" pd="0"> 
+    <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-      <div id='cameraData' className="cameraData" key="h">
-        <CameraValue img={totalCamera} title={'监控总数'} value={statistics?.all ?? '0'}></CameraValue>
-        <CameraValue img={cloudCamera} title={'云监控'} value={statistics?.cloud ?? '0'}></CameraValue>
-        <CameraValue img={localCamera} title={'本地监控'} value={statistics?.local ?? '0'}></CameraValue>
-      </div>
-    
-      <Titlelayout layout="flex">
-        <div  className='data'>
-        <div  className='serach'>
-          <span>设备查询</span>
-           <Serach style={{width: '320px'}} placeholder='请输入设备编号/安装地址' onSearch={setAlike}></Serach>
-        
+        <div id='cameraData' className="cameraData" key="h">
+          <CameraValue img={totalCamera} title={'监控总数'} value={statistics?.all ?? '0'}></CameraValue>
+          <CameraValue img={cloudCamera} title={'云监控'} value={statistics?.cloud ?? '0'}></CameraValue>
+          <CameraValue img={localCamera} title={'本地监控'} value={statistics?.local ?? '0'}></CameraValue>
         </div>
-        <Cdivider type="h" style={{margin: "16px 0"}} /> 
-         
-          <UseTable   columns={columns}  {...tableProps} rowKey='sn'  />
-        </div>
-      </Titlelayout>
+
+        <Titlelayout layout="flex">
+          <div className='data'>
+            <div className='serach'>
+              <span>设备查询</span>
+              <Serach style={{ width: '320px' }} placeholder='请输入设备编号/安装地址' onSearch={setAlike}></Serach>
+
+            </div>
+            <Cdivider type="h" style={{ margin: "16px 0" }} />
+
+            <UseTable columns={columns}  {...tableProps} rowKey='sn' />
+          </div>
+        </Titlelayout>
       </Mainbox>
       <Modal
         title={recordData?.address}
@@ -564,15 +616,15 @@ const playBackYun=()=>{
           }}></div>
           <div style={{ flex: "1", marginLeft: 32 }}>
             <Titlelayout title="云台控制" bordered="n">
-             
+
               <div className={style.controlBackground} >
-              <div className={style.slotDiv}>
-                <span className={style.leftClick } onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
-                <span className={style.rightClick} onMouseDown={() => changeControlYun(3)} onMouseUp={cancelControlYun}></span>
-                <span className={style.topClick} onMouseDown={() => changeControlYun(0)} onMouseUp={cancelControlYun}></span>
-                <span className={style.bottomClick} onMouseDown={() => changeControlYun(1)} onMouseUp={cancelControlYun}></span>
+                <div className={style.slotDiv}>
+                  <span className={style.leftClick} onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
+                  <span className={style.rightClick} onMouseDown={() => changeControlYun(3)} onMouseUp={cancelControlYun}></span>
+                  <span className={style.topClick} onMouseDown={() => changeControlYun(0)} onMouseUp={cancelControlYun}></span>
+                  <span className={style.bottomClick} onMouseDown={() => changeControlYun(1)} onMouseUp={cancelControlYun}></span>
+                </div>
               </div>
-            </div>
             </Titlelayout>
             <div style={{ marginTop: 32 }}>
               <Collapse
@@ -611,10 +663,10 @@ const playBackYun=()=>{
                     </Item>
                     <Item>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>
+                        <CustButton ghost style={{ width: '120px' }} onClick={() => changeActive()}>
                           返回
                         </CustButton>
-                        <CustButton  style={{width: '120px'}} onClick={()=>{playBackYun()}}>
+                        <CustButton style={{ width: '120px' }} onClick={() => { playBackYun() }}>
                           回放
                         </CustButton>
                       </div>
@@ -640,58 +692,20 @@ const playBackYun=()=>{
       >
         <div className={style.dialogBody}>
           <div className="bodyLeft" style={{ width: 1278, height: 718 }}>
-            {wsType == 'h265' ?
-              <div id="player-container" >
-                <div id="glplayer" className="glplayer"></div>
-                <div id="controller" className="controller">
-                  <div id="progress-contaniner" className="progress-common progress-contaniner">
-                    <div id="cachePts" className="progress-common cachePts"></div>
-                    <div id="progressPts" className="progress-common progressPts"></div>
-                  </div>
-                  <div id="operate-container" className="operate-container">
-                    <li id="playBar" className="playBtn">
-                      <a href="/#" title="start" onClick={preventJump}>Start</a>
-                    </li>
-                    <span id="ptsLabel" className="ptsLabel">00:00:00/00:00:00</span>
-                    <div className="voice-div">
-                      <span>
-                        <a id="muteBtn" className="muteBtn" href='/#' onClick={preventJump}>
-                          <svg className="icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden' }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="488">
-                            <path d="M153.6 665.6V358.4h204.8V256H153.6c-56.32 0-102.4 46.08-102.4 102.4v307.2c0 56.32 46.08 102.4 102.4 102.4h204.8v-102.4H153.6zM358.4 256v102.4l204.8-128v563.2L358.4 665.6v102.4l307.2 204.8V51.2zM768 261.12v107.52c61.44 20.48 102.4 76.8 102.4 143.36s-40.96 122.88-102.4 143.36v107.52c117.76-25.6 204.8-128 204.8-250.88s-87.04-225.28-204.8-250.88z" p-id="489">
-                            </path>
-                          </svg>
-                        </a>
-                      </span>
-                      <progress id="progressVoice" className="progressVoice" value="50" max="100"></progress>
-                    </div>
-
-                    <a id="fullScreenBtn" className="fullScreenBtn" href='/#' onClick={preventJump}>
-                      <svg className="icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden' }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="403">
-                        <path d="M167.8 903.1c-11.5 0-22.9-4.4-31.7-13.1-17.5-17.5-17.5-45.8 0-63.3l221.1-221.1c17.5-17.5 45.9-17.5 63.3 0 17.5 17.5 17.5 45.8 0 63.3L199.4 890c-8.7 8.7-20.2 13.1-31.6 13.1zM638.5 432.4c-11.5 0-22.9-4.4-31.7-13.1-17.5-17.5-17.5-45.8 0-63.3l221.7-221.7c17.5-17.5 45.8-17.5 63.3 0s17.5 45.8 0 63.3L670.1 419.3c-8.7 8.7-20.2 13.1-31.6 13.1zM859.7 903.8c-11.5 0-23-4.4-31.7-13.1L606.7 668.8c-17.5-17.5-17.4-45.9 0.1-63.4s45.9-17.4 63.3 0.1l221.4 221.9c17.5 17.5 17.4 45.9-0.1 63.4-8.8 8.7-20.2 13-31.7 13zM389 432.1c-11.5 0-23-4.4-31.7-13.1L136.1 197.2c-17.5-17.5-17.4-45.9 0.1-63.4s45.9-17.4 63.3 0.1l221.2 221.7c17.5 17.5 17.4 45.9-0.1 63.4-8.7 8.7-20.2 13.1-31.6 13.1z" fill="#ffffff" p-id="404">
-                        </path>
-                        <path d="M145 370c-24.7 0-44.8-20.1-44.8-44.8V221.8C100.2 153.5 155.7 98 224 98h103.4c24.7 0 44.8 20.1 44.8 44.8s-20.1 44.8-44.8 44.8H224c-18.9 0-34.2 15.3-34.2 34.2v103.4c0 24.7-20.1 44.8-44.8 44.8zM883.3 370c-24.7 0-44.8-20.1-44.8-44.8V221.8c0-18.9-15.3-34.2-34.2-34.2H700.8c-24.7 0-44.8-20.1-44.8-44.8S676.1 98 700.8 98h103.5c68.2 0 123.8 55.5 123.8 123.8v103.5c0 24.7-20.1 44.7-44.8 44.7zM327.5 926.6H224c-68.2 0-123.8-55.5-123.8-123.8V699.4c0-24.7 20.1-44.8 44.8-44.8s44.8 20.1 44.8 44.8v103.5c0 18.9 15.3 34.2 34.2 34.2h103.5c24.7 0 44.8 20.1 44.8 44.8s-20.1 44.7-44.8 44.7zM804.3 926.6H700.8c-24.7 0-44.8-20.1-44.8-44.8s20.1-44.8 44.8-44.8h103.5c18.9 0 34.2-15.4 34.2-34.2V699.4c0-24.7 20.1-44.8 44.8-44.8 24.7 0 44.8 20.1 44.8 44.8v103.5c0 68.2-55.6 123.7-123.8 123.7z" fill="#ffffff" p-id="405">
-                        </path>
-                      </svg>
-                    </a>
-                    <span id="showLabel" className="showLabel"></span>
-                  </div>
-                </div>
-              </div> : wsType == 'h264' ?
-                <div id="container" style={{ marginLeft: 0, marginRight: 16 }}>
-                  <video style={{ width: 1278, height: 717.75 }} muted controls autoPlay id="player"></video>
-                </div> : null
-            }
+            <div id="container" style={{ marginLeft: 0, marginRight: 16 }}>
+              <video style={{ width: 1278, height: 717.75 }} muted controls autoPlay id="player"></video>
+            </div>
           </div>
           <div className="bodyRight">
-            <Titlelayout title="云台控制" bordered="n"> 
-            <div className="controlBackground" id="controlBackground" >
-              <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>
-                <span className="clickButton leftClick" onMouseDown={() => changeControl('left')} onMouseUp={cancelControl}></span>
-                <span className="clickButton rightClick" onMouseDown={() => changeControl('right')} onMouseUp={cancelControl}></span>
-                <span className="clickButton topClick" onMouseDown={() => changeControl('top')} onMouseUp={cancelControl}></span>
-                <span className="clickButton bottomClick" onMouseDown={() => changeControl('bottom')} onMouseUp={cancelControl}></span>
+            <Titlelayout title="云台控制" bordered="n">
+              <div className="controlBackground" id="controlBackground" >
+                <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>
+                  <span className="clickButton leftClick" onMouseDown={() => changeControl('left')} onMouseUp={cancelControl}></span>
+                  <span className="clickButton rightClick" onMouseDown={() => changeControl('right')} onMouseUp={cancelControl}></span>
+                  <span className="clickButton topClick" onMouseDown={() => changeControl('top')} onMouseUp={cancelControl}></span>
+                  <span className="clickButton bottomClick" onMouseDown={() => changeControl('bottom')} onMouseUp={cancelControl}></span>
+                </div>
               </div>
-            </div>
             </Titlelayout>
             <div className="timeControl">
               <Collapse
@@ -719,8 +733,8 @@ const playBackYun=()=>{
                     disabledDate={disabledendDate}></DatePicker>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <CustButton  ghost style={{width: '120px'}} onClick={() => changeActive()}>返回</CustButton>
-                    <CustButton style={{width: '120px'}} onClick={() => playBack()}>回放</CustButton>
+                    <CustButton ghost style={{ width: '120px' }} onClick={() => changeActive()}>返回</CustButton>
+                    <CustButton style={{ width: '120px' }} onClick={() => playBack()}>回放</CustButton>
                   </div>
 
                 </Panel>

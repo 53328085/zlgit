@@ -80,7 +80,7 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
   const getSysteminfo = async (hostname) => {
      try {
        let {data, success} =   await Logapi.SystemConfig(hostname)
-       if(success && data.constructor === Object) { 
+       if(success && data) { 
             const { englishTitle="Integrated Energy Service Platform", literal, title, chineseTitle } = data;
             
           
@@ -97,7 +97,8 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
             dispatch(getSystemconfiginfo({}))
        }
 
-     } catch (error) {         
+     } catch (error) {      
+          console.log(error)   
           dispatch(getSystemconfiginfo({}))
      }
     

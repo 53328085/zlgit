@@ -26,7 +26,7 @@ export default function Index() {
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId)
   const iszh = useSelector(iszhCN)
-  const {id: enterpriseId} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
       "monitor",
@@ -153,6 +153,7 @@ export default function Index() {
               isdate: true,
               shiftNo: true,
               gas: false,
+              custview: true,
             });
             break;
           case "direction":
@@ -162,6 +163,7 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
+             
             });
             break;
           case "analysis":

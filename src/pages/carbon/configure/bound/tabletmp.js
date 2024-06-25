@@ -121,7 +121,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
-      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==0} onClick={() => onConfig(record, index)} /> :  ''
+      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==2} onClick={() => onConfig(record, index)} /> :  ''
     }
 
   ]

@@ -230,7 +230,7 @@ export default function Index() {
             dataes[it.name] = it.value
           }
           if(it.name==='Load' && transInfo.current.capacity){
-            dataes['LoadPer'] =(parseFloat(it.value)/transInfo.current.capacity).toFixed(2)
+            dataes['LoadPer'] =(parseFloat(it.value)/transInfo.current.capacity*100).toFixed(2)
           }
            })
       

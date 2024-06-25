@@ -5,7 +5,7 @@ import styled from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
 import {useAntdTable} from 'ahooks'
-import {QueryElectric} from "@api/api.js"
+import {QueryElectric, DesElectric} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import Citem from './item'
 import {useSelector} from 'react-redux'
@@ -93,7 +93,7 @@ export default function Index() {
  
  
   const picker= ['', 'date', 'month', 'year'][timetype];
- console.log(areaId)
+ 
  const [params, setParams] = useState({
  projectId,
  pageNum: 1,
@@ -149,9 +149,10 @@ export default function Index() {
 
   ]
 
- 
+ let imageKey = useRef([])
 
-  const getData =  () => {
+
+  const getData = async  () => {
  /*    let {area, date, type } = form.getFieldsValue() 
     const params = {
       type,
@@ -161,24 +162,37 @@ export default function Index() {
       pageNum: current,
       pageSize,
    } */
- return QueryElectric.query(params).then(res => {
-     let {success, data, total} = res
-     if (success && Array.isArray(data) && data.length >0) {
+
+   try {
+    let {success, data, total} =await QueryElectric.query(params)
+    if (success && Array.isArray(data) && data.length >0) {
+    
+      let  imageKeys = data.map(d => d.imageKey)
+      let promises = imageKeys.map(key => DesElectric.QueryImage(key))
+      let result = await Promise.allSettled(promises)
+      result.forEach(r => {
+        if(r.status == 'fulfilled' && r.value?.success) {
+          let {data:imagedata} = r.value
+         
+          data.forEach(d => {
+             if(d.imageKey ==imagedata.imageKey ) {
+                 console.log(imagedata.image)
+                 d.image=imagedata.image;
+             }
+          })
+        }
+      })
       setTotal(total)
-      setTableData(data)
-      return {
-        list: data,
-        total,
-      }
+      setTableData(data)     
      } else {
       setTotal(0)
       setTableData([])
-      return {
-         list: [],
-         total: 0
-      }
      }
-   }).catch()
+
+   } catch (error) {
+    
+   }
+ 
    
   }
 
@@ -197,7 +211,12 @@ export default function Index() {
  }, [params, areaId]) 
  const tbref = useRef();
  const onExport = useCallback(() => {
-    return getData(1, total)
+    setParams({
+      ...params,
+      pageNum: 1,
+      pageSize: total,
+    })
+    return getData()
  }, [total])
  const Title =  (
       <CustTitle className="t">
@@ -299,7 +318,7 @@ export default function Index() {
                  mode == 1 ? items : <UseTable  dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />
              }  
            
-             <Pagination showTotal={showTotal}  defaultPageSize={14} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}} onChange={pagechange}></Pagination>
+             <Pagination showTotal={showTotal}  defaultPageSize={12} defaultCurrent={1} total={total} size="small" style={{marginLeft: "auto"}} onChange={pagechange}></Pagination>
            </Laybox>
         </Titlelayout>
     

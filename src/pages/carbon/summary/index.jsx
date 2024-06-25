@@ -98,7 +98,7 @@ const options = [
 
 /* 月，年。没有日 */
 export default function Index() {
-  const {id:enterpriseId} = useSelector(enterprise)
+  const {enterpriseId} = useSelector(enterprise)
  // 概览数据查询
  let Quota ={}
  const {isSuccess, data: quotaData } = useOverviewQuery(enterpriseId, {

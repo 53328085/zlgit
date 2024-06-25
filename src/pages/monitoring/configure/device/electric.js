@@ -463,7 +463,7 @@ export default function gateway({ deviceStyle }) {
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
-        setDevicelist([])
+        setDevicelist([{ sn: '(无)直连设备', id: 0 }]) // 修改需求提出者： 王建 ，理由： 有些电表是直连设备不需要网关（）
       }
     } catch (e) { console.log(e) }
 

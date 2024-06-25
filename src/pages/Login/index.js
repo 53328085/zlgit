@@ -7,14 +7,14 @@ import {
   getPassword,
   getLang,
 } from "@redux/user";
-import {   getJump,  getIsGranary, configProject, getSystemconfiginfo,   getWebsiteState, getWebsiteMenu} from "@redux/systemconfig";
+import {   getJump,  getIsGranary, configProject,   systemConfigInfo, getWebsiteState, getWebsiteMenu} from "@redux/systemconfig";
  
-import { Login as LoginApi, I18N } from "@api/api.js";
+import { Login as LoginApi, I18N,  } from "@api/api.js";
 import { message, Tabs, Form, Input } from "antd";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import styled from "styled-components";
 import CModal from "@com/useModal"
-import {cipher} from "@com/usehandler"
+import {cipher, isObject} from "@com/usehandler"
 import { phoneValidator} from "@pages/rule";
 import imgurl from "./icon";
  
@@ -71,7 +71,8 @@ const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
     display: flex;
-    height: calc(100vh - 138px - 24px);
+    flex: 1 calc(100vh - 138px - 24px);
+   // height: calc(100vh - 138px - 24px);
     overflow-y: auto;
     justify-content: space-between;
   }
@@ -176,8 +177,8 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
        if (roleType == 3 || roleType == 4) {     
          dispatch(getWebsiteState(projectId)) 
          dispatch(configProject(false)) // 项目是否处于设计状态
-         let {runMenus} = await dispatch(getWebsiteMenu(projectId)).unwrap()
-         let ismenu = runMenus?.find(item => item.no == '0104') || runMenus[0]  
+         let {runMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
+         let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
          projectRun(ismenu)
        }
@@ -289,7 +290,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
 }
 const Log = memo(UserLog)
 export default function Login() {
-  const {systemBackImage} = useSelector(getSystemconfiginfo) || {}
+  const {systemBackImage, literal} = useSelector(systemConfigInfo) || {}
   const bgImg= systemBackImage ? `data:image/png;base64,${systemBackImage}` : imgurl.logBg
   return (
     <Loginpage bgImg={bgImg}>
@@ -298,7 +299,7 @@ export default function Login() {
          <Listitem />
          <Log />
       </Logmain>
-      <Copyright/>
+    {literal==1 &&  <Copyright/>}
     </Loginpage>
   );
 }
