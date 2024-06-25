@@ -1205,56 +1205,31 @@ export const GetCamerasVideosByProjectId = (Id) =>
   export const GetCamerasoneInfo = (projectId, id) =>
   server.get(`/Monitor/RuntimeCamera/OneInfo?projectId=${projectId}&cameraId=${id}`);  
  
-export const leftControl = (params,url,projectId, id) =>
+  export const leftControl = (url, ip, channel, user, pwd) =>
   
-  server.post(
-  
-    url +
-    "/V1/Ptz/PtzLeft?projectId="+
-    projectId +
-    "&id=" +
-    id,
-    params
-  );
-export const bottomControl = (params, url,projectId, id) =>
-  server.post(
+    server.post(
     
-    url +
-    "/V1/Ptz/PtzDown?ip="+
-    projectId +
-    "&id=" +
-    id,
-    params
-  );
-export const rightControl = (params, url,projectId, id) =>
-  server.post(
-   
-    url +
-    "/V1/Ptz/PtzRight?projectId="+
-    projectId +
-    "&id=" +
-    id,
-    params
-  );
-export const topControl = (params, url,projectId, id) =>
-  server.post(
-   
-    url +
-    "/V1/Ptz/PtzUp?projectId=" +
-    projectId +
-    "&id=" +
-    id,
-    params
-  );
-export const stopControl = (params, url,projectId, id) =>
-  server.post(
-    url +
-    "/V1/Ptz/PtzStop?projectId="+
-    projectId +
-    "&id=" +
-    id,
-    params
-  );
+      `${url}/VideoWebrtcServer/V1/Ptz/PtzLeft?ip=${ip}&channel=${channel}&user=${user}&pwd=${pwd}`
+  
+    );
+  export const bottomControl = (url, ip, channel, user, pwd) =>
+    server.post(
+      `${url}/VideoWebrtcServer/V1/Ptz/PtzDown?ip=${ip}&channel=${channel}&user=${user}&pwd=${pwd}`
+    );
+  export const rightControl = (url, ip, channel, user, pwd) =>
+    server.post(
+     
+      `${url}/VideoWebrtcServer/V1/Ptz/PtzRight?ip=${ip}&channel=${channel}&user=${user}&pwd=${pwd}`
+    );
+  export const topControl = (url, ip, channel, user, pwd) =>
+    server.post(
+     
+      `${url}/VideoWebrtcServer/V1/Ptz/PtzUp?ip=${ip}&channel=${channel}&user=${user}&pwd=${pwd}`
+    );
+  export const stopControl = (url, ip, channel, user, pwd) =>
+    server.post(
+      `${url}/VideoWebrtcServer/V1/Ptz/PtzStop?ip=${ip}&channel=${channel}&user=${user}&pwd=${pwd}`
+    );
  
 //首页
 export class UISummary {
