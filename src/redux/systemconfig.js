@@ -7,7 +7,8 @@ import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime} from "@api/api.js"; 
 import {isObject} from '@com/usehandler'
- 
+import moment from 'moment';
+
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
  
   // 进入项目配置/项目 
@@ -112,6 +113,7 @@ const initialState = {
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
   enterprise: {}, // 碳排 企业信息
+  environmentTime: {},//配电管理--环境监测时间
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -289,7 +291,10 @@ const system = createSlice({
         },
         getEnterprise(state, {payload}) {        
           state.enterprise = payload
-        }
+        },
+        setEnvironmentTime(state, {payload}) {        
+          state.environmentTime = payload
+        },
 
     },
      extraReducers: {
@@ -413,6 +418,8 @@ export const deviceStyle = state => state.system.deviceStyle;
 export const intl = state => state.system.intl //国际化
 export const iszhCN = state => state.system.iszhCN // 是否中文
 export const enterprise = state => state.system.enterprise // 碳排企业信息
+export const Time = state => state.system.environmentTime // 碳排企业信息
+
 export const {
     configProject,
     getSetMenus,
@@ -441,5 +448,6 @@ export const {
     setIntl,
     setIszhCN,
     getEnterprise,
+    setEnvironmentTime
 } = actions
 export default system.reducer
