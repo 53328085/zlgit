@@ -238,7 +238,7 @@ export default function Index() {
         }
       })
       setbigplay(player)
-    }, 0)
+    }, 100)
     setisModal(true)
 
   }
@@ -364,7 +364,7 @@ export default function Index() {
 
 
       setrecordData(record)
-
+      console.log(record)
       if (record.accessMode == 1) {
         //  showModal()
         getYsRealPlayUrl(record)

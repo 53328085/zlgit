@@ -201,8 +201,8 @@ if(msuc) {
   moption.dataset = {
     dimensions: [
       {name: i18t("comm","time"), type: "time"},
+      {name: i18t("carbon","directe", {param: ''})},
       {name: i18t("carbon","indirecte", {param: ''})},
-      {name: i18t("carbon","directe", {param: ''})}
      ],
      source: [x, y, y1]
   }

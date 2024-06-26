@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useEffect, useRef} from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
 import styled from 'styled-components'
 import { useAntdTable, useRequest, useReactive } from 'ahooks'
@@ -17,7 +17,8 @@ import totalCamera from './images/totalCamera.png';
 import cloudCamera from './images/cloudCamera.png';
 import localCamera from './images/localCamera.png';
 import playImg from './images/play.png';
-import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring, DistributionRoomRuntime, distributionRoom } from '@api/api.js'
+import { leftControl, bottomControl, rightControl, topControl, stopControl, Monitoring,GetCamerasoneInfo, DistributionRoomRuntime, distributionRoom } from '@api/api.js'
+import { isObject } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent'
 import { CustButton } from '@com/useButton'
@@ -132,21 +133,30 @@ export default function Index() {
   const [alike, setAlike] = useState('')
   let [realPlayUrl, setrealPlayUrl] = useState()
   const getYsRealPlayUrl = record => {
-    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality).then((res) => {
+    return GetYsRealPlayUrl(record.sn, record.channel, 1, quality,projectId).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setrealPlayUrl(data)
-        console.log(realPlayUrl)
+      if (success &&  isObject(data)) {
+        // setrealPlayUrl(data)
+        // console.log(realPlayUrl)
+        let { token, url } = data;
+        console.log(data)
+        if (!url) return message.warning("url不存在");
+        if (!token) return message.warning("token不存在")
+        showModal({ token, url })
       } else {
         message.error(res.errMsg)
       }
     })
   }//云监控token、URL
   const getYsHisPlayUrl = (start, end) => {
-    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality, start, end).then((res) => {
+    return GetYsHisPlayUrl(recordData.sn, recordData.channel, quality, start, end,projectId).then((res) => {
       let { success, data } = res
-      if (success && data) {
-        setrealPlayUrl(data)
+      if (success && isObject(data)) {
+        let { token, url } = data;
+        if (!url) return message.warning("url不存在");
+        if (!token) return message.warning("token不存在")
+        showModal(data)
+        // setrealPlayUrl(data)
       } else {
         message.error(res.errMsg)
       }
@@ -156,7 +166,8 @@ export default function Index() {
     cameraSn: recordData?.sn,
     channelNo: recordData?.channel,
     direction: '',
-    speed: 1
+    speed: 1,
+    projectId
   }
   const changeControlYun = val => {
     StartYsPtzData.direction = val
@@ -167,6 +178,7 @@ export default function Index() {
     cameraSn: recordData?.sn,
     channelNo: recordData?.channel,
     direction: '',
+    projectId,
   }
   const cancelControlYun = () => {
     return StopYsPtz(StopYsPtzData).then((res) => {
@@ -174,7 +186,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+        message.error("当前设备不支持控制功能")
       }
     })
   }
@@ -185,7 +197,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error(res.errMsg)
+        message.error("当前设备不支持控制功能")
       }
     })
   }//云监控云台控制
@@ -235,30 +247,38 @@ export default function Index() {
     setEndTime(date);
     setEndTimeHistory(dateString)
   }
+  const player = useRef()
   //打开视频监控弹窗yun
-  const showModal = () => {
-    setisModal(true)
+  const showModal =async ({ url, token }) => {
+  
 
     //setLocalModal(true)
     // play.stop()
-    let player
-    if (realPlayUrl) {
-      setTimeout(() => {
-        player = new EZUIKit.EZUIKitPlayer({
+    // let player
+    setisModal(true)
+      setTimeout(async () => {    
+        player.current =await new EZUIKit.EZUIKitPlayer({
           id: 'replay',
-          accessToken: realPlayUrl?.token,//
-          url: realPlayUrl?.url,
+          accessToken: token,//
+          url: url,
           width: 1280,
           height: 717,
           themeData: themeData,
+          handleError: (err) => {
+            console.log(err)
+          }
         })
-        setbigplay(player)
-      }, 0)
-    }
+        setbigplay(player.current)
+        }, 100)
+       
   }
+
   //关闭视频监控弹窗
   const handleCancel = () => {
     setisModal(false)
+    // player.current.stop()
+    // player.current.destroy()
+    // player.current=null
     //  setLocalModal(false)
     bigplay.stop()
     // play.play()
@@ -376,28 +396,27 @@ export default function Index() {
   }
 
   const showCameraDialog = async (record) => {
-    console.log(record, location.protocol)
-
+  try {
+   
     setrecordData(record)
-
-    let { serverAddress, id } = record
-    let { success, data } = await GetCamerasoneInfo(projectId, id)
-    if (!success || !data) return
-    let { ip, channel, account, pwd } = data
-
-    state.videoData = data
-
-    console.log(record, data)
-    let url = 'http://' + serverAddress
-    console.log(url)
-    if (!serverAddress) return message.warning("播放地址URL不存在")
-
     if (record.accessMode == 1) {
-      showModal()
       getYsRealPlayUrl(record)
     } else {
+    
       if (record.accessMode == 2) {
-        setLocalModal(true);
+        console.log('jinlaile',record.accessMode)
+        let { serverAddress, id } = record
+        let { success, data } = await GetCamerasoneInfo(projectId, id)
+        if (!success || !data) return
+        let { ip, channel, account, pwd } = data
+
+        state.videoData = data
+
+        console.log(record, data)
+        let url = 'http://' + serverAddress
+        console.log(url)
+        if (!serverAddress) return message.warning("播放地址URL不存在")
+          setLocalModal(true);
         setCameraTitle(record.address)
         // setwsType('h264')
         let cha = record.channel + 100
@@ -410,6 +429,31 @@ export default function Index() {
         }, 500)
       }
     }
+    
+
+    // if (record.accessMode == 1) {
+    //   showModal()
+    //   getYsRealPlayUrl(record)
+    // } else {
+    //   if (record.accessMode == 2) {
+    //     setLocalModal(true);
+    //     setCameraTitle(record.address)
+    //     // setwsType('h264')
+    //     let cha = record.channel + 100
+
+    //     let rtsp = 'rtsp://' + ip + '/Streaming/Channels/' + cha
+
+    //     setWsUrl(url);
+    //     setTimeout(() => {
+    //       chooseType(url, rtsp, channel, account, pwd);
+    //     }, 500)
+    //   }
+    // }
+  } catch (error) {
+    
+  }
+
+    
   }
 
 

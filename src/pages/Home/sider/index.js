@@ -93,9 +93,7 @@ export default function Sider() {
      )
   }
 
-  useEffect(() => {  
-    console.log('语言改变后。')
-    console.log(config)
+  useEffect(() => {      
     try {
     
       let state = location.state || {}    

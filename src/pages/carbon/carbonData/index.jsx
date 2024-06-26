@@ -31,13 +31,13 @@ const Mainbox = styled.div`
 `
 const columns = [
   {
-    title: i18t("comm","name"),
+    title: <CustTransO ns="comm" text="name" />,
     dataIndex: 'name',
     key: 'name',
     width: 180
   },
   {
-    title: i18t("comm","StartDate"),
+    title:<CustTransO ns="comm" text="StartDate" />,
     dataIndex: 'startDate',
     key: 'startDate',
     width: 180,
@@ -47,7 +47,7 @@ const columns = [
 
   },
   {
-    title: i18t("comm","EndDate"),
+    title: <CustTransO ns="comm" text="EndDate" />,
     dataIndex: 'endDate',
     key: 'endDate',
     width: 180,
@@ -56,7 +56,7 @@ const columns = [
     }
   },
   {
-    title: i18t("comm","Carbonemissionl", {param: '(tCO₂)'}),
+    title:  <CustTransO ns="carbon" text="Carbonemissionl" param="(tCO₂)"  /> ,
     dataIndex: 'value',
     key: 'value',
     width: 180,

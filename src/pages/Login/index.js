@@ -86,10 +86,10 @@ function UserLog() {
  
   const dispatch = useDispatch();
  
-  const projectRun = ({ key, label }) => {
+  const projectRun = ({ key, label },jumpath, substate) => {
     dispatch(getJump(true))
     navigate(`/index/${key}`, {
-      state: { type: "index", primary: key, index: true, title: label },
+      state: { type: "index", primary: key, index: true, title: label, jumpath, substate },
     });
   };
  
@@ -177,10 +177,22 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
        if (roleType == 3 || roleType == 4) {     
          dispatch(getWebsiteState(projectId)) 
          dispatch(configProject(false)) // 项目是否处于设计状态
-         let {runMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
+         let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
-         projectRun(ismenu)
+         let  jumpath, substate;
+         let sider = siderRunMenus?.[ismenu.key]?.[0] 
+         if(sider) { 
+           let {key, label} = sider
+           jumpath = `/index/${menu.key}/${key}`
+           substate = {
+             nested: key,
+             title: label,
+             primary: ismenu.key
+           }
+   
+         }
+         projectRun(ismenu, jumpath, substate)
        }
  
     }else {

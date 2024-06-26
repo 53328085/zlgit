@@ -55,6 +55,8 @@ export default function Hmenu() {
   const onSelect = ({key}) => {
     
      let item = menus.find(item => item?.key === key);   
+
+      console.log(item)
       if (!item) return;
       const {nested, label, no} = item || {};  
      /*  if(key === 'designerProject' || key == 'runtimeProject' ) {
@@ -79,9 +81,11 @@ export default function Hmenu() {
  useEffect(() => {    
     if(state) {
       console.log(state)
-      let {primary} = state
+      let {primary, jumpath, substate} = state
       dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
-       
+      if(jumpath && substate) {
+        navigate(jumpath, {state:substate})
+      }
 
     } else {
        let url, state

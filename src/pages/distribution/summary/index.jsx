@@ -135,7 +135,7 @@ export default function Index() {
   useEffect(() => {
    if(Number.isInteger(roomId))  getEnvironment(roomId)
    
-  }, [roomId])
+  }, [roomId, rname])
   return (
   
       <Pagecount bgcolor="#eeeff3" pd="0px" custserach="true">

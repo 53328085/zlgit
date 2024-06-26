@@ -233,7 +233,7 @@ export default function ProjectSet({projectId}) {
    'oilEnabled',
   ])
  
-  let bkmenus = [
+  let bkmenus = useRef([
     { label: t("common:ElectricalSafety"), key: 'safeEnabled', value: 0 },
     { label: t("common:DistributionManagemet"), key: 'distributionEnabled', value: 0 },
     { label: t("common:SettlementFee"), key: 'prepayEnabled', value: 0 },
@@ -242,7 +242,7 @@ export default function ProjectSet({projectId}) {
     { label:  t("common:StorageManagement"), key: 'storageEnabled', value: 0 },
     { label: t("common:CarbonEmissionManagement"), key: 'carbonEnabled', value: 0 },  
     { label: t("common:OperationMaintenanceManagement"), key: 'maintenanceEnabled', value: 0 },
-  ]
+  ])
 
 
   const optionalProject = [
@@ -267,13 +267,22 @@ export default function ProjectSet({projectId}) {
 
   const chChnage =(value) => {
     let {target: {checked, id}} = value
+    console.log(value)
     console.log(checked)
     console.log(homepage)
+    let homeMenu = form.getFieldValue('homeMenu')
+    console.log(homeMenu)
     if(checked) {
-      let item = bkmenus.find(item => item.key == id);
+      let item = bkmenus.current.find(item => item.key == id);
       setHomePage([...homepage, item])
     }else {
+      let curitem = homepage.find(item => item.key == id);
       let items = homepage.filter(item => item.key!=id);
+   
+     
+      if(homeMenu == curitem.value) {
+        form.setFieldValue("homeMenu", items[0].value)
+      }
       setHomePage([...items])
     }
    
@@ -311,14 +320,13 @@ const queryProjectInfo = async () => {
       dispatch(getCurrProjectInfo({...CurrProject, ...data} || {}))
      initial = data;
      let homemenus = []
-     bkmenus.forEach(item => {
+     bkmenus.current.forEach(item => {
+        item.value =getVal(item.key);
         if (data[item.key] ==1) {
-
-
-          item.value =getVal(item.key);
           homemenus.push(item)
         }
      })
+    console.log(bkmenus.current)
     setHomePage([...defaultpage, ...homemenus])  
  
     for(let key of Object.keys(params)) {
