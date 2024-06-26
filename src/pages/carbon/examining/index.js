@@ -155,14 +155,14 @@ if(anusuc) {
 
 // 碳排月度数据
 
-const {isSuccess: monsuc, data: monData} = useAnalysisQuery(comparam, {
+/* const {isSuccess: monsuc, data: monData} = useAnalysisQuery(comparam, {
   skip: !(Number.isInteger(comparam.enterpriseId) && comparam.year)
-})
+}) */
 
-const getMonthData = () =>{
+const getMonthData =async () =>{
   try {
 
- let {success, data, errMsg} = monData
+ let {success, data, errMsg} = await QueryMonthlyAnalysis(enterpriseId, year )
 
  if(success && isObject(data)) {
    
@@ -224,11 +224,11 @@ const getMonthData = () =>{
 }
 }
 useEffect(() => {
-   if(monsuc && monData) {
+   if(enterpriseId && year) {
     getMonthData()
    }
 
-}, [monsuc, monData])
+}, [enterpriseId, year])
 
  /*  const getAnnual = async () => {
     try {

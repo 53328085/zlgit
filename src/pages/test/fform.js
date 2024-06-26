@@ -47,7 +47,7 @@ export default function Index() {
    )
 } */
 
-  import React, { useEffect, useState,useMemo } from 'react'
+ /*  import React, { useEffect, useState,useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
  
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
@@ -143,4 +143,18 @@ export default function Index() {
     </div>
   )
 }
-  
+   */
+
+// 测试各种组件
+import { Timeline } from 'antd';
+import {IconProvider, IeOutlined} from "@ant-design/icons"
+import React from 'react';
+const App = () => (
+  <Timeline mode='left' >
+    <Timeline.Item color='#ff7314' label="2015-09-01">Create a services site</Timeline.Item>
+    <Timeline.Item color='green' label="2015-09-01">Solve initial network problems </Timeline.Item>
+    <Timeline.Item dot={<IeOutlined />} label="2015-09-01">Technical testing </Timeline.Item>
+    <Timeline.Item label="2015-09-01" position='left'>Network problems being solved </Timeline.Item>
+  </Timeline>
+);
+export default App;

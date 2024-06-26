@@ -82,6 +82,7 @@ const initialState = {
     roomId: [],    
     
     curlRommid: '',  
+    curlRommidl: 0,
     menus: {
         fullmenu: [], //全部菜单
         projectId: 0, // 项目ID
@@ -270,6 +271,9 @@ const system = createSlice({
         getcurlRommid(state, {payload}) {
           state.curlRommid = payload
         },
+        getcurlRommidl(state, {payload}) {
+          state.curlRommidl = payload
+        },
         getSystemconfiginfo(state, {payload}) {
            console.log(payload)
            state.systemConfigInfo = payload ?? {}
@@ -385,6 +389,7 @@ export const selectdisOneLevel = state =>  state.system.disonlevel
 export const selectdiscurlevel = state => state.system.disonlevel[0]?.id;
 
 export const selectcurlRommid = state =>  state.system.curlRommid
+export const selectcurlRommidl = state =>  state.system.curlRommidl
 export const selectRoomList = state => state.system.roomIdList
 export const levelDefaultLabel = state =>  state.system.currlevel?.levelName || state.system.onelevel[0]?.levelName || ''
 export const selectshifts = state => state.system.shifts
@@ -437,9 +442,11 @@ export const {
     getDisonlevel,
     getisDistribution,
     getcurlRommid,
+    getcurlRommidl,
     getDiscurlevel,
     setIntl,
     setIszhCN,
     getEnterprise,
+     
 } = actions
 export default system.reducer

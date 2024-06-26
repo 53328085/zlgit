@@ -180,6 +180,9 @@ export default function Index() {
   },
   {
     type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
+  },
+  {
+    type: 'bar',seriesLayoutBy: 'row', stack: 'Ad', 
   }],  
   grid:{
     left: "0px",
@@ -206,10 +209,12 @@ const [baropt, pieopt, momYoy] = useMemo(() => {
       dimensions: [
         {name: 'x', type: 'time'},
         {name: 'y', displayName: '尖能耗(kWh)'},
+        {name: 'y1', displayName: '峰能耗(kWh)'},
         {name: 'y2', displayName: '平能耗(kWh)'},
         {name: 'y3', displayName: '谷能耗(kWh)'},
       ],
-      source: [x, y, y2, y3]
+      
+      source: [x, y,y1, y2, y3]
     }
   },
   {

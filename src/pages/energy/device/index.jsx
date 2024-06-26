@@ -97,7 +97,7 @@ export default function Index() {
  const [params, setParams] = useState({
  projectId,
  pageNum: 1,
- pageSize: 14,
+ pageSize: 12,
  areaId,
  type: 1,
  date: getTime(moment(), 1)
@@ -176,7 +176,7 @@ export default function Index() {
          
           data.forEach(d => {
              if(d.imageKey ==imagedata.imageKey ) {
-                 console.log(imagedata.image)
+                
                  d.image=imagedata.image;
              }
           })

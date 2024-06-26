@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 import { selectProjectId, mixtitle, systemConfigInfo, currProject,} from '@redux/systemconfig.js'
-
+import {isObject} from "@com/usehandler"
 import { selectUser } from '@redux/user.js'
 import Ichart  from '@com/useEcharts/Ichart';
 import Table from '@com/useTable'
@@ -336,12 +336,13 @@ export default function GatewayDetail(props) {
     }
 
     const getEnergyReport = () => {// 水表不展示日趋势线
+       if(!deviceStyle ) return
        if([2, 7].includes(deviceStyle) && paramsReport.type == 1) return 
        
         return EnergyReport(paramsReport).then(res => {
             let { success, data, errMsg } = res
             setEnergyReport(data)
-            if(success && Object.prototype.toString.call(data).slice(8,-1)==="Object") {
+            if(success && isObject(data)) {
                  let {Data=[], Header=[]} = data
                  let dimensions = Header.map(h => ({name: h.Name, displayName: h.Display}))
                  setOptions({

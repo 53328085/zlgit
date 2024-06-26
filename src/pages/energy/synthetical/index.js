@@ -226,7 +226,7 @@ export default function Index() {
       let {x =[], y=[], y1=[]} = data || {}
 
       let cost = ['',
-      ["time", `本${type}(万元)`, `${my}${type}(万元)`],
+      ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
@@ -477,7 +477,7 @@ const CoalStandard =({data={}, op, datetype}) => {
           height={64}
         />
         <span style={{ color: "#999", marginTop: "10px" }}>
-         {op ==1 ? <> （吨标煤）</> : <>（万元）</>}
+         {op ==1 ? <> （吨标煤）</> : <>（元）</>}
         </span>
       </div>
 

@@ -204,6 +204,7 @@ if(msuc) {
       {name: i18t("carbon","directe", {param: ''})},
       {name: i18t("carbon","indirecte", {param: ''})},
      ],
+     sourceHeader: false,
      source: [x, y, y1]
   }
 

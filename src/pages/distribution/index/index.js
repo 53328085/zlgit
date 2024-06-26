@@ -4,7 +4,7 @@ import {Outlet} from 'react-router-dom'
 import Comhead from '../usehead/com'
 import {useLocation} from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
-import {  getOnelevel,  selectOneLevel, setCurrentlevel} from "@redux/systemconfig.js";
+import {  getOnelevel,  selectOneLevel, setCurrentlevel, getcurlRommid} from "@redux/systemconfig.js";
 export default function Index() {
    const location = useLocation()
    const dispatch = useDispatch();
@@ -43,6 +43,11 @@ export default function Index() {
     sethandler()
    
 }, [nested, primary])
+ useEffect(() => {
+  return () => {
+    dispatch(getcurlRommid(null))
+  }
+ }, [])
  const {Content } = Layout;   
     return (  
       <Content className='page--main'>

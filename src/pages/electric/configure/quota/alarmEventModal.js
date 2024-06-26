@@ -217,8 +217,21 @@ export default function Index(props) {
   const handleCancel = () => {
     props.callBack();
   };
+  const [disabled, setDisabled] = useState(false)
 
-  const changeAlarmType = (val) => {};
+  const changeAlarmType = (val) => {
+     setDisabled(val==5)
+     if(val==5) {
+      formInfo.setFieldValue('PointIdentifier', 'Discon')
+    }else {
+      formInfo.setFieldValue('PointIdentifier', '')
+    }
+    if(giveModalTitle === "新增告警事件") {
+      let name = alarmList.find(a => a.id == val)?.name ?? ''
+      let named = formInfo.getFieldValue('Name')?.trim()
+      if(!named) formInfo.setFieldValue('Name', name)
+    }
+  };
   ///区间告警-区间内外切换
   const conditionOnChange = ({ target: { value } }) => {
     setAlarmCondition(value);
@@ -351,6 +364,7 @@ export default function Index(props) {
                   label="告警事件名称："
                   rules={[{ required: true, message: "请输入告警事件名称" }]}
                   style={{ width: 415, marginBottom: 24 }}
+                  initialValue={alarmList[0].name}
                 >
                   <Input
                     style={{ width: 290 }}
@@ -375,6 +389,7 @@ export default function Index(props) {
                   rules={[{ required: true, message: "请输入数据标识" }]}
                   style={{ width: 415, marginBottom: 24 }}
                   name="PointIdentifier"
+                  disabled={disabled}
                 >
                   <Input
                     style={{ width: 290 }}
@@ -438,6 +453,7 @@ export default function Index(props) {
                   labelCol={{ flex: "110px" }}
                   style={{ width: 220 }}
                   name="Time"
+                  initialValue={300}
                 >
                   {/* 使用precision，对输入的内容做保留0位小数处理 */}
                   <InputNumber min="0" style={{ width: 110 }} precision={0} />

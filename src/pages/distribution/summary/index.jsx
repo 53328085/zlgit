@@ -103,6 +103,7 @@ export default function Index() {
   const getEnvironment = async (roomId) => {
      try {
       setSpinging(true)
+      setEnvList(init)
       const res = await DistributionRoomRuntime.GetEnvironment(projectId, roomId)
       if (res.success) {
         setEnvList(res.data)
@@ -114,6 +115,7 @@ export default function Index() {
         message.error(res.errMsg)
       }
      } catch (error) {
+      setEnvList(init)
        console.log(error)
      } finally {
        setSpinging(false)

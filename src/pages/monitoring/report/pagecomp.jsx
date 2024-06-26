@@ -138,9 +138,9 @@ export default function pagecomp({data}) {
 ]
 let dataSource = [
   {type: '网关', count: reptdata.gatewayCount, online: reptdata.gatewayOnlineCount, offline: reptdata.gatewayOfflineCount, rate: reptdata.gatewayOnlineRate},
-  {type: '电表', count: reptdata.electricMeterCount, online: reptdata.electricMeterOfflineCount, offline: reptdata.electricMeterOfflineCount, rate: reptdata.electricMeterOnlineRate},
-  {type: '水表', count: reptdata.waterMeterCount, online: reptdata.waterMeterOfflineCount, offline: reptdata.waterMeterOfflineCount, rate: reptdata.waterMeterOnlineRate},
-  {type: '断路器', count: reptdata.sensorCount, online: reptdata.sensorOfflineCount, offline: reptdata.sensorOfflineCount, rate: reptdata.sensorOnlineRate}
+  {type: '电表', count: reptdata.electricMeterCount, online: reptdata.electricMeterOnlineCount, offline: reptdata.electricMeterOfflineCount, rate: reptdata.electricMeterOnlineRate},
+  {type: '水表', count: reptdata.waterMeterCount, online: reptdata.waterMeterOnlineCount, offline: reptdata.waterMeterOfflineCount, rate: reptdata.waterMeterOnlineRate},
+  {type: '断路器', count: reptdata.breakerCount, online: reptdata.breakerOnlineCount, offline: reptdata.breakerOfflineCount, rate: reptdata.breakerOnlineRate}
 ]
  const stye ={
   marginBottom: '32px',

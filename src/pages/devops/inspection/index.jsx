@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline, Select,  message, Form, Space } from 'antd';
+import { Input, Button, DatePicker, Modal, Timeline, Select,  message, Form, Space,Image } from 'antd';
  
 import {useOutletContext} from 'react-router-dom'
 import { CompleteIcon, UnCompleteIcon  } from './completeicon'
 import UserTable from '@com/useTable'
 import BlueColumn from '@com/bluecolumn'
- 
+import {CheckCircleOutlined} from "@ant-design/icons"
 import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import { operation } from '@api/api'
@@ -38,6 +38,39 @@ const Mainbox = styled.div`
      column-gap: 16px;
    }
 `
+const Imain = styled.div`
+   && {
+    display:  flex;
+    flex-direction: column;
+    row-gap: 16px;
+    padding-top: 32px;
+    width: 720px;
+    .strong {
+        font-weight: bold;
+
+    }
+    .icons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 8px;
+        width: 720px;
+        .icon {
+            display: flex;
+            align-items: center;
+            column-gap: 4px;
+        }
+    }
+    .imgs {
+        display: flex;
+        column-gap: 16px;
+        .img {
+            width: 132px;
+            height: 96px;
+        }
+    }
+   }
+
+`
 export default function Warncontent() {
     let {exparams} = useOutletContext()
  
@@ -50,7 +83,7 @@ export default function Warncontent() {
     // order = useRef()
     // order.current=false
     const [order, setOrder] = useState(false)
-    const [orderdetail, setOrderdetail] = useState()
+    const [orderdetail, setOrderdetail] = useState({})
     const [rangerTime, setRangerTime] = useState([moment().subtract('day', 7), moment()])
     const [stateopts, setStateopts] = useState([{
         label: '全部',
@@ -59,7 +92,7 @@ export default function Warncontent() {
     const orderSn = useRef()  
    
     columns[0].render = (_, record, rowIndex) => (<a style={{ textDecoration: 'underline' }} onClick={() => {
-        setOrder(true);
+      
         orderSn.current = _
         getInspectionDetail(record.id)
     }}>{_}</a>)
@@ -141,7 +174,8 @@ export default function Warncontent() {
             }
             const res = await operation.InspectionDetail(param)
             if (res.success) {
-                setOrderdetail(res.data || [])
+                setOrderdetail(res.data || {})
+                setOrder(true);
             } else {
                 message.error(res.errMsg)
             }
@@ -227,12 +261,34 @@ export default function Warncontent() {
                 }
                 mold="cust"
             >
+                <Cdivider type="h" style={{marginBotton: "32px", marginTop: 0}} />
                 <Timeline mode='left' >
-                    <Timeline.Item label={orderdetail?.createTime} dot={<CompleteIcon />} className={style.timeline}>
-                        <div style={{ minHeight: 50, fontWeight: 'bold' }} >平台派单</div>
+                    <Timeline.Item label={orderdetail?.arriveTime} dot={orderdetail?.state!=1 ? <CompleteIcon /> :  <UnCompleteIcon />} className={style.timeline}>
+                        <div style={{ minHeight: orderdetail?.state  <4   ? 270 : "auto", fontWeight: 'bold' }} >
+                             <strong>到达巡检点</strong> 
+                           {orderdetail?.state >3 ? <Imain>
+                                <span className='strong'>检查项</span>
+                                 <div className='icons'>
+                                     {orderdetail?.contentVos?.map(o => o.state==1 ? <div className='icon' key={o.id}><CheckCircleOutlined style={{color: "#3f8be8", fontSize: "18px"}} />{o.name}</div>: null)}
+                                 </div>
+                                 <span className='strong'>巡检现场照片</span>
+                                 <div className='imgs'>
+                                    {
+                                        orderdetail?.processImages?.map(img => <Image src={img} className='img' />)
+
+                                    }
+                                 </div>
+                                 <span className='strong'>巡检详情描述</span>
+                                 <Input.TextArea value={orderdetail.result}></Input.TextArea>
+                                 <span className='strong'>巡检结果</span>
+                                 <span>
+                                   {['未知','正常','异常'][orderdetail?.finishState]??''}
+                                  </span>
+                            </Imain> : null}
+                        </div>
                     </Timeline.Item>
-                    <Timeline.Item label={orderdetail?.state !== 1 ? orderdetail?.confirmTime : null} dot={orderdetail?.state !== 1 ? <CompleteIcon /> : <UnCompleteIcon />} className={style.timeline}>
-                        <div style={{ minHeight: 50 }}><span style={{ paddingRight: 64, fontWeight: 'bold', color: orderdetail?.state !== 1 ? '#000' : '#ccc' }}>派单确认</span>{orderdetail?.operator}</div>
+                  {/*   <Timeline.Item label={orderdetail?.state !== 1 ? orderdetail?.confirmTime : null} dot={orderdetail?.state !== 1 ? <CompleteIcon /> : <UnCompleteIcon />} className={style.timeline}>
+                        <div style={{ minHeight: orderdetail?.state !== 4 ? 150 : 50 }}><span style={{ paddingRight: 64, fontWeight: 'bold', color: orderdetail?.state !== 1 ? '#000' : '#ccc' }}>派单确认</span>{orderdetail?.operator}</div>
                     </Timeline.Item>
                     <Timeline.Item label={orderdetail?.state > 2 ? orderdetail?.arriveTime : null} dot={orderdetail?.state > 2 ? <CompleteIcon /> : <UnCompleteIcon />} className={style.timeline}>
                         <div style={{ minHeight: 100 }}>
@@ -257,8 +313,8 @@ export default function Warncontent() {
                         <div>
                             <TextArea rows={4} style={{ width: 528, height: 80 }} value={orderdetail?.description} />
                         </div>
-                    </Timeline.Item>
-                    <Timeline.Item dot={orderdetail?.state > 3 ? <CompleteIcon /> : <UnCompleteIcon />} className={style.timeline}>
+                    </Timeline.Item> */}
+                    <Timeline.Item dot={orderdetail?.state > 3 ? <CompleteIcon /> : <UnCompleteIcon />} label={orderdetail?.state > 3 ? orderdetail?.finishTime : null}   className={style.timeline}>
                         <div style={{ fontWeight: 'bold', color: orderdetail?.state > 3 ? '#000' : '#ccc' }}>完成</div>
                     </Timeline.Item>
                 </Timeline>

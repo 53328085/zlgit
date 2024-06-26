@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   const location = useLocation()
   let {state={}} = location
@@ -29,8 +29,11 @@ export default  memo(function Index(props) {
      showRoom &&  getRoomList(v)
   }
   const changeRomme = (v) => {      
-       dispacth(getcurlRommid(v))
-       setRoomId(v)
+      dispacth(getcurlRommid(v))
+      
+  }
+  const lchangeRomme = (v) => {
+    dispacth(getcurlRommidl(v))
   }
   const  getOnelevel = async () => {
         try {
@@ -68,10 +71,10 @@ export default  memo(function Index(props) {
   const getRoomList = async (id) => {
     const {success, data, errMsg} = await distributionRoom.RoomList(projectId, id)
     if (success && Array.isArray(data) && data.length > 0) {        
-        dispacth(getRoomId(isline ? [...data, {name: '全部配电房', id: 0}] : data))
-        let id  =  isline ? 0 : data[0].id
-        form.setFieldValue("roomId", id)
-        dispacth(getcurlRommid(id))
+        dispacth(getRoomId(data))
+     
+        form.setFieldValue("roomId", data[0].id)
+        dispacth(getcurlRommid(data[0].id));
     }else {
       dispacth(getRoomId([]))
       form.setFieldValue('roomId', null)
@@ -85,8 +88,15 @@ export default  memo(function Index(props) {
   }
   useEffect(() => {
     if(Number.isInteger(projectId))   getOnelevel()
-  }, [projectId, nested])
+  }, [projectId])
  
+ useEffect(() => {
+  if(isline) {
+    dispacth(getcurlRommidl(0))
+    form.setFieldValue("roomIdl", 0)
+  }
+
+}, [isline])
 
 return (
   <div>
@@ -107,14 +117,23 @@ return (
                   {showRoom && <><Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
                   </Form.Item>
-                  <Form.Item name="roomId" initialValue={RommId}>
+                 {isline ? <Form.Item name="roomIdl" initialValue={0} >
                       <Select
-                          options={roomIds}
+                          options={[{name: '全部配电房', id: 0},...roomIds]}
                           fieldNames={{ label: 'name', value: 'id' }}
                           style={{ width: 240 }}
                           placeholder="请选择配电房"
-                          onChange={changeRomme}></Select>
+                          onChange={lchangeRomme}></Select>
                   </Form.Item>
+                  : <Form.Item name="roomId"  >
+                  <Select
+                      options={roomIds}
+                      fieldNames={{ label: 'name', value: 'id' }}
+                      style={{ width: 240 }}
+                      placeholder="请选择配电房"
+                      onChange={changeRomme}></Select>
+                   </Form.Item>
+                  }
                   </>
                   }
               </Form>

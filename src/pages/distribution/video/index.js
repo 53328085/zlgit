@@ -605,7 +605,7 @@ export default function Index() {
             </div>
             <Cdivider type="h" style={{ margin: "16px 0" }} />
 
-            <UseTable columns={columns}  {...tableProps} rowKey='sn' />
+            <UseTable columns={columns}  {...tableProps} rowKey='name' />
           </div>
         </Titlelayout>
       </Mainbox>

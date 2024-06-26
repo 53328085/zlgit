@@ -8,7 +8,7 @@ import LoopDetail from './loopDetail';
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectcurlRommid, roomId } from "@redux/systemconfig";
+import { selectcurlRommidl, roomId } from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'
 import {ExportExcel, RefreshButton} from '@com/useButton'
 import styled from 'styled-components';
@@ -21,7 +21,7 @@ export default function Index() {
    
     
     const projectId = useSelector(state => state.system.menus.projectId)
-    const curid = useSelector(selectcurlRommid)
+    const curid = useSelector(selectcurlRommidl)
     const roomIds = useSelector(roomId)
    //  const roomId = [curid]
     const  RoomId = useMemo(() => {

@@ -396,7 +396,6 @@ export const carbonSlice = apiSlice.injectEndpoints({
         query: ({enterpriseId, year}) =>({
             url:`Carbon/CarbonTrackRuntime/QueryMonthlyAnalysis?enterpriseId=${enterpriseId}&year=${year}`, //  碳排月度考核分析
             method: "GET",
-            transformResponse: (response, meta, arg) => response.data,
         }),
       }), 
       EmissionData: build.query({    

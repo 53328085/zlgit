@@ -10,6 +10,7 @@ import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
 import UseTable from '@com/useTable'
 import {CustButton} from '@com/useButton'
+ 
 const {Link} = Typography
 export default function Index ({projectId, areaId}) {
   const {t} = useTranslation(["button"])
@@ -18,13 +19,8 @@ export default function Index ({projectId, areaId}) {
   const [form] = Form.useForm()
   const Item = Form.Item 
  
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
-      type,
-      content
-    })
-  }
+ 
+ 
   const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage} = DesElectric
  
   const tbcolumns = [
@@ -76,7 +72,8 @@ export default function Index ({projectId, areaId}) {
           setTreeData([])
         }
       }else{
-        messageContent('error',errMsg)
+        message.warning(errMsg)
+     
       }
     
   }
@@ -91,23 +88,26 @@ export default function Index ({projectId, areaId}) {
   const [modalTitle,setModalTitle] = useState('')
   //const [formLabel,setFormLabel] = useState('')
   const [parentId, setParentId] = useState(null)
-  const [updateId, setUpdateId] = useState(null)
+  //const [updateId, setUpdateId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
-  const [modalTag, setModalTag] = useState('')
-  const isAdd = modalTag == 'add'
+ // const [modalTag, setModalTag] = useState('')
+  const [isAdd, setIsAdd] = useState(true) // modalTag == 'add'
+  const updateId = useRef()
   const addMain = () => {
     
     setModalTitle('新增重点设备')
    // setFormLabel('重点设备名称')
     setParentId(0)
-    setModalTag('add')
+    setIsAdd(true)
     aref.current.onOpen()
   }
   const edit = ({id, name, address, imgsrc}) => {
+    console.log(id)
     setModalTitle('编辑重点设备')
    // setFormLabel('重点设备名称')
-    setUpdateId(id)
-    setModalTag('edit')
+   updateId.current = id;
+   // setUpdateId(id)
+    setIsAdd(false)
     form.setFieldValue('name', name)
     form.setFieldValue('address', address)
     form.setFieldValue("imageKey",imgsrc)
@@ -125,25 +125,30 @@ export default function Index ({projectId, areaId}) {
         parentId,
         areaId,
         projectId,
-        address,
+        address: encodeURIComponent(address),
       }
       if(isAdd){
         insertDrive(params, {image:imageKey}).then(res => {
           if(res.success){
-            messageContent('success','新增重点设备成功!')
+            message.success('新增重点设备成功!')
+       
           }else{
-            messageContent('error', res.errMsg)
+            message.warning(res.errMsg)
+           
           }
           form.resetFields()
           getTreeData()
-         // aref.current.onCancel()
+        
         })
       }else {
-        updateDrive({projectId, id: updateId, name: encodeURIComponent(name), address}, {image:imageKey}).then(res => {
+        updateDrive({projectId, id: updateId.current, name: encodeURIComponent(name), address: encodeURIComponent(address)}, {image:imageKey}).then(res => {
           if(res.success){
-            messageContent('success','修改重点设备成功!')
+            console.log(updateId.current)
+            message.success('修改重点设备成功!')
+           
           }else{
-            messageContent('error', res.errMsg)
+            message.warning(res.errMsg)
+           
           }
           getTreeData()
           aref.current.onCancel() 
@@ -157,14 +162,16 @@ export default function Index ({projectId, areaId}) {
   const onDelete = () => {
     deleteDrive({projectId, id: deleteId}).then(res=> {
       if(res.success){
-        messageContent('success','删除重点设备成功!')
+        message.success('删除重点设备成功!')
+       
       }else{
-        messageContent('error', res.errMsg)
+        message.warning(res.errMsg)
+        
       }
       getTreeData()
       dref.current.onCancel()
     }).catch(error => {
-      
+       console.log(error)
     })  
   }
 
@@ -207,13 +214,15 @@ export default function Index ({projectId, areaId}) {
           setUnknownTable(data || [])
         }else{
           setUnknownTable([])
-          messageContent('error',errMsg)
+          message.warning(errMsg)
+          
         }
         if(sus) {
           setSubTable(cdata || [])
         }else {
           setSubTable([])
-          messageContent('error',msg)
+          message.warning(msg)
+          
         }
       //  setDeleteDom(true)
         setTransTag('open')
@@ -227,11 +236,13 @@ export default function Index ({projectId, areaId}) {
     
     conifgDrive({projectId, id: structureId}, params).then(res => {
       if(res.success){
-        messageContent('success', '重点设备配置成功!')
+        message.warning('重点设备配置成功!')
+        
         setTransTag(false)
        // setTimeout(()=> {setDeleteDom(false)}, 600)
       }else{
-        messageContent('error', res.errMsg)
+        message.warning(res.errMsg)
+        
       }
     }) 
   }
@@ -279,7 +290,7 @@ export default function Index ({projectId, areaId}) {
 </Custmodl>, [modalTitle])
   return (
     <div style={{flex: 1, display: 'flex', flexDirection: "column"}}>
-      {contextHolder}
+      
       <Titlelayout layout="flex" title={<div style={{display: 'flex',alignItems: "center", justifyContent: "space-between"}}>
           <span>重点设备</span>
           <CustButton  wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>

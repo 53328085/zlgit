@@ -65,7 +65,7 @@ export default function pagecomp({data}) {
     return subCategoryCalculationFactors
   }).flat()
  
-   
+   console.log(emissionTable)
   const activityColumns = [
     {
     title: "",
@@ -95,8 +95,8 @@ export default function pagecomp({data}) {
     },
     {
       title: "低位发热量(GJ/t，(GJ/万Nm3)",
-      dataIndex: "cell1Value",
-      key: "cell1Value"
+      dataIndex: "cell2Value",
+      key: "cell2Value"
     },
   ]
 
@@ -130,8 +130,8 @@ export default function pagecomp({data}) {
     },
     {
       title: "低位发热量(GJ/t，(GJ/万Nm3)",
-      dataIndex: "cell1Value",
-      key: "cell1Value"
+      dataIndex: "cell2Value",
+      key: "cell2Value"
     },
   ]
  
