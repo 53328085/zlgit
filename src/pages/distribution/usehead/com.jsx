@@ -1,33 +1,35 @@
-import React, { useState, useMemo, useEffect, useRef,forwardRef,useImperativeHandle, memo } from 'react'
+import React, { useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
+import moment from 'moment'
 import { useSelector, useDispatch } from 'react-redux'
-import { Select, Button, DatePicker, Form, Divider, message } from 'antd'
+import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl,setEnvironmentTime} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   const location = useLocation()
-  let {state={}} = location
-  let {nested = '', primary} = state;
+  let { state = {} } = location
+  let { nested = '', primary } = state;
   let isline = primary == "runtimeDistribution" && nested == "line"
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
   const [RommId, setRoomId] = useState(curid)
-  let {showRoom = true} = props
+  let { showRoom = true } = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
-  const [oneLevel, setOnelevel] = useState([]) 
-   
+  const [oneLevel, setOnelevel] = useState([])
+
   const levelName = useSelector(levelDefaultLabel) || '园区'
- 
+
   const [roomlist, setRoomList] = useState([])
- // const [roomId, setRoomId] = useState()
+  // const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
-  const changeArea=(v, option)=>{  
-     dispacth(setCurrentlevel(option))
-  
-     showRoom &&  getRoomList(v)
+  const changeArea = (v, option) => {
+    dispacth(setCurrentlevel(option))
+
+    showRoom && getRoomList(v)
   }
+ 
   const changeRomme = (v) => {      
       dispacth(getcurlRommid(v))
       
@@ -35,39 +37,51 @@ export default  memo(function Index(props) {
   const lchangeRomme = (v) => {
     dispacth(getcurlRommidl(v))
   }
-  const  getOnelevel = async () => {
-        try {
-          let {success, data, errMsg} = await Area.AreaList(projectId)
-          if(success) {
-             if (Array.isArray(data) && data?.length) {
-                setOnelevel(data)             
-                form.setFieldValue("area", data[0].id)
-                getRoomList(data[0].id)
-             }else {
-               form.setFieldsValue({
-                 areaId: null,
-                 roomId: null
-               })
-               setOnelevel([])
-               setRoomList([])
-              
-               message.warning("没有设置园区")
-             }
-          }else {
-              message.warning(errMsg || "数据出错")
-             
-              form.setFieldsValue({
-                areaId: null,
-                roomId: null
-              })
-              setOnelevel([])
-              setRoomList([])
-           }
-        } catch (error) {
-          console.log(error)
+  const [TimeSelect, setTimeSelect] = useState(true);
+  const [dateval, setDateVal] = useState(moment())
+  const changeTime = (time, option) => {
+    setDateVal(time)
+    dispacth(setEnvironmentTime(option))
+  }
+
+  const getOnelevel = async () => {
+    if (nested != "environment") {
+      setTimeSelect(false)
+    } else {
+      setTimeSelect(true)
+    }
+    try {
+      let { success, data, errMsg } = await Area.AreaList(projectId)
+      if (success) {
+        if (Array.isArray(data) && data?.length) {
+          setOnelevel(data)
+          form.setFieldValue("area", data[0].id)
+          getRoomList(data[0].id)
+        } else {
+          form.setFieldsValue({
+            areaId: null,
+            roomId: null
+          })
+          setOnelevel([])
+          setRoomList([])
+
+          message.warning("没有设置园区")
         }
-          
-  }  
+      } else {
+        message.warning(errMsg || "数据出错")
+
+        form.setFieldsValue({
+          areaId: null,
+          roomId: null
+        })
+        setOnelevel([])
+        setRoomList([])
+      }
+    } catch (error) {
+
+    }
+
+  }
   const getRoomList = async (id) => {
     const {success, data, errMsg} = await distributionRoom.RoomList(projectId, id)
     if (success && Array.isArray(data) && data.length > 0) {        
@@ -79,9 +93,9 @@ export default  memo(function Index(props) {
       dispacth(getRoomId([]))
       form.setFieldValue('roomId', null)
       dispacth(getcurlRommid(null))
-      if(!success) {
+      if (!success) {
         message.warning(errMsg || "数据出错")
-      }else {
+      } else {
         message.warning("没有配电房")
       }
     }
@@ -97,10 +111,12 @@ export default  memo(function Index(props) {
   }
 
 }, [isline])
-
+useEffect(() => {
+  dispacth(setEnvironmentTime(dateval))
+}, [dateval])
 return (
   <div>
-          <div style={{ backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <div style={{position: "relative", backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
               <Form
                   form={form}
                   colon={false}
@@ -137,8 +153,11 @@ return (
                   </>
                   }
               </Form>
+              {TimeSelect && <Space style={{ position: "absolute", right: "16px" }}  >
+          <span>日期</span>
+          <DatePicker size='middle' value={dateval} onChange={changeTime}></DatePicker>
+        </Space>}
           </div>
   </div>
 )
 })
- 
